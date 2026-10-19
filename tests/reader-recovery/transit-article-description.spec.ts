@@ -1,3 +1,4 @@
+import {readerResponse} from '../helpers/reader-response';
 import { expect, test, type Page, type Locator } from "@playwright/test";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
@@ -114,6 +115,16 @@ for (const theme of ["light", "dark"]) {
   test(`Friends transit articles use the friend's houses (${theme})`, async ({ page }) => {
     test.setTimeout(90_000);
     await prepare(page, theme);
+    // This typography/facts case needs its own approved activation. Standing
+    // synastry and editable bridge starters are not connection publications.
+    const activationKey='authored/connection-activation/pluto/trine/midheaven';
+    const stamp='2026-09-01T12:00:00Z';
+    const activation={id:'fixture-pluto-trine-midheaven',content_key:activationKey,status:'LIVE',lane:'serving',review_state:null,updated_at:stamp,
+      surface:'friends',mode:'in_depth',provider:'tldrastro-fallback-architecture-v3',body:'The complete synthetic connection reading names {{holder1}}. Its synthetic final sentence stays intact.',
+      source_snapshot:{contentType:'connection-activation',content_role:'full_copy',review_status:'approved'},
+      sections:{packageRecord:{contentKey:activationKey,content_role:'full_copy',review_status:'approved',body_you:'The complete synthetic connection reading names {{holder1}}. Its synthetic final sentence stays intact.'}}};
+    const publication={content_key:activationKey,state:'live',revision:990,row_id:activation.id,row_updated_at:stamp,updated_at:stamp};
+    await page.route('**/api/content-reader',route=>route.fulfill({json:readerResponse(route.request().postDataJSON()?.keys?.includes(activationKey)?[activation]:[],[publication])}));
     await page.goto("/?date=2026-09-08#friends?tab=charts&chart=facts-friend&view=transits");
     const row = page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(row).toBeVisible({ timeout: 45_000 });
@@ -143,6 +154,8 @@ for (const theme of ["light", "dark"]) {
     await expect(reading.locator(".article-section__eyebrow")).toHaveText("What this activates");
     const section = reading.locator(".article-section").filter({ has: page.locator(".article-section__eyebrow") });
     await expect(section.locator("h2")).toContainText(/^Your /);
+    await expect(section.locator("h2")).toHaveText("Your Pluto trine Example Friend's Midheaven");
+    await expect(section.locator("p").first()).toHaveText('The complete synthetic connection reading names Example Friend. Its synthetic final sentence stays intact.');
     await expect(section.locator("p").first()).not.toHaveText(await section.locator("h2").innerText());
     const glyphLabel = await reading.locator(".article-eyebrow").getAttribute("aria-label");
     expect(glyphLabel).toBe("Aspect: Jupiter sextile Pluto");

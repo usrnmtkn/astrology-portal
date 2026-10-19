@@ -1,3 +1,4 @@
+import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
@@ -31,7 +32,7 @@ for(const [width,theme,exhausted] of [[390,'light',false],[1440,'dark',false],[3
    }});
    await page.goto('/admin/content#horoscopes');
    const studio=page.getByRole('region',{name:'Horoscope editions'});
-   await studio.getByText(/^Continue a saved edition/).click();
+   await showSavedHoroscopeEditions(page,studio);
    await studio.getByRole('button',{name:/Seasonal architecture fixture/}).click();
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await expect(studio.getByText(/Up to 30 paid AI requests/)).toBeVisible();
@@ -47,7 +48,7 @@ for(const [width,theme,exhausted] of [[390,'light',false],[1440,'dark',false],[3
    const storedBefore=(await call({method:'rows'})).find((r:any)=>r.id===id);
    expect(storedBefore.status).toBe('DRAFT');
    expect(storedBefore.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='taurus').body).toBe('');
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/Seasonal architecture fixture/}).click();
+   await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/Seasonal architecture fixture/}).click();
    await studio.getByRole('button',{name:/^Taurus/}).click();await studio.getByText('Seasonal generation record',{exact:true}).click();
    if(exhausted)await expect(studio.getByLabel('Private accepted Seasonal candidate')).toHaveCount(0);
    else await expect(studio.getByLabel('Private accepted Seasonal candidate')).toHaveValue(original!);
@@ -83,7 +84,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const studio=page.getByRole('region',{name:'Horoscope editions'});
    for(let visit=0;visit<2;visit++){
     if(visit)await page.reload();else await page.goto('/admin/content#horoscopes');
-    await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/Legacy receipt fixture/}).click();
+    await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/Legacy receipt fixture/}).click();
     await studio.getByRole('button',{name:/^Aries/}).click();
     await studio.getByText('Seasonal generation record',{exact:true}).click();
     await expect(studio.getByLabel('Original Seasonal writer draft')).toHaveValue(`${originalDraft.headline}\n\n${originalDraft.body}`);

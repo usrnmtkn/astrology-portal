@@ -89,7 +89,8 @@ assert.equal(publicationAllowsContent('new-import','unregistered',record.updated
 const { skyDailySummaryParts } = await import('../apps/web/src/content/skyDailySummary.ts');
 const summaryFacts = { sun: { sign: 'Virgo' }, moon: { sign: 'Cancer' }, moonIsVoid: true, voidRemainingLabel: '20 minutes', retrogradePlanets: ['Saturn', 'Chiron'], event: { name: 'New Moon', sign: 'Virgo', countdown: 'in 3 days' } };
 const summaryText = (content?: any) => skyDailySummaryParts(summaryFacts, content).map(part => part.text).join('');
-assert.match(summaryText(), /daily rituals/);
+const summaryBaseline=summaryText();
+assert.match(summaryBaseline, /daily rituals/);
 const summaryKeys = ['cms/sky-daily-summary/sun/virgo', 'cms/sky-daily-summary/retrograde', 'cms/sky-daily-summary/voidRemaining', 'cms/sky-daily-summary/lunation'];
 for (const content_key of summaryKeys) installContentPublications([{ ...retired, content_key, revision: 20 }]);
 assert.doesNotMatch(summaryText(), /daily rituals|retrograde|void of course|New Moon/);
@@ -108,6 +109,7 @@ const ingressEvent = { id: 'qa-ingress', type: 'ingress', planet: 'Mercury', toS
 const olderIngress = { id: 'older-ingress', contentKey: 'sky.ingress.mercury.libra', status: 'LIVE', summary: 'QA older ingress TLDR', body: 'QA older article' };
 const ingressContent = new Map<string, any>([['sky.ingress.mercury.libra', olderIngress]]);
 const ingressFacts = () => skySummaryEventFacts([ingressEvent as any], ingressContent).ingresses[0];
+const ingressBaseline=ingressFacts();
 installContentPublications([{ ...retired, content_key: ingressKey, revision: 30 }]);
 assert.equal(ingressFacts().tldr, undefined, 'Retired ingress wording cannot reveal an older article TLDR');
 assert.equal(ingressFacts().label, 'Mercury enters Libra', 'Retirement preserves the calculated ingress');
@@ -139,3 +141,132 @@ console.log('PASS dated and seasonal Sky article publication identity, refresh, 
   assert.notEqual(skyPlacementPublicationIdentity(), before, 'One-microsecond current aspect changes invalidate the existing placement owner.');
 }
 console.log('PASS exact Sky aspect publication identity, microseconds, retirement and unrelated-guide isolation.');
+
+// Exercise the actual app owner and its shipped data/factory, not a hand-built renderer.
+{
+  const {createHash} = await import('node:crypto');
+  const runtime = await import('../apps/web/src/content/fallbackArchitectureV3Runtime.ts');
+  await runtime.loadDeferredFallbackArchitectureV3Bundle();
+  const cases = [
+    {key:'fallback-hook/natal-aspect-lived/sun/conjunction/moon', render:()=>runtime.fallbackRendererV3.renderNatalAspect({planetA:'sun',planetB:'moon',aspect:'conjunction',voice:'you'})},
+    {key:'fallback-hook/natal-you-placement-complete-final/sun/aquarius/9', render:()=>runtime.fallbackRendererV3.renderNatalPlacement({planet:'sun',sign:'aquarius',house:9,voice:'you'})}
+  ];
+  const digest = (body:string) => createHash('sha256').update(body).digest('hex');
+  for (const entry of cases) {
+    const before=digest(entry.render().body);
+    // These exact baselines are factory-owned rather than hook rows in the JSON partition.
+    // Install a distinct synthetic version through the same runtime overlay interface.
+    const cached={contentKey:entry.key,content_role:'full_copy',review_status:'approved',reader_only:true,render_policy:'reader-only-exact-lived-v1',body:'Synthetic cached versioned passage remains distinct.',body_you:'Synthetic cached versioned passage remains distinct.',body_they:'Synthetic cached versioned passage remains distinct.',approval:{approvalLevel:'exact_owner_approved',recordPath:'fixture:baseline-reset',payloadSha256:'a'.repeat(64),approvedAt:record.row_updated_at},publicationRowId:'cached-qa',publicationRowUpdatedAt:record.row_updated_at};
+    const overlay={transitLib:{authoredCards:[]},templatesFile:{templates:[]},rowsFile:{hookRows:[cached],vocabularyRows:[]}};
+    installContentPublications([{...record,content_key:entry.key,revision:9999,row_id:'cached-qa'}]);
+    runtime.installFallbackArchitectureV3Bundle(overlay);
+    assert.match(entry.render().body,/Synthetic cached versioned passage/,'Actual installed overlay is active before reset');
+    const tombstone={...retired,content_key:entry.key,revision:10000};
+    installContentPublications([tombstone]);
+    assert.throws(entry.render,/Publication unavailable/);
+    const reset={...tombstone,state:'live' as const,revision:10001,row_id:null,row_updated_at:null};
+    installContentPublications([reset]);
+    assert.equal(digest(entry.render().body),before,'Explicit reset restores the identical approved runtime baseline');
+    runtime.installFallbackArchitectureV3Bundle(overlay);
+    assert.equal(digest(entry.render().body),before,'Reinstalling a stale cached overlay cannot displace the baseline after reset');
+    assert.equal(publicationAllowsContent(entry.key,'cached-qa',record.row_updated_at),false,'Cached versioned QA cannot survive a baseline reset');
+    assert.equal(publicationAllowsContent(entry.key,null,record.row_updated_at),false,'Partial null identity is not baseline copy');
+    installContentPublications([tombstone],'complete-live');
+    assert.equal(digest(entry.render().body),before,'Lower-revision offline/complete snapshots cannot replay retirement');
+    installContentPublications([{...reset,revision:9999}]);
+    assert.equal(digest(entry.render().body),before,'Lower-revision reset cannot change current state');
+    installContentPublications([{...reset,revision:10002,row_id:'missing-exact',row_updated_at:record.row_updated_at}]);
+    assert.throws(entry.render,/Publication unavailable/,'Missing pinned LIVE remains fail-closed');
+    installContentPublications([{...reset,revision:10003,row_id:'mismatched',row_updated_at:null}]);
+    assert.throws(entry.render,/Publication unavailable/,'Mismatched null publication remains fail-closed');
+    installContentPublications([{...reset,revision:10004}]);
+    assert.equal(digest(entry.render().body),before);
+    installContentPublications([{...tombstone,revision:10005}]);
+    installContentPublications([{...reset,revision:10004}],'complete-live');
+    assert.throws(entry.render,/Publication unavailable/,'An older reset cannot undo a newer retirement');
+    installContentPublications([{...reset,revision:10006}]);
+    runtime.installFallbackArchitectureV3Bundle(null);
+    assert.equal(digest(entry.render().body),before,'Removing the rejected overlay preserves the identical baseline');
+  }
+}
+
+// Baseline resets apply at the actual CMS, lunar and Sky selection boundaries.
+{
+  const {createServer}=await import('vite');
+  const vite=await createServer({configFile:false,envFile:false,root:process.cwd(),server:{middlewareMode:true,hmr:false},appType:'custom',logLevel:'silent'});
+  try {
+  const {installContentPublications,publicationAllowsContent}=await vite.ssrLoadModule('/apps/web/src/content/contentPublicationState.ts');
+  const {skyDailySummaryParts}=await vite.ssrLoadModule('/apps/web/src/content/skyDailySummary.ts');
+  const summaryText=(content?:any)=>skyDailySummaryParts(summaryFacts,content).map((part:any)=>part.text).join('');
+  const summaryBaseline=summaryText();
+  const {skySummaryEventFacts}=await vite.ssrLoadModule('/apps/web/src/content/skySummaryEvents.ts');
+  const ingressContent=new Map([[olderIngress.contentKey,olderIngress]]);
+  const ingressFacts=()=>skySummaryEventFacts([ingressEvent],ingressContent).ingresses[0];
+  const ingressBaseline=ingressFacts();
+  const {resolveCmsSurfaceOverride}=await vite.ssrLoadModule('/apps/web/src/content/cmsSurfaceOverrides.ts');
+  const {resolveLunationReaderSource,lunationReaderContentKeys}=await vite.ssrLoadModule('/apps/web/src/content/lunationReaderSource.ts');
+  const runtime=await vite.ssrLoadModule('/apps/web/src/content/fallbackArchitectureV3Runtime.ts');
+  await runtime.loadLunationBookFallbackArchitectureV3Bundle();
+  const specific='cms/baseline-reset/specific',generic='cms/baseline-reset/generic';
+  const baseline={contentKey:generic,id:null,updatedAt:null,status:'LIVE',body:'Synthetic unversioned baseline.',paragraphs:['Synthetic unversioned baseline.']};
+  const stale={...baseline,contentKey:specific,id:'cached-qa',updatedAt:record.row_updated_at,targetDate:'2031-04-07',body:'Synthetic stale dated override.',paragraphs:['Synthetic stale dated override.']};
+  const content=new Map([[generic,baseline],[specific,stale]]) as any;
+  const keys=[specific,generic];
+  const reset=(content_key:string,revision:number)=>({...record,content_key,revision,row_id:null,row_updated_at:null});
+  installContentPublications([{...retired,content_key:specific,revision:20000}]);
+  assert.equal(resolveCmsSurfaceOverride(content,keys)?.unavailable,true);
+  installContentPublications([{...record,content_key:specific,revision:20001}]);
+  assert.equal(resolveCmsSurfaceOverride(undefined,keys)?.unavailable,true,'Missing pinned CMS publication is terminal');
+  installContentPublications([reset(specific,20002)]);
+  assert.equal(resolveCmsSurfaceOverride(content,keys)?.body,baseline.body);
+  assert.equal(publicationAllowsContent(specific,stale.id,stale.updatedAt,stale.targetDate),false,'Reset rejects versioned dated QA');
+  const event={startsAt:'2031-04-07T12:00:00Z',phase:'full-moon',title:'Full Moon',sign:'Libra'};
+  const lunarKeys=lunationReaderContentKeys(event);
+  const lunarBaseline=resolveLunationReaderSource(event);
+  assert(lunarBaseline?.body,'Actual reusable lunar baseline is available');
+  const hash=(body:string)=>createPackageManifest({transitLib:{authoredCards:[]},templatesFile:{templates:[]},rowsFile:{hookRows:[{contentKey:'fixture',body_you:body}],vocabularyRows:[]}}).contentHash;
+  const lunarHash=hash(lunarBaseline.body);
+  const lunarRows=new Map(lunarKeys.map(contentKey=>[contentKey,{...stale,contentKey}])) as any;
+  for(const content_key of lunarKeys)installContentPublications([{...retired,content_key,revision:20000}]);
+  assert.equal(resolveLunationReaderSource(event,lunarRows)?.unavailable,true);
+  for(const content_key of lunarKeys)installContentPublications([{...record,content_key,revision:20001}]);
+  assert.equal(resolveLunationReaderSource(event)?.unavailable,true,'Missing pinned lunar publication is terminal');
+  for(const content_key of lunarKeys)installContentPublications([reset(content_key,20002)]);
+  assert.equal(hash(resolveLunationReaderSource(event,lunarRows)!.body),lunarHash,'Dated and reusable resets restore identical actual lunar baseline');
+  const {publishedPassageSources,calendarStudioMoonSources}=await vite.ssrLoadModule('/apps/admin/src/calendarPassageSources.ts');
+  const reusable=lunarKeys.find(key=>key.startsWith('authored/'))!;
+  const packageRecord=servingPackageRecords.get(reusable)!;
+  assert(packageRecord,'Actual lunar package record is available to Studio');
+  const packageBody=packageRecord.body_you??packageRecord.body??packageRecord.text;
+  const packageRow={id:`package:${reusable}`,content_key:reusable,body:packageBody,status:'LIVE',lane:'serving',surface:'calendar',mode:'article',review_state:null,sections:{packageRecord},source_snapshot:{contentType:'authored-content'}};
+  const studioRows=publishedPassageSources([packageRow,...lunarKeys.map(content_key=>({...stale,id:'cached-qa',content_key,updated_at:stale.updatedAt,target_date:stale.targetDate,sections:{},surface:'calendar',mode:'article',lane:'serving',review_state:null}))] as any);
+  assert.equal(studioRows.has(lunarKeys[0]),false,'Studio excludes the dated QA override after reset');
+  assert.equal(studioRows.get(reusable)?.body,packageBody,'Studio accepts the identical verified package baseline after reset');
+  const options=calendarStudioMoonSources(studioRows).calendarMoonFallbackOptions({events:[{...event,type:'lunation'}]} as any,{moonSign:'Libra',moonPhase:'Full Moon',nextMoonSign:'',seasonName:'',exactFullMoon:true} as any,studioRows);
+  assert.equal(options.exactLunationCopy?.body,packageBody,'Actual Studio lunar selector reaches reusable baseline after dated reset');
+  installContentPublications([{...retired,content_key:reusable,revision:20003}]);
+  assert.equal(publishedPassageSources([packageRow] as any).has(reusable),false,'Retired package remains excluded');
+  installContentPublications([{...record,content_key:reusable,revision:20004}]);
+  assert.equal(publishedPassageSources([packageRow] as any).has(reusable),false,'Pinned publication cannot admit package substitute');
+  installContentPublications([reset(reusable,20005)]);
+
+  const cachedSummaryBody='Synthetic verified summary cache marker remains distinct.';
+  installContentPublications([{...record,content_key:summaryKey,revision:20001}]);
+  const cachedSummary=new Map([[summaryKey,{...stale,contentKey:summaryKey,id:record.row_id,updatedAt:record.row_updated_at,targetDate:null,body:cachedSummaryBody}]]) as any;
+  assert.match(summaryText(cachedSummary),/Synthetic verified summary cache marker/,'Matching pinned summary enters this Vite graph');
+  assert.match(summaryText(new Map()),/Synthetic verified summary cache marker/,'The same graph retains its verified cache across empty hydration');
+  for(const content_key of summaryKeys)installContentPublications([reset(content_key,20002)]);
+  const staleSummary=new Map(summaryKeys.map(contentKey=>[contentKey,{...stale,contentKey}])) as any;
+  assert.equal(summaryText(staleSummary),summaryBaseline,'Sky reset restores baseline, excluding both cached and supplied QA');
+  assert.equal(summaryText(new Map()),summaryBaseline,'Reset clears the verified cache in this graph even with empty hydration');
+  const {missingPublishedSkySummaryKeys}=await vite.ssrLoadModule('/apps/web/src/features/sky/skySummarySources.ts');
+  assert.deepEqual(missingPublishedSkySummaryKeys(summaryKeys,staleSummary),[],'Reset requires no versioned summary row to become ready');
+  installContentPublications([{...record,content_key:summaryKey,revision:20003}]);
+  assert.deepEqual(missingPublishedSkySummaryKeys([summaryKey],new Map()),[summaryKey],'Ordinary pinned summary still requires its row');
+  installContentPublications([reset(summaryKey,20004)]);
+
+  installContentPublications([reset(ingressKey,20002)]);
+  ingressContent.set(ingressKey,{...stale,contentKey:ingressKey});
+  assert.deepEqual(ingressFacts(),ingressBaseline,'Ingress reset restores prior source selection rather than stale dated QA');
+  } finally {await vite.close();}
+}

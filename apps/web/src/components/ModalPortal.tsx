@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { PortalVisibility } from "./portalVisibility";
 import { createPortal } from "react-dom";
 import type { CSSProperties, ReactNode } from "react";
 
@@ -10,6 +11,7 @@ type ModalPortalProps = {
   panelClassName?: string;
   titleId?: string;
   width?: string;
+  restoreFocusId?: string;
 };
 
 let openModalCount = 0;
@@ -21,23 +23,29 @@ export function ModalPortal({
   onClose,
   panelClassName = "",
   titleId,
+  restoreFocusId,
   width
 }: ModalPortalProps) {
+  const visible = useContext(PortalVisibility);
+  const lastFocusedRef = useRef<HTMLElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const restoreFocusIdRef = useRef(restoreFocusId);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
 
   useEffect(() => {
     onCloseRef.current = onClose;
-  }, [onClose]);
+    restoreFocusIdRef.current = restoreFocusId;
+  }, [onClose, restoreFocusId]);
 
   useEffect(() => {
-    restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (!visible) return;
+    if (!restoreFocusRef.current) restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     openModalCount += 1;
     document.body.classList.add("modal-open");
 
     const focusTimer = window.setTimeout(() => {
-      panelRef.current?.focus();
+      (lastFocusedRef.current?.isConnected ? lastFocusedRef.current : panelRef.current)?.focus();
     }, 0);
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -84,11 +92,13 @@ export function ModalPortal({
       if (openModalCount === 0) {
         document.body.classList.remove("modal-open");
       }
-      restoreFocusRef.current?.focus();
+      const target = (restoreFocusIdRef.current ? document.getElementById(restoreFocusIdRef.current) : null) ?? restoreFocusRef.current;
+      if (target?.isConnected && !target.closest("[hidden], [inert]")) target.focus();
     };
-  }, []);
+  }, [visible]);
 
   return createPortal(
+    <div hidden={!visible} inert={!visible}>
     <div className={`modal-root${className ? ` ${className}` : ""}`}>
       <div className="modal-overlay" role="presentation" />
       <div
@@ -105,6 +115,7 @@ export function ModalPortal({
           aria-modal="true"
           aria-labelledby={titleId}
           ref={panelRef}
+          onFocusCapture={event => { if (event.target instanceof HTMLElement) lastFocusedRef.current = event.target; }}
           style={width ? { "--modal-width": width } as CSSProperties : undefined}
           tabIndex={-1}
           onMouseDown={(event) => event.stopPropagation()}
@@ -112,6 +123,7 @@ export function ModalPortal({
           {children}
         </div>
       </div>
+    </div>
     </div>,
     document.body
   );

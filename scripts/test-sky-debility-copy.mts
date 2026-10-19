@@ -177,3 +177,8 @@ const olderContext = "{countWord} out of the {totalWord} classical planets {coun
 assert.deepEqual(skyDebilityTemplateErrors(contextKey, olderContext), []);
 assert.ok(assembleSkyDebilityCopy(saturn, withEdits({ [contextKey]: olderContext })).body.includes("moving through Aries"));
 for (const name of ["situationPhrase", "planetFunctionVerbPhrase", "responseClause"] as const) assert.equal(assembleSkyDebilityCopy(original, withEdits({ [skyDebilityPhraseKey("Venus", "Scorpio", name)]: null })).visible, true);
+
+// Reset both exact interpretation and reusable field to the unchanged shipped baseline.
+for(const content_key of [venusKey,definitionKey])installContentPublications([{content_key,state:'live',revision:20002,row_id:null,row_updated_at:null,updated_at:liveTime}]);
+assert.equal(resolveSkyDebilityCopy(new Map([[venusKey,row(venusKey,editedBody)]]) as never,original).body,assembleSkyDebilityCopy(original).body,'Exact reset ignores stale QA and restores baseline');
+assert.equal(resolveSkyDebilityCopy(new Map([[definitionKey,row(definitionKey,explanation)]]) as never,saturn).body,assembleSkyDebilityCopy(saturn).body,'Reusable field reset restores exact baseline');

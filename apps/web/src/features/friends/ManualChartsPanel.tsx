@@ -1,10 +1,15 @@
+import { PortalVisibility } from "../../components/portalVisibility";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
+import { connectionActivationKey, connectionAspectWord, connectionPointTitle, CONNECTION_BRIDGE_PREFIX } from "../../content/connectionTransit";
+import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeCopy } from "./connectionTransitSources";
+import { connectionTransitReading } from "./connectionTransitReading";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
 import { X } from "lucide-react";
 import {
   Suspense,
   lazy,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -39,6 +44,7 @@ import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
   fallbackV3ApprovalLevelForContentKey,
   normalizeAspect as normalizeFallbackV3Aspect,
+  transitV3AuthoredCardForContentKey,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
@@ -83,7 +89,6 @@ import {
   normalizeRelationshipContextKey
 } from "../../services/relationshipContext";
 import {
-  acceptedOwnerApprovedTransitBody,
   acceptedOwnerApprovedTransitSections
 } from "./transitDetailApproval";
 import type { PronounChoice } from "../../services/personReferences";
@@ -116,7 +121,8 @@ import {
   type FriendBondTransitView,
   type FriendDailyForecastView,
   type FriendHouseTransitView,
-  type FriendPersonalTransitGroup
+  type FriendPersonalTransitGroup,
+  type FriendTransitReaderSection
 } from "./friendTransitsBrief";
 import {
   friendDetailRoutePath,
@@ -901,7 +907,9 @@ export function ManualChartsPanel({
     };
   }
 
+  const portalsVisible = useContext(PortalVisibility);
   const friendRouteDetailRefreshKeyRef = useRef("");
+  const [connectionNavigation, setConnectionNavigation] = useState(0);
   const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);
   const socialFriendCharts = useMemo(
     () => socialFriends.map(socialFriendToChart),
@@ -1416,6 +1424,11 @@ export function ManualChartsPanel({
     selectedFriendTransits,
     selectedSynastryContacts
   ]);
+  const connectionSourceKeys = selectedBondTransitCards.flatMap(card => card.activatedContacts.flatMap(contact => {
+    const key = connectionActivationKey(normalizeContentIdPart(contact.yourPoint.name), normalizeFallbackV3Aspect(contact.aspect) ?? "", normalizeContentIdPart(contact.friendPoint.name));
+    return key ? [key] : [];
+  }));
+  const { rows: connectionSources, publicationIdentity: connectionPublicationIdentity } = useConnectionTransitSources(connectionSourceKeys);
   const selectedPairDailySelection = useMemo(() => {
     if (
       !friendProfileWork.compatibility
@@ -1542,15 +1555,32 @@ export function ManualChartsPanel({
       ? transitWheelAspectLines(currentSky, selectedFriendReadyNatalChart, selectedFriendEligibleTransits)
       : []
   ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendEligibleTransits, selectedFriendReadyNatalChart]);
+  const selectedBondTransitSections = useMemo(() => new Map(selectedBondTransitCards.map(card => {
+    try {
+    const reading = currentSky && selectedChart ? connectionTransitReading({
+      transiting: normalizeContentIdPart(card.activation.transitPlanet), natal: normalizeContentIdPart(card.activation.natalPoint),
+      aspect: normalizeFallbackV3Aspect(card.activation.aspect) ?? "", voice: card.endpointOwner === "reader" ? "you" : selectedChart.displayName,
+      window: personalTransitPackageWindow(card.activation, currentSky.generatedAt)
+    }, transitV3AuthoredCardForContentKey, normalizePersonalTransitSurface(card.activation, currentSky.generatedAt, card.endpointOwner === "reader" ? "you" : selectedChart.displayName).sections
+      .find(section => section.slot === "meaning")?.sourceKeys ?? []) : null;
+    return [card.id, acceptedOwnerApprovedTransitSections(
+      reading ? [{ body: reading.body, sourceKeys: [reading.contentKey] }] : [], fallbackV3ApprovalLevelForContentKey)] as const;
+    } catch(error) {
+      if (!(error instanceof FallbackV3SourceGapError)) throw error;
+      const unavailable: FriendTransitReaderSection[] = [];
+      return [card.id, unavailable] as const;
+    }
+  })), [selectedBondTransitCards, currentSky?.generatedAt, selectedChart?.displayName, fallbackArchitectureV3Version]);
   const selectedBondTransitViewCards = useMemo<FriendBondTransitView[]>(() => (
     selectedBondTransitCards.map((card) => ({
       id: card.id,
       headline: card.headline,
       effectBody: card.effectBody,
       activationBody: card.activationBody,
-      transitPlanet: card.transitPlanet
+      transitPlanet: card.transitPlanet,
+      detailAvailable: Boolean(selectedBondTransitSections.get(card.id)?.length)
     }))
-  ), [selectedBondTransitCards]);
+  ), [selectedBondTransitCards, selectedBondTransitSections]);
   const selectedFriendHouseTransitViewCards = useMemo<FriendHouseTransitView[]>(() => (
     selectedFriendHouseTransitCards.map((card) => ({
       id: card.contentKey,
@@ -2144,13 +2174,32 @@ export function ManualChartsPanel({
       return;
     }
 
-    const activatedConnectionSections = card.activatedContacts.flatMap((contact) => {
-      const rendered = renderReaderDirectedSynastryContact(
-        contact,
-        selectedChart.displayName
-      );
-
-      return rendered ? [rendered] : [];
+    if (!currentSky) return;
+    const transitAspect = normalizeFallbackV3Aspect(card.activation.aspect) ?? "";
+    const voice = card.endpointOwner === "reader" ? "you" : selectedChart.displayName;
+    const transitSections = selectedBondTransitSections.get(card.id) ?? [];
+    if (!transitSections.length) return;
+    let activationCount = 0;
+    const activatedConnectionSections = card.activatedContacts.flatMap(contact => {
+      const yourPoint = normalizeContentIdPart(contact.yourPoint.name);
+      const theirPoint = normalizeContentIdPart(contact.friendPoint.name);
+      const aspect = normalizeFallbackV3Aspect(contact.aspect) ?? "";
+      const key = connectionActivationKey(yourPoint, aspect, theirPoint);
+      if (!key) return [];
+      const variables = { holder1: selectedChart.displayName, transitPlanet: card.transitPlanet,
+        transitAspectWord: connectionAspectWord(transitAspect),
+        endpointPoint: connectionPointTitle(normalizeContentIdPart(card.activation.natalPoint)),
+        yourPoint: connectionPointTitle(yourPoint), theirPoint: connectionPointTitle(theirPoint), synastryAspectWord: connectionAspectWord(aspect) };
+      const body = publishedConnectionCopy(connectionSources, key, variables);
+      if (!body) return [];
+      const bridgeKey = `${CONNECTION_BRIDGE_PREFIX}${card.endpointOwner}-endpoint`;
+      const bridge = connectionBridgeCopy(connectionSources, bridgeKey, variables);
+      return [
+        ...(bridge ? [{ heading: "", body: bridge, sourceKeys: [bridgeKey] }] : []),
+        { eyebrow: activationCount++ === 0 ? "What this activates" : undefined,
+          heading: `Your ${variables.yourPoint} ${variables.synastryAspectWord} ${selectedChart.displayName}'s ${variables.theirPoint}`,
+          body, sourceKeys: [key] }
+      ];
     });
 
     openFriendDetail({
@@ -2160,26 +2209,18 @@ export function ManualChartsPanel({
         `connection-transit-${normalizeContentIdPart(card.id)}`
       ),
       glyph: pointGlyph(card.transitPlanet),
-      kicker: "Between you two right now",
+      kicker: "Connection transit",
       title: card.headline,
       transitDescription: transitArticleDescription(
         card.activation,
         card.endpointOwner === "reader" ? profileNatalSky : selectedFriendReadyNatalChart,
         transitAspectTechnicalVerb(card.activation.aspect),
-        card.endpointOwner === "reader" ? "you" : selectedChart.displayName
+        voice
       ),
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: activatedConnectionSections.length > 0,
-      body: acceptedOwnerApprovedTransitBody(
-        card.effectBody,
-        card.effectContentKey,
-        fallbackV3ApprovalLevelForContentKey
-      ),
-      sections: activatedConnectionSections.map((connection, index) => ({
-        eyebrow: index === 0 ? "What this activates" : undefined,
-        heading: connection.headline,
-        body: connection.body
-      }))
+      body: transitSections.map(section => section.body),
+      sections: activatedConnectionSections
     });
   };
   const openBondTransitById = (cardId: string) => {
@@ -2189,6 +2230,17 @@ export function ManualChartsPanel({
       openBondTransitDetail(card);
     }
   };
+  const connectionDetailRevision = JSON.stringify([connectionPublicationIdentity, connectionSources.map(row => [row.content_key, row.id, row.updated_at])]);
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (!route?.detail?.startsWith("connection-transit-") || route.chartId !== selectedChart?.id || !currentSky) return;
+    const card = selectedBondTransitCards.find(candidate => `connection-transit-${normalizeContentIdPart(candidate.id)}` === route.detail);
+    if (!card) return;
+    const refreshKey = `${connectionNavigation}:${route.chartId}:${route.detail}:${currentSky.generatedAt}:${fallbackArchitectureV3Version}:${connectionDetailRevision}`;
+    if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
+    friendRouteDetailRefreshKeyRef.current = refreshKey;
+    openBondTransitDetail(card);
+  }, [connectionNavigation, selectedChart?.id, selectedBondTransitCards, currentSky, fallbackArchitectureV3Version, connectionDetailRevision]);
   const openFriendSynastryContactDetail = (contactId: string) => {
     if (!selectedChart) {
       return;
@@ -2334,6 +2386,7 @@ export function ManualChartsPanel({
 
   function applyFriendsRouteStateFromUrl() {
     const routeState = friendsRouteStateFromUrl();
+    setConnectionNavigation(value => value + 1);
 
     if (!routeState) {
       return false;
@@ -2469,7 +2522,7 @@ export function ManualChartsPanel({
   ]);
 
   useEffect(() => {
-    if (!openChartMenuId) {
+    if (!openChartMenuId || !portalsVisible) {
       return;
     }
 
@@ -2496,7 +2549,7 @@ export function ManualChartsPanel({
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [openChartMenuId]);
+  }, [openChartMenuId, portalsVisible]);
 
   function openAddChartModal() {
     resetForm();
@@ -2643,6 +2696,7 @@ export function ManualChartsPanel({
           form={form}
           formCopy={formCopy}
           isEditing={Boolean(editingChart)}
+          restoreFocusId={editingChartId ? `friend-edit-${editingChartId}` : undefined}
           isEventForm={isEventForm}
           isSubmitting={status === "saving" || status === "deleting"}
           message={message}
@@ -2765,6 +2819,7 @@ export function ManualChartsPanel({
           isEventChart={selectedChartIsEvent}
           moon={selectedFriendBigThree?.moon ?? "Pending"}
           name={selectedChart.displayName}
+          editButtonId={`friend-edit-${selectedChart.id}`}
           onEdit={isSocialFriendChart(selectedChart) ? undefined : () => editChart(selectedChart)}
           onTabChange={changeFriendProfileTab}
           onTabIntent={requestFriendProfileTab}

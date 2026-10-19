@@ -1,3 +1,4 @@
+import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
@@ -24,7 +25,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
     const result=await call({method:'writing',body});await route.fulfill({status:result.status,json:result.payload});return true;
    }});
    const studio=page.getByRole('region',{name:'Horoscope editions'});
-   const open=async()=>{await page.goto('/admin/content#horoscopes');await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Synthetic October overview/}).click();};
+   const open=async()=>{await page.goto('/admin/content#horoscopes');await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Synthetic October overview/}).click();};
    await open();
    const review=studio.getByRole('region',{name:'Overview prose review'});
    const recover=studio.getByRole('button',{name:'Check saved Overview prose review',exact:true});
@@ -40,7 +41,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await expect(recover).toHaveCount(0);
    let current=(await call({method:'rows'})).find((r:any)=>r.id===original.id);
    expect(current.status).toBe('DRAFT');expect(current.source_snapshot.horoscopeGeneration.candidateHolds.overview.candidate).toEqual(reviewCandidate);
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Synthetic October overview/}).click();
+   await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Synthetic October overview/}).click();
    await expect(review.locator('blockquote')).toHaveText('The synthetic unsupported sentence belongs here.');
    await studio.getByRole('button',{name:'Edit saved Overview draft',exact:true}).click();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(reviewCandidate.body);
@@ -52,7 +53,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    current=(await call({method:'rows'})).find((r:any)=>r.id===original.id);
    expect(current.status).toBe('DRAFT');expect(current.sections.horoscopeEdition.passages[0].body).toBe(edited);
    expect(current.source_snapshot.horoscopeGeneration.candidateHolds.overview).toBeUndefined();
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+   await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(edited);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();

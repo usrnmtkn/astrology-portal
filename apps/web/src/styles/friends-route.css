@@ -1193,6 +1193,10 @@
   cursor: wait;
 }
 
+.friends-unified-panel .friend-transit-row:disabled {
+  cursor: default;
+}
+
 .friends-unified-panel .social-primary-button:disabled {
   background: var(--friend-disabled-control-bg);
   color: var(--friend-danger-fg);

@@ -10,7 +10,7 @@ import { build } from 'esbuild';
 const file = join(mkdtempSync(join(tmpdir(), 'sky-cold-aspects-')), 'reader.mjs');
 await build({ stdin: { resolveDir: process.cwd(), contents: `
   export * from './apps/web/src/services/skyDetailContent.ts';
-  export { installContentPublications, contentPublication } from './apps/web/src/content/contentPublicationState.ts';
+  export { installContentPublications, contentPublication, publicationRestoresBaseline } from './apps/web/src/content/contentPublicationState.ts';
   export { contentStudioExactSkyAspectKeys } from './apps/web/src/services/skyAspectContent.ts';
   export { SKY_BODY_ORDER, SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from './apps/web/src/astrologyConfig.ts';
 ` }, bundle: true, platform: 'node', format: 'esm', outfile: file, logLevel: 'silent', define: { 'import.meta.env': '{}' }, plugins: [{ name: 'online-fixture', setup(builder) {
@@ -187,7 +187,7 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
   const context = vm.createContext({ Map, Set, Promise,
     loadContentRegistry: async () => {}, refreshContentPublications: () => publications.promise,
     eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
-    contentPublication: qa.contentPublication,
+    contentPublication: qa.contentPublication, publicationRestoresBaseline: qa.publicationRestoresBaseline,
     skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [dated], contentPublicationRecords: () => [], normalizeContentIdPart: (x: string) => x,
     filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,
@@ -277,7 +277,7 @@ for (const scenario of ['completed-before-facts', 'complete-after-facts', 'parti
   const context = vm.createContext({ Map, Set, Promise,
     loadContentRegistry: async () => {}, refreshContentPublications: () => publications.promise,
     eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
-    contentPublication: qa.contentPublication,
+    contentPublication: qa.contentPublication, publicationRestoresBaseline: qa.publicationRestoresBaseline,
     skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [], contentPublicationRecords: () => [], normalizeContentIdPart: (value: string) => value,
     filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,

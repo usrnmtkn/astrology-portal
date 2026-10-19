@@ -1,7 +1,7 @@
 import { calendarMotionTitle, skyAspectVerbs } from "./skyMotionLabels";
 import type { LunarCalendarEvent } from "../services/ephemeris";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
-import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
+import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from "./contentPublicationState";
 import { skyIngressContentKey, skyIngressInstanceContentKey, slugContentPart } from "../services/generatedContentKeys";
 
 export function ingressSummaryKeys(event: LunarCalendarEvent) {
@@ -27,6 +27,7 @@ export function skySummaryEventFacts(events: LunarCalendarEvent[], content: CmsG
       let tldr: string | undefined;
       for (const key of ingressSummaryKeys(event)) {
         const publication = contentPublication(key);
+        if (publication && publicationRestoresBaseline(publication)) continue;
         const row = content.get(key);
         if (publication && (publication.state === "retired" || !row || !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate))) break;
         if (!row || row.status && row.status !== "LIVE") continue;

@@ -1,4 +1,5 @@
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
+import { adminLazyBoundaryManifestPlugin } from "../../scripts/admin-lazy-boundary-manifest-plugin.mjs";
 import { browserOnlySwissEphemerisPlugin, trimSwissEphemerisWebDataPlugin, serveFullSwissEphemerisDataInDevPlugin, versionedSwissAssetsPlugin } from "../web/vite.config";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
@@ -104,7 +105,7 @@ export default defineConfig(({ command, mode }) => {
     : "";
 
   return {
-    plugins: [memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
+    plugins: [adminLazyBoundaryManifestPlugin(repoRoot), memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
       name: "studio-swiss-ephemeris-assets",
       generateBundle() {
         for (const name of ["swisseph.wasm", "swisseph.data"]) this.emitFile({ type: "asset", fileName: `wasm/${name}`, source: readFileSync(resolve(repoRoot, "apps/web/public/wasm", name)) });
@@ -132,13 +133,17 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
+            // Calendar editing, preview and their exclusive models share one lazy workspace.
+            if (/apps\/admin\/src\/(?:SkyForecastTemplateStudio|CalendarPassageEditor|CalendarPassageTemplateEditor|CalendarTemplatePreview|CalendarOverviewEditor|CalendarVariableText)\.tsx$/u.test(id)
+              || /apps\/admin\/src\/(?:calendarPreviewModel|calendarOverviewTemplate)\.ts$/u.test(id)
+              || /src\/shared\/features\/calendar\/calendarPassageAssembly\.ts$/u.test(id)) return "admin-calendar-workspace";
             // Draft factories load together when a source editor is opened.
-            if (/apps\/admin\/src\/(?:transitNatalExactDraft|calendarPlanetaryDraft|compatibilityAspectDraft|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData)\.ts$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:transitNatalExactDraft|calendarPlanetaryDraft|compatibilityAspectDraft|connectionTransitSources|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData)\.ts$/u.test(id)) {
               return "admin-source-drafts";
             }
             // Shared controls render immediately and remain outside this lazy group.
             // Editor and publication panels share a deferred workspace.
-            if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:ArticleBlockStyleFields|ConnectionTransitStudio|FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
               return "admin-deferred-review-tools";
             }
             // Review panels and owner publication share one deferred workspace chunk.

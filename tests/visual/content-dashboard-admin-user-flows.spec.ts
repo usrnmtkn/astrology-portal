@@ -8929,6 +8929,11 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
       const editor=page.getByRole('dialog',{name:'Generated content editor'});
       await expect(editor).toBeVisible();
       await editor.locator('details').evaluateAll(items => items.forEach(item => { (item as HTMLDetailsElement).open = true; }));
+      if (item.blockType === 'essay') {
+        const styles=editor.getByRole('region',{name:'Article section styles',exact:true});
+        await expect(styles).toBeVisible();
+        await expect(styles.getByRole('combobox',{name:'Body style',exact:true})).toBeVisible();
+      }
       const missing=await uncontainedStudioContent(page);
       if(missing.length) findings.push({route:item.action,missing});
       await expectNoHorizontalOverflow(page,item.action);

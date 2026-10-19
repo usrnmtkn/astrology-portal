@@ -1,16 +1,18 @@
-import { useLayoutEffect, useRef, useState, type HTMLAttributes } from "react";
+import { useContext, useLayoutEffect, useRef, useState, type HTMLAttributes } from "react";
+import { PortalVisibility } from "./portalVisibility";
 import { createPortal } from "react-dom";
 
 // Render under the application root to escape card clipping while retaining
 // theme selectors. The hidden marker keeps the trigger in its original place.
 export function ViewportMenu({ children, ...props }: Omit<HTMLAttributes<HTMLDivElement>, "style" | "onPointerDown" | "role">) {
+  const visible = useContext(PortalVisibility);
   const [marker, setMarker] = useState<HTMLSpanElement | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const panel = panelRef.current;
     const trigger = marker?.previousElementSibling;
-    if (!panel || !trigger) return;
+    if (!visible || !panel || !trigger) return;
     const viewport = window.visualViewport;
     const update = () => {
       const styles = getComputedStyle(document.documentElement);
@@ -45,15 +47,15 @@ export function ViewportMenu({ children, ...props }: Omit<HTMLAttributes<HTMLDiv
         target.removeEventListener("resize", update);
         target.removeEventListener("scroll", update, true);
       }
-      if (panel.contains(document.activeElement) && trigger instanceof HTMLElement) trigger.focus({ preventScroll: true });
+      if (panel.contains(document.activeElement) && trigger instanceof HTMLElement && !trigger.closest("[hidden], [inert]")) trigger.focus({ preventScroll: true });
     };
-  }, [marker]);
+  }, [marker, visible]);
 
   return <>
     <span hidden ref={setMarker} />
     {marker && createPortal(
-      <div {...props} role="menu" ref={panelRef} style={{ position: "fixed", inset: "auto", margin: 0, overflowY: "auto", overflowWrap: "anywhere" }}
-        onPointerDown={(event) => event.stopPropagation()}>{children}</div>,
+      <div hidden={!visible} inert={!visible}><div {...props} role="menu" ref={panelRef} style={{ position: "fixed", inset: "auto", margin: 0, overflowY: "auto", overflowWrap: "anywhere" }}
+        onPointerDown={(event) => event.stopPropagation()}>{children}</div></div>,
       marker.closest(".app-shell, .report-route-root") ?? document.body
     )}
   </>;

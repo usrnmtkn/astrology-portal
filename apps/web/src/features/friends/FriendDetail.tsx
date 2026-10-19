@@ -1,6 +1,7 @@
+import { PortalVisibility } from "../../components/portalVisibility";
 import { ViewportMenu } from "../../components/ViewportMenu";
 import { Check, ChevronDown, MoreVertical } from "lucide-react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import "../../styles/friends-detail.css";
 
@@ -22,6 +23,7 @@ type FriendDetailProps = {
   moon: string;
   name: string;
   onEdit?: () => void;
+  editButtonId?: string;
   onTabChange: (tab: FriendDetailTab) => void;
   onTabIntent?: (tab: FriendDetailTab) => void;
   rising: string;
@@ -50,6 +52,7 @@ export function FriendDetail({
   moon,
   name,
   onEdit,
+  editButtonId,
   onTabChange,
   onTabIntent,
   rising,
@@ -63,6 +66,7 @@ export function FriendDetail({
     { value: "composite", label: "Composite" }
   ]
 }: FriendDetailProps) {
+  const portalsVisible = useContext(PortalVisibility);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const primaryTabs = tabs.filter(({ value }) => (
@@ -74,7 +78,7 @@ export function FriendDetail({
   const overflowActive = overflowTabs.some(({ value }) => value === activeTab);
 
   useEffect(() => {
-    if (!moreOpen) {
+    if (!moreOpen || !portalsVisible) {
       return;
     }
 
@@ -97,7 +101,7 @@ export function FriendDetail({
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [moreOpen]);
+  }, [moreOpen, portalsVisible]);
 
   function selectTab(tab: FriendDetailTab) {
     setMoreOpen(false);
@@ -125,7 +129,7 @@ export function FriendDetail({
             </span>
           </div>
           {onEdit ? (
-            <button className="friend-kebab" type="button" aria-label={`Edit ${name}`} onClick={onEdit}>
+            <button id={editButtonId} className="friend-kebab" type="button" aria-label={`Edit ${name}`} onClick={onEdit}>
               <MoreVertical size={24} aria-hidden="true" />
             </button>
           ) : null}

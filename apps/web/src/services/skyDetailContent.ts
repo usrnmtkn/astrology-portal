@@ -1,5 +1,5 @@
 import {lunationReaderContentKeys} from '../content/lunationReaderSource';
-import { contentPublication, publicationAllowsContent } from "../content/contentPublicationState";
+import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from "../content/contentPublicationState";
 import { SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from "../astrologyConfig";
 import { contentPublicationsAvailableOnline } from "./contentPublications";
 import type { SkySnapshot } from "../types";
@@ -100,7 +100,7 @@ export async function loadSkyDetailContent(
   const complete = (content: Map<string, LiveGeneratedContent>) => {
     const unresolved = extraKeys.filter(key => {
       const publication = contentPublication(key);
-      if (publication?.state !== "live") return false;
+      if (publication?.state !== "live" || publicationRestoresBaseline(publication)) return false;
       const row = content.get(key);
       return !row || !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate);
     });

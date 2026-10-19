@@ -1,4 +1,4 @@
-import { publicationAllowsContent, contentPublicationRecords, subscribeToContentPublications } from "./contentPublicationState";
+import { publicationRestoresBaseline, publicationAllowsContent, contentPublicationRecords, subscribeToContentPublications } from "./contentPublicationState";
 import bundledInitialReaderRowsV3 from "./fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import bundledSkyAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-sky-authored-cards-v3.json";
@@ -316,7 +316,7 @@ function blockedPublicationKeys(bundle: FallbackArchitectureV3Bundle) {
   const records = [...bundle.transitLib.authoredCards, ...bundle.templatesFile.templates,
     ...(bundle.rowsFile.hookRows ?? []), ...(bundle.rowsFile.vocabularyRows ?? [])] as Array<{ contentKey: string; publicationRowId?: string; publicationRowUpdatedAt?: string }>;
   const available = new Set(records.filter((row) => publicationAllowsContent(row.contentKey, row.publicationRowId, row.publicationRowUpdatedAt)).map((row) => row.contentKey));
-  return contentPublicationRecords().filter((record) => !available.has(record.content_key)).map((record) => record.content_key);
+  return contentPublicationRecords().filter((record) => !publicationRestoresBaseline(record) && !available.has(record.content_key)).map((record) => record.content_key);
 }
 
 function createAppTransitRenderer(readerBundle: FallbackArchitectureV3Bundle) {

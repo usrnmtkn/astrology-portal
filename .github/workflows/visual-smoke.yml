@@ -204,6 +204,30 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  connection-transit-sources:
+    needs: scope
+    if: needs.scope.outputs.reader == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @tldr/astro-knowledge
+      - run: npx playwright install --with-deps chromium
+      - name: Verify independent connection sources and Studio draft editing
+        run: npx playwright test -c playwright.connection-transit.config.ts
+      - name: Upload connection transit artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: connection-transit-results
+          path: test-results/
+          if-no-files-found: ignore
+
   sky-placement-studio:
     needs: scope
     if: needs.scope.outputs.sky == 'true'
@@ -446,7 +470,7 @@ jobs:
           if-no-files-found: ignore
 
   browser-release-gate:
-    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites]
+    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites]
     # Still inspect failed dependencies, but let a superseded workflow cancel.
     # An always() gate can remain queued and block the next revision's run.
     if: ${{ !cancelled() }}

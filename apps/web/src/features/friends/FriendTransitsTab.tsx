@@ -257,9 +257,10 @@ export function FriendTransitsTab({
             <div className="updates-aspect-list friend-transit-list">
               {relationshipActivations.map((card) => (
                 <button
-                  aria-label={`Open full entry for ${card.headline}`}
+                  aria-label={card.detailAvailable ? `Open full entry for ${card.headline}` : card.headline}
                   className="updates-aspect-row friend-transit-row"
                   key={card.id}
+                  disabled={!card.detailAvailable}
                   onClick={() => onOpenBondTransit(card.id)}
                   type="button"
                 >
@@ -271,7 +272,7 @@ export function FriendTransitsTab({
                         {card.activationBody}
                       </p>
                     ) : null}
-                    <CardReadMore />
+                    {card.detailAvailable ? <CardReadMore /> : null}
                   </span>
                 </button>
               ))}

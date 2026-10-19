@@ -34,6 +34,10 @@ async function request(secret:string,url:string,body?:unknown,method='POST',sign
   if (!response.ok || data.ok !== true) throw Object.assign(new Error(data.error ?? 'The edition could not be loaded.'),{rows:data.rows,status:response.status,dispatchNotStarted:data.dispatchNotStarted===true});
   return data;
 }
+const editionVersion=(row:any)=>({id:row.id,expectedUpdatedAt:row.updated_at});
+function editionDraft(edition:HoroscopeEdition,brief:unknown,sourceSnapshot:unknown,saved?:any,period=edition.window.period) {
+  return {...(saved ? {...editionVersion(saved)}:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null}),status:'DRAFT',lane:'serving',reviewState:null,headline:`${horoscopeSignLabel(period)} horoscopes`,body:horoscopeEditionBody(edition),summary:'',sections:{horoscopeEdition:edition},facts:{horoscopeBrief:brief},sourceSnapshot};
+}
 const recoverable=(reason:any)=>!reason?.status||[408,409,429].includes(reason.status)||reason.status>=500;
 function waitForPoll(signal:AbortSignal,delay=3000) {
   return new Promise<void>(resolve=>{
@@ -45,7 +49,7 @@ function download(name:string,value:unknown) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}));
   const link = document.createElement('a'); link.href=url; link.download=name; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{secret:string;requestedEditionId?:string|null}) {
+export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEditionChange}:{secret:string;requestedEditionId?:string|null;onEditionChange?:(id:string|null)=>void}) {
   const [rows,setRows]=useState<any[]>([]),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState<string|{previous:string}>(''),[message,setMessage]=useState('');
   const [listError,setListError]=useState('');
   const [editionSearch,setEditionSearch]=useState(''),[editionType,setEditionType]=useState('all'),[editionStatus,setEditionStatus]=useState('all'),[editionSort,setEditionSort]=useState('newest');
@@ -53,7 +57,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const visibleEditions=rows.filter(row=>{
     const window=row.sections.horoscopeEdition.window;
     if(editionType!=='all'&&window.period!==editionType)return false;
-    if(editionStatus!=='all'&&(row.status==='LIVE')!==(editionStatus==='published'))return false;
+    if(editionStatus!=='all'&&row.status!==editionStatus)return false;
     if(!searchTerms.length)return true;
     const isoDate=new Intl.DateTimeFormat('en-CA',{timeZone:window.timeZone});
     const searchable=`${row.headline} ${horoscopeWindowLabel(window)} ${isoDate.format(new Date(window.startsAt))} ${isoDate.format(new Date(Date.parse(window.endsAt)-1))} ${window.period} ${window.timeZone.replaceAll('_',' ')}`.toLowerCase();
@@ -77,7 +81,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const [savedEvidence,setSavedEvidence]=useState<any>(null);
   useEffect(()=>{setSavedEvidence(null);},[saved?.id,saved?.updated_at,sign]);
   async function loadEvidence(){
-    try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'evidence',id:saved.id,expectedUpdatedAt:saved.updated_at,sign});setSavedEvidence(data.receipt);}
+    try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'evidence',...editionVersion(saved),sign});setSavedEvidence(data.receipt);}
     catch(reason){setError((reason as Error).message);}
   }
   useEffect(()=>{
@@ -98,7 +102,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const mounted=useRef(true);
   function retain(row:any,refreshContext=false){setSaveConflict(null);validateHoroscopeEdition(row.sections?.horoscopeEdition);lastSync.current=Date.now();setNeedsSync(false);setSaved(row);setDraft(row.sections.horoscopeEdition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);if(refreshContext){setOutlines(row.source_snapshot?.horoscopeOutlines??{});setProfile(row.source_snapshot?.studioWritingProfile??null);setEditorialImport(row.source_snapshot?.editorialImport??null);setPlan(null);setPlanApproved(false);}}
   useEffect(()=>{setPlan(null);setPlanApproved(false);},[draft?.window.startsAt,draft?.window.endsAt,draft?.window.timeZone,outlines]);
-  const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
+  const sameEditionValue=(left:unknown,right:unknown)=>horoscopeCanonicalJson(left)===horoscopeCanonicalJson(right);
+  const dirty=Boolean(draft && (!saved || !sameEditionValue(draft,saved.sections.horoscopeEdition) || !sameEditionValue(outlines,saved.source_snapshot?.horoscopeOutlines??{}) || !sameEditionValue(profile,saved.source_snapshot?.studioWritingProfile??null) || !sameEditionValue(editorialImport,saved.source_snapshot?.editorialImport??null)));
   const credentialIdentity=ownerCredentialIdentity(secret);
   const [publication,setPublication]=useState<any>(null);
   const [validationOverride,setValidationOverride]=useState(false);
@@ -134,14 +139,14 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     const next:Step=row.status==='LIVE'?'publish':row.source_snapshot?.horoscopeGeneration?.active||(edition.window.period==='seasonal'?pendingReadings(edition,row.source_snapshot?.horoscopeGeneration).length:edition.passages.some(p=>!p.headline.trim()&&!p.body.trim()))?'generate':'edit';
     setStep(next);return next;
   }
-  async function loadPlan(row:any,controller?:AbortController,writerChoice?:string) {
-    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at,...(writerChoice?{writerChoice}:{})},'POST',controller?.signal);
+  async function loadPlan(row:any,controller?:AbortController,writerChoice?:string,admit?:()=>boolean) {
+    const data=await request(secret,'/api/admin/horoscope-writing',{action:'prepare',...editionVersion(row),...(writerChoice?{writerChoice}:{})},'POST',controller?.signal);
     // Preparation may save the latest profile. Keep its confirmed row version
     // for generation and failure recovery instead of sending the old timestamp.
     const updated=data.rows?.[0];
     if(updated&&updated.id!==row.id)throw new Error('The writing plan edition could not be confirmed.');
     const failure=await savedFailureMessage(updated??row,controller?.signal);
-    if(!mounted.current||controller&&!isCurrent(controller))return;
+    if(!mounted.current||(admit?!admit():controller&&!isCurrent(controller)))return;
     if(updated){retain(updated);setProfile(updated.source_snapshot?.studioWritingProfile??null);}
     setPlan(data.plan);setConfigured(data.configured);setPlanApproved(false);setError(failure?{previous:failure}:'');
     return failure;
@@ -181,54 +186,76 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     validateHoroscopeEdition(row.sections?.horoscopeEdition);return row;
   }
   const opening=useRef<AbortController|null>(null);
-  async function open(row:any,fromLink=false) {
+  const locallySyncedEdition=useRef<{id:string|null;credential:string}|null>(null);
+  function syncEditionLink(id:string|null) {
+    const url=new URL(window.location.href);
+    if(url.hash.slice(1).split('?')[0]!=='horoscopes')return;
+    const params=new URLSearchParams(url.hash.split('?')[1]??'');
+    if(id)params.set('edition',id);else params.delete('edition');
+    url.hash=`horoscopes${params.size?'?'+params.toString():''}`;
+    window.history.replaceState(window.history.state,'',url);
+    locallySyncedEdition.current=requestedEditionId===id?null:{id,credential:credentialIdentity};
+    onEditionChange?.(id);
+  }
+  async function withOpening(action:(controller:AbortController,current:()=>boolean,link:(id:string)=>void)=>Promise<void>) {
     if(busy&&!opening.current?.signal.aborted||running.current){setError('Finish the current operation first.');return;}
     if(!mayReplace())return;
     opening.current?.abort();const controller=new AbortController();opening.current=controller;
+    const route=window.location.href,current=()=>opening.current===controller&&!controller.signal.aborted&&window.location.href===route;
+    let confirmedId:string|undefined;
     setBusy(true);setError('');setMessage('');
-    try{
-      row=await readSaved(row.id,controller.signal);if(controller.signal.aborted)return;
+    try{await action(controller,current,id=>confirmedId=id);}
+    catch(reason){if(current())setError((reason as Error).message);}
+    finally{if(confirmedId&&current())syncEditionLink(confirmedId);if(opening.current===controller){opening.current=null;if(!controller.signal.aborted)setBusy(false);}}
+  }
+  function open(row:any,fromLink=false) {
+    return withOpening(async(controller,current,link)=>{
+      row=await readSaved(row.id,controller.signal);if(!current())return;
       const next=adopt(row);
       // Saved-edition actions open published writing in the editor. Opening it
       // never changes its publication state or starts another generation.
       if(!fromLink&&row.status==='LIVE')setStep('edit');
       // Library links read only; preparing a writing plan remains explicit.
-      if(!fromLink&&next==='generate'&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(!row.source_snapshot?.horoscopeGeneration?.active||row.sections.horoscopeEdition.window.period==='weekly'))await loadPlan(row);
-    }catch(reason){if(!controller.signal.aborted)setError((reason as Error).message);}
-    finally{if(opening.current===controller){opening.current=null;if(!controller.signal.aborted)setBusy(false);}}
+      if(!fromLink&&next==='generate'&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(!row.source_snapshot?.horoscopeGeneration?.active||row.sections.horoscopeEdition.window.period==='weekly'))await loadPlan(row,undefined,undefined,current);
+      if(!fromLink)link(row.id);
+    });
   }
   useEffect(()=>{
-    if(secret&&requestedEditionId)void open({id:requestedEditionId},true);
+    const local=locallySyncedEdition.current?.id===requestedEditionId&&locallySyncedEdition.current?.credential===credentialIdentity;
+    locallySyncedEdition.current=null;
+    if(secret&&requestedEditionId&&!local)void open({id:requestedEditionId},true);
     return()=>{if(opening.current){opening.current.abort();setBusy(false);}};
   },[credentialIdentity,requestedEditionId]);
-  async function prepare() {
-    if(!mayReplace())return;setBusy(true);setError('');setMessage('');
-    try {
+  function prepare() {
+    return withOpening(async(controller,current,link)=>{
+      const read=(url:string)=>request(secret,url,undefined,'GET',controller.signal);
       const params=new URLSearchParams({horoscopeBrief:'true',period,date,timeZone:zone});
-      const [facts,profiles]=await Promise.all([request(secret,endpoint+'?'+params),request(secret,endpoint+'?writingProfiles=true')]);
+      const [facts,profiles]=await Promise.all([read(endpoint+'?'+params),read(endpoint+'?writingProfiles=true')]);
+      if(!current())return;
       const edition=emptyHoroscopeEdition(facts.brief.window);
-      const matching=await request(secret,endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',contentKey:horoscopeEditionKey(edition.window)}));
-      let row=matching.rows?.[0]??rows.find(row=>isHoroscopeEditionKey(row.content_key,edition.window)&&horoscopeCanonicalJson(row.sections?.horoscopeEdition?.window)===horoscopeCanonicalJson(edition.window));
-      if(row?.inventory_only)row=await readSaved(row.id);
+      const matching=await read(endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',contentKey:horoscopeEditionKey(edition.window)}));
+      if(!current())return;
+      let row=matching.rows?.[0]??rows.find(row=>isHoroscopeEditionKey(row.content_key,edition.window)&&sameEditionValue(row.sections?.horoscopeEdition?.window,edition.window));
+      if(row?.inventory_only)row=await readSaved(row.id,controller.signal);
       if(!row){
         const result=await request(secret,endpoint,{
-          contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null,
-          status:'DRAFT',lane:'serving',reviewState:null,headline:`${horoscopeSignLabel(period)} horoscopes`,body:horoscopeEditionBody(edition),summary:'',sections:{horoscopeEdition:edition},
-          facts:{horoscopeBrief:{brief:facts.brief,signature:facts.signature}},sourceSnapshot:{horoscopeOutlines:{},studioWritingProfile:profiles.profiles.find((p:any)=>p.profile.period===period)??null,editorialImport:null}
-        });
+          ...editionDraft(edition,{brief:facts.brief,signature:facts.signature},{horoscopeOutlines:{},studioWritingProfile:profiles.profiles.find((p:any)=>p.profile.period===period)??null,editorialImport:null},undefined,period)
+        },'POST',controller.signal);
         row=result.rows?.[0];
-        if(!row?.id||!row.updated_at||row.status!=='DRAFT'||!isHoroscopeEditionKey(row.content_key,edition.window)||horoscopeCanonicalJson(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==horoscopeCanonicalJson(edition))throw new Error('The edition could not be confirmed. Choose Continue to check for the saved edition before trying again.');
+        if(!row?.id||!row.updated_at||row.status!=='DRAFT'||!isHoroscopeEditionKey(row.content_key,edition.window)||!sameEditionValue(validateHoroscopeEdition(row.sections?.horoscopeEdition),edition))throw new Error('The edition could not be confirmed. Choose Continue to check for the saved edition before trying again.');
       }
+      if(!current())return;
       const next=adopt(row);
-      if(next==='generate'&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row);
-    }catch(reason){setError((reason as Error).message);}finally{setBusy(false);}
+      link(row.id);
+      if(next==='generate'&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&!row.source_snapshot?.horoscopeGeneration?.active)await loadPlan(row,controller,undefined,current);
+    });
   }
   async function useReconciledDraft(row:any,state:any){
     const {horoscopeEditableState}=await import('./HoroscopeSaveRecovery');
     setSaved(row);setDraft(state.draft);setOutlines(state.outlines);setProfile(state.profile);setEditorialImport(state.editorialImport);
     setPacket(row.facts?.horoscopeBrief);setSaveConflict(null);setApproved(false);setPublication(null);setValidationOverride(false);setPlan(null);setPlanApproved(false);setError('');
     setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);
-    setMessage(horoscopeCanonicalJson(state)===horoscopeCanonicalJson(horoscopeEditableState(row))?'Your draft is saved. Loaded the confirmed saved version.':'Loaded the latest saved version and kept your selected edits. Review and save the draft to continue.');
+    setMessage(sameEditionValue(state,horoscopeEditableState(row))?'Your draft is saved. Loaded the confirmed saved version.':'Loaded the latest saved version and kept your selected edits. Review and save the draft to continue.');
   }
   async function reconcileSaveFailure(reason:any){
     if(!saved||!recoverable(reason))return false;
@@ -248,11 +275,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     try {
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
-      const body=publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : {
-        ...(saved ? {id:saved.id,expectedUpdatedAt:saved.updated_at}:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null}),
-        status:'DRAFT',lane:'serving',reviewState:null,headline:`${horoscopeSignLabel(edition.window.period)} horoscopes`,body:horoscopeEditionBody(edition),summary:'',sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},
-        sourceSnapshot:{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport}
-      };
+      const body=publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
       const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
       const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
       const data=ownerTransport?await ownerTransport.publishSavedOwnerContent(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved))):await write();
@@ -337,7 +360,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
       let failure:any;
       if(pollExisting&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(heldSign||active||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
         try{
-          const data=await request(secret,'/api/admin/horoscope-writing',{action:heldSign?'recover-review':'poll',id:row.id,expectedUpdatedAt:row.updated_at,...(heldSign?{sign:heldSign}:{})},'POST',controller.signal);
+          const data=await request(secret,'/api/admin/horoscope-writing',{action:heldSign?'recover-review':'poll',...editionVersion(row),...(heldSign?{sign:heldSign}:{})},'POST',controller.signal);
           if(data.rows?.[0]?.id!==row.id)throw new Error('The saved result could not be confirmed.');
           row=data.rows[0];
         }catch(reason){
@@ -386,7 +409,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   async function batchAction(action:string){
     if(!saved)return;setBusy(true);setError('');
     try{
-      const data=await request(secret,'/api/admin/horoscope-writing',{action,id:saved.id,expectedUpdatedAt:saved.updated_at,...(action==='start-batch'?{approvedPlanHash:plan?.planHash}:{})});
+      const data=await request(secret,'/api/admin/horoscope-writing',{action,...editionVersion(saved),...(action==='start-batch'?{approvedPlanHash:plan?.planHash}:{})});
       retain(data.rows[0]);setPlanApproved(false);setMessage(action==='pause-batch'?'Batch paused. A request already sent can still finish.':'The saved batch will continue through the remaining signs. You can leave this page.');
     }catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
@@ -412,7 +435,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         let data;
         const action=active?(active.state==='ready'?'continue':'poll'):'generate';
         try{
-          data=await request(secret,'/api/admin/horoscope-writing',{action,id:row.id,expectedUpdatedAt:row.updated_at,...(!active?{sign:next,approvedPlanHash:plan.planHash}:{})},'POST',controller.signal);
+          data=await request(secret,'/api/admin/horoscope-writing',{action,...editionVersion(row),...(!active?{sign:next,approvedPlanHash:plan.planHash}:{})},'POST',controller.signal);
         }catch(reason){
           if(!isCurrent(controller))return;
           if((reason as any).status===409&&active?.state==='running'){
@@ -446,7 +469,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   async function release(heldSign?:string){
     const isReview=saved?.source_snapshot?.horoscopeGeneration?.active?.phase==='review';
     if(!saved||!window.confirm(isReview?'Stop this prose check and keep its draft for editing? It may already have been billed. No replacement request will be started.':`The interrupted ${heldSign?horoscopeSignLabel(heldSign)+' ':''}request may have been billed. Allow a new paid request for this reading?`))return;
-    setBusy(true);setError('');try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'release',id:saved.id,expectedUpdatedAt:saved.updated_at,acknowledgeUnknownOutcome:true,...(heldSign?{sign:heldSign}:{})});retain(data.rows[0]);await loadPlan(data.rows[0]);setMessage('Interrupted request released. Review the plan before starting another request.');setPlanApproved(false);}catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
+    setBusy(true);setError('');try{const data=await request(secret,'/api/admin/horoscope-writing',{action:'release',...editionVersion(saved),acknowledgeUnknownOutcome:true,...(heldSign?{sign:heldSign}:{})});retain(data.rows[0]);await loadPlan(data.rows[0]);setMessage('Interrupted request released. Review the plan before starting another request.');setPlanApproved(false);}catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
   async function reject(target:string){
     if(!saved||locked||saved.status!=='DRAFT')return;
@@ -531,7 +554,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   async function moveTo(next:Step) {
     if(saveConflict)return;
     if(next==='setup'&&(!busy||running.current||checking)){
-      pauseGeneration();setStep('setup');setMessage(dirty?'Your unsaved edits are kept in this session. Return to Review to continue editing.':'Your edition is saved. Open it under Continue a saved edition to pick up where you left off.');return;
+      pauseGeneration();syncEditionLink(null);setStep('setup');setMessage(dirty?'Your unsaved edits are kept in this session. Return to Review to continue editing.':'Your edition is saved. Open it under Continue a saved edition to pick up where you left off.');return;
     }
     if(busy)return;
     if(next==='publish') {if(complete!==total||active||serverRunning)return;if(dirty&&!await save())return;}
@@ -566,7 +589,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         <div className="admin-filter-form admin-filter-form--four" role="group" aria-label="Find saved editions">
           <label><span>Search editions</span><StudioInput type="search" value={editionSearch} placeholder="October 2026" onChange={e=>setEditionSearch(e.target.value)}/></label>
           <label><span>Horoscope type</span><AdminSelect value={editionType} onChange={e=>setEditionType(e.target.value)}><option value="all">All types</option>{HOROSCOPE_PERIODS.map(p=><option key={p} value={p}>{horoscopeSignLabel(p)}</option>)}</AdminSelect></label>
-          <label><span>Publication status</span><AdminSelect value={editionStatus} onChange={e=>setEditionStatus(e.target.value)}><option value="all">All statuses</option><option value="published">Published</option><option value="draft">Drafts</option></AdminSelect></label>
+          <label><span>Publication status</span><AdminSelect value={editionStatus} onChange={e=>setEditionStatus(e.target.value)}><option value="all">All statuses</option><option value="LIVE">Published</option><option value="DRAFT">Drafts</option><option value="ARCHIVED">Archived</option></AdminSelect></label>
           <label><span>Sort editions</span><AdminSelect value={editionSort} onChange={e=>setEditionSort(e.target.value)}><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="updated">Recently updated</option></AdminSelect></label>
         </div>
         <div className="admin-filter-actions"><p aria-live="polite">{loading?'Loading editions…':`${visibleEditions.length} of ${rows.length} editions`}</p><StudioButton disabled={!editionViewChanged} onClick={()=>{setEditionSearch('');setEditionType('all');setEditionStatus('all');setEditionSort('newest');}}>Reset view</StudioButton></div>
@@ -576,7 +599,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
             <tbody>{visibleEditions.map(row=>{
               const edition=row.sections.horoscopeEdition,dates=horoscopeWindowLabel(edition.window);
               const written=edition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length;
-              const status=row.status==='LIVE'?'Published':`${written}/${edition.passages.length} drafted`;
+              const status=row.status==='LIVE'?'Published':row.status==='ARCHIVED'?'Archived':row.status==='DRAFT'?`${written}/${edition.passages.length} drafted`:String(row.status??'Unknown status');
               const action=row.status==='LIVE'||written===edition.passages.length?'Review / Edit':'Continue';
               return <tr key={row.id}>
                 <td>{dates}<small>{edition.window.timeZone.replaceAll('_',' ')}</small></td>
