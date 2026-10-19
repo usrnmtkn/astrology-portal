@@ -15,13 +15,24 @@ const keys = [
   'fallback-hook/bond-effect-soft/moon'
 ];
 
-for(const width of [390,1440])test(`Owner creates a missing exact Friends opening ${width}`,async({page})=>{
+for(const width of [390,1440])test(`Owner creates a missing exact Friends opening ${width}`,async({page}, testInfo)=>{
   const store=await studioApiStore([]);
   const key='fallback-hook/bond-effect-sextile/lilith';
+  let releaseLookup!: () => void;
+  const heldLookup = new Promise<void>(resolve => { releaseLookup = resolve; });
+  let lookupStarted = false;
+  const call = async (message: Parameters<typeof store.call>[0]) => {
+    if (!lookupStarted && message.method === 'GET' && message.url && new URL(message.url, 'http://fixture.invalid').searchParams.get('contentKey') === 'fallback-hook/synastry-pair/sun/imum-coeli/sextile') {
+      lookupStarted = true;
+      await heldLookup;
+      return { status: 503, payload: { error: 'QA activation source unavailable' } };
+    }
+    return store.call(message);
+  };
   try{
     await page.setViewportSize({width,height:1000});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    await routeStudioInventoryApi(page,{call:store.call,answer:async(route,url)=>{
+    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
       if(url.pathname!='/api/admin/content-live-status')return false;
       await route.fulfill({json:{ok:true,statuses:await store.call({method:'statuses',body:route.request().postDataJSON()})}});return true;
     }});
@@ -47,7 +58,25 @@ for(const width of [390,1440])test(`Owner creates a missing exact Friends openin
     await expect(map).toContainText('Complete Friend opening with Name.');
     await map.getByLabel('Preview natal point',{exact:true}).selectOption('sun');
     await map.getByLabel('Preview friend point',{exact:true}).selectOption('imum-coeli');
+    await expect(map.getByRole('button',{name:'Open You activation',exact:true})).toBeEnabled();
     await map.getByLabel('Preview synastry aspect',{exact:true}).selectOption('sextile');
+    await expect.poll(() => lookupStarted).toBe(true);
+    await expect(map.getByRole('button',{name:'Open You activation',exact:true})).toBeDisabled();
+    await expect(map.getByRole('button',{name:'Open Friend activation',exact:true})).toBeDisabled();
+    releaseLookup();
+    for (const view of ['Saved preview', 'Main template', 'Assembly']) {
+      await map.getByRole('tab', {name: view, exact: true}).click();
+      await expect(map.getByRole('alert')).toHaveCount(1);
+      await expect(map.getByRole('alert')).toContainText('QA activation source unavailable');
+      await expect(map.getByRole('button', {name: 'Retry activation source', exact: true})).toBeVisible();
+      const retryBox = await map.getByRole('button', {name: 'Retry activation source', exact: true}).boundingBox();
+      expect(retryBox!.x).toBeGreaterThanOrEqual(0);
+      expect(retryBox!.x + retryBox!.width).toBeLessThanOrEqual(width);
+      await page.screenshot({path: testInfo.outputPath(`activation-source-error-${view.replaceAll(' ', '-')}.png`)});
+      await expect(map.getByRole('button',{name:'Open You activation',exact:true})).toBeDisabled();
+      if (view !== 'Saved preview') await expect(map.getByRole('button',{name:'Edit this activation',exact:true})).toBeDisabled();
+    }
+    await map.getByRole('button',{name:'Retry activation source',exact:true}).click();
     await map.getByRole('button',{name:'Open You activation',exact:true}).click();
     await expect(editor.getByLabel('Content key',{exact:true})).toHaveValue('fallback-hook/synastry-pair/sun/imum-coeli/soft');
     await expect(publish).toBeEnabled();
@@ -58,7 +87,46 @@ for(const width of [390,1440])test(`Owner creates a missing exact Friends openin
     await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.content_key===activationKey)?.status).toBe('LIVE');
     await page.reload();
     await expect(map).toContainText('Complete owner Friend activation.');
-  }finally{store.close();}
+  }finally{releaseLookup();store.close();}
+});
+test('Owner authors an activation after a completed empty source lookup', async ({page}) => {
+  const store = await studioApiStore([]);
+  const key = 'fallback-hook/synastry-pair/lilith/imum-coeli/conjunction';
+  let published = false;
+  try {
+    await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await routeStudioInventoryApi(page, {call: async message => {
+      if (!published && message.method === 'GET' && message.url && new URL(message.url, 'http://fixture.invalid').searchParams.get('contentKey')?.startsWith('fallback-hook/synastry-pair/')) {
+        return {status: 200, payload: {ok: true, rows: [], packageSource: null}};
+      }
+      return store.call(message);
+    }, answer: async (route, url) => {
+      if (url.pathname !== '/api/admin/content-live-status') return false;
+      await route.fulfill({json: {ok: true, statuses: await store.call({method: 'statuses', body: route.request().postDataJSON()})}});
+      return true;
+    }});
+    await page.goto('/admin/content#fallback-hooks?section=friends&audience=friends&workspace=between-you-two');
+    const map = page.getByRole('region', {name: 'Between you two composition map'});
+    await map.getByLabel('Preview natal point', {exact: true}).selectOption('lilith');
+    await map.getByLabel('Preview friend point', {exact: true}).selectOption('imum-coeli');
+    await map.getByLabel('Preview synastry aspect', {exact: true}).selectOption('conjunction');
+    await map.getByRole('button', {name: 'Open You activation', exact: true}).click();
+    const editor = page.getByRole('dialog', {name: 'Generated content editor'});
+    await expect(editor.getByLabel('Content key', {exact: true})).toHaveValue(key);
+    await editor.locator('[data-sky-field="body_you"]').fill('Complete new You activation after verified missing source.');
+    await editor.locator('[data-sky-field="body_they"]').fill('Complete new Friend activation after verified missing source.');
+    const publish = editor.locator('.admin-editor-savebar').getByRole('button', {name: 'Save & publish', exact: true});
+    await expect(publish).toBeEnabled();
+    published = true;
+    await publish.click();
+    await expect.poll(async () => (await store.call({method: 'rows'})).find((row: any) => row.content_key === key)?.status).toBe('LIVE');
+    const reader = await store.call({method: 'POST', url: '/api/content-reader', body: {keys: [key]}});
+    expect(reader.payload.rows[0].sections.packageRecord).toMatchObject({body_you: 'Complete new You activation after verified missing source.', body_they: 'Complete new Friend activation after verified missing source.'});
+    await page.reload();
+    await map.getByLabel('Preview natal point', {exact: true}).selectOption('lilith');
+    await map.getByLabel('Preview friend point', {exact: true}).selectOption('imum-coeli');
+    await expect(map).toContainText('Complete new Friend activation after verified missing source.');
+  } finally { store.close(); }
 });
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owner publishes unchanged saved package drafts ${width} ${theme}`, async ({page}) => {
   test.setTimeout(120000);
