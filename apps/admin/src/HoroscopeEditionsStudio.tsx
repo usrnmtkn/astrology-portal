@@ -101,9 +101,10 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   const dirty=Boolean(draft && (!saved || horoscopeCanonicalJson(draft)!==horoscopeCanonicalJson(saved.sections.horoscopeEdition) || horoscopeCanonicalJson(outlines)!==horoscopeCanonicalJson(saved.source_snapshot?.horoscopeOutlines ?? {}) || horoscopeCanonicalJson(profile)!==horoscopeCanonicalJson(saved.source_snapshot?.studioWritingProfile ?? null) || horoscopeCanonicalJson(editorialImport)!==horoscopeCanonicalJson(saved.source_snapshot?.editorialImport ?? null)));
   const credentialIdentity=ownerCredentialIdentity(secret);
   const [publication,setPublication]=useState<any>(null);
-  useEffect(()=>{setApproved(false);setPublication(null);},[step,saved?.id,saved?.updated_at,saved?.status,dirty,credentialIdentity]);
+  const [validationOverride,setValidationOverride]=useState(false);
+  useEffect(()=>{setApproved(false);setPublication(null);setValidationOverride(false);},[step,saved?.id,saved?.updated_at,saved?.status,dirty,credentialIdentity]);
   const publicationCurrent=Boolean(publication&&saved&&publication.id===saved.id&&publication.updatedAt===saved.updated_at);
-  const publicationReady=publicationCurrent&&publication?.ready===true&&publication.issues.length===0;
+  const publicationReady=publicationCurrent&&(publication?.ready===true&&publication.issues.length===0||publication?.canOverride===true&&validationOverride);
   async function load() {
     listRequest.current?.abort();setListError('');
     // The dashboard adopts the owner session asynchronously after mounting.
@@ -225,7 +226,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
   async function useReconciledDraft(row:any,state:any){
     const {horoscopeEditableState}=await import('./HoroscopeSaveRecovery');
     setSaved(row);setDraft(state.draft);setOutlines(state.outlines);setProfile(state.profile);setEditorialImport(state.editorialImport);
-    setPacket(row.facts?.horoscopeBrief);setSaveConflict(null);setApproved(false);setPublication(null);setPlan(null);setPlanApproved(false);setError('');
+    setPacket(row.facts?.horoscopeBrief);setSaveConflict(null);setApproved(false);setPublication(null);setValidationOverride(false);setPlan(null);setPlanApproved(false);setError('');
     setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);
     setMessage(horoscopeCanonicalJson(state)===horoscopeCanonicalJson(horoscopeEditableState(row))?'Your draft is saved. Loaded the confirmed saved version.':'Loaded the latest saved version and kept your selected edits. Review and save the draft to continue.');
   }
@@ -247,7 +248,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
     try {
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
-      const body=publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at} : {
+      const body=publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : {
         ...(saved ? {id:saved.id,expectedUpdatedAt:saved.updated_at}:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null}),
         status:'DRAFT',lane:'serving',reviewState:null,headline:`${horoscopeSignLabel(edition.window.period)} horoscopes`,body:horoscopeEditionBody(edition),summary:'',sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},
         sourceSnapshot:{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport}
@@ -657,7 +658,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId}:{sec
         </footer>
       </>:<>
         <Suspense fallback={<p role="status">Loading publication review…</p>}><HoroscopePublicationReview
-          draft={draft} saved={saved} sign={sign} dirty={dirty} locked={locked} approved={approved} publication={publication}
+          draft={draft} saved={saved} sign={sign} dirty={dirty} locked={locked} approved={approved} publication={publication} validationOverride={validationOverride} onOverride={value=>{setValidationOverride(value);setApproved(false);}}
           secret={secret} request={request} onCheck={setPublication} onApprove={setApproved} onReload={()=>void open(saved,true)}
           onEdit={affectedSign=>{setSign(affectedSign);setError('');setStep('edit');}}
           onBack={()=>void moveTo('edit')} onPublish={()=>void save(true)} onSetup={()=>void moveTo('setup')} rejectAllButton={rejectAllButton}

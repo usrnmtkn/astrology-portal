@@ -229,3 +229,21 @@ Fact validator v7 recognizes motion asides such as `Mercury, now retrograde, squ
 An interpretive `this square` or `that opposition` may refer to a supported explicit pair earlier in the same paragraph. A new paragraph, unresolved aspect or different named subject clears that reference. It cannot supply another planet, date, motion or exactness claim. Unsupported pairs remain blocking.
 
 Publication rechecks the exact saved text with the current validator. Older factual findings remain in their historical generation receipt but do not override the current factual result. No prose rewrite, generation request or publication approval is implied by a parser correction.
+
+### Owner override of automated publication checks
+
+The final publication review shows automated reading findings without changing
+saved prose. When every remaining finding is an automated factual-language
+check, the owner can select **I have reviewed these automated checks and want
+to override them for this saved edition**, then approve the exact complete
+edition and publish. This is an explicit decision for the opened saved version.
+The server recomputes and records the overridden findings inside the exact-copy
+owner approval. Changing copy invalidates that approval; stale writes still
+return a conflict. Signed calculated facts, edition identity, complete readings,
+and active-generation checks cannot be overridden.
+
+Writing-profile fields support 64,000 characters so complete approved examples
+can be added without compressing earlier sources. Complete comparison blocks
+retain their exact-text hashes and are delivered through the existing governed
+writer and private evidence receipt. Saving a profile makes no model call and
+does not publish an edition.

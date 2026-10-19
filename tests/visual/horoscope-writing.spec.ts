@@ -159,7 +159,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    await prompt.fill(seasonalPrompt);
    await expect(prompt).toHaveValue(seasonalPrompt);
    await expect(prompt).toHaveAttribute('aria-invalid', 'false');
-   await expect(editor.getByText(`${seasonalPrompt.length.toLocaleString()} / 32,000 characters`, {exact: true})).toBeVisible();
+   await expect(editor.getByText(`${seasonalPrompt.length.toLocaleString()} / ${HOROSCOPE_PROFILE_FIELD_LIMIT.toLocaleString()} characters`, {exact: true})).toBeVisible();
    await editor.getByRole('button', {name: 'Save writing profile', exact: true}).click();
    await expect(editor.getByRole('status')).toHaveText('Saved Seasonal profile, revision 1.');
    const seasonalRow = (await call({method: 'rows'})).find((r: any) => r.content_key === 'studio-writing-profile/horoscope/seasonal');

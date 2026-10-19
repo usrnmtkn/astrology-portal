@@ -9,7 +9,7 @@ export const HOROSCOPE_PROFILE_PROMPT_VARIABLES = Object.freeze(["period", "voic
 export const HOROSCOPE_RUN_PROMPT_VARIABLES = Object.freeze(["primaryOwnerVoiceSources", "supportingOwnerVoiceSources", "ownerPositiveComparisons", "ownerCorrections", "governedFacts"]);
 export const HOROSCOPE_PROMPT_VARIABLES = Object.freeze([...HOROSCOPE_PROFILE_PROMPT_VARIABLES, ...HOROSCOPE_RUN_PROMPT_VARIABLES]);
 export const HOROSCOPE_PROFILE_FIELDS = Object.freeze(["voiceGuidance", "structure", "sourceGuidance", "prompt"]);
-export const HOROSCOPE_PROFILE_FIELD_LIMIT = 32000;
+export const HOROSCOPE_PROFILE_FIELD_LIMIT = 64000;
 const promptVariable = /\{\{\s*([^{}]+?)\s*\}\}/gu;
 
 export const HOROSCOPE_PROSE_BEHAVIOR_GUIDANCE = "Learn from the complete owner passage: its point of view, movement of thought, imagery, rhythm and ending. A short opening, early astrology, a question, a list or a direct instruction may work when it develops this particular reading. Do not ban those forms or turn any of them into a formula. Vary sentence length with the meaning, rather than smoothing every paragraph into the same measured rhythm. Keep a sensory image coherent while it carries the thought. Let an example make its point without immediately explaining it again. Precision can carry emotional, spiritual or philosophical depth; it does not always require a practical task. Let the ending arrive from what has developed, without a compulsory moral or advice line. Current saved vocabulary preferences take precedence over older source wording. These are editorial directions for owner review, not automatic quality verdicts.";
