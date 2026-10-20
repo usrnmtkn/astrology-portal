@@ -47,7 +47,7 @@ async function expectHousePillsInArticle(page: Page) {
 
 type SeedOptions = {
   pageAnimations?: "on" | "off";
-  synastryFixture?: { body: string; aspect: string; inverse: boolean };
+  synastryFixture?: { body: string; aspect: string; inverse: boolean; readerBody?: string };
   profile?: boolean;
   profileBirthDate?: string;
   profileBirthTime?: string;
@@ -397,8 +397,8 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         : name === "Imum Coeli" ? normalize(sky.midheavenLongitude! + 180)
         : sky.positions.find(p => p.planet === name)!.longitude!;
       const degrees = ({ conjunction: 0, square: 90, opposition: 180, trine: 120, sextile: 60 } as Record<string, number>)[fixture.aspect];
-      const targetName = fixture.inverse ? "Sun" : fixture.body;
-      const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : "Sun") + degrees);
+      const targetName = fixture.inverse ? (fixture.readerBody ?? "Sun") : fixture.body;
+      const longitude = normalize(pointLongitude(fixture.inverse ? fixture.body : (fixture.readerBody ?? "Sun")) + degrees);
       const friendSky = structuredClone(sky);
       // Avoid filling the 16-card ranking cap with same-chart conjunctions.
       const fixtureOffset = fixture.body === "Imum Coeli" && fixture.aspect === "sextile" ? 47 : 17;
@@ -6147,3 +6147,38 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   await expectNoHorizontalOverflow(page, 'Moon Friend reader');
   errors();
 });
+
+for (const inverse of [false, true]) {
+  test(`synastry publication keeps three paragraphs ${inverse ? "Uranus" : "Moon"} reader`, async ({ page }) => {
+    const paragraphs = [
+      "You share a synthetic first paragraph with {{holder2}}.",
+      "You read a synthetic second paragraph.",
+      "You reach the synthetic final Moon sentence."
+    ];
+    const reverse = [
+      "You share a synthetic first paragraph with {{holder1}}.",
+      "You read a synthetic second paragraph.",
+      "You reach the synthetic final Uranus sentence."
+    ];
+    const record = {
+      contentKey: "fallback-hook/synastry-pair/moon/uranus/opposition",
+      content_role: "full_copy", grammar_frame: "complete_sentence", review_status: "approved",
+      approval: { approvalLevel: "exact_owner_approved", recordPath: "qa://paragraph-publication", payloadSha256: "a".repeat(64), approvedAt: "2026-10-19" },
+      body_you: paragraphs.join("\n\n"), body_they: reverse.join("\n\n")
+    };
+    await seedCrossSurfacePublications(page, [record], {
+      profile: true, friends: true, preloadProfileNatalSky: true,
+      synastryFixture: { body: "Uranus", readerBody: "Moon", aspect: "opposition", inverse }
+    });
+    await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
+    const title = inverse ? "Your Uranus opposite Sofia's Moon" : "Your Moon opposite Sofia's Uranus";
+    const expected = (inverse ? reverse : paragraphs).map(p => p.replace(/\{\{holder[12]\}\}/g, "Sofia"));
+    const card = page.getByRole("button", { name: `Open full entry for ${title}`, exact: true });
+    await expect(card.locator(".synastry-contact-description")).toContainText(expected[0]);
+    await card.click();
+    const detail = page.locator(".app-shell.mode-detail");
+    for (const paragraph of expected) await expect(detail.getByText(paragraph, { exact: true })).toBeVisible();
+    await page.reload();
+    for (const paragraph of expected) await expect(detail.getByText(paragraph, { exact: true })).toBeVisible();
+  });
+}

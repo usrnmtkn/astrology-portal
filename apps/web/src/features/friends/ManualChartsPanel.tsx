@@ -2263,7 +2263,7 @@ export function ManualChartsPanel({
       title,
       meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
       pills: { labels: [{ label: subtitle, tone: "muted" }] },
-      body: rendered?.body ? [rendered.body] : [],
+      body: rendered?.body ? rendered.body.split(/\n{2,}/) : [],
       content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
     });
   };

@@ -1968,7 +1968,10 @@ function localizedLunationDateParts(exactAt, timeZone, label) {
 }
 var NEEDS_ARTICLE = /* @__PURE__ */ new Set(["sun", "moon", "north-node", "south-node"]);
 var transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title7(planet)}${sign ? ` in ${title7(sign)}` : ""}`;
-var fill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
+var fill = (body, ctx, preserveWhitespace = false) => {
+  const rendered = body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`);
+  return preserveWhitespace ? rendered : rendered.replace(/\s{2,}/g, " ").trim();
+};
 var READER_HOLDER_VERBS = new Map(Object.entries({
   is: "are",
   was: "were",
@@ -2056,7 +2059,7 @@ var READER_HOLDER_VERB_PATTERN = [...READER_HOLDER_VERBS.keys()].join("|");
 function renderSynastryPairVoice(body, holders) {
   const readerHolder = holders.holder1 === "you" ? "holder1" : "holder2";
   const marker = "__reader_holder__";
-  let rendered = fill(body, { ...holders, [readerHolder]: marker });
+  let rendered = fill(body, { ...holders, [readerHolder]: marker }, true);
   rendered = rendered.replace(new RegExp(`${marker}'s`, "g"), "your").replace(
     new RegExp(`(?<!from\\s)${marker}(\\s+(?:(?:${READER_HOLDER_ADVERBS})\\s+)*)(?:${READER_HOLDER_VERB_PATTERN})\\b`, "g"),
     (match, spacing) => {
@@ -2734,7 +2737,7 @@ ${passHook}`;
       if (!selectionTier) {
         throw new SourceGapError(`SOURCE_GAP: ineligible synastry row ${pairRow?.contentKey ?? "missing"}`);
       }
-      return { headline: headlinePair, tag: typeRow?.tag ?? null, body, parts: [body], templateKey: T.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
+      return { headline: headlinePair, tag: typeRow?.tag ?? null, body, parts: body.split(/\n{2,}/), templateKey: T.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
     }
     throw new SourceGapError(`SOURCE_GAP: synastry aspect ${planetA}-${aspect}-${planetB}`);
   }
@@ -6614,7 +6617,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-17-studio-owner-daily";
+var PACKAGE_VERSION = "v3-2026-10-19-synastry-paragraphs";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

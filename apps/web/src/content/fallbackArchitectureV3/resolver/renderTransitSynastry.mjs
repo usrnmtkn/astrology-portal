@@ -124,7 +124,10 @@ const ELEMENT = { aries: "fire", leo: "fire", sagittarius: "fire", taurus: "eart
 const ORD = { 1: "1st", 2: "2nd", 3: "3rd" };
 const ordinal = (n) => ORD[n] ?? `${n}th`;
 const tpl = (key) => { assertKey(key); return templates.templates.find((t) => t.contentKey === key); };
-const fill = (body, ctx) => resolveZodiacSeasonVariables(body, ctx, hooks).replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(zodiacSeasonVariableNames(body).length ? /$^/g : /\s{2,}/g, " ").trim();
+const fill = (body, ctx, preserveWhitespace = false) => {
+  const rendered = resolveZodiacSeasonVariables(body, ctx, hooks).replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`);
+  return preserveWhitespace ? rendered : rendered.replace(zodiacSeasonVariableNames(body).length ? /$^/g : /\s{2,}/g, " ").trim();
+};
 const READER_HOLDER_VERBS = new Map(Object.entries({
   is: "are", was: "were", has: "have", does: "do", feels: "feel", gives: "give",
   keeps: "keep", makes: "make", helps: "help", responds: "respond", reaches: "reach",
@@ -149,7 +152,7 @@ const READER_HOLDER_VERB_PATTERN = [...READER_HOLDER_VERBS.keys()].join("|");
 function renderSynastryPairVoiceReference(body, holders) {
   const readerHolder = holders.holder1 === "you" ? "holder1" : "holder2";
   const marker = "__reader_holder__";
-  let rendered = fill(body, { ...holders, [readerHolder]: marker });
+  let rendered = fill(body, { ...holders, [readerHolder]: marker }, true);
   rendered = rendered
     .replace(new RegExp(`${marker}'s`, "g"), "your")
     .replace(
@@ -1183,7 +1186,7 @@ function renderSynastryAspectReference({
     if (!selectionTier) {
       throw new SourceGapError(`SOURCE_GAP: ineligible synastry row ${pairRow?.contentKey ?? "missing"}`);
     }
-    return { headline: headlinePair, tag: typeRow?.tag ?? null, body: pairSentences, parts: [pairSentences], templateKey: tpl.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
+    return { headline: headlinePair, tag: typeRow?.tag ?? null, body: pairSentences, parts: pairSentences.split(/\n{2,}/), templateKey: tpl.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
   }
   throw new SourceGapError(`SOURCE_GAP: synastry aspect ${planetA}-${aspect}-${planetB}`);
 }
