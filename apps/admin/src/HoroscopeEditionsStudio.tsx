@@ -1,4 +1,5 @@
-import {lazy,Suspense,useEffect,useRef,useState} from 'react';
+import { studioLazy as lazy } from "./studioLazy";
+import {Suspense,useEffect,useRef,useState} from 'react';
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
 import {fetchWithOwnerSession,ownerSignInMessage} from './ownerSessionRequest';

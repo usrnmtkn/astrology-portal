@@ -1,6 +1,7 @@
+import { studioLazy as lazy } from "./studioLazy";
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
-import { Fragment, lazy, Suspense, useEffect, useState } from "react";
+import { Fragment, Suspense, useEffect, useState } from "react";
 import { renderTransitNatalPreview, transitNatalExactContentKey, type TransitNatalSelection, type TransitNatalReadingContext, type TransitPassageSource } from "./transitNatalSources";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { readStudioContentDocument, requestStudioJson } from "./generatedContentClient";

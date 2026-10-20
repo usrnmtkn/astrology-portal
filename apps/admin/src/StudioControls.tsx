@@ -1,4 +1,5 @@
-import { cloneElement, forwardRef, lazy, Suspense, useImperativeHandle, isValidElement, useEffect, useLayoutEffect, useId, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
+import { cloneElement, forwardRef, Suspense, useImperativeHandle, isValidElement, useEffect, useLayoutEffect, useId, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { requestStudioReturnAfterSave, returnToStudioParentEditor, studioEditorReturnContext } from "./studioEditorReturn";
 import { installStudioStatusCompatibility } from "./studioStatusCompatibility";
 
@@ -70,7 +71,9 @@ export const StudioInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef
     return <input {...props} ref={ref} data-studio-component="input" />;
   }
 );
-const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"));
+const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"), ({ onDone }) =>
+  <StudioPanelLoadError><StudioButton onClick={onDone}>Back to plain text</StudioButton></StudioPanelLoadError>
+);
 export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef<"textarea"> & { formatting?: boolean; highlight?: ReactNode }>(
   function StudioTextarea({ formatting = true, highlight, ...props }, ref) {
     const textarea = useRef<HTMLTextAreaElement>(null);

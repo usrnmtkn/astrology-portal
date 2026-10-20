@@ -1,5 +1,6 @@
+import { studioLazy as lazy } from "./studioLazy";
 import { Save, X } from "lucide-react";
-import { lazy, Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
 import { StudioButton, StudioTabs, StudioTextarea } from "./StudioControls";
 
 const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));

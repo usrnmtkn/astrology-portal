@@ -1,4 +1,5 @@
-import {lazy,Suspense,useRef,useState,type ReactNode} from 'react';
+import { studioLazy as lazy } from "./studioLazy";
+import {Suspense,useRef,useState,type ReactNode} from 'react';
 import {StudioTabs} from './StudioControls';
 import {PageLoading} from '../../../src/shared/components/PageLoading';
 const Reusable = lazy(()=>import('./ReusableLunationWritingStudio'));

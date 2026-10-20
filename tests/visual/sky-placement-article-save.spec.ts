@@ -33,15 +33,27 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
    };
    const recoverChunk = !legacyDraft && width === 1440;
    let missingChunk = recoverChunk;
-   if (recoverChunk) await page.route('**/SkyPlacementComposition-*.js', route => missingChunk ? route.abort('failed') : route.continue());
+   const compositionResponses: number[] = [];
+   page.on('response', response => {
+    if (/\/SkyPlacementComposition-[^/]+\.js$/.test(new URL(response.url()).pathname)) compositionResponses.push(response.status());
+   });
+   if (recoverChunk) await page.route('**/SkyPlacementComposition-*.js', route => missingChunk
+    ? route.fulfill({ status: 503, contentType: 'text/javascript', body: '/* Synthetic optional composition download failure. */' })
+    : route.continue());
    await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
    if (recoverChunk) {
     await selectSunVirgo();
-    const recovery = page.getByRole('region', { name: 'Page recovery', exact: true });
-    await expect(recovery).toBeVisible();
+    await expect.poll(() => compositionResponses).toEqual([503]);
+    await expect(page.getByRole('alert').filter({ hasText: 'This section could not load.' })).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Page recovery', exact: true })).toHaveCount(0);
+    await expect(page.getByLabel('Sky placement planet or point')).toHaveValue('sun');
+    await expect(page.getByLabel('Sky placement zodiac sign')).toHaveValue('virgo');
+    expect(responses).toEqual([]);
+    expect((await call({ method: 'rows' })).find((row: any) => row.id === liveBefore.id)).toEqual(liveBefore);
+    // No editor is open yet. Explicit reload obtains the recovered optional
+    // module before the actual-handler draft/save/reopen/publish journey.
     missingChunk = false;
-    await recovery.getByRole('button', { name: 'Retry page', exact: true }).click();
-    await expect(recovery).toHaveCount(0);
+    await page.reload();
    }
    await selectSunVirgo();
    const map = page.getByRole('region', { name: 'Sky placement composition map' });

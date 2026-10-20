@@ -1,9 +1,10 @@
+import { studioLazy as lazy } from "./studioLazy";
 import { StudioButton } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
 import { Grid } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
-import { lazy, Suspense, useState } from "react";
+import { Suspense, useState } from "react";
 import { isContentStudioReferenceSource } from "../../web/src/content/contentStudioSourceRole";
 import { skyWritingIssues, type ReviewableContent } from "../../web/src/content/contentReviewReadiness";
 import ContentLiveStatusBadge from "./ContentLiveStatus";

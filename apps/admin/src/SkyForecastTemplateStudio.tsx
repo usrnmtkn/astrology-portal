@@ -1,4 +1,5 @@
-import { lazy, Suspense, type ReactNode } from "react";
+import { studioLazy as lazy } from "./studioLazy";
+import { Suspense, type ReactNode } from "react";
 import type { CalendarTemplatePreviewProps } from "./CalendarTemplatePreview";
 import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../../src/shared/components/PageLoading";

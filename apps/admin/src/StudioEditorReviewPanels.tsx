@@ -1,4 +1,5 @@
-import { lazy, Suspense, type ComponentProps } from 'react';
+import { studioLazy as lazy } from "./studioLazy";
+import { Suspense, type ComponentProps } from 'react';
 import { studioWritingMemoryKey } from '../../web/src/content/studioMemoryIdentity';
 import ReviewWorkflowPanel from './ReviewWorkflowPanel';
 

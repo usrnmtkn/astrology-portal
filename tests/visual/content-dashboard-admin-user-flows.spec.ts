@@ -4616,7 +4616,18 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByLabel("Reader phrase · You", { exact: true }).fill("QA new natal aspect passage.");
     await textarea.fill("{{Name}} receives the QA natal aspect passage.");
 
+    // The write observer runs before the real transactional handler finishes.
+    // Await its completed HTTP response before asserting the resulting status.
+    const publicationResponse = page.waitForResponse(response =>
+      new URL(response.url()).pathname === "/api/admin/generated-content"
+      && ["POST", "PATCH"].includes(response.request().method())
+      && response.request().postDataJSON()?.ownerAction === "approve-package-revision"
+    );
     await editor.getByRole("button", { name: "Save & publish" }).click();
+    const published = await publicationResponse;
+    expect(published.status()).toBe(200);
+    expect(await published.finished()).toBeNull();
+    expect((await published.json()).publicationReceipt).toBeTruthy();
     await expect.poll(() => writes.length).toBe(2);
     expect(writes[1]?.payload).toMatchObject({ ownerAction: "approve-package-revision" });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");

@@ -1,7 +1,9 @@
 import { StudioButton } from "./StudioControls";
 import { AlertTriangle, BarChart3, Plus, type LucideIcon } from "lucide-react";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
-import { lazy, Suspense, useEffect, useRef, type ComponentProps, type KeyboardEvent } from "react";
+import { studioSignInHref } from "../../../src/shared/services/studioAuthReturn";
+import { studioLazy } from "./studioLazy";
+import { Suspense, useEffect, useRef, type ComponentProps, type KeyboardEvent } from "react";
 
 export type AdminBreadcrumb = {
   current?: boolean;
@@ -162,7 +164,12 @@ export function AdminPageHeader({
   );
 }
 
-const DeferredAccessGate = lazy(() => import("./AdminAccessGate"));
+const DeferredAccessGate = studioLazy(() => import("./AdminAccessGate"), () =>
+  <div className="app-loading" role="alert">
+    <span>Sign-in could not load. Keep this tab open to preserve your changes.</span>
+    <a className="admin-page-link" href={studioSignInHref(`${window.location.pathname}${window.location.search}${window.location.hash}`)} target="_blank" rel="noopener">Sign in in another tab</a>
+  </div>
+);
 
 export function AdminAccessGate(props: ComponentProps<typeof DeferredAccessGate>) {
   return (
