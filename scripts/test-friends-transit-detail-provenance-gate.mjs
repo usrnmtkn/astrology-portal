@@ -175,7 +175,7 @@ assert.match(
 );
 assert.equal(
   (manualChartsPanelSource.match(/acceptedOwnerApprovedTransitSections\(/gu) ?? []).length,
-  7,
+  8,
   "pre-cap eligibility plus personal/house reader sections, availability, and open handlers must use the permanent gate"
 );
 assert.deepEqual(
@@ -202,8 +202,8 @@ assert.match(briefSource, /houseTransits\.filter\(\(transit\) => \(\s*transit\.d
 
 assert.match(
   manualChartsPanelSource,
-  /acceptedOwnerApprovedTransitBody\(\s*card\.effectBody,\s*card\.effectContentKey,/u,
-  "bond-effect detail body must use the permanent gate"
+  /acceptedOwnerApprovedTransitSections\(\s*reading \? \[/u,
+  "connection detail must gate the existing personal transit unit instead of borrowing a bond opening"
 );
 assert.match(
   manualChartsPanelSource,

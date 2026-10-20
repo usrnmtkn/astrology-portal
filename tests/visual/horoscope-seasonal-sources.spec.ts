@@ -3,6 +3,7 @@ import {fork} from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
+import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 
 const bank=JSON.parse(fs.readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/editorial-source-bank-v1.json','utf8'));
 const originals=['sign-season-content','sign-axis-tensions'].map(id=>bank.collections.find((c:any)=>c.id===id).entries.find((e:any)=>e.signs.includes('libra')).body);
@@ -56,7 +57,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Gemini',exact:true}).click();
    // The disclosure stays open while changing signs.
    await studio.getByText('Full plan details',{exact:true}).click();await assertSources('Gemini',5);
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();
+   await page.reload();await showSavedHoroscopeEditions(page,studio);
    await studio.locator('.admin-horoscope-saved button').first().click();
    await assertIntroduction();await assertSources();
    expect((await call({method:'writer-state'})).calls).toBe(0);

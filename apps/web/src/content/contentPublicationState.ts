@@ -74,13 +74,21 @@ export function subscribeToContentPublications(listener: (source: ContentPublica
   return () => { listeners.delete(listener); };
 }
 
-/** Once a key has a publication, an older row or unversioned bundle is not a substitute. */
+/** Explicit null/null LIVE identity restores only the unversioned approved baseline. */
+export function publicationRestoresBaseline(publication: ContentPublication) {
+  return publication.state === "live" && publication.row_id === null && publication.row_updated_at === null
+    && !isRetiredCompositionKey(publication.content_key);
+}
+
+/** A pinned publication requires its exact version; baseline resets reject cached Studio rows. */
 export function publicationAllowsContent(contentKey: string, rowId?: string | null, rowUpdatedAt?: string | null, targetDate?: string | null, records: ReadonlyMap<string, ContentPublication> = publications) {
   if (isRetiredCompositionKey(contentKey)) return false;
   const publication = records.get(contentKey);
   if (!publication) return !rowId || Boolean(targetDate) || !records.has(publicationLedgerKey);
   if (publication.state === "retired") return false;
-  if (targetDate || !publication.row_id) return true;
+  if (publicationRestoresBaseline(publication)) return rowId == null && rowUpdatedAt == null;
+  if (targetDate) return true;
+  if (!publication.row_id || !publication.row_updated_at) return false;
   return rowId === publication.row_id && Boolean(rowUpdatedAt) && Boolean(publication.row_updated_at)
     && publicationTimestamp(rowUpdatedAt!) === publicationTimestamp(publication.row_updated_at!);
 }

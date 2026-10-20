@@ -1,4 +1,4 @@
-import { isContentRetired, contentPublication } from "./contentPublicationState";
+import { isContentRetired, contentPublication, publicationRestoresBaseline } from "./contentPublicationState";
 import {
   generatedContentParagraphs,
   renderGeneratedContentTemplate,
@@ -74,9 +74,11 @@ export function resolveCmsSurfaceOverride(
   slots: TemplateSlotValues = {}
 ): CmsSurfaceOverride | null {
   for (const contentKey of contentKeys) {
+    const publication = contentPublication(contentKey);
+    if (publication && publicationRestoresBaseline(publication)) continue;
     const retired = isContentRetired(contentKey);
     const rendered = retired ? null : renderGeneratedContentTemplate(generatedContent?.get(contentKey), slots);
-    if (!rendered && contentPublication(contentKey)) {
+    if (!rendered && publication) {
       return { body: "", headline: null, contentKey, sourceKeys: [contentKey], retired, unavailable: true };
     }
     if (!rendered) continue;

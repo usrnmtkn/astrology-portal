@@ -8,8 +8,10 @@ import type { SkySnapshot } from "../apps/web/src/types.ts";
 // These app services read Vite's import.meta.env through their auth dependency.
 // Load their shared module graph with the same transform used by the reader.
 const vite = await createServer({
+  configFile: false,
+  envFile: false,
   root: fileURLToPath(new URL("../apps/web", import.meta.url)),
-  server: { middlewareMode: true },
+  server: { middlewareMode: true, hmr: false },
   appType: "custom",
   logLevel: "silent"
 });
@@ -87,6 +89,13 @@ try {
   installContentPublications([{content_key:key,state:"retired",revision:999999,row_id:null,row_updated_at:null,updated_at:"2026-09-08T15:00:00Z"}]);
   const retired = await loadSkyDetailContent(facts, content, [], async () => { throw new Error("offline fixture"); });
   assert.equal(retired.has(key), false, "A missing response must not restore a retired row.");
+  const resetKey='cms/fixture-reset/article';
+  const resetRow={...content.get(key)!,contentKey:resetKey,id:'cached-dated-qa',updatedAt:'2026-09-08T15:00:00Z',targetDate:'2031-04-07'};
+  installContentPublications([{content_key:resetKey,state:'live',revision:1,row_id:null,row_updated_at:null,updated_at:'2026-09-08T15:00:00Z'}]);
+  const resetDetail=await loadSkyDetailContent(facts,new Map([[resetKey,resetRow]]),[resetKey],async()=>new Map(),[]);
+  assert.equal(resetDetail.has(resetKey),false,'Reset drops stale dated QA and does not block article readiness');
+  installContentPublications([{content_key:resetKey,state:'live',revision:2,row_id:'missing-pinned',row_updated_at:'2026-09-08T15:00:00Z',updated_at:'2026-09-08T15:00:00Z'}]);
+  await assert.rejects(loadSkyDetailContent(facts,new Map(),[resetKey],async()=>new Map(),[]),/current article publication/,'Ordinary missing pinned publication remains terminal');
   console.log(`PASS: ${checked} published detail identities in both orders; event signs, stale revisions and retirement remain guarded.`);
 } finally {
   await vite.close();

@@ -5,6 +5,7 @@ export type FriendTransitReaderSection = { body: string; sourceKeys: string[] };
 
 export type FriendBondTransitView = {
   id: string;
+  detailAvailable: boolean;
   headline: string;
   effectBody: string;
   activationBody: string;

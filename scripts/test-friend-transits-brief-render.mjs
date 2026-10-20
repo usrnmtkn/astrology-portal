@@ -72,6 +72,7 @@ try {
     }],
     bondTransits: [{
       id: "bond-1",
+      detailAvailable: true,
       headline: "A shared pressure point is active",
       effectBody: "The connection feels more serious today.",
       activationBody: "Patience reveals what needs attention.",
@@ -112,6 +113,15 @@ try {
     patternTimingOverrides: {}
   }));
 
+  const unavailableHtml=renderToStaticMarkup(React.createElement(FriendTransitsTab,{
+    brief:{...populatedBrief,relationshipActivations:populatedBrief.relationshipActivations.map(card=>({...card,detailAvailable:false}))},
+    onOpenBondTransit(){throw new Error("Unavailable action must remain disabled");},onOpenHouseTransit(){},onOpenPersonalTransit(){},patternTimingOverrides:{}
+  }));
+  const unavailableSection=unavailableHtml.slice(unavailableHtml.indexOf('aria-label="Between you two"'),unavailableHtml.indexOf('</section>',unavailableHtml.indexOf('aria-label="Between you two"')));
+  assert.match(unavailableSection,/<button[^>]*aria-label="A shared pressure point is active"[^>]*disabled=""/);
+  assert.doesNotMatch(unavailableSection,/Read More/);
+  assert.match(unavailableSection,/The connection feels more serious today/);
+  assert.match(unavailableSection,/Patience reveals what needs attention/);
   assert.match(populatedHtml, /Daily forecast for Alex/);
   assert.match(populatedHtml, /An opening just appeared/);
   assert.match(populatedHtml, /Name the plan/);

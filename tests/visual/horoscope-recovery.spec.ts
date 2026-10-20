@@ -1,3 +1,4 @@
+import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {test,expect,type Page} from '@playwright/test';
 import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
 import {fork} from 'node:child_process';
@@ -53,7 +54,7 @@ async function fixture(page:Page,missing=1,unknown=false,period='weekly',session
       await route.fulfill({status:result.status,json:result.payload}).catch(()=>{});return true;
     }});
     if(!session)await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    const open=async()=>{await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').first().click();return studio;};
+    const open=async()=>{await page.goto('/admin/content#horoscopes');const studio=page.getByRole('region',{name:'Horoscope editions'});await showSavedHoroscopeEditions(page,studio);await studio.locator('.admin-horoscope-saved button').first().click();return studio;};
     return {child,call,latest,action,finishReview,state,open,original:edition};
   }catch(error){child.kill();throw error;}
 }
@@ -355,7 +356,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    expect((await f.latest()).source_snapshot.horoscopeGeneration.active.sign).toBe('taurus');
    // Retrieve the already-started request elsewhere, then reopen without a new generation.
    expect((await f.action('poll')).status).toBe(200);
-   await studio.getByText(/^Continue a saved edition/).click();
+   await showSavedHoroscopeEditions(page,studio);
    await studio.locator('.admin-horoscope-saved button').first().click();
    await expect(studio.getByText('2/12 readings ready',{exact:false})).toBeVisible();
    f.state.release();
@@ -387,7 +388,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    // An existing request on a newly opened edition also catches up without a click.
    const plan=await f.action('prepare');expect((await f.call({method:'legacy-seasonal-request',body:{id:(await f.latest()).id,sign:'gemini',approvedPlanHash:plan.payload.plan.planHash}})).status).toBe(202);
    await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
-   await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved button').first().click();
+   await showSavedHoroscopeEditions(page,studio);await studio.locator('.admin-horoscope-saved button').first().click();
    // Opening retrieves the saved row asynchronously. Start the idle interval
    // only after that row is adopted; otherwise the clock can jump before the
    // recovery effect registers its timer on a slower CI browser.
@@ -521,6 +522,23 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByLabel('Complete reading')).toHaveValue(f.original.passages[0].body);
    await page.reload();
    await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   expect((await f.latest()).sections).toEqual(before.sections);
+   expect((await f.latest()).source_snapshot).toEqual(before.source_snapshot);
+   expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0});
+   await studio.getByRole('button',{name:'Back to editions',exact:true}).click();
+   await studio.getByLabel('Reference date').fill('2026-09-24');
+   let planFailures=0;
+   await page.route('**/api/admin/horoscope-writing',async route=>{
+    if(route.request().postDataJSON()?.action!=='prepare')return route.fallback();
+    planFailures++;await route.fulfill({status:503,json:{ok:false,error:'Synthetic writing plan unavailable.'}});
+   });
+   await studio.getByRole('button',{name:'Continue to writing plan',exact:true}).click();
+   await expect(studio.getByRole('alert')).toContainText('Synthetic writing plan unavailable.');
+   expect(new URLSearchParams(new URL(page.url()).hash.split('?')[1]).get('edition')).toBe(before.id);
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   await page.reload();
+   await expect(studio.getByText('11/12 readings ready',{exact:false})).toBeVisible();
+   expect(planFailures).toBe(1);
    expect((await f.latest()).sections).toEqual(before.sections);
    expect((await f.latest()).source_snapshot).toEqual(before.source_snapshot);
    expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0});
@@ -688,4 +706,31 @@ test('A stale Weekly Reject refreshes the current edition without replaying the 
   expect(after.sections.horoscopeEdition.passages.slice(1)).toEqual(f.original.passages.slice(1));
   expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0});
  }finally{f.child.kill();}
+});
+
+test('Leaving a saved edition ignores a completed old writing plan',async({page})=>{
+ const f=await fixture(page,1,false,'weekly',false,false);
+ let release=()=>{};let held=false;let outcome='pending';let completedStatus:number|undefined;
+ const stale='Synthetic old-context reading must never replace the current draft.';
+ try{
+  page.on('requestfinished',async request=>{if(request.url().includes('/api/admin/horoscope-writing')&&request.postDataJSON()?.action==='prepare'){completedStatus=(await request.response())?.status();outcome='finished';}});
+  page.on('requestfailed',request=>{if(request.url().includes('/api/admin/horoscope-writing')&&request.postDataJSON()?.action==='prepare')outcome='failed';});
+  await page.route('**/api/admin/horoscope-writing',async route=>{
+   const body=route.request().postDataJSON();if(body?.action!=='prepare')return route.fallback();
+   const result=await f.call({method:'writing',body});expect(result.status).toBe(200);
+   result.payload.rows[0].sections.horoscopeEdition.passages[0].body=stale;
+   held=true;await new Promise<void>(resolve=>release=resolve);
+   await route.fulfill({status:result.status,json:result.payload});
+  });
+  const studio=await f.open();await expect.poll(()=>held).toBe(true);
+  await page.evaluate(()=>window.location.hash='connection');
+  await expect(page.getByLabel('CONTENT_GENERATION_SECRET',{exact:true})).toBeVisible();
+  release();await expect.poll(()=>outcome).toBe('finished');expect(completedStatus).toBe(200);
+  await page.evaluate(()=>window.location.hash='horoscopes');
+  await expect(studio).toBeVisible();
+  await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+  await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(f.original.passages[0].body);
+  expect((await f.latest()).sections.horoscopeEdition.passages[0].body).toBe(f.original.passages[0].body);
+  expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0});
+ }finally{release();f.child.kill();}
 });

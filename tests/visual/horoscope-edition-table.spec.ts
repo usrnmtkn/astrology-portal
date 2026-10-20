@@ -1,4 +1,4 @@
-import {test,expect} from '@playwright/test';
+import {test,expect,type Request} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
@@ -32,8 +32,17 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
      expect(live.status,JSON.stringify(live.payload)).toBe(200);published=live.payload.rows[0];
     }
    }
-   let listMode='normal',releaseList=()=>{};
+   let listMode='normal',releaseList=()=>{},holdDetail=false,releaseDetail=()=>{},detailStarted=false;
+   const detailCredentials:string[]=[];
+   let heldDetail:Request|null=null,detailOutcome='pending',detailStatus:number|null=null,detailFailure:string|null=null;
+   page.on('request',request=>{if(new URL(request.url()).searchParams.get('horoscopeEditions')==='true'){
+     detailCredentials.push(request.headers()['x-content-generation-secret']??request.headers()['authorization']??'');
+     if(holdDetail)heldDetail=request;
+   }});
+   page.on('requestfinished',async request=>{if(request===heldDetail){detailStatus=(await request.response())?.status()??null;detailFailure=request.failure()?.errorText??null;detailOutcome='finished';}});
+   page.on('requestfailed',request=>{if(request===heldDetail){detailFailure=request.failure()?.errorText??'request failed';detailOutcome='failed';}});
    await routeStudioInventoryApi(page,{call:async message=>{
+    if(message.method==='GET'&&message.url?.includes('horoscopeEditions=true')&&holdDetail){detailStarted=true;await new Promise<void>(resolve=>{releaseDetail=resolve;});}
     if(message.method==='GET'&&message.url?.includes('editionInventory=true')){
      if(listMode==='empty')return {status:200,payload:{ok:true,rows:[]}};
      if(listMode==='error')return {status:503,payload:{ok:false,error:'Synthetic edition list unavailable.'}};
@@ -82,7 +91,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await filters.getByLabel('Search editions').fill('  OCTOBER, 2026  ');
    await expect(table.locator('tbody tr')).toHaveCount(5);
    await expect(studio.getByText('5 of 10 editions',{exact:true})).toBeVisible();
-   await filters.getByLabel('Publication status').selectOption('draft');
+   await filters.getByLabel('Publication status').selectOption('DRAFT');
    await expect(table.locator('tbody tr')).toHaveCount(4);
    await expect(table).not.toContainText('Published');
    await filters.getByLabel('Search editions').fill('2026-10-12');
@@ -99,7 +108,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await expect(table.locator('tbody tr').first()).toContainText('November 2, 2026');
    await expect(filters.getByLabel('Search editions')).toHaveValue('');
    await filters.getByLabel('Horoscope type').selectOption('weekly');
-   await filters.getByLabel('Publication status').selectOption('published');
+   await filters.getByLabel('Publication status').selectOption('LIVE');
    await expect(table.locator('tbody tr')).toHaveCount(1);
    await table.getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
    await expect(studio.getByRole('heading',{name:'Review each reading',exact:true})).toBeVisible();
@@ -108,14 +117,18 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();
    await expect(filters.getByLabel('Horoscope type')).toHaveValue('weekly');
-   await expect(filters.getByLabel('Publication status')).toHaveValue('published');
+   await expect(filters.getByLabel('Publication status')).toHaveValue('LIVE');
    await expect(table.locator('tbody tr')).toHaveCount(1);
    await table.getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
    const edited=published.sections.horoscopeEdition.passages[0].body+' Exact saved revision.';
    await studio.getByLabel('Complete reading',{exact:true}).fill(edited);
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();
+   await page.reload();
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await studio.getByText(/^Continue a saved edition/).click();
    await table.getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(edited);
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
@@ -128,10 +141,81 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    const reader=await call({method:'reader',body:{ids:[published.id]}});
    expect(reader.status).toBe(200);expect(reader.payload.rows[0].sections.horoscopeEdition).toEqual(saved.sections.horoscopeEdition);
    expect((await call({method:'writer-state'})).calls).toBe(0);
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();
+   await page.reload();
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await studio.getByText(/^Continue a saved edition/).click();
    await expect(table.locator('tbody tr').first()).toContainText('November 2, 2026');
    await filters.getByLabel('Sort editions').selectOption('updated');
    await expect(table.locator('tbody tr').first()).toContainText('October 5, 2026');
+   // Archived editions stay recoverable without being counted or labelled as drafts.
+   const initialRows=await call({method:'rows'}),daily=initialRows.find((row:any)=>row.sections?.horoscopeEdition?.window.period==='daily');
+   const archived=await call({method:'PATCH',body:{id:daily.id,expectedUpdatedAt:daily.updated_at,status:'ARCHIVED'}});
+   expect(archived.status).toBe(200);
+   await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
+   await filters.getByLabel('Search editions').fill('');
+   await filters.getByLabel('Horoscope type').selectOption('all');
+   await filters.getByLabel('Publication status').selectOption('ARCHIVED');
+   await expect(table.locator('tbody tr')).toHaveCount(1);
+   await expect(table.locator('tbody tr')).toContainText('Archived');
+   await expect(table).not.toContainText('drafted');
+   await filters.getByLabel('Publication status').selectOption('DRAFT');
+   await expect(table).not.toContainText('September 30, 2026');
+   // Library deep link A -> setup -> saved B must reload B, with no content mutation.
+   const monthly=initialRows.find((row:any)=>row.sections?.horoscopeEdition?.window.period==='monthly');
+   await page.goto(`/admin/content#horoscopes?edition=${daily.id}`);
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(daily.sections.horoscopeEdition.passages[0].body);
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await expect(page).toHaveURL(/#horoscopes$/);
+   await studio.getByText(/^Continue a saved edition/).click();
+   await studio.getByRole('button',{name:'Reset view',exact:true}).click();
+   await expect(filters.getByLabel('Publication status')).toHaveValue('all');
+   await table.getByRole('button',{name:/October 1, 2026/}).click();
+   await expect.poll(()=>new URL(page.url()).hash).toBe(`#horoscopes?edition=${monthly.id}`);
+   await page.reload();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(monthly.sections.horoscopeEdition.passages[0].body);
+   expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   expect((await call({method:'writer-state'})).calls).toBe(0);
+   // A declined replacement keeps the current unsaved value and URL.
+   const unsaved=monthly.sections.horoscopeEdition.passages[0].body+' Unsaved local change.';
+   await studio.getByLabel('Complete reading',{exact:true}).fill(unsaved);
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await studio.getByText(/^Continue a saved edition/).click();
+   const beforeDeclinedUrl=page.url();
+   page.once('dialog',dialog=>dialog.dismiss());
+   await table.getByRole('button',{name:/November 2, 2026/}).click();
+   await expect(page).toHaveURL(beforeDeclinedUrl);
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+   expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   // Reset the independently proven dirty session before the late-detail scenario.
+   await page.goto(`/admin/content#horoscopes?edition=${monthly.id}`);
+   await page.reload();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(monthly.sections.horoscopeEdition.passages[0].body);
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await studio.getByText(/^Continue a saved edition/).click();
+   holdDetail=true;detailStarted=false;
+   await table.getByRole('button',{name:/November 2, 2026/}).click();
+   await expect.poll(()=>detailStarted).toBe(true);
+   await page.evaluate(()=>{window.location.hash='connection';});
+   await expect(page.getByLabel('CONTENT_GENERATION_SECRET',{exact:true})).toBeVisible();
+   holdDetail=false;releaseDetail();
+   await expect.poll(()=>detailOutcome).not.toBe('pending');
+   expect({detailOutcome,detailStatus,detailFailure}).toEqual({detailOutcome:'finished',detailStatus:200,detailFailure:null});
+   await expect(page.getByRole('region',{name:'Horoscope editions',includeHidden:true}).getByRole('button',{name:'1 · Dates',exact:true,includeHidden:true})).toBeEnabled();
+   await expect(studio).toHaveCount(0);
+   await expect(page).toHaveURL(/#connection$/);
+   // A changed credential must authorize a fresh read of the same edition.
+   await page.getByLabel('CONTENT_GENERATION_SECRET',{exact:true}).fill('calendar-api-fixture-changed');
+   await page.getByRole('button',{name:'Check Access',exact:true}).click();
+   const readsBefore=detailCredentials.length;
+   await page.evaluate(id=>{window.location.hash=`horoscopes?edition=${id}`;},monthly.id);
+   await expect.poll(()=>detailCredentials.length).toBeGreaterThan(readsBefore);
+   await expect.poll(()=>detailCredentials.at(-1)).toContain('calendar-api-fixture-changed');
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(monthly.sections.horoscopeEdition.passages[0].body);
+   await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
+   await studio.getByText(/^Continue a saved edition/).click();
    listMode='error';await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
    await expect(studio.getByRole('alert')).toContainText('Synthetic edition list unavailable.');
    listMode='loading';await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();

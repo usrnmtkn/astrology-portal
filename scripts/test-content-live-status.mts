@@ -286,3 +286,22 @@ for (const [part, body] of Object.entries(summaryClauses.provenance.previousClau
     'Studio compares the same approved wording migration as the reader');
 }
 console.log('PASS installed and saved summary status follow the current approved wording');
+
+// Explicit edition IDs remain readable outside the current time window.
+{
+  const {emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody,horoscopeEditionFromRow} = await import('../apps/web/src/content/horoscopeEditions.mjs');
+  for (const period of ['daily','weekly','monthly','seasonal'] as const) for (const year of [2020,2030]) {
+    const hours=period==='daily'?24:period==='weekly'?168:720;
+    const startsAt=`${year}-01-01T00:00:00.000Z`;
+    const edition=emptyHoroscopeEdition({period,audience:period==='monthly'?'collective':'rising',timeZone:'UTC',startsAt,endsAt:new Date(Date.parse(startsAt)+hours*3600000).toISOString(),...(period==='seasonal'?{seasonSign:'aries'}:{})});
+    for (const passage of edition.passages) {passage.headline=`Synthetic ${passage.sign}`;passage.body='Synthetic complete reader passage.';}
+    const row={id:`qa-${period}-${year}`,content_key:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',status:'LIVE',lane:'serving',review_state:null,body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition}};
+    assert(horoscopeEditionFromRow(row));
+    assert.equal(contentLiveStatuses([row],[row],()=>true)[0].live,true,`${period} explicit-ID reader family is wired`);
+    for (const invalid of [{...row,status:'ARCHIVED'},{...row,review_state:'needs-review'},{...row,content_key:'horoscope/malformed'},{...row,body:'Different copy.'},{...row,sections:{horoscopeEdition:{...edition,passages:[]}}}]) {
+      assert.equal(horoscopeEditionFromRow(invalid),null);
+      assert.equal(contentLiveStatuses([invalid],[invalid],()=>true)[0].live,false);
+    }
+    assert.equal(contentLiveStatuses([row],[row],()=>false)[0].live,false,'Publication gate still wins');
+  }
+}

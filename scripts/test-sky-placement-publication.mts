@@ -109,3 +109,11 @@ assert.equal(keyInspections, 0, "Unversioned rows must be rejected before expens
 sources[0].review_status = "needs_review";
 assert.throws(() => reader(cachedInput), /SOURCE_GAP/, "Changed eligibility must invalidate prepared copy immediately");
 console.log("PASS: current published Sky article/Rx revisions replace the baseline, repeated edits, stale/draft rejection and retirement.");
+
+// Both article and motion reset to exact immutable corpus despite stale supplied rows.
+for(const content_key of [key,rxKey])installContentPublications([{content_key,state:'live',revision:20002,row_id:null,row_updated_at:null,updated_at:'2026-09-18T00:00:00Z'}]);
+const resetReading=reader(input);
+assert(resetReading.readerParts.includes(base.placementArticle));
+assert(resetReading.readerParts.includes(rx.Body));
+assert.equal(JSON.stringify(corpus),original);
+assert(!resetReading.readerParts.some((part:string)=>part.includes('Approved test revision')||part.includes('Approved test retrograde')));

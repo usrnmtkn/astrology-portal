@@ -17,7 +17,6 @@ import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid, surfaceSection } from "./studio-ds/recipes";
 import { StudioTabs, StudioButton, StudioIconButton, StudioInput, StudioTextarea } from "./StudioControls";
 import type { CsvContentRow, CsvRecord } from './studioCsv';
-import { ArticleBlockStyleFields } from "./ArticleBlockStyleFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
 import { AdminContentTable, AdminDataTable, AdminFilterBar } from "./AdminBrowseComponents";
@@ -258,6 +257,8 @@ const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then
 const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementWritingLinks })));
 const SkyPlacementReusableSources = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementReusableSources })));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
+const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
+const ConnectionTransitStudio = lazy(() => import("./ConnectionTransitStudio"));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const StudioCsvTools = lazy(() => import('./StudioCsvTools'));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
@@ -268,6 +269,7 @@ const PersonalTransitAiWriter = lazy(() => import("./PersonalTransitAiWriter"));
 const BondEffectPagePreview = lazy(() => import("./BondEffectPagePreview"));
 const FriendsTransitSectionFinder = lazy(() => import("./FriendsTransitSectionFinder"));
 const FriendsBetweenYouTwoComposition = lazy(() => import("./FriendsBetweenYouTwoComposition"));
+
 const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
 const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
@@ -339,6 +341,7 @@ type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERRO
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends" | "year_ahead" | "education";
 type GeneratedContentMode = "feed" | "in_depth" | "article" | "card" | string;
 type AdminDashboardPage =
+  | "connectionTransits"
   | "articles"
   | "astro101"
   | "skyWriteups"
@@ -730,6 +733,7 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
 ];
 
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
+  connectionTransits: "connection-transits",
   articles: "articles-guides",
   astro101: "astro-101",
   skyWriteups: "sky-writeups",
@@ -798,6 +802,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart", group: "Write" },
   { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects", group: "Write" },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon, group: "Write" },
+  { page: "connectionTransits", label: "Connection Transits", icon: Users, group: "Write" },
   { page: "calendarWriteups", label: "Calendar Write-ups", icon: CalendarDays, group: "Write" },
   { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects", group: "Write" },
   { page: "articles", label: "Articles & Guides", icon: FileText, group: "Write" },
@@ -965,6 +970,7 @@ function parseAdminHash() {
 
 function adminPageTitle(activePage: AdminDashboardPage) {
   switch (activePage) {
+    case "connectionTransits": return "Connection Transits";
     case "articles": return "Articles & Guides";
     case "astro101": return "Astro 101";
     case "skyWriteups": return "Sky Write-ups";
@@ -3259,6 +3265,7 @@ export function GeneratedContentAdminDashboard() {
   const [compatibilityAspectSelection, setCompatibilityAspectSelection] = useState<CompatibilityAspectSelection | null>(null);
   const compatibilityAspectFormRef = useRef<HTMLElement>(null);
   const compatibilityAspectRequestRef = useRef(0);
+  const connectionSourceRequestRef = useRef(0);
   useEffect(() => {
     if (!compatibilityAspectSelection) return;
     compatibilityAspectFormRef.current?.scrollIntoView({ block: "center" });
@@ -4415,6 +4422,12 @@ export function GeneratedContentAdminDashboard() {
     setSelectedTemplateVariableSourceId(null);
   }
 
+  function hasChangedSavedDraft() {
+    if (!draft) return false;
+    const serialized = JSON.stringify(draft);
+    return serialized !== editorBaselineRef.current && serialized !== editorSavedInputRef.current;
+  }
+
   function hasPendingArticleChanges() {
     return Boolean(
       subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || dailyWritingDirtyRef.current
@@ -4430,7 +4443,7 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
-      const draftChanged = draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current;
+      const draftChanged = hasChangedSavedDraft();
       if (!csvBusy && !draftChanged && !hasPendingArticleChanges() && natalUnsavedSourcesRef.current.size === 0) return;
       event.preventDefault();
       event.returnValue = "";
@@ -5870,7 +5883,7 @@ export function GeneratedContentAdminDashboard() {
       return navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "lunation-writing", writing: "dated", draft: row.id }));
     }
     const replacingUnsavedEditor = draft && row.id !== draft.id && (
-      JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
+      hasChangedSavedDraft()
       || hasPendingArticleChanges()
     );
     if (replacingUnsavedEditor && !preservingParentDraft && !window.confirm("Discard the unsaved changes in this editor?")) return false;
@@ -6215,7 +6228,7 @@ export function GeneratedContentAdminDashboard() {
         if (await openRow(existing)) setMessage("Opened the existing exact write-up.");
         return;
       }
-      if (draft && (JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current || hasPendingArticleChanges())
+      if (draft && (hasChangedSavedDraft() || hasPendingArticleChanges())
         && !window.confirm("Discard the unsaved changes in this editor?")) return;
       if (document.activeElement instanceof HTMLElement) editorReturnFocusRef.current = document.activeElement;
       setSelectedRowId(null);
@@ -6321,7 +6334,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function confirmSkyEditorNavigation() {
-    const unsaved = draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current;
+    const unsaved = hasChangedSavedDraft();
     return !(unsaved || hasPendingArticleChanges()) || window.confirm("Discard the unsaved changes in this editor?");
   }
 
@@ -6592,7 +6605,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function openSkySummaryField(field: SkySummaryField, initialBody?: string) {
-    if (draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
+    if (hasChangedSavedDraft()
       && !window.confirm("Discard the unsaved changes in this editor?")) return;
     setIsLoading(true);
     try {
@@ -6697,6 +6710,30 @@ export function GeneratedContentAdminDashboard() {
   function showCompatibilityAspectCreator() {
     setIsCreateMenuOpen(false);
     setCompatibilityAspectSelection(compatibilityAspectFromSearch(compatibilityQuery));
+  }
+
+  async function openConnectionSource(key: string) {
+    const requestId = ++connectionSourceRequestRef.current;
+    const originatingHash = window.location.hash;
+    setIsLoading(true);
+    try {
+      const result = await readStudioContentDocument(key, secret);
+      if (requestId !== connectionSourceRequestRef.current || originatingHash !== window.location.hash) return;
+      const existing = result.rows.find(row => row.status !== "ARCHIVED") ?? result.rows[0];
+      if (existing) { await openRow(existing as unknown as AdminGeneratedContentRow); return; }
+      const { connectionSourceDraft } = await import("./connectionTransitSources");
+      if (requestId !== connectionSourceRequestRef.current || originatingHash !== window.location.hash) return;
+      setSelectedRowId(null);
+      setEditorSourceRow(null);
+      setCompositionEditorContext(null);
+      setEditorSaveError("");
+      rememberSavedDraft(connectionSourceDraft(key));
+      scrollEditorToTop();
+    } catch (error) {
+      if (requestId === connectionSourceRequestRef.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
+    } finally {
+      if (requestId === connectionSourceRequestRef.current) setIsLoading(false);
+    }
   }
 
   async function openCompatibilityAspect() {
@@ -7089,7 +7126,10 @@ export function GeneratedContentAdminDashboard() {
                       <Users size={16} aria-hidden="true" />
                       <span>Friends Transits</span>
                     </StudioButton>
-                    <div className="admin-nav-workspace-group" hidden={!(activePage === "skyWriteups" || friendsTransitAudience)} aria-label="Friends Transits sections">
+                    <div className="admin-nav-workspace-group" hidden={!(activePage === "skyWriteups" || activePage === "connectionTransits" || friendsTransitAudience)} aria-label="Friends Transits sections">
+                      <StudioButton type="button" onClick={() => navigateAdminPage("connectionTransits")} aria-current={activePage === "connectionTransits" ? "page" : undefined}>
+                        <span>Connection transit sources</span>
+                      </StudioButton>
                       <StudioButton
                         type="button"
                         title="Edit the bond-effect passages shown under Friends > Transits > Between you two"
@@ -7287,7 +7327,7 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
-        {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} /></Suspense></div>}
+        {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} /></Suspense></div>}
         {hasOpenedAiWriting && <div hidden={activePage !== "aiWriting"}><Suspense fallback={<PageLoading message="Loading AI writing…" />}><HoroscopeWritingStudio secret={secret} /></Suspense></div>}
 
         {activePage === "reviewQueue" && (
@@ -7881,6 +7921,12 @@ export function GeneratedContentAdminDashboard() {
             </section>
           </section>
         )}
+
+              {activePage === "connectionTransits" && <Suspense fallback={<PageLoading compact message="Opening connection transit sources…" />}>
+                <ConnectionTransitStudio busy={isLoading} onOpenTransits={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" }))}
+                  onEdit={key => void openConnectionSource(key)} />
+                {renderEditor()}
+              </Suspense>}
 
         {activePage === "knowledge" && fallbackSectionFilter !== "lunar-calendar" && (
           <section className="admin-template-page admin-fallback-library">
@@ -10370,6 +10416,9 @@ export function GeneratedContentAdminDashboard() {
       && currentDraft.contentKey.startsWith("authored/transit-return/");
     const isExactPersonalTransitDraft = isAuthoredTransitAspectDraft || isExactTransitReturnDraft;
     const isBondEffectDraft = currentDraft.contentKey.startsWith("fallback-hook/bond-effect-");
+    const isConnectionActivationDraft = currentDraft.contentKey.startsWith("authored/connection-activation/");
+    const bodyYouLabel = isConnectionActivationDraft ? "Activation passage" : fallbackEditorGuidance?.bodyYouLabel ?? "You view copy";
+    const bodyTheyLabel = isConnectionActivationDraft ? "Reciprocal draft (editorial only)" : fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy";
     const bondEffectParts = isBondEffectDraft ? currentDraft.contentKey.split("/") : [];
     const bondEffectKind = bondEffectParts[1]?.slice("bond-effect-".length) ?? "";
     const bondEffectPlanet = bondEffectParts[2] ?? "";
@@ -11896,10 +11945,10 @@ export function GeneratedContentAdminDashboard() {
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
             <label className="admin-review-copy-editor studio-surface" data-reader-audience="you">
-              <span>{fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}</span>
+              <span>{bodyYouLabel}</span>
               <StudioTextarea
                 data-sky-field="body_you"
-                aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}
+                aria-label={bodyYouLabel}
                 value={isExactTransitReturnDraft
                   ? (packageFieldString(currentDraft, "body_you") || packageFieldString(currentDraft, "body") || currentDraft.body)
                   : packageFieldString(currentDraft, "body_you")}
@@ -11933,7 +11982,7 @@ export function GeneratedContentAdminDashboard() {
           ))}
           {showPackageBodyThey && !skyFallbackEditor && (
             <label className="admin-review-copy-editor studio-surface" data-reader-audience="they">
-              <span>{fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}</span>
+              <span>{bodyTheyLabel}</span>
               {isExactNatalAspectDraft && (
                 <small className="admin-field-hint" id="natal-aspect-they-name-hint" role="note">
                   Name variable: <code>{natalAspectTheyNameVariable}</code>. Enter it exactly where the person&apos;s name should appear; the app replaces it with their name.
@@ -11949,7 +11998,7 @@ export function GeneratedContentAdminDashboard() {
                 aria-describedby={isExactNatalAspectDraft
                   ? "natal-aspect-they-name-hint"
                   : isAuthoredTransitAspectDraft ? "transit-aspect-they-name-hint" : undefined}
-                aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}
+                aria-label={bodyTheyLabel}
                 value={packageFieldString(currentDraft, "body_they")}
                 onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
               />
@@ -12011,7 +12060,7 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-hint">{description} Write the complete passage. Leave blank to use the default version. Save and publish with the rest of this aspect.</small>
             </label>
           ))}
-          {showArticleStyleEditor && (
+          {showArticleStyleEditor && <Suspense fallback={<PageLoading compact message="Loading article section styles…" />}>
             <ArticleBlockStyleFields
               allowAdd
               blocks={astro101Blocks}
@@ -12035,7 +12084,7 @@ export function GeneratedContentAdminDashboard() {
                 setDraft({ ...currentDraft, sections });
               }}
             />
-          )}
+          </Suspense>}
           {showNatalFriendEditor && natalPlacementPlanet && natalPlacementSign && (
             <section className={`${surfaceSection} admin-editor-guidance admin-natal-friend-editor`} aria-label="Friends natal copy and sources">
               <Stack gap="sm">

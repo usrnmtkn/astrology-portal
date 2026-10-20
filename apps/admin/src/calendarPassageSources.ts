@@ -4,7 +4,7 @@ import type { LiveGeneratedContent } from '../../web/src/services/generatedConte
 import { createCalendarMoonSources } from '../../../src/shared/features/calendar/calendarMoonSourcesCore';
 import { lunationReaderContentKeys } from '../../web/src/content/lunationArticleIdentity';
 import { isGovernedReaderEligible } from '../../web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser';
-import { contentPublication, publicationAllowsContent } from '../../web/src/content/contentPublicationState';
+import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from '../../web/src/content/contentPublicationState';
 
 /** Package sources come from the authenticated source API, never the full reader bundle. */
 export function publishedPassageSources(rows: CalendarPreviewRow[]) {
@@ -13,7 +13,7 @@ export function publishedPassageSources(rows: CalendarPreviewRow[]) {
     if (row.id === `package:${row.content_key}`) {
       const original = record?.body_you ?? record?.body ?? record?.text;
       if (!record || record.contentKey !== row.content_key || row.body !== original
-        || !isGovernedReaderEligible({ ...record, contentKey: row.content_key }) || contentPublication(row.content_key)) return [];
+        || !isGovernedReaderEligible({ ...record, contentKey: row.content_key }) || !publicationAllowsContent(row.content_key)) return [];
       return [{ ...row, status: 'LIVE', lane: 'serving', review_state: null }];
     }
     return publicationAllowsContent(row.content_key, row.id, row.updated_at, (row as CalendarPreviewRow & { target_date?: string }).target_date) ? [row] : [];
@@ -27,7 +27,8 @@ export function calendarStudioMoonSources(content: Map<string, LiveGeneratedCont
       for (const key of lunationReaderContentKeys(event)) {
         const body = content.get(key)?.body?.trim();
         if (body) return { contentKey: key, body };
-        if (contentPublication(key)) return { contentKey: key, body: '' };
+        const publication=contentPublication(key);
+        if (publication && !publicationRestoresBaseline(publication)) return { contentKey: key, body: '' };
       }
       return null;
     }

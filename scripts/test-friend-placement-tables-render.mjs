@@ -241,7 +241,11 @@ try {
   }));
   assert.match(populatedSynastryHtml, /Your Sun trine Alex&#x27;s Moon/);
   assert.match(populatedSynastryHtml, /You recognize each other&#x27;s rhythm quickly/);
-  assert.match(populatedSynastryHtml, /Easy recognition/);
+  // Established #742 card/header contract: subtitle/pills belong in articles,
+  // while the card keeps its title, complete description, action and orb.
+  assert.doesNotMatch(populatedSynastryHtml, /aspect-row-subtitle|Easy recognition/);
+  assert.match(populatedSynastryHtml, /Read More/);
+  assert.match(populatedSynastryHtml, /aria-label="1° orb"/);
   assert.doesNotMatch(populatedSynastryHtml, /Add both charts/);
 
   const natalTabHtml = renderToStaticMarkup(React.createElement(FriendNatalTab, {
@@ -329,6 +333,7 @@ try {
   const populatedTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsFixture, {
     bondTransits: [{
       id: "bond-1",
+      detailAvailable: true,
       headline: "A shared pressure point is active",
       effectBody: "The connection feels more serious today.",
       activationBody: "Patience reveals what needs attention."
@@ -411,8 +416,10 @@ try {
   }));
   const visibleTiming = durationOnlyHtml.match(/updates-aspect-row__meta-line[^>]*>(.*?)<\/span><p/s)?.[1];
   assert.ok(visibleTiming, "Stationary timing is rendered.");
-  assert.doesNotMatch(visibleTiming, /<span>3Y3M<\/span>/,
-    "A duration-only estimate must not be repeated as a date range.");
+  assert.equal((visibleTiming.match(/<span>3Y3M<\/span>/g) ?? []).length, 1,
+    "The established card/header contract keeps the sole visible timing estimate.");
+  assert.doesNotMatch(durationOnlyHtml, /class="[^"]*planet-placement-row__duration/,
+    "Duration pills remain in article headers rather than repeating on cards.");
   assert.doesNotMatch(populatedTransitsHtml, /Read what this means/);
   assert.doesNotMatch(populatedTransitsHtml, /friend-transit-focus-card/);
   assert.doesNotMatch(populatedTransitsHtml, /Today for Alex/);

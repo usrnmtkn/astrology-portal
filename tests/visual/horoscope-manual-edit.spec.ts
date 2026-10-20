@@ -1,3 +1,4 @@
+import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
@@ -30,7 +31,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     if(!method)return false;const result=await call({method,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;
    }});
    const studio=page.getByRole('region',{name:'Horoscope editions'});
-   const open=async()=>{await page.goto('/admin/content#horoscopes');await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^(Synthetic monthly publication|Monthly horoscopes)/}).click();};
+   const open=async()=>{await page.goto('/admin/content#horoscopes');await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^(Synthetic monthly publication|Monthly horoscopes)/}).click();};
    await open();const reading=studio.getByLabel('Complete reading',{exact:true});
    await reading.fill(monthlyManualBody);
    await change({reviewerNotes:'Synthetic metadata update while editor is open.'});
@@ -71,7 +72,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(reading).toHaveValue(remote);await expect(studio.getByLabel('Reading headline',{exact:true})).toHaveValue('External monthly headline');
    await reading.fill(monthlyManualBody);await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^(Synthetic monthly publication|Monthly horoscopes)/}).click();
+   await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^(Synthetic monthly publication|Monthly horoscopes)/}).click();
    await expect(reading).toHaveValue(monthlyManualBody);await expect(studio.getByLabel('Reading headline',{exact:true})).toHaveValue('External monthly headline');
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();

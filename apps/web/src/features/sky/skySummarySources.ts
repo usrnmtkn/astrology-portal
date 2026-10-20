@@ -1,7 +1,7 @@
 import { sunSeasonSourceKeys } from "../../content/skySunSeason";
 import { skyDailySummaryFields, skySummaryTemplateErrors } from "../../content/skyDailySummaryCatalog";
 import { moonSummaryKey, selectedMoonKind } from "../../content/skyMoonSummary";
-import { contentPublication, publicationAllowsContent } from "../../content/contentPublicationState";
+import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from "../../content/contentPublicationState";
 import { ingressSummaryKeys } from "../../content/skySummaryEvents";
 import type { SkyDailySummaryFacts } from "../../content/skyDailySummary";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
@@ -23,7 +23,7 @@ export function skySummarySourceKeys(facts: SkyDailySummaryFacts, events: LunarC
 export function missingPublishedSkySummaryKeys(keys: readonly string[], content: Content) {
   return keys.filter(key => {
     const publication = contentPublication(key);
-    if (publication?.state !== "live") return false;
+    if (publication?.state !== "live" || publicationRestoresBaseline(publication)) return false;
     const row = content.get(key);
     // The canonical loader has already checked LIVE/serving/review-clear;
     // normalized LiveGeneratedContent does not always retain the status field.

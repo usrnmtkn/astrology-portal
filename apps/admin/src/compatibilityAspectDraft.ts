@@ -1,10 +1,10 @@
+import {connectionPointTitle as title} from "../../web/src/content/connectionTransit";
 import type {AdminDraft} from "./GeneratedContentAdminDashboard";
 import {compatibilityAspectKey, type CompatibilityAspectSelection} from "./compatibilityAspectSources";
 
 export function compatibilityAspectSourceDraft(selection: CompatibilityAspectSelection): AdminDraft {
   const contentKey = compatibilityAspectKey(selection);
   if (!contentKey) throw new Error("Choose both planets or points and an aspect.");
-  const title = (word: string) => word.split("-").map(part => part[0].toUpperCase() + part.slice(1)).join(" ");
   return {
     id: null, contentKey, surface: "synastry", mode: "in_depth", status: "DRAFT",
     headline: `${title(selection.first)} ${selection.aspect} ${title(selection.second)}`,

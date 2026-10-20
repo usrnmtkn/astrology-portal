@@ -1,9 +1,6 @@
 
-export const compatibilityAspectPoints = [
-  "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto",
-  "chiron", "lilith", "north-node", "south-node", "ascendant", "descendant", "midheaven", "imum-coeli"
-] as const;
-export const compatibilityAspectTypes = ["conjunction", "sextile", "square", "trine", "opposition"] as const;
+import { connectionPoints as compatibilityAspectPoints, connectionAspects as compatibilityAspectTypes } from "../../web/src/content/connectionTransitIdentity.js";
+export { compatibilityAspectPoints, compatibilityAspectTypes };
 export type CompatibilityAspectSelection = { first: string; aspect: string; second: string };
 const prefix = "fallback-hook/synastry-pair/";
 

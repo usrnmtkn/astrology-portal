@@ -157,3 +157,40 @@ for (const restoring of [false, true]) test(`${restoring ? 'Restoring account' :
     await expect(page.locator('.sky-detail-article .article-body-inner').first()).toContainText('The system that works is the one that makes your life easier to live.',{timeout:60_000});
   } finally {releaseProfile();releaseSky();await page.unrouteAll({behavior:'wait'});}
 });
+
+for (const [width,theme] of [[390,'dark'],[1440,'light']] as const) {
+  test(`A plain root article parent restores Sky on Close, Back and Forward ${width} ${theme}`,async({page})=>{
+    test.setTimeout(90000);
+    await page.setViewportSize({width,height:1000});
+    await page.clock.setFixedTime(new Date('2026-10-12T16:00:00Z'));
+    await page.addInitScript(theme=>{
+      localStorage.setItem('tldrastro:theme',theme);
+      localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'Synthetic New York',latitude:40.7128,longitude:-74.006,timeZone:'America/New_York'}));
+    },theme);
+    await page.route('**/api/**',route=>route.fulfill({status:503,json:{error:'Isolated offline source'}}));
+    await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**',route=>route.fulfill({status:503,json:{}}));
+    await bundledPublications(page);
+    await page.goto('/?date=2026-10-11');
+    const parent=page.url();
+    const sun=page.locator('.planet-placement-row:has(.card-read-more)').filter({hasText:'Sun in Libra'}).first();
+    await expect(sun).toBeVisible({timeout:45000});
+    await sun.click();
+    const article=page.locator('.sky-detail-page');
+    await expect(article.getByRole('heading',{level:1})).toHaveText('Sun in Libra');
+    const body=await article.locator('.article-body-inner').first().innerText();
+    expect(body.length).toBeGreaterThan(1000);
+    await page.getByRole('button',{name:'Close detail',exact:true}).click();
+    await expect(page).toHaveURL(parent);
+    await expect(article).toHaveCount(0);
+    await expect(sun).toBeVisible();
+    await page.goForward();
+    await expect(article.getByRole('heading',{level:1})).toHaveText('Sun in Libra');
+    await expect(article.locator('.article-body-inner').first()).toHaveText(body,{useInnerText:true});
+    await page.goBack();
+    await expect(page).toHaveURL(parent);await expect(article).toHaveCount(0);
+    await sun.click();await expect(article).toBeVisible();await page.reload();
+    await expect(article.locator('.article-body-inner').first()).toHaveText(body,{useInnerText:true});
+    await page.getByRole('button',{name:'Close detail',exact:true}).click();
+    await expect(page).toHaveURL(parent);await expect(article).toHaveCount(0);await expect(sun).toBeVisible();
+  });
+}

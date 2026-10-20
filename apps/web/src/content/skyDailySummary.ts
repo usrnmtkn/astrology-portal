@@ -7,7 +7,7 @@ import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import defaultTiming from "./skyDailySummaryTiming.json" with { type: "json" };
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
-import { contentPublication, publicationAllowsContent } from "./contentPublicationState";
+import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from "./contentPublicationState";
 import {
   calendarSeasonTransitionCountdown,
   calendarSeasonTransitionIsCurrent
@@ -64,6 +64,10 @@ function cachedVerifiedSkySummaryCopy(key: string, identity: string) {
 
 function savedCopy(content: CmsGeneratedContentMap | undefined, key: string, fallback: string, editorialPreview = false) {
   const publication = editorialPreview ? undefined : contentPublication(key);
+  if (publication && publicationRestoresBaseline(publication)) {
+    verifiedSkySummaryCopy.delete(key);
+    return fallback;
+  }
   if (publication?.state === "retired") {
     verifiedSkySummaryCopy.delete(key);
     return "";
@@ -184,7 +188,7 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     if (body === "sun" && sunSeasonRetrograde(placement.sign, facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets)) {
       const variantKey = sunSeasonKey(placement.sign, true);
       const variant = savedCopy(content, variantKey, "", editorialPreview);
-      if (variant || (!editorialPreview && contentPublication(variantKey)?.state === "live")) {
+      if (variant || (!editorialPreview && contentPublication(variantKey)?.state === "live" && !publicationRestoresBaseline(contentPublication(variantKey)!))) {
         sourceKey = variantKey;
         fullClause = variant;
       }

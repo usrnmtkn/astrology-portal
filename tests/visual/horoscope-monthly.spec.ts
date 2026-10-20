@@ -1,3 +1,4 @@
+import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
@@ -56,7 +57,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const before=library.payload.profiles.find((p:any)=>p.profile.period==='monthly');
    const changed=await call({method:'POST',url:'/api/admin/generated-content?writingProfiles=true',body:{profile:{...before.profile,voiceGuidance:'Latest monthly instructions from the owner.'},expectedUpdatedAt:before.updatedAt}});
    expect(changed.status).toBe(200);
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+   await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
    await expect(studio.getByRole('heading',{name:'Overview writing plan',exact:true})).toBeVisible();
    await studio.getByText('Writing instructions · optional',{exact:true}).click();
    await expect(studio.getByText('Using your saved monthly instructions, revision 2. You can use these as they are.',{exact:true})).toBeVisible();
@@ -76,7 +77,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     step=await call({method:'writing',body:{action:'generate',id:current.id,expectedUpdatedAt:current.updated_at,sign:'overview',approvedPlanHash:step.payload.plan.planHash}});
     current=step.payload.rows[0];
     await call({method:'legacy-monthly-plan-failure',body:{id:current.id}});
-    await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+    await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
     await expect(studio.getByRole('alert')).toHaveCount(0);
     const history=studio.locator('details').filter({has:page.locator('summary',{hasText:/^Previous attempt$/})});
     await expect(history).not.toHaveAttribute('open','');
@@ -87,7 +88,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await expect(studio.getByText('Plan saved. Resume generation to write the overview without another planning charge.',{exact:true})).toBeVisible();
     await expect(studio.getByRole('button',{name:'Resume generation',exact:true})).toBeEnabled();
     expect((await call({method:'writer-state'})).calls).toBe(1);
-    await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+    await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
     await expect(studio.getByText('Plan saved. Resume generation to write the overview without another planning charge.',{exact:true})).toBeVisible();
     expect((await call({method:'writer-state'})).calls).toBe(1);
     await call({method:'writer-state',body:{nextResult:{status:'incomplete',incomplete_details:{reason:'max_output_tokens'},usage:{input_tokens:50000,output_tokens:12000,output_tokens_details:{reasoning_tokens:11302}},output:[{type:'message',content:[{type:'output_text',text:'{"headline":"Incomplete fixture'}]}]}}});
@@ -109,7 +110,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     const profilesNow=await call({method:'GET',url:'/api/admin/generated-content?writingProfiles=true'});
     const latest=profilesNow.payload.profiles.find((p:any)=>p.profile.period==='monthly');
     expect((await call({method:'POST',url:'/api/admin/generated-content?writingProfiles=true',body:{profile:{...latest.profile,voiceGuidance:'Updated synthetic instructions after the failed attempt.'},expectedUpdatedAt:latest.updatedAt}})).status).toBe(200);
-    await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+    await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
     await expect(error).toHaveCount(0);
     await expect(history).not.toHaveAttribute('open','');
     await expect(history.locator('p')).not.toBeVisible();
@@ -137,7 +138,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(studio).toContainText('Your summary ends here.');
    const saved=(await call({method:'rows'})).find((r:any)=>r.content_key.startsWith('horoscope/monthly/'));
    expect(saved.status).toBe('DRAFT');
-   await page.reload();await studio.getByText(/^Continue a saved edition/).click();await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
+   await page.reload();await showSavedHoroscopeEditions(page,studio);await studio.getByRole('button',{name:/^Monthly horoscopes/}).click();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(edited);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();

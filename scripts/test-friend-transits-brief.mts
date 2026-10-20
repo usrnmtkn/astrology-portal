@@ -48,6 +48,7 @@ const brief = buildFriendTransitsBrief({
   ],
   bondTransits: [{
     id: "bond-1",
+      detailAvailable: true,
     headline: "A shared pressure point is active",
     effectBody: "The relationship is carrying extra weight.",
     activationBody: "Give the important part time.",

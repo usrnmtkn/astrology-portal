@@ -45,6 +45,7 @@ type FriendChartModalProps = {
   form: FriendChartFormState;
   formCopy: FriendChartFormCopy;
   isEditing: boolean;
+  restoreFocusId?: string;
   isEventForm: boolean;
   isSubmitting: boolean;
   message: string;
@@ -71,6 +72,7 @@ export function FriendChartModal({
   form,
   formCopy,
   isEditing,
+  restoreFocusId,
   isEventForm,
   isSubmitting,
   message,
@@ -86,6 +88,7 @@ export function FriendChartModal({
       className="friend-chart-modal-root"
       panelClassName="chart-modal friend-chart-modal add-chart-modal"
       titleId="friend-chart-modal-title"
+      restoreFocusId={restoreFocusId}
       width="440px"
       onClose={onClose}
     >

@@ -780,11 +780,14 @@ assert.match(
   /onOpenBondTransit=\{openBondTransitById\}/u,
   "The deferred connection-transit list must remain wired to the detail handler."
 );
-assert.match(
-  appSource,
-  /const openBondTransitDetail[\s\S]*?body: acceptedOwnerApprovedTransitBody\([\s\S]*?card\.effectBody,[\s\S]*?card\.effectContentKey,[\s\S]*?\)[\s\S]*?eyebrow: index === 0 \? "What this activates"[\s\S]*?heading: connection\.headline/u,
-  "Connection-transit detail views must show the effect once and expand the activated synastry connections."
-);
+const connectionDecision = appSource.slice(appSource.indexOf("  const selectedBondTransitSections ="), appSource.indexOf("  const selectedBondTransitViewCards ="));
+const connectionDetail = appSource.slice(appSource.indexOf("  const openBondTransitDetail ="), appSource.indexOf("  const openBondTransitById ="));
+assert.match(connectionDecision, /connectionTransitReading[\s\S]*?normalizePersonalTransitSurface[\s\S]*?section\.slot === "meaning"[\s\S]*?acceptedOwnerApprovedTransitSections/u);
+assert.match(connectionDetail, /selectedBondTransitSections\.get\(card\.id\)[\s\S]*?if \(!transitSections\.length\) return/u);
+assert.match(connectionDetail, /connectionActivationKey[\s\S]*?publishedConnectionCopy\(connectionSources, key, variables\)[\s\S]*?connectionBridgeCopy\(connectionSources, bridgeKey, variables\)[\s\S]*?sourceKeys: \[bridgeKey\][\s\S]*?What this activates[\s\S]*?sourceKeys: \[key\]/u);
+assert.match(connectionDetail, /body: transitSections\.map\(section => section\.body\)[\s\S]*?sections: activatedConnectionSections/u);
+assert.doesNotMatch(connectionDetail, /card\.effectBody|card\.effectContentKey|connection\.headline|renderReaderDirectedSynastryContact/u);
+assert.match(friendTransitsTabSource, /disabled=\{!card\.detailAvailable\}[\s\S]*?card\.detailAvailable \? <CardReadMore \/> : null/u);
 assert.ok(
   /function FriendPersonalTransitCard[\s\S]*?onClick=\{\(\) => onOpen\(transit\.id\)\}/u.test(friendTransitsTabSource)
     || /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u.test(friendTransitsTabSource),

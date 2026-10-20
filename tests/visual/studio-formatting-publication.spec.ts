@@ -1,10 +1,15 @@
 import { readerResponse } from '../helpers/reader-response';
-import { test, expect } from '@playwright/test';
+import { test, expect, type Request } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { astro101IsLiveOnLearn } from '../../apps/web/src/content/astro101';
 
 test.use({ actionTimeout: 15_000 });
+
+const readerBase = process.env.STUDIO_READER_BASE_URL;
+if (readerBase && !['127.0.0.1','localhost'].includes(new URL(readerBase).hostname)) throw new Error('Reader fixture origin must be localhost.');
+const readerHref = (pathname: string) => readerBase ? new URL(pathname, readerBase).href : pathname;
+
 
 const rows = ['chapter', 'article'].map(kind => ({
   id: `format-${kind}`, content_key: `education/astro-101/${kind}/format-${kind}`, surface: 'education', mode: 'all',
@@ -39,9 +44,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       } });
       await page.setViewportSize({ width, height: 1000 });
       const reader = await context.newPage();
+      // Separate localhost origins cannot receive the same-origin update signal.
+      const refreshSeparateReader=async()=>{if(new URL(reader.url()).origin!==new URL(page.url()).origin)await reader.reload();};
       reader.on('pageerror', error => errors.push(error.message));
       await reader.setViewportSize({ width, height: 1000 });
-      await reader.goto('/learn/astro-101/format-chapter');
+      await reader.goto(readerHref('/learn/astro-101/format-chapter'));
       await expect(reader.getByRole('heading', { name: rows[0].headline, exact: true })).toBeVisible();
       await page.goto('/admin/content#astro-101');
       await page.getByText(rows[0].headline, { exact: true }).click();
@@ -75,6 +82,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(formatted).not.toBe(original);
       await editor.getByRole('button', { name: 'Save changes', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' }))[0].sections.blocks[0].body).toBe(formatted);
+      await refreshSeparateReader();
       await expect(reader.locator('.learn-article-body ol > li')).toHaveCount(2);
       await expect(reader.locator('.learn-article-body strong')).toHaveCount(2);
       await expect(reader.locator('.learn-article-body em')).toHaveCount(2);
@@ -83,8 +91,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await editor.getByRole('button', { name: 'Move to draft', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('DRAFT');
       await expect(editor.locator('.admin-editor-context-line')).toContainText('Hidden from app');
+      await refreshSeparateReader();
       await expect(reader.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
-      await reader.goto('/learn');
+      await reader.goto(readerHref('/learn'));
       await expect(reader.getByRole('button', { name: rows[0].headline, exact: true })).toHaveCount(0);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       await page.reload();
@@ -96,13 +105,16 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(body).toHaveValue(formatted);
       await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('LIVE');
+      await refreshSeparateReader();
       await expect(reader.getByRole('button', { name: rows[0].headline, exact: true })).toBeVisible();
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       await page.getByText(rows[1].headline, { exact: true }).click();
       await expect(editor.locator('.admin-editor-context-line')).toContainText('Astro 101 · Article');
-      await reader.goto('/learn/astro-101/format-article');
+      await reader.goto(readerHref('/learn/astro-101/format-article'));
       await expect(reader.getByRole('heading', { name: rows[1].headline, exact: true })).toBeVisible();
       await editor.getByRole('button', { name: 'Move to draft', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[1].status).toBe('DRAFT');
+      await refreshSeparateReader();
       await expect(reader.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
       expect((await store.call({ method: 'rows' }))[1].sections).toEqual(rows[1].sections);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
@@ -126,3 +138,40 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     } finally { await context.unrouteAll({ behavior: "wait" }); store.close(); }
   });
 }
+
+test('Held article style module finishes after close without reopening or saving a draft',async({page,context})=>{
+  const store=await studioApiStore([rows[0]]);
+  let release!:()=>void,held=false,heldRequest:Request|undefined;
+  let outcome:{status:number|null;failure:string|null}|undefined;
+  const gate=new Promise<void>(resolve=>{release=resolve;});
+  page.on('requestfinished',async request=>{if(request===heldRequest)outcome={status:(await request.response())?.status()??null,failure:request.failure()?.errorText??null};});
+  page.on('requestfailed',request=>{if(request===heldRequest)outcome={status:null,failure:request.failure()?.errorText??'request failed'};});
+  try{
+    await context.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+    await routeStudioInventoryApi(page,{call:store.call});
+    await page.route('**/assets/ArticleBlockStyleFields-*.js',async route=>{held=true;heldRequest=route.request();await gate;await route.continue();});
+    await page.goto('/admin/content#astro-101');
+    await page.getByText(rows[0].headline,{exact:true}).click();
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    await expect.poll(()=>held).toBe(true);
+    await expect(editor.getByText('Loading article section styles…',{exact:true})).toBeVisible();
+    await expect(editor.getByRole('region',{name:'Article section styles',exact:true})).toHaveCount(0);
+    await editor.getByRole('textbox',{name:'Card title',exact:true}).fill('Unsaved held style title');
+    page.once('dialog',dialog=>dialog.accept());
+    await editor.getByRole('button',{name:'Close',exact:true}).click();
+    await expect(editor).toHaveCount(0);
+    release();
+    await expect.poll(()=>outcome).toEqual({status:200,failure:null});
+    await expect(editor).toHaveCount(0);
+    expect((await store.call({method:'rows'}))[0].headline).toBe(rows[0].headline);
+    await page.getByText(rows[0].headline,{exact:true}).click();
+    const styles=editor.getByRole('region',{name:'Article section styles',exact:true});
+    await expect(styles).toBeVisible();
+    await expect(editor.getByRole('textbox',{name:'Section 1 body',exact:true})).toHaveValue(rows[0].sections.blocks[0].body);
+    await editor.getByRole('textbox',{name:'Card title',exact:true}).fill('Saved after actual style module load');
+    await editor.getByRole('button',{name:'Save changes',exact:true}).click();
+    await expect.poll(async()=>{const row=(await store.call({method:'rows'}))[0];return {headline:row.headline,body:row.sections.blocks[0].body};}).toEqual({headline:'Saved after actual style module load',body:rows[0].sections.blocks[0].body});
+    await page.reload();await page.getByText('Saved after actual style module load',{exact:true}).click();
+    await expect(editor.getByRole('textbox',{name:'Section 1 body',exact:true})).toHaveValue(rows[0].sections.blocks[0].body);
+  }finally{release?.();await store.close();}
+});

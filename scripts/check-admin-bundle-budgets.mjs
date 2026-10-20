@@ -5,6 +5,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
+import { calendarLazyEntries, calendarLazyBoundaryFailures } from "./admin-lazy-boundary-contract.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const distRoot = path.join(repoRoot, "apps/admin/dist");
@@ -163,8 +164,15 @@ const expectedDynamicEntries = [
   "src/SkyForecastTemplateStudio.tsx",
   "src/calendarPreviewCalculation.ts",
 ];
+const groupedCalendar = calendarLazyEntries.some(key => !manifest[key]?.isDynamicEntry);
+if (groupedCalendar) {
+  let proof;
+  try { proof = JSON.parse(fs.readFileSync(path.join(distRoot, '.vite/admin-lazy-boundaries.json'), 'utf8')); } catch {}
+  failures.push(...calendarLazyBoundaryFailures({manifest, entryKey:Object.keys(manifest).find(key=>manifest[key]===entry), proof,
+    sourceBytes:key=>fs.readFileSync(path.join(repoRoot,'apps/admin',key)), chunkBytes:file=>fs.readFileSync(path.join(distRoot,file))}));
+}
 for (const key of expectedDynamicEntries) {
-  if (!manifest[key]?.isDynamicEntry) failures.push(`Expected lazy Admin entry is missing: ${key}`);
+  if (!manifest[key]?.isDynamicEntry && !(groupedCalendar && calendarLazyEntries.includes(key))) failures.push(`Expected lazy Admin entry is missing: ${key}`);
 }
 // Editor, fallback, and publication panels share the review workspace chunk.
 // Both it and source factories must still be absent from startup imports.

@@ -328,6 +328,12 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
     || /^Failed to load resource: the server responded with a status of 503\b/u.test(error.message)
       && /\/wasm\/.*\.wasm$/u.test(error.url ?? '')
   );
+
+  // The failed worker responds before DevTools forwards its terminal console
+  // events. Observe both exact failed-attempt events before classifying retry.
+  for(const message of ['failed to asynchronously prepare wasm: both async and sync fetching of the wasm failed','Aborted(both async and sync fetching of the wasm failed)']) {
+    await expect.poll(()=>errors.some(error=>error.stage==='failed'&&error.kind==='console'&&error.message===message)).toBe(true);
+  }
   expect(errors.filter(error => error.stage === 'failed' && !expectedAssetError(error))).toEqual([]);
 
   failAsset = false;

@@ -1,4 +1,5 @@
-import { useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useContext, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { PortalVisibility } from "../portalVisibility";
 import { createPortal } from "react-dom";
 
 type FloatingTooltipProps = {
@@ -20,12 +21,13 @@ const VIEWPORT_GUTTER = 12;
 const TOOLTIP_GAP = 10;
 
 export function FloatingTooltipPortal({ anchor, className, content, id, open }: FloatingTooltipPortalProps) {
+  const visible = useContext(PortalVisibility);
   const fallbackId = useId();
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const tooltip = tooltipRef.current;
-    if (!open || !anchor || !tooltip) return;
+    if (!visible || !open || !anchor || !tooltip) return;
     const viewport = window.visualViewport;
     const update = (event?: Event) => {
       if (event?.type === "scroll" && event.target === tooltip) return;
@@ -73,9 +75,9 @@ export function FloatingTooltipPortal({ anchor, className, content, id, open }: 
         target.removeEventListener("scroll", update, true);
       }
     };
-  }, [anchor, content, open]);
+  }, [anchor, content, open, visible]);
 
-  if (!open || !anchor) return null;
+  if (!visible || !open || !anchor) return null;
   return createPortal(
     <div ref={tooltipRef} id={id ?? fallbackId} role="tooltip"
       className={["floating-tooltip", className].filter(Boolean).join(" ")}

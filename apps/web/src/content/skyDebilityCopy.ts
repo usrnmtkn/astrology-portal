@@ -1,5 +1,5 @@
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
-import { contentPublication, publicationAllowsContent } from "./contentPublicationState.js";
+import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from "./contentPublicationState.js";
 import { skyDebilityField, skyDebilityFields } from "./skyDebilityCatalog.js";
 import { assembleSkyDebilityCopy } from "./skyDebilityAssembly.js";
 import type { TraditionalSkyDebilities } from "../services/planetSignDignity.mjs";
@@ -12,6 +12,7 @@ export function skyDebilityContentKeys() { return skyDebilityFields.map(field =>
 function savedCopy(content: CmsGeneratedContentMap | undefined, key: string) {
   const publication = contentPublication(key);
   const row = content?.get(key);
+  if (publication && publicationRestoresBaseline(publication)) return skyDebilityField(key)?.body;
   if (publication?.state === "retired") return null;
   if (publication) {
     // Never substitute bundled wording for a missing, retired or stale published
@@ -28,7 +29,7 @@ export function resolveSkyDebilityCopy(content: CmsGeneratedContentMap | undefin
   if (key) {
     const publication = contentPublication(key);
     const row = content?.get(key);
-    if (publication || row?.status === "LIVE") {
+    if (!(publication && publicationRestoresBaseline(publication)) && (publication || row?.status === "LIVE")) {
       // A published exact reading is indivisible. Missing/stale/retired copy
       // must never bring back the old paragraph or another combination's text.
       if (publication?.state === "retired" || !row || row.status !== "LIVE"
