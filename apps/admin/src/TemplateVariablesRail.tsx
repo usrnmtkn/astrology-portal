@@ -1,8 +1,9 @@
+import { studioLazy as lazy } from "./studioLazy";
 import { StudioButton, StudioIconButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { Stack, Text } from "./studio-ds/primitives";
 import { ChevronRight, CircleHelp, Search, X } from "lucide-react";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { CompositionMapRow, CompositionPreviewOptions } from "./compositionMap";
 import type { TemplateVariableReference } from "./templateVariableReference";

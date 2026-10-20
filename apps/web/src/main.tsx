@@ -100,7 +100,7 @@ async function startApp() {
     const Dashboard = dashboard;
     createRoot(document.getElementById("root")!).render(
       <React.StrictMode>
-        <PageLoadBoundary recoveryHref="/admin/content#review-queue" renderFallback={(detail, onRetry) => <AdminPageError detail={detail} onRetry={onRetry} recoveryHref="/admin/content#review-queue" />}><React.Suspense fallback={<AdminPageLoading label="Loading Content Studio…" />}>
+        <PageLoadBoundary localAssetRecovery recoveryHref="/admin/content#review-queue" renderFallback={(detail, onRetry) => <AdminPageError detail={detail} onRetry={onRetry} recoveryHref="/admin/content#review-queue" />}><React.Suspense fallback={<AdminPageLoading label="Loading Content Studio…" />}>
           <Dashboard />
         </React.Suspense></PageLoadBoundary>
       </React.StrictMode>

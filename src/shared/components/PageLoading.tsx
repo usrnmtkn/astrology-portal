@@ -90,10 +90,12 @@ type PageLoadBoundaryProps = {
   resetKey?: string;
   recoveryHref?: string;
   recoveryLabel?: string;
+  localAssetRecovery?: boolean;
   renderFallback?: (detail: string, retry: () => void) => ReactNode;
 };
 export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed: boolean; detail: string; assetFailure: boolean }> {
   state = { failed: false, detail: "", assetFailure: false };
+  private preloadFailures = new WeakSet<object>();
   static getDerivedStateFromError() { return { failed: true }; }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
@@ -102,7 +104,7 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
     const detail = errorDetail(error);
     console.error("Page rendering failed", error, info.componentStack);
     if (reloadReaderRouteOnce()) return;
-    this.setState({ detail });
+    this.setState({ detail, assetFailure: this.state.assetFailure || this.preloadFailures.has(error) });
   }
 
   retry = () => {
@@ -118,6 +120,14 @@ export class PageLoadBoundary extends Component<PageLoadBoundaryProps, { failed:
     // navigation instead of replacing the entire application as well.
     if (event.defaultPrevented) return;
     const payload = (event as Event & { payload?: unknown }).payload;
+    // Vite dispatches before rejecting the import. Optional Studio panels and
+    // actions catch it locally, so the event alone must not discard a draft.
+    // A rejected initial React.lazy import still reaches componentDidCatch;
+    // remember its exact error so explicit Retry reloads the cached module.
+    if (this.props.localAssetRecovery) {
+      if (payload && typeof payload === "object") this.preloadFailures.add(payload);
+      return;
+    }
     const detail = payload ? errorDetail(payload) : "A page asset from an older deployment could not be loaded.";
     // Calendar keeps its dates usable and owns the reading error/retry locally.
     // Do not preventDefault: Vite must still reject the import to its caller.

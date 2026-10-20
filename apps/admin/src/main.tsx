@@ -16,7 +16,7 @@ const recoveryHref = isCoverageRoute || isMemoryRoute ? "/admin/content#review-q
 
 createRoot(root).render(
   <React.StrictMode>
-    <PageLoadBoundary recoveryHref={recoveryHref} recoveryLabel="Open Review Queue"
+    <PageLoadBoundary localAssetRecovery recoveryHref={recoveryHref} recoveryLabel="Open Review Queue"
       renderFallback={(detail, retry) => <AdminPageError detail={detail} onRetry={retry} recoveryHref={recoveryHref} />}>
     {isMemoryRoute ? (
       <Suspense fallback={<AdminPageLoading label="Loading memory graph…" />}><MemoryGraphDashboard /></Suspense>

@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { studioLazy as lazy } from "./studioLazy";
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { FormattedProse } from '../../../src/shared/components/FormattedProse';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { AdminSelect } from './AdminNativeControls';

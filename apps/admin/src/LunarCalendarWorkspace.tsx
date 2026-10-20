@@ -1,10 +1,11 @@
+import { studioLazy as lazy } from "./studioLazy";
 import { FormattedProse } from "../../../src/shared/components/FormattedProse";
 import { StudioTabs, StudioButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { CompositionMapRow } from './compositionMap';
 import { dropSupersededPackageStarters } from './contentStudioState';
 import { lunarContentIdentity, lunarSigns, lunarWorkspaceFamilyOrder, lunarWorkspaceJobs, lunarWorkspaceSelectionFromQuery } from './lunarCalendarContent';
