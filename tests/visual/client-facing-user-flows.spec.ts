@@ -6179,6 +6179,8 @@ for (const inverse of [false, true]) {
     const detail = page.locator(".app-shell.mode-detail");
     for (const paragraph of expected) await expect(detail.getByText(paragraph, { exact: true })).toBeVisible();
     await page.reload();
+    await expect(card.locator(".synastry-contact-description")).toContainText(expected[0]);
+    await card.click();
     for (const paragraph of expected) await expect(detail.getByText(paragraph, { exact: true })).toBeVisible();
   });
 }
