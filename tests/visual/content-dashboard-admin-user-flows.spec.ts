@@ -6485,6 +6485,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
     const summary = editor.getByLabel("TL;DR / summary", { exact: true });
+    expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
     await summary.fill("QA unsaved navigation draft.");
     expect(await page.evaluate(() => !window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
     page.once("dialog", (dialog) => dialog.dismiss());
@@ -6496,6 +6497,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       await editor.getByRole("button", { name: "Save", exact: true }).click();
       await expect(editor.locator(".admin-editor-savebar")).toContainText("All changes saved");
       await expect(summary).toHaveValue(copy);
+      expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
     }
     await editor.getByRole("button", { name: "Archive source", exact: true }).click();
     await expect(editor.getByRole("button", { name: "Restore as draft", exact: true })).toBeVisible();
@@ -6508,6 +6510,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     page.on("dialog", async (dialog) => { discarded = true; await dialog.dismiss(); });
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await expect(editor).toHaveCount(0);
+    expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
     await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
     await expect(summary).toHaveValue("QA final copy after restore.");
     expect(discarded).toBe(false);

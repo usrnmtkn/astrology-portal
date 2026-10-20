@@ -170,7 +170,7 @@ for (const [width,theme] of [[390,'dark'],[1440,'light']] as const) {
     await page.route('**/api/**',route=>route.fulfill({status:503,json:{error:'Isolated offline source'}}));
     await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**',route=>route.fulfill({status:503,json:{}}));
     await bundledPublications(page);
-    await page.goto('/?date=2026-10-12');
+    await page.goto('/?date=2026-10-11');
     const parent=page.url();
     const sun=page.locator('.planet-placement-row:has(.card-read-more)').filter({hasText:'Sun in Libra'}).first();
     await expect(sun).toBeVisible({timeout:45000});

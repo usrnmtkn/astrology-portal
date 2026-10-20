@@ -4422,6 +4422,12 @@ export function GeneratedContentAdminDashboard() {
     setSelectedTemplateVariableSourceId(null);
   }
 
+  function hasChangedSavedDraft() {
+    if (!draft) return false;
+    const serialized = JSON.stringify(draft);
+    return serialized !== editorBaselineRef.current && serialized !== editorSavedInputRef.current;
+  }
+
   function hasPendingArticleChanges() {
     return Boolean(
       subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || dailyWritingDirtyRef.current
@@ -4437,7 +4443,7 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
-      const draftChanged = draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current;
+      const draftChanged = hasChangedSavedDraft();
       if (!csvBusy && !draftChanged && !hasPendingArticleChanges() && natalUnsavedSourcesRef.current.size === 0) return;
       event.preventDefault();
       event.returnValue = "";
@@ -5877,7 +5883,7 @@ export function GeneratedContentAdminDashboard() {
       return navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "lunation-writing", writing: "dated", draft: row.id }));
     }
     const replacingUnsavedEditor = draft && row.id !== draft.id && (
-      JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
+      hasChangedSavedDraft()
       || hasPendingArticleChanges()
     );
     if (replacingUnsavedEditor && !preservingParentDraft && !window.confirm("Discard the unsaved changes in this editor?")) return false;
@@ -6222,7 +6228,7 @@ export function GeneratedContentAdminDashboard() {
         if (await openRow(existing)) setMessage("Opened the existing exact write-up.");
         return;
       }
-      if (draft && (JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current || hasPendingArticleChanges())
+      if (draft && (hasChangedSavedDraft() || hasPendingArticleChanges())
         && !window.confirm("Discard the unsaved changes in this editor?")) return;
       if (document.activeElement instanceof HTMLElement) editorReturnFocusRef.current = document.activeElement;
       setSelectedRowId(null);
@@ -6328,7 +6334,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function confirmSkyEditorNavigation() {
-    const unsaved = draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current;
+    const unsaved = hasChangedSavedDraft();
     return !(unsaved || hasPendingArticleChanges()) || window.confirm("Discard the unsaved changes in this editor?");
   }
 
@@ -6599,7 +6605,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function openSkySummaryField(field: SkySummaryField, initialBody?: string) {
-    if (draft && JSON.stringify(draft) !== editorBaselineRef.current && JSON.stringify(draft) !== editorSavedInputRef.current
+    if (hasChangedSavedDraft()
       && !window.confirm("Discard the unsaved changes in this editor?")) return;
     setIsLoading(true);
     try {
