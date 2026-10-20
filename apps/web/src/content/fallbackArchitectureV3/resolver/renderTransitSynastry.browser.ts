@@ -442,8 +442,10 @@ function localizedLunationDateParts(exactAt: string, timeZone: string, label: st
 const NEEDS_ARTICLE = new Set(["sun", "moon", "north-node", "south-node"]);
 // mid-sentence reference: "the Sun", optionally with its current sign: "the Sun in Leo"
 const transitRef = (planet: string, sign?: string | null) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title(planet)}${sign ? ` in ${title(sign)}` : ""}`;
-const fill = (body: string, ctx: Ctx) =>
-  body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
+const fill = (body: string, ctx: Ctx, preserveWhitespace = false) => {
+  const rendered = body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`);
+  return preserveWhitespace ? rendered : rendered.replace(/\s{2,}/g, " ").trim();
+};
 const READER_HOLDER_VERBS = new Map<string, string>(Object.entries({
   is: "are", was: "were", has: "have", does: "do", feels: "feel", gives: "give",
   keeps: "keep", makes: "make", helps: "help", responds: "respond", reaches: "reach",
@@ -468,7 +470,7 @@ const READER_HOLDER_VERB_PATTERN = [...READER_HOLDER_VERBS.keys()].join("|");
 function renderSynastryPairVoice(body: string, holders: Ctx) {
   const readerHolder = holders.holder1 === "you" ? "holder1" : "holder2";
   const marker = "__reader_holder__";
-  let rendered = fill(body, { ...holders, [readerHolder]: marker });
+  let rendered = fill(body, { ...holders, [readerHolder]: marker }, true);
   rendered = rendered
     .replace(new RegExp(`${marker}'s`, "g"), "your")
     .replace(
@@ -1325,7 +1327,7 @@ export function createTransitSynastryRenderer(
       if (!selectionTier) {
         throw new SourceGapError(`SOURCE_GAP: ineligible synastry row ${pairRow?.contentKey ?? "missing"}`);
       }
-      return { headline: headlinePair, tag: (typeRow as { tag?: string } | undefined)?.tag ?? null, body, parts: [body], templateKey: T.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
+      return { headline: headlinePair, tag: (typeRow as { tag?: string } | undefined)?.tag ?? null, body, parts: body.split(/\n{2,}/), templateKey: T.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
     }
     throw new SourceGapError(`SOURCE_GAP: synastry aspect ${planetA}-${aspect}-${planetB}`);
   }

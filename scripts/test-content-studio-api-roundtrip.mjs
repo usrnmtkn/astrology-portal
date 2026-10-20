@@ -1598,7 +1598,7 @@ for (const [label,key] of admissionCases) {
    for (const [a,b,expected] of [['sun','venus',copy],['venus','sun',reverseCopy]]) {
      const rendered=runtime.transitSynastryFallbackRendererV3.renderSynastryAspect({planetA:a,planetB:b,aspect:'square',otherName:'QA Friend'});
      assert.equal(bundle.rowsFile.hookRows.find(r=>r.contentKey===key)[a==='sun'?'body_you':'body_they'],expected,'Publication retains every source byte.');
-     assert.equal(rendered.body,expected.replace(/\s+/gu,' '),'The token renderer retains the complete passage.');
+     assert.equal(rendered.body,expected,'The token renderer retains the complete passage and paragraph breaks.');
      assert.equal(rendered.contentKey,key);
      assert.equal(rendered.synastryTier,'exact-owner-approved');
    }
