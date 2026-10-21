@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { generateSkyArticleTemplateSlots } from '../api/_lib/content-generation.ts';
+import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 Object.assign(process.env,{STUDIO_MEMORY_FEEDBACK_ENABLED:'true',SUPABASE_URL:'https://studio-memory.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic'});
 const memory={id:'11111111-1111-4111-8111-111111111111',source_row_id:'22222222-2222-4222-8222-222222222222',
  content_key:'sky-article/saturn/aries/2026',family:'sky-article',before_text:JSON.stringify({body:'Synthetic rejected article.'}),after_text:JSON.stringify({body:'Synthetic approved article replacement. Complete last sentence.'}),
@@ -14,9 +15,11 @@ globalThis.fetch=async(url,init={})=>{
  }
  const request=JSON.parse(init.body);
  if(String(url)==='https://api.openai.com/v1/responses'){
+   assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
    prompts.push(request.input);return Response.json({id:'synthetic-response',output_text:JSON.stringify({slotValues:{opener:'Synthetic generated field.'}})});
  }
  if(String(url)==='https://api.anthropic.com/v1/messages'){
+   assert.equal(request.system,GHOSTWRITING_SKILL_INSTRUCTIONS);
    prompts.push(request.messages[0].content[0].text);return Response.json({id:'synthetic-response',content:[{type:'tool_use',name:'tldr_astro_sky_article_template_slots',input:{slotValues:{opener:'Synthetic generated field.'}}}]});
  }
  throw Error(`Unexpected network request ${new URL(String(url)).origin}`);

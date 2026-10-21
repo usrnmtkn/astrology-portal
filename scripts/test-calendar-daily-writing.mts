@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {GHOSTWRITING_SKILL_INSTRUCTIONS} from '../src/astro-writing/ghostwritingSkill.mjs';
 import {Readable} from 'node:stream';
 import {store} from '../tests/helpers/sky-article-save-api.mts';
 import handler from '../api/admin/calendar-daily-writing';
@@ -47,6 +48,7 @@ prep=(await call('prepare')).prepared;
 const race=await Promise.all([call('generate',{requestHash:prep.requestHash,authorizeWriterCall:true}),call('generate',{requestHash:prep.requestHash,authorizeWriterCall:true})]);
 assert.deepEqual(race.map(v=>v.status).sort(),[202,409]);row=race.find(v=>v.status===202).row;assert.equal(calls,1);
 assert.deepEqual(request,{...prep.request,instructions:prep.instructions});assert(request.input.includes('Latest edit.'));assert(!request.instructions.includes('SPINE'));
+assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
 assert.equal((await call('save',{workspace})).status,409);assert.equal((await call('generate',{requestHash:prep.requestHash,authorizeWriterCall:true})).status,409);
 row=(await call('poll')).row;assert.equal(polls,1);assert.equal(calls,1);
 const result=row.sections.run.results[0];assert.equal(result.candidate,candidate);assert.equal(result.outputHash,digest(candidate));assert.equal(result.ownerApproved,false);assert.equal(result.promotionAuthorized,false);assert.equal(result.status,'needs_review');

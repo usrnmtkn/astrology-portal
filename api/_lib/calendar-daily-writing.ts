@@ -5,6 +5,7 @@ import {getAstrodienstSky} from '../../apps/web/src/services/ephemeris.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
+import {withGhostwritingSkill} from '../../src/astro-writing/ghostwritingSkill.mjs';
 
 export const DAILY_PROFILE_KEY='studio-writing-profile/calendar/daily';
 export const PROFILE_FIELDS=['instructions','calendarExamples','bookExamples','rejectedExamples','outputGuidance'] as const;
@@ -68,7 +69,7 @@ export async function prepareDaily(date:string,timeZone:string,workspace:any) {
   if(PROFILE_FIELDS.some(k=>!profile[k].trim())||!workspace.thought.trim())throw new AdminHttpError(422,'Add writing instructions, references and a thought for this date before preparing the input.');
   const facts=await dailyFacts(date,timeZone);
   const input=[`CALCULATED FACTS\n\n${JSON.stringify(facts,null,2)}`,`APPROVED THOUGHT\n\n${workspace.thought}`,`DATE-SPECIFIC EXCLUSIONS\n\n${workspace.exclusions}`,`SHORT WRITER CONTRACT\n\n${profile.instructions}`,`CURRENT CALENDAR\n\n${profile.calendarExamples}`,`BOOK WRITING\n\n${profile.bookExamples}`,`REJECTED WRITING — NEGATIVE EVIDENCE ONLY\n\n${profile.rejectedExamples}`,`OUTPUT CONTRACT\n\n${profile.outputGuidance}`].join('\n\n');
-  const instructions=responses.instructionsForRole('WRITER','',{surface:'calendar-daily',family:'calendar-daily'});
+  const instructions=withGhostwritingSkill(responses.instructionsForRole('WRITER','',{surface:'calendar-daily',family:'calendar-daily'}));
   const config=provider.normalizeProviderConfig({},'writer');
   const request={...provider.buildProviderRequest({config,role:'writer',input}),background:true,store:true};
   const profileReceipt={id:row.id,updatedAt:row.updated_at,sha256:digest(profile),sourceReceipt:row.sections.sourceReceipt??null};

@@ -14,6 +14,7 @@ import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
+import { GHOSTWRITING_SKILL_INSTRUCTIONS } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
@@ -5602,6 +5603,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
       body: JSON.stringify({
         model,
         max_tokens: 5000,
+        system: GHOSTWRITING_SKILL_INSTRUCTIONS,
         messages: [
           {
             role: "user",
@@ -5914,6 +5916,7 @@ export async function generateSkyArticleTemplateSlots(
     body: JSON.stringify({
       model,
       max_tokens: 6000,
+      system: GHOSTWRITING_SKILL_INSTRUCTIONS,
       messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
       tools: [{
         name: "tldr_astro_sky_article_template_slots",

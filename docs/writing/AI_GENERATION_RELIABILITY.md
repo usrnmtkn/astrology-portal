@@ -676,3 +676,19 @@ receipts remain unchanged; old parser findings do not substitute for current
 validation. See the manual rewrite recovery contract in
 `docs/content-management/horoscope-editions.md` for local save reconciliation
 and the separate owner publication action.
+
+### Ghostwriter craft guidance — October 20
+
+Content Studio writing uses a packaged, versioned adaptation of the Ghostwriter
+skill and its anti-ai-writing foundation. Complete author passages, current
+corrections and saved surface profiles retain authority. The guidance develops
+source meaning and astrological reasoning, then edits the requested draft within
+the existing call. Generic persuasion devices and fixed paragraph formulas are
+optional rather than surface requirements.
+
+Prepared horoscope and lunar plans bind the guidance into their hashes; Daily
+Calendar binds it into the reserved request. Already stored requests retain
+their exact instructions. The integration adds no generation stage, profile
+mutation, automatic rewrite or publication authority. See
+[the integration contract](GHOSTWRITER_INTEGRATION.md) for the runtime consumers,
+upstream provenance and verification boundaries.

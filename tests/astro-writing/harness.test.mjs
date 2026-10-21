@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { effectiveRulePrompt } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
+import { withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import {
   buildMeaningPlan,
   buildArgumentOutline,
@@ -809,7 +810,7 @@ const writerClient = async ({ stage, instructions, input }) => {
   assert.equal(stage, "draft");
   const family = input.match(/CONTENT FAMILY\n([^\n]+)/u)?.[1];
   assert.ok(family);
-  assert.equal(instructions, effectiveRulePrompt(canonicalAstrologyWritingInstructions, { surface: "sky-placement-page", family }));
+  assert.equal(instructions, withGhostwritingSkill(effectiveRulePrompt(canonicalAstrologyWritingInstructions, { surface: "sky-placement-page", family })));
   assert.match(input, /OWNER-APPROVED ARGUMENT OUTLINE/u);
   assert.match(input, /RECORDED STRUCTURAL SPINE/u);
   assert.match(input, /SHARED FIVE-ROLE EVIDENCE PACKET/u);
