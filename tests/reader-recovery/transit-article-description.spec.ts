@@ -53,11 +53,12 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
 const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 const ordinal = (house: number) => `${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"}`;
 function expectedIdentity(title: string, sky: SkySnapshot, natalChart: SkySnapshot, owner = "your") {
-  const match = title.match(/^(.+?) (conjunction|conjunct|opposition|opposite|square|trine|sextile) (?:your |their )?(.+)$/)!;
+  const match = title.match(/^(.+?)(?: in ([A-Z][a-z]+))? (conjunction|conjunct|opposition|opposite|square|trine|sextile) (?:(?:your|their|Example Friend's) )?(?:natal )?(.+)$/)!;
   expect(match, `Unrecognized calculated title: ${title}`).toBeTruthy();
   const transit = sky.positions.find(position => position.planet === match[1])!;
-  const target = natalChart.positions.find(position => position.planet === match[3])!;
-  const aspect = ({ conjunction: "conjunct", opposition: "opposite" } as Record<string, string>)[match[2]] ?? match[2];
+  if (match[2]) expect(match[2]).toBe(transit.sign);
+  const target = natalChart.positions.find(position => position.planet === match[4])!;
+  const aspect = ({ conjunction: "conjunct", opposition: "opposite" } as Record<string, string>)[match[3]] ?? match[3];
   const house = (signs.indexOf(transit.sign) - signs.indexOf(natalChart.ascendant) + 12) % 12 + 1;
   return `${transit.planet} in ${transit.sign} in ${owner} ${ordinal(house)} house is ${aspect} ${owner} natal ${target.planet} in ${target.sign} in ${owner} ${ordinal(target.house)} house.`;
 }
@@ -128,8 +129,9 @@ for (const theme of ["light", "dark"]) {
     await page.goto("/?date=2026-09-08#friends?tab=charts&chart=facts-friend&view=transits");
     const row = page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(row).toBeVisible({ timeout: 45_000 });
-    expect(await page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").allTextContents()).not.toEqual(expect.arrayContaining([expect.stringContaining("Example Friend")]));
+    expect(await page.locator("button.friend-transit-row:has(.updates-aspect-row__orb) .updates-aspect-row__description").allTextContents()).not.toEqual(expect.arrayContaining([expect.stringContaining("Example Friend")]));
     const title = await row.locator(".updates-aspect-row__title").innerText();
+    expect(title).toContain("Example Friend's natal");
     const expected = expectedIdentity(title, skies[0], friendNatal, "their");
     await expect(row).not.toContainText(expected);
     await row.click();
@@ -139,7 +141,7 @@ for (const theme of ["light", "dark"]) {
     await page.reload();
     await expect(footer).toContainText(expected);
     await page.getByRole("button", { name: "Close detail", exact: true }).click();
-    const bond = page.locator("button.friend-transit-row").filter({ has: page.locator(".friend-bond-transit-activation") }).filter({ hasText: "Jupiter sextile your Pluto" }).first();
+    const bond = page.locator("button.friend-transit-row").filter({ has: page.locator(".friend-bond-transit-activation") }).filter({ hasText: "Jupiter in Leo sextile your natal Pluto" }).first();
     await expect(bond).toBeVisible();
     await expect(bond).toContainText("Example Friend");
     const namedBond = page.locator("button.friend-transit-row:has(.friend-bond-transit-activation)").filter({ has: page.locator(".updates-aspect-row__title", { hasText: "Example Friend's" }) }).first();
@@ -221,10 +223,10 @@ for (const passage of ownerPassages) {
       : position) };
     await prepare(page, "light", false, fixture);
     await page.goto("/?date=2026-09-08#friends?tab=charts&chart=facts-friend&view=transits");
-    const label = `${transit.planet} ${aspect === "conjunction" ? "conjunct" : aspect === "opposition" ? "opposite" : aspect} ${natalPoint.planet}`;
+    const label = `${transit.planet} in ${transit.sign} ${aspect === "conjunction" ? "conjunct" : aspect === "opposition" ? "opposite" : aspect} Example Friend's natal ${natalPoint.planet}`;
     const row = page.locator("button.friend-transit-row:has(.updates-aspect-row__orb)").filter({ has: page.getByText(label, { exact: true }) });
     await expect(row).toBeVisible({ timeout: 45_000 });
-    await expect(row).not.toContainText("Example Friend");
+    await expect(row.locator(".updates-aspect-row__description")).not.toContainText("Example Friend");
     await row.click();
     const article = page.locator(".sky-detail-page");
     await expect(article).toContainText(passage.body_they);

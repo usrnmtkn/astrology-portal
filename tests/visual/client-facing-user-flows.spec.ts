@@ -6138,7 +6138,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   const friendSource = moonRoutingRecords.find(row => row.body_they === friendBody);
   expect(friendSource).toBeTruthy();
   const friendTitle = await friendDetail.locator('h1').innerText();
-  const friendContact = /^Moon (conjunct|square|opposite|trine|sextile) (.+)$/.exec(friendTitle);
+  const friendContact = /^Moon in Taurus (conjunct|square|opposite|trine|sextile) Nikki's natal (.+)$/.exec(friendTitle);
   expect(friendContact).toBeTruthy();
   const friendAspect = ({ conjunct: 'conjunction', opposite: 'opposition' } as Record<string, string>)[friendContact![1]] ?? friendContact![1];
   assertActualDateSource(friendSource, friendAspect, friendContact![2], 'Nikki');

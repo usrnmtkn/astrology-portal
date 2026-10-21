@@ -1,5 +1,13 @@
 import assert from "node:assert/strict";
 import { transitArticleDescription } from "../apps/web/src/services/transitArticleDescription";
+import { articleAspectGlyphPartsFromHeading } from "../apps/web/src/utils/articleAspects";
+
+for (const title of ["Mars in Leo square Example Friend's natal Chiron", "Mars in Leo square your natal Chiron", "Mars square Chiron"]) {
+  assert.deepEqual(articleAspectGlyphPartsFromHeading(title), { from: "Mars", aspect: "square", to: "Chiron" });
+}
+assert.deepEqual(articleAspectGlyphPartsFromHeading("North Node in Aquarius opposite Example Friend’s natal Moon"), {
+  from: "North Node", aspect: "opposition", to: "Moon"
+});
 
 const transit = { transitPlanet: "Lilith", transitSign: "Capricorn", natalPoint: "North Node", natalSign: "Virgo", natalHouse: 4 };
 const chart = { ascendant: "Gemini", birthTimeKnown: true };

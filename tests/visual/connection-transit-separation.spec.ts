@@ -163,6 +163,7 @@ test('transit titles identify the sky sign and natal chart owner in both section
 
   await between.getByRole('button', { name: `Open full entry for ${readerTitle}`, exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(readerTitle);
+  await expect(page.locator('.article-eyebrow')).toHaveAttribute('aria-label', 'Aspect: Saturn trine Mars');
   await page.getByRole('button', { name: 'Close detail', exact: true }).click();
   await expect(active).toBeVisible();
   const personalTitle = activeTitles[0];
