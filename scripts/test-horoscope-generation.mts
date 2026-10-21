@@ -3,6 +3,7 @@ import {loadWeeklyOwnerEvidence} from '../src/astro-writing/weeklyOwnerEvidence.
 import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
 import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
+import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -87,6 +88,7 @@ for(const sign of edition.passages.slice(1).map(p=>p.sign)){
 }
 assert.equal(writerFixture.calls,13);assert.equal(row.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,12);
 for(const request of writerFixture.requests.values()){
+ assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
  assert(request.input.includes(HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE));
  assert(request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE));
  assert(request.input.includes(HOROSCOPE_PUBLICATION_TIMING_GUIDANCE));
@@ -264,6 +266,7 @@ for(const period of ['daily','seasonal']){
   assert.equal(generated.status,202,JSON.stringify(generated.payload));dailyRow=generated.payload.rows[0];
   const request=writerFixture.requests.get(dailyRow.source_snapshot.horoscopeGeneration.active.responseId);
   assert(request,'Inspect the actual daily provider request');
+  assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
   assert(request.input.includes(horoscopeEditorialPrompt(profile)),'The full saved daily profile reaches the writer');
   assert(request.input.includes('Write a brief, nontechnical daily reading'));
   assert(request.input.includes('omit numbered houses and technical explanations'));
@@ -375,6 +378,7 @@ assert.equal(seasonalRow.status,'DRAFT');
 for(const reading of seasonalEdition.passages){
  const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('COMPACT SEASONAL DEVELOPMENT PLAN')&&r.text.format.schema.required.includes('body'));
  assert(request,`Missing seasonal provider request for ${reading.sign}`);
+ assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
  assertHoroscopeRequestEvidence(request.input);
  const facts=JSON.parse(request.input.split('GOVERNED SEASONAL FACTS\n')[1].split('\n\n')[0]);
  const meaning=facts.seasonalMeaning;

@@ -14,6 +14,7 @@ import {runWritingPipeline} from './runWritingPipeline.mjs';
 import {LUNATION_ARTICLE_PROTOCOL_VERSION,lunationArticleGuidance,lunationArticleOpeningDate} from './lunationArticleInput.mjs';
 import {LUNATION_EDITORIAL_AUTHORITY} from './lunationEditorialConstraints.mjs';
 import {LUNAR_SAVED_WRITING_GUIDANCE} from './lunationSavedWriting.mjs';
+import {GHOSTWRITING_SKILL_INSTRUCTIONS} from './ghostwritingSkill.mjs';
 
 // Storage may reorder any JSON object. Arrays and exact source text retain order.
 export const lunationArticleHash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value, (_key, item) =>
@@ -87,7 +88,7 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
   const context=retrieveOwnerContext(plan,{...contextOptions,contentFamily:family,register:'second_person'});
   try{assertPositiveOwnerEvidenceContext(context,{family});}catch(error){if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;}
   const voiceSelection=context.sameFamilyExamples.map(e=>({id:e.id,sha256:lunationArticleHash(e.text)}));
-  const planHash=lunationArticleHash({version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,savedWritingGuidance:LUNAR_SAVED_WRITING_GUIDANCE,savedWriting,editorialAuthority:LUNATION_EDITORIAL_AUTHORITY,facts,outline,sources,voiceSelection,writingProfile,feedbackReceipt});
+  const planHash=lunationArticleHash({ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,version:LUNATION_ARTICLE_PROTOCOL_VERSION,protocol:lunationArticleGuidance,savedWritingGuidance:LUNAR_SAVED_WRITING_GUIDANCE,savedWriting,editorialAuthority:LUNATION_EDITORIAL_AUTHORITY,facts,outline,sources,voiceSelection,writingProfile,feedbackReceipt});
   return {writingProfile,feedbackReceipt,savedWriting,facts,eventMeaning,meaningInput,argumentInput,outline,contextOptions,context,sources,planHash,direction,
     preview:{planHash,title:facts.event.title,event:facts.event,positions:facts.positions,rulers:facts.rulers,contacts:facts.contacts,
       argument:outline,writingProfile,savedWriting,corrections:privateCorrections,voiceSources:[...(savedWriting?.references??[]).map(r=>({id:`${r.title} · ${r.contentKey}`,text:r.body,sourcePath:r.contentKey})),...context.sameFamilyExamples.map(e=>({id:e.id,text:e.text,sourcePath:e.sourcePath}))],protocol:lunationArticleGuidance}};

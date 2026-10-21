@@ -9,6 +9,7 @@ import {approveArgumentOutline} from '../../src/astro-writing/argumentGate.mjs';
 import {runWritingPipeline} from '../../src/astro-writing/runWritingPipeline.mjs';
 import {loadLunarSavedWriting} from './lunar-saved-writing.js';
 import {LUNAR_SAVED_WRITING_GUIDANCE} from '../../src/astro-writing/lunationSavedWriting.mjs';
+import {GHOSTWRITING_SKILL_INSTRUCTIONS} from '../../src/astro-writing/ghostwritingSkill.mjs';
 
 export const workspaceKey=(phase:string,sign:string)=>{lunationContentKey(phase,sign);return `${LUNATION_WORKSPACE_PREFIX}${phase}/${sign}`;};
 export async function lunarStorage(params:URLSearchParams,options:RequestInit={}) {
@@ -84,7 +85,7 @@ export async function prepareStudioLunation(workspace:any,engineFacts?:any) {
   const prepared=prepareLunationWriting({engineFacts:facts,argumentInput:workspace.argumentInput,preferredOwnerSourceIds:workspace.preferredOwnerSourceIds??[],privateCorrections:feedback.corrections});
   const savedWriting=await loadLunarSavedWriting(facts.event);
   prepared.receipt.feedbackStorage='private-studio/explicit-writing-feedback';
-  const planHash=lunationDigest({receipt:prepared.receipt,profile:profile.sha256,feedback:feedback.receipt,approach:lunationArticleGuidance,savedWriting,savedWritingGuidance:LUNAR_SAVED_WRITING_GUIDANCE});
+  const planHash=lunationDigest({ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,receipt:prepared.receipt,profile:profile.sha256,feedback:feedback.receipt,approach:lunationArticleGuidance,savedWriting,savedWritingGuidance:LUNAR_SAVED_WRITING_GUIDANCE});
   return {prepared,profile,feedback,facts,planHash,savedWriting};
 }
 export function lunarPlanPreview(value:any) {

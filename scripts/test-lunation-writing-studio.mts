@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {GHOSTWRITING_SKILL_INSTRUCTIONS} from '../src/astro-writing/ghostwritingSkill.mjs';
 import {rows,invoke,providerFixture,feedbackFixture} from '../tests/helpers/lunation-writing-api.mts';
 import {calculateLunationArticleFacts,lunationArticleEvents,verifiedLunationEclipse} from '../api/_lib/lunation-article-facts';
 import {prepareLunationArticle,writeLunationArticle,lunationArticleHash} from '../src/astro-writing/lunationArticleWriting.mjs';
@@ -44,6 +45,7 @@ for(const month of ['2026-08','2026-09']){
     assert.equal((await action('save',{headline:'Race',body:'Must not replace in-flight copy'})).status,409);
     const prompt=providerFixture.requests.at(-1).input;
     const instructions=providerFixture.requests.at(-1).instructions;
+    assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
     assert(instructions.includes('LUNAR EDITORIAL AUTHORITY'));
     assert(instructions.includes('REQUIRED LUNAR WORDING'));
     assert(instructions.includes('CORRECTIO'));

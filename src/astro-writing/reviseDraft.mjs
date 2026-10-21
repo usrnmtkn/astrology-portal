@@ -5,6 +5,7 @@ import {
   isCardWritingSurface
 } from "./cardWritingStandard.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
+import { withGhostwritingSkill } from "./ghostwritingSkill.mjs";
 import { unapprovedDraft } from "./generateDraft.mjs";
 
 function permittedFields(review) {
@@ -39,7 +40,7 @@ export async function reviseDraft({
   const patch = await modelClient({
     stage: "revision",
     role: isCardWritingSurface({ surface, family }) ? "CARD_REVISER_V3" : "REVISER",
-    instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
+    instructions: withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family })),
     input: JSON.stringify({
       instruction: "Revise only the supplied blocking failed lines. Return a JSON patch containing only those fields. Do not rewrite successful or advisory-only material.",
       surface,

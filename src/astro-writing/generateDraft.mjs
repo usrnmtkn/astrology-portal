@@ -12,6 +12,7 @@ import { attachGenerationMetadata, writeGenerationMetadata } from "./generationM
 import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
 import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
+import { withGhostwritingSkill } from "./ghostwritingSkill.mjs";
 import { resolveStudioWritingProfile, studioWritingProfileReceipt } from "./studioWritingProfileReceipt.mjs";
 import { buildHoroscopeDraftInput, horoscopeDraftSchema, HOROSCOPE_EDITORIAL_AUTHORITY } from './horoscopeDraftInput.mjs';
 import { buildLunationDraftInput, LUNATION_DRAFT_SCHEMA } from './lunationDraftInput.mjs';
@@ -240,7 +241,7 @@ export async function generateDraft({
   const input=seasonalPreparation?draftInput:[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface}),renderApprovedVoiceStyleReference(approvedStyleReference)].filter(Boolean).join('\n\n');
   const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
     ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
-  const instructions=effectiveRulePrompt(baseInstructions, { surface, family });
+  const instructions=withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
   const value = await modelClient({
     stage: "draft",
     role,

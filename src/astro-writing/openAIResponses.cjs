@@ -12,6 +12,7 @@ const { LEGACY_RHETORICAL_JUDGE_POLICY, LEGACY_HOROSCOPE_WRITER_POLICY } = requi
 const { LUNATION_EDITORIAL_AUTHORITY } = require("./lunationEditorialAuthority.cjs");
 const { renderEffectiveRulesForPrompt } = require("./effectiveRules.cjs");
 const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
+const { withGhostwritingSkill } = require("./ghostwritingSkill.cjs");
 
 const CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS = `ROLE: TLDR ASTRO CARD JUDGE V3 CANDIDATE
 
@@ -19,6 +20,7 @@ This role is calibration-only and is not active in production. Apply only the su
 
 const ROLES = new Set(["MEANING_PLANNER", "WRITER", "COLD_REVIEWER", "REVIEWER", "RHETORICAL_REVIEWER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3", "CARD_REVIEWER_V3"]);
 const EFFECTIVE_RULE_ROLES = new Set(["WRITER", "REVIEWER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3"]);
+const GHOSTWRITING_ROLES = new Set(["WRITER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3"]);
 // Seasonal-only architecture roles. Existing role instructions are unchanged.
 const SEASONAL_ROLES = new Set(['SEASONAL_MECHANISM','SEASONAL_PLANNER','SEASONAL_PLAN_REVIEWER','SEASONAL_VOICE_REVIEWER','SEASONAL_MEANING_REVIEWER']);
 
@@ -95,7 +97,8 @@ function governedInstructionsForRole(role, {
   const reviewerGovernance = role === "REVIEWER"
     ? "MODEL REVIEW GOVERNANCE: Model editorial findings are advisory except the three evidenced contextual rhetorical-pattern blockers. Do not claim approval authority, and do not use severity to authorize an automatic rewrite."
     : "";
-  const base = [canonical, effectiveRules, reviewerGovernance].filter(Boolean).join("\n\n");
+  const proseInstructions = GHOSTWRITING_ROLES.has(role) ? withGhostwritingSkill(canonical) : canonical;
+  const base = [proseInstructions, effectiveRules, reviewerGovernance].filter(Boolean).join("\n\n");
   return taskInstructions.trim() ? `${base}\n\n${taskInstructions.trim()}` : base;
 }
 

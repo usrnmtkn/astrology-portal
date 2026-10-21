@@ -25,6 +25,7 @@ import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
 import {loadMonthlyHoroscopeEvidence} from './monthlyHoroscopeEvidence.mjs';
 import {HOROSCOPE_RHETORICAL_REVIEW} from './horoscopeRhetoricalReview.mjs';
 import {buildHellenisticMeaningSupport} from './hellenisticMeaningSupport.mjs';
+import {GHOSTWRITING_SKILL_INSTRUCTIONS} from './ghostwritingSkill.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 export const horoscopeWritingVersion='horoscope-writer/v17';
@@ -178,7 +179,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       approvedStyleReference:approvedVoiceStyleReference({family:'horoscope',surface:'horoscopes'}).receipt,
       meaningSupport:buildHellenisticMeaningSupport({facts:{...brief,house,developments},plan,family:'horoscope',surface:'horoscopes'}).receipt};
   });
-  const planHash=digest({...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
+  const planHash=digest({ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,...(edition.window.period==='weekly'?{rejectedReadings}:{}),brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
   const prepared={edition,brief,writingProfile,entries,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
