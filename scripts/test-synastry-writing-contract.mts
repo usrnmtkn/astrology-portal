@@ -77,7 +77,9 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('"As a result"'), 'The owner-identified transition is retained as a negative style example.');
   assert(instructions.includes('a feeling word alone does not explain the interaction'));
   assert(instructions.includes('constructive_expression is not a required resolution'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v4-2026-10-21'));
+  assert(instructions.includes('A meaning plan establishes supported interpretation, not reader wording'), 'The writer must not paraphrase planner labels into reader copy.');
+  assert(instructions.includes('Do not repeat the same contrast in new vocabulary'), 'Additional sentences must develop the interaction rather than restate it.');
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v5-2026-10-21'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
   // Inspect both actual provider fields: OpenAI's canonical transport can add
   // instructions that are absent from the assembled user prompt.
@@ -140,6 +142,8 @@ try {
         assert(stages[0].body.instructions.includes('SYNASTRY MEANING AUTHORITY'));
         assert(stages[0].body.instructions.includes("specific interaction and its supported consequences"), 'The actual planner must retain the source-specific development.');
         assert(stages[0].body.instructions.includes('A broad contrast such as logic versus feelings is incomplete'));
+        assert(stages[0].body.instructions.includes('observable_behaviors must describe supported things people say or do'), 'The planner must distinguish behavior from an emotional verdict.');
+        assert(stages[0].body.instructions.includes('Do not infer a fear or need merely to explain a planetary function'));
         assert.deepEqual(JSON.parse(stages[0].body.input).governedFacts, JSON.parse(JSON.stringify(variant.facts)), 'Complete directional facts remain unchanged in the planner input.');
         assert(stages[3].body.instructions.includes('SYNASTRY REVIEW AUTHORITY'));
         for (const stage of stages) assert(!stage.body.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
@@ -166,6 +170,7 @@ try {
   const reviser = governedInstructionsForRole('REVISER', { surface: 'synastry', family: 'synastry-aspect' });
   assert(reviser.includes('Revise only the supplied failed fields'));
   assert(reviser.includes(RHETORICAL_WRITER_POLICY));
+  assert(reviser.includes('A meaning plan establishes supported interpretation, not reader wording'));
   assert(!reviser.includes('SKY PLACEMENT ARTICLE SPINE'));
   assert.throws(() => governedInstructionsForRole('WRITER', { surface: 'synastry', family: 'synastry-aspect',
     governedInstructions: 'An unrelated instruction override.' }), /canonical role instructions/);
@@ -183,6 +188,7 @@ try {
     const prompt = provider === 'openai' ? request.body.input : request.body.messages[0].content[0].text;
     const instructions = provider === 'openai' ? request.body.instructions : request.body.system;
     assert(!instructions.includes('Prefer direct causal sentences to report transitions'), 'The refinement stays within directional synastry.');
+    assert(!instructions.includes('A meaning plan establishes supported interpretation, not reader wording'));
     assert(!prompt.includes('OUTPUT SHAPE FOR SYNASTRY ASPECT'));
     assert(prompt.includes('action: one specific useful move.'));
   }

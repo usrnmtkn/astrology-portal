@@ -720,7 +720,7 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
-The shared synastry writer uses `synastry-aspect/v4-2026-10-21` for directional
+The shared synastry writer uses `synastry-aspect/v5-2026-10-21` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,
 fixed paragraph count or instruction to keep planetary reasoning out of the body.
@@ -754,6 +754,17 @@ transitions, and no compulsory resolution from a plan's `constructive_expression
 This is scoped synastry guidance, not a global phrase ban, mandatory scene or
 new validation gate. Complete rejected passages and exact owner reasons remain
 private, exact-target feedback; they are never positive voice examples.
+
+The v5 authority distinguishes a meaning plan from reader wording. The planner
+is instructed to separate supported behavior from emotional verdicts and avoid
+inventing a fear or need to explain a planetary function. The writer is instructed
+to develop the supported interaction rather than paraphrase plan fields or repeat
+one contrast in different vocabulary. These are prompt instructions, not proof
+that a new candidate follows them. The preceding bounded v4 sample retained its
+source-specific tension but still repeated broad mental/emotional categories and
+violated existing wording rules. It remains an unapproved private test artifact;
+no new positive voice example, private owner rejection or model stage follows
+from that assistant observation. No additional generation is part of this repair.
 
 `scripts/test-synastry-writing-contract.mts` intercepts both providers at the
 actual generation handler. It covers supported and challenging contacts, the
