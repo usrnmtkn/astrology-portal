@@ -100,15 +100,21 @@ try {
     status: 'active', scope: 'passage', reason: 'Synthetic passage-specific correction.', version: 2,
     created_at: '2026-09-10T12:01:00Z', updated_at: '2026-09-10T12:02:00Z' };
   Object.assign(process.env, { STUDIO_MEMORY_FEEDBACK_ENABLED: 'true', SUPABASE_URL: 'https://studio-memory.invalid', SUPABASE_SERVICE_ROLE_KEY: 'synthetic' });
+  const explicit={id:'33333333-3333-4333-8333-333333333333',version:1,status:'active',kind:'rejection',target_keys:[live.content_key],
+    rejected_text:'Private synthetic rejected Sky wording.',owner_reason:'Private synthetic Sky owner reason.',source_roles:null,
+    source_uri:'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',source_date:'2026-10-21T05:00:00Z'};
   globalThis.fetch = async input => {
     assert.equal(String(input), 'https://studio-memory.invalid/rest/v1/rpc/studio_memory_active_snapshot');
-    return Response.json([{ snapshot: { rows: [live] } }]);
+    return Response.json([{ snapshot: { rows: [live],writingFeedback:[explicit] } }]);
   };
   const withFeedback = await runStudioSkyWriting(live.content_key, 'generate', '');
   assert.match(globalThis.__skyMemoryPrompts.at(-1), /Synthetic approved Studio replacement/);
   assert.equal(withFeedback.memoryReceipt.studioFeedback.selected[0].version, 2);
   assert.equal(withFeedback.memoryReceipt.selected.filter(row => row.memoryId.startsWith('studio-')).length, 1);
   assert(!JSON.stringify(withFeedback.memoryReceipt).includes(live.after_text));
+  assert(globalThis.__skyMemoryPrompts.at(-1).includes(explicit.owner_reason));
+  assert.equal(withFeedback.memoryReceipt.writingFeedback.selected[0].id,explicit.id);
+  assert(!JSON.stringify(withFeedback.memoryReceipt).includes(explicit.rejected_text));
   const count = globalThis.__skyMemoryPrompts.length;
   globalThis.fetch = async () => { throw new Error('Synthetic outage'); };
   await assert.rejects(runStudioSkyWriting(live.content_key, 'generate', ''), /Storage request failed/);

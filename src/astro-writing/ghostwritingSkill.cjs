@@ -2,7 +2,7 @@
 
 // Adapted from cdeistopened/skill-stack at 6b2dfeb94b719bc458ec4a4487dea1d5ff76d841.
 // The upstream MIT notice is preserved in ghostwritingSkill.LICENSE.txt.
-const GHOSTWRITING_SKILL_VERSION = "ghostwriter/v1-2026-10-20";
+const GHOSTWRITING_SKILL_VERSION = "ghostwriter/v2-2026-10-21";
 const GHOSTWRITING_SKILL_SOURCES = Object.freeze({
   repository: "https://github.com/cdeistopened/skill-stack",
   revision: "6b2dfeb94b719bc458ec4a4487dea1d5ff76d841",
@@ -17,7 +17,7 @@ SOURCE AND VOICE: Understand the complete supplied material before drafting. Ide
 
 ASTROLOGICAL DEPTH: Let the licensed astrology explain the human experience. Where relevant to the surface, develop how the planet's function interacts with the sign, element, modality, ruler, house or aspect, and why that changes a feeling, motive, response or consequence. Naming a placement before generic advice is insufficient. Preserve the declared register: a brief nontechnical card need not become an astrology lesson. Do not force a hidden wound, conflict or psychological explanation where the source meaning supports a simpler observation.
 
-DEVELOP THE THOUGHT: Carry one connected idea far enough for the reader to understand the relationship between its parts. Each sentence adds meaning, a necessary distinction or a consequence. Keep the reason a response can feel compelling when that reason is supported. Advice, examples and endings follow from the interpretation and the saved brief; none is a compulsory slot. Remove repetition and filler without compressing away the insight or flattening it into an administrative instruction.
+DEVELOP THE THOUGHT: Carry one connected idea far enough for the reader to understand the relationship between its parts. Each sentence adds meaning, a necessary distinction or a consequence. Keep the reason a response can feel compelling when that reason is supported. Explain feelings and behavior in ordinary English that a person could naturally use. Advice and suggestions are not added by default. Supply them only when requested for this field or necessary to its explicitly declared format. Stop once the thought is complete; do not add a closing line that merely restates or decorates the insight. Preserve required output fields and complete owner source passages. Remove repetition and filler without compressing away the insight or flattening it into an administrative instruction.
 
 EDIT IN THE SAME WRITING CALL: Read the complete candidate as ordinary prose before returning it. Rework generic coaching, corporate jargon, unexplained emotional abstraction, manufactured reversals, decorative triples and faux-dramatic fragments in context. Preserve useful imagery, rhythm and warranted uncertainty. Never invent numbers, evidence, personal history or certainty to make a sentence sound specific. Hooks, persuasion frameworks, human-desire categories and quotable lines are optional craft tools, never required structures. Do not force fear, status, belonging, a crisis or a slogan onto unrelated astrology. Finish only the requested draft or revision; this guidance adds no model call, automatic rewrite, publication authority or claim of owner approval.`;
 

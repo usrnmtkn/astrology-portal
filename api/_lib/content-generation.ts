@@ -15,6 +15,7 @@ import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from "../../src/astro-writing/ghostwritingSkill.mjs";
+import { loadExplicitWritingFeedback } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
@@ -2634,12 +2635,12 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "STRUCTURE",
     "Open with the felt experience of being around this person.",
     "Explain what one person brings out in the other and how it may feel on both sides.",
-    "For supportive aspects, name what feels easy, then name the catch: comfort can replace facing the issue, or encouragement can pass for progress.",
+    "For supportive aspects, explain what feels easy and why. Include a complication only when supported; do not invent a catch.",
     "For challenging aspects, name the concrete mismatch, expectation, or recurring tension without making either person the villain.",
     "For conjunctions, write immediacy and concentration.",
     "For oppositions, write reflection, polarity, projection, or one part of life pulling against another.",
-    "End with one practical move in plain language.",
-    "If writing a TLDR, use three short sentences: the feeling, why it works, and one thing to watch.",
+    "Stop when the relationship experience is clear. Do not append advice, a practical move or a concluding maxim by default.",
+    "Keep a TLDR concise within its requested length. Include only what explains the relationship; no compulsory warning or closing sentence.",
     "",
     "LIVED EXAMPLES",
     "Use one or two examples maximum, only where they naturally fit inside a paragraph.",
@@ -5268,13 +5269,15 @@ async function reviewGeneratedContentWithOpenAI({
   draft,
   input,
   meaningPlan,
-  productionGate
+  productionGate,
+  writingFeedback
 }: {
   apiKey: string;
   draft: GeneratedContent;
   input: GenerateContentInput;
   meaningPlan: Record<string, unknown>;
   productionGate: ReturnType<typeof prepareProductionPreCallGate>;
+  writingFeedback?: Awaited<ReturnType<typeof loadExplicitWritingFeedback>> | null;
 }): Promise<CanonicalReview> {
   const coldReview = await reviewColdRenderedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
   const model = process.env.OPENAI_REVIEW_MODEL ?? process.env.OPENAI_JUDGE_MODEL ?? "gpt-5.6-terra";
@@ -5296,6 +5299,7 @@ async function reviewGeneratedContentWithOpenAI({
           : {}),
         meaningPlan,
         advisorySignals: sharedGenerationReviewSignals(draft, input),
+        ...(writingFeedback?.prompt ? {currentOwnerWritingCorrections:writingFeedback.prompt} : {}),
         draft
       }),
       reasoning: { effort: process.env.OPENAI_REVIEW_REASONING_EFFORT ?? "medium" },
@@ -5400,7 +5404,8 @@ async function reviseGeneratedContentWithOpenAI({
   input,
   review,
   meaningPlan,
-  productionGate
+  productionGate,
+  writingFeedback
 }: {
   apiKey: string;
   draft: StoredGeneratedContent;
@@ -5408,6 +5413,7 @@ async function reviseGeneratedContentWithOpenAI({
   review: CanonicalReview;
   meaningPlan: Record<string, unknown>;
   productionGate: ReturnType<typeof prepareProductionPreCallGate>;
+  writingFeedback?: Awaited<ReturnType<typeof loadExplicitWritingFeedback>> | null;
 }): Promise<StoredGeneratedContent> {
   const fields = [...new Set(review.violations.map((violation) => violation.location))];
   if (!fields.length || fields.some((field) => !generatedContentRevisionFields.has(field))) {
@@ -5431,6 +5437,7 @@ async function reviseGeneratedContentWithOpenAI({
           : {}),
         meaningPlan,
         failedLines,
+        ...(writingFeedback?.prompt ? {currentOwnerWritingCorrections:writingFeedback.prompt} : {}),
         violations: review.violations
       }),
       text: {
@@ -5465,7 +5472,8 @@ async function reviseGeneratedContentWithOpenAI({
     responseId: typedPayload.id,
     retryCount: 1,
     ...generatedApprovalState(),
-    generation_metadata: writeGenerationMetadata({ role: "REVISER", model, reasoningEffort })
+    generation_metadata: writeGenerationMetadata({ role: "REVISER", model, reasoningEffort,
+      ...(writingFeedback?.receipt.selected.length?{evidencePacket:{writingFeedback:writingFeedback.receipt}}:{}) })
   };
 }
 
@@ -5474,6 +5482,8 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     return deterministicNatalPlacementDraft(input);
   }
 
+  const writingFeedback = !input.reportPayload && !isFriendTransitReadingInput(input)
+    ? await loadExplicitWritingFeedback(input) : null;
   const productionGate = prepareProductionPreCallGate(input);
   assertValidationProfile(productionGate.validation.validationProfile);
   const evidenceShadow = buildProductionEvidenceShadow(input);
@@ -5481,14 +5491,16 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
   const lockedHeadline = factualHeadlineFor(input);
-  const approvedExamples = isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input);
+  const approvedExamples = (isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input))
+    .filter(example => !(writingFeedback?.rows ?? []).some(row => JSON.stringify(example).includes(JSON.stringify(row.rejected_text).slice(1,-1))));
   const meaningPlan = isFriendTransitReadingInput(input)
     ? friendTransitReadingMeaningPlan(friendTransitReadingBriefFromFacts(input.facts))
     : await planGeneratedContentWithOpenAI({ apiKey, input, productionGate });
   const legacyPrompt = `${buildPrompt(input, approvedExamples, "")}\n\nGOVERNED MEANING PLAN\n${JSON.stringify(meaningPlan, null, 2)}`;
-  const writerPrompt = productionGate.governedPromptEnabled
+  const publicWriterPrompt = productionGate.governedPromptEnabled
     ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
     : legacyPrompt;
+  const writerPrompt = [publicWriterPrompt, writingFeedback?.prompt].filter(Boolean).join("\n\n");
   recordLegacyPromptShadow(evidenceShadow, legacyPrompt);
   assertProductionRoleGate(productionGate, "WRITER", input);
   const { response, payload } = await callOpenAIResponses({
@@ -5529,7 +5541,8 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       model,
       reasoningEffort,
       sourceIds: approvedExamples.map((example) => example.contentKey),
-      evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null}
+      evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
+        ...(writingFeedback?.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
     })
   };
   validateGeneratedContentForInput(draft, input);
@@ -5539,11 +5552,11 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     throw new ContentGenerationQualityError(`Deterministic production gate failed: ${details}`);
   }
 
-  let review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
+  let review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate, writingFeedback });
   if (review.decision !== "PASS") {
-    draft = await reviseGeneratedContentWithOpenAI({ apiKey, draft, input, review, meaningPlan, productionGate });
+    draft = await reviseGeneratedContentWithOpenAI({ apiKey, draft, input, review, meaningPlan, productionGate, writingFeedback });
     validateGeneratedContentForInput(draft, input);
-    review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
+    review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate, writingFeedback });
   }
   if (review.decision !== "PASS") {
     const details = review.violations.map((violation) => `${violation.category}: ${violation.reason}`).join("; ");
@@ -5576,22 +5589,26 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
     return deterministicNatalPlacementDraft(input);
   }
 
+  const writingFeedback = !input.reportPayload && !isFriendTransitReadingInput(input)
+    ? await loadExplicitWritingFeedback(input) : null;
   const productionGate = prepareProductionPreCallGate(input);
   assertValidationProfile(productionGate.validation.validationProfile);
   const evidenceShadow = buildProductionEvidenceShadow(input);
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
   const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
   const lockedHeadline = factualHeadlineFor(input);
-  const approvedExamples = isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input);
+  const approvedExamples = (isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input))
+    .filter(example => !(writingFeedback?.rows ?? []).some(row => JSON.stringify(example).includes(JSON.stringify(row.rejected_text).slice(1,-1))));
   let qualityFeedback = "";
   let lastError: Error | null = null;
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     const legacyPrompt = `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
-    const writerPrompt = productionGate.governedPromptEnabled
+    const publicWriterPrompt = productionGate.governedPromptEnabled
       ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
       : legacyPrompt;
+    const writerPrompt = [publicWriterPrompt, writingFeedback?.prompt].filter(Boolean).join("\n\n");
     if (attempt === 0) recordLegacyPromptShadow(evidenceShadow, legacyPrompt);
     assertProductionRoleGate(productionGate, "WRITER", input);
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -5661,7 +5678,8 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
           role: "WRITER",
           model,
           sourceIds: approvedExamples.map((example) => example.contentKey),
-          evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null}
+          evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
+            ...(writingFeedback?.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
         })
       };
 
@@ -5842,11 +5860,13 @@ export async function generateSkyArticleTemplateSlots(
     ? input.writingMemory
     : await studioArticleWritingMemory(input);
   const generationInput = skyArticleSlotGenerationInput(input);
+  const writingFeedback = await loadExplicitWritingFeedback(generationInput);
   const productionGate = prepareProductionPreCallGate(generationInput);
   const evidenceShadow = buildProductionEvidenceShadow(generationInput);
   const transitContext = input.surface === "you" && input.eventType === "transit-aspect"
     ? assertPersonalTransitWriterContext(input.personalTransitContext, input.templateKey, names) : null;
-  const approvedExamples = transitContext ? [] : await loadApprovedExamples(generationInput);
+  const approvedExamples = (transitContext ? [] : await loadApprovedExamples(generationInput))
+    .filter(example => !writingFeedback.rows.some(row => JSON.stringify(example).includes(JSON.stringify(row.rejected_text).slice(1,-1))));
   // Transit meaning and passages are private. Retain hashes in receipts, never
   // their bodies in public prompt shadows. Raw mechanics stay in the gate.
   const publicPrompt = transitContext ? "Personal Transit uses verified private meaning and voice inputs." : [
@@ -5855,7 +5875,7 @@ export async function generateSkyArticleTemplateSlots(
       ? [`GOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`] : [])
   ].join("\n\n");
   // Private corrections must not enter prompt-shadow artifacts or row snapshots.
-  const prompt = [transitContext?.prompt ?? publicPrompt, memory?.prompt].filter(Boolean).join("\n\n");
+  const prompt = [transitContext?.prompt ?? publicPrompt, memory?.prompt, writingFeedback.prompt].filter(Boolean).join("\n\n");
   const writingReceipt = transitContext ? { ...transitContext.receipt,
     contextSha256: transitContext.receipt.promptSha256,
     promptSha256: createHash("sha256").update(prompt).digest("hex") } : undefined;
@@ -5914,7 +5934,8 @@ export async function generateSkyArticleTemplateSlots(
         model,
         reasoningEffort,
         sourceIds,
-        evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null}
+        evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null,
+          ...(writingFeedback.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
       })
     });
   }
@@ -5964,7 +5985,8 @@ export async function generateSkyArticleTemplateSlots(
       role: "WRITER",
       model,
       sourceIds,
-      evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null}
+      evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null,
+        ...(writingFeedback.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
     })
   });
 }

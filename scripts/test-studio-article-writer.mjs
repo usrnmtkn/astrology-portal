@@ -11,7 +11,7 @@ const prompts=[];let unavailable=false;
 globalThis.fetch=async(url,init={})=>{
  if(String(url)==='https://studio-memory.invalid/rest/v1/rpc/studio_memory_active_snapshot'){
    if(unavailable)throw Error('Synthetic memory outage');
-   return Response.json([{snapshot:{rows:[memory]}}]);
+   return Response.json([{snapshot:{rows:[memory],writingFeedback:[]}}]);
  }
  const request=JSON.parse(init.body);
  if(String(url)==='https://api.openai.com/v1/responses'){

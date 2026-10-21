@@ -9,7 +9,7 @@ import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdm
 import {studioStorage} from '../_lib/sky-studio-sources.js';
 import {assertHoroscopeRow,prepareHoroscopeBrief,horoscopePublicationIssues} from '../_lib/horoscope-editions.js';
 import {listStudioWritingProfiles} from '../_lib/studio-writing-profiles.js';
-import {activeStudioFeedback,studioFeedbackEnabled,feedbackHash} from '../_lib/studio-memory-feedback.js';
+import {loadExplicitWritingFeedback,hydrateWritingFeedbackRequest} from '../_lib/studio-explicit-writing-feedback.js';
 import {prepareHoroscopeWriting,horoscopePlanPreview,writeHoroscopeSign,horoscopeWritingVersionFor} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {horoscopeEditionBody,horoscopeReadingSigns,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {horoscopeWriterConfig,horoscopeWriterOptions,isHoroscopeResponseId} from '../../src/astro-writing/horoscopeWriterModels.mjs';
@@ -287,10 +287,8 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
       const patch={status:'DRAFT',sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition),source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:null,lastError:null,readings:{...row.source_snapshot.horoscopeGeneration.readings,[operation.sign]:receipt}}}};
       assertHoroscopeRow({...row,...patch});await persist(patch);return reply(200,{ok:true,rows:[row],pending:false});
     }
-    const memory=studioFeedbackEnabled()?await activeStudioFeedback():[];
-    // Existing feedback families have explicit scopes. Do not widen a passage
-    // or Sky correction to a new horoscope surface.
-    const feedbackReceipt={enabled:studioFeedbackEnabled(),inventoryHash:hash(memory.map(feedbackHash)),selected:[],reason:'No existing Studio feedback scope includes horoscope editions.'};
+    const explicitFeedback=await loadExplicitWritingFeedback({contentKey:row.content_key,period:row.sections.horoscopeEdition.window.period});
+    const feedbackReceipt=explicitFeedback.receipt;
     // A new plan always adopts the latest saved instructions. In-flight requests
     // and their historical receipts stay pinned to the instructions they used.
     let writingRow=row;
@@ -307,7 +305,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     const writerConfig=horoscopeWriterConfig(writerChoice,row.sections.horoscopeEdition.window.period);
     const writerModels=horoscopeWriterOptions(process.env);
     const writerAvailable=writerModels.find((writer:any)=>writer.id===writerChoice)?.available;
-    const prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,seasonalSourceRows,writerSelection:writerChoice==='current'?null:writerConfig});
+    const prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,explicitFeedback,seasonalSourceRows,writerSelection:writerChoice==='current'?null:writerConfig});
     if(recoverMonthlyPlan){
       if(prepared.planHash!==failed.operation.planHash||prepared.edition.passages.some((p:any)=>p.headline.trim()||p.body.trim()))throw new AdminHttpError(409,'The saved plan uses earlier instructions or content. Review the current writing plan before generating. Your saved readings are kept.');
       if(!apiKey)throw new AdminHttpError(503,'The horoscope writer is not connected. Restore its server API key to retrieve this plan.');
@@ -366,8 +364,9 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     let payload:any;
     const writerClient=Object.assign(async({role,instructions,input:prompt,schema,reviewEvidence,ownerEvidence}:any)=>{
         const request=buildHoroscopeProviderRequest({config:operation.config,role,input:prompt,schema,instructions});
+        const dispatchedRequest=await hydrateWritingFeedbackRequest(request,operation.receipt.feedback);
         const providerRequest=ownerEvidence?horoscopeProviderRequestSnapshot({config:operation.config,role,request,instructions}):null;
-        operation={...operation,requestHash:hash({request,instructions}),reviewEvidence,
+        operation={...operation,requestHash:hash({request:dispatchedRequest,instructions}),reviewEvidence,
           ...(ownerEvidence?{receipt:{...operation.receipt,ownerEvidence:{...ownerEvidence,providerRequest,providerRequestHash:hash(providerRequest)}}}: {})};
         // Native streams already have a stable local ID. Save it atomically with
         // the reservation, before dispatch. No second write races the result.
@@ -382,7 +381,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
           ...(batchId?{batch:{...generation.batch,attempted:[...generation.batch.attempted,sign]}}:{}),
           failures:legacy&&!failures.some((failure:any)=>failure.operation?.id===legacy.operation?.id)?[...failures,legacy]:failures}}});
         stage='dispatch';dispatchAttempted=true;
-        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash,...(reservedStreamId?{deadline:invocationDeadline,weekly:true}:{})}});
+        const {response,payload:result}=await startHoroscopeResponse({config:operation.config,role,request:dispatchedRequest,instructions,context:{editionId:row.id,operationId:operation.id,requestHash:operation.requestHash,...(reservedStreamId?{deadline:invocationDeadline,weekly:true}:{})}});
         payload=result;
         if(!response.ok) {
           if(response.status>=400&&response.status<500)readHoroscopeProviderResult({...payload,status:'failed'},{format:operation.outputFormat});
