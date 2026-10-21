@@ -65,6 +65,8 @@ export function validateSkyArticleTemplateSlotValues(
     if (/\bwhether\b/iu.test(body)) {
       throw new Error(`The writing provider used the banned word whether in ${name}.`);
     }
+    if (options.ingressEssay && /\b(?:pleasure|preferences?)\b|\bout loud\b/iu.test(body))
+      throw new Error(`The writing provider used wording prohibited by the current owner instructions in ${name}.`);
     result[name] = body;
   }
 

@@ -7,6 +7,8 @@ import { TRANSIT_INGRESS_EDITORIAL_AUTHORITY } from "./transit-ingress-editorial
 import { GeneratedRowWriteConflict, confirmedGeneratedRowWrite } from "./generated-row-writes.js";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_INSTRUCTIONS } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { studioArticleWritingMemory } from './studio-article-memory.js';
+import type { SkySeasonMeaningContext } from './sky-season-meaning.js';
+import { validateSkyIngressWriting, ingressProviderSlots, assembleIngressFields, ingressWriterFacts, validateIngressTemplateReference, type SkyIngressWritingContext, type IngressTemplateReference } from './sky-ingress-writing.js';
 import { transitReadingOwnerVoice, transitReadingOwnerVoicePrompt, transitReadingVoiceContext } from "./transit-reading-owner-voice.js";
 import fs from "node:fs";
 import { createHash } from "node:crypto";
@@ -22,7 +24,7 @@ import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/revie
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
 import { generatedApprovalState, markPipelineReady } from "../../src/astro-writing/approvalGovernance.mjs";
 import { writeGenerationMetadata } from "../../src/astro-writing/generationMetadata.mjs";
-import { callOpenAIResponses } from "../../src/astro-writing/openAIResponses.cjs";
+import { callOpenAIResponses, governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
 import {
   buildProductionEvidenceShadow,
   recordLegacyPromptShadow
@@ -88,6 +90,9 @@ export type GenerateSkyArticleTemplateSlotsInput = {
   licensedVariables?: readonly string[];
   personalTransitContext?: PersonalTransitWriterContext;
   writingMemory?: { prompt: string; receipt: NonNullable<GeneratedSkyArticleTemplateSlots["memoryReceipt"]> } | null;
+  seasonMeaning?: SkySeasonMeaningContext | null;
+  ingressWriting?: SkyIngressWritingContext;
+  ingressTemplateReference?: IngressTemplateReference;
 };
 
 export type GeneratedSkyArticleTemplateSlots = {
@@ -100,6 +105,8 @@ export type GeneratedSkyArticleTemplateSlots = {
   generation_metadata?: ReturnType<typeof writeGenerationMetadata>;
   memoryReceipt?: NonNullable<Awaited<ReturnType<typeof studioArticleWritingMemory>>>["receipt"];
   writingReceipt?: PersonalTransitWriterContext["receipt"];
+  ingressValidation?: ReturnType<typeof validateSkyIngressWriting>;
+  providerCalls?: number;
 };
 
 export class RejectedSkyArticleDraftError extends Error {
@@ -111,19 +118,25 @@ export class RejectedSkyArticleDraftError extends Error {
 
 function finishSkyArticleSlots(raw: unknown, input: GenerateSkyArticleTemplateSlotsInput,
   receipt: Omit<GeneratedSkyArticleTemplateSlots, "slotValues">): GeneratedSkyArticleTemplateSlots {
+  let ingressValidation: ReturnType<typeof validateSkyIngressWriting> | undefined;
   try {
-    return { ...receipt, slotValues: validateSkyArticleTemplateSlotValues(raw, input.requestedSlots, {
+    const assembled = input.ingressWriting ? assembleIngressFields(raw, input.requestedSlots, input.ingressWriting) : raw;
+    const slotValues = validateSkyArticleTemplateSlotValues(assembled, input.requestedSlots, {
       ingressEssay: isSkyIngressEssay(input.facts.articleFormat), licensedVariables: input.licensedVariables
-    }) };
+    });
+    ingressValidation = input.ingressWriting ? validateSkyIngressWriting(slotValues, input.ingressWriting) : undefined;
+    if (ingressValidation && !ingressValidation.passed) throw new Error(ingressValidation.issues.join(' '));
+    return { ...receipt, slotValues, ...(ingressValidation ? { ingressValidation } : {}) };
   } catch (error) {
     if (!isSkyIngressEssay(input.facts.articleFormat)) throw error;
     // Retain only requested text in a separate, unapproved candidate. Never admit
     // rejected output as editable article fields or discard its provider receipt.
     const requested = new Set(input.requestedSlots.map(slot => slot.name));
-    const slotValues = Object.fromEntries(Object.entries(raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {})
+    const retained = input.ingressWriting ? assembleIngressFields(raw, input.requestedSlots, input.ingressWriting, true) : raw;
+    const slotValues = Object.fromEntries(Object.entries(retained && typeof retained === "object" && !Array.isArray(retained) ? retained : {})
       .filter((entry): entry is [string, string] => requested.has(entry[0]) && typeof entry[1] === "string"));
     throw new RejectedSkyArticleDraftError(error instanceof Error ? error.message : "The returned draft needs correction.",
-      { ...receipt, slotValues });
+      { ...receipt, slotValues, ...(ingressValidation ? { ingressValidation } : {}) });
   }
 }
 
@@ -402,13 +415,14 @@ const promptVersion = "tldr-astro-v5";
 const SKY_LUNATION_FRAMEWORK_ID = "lunation-content-architecture-framework";
 const SKY_LUNATION_RITUAL_ID = "lunation-ritual-practice-framework";
 const defaultOpenAiModel = "gpt-4.1-mini";
+const defaultIngressOpenAiModel = 'gpt-5.6-sol';
 const defaultClaudeModel = "claude-sonnet-4-6";
 const openAiReasoningEfforts = new Set(["none", "low", "medium", "high", "xhigh", "max"] as const);
 type OpenAiReasoningEffort = "none" | "low" | "medium" | "high" | "xhigh" | "max";
 
-function configuredOpenAiReasoningEffort(model: string): OpenAiReasoningEffort | undefined {
+function configuredOpenAiReasoningEffort(model: string, scopedEffort?: string): OpenAiReasoningEffort | undefined {
   const configured = String(
-    process.env.OPENAI_GENERATION_REASONING_EFFORT
+    scopedEffort ?? process.env.OPENAI_GENERATION_REASONING_EFFORT
     ?? process.env.OPENAI_REASONING_EFFORT
     ?? ""
   ).trim().toLowerCase();
@@ -5827,20 +5841,27 @@ function skyArticleTemplateSlotPrompt(
 ) {
   const personalTransit = input.surface === "you" || (input.surface === "friends" && input.eventType === "bond-effect");
   const revisingArticle = input.templateContextRole === "existing-draft";
+  const datedIngress = (input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat) && Boolean(input.ingressWriting);
   const scopedEditorial = (input.surface === "you" && ["transit-aspect", "transit-house"].includes(input.eventType ?? ""))
-    || ((input.surface ?? "sky") === "sky" && isSkyIngressEssay(input.facts.articleFormat));
+    || ((input.surface ?? "sky") === "sky" && (isSkyIngressEssay(input.facts.articleFormat) || Boolean(input.seasonMeaning)));
   return [
-    scopedEditorial ? TRANSIT_INGRESS_EDITORIAL_AUTHORITY
+    // Dated ingress already receives its scoped authority and Ghostwriter in
+    // the system layer. Do not repeat the multi-surface transit authority here.
+    datedIngress ? "" : scopedEditorial ? TRANSIT_INGRESS_EDITORIAL_AUTHORITY
       : readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
     RHETORICAL_WRITER_POLICY,
     "",
     "TASK",
-    personalTransit
+    datedIngress
+      ? "Write one connected dated ingress article from the complete supplied meaning and voice sources, returning its prose in the requested fields. The fields are output containers, not separate writing jobs."
+      : personalTransit
       ? "Fill only the requested Personal Transit audience fields for one locked destination. Apply the owner's revision direction to existing fields when supplied."
       : revisingArticle
       ? "Write or revise only the requested article fields. When existing article prose is supplied, apply the owner's direction to that prose; otherwise write a new passage for the declared subject."
       : "Fill only the requested unfinished fields in an owner-authored Sky article template.",
-    personalTransit
+    datedIngress
+      ? "The dated output layout is fixed. Use the separately supplied complete saved article as structural reference and the complete eligible author passages for voice. Develop the article from the KB/Calendar meaning and current calculated events. Historical reference prose is not immutable wording for this new edition."
+      : personalTransit
       ? `Return reader-facing prose only. Do not save, approve, or publish.${
         typeof input.facts.placementScope === "string" && input.facts.placementScope.trim()
           ? ` ${input.facts.placementScope.trim()}`
@@ -5851,15 +5872,21 @@ function skyArticleTemplateSlotPrompt(
               : " Use the locked house and sign facts. Do not invent other placements."
       }`
       : revisingArticle
-      ? "The existing article is revision context. Preserve its subject, argument, effective wording and complete protected passages except where the owner explicitly requests a change. Existing text alone does not establish owner authorship or approval."
+      ? "The existing article is revision context. Preserve its subject, argument, effective wording and complete protected passages except where the owner explicitly requests a change. " + (input.seasonMeaning
+        ? "Check its interpretation against the supplied meaning sources; existing draft text cannot override them or establish owner authorship or approval."
+        : "Existing text alone does not establish owner authorship or approval.")
       : "The template's fixed prose is immutable. Do not rewrite it, summarize it, or return it.",
     input.licensedVariables?.length
       ? `These exact reader variables may appear in returned fields: ${input.licensedVariables.map((name) => `{{${name}}}`).join(", ")}. Do not invent other {{variables}}.`
       : "Returned fields must not contain {{ or }} placeholders.",
     "Return one value for every requested field and no other fields.",
     "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
-    "If retrogradeHistoryIncluded is true, retrogradeHistory supplies the previous and next complete retrograde cycles through its named sign, the exact previousCrossing of the current station degree when available, and separately the most recent path within its degree tolerance. Use full cycles, signTransitions and in-sign segments precisely. durationDays and daysInStationSign are exact elapsed days; civil calendar dates depend on the reference time zone. nextSameSign is a future calculation, not historical evidence. A null crossing means the previous same-sign cycle did not reach that degree. The degree reference is the current cycle's retrograde-start station. This is not proof of a prior ingress, aspect recurrence, repeated life experience, or world event. Do not invent historical context or imply causation. Missing matches are unknown outside the stated coverage.",
-    "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, applicable NEUTRAL HELLENISTIC MEANING SUPPORT, and the supplied article or fixed template context for meaning. OWNER-APPROVED STYLE REFERENCE supplies voice only, with current owner rules and surface constraints retained. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority.",
+    ...(!datedIngress || input.facts.retrogradeHistoryIncluded ? ["If retrogradeHistoryIncluded is true, retrogradeHistory supplies the previous and next complete retrograde cycles through its named sign, the exact previousCrossing of the current station degree when available, and separately the most recent path within its degree tolerance. Use full cycles, signTransitions and in-sign segments precisely. durationDays and daysInStationSign are exact elapsed days; civil calendar dates depend on the reference time zone. nextSameSign is a future calculation, not historical evidence. A null crossing means the previous same-sign cycle did not reach that degree. The degree reference is the current cycle's retrograde-start station. This is not proof of a prior ingress, aspect recurrence, repeated life experience, or world event. Do not invent historical context or imply causation. Missing matches are unknown outside the stated coverage."] : []),
+    datedIngress
+      ? "Use ASTROLOGY FACTS and the calculated ingress coverage plan for placements and timing. Its complete collective event-meaning sources, supplied ZODIAC SEASON MEANING SOURCES and applicable NEUTRAL HELLENISTIC MEANING SUPPORT establish interpretation. Eligible complete owner passages and owner-approved style references establish voice. The ingress uses temporary collective meaning, not a lifelong natal placement packet. Historical voice and Calendar passages cannot supply this year's facts."
+      : input.seasonMeaning
+      ? "Use only ASTROLOGY FACTS for placements and timing. Use GOVERNED KNOWLEDGE EVIDENCE, supplied ZODIAC SEASON MEANING SOURCES and applicable NEUTRAL HELLENISTIC MEANING SUPPORT for interpretation. The article or fixed template defines the editorial task, not additional factual authority. OWNER-APPROVED STYLE REFERENCE supplies voice only, with current owner rules and surface constraints retained. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority."
+      : "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, applicable NEUTRAL HELLENISTIC MEANING SUPPORT, and the supplied article or fixed template context for meaning. OWNER-APPROVED STYLE REFERENCE supplies voice only, with current owner rules and surface constraints retained. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority.",
     "The result is an owner-review draft. It is not approved and cannot serve by itself.",
     "",
     "SOURCE ROLES",
@@ -5879,19 +5906,22 @@ function skyArticleTemplateSlotPrompt(
     bannedPhraseRules(),
     "",
     "ASTROLOGY FACTS",
-    JSON.stringify(input.facts, null, 2),
+    JSON.stringify(input.ingressWriting ? ingressWriterFacts(input.facts) : input.facts, null, 2),
     hellenisticMeaningPrompt({facts:input.facts,surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'}),
-    approvedVoiceStylePrompt({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'}),
+    approvedVoiceStylePrompt(skyArticleVoiceStyleContext(input)),
     "",
     "REQUESTED TEMPLATE FIELDS",
     JSON.stringify(input.requestedSlots, null, 2),
     "",
-    personalTransit ? "EXISTING AUDIENCE COPY TO REVISE ONLY AS DIRECTED"
+    datedIngress ? "DATED ARTICLE OUTPUT LAYOUT"
+      : personalTransit ? "EXISTING AUDIENCE COPY TO REVISE ONLY AS DIRECTED"
       : revisingArticle ? "EXISTING ARTICLE CONTEXT" : "IMMUTABLE OWNER TEMPLATE CONTEXT",
     input.templateBody,
     "",
     "APPROVED TLDR ASTRO VOICE EXAMPLES",
-    "Use these only for voice, pacing, specificity, and sentence shape. Do not copy their astrology facts.",
+    datedIngress
+      ? "Use the complete owner-selected revised Libra article as the primary ingress voice benchmark, alongside the complete original author season passages and supporting approved Scorpio reference. Follow how meaning develops across sentences and paragraphs. Use the current meaning and calculated facts for this article; the voice references do not supply its wording, scenarios or historical astrology facts."
+      : "Use these only for voice, pacing, specificity, and sentence shape. Do not copy their astrology facts.",
     approvedExamplesPrompt(approvedExamples),
     "",
     "EXTRA VOICE NOTES",
@@ -5900,6 +5930,7 @@ function skyArticleTemplateSlotPrompt(
       ? [SKY_INGRESS_ESSAY_INSTRUCTIONS] : []),
     "",
     "BEFORE RETURNING",
+    ...(datedIngress ? ["Read the requested fields together in article order beside the complete revised Libra voice benchmark, original author season passages and supporting approved Scorpio reference. Check that the overview develops the season's meaning and each transit adds its own relevant facet, without repeated primers, detached aspect formulas or a fact-then-example rhythm. Preserve source-supported lightness and enjoyment as well as serious insight. This is an internal check in the same writing call, not another plan, judge or rewrite call."] : []),
     "Check that every requested key is present once, no unrequested key is present, and each string follows its field description and existing empty-value rules. Preserve only explicitly licensed reader variables. Keep facts within supplied coverage, preserve fixed template text outside the requested fields, and keep drafting notes outside reader values. Return only the structured result."
   ].join("\n");
 }
@@ -5927,6 +5958,11 @@ function skyArticleSlotGenerationInput(input: GenerateSkyArticleTemplateSlotsInp
   };
 }
 
+function skyArticleVoiceStyleContext(input: GenerateSkyArticleTemplateSlotsInput) {
+  return { surface: input.surface ?? 'sky', family: (input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat)
+    ? 'sky-ingress-essay' : input.eventType ?? 'sky-article-template-slots' };
+}
+
 export async function generateSkyArticleTemplateSlots(
   input: GenerateSkyArticleTemplateSlotsInput
 ): Promise<GeneratedSkyArticleTemplateSlots> {
@@ -5935,6 +5971,9 @@ export async function generateSkyArticleTemplateSlots(
   }
 
   const names = input.requestedSlots.map((slot) => slot.name);
+  const datedIngress = (input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat);
+  const providerSlots = input.ingressWriting ? ingressProviderSlots(input.requestedSlots, input.ingressWriting) : input.requestedSlots;
+  if (datedIngress && input.ingressWriting && providerSlots.length) validateIngressTemplateReference(input.ingressTemplateReference);
   if (new Set(names).size !== names.length || names.some((name) => !/^[A-Za-z][A-Za-z0-9]*$/u.test(name))) {
     throw new Error("Template slot names must be unique alphanumeric identifiers.");
   }
@@ -5953,18 +5992,22 @@ export async function generateSkyArticleTemplateSlots(
   // Transit meaning and passages are private. Retain hashes in receipts, never
   // their bodies in public prompt shadows. Raw mechanics stay in the gate.
   const publicPrompt = transitContext ? "Personal Transit uses verified private meaning and voice inputs." : [
-    skyArticleTemplateSlotPrompt(input, approvedExamples),
-    ...(productionGate.governedPromptEnabled
+    skyArticleTemplateSlotPrompt({ ...input, requestedSlots: providerSlots }, approvedExamples),
+    // The generic placement-sign packet is explicitly lifelong/natal. The
+    // dated ingress has its own complete collective event and season meaning.
+    // Keep the production role gate; exclude only that incompatible prompt.
+    ...(productionGate.governedPromptEnabled && !(datedIngress && input.ingressWriting)
       ? [`GOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`] : [])
   ].join("\n\n");
   // Private corrections must not enter prompt-shadow artifacts or row snapshots.
-  const prompt = [transitContext?.prompt ?? publicPrompt, memory?.prompt, writingFeedback.prompt].filter(Boolean).join("\n\n");
+  const prompt = [transitContext?.prompt ?? publicPrompt, datedIngress ? input.ingressTemplateReference?.prompt : undefined, input.seasonMeaning?.prompt, memory?.prompt, writingFeedback.prompt,
+    input.ingressWriting?.prompt].filter(Boolean).join("\n\n");
   const writingReceipt = transitContext ? { ...transitContext.receipt,
     contextSha256: transitContext.receipt.promptSha256,
     promptSha256: createHash("sha256").update(prompt).digest("hex") } : undefined;
   const sourceIds = transitContext ? [...new Set(transitContext.receipt.sources.map(source => source.id))]
     : approvedExamples.map(example => example.contentKey);
-  const schema = skyArticleTemplateSlotSchema(input.requestedSlots);
+  const schema = skyArticleTemplateSlotSchema(providerSlots);
   const provider = contentGenerationProvider({
     requestedProvider: input.provider,
     blockType: typeof generationInput.facts.blockType === "string" ? generationInput.facts.blockType : "sky_article",
@@ -5973,13 +6016,23 @@ export async function generateSkyArticleTemplateSlots(
   recordLegacyPromptShadow(evidenceShadow, publicPrompt);
   assertProductionRoleGate(productionGate, "WRITER", generationInput);
 
+  if (!providerSlots.length && input.ingressWriting) return finishSkyArticleSlots({}, input, {
+    provider, model: 'calculated-only', providerCalls: 0, generatedAt: new Date().toISOString(), requestedSlots: names,
+    generation_metadata: writeGenerationMetadata({ role: 'WRITER', model: 'calculated-only', sourceIds: [],
+      evidencePacket: { ingressWriting: input.ingressWriting.receipt } }),
+  });
+
   if (provider === "openai") {
     const apiKey = requireEnv("OPENAI_API_KEY");
-    const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
-    const reasoningEffort = configuredOpenAiReasoningEffort(model);
+    const model = datedIngress ? process.env.OPENAI_INGRESS_MODEL ?? defaultIngressOpenAiModel
+      : process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
+    const reasoningEffort = configuredOpenAiReasoningEffort(model, datedIngress
+      ? process.env.OPENAI_INGRESS_REASONING_EFFORT ?? (model === defaultIngressOpenAiModel ? 'xhigh' : undefined) : undefined);
+    assertProductionRoleGate(productionGate, "WRITER", generationInput);
     const { response, payload } = await callOpenAIResponses({
       apiKey,
       role: "WRITER",
+      ...(datedIngress ? { surface: 'sky', family: 'sky-ingress-essay' } : {}),
       request: {
         model,
         ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -6006,6 +6059,7 @@ export async function generateSkyArticleTemplateSlots(
     const parsed = JSON.parse(outputText) as { slotValues?: unknown };
     return finishSkyArticleSlots(parsed.slotValues, input, {
       responseId: typedPayload.id,
+      providerCalls: 1,
       provider,
       model,
       generatedAt: new Date().toISOString(),
@@ -6017,8 +6071,11 @@ export async function generateSkyArticleTemplateSlots(
         model,
         reasoningEffort,
         sourceIds,
-        evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null,
-          ...(writingFeedback.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
+        evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference(skyArticleVoiceStyleContext(input))?.receipt??null,
+          ...(writingFeedback.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{}),
+          ...(input.seasonMeaning ? { seasonMeaning: input.seasonMeaning.receipt } : {}),
+          ...(input.ingressWriting ? { ingressWriting: input.ingressWriting.receipt } : {}),
+          ...(datedIngress && input.ingressTemplateReference ? { ingressTemplateReference: input.ingressTemplateReference.receipt } : {})}
       })
     });
   }
@@ -6036,7 +6093,9 @@ export async function generateSkyArticleTemplateSlots(
     body: JSON.stringify({
       model,
       max_tokens: 6000,
-      system: GHOSTWRITING_SKILL_INSTRUCTIONS,
+      system: datedIngress
+        ? governedInstructionsForRole('WRITER', { surface: 'sky', family: 'sky-ingress-essay' })
+        : GHOSTWRITING_SKILL_INSTRUCTIONS,
       messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
       tools: [{
         name: "tldr_astro_sky_article_template_slots",
@@ -6058,6 +6117,7 @@ export async function generateSkyArticleTemplateSlots(
   if (!toolInput) throw new Error("Claude response did not include template slot values.");
   return finishSkyArticleSlots(toolInput.slotValues, input, {
     responseId: payload.id,
+    providerCalls: 1,
     provider,
     model,
     generatedAt: new Date().toISOString(),
@@ -6068,8 +6128,11 @@ export async function generateSkyArticleTemplateSlots(
       role: "WRITER",
       model,
       sourceIds,
-      evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null,
-        ...(writingFeedback.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
+      evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference(skyArticleVoiceStyleContext(input))?.receipt??null,
+          ...(writingFeedback.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{}),
+          ...(input.seasonMeaning ? { seasonMeaning: input.seasonMeaning.receipt } : {}),
+          ...(input.ingressWriting ? { ingressWriting: input.ingressWriting.receipt } : {}),
+          ...(datedIngress && input.ingressTemplateReference ? { ingressTemplateReference: input.ingressTemplateReference.receipt } : {})}
     })
   });
 }

@@ -95,8 +95,16 @@ try {
         assert(captured.includes("CURRENT PERSONAL TRANSIT READER-COPY RULE BUNDLE"));
       } else {
         const style=JSON.parse(captured.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
-        assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
+        const ingressStyle = fixture.facts.articleFormat === 'ingress-essay-v2';
+        assert.equal(style.reference.id, ingressStyle ? 'libra-ingress-voice-benchmark-20261021' : 'saturn-aries-voice-20261020');
+        assert.equal(style.reference.textSha256, ingressStyle
+          ? '2e25f72d7fddd6db112a4e8b3c8ff9fed8250844940a263742ab630d0a937fd8'
+          : 'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
         assert.equal(style.reference.ownerAuthored,false);assert.equal(style.reference.factUseAuthorized,false);
+        if (ingressStyle) {
+          assert.equal(style.supportingReferences[0].reference.textSha256,'6799ba2f672c68281981a14ea53b1baee7cdd8874f0dc6e7d624402ec5d1980b');
+          assert.equal(style.receipt.supportingReferences[0].id,'sun-scorpio-ingress-voice-20261020');
+        } else assert.equal(style.supportingReferences,undefined);
         assert.equal(captured.split('OWNER-APPROVED STYLE REFERENCE\n').length-1,1);
         const neutral=JSON.parse(captured.match(/NEUTRAL HELLENISTIC MEANING SUPPORT\n([^\n]+)/u)![1]);
         assert.equal(neutral.role,'meaning-only');

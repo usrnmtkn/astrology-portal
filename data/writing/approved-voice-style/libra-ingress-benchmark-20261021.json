@@ -1,0 +1,32 @@
+{
+  "schema": "approved-voice-style/v1",
+  "id": "libra-ingress-voice-benchmark-20261021",
+  "version": "libra-ingress-voice-benchmark/v1",
+  "title": "Owner-selected connected Libra article benchmark for dated ingress voice",
+  "author": "assistant",
+  "ownerAuthored": false,
+  "ownerApproved": true,
+  "positiveVoiceEvidence": true,
+  "role": "style-only",
+  "factUseAuthorized": false,
+  "readerServing": false,
+  "publicationAuthorized": false,
+  "scope": [
+    "sky-ingress-essay"
+  ],
+  "approval": {
+    "kind": "voice-benchmark-only",
+    "sourceUri": "thread:01a15c54-6709-7872-821c-7303fa4383a8",
+    "sourceDate": "2026-10-21",
+    "exactOwnerRequest": "Please make this version the voice benchmark for the ingress writer. Keep my KB and Calendar for meaning and dates and transits accurate. Show the changes. Don’t run another paid test, save or publish the draft."
+  },
+  "source": {
+    "kind": "owner-supplied-attachment",
+    "attachmentId": "1b8463ed-e74a-4ad1-8b23-8906900b831f",
+    "sourceSha256": "e25c3384d8b2a630f4af31a9029ce33bde0d81c311a381437dee3b83c84d280d",
+    "readerBoundary": "Complete reader article from its H1 to its final sentence. Preceding assistant editorial notes are excluded."
+  },
+  "textSha256": "2e25f72d7fddd6db112a4e8b3c8ff9fed8250844940a263742ab630d0a937fd8",
+  "wordCount": 1149,
+  "textSourceRef": "private:ingress-style/libra-ingress-voice-benchmark-20261021"
+}

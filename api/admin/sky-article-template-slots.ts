@@ -12,6 +12,9 @@ import {
 import { skyArticleTemplatePlaceholders } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_TEMPLATE, skyIngressEssayFields, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { hasVerifiedSameSignHistory } from "../../apps/web/src/services/retrogradeHistory.js";
+import { loadSkySeasonMeaning } from '../_lib/sky-season-meaning.js';
+import { buildSkyIngressWritingContext, buildIngressTemplateReference } from '../_lib/sky-ingress-writing.js';
+import { approvedVoiceStyleReference } from '../../src/astro-writing/approvedVoiceStyle.mjs';
 
 loadLocalWebEnv();
 
@@ -95,13 +98,21 @@ function existingStringValues(value: Record<string, unknown> | undefined) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== "POST") {
-    sendAdminMethodNotAllowed(res, ["POST"]);
+  const inspect = req.method === 'GET' && new URL(req.url ?? '/', 'http://studio.invalid').searchParams.get('inspect') === 'ingress-voice';
+  if (req.method !== "POST" && !inspect) {
+    sendAdminMethodNotAllowed(res, ["POST", "GET"]);
     return;
   }
   if (!await requireContentAdmin(req, res)) return;
 
   try {
+    if (inspect) {
+      const source = approvedVoiceStyleReference({surface:'sky',family:'sky-ingress-essay'});
+      sendAdminJson(res, 200, {ok:true,scope:'sky-ingress-essay',voiceBenchmark:source.receipt,
+        sourcePolicy:{meaning:'knowledge-base-and-calendar',facts:'calculated-ingress-coverage',voice:'selected-style-references'},
+        providerCalls:0,saved:false,published:false});
+      return;
+    }
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);
     if (body.includeRetrogradeHistory !== undefined && typeof body.includeRetrogradeHistory !== "boolean") throw new AdminHttpError(400, "includeRetrogradeHistory must be a boolean.");
     if (body.format !== undefined && body.format !== "saved-template" && !isSkyIngressEssay(body.format)) throw new AdminHttpError(400, "Unsupported article format.");
@@ -153,16 +164,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return;
     }
 
+    const seasonMeaning = await loadSkySeasonMeaning(facts.planet, facts.sign);
+    const writingFacts = { ...facts, retrogradeHistory: includeHistory ? facts.retrogradeHistory : undefined,
+      retrogradeHistoryIncluded: includeHistory };
     const generation = await generateSkyArticleTemplateSlots({
       templateKey: template.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
       templateBody: completeTemplate,
       planet: facts.planet,
       sign: facts.sign,
-      facts: { ...facts, retrogradeHistory: includeHistory ? facts.retrogradeHistory : undefined,
-        retrogradeHistoryIncluded: includeHistory },
+      facts: writingFacts,
       requestedSlots,
       provider: body.provider,
-      voiceNotes: body.voiceNotes
+      voiceNotes: body.voiceNotes,
+      seasonMeaning,
+      ...(ingress ? { ingressWriting: buildSkyIngressWritingContext(writingFacts),
+        ingressTemplateReference: buildIngressTemplateReference(template.content_key, template.body!) } : {}),
     });
     sendAdminJson(res, 200, {
       ok: true,
@@ -174,10 +190,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         provider: generation.provider,
         model: generation.model,
         responseId: generation.responseId ?? null,
+        ...(generation.providerCalls !== undefined ? { providerCalls: generation.providerCalls } : {}),
         generatedAt: generation.generatedAt,
         requestedSlots: generation.requestedSlots,
         generationMetadata: generation.generation_metadata ?? null,
-        memoryReceipt: generation.memoryReceipt ?? null
+        memoryReceipt: generation.memoryReceipt ?? null,
+        ...(generation.ingressValidation ? { ingressValidation: generation.ingressValidation } : {})
       }
     });
   } catch (error) {

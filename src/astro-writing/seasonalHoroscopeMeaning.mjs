@@ -18,7 +18,13 @@ export function seasonalMeaningKeys(brief) {
 export function resolveSeasonalMeaning(brief,bank,rows=[]) {
   const keys=seasonalMeaningKeys(brief);
   if(!keys.length)return null;
-  const sign=brief.window.seasonSign;
+  return resolveZodiacSeasonMeaning(brief.window.seasonSign,bank,rows);
+}
+
+/** Meaning lookup only; callers retain their own calculated placement validation. */
+export function resolveZodiacSeasonMeaning(sign,bank,rows=[]) {
+  if(!HOROSCOPE_SIGNS.includes(sign))fail('Choose a valid zodiac season before retrieving meaning.');
+  const keys=[`fallback-hook/zodiac-season/${sign}`,`fallback-hook/zodiac-season-polar-axis/${sign}`];
   const oppositeSign=HOROSCOPE_SIGNS[(HOROSCOPE_SIGNS.indexOf(sign)+6)%12];
   const sources=keys.map((contentKey,index)=>{
     const collection=bank.collections?.find(c=>c.id===(index?'sign-axis-tensions':'sign-season-content'));

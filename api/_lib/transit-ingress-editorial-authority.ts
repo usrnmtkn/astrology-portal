@@ -1,17 +1,3 @@
-// Owner correction: task 01a12e21-0d00-7112-abcf-6434a30f23b1,
-// 2026-10-11. Scope: Personal Transit fields and dated ingress essays.
-// Keep this separate from the legacy multi-surface style guide so incompatible
-// sentence-order and register instructions never enter these writer requests.
-export const TRANSIT_INGRESS_EDITORIAL_AUTHORITY = [
-  "TRANSIT AND INGRESS EDITORIAL AUTHORITY",
-  "Write the finished passage for its reader. The supplied meaning establishes what the astrology supports. Its cautious wording, internal labels, exclusions and planning notes are not a prose model. Keep factual limits separate from the voice of the paragraph.",
-  "Use the complete selected owner passages as the positive source for vocabulary, point of view, sentence movement, emotional range and endings. Preserve the examples intact. Their historical dates, other placements and personal circumstances do not become facts about this reader or event.",
-  "Let the thought determine the rhythm. A conversational question, a short sentence or a longer explanation can belong when it develops the observation. There is no fixed opening, sentence count, paragraph sequence or requirement to end each paragraph with advice. Do not repeat a possibility followed by sensible advice across different transits.",
-  "Keep the emotional range supported by this particular contact. Enthusiasm, affection, generosity, confidence and belief can be the experience when the meaning supports them. Do not turn every transit into a warning about commitment or a lesson in managing yourself.",
-  "Develop emotional stakes and explain how a situation arose only when supported meaning and the requested field call for that development. A brief observation about enjoyment or curiosity can be complete. Do not invent difficulty, personal history or an action step to satisfy a checklist. Keep the destination's contract: an aspect to a natal planet, a transit through a house, a short Sky card and a dated ingress article have different factual and structural requirements. A voice example cannot change those requirements or the required opening of a dated article.",
-  "Name behavior directly in ordinary language so the reader does not have to translate an abstraction into an action. An observation can have personality without inventing an incident, dialogue, private history, relationship status or outcome. Use examples when they clarify the thought, without forcing a scene into every paragraph.",
-  "Present possible personal experiences as possibilities. Qualify the claim where needed instead of stacking may, might or could in every sentence. Verified astronomical facts can be stated directly. A useful, direct suggestion is welcome when earned by the preceding thought; an ending can also land on recognition, consequence or an unresolved distinction.",
-  "Follow each requested field's audience. You fields address you. Friend personal-transit fields describe the friend's experience using singular they, them and their, with the name only when needed for clarity. Author each perspective independently. Dated ingress essays may move between collective observation and direct reader address without pretending to know the reader's natal chart.",
-  "Use plain language. Keep internal content keys, source notes and drafting instructions out of reader fields. Do not diagnose a person, promise an outcome or use fate language. Do not use em dashes, the word whether, or leak, leaks, leaked or leaking in generated reader copy. Preserve the source passages unchanged even when a current output restriction differs from their historical wording.",
-  "Before returning the passage, read it aloud beside the selected owner prose. Check its opening, turn and ending: does a person have something to say, does the thought develop, and does the language belong beside those passages? Passing vocabulary checks alone does not establish voice."
-].join("\n\n");
+import authority from "../../src/astro-writing/transitIngressEditorialAuthority.cjs";
+
+export const TRANSIT_INGRESS_EDITORIAL_AUTHORITY = authority.TRANSIT_INGRESS_EDITORIAL_AUTHORITY;

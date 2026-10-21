@@ -42,8 +42,13 @@ const ingressEntries = [
   entry('ingress-direct-2', 'Your second Mercury in Virgo fixture has a complete ending.'),
   entry('unrelated', 'An unrelated Jupiter Neptune Saturn fixture.'),
   entry('unrelated-2', 'Another Jupiter Neptune Saturn fixture.')
-];
+].map(row => ({ ...row, surface: 'sky-season', structuralFunction: 'article paragraph',
+  sourcePath: 'synthetic/libra-season-autumn-equinox.md' }));
 const ingressSelected = sharedGenerationOwnerExamples({ entries: ingressEntries }, ingressInput);
+assert.equal(ingressSelected.length, ingressEntries.length,
+  'The designated complete article is retained instead of being cut to a four-passage ceiling.');
+assert.throws(() => sharedGenerationOwnerExamples({ entries }, ingressInput), /no provider call/,
+  'Missing designated author-article evidence stops dated writing before a paid call.');
 assert(ingressSelected.some(row => row.contentKey === 'ingress-direct'), 'Ingress essays admit the owner’s direct reader address.');
 assert(ingressSelected.some(row => row.contentKey === 'ingress-collective'), 'Collective observations remain eligible.');
 assert.deepEqual(sharedGenerationOwnerExamples({ entries: ingressEntries }, { ...ingressInput,

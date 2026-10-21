@@ -1,0 +1,30 @@
+{
+  "schema": "approved-voice-style/v1",
+  "id": "sun-scorpio-ingress-voice-20261020",
+  "version": "sun-scorpio-ingress-voice/v1",
+  "title": "Owner-approved Sun in Scorpio voice reference for dated ingress writing",
+  "author": "assistant",
+  "ownerAuthored": false,
+  "ownerApproved": true,
+  "positiveVoiceEvidence": true,
+  "role": "style-only",
+  "factUseAuthorized": false,
+  "readerServing": false,
+  "publicationAuthorized": false,
+  "scope": [
+    "sky-ingress-essay"
+  ],
+  "approval": {
+    "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+    "sourceDate": "2026-10-20",
+    "exactOwnerRequest": "this is great, write more like this:"
+  },
+  "integrationAuthorization": {
+    "sourceUri": "thread:01a15c54-6709-7872-821c-7303fa4383a8",
+    "sourceDate": "2026-10-21",
+    "scope": "Use approved Scorpio writing for voice in the ingress writer; the original author season article and current correction govern the event-led guide structure. No draft publication."
+  },
+  "textSha256": "6799ba2f672c68281981a14ea53b1baee7cdd8874f0dc6e7d624402ec5d1980b",
+  "wordCount": 195,
+  "textSourceRef": "private:ingress-style/sun-scorpio-ingress-voice-20261020"
+}

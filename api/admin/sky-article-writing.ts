@@ -12,6 +12,7 @@ import { generateSkyArticleTemplateSlots } from '../_lib/content-generation.js';
 import { currentSkyFacts } from '../_lib/current-sky.js';
 import { loadLocalWebEnv } from '../_lib/local-env.js';
 import { contentGenerationProvider, type GenerationProvider } from '../_lib/provider-config.js';
+import { loadSkySeasonMeaning } from '../_lib/sky-season-meaning.js';
 
 loadLocalWebEnv();
 export const maxDuration = 300;
@@ -179,6 +180,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     ].join('');
 
     const articleContext = currentText.trim() || 'No existing reader-facing article prose was supplied.';
+    const seasonMeaning = await loadSkySeasonMeaning(planet, calculatedSign);
     const initialProvider = contentGenerationProvider({
       requestedProvider: body.provider,
       blockType: 'sky_article',
@@ -198,6 +200,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }],
       provider,
       voiceNotes: correction ? `${baseVoiceNotes}\n\nREWRITE REQUIRED:\n${correction}` : baseVoiceNotes,
+      seasonMeaning,
     });
 
     let generation;
