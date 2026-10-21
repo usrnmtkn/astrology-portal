@@ -4791,7 +4791,19 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     const publishRevisionButton = editor.getByRole("button", { name: "Save & publish" });
     await expect(publishRevisionButton).toBeEnabled();
+    // SQL initialization can take longer than the UI assertion timeout. Wait
+    // for the deliberately incomplete response before checking its recovery UI.
+    const lostPublicationResponse = page.waitForResponse(response => {
+      const request = response.request();
+      if (new URL(response.url()).pathname !== "/api/admin/generated-content" || request.method() !== "PATCH") return false;
+      const payload = request.postDataJSON();
+      return payload?.id === pendingRevision.id && payload?.ownerAction === "approve-package-revision";
+    });
     await publishRevisionButton.click();
+    const response = await lostPublicationResponse;
+    expect(await response.finished()).toBeNull();
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toEqual({ ok: true, rows: [] });
     await expect(editor.getByRole("alert")).toContainText("Publication is awaiting confirmation");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
     await expect(publishRevisionButton).toBeEnabled();

@@ -14,7 +14,8 @@ import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
-import { GHOSTWRITING_SKILL_INSTRUCTIONS } from "../../src/astro-writing/ghostwritingSkill.mjs";
+import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
+import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
 import { loadExplicitWritingFeedback } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
@@ -1284,6 +1285,16 @@ function modeRules(mode: ContentMode) {
 }
 
 function modeRulesForInput(input: GenerateContentInput) {
+  if (isSynastryAspectInput(input)) {
+    return [
+      "Synastry Aspect Mode: interpret one directional relationship contact between two charts.",
+      "Keep the supplied target length when present. Feed copy stays compact; in-depth and article copy can develop the interpretation further. Do not add paragraphs merely to reach a count.",
+      "Synastry structure: develop the relationship experience through connected paragraphs, without a fixed definition, problem, advice or conclusion sequence.",
+      "Keep the reader's planet and the other person's planet distinct. Explain why one response can change what the other person feels or does.",
+      "The requested length is room for interpretation, not a requirement to add a complication, another example or a closing lesson."
+    ].join("\n");
+  }
+
   if (isPersonalizedNatalPlacementAspectCard(input)) {
     return [
       "Natal Placement Aspect Card Mode: evergreen birth-chart support copy attached to a primary placement.",
@@ -1319,6 +1330,26 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
   const exactHeadline = lockedHeadline
     ? `Use this exact headline: ${JSON.stringify(lockedHeadline)}.`
     : "Use a factual astrology headline, not a poetic title.";
+
+  if (isSynastryAspectInput(input)) {
+    return [
+      "OUTPUT SHAPE FOR SYNASTRY ASPECT",
+      exactHeadline,
+      "Return every field in the supplied JSON schema. These fields have separate jobs; do not repeat the whole interpretation in each one.",
+      "tldr: a concise observation about this relationship contact, not an instruction.",
+      "summary: one or two plain sentences that preview the relationship experience.",
+      "body: the complete interpretation in natural paragraphs. Name the supplied planets and aspect where they help explain the experience. Weave each planet's function into what the people may want, notice or misunderstand; do not leave the astrological reasoning entirely in the drilldown.",
+      "Explain the particular contact rather than opposing a rational person to an emotional person or labeling the relationship supportive or challenging. Keep both people's responses understandable without assigning a biography or motive the sources do not support.",
+      "action: return an empty string unless the owner explicitly requests advice. An action field in the schema does not require an instruction or an advice ending in the body.",
+      "timing: return an empty string for this evergreen relationship contact. Do not invent dates or current-weather language.",
+      "sections: return an empty array unless separate sections are explicitly requested. Do not duplicate the body or add an advice section to fill the schema.",
+      "sceneLock: return the required object with one supported relationship_interaction, conversation or internal_state. It records the possible experience being interpreted, not an event that is known to have happened. Keep unsupported circumstances in excludedMeanings.",
+      "astrologyDrilldown: use title 'Why this?' and explain only the supplied chart contact. Include at least two complete factors, each with label, technicalFact and plainMeaning: one for the other person's supplied planet and one for the reader's supplied planet, explaining their roles in this aspect. The aspect may be a further factor; do not invent another placement to fill the array.",
+      "astrologyDrilldown.whyThisScene: explain why the supplied contact supports the selected possible experience, preserving directionality and identifying unsupported circumstances that were excluded.",
+      "astrologyDrilldown.timingNote: return an empty string when no calculated timing is supplied.",
+      "The body can end when the reader understands the interaction. Do not add suggestions, reassurance, a maxim or an idealized resolution merely to finish."
+    ].join("\n");
+  }
 
   if (isPrimaryNatalPlacementGeneration(input)) {
     const hasAspects = asArray<Record<string, unknown>>(input.facts.aspects).length > 0;
@@ -1662,7 +1693,12 @@ function timeLordSceneRules(input: GenerateContentInput) {
   ].join("\n");
 }
 
-function sourceMethodRules() {
+function sourceMethodRules(input?: GenerateContentInput) {
+  if (input && isSynastryAspectInput(input)) return [
+    "SOURCE-INFORMED RELATIONSHIP METHOD",
+    "Use the reviewed books and exact relationship sources for meaning, not as wording to copy. Read the contact as an interaction between the supplied planets, preserving whose response is being described.",
+    "Avoid vague comfort, Barnum statements and broad predictions. A possible interaction can clarify the meaning; do not claim it happened or invent private history to make the interpretation specific."
+  ].join("\n");
   return [
     "SOURCE-INFORMED METHOD",
     "Use the reviewed books as method, not as wording.",
@@ -1711,12 +1747,14 @@ function bannedPhraseRules() {
   ].join("\n");
 }
 
-function metaphorSpecificityRules() {
+function metaphorSpecificityRules(input?: GenerateContentInput) {
   return [
     "METAPHOR AND SPECIFICITY PHRASE BOOK - AUTHORITATIVE WORDING GUIDE",
     "This guide sits above the voice spec for wording decisions.",
     "A metaphor must explain what is happening. It cannot be the explanation by itself.",
-    "Write in this order: placement or event named plainly, actual situation, recognizable behavior, real stakes, direct action or reframe when useful.",
+    input && isSynastryAspectInput(input)
+      ? "Let the relationship thought determine sentence order. Use an image only when it clarifies the supplied contact."
+      : "Write in this order: placement or event named plainly, actual situation, recognizable behavior, real stakes, direct action or reframe when useful.",
     "Use no more than one metaphor family in a short paragraph, and follow it with a real behavior or consequence.",
     "Replace vague scaffolds with the actual object, agreement, decision, behavior, responsibility, or consequence.",
     "Flagged phrases to avoid unless a human editor deliberately keeps them:",
@@ -2570,8 +2608,27 @@ function isSynastryAspectInput(input: GenerateContentInput) {
       && (
         input.eventType.includes("synastry-aspect")
         || input.eventType.includes("synastry-contact")
+        || input.eventType === "aspect"
       )
     );
+}
+
+function synastryInstructionContext(input: GenerateContentInput) {
+  return isSynastryAspectInput(input) ? { surface: "synastry", family: "synastry-aspect" } : {};
+}
+
+function synastrySharedStyleGuide(styleGuide: string) {
+  // Keep complete applicable shared rules, excluding other surfaces' worked
+  // examples, paragraph quotas and the obsolete extra relationship voice pass.
+  return ["# TLDR Astro shared rules for synastry", ...[
+    ["## Universal rules (all surfaces)", "## The interpretive engine"],
+    ["### Universal (all voices)", "### Natal voice only"]
+  ].map(([heading, nextHeading]) => {
+    const start = styleGuide.indexOf(heading);
+    const end = styleGuide.indexOf(nextHeading, start + heading.length);
+    if (start < 0 || end <= start) throw new Error("Synastry shared style rules are incomplete.");
+    return styleGuide.slice(start, end).trim();
+  })].join("\n\n");
 }
 
 function selectedSynastryExampleBank(input: GenerateContentInput) {
@@ -2620,7 +2677,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
   const contextInstruction = relationshipContextInstruction(input.facts);
 
   return [
-    "SYNASTRY WRITING SYSTEM",
+    `SYNASTRY WRITING SYSTEM ${SYNASTRY_EDITORIAL_VERSION}`,
     "Use this for client-facing synastry aspect copy.",
     "",
     "POV AND QUESTION",
@@ -2628,13 +2685,16 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "The main question is: what does this person bring out in me?",
     "Lead with how one person makes the other feel in plain language, then translate the astrology into daily relationship experience.",
     "Use names when supplied in ASTROLOGY FACTS. Be direct, specific, and human.",
-    "Do not explain astrology mechanics in the body. The title already carries the chart label.",
+    "Let the supplied planets and aspect explain the lived experience in the body. Naming the contact in the title does not replace interpreting it. Keep raw calculations and technical detail in astrologyDrilldown.",
     "Do not overstate fate, trauma, permanence, compatibility, or harm.",
     contextInstruction,
     "",
     "STRUCTURE",
     "Open with the felt experience of being around this person.",
     "Explain what one person brings out in the other and how it may feel on both sides.",
+    "Develop the feeling through what matters to each person: what they want from the exchange, what they hear in the other's response, and how their next response can affect the other person. Use only the motives and possibilities supported by this contact; this is not a required sequence for every paragraph.",
+    "Keep affection, interest, anticipation, enjoyment and disappointment available when the astrology supports them. Do not make every connection a problem to manage or flatten it into a clinical account of two planetary functions.",
+    "Learn conversational rhythm and emotional development from the complete eligible owner passages. Warmth comes from understanding the people in this contact, not from borrowed catchphrases, decorative language or an imitation of another author's distinctive wording.",
     "For supportive aspects, explain what feels easy and why. Include a complication only when supported; do not invent a catch.",
     "For challenging aspects, name the concrete mismatch, expectation, or recurring tension without making either person the villain.",
     "For conjunctions, write immediacy and concentration.",
@@ -2644,7 +2704,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "",
     "LIVED EXAMPLES",
     "Use one or two examples maximum, only where they naturally fit inside a paragraph.",
-    "Do not ask the model to invent examples. Do not create new examples. If you include an example, use one of the approved examples below verbatim or lightly adapted only for pronouns/names.",
+    "The examples below are optional illustrations of meaning, not positive owner-voice evidence or a required scene. Do not copy an example merely to satisfy a specificity rule. Use a supplied human moment when it clarifies the contact, keeping it conditional rather than claiming it happened.",
     "Do not turn examples into bullets or a list.",
     "Keep examples optional with may, can, or you may notice.",
     JSON.stringify(bank, null, 2),
@@ -2656,12 +2716,6 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "Avoid phrases like their energy reaches your private side, their emotional world connects with your direction, who they are connects with, or this aspect activates.",
     "Do not overuse the thing to watch, give it somewhere to go, or this connection works best when.",
     "Banned words and phrases: soulmate, twin flame, karmic contract, meant to be, toxic, destined, guaranteed, the hard thing, hold space, deeply affirming, masquerade.",
-    "",
-    "GOOD SHAPE",
-    "{{personA}}'s Mars opposes your Midheaven, so they may interrupt the part of you that is trying to stay focused, visible, or in control. You may be trying to finish a project, hold a role, meet a deadline, or stay composed in public, and suddenly their urgency brings up what is happening behind the scenes.",
-    "",
-    "BAD SHAPE",
-    "Do not write: {{personA}}'s Mars opposes your Midheaven, so their Mars energy activates your IC axis."
   ].join("\n");
 }
 
@@ -4574,7 +4628,9 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
         "HEADLINE RULE",
         `Return this exact headline string: ${JSON.stringify(lockedHeadline)}.`,
         "Do not rewrite it as a human-theme title. Keep the headline as the astrology aspect, placement, transit, season, retrograde, or lunation label.",
-        "Put the readable hook, advice, and emotional interpretation in summary and body."
+        isSynastryAspectInput(input)
+          ? "Put the readable hook and emotional interpretation in summary and body."
+          : "Put the readable hook, advice, and emotional interpretation in summary and body."
       ].join("\n")
     : [
         "HEADLINE RULE",
@@ -4583,7 +4639,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
       ].join("\n");
 
   return effectiveRulePrompt([
-    styleGuide,
+    isSynastryAspectInput(input) ? synastrySharedStyleGuide(styleGuide) : styleGuide,
     "",
     "TASK",
     "Write one TLDR Astro interpretation from the provided astrology facts and source material.",
@@ -4596,11 +4652,11 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     outputShapeRules(input, lockedHeadline),
     "",
-    sceneLockRules(),
+    isSynastryAspectInput(input) ? "" : sceneLockRules(),
     "",
-    timeLordSceneRules(input),
+    isSynastryAspectInput(input) ? "" : timeLordSceneRules(input),
     "",
-    sourceMethodRules(),
+    sourceMethodRules(input),
     "",
     "CONTENT MODE",
     modeRulesForInput(input),
@@ -4637,7 +4693,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "TECHNICAL ASPECT NOTES",
     "Use technical aspect notes only to preserve aspect accuracy and to keep aspect cards attached to the primary natal placement.",
     "",
-    metaphorSpecificityRules(),
+    metaphorSpecificityRules(input),
     "",
     "VOICE RULES",
     natalPlacementPrimitiveRules(),
@@ -5285,6 +5341,7 @@ async function reviewGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
+    ...synastryInstructionContext(input),
     taskInstructions: rhetoricalReviewContract(deterministicReaderCopy(draft)),
     request: {
       model,
@@ -5360,6 +5417,7 @@ async function planGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "MEANING_PLANNER",
+    ...synastryInstructionContext(input),
     taskInstructions: "Astrology first. Return only the governed structured meaning plan. Do not draft prose.",
     request: {
       model,
@@ -5426,6 +5484,7 @@ async function reviseGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVISER",
+    ...synastryInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5506,6 +5565,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "WRITER",
+    ...synastryInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5604,7 +5664,9 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const legacyPrompt = `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
+    const legacyPrompt = isSynastryAspectInput(input)
+      ? buildPrompt(input, approvedExamples, qualityFeedback)
+      : `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
     const publicWriterPrompt = productionGate.governedPromptEnabled
       ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
       : legacyPrompt;
@@ -5621,7 +5683,9 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
       body: JSON.stringify({
         model,
         max_tokens: 5000,
-        system: GHOSTWRITING_SKILL_INSTRUCTIONS,
+        system: isSynastryAspectInput(input)
+          ? withGhostwritingSkill(synastryInstructionsForRole("WRITER"))
+          : GHOSTWRITING_SKILL_INSTRUCTIONS,
         messages: [
           {
             role: "user",
