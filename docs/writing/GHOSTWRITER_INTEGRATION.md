@@ -20,6 +20,13 @@ authoritative. Generic persuasion frameworks, desire categories, hooks and
 quotable lines are optional. Necessary uncertainty, protected text and source
 meaning are preserved.
 
+The October 21 adaptation (`ghostwriter/v2-2026-10-21`) makes advice and closing
+lines optional unless the requested field or declared format requires them.
+Writers should stop when the thought is complete and use ordinary English.
+Synastry's shared prompt no longer requires a practical move, warning, or catch
+in every passage. These are instruction changes; existing reader prose and saved
+profiles are unchanged.
+
 New shared writer/reviser requests receive the guidance at the provider
 boundary. Injected draft and revision requests include it when prepared, so it
 is part of their existing instruction/request hashes. Horoscope and lunar plan

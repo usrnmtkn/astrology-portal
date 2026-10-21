@@ -45,6 +45,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  throw new Error(`Unmodeled storage filter ${field}=${value}`);
 });
 export const editorialFixtureRows=new Map<string,any>();
+export const explicitWritingFeedbackFixture={rows:[] as any[],unavailable:false,incomplete:false};
 const horoscopeStorageFaults={remaining:[] as string[],lost:[] as string[],failWriterReservations:0};
 globalThis.fetch = async (input: any, options: any = {}) => {
  const operation = await store.publication(input, options); if (operation) return operation;
@@ -56,6 +57,9 @@ globalThis.fetch = async (input: any, options: any = {}) => {
      : Response.json({message:'Invalid JWT'},{status:401});
  }
  if (url.origin !== 'https://calendar-api.invalid') throw new Error('Fixture refuses external storage');
+ if(url.pathname==='/rest/v1/rpc/studio_memory_active_snapshot')return explicitWritingFeedbackFixture.unavailable?Response.json({}, {status:503})
+  :Response.json([{snapshot:{rows:[],...(!explicitWritingFeedbackFixture.incomplete?{writingFeedback:explicitWritingFeedbackFixture.rows.filter(row=>row.status==='active')}:{})}}]);
+ if(url.pathname==='/rest/v1/studio_writing_feedback'&&url.searchParams.has('id'))return Response.json(explicitWritingFeedbackFixture.rows.filter(row=>url.searchParams.get('id')!.slice(4,-1).split(',').includes(row.id)));
  if(url.pathname==='/rest/v1/rpc/checkpoint_weekly_provider_result'){
   const input=JSON.parse(options.body),row=store.rows.get(input.p_id),active=row?.source_snapshot?.horoscopeGeneration?.active;
   if(!row||row.status!=='DRAFT'||row.sections?.horoscopeEdition?.window?.period!=='weekly'

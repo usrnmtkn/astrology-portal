@@ -10,6 +10,7 @@ import {runWritingPipeline} from '../../src/astro-writing/runWritingPipeline.mjs
 import {loadLunarSavedWriting} from './lunar-saved-writing.js';
 import {LUNAR_SAVED_WRITING_GUIDANCE} from '../../src/astro-writing/lunationSavedWriting.mjs';
 import {GHOSTWRITING_SKILL_INSTRUCTIONS} from '../../src/astro-writing/ghostwritingSkill.mjs';
+import {loadExplicitWritingFeedback} from './studio-explicit-writing-feedback.js';
 
 export const workspaceKey=(phase:string,sign:string)=>{lunationContentKey(phase,sign);return `${LUNATION_WORKSPACE_PREFIX}${phase}/${sign}`;};
 export async function lunarStorage(params:URLSearchParams,options:RequestInit={}) {
@@ -61,9 +62,11 @@ export async function lunarFeedback(contentKey:string,family='lunations') {
   const params=new URLSearchParams({target_keys:`cs.{${contentKey}}`,status:'eq.active',select:'*',order:'created_at.desc,id.asc',limit:'501'});
   const result=await adminFetchJson(`${url.replace(/generated_interpretations$/u,'studio_writing_feedback')}?${params}`,{headers});
   if(!result.ok)throw new AdminHttpError(503,'Private writing feedback could not load. No writer call was started.');
-  const rows=adminStorageRows<any>(result.payload);
+  let rows=adminStorageRows<any>(result.payload);
   if(rows.length>500)throw new AdminHttpError(503,'The feedback inventory needs review before drafting.');
   for(const row of rows)if(!row.id||row.status!=='active'||!row.target_keys?.includes(contentKey)||!Number.isInteger(row.version)||!row.owner_reason||row.kind!=='rejection'||typeof row.rejected_text!=='string'||!row.rejected_text.trim())throw new AdminHttpError(503,'This target has unsupported or invalid writing feedback. Resolve its evidence before drafting.');
+  const explicit=await loadExplicitWritingFeedback({contentKey,surface:'sky'});
+  rows=[...new Map([...rows,...explicit.rows].map(row=>[row.id,row])).values()];
   return {rows,corrections:rows.map(row=>({id:`studio-writing-${row.id}`,contentKey,family,bad:row.rejected_text,owner_reason:row.owner_reason,originalSha256:lunationDigest(row.rejected_text),positive_evidence_revoked:true,source_uri:row.source_uri})),receipt:rows.map(row=>({id:row.id,version:row.version,sha256:lunationDigest(row)}))};
 }
 export async function calculateLunarWritingFacts(workspace:any) {

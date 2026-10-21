@@ -700,3 +700,20 @@ their exact instructions. The integration adds no generation stage, profile
 mutation, automatic rewrite or publication authority. See
 [the integration contract](GHOSTWRITER_INTEGRATION.md) for the runtime consumers,
 upstream provenance and verification boundaries.
+
+### Scoped owner feedback — October 21
+
+Fresh Studio requests can select complete explicit rejections from the existing
+private feedback store for the requested writing family or horoscope period.
+Current owner reasons override conflicting historical examples; rejected wording
+is negative evidence. Plan hashes bind the selection. Persisted horoscope requests
+hold references rather than feedback text, with verified hydration at dispatch;
+Monthly continuation preserves its reserved sources after retirement. Seasonal
+feedback remains in private editorial runs. Disabled rollout keeps the previous
+retrieval behavior.
+
+Actual handler and provider-boundary tests use isolated storage and intercepted
+model calls. They check scope, stale plans, outages, private metadata boundaries
+and saved-request recovery. They do not certify Satori voice or authorize paid
+regeneration. No published writing, saved profile, model choice or call budget is
+changed by this repair.

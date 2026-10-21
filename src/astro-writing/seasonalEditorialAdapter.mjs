@@ -5,6 +5,7 @@ import {validateHoroscopeReading} from './horoscopeValidation.mjs';
 import {createEvidenceRegistry,digest} from './editorial/evidenceRegistry.mjs';
 import {latest} from './editorial/controller.mjs';
 import {object,text,list,evaluationSchema,evaluationInstructions} from './editorial/evaluation.mjs';
+import {resolveExplicitWritingFeedback} from './explicitWritingFeedback.mjs';
 
 export const SEASONAL_EDITORIAL_WORKFLOW='seasonal-editorial/v2';
 export const seasonalEditorialModels=()=>Object.fromEntries(['mechanism','plan','prose','plan_review','voice','meaning'].map(stage=>[stage,
@@ -97,6 +98,7 @@ export function seasonalEditorialAdapter(input) {
       seasonMeaning:JSON.stringify(facts.seasonalMeaning)},diagnostic,latest(run,'evidence')?.hash??null);},
     request(run){
       const {manifest,mechanism,plan}=data(run),stage=run.stage,config=run.models[stage];
+      const ownerFeedback=input.explicitWritingFeedback?resolveExplicitWritingFeedback(input.explicitWritingFeedback.receipt,input.explicitWritingFeedback.rows):'';
       let schema,prompt,instructions,role;
       const feedback=latest(run,'routing');
       const base={audience:facts.audience,governedFacts:facts,evidenceManifest:manifest,
@@ -108,18 +110,19 @@ export function seasonalEditorialAdapter(input) {
       }else if(stage==='plan'){
         schema=developmentSchema(facts,manifest);role='SEASONAL_PLANNER';
         instructions='Develop an underlying human concern and consequential distinction from the validated source-bound astrology mechanism. This is a plan, not horoscope prose. startingSituation describes the concern a person could recognize, not a compulsory invented activity. A project, chore, errand, conversation, cooking or shopping must not become the plot merely to appear concrete. Several possible manifestations may illustrate the same concern; leave them optional. Identify what each selected event changes in the reasoning, using its supplied meaning rather than its date alone. No compulsory conflict, advice, permission or fixed ending. Use complete approved passages for reasoning and movement, while making sourceDifferences explicit so you do not transplant their argument. Compare the scoped owner rejections. Select only relevant approved evidence, with no quota. Return the schema.';
-        prompt=JSON.stringify({...base,mechanism,feedback});
+        prompt=JSON.stringify({...base,mechanism,feedback,...(ownerFeedback?{currentOwnerWritingCorrections:ownerFeedback}:{})});
       }else if(stage==='prose'){
         const request=completeSeasonalDraftRequest(input.template,plan,manifest);
         // Existing prose instructions remain byte-identical. Correction findings
         // and mechanism are request data, not additions to the master prompt.
-        return {...request,input:`${request.input}\n\nVALIDATED ASTROLOGY MECHANISM\n${JSON.stringify(mechanism)}\n\nSUPPORTED REVISION FINDINGS\n${JSON.stringify(feedback?.action==='regenerate'?feedback:null)}`,config};
+        return {...request,input:[`${request.input}\n\nVALIDATED ASTROLOGY MECHANISM\n${JSON.stringify(mechanism)}\n\nSUPPORTED REVISION FINDINGS\n${JSON.stringify(feedback?.action==='regenerate'?feedback:null)}`,ownerFeedback].filter(Boolean).join('\n\n'),config};
       }else{
         const scope=stage==='plan_review'?'plan':stage;
         const candidate=scope==='plan'?{mechanism,plan}:latest(run,'candidate');
         schema=evaluationSchema(scope,manifest);role=stage==='plan_review'?'SEASONAL_PLAN_REVIEWER':stage==='voice'?'SEASONAL_VOICE_REVIEWER':'SEASONAL_MEANING_REVIEWER';
         instructions=evaluationInstructions(scope);
         prompt=JSON.stringify({audience:facts.audience,candidate,candidateHash:digest(candidate),manifestHash:manifest.hash,evidenceManifest:manifest,
+          ...(['plan','voice'].includes(scope)&&ownerFeedback?{currentOwnerWritingCorrections:ownerFeedback}:{}),
           ...(scope==='voice'?{approvedStyleReference:input.template.seasonalPreparation.approvedStyleReference??null}:{governedFacts:facts,mechanism,...(scope==='meaning'?{plan}:{})})});
       }
       return {stage,role,input:prompt,schema,config,instructions:responses.governedInstructionsForRole(role,{taskInstructions:instructions,surface:'horoscopes',family:'horoscope'})};

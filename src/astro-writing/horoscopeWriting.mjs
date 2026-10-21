@@ -90,11 +90,17 @@ function profileFor(row,edition) {
 }
 
 /** Pure preparation: no model, approval, or storage write. All moving facts are from the signed brief. */
-export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceipt=null,seasonalSourceRows=[],writerSelection=null}={}) {
+export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceipt=null,explicitFeedback=null,seasonalSourceRows=[],writerSelection=null}={}) {
+  feedbackReceipt??=explicitFeedback?.receipt??null;
   const edition=validateHoroscopeEdition(row.sections?.horoscopeEdition);
   const brief=row.facts?.horoscopeBrief?.brief;
   if(!brief||horoscopeCanonicalJson(brief.window)!==horoscopeCanonicalJson(edition.window))throw new Error('Prepare the calculated dates before generating readings.');
-  const sources=loadSources(edition.window.period),writingProfile=profileFor(row,edition);
+  const originalSources=loadSources(edition.window.period),writingProfile=profileFor(row,edition);
+  const rejectedTexts=(explicitFeedback?.rows??[]).map(row=>row.rejected_text.trim());
+  const eligible=(rows,field='text')=>rows.filter(row=>!rejectedTexts.some(text=>String(row[field]??'').includes(text)));
+  const sources=rejectedTexts.length?{...originalSources,voice:{...originalSources.voice,entries:eligible(originalSources.voice.entries)},
+    examples:eligible(originalSources.examples),matrix:eligible(originalSources.matrix,'copy'),approved:eligible(originalSources.approved)}:originalSources;
+  if(rejectedTexts.some(text=>String(writingProfile.profile.sourceGuidance??'').includes(text)))throw new Error('The saved writing profile still contains a rejected passage. Review its source guidance before drafting.');
   const seasonalMeaning=resolveSeasonalMeaning(brief,sources.seasonalBank,seasonalSourceRows);
   const sourceHash=seasonalMeaning?digest({repository:sources.sha256,seasonalMeaning:seasonalMeaning.sha256}):sources.sha256;
   const rejectedReadings=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.rejections??[]:[];
@@ -181,7 +187,8 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   });
   const planHash=digest({ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,...(edition.window.period==='weekly'?{rejectedReadings}:{}),brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
-  const prepared={edition,brief,writingProfile,entries,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt};
+  const prepared={edition,brief,writingProfile,entries,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt,
+    explicitFeedbackMarker:explicitFeedback?.marker??'',explicitFeedbackRows:explicitFeedback?.rows??[]};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
 }
 
@@ -192,6 +199,7 @@ export function horoscopePlanPreview(prepared) {
       argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds,meaningSupport:e.meaningSupport,approvedStyleReference:e.approvedStyleReference,
       ...(prepared.edition.window.period==='weekly'?{ownerEvidence:horoscopeEvidenceReceipt(e.ownerContext,prepared.writingProfile)}:{})})),writerCalls,
     ...(prepared.edition.window.period==='seasonal'?{planningCalls:writerCalls*3,editorialReviewCalls:writerCalls*6,maximumPaidCalls:writerCalls*30}:{}),
+    feedback:prepared.feedbackReceipt,
     synthesisCalls:prepared.edition.window.period==='monthly'&&prepared.edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?1:0};
 }
 
@@ -201,6 +209,9 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
   const approved=approveArgumentOutline(entry.argumentOutline,{exactOwnerRuling:`Authenticated owner selected Generate drafts for plan ${approvedPlanHash}. Reference: ${approvalReference}`});
   const argumentSource={contentKey:`horoscope-plan/${approvedPlanHash}/${sign}`,sourcePath:approvalReference,ownerApproved:true,
     authority:'owner-approved-horoscope-plan',opening:approved.thesis,tension:approved.complication,development:approved.recognition,close:approved.response};
+  const currentWriter=prepared.explicitFeedbackMarker?Object.assign(async request=>writerClient({...request,
+    input:`${request.input}\n\n${prepared.explicitFeedbackMarker}`,
+    ...(request.ownerEvidence?{ownerEvidence:{...request.ownerEvidence,writingFeedback:prepared.feedbackReceipt}}:{})}),writerClient):writerClient;
   const result=await runWritingPipeline({...entry.contextOptions,meaningInput:entry.meaningInput,
     // Reconstruct the exact input shape used by the canonical argument builder.
     argumentInput:{...entry.argumentOutline,scope_breadth:{broad_mechanism:entry.argumentOutline.scopeBreadth.broadMechanism,
@@ -208,7 +219,7 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
     approvedArgumentOutline:approved,argumentSource,family:'horoscope',surface:'horoscopes',register:'second_person',writingProfile:prepared.writingProfile,
     target:{surface:'horoscopes',route:'horoscopes',renderer:'HoroscopeReader',contentKeyFamily:'horoscope',temporality:'current_sky',voiceMode:'second_person'},
     engineFacts:{...prepared.brief,risingSign:sign,anchor:entry.anchor,house:entry.house,developments:entry.developments,seasonalMeaning:entry.seasonalMeaning},
-    task:sign==='overview'?`Write one shared ${prepared.edition.window.period==='seasonal'?'season introduction':'calendar-month overview'} for readers of all signs in ${prepared.edition.window.timeZone}. Do not assign a personal house or rising sign.`:`Write one complete ${prepared.edition.window.period} horoscope for ${sign} rising in ${prepared.edition.window.timeZone}.`,writerClient});
+    task:sign==='overview'?`Write one shared ${prepared.edition.window.period==='seasonal'?'season introduction':'calendar-month overview'} for readers of all signs in ${prepared.edition.window.timeZone}. Do not assign a personal house or rising sign.`:`Write one complete ${prepared.edition.window.period} horoscope for ${sign} rising in ${prepared.edition.window.timeZone}.`,writerClient:currentWriter});
   if(!result.draft)throw new Error('The writer could not prepare a horoscope from the available evidence.');
   const {headline,body}=result.draft;
   if(typeof headline!=='string'||!headline.trim()||headline.length>200||typeof body!=='string'||!body.trim()||body.length>20000)throw new Error('The writer returned an incomplete reading.');

@@ -32,7 +32,8 @@ export async function seasonalEditorialOperation({action,row:initialRow,persist,
     if(!template?.seasonalPreparation)throw new AdminHttpError(409,'Seasonal preparation is missing.');
     const entry=prepared.entries.find((e:any)=>e.sign===sign);
     const seasonalRejectionTargetKeys=[`horoscope-plan/${row.id}/${sign}`,`horoscope-opening-plan/${row.id}/${sign}`];
-    const input={template,brief:prepared.brief,validationCorrections:entry.validationCorrections,seasonalRejectionTargetKeys,rejections:rejections??await loadSeasonalRejections(seasonalRejectionTargetKeys)};
+    const input={template,brief:prepared.brief,validationCorrections:entry.validationCorrections,seasonalRejectionTargetKeys,rejections:rejections??await loadSeasonalRejections(seasonalRejectionTargetKeys),
+      ...(prepared.explicitFeedbackRows?.length?{explicitWritingFeedback:{receipt:prepared.feedbackReceipt,rows:prepared.explicitFeedbackRows}}:{})};
     run=newEditorialRun({id,target:{sign,window:prepared.edition.window,editionId:row.id},input,models:{...seasonalEditorialModels(),...(prepared.writerSelection?{prose:prepared.writerSelection}:{})},authorization:{reference:`authenticated-seasonal-plan/${prepared.planHash}`,actor}});
     await storage.create(run,row.id);previous=structuredClone(run);
   }else{

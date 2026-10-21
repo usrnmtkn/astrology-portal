@@ -6,6 +6,7 @@ import { AdminHttpError } from "./admin-http.js";
 import { studioSkyIdentity } from "./sky-studio-identity.js";
 import { buildSkyWritingMemory } from "./sky-writing-memory.mjs";
 import { activeStudioFeedback, selectStudioFeedback, studioFeedbackEnabled } from "./studio-memory-feedback.js";
+import { loadExplicitWritingFeedback } from "./studio-explicit-writing-feedback.js";
 export { studioSkyIdentity } from "./sky-studio-identity.js";
 /** Called only by an explicit authenticated editor action. Rechecking has no writer call. */
 export async function runStudioSkyWriting(key: string, action: "generate" | "recheck", body: string, source?: any): Promise<Partial<SkyAspectCardResult> & { memoryReceipt?: ReturnType<typeof buildSkyWritingMemory>["receipt"] }> {
@@ -20,6 +21,7 @@ export async function runStudioSkyWriting(key: string, action: "generate" | "rec
     // Read live corrections before any paid work. Failure is explicit, never an empty-success fallback.
     const feedback = studioFeedbackEnabled() ? selectStudioFeedback(await activeStudioFeedback(), key) : null;
     const memory = buildSkyWritingMemory(identity, { studioCorrections: feedback?.corrections ?? [] });
+    const explicit = await loadExplicitWritingFeedback({contentKey:key,surface:'sky'});
     if (feedback) (memory.receipt as any).studioFeedback = {
         ...feedback.receipt,
         selected: feedback.receipt.selected.filter(item => memory.receipt.selected.some(ref => ref.memoryId === item.memoryId)),
@@ -28,7 +30,7 @@ export async function runStudioSkyWriting(key: string, action: "generate" | "rec
     };
     const kernel = identity.kind === "aspect" ? skyAspectKernel(identity.args) : placementKernel(identity.args);
     const options = { withJudge: false,
-        generateFn: (prompt: string, options?: Record<string, unknown>) => kernel.generateFn(`${prompt}\n\n${memory.prompt}`, options),
+        generateFn: (prompt: string, options?: Record<string, unknown>) => kernel.generateFn([prompt,memory.prompt,explicit.prompt].filter(Boolean).join('\n\n'), options),
         generationMetadata: kernel.generationMetadata,
         judgeBeforeProviderCall: kernel.judgeBeforeProviderCall, judgeGovernedPrompt: kernel.judgeGovernedPrompt,
         pairSourceOverride: source };
@@ -36,5 +38,5 @@ export async function runStudioSkyWriting(key: string, action: "generate" | "rec
         : await generator.generatePlacementCard(identity.args, options);
     if (!result.text?.trim())
         throw new AdminHttpError(409, `${result.note || "Approved writing sources are missing for this configuration."} You can write this draft manually and run writing checks.`);
-    return { ...result, memoryReceipt: memory.receipt };
+    return { ...result, memoryReceipt: {...memory.receipt,...(explicit.receipt.selected.length?{writingFeedback:explicit.receipt}:{})} };
 }

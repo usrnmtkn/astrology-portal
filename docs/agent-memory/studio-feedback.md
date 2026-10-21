@@ -62,6 +62,52 @@ still reads repository sources only; do not claim it includes live database feed
 
 ## Privacy and rollout
 
+### Explicit owner rejections across writing surfaces
+
+The separate `studio_writing_feedback` store preserves complete rejected passages,
+the owner's exact reason, explicit target keys and actual `thread:<UUID>`
+provenance. Its existing `20260914150654_studio_explicit_writing_feedback.sql`
+migration must be installed. This does not change the pending-edit activation
+workflow above or infer approval of a replacement.
+
+`scripts/studio-writing-feedback.mjs` records a rejection from a protected JSON
+file, exports active records for one target, or retires an exact version through
+the existing idempotent RPCs. Run `--help` for commands. Record input fields are
+`requestId` (fresh UUID), `targetKeys`, `rejectedText`, `ownerReason`, `sourceUri`
+(actual owner thread) and `sourceDate`. Retire input fields are `requestId`, `id`,
+`version`, `reason` and `sourceUri`. Use a protected environment file containing
+the server-role credentials. Never put these files or feedback bodies in Git.
+The CLI does not record source-role assignments or approve reader prose.
+
+Supported explicit scopes are `writing/all`, `writing/sky`, `writing/synastry`,
+`writing/composite`, `writing/relationship`, `writing/personal-transit`, and each
+`horoscope/{daily,weekly,monthly,seasonal}` period. A safe exact content key can
+also be selected. Legacy content keys containing pipes cannot be explicit targets
+under the database contract. Broader guidance still requires the owner's express
+scope decision; an ordinary rejection never becomes global automatically.
+
+With `STUDIO_MEMORY_FEEDBACK_ENABLED=true`, fresh shared writer, template-slot,
+Sky Placement and horoscope requests read the existing private snapshot. Lunar
+writing merges these applicable scopes with its existing exact-target feedback.
+Report contracts retain their existing path. Unavailable or incomplete storage
+stops new generation before a provider call. More than 100 selected records or
+1 MiB of selected text requires maintenance, without truncating passages.
+
+Horoscope plans include selected IDs, versions and hashes. A changed correction
+invalidates a fresh plan. Saved Daily, Weekly and Monthly request snapshots carry
+a stable reference; dispatch resolves the exact private source and verifies its
+immutable hash. JSONB field ordering does not change that reference. Retirement
+affects future plans, while a reserved Monthly request retains its original
+correction. Seasonal runs retain their frozen correction in the existing private
+run store. Shared prompt shadows and edition rows contain no feedback bodies.
+
+The actual-handler and intercepted-provider regressions verify all four horoscope
+periods, Synastry, Personal Transit and Sky template delivery, scope isolation,
+storage failures and saved-request recovery. These checks establish delivery,
+not literary quality. A fresh prose comparison still requires owner review.
+
+## Existing capture-store privacy and rollout
+
 `studio_memory_feedback` and `studio_memory_feedback_decisions` have RLS enabled,
 no PUBLIC/anon/authenticated grants, and only server-role access. RPCs are security
 invoker with explicitly restricted execution. The API checks Content Studio owner
@@ -103,9 +149,10 @@ notices for these server-only tables; existing warnings were unchanged.
 - Ask the owner to choose real passages for a prose-quality comparison before
   claiming better writing or extending beyond this first scope. Model assessments
   remain advisory; exact prose approval remains with the owner.
-- Future work: other package/editor families, explicit supersession
+- Future work: additional edit-capture families, explicit supersession
   links, privacy-safe live recall for coding agents, and
-  owner-approved expansion to other writer families. Do not infer these are wired.
+  owner-approved expansion to additional writer families. Explicit-rejection
+  consumers are listed above; do not infer edit capture for those families.
 
 Agent maintenance follows `AGENTS.md`: record source/version coverage and dated
 technology checks, preserve pinned renderer behavior, and keep local notes distinct
