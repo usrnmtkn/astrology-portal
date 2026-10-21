@@ -4,7 +4,7 @@ import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
 import {isHoroscopeResponseId} from '../../src/astro-writing/horoscopeWriterModels.mjs';
 import {buildHoroscopeProviderRequest} from './horoscope-provider-codecs.js';
 import {startHoroscopeResponse,storedHoroscopeResponse} from './horoscope-provider.js';
-import {writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
+import {writeHoroscopeSign,horoscopeWritingVersionFor} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {MONTHLY_SYNTHESIS_VERSION,MONTHLY_SYNTHESIS_INSTRUCTIONS,monthlySynthesisFacts,monthlySynthesisSchema,applyMonthlySynthesis} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
 import {hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
@@ -17,6 +17,7 @@ import {HoroscopeProviderFailure,readHoroscopeProviderResult} from './horoscope-
 import {HOROSCOPE_RHETORICAL_REVIEW,supportedHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {queueHoroscopeReview} from './horoscope-rhetorical-operation.js';
 import {hydrateWritingFeedbackRequest} from './studio-explicit-writing-feedback.js';
+import {monthlyRequestInput} from '../../src/astro-writing/monthlyRequestEvidence.mjs';
 
 const hash=(value:any)=>createHash('sha256').update(horoscopeCanonicalJson(value)).digest('hex');
 class Captured extends Error { constructor(public request:any){super('Prepared canonical writer request.');} }
@@ -60,7 +61,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
   };
   const dispatch=async(input:string,instructions:string,schema:any)=>{
     const role=operation.phase==='synthesis'?'MEANING_PLANNER':'WRITER';
-    const preparedRequest=buildHoroscopeProviderRequest({config:operation.config,role,input,schema,instructions});
+    const preparedRequest=buildHoroscopeProviderRequest({config:operation.config,role,input:monthlyRequestInput(input),schema,instructions});
     const request=operation.phase==='synthesis'?preparedRequest:await hydrateWritingFeedbackRequest(preparedRequest,operation.receipt.feedback);
     operation={...operation,state:'starting',responseId:null,providerResult:null,requestHash:hash({request,instructions}),startedAt:new Date().toISOString()};
     await saveOperation(); // CAS reservation precedes each potentially billed request.
@@ -94,7 +95,7 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
         // failed prose request. Keep the model and cost ceiling; use medium
         // effort for new drafts only. Stored operations retain their config.
         draftConfig:prepared.writerSelection??provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:12000},'writer'),config:provider.normalizeProviderConfig({reasoningEffort:'medium',maxOutputTokens:6000},'writer'),
-        validationCorrections:entry.validationCorrections,receipt:{version:horoscopeWritingVersion,outputFormat:MONTHLY_HOROSCOPE_FORMAT,planHash:prepared.planHash,sign:'overview',sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
+        validationCorrections:entry.validationCorrections,receipt:{version:horoscopeWritingVersionFor('monthly'),outputFormat:MONTHLY_HOROSCOPE_FORMAT,planHash:prepared.planHash,sign:'overview',sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
       const generation=row.source_snapshot?.horoscopeGeneration??{};
       const previousFailure=generation.lastError;
       row=await persist({source_snapshot:{...row.source_snapshot,studioWritingProfile:prepared.writingProfile,horoscopeGeneration:{...generation,active:operation,lastError:null,

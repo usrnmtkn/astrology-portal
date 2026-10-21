@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import patterns from './rhetoricalPatterns.cjs';
 import history from './rhetoricalPatternHistory.cjs';
 import {horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {monthlyReviewEvidence} from './monthlyRequestEvidence.mjs';
 
 export const HOROSCOPE_RHETORICAL_REVIEW = `horoscope-review/v1:${patterns.RHETORICAL_PATTERN_VERSION}`;
 export const LEGACY_HOROSCOPE_RHETORICAL_REVIEW = `horoscope-review/v1:${history.LEGACY_RHETORICAL_PATTERN_VERSION}`;
@@ -42,7 +43,7 @@ export function horoscopeReviewValidationCode(error) {
 
 export function horoscopeReviewInput(candidate, evidence) {
   if(!Array.isArray(evidence?.ownerExamples)||!evidence.ownerExamples.some(e=>typeof e.text==='string'&&e.text.trim()))throw new Error('Complete owner evidence is required for horoscope review.');
-  return JSON.stringify({candidate,evidence});
+  return JSON.stringify({candidate,evidence:evidence.engineFacts?.window?.period==='monthly'?monthlyReviewEvidence(evidence):evidence});
 }
 export function readHoroscopeReview(payload,candidate) {
   if(payload?.status!=='completed')throw new Error('The prose review did not finish.');

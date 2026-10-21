@@ -29,7 +29,7 @@ import {GHOSTWRITING_SKILL_INSTRUCTIONS} from './ghostwritingSkill.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 export const horoscopeWritingVersion='horoscope-writer/v17';
-export const horoscopeWritingVersionFor=period=>period==='daily'?'horoscope-writer/v22-daily-evidence-refs':period==='seasonal'?'horoscope-writer/v19-seasonal-editorial':period==='weekly'?'horoscope-writer/v21-weekly-rejections':horoscopeWritingVersion;
+export const horoscopeWritingVersionFor=period=>period==='daily'?'horoscope-writer/v22-daily-evidence-refs':period==='monthly'?'horoscope-writer/v23-monthly-evidence-refs':period==='seasonal'?'horoscope-writer/v23-seasonal-evidence-refs':period==='weekly'?'horoscope-writer/v21-weekly-rejections':horoscopeWritingVersion;
 const digest=value=>createHash('sha256').update(typeof value==='string'?value:horoscopeCanonicalJson(value)).digest('hex');
 const repositorySources=new Map();
 const preparedPlans=new Map();

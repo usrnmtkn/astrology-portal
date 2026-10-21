@@ -1,7 +1,7 @@
 import policyHistory from '../src/astro-writing/rhetoricalPatternHistory.cjs';
 import {HOROSCOPE_EDITORIAL_AUTHORITY} from '../src/astro-writing/canonicalInstructions.mjs';
 import {LEGACY_HOROSCOPE_RHETORICAL_REVIEW} from '../src/astro-writing/horoscopeRhetoricalReview.mjs';
-import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
+import {assertHoroscopeRequestEvidence,horoscopeRequestMeaningPassages} from './assert-horoscope-request-evidence.mjs';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -139,7 +139,7 @@ for(const essay of essays){
  assert.equal(request.input.split(JSON.stringify(essay.text).slice(1,-1)).length-1,1,'The complete primary essay must be supplied once, without compression');
 }
 const supporting=JSON.parse(request.input.match(/SUPPORTING OWNER PASSAGES\n([^\n]+)\n\n/)[1]);
-const completePassages=new Map([...essays,...supporting].map((p:any)=>[p.id,p]));
+const completePassages=new Map([...essays,...supporting,...horoscopeRequestMeaningPassages(request.input)].map((p:any)=>[p.id,p]));
 const shared=JSON.parse(request.input.match(/SHARED FIVE-ROLE EVIDENCE\n([^\n]+)\n\n/)[1]);
 const relevant=JSON.parse(request.input.match(/RELEVANT OWNER PASSAGES\n([^\n]+)\n\n/)[1]);
 assert.deepEqual(Object.keys(shared.roles).sort(),['argument','meaning','phrase','register','scene']);

@@ -8,12 +8,12 @@ export function seasonalEvidenceInput(context) {
     seasonalVoiceRole:primary.has(p.id)?'primary argument and voice':'supporting same-audience sign reading'})))}\n\n${SEASONAL_SOURCE_PRIORITY}`;
 }
 export function seasonalSharedEvidence(context) {
-  return sharedEvidenceWithPassageReferences(context,context.sameFamilyExamples);
+  return sharedEvidenceWithPassageReferences(context,context.sameFamilyExamples,{includeSupportingArgumentCandidates:true});
 }
 
 // Only reference passages actually serialized in full elsewhere in this input.
 // Keep each role's metadata, including provenance and use restrictions.
-export function sharedEvidenceWithPassageReferences(context,passages) {
+export function sharedEvidenceWithPassageReferences(context,passages,{includeSupportingArgumentCandidates=false}={}) {
   const sources=new Map(passages.map(p=>[p.text,p]));
   const presented=new Map();
   const reference=e=>{
@@ -29,5 +29,6 @@ export function sharedEvidenceWithPassageReferences(context,passages) {
   const entries=packet.entries.map(reference);
   // Roles index the canonical entries. Never serialize a second copy of prose,
   // including meaning, scene, phrase and argument evidence outside the essays.
-  return {...packet,roles:Object.fromEntries(Object.entries(packet.roles).map(([role,items])=>[role,items.map(e=>({evidenceRef:e.id}))])),entries};
+  return {...packet,roles:Object.fromEntries(Object.entries(packet.roles).map(([role,items])=>[role,items.map(e=>({evidenceRef:e.id}))])),entries,
+    ...(includeSupportingArgumentCandidates&&packet.supportingArgumentCandidates?{supportingArgumentCandidates:packet.supportingArgumentCandidates.map(reference)}:{})};
 }
