@@ -1073,8 +1073,8 @@ function YouTransitArticlePage({
                 <>
                   <span className="article-eyebrow__slash" aria-hidden="true">/</span>
                   <span className="article-eyebrow__glyphs" aria-hidden="true">
-                    {eyebrowGlyphs.map((part) => (
-                      <span className={/^\d{1,2}H$/.test(part) ? "article-eyebrow__house" : undefined} key={part}>{part}</span>
+                    {eyebrowGlyphs.map((part, index) => (
+                      <span className={/^\d{1,2}H$/.test(part) ? "article-eyebrow__house" : undefined} key={`${part}-${index}`}>{part}</span>
                     ))}
                   </span>
                 </>
