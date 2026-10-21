@@ -40,9 +40,15 @@ for(const stage of ['mechanism','plan']){
 }
 assert.equal(writer.input.split('NEUTRAL HELLENISTIC MEANING SUPPORT\n').length-1,1,'Rebuilt prose request retains meaning support once');
 assert(!voice.input.includes('neutralMeaningSupport'),'External mechanics do not become voice-review evidence');
-const legacyInput=structuredClone(run.input);delete legacyInput.template.seasonalPreparation.meaningSupport;
+const style=JSON.parse(writer.input.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
+assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
+assert.equal(writer.input.split('OWNER-APPROVED STYLE REFERENCE\n').length-1,1);
+assert.deepEqual(JSON.parse(voice.input).approvedStyleReference,style,'Voice review sees the exact pinned approved reference');
+assert(!meaning.input.includes(style.reference.textSha256),'Style does not supply meaning-review facts');
+const legacyInput=structuredClone(run.input);delete legacyInput.template.seasonalPreparation.meaningSupport;delete legacyInput.template.seasonalPreparation.approvedStyleReference;
 const legacyDraft=completeSeasonalDraftRequest(legacyInput.template,latest(run,'plan'),latest(run,'evidence'));
 assert(!legacyDraft.input.includes('NEUTRAL HELLENISTIC MEANING SUPPORT'),'An old running request cannot acquire new source material on reload');
+assert(!legacyDraft.input.includes('OWNER-APPROVED STYLE REFERENCE'),'An old running request cannot acquire a new voice reference on reload');
 const legacyMechanism=seasonalEditorialAdapter(legacyInput).request({...run,stage:'mechanism'});
 assert(!JSON.parse(legacyMechanism.input).neutralMeaningSupport);
 assert.notEqual(writer.config.model,voice.config.model);assert.notEqual(writer.config.model,meaning.config.model);

@@ -88,11 +88,16 @@ try {
       captured = "";
       await generateSkyArticleTemplateSlots({ ...fixture, provider, writingMemory: null, personalTransitContext });
       if (personalTransitContext) {
+        assert(!captured.includes('OWNER-APPROVED STYLE REFERENCE'),'Dedicated Personal Transit voice remains primary');
         assert(!captured.includes('NEUTRAL HELLENISTIC MEANING SUPPORT'), 'Keep mechanics outside Personal Transit reader-meaning projection');
         assert(captured.includes('"readerMeaning":"Synthetic complete contact meaning."'));
         assert(!captured.includes(gate.governedPrompt), "Mechanics are verified privately, not passed as draft language.");
         assert(captured.includes("CURRENT PERSONAL TRANSIT READER-COPY RULE BUNDLE"));
       } else {
+        const style=JSON.parse(captured.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
+        assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
+        assert.equal(style.reference.ownerAuthored,false);assert.equal(style.reference.factUseAuthorized,false);
+        assert.equal(captured.split('OWNER-APPROVED STYLE REFERENCE\n').length-1,1);
         const neutral=JSON.parse(captured.match(/NEUTRAL HELLENISTIC MEANING SUPPORT\n([^\n]+)/u)![1]);
         assert.equal(neutral.role,'meaning-only');
         assert.equal(neutral.receipt.positiveVoiceEvidence,false);
@@ -149,6 +154,9 @@ try {
     const prompt=request.messages[0].content[0].text;
     assert.equal(prompt.split('NEUTRAL HELLENISTIC MEANING SUPPORT\n').length-1,1);
     assert(prompt.includes('APPROVED TLDR ASTRO EXAMPLES'));
+    const style=JSON.parse(prompt.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
+    assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
+    assert.equal(style.reference.ownerAuthored,false);
     return Response.json({error:{message:'synthetic writer boundary stop'}},{status:422});
   };
   await assert.rejects(generateWithClaude(generic),/synthetic writer boundary stop/u);
