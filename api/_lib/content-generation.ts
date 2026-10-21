@@ -14,7 +14,8 @@ import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
 import { generatedReportWritingContract } from "./transit-reading-writing-contract.js";
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
-import { GHOSTWRITING_SKILL_INSTRUCTIONS } from "../../src/astro-writing/ghostwritingSkill.mjs";
+import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
+import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
 import { loadExplicitWritingFeedback } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
@@ -1692,7 +1693,12 @@ function timeLordSceneRules(input: GenerateContentInput) {
   ].join("\n");
 }
 
-function sourceMethodRules() {
+function sourceMethodRules(input?: GenerateContentInput) {
+  if (input && isSynastryAspectInput(input)) return [
+    "SOURCE-INFORMED RELATIONSHIP METHOD",
+    "Use the reviewed books and exact relationship sources for meaning, not as wording to copy. Read the contact as an interaction between the supplied planets, preserving whose response is being described.",
+    "Avoid vague comfort, Barnum statements and broad predictions. A possible interaction can clarify the meaning; do not claim it happened or invent private history to make the interpretation specific."
+  ].join("\n");
   return [
     "SOURCE-INFORMED METHOD",
     "Use the reviewed books as method, not as wording.",
@@ -1741,12 +1747,14 @@ function bannedPhraseRules() {
   ].join("\n");
 }
 
-function metaphorSpecificityRules() {
+function metaphorSpecificityRules(input?: GenerateContentInput) {
   return [
     "METAPHOR AND SPECIFICITY PHRASE BOOK - AUTHORITATIVE WORDING GUIDE",
     "This guide sits above the voice spec for wording decisions.",
     "A metaphor must explain what is happening. It cannot be the explanation by itself.",
-    "Write in this order: placement or event named plainly, actual situation, recognizable behavior, real stakes, direct action or reframe when useful.",
+    input && isSynastryAspectInput(input)
+      ? "Let the relationship thought determine sentence order. Use an image only when it clarifies the supplied contact."
+      : "Write in this order: placement or event named plainly, actual situation, recognizable behavior, real stakes, direct action or reframe when useful.",
     "Use no more than one metaphor family in a short paragraph, and follow it with a real behavior or consequence.",
     "Replace vague scaffolds with the actual object, agreement, decision, behavior, responsibility, or consequence.",
     "Flagged phrases to avoid unless a human editor deliberately keeps them:",
@@ -2605,6 +2613,24 @@ function isSynastryAspectInput(input: GenerateContentInput) {
     );
 }
 
+function synastryInstructionContext(input: GenerateContentInput) {
+  return isSynastryAspectInput(input) ? { surface: "synastry", family: "synastry-aspect" } : {};
+}
+
+function synastrySharedStyleGuide(styleGuide: string) {
+  // Keep complete applicable shared rules, excluding other surfaces' worked
+  // examples, paragraph quotas and the obsolete extra relationship voice pass.
+  return ["# TLDR Astro shared rules for synastry", ...[
+    ["## Universal rules (all surfaces)", "## The interpretive engine"],
+    ["### Universal (all voices)", "### Natal voice only"]
+  ].map(([heading, nextHeading]) => {
+    const start = styleGuide.indexOf(heading);
+    const end = styleGuide.indexOf(nextHeading, start + heading.length);
+    if (start < 0 || end <= start) throw new Error("Synastry shared style rules are incomplete.");
+    return styleGuide.slice(start, end).trim();
+  })].join("\n\n");
+}
+
 function selectedSynastryExampleBank(input: GenerateContentInput) {
   const facts = input.facts;
   const candidates = [
@@ -2651,7 +2677,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
   const contextInstruction = relationshipContextInstruction(input.facts);
 
   return [
-    "SYNASTRY WRITING SYSTEM synastry-aspect/v2-2026-10-21",
+    `SYNASTRY WRITING SYSTEM ${SYNASTRY_EDITORIAL_VERSION}`,
     "Use this for client-facing synastry aspect copy.",
     "",
     "POV AND QUESTION",
@@ -4602,7 +4628,9 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
         "HEADLINE RULE",
         `Return this exact headline string: ${JSON.stringify(lockedHeadline)}.`,
         "Do not rewrite it as a human-theme title. Keep the headline as the astrology aspect, placement, transit, season, retrograde, or lunation label.",
-        "Put the readable hook, advice, and emotional interpretation in summary and body."
+        isSynastryAspectInput(input)
+          ? "Put the readable hook and emotional interpretation in summary and body."
+          : "Put the readable hook, advice, and emotional interpretation in summary and body."
       ].join("\n")
     : [
         "HEADLINE RULE",
@@ -4611,7 +4639,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
       ].join("\n");
 
   return effectiveRulePrompt([
-    styleGuide,
+    isSynastryAspectInput(input) ? synastrySharedStyleGuide(styleGuide) : styleGuide,
     "",
     "TASK",
     "Write one TLDR Astro interpretation from the provided astrology facts and source material.",
@@ -4628,7 +4656,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     isSynastryAspectInput(input) ? "" : timeLordSceneRules(input),
     "",
-    sourceMethodRules(),
+    sourceMethodRules(input),
     "",
     "CONTENT MODE",
     modeRulesForInput(input),
@@ -4665,7 +4693,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "TECHNICAL ASPECT NOTES",
     "Use technical aspect notes only to preserve aspect accuracy and to keep aspect cards attached to the primary natal placement.",
     "",
-    metaphorSpecificityRules(),
+    metaphorSpecificityRules(input),
     "",
     "VOICE RULES",
     natalPlacementPrimitiveRules(),
@@ -5313,6 +5341,7 @@ async function reviewGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
+    ...synastryInstructionContext(input),
     taskInstructions: rhetoricalReviewContract(deterministicReaderCopy(draft)),
     request: {
       model,
@@ -5388,6 +5417,7 @@ async function planGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "MEANING_PLANNER",
+    ...synastryInstructionContext(input),
     taskInstructions: "Astrology first. Return only the governed structured meaning plan. Do not draft prose.",
     request: {
       model,
@@ -5454,6 +5484,7 @@ async function reviseGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVISER",
+    ...synastryInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5534,6 +5565,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "WRITER",
+    ...synastryInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5649,7 +5681,9 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
       body: JSON.stringify({
         model,
         max_tokens: 5000,
-        system: GHOSTWRITING_SKILL_INSTRUCTIONS,
+        system: isSynastryAspectInput(input)
+          ? withGhostwritingSkill(synastryInstructionsForRole("WRITER"))
+          : GHOSTWRITING_SKILL_INSTRUCTIONS,
         messages: [
           {
             role: "user",

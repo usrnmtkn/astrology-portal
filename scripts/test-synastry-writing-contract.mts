@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { REVIEW_FIELDS } from '../src/astro-writing/canonicalInstructions.mjs';
 import { RHETORICAL_LABELS } from '../src/astro-writing/rhetoricalPatterns.mjs';
 import handler from '../api/generate-content.js';
+import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
+import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
+
+const sharedStyle = readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/style-guide.md', import.meta.url), 'utf8');
 
 Object.assign(process.env, {
   NODE_ENV: 'test', CONTENT_GENERATION_SECRET: 'synthetic-synastry-secret',
@@ -65,7 +70,25 @@ async function generate(body: any, authorized = true) {
 
 function assertSynastryRequest(request: any, input: typeof base) {
   const prompt = request.provider === 'openai' ? request.body.input : request.body.messages[0].content[0].text;
+  const instructions = request.provider === 'openai' ? request.body.instructions : request.body.system;
   const schema = request.provider === 'openai' ? request.body.text.format.schema : request.body.tools[0].input_schema;
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v3-2026-10-21'));
+  assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
+  // Inspect both actual provider fields: OpenAI's canonical transport can add
+  // instructions that are absent from the assembled user prompt.
+  const combined = `${instructions}\n${prompt}`;
+  for (const conflict of [
+    'SPINE QUALITY GATES', 'SKY PLACEMENT ARTICLE SPINE',
+    'Strategy needs at least two short imperatives', 'LONG-FORM SENTENCE ARCHITECTURE',
+    '## Natal voice (warm)', '## Transit and Sky voice (direct)', '## Relationship voice (interim)',
+    '3 to 5 paragraphs', '1 to 2 paragraphs', 'Gives one practical move.',
+    'Flag relationship blocks for a dedicated voice pass', 'Put the readable hook, advice',
+    'Write in this order:', 'Daily horoscope rule: include lunar contacts'
+  ]) assert(!combined.includes(conflict), `Cross-surface instruction remains: ${conflict}`);
+  const universal = sharedStyle.match(/^## Universal rules \(all surfaces\)[\s\S]*?(?=^## )/mu)?.[0].trim();
+  const universalBans = sharedStyle.match(/^### Universal \(all voices\)[\s\S]*?(?=^### )/mu)?.[0].trim();
+  assert(universal && prompt.includes(universal), 'Complete shared safety and wording rules remain intact.');
+  assert(universalBans && prompt.includes(universalBans), 'Complete applicable shared word policy remains intact.');
   assert(prompt.includes('OUTPUT SHAPE FOR SYNASTRY ASPECT'));
   assert(prompt.includes("do not leave the astrological reasoning entirely in the drilldown"));
   assert(prompt.includes('what they want from the exchange'));
@@ -103,6 +126,12 @@ try {
       assert.deepEqual(requests.slice(start).map(request => request.kind), provider === 'openai'
         ? ['tldr_astro_meaning_plan', 'tldr_astro_generated_content', 'tldr_astro_cold_rendered_prose_review', 'tldr_astro_marie_review']
         : ['tldr_astro_generated_content'], 'The existing provider call sequence is unchanged.');
+      if (provider === 'openai') {
+        const stages = requests.slice(start);
+        assert(stages[0].body.instructions.includes('SYNASTRY MEANING AUTHORITY'));
+        assert(stages[3].body.instructions.includes('SYNASTRY REVIEW AUTHORITY'));
+        for (const stage of stages) assert(!stage.body.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
+      }
       assertSynastryRequest(writers[0], variant as typeof base);
       assert.equal(response.result.generated.action, '');
       assert.equal(response.result.generated.body, draft.body);
@@ -122,6 +151,15 @@ try {
     assert.notEqual((await generate({ ...base, provider })).statusCode, 200, 'Unlicensed variables remain invalid.');
     nextDraft = draft;
   }
+  const reviser = governedInstructionsForRole('REVISER', { surface: 'synastry', family: 'synastry-aspect' });
+  assert(reviser.includes('Revise only the supplied failed fields'));
+  assert(!reviser.includes('SKY PLACEMENT ARTICLE SPINE'));
+  assert.throws(() => governedInstructionsForRole('WRITER', { surface: 'synastry', family: 'synastry-aspect',
+    governedInstructions: 'An unrelated instruction override.' }), /canonical role instructions/);
+  await assert.rejects(callOpenAIResponses({ apiKey: 'synthetic', role: 'WRITER', surface: 'synastry', family: 'synastry-aspect',
+    request: { input: 'Synthetic request.', instructions: 'An unrelated override.' } }), /may not override/);
+  // Sharing a surface name alone cannot change an unrelated call's authority.
+  assert(governedInstructionsForRole('WRITER', { surface: 'synastry', family: 'composite-aspect' }).includes('SKY PLACEMENT ARTICLE SPINE'));
   // Other surfaces retain their own existing output and scene contracts.
   for (const provider of ['openai', 'claude'] as const) {
     const start = requests.length;
