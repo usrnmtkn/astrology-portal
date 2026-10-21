@@ -61,6 +61,7 @@ Provider-input tests establish source delivery and preservation, not prose quali
 
 Base: `origin/main` at `a7d2d778a3539c800b7ed3d8a1b248ebc4419d69`.
 Work branch: `feat/hellenistic-knowledge-20261020`.
+Implementation tested: `e8f5d2c5be14ab7229afe675d9c3b4eef7d7cf3c`.
 
 | Criterion | Evidence | Status |
 | --- | --- | --- |
@@ -70,10 +71,21 @@ Work branch: `feat/hellenistic-knowledge-20261020`.
 | Seasonal mechanism/plan and rebuilt prose retain source; voice review stays separate | `scripts/test-seasonal-composition.mts` through actual handlers | Passed locally |
 | Actual server bundle preserves version-checked owner writes | `scripts/test-generated-row-writers.mts` | Passed locally |
 | Server type check | `npm run typecheck:server` | Passed locally |
-| Full Content Studio API gate | `npm run test:content-studio-api` | Pending |
-| Fresh production-entry browser profile save/preview/reload journey | `STUDIO_PRODUCTION_ENTRY=1 npx playwright test --config=playwright.horoscope-writing.config.ts` | Pending |
-| Repository and reader-bundle privacy | Protected-policy scan and browser knowledge partition checks | Pending |
-| Hosted exact-head checks and production revision | Release workflow | Unverified; no deployment performed |
+| Full Content Studio API gate | `npm run test:content-studio-api` | Passed locally |
+| Fresh production-entry browser profile save/preview/reload journey | `STUDIO_PRODUCTION_ENTRY=1 npx playwright test --config=playwright.horoscope-writing.config.ts` | Passed; five tests |
+| Repository and reader-bundle privacy | Protected-policy scan and browser knowledge partition checks | Passed; 11,232 source files and 350 built assets |
+| Hosted exact-head checks and production revision | Release workflow | Unverified; branch not pushed and no deployment performed |
 
 All mutation/generation checks use isolated storage and synthetic provider
 responses. Existing production copy is not mutated to obtain test evidence.
+
+The complete API command passed after provisioning the prescribed ignored
+protected report-reference store. This is a test prerequisite, not a source or
+reader-content change. Browser verification used a fresh production-entry build
+with `reuseExistingServer: false`, phone/desktop widths and both themes.
+
+Publishing is blocked by automatic approval review: pushing the feature branch
+to the public GitHub repository requires explicit owner authorization to export
+the code and neutral knowledge summaries. No original PDFs, extracted source
+text, protected report documents, private profiles or new reader prose are in
+the commit. Hosted checks on the eventual exact head remain required before merge.
