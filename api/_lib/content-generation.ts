@@ -1,4 +1,5 @@
 import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
+import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
 import { sharedGenerationOwnerExamples } from "./shared-generation-owner-examples.js";
 import { assertPersonalTransitWriterContext, type PersonalTransitWriterContext } from "./personal-transit-writer-context.js";
 import { TRANSIT_INGRESS_EDITORIAL_AUTHORITY } from "./transit-ingress-editorial-authority.js";
@@ -4615,6 +4616,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     "ASTROLOGY FACTS",
     JSON.stringify(input.facts, null, 2),
+    hellenisticMeaningPrompt({facts:input.facts,surface:input.surface,family:input.eventType}),
     "",
     "SOURCE SNAPSHOT",
     JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
@@ -5360,6 +5362,7 @@ async function planGeneratedContentWithOpenAI({
         mode: input.mode,
         contentKey: input.contentKey,
         governedFacts: input.facts,
+        neutralMeaningSupport:buildHellenisticMeaningSupport({facts:input.facts,surface:input.surface,family:input.eventType}),
         ...(productionGate.governedPromptEnabled
           ? { governedKnowledgeEvidence: productionGate.governedPrompt }
           : {})
@@ -5743,7 +5746,7 @@ function skyArticleTemplateSlotPrompt(
     "Return one value for every requested field and no other fields.",
     "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
     "If retrogradeHistoryIncluded is true, retrogradeHistory supplies the previous and next complete retrograde cycles through its named sign, the exact previousCrossing of the current station degree when available, and separately the most recent path within its degree tolerance. Use full cycles, signTransitions and in-sign segments precisely. durationDays and daysInStationSign are exact elapsed days; civil calendar dates depend on the reference time zone. nextSameSign is a future calculation, not historical evidence. A null crossing means the previous same-sign cycle did not reach that degree. The degree reference is the current cycle's retrograde-start station. This is not proof of a prior ingress, aspect recurrence, repeated life experience, or world event. Do not invent historical context or imply causation. Missing matches are unknown outside the stated coverage.",
-    "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, and the immutable template context.",
+    "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, applicable NEUTRAL HELLENISTIC MEANING SUPPORT, and the immutable template context. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority.",
     "The result is an owner-review draft. It is not approved and cannot serve by itself.",
     "",
     ...(!scopedEditorial ? [
@@ -5758,6 +5761,7 @@ function skyArticleTemplateSlotPrompt(
     "",
     "ASTROLOGY FACTS",
     JSON.stringify(input.facts, null, 2),
+    hellenisticMeaningPrompt({facts:input.facts,surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'}),
     "",
     "REQUESTED TEMPLATE FIELDS",
     JSON.stringify(input.requestedSlots, null, 2),

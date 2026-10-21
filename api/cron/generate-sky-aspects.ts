@@ -7,6 +7,7 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { canonicalizeNodeAxisAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
 import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
+import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
 import {
   prepareProductionPreCallGate,
   assertProductionPreCallGate
@@ -209,11 +210,13 @@ export function skyAspectKernel(args: {
     provider: config.provider,
     model: config.model,
     temperature: config.temperature,
-    reasoningEffort: config.reasoningEffort
+    reasoningEffort: config.reasoningEffort,
+    meaningSupport:buildHellenisticMeaningSupport({facts:input.facts,surface:'sky',family:'sky-aspect'}).receipt
   };
-  const governed = (prompt: string) => gate.governedPromptEnabled
+  const meaningSupport=hellenisticMeaningPrompt({facts:input.facts,surface:'sky',family:'sky-aspect'});
+  const governed = (prompt: string) => [gate.governedPromptEnabled
     ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`
-    : prompt;
+    : prompt,meaningSupport].filter(Boolean).join('\n\n');
   const generateFn = (prompt: string, options: Record<string, unknown> = {}) => generate(governed(prompt), {
     ...options,
     beforeProviderCall: () => {

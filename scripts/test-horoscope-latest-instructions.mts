@@ -41,6 +41,12 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  const repeated=await action('prepare');assert.equal(repeated.status,200);assert.equal(repeated.payload.rows[0].updated_at,row.updated_at,'No write when already current');
  const started=await action('generate',{sign,approvedPlanHash:refreshed.payload.plan.planHash});assert.equal(started.status,202,JSON.stringify(started.payload));row=started.payload.rows[0];
  const active=structuredClone(row.source_snapshot.horoscopeGeneration.active);
+ const actualDraft=(period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId)).input;
+ const neutral=JSON.parse(actualDraft.match(/NEUTRAL HELLENISTIC MEANING SUPPORT\n([^\n]+)/u)![1]);
+ assert.equal(neutral.role,'meaning-only');assert.equal(neutral.receipt.positiveVoiceEvidence,false);
+ assert(neutral.records.some((r:any)=>r.id==='HB-26'));
+ assert(refreshed.payload.plan.readings[0].meaningSupport.frameworkSha256===neutral.receipt.frameworkSha256);
+ assert(!neutral.records.some((r:any)=>r.id==='HB-08'||r.id.startsWith('HB-HOUSE-')));
  assert((period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId)).input.includes(horoscopeEditorialPrompt(second.profile)));
  const third=await saveProfile(second,`Future ${period} guidance.`);
  const pinned=await action('prepare');assert.equal(pinned.status,200);

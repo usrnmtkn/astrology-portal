@@ -3,6 +3,7 @@ import {buildHoroscopePromptVariables} from './horoscopePromptVariables.mjs';
 import {horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {SEASONAL_PLAN_SLOT,validateSeasonalDevelopmentPlan,selectSeasonalPlanFacts} from './seasonalDevelopmentPlan.mjs';
 import {seasonalContextBudget} from './seasonalContextBudget.mjs';
+import {buildHellenisticMeaningSupport} from './hellenisticMeaningSupport.mjs';
 
 const hash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
 const pick = (value, keys) => Object.fromEntries(keys.filter(k => value[k] !== undefined).map(k => [k,value[k]]));
@@ -68,7 +69,8 @@ export function selectSeasonalDraftPassages(context,argumentOutline={}) {
     role:p.draftingRole,text:p.text}));
 }
 
-export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile,evidenceManifest=null}) {
+export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile,evidenceManifest=null,
+  meaningSupport=buildHellenisticMeaningSupport({facts:engineFacts,family:'horoscope',surface:'horoscopes'})}) {
   if (engineFacts.window?.period !== 'seasonal' || writingProfile.profile.period !== 'seasonal') throw new Error('Seasonal drafting requires a matching profile and window.');
   const overview = engineFacts.risingSign === 'overview';
   const candidates = evidenceManifest ? evidenceManifest.entries.filter(e=>e.role==='approved').map(e=>({id:e.id,sourcePath:e.source.locator,textSha256:e.textHash,text:e.text,role:'primary owner voice'})) : selectSeasonalDraftPassages(context,argumentOutline);
@@ -90,6 +92,7 @@ export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutlin
     ...(!variables.uses('primaryOwnerVoiceSources') ? [`SELECTED COMPLETE OWNER PASSAGES\n${JSON.stringify(primary)}`] : []),
     ...(!variables.uses('supportingOwnerVoiceSources') && supporting.length ? [`SELECTED SUPPORTING OWNER PASSAGE\n${JSON.stringify(supporting)}`] : []),
     ...(!variables.uses('governedFacts') ? [factsText] : []),
+    ...(meaningSupport?.records?.length?[`NEUTRAL HELLENISTIC MEANING SUPPORT\n${JSON.stringify(meaningSupport)}`]:[]),
     ...(evidenceManifest ? [`SCOPED REJECTED OWNER EVIDENCE\n${JSON.stringify(evidenceManifest.entries.filter(e=>e.role==='rejected'))}`] : []),
     'FACT BOUNDARIES\nChoose from this catalog; it is not an event checklist. Every house belongs to its attached planet or lunation. Exact events and sampled relationships are separate: samples establish only the stated instant, orb and phase. Configurations require their supplied simultaneous aspects. Rulership and the symbolic season axis are meaning, not extra events. A reference position does not establish an ingress, duration or earlier cycle. Unknown circumstances remain possible, never guaranteed. Do not invent history or outcomes. Include the supplied local date when first mentioning a selected event; keep exact times outside prose.'
   ].join('\n\n');
@@ -101,7 +104,9 @@ export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutlin
 export function completeSeasonalDraftRequest(template,developmentPlan,evidenceManifest=null) {
   if(!template.seasonalPreparation)throw new Error('Missing pinned Seasonal preparation.');
   const preparation=template.seasonalPreparation;
-  const input=buildSeasonalDraftInput({...preparation,evidenceManifest,engineFacts:{...preparation.engineFacts,seasonalDevelopmentPlan:developmentPlan}});
+  // Legacy running requests predate this source. Do not silently add current
+  // doctrine while rebuilding their stored preparation after a deployment.
+  const input=buildSeasonalDraftInput({...preparation,meaningSupport:preparation.meaningSupport??null,evidenceManifest,engineFacts:{...preparation.engineFacts,seasonalDevelopmentPlan:developmentPlan}});
   if(input.includes(SEASONAL_PLAN_SLOT))throw new Error('Seasonal planning is incomplete.');
   const request={...template,stage:'draft',input};
   return {...request,contextBudget:seasonalContextBudget(request),contextReceipt:{version:'seasonal-composition/v1',

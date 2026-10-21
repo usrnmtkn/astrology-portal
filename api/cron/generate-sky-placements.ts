@@ -5,6 +5,7 @@ import editorialJudgeRuntime from "../../packages/astro-knowledge/scripts/editor
 import productionPreCallGate from "../../src/astro-writing/productionPreCallGate.cjs";
 import skyPlacementCachePolicy from "../../src/astro-writing/skyPlacementCachePolicy.cjs";
 import { validateCopy } from "../../src/astro-writing/validateCopy.mjs";
+import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
 import { currentSkyFacts, type PlanetPosition, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
@@ -335,11 +336,13 @@ export function placementKernel(
     provider: config.provider,
     model: config.model,
     temperature: config.temperature,
-    reasoningEffort: config.reasoningEffort ?? null
+    reasoningEffort: config.reasoningEffort ?? null,
+    meaningSupport:buildHellenisticMeaningSupport({facts:input.facts,surface:'sky',family:'sky-placement'}).receipt
   };
-  const governed = (prompt: string) => gate.governedPromptEnabled
+  const meaningSupport=hellenisticMeaningPrompt({facts:input.facts,surface:'sky',family:'sky-placement'});
+  const governed = (prompt: string) => [gate.governedPromptEnabled
     ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`
-    : prompt;
+    : prompt,meaningSupport].filter(Boolean).join('\n\n');
   const generateFn = (prompt: string, generateOptions: Record<string, unknown> = {}) => generate(governed(prompt), {
     ...generateOptions,
     beforeProviderCall: () => {

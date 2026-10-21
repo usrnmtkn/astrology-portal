@@ -64,6 +64,7 @@ export function prepareLunationArticle(facts,direction='',{writingProfile=null,p
   const evidence=ownerApprovedMatrixRoleEvidenceForTarget(matrix,{planet:'moon',sign,eventType:phase,surface:family});
   const scenes=sceneEvidenceForTarget({approvedExamples:approved,matrixEvidenceRows:matrix,registerExamples:examples,sceneNounLexicon:matrixSceneNounLexicon(matrix),plan});
   const phrasePath='data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl';read(phrasePath);
+  read('packages/astro-knowledge/data/frameworks/hellenistic-meaning-support.json');
   const relevant=examples.filter(e=>e.sign===sign);
   const contextOptions={examples,matrixExamples:evidence.meaning,matrixArgumentCandidates:evidence.argument_candidate,
     matrixEvidenceAvailableCount:evidence.meaning.length,relevantOwnerPassagesAvailableCount:relevant.length,

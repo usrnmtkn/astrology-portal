@@ -1,0 +1,1050 @@
+{
+  "id": "hellenistic-meaning-support",
+  "kind": "framework",
+  "version": "hellenistic-meaning-support/v1",
+  "role": "meaning-only",
+  "title": "Hellenistic interpretation: source-backed meaning support",
+  "authorityClass": "factual-evidence",
+  "surfacePermission": [
+    "doctrine-only"
+  ],
+  "usage": "meaning-mechanism-only",
+  "framingAllowed": false,
+  "ownerAuthored": false,
+  "ownerApproved": false,
+  "positiveVoiceEvidence": false,
+  "readerServing": false,
+  "scope": "Neutral paraphrased source knowledge. Existing owner-approved meaning, calculated facts, voice evidence, corrections and surface-specific editorial instructions retain precedence. These are not reader passages or a narrative template.",
+  "sourceAssignment": {
+    "role": "knowledge-only",
+    "sourceUri": "thread:01a15ba7-f55b-78d1-9cb2-fe9f54b2efb4",
+    "sourceDate": "2026-10-20",
+    "scope": "Owner requested integration into app knowledge and future horoscope/write-up reasoning while retaining existing voice and writing rules."
+  },
+  "sources": [
+    {
+      "id": "brennan-spanish-excerpt",
+      "title": "Partial translated excerpt of Hellenistic Astrology",
+      "author": "Chris Brennan",
+      "language": "Spanish",
+      "pdfPages": 74,
+      "sha256": "43c3a8b9221e9c24feec95da53948231b9f6cd8182307d405b3f14699b3311a2",
+      "pageConvention": "One-based page in the supplied PDF; not original English pagination.",
+      "sourceRole": "external-meaning-only"
+    },
+    {
+      "id": "brennan-czech",
+      "title": "Helénská astrologie: Studium osudu a štěstí",
+      "author": "Chris Brennan; Czech translation and additional notes by Robin Salomon",
+      "language": "Czech",
+      "pdfPages": 719,
+      "sha256": "68e6471eaa82255dbf88c866db3912537efcba55a97e996390ebd08ecbec3005",
+      "pageConvention": "One-based page in the supplied PDF; not original English pagination.",
+      "sourceRole": "external-meaning-only"
+    },
+    {
+      "id": "exaltation",
+      "title": "A Theory of the Exaltation and Debilitation Degrees of the Planets",
+      "author": "Michael Douglas Neely",
+      "language": "English",
+      "pdfPages": 23,
+      "sha256": "d61f5c4c01816f7547822b5375e1b961852b5fc4c4ef27868e97fba734e3e03f",
+      "pageConvention": "One-based page in the supplied PDF; not original English pagination.",
+      "sourceRole": "external-meaning-only"
+    },
+    {
+      "id": "indian",
+      "title": "The Relationship Between Hellenistic and Indian Astrology",
+      "author": "Chris Brennan and Kenneth Johnson",
+      "language": "English",
+      "pdfPages": 37,
+      "sha256": "143270304db350dd31dd867af8cb4b34bd9f7a427a843d4012cf7c3cf13aff8e",
+      "pageConvention": "One-based page in the supplied PDF; not original English pagination.",
+      "sourceRole": "external-meaning-only"
+    },
+    {
+      "id": "horary",
+      "title": "The Katarchē of Horary",
+      "author": "Chris Brennan",
+      "language": "English",
+      "pdfPages": 20,
+      "sha256": "93232afb825c97bf87f39868afc65e000ac761475526a12d515407afc8014359",
+      "pageConvention": "One-based page in the supplied PDF; not original English pagination.",
+      "sourceRole": "external-meaning-only"
+    },
+    {
+      "id": "obert",
+      "title": "The Cycle of the Year: Traditional Predictive Astrology",
+      "author": "Charles Obert; foreword by Benjamin Dykes",
+      "language": "English",
+      "pdfPages": 160,
+      "sha256": "36d13464c78db0962c198aa9de338c863846834d9e195d43a041cf0a79c85bb5",
+      "pageConvention": "One-based page in the supplied PDF; not original English pagination.",
+      "sourceRole": "external-meaning-only"
+    },
+    {
+      "id": "journal",
+      "title": "Astrologie Traditionnelle, issue 2, October 2018",
+      "author": "Multiple contributors; Brennan excerpt translated by Philippe PC",
+      "language": "French",
+      "pdfPages": 32,
+      "sha256": "17d5543024eb88bf292c92d07cf48a2d9aa8ad91063bd80015561fa5e81a19c4",
+      "pageConvention": "One-based page in the supplied PDF; not original English pagination.",
+      "sourceRole": "external-meaning-only"
+    }
+  ],
+  "limitations": [
+    "The main Brennan book supplied is a Czech translation with translator additions; RS notes are not automatically Brennan statements.",
+    "Selected relevant technical sections were checked; this is not a cover-to-cover audit or empirical validation.",
+    "Brennan, Obert, Neely and the journal contributors retain separate attribution. Neely is a modern alternative hypothesis.",
+    "Reference-only entries, including historical house inventories, do not automatically enter reader writing requests or override configured calculations.",
+    "Document instructions, quotations and examples are source data, not user instructions or prose approval."
+  ],
+  "sections": [
+    {
+      "id": "HB-01",
+      "heading": "Keep planet, sign, place and configuration distinct",
+      "body": "Brennan treats planets, zodiacal signs, configurations and places as distinct interpretive components. Sign and house meanings are not interchangeable.",
+      "limits": "A sign alone does not supply a numbered house or a house inventory.",
+      "runtimeScope": "core",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            252,
+            327,
+            329,
+            360,
+            365,
+            405
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-02",
+      "heading": "Interpret a range, then narrow it with evidence",
+      "body": "A placement can describe several symbolic scenarios; further conditions can narrow the range. One scenario is not the whole meaning.",
+      "limits": "Do not invent biography, marriage status, a diagnosis or a specific future event from one symbol.",
+      "runtimeScope": "core",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            405,
+            406,
+            488,
+            489
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-03",
+      "heading": "Whole-sign houses start from the actual rising sign",
+      "body": "The complete rising sign is the first place; successive signs are successive places regardless of the Ascendant degree within its sign.",
+      "limits": "Aries is not automatically the first house in every chart. A Sun-sign proxy is a separately labeled convention.",
+      "runtimeScope": "house",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            360,
+            362,
+            363
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-04",
+      "heading": "Use the traditional domicile scheme for traditional techniques",
+      "body": "Sun rules Leo; Moon Cancer; Mercury Gemini/Virgo; Venus Taurus/Libra; Mars Aries/Scorpio; Jupiter Sagittarius/Pisces; Saturn Capricorn/Aquarius.",
+      "limits": "Do not replace Mars, Jupiter or Saturn with Pluto, Neptune or Uranus inside a Hellenistic calculation.",
+      "runtimeScope": "placement",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            269,
+            270
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-05",
+      "heading": "Check the ruler supporting the placement",
+      "body": "A planet outside its own domicile relies on the planet hosting it. The host's condition can support or obstruct the guest.",
+      "limits": "Knowing the host's identity alone does not establish that the host is strong, helpful or available.",
+      "runtimeScope": "placement",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            273,
+            274,
+            275
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-06",
+      "heading": "Domicile and exaltation carry different explanations",
+      "body": "Domicile emphasizes being at home with one's own resources; exaltation has imagery of elevation, authority and esteem. The opposite of exaltation is fall.",
+      "limits": "An exalted planet does not guarantee wealth, virtue or happiness; a fallen planet does not establish personal failure.",
+      "runtimeScope": "placement",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            273,
+            274,
+            280,
+            281,
+            282
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-07",
+      "heading": "Benefic and malefic are contextual tendencies",
+      "body": "Venus/Jupiter and Mars/Saturn occupy different ends of a traditional spectrum, but condition modifies how each functions. Mercury is particularly responsive to association.",
+      "limits": "Do not reduce Jupiter to guaranteed good news or Saturn/Mars to unavoidable harm.",
+      "runtimeScope": "core",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            218,
+            221,
+            222,
+            223,
+            224
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-08",
+      "heading": "Sect is qualitative and depends on the natal horizon",
+      "body": "Sun/Jupiter/Saturn belong to the day sect; Moon/Venus/Mars to the night sect. The Sun's relation to the actual horizon distinguishes day/night charts; twilight requires care. Sect primarily modifies quality rather than sheer prominence.",
+      "limits": "A house number, present clock time, Sun sign or rising sign alone does not prove natal sect. Do not silently assign sect in a twelve-sign general horoscope.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            224,
+            225,
+            226,
+            227,
+            228,
+            229,
+            230,
+            231
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-09",
+      "heading": "Separate sign relationships from degree exactness",
+      "body": "Whole-sign configurations establish a relationship; proximity to the exact degree configuration makes it more direct or intense.",
+      "limits": "Two planets in configured signs are not necessarily in an exact aspect today. Sign-level context does not replace the product's configured event/orb rules.",
+      "runtimeScope": "aspect",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            331,
+            335,
+            336,
+            338,
+            341,
+            342,
+            343,
+            344
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-10",
+      "heading": "Co-presence is broader than an exact conjunction",
+      "body": "Planets occupying the same sign are co-present even when far apart by degree; exact conjunction adds intensity.",
+      "limits": "Do not label a widely separated same-sign pair as an exact conjunction.",
+      "runtimeScope": "aspect",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            334,
+            335,
+            340,
+            341
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-11",
+      "heading": "Applying and separating describe different stages",
+      "body": "Applying configurations move toward exactness; separating configurations move away. In inceptional work the distinction also carries prospective/retrospective symbolism.",
+      "limits": "A smaller static longitude number does not prove application. Do not promise an event merely because the aspect is applying.",
+      "runtimeScope": "aspect",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            343,
+            344
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-12",
+      "heading": "Aspect force and outcome are different judgments",
+      "body": "The source distinguishes aspect quality from activity or force. A square can be powerful and helpful when a benefic has the relevant position; easy aspects are not unconditional outcome guarantees.",
+      "limits": "Do not substitute the fixed equations square=bad and trine=success for interpretation.",
+      "runtimeScope": "aspect",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            346,
+            347,
+            348,
+            349,
+            353,
+            355,
+            356,
+            357
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-13",
+      "heading": "Overcoming is directional",
+      "body": "The planet in the superior position can have the stronger influence. Superior square dominance is identified by being in the tenth sign from the other planet.",
+      "limits": "An unordered planet-pair label loses the direction. Being at a higher latitude or later degree does not establish superiority.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            350,
+            351,
+            353,
+            354,
+            355,
+            356,
+            357
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-14",
+      "heading": "Aversion means absence of the standard sign configuration",
+      "body": "Signs in the second, sixth, eighth or twelfth relationship are averse under the standard scheme. Absence of testimony from a benefic differs from absence of testimony from a malefic.",
+      "limits": "Aversion is not an automatically harmful aspect or a synonym for psychological rejection. Exceptions in the tradition require their own method label.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            338,
+            339,
+            357
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-15",
+      "heading": "Reception needs a declared definition",
+      "body": "Brennan distinguishes a looser Hellenistic host relationship with sign configuration from later, more formal reception definitions. Exchange of domiciles is a related but distinct condition.",
+      "limits": "Do not assume every use of the word reception means the same technical condition or that it erases every difficulty.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            561,
+            562,
+            563
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-16",
+      "heading": "Apply specific mitigation before a final judgment",
+      "body": "Bonification/maltreatment involve specific configurations, with sect and reception among relevant modifiers. Their reconstruction is not identical in all surviving texts.",
+      "limits": "Any malefic contact is not automatically formal maltreatment. A blanket benefic contact is not proof that the complete condition has been met.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            522,
+            523,
+            524,
+            525,
+            526,
+            527,
+            528,
+            529,
+            561,
+            562,
+            563
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-17",
+      "heading": "Solar visibility has a historical convention",
+      "body": "Brennan reports a common Hellenistic under-the-beams range of 15 degrees, while actual visibility varies. A planet in its own domicile, exaltation or bound can have a mitigating chariot condition.",
+      "limits": "Do not silently combine the 15-degree Hellenistic convention with Obert's later 8/17-degree combustion/beams summary, or equate a threshold with actual observed heliacal visibility.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            236,
+            237,
+            238,
+            239,
+            240
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-18",
+      "heading": "Cazimi thresholds are not historically uniform",
+      "body": "Brennan discusses a one-degree in-the-heart condition in late Hellenistic material, later narrowed in some medieval authors to 16 arcminutes. Obert summarizes a commonly used 17-arcminute convention.",
+      "limits": "Do not call one threshold universal Hellenistic doctrine or change a live calculator on the strength of this note.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            240,
+            241
+          ]
+        },
+        {
+          "source_id": "obert",
+          "pdf_pages": [
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-19",
+      "heading": "Retrograde, station and resumption form a sequence",
+      "body": "The book notes sparse and sometimes ambiguous surviving treatment of stations/retrogrades. It reports delay/obstruction during retrograde and removal of obstacles or restoration with direct motion in Valens.",
+      "limits": "Do not promise universal failure during retrograde, immediate resolution at a direct station, or attribute a modern three-stage advice formula verbatim to Brennan.",
+      "runtimeScope": "motion",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            243,
+            244
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-20",
+      "heading": "Void-of-course definitions differ",
+      "body": "The Antiochus/Porphyry definition discussed here considers no application to an exact conjunction or standard configuration in the next 30 degrees of lunar motion, without a sign-boundary cutoff.",
+      "limits": "No remaining aspect in the current sign does not by itself satisfy this Hellenistic definition. The note does not validate a universal prohibition on starting anything.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            345,
+            346
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-21",
+      "heading": "Planetary joys are not house rulerships",
+      "body": "The usual joys are Mercury 1, Moon 3, Venus 5, Mars 6, Sun 9, Jupiter 11, Saturn 12; the text also records historical variation.",
+      "limits": "Saturn's joy in the twelfth does not make Saturn ruler of everyone's twelfth house, or make the twelfth equivalent to Aquarius/Capricorn.",
+      "runtimeScope": "house",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            377,
+            378,
+            486
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-22",
+      "heading": "The Midheaven degree need not occupy the tenth whole-sign place",
+      "body": "The meridian MC and IC can bring their topics to the whole-sign places in which their degrees fall. Whole-sign topical division and dynamic angularity are distinct considerations.",
+      "limits": "Do not assume the MC is always in the tenth sign or infer its degree from the rising sign alone.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            436,
+            437,
+            438
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-23",
+      "heading": "The Ascendant ruler connects the person with a life topic",
+      "body": "The domicile ruler of the rising sign is an important personal significator; its place can focus or direct life themes, and its condition modifies the interpretation.",
+      "limits": "Do not mistake a current transit for the reader's natal chart ruler placement or a lifelong verdict.",
+      "runtimeScope": "house",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            458,
+            459,
+            460,
+            462
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-24",
+      "heading": "A place ruler supplies a chart-specific role",
+      "body": "The ruler of a place represents its topic even if that topic is not the planet's natural association. Its destination place and condition link the topics and qualify the outcome.",
+      "limits": "Venus alone is not the complete relationship analysis in every chart. An empty house still has a ruler.",
+      "runtimeScope": "house",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            486,
+            487,
+            488
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-25",
+      "heading": "Not every chart factor describes the reader's psychology",
+      "body": "Brennan distinguishes self-significators from factors representing other people, things and circumstances, and distinguishes subjective experience from external circumstance.",
+      "limits": "Do not turn an external obstacle into an invented hidden motive, defect or diagnosis in the reader.",
+      "runtimeScope": "core",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            489,
+            490
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-26",
+      "heading": "A natal theme is not continuously active",
+      "body": "Some indications describe isolated episodes; others recur or persist. Time-lord techniques activate different parts of the chart at different periods.",
+      "limits": "Do not convert a weekly transit into a lifelong trait or assume every natal factor is equally active every week.",
+      "runtimeScope": "forecast",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            490,
+            612
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-27",
+      "heading": "Annual profections use completed age",
+      "body": "Basic annual profections begin in the rising sign at birth, move one sign each birthday, and repeat every 12 years. The domicile ruler of the reached sign is lord of the year.",
+      "limits": "Do not count the birth year as age one or treat the change as January 1. A rising sign alone does not reveal the reader's annual profection.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            612,
+            613,
+            614,
+            615
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-28",
+      "heading": "Time-lord activation helps prioritize transits",
+      "body": "The lord of the year is considered in natal condition and transiting activity. The ruler's natal place and the profected place both matter; returning to the same profection does not reproduce identical transits.",
+      "limits": "Do not deduce a specific annual event from a profected house alone or declare all other transits irrelevant.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            624,
+            628,
+            629
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-29",
+      "heading": "Profection variants must remain attributed",
+      "body": "Brennan discusses Valens' emphasis on occupants of the profected sign and adopts activation of both occupants and ruler in his own practice.",
+      "limits": "Do not silently treat every historical school as identical or claim a modern synthesis is the unanimous ancient rule.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            634,
+            635,
+            638,
+            639
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-30",
+      "heading": "Lots are derived, personalized points",
+      "body": "Lots project a relationship among chart factors from the Ascendant and add topic significations to their signs. Their rulers and conditions also matter.",
+      "limits": "Lots cannot be calculated from a rising sign alone. They are not physical planets and their presence is not a guaranteed outcome.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            586,
+            587,
+            588,
+            590,
+            591,
+            592,
+            594
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-31",
+      "heading": "Fortune and Spirit formulas require sect",
+      "body": "The standard formulas adopted here are Fortune(day)=ASC+Moon-Sun and Fortune(night)=ASC+Sun-Moon; Spirit reverses these. The text records competing historical calculations.",
+      "limits": "Fortune is not simply a universal wealth promise. Do not combine this formula with Ptolemy's non-reversing variant without labeling the change.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            587,
+            588,
+            595,
+            596,
+            597,
+            598
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-32",
+      "heading": "Zodiacal releasing prominence differs from benefit",
+      "body": "Releasing from Spirit is used here for activity/reputation and Fortune for bodily circumstances. Peaks relative to Fortune indicate activity/prominence; their quality needs additional judgment.",
+      "limits": "A peak is not automatically a happy period, promotion or success. Do not apply personal releasing periods to a whole rising-sign audience.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            640,
+            641,
+            642,
+            647,
+            648,
+            659,
+            660
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-33",
+      "heading": "Advanced releasing depends on explicit implementation choices",
+      "body": "The chapter uses idealized 360-day years/30-day months, distinguishes Capricorn's 27-year period from Aquarius' 30, describes loosing of the bond, and moves the Spirit starting sign forward when Spirit and Fortune share a sign.",
+      "limits": "The same-sign adjustment changes the releasing start, not the natal lot's stored longitude. A loosing of the bond is not a guaranteed disaster or a general retrograde rule.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            642,
+            645,
+            670,
+            671,
+            685,
+            687
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-34",
+      "heading": "Triplicity timing is not automatically three equal thirds",
+      "body": "For the sect-light technique, the account of Dorotheus/Valens gives the first ruler the first portion, second ruler the later portion and the participating ruler a cooperative role; later three-part schemes differ.",
+      "limits": "Do not invent a universal age switch or divide every life into equal thirds.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            565,
+            566,
+            568,
+            569,
+            574
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-35",
+      "heading": "Treat historical claims as dated arguments",
+      "body": "The Katarchē paper distinguishes inception/election from interrogations and contests an early horary origin in Dorotheus. The 2013 discussion allows a more qualified picture involving consultation charts and uncertain late development.",
+      "limits": "Neither absence of surviving evidence nor a later translation proves a simple universally settled origin story.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "horary",
+          "pdf_pages": [
+            1,
+            2,
+            18,
+            19,
+            20
+          ]
+        },
+        {
+          "source_id": "indian",
+          "pdf_pages": [
+            22,
+            23,
+            24,
+            25,
+            26
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-36",
+      "heading": "Comparison does not license merging traditions",
+      "body": "Brennan and Johnson discuss shared rulerships, house practices and time-lord principles alongside divergent aspects, lots, indigenous lunar material and disputed textual chronology.",
+      "limits": "A family resemblance does not make dashas, profections, releasing or special planetary aspects interchangeable.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "indian",
+          "pdf_pages": [
+            4,
+            5,
+            6,
+            7,
+            18,
+            19,
+            20,
+            21,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-37",
+      "heading": "Keep Neely's recalibration in a hypothesis record",
+      "body": "Neely proposes reinterpreting exaltation/debilitation points as upswing/downswing and shifting the peak by 90 degrees, supported by a proposed wave/symmetry model.",
+      "limits": "This is not Brennan's doctrine, established historical origin evidence, or validation of prediction accuracy.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "exaltation",
+          "pdf_pages": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            8,
+            9,
+            10
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-38",
+      "heading": "Obert is a later synthesis with its own scope",
+      "body": "Obert combines profections, solar returns, directions and transits into a layered annual practice; it includes later terminology and modern examples.",
+      "limits": "Obert's whole framework, dignity point equivalences, outer-planet examples and solar thresholds are not automatically Brennan's Hellenistic method.",
+      "runtimeScope": "reference-only",
+      "sourceRefs": [
+        {
+          "source_id": "obert",
+          "pdf_pages": [
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            25,
+            26,
+            62
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-01",
+      "heading": "Self and embodied life",
+      "body": "The person, embodied life, vitality and character.",
+      "limits": "Keep bodily experience and personal direction specific; do not turn a broad symbol into a health diagnosis.",
+      "runtimeScope": "reference-only",
+      "house": 1,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            394,
+            395
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-02",
+      "heading": "Livelihood and resources",
+      "body": "Resources supporting life, money, possessions, earning and spending.",
+      "limits": "Do not replace material livelihood with Taurus/Venus stereotypes or self-worth alone.",
+      "runtimeScope": "reference-only",
+      "house": 2,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            395,
+            396
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-03",
+      "heading": "Siblings, movement and sacred practice",
+      "body": "Siblings/kin, movement or travel, religious observance, divination and dreams.",
+      "limits": "Generic communication is a later practical extension; short-versus-long travel is not presented as a clean universal early distinction.",
+      "runtimeScope": "reference-only",
+      "house": 3,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            396,
+            397,
+            398
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-04",
+      "heading": "Home, parents and foundations",
+      "body": "Parents, ancestry/inherited foundations, dwelling, land and private circumstances.",
+      "limits": "Retain the actual foundational topic; do not invent a move, family crisis or property transaction.",
+      "runtimeScope": "reference-only",
+      "house": 4,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            398,
+            399
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-05",
+      "heading": "Children and good fortune",
+      "body": "Children; Good Fortune; Venus' joy; acts of beneficence and favorable acquisition also appear.",
+      "limits": "Contemporary creativity, enjoyment and heart-centered expression can draw on the owner's own book. Label that layer rather than back-attributing the entire modern inventory to Brennan.",
+      "runtimeScope": "reference-only",
+      "house": 5,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            399
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-06",
+      "heading": "Illness, toil and subordinate obligations",
+      "body": "Bodily difficulties, subordination, burdens, and a connection to occupation in some authors; Mars' joy.",
+      "limits": "Modern work/routine/wellness language is an adaptation. Do not turn the place into Virgo or predict illness.",
+      "runtimeScope": "reference-only",
+      "house": 6,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            399,
+            400
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-07",
+      "heading": "Other people and union",
+      "body": "The other person, spouse, marriage and sexual union; an angular place.",
+      "limits": "Do not move sexual union to the eighth through Scorpio equivalence or assume every reader is partnered.",
+      "runtimeScope": "reference-only",
+      "house": 7,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            401
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-08",
+      "heading": "Mortality, inheritance and another's resources",
+      "body": "Death and what follows it, inheritance; a partner's livelihood through second-from-seventh derivation.",
+      "limits": "Do not infer sex, psychological transformation or a death prediction from the house alone. Modern shared-resource phrasing needs its own scope.",
+      "runtimeScope": "reference-only",
+      "house": 8,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            401,
+            402
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-09",
+      "heading": "Travel, religion and divination",
+      "body": "Foreign travel/lands, religion, philosophy, divination and related knowledge; Sun's joy.",
+      "limits": "Keep the owner's contemporary wisdom/learning layer separately identifiable; Sagittarius alone does not import this whole house inventory.",
+      "runtimeScope": "reference-only",
+      "house": 9,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            402,
+            403
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-10",
+      "heading": "Action, occupation and reputation",
+      "body": "Praxis: what a person does; occupation, craft, reputation, authority and visible action.",
+      "limits": "The reader need not be employed or seek fame; distinguish the whole-sign tenth from the computed MC degree.",
+      "runtimeScope": "reference-only",
+      "house": 10,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            403,
+            436,
+            437,
+            438
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-11",
+      "heading": "Friends, allies and hopes",
+      "body": "Friends, alliances, patronage, hopes, gifts and support of activity; Jupiter's joy.",
+      "limits": "Do not treat every friendship as financial networking or erase affection and enjoyment from the actual source-supported context.",
+      "runtimeScope": "reference-only",
+      "house": 11,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            403,
+            404
+          ]
+        }
+      ]
+    },
+    {
+      "id": "HB-HOUSE-12",
+      "heading": "Constraint and circumstances outside direct control",
+      "body": "Enemies, loss, compulsion, subordination and difficult removal/exile in the source; Saturn's joy.",
+      "limits": "Rest, retreat and spiritual solitude are contemporary writing applications requiring context; the ancient place is not simply Pisces/Neptune or a guaranteed hidden enemy.",
+      "runtimeScope": "reference-only",
+      "house": 12,
+      "sourceRefs": [
+        {
+          "source_id": "brennan-czech",
+          "pdf_pages": [
+            404,
+            405
+          ]
+        }
+      ]
+    }
+  ],
+  "voiceNeutral": true,
+  "status": "SOURCE_BACKED"
+}
