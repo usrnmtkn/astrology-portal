@@ -5,7 +5,7 @@ import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {defaultHoroscopeProfile,validateHoroscopeProfile,horoscopeEditorialPrompt,horoscopeEditorialPreview,HOROSCOPE_RUN_PROMPT_VARIABLES} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 import {horoscopeProfileEvidence} from '../src/astro-writing/horoscopePromptVariables.mjs';
-import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
+import {assertHoroscopeRequestEvidence,resolveHoroscopeRequestPassage} from './assert-horoscope-request-evidence.mjs';
 import {SEASONAL_SOURCE_PRIORITY} from '../src/astro-writing/horoscopeEditorialConstraints.mjs';
 
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
@@ -59,8 +59,9 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
   const primary=sources('primaryOwnerVoiceSources'),supporting=sources('supportingOwnerVoiceSources');
   if(period==='seasonal')assert(primary.length>=1,'Relevant evidence has no artificial minimum');else assert.equal(primary.length,period==='monthly'?4:3);
   for(const p of [...primary,...supporting]){
-   assert(p.text.trim());assert(p.id);assert.equal(p.sourceRecordSha256??p.textSha256,hash(p.text));
-   assert.equal(request.input.split(JSON.stringify(p.text).slice(1,-1)).length-1,1,'Each complete owner passage is supplied once');
+   const text=resolveHoroscopeRequestPassage(request.input,p);
+   assert(text.trim());assert(p.id);assert.equal(p.sourceRecordSha256??p.textSha256,hash(text));
+   assert.equal(request.input.split(JSON.stringify(text).slice(1,-1)).length-1,1,'Each complete owner passage is supplied once');
   }
   assert.equal(request.input.split(comparison).length-1,1,'Complete comparison appears once');
   assert.equal(request.input.split(correction).length-1,1,'Saved scoped correction appears once');
@@ -74,7 +75,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
    assert.equal(row.seasonalEditorialRun.status,'accepted');assert.equal(row.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body,'');continue;
   }
   r=await action('poll');assert.equal(r.status,200,JSON.stringify(r.payload));row=r.payload.rows[0];
-  assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].version,period==='weekly'?'horoscope-writer/v21-weekly-rejections':'horoscope-writer/v17');
+  assert.equal(row.status,'DRAFT');assert.equal(row.source_snapshot.horoscopeGeneration.readings[sign].version,period==='daily'?'horoscope-writer/v22-daily-evidence-refs':period==='weekly'?'horoscope-writer/v21-weekly-rejections':'horoscope-writer/v17');
  }
 }
 console.log('PASS horoscope run variables: actual-handler save and generation across all periods, complete exact evidence once, scoped comparisons/corrections, audience-safe facts, strict expansion and unchanged saved profiles. Injected provider only.');
