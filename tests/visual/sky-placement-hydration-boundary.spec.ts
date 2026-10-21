@@ -283,13 +283,20 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
   });
   await page.addInitScript(() => {
     const NativeWorker = window.Worker;
-    const evidence = (window as any).__swissRetry = { workers: 0, responses: [] as boolean[], fatal: [] as string[] };
+    const evidence = (window as any).__swissRetry = { workers: 0, responses: [] as boolean[], fatal: [] as string[], pending: [] as number[] };
     window.Worker = class extends NativeWorker {
       constructor(url: string | URL, options?: WorkerOptions) {
         super(url, options);
         evidence.workers++;
-        this.addEventListener('message', event => evidence.responses.push(event.data.ok));
+        this.addEventListener('message', event => {
+          evidence.responses.push(event.data.ok);
+          evidence.pending = evidence.pending.filter(id => id !== event.data.id);
+        });
         this.addEventListener('error', event => evidence.fatal.push(event.message));
+      }
+      postMessage(message: any, options?: any) {
+        if (Number.isInteger(message?.id)) evidence.pending.push(message.id);
+        return options === undefined ? super.postMessage(message) : super.postMessage(message, options);
       }
     };
   });
@@ -329,10 +336,14 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
       && /\/wasm\/.*\.wasm$/u.test(error.url ?? '')
   );
 
-  // The failed worker responds before DevTools forwards its terminal console
-  // events. Observe both exact failed-attempt events before classifying retry.
+  // More than one initial request can be queued in the worker. Each failed
+  // request resets initialization, and its console events can arrive after its
+  // response. Drain every initial request and observe each terminal pair before
+  // classifying events as retry errors; the final no-error assertion stays strict.
+  await expect.poll(() => page.evaluate(() => (window as any).__swissRetry.pending)).toEqual([]);
+  const failedAttempts = await page.evaluate(() => (window as any).__swissRetry.responses.filter((ok: boolean) => !ok).length);
   for(const message of ['failed to asynchronously prepare wasm: both async and sync fetching of the wasm failed','Aborted(both async and sync fetching of the wasm failed)']) {
-    await expect.poll(()=>errors.some(error=>error.stage==='failed'&&error.kind==='console'&&error.message===message)).toBe(true);
+    await expect.poll(()=>errors.filter(error=>error.stage==='failed'&&error.kind==='console'&&error.message===message).length).toBe(failedAttempts);
   }
   expect(errors.filter(error => error.stage === 'failed' && !expectedAssetError(error))).toEqual([]);
 
@@ -344,6 +355,7 @@ for (const width of [390, 1440]) test(`WASM initialization failure recovers thro
   const recovered = await page.evaluate(() => (window as any).__swissRetry);
   expect(recovered.workers).toBe(1);
   expect(recovered.responses).toContain(true);
+  expect(recovered.responses.filter((ok: boolean) => !ok)).toHaveLength(failedAttempts);
   expect(recovered.fatal).toEqual([]);
   const completeBody = await article.textContent();
   const title = await page.locator('#sky-detail-title').textContent();
