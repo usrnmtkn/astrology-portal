@@ -2675,6 +2675,16 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
 
   const bank = selectedSynastryExampleBank(input);
   const contextInstruction = relationshipContextInstruction(input.facts);
+  const signPlacements = [
+    [stringValue(input.facts.personA) || "person A", stringValue(input.facts.planetA) || stringValue(input.facts.body1) || stringValue(input.facts.from),
+      stringValue(input.facts.planetASign) || stringValue(input.facts.sign1) || stringValue(input.facts.fromSign)],
+    [stringValue(input.facts.personB) || "person B", stringValue(input.facts.planetB) || stringValue(input.facts.body2) || stringValue(input.facts.to),
+      stringValue(input.facts.planetBSign) || stringValue(input.facts.sign2) || stringValue(input.facts.toSign)]
+  ].filter(([, planet, sign]) => planet && sign);
+  const signContext = signPlacements.length
+    ? ["SUPPLIED SYNASTRY SIGN CONTEXT", ...signPlacements.map(([person, planet, sign]) => `${person}: ${planet} in ${sign}.`),
+      "Explain how each supplied sign qualifies its own planet and the exchange between the people. Preserve these ownership associations. Do not infer a missing sign or derive houses from signs."].join("\n")
+    : "This reusable contact has no supplied planet signs. Explain the planets and aspect without assigning signs or implying a chart-specific reading.";
 
   return [
     `SYNASTRY WRITING SYSTEM ${SYNASTRY_EDITORIAL_VERSION}`,
@@ -2688,6 +2698,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "Let the supplied planets and aspect explain the lived experience in the body. Naming the contact in the title does not replace interpreting it. Keep raw calculations and technical detail in astrologyDrilldown.",
     "Do not overstate fate, trauma, permanence, compatibility, or harm.",
     contextInstruction,
+    signContext,
     "",
     "STRUCTURE",
     "Explain what one person brings out in the other and how it may feel on both sides.",
@@ -4753,6 +4764,15 @@ export function validateGeneratedContentQuality(content: GeneratedContent, input
   const sectionHeadings = (content.sections ?? []).map((section) => stringValue(section.heading));
   const requiredHeadings = requiredSectionHeadingsForInput(input);
   const matchedRequired = sectionHeadingSetMatch(sectionHeadings, requiredHeadings);
+
+  if (isSynastryAspectInput(input)) {
+    const drilldown = content.astrologyDrilldown;
+    const readerText = [userFacingText, drilldown?.title, drilldown?.summary, drilldown?.whyThisScene, drilldown?.timingNote,
+      ...(drilldown?.factors ?? []).flatMap(factor => [factor.label, factor.technicalFact, factor.plainMeaning])].filter(Boolean).join("\n");
+    if (readerText.includes("—")) {
+      hardEditorialViolation(["em dash"], "Generated synastry reader copy contains an em dash, contrary to the owner's explicit punctuation rule.");
+    }
+  }
 
   for (const signature of bannedOutputSignatures) {
     if (normalized.includes(signature)) {
