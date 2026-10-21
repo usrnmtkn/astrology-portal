@@ -294,6 +294,15 @@ components, a composer, or serving state approved. When an approval comes from
 another task or tool, its record must cite a resolvable tool, thread or task ID,
 and date; a generic `owner_chat` label is not valid provenance.
 
+### Prompt and agent-instruction maintenance
+
+For Content Studio prompt design, refactoring or evaluation, use
+`.agents/skills/prompt-engineer/SKILL.md`. For skills, agent workflows or changes
+to `AGENTS.md` / `CLAUDE.md`, use `.agents/skills/writing-for-agents/SKILL.md`.
+Follow [the Studio prompt review workflow](docs/writing/CONTENT_STUDIO_PROMPT_REVIEW.md)
+for contract preservation, provider-request tests and review evidence. These
+authoring skills work within the shared writing governance above.
+
 ## Serving-content merge model (v2 - replaces the flight rule; canonical text in CLAUDE.md)
 
 Open PRs touching `apps/web/src/content/fallbackArchitectureV3/**` or `packages/astro-knowledge/**` do NOT block branching or development. Queue, don't halt:

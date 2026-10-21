@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/Jeffallan/claude-skills",
+  "revision": "36f3fe8052da7c57083783268c6ea3265d075265",
+  "path": "skills/prompt-engineer",
+  "retrievedOn": "2026-10-20",
+  "filesSha256": {
+    "SKILL.md": "3b3f4fd1cc1498584194adb584920b3ec7637dd90285939e13695f3f84c6e785",
+    "UPSTREAM-LICENSE.txt": "06dcddbb6908a0c6dd4a9e8ec822eea41d5a460a53089fecccc8a68049e99241",
+    "references/context-management.md": "7baceb0abd3cbac9e911fa48bfbc97965f122fe53b93e9967c002bfbdcd1b66b",
+    "references/evaluation-frameworks.md": "0eff6ae070d12c0d62f2c9ce952e7e5225e5ec4197fcb8a717cd359c189b9d22",
+    "references/prompt-optimization.md": "ccc38e0e5816f1afd9e62dda4b7e0f14b8b57f5d79fea2f84d4f574ee4ec3bee",
+    "references/prompt-patterns.md": "b749ede7feb361c9f7ac0c729c19bce11c5d733c3a0e93d72b6f3e99f7b7f0cb",
+    "references/structured-outputs.md": "aa01c577ff3a23f281cc9385475293e9d46ded5ac99c712e318941fd5f4b9969",
+    "references/system-prompts.md": "18a3054c96edbc7f5cbbeba338898fc49fbfe56b3f07b004285da292acd22513"
+  }
+}
