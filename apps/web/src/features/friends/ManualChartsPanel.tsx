@@ -1,5 +1,6 @@
 import { PortalVisibility } from "../../components/portalVisibility";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
+import { precisePersonalOrb } from "../../services/personalDailyTransits";
 import { connectionActivationKey, connectionAspectWord, connectionPointTitle, CONNECTION_BRIDGE_PREFIX } from "../../content/connectionTransit";
 import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeCopy } from "./connectionTransitSources";
 import { connectionTransitReading } from "./connectionTransitReading";
@@ -2185,6 +2186,17 @@ export function ManualChartsPanel({
     const voice = card.endpointOwner === "reader" ? "you" : selectedChart.displayName;
     const transitSections = selectedBondTransitSections.get(card.id) ?? [];
     if (!transitSections.length) return;
+    const endpoint = card.endpointOwner === "reader"
+      ? `your natal ${card.activation.natalPoint}`
+      : `${possessiveLabel(selectedChart.displayName)} natal ${card.activation.natalPoint}`;
+    const counterpartChart = card.endpointOwner === "reader" ? `${possessiveLabel(selectedChart.displayName)} chart` : "your chart";
+    const connectionFacts = {
+      heading: `Why this involves ${selectedChart.displayName}`,
+      body: [
+        `This transit reaches ${endpoint}. That natal point also forms these aspects with ${counterpartChart}:`,
+        ...card.activatedContacts.map(contact => `Your natal ${contact.yourPoint.name} ${transitAspectTechnicalVerb(contact.aspect)} ${possessiveLabel(selectedChart.displayName)} natal ${contact.friendPoint.name} · Orb ${precisePersonalOrb(contact.orb)}`)
+      ].join("\n\n")
+    };
     let activationCount = 0;
     const activatedConnectionSections = card.activatedContacts.flatMap(contact => {
       const yourPoint = normalizeContentIdPart(contact.yourPoint.name);
@@ -2224,9 +2236,9 @@ export function ManualChartsPanel({
         voice
       ),
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
-      bodyBeforeSections: activatedConnectionSections.length > 0,
+      bodyBeforeSections: true,
       body: transitSections.map(section => section.body),
-      sections: activatedConnectionSections
+      sections: [connectionFacts, ...activatedConnectionSections]
     });
   };
   const openBondTransitById = (cardId: string) => {

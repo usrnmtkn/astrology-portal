@@ -4,7 +4,14 @@ Owner-authorized separation, October 15, 2026. Scope: Friends chart Transits,
 `detail=connection-transit-*`. This changes the detail assembly, not the approved
 Between You Two list openings, their publication identities or other consumers.
 
-The detail has three independent sources:
+Calculated evidence is also shown under “Why this involves [friend]”, independently
+of those prose sources. It identifies the natal endpoint receiving the transit
+and lists that endpoint's actual grouped synastry contacts, including aspect type
+and orb. Missing or unpublished activation/bridge prose cannot hide these facts.
+This factual section does not supply a missing interpretation or change publication
+eligibility; all three prose-source boundaries below still apply.
+
+The detail has three independent prose sources:
 
 1. One complete existing authored personal transit-aspect unit for the activated
    endpoint. The existing personal transit normalizer selects a source identity.

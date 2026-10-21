@@ -164,6 +164,21 @@ test('transit titles identify the sky sign and natal chart owner in both section
   await between.getByRole('button', { name: `Open full entry for ${readerTitle}`, exact: true }).click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(readerTitle);
   await expect(page.locator('.article-eyebrow')).toHaveAttribute('aria-label', 'Aspect: Saturn trine Mars');
+  const facts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) });
+  await expect(facts.locator('p').first()).toHaveText("This transit reaches your natal Mars. That natal point also forms these aspects with Nikki's chart:");
+  await expect(facts).toContainText("Your natal Mars conjunct Nikki's natal Saturn · Orb 1° 51′");
+  const factCopy = await facts.innerText();
+  await page.reload();
+  await expect(facts).toHaveText(factCopy, { timeout: 60000 });
+  const headings = await page.locator('.sky-detail-page h1, .sky-detail-page h2').allTextContents();
+  expect(headings.slice(0, 2)).toEqual([readerTitle, 'Why this involves Nikki']);
+  const factStyles = await facts.locator('p').first().evaluate(element => {
+    const pick = (node: Element) => { const s = getComputedStyle(node); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
+    return { actual: pick(element), reference: pick(document.querySelector('.sky-detail-intro-section p')!) };
+  });
+  expect(factStyles.actual).toEqual(factStyles.reference);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: `test-results/connection-facts-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
   await page.getByRole('button', { name: 'Close detail', exact: true }).click();
   await expect(active).toBeVisible();
   const personalTitle = activeTitles[0];
@@ -175,6 +190,10 @@ test('transit titles identify the sky sign and natal chart owner in both section
   await page.goto('/#friends?tab=charts&chart=friend-casey&view=transits');
   await expect(page.getByRole('region', { name: 'Short-term themes', exact: true }).getByRole('heading', { level: 3 }).first()).toHaveText(personalTitle.replace("Nikki's", "Casey's"), { timeout: 60000 });
   await expect(page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('heading', { name: "Pluto in Aquarius conjunct Casey's natal Pluto", exact: true })).toBeVisible();
+  await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: `Open full entry for ${readerTitle}`, exact: true }).click();
+  const switchedFacts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Casey', exact: true }) });
+  await expect(switchedFacts).toContainText("Your natal Mars conjunct Casey's natal Saturn · Orb 1° 51′");
+  await expect(page.locator('.sky-detail-page')).not.toContainText('Nikki');
 });
 
 for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,true]]) test(`connection detail separates transit, activation ${activationLive ? 'published' : 'draft'}, bridge ${bridgeLive ? 'published' : 'draft'}`, async ({ page }, testInfo) => {
@@ -255,6 +274,8 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   await expect(page.getByRole('heading',{level:1})).toBeVisible();
   await expect(page.locator('.sky-detail-intro-section, .sky-detail-section').first()).not.toContainText(opening);
   await expect(page.locator('main')).not.toContainText('{{untilDate}}');
+  await expect(page.getByRole('heading', { name: 'Why this involves Nikki', exact: true })).toBeVisible();
+  await expect(page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) })).toContainText("Your natal Mars conjunct Nikki's natal Saturn · Orb 1° 51′");
   if(activationLive){
     await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true}).first()).toBeVisible();
     if(bridgeLive) await expect(page.getByText(/connecting this transit to the pattern below/).first()).toBeVisible();

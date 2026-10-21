@@ -23,6 +23,8 @@ import {
 } from "./NatalAspectPatternsSection";
 import { resolvedNatalAspectPatternSectionLabel } from "./natalAspectPatternLabels";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
+import { articleAspectGlyphPartsFromHeading } from "../../utils/articleAspects";
+import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
@@ -856,20 +858,6 @@ function articleAspectToneBucket(aspectType?: string): AspectToneBucket {
   return aspectGiftOrLesson(normalizedArticleAspectType(aspectType));
 }
 
-function articleAspectGlyphPartsFromHeading(heading: string) {
-  const match = heading.match(/^\s*(.+?)\s+(conjunction|conjunct|sextile|square|trine|opposition|opposite|quincunx|inconjunct)\s+(.+?)\s*$/iu);
-
-  if (!match) {
-    return null;
-  }
-
-  return {
-    from: match[1].trim(),
-    aspect: normalizedArticleAspectType(match[2]),
-    to: match[3].trim()
-  };
-}
-
 const articleZodiacGlyphs: Record<string, string> = {
   Aries: "♈",
   Taurus: "♉",
@@ -899,7 +887,7 @@ function articleTitleHouseToken(title: string, meta = "") {
 }
 
 function articleEyebrowLabel(title: string, meta: YouTransitArticle["meta"]) {
-  if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
+  if (/\b(conjunction|conjunct|opposition|opposite|square|trine|sextile|quincunx|inconjunct|aspect)\b/i.test(title)) {
     return "Aspect";
   }
 
@@ -917,6 +905,8 @@ function articleEyebrowLabel(title: string, meta: YouTransitArticle["meta"]) {
 }
 
 function articleEyebrowGlyphs(article: YouTransitArticle) {
+  const aspect = articleAspectGlyphPartsFromHeading(article.title.split(" · ")[0]);
+  if (aspect) return [pointGlyph(aspect.from), aspectGlyph(aspect.aspect), pointGlyph(aspect.to)];
   const metaText = article.meta.map((row) => row.value).join(" ");
   const parts = [
     ...(article.glyph ? article.glyph.split(/\s+/).filter(Boolean) : []),
@@ -954,7 +944,7 @@ function YouTransitArticlePage({
   const displayArticle: YouTransitArticle = generated && (generatedParagraphs.length || generatedSections.length)
     ? {
         ...article,
-        title: generatedHeadline || article.title,
+        title: article.transitDescription ? article.title : generatedHeadline || article.title,
         summary: generatedSummary,
         bodyBeforeSections: generatedParagraphs.length > 0,
         body: generatedParagraphs,
@@ -1053,6 +1043,10 @@ function YouTransitArticlePage({
   ) && cleanArticleText(row.value));
   const eyebrowLabel = articleEyebrowLabel(displayArticle.title, displayArticle.meta);
   const eyebrowGlyphs = articleEyebrowGlyphs(displayArticle);
+  const eyebrowAspect = articleAspectGlyphPartsFromHeading(displayArticle.title.split(" · ")[0]);
+  const eyebrowDescription = eyebrowAspect
+    ? `${eyebrowAspect.from} ${eyebrowAspect.aspect} ${eyebrowAspect.to}`
+    : eyebrowGlyphs.join(" ");
   const headerDateRange = cleanArticleText(
     displayArticle.meta.find((row) => {
       const label = row.label.trim().toLowerCase();
@@ -1073,7 +1067,7 @@ function YouTransitArticlePage({
       <article className="article-shell sky-detail-article you-transit-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
-            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.join(" ")}` : eyebrowLabel}>
+            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>

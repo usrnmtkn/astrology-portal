@@ -5327,11 +5327,11 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   });
   await expectClientRouteLoads(page, "/#you");
   await page.getByRole("tab", { name: /updates|transits/i }).click();
-  const card = page.getByRole("button", { name: /^Chiron square your Jupiter/ }).first();
+  const card = page.getByRole("button", { name: /^Chiron in Aries square your natal Jupiter/ }).first();
   await expect(card).toBeVisible({ timeout: 30_000 });
   await expect(card).toContainText("Exact Oct 5, 2026");
   await card.click();
-  const detail = page.getByRole("region", { name: "Chiron square your Jupiter", exact: true });
+  const detail = page.getByRole("region", { name: "Chiron in Aries square your natal Jupiter article", exact: true });
   await expect(detail).toBeVisible();
   releaseCopy();
   await expect(detail).toContainText("A moment of real growth can unexpectedly pull an old insecurity straight to the surface.");
@@ -6111,7 +6111,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   const youSource = moonRoutingRecords.find(row => row.body_you === youBody);
   expect(youSource).toBeTruthy();
   const youTitle = await detail.locator('h1').innerText();
-  const youContact = /^Moon (conjunction|square|opposition|trine|sextile) your (.+)$/.exec(youTitle);
+  const youContact = /^Moon in Taurus (conjunct|square|opposite|trine|sextile) your natal (.+)$/.exec(youTitle);
   expect(youContact).toBeTruthy();
   const assertActualDateSource = (source: typeof youSource, aspect: string, natalLabel: string, voice: string) => {
     const natal = natalLabel.toLowerCase().replace(/\s+/g, '-');
@@ -6120,7 +6120,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
       undefined, personalTransitCopySeed('Moon', id, voice, '2026-10-26', 'America/New_York'));
     expect(source?.contentKey).toBe(expected);
   };
-  assertActualDateSource(youSource, youContact![1], youContact![2], 'you');
+  assertActualDateSource(youSource, ({conjunct:'conjunction',opposite:'opposition'} as Record<string,string>)[youContact![1]] ?? youContact![1], youContact![2], 'you');
   await page.reload();
   await expect(card).toBeVisible();
   await card.click();

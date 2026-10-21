@@ -98,10 +98,12 @@ for (const theme of ["light", "dark"]) {
       const row = page.locator("button.updates-aspect-row--personal").first();
       await expect(row).toBeVisible({ timeout: 45_000 });
       const title = await row.locator(".updates-aspect-row__title").innerText();
+      expect(title).toMatch(/^.+ in [A-Z][a-z]+ (?:conjunct|opposite|square|trine|sextile) your natal .+$/);
       const expected = expectedIdentity(title, skies[index], natal);
       await expect(row).not.toContainText(expected);
       await expect(page.getByLabel("Transit details", { exact: true })).toHaveCount(0);
       await row.click();
+      await expect(page.locator('.you-transit-article h1')).toHaveText(title);
       const footer = page.getByLabel("Transit details", { exact: true });
       await expect(footer).toHaveText(expected);
       await verifyFooter(page, footer, theme, `you-${date}`);
@@ -109,6 +111,7 @@ for (const theme of ["light", "dark"]) {
       await expect(footer).toHaveCount(0);
       // The secondary "Behind this forecast" entry opens the same factual identity.
       await page.locator("button.daily-forecast-label").first().click();
+      await expect(page.locator('.you-transit-article h1')).toContainText(/in [A-Z][a-z]+ (?:conjunct|opposite|square|trine|sextile) your natal/);
       await expect(footer).toContainText(/in your \d+(?:st|nd|rd|th) house is/);
     }
   });
