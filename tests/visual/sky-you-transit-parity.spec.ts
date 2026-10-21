@@ -69,17 +69,18 @@ for (const [day, hour, width, theme] of [
   await expect(row).toBeVisible({ timeout: 60_000 });
   await row.click();
   const article = page.locator(".you-transit-article");
+  await expect(article.getByRole("heading", { level: 1 })).toHaveText("Sun in Virgo conjunct your natal North Node · Sun in Virgo opposite your natal South Node");
   await expect(article).toContainText("You may be offered a role that feels slightly ahead");
   await expect(article).toContainText("learn from what happens next.");
   await expect(article.getByRole("heading", { name: "Sun Conjunction North Node", exact: true })).toHaveCount(1);
-  await expect(article.getByRole("heading", { name: "Sun in Virgo opposite your natal South Node", exact: true })).toHaveCount(1);
+  await expect(article.getByRole("heading", { name: "Sun opposition your South Node", exact: true })).toHaveCount(1);
   const youParagraphs = await article.locator(".article-section").filter({ has: page.getByText(skyParagraphs[0], { exact: true }) }).locator("p").allTextContents();
   // Both surfaces group the nodal axis and preserve each complete source unit.
   expect(youParagraphs).toHaveLength(2);
   expect(skyParagraphs).toHaveLength(3);
   expect(skyParagraphs.slice(0, 2)).toEqual(youParagraphs);
   expect(skyParagraphs[2]).toContain("opposing your natal South Node");
-  await expect(article.locator(".article-section").filter({ has: page.getByRole("heading", { name: "Sun in Virgo opposite your natal South Node", exact: true }) }).locator("p")).toHaveText([skyParagraphs[2]]);
+  await expect(article.locator(".article-section").filter({ has: page.getByRole("heading", { name: "Sun opposition your South Node", exact: true }) }).locator("p")).toHaveText([skyParagraphs[2]]);
   expect(errors).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

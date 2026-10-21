@@ -193,6 +193,20 @@ for (const theme of ["light", "dark"]) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/friends-article-formatting/${theme}-${width}.png`, fullPage: true });
     }
+    await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+    await expect(namedBond).toBeVisible();
+    const friendEndpointTitle = await namedBond.locator('.updates-aspect-row__title').innerText();
+    const endpoint = friendEndpointTitle.split("Example Friend's natal ")[1];
+    await namedBond.click();
+    const friendFacts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Example Friend', exact: true }) });
+    await expect(friendFacts.locator('p').first()).toHaveText(`This transit reaches Example Friend's natal ${endpoint}. That natal point also forms these aspects with your chart:`);
+    for (const contact of (await friendFacts.locator('p').allTextContents()).slice(1)) {
+      expect(contact).toContain(`Example Friend's natal ${endpoint} · Orb `);
+      expect(contact).toMatch(/^Your natal /);
+    }
+    const friendFactCopy = await friendFacts.innerText();
+    await page.reload();
+    await expect(friendFacts).toHaveText(friendFactCopy, { useInnerText: true, timeout: 60000 });
   });
 }
 

@@ -13,8 +13,8 @@ test.afterEach(async({page},testInfo)=>{
   const effects=await page.evaluate(()=> (window as any).__connectionEffectTrace ?? []).catch(()=>[]);
   if(effects.length) await testInfo.attach('connection-source-effects',{body:JSON.stringify(effects,null,2),contentType:'application/json'});
 });
-async function seed(page: Page, theme: string) {
-  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart, theme }) => {
+async function seed(page: Page, theme: string, multipleContacts = false) {
+  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart, theme, multipleContacts }) => {
     if (window.localStorage.getItem("tldrastro:friendsPerformanceSeeded")) {
       return;
     }
@@ -96,6 +96,14 @@ async function seed(page: Page, theme: string) {
         birthLocation: location
       }]
     };
+    const friendNatal = fixtureSky(2);
+    if (multipleContacts) {
+      for (const point of friendNatal.positions) {
+        if (["Venus", "Mercury", "Chiron", "Jupiter"].includes(point.planet)) {
+          Object.assign(point, { sign: "Sagittarius", signGlyph: "♐", degree: 12, longitude: 252 });
+        }
+      }
+    }
     const friendChart = {
       id: incompleteChart ? "friend-incomplete" : "friend-nikki",
       ownerUserId: fixtureUserId,
@@ -109,7 +117,7 @@ async function seed(page: Page, theme: string) {
       birthTimeUnknown: false,
       birthPlace: location.label,
       birthLocation: location,
-      natalChart: incompleteChart ? null : fixtureSky(2),
+      natalChart: incompleteChart ? null : friendNatal,
       notes: null,
       createdAt: "2026-08-08T16:00:00.000Z",
       updatedAt: "2026-08-08T16:00:00.000Z"
@@ -124,12 +132,12 @@ async function seed(page: Page, theme: string) {
   }, {
     fixtureUserId,
     fixtureFriendName,
-    incompleteChart: false, theme
+    incompleteChart: false, theme, multipleContacts
   });
 }
 test('transit titles identify the sky sign and natal chart owner in both sections', async ({ page }, testInfo) => {
   await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
-  await seed(page, testInfo.project.name.endsWith('dark') ? 'dark' : 'light');
+  await seed(page, testInfo.project.name.endsWith('dark') ? 'dark' : 'light', true);
   await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status: 503, body: 'Isolated calculation fallback.' }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: [] } }));
@@ -167,9 +175,12 @@ test('transit titles identify the sky sign and natal chart owner in both section
   const facts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) });
   await expect(facts.locator('p').first()).toHaveText("This transit reaches your natal Mars. That natal point also forms these aspects with Nikki's chart:");
   await expect(facts).toContainText("Your natal Mars conjunct Nikki's natal Saturn · Orb 1° 51′");
+  for (const point of ['Venus', 'Mercury', 'Chiron', 'Jupiter']) {
+    await expect(facts).toContainText(`Your natal Mars conjunct Nikki's natal ${point} · Orb 1° 51′`);
+  }
   const factCopy = await facts.innerText();
   await page.reload();
-  await expect(facts).toHaveText(factCopy, { timeout: 60000 });
+  await expect(facts).toHaveText(factCopy, { useInnerText: true, timeout: 60000 });
   const headings = await page.locator('.sky-detail-page h1, .sky-detail-page h2').allTextContents();
   expect(headings.slice(0, 2)).toEqual([readerTitle, 'Why this involves Nikki']);
   const factStyles = await facts.locator('p').first().evaluate(element => {

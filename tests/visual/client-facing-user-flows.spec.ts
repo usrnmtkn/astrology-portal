@@ -5331,7 +5331,7 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   await expect(card).toBeVisible({ timeout: 30_000 });
   await expect(card).toContainText("Exact Oct 5, 2026");
   await card.click();
-  const detail = page.getByRole("region", { name: "Chiron in Aries square your natal Jupiter article", exact: true });
+  const detail = page.getByRole("region", { name: "Chiron in Aries square your natal Jupiter", exact: true });
   await expect(detail).toBeVisible();
   releaseCopy();
   await expect(detail).toContainText("A moment of real growth can unexpectedly pull an old insecurity straight to the surface.");
