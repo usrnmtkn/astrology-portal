@@ -167,22 +167,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       motion: position.motion,
     };
 
-    const context = currentText.trim()
-      ? `\n\nPRIMARY OWNER-AUTHORED ARTICLE TO REVISE:\n${currentText.trim()}\n\nPreserve this article's subject direction, core argument, concrete lived evidence, sentence movement, and strongest owner-authored lines unless the owner request specifically changes them. Do not replace it with generic sign traits or generic astrology advice.`
-      : '';
     const ownerRequest = instruction
       ? `OWNER REQUEST FOR THIS REVISION:\n${instruction}`
       : 'OWNER REQUEST FOR THIS REVISION:\nRevise the complete evergreen article passage for owner review.';
     const scopeRule = skyWritingScope(planet, sign);
     const baseVoiceNotes = [
       ownerRequest,
-      context,
       `\nSURFACE AND SUBJECT DIRECTION:\n${scopeRule}`,
       `\n${evergreenOccurrenceRule}`,
       '\nReturn only reader-facing prose for the requested article field. Do not include drafting notes, explanations, labels, source commentary, or approval language. Do not invent dates, aspects, or historical facts. Preserve literal template variables only when they are already present in the current article context and valid for this field. Never output {{articleDraft}} or any other generation-control placeholder.',
     ].join('');
 
-    const immutableContext = currentText.trim() || 'No existing reader-facing article prose was supplied.';
+    const articleContext = currentText.trim() || 'No existing reader-facing article prose was supplied.';
     const initialProvider = contentGenerationProvider({
       requestedProvider: body.provider,
       blockType: 'sky_article',
@@ -191,7 +187,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     const generateDraft = async (provider: GenerationProvider, correction = '') => generateSkyArticleTemplateSlots({
       templateKey: `sky/article/${planet}/${sign}/${referenceYear}`,
-      templateBody: immutableContext,
+      templateBody: articleContext,
+      templateContextRole: 'existing-draft',
       planet,
       sign,
       facts,

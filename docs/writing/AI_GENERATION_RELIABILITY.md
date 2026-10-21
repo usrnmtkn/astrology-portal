@@ -47,6 +47,14 @@ Generation-control placeholders must not be supplied to a writer as immutable pr
 
 The Content Studio evergreen article writer must not use `{{articleDraft}}` as immutable model context. Existing reader-facing article prose is context when available; the requested `articleDraft` field is declared separately as output.
 
+Reusable-article revision context and fixed-template context have distinct
+roles. The reusable writer delivers the complete existing article once and
+permits the requested revision; fixed-template filling preserves surrounding
+prose. Both retain the same `slotValues` schema and licensed-variable validation.
+See [the prompt review workflow](CONTENT_STUDIO_PROMPT_REVIEW.md) for the
+reviewed changes, authoring skills and actual-request test cases. Fixture checks
+establish contract delivery, not live prose quality or production completion.
+
 ### Correctable output failures
 
 A structurally valid model response must not become a terminal product failure merely because a correction introduces a mechanically identifiable writing violation. When safe and bounded, deterministic validation findings may receive one targeted cleanup/correction pass followed by full revalidation. The correction may not add facts, loosen evidence rules, lower owner-voice requirements, or bypass the independent judge.
