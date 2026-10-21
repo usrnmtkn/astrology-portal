@@ -743,6 +743,8 @@ authority instead of the generic natal/Sky article spine. Claude receives the
 same writing authority and Ghostwriter craft guidance. The shared transport still
 adds effective rules and retains its instruction-override protection. Other
 families keep their existing system instructions and user requests.
+Both providers retain the complete shared rhetorical writer policy exactly once;
+the existing contextual review contract and admission checks remain intact.
 
 `scripts/test-synastry-writing-contract.mts` intercepts both providers at the
 actual generation handler. It covers supported and challenging contacts, the

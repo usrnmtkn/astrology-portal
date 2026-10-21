@@ -5664,7 +5664,9 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const legacyPrompt = `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
+    const legacyPrompt = isSynastryAspectInput(input)
+      ? buildPrompt(input, approvedExamples, qualityFeedback)
+      : `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
     const publicWriterPrompt = productionGate.governedPromptEnabled
       ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
       : legacyPrompt;

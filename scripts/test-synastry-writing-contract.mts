@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { REVIEW_FIELDS } from '../src/astro-writing/canonicalInstructions.mjs';
-import { RHETORICAL_LABELS } from '../src/astro-writing/rhetoricalPatterns.mjs';
+import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY } from '../src/astro-writing/rhetoricalPatterns.mjs';
 import handler from '../api/generate-content.js';
 import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
@@ -77,6 +77,8 @@ function assertSynastryRequest(request: any, input: typeof base) {
   // Inspect both actual provider fields: OpenAI's canonical transport can add
   // instructions that are absent from the assembled user prompt.
   const combined = `${instructions}\n${prompt}`;
+  assert(instructions.includes(RHETORICAL_WRITER_POLICY), 'The complete existing rhetorical writer policy remains in the system instructions.');
+  assert.equal(combined.split(RHETORICAL_WRITER_POLICY).length - 1, 1, 'Shared rhetorical policy is delivered once.');
   for (const conflict of [
     'SPINE QUALITY GATES', 'SKY PLACEMENT ARTICLE SPINE',
     'Strategy needs at least two short imperatives', 'LONG-FORM SENTENCE ARCHITECTURE',
@@ -153,6 +155,7 @@ try {
   }
   const reviser = governedInstructionsForRole('REVISER', { surface: 'synastry', family: 'synastry-aspect' });
   assert(reviser.includes('Revise only the supplied failed fields'));
+  assert(reviser.includes(RHETORICAL_WRITER_POLICY));
   assert(!reviser.includes('SKY PLACEMENT ARTICLE SPINE'));
   assert.throws(() => governedInstructionsForRole('WRITER', { surface: 'synastry', family: 'synastry-aspect',
     governedInstructions: 'An unrelated instruction override.' }), /canonical role instructions/);

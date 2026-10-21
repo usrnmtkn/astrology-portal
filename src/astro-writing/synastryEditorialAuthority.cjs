@@ -1,4 +1,5 @@
 "use strict";
+const { RHETORICAL_WRITER_POLICY } = require("./rhetoricalPatterns.cjs");
 
 const SYNASTRY_EDITORIAL_VERSION = "synastry-aspect/v3-2026-10-21";
 const SYNASTRY_EDITORIAL_AUTHORITY = [
@@ -24,6 +25,7 @@ function synastryInstructionsForRole(role) {
   ].join("\n\n");
   if (role === "WRITER" || role === "REVISER") return [
     SYNASTRY_EDITORIAL_AUTHORITY,
+    RHETORICAL_WRITER_POLICY,
     role === "REVISER" ? "Revise only the supplied failed fields within the existing request. Preserve successful wording and obey the field schema. A review finding does not create a new scene, fact, prose approval or publication authority." : ""
   ].filter(Boolean).join("\n\n");
   throw new Error(`Unsupported synastry editorial role: ${role}`);
