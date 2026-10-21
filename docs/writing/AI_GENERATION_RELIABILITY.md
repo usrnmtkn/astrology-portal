@@ -720,7 +720,7 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
-The shared synastry writer uses `synastry-aspect/v4-2026-10-21` for directional
+The shared synastry writer uses `synastry-aspect/v6-2026-10-21` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,
 fixed paragraph count or instruction to keep planetary reasoning out of the body.
@@ -732,8 +732,7 @@ The existing JSON schema remains unchanged. Advice is unrequested by default,
 and `action` can be empty. The prompt now states the existing minimum of two
 complete astrology factors without inventing additional chart placements.
 Other surfaces keep their existing instructions. Source selection, provider
-settings, call sequences, validation, private feedback and approval remain
-unchanged.
+settings, call sequences, private feedback and approval remain unchanged.
 
 The complete provider request is scoped at both instruction layers. Synastry
 receives the shared guide's complete universal rules and word policy, excluding
@@ -755,10 +754,41 @@ This is scoped synastry guidance, not a global phrase ban, mandatory scene or
 new validation gate. Complete rejected passages and exact owner reasons remain
 private, exact-target feedback; they are never positive voice examples.
 
+The v5 authority distinguishes a meaning plan from reader wording. The planner
+is instructed to separate supported behavior from emotional verdicts and avoid
+inventing a fear or need to explain a planetary function. The writer is instructed
+to develop the supported interaction rather than paraphrase plan fields or repeat
+one contrast in different vocabulary. These are prompt instructions, not proof
+that a new candidate follows them. The preceding bounded v4 sample retained its
+source-specific tension but still repeated broad mental/emotional categories and
+violated existing wording rules. It remains an unapproved private test artifact;
+no new positive voice example, private owner rejection or model stage follows
+from that assistant observation. No additional generation is part of this repair.
+
+The v6 authority avoids awkward planetary labels inserted into sentences about
+people's feelings and actions, while retaining meaningful personification.
+Chart-specific Studio records already supply `planetASign` and
+`planetBSign`; the writer now receives their explicit person/planet/sign
+associations and guidance to explain those signs in the interaction. Reusable
+Compatibility entries contain only the planet pair and aspect. Their prompt
+explicitly stays sign-independent rather than inventing either sign. Supplied
+partial context never licenses a missing sign or a house derived from a sign.
+These instructions establish delivery, not proof of a draft's interpretation.
+
+An explicit owner correction also restores the existing no-em-dash instruction
+as a hard check for newly generated synastry reader fields, including sections
+and the astrology drilldown. Quality fallback cannot admit that violation.
+The check does not scrub a rejected result or alter source passages, historical
+drafts, saved owner prose or other writing families. The exact entry's requested
+order and wording corrections remain complete private feedback, scoped to that
+entry; they do not impose a universal paragraph formula or approve a replacement.
+
 `scripts/test-synastry-writing-contract.mts` intercepts both providers at the
 actual generation handler. It covers supported and challenging contacts, the
 legacy route, complete source delivery, directional facts, schemas, empty
-advice, invalid factors, missing body, unknown variables and denied access.
+advice, supplied and absent signs, complete punctuated source preservation,
+em-dash rejection including quality fallback, invalid factors, missing body,
+unknown variables and denied access.
 These fixtures establish request delivery and field behavior, not literary
 quality. A further live prose comparison needs its own bounded authorization
 and exact owner review; no paid generation is part of this repair's tests.

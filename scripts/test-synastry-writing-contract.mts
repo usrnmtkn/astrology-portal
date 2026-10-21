@@ -5,6 +5,7 @@ import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY } from '../src/astro-writin
 import handler from '../api/generate-content.js';
 import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
+import { validateGeneratedContentQuality } from '../api/_lib/content-generation.js';
 
 const sharedStyle = readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/style-guide.md', import.meta.url), 'utf8');
 
@@ -77,7 +78,10 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('"As a result"'), 'The owner-identified transition is retained as a negative style example.');
   assert(instructions.includes('a feeling word alone does not explain the interaction'));
   assert(instructions.includes('constructive_expression is not a required resolution'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v4-2026-10-21'));
+  assert(instructions.includes('A meaning plan establishes supported interpretation, not reader wording'), 'The writer must not paraphrase planner labels into reader copy.');
+  assert(instructions.includes('Do not repeat the same contrast in new vocabulary'), 'Additional sentences must develop the interaction rather than restate it.');
+  assert(instructions.includes("Use ordinary sentences about people's feelings and actions without interrupting them with a planetary label"));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v6-2026-10-21'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
   // Inspect both actual provider fields: OpenAI's canonical transport can add
   // instructions that are absent from the assembled user prompt.
@@ -114,6 +118,17 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(prompt.includes(JSON.stringify(input.facts, null, 2)), 'Complete directional facts reach the actual writer.');
   assert(prompt.includes(input.sourceSnapshot.meaning), 'Complete source reaches the writer.');
   assert(prompt.includes(input.voiceNotes));
+  if ('planetASign' in input.facts) {
+    assert(prompt.includes('SUPPLIED SYNASTRY SIGN CONTEXT'));
+    assert(prompt.includes('Rowan: Mercury in Gemini'));
+    if ('planetBSign' in input.facts) assert(prompt.includes('you: Moon in Virgo'));
+    else assert(!prompt.includes('you: Moon in'), 'An absent counterpart sign is not invented.');
+    assert(prompt.includes('Explain how each supplied sign qualifies its own planet'));
+    assert(!prompt.includes('This reusable contact has no supplied planet signs'));
+  } else {
+    assert(prompt.includes('This reusable contact has no supplied planet signs'));
+    assert(!prompt.includes('SUPPLIED SYNASTRY SIGN CONTEXT'));
+  }
   assert(prompt.includes('owner_authored_final'), 'Existing eligible owner retrieval is retained.');
   assert.equal(schema.additionalProperties, false);
   assert.deepEqual(schema.required, ['headline', 'tldr', 'summary', 'body', 'action', 'timing', 'sections', 'sceneLock', 'astrologyDrilldown']);
@@ -126,7 +141,10 @@ try {
       { ...base, mode: 'feed', contentKey: 'fixture/synastry-moon-trine-venus', knowledgeIds: ['synastry-moon-trine-venus'],
         facts: { ...base.facts, planetA: 'Venus', planetB: 'Moon', aspect: 'trine' } },
       { ...base, mode: 'article', contentKey: 'fixture/synastry-moon-conjunction-venus', knowledgeIds: ['synastry-moon-conjunction-venus'],
-        facts: { ...base.facts, planetA: 'Moon', planetB: 'Venus', aspect: 'conjunction' } }]) {
+        facts: { ...base.facts, planetA: 'Moon', planetB: 'Venus', aspect: 'conjunction' } },
+      { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini', planetBSign: 'Virgo' },
+        sourceSnapshot: { meaning: 'Complete synthetic source with an em dash — its original punctuation stays intact.' } },
+      { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini' } }]) {
       const start = requests.length;
       const response = await generate({ ...variant, provider });
       assert.equal(response.statusCode, 200, JSON.stringify(response.result));
@@ -140,6 +158,8 @@ try {
         assert(stages[0].body.instructions.includes('SYNASTRY MEANING AUTHORITY'));
         assert(stages[0].body.instructions.includes("specific interaction and its supported consequences"), 'The actual planner must retain the source-specific development.');
         assert(stages[0].body.instructions.includes('A broad contrast such as logic versus feelings is incomplete'));
+        assert(stages[0].body.instructions.includes('observable_behaviors must describe supported things people say or do'), 'The planner must distinguish behavior from an emotional verdict.');
+        assert(stages[0].body.instructions.includes('Do not infer a fear or need merely to explain a planetary function'));
         assert.deepEqual(JSON.parse(stages[0].body.input).governedFacts, JSON.parse(JSON.stringify(variant.facts)), 'Complete directional facts remain unchanged in the planner input.');
         assert(stages[3].body.instructions.includes('SYNASTRY REVIEW AUTHORITY'));
         for (const stage of stages) assert(!stage.body.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
@@ -161,11 +181,25 @@ try {
     assert.notEqual((await generate({ ...base, provider })).statusCode, 200, 'Missing body remains invalid.');
     nextDraft = { ...draft, body: 'Synthetic prose with an unlicensed {{unexpected}} variable.' };
     assert.notEqual((await generate({ ...base, provider })).statusCode, 200, 'Unlicensed variables remain invalid.');
+    for (const withDash of [
+      { ...draft, body: draft.body + ' Synthetic continuation — retained for review.' },
+      { ...draft, sections: [{ heading: 'Synthetic section', body: 'Synthetic text — continued.' }] },
+      { ...draft, astrologyDrilldown: { ...draft.astrologyDrilldown, whyThisScene: 'Synthetic explanation — continued.' } }
+    ]) {
+      nextDraft = withDash;
+      const invalidDash = await generate({ ...base, provider, allowQualityFallback: true });
+      assert.notEqual(invalidDash.statusCode, 200, 'An em dash cannot return a successful synastry draft, including quality fallback.');
+      assert.match(invalidDash.result.error, /em dash/u);
+      assert(JSON.stringify(withDash).includes('—'), 'Rejected copy must not be silently scrubbed.');
+    }
     nextDraft = draft;
   }
+  validateGeneratedContentQuality({ ...draft, body: draft.body + ' Synthetic sentence — continued.' } as any,
+    { ...base, surface: 'composite', eventType: 'composite-aspect', facts: {} } as any);
   const reviser = governedInstructionsForRole('REVISER', { surface: 'synastry', family: 'synastry-aspect' });
   assert(reviser.includes('Revise only the supplied failed fields'));
   assert(reviser.includes(RHETORICAL_WRITER_POLICY));
+  assert(reviser.includes('A meaning plan establishes supported interpretation, not reader wording'));
   assert(!reviser.includes('SKY PLACEMENT ARTICLE SPINE'));
   assert.throws(() => governedInstructionsForRole('WRITER', { surface: 'synastry', family: 'synastry-aspect',
     governedInstructions: 'An unrelated instruction override.' }), /canonical role instructions/);
@@ -183,6 +217,7 @@ try {
     const prompt = provider === 'openai' ? request.body.input : request.body.messages[0].content[0].text;
     const instructions = provider === 'openai' ? request.body.instructions : request.body.system;
     assert(!instructions.includes('Prefer direct causal sentences to report transitions'), 'The refinement stays within directional synastry.');
+    assert(!instructions.includes('A meaning plan establishes supported interpretation, not reader wording'));
     assert(!prompt.includes('OUTPUT SHAPE FOR SYNASTRY ASPECT'));
     assert(prompt.includes('action: one specific useful move.'));
   }
