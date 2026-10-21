@@ -303,6 +303,15 @@ Follow [the Studio prompt review workflow](docs/writing/CONTENT_STUDIO_PROMPT_RE
 for contract preservation, provider-request tests and review evidence. These
 authoring skills work within the shared writing governance above.
 
+For draft comparison or judge calibration, use
+`.agents/skills/advanced-evaluation/SKILL.md`. For testing a skill or
+writer-instruction change against a baseline, use
+`.agents/skills/tldr-astro-skill-testing/SKILL.md`. Follow
+[the evaluation workflow](docs/writing/SKILL_EVALUATION_WORKFLOW.md) for
+frozen cases, private receipts and separate owner decisions. These are
+maintenance workflows; they add no routine judge, paid-call authority or
+automatic prose approval.
+
 ## Serving-content merge model (v2 - replaces the flight rule; canonical text in CLAUDE.md)
 
 Open PRs touching `apps/web/src/content/fallbackArchitectureV3/**` or `packages/astro-knowledge/**` do NOT block branching or development. Queue, don't halt:

@@ -1,0 +1,35 @@
+{
+  "purpose": "Planning examples for isolated skill tests, not scored results or reader prose. Select cases relevant to the proposed change.",
+  "cases": [
+    {
+      "id": "prepare-comparison-only",
+      "prompt": "Prepare a test of a revised Sky Placement writing skill against the current version. Show the cases, controls and expected cost before running anything paid.",
+      "expectedBehavior": "Preserve canonical and Sky Placement rules in both conditions, freeze the baseline and case set, prepare complete private evidence references, and stop at the paid execution boundary.",
+      "evidence": ["skills/tldr-astro-writer/SKILL.md", "skills/tldr-astro-sky-placement/SKILL.md"]
+    },
+    {
+      "id": "personal-transit-scope",
+      "prompt": "Test a Personal Transit wording change for the existing four-contact You/Friend batch.",
+      "expectedBehavior": "Use the dedicated preparation and batch contract. Keep You/Friend perspective and exact-contact meaning, model/settings and owner review. Do not add a planner, model judge, extra writer, automatic rewrite or article argument gate.",
+      "evidence": ["skills/tldr-astro-personal-transit/SKILL.md", "docs/writing/PERSONAL_TRANSIT_OWNER_BATCH.md"]
+    },
+    {
+      "id": "monthly-period-isolation",
+      "prompt": "Compare a proposed Monthly profile instruction with the saved Monthly version. Weekly currently sounds right.",
+      "expectedBehavior": "Use the exact saved Monthly profile and scoped corrections, preserve complete evidence, and keep Daily/Weekly/Seasonal settings and saved profiles unchanged. Do not mutate a profile merely to run a comparison.",
+      "evidence": ["AGENTS.md", "docs/writing/CONTENT_STUDIO_PROMPT_REVIEW.md"]
+    },
+    {
+      "id": "preference-is-not-prose-approval",
+      "prompt": "B is better overall, but its final paragraph still needs work.",
+      "expectedBehavior": "Record a scoped preference and the full owner reason. Retain the complete candidate as needs_review. Do not infer exact wording approval, positive voice-evidence eligibility, automatic rewriting or publication authority.",
+      "evidence": ["skills/tldr-astro-writer/SKILL.md", "docs/agent-memory/studio-feedback.md"]
+    },
+    {
+      "id": "position-bias-and-invalidity",
+      "prompt": "The judge selected the first displayed draft in both swapped-order reviews. One draft also failed the calculated-date check.",
+      "expectedBehavior": "Map displayed positions to stable candidate identities, record position inconsistency separately from a tie, retain the factual failure and reject an unsupported usable-winner claim. Request owner review within the existing workflow without a paid retry.",
+      "evidence": [".agents/skills/advanced-evaluation/SKILL.md"]
+    }
+  ]
+}

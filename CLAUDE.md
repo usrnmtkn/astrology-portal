@@ -31,6 +31,14 @@ language to a prose writer as positive reader-copy evidence.
 No model may approve, publish, promote or rewrite prose automatically. Passing
 deterministic checks does not establish voice quality or owner approval.
 
+For draft comparison or judge calibration, use
+`.agents/skills/advanced-evaluation/SKILL.md`. For testing a skill or
+writer-instruction change against a baseline, use
+`.agents/skills/tldr-astro-skill-testing/SKILL.md`. Follow
+[the evaluation workflow](docs/writing/SKILL_EVALUATION_WORKFLOW.md), within
+the canonical writer and target surface rules. Installation and preparation
+add no paid-call authority or automatic prose approval.
+
 ## Source and correction preflight (owner directive, 2026-08-17)
 
 Apply these source-authority protections through the target surface workflow.
