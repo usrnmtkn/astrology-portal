@@ -1,13 +1,19 @@
 # Content Studio prompt review
 
 Use this workflow when changing Studio generation prompts or writer instructions.
-The two project skills are authoring references:
+The project skills are authoring and evaluation references:
 
 - [Prompt Engineer](../../.agents/skills/prompt-engineer/SKILL.md) diagnoses prompt
   defects and defines comparisons and test cases. Load only the references needed
   for the task.
 - [Writing for Agents](../../.agents/skills/writing-for-agents/SKILL.md) clarifies
   workflow order, source roles, context pointers and completion criteria.
+- [Advanced Evaluation](../../.agents/skills/advanced-evaluation/SKILL.md) handles
+  draft comparison, judge bias and calibration against scoped owner labels.
+- [TLDR Astro Skill Testing](../../.agents/skills/tldr-astro-skill-testing/SKILL.md)
+  supplies baseline/candidate tests and human review. Follow
+  [the evaluation workflow](SKILL_EVALUATION_WORKFLOW.md) when testing a change;
+  preparation and fixture checks do not authorize paid comparisons.
 
 The [canonical writer](../../skills/tldr-astro-writer/SKILL.md) and the target
 surface's workflow govern source authority, owner voice and exact prose approval.
@@ -124,12 +130,17 @@ part of this patch. Record executed results separately from these expectations.
 
 ## Skill provenance
 
-Each vendored skill includes `UPSTREAM.json` with its source commit, original
-path and SHA-256 inventory, plus the upstream license. Keep the source files
+The original Prompt Engineer and Writing for Agents copies include `UPSTREAM.json`
+with their source commit, original path and SHA-256 inventory, plus the upstream license. Keep the source files
 unchanged; project-specific guidance belongs in this workflow and `AGENTS.md`.
 The project-folder copies and repository copies were verified against the same
 pinned sources. Upstream material is authoring guidance, not positive owner
 voice evidence and not a prompt automatically appended to generation calls.
+
+Advanced Evaluation and TLDR Astro Skill Testing are project-local adaptations.
+Their `UPSTREAM.json` records pin the original source and license hashes, identify
+the retained concepts and intentional changes, and inventory the adapted files.
+They preserve TLDR's separate execution, prose-approval and publication decisions.
 
 ## Local verification — October 20, 2026
 

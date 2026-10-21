@@ -19,6 +19,7 @@
     { "path": "docs/writing/LUNATION_ARTICLE_STUDIO.md", "kind": "note", "role": "Shared lunar writing guidance, dated drafts and reader source selection; not wording approval" },
     { "path": "docs/writing/AI_GENERATION_RELIABILITY.md", "kind": "rule", "role": "AI generation reliability architecture" },
     { "path": "docs/writing/CONTENT_STUDIO_PROMPT_REVIEW.md", "kind": "note", "role": "Prompt-maintenance workflow and fixture review evidence; not owner voice evidence or wording approval" },
+    { "path": "docs/writing/SKILL_EVALUATION_WORKFLOW.md", "kind": "note", "role": "Advanced Evaluation and Skill Creator testing adaptation; maintenance workflow, not voice evidence, calibrated quality or prose approval" },
     { "path": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md", "kind": "rule", "role": "Writing guidance" },
     { "path": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md", "kind": "navigation", "role": "Authority index" },
     { "path": "data/writing/OWNER_CORRECTIONS.jsonl", "kind": "correction", "role": "Owner correction; includes rejected text" },

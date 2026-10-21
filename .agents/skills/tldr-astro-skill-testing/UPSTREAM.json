@@ -1,0 +1,23 @@
+{
+  "repository": "https://github.com/anthropics/skills",
+  "revision": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+  "path": "skills/skill-creator",
+  "retrievedOn": "2026-10-21",
+  "adaptation": "TLDR Astro project-local rewrite; upstream instructions are not an execution or editorial authority.",
+  "originalFilesSha256": {
+    "skills/skill-creator/SKILL.md": "dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf",
+    "skills/skill-creator/LICENSE.txt": "bc6b3af2f331cbc7fb0da1344efb2cbe5877a31498b4d70dbc7000f3405a1362"
+  },
+  "adaptationNotes": [
+    "Project-specific rewrite of the testing and human-review workflow only; full upstream skill and execution scripts are not installed.",
+    "Retains frozen baselines, realistic cases, holdouts, complete outputs, measured usage and owner feedback.",
+    "Reuses TLDR surface adapters; paid baseline, candidate, judge and retry calls require existing bounded authorization.",
+    "Private Markdown or existing Studio review replaces the upstream CLI/viewer requirement; subagents are optional and require session authorization."
+  ],
+  "filesSha256": {
+    "SKILL.md": "a72ffaa6e432f1f17f0e9be64b9bb6720d60729befe20ca6757d15f59e446b07",
+    "agents/openai.yaml": "b7b5e240ee975c00c9a37ae82a110fe56f1d8b43817205fd35fb98483f05f297",
+    "UPSTREAM-LICENSE.txt": "bc6b3af2f331cbc7fb0da1344efb2cbe5877a31498b4d70dbc7000f3405a1362",
+    "references/starter-cases.json": "9098f3e9be9c754739ed5f0f4121a8743591dd79d933911d5b68ea4bb673967f"
+  }
+}

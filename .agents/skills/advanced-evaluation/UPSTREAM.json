@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering",
+  "revision": "9ff0c99108b36d3b886defd825d8ac1f47dba374",
+  "path": "skills/advanced-evaluation",
+  "retrievedOn": "2026-10-21",
+  "adaptation": "TLDR Astro project-local rewrite; upstream instructions are not an execution or editorial authority.",
+  "originalFilesSha256": {
+    "skills/advanced-evaluation/SKILL.md": "8b9e3d9de07a0505ae2b42df2e15dd75bab5f2486e336194481c558e0648ded0",
+    "LICENSE": "65bc33b0759a48b980962833b12bcb820404da9f5256bff39c00e89471bcf209"
+  },
+  "adaptationNotes": [
+    "Project-specific rewrite retaining evidence-first rubrics, blinded pairwise comparison, position swaps and human-label calibration.",
+    "Keeps factual checks, current surface admission rules and owner taste judgments distinct; no generic score threshold or confidence arithmetic.",
+    "Separate bounded paid-call authorization, complete owner evidence, no new runtime judge, automatic revision or publication."
+  ],
+  "filesSha256": {
+    "SKILL.md": "db839ad931861ae5a1dd806004c1bdb1e445d60e6300463f0693c604f013832a",
+    "agents/openai.yaml": "2135a0096a6505df99badeea507e51ddb5de099feae5c95888deb22a3e557be0",
+    "UPSTREAM-LICENSE.txt": "65bc33b0759a48b980962833b12bcb820404da9f5256bff39c00e89471bcf209"
+  }
+}

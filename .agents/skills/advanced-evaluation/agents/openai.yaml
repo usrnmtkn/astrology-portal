@@ -1,0 +1,3 @@
+interface:
+  display_name: "Advanced Evaluation — TLDR Astro"
+  short_description: "Compare drafts against TLDR owner judgments"

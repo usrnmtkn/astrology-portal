@@ -347,3 +347,26 @@ test('rhetorical protections retain complete evidence, narrow qualifications and
   assert(config.requiredContext.includes(sourcePath));
   assert(config.qualifications.some(item => item.source === sourcePath && item.targets.includes('docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md')));
 });
+
+test('skill evaluation is retrievable maintenance context with exact text and no writer authority', () => {
+  const sourcePath = 'docs/writing/SKILL_EVALUATION_WORKFLOW.md';
+  const index = buildMemoryIndex({ root: process.cwd() });
+  const search = queryMemory(index, { query: 'Freeze a private manifest', kind: 'note', phrase: true });
+  const record = search.records.find(item => item.path === sourcePath);
+  assert(record, 'The comparison preparation workflow must be discoverable.');
+  const detail = memoryDetail(index, record.id);
+  const source = fs.readFileSync(sourcePath, 'utf8');
+  const exactSection = source.match(/## Freeze a private manifest\n[\s\S]*?(?=\n## )/u)[0] + '\n';
+  assert.equal(detail.body, exactSection);
+  assert.equal(detail.sourceSha256, sha256(source));
+  for (const item of index.records.filter(item => item.path === sourcePath)) {
+    assert.equal(item.kind, 'note');
+    assert.equal(item.status, 'unverified');
+    assert.equal(item.writerPacketEligible, false);
+    assert.equal(memoryDetail(index, item.id).bodySha256, sha256(item.body));
+  }
+  const recalled = recallMemory(index, 'Freeze a private manifest');
+  assert(!recalled.groups.rule.some(item => item.path === sourcePath));
+  assert(!recalled.groups.example.some(item => item.path === sourcePath));
+  assert(recalled.requiredContext.some(item => item.path === 'skills/tldr-astro-writer/SKILL.md'));
+});
