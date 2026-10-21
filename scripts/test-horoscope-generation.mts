@@ -1,6 +1,6 @@
 import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
 import {loadWeeklyOwnerEvidence} from '../src/astro-writing/weeklyOwnerEvidence.mjs';
-import {assertHoroscopeRequestEvidence} from './assert-horoscope-request-evidence.mjs';
+import {assertHoroscopeRequestEvidence,resolveHoroscopeRequestPassage} from './assert-horoscope-request-evidence.mjs';
 import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
@@ -283,7 +283,8 @@ for(const period of ['daily','seasonal']){
   assert.doesNotMatch(request.input,/Timing language must stay within the declared local period/);
   const primary=JSON.parse(request.input.match(/COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES\n([^\n]+)\n\n/)![1]);
   assert.equal(primary.length,3);assert.equal(primary[0].id,(forecastSources.get('gemini') as any).sourceId);
-  for(const passage of primary){const source=forecastSources.get(passage.id);assert.equal(passage.text,source.text);assert.equal(passage.sourceRecordSha256,createHash('sha256').update(source.text).digest('hex'));assert.equal(source.ownerAuthored,true);}
+  for(const passage of primary){const source=forecastSources.get(passage.id);assert.equal(resolveHoroscopeRequestPassage(request.input,passage),source.text);assert.equal(passage.sourceRecordSha256,createHash('sha256').update(source.text).digest('hex'));assert.equal(source.ownerAuthored,true);}
+  assertHoroscopeRequestEvidence(request.input);
   const polled=await invokeHoroscopeWriting({action:'poll',id:dailyRow.id,expectedUpdatedAt:dailyRow.updated_at});assert.equal(polled.status,200);
   assert.equal(polled.payload.rows[0].status,'DRAFT');assert.equal(polled.payload.rows[0].source_snapshot.horoscopeGeneration.readings.gemini.ownerApproved,false);
  }

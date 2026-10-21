@@ -1,10 +1,39 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 
+export function resolveHoroscopeRequestPassage(input,passage) {
+  if(!passage.completePassageRef)return passage.text;
+  const match=input.match(/DAILY COMPLETE SOURCE PASSAGES\n([^\n]+)\n\n/u);
+  assert(match,'Daily full-source index is present');
+  const source=JSON.parse(match[1]).find(p=>p.id===passage.completePassageRef);
+  assert(source,'Daily complete passage reference resolves');
+  assert.equal(createHash('sha256').update(source.text).digest('hex'),source.sha256);
+  return source.text;
+}
+
 // Inspect the provider-bound request, not just the selected primary source list.
 export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
   assert(!input.includes('register-gold:sky-placement:saturn-capricorn-v3'));
   assert(!input.includes('Saturn stands at the threshold where a choice becomes a consequence.'));
+  if(input.includes('DAILY COMPLETE SOURCE PASSAGES\n')) {
+    const sources=JSON.parse(input.match(/DAILY COMPLETE SOURCE PASSAGES\n([^\n]+)\n\n/u)[1]);
+    assert.equal(new Set(sources.map(p=>p.id)).size,sources.length);
+    assert.equal(new Set(sources.map(p=>p.text)).size,sources.length,'Daily serializes each distinct complete body once');
+    for(const p of sources)assert.equal(createHash('sha256').update(p.text).digest('hex'),p.sha256);
+    const used=new Set();
+    const visit=value=>{
+      if(Array.isArray(value))return value.forEach(visit);
+      if(!value||typeof value!=='object')return;
+      if(value.completePassageRef){assert(!Object.hasOwn(value,'text'));assert(resolveHoroscopeRequestPassage(input,value).trim());used.add(value.completePassageRef);}
+      for(const child of Object.values(value))visit(child);
+    };
+    for(const label of ['COMPLETE OWNER HOROSCOPES — PRIMARY PROSE EXAMPLES','SUPPORTING OWNER PASSAGES','SHARED FIVE-ROLE EVIDENCE','RELEVANT OWNER PASSAGES','SAME-FAMILY OWNER PASSAGES','REGISTER REFERENCE','AVAILABLE OWNER LINES',...additionalLabels]){
+      const match=input.match(new RegExp(`${label}\\n([^\\n]+)\\n\\n`,'u'));
+      if(match)visit(JSON.parse(match[1]));
+    }
+    assert.deepEqual([...used].sort(),sources.map(p=>p.id).sort(),'Every complete Daily source retains a referencing role');
+    return;
+  }
   if(input.includes('COMPACT SEASONAL DEVELOPMENT PLAN\n')) {
     const passages=['SELECTED COMPLETE OWNER PASSAGES','SELECTED SUPPORTING OWNER PASSAGE',...additionalLabels].flatMap(label=>{
       const match=input.match(new RegExp(`${label}\\n([^\\n]+)\\n\\n`,'u'));
