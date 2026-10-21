@@ -235,7 +235,7 @@ function articlePlacementGlyphs(title: string, meta = "") {
 }
 
 function articleEyebrowLabel(title: string, kicker?: string) {
-  if (/\b(conjunction|opposition|square|trine|sextile|quincunx|aspect)\b/i.test(title)) {
+  if (/\b(conjunction|conjunct|opposition|opposite|square|trine|sextile|quincunx|inconjunct|aspect)\b/i.test(title)) {
     return "Aspect";
   }
 
@@ -257,13 +257,13 @@ function articleEyebrowGlyphs({
   meta?: string;
   title: string;
 }) {
+  const aspect = articleAspectGlyphPartsFromHeading(title);
   const placementGlyphs = articlePlacementGlyphs(title, meta);
 
-  if (placementGlyphs.length > 0) {
+  if (placementGlyphs.length > 0 && !(aspect && /\bnatal\b/i.test(title))) {
     return placementGlyphs;
   }
 
-  const aspect = articleAspectGlyphPartsFromHeading(title);
   if (aspect) {
     const pointGlyphs = (label: string) => {
       const point = label.replace(/\s+Rx$/iu, "");

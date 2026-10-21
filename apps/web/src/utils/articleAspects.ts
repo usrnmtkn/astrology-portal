@@ -36,7 +36,10 @@ export function articleAspectGlyphPartsFromHeading(heading: string) {
   }
 
   // Ownership belongs in the displayed title, not in the point glyph lookup.
-  const point = (label: string) => label.trim().replace(/^(?:your|their)\s+|^.+?['’]s\s+/iu, "");
+  const point = (label: string) => label.trim()
+    .replace(/^(?:your|their)\s+|^.+?['’]s\s+/iu, "")
+    .replace(/^natal\s+/iu, "")
+    .replace(/\s+in\s+(?:Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces)(?=\s+Rx$|$)/iu, "");
   return {
     from: point(match[1]),
     aspect: articleAspectGlyphTypeFromText(match[2]),
