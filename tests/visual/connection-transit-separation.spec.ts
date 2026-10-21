@@ -127,6 +127,55 @@ async function seed(page: Page, theme: string) {
     incompleteChart: false, theme
   });
 }
+test('transit titles identify the sky sign and natal chart owner in both sections', async ({ page }, testInfo) => {
+  await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
+  await seed(page, testInfo.project.name.endsWith('dark') ? 'dark' : 'light');
+  await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status: 503, body: 'Isolated calculation fallback.' }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: [] } }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([], []) }));
+  await page.goto('/#friends?tab=charts&chart=friend-nikki&view=transits');
+
+  const between = page.getByRole('region', { name: 'Between you two', exact: true });
+  const active = page.getByRole('region', { name: 'Short-term themes', exact: true });
+  await expect(between.getByRole('heading', { name: "Pluto in Aquarius conjunct Nikki's natal Pluto", exact: true })).toBeVisible({ timeout: 60000 });
+  const readerTitle = 'Saturn in Aries trine your natal Mars';
+  await expect(between.getByRole('heading', { name: readerTitle, exact: true })).toBeVisible();
+  await expect(active).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveCount(0);
+  expect(await page.locator('.friend-transit-group > .friend-section-label').allTextContents()).toEqual(expect.arrayContaining(['Between you two', 'Active for Nikki']));
+  const labels = await page.locator('.friend-transit-group > .friend-section-label').allTextContents();
+  expect(labels.indexOf('Between you two')).toBeLessThan(labels.indexOf('Active for Nikki'));
+
+  const activeHeadings = active.getByRole('heading', { level: 3 });
+  const activeTitles = await activeHeadings.allTextContents();
+  expect(activeTitles.length).toBeGreaterThan(0);
+  for (const title of activeTitles) {
+    expect(title).toMatch(/^.+ in (?:Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces) (?:conjunct|opposite|square|trine|sextile) Nikki's natal .+$/);
+  }
+  const titleStyles = await page.locator('.friend-transit-row h3').evaluateAll(headings => headings.map(heading => {
+    const style = getComputedStyle(heading);
+    return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(property => [property, style[property as keyof CSSStyleDeclaration]]));
+  }));
+  for (const style of titleStyles) expect(style).toEqual(titleStyles[0]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: `test-results/friend-transit-titles-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
+
+  await between.getByRole('button', { name: `Open full entry for ${readerTitle}`, exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(readerTitle);
+  await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+  await expect(active).toBeVisible();
+  const personalTitle = activeTitles[0];
+  await active.getByRole('button', { name: `Open full entry for ${personalTitle}`, exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(personalTitle);
+  await page.reload();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(personalTitle, { timeout: 60000 });
+
+  await page.goto('/#friends?tab=charts&chart=friend-casey&view=transits');
+  await expect(page.getByRole('region', { name: 'Short-term themes', exact: true }).getByRole('heading', { level: 3 }).first()).toHaveText(personalTitle.replace("Nikki's", "Casey's"), { timeout: 60000 });
+  await expect(page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('heading', { name: "Pluto in Aquarius conjunct Casey's natal Pluto", exact: true })).toBeVisible();
+});
+
 for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,true]]) test(`connection detail separates transit, activation ${activationLive ? 'published' : 'draft'}, bridge ${bridgeLive ? 'published' : 'draft'}`, async ({ page }, testInfo) => {
   test.setTimeout(90_000);
   await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
@@ -194,12 +243,12 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   await expect(group).toBeVisible({timeout:60000});
   // Return cards remain in the unchanged bond list but cannot borrow return
   // readings for A. Exercise an authored transit-aspect contact explicitly.
-  const unavailable=group.getByRole('button',{name:"Pluto conjunct Nikki's Pluto",exact:true});
+  const unavailable=group.getByRole('button',{name:"Pluto in Aquarius conjunct Nikki's natal Pluto",exact:true});
   await expect(unavailable).toBeDisabled();
   await expect(unavailable.locator('.card-read-more')).toHaveCount(0);
-  await expect(unavailable.locator('.updates-aspect-row__title')).toHaveText("Pluto conjunct Nikki's Pluto");
+  await expect(unavailable.locator('.updates-aspect-row__title')).toHaveText("Pluto in Aquarius conjunct Nikki's natal Pluto");
   await expect(page.getByRole('heading',{level:1})).toHaveCount(0);
-  const button=group.getByRole('button',{name:'Open full entry for Saturn trine your Mars',exact:true});
+  const button=group.getByRole('button',{name:'Open full entry for Saturn in Aries trine your natal Mars',exact:true});
   const opening=await button.locator('.updates-aspect-row__description').first().innerText();
   await button.click();
   await expect(page.getByRole('heading',{level:1})).toBeVisible();
@@ -233,7 +282,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     const paragraphs=await group.locator('p').allTextContents();
     const key='authored/transit-aspect/saturn/mars/soft';
     await install([{...unrelated,content_key:key,state:'retired',revision:901,row_id:null,row_updated_at:null}]);
-    const retired=group.getByRole('button',{name:'Saturn trine your Mars',exact:true});
+    const retired=group.getByRole('button',{name:'Saturn in Aries trine your natal Mars',exact:true});
     await expect(retired).toBeDisabled();await expect(retired.locator('.card-read-more')).toHaveCount(0);
     expect(await group.locator('.updates-aspect-row__title').allTextContents()).toEqual(titles);
     expect(await group.locator('p').allTextContents()).toEqual(paragraphs);
@@ -241,7 +290,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(button).toBeEnabled();
     expect(await group.locator('.updates-aspect-row__title').allTextContents()).toEqual(titles);
     expect(await group.locator('p').allTextContents()).toEqual(paragraphs);
-    await button.click();await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn trine your Mars');
+    await button.click();await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn in Aries trine your natal Mars');
     await expect(sourceA).toHaveText(completeA,{useInnerText:true});
   }
   if(activationLive && bridgeLive){
@@ -254,7 +303,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await name.fill('Nikki unsaved draft');
     await name.focus();
     await page.goto(detailUrl);
-    await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn trine your Mars');
+    await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn in Aries trine your natal Mars');
     await expect(page.getByRole('dialog')).toHaveCount(0);
     expect(await page.evaluate(()=>document.body.classList.contains('modal-open'))).toBe(false);
     await page.getByRole('button',{name:'Close detail',exact:true}).click();
@@ -316,8 +365,8 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true})).toHaveCount(0);
   releaseHeldRead!();
   await settled();
-  await page.getByRole('region',{name:'Between you two',exact:true}).getByRole('button',{name:'Open full entry for Saturn trine your Mars',exact:true}).click();
-  await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn trine your Mars');
+  await page.getByRole('region',{name:'Between you two',exact:true}).getByRole('button',{name:'Open full entry for Saturn in Aries trine your natal Mars',exact:true}).click();
+  await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn in Aries trine your natal Mars');
   if(activationLive) await expect(page.getByText('You talk to Casey. This is the final activation sentence.',{exact:true}).first()).toBeVisible();
   await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true})).toHaveCount(0);
   await page.goto(detailUrl);
@@ -373,7 +422,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     const beforeRetry=placementSourceAttempts;
     await notice.getByRole('button',{name:'Retry',exact:true}).click();
     await expect.poll(()=>placementSourceAttempts,{timeout:30000}).toBeGreaterThan(beforeRetry);
-    await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn trine your Mars');
+    await expect(page.getByRole('heading',{level:1})).toHaveText('Saturn in Aries trine your natal Mars');
     if(testInfo.project.name==='390-dark'){
       await expect(notice).toBeVisible({timeout:30000});
       holdPlacement=true;
@@ -604,8 +653,8 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     await send();
   });
   await page.goto('/#friends?tab=charts&chart=friend-nikki&view=transits');
-  await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn trine your Mars', exact: true }).click();
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Saturn trine your Mars');
+  await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn in Aries trine your natal Mars', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Saturn in Aries trine your natal Mars');
   const instanceToken = await page.evaluate(() => {
     const token = crypto.randomUUID();
     (window as any).__recoveryRetainedInstance = token;
@@ -656,7 +705,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     await openChart('Nikki');
     // Friends retries the captured preparation scope. Its authored transit
     // consumer does not await the unrelated Sky season edition.
-    await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn trine your Mars', exact: true }).click();
+    await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn in Aries trine your natal Mars', exact: true }).click();
     await expect(notice).toBeVisible();
     phase = 'retry';
     await notice.getByRole('button', { name: 'Retry', exact: true }).click();
@@ -734,7 +783,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   await expect(notice).toHaveCount(0);
   await expect(page.getByText('Synthetic recovery opening. Synthetic recovery final sentence.', { exact: true })).toHaveCount(0);
   await openChart('Nikki');
-  await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn trine your Mars', exact: true }).click();
+  await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn in Aries trine your natal Mars', exact: true }).click();
   if (targetChange === 'route') await expect(aBody).toHaveText(completeA);
   else await expect(aBody).toBeVisible();
   if (heldStage === 'edition-fetch' && targetChange === 'route') {

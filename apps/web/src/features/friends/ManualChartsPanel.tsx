@@ -359,6 +359,12 @@ export function ManualChartsPanel({
     transitWheelAspectLines
   } = viewModel;
 
+  function friendTransitTitle(transit: TransitItem, ownerName: string) {
+    const transiting = [transit.transitPlanet, transit.transitSign ? `in ${transit.transitSign}` : ""].filter(Boolean).join(" ");
+    const owner = ownerName === "you" ? "your" : possessiveLabel(ownerName);
+    return `${transiting} ${transitAspectTechnicalVerb(transit.aspect)} ${owner} natal ${transit.natalPoint}`;
+  }
+
   function pairDailyDriver(
     currentSky: SkySnapshot,
     natalSky: SkySnapshot,
@@ -669,7 +675,7 @@ export function ManualChartsPanel({
           id: `${group.key}-${group.activationId}`,
           effectFamily: bondEffectFamily(group.transiting, group.aspect) as "soft" | "hard",
           effectContentKey: rendered.contentKey,
-          headline: rendered.headline,
+          headline: friendTransitTitle(group.activation, group.endpointOwner === "reader" ? "you" : friendName),
           transitPlanet: group.activation.transitPlanet,
           transitSign: group.activation.transitSign ?? "",
           timingRange,
@@ -1629,7 +1635,7 @@ export function ManualChartsPanel({
 
           return {
             id: transit.id,
-            title: `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`,
+            title: friendTransitTitle(transit, selectedChart.displayName),
             durationLabel: timing.durationLabel,
             rangeLabel: timing.rangeLabel,
             timingLabel: timing.label,
@@ -2278,7 +2284,7 @@ export function ManualChartsPanel({
       currentSky.generatedAt,
       selectedChart.displayName
     );
-    const title = `${transit.transitPlanet} ${transitAspectTechnicalVerb(transit.aspect)} ${transit.natalPoint}`;
+    const title = friendTransitTitle(transit, selectedChart.displayName);
     const orbLabel = wholeDegreeOrb(transitOrbValue(transit));
     const directionSentence = transit.direction
       ? ` The aspect is ${transit.direction}.`
