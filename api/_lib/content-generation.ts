@@ -1284,6 +1284,16 @@ function modeRules(mode: ContentMode) {
 }
 
 function modeRulesForInput(input: GenerateContentInput) {
+  if (isSynastryAspectInput(input)) {
+    return [
+      "Synastry Aspect Mode: interpret one directional relationship contact between two charts.",
+      "Keep the supplied target length when present. Feed copy stays compact; in-depth and article copy can develop the interpretation further. Do not add paragraphs merely to reach a count.",
+      "Synastry structure: develop the relationship experience through connected paragraphs, without a fixed definition, problem, advice or conclusion sequence.",
+      "Keep the reader's planet and the other person's planet distinct. Explain why one response can change what the other person feels or does.",
+      "The requested length is room for interpretation, not a requirement to add a complication, another example or a closing lesson."
+    ].join("\n");
+  }
+
   if (isPersonalizedNatalPlacementAspectCard(input)) {
     return [
       "Natal Placement Aspect Card Mode: evergreen birth-chart support copy attached to a primary placement.",
@@ -1319,6 +1329,26 @@ function outputShapeRules(input: GenerateContentInput, lockedHeadline: string) {
   const exactHeadline = lockedHeadline
     ? `Use this exact headline: ${JSON.stringify(lockedHeadline)}.`
     : "Use a factual astrology headline, not a poetic title.";
+
+  if (isSynastryAspectInput(input)) {
+    return [
+      "OUTPUT SHAPE FOR SYNASTRY ASPECT",
+      exactHeadline,
+      "Return every field in the supplied JSON schema. These fields have separate jobs; do not repeat the whole interpretation in each one.",
+      "tldr: a concise observation about this relationship contact, not an instruction.",
+      "summary: one or two plain sentences that preview the relationship experience.",
+      "body: the complete interpretation in natural paragraphs. Name the supplied planets and aspect where they help explain the experience. Weave each planet's function into what the people may want, notice or misunderstand; do not leave the astrological reasoning entirely in the drilldown.",
+      "Explain the particular contact rather than opposing a rational person to an emotional person or labeling the relationship supportive or challenging. Keep both people's responses understandable without assigning a biography or motive the sources do not support.",
+      "action: return an empty string unless the owner explicitly requests advice. An action field in the schema does not require an instruction or an advice ending in the body.",
+      "timing: return an empty string for this evergreen relationship contact. Do not invent dates or current-weather language.",
+      "sections: return an empty array unless separate sections are explicitly requested. Do not duplicate the body or add an advice section to fill the schema.",
+      "sceneLock: return the required object with one supported relationship_interaction, conversation or internal_state. It records the possible experience being interpreted, not an event that is known to have happened. Keep unsupported circumstances in excludedMeanings.",
+      "astrologyDrilldown: use title 'Why this?' and explain only the supplied chart contact. Include at least two complete factors, each with label, technicalFact and plainMeaning: one for the other person's supplied planet and one for the reader's supplied planet, explaining their roles in this aspect. The aspect may be a further factor; do not invent another placement to fill the array.",
+      "astrologyDrilldown.whyThisScene: explain why the supplied contact supports the selected possible experience, preserving directionality and identifying unsupported circumstances that were excluded.",
+      "astrologyDrilldown.timingNote: return an empty string when no calculated timing is supplied.",
+      "The body can end when the reader understands the interaction. Do not add suggestions, reassurance, a maxim or an idealized resolution merely to finish."
+    ].join("\n");
+  }
 
   if (isPrimaryNatalPlacementGeneration(input)) {
     const hasAspects = asArray<Record<string, unknown>>(input.facts.aspects).length > 0;
@@ -2570,6 +2600,7 @@ function isSynastryAspectInput(input: GenerateContentInput) {
       && (
         input.eventType.includes("synastry-aspect")
         || input.eventType.includes("synastry-contact")
+        || input.eventType === "aspect"
       )
     );
 }
@@ -2620,7 +2651,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
   const contextInstruction = relationshipContextInstruction(input.facts);
 
   return [
-    "SYNASTRY WRITING SYSTEM",
+    "SYNASTRY WRITING SYSTEM synastry-aspect/v2-2026-10-21",
     "Use this for client-facing synastry aspect copy.",
     "",
     "POV AND QUESTION",
@@ -2628,13 +2659,16 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "The main question is: what does this person bring out in me?",
     "Lead with how one person makes the other feel in plain language, then translate the astrology into daily relationship experience.",
     "Use names when supplied in ASTROLOGY FACTS. Be direct, specific, and human.",
-    "Do not explain astrology mechanics in the body. The title already carries the chart label.",
+    "Let the supplied planets and aspect explain the lived experience in the body. Naming the contact in the title does not replace interpreting it. Keep raw calculations and technical detail in astrologyDrilldown.",
     "Do not overstate fate, trauma, permanence, compatibility, or harm.",
     contextInstruction,
     "",
     "STRUCTURE",
     "Open with the felt experience of being around this person.",
     "Explain what one person brings out in the other and how it may feel on both sides.",
+    "Develop the feeling through what matters to each person: what they want from the exchange, what they hear in the other's response, and how their next response can affect the other person. Use only the motives and possibilities supported by this contact; this is not a required sequence for every paragraph.",
+    "Keep affection, interest, anticipation, enjoyment and disappointment available when the astrology supports them. Do not make every connection a problem to manage or flatten it into a clinical account of two planetary functions.",
+    "Learn conversational rhythm and emotional development from the complete eligible owner passages. Warmth comes from understanding the people in this contact, not from borrowed catchphrases, decorative language or an imitation of another author's distinctive wording.",
     "For supportive aspects, explain what feels easy and why. Include a complication only when supported; do not invent a catch.",
     "For challenging aspects, name the concrete mismatch, expectation, or recurring tension without making either person the villain.",
     "For conjunctions, write immediacy and concentration.",
@@ -2644,7 +2678,7 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "",
     "LIVED EXAMPLES",
     "Use one or two examples maximum, only where they naturally fit inside a paragraph.",
-    "Do not ask the model to invent examples. Do not create new examples. If you include an example, use one of the approved examples below verbatim or lightly adapted only for pronouns/names.",
+    "The examples below are optional illustrations of meaning, not positive owner-voice evidence or a required scene. Do not copy an example merely to satisfy a specificity rule. Use a supplied human moment when it clarifies the contact, keeping it conditional rather than claiming it happened.",
     "Do not turn examples into bullets or a list.",
     "Keep examples optional with may, can, or you may notice.",
     JSON.stringify(bank, null, 2),
@@ -2656,12 +2690,6 @@ function synastryWritingSystemPrompt(input: GenerateContentInput) {
     "Avoid phrases like their energy reaches your private side, their emotional world connects with your direction, who they are connects with, or this aspect activates.",
     "Do not overuse the thing to watch, give it somewhere to go, or this connection works best when.",
     "Banned words and phrases: soulmate, twin flame, karmic contract, meant to be, toxic, destined, guaranteed, the hard thing, hold space, deeply affirming, masquerade.",
-    "",
-    "GOOD SHAPE",
-    "{{personA}}'s Mars opposes your Midheaven, so they may interrupt the part of you that is trying to stay focused, visible, or in control. You may be trying to finish a project, hold a role, meet a deadline, or stay composed in public, and suddenly their urgency brings up what is happening behind the scenes.",
-    "",
-    "BAD SHAPE",
-    "Do not write: {{personA}}'s Mars opposes your Midheaven, so their Mars energy activates your IC axis."
   ].join("\n");
 }
 
@@ -4596,9 +4624,9 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     outputShapeRules(input, lockedHeadline),
     "",
-    sceneLockRules(),
+    isSynastryAspectInput(input) ? "" : sceneLockRules(),
     "",
-    timeLordSceneRules(input),
+    isSynastryAspectInput(input) ? "" : timeLordSceneRules(input),
     "",
     sourceMethodRules(),
     "",

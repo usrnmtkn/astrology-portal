@@ -717,3 +717,28 @@ model calls. They check scope, stale plans, outages, private metadata boundaries
 and saved-request recovery. They do not certify Satori voice or authorize paid
 regeneration. No published writing, saved profile, model choice or call budget is
 changed by this repair.
+
+### Synastry interpretation and field contract — October 21
+
+The shared synastry writer uses `synastry-aspect/v2-2026-10-21` for directional
+aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
+It no longer receives the generic advice field instructions, daily scene lock,
+fixed paragraph count or instruction to keep planetary reasoning out of the body.
+The body can explain the supplied planets and aspect through what each person
+wants, hears and does. Emotional range follows the contact and complete eligible
+owner passages; optional meaning examples are not owner-voice evidence.
+
+The existing JSON schema remains unchanged. Advice is unrequested by default,
+and `action` can be empty. The prompt now states the existing minimum of two
+complete astrology factors without inventing additional chart placements.
+Other surfaces keep their existing instructions. Source selection, provider
+settings, call sequences, validation, private feedback and approval remain
+unchanged.
+
+`scripts/test-synastry-writing-contract.mts` intercepts both providers at the
+actual generation handler. It covers supported and challenging contacts, the
+legacy route, complete source delivery, directional facts, schemas, empty
+advice, invalid factors, missing body, unknown variables and denied access.
+These fixtures establish request delivery and field behavior, not literary
+quality. A further live prose comparison needs its own bounded authorization
+and exact owner review; no paid generation is part of this repair's tests.
