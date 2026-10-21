@@ -65,10 +65,11 @@ for (const [day, hour, width, theme] of [
   await expect(aspect.locator("p")).toHaveText(skyParagraphs);
   await page.goto(`/?date=${day}#you`);
   await page.getByRole("tab", { name: /updates|transits/i }).click();
-  const row = page.locator("button.updates-aspect-row").filter({ hasText: "Sun conjunction your North Node" });
+  const row = page.locator("button.updates-aspect-row").filter({ hasText: "Sun in Virgo conjunct your natal North Node" });
   await expect(row).toBeVisible({ timeout: 60_000 });
   await row.click();
   const article = page.locator(".you-transit-article");
+  await expect(article.getByRole("heading", { level: 1 })).toHaveText("Sun in Virgo conjunct your natal North Node · Sun in Virgo opposite your natal South Node");
   await expect(article).toContainText("You may be offered a role that feels slightly ahead");
   await expect(article).toContainText("learn from what happens next.");
   await expect(article.getByRole("heading", { name: "Sun Conjunction North Node", exact: true })).toHaveCount(1);

@@ -98,10 +98,12 @@ for (const theme of ["light", "dark"]) {
       const row = page.locator("button.updates-aspect-row--personal").first();
       await expect(row).toBeVisible({ timeout: 45_000 });
       const title = await row.locator(".updates-aspect-row__title").innerText();
+      expect(title).toMatch(/^.+ in [A-Z][a-z]+ (?:conjunct|opposite|square|trine|sextile) your natal .+$/);
       const expected = expectedIdentity(title, skies[index], natal);
       await expect(row).not.toContainText(expected);
       await expect(page.getByLabel("Transit details", { exact: true })).toHaveCount(0);
       await row.click();
+      await expect(page.locator('.you-transit-article h1')).toHaveText(title);
       const footer = page.getByLabel("Transit details", { exact: true });
       await expect(footer).toHaveText(expected);
       await verifyFooter(page, footer, theme, `you-${date}`);
@@ -109,6 +111,7 @@ for (const theme of ["light", "dark"]) {
       await expect(footer).toHaveCount(0);
       // The secondary "Behind this forecast" entry opens the same factual identity.
       await page.locator("button.daily-forecast-label").first().click();
+      await expect(page.locator('.you-transit-article h1')).toContainText(/in [A-Z][a-z]+ (?:conjunct|opposite|square|trine|sextile) your natal/);
       await expect(footer).toContainText(/in your \d+(?:st|nd|rd|th) house is/);
     }
   });
@@ -190,6 +193,20 @@ for (const theme of ["light", "dark"]) {
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/friends-article-formatting/${theme}-${width}.png`, fullPage: true });
     }
+    await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+    await expect(namedBond).toBeVisible();
+    const friendEndpointTitle = await namedBond.locator('.updates-aspect-row__title').innerText();
+    const endpoint = friendEndpointTitle.split("Example Friend's natal ")[1];
+    await namedBond.click();
+    const friendFacts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Example Friend', exact: true }) });
+    await expect(friendFacts.locator('p').first()).toHaveText(`This transit reaches Example Friend's natal ${endpoint}. That natal point also forms these aspects with your chart:`);
+    for (const contact of (await friendFacts.locator('p').allTextContents()).slice(1)) {
+      expect(contact).toContain(`Example Friend's natal ${endpoint} · Orb `);
+      expect(contact).toMatch(/^Your natal /);
+    }
+    const friendFactCopy = await friendFacts.innerText();
+    await page.reload();
+    await expect(friendFacts).toHaveText(friendFactCopy, { useInnerText: true, timeout: 60000 });
   });
 }
 

@@ -1572,6 +1572,11 @@ function transitAspectTechnicalVerb(aspect: string) {
   return verbs[normalized] ?? titleCase(aspect).toLowerCase();
 }
 
+function personalTransitTitle(transit: TransitItem) {
+  const transiting = [transit.transitPlanet, transit.transitSign ? `in ${transit.transitSign}` : ""].filter(Boolean).join(" ");
+  return `${transiting} ${transitAspectTechnicalVerb(transit.aspect)} your natal ${transit.natalPoint}`;
+}
+
 function liveGeneratedSummaryIfPresent(generated: LiveGeneratedContent | null) {
   const summary = firstReaderFacingCopy([
     generated?.summary,
@@ -13622,7 +13627,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               surface: "you",
               mode: "in_depth",
               eventType: "you-transit-to-natal",
-              headline: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
+              headline: personalTransitTitle(transit),
               targetDate: skyDate,
               facts: {
                 type: "you_transit_to_natal_description",
@@ -17878,7 +17883,7 @@ function ProfileView({
       : [];
     const isBackgroundUpdate = background;
     const timing = transitItemTimingDisplay(transit, targetDate);
-    const title = group.map(contact => `${contact.transitPlanet} ${contact.aspect} your ${contact.natalPoint}`).join(" · ");
+    const title = group.map(personalTransitTitle).join(" · ");
     const peakLabel = transit.dailyPeak ? personalDailyPeakLabel(transit.dailyPeak) : null;
     const currentRange = transit.timing?.currentStart && transit.timing.currentEnd
       ? formatEditorialDateRange(new Date(transit.timing.currentStart), new Date(transit.timing.currentEnd),
@@ -17894,7 +17899,7 @@ function ProfileView({
       value: formatEditorialDate(new Date(pass.exactAt), true, transitEventTimeZone(transit))
     })) ?? [];
     const articleSections = group.flatMap(contact => normalizePersonalTransitSurface(contact, targetDate).sections.map((section) => ({
-      heading: section.heading || `${contact.transitPlanet} ${contact.aspect} your ${contact.natalPoint}`,
+      heading: section.heading || personalTransitTitle(contact),
       tldr: "",
       body: taggedSectionBody(section)
     })));
@@ -18092,7 +18097,7 @@ function ProfileView({
                   setActivePlacementRouteId(null);
                   setTransitArticle({
                     id: personalizedContentKey,
-                    title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
+                    title: personalTransitTitle(transit),
                     glyph: pointGlyph(transit.transitPlanet),
                     subtitle: "",
                     summary: "",

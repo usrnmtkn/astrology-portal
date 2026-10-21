@@ -227,7 +227,8 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         const fact = brief.technicalEvidence.qualifyingTransits.find((transit: { id: string }) => transit.id === reading.transitId);
         expect(fact).toBeTruthy();
         expect(reading.sourceUnits.length).toBeGreaterThan(0);
-        const title = `${fact.transitPlanet} ${fact.aspect} your ${fact.natalPoint}`;
+        const aspect = ({ conjunction: "conjunct", opposition: "opposite" } as Record<string, string>)[fact.aspect] ?? fact.aspect;
+        const title = `${fact.transitPlanet} in ${fact.transitSign} ${aspect} your natal ${fact.natalPoint}`;
         await cards.filter({ hasText: title }).first().click();
         const article = page.locator(".you-transit-article-page");
         await expect(article).toBeVisible();
