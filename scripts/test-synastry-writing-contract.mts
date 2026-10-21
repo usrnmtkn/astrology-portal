@@ -72,11 +72,18 @@ function assertSynastryRequest(request: any, input: typeof base) {
   const prompt = request.provider === 'openai' ? request.body.input : request.body.messages[0].content[0].text;
   const instructions = request.provider === 'openai' ? request.body.instructions : request.body.system;
   const schema = request.provider === 'openai' ? request.body.text.format.schema : request.body.tools[0].input_schema;
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v3-2026-10-21'));
+  assert(instructions.includes('Show what each person says, hears, wants or does'), 'The actual writer receives interaction-led guidance.');
+  assert(instructions.includes('Prefer direct causal sentences to report transitions'), 'Report-like wording is addressed in the dispatched instructions.');
+  assert(instructions.includes('"As a result"'), 'The owner-identified transition is retained as a negative style example.');
+  assert(instructions.includes('a feeling word alone does not explain the interaction'));
+  assert(instructions.includes('constructive_expression is not a required resolution'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v4-2026-10-21'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
   // Inspect both actual provider fields: OpenAI's canonical transport can add
   // instructions that are absent from the assembled user prompt.
   const combined = `${instructions}\n${prompt}`;
+  assert(!combined.includes('Lead with how one person makes the other feel'));
+  assert(!combined.includes('Open with the felt experience of being around this person.'));
   assert(instructions.includes(RHETORICAL_WRITER_POLICY), 'The complete existing rhetorical writer policy remains in the system instructions.');
   assert.equal(combined.split(RHETORICAL_WRITER_POLICY).length - 1, 1, 'Shared rhetorical policy is delivered once.');
   for (const conflict of [
@@ -131,6 +138,9 @@ try {
       if (provider === 'openai') {
         const stages = requests.slice(start);
         assert(stages[0].body.instructions.includes('SYNASTRY MEANING AUTHORITY'));
+        assert(stages[0].body.instructions.includes("specific interaction and its supported consequences"), 'The actual planner must retain the source-specific development.');
+        assert(stages[0].body.instructions.includes('A broad contrast such as logic versus feelings is incomplete'));
+        assert.deepEqual(JSON.parse(stages[0].body.input).governedFacts, JSON.parse(JSON.stringify(variant.facts)), 'Complete directional facts remain unchanged in the planner input.');
         assert(stages[3].body.instructions.includes('SYNASTRY REVIEW AUTHORITY'));
         for (const stage of stages) assert(!stage.body.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
       }
@@ -171,6 +181,8 @@ try {
     const request = requests.slice(start).find(request => request.kind === 'tldr_astro_generated_content');
     assert(request, 'Composite still reaches its existing writer.');
     const prompt = provider === 'openai' ? request.body.input : request.body.messages[0].content[0].text;
+    const instructions = provider === 'openai' ? request.body.instructions : request.body.system;
+    assert(!instructions.includes('Prefer direct causal sentences to report transitions'), 'The refinement stays within directional synastry.');
     assert(!prompt.includes('OUTPUT SHAPE FOR SYNASTRY ASPECT'));
     assert(prompt.includes('action: one specific useful move.'));
   }

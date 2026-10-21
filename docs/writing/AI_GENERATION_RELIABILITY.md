@@ -720,7 +720,7 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
-The shared synastry writer uses `synastry-aspect/v3-2026-10-21` for directional
+The shared synastry writer uses `synastry-aspect/v4-2026-10-21` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,
 fixed paragraph count or instruction to keep planetary reasoning out of the body.
@@ -745,6 +745,15 @@ adds effective rules and retains its instruction-override protection. Other
 families keep their existing system instructions and user requests.
 Both providers retain the complete shared rhetorical writer policy exactly once;
 the existing contextual review contract and admission checks remain intact.
+
+The planner is instructed to retain the supplied interaction and supported
+consequences rather than stop at broad mental/emotional categories. The writer no longer has
+to open with a feeling label. Its shared authority asks for the behavior and
+consequence behind a feeling, direct causal sentences instead of report-like
+transitions, and no compulsory resolution from a plan's `constructive_expression`.
+This is scoped synastry guidance, not a global phrase ban, mandatory scene or
+new validation gate. Complete rejected passages and exact owner reasons remain
+private, exact-target feedback; they are never positive voice examples.
 
 `scripts/test-synastry-writing-contract.mts` intercepts both providers at the
 actual generation handler. It covers supported and challenging contacts, the
