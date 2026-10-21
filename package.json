@@ -54,7 +54,7 @@
     "test:sky-calendar-sign-aware-semantic-layer": "node scripts/test-sky-calendar-sign-aware-semantic-layer.mjs",
     "test:github-protection-baseline": "node scripts/test-github-branch-protection-baseline.mjs",
     "lint:corpus-grammar": "node scripts/lint-corpus-grammar.mjs",
-    "refresh:writing-evidence": "npm run lint:corpus-grammar && node scripts/build-knowledge-index.mjs --write && node scripts/build-phrase-index.mjs --write && node scripts/build-knowledge-index.mjs --check && node scripts/build-phrase-index.mjs --check",
+    "refresh:writing-evidence": "npm run lint:corpus-grammar && node scripts/build-knowledge-index.mjs --write && node scripts/build-phrase-index.mjs --write && node scripts/build-production-sky-kernel-comparison.mjs --write && node scripts/build-knowledge-index.mjs --check && node scripts/build-phrase-index.mjs --check && node scripts/build-production-sky-kernel-comparison.mjs",
     "test:browser-knowledge-boundary": "node scripts/test-browser-knowledge-boundary.mjs",
     "prepare:app-test-dependencies": "npm run build -w @tldr/astro-knowledge",
     "test:isolated-worktree-prerequisite": "node scripts/test-isolated-worktree-prerequisite.mjs",
