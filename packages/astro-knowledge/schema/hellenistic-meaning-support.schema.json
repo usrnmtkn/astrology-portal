@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://astro-knowledge.local/schema/hellenistic-meaning-support.schema.json",
+  "description": "Source-backed meaning only. scripts/validate.js also verifies source-role flags, unique records and all referenced PDF pages.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "version",
+    "role",
+    "title",
+    "authorityClass",
+    "usage",
+    "scope",
+    "framingAllowed",
+    "ownerAuthored",
+    "ownerApproved",
+    "positiveVoiceEvidence",
+    "readerServing",
+    "voiceNeutral",
+    "status",
+    "surfacePermission",
+    "sourceAssignment",
+    "sources",
+    "limitations",
+    "sections"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "authorityClass": {
+      "type": "string"
+    },
+    "usage": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "string"
+    },
+    "framingAllowed": {
+      "const": false
+    },
+    "ownerAuthored": {
+      "const": false
+    },
+    "ownerApproved": {
+      "const": false
+    },
+    "positiveVoiceEvidence": {
+      "const": false
+    },
+    "readerServing": {
+      "const": false
+    },
+    "voiceNeutral": {
+      "const": true
+    },
+    "status": {
+      "const": "SOURCE_BACKED"
+    },
+    "surfacePermission": {
+      "const": [
+        "doctrine-only"
+      ]
+    },
+    "sourceAssignment": {
+      "type": "object"
+    },
+    "sources": {
+      "type": "array"
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sections": {
+      "type": "array"
+    }
+  }
+}

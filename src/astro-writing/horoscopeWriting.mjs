@@ -23,6 +23,7 @@ import {loadSeasonalHoroscopeEvidence} from './seasonalHoroscopeEvidence.mjs';
 import {loadSeasonalArgumentEvidence} from './seasonalArgumentEvidence.mjs';
 import {loadMonthlyHoroscopeEvidence} from './monthlyHoroscopeEvidence.mjs';
 import {HOROSCOPE_RHETORICAL_REVIEW} from './horoscopeRhetoricalReview.mjs';
+import {buildHellenisticMeaningSupport} from './hellenisticMeaningSupport.mjs';
 
 const root=fileURLToPath(new URL('../../',import.meta.url));
 export const horoscopeWritingVersion='horoscope-writer/v17';
@@ -63,6 +64,7 @@ function loadSources(period) {
   const approved=withoutOwnerRejectedEvidence(lines('data/writing/OWNER_APPROVED_EXAMPLES.jsonl'),corrections);
   const phrasePath='data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl';read(phrasePath);
   const phrases=loadPhraseEvidenceIndex(path.join(root,phrasePath));
+  read('packages/astro-knowledge/data/frameworks/hellenistic-meaning-support.json');
   const houses=json('packages/astro-knowledge/data/primitives/houses.json').entries;
   const aspects=json('packages/astro-knowledge/data/primitives/aspects.json').entries;
   const meaningPath='tldr-astro-phrasebank/phrasebank/cc-planet-in-sign-reviewed.json';
@@ -170,7 +172,8 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       if(error.code!=='OWNER_EVIDENCE_ROLE_MISSING'||error.detail?.role!=='argument')throw error;
     }
     return {sign:rising,house,seasonalMeaning:overview?seasonalMeaning:seasonalMeaningForRising(seasonalMeaning,rising,sources.houses),anchor:{planet,sign},developments,domain:domain.plainTranslation,outline:savedOutline||argumentInput.thesis,
-      argumentOutline,meaningInput,plan,contextOptions,ownerContext:context,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id)};
+      argumentOutline,meaningInput,plan,contextOptions,ownerContext:context,validationCorrections:context.corrections,sourceIds:context.sameFamilyExamples.map(e=>e.id),
+      meaningSupport:buildHellenisticMeaningSupport({facts:{...brief,house,developments},plan,family:'horoscope',surface:'horoscopes'}).receipt};
   });
   const planHash=digest({...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,...(edition.window.period==='weekly'?{rejectedReadings}:{}),brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
@@ -182,7 +185,7 @@ export function horoscopePlanPreview(prepared) {
   const writerCalls=prepared.edition.passages.filter(p=>!p.headline.trim()&&!p.body.trim()).length;
   return {version:horoscopeWritingVersionFor(prepared.edition.window.period),...(prepared.edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW,reviewCalls:writerCalls}:{}),planHash:prepared.planHash,sourceHash:prepared.sourceHash,window:prepared.edition.window,
     readings:prepared.entries.map(e=>({sign:e.sign,anchor:e.anchor,house:e.house,domain:e.domain,outline:e.outline,
-      argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds,
+      argument:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning,sourceIds:e.sourceIds,meaningSupport:e.meaningSupport,
       ...(prepared.edition.window.period==='weekly'?{ownerEvidence:horoscopeEvidenceReceipt(e.ownerContext,prepared.writingProfile)}:{})})),writerCalls,
     ...(prepared.edition.window.period==='seasonal'?{planningCalls:writerCalls*3,editorialReviewCalls:writerCalls*6,maximumPaidCalls:writerCalls*30}:{}),
     synthesisCalls:prepared.edition.window.period==='monthly'&&prepared.edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?1:0};

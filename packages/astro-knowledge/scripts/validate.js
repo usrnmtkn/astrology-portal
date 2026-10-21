@@ -176,6 +176,13 @@ const entryShapes = {
     types: { id: "string", kind: "string", title: "string", sections: "array", role: "string", category: "string", voiceNeutral: "boolean", status: "string" },
     enums: { kind: ["guide", "framework", "template", "correspondence", "synastry"] }
   },
+  meaningSupport: {
+    schemaFile: "hellenistic-meaning-support.schema.json",
+    required: ["id", "kind", "version", "role", "title", "voiceNeutral", "status", "authorityClass", "surfacePermission", "usage", "framingAllowed", "ownerAuthored", "ownerApproved", "positiveVoiceEvidence", "readerServing", "scope", "sourceAssignment", "sources", "limitations", "sections"],
+    optional: [],
+    types: {id:"string",kind:"string",version:"string",role:"string",title:"string",authorityClass:"string",surfacePermission:"array:string",usage:"string",scope:"string",sourceAssignment:"object",sources:"array",limitations:"array:string",sections:"array"},
+    enums: {kind:["framework"],role:["meaning-only"],authorityClass:["factual-evidence"],usage:["meaning-mechanism-only"]}
+  },
   insightCard: {
     schemaFile: "insight-card.schema.json",
     required: ["id", "kind", "displayTitle", "summary", "body", "gift", "shadow", "integration", "do", "dont", "lifeAreas", "tags", "intensity", "sourceFactors", "collectionHints", "voiceNeutral", "status"],
@@ -316,6 +323,42 @@ function validateEntryFile(filePath, kind, errors) {
     return;
   }
   validateObject(filePath, json, shape, errors);
+  if (kind === "meaningSupport") {
+    const reject = message => errors.push(`${rel(filePath)}: ${message}`);
+    for (const key of ["framingAllowed", "ownerAuthored", "ownerApproved", "positiveVoiceEvidence", "readerServing"]) {
+      if (json[key] !== false) reject(`${key} must remain false`);
+    }
+    if (JSON.stringify(json.surfacePermission) !== '["doctrine-only"]') reject("surfacePermission must remain doctrine-only");
+    if (json.status !== "SOURCE_BACKED") reject("source-backed knowledge is not reviewed reader copy");
+    if (json.sourceAssignment?.role !== "knowledge-only" || !/^thread:[a-f0-9-]+$/u.test(json.sourceAssignment?.sourceUri ?? "")) reject("sourceAssignment requires knowledge-only owner provenance");
+    const sourceMap = new Map();
+    for (const source of Array.isArray(json.sources) ? json.sources : []) {
+      if (!source || typeof source !== "object" || Array.isArray(source)) {reject("invalid meaning source"); continue;}
+      if (!["id", "title", "author", "language", "pdfPages", "sha256", "pageConvention", "sourceRole"].every(k => k in source)
+        || Object.keys(source).length !== 8 || !["id", "title", "author", "language", "pageConvention"].every(k => typeof source[k] === "string" && source[k].trim())
+        || !/^[a-f0-9]{64}$/u.test(source.sha256) || !Number.isInteger(source.pdfPages) || source.pdfPages < 1
+        || source.sourceRole !== "external-meaning-only" || sourceMap.has(source.id)) reject("invalid or duplicate meaning-source provenance");
+      sourceMap.set(source.id, source);
+    }
+    if (!sourceMap.size) reject("meaning sources are required");
+    const recordIds = new Set();
+    for (const section of Array.isArray(json.sections) ? json.sections : []) {
+      if (!section || typeof section !== "object") {reject("invalid meaning record"); continue;}
+      if (Object.keys(section).some(k => !["id", "heading", "body", "limits", "runtimeScope", "sourceRefs", "house"].includes(k))
+        || !["id", "heading", "body", "limits"].every(k => typeof section[k] === "string" && section[k].trim())
+        || !["core", "placement", "house", "aspect", "motion", "forecast", "reference-only"].includes(section.runtimeScope)
+        || recordIds.has(section.id)) reject("invalid or duplicate bounded meaning record");
+      recordIds.add(section.id);
+      if (section.house !== undefined && (!Number.isInteger(section.house) || section.house < 1 || section.house > 12 || section.runtimeScope !== "reference-only")) reject("historical houses must remain reference-only");
+      if (!Array.isArray(section.sourceRefs) || !section.sourceRefs.length) {reject("meaning record requires source pages"); continue;}
+      for (const ref of section.sourceRefs) {
+        if (!ref || typeof ref !== "object" || Array.isArray(ref)) {reject("invalid page reference"); continue;}
+        const source = sourceMap.get(ref?.source_id);
+        if (!source || Object.keys(ref).sort().join('|') !== 'pdf_pages|source_id' || !Array.isArray(ref.pdf_pages) || !ref.pdf_pages.length
+          || !ref.pdf_pages.every(p => Number.isInteger(p) && p > 0 && p <= source.pdfPages)) reject("unresolved or out-of-range source page");
+      }
+    }
+  }
   if (kind === "transit" && json.readerCopy) {
     const readerCopy = json.readerCopy;
     for (const field of ["summary", "body", "approvedVia"]) {
@@ -722,7 +765,7 @@ function validateAll() {
   }
   for (const dir of ["guides", "frameworks", "templates", "correspondences"]) {
     for (const filePath of listJsonFiles(path.join(dataRoot, dir))) {
-      validateEntryFile(filePath, "content", errors);
+      validateEntryFile(filePath, dir === "frameworks" && path.basename(filePath) === "hellenistic-meaning-support.json" ? "meaningSupport" : "content", errors);
     }
   }
   for (const filePath of listDirectJsonFiles(path.join(dataRoot, "synastry"))) {
@@ -752,6 +795,7 @@ if (require.main === module) {
 
 module.exports = {
   validateAll,
+  validateEntryFile,
   listJsonFiles,
   listLegacyPackageJsonFiles,
   isLegacyPackageDataFile,

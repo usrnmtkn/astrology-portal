@@ -17,6 +17,7 @@ import { buildLunationDraftInput, LUNATION_DRAFT_SCHEMA } from './lunationDraftI
 import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
 import {composeMonthlyHoroscopeDraft} from './monthlyHoroscopeFormat.mjs';
 import { LUNATION_EDITORIAL_AUTHORITY } from './lunationEditorialConstraints.mjs';
+import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from './hellenisticMeaningSupport.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -230,9 +231,11 @@ export async function generateDraft({
     : family === 'horoscope' ? HOROSCOPE_EDITORIAL_AUTHORITY : isCardWritingSurface({ surface, family })
     ? candidateCardAstrologyWritingInstructions
     : canonicalAstrologyWritingInstructions;
+  const meaningSupport=buildHellenisticMeaningSupport({facts:engineFacts??{},plan,family,surface});
   const seasonalPreparation=family==='horoscope'&&engineFacts?.window?.period==='seasonal'
-    ? {context,task,engineFacts,argumentOutline,writingProfile}:null;
-  const input=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
+    ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport}:null;
+  const draftInput=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
+  const input=seasonalPreparation?draftInput:[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface})].filter(Boolean).join('\n\n');
   const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
     ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
   const instructions=effectiveRulePrompt(baseInstructions, { surface, family });
@@ -262,6 +265,7 @@ export async function generateDraft({
     argumentOutline,
     argumentOutlineHash: argumentOutline.approvedOutlineHash,
     contentSpineId: spine.id,
+    meaningSupportReceipt:meaningSupport.receipt,
     ...(writingProfile ? { studioWritingProfile: studioWritingProfileReceipt(writingProfile,{allowStarter:family==='horoscope'}) } : {})
   }, writeGenerationMetadata({
     role,
@@ -276,6 +280,7 @@ export async function generateDraft({
     ],
     evidencePacket: {
       version: context.sharedEvidencePacket.version,
+      hellenisticMeaningSupport:meaningSupport.receipt,
       roles: Object.fromEntries(Object.entries(context.sharedEvidencePacket.roles).map(([evidenceRole, entries]) => [
         evidenceRole,
         entries.map((entry) => entry.id)

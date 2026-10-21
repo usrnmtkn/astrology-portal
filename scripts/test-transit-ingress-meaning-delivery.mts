@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import {
   generateSkyArticleTemplateSlots,
+  generateWithOpenAI,
+  generateWithClaude,
   type GenerateSkyArticleTemplateSlotsInput
 } from "../api/_lib/content-generation.js";
 import { prepareProductionPreCallGate } from "../src/astro-writing/productionPreCallGate.cjs";
@@ -86,10 +88,19 @@ try {
       captured = "";
       await generateSkyArticleTemplateSlots({ ...fixture, provider, writingMemory: null, personalTransitContext });
       if (personalTransitContext) {
+        assert(!captured.includes('NEUTRAL HELLENISTIC MEANING SUPPORT'), 'Keep mechanics outside Personal Transit reader-meaning projection');
         assert(captured.includes('"readerMeaning":"Synthetic complete contact meaning."'));
         assert(!captured.includes(gate.governedPrompt), "Mechanics are verified privately, not passed as draft language.");
         assert(captured.includes("CURRENT PERSONAL TRANSIT READER-COPY RULE BUNDLE"));
       } else {
+        const neutral=JSON.parse(captured.match(/NEUTRAL HELLENISTIC MEANING SUPPORT\n([^\n]+)/u)![1]);
+        assert.equal(neutral.role,'meaning-only');
+        assert.equal(neutral.receipt.positiveVoiceEvidence,false);
+        assert(neutral.records.some((r:any)=>r.id==='HB-01'));
+        assert(!neutral.records.some((r:any)=>['HB-08','HB-28','HB-29'].includes(r.id)),'No natal sect or time-lord inference');
+        assert.equal(captured.split('NEUTRAL HELLENISTIC MEANING SUPPORT\n').length-1,1);
+        if(fixture.eventType==='transit-house')assert(neutral.records.some((r:any)=>r.id==='HB-24'));
+        else assert(!neutral.records.some((r:any)=>r.id==='HB-24'),'A sign cannot supply a house');
         assert(captured.includes(`GOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`),
           `${provider}/${fixture.templateKey}: include the complete validated meaning packet`);
         assert.equal(captured.split("GOVERNED KNOWLEDGE EVIDENCE\n").length - 1, 1);
@@ -117,5 +128,29 @@ try {
     provider: "openai", writingMemory: null }), /PRODUCTION_EVIDENCE_IDENTIFIER_UNMAPPED/);
   assert.equal(requests, beforeInvalid, "Unresolved meaning must stop before a model request");
   assert.equal(requests, 8);
+  // Stop at the real planner/provider boundaries. An intentional error makes
+  // it impossible for this check to generate prose or dispatch a review.
+  const generic={contentKey:'sky/article-template/sun/libra',surface:'sky' as const,mode:'article' as const,
+    eventType:'sky-article-template-slots',facts:{planet:'sun',sign:'libra',articleFormat:'ingress-essay-v2'},
+    knowledgeIds:['sky-placement-sun-libra']};
+  globalThis.fetch=async(url,init={})=>{
+    const request=JSON.parse(String(init.body));
+    assert.equal(String(url),'https://api.openai.com/v1/responses');
+    assert.equal(request.text.format.name,'tldr_astro_meaning_plan');
+    const support=JSON.parse(request.input).neutralMeaningSupport;
+    assert(support.records.some((r:any)=>r.id==='HB-04'));
+    assert(!support.records.some((r:any)=>r.id==='HB-24'));
+    return Response.json({error:{message:'synthetic planner boundary stop'}},{status:422});
+  };
+  await assert.rejects(generateWithOpenAI(generic),/synthetic planner boundary stop/u);
+  globalThis.fetch=async(url,init={})=>{
+    assert.equal(String(url),'https://api.anthropic.com/v1/messages');
+    const request=JSON.parse(String(init.body));
+    const prompt=request.messages[0].content[0].text;
+    assert.equal(prompt.split('NEUTRAL HELLENISTIC MEANING SUPPORT\n').length-1,1);
+    assert(prompt.includes('APPROVED TLDR ASTRO EXAMPLES'));
+    return Response.json({error:{message:'synthetic writer boundary stop'}},{status:422});
+  };
+  await assert.rejects(generateWithClaude(generic),/synthetic writer boundary stop/u);
 } finally { globalThis.fetch = originalFetch; }
 console.log("Transit, house, return and ingress meaning reaches both providers; unrelated rollout controls and pre-call rejection are preserved. No network calls made.");

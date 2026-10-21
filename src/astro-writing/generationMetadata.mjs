@@ -4,6 +4,7 @@ import {
   CANONICAL_WRITING_INSTRUCTIONS_VERSION
 } from "./canonicalInstructions.mjs";
 import { SPINE_REGISTRY_VERSION } from "./spineRegistry.mjs";
+import {HELLENISTIC_MEANING_VERSION} from './hellenisticMeaningSupport.mjs';
 
 export const WRITING_COMPONENT_VERSIONS = Object.freeze({
   pipeline: "writing-pipeline-v3-sky-placement-spine-2026-08-14",
@@ -12,6 +13,7 @@ export const WRITING_COMPONENT_VERSIONS = Object.freeze({
   correction_pair_selector: "owner-correction-pairs-v1-2026-08-12",
   deterministic_layer: "writing-deterministic-v6-sky-placement-spine-2026-08-14",
   astrology_contract: "owner-contract-2026-08-09",
+  hellenistic_meaning_support: HELLENISTIC_MEANING_VERSION,
   writing_contract: CANONICAL_WRITING_INSTRUCTIONS_VERSION,
   review_rubric: CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   owner_corpus: "owner-corpus-through-2026-08-09",

@@ -7,6 +7,7 @@ import {startHoroscopeResponse,storedHoroscopeResponse} from './horoscope-provid
 import {writeHoroscopeSign,horoscopeWritingVersion} from '../../src/astro-writing/horoscopeWriting.mjs';
 import {MONTHLY_HOROSCOPE_FORMAT,composeMonthlyHoroscopeDraft} from '../../src/astro-writing/monthlyHoroscopeFormat.mjs';
 import {MONTHLY_SYNTHESIS_VERSION,MONTHLY_SYNTHESIS_INSTRUCTIONS,monthlySynthesisFacts,monthlySynthesisSchema,applyMonthlySynthesis} from '../../src/astro-writing/monthlyHoroscopeSynthesis.mjs';
+import {hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
 import {horoscopeEditionBody,horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {validateHoroscopeReading} from '../../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopePunctuationFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
@@ -98,7 +99,8 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
         failures:previousFailure&&!(generation.failures??[]).some((f:any)=>f.operation?.id===previousFailure.operation?.id)?[...(generation.failures??[]),previousFailure]:generation.failures??[]}}});
       if(reusable){operation={...operation,state:'ready'};await saveOperation();return pending();}
       const instructions=responses.governedInstructionsForRole('MEANING_PLANNER',{taskInstructions:MONTHLY_SYNTHESIS_INSTRUCTIONS,surface:'horoscopes',family:'horoscope'});
-      return await dispatch(`MONTHLY FACTS AND PLAN SCOPE\n${JSON.stringify({window:prepared.edition.window,...synthesisFacts})}\n\nOWNER PLAN SCOPE\n${entry.outline}`,instructions,monthlySynthesisSchema(synthesisFacts));
+      const meaningSupport=hellenisticMeaningPrompt({facts:{window:prepared.edition.window,developments:entry.developments},family:'horoscope',surface:'horoscopes'});
+      return await dispatch(`MONTHLY FACTS AND PLAN SCOPE\n${JSON.stringify({window:prepared.edition.window,...synthesisFacts})}\n\nOWNER PLAN SCOPE\n${entry.outline}\n\n${meaningSupport}`,instructions,monthlySynthesisSchema(synthesisFacts));
     }
     if(action==='continue'){
       if(operation?.phase!=='synthesis'||operation?.state!=='ready'||!operation.synthesisReceipt)throw new AdminHttpError(409,'Check saved progress before continuing this monthly reading.');

@@ -3,8 +3,8 @@
   "status": "index-only. No content moved, rewritten, or approved.",
   "deterministic": "This payload contains no timestamps. Identical inputs produce a byte-identical file.",
   "totals": {
-    "canonicalObjects": 15737,
-    "sourceRecordsIndexed": 26664,
+    "canonicalObjects": 15738,
+    "sourceRecordsIndexed": 26665,
     "objectsFoundInMoreThanOneStore": 2050,
     "unresolved": 0,
     "skipped": 55,
@@ -14,7 +14,7 @@
     "ll-matrix-v13": 1014,
     "v13-locked": 301,
     "phrasebank": 7064,
-    "astro-knowledge/data": 3415,
+    "astro-knowledge/data": 3416,
     "authored-placements": 314,
     "daily-glance-config": 31,
     "matrix-v9": 3430,
@@ -29,7 +29,7 @@
     "machine-proposal": 725,
     "owner-approved-prose": 10406,
     "unverified": 7748,
-    "factual-evidence": 7785
+    "factual-evidence": 7786
   },
   "byKind": {
     "aspect-generic": {
@@ -108,10 +108,10 @@
       }
     },
     "document": {
-      "objects": 600,
-      "records": 600,
+      "objects": 601,
+      "records": 601,
       "stores": {
-        "astro-knowledge/data": 600
+        "astro-knowledge/data": 601
       }
     },
     "phrasebank-entry": {
@@ -95611,6 +95611,29 @@
           },
           "path": "packages/astro-knowledge/data/synastry/hard-to-forget-connections.json",
           "sourceSha256": "6398ab36d5ce1d2a1fc36b5125dc554013255db8b253ac00f47871a330aed6eb"
+        }
+      ]
+    },
+    {
+      "id": "doc/hellenistic_meaning_support",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "hellenistic-meaning-support",
+          "rowKey": "hellenistic-meaning-support",
+          "status": "SOURCE_BACKED",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "usage": "meaning-mechanism-only",
+          "framingAllowed": false,
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/frameworks/hellenistic-meaning-support.json",
+          "sourceSha256": "d4e7a2d6c9aedcf41236cf20d9bd2e2dcba49ab431a3359efeaaf6178cd6e4a2"
         }
       ]
     },
@@ -543902,7 +543925,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "fb36c3319a4e0755f94e17cc9d6f91af70a9f5d63cf0ed2c1062e1d23ebe5347",
-    "distinctSourceFiles": 3456
+    "contentSha256": "097039273674f6d36c6a5dcd2a0df3c7fd346ac2a1b311df16fe2d6ad2445b40",
+    "distinctSourceFiles": 3457
   }
 }

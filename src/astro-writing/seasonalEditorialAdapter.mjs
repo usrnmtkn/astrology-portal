@@ -99,7 +99,8 @@ export function seasonalEditorialAdapter(input) {
       const {manifest,mechanism,plan}=data(run),stage=run.stage,config=run.models[stage];
       let schema,prompt,instructions,role;
       const feedback=latest(run,'routing');
-      const base={audience:facts.audience,governedFacts:facts,evidenceManifest:manifest};
+      const base={audience:facts.audience,governedFacts:facts,evidenceManifest:manifest,
+        ...(input.template.seasonalPreparation.meaningSupport?{neutralMeaningSupport:input.template.seasonalPreparation.meaningSupport}:{})};
       if(stage==='mechanism'){
         schema=mechanismSchema(facts);role='SEASONAL_MECHANISM';
         instructions='Build the astrology mechanism for one Seasonal reading from the governed catalog. Explain how the selected event meanings and their attached whole-sign life areas combine and what they cannot establish. Cite supplied event IDs and their actual meaning references. Season-axis sources are interpretive context, not dated events. Do not create a miniature story, invent a personal event, imitate an owner argument, or write prose. Distinguish the mechanism from materially different placements. Return only the schema.';
