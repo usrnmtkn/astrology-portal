@@ -1,3 +1,4 @@
+import {approvedVoiceStyleReference,approvedVoiceStylePrompt} from '../../src/astro-writing/approvedVoiceStyle.mjs';
 import { generatedRowVersionQuery, confirmedGeneratedRowWrite } from "../_lib/generated-row-writes.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
@@ -337,12 +338,13 @@ export function placementKernel(
     model: config.model,
     temperature: config.temperature,
     reasoningEffort: config.reasoningEffort ?? null,
+    approvedVoiceStyle:approvedVoiceStyleReference({surface:'sky',family:'sky-placement'})?.receipt??null,
     meaningSupport:buildHellenisticMeaningSupport({facts:input.facts,surface:'sky',family:'sky-placement'}).receipt
   };
   const meaningSupport=hellenisticMeaningPrompt({facts:input.facts,surface:'sky',family:'sky-placement'});
   const governed = (prompt: string) => [gate.governedPromptEnabled
     ? `${prompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`
-    : prompt,meaningSupport].filter(Boolean).join('\n\n');
+    : prompt,meaningSupport,approvedVoiceStylePrompt({surface:'sky',family:'sky-placement'})].filter(Boolean).join('\n\n');
   const generateFn = (prompt: string, generateOptions: Record<string, unknown> = {}) => generate(governed(prompt), {
     ...generateOptions,
     beforeProviderCall: () => {

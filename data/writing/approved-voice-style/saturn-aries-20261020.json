@@ -1,0 +1,26 @@
+{
+  "schema": "approved-voice-style/v1",
+  "id": "saturn-aries-voice-20261020",
+  "version": "saturn-aries-voice/v1",
+  "title": "Owner-approved Saturn in Aries voice reference",
+  "author": "assistant",
+  "ownerAuthored": false,
+  "ownerApproved": true,
+  "positiveVoiceEvidence": true,
+  "role": "style-only",
+  "factUseAuthorized": false,
+  "readerServing": false,
+  "publicationAuthorized": false,
+  "scope": [
+    "horoscopes",
+    "write-ups"
+  ],
+  "approval": {
+    "sourceUri": "thread:01a15ba7-f55b-78d1-9cb2-fe9f54b2efb4",
+    "sourceDate": "2026-10-20",
+    "exactOwnerRequest": "please save this Saturn passage as an approved voice reference and update the app’s writing logic so future horoscopes and write-ups use this style, while keeping my existing writing rules."
+  },
+  "textSha256": "bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca",
+  "wordCount": 196,
+  "text": "Saturn in Aries can make it hard to admit that something you chose is asking more of you than you can give. You may still want the responsibility and hate how much of your time it takes. Asking for help can feel awkward when you were the one insisting you could handle it.\n\nSaturn is in its fall in Aries, where the urge to get started can clash with the time it takes to do something well. Once you’re committed, determination may stop being enough. If every delay starts to feel like a challenge to your ability, you may push yourself harder to prove you made the right choice. You can end up promising more at the very moment you need to admit how much you’re already doing.\n\nLook at what’s making the commitment difficult before you decide you’re the problem. If you’re waiting on someone else’s decision, another late night may leave you exhausted without moving anything forward. Tell them what you need, and change what you’ve promised if the help isn’t there. Taking responsibility for everything can leave you with too little time for the part you wanted to do in the first place."
+}

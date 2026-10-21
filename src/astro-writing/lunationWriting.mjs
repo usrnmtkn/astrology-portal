@@ -76,6 +76,7 @@ export function prepareLunationWriting({ engineFacts, argumentInput, preferredOw
   const phrasePath = 'data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl';
   read(phrasePath);
   read('packages/astro-knowledge/data/frameworks/hellenistic-meaning-support.json');
+  read('data/writing/approved-voice-style/saturn-aries-20261020.json');
   const reviewedMeaningExamples = [phaseMeaning, signMeaning].map(e => ({ id: e.id, status: e.status,
     planet: 'moon', sign: e.sign ?? null, eventType: e.phase ?? null,
     meaningScope: e.kind === 'moon_phase' ? 'lunar-phase' : 'lunar-sign', text: Object.values(e.slots).join('\n'),

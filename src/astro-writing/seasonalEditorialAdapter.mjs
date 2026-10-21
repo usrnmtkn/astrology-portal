@@ -120,7 +120,7 @@ export function seasonalEditorialAdapter(input) {
         schema=evaluationSchema(scope,manifest);role=stage==='plan_review'?'SEASONAL_PLAN_REVIEWER':stage==='voice'?'SEASONAL_VOICE_REVIEWER':'SEASONAL_MEANING_REVIEWER';
         instructions=evaluationInstructions(scope);
         prompt=JSON.stringify({audience:facts.audience,candidate,candidateHash:digest(candidate),manifestHash:manifest.hash,evidenceManifest:manifest,
-          ...(scope==='voice'?{}:{governedFacts:facts,mechanism,...(scope==='meaning'?{plan}:{})})});
+          ...(scope==='voice'?{approvedStyleReference:input.template.seasonalPreparation.approvedStyleReference??null}:{governedFacts:facts,mechanism,...(scope==='meaning'?{plan}:{})})});
       }
       return {stage,role,input:prompt,schema,config,instructions:responses.governedInstructionsForRole(role,{taskInstructions:instructions,surface:'horoscopes',family:'horoscope'})};
     },

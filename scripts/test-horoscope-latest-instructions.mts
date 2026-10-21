@@ -42,6 +42,13 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  const started=await action('generate',{sign,approvedPlanHash:refreshed.payload.plan.planHash});assert.equal(started.status,202,JSON.stringify(started.payload));row=started.payload.rows[0];
  const active=structuredClone(row.source_snapshot.horoscopeGeneration.active);
  const actualDraft=(period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId)).input;
+ const style=JSON.parse(actualDraft.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
+ assert.equal(style.reference.ownerAuthored,false);assert.equal(style.reference.ownerApproved,true);
+ assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
+ assert(style.reference.text.startsWith('Saturn in Aries can make it hard to admit'));
+ assert(style.reference.text.endsWith('the part you wanted to do in the first place.'));
+ assert.equal(actualDraft.split('OWNER-APPROVED STYLE REFERENCE\n').length-1,1);
+ assert.equal(refreshed.payload.plan.readings[0].approvedStyleReference.textSha256,style.reference.textSha256);
  const neutral=JSON.parse(actualDraft.match(/NEUTRAL HELLENISTIC MEANING SUPPORT\n([^\n]+)/u)![1]);
  assert.equal(neutral.role,'meaning-only');assert.equal(neutral.receipt.positiveVoiceEvidence,false);
  assert(neutral.records.some((r:any)=>r.id==='HB-26'));

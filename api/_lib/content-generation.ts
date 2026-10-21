@@ -1,3 +1,4 @@
+import {approvedVoiceStyleReference,approvedVoiceStylePrompt} from '../../src/astro-writing/approvedVoiceStyle.mjs';
 import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
 import { sharedGenerationOwnerExamples } from "./shared-generation-owner-examples.js";
@@ -4617,6 +4618,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "ASTROLOGY FACTS",
     JSON.stringify(input.facts, null, 2),
     hellenisticMeaningPrompt({facts:input.facts,surface:input.surface,family:input.eventType}),
+    approvedVoiceStylePrompt({surface:input.surface,family:input.eventType}),
     "",
     "SOURCE SNAPSHOT",
     JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
@@ -5524,7 +5526,8 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       role: "WRITER",
       model,
       reasoningEffort,
-      sourceIds: approvedExamples.map((example) => example.contentKey)
+      sourceIds: approvedExamples.map((example) => example.contentKey),
+      evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null}
     })
   };
   validateGeneratedContentForInput(draft, input);
@@ -5654,7 +5657,8 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
         generation_metadata: writeGenerationMetadata({
           role: "WRITER",
           model,
-          sourceIds: approvedExamples.map((example) => example.contentKey)
+          sourceIds: approvedExamples.map((example) => example.contentKey),
+          evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null}
         })
       };
 
@@ -5746,7 +5750,7 @@ function skyArticleTemplateSlotPrompt(
     "Return one value for every requested field and no other fields.",
     "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
     "If retrogradeHistoryIncluded is true, retrogradeHistory supplies the previous and next complete retrograde cycles through its named sign, the exact previousCrossing of the current station degree when available, and separately the most recent path within its degree tolerance. Use full cycles, signTransitions and in-sign segments precisely. durationDays and daysInStationSign are exact elapsed days; civil calendar dates depend on the reference time zone. nextSameSign is a future calculation, not historical evidence. A null crossing means the previous same-sign cycle did not reach that degree. The degree reference is the current cycle's retrograde-start station. This is not proof of a prior ingress, aspect recurrence, repeated life experience, or world event. Do not invent historical context or imply causation. Missing matches are unknown outside the stated coverage.",
-    "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, applicable NEUTRAL HELLENISTIC MEANING SUPPORT, and the immutable template context. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority.",
+    "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, applicable NEUTRAL HELLENISTIC MEANING SUPPORT, and the immutable template context for meaning. OWNER-APPROVED STYLE REFERENCE supplies voice only, with current owner rules and surface constraints retained. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority.",
     "The result is an owner-review draft. It is not approved and cannot serve by itself.",
     "",
     ...(!scopedEditorial ? [
@@ -5762,6 +5766,7 @@ function skyArticleTemplateSlotPrompt(
     "ASTROLOGY FACTS",
     JSON.stringify(input.facts, null, 2),
     hellenisticMeaningPrompt({facts:input.facts,surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'}),
+    approvedVoiceStylePrompt({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'}),
     "",
     "REQUESTED TEMPLATE FIELDS",
     JSON.stringify(input.requestedSlots, null, 2),
@@ -5890,7 +5895,8 @@ export async function generateSkyArticleTemplateSlots(
         role: "WRITER",
         model,
         reasoningEffort,
-        sourceIds
+        sourceIds,
+        evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null}
       })
     });
   }
@@ -5938,7 +5944,8 @@ export async function generateSkyArticleTemplateSlots(
     generation_metadata: writeGenerationMetadata({
       role: "WRITER",
       model,
-      sourceIds
+      sourceIds,
+      evidencePacket: {approvedVoiceStyle: approvedVoiceStyleReference({surface:input.surface??'sky',family:input.eventType??'sky-article-template-slots'})?.receipt??null}
     })
   });
 }

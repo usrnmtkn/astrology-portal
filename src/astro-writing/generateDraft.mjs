@@ -1,3 +1,4 @@
+import {approvedVoiceStyleReference,renderApprovedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {horoscopeEvidenceReceipt,assertHoroscopeEvidenceDelivered} from './horoscopeEvidenceReceipt.mjs';
 import {buildLunationArticleInput,LUNATION_ARTICLE_SCHEMA} from "./lunationArticleInput.mjs";
 import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
@@ -232,10 +233,11 @@ export async function generateDraft({
     ? candidateCardAstrologyWritingInstructions
     : canonicalAstrologyWritingInstructions;
   const meaningSupport=buildHellenisticMeaningSupport({facts:engineFacts??{},plan,family,surface});
+  const approvedStyleReference=approvedVoiceStyleReference({family,surface});
   const seasonalPreparation=family==='horoscope'&&engineFacts?.window?.period==='seasonal'
-    ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport}:null;
+    ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport,approvedStyleReference}:null;
   const draftInput=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
-  const input=seasonalPreparation?draftInput:[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface})].filter(Boolean).join('\n\n');
+  const input=seasonalPreparation?draftInput:[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface}),renderApprovedVoiceStyleReference(approvedStyleReference)].filter(Boolean).join('\n\n');
   const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
     ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
   const instructions=effectiveRulePrompt(baseInstructions, { surface, family });
@@ -248,7 +250,7 @@ export async function generateDraft({
     schema: resolvedSchema,
     ...(seasonalPreparation?{seasonalPreparation}:{}),
     ...(family==='horoscope'?{reviewEvidence:{
-      ownerExamples:context.sameFamilyExamples,corrections:context.corrections,
+      ownerExamples:context.sameFamilyExamples,corrections:context.corrections,approvedStyleReference,
       writingProfile,argumentOutline,engineFacts,
       // Complete texts already travel in ownerExamples and writingProfile.
       // Carry provenance without duplicating the corpus in the paid review input.
@@ -266,6 +268,7 @@ export async function generateDraft({
     argumentOutlineHash: argumentOutline.approvedOutlineHash,
     contentSpineId: spine.id,
     meaningSupportReceipt:meaningSupport.receipt,
+    approvedStyleReferenceReceipt:approvedStyleReference?.receipt??null,
     ...(writingProfile ? { studioWritingProfile: studioWritingProfileReceipt(writingProfile,{allowStarter:family==='horoscope'}) } : {})
   }, writeGenerationMetadata({
     role,
@@ -281,6 +284,7 @@ export async function generateDraft({
     evidencePacket: {
       version: context.sharedEvidencePacket.version,
       hellenisticMeaningSupport:meaningSupport.receipt,
+      approvedVoiceStyle:approvedStyleReference?.receipt??null,
       roles: Object.fromEntries(Object.entries(context.sharedEvidencePacket.roles).map(([evidenceRole, entries]) => [
         evidenceRole,
         entries.map((entry) => entry.id)

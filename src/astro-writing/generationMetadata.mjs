@@ -1,3 +1,4 @@
+import {APPROVED_VOICE_STYLE_VERSION} from './approvedVoiceStyle.mjs';
 import {
   CARD_WRITING_INSTRUCTIONS_VERSION,
   CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
@@ -14,6 +15,7 @@ export const WRITING_COMPONENT_VERSIONS = Object.freeze({
   deterministic_layer: "writing-deterministic-v6-sky-placement-spine-2026-08-14",
   astrology_contract: "owner-contract-2026-08-09",
   hellenistic_meaning_support: HELLENISTIC_MEANING_VERSION,
+  approved_voice_style: APPROVED_VOICE_STYLE_VERSION,
   writing_contract: CANONICAL_WRITING_INSTRUCTIONS_VERSION,
   review_rubric: CANONICAL_REVIEWER_INSTRUCTIONS_VERSION,
   owner_corpus: "owner-corpus-through-2026-08-09",
