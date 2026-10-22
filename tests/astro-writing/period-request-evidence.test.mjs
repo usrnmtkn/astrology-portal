@@ -27,9 +27,10 @@ test('Monthly complete meaning, each placement binding and cross-role entry roun
     sourcePath:'fixture:reviewed-meaning',ownerAuthored:false,ownerApproved:false,sha256:hash(complete)}]};
   const synthesis={thesis:'Synthetic thesis.',readingMovement:'Synthetic movement.',endingChange:'Synthetic ending.',stories:[{role:'related-participant-context',fact:{planet:'sun',meaning:{temporaryMeaning:complete}}}]};
   const profileText=`Saved complete comparison\n${complete}\nSaved correction stays exact.`;
+  const options={phase:'draft',profile:{voiceGuidance:profileText,sourceGuidance:'',structure:'',prompt:''}};
   const original=[facts,synthesis,packet];
   const input=[profileText,section('GOVERNED PERIOD DEVELOPMENTS',facts),section('PRIVATE MONTHLY SYNTHESIS',synthesis),section('SHARED FIVE-ROLE EVIDENCE',packet)].join('\n\n');
-  const projected=monthlyRequestInput(input);
+  const projected=monthlyRequestInput(input,options);
   assert(projected.startsWith(profileText),'Saved comparisons/corrections are not parsed or rewritten');
   const values=['GOVERNED PERIOD DEVELOPMENTS','PRIVATE MONTHLY SYNTHESIS','SHARED FIVE-ROLE EVIDENCE'].map(label=>JSON.parse(projected.split(`${label}\n`)[1].split('\n')[0]));
   const sources=definitions(values);assert.equal(sources.get('monthly-meaning:2'),complete);
@@ -47,12 +48,40 @@ test('Monthly complete meaning, each placement binding and cross-role entry roun
   assert.deepEqual(values.map(restore),original,'All source metadata, roles, hashes, whole text and fact bindings survive');
   const escaped=JSON.stringify(complete).slice(1,-1);
   assert.equal(projected.split(escaped).length-1,1,'The structured whole meaning appears once');
-  assert.equal(monthlyRequestInput(projected),projected,'Projection is idempotent');
+  assert.equal(monthlyRequestInput(projected,options),projected,'Projection is idempotent');
   assert.deepEqual(facts,original[0]);
   const ambiguous=input+'\n\nSaved complete example follows:\n'+section('GOVERNED PERIOD DEVELOPMENTS',facts);
-  assert.throws(()=>monthlyRequestInput(ambiguous),/Ambiguous Monthly request section/,'Ambiguous saved examples fail before dispatch rather than rewriting source passages');
+  assert.throws(()=>monthlyRequestInput(ambiguous,options),/Ambiguous Monthly request section/,'Ambiguous saved examples fail before dispatch rather than rewriting source passages');
   const unrelated='\n\nGOVERNED PERIOD DEVELOPMENTS\n{"savedComparison":"Keep this complete JSON exactly."}';
-  assert(monthlyRequestInput(input+unrelated).endsWith(unrelated),'Heading-like saved source material is not an application fact block');
+  assert(monthlyRequestInput(input+unrelated,options).endsWith(unrelated),'Heading-like saved source material is not an application fact block');
+});
+
+test('Monthly dispatch protects complete saved JSON examples and separates planning from drafting',()=>{
+  const fakeFacts='{ "windowPeriod": "monthly", "factsById": {}, "planetaryArcs": [] }';
+  const facts={period:'monthly',factsById:{first:{meaning:{temporaryMeaning:complete}},second:{meaning:{temporaryMeaning:complete}}}};
+  const synthesis={thesis:'Synthetic thesis.',stories:[],readingMovement:'Synthetic movement.',endingChange:'Synthetic ending.'};
+  const packet={roles:{meaning:[]},entries:[]};
+  const source='Synthetic saved guidance opening.\nMONTHLY FACTS AND PLAN SCOPE\n'+fakeFacts+'\nSynthetic saved guidance final sentence.';
+  const profile={voiceGuidance:source,sourceGuidance:'',structure:'',prompt:'{{voiceGuidance}}'};
+  const generated=[section('GOVERNED PERIOD DEVELOPMENTS',facts),section('PRIVATE MONTHLY SYNTHESIS',synthesis),section('SHARED FIVE-ROLE EVIDENCE',packet)];
+  const input=['CURRENT MONTHLY WRITING INSTRUCTIONS\n'+source,...generated].join('\n\n');
+  const projected=monthlyRequestInput(input,{phase:'draft',profile});
+  assert(projected.includes(source),'A complete saved facts-shaped example remains byte-identical');
+  assert(projected.includes('monthly-meaning:1'),'Actual generated meanings still deduplicate');
+  const sourceWithCollisions=source+'\n\n'+generated.join('\n\n');
+  const collisionInput=['CURRENT MONTHLY WRITING INSTRUCTIONS\n'+sourceWithCollisions,...generated].join('\n\n');
+  assert(monthlyRequestInput(collisionInput,{phase:'draft',profile:{...profile,voiceGuidance:sourceWithCollisions}}).includes(sourceWithCollisions),'Generated-looking blocks inside saved guidance are opaque');
+  const literal='Complete saved template example\nSHARED FIVE-ROLE EVIDENCE\n{ "roles": {}, "entries": [] }\nComplete saved template ending.';
+  const templateInput=['CURRENT MONTHLY WRITING INSTRUCTIONS\n'+source,literal,...generated].join('\n\n');
+  assert(monthlyRequestInput(templateInput,{phase:'draft',profile:{...profile,prompt:'{{voiceGuidance}}\n\n'+literal+'\n\n{{governedFacts}}'}}).includes(literal),'Literal owner prompt text is preserved as well as field values');
+  const scope='Complete owner scope opening.\n'+generated.join('\n\n')+'\nMONTHLY FACTS AND PLAN SCOPE\n'+fakeFacts+'\nComplete owner scope final sentence.';
+  const planningFacts={windowPeriod:'monthly',factsById:facts.factsById,planetaryArcs:[]};
+  const planningInput=section('MONTHLY FACTS AND PLAN SCOPE',planningFacts)+'\n\nOWNER PLAN SCOPE\n'+scope;
+  const planned=monthlyRequestInput(planningInput,{phase:'synthesis'});
+  assert(planned.endsWith(scope),'Planning projects only its initial generated facts, never the owner scope');
+  assert(planned.includes('monthly-meaning:1'));
+  assert.equal(monthlyRequestInput(input),input,'Unknown stage boundaries keep the complete original input');
+  assert.equal(monthlyRequestInput(input,{phase:'draft'}),input,'A missing historical profile keeps the complete legacy input');
 });
 
 test('Monthly synthesis/review project only governed facts; candidate, profiles and other periods stay exact',()=>{

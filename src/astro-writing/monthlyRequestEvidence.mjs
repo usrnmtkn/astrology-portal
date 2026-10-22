@@ -44,17 +44,38 @@ function meaningReferences(values) {
 
 /** Only our generated JSON sections are projected, never saved guidance,
  * complete comparisons, corrections, candidate prose or arbitrary JSON in them. */
-export function monthlyRequestInput(input) {
-  const labels={
+export function monthlyRequestInput(input,{phase,profile}={}) {
+  if(!['synthesis','draft'].includes(phase))return input;
+  const fields=['voiceGuidance','sourceGuidance','structure','prompt'];
+  if(phase==='draft'&&!fields.every(key=>typeof profile?.[key]==='string'))return input;
+  const allLabels={
     'MONTHLY FACTS AND PLAN SCOPE':v=>v?.windowPeriod==='monthly'&&v.factsById&&Array.isArray(v.planetaryArcs),
     'GOVERNED PERIOD DEVELOPMENTS':v=>v?.period==='monthly'&&v.factsById,
     'PRIVATE MONTHLY SYNTHESIS':v=>typeof v?.thesis==='string'&&Array.isArray(v.stories)&&typeof v.readingMovement==='string'&&typeof v.endingChange==='string',
     'SHARED FIVE-ROLE EVIDENCE':v=>v?.roles&&Array.isArray(v.entries)
   };
+  const labels=Object.fromEntries(Object.entries(allLabels).filter(([label])=>
+    (label==='MONTHLY FACTS AND PLAN SCOPE')===(phase==='synthesis')));
+  // Saved field values and literal prompt examples are opaque source text.
+  // Locate them before parsing so owner examples cannot become fact sections.
+  const protectedText=phase==='draft'?fields.map(key=>profile[key]).filter(Boolean):[];
+  if(phase==='draft')protectedText.push(...profile.prompt.split(/\{\{[^{}]*\}\}/u)
+    .filter(text=>Object.keys(allLabels).some(label=>text.includes(label))));
+  const protectedRanges=[];
+  for(const text of protectedText){
+    let from=0,start;
+    while((start=input.indexOf(text,from))!==-1){
+      protectedRanges.push({start,end:start+text.length});from=start+text.length;
+    }
+  }
+  const original=input;
   const sections=[];
   for(const [label,accepts] of Object.entries(labels)){
     const matches=[];
-    for(const match of input.matchAll(new RegExp(`(?:^|\\n)${label}\\n([^\\n]+)`,'gu'))){
+    const boundary=phase==='synthesis'?'^':'(?:^|\\n)';
+    for(const match of input.matchAll(new RegExp(`${boundary}${label}\\n([^\\n]+)`,'gu'))){
+      const end=match.index+match[0].length;
+      if(protectedRanges.some(range=>match.index<range.end&&end>range.start))continue;
       let value;try{value=JSON.parse(match[1]);}catch{continue;}
       if(!accepts(value))continue;
       const start=match.index+match[0].length-match[1].length;
@@ -68,6 +89,9 @@ export function monthlyRequestInput(input) {
   for(let i=sections.length-1;i>=0;i--){
     const section=sections[i];
     input=input.slice(0,section.start)+JSON.stringify(projected[i])+input.slice(section.end);
+  }
+  for(const text of protectedText){
+    if(original.includes(text)&&!input.includes(text))throw new Error('Monthly projection changed complete saved writing instructions.');
   }
   return input;
 }

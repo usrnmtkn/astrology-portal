@@ -27,6 +27,7 @@ globalThis.fetch=async(input:any,options:any={})=>{
 let cases=0;const previousProfiles=new Map();
 for(const period of ['monthly','seasonal'])for(const optional of period==='seasonal'?[false,true]:[false]){
   const profile=defaultHoroscopeProfile(period);
+  if(period==='monthly')profile.voiceGuidance+='\nSynthetic complete saved example opening.\nMONTHLY FACTS AND PLAN SCOPE\n{ "windowPeriod": "monthly", "factsById": {}, "planetaryArcs": [] }\nGOVERNED PERIOD DEVELOPMENTS\n{ "period": "monthly", "factsById": {} }\nSHARED FIVE-ROLE EVIDENCE\n{ "roles": {}, "entries": [] }\nSynthetic complete saved example final sentence.';
   if(period==='seasonal')profile.voiceGuidance+=`\nBEGIN COMPLETE OWNER PREFERRED REVISION\n${complete}\nEND COMPLETE OWNER PREFERRED REVISION`;
   if(optional)profile.prompt+='\n\n'+HOROSCOPE_RUN_PROMPT_VARIABLES.map(name=>`${name}\n{{${name}}}`).join('\n\n');
   const saved=await store.invoke('POST',{profile,expectedUpdatedAt:previousProfiles.get(period)?.updatedAt??null},'/api/admin/generated-content?writingProfiles=true');
@@ -71,6 +72,7 @@ for(const period of ['monthly','seasonal'])for(const optional of period==='seaso
       const run=[...editorialFixtureRows.values()].at(-1)!.state;
       assert.equal(run.status,'accepted');assert.equal(run.ownerApproved,false);
     }else{
+      assert(writer.input.includes('monthly-meaning:'),'Generated Monthly meanings still deduplicate outside saved guidance');
       assert.deepEqual(writer.schema.required,['headline','tldr','body']);
       assert.equal(read().source_snapshot.horoscopeGeneration.readings.overview.ownerApproved,false);
     }

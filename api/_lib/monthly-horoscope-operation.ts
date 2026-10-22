@@ -61,7 +61,8 @@ export async function monthlyHoroscopeOperation({action,row:initialRow,persist,p
   };
   const dispatch=async(input:string,instructions:string,schema:any)=>{
     const role=operation.phase==='synthesis'?'MEANING_PLANNER':'WRITER';
-    const preparedRequest=buildHoroscopeProviderRequest({config:operation.config,role,input:monthlyRequestInput(input),schema,instructions});
+    const preparedRequest=buildHoroscopeProviderRequest({config:operation.config,role,
+      input:monthlyRequestInput(input,{phase:operation.phase,profile:row.source_snapshot?.studioWritingProfile?.profile}),schema,instructions});
     const request=operation.phase==='synthesis'?preparedRequest:await hydrateWritingFeedbackRequest(preparedRequest,operation.receipt.feedback);
     operation={...operation,state:'starting',responseId:null,providerResult:null,requestHash:hash({request,instructions}),startedAt:new Date().toISOString()};
     await saveOperation(); // CAS reservation precedes each potentially billed request.
