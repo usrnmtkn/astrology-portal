@@ -7,10 +7,13 @@ format callable. Its tests explicitly preserved the old writing behavior.
 Those constraints did not have to be reintroduced: the old path still had them.
 The owner authorized committing, merging and deploying this repair on 2026-10-22.
 
-The release candidate is on `codex/ingress-narrative-prompt-20261022`, rebased
-onto refreshed main `4b7e9b8d895881913b3a10e317141687bbdd81a8`. The integration
-preserves the Synastry request preparation and its API regressions alongside
-the ingress guards. Hosted checks and deployment receipts belong to the release PR.
+The release candidate is on `codex/ingress-narrative-prompt-20261022`. It first
+integrated main `4b7e9b8d895881913b3a10e317141687bbdd81a8`, preserving Synastry
+request preparation and its API regressions alongside the ingress guards. Main
+then advanced to `717e2b287a5482f980bbbd8e679ca9e55ab2707c` while CI ran. The
+candidate includes that natal-editor release, its test entry and measured bundle
+allocations. The ingress contract hash is unchanged. Hosted checks and deployment
+receipts belong to release PR #1322.
 
 ## Active controls found
 
@@ -75,6 +78,11 @@ These checks verify routing, instruction delivery and bounded factual rules.
 They do not prove a new draft's literary quality or grant owner approval.
 
 ## Verification
+
+The table records candidate `9ef4474b6d297cf61c4fc1c48e8ef7ca4463534a` against
+the first integrated main. Both hosted full API checks also passed for that head.
+After the newer-main integration, the current head must pass fresh release gates;
+the PR records that evidence separately rather than reusing an earlier green run.
 
 | Check | Result |
 | --- | --- |

@@ -238,6 +238,30 @@ fails closed and shows the emergency access field.
 
 ## Finding content from the reader surface
 
+### Natal rulership and day/night libraries
+
+Natal Chart > Rulership edits Understanding Undoing and the twelve twelfth-house
+ruler destinations, independently for You and Friend. Natal Chart > Day & night
+edits the chart overview and Jupiter, Venus, Mars and Saturn by day/night sect,
+also independently for both audiences. These sources retain their complete
+paragraphs; the Friend name field changes only the preview, preserving the saved
+`{{ownerName}}` template. Existing planet-placement and empty-house editors remain
+available in their own tabs.
+
+The libraries use `cms/natal-twelfth-ruler/{you|they}/introduction`,
+`cms/natal-twelfth-ruler/{you|they}/ruler-house/{1..12}`,
+`cms/natal-chart-context/{you|they}/sect/{day|night}`, and
+`cms/natal-planet-sect/{you|they}/{jupiter|venus|mars|saturn}/{day|night}`.
+Missing writing opens a blank draft. Failed reads require retry and cannot be
+mistaken for missing content. Saving uses the normal version-checked editor;
+deployment never approves or publishes these drafts. Reader integration is a
+separate requirement from making a source editable.
+
+The focused regression is `node --import tsx scripts/test-natal-editorial-library.mts`.
+The focused browser matrix uses the existing CI config: `npx playwright test --config playwright.config.ts --workers=1 tests/visual/content-dashboard-admin-user-flows.spec.ts --grep "Natal editorial library|Natal Empty Houses opens|surface map organizes editable"`;
+all mutations use isolated storage. An opt-in private saved-row preview is local
+only and is skipped when `NATAL_EDITORIAL_PREVIEW_ROWS` is absent.
+
 Open Content Studio > App surfaces > Surface Map. This is the canonical
 reader-to-editor directory. Start with where the copy appears (Sky, You,
 Friends, Calendar, or Settings), then use the action on that surface to open
