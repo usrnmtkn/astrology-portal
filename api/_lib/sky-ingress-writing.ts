@@ -122,14 +122,25 @@ export function buildSkyIngressWritingContext(facts: Record<string, any>) {
   const plan = { version, articleFormat: facts.articleFormat, coverage: facts.eventCoverage, selectedPlanet: facts.planet, selectedSign: facts.sign,
     traditionalRuler: ruler, condition, participantConditions, developed, requiredDates,
     verifiedHistoryInstants: [...new Set(historyInstants)], uninterpreted: [...uninterpreted], meaningSources: [...meaning.values()] };
-  const receipt = { version, writerContract: ingressWriterContractReceipt(), planSha256: hash(plan), developedEventIds: developed.map(event => event.id),
+  // Preserve the complete calculation plan and sources for validation/receipts.
+  // The prose writer needs each fact, not repeated formatted position lines,
+  // app-owned date bullets or the same dignity explanation for every participant.
+  const withoutBasis = ({ basis: _basis, ...condition }: ReturnType<typeof ingressDignityEvidence>) => condition;
+  const writerEvidence = { ...plan, condition: withoutBasis(condition),
+    participantConditions: participantConditions.map(withoutBasis),
+    dignityBasis: condition.basis,
+    developed: developed.map(({ positionsLine: _line, ...item }) => item),
+    requiredDates: requiredDates.map(({ prefix: _prefix, ...item }) => item) };
+  const receipt = { version, writerContract: ingressWriterContractReceipt(), planSha256: hash(plan),
+    writerEvidence: { version: 'ingress-writer-evidence/v1', sha256: hash(writerEvidence) },
+    developedEventIds: developed.map(event => event.id),
     requiredDateEventIds: requiredDates.map(event => event.id),
     developedEventFacts: developed.map(({ id, event, positionsLine }) => ({ id,
       title: event.title, startsAt: event.startsAt, dateLabel: event.dateLabel, timeLabel: event.timeLabel, positionsLine })),
     meaningSources: [...meaning.values()].map(({ body: _body, ...source }) => source),
     dignitySource: 'apps/web/src/services/planetSignDignity.mjs', ownerApproved: false };
   const prompt = [
-    'DATED INGRESS COVERAGE AND EVENT MEANING', JSON.stringify(plan),
+    'DATED INGRESS COVERAGE AND EVENT MEANING', JSON.stringify(writerEvidence),
     INGRESS_WRITER_CONTRACT.coverage,
     INGRESS_WRITER_CONTRACT.meaning,
   ].join('\n\n');

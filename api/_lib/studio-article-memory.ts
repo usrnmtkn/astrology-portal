@@ -1,7 +1,7 @@
 import { buildStudioArticleMemoryMap } from './studio-article-memory-map.mjs';
 import { activeStudioFeedback, selectStudioFeedback, studioFeedbackEnabled } from './studio-memory-feedback.js';
 import { skyArticleEditionContentKey } from '../../apps/web/src/content/skyArticleTemplateCompiler.js';
-import { isSkyIngressEssay } from '../../apps/web/src/content/skyIngressEssay.mjs';
+import { isSkyIngressEssay, isSkyIngressArticle } from '../../apps/web/src/content/skyIngressEssay.mjs';
 
 /** Server-calculated edition identity; caller notes cannot widen passage scope. */
 export function studioArticleWritingMemoryKey(input: { planet: string; sign: string; facts: Record<string, unknown> }) {
@@ -27,7 +27,10 @@ export async function studioArticleWritingMemory(input: { planet: string; sign: 
     : null;
   const memory = buildStudioArticleMemoryMap(
     { planet: input.planet, sign: input.sign, year: Number(input.facts.entryYear) },
-    { studioCorrections: feedback?.corrections ?? [] },
+    // The current dated writer already receives its qualified rules in the
+    // provider system. Memory contributes correction evidence, not a second
+    // generic article rule bundle. Saved/other article workflows retain theirs.
+    { studioCorrections: feedback?.corrections ?? [], includeEffectiveRules: !isSkyIngressArticle(input.facts.articleFormat) },
   );
 
   if (feedback) (memory.receipt as any).studioFeedback = {

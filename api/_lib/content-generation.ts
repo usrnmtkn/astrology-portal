@@ -5907,6 +5907,7 @@ function skyArticleTemplateSlotPrompt(
     'OUTPUT CONTRACT',
     INGRESS_WRITER_CONTRACT.output,
     bannedPhraseRules(),
+    INGRESS_WRITER_CONTRACT.factualReference,
     'ASTROLOGY FACTS',
     JSON.stringify(ingressWriterFacts(input.facts), null, 2),
     hellenisticMeaningPrompt({ facts: input.facts, surface: 'sky', family: input.eventType ?? 'sky-article-template-slots' }),
@@ -6080,7 +6081,7 @@ export async function generateSkyArticleTemplateSlots(
     ...(narrativeIngress ? [
       'APPROVED TLDR ASTRO VOICE EXAMPLES', approvedExamplesPrompt(approvedExamples),
       approvedVoiceStylePrompt(skyArticleVoiceStyleContext(input)),
-      'CURRENT OWNER DIRECTION', input.voiceNotes ?? 'Use the supplied approved voice references.',
+      'CURRENT OWNER DIRECTION', input.voiceNotes?.trim() || INGRESS_WRITER_CONTRACT.ownerDirection,
       'BEFORE RETURNING',
       INGRESS_WRITER_CONTRACT.beforeReturning
     ] : [])].filter(Boolean).join("\n\n");

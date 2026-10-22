@@ -37,15 +37,51 @@ const template = { id, content_key: "sky/article-template/sun/libra", event_type
 let prompts: string[] = [];
 let requested: string[] = [];
 let rejectWriterCopy = false;
+let liveCorrections = false;
+let correctionStoreUnavailable = false;
+const syntheticPassageFeedback = {
+  id: '11111111-1111-4111-8111-111111111111', source_row_id: id,
+  content_key: 'sky-article/sun/libra/2026/2026-09-22', family: 'sky-article',
+  before_text: JSON.stringify({ body: 'Synthetic complete former passage. Final former sentence.' }),
+  after_text: JSON.stringify({ body: 'Synthetic complete revised passage. Final revised sentence.' }),
+  before_version: '2026-10-21T12:00:00Z', after_version: '2026-10-21T12:01:00Z',
+  status: 'active', scope: 'passage', reason: 'Synthetic complete passage correction.', version: 2,
+  created_at: '2026-10-21T12:01:00Z', updated_at: '2026-10-21T12:02:00Z'
+};
+const syntheticExplicitFeedback = {
+  id: 'synthetic-ingress-rejection', version: 1, status: 'active', kind: 'rejection',
+  target_keys: ['sky/article-template/sun/libra'],
+  rejected_text: 'Synthetic complete rejected introduction. Final rejected sentence.',
+  owner_reason: 'Synthetic reason: definitions replace the connected human thought.',
+  source_roles: null, source_uri: 'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', source_date: '2026-10-21T12:00:00Z'
+};
 const summaryGuidanceProviders = new Set<string>();
 const narrativeProviders = new Set<string>();
-function assertSummaryGuidance(provider: string, prompt: string, schema: any) {
+function assertSummaryGuidance(provider: string, prompt: string, schema: any, system: string) {
   const narrative = Boolean(schema.properties.slotValues.properties.articleBody);
   if (narrative) {
+    const completeRequest = `${system}\n\n${prompt}`;
+    assert.equal(completeRequest.split('Effective TLDR Astro writing rules (').length - 1, 1,
+      'The complete provider request must contain one scoped rule bundle, including article memory.');
+    doesNotMatch(completeRequest, /Use a specific situation, a direct consequence, a useful next move/,
+      'Article memory must not reinstate the generic advice requirement after the scoped ingress system instructions.');
+    matches(completeRequest, /not a default paragraph ending/);
+    assert(prompt.includes(INGRESS_WRITER_CONTRACT.factualReference));
+    assert(prompt.includes(INGRESS_WRITER_CONTRACT.layout));
+    matches(schema.properties.slotValues.properties.articleBody.description, /develop its human meaning in the opening/);
+    const evidence=JSON.parse(prompt.match(/DATED INGRESS COVERAGE AND EVENT MEANING\n\n([^\n]+)/u)![1]);
+    assert.equal(JSON.stringify(evidence).split('Fall is opposite exaltation.').length-1,1);
+    if (liveCorrections) {
+      for (const text of [syntheticPassageFeedback.before_text, syntheticPassageFeedback.after_text])
+        assert(prompt.includes(JSON.stringify(text).slice(1,-1)), 'Keep complete scoped passage correction documents.');
+      assert(prompt.includes(syntheticExplicitFeedback.rejected_text)&&prompt.includes(syntheticExplicitFeedback.owner_reason),
+        'Deliver the complete exact-target rejection and reason without turning it into positive voice evidence.');
+      doesNotMatch(prompt, /Synthetic unrelated rejection/);
+    }
     matches(prompt, /Write one complete dated ingress article in articleBody/);
     doesNotMatch(prompt, /ingressTransitBody\d|100–180|120–180|60–100|INGRESS ESSAY FORMAT/);
     assert(Object.keys(schema.properties.slotValues.properties).every(name => ['what', 'takeaway', 'articleBody', 'priorOccurrenceSection'].includes(name)));
-    matches(prompt, /WRITER CONTRACT ingress-article\/v4-2026-10-22/);
+    matches(prompt, /WRITER CONTRACT ingress-article\/v5-2026-10-22/);
     assert.equal(schema.properties.slotValues.properties.articleBody.description,
       skyIngressArticleFields.find(field => field.name === 'articleBody')!.description);
     const meaningPosition = prompt.indexOf('DATED INGRESS COVERAGE AND EVENT MEANING');
@@ -143,6 +179,12 @@ async function invoke(handler: any, method: string, url: string, body?: unknown,
 try {
   globalThis.fetch = async (url, init = {}) => {
     if (String(url).startsWith(env.SUPABASE_URL)) {
+      if (String(url).endsWith('/rpc/studio_memory_active_snapshot')) {
+        assert.equal(init.method, 'POST');assert.equal(init.body, '{}', 'Feedback RPC is a read-only snapshot.');
+        if (correctionStoreUnavailable) return Response.json({ error: 'Synthetic unavailable snapshot' }, { status: 503 });
+        return Response.json([{ snapshot: { rows: [syntheticPassageFeedback], writingFeedback: [syntheticExplicitFeedback,
+          {...syntheticExplicitFeedback,id:'synthetic-unrelated',target_keys:['sky/article-template/sun/taurus'],rejected_text:'Synthetic unrelated rejection.'}] } }]);
+      }
       assert.equal(init.method ?? 'GET', 'GET', 'Generation must not save a source or draft.');
       return Response.json(new URL(String(url)).searchParams.has('or') ? [] : [template]);
     }
@@ -152,7 +194,7 @@ try {
     if (String(url).startsWith("https://ssd.jpl.nasa.gov/")) return new Response("Synthetic outage", { status: 503 });
     if (String(url) === "https://api.openai.com/v1/responses") {
       const request = JSON.parse(String(init.body)); prompts.push(request.input);
-      assertSummaryGuidance('openai', request.input, request.text.format.schema);
+      assertSummaryGuidance('openai', request.input, request.text.format.schema, request.instructions);
       requested = request.text.format.schema.properties.slotValues.required;
       const slotValues = ingressFixtureValues(request.input, requested);
       const transitBody = requested.find(name => /^ingressTransitBody/u.test(name) || name === 'articleBody');
@@ -170,7 +212,7 @@ try {
     }
     if (String(url) === 'https://api.anthropic.com/v1/messages') {
       const request = JSON.parse(String(init.body)); prompts.push(request.messages[0].content[0].text);
-      assertSummaryGuidance('claude', request.messages[0].content[0].text, request.tools[0].input_schema);
+      assertSummaryGuidance('claude', request.messages[0].content[0].text, request.tools[0].input_schema, request.system);
       requested = request.tools[0].input_schema.properties.slotValues.required;
       matches(request.system, /DATED INGRESS EDITORIAL AUTHORITY/);
       assert.equal(request.system.split(INGRESS_WRITER_CONTRACT.authority).length - 1, 1);
@@ -248,7 +290,7 @@ try {
   assert(!requested.includes('otherDatesSection'), 'The app assembles required dates instead of delegating fact copying.');
   assert(result.generation.requestedSlots.includes('articleBody'), 'Public article fields remain unchanged.');
   assert.deepEqual(result.blockedSlots.map((slot: any) => slot.name), ["priorOccurrenceSection"]);
-  matches(prompts[0], /WRITER CONTRACT ingress-article\/v4/);
+  matches(prompts[0], /WRITER CONTRACT ingress-article\/v5/);
   matches(prompts[0], /astronomy-explanation-only/);
   matches(prompts[0], /after-ingress-window/);
   matches(prompts[0], /ZODIAC SEASON MEANING SOURCES/);
@@ -438,6 +480,29 @@ try {
   assert.equal(rejectedNarrative.slotValues, undefined);
   matches(rejectedNarrative.rejectedGeneration.slotValues.articleBody, /Synthetic draft; punctuation needs correction/);
   assert.equal(prompts.length, beforeNarrative + 3, 'A rejected narrative candidate is returned once without a retry.');
+  rejectWriterCopy = false;
+  liveCorrections = true;
+  process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'true';
+  const beforeFeedback = prompts.length;
+  for (const provider of ['openai', 'claude']) {
+    const withFeedback = await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', {
+      templateId: id, referenceDate: '2026-10-22', format: SKY_INGRESS_ARTICLE_FORMAT, provider
+    });
+    assert.equal(withFeedback.status, 200, 'Both actual provider requests preserve complete live correction evidence with one rule bundle.');
+    assert.equal(withFeedback.generation.memoryReceipt.effectiveRulesLocation, 'provider-system');
+    assert(withFeedback.generation.memoryReceipt.selected.some((ref:any)=>ref.memoryId===`studio-${syntheticPassageFeedback.id}`));
+    assert.deepEqual(withFeedback.generation.generationMetadata.evidencePacket.writingFeedback.selected.map((ref:any)=>ref.id),
+      [syntheticExplicitFeedback.id]);
+    assert(prompts.at(-1)!.includes(INGRESS_WRITER_CONTRACT.ownerDirection), 'The no-notes Preview receives the current ingress correction.');
+    assert(!JSON.stringify(withFeedback.generation).includes(syntheticExplicitFeedback.rejected_text), 'Private rejection text stays out of receipts.');
+  }
+  assert.equal(prompts.length, beforeFeedback + 2, 'Exactly one intercepted call per provider, with no judge or retry.');
+  correctionStoreUnavailable = true;
+  assert.equal((await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', {
+    templateId: id, referenceDate: '2026-10-22', format: SKY_INGRESS_ARTICLE_FORMAT, provider: 'openai'
+  })).status, 503);
+  assert.equal(prompts.length, beforeFeedback + 2, 'Unavailable correction memory stops before provider dispatch.');
+  process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'false';
   globalThis.fetch = async () => Response.json({ signature: { source: "Synthetic NASA response" }, result: "$$SOE\n2026-Oct-09, , 191.5, 0.1,\n$$EOE" });
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191.5)).status, "matched");
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191)).status, "disagreement");

@@ -18,6 +18,19 @@ try {
 }
 finally { globalThis.fetch = originalFetch; }
 const context = buildSkyIngressWritingContext(facts);
+const writerEvidence=JSON.parse(context.prompt.match(/DATED INGRESS COVERAGE AND EVENT MEANING\n\n([^\n]+)/u)![1]);
+assert.equal((JSON.stringify(writerEvidence).match(/Fall is opposite exaltation\./gu)??[]).length,1,
+  'Dignity basis is available once, not repeated for every participant.');
+assert.deepEqual(writerEvidence.meaningSources,context.plan.meaningSources,'Complete meaning sources stay byte-identical in the writer projection.');
+assert.deepEqual(writerEvidence.coverage,context.plan.coverage);
+for(const key of ['developed','requiredDates'] as const) {
+  assert.equal(JSON.stringify(writerEvidence[key].map((item:any)=>item.event)),JSON.stringify(context.plan[key].map(item=>item.event)),
+    'All event facts, participants and exact times survive removal of duplicate display strings.');
+}
+assert(context.plan.developed.every(item=>item.positionsLine)&&context.plan.requiredDates.every(item=>item.prefix),
+  'The complete validation/inspection plan retains the original display evidence.');
+assert(!JSON.stringify(writerEvidence).includes('positionsLine')&&!JSON.stringify(writerEvidence).includes('"prefix":'));
+assert.deepEqual(writerEvidence.participantConditions,context.plan.participantConditions.map(({basis,...condition})=>condition));
 const fields = facts.templateFields;
 const requested = fields.filter(field => !['articleTitle', 'when', 'priorOccurrenceSection'].includes(field.name));
 assert.deepEqual(ingressProviderSlots(requested, context).map(field => field.name), ['what', 'takeaway', 'articleBody']);

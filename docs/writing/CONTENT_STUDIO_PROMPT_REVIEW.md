@@ -4,6 +4,11 @@ Use this workflow when changing Studio generation prompts or writer instructions
 The [October 21 full ingress audit](INGRESS_PROMPT_VOICE_AUDIT_2026-10-21.md)
 records the local request comparison, scoped conflict removals and verification
 limits. It is a proposal, not evidence of a deployed prompt or approved prose.
+The [October 22 full-request repair](INGRESS_FULL_REQUEST_REPAIR_2026-10-22.md)
+also covers the article-memory appendix. The previous ingress system qualification
+did not prevent generic article memory from appending a second rule bundle.
+The current repair tests the assembled system and user request together; source
+delivery and deterministic validation still do not establish literary quality.
 The subsequent [event-led template repair](INGRESS_EVENT_LED_TEMPLATE_REVIEW_2026-10-21.md)
 connects the complete saved guide and scoped Scorpio reference, and supersedes
 the earlier human-observation opening emphasis and compulsory chart lookup for

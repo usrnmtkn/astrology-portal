@@ -87,6 +87,12 @@ try{
   assert.equal((await review(datedEvidence)).statusCode,200);
   const datedPacket=await studioArticleWritingMemory(ingressIdentity);
   assert(datedPacket.prompt.includes('Synthetic revised dated summary.'));
+  const currentPacket=await studioArticleWritingMemory({...ingressIdentity,facts:{...ingressIdentity.facts,articleFormat:'ingress-essay-v3'}});
+  assert(currentPacket.prompt.includes('Synthetic revised dated summary.'),'Current ingress memory keeps the complete scoped live correction.');
+  assert.deepEqual(currentPacket.receipt.selected,datedPacket.receipt.selected,'Removing the duplicate rules does not alter correction selection.');
+  assert(!currentPacket.prompt.includes('Effective TLDR Astro writing rules ('),'Current ingress rules belong only in the provider system.');
+  assert.equal(currentPacket.receipt.effectiveRulesLocation,'provider-system');
+  assert(datedPacket.prompt.includes('Effective TLDR Astro writing rules ('),'Other/saved article memory retains its existing rule rendering.');
   const laterPacket=await studioArticleWritingMemory({...ingressIdentity,facts:{...ingressIdentity.facts,validFrom:'2026-10-25'}});
   assert(!laterPacket.prompt.includes('Synthetic revised dated summary.'));
   for(const key of [visitKey,visitKey.replace('sky-article/','sky-article-revision/'),edition.contentKey]) {
