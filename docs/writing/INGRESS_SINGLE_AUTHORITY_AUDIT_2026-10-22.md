@@ -1,5 +1,11 @@
 # Why the ingress report structure survived
 
+Historical v4 release audit. The subsequent
+[full-request audit and repair](INGRESS_FULL_REQUEST_REPAIR_2026-10-22.md)
+found a surviving generic rule bundle in article memory. The v4 routing and
+legacy-layout repairs below remain valid; its single-authority claim did not
+cover that appendix. The current local contract is v5, pending release.
+
 The earlier fixes were incomplete. They added voice guidance while retaining
 the instructions and code that divided the article into technical sections.
 The preceding local proposal then introduced a new format but left the old
@@ -57,7 +63,7 @@ rewritten.
 ## Preventing a silent return
 
 `INGRESS_WRITER_CONTRACT` is the shared source for both providers and the
-server adapters. Its current version is `ingress-article/v4-2026-10-22`.
+server adapters. That release's version is `ingress-article/v4-2026-10-22`.
 The read-only authenticated inspection endpoint and generation receipts expose
 the same version, format and SHA-256 of the contract plus current layout.
 This verifies more than the presence of an approved voice reference.
