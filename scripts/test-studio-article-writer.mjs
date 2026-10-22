@@ -66,8 +66,8 @@ try{
    const pattern=deployment.functions[functionKey]?.includeFiles ?? '';
    assert.ok(pattern.length>0 && pattern.length<=256,`${functionKey} must have a deployable includeFiles pattern.`);
    assert.match(pattern,/data\/writing/u,`${functionKey} must package repository writing-memory sources.`);
-   assert.match(pattern,/jsonl/u,`${functionKey} must package JSONL correction-memory files.`);
    const packaged=new Set(fs.globSync(pattern));
+   assert([...packaged].some(file=>file.endsWith('.jsonl')),`${functionKey} must package JSONL correction-memory files.`);
    for(const spec of memoryConfig.sources.filter(item=>item.kind==='correction')){
      assert(packaged.has(spec.path),`${functionKey} is missing configured correction source: ${spec.path}`);
    }

@@ -10,6 +10,7 @@ const {
 const { RHETORICAL_JUDGE_POLICY } = require("./rhetoricalPatterns.cjs");
 const { LEGACY_RHETORICAL_JUDGE_POLICY, LEGACY_HOROSCOPE_WRITER_POLICY } = require("./rhetoricalPatternHistory.cjs");
 const { LUNATION_EDITORIAL_AUTHORITY } = require("./lunationEditorialAuthority.cjs");
+const { DATED_INGRESS_EDITORIAL_AUTHORITY } = require("./transitIngressEditorialAuthority.cjs");
 const { renderEffectiveRulesForPrompt } = require("./effectiveRules.cjs");
 const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
 const { withGhostwritingSkill } = require("./ghostwritingSkill.cjs");
@@ -43,6 +44,8 @@ function instructionsForRole(role, taskInstructions = "", {surface = "", family 
     return taskInstructions.trim()?`${authority}\n\n${taskInstructions.trim()}`:authority;
   }
   const canonical = role === 'RHETORICAL_REVIEWER' ? RHETORICAL_JUDGE_POLICY
+    : role === 'WRITER' && surface === 'sky' && family === 'sky-ingress-essay'
+    ? DATED_INGRESS_EDITORIAL_AUTHORITY
     : role === "WRITER" && ((family === "lunation-article" && surface === "lunation-article")
       || (family === "lunations" && surface === "calendar-lunation"))
     ? LUNATION_EDITORIAL_AUTHORITY

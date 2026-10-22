@@ -36,6 +36,11 @@ for (const endpoint of [
 }
 
 const horoscopeFiles=new Set(fs.globSync(deployment.functions['api/admin/horoscope-writing.ts'].includeFiles));
+const ingressFiles = new Set(fs.globSync(deployment.functions['api/admin/sky-article-template-slots.ts'].includeFiles));
+assert.ok(ingressFiles.has('data/writing/approved-voice-style/libra-ingress-benchmark-20261021.json'),
+  'The dated ingress writer must package the complete owner-selected Libra voice benchmark.');
+assert.ok(ingressFiles.has('data/writing/approved-voice-style/sun-scorpio-ingress-20261020.json'),
+  'The dated ingress writer must package its complete approved Scorpio style reference.');
 const transitFiles = new Set(fs.globSync(deployment.functions['api/admin/personal-transit-writing.ts'].includeFiles));
 for (const source of ['api/_lib/personal-transit-writer-context.ts', 'src/astro-writing/personalTransitReaderRules.mjs',
   'src/astro-writing/personalTransitWriterContext.mjs', 'src/astro-writing/personalTransitApprovedWriting.mjs', 'src/astro-writing/personalTransitBlobSources.mjs', 'src/astro-writing/personalTransitPassageValidation.mjs', 'src/astro-writing/personalTransitInputControls.mjs',

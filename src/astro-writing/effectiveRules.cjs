@@ -110,7 +110,13 @@ function renderEffectiveRulesForPrompt(input = {}) {
   const rules = effectiveRulesForSurface(surface).filter((rule) => rule.prompt === true);
   const blocking = rules.filter((rule) => rule.tier === "blocking");
   const advisory = rules.filter((rule) => rule.tier === "advisory");
-  const render = (entries) => entries.map((rule) => `- ${rule.id}: ${rule.promptText}`).join("\n");
+  // The dated essay keeps this owner standard without turning a useful next
+  // move into an instruction to finish every interpretive paragraph with advice.
+  // Other surfaces and the registry's enforcement tiers remain unchanged.
+  const datedIngress = input.surface === 'sky' && input.family === 'sky-ingress-essay';
+  const render = (entries) => entries.map((rule) => `- ${rule.id}: ${datedIngress && rule.id === 'lived-cause-consequence-v2'
+    ? 'Use supported human experience, direct consequences and enough personality to sound written rather than generated. A useful next move belongs when it develops the thought or is required by the field; it is not a default paragraph ending. Concrete means an observable action, decision, exchange or consequence, not a decorative prop or an unsupported life domain.'
+    : rule.promptText}`).join("\n");
   return [
     `# Effective TLDR Astro writing rules (${REGISTRY.registryId})`,
     `Surface: ${surface}`,

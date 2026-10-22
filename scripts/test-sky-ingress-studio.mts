@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { ingressFixtureValues } from './fixtures/sky-ingress-writing.mjs';
+import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
+import { RHETORICAL_WRITER_POLICY } from '../src/astro-writing/rhetoricalPatterns.mjs';
+import { approvedVoiceStyleReference } from '../src/astro-writing/approvedVoiceStyle.mjs';
 import { studioRequestTimeoutMs } from "../apps/admin/src/studioRequestPolicy.ts";
 const deploymentConfig = JSON.parse(fs.readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
 assert.equal(deploymentConfig.functions["api/admin/sky-article-template-slots.ts"].maxDuration, 300);
@@ -17,6 +21,7 @@ import { skyIngressNasaReceipt } from "../api/_lib/sky-ingress-nasa.ts";
 
 const env = { NODE_ENV: "test", CONTENT_GENERATION_SECRET: "synthetic-ingress-secret",
   SUPABASE_URL: "https://ingress.invalid", SUPABASE_SERVICE_ROLE_KEY: "synthetic", OPENAI_API_KEY: "synthetic",
+  ANTHROPIC_API_KEY: "synthetic",
   STUDIO_MEMORY_FEEDBACK_ENABLED: "false", STUDIO_WRITING_FEEDBACK_ENABLED: "false" };
 Object.assign(process.env, env);
 const { default: factsHandler } = await import("../api/admin/sky-article-facts.ts");
@@ -29,6 +34,86 @@ const template = { id, content_key: "sky/article-template/sun/libra", event_type
 let prompts: string[] = [];
 let requested: string[] = [];
 let rejectWriterCopy = false;
+const summaryGuidanceProviders = new Set<string>();
+function assertSummaryGuidance(provider: string, prompt: string, schema: any) {
+  matches(prompt, /Write one connected dated ingress article/);
+  matches(prompt, /fields are output containers, not separate writing jobs/);
+  matches(prompt, /DATED ARTICLE OUTPUT LAYOUT/);
+  doesNotMatch(prompt, /Fill only the requested unfinished fields in an owner-authored Sky article template|IMMUTABLE OWNER TEMPLATE CONTEXT/,
+    'The dated writer authors an article within the layout, rather than filling independent knowledge boxes.');
+  matches(prompt, /primary ingress voice benchmark, alongside the complete original author season passages/);
+  matches(prompt, /Read the requested fields together in article order/);
+  matches(prompt, /not another plan, judge or rewrite call/);
+  const voiceIndex = JSON.parse(fs.readFileSync('packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json', 'utf8'));
+  let priorPassagePosition = -1;
+  for (const id of Array.from({ length: 14 }, (_, i) => `p${String(i + 1).padStart(3, '0')}`)) {
+    const passage = voiceIndex.entries.find((entry: any) => entry.sourceId === `owner-article:libra-season-autumn-equinox:${id}`);
+    assert(prompt.includes(passage.text), `The complete eligible original Libra passage ${id} must reach the writer unchanged.`);
+    const position = prompt.indexOf(passage.text);
+    assert(position > priorPassagePosition, 'The complete author overview keeps its original paragraph order.');
+    priorPassagePosition = position;
+  }
+  doesNotMatch(prompt, /owner-article:libra-season-autumn-equinox:p015/,
+    'The separate horoscope companion is not part of the guide voice reference.');
+  doesNotMatch(prompt, /GOVERNED KNOWLEDGE EVIDENCE|TEMPORALITY: lifelong-pattern|You are here to create harmony/,
+    'The dated writer uses its collective event/season sources, not the generic natal placement packet.');
+  doesNotMatch(prompt, /TRANSIT AND INGRESS EDITORIAL AUTHORITY/,
+    'The scoped system authority is not repeated as multi-surface user guidance.');
+  assert.equal(prompt.split(RHETORICAL_WRITER_POLICY).length - 1, 1,
+    'Keep the complete contextual rhetorical policy exactly once.');
+  assert(prompt.includes(JSON.stringify(template.body)), 'Keep the saved article reference complete instead of discarding its event-led structure.');
+  matches(prompt, /COMPLETE SAVED INGRESS TEMPLATE REFERENCE/);
+  const style = approvedVoiceStyleReference({ surface: 'sky', family: 'sky-ingress-essay' });
+  for (const reference of [style.reference, ...style.supportingReferences.map(entry => entry.reference)]) {
+    assert.equal(prompt.split(JSON.stringify(reference.text)).length - 1, 1,
+      'The complete revised Libra benchmark and supporting Scorpio reach both providers once, without custom test voice notes.');
+  }
+  assert.equal(style.reference.id, 'libra-ingress-voice-benchmark-20261021');
+  matches(prompt, /primary ingress voice benchmark/);
+  doesNotMatch(style.reference.text, /I need to develop the article|Here is that rewrite/);
+  doesNotMatch(prompt, /saturn-aries-voice-20261020/);
+  doesNotMatch(prompt, /names the ingress and a developed defining aspect|its defining calculated aspect/,
+    'Do not force a technical aspect inventory into every What summary.');
+  const what = schema.properties.slotValues.properties.what;
+  const overview = schema.properties.slotValues.properties.overviewBody;
+  if (overview) {
+    assert.equal(overview.description, skyIngressEssayFields.find(field => field.name === 'overviewBody')!.description,
+      'The actual provider schema receives the overview guidance shown by the editor.');
+    matches(overview.description, /Begin with the actual season or planetary ingress, its calculated entry date and time/,
+      'The article establishes the actual event rather than opening with a detached human-interest hook.');
+    matches(overview.description, /revised Libra article is the primary voice benchmark/);
+    matches(overview.description, /rather than stacking facts and adding an example afterward/);
+    doesNotMatch(overview.description, /Explain sign mode, element, traditional ruler, territory/);
+  }
+  for (const [name, field] of Object.entries(schema.properties.slotValues.properties) as [string, any][]) {
+    if (!/^ingressTransitBody/u.test(name)) continue;
+    matches(field.description, /within the same article/);
+    matches(field.description, /without a separate textbook preface or generic aspect maxim/);
+  }
+  const takeaway = schema.properties.slotValues.properties.takeaway;
+  if (takeaway) {
+    assert.equal(takeaway.description, skyIngressEssayFields.find(field => field.name === 'takeaway')!.description);
+    doesNotMatch(takeaway.description, /without giving the planet agency/);
+    matches(takeaway.description, /contextual personification rule/);
+    matches(takeaway.description, /advice is optional/);
+  }
+  const closing = schema.properties.slotValues.properties.closingBody;
+  if (closing) {
+    assert.equal(closing.description, skyIngressEssayFields.find(field => field.name === 'closingBody')!.description);
+    matches(closing.description, /Personal chart context is optional/);
+    matches(closing.description, /Do not instruct the reader to count houses/);
+    doesNotMatch(closing.description, /Include an earned practice or reflection and directions/);
+  }
+  if (what) {
+    assert.equal(what.description, skyIngressEssayFields.find(field => field.name === 'what')!.description,
+      'The actual provider schema receives the same guidance as the editor.');
+    matches(what.description, /supplied KB and Calendar meaning/);
+    summaryGuidanceProviders.add(provider);
+  }
+}
+// Keep complete private voice passages out of public CI assertion diagnostics.
+function matches(value: string, pattern: RegExp, message?: string) { assert(pattern.test(value), message ?? `Missing contract: ${pattern}`); }
+function doesNotMatch(value: string, pattern: RegExp, message?: string) { assert(!pattern.test(value), message ?? `Unexpected contract: ${pattern}`); }
 const originalFetch = globalThis.fetch;
 async function invoke(handler: any, method: string, url: string, body?: unknown, authorized = true) {
   const req = Object.assign(Readable.from(body ? [JSON.stringify(body)] : []), { method, url,
@@ -38,17 +123,43 @@ async function invoke(handler: any, method: string, url: string, body?: unknown,
 }
 try {
   globalThis.fetch = async (url, init = {}) => {
-    if (String(url).startsWith(env.SUPABASE_URL)) return Response.json([template]);
+    if (String(url).startsWith(env.SUPABASE_URL)) {
+      assert.equal(init.method ?? 'GET', 'GET', 'Generation must not save a source or draft.');
+      return Response.json(new URL(String(url)).searchParams.has('or') ? [] : [template]);
+    }
     // No network or paid calls. A failed independent check must remain visible,
     // while Swiss event facts remain available to the editor.
     if (String(url).startsWith("https://science.nasa.gov/")) return new Response("<p>Synthetic test: the length of day and night depends on latitude.</p>");
     if (String(url).startsWith("https://ssd.jpl.nasa.gov/")) return new Response("Synthetic outage", { status: 503 });
     if (String(url) === "https://api.openai.com/v1/responses") {
       const request = JSON.parse(String(init.body)); prompts.push(request.input);
+      assertSummaryGuidance('openai', request.input, request.text.format.schema);
       requested = request.text.format.schema.properties.slotValues.required;
-      return Response.json({ id: "synthetic-ingress-response", output_text: JSON.stringify({ slotValues:
-        Object.fromEntries(requested.map(name => [name, rejectWriterCopy && name === "majorTransitSections"
-          ? "Synthetic draft; punctuation needs correction." : "Synthetic complete draft field."])) }) });
+      const slotValues = ingressFixtureValues(request.input, requested);
+      const transitBody = requested.find(name => /^ingressTransitBody/u.test(name));
+      if (rejectWriterCopy && transitBody) slotValues[transitBody] = 'Synthetic draft; punctuation needs correction.';
+      matches(request.instructions, /DATED INGRESS EDITORIAL AUTHORITY/);
+      doesNotMatch(request.instructions, /TRANSIT AND INGRESS EDITORIAL AUTHORITY|Friend personal-transit fields/);
+      matches(request.instructions, /not a default paragraph ending/);
+      assert.equal(request.instructions.split(GHOSTWRITING_SKILL_INSTRUCTIONS).length - 1, 1,
+        'The dated writer receives the complete current Ghostwriter policy once.');
+      assert.equal(request.model, 'gpt-5.6-sol', 'The dated ingress route uses its documented scoped writer.');
+      assert.equal(request.reasoning.effort, 'xhigh');
+      doesNotMatch(request.instructions, /SKY PLACEMENT ARTICLE SPINE|cultural rule and beneficiary|Maintain register consistently\. These sign cores/);
+      return Response.json({ id: "synthetic-ingress-response", output_text: JSON.stringify({ slotValues }) });
+    }
+    if (String(url) === 'https://api.anthropic.com/v1/messages') {
+      const request = JSON.parse(String(init.body)); prompts.push(request.messages[0].content[0].text);
+      assertSummaryGuidance('claude', request.messages[0].content[0].text, request.tools[0].input_schema);
+      requested = request.tools[0].input_schema.properties.slotValues.required;
+      matches(request.system, /DATED INGRESS EDITORIAL AUTHORITY/);
+      doesNotMatch(request.system, /TRANSIT AND INGRESS EDITORIAL AUTHORITY|Friend personal-transit fields/);
+      matches(request.system, /not a default paragraph ending/);
+      assert.equal(request.system.split(GHOSTWRITING_SKILL_INSTRUCTIONS).length - 1, 1,
+        'The Claude dated writer receives the same complete Ghostwriter policy.');
+      doesNotMatch(request.system, /SKY PLACEMENT ARTICLE SPINE/);
+      return Response.json({ id: 'synthetic-claude-ingress', content: [{ type: 'tool_use', name: 'tldr_astro_sky_article_template_slots',
+        input: { slotValues: ingressFixtureValues(request.messages[0].content[0].text, requested) } }] });
     }
     throw new Error(`Unexpected test network destination: ${new URL(String(url)).origin}`);
   };
@@ -59,12 +170,12 @@ try {
   const facts = factsResult.facts;
   assert.deepEqual(facts.templateFields, skyIngressEssayFields, "Authenticated facts carry complete authoring guidance");
   assert.equal(facts.slotValues.articleTitle, "Libra Season 2026");
-  assert.match(facts.slotValues.when, /September 22, 2026 at 8:05 PM ET/);
-  assert.match(facts.slotValues.when, /October 23, 2026 at 5:37 AM ET/);
+  matches(facts.slotValues.when, /September 22, 2026 at 8:05 PM ET/);
+  matches(facts.slotValues.when, /October 23, 2026 at 5:37 AM ET/);
   assert.equal(facts.calculationProvenance.actualEphemeris, "swiss");
   assert.equal(facts.nasa.status, "unavailable");
   assert.equal(facts.nasaExplanatoryText.status, "retrieved");
-  assert.match(prompts.join(""), /^$/);
+  matches(prompts.join(""), /^$/);
   assert.equal(facts.eventCoverage.complete, true);
   const opposition = facts.events.find((event: any) => event.aspect === "opposition" && event.planets.includes("Saturn"));
   assert(opposition);
@@ -93,15 +204,31 @@ try {
     existingSlotValues: { what: "Synthetic existing owner field." }
   });
   assert.equal(result.status, 200, JSON.stringify(result));
+  assert.equal(result.generation.ingressValidation.passed, true);
+  matches(result.slotValues.otherDatesSection, /Full Moon in Aries: September 26, 2026 at 12:49 PM ET/);
+  matches(result.slotValues.otherDatesSection, /New Moon in Libra: October 10, 2026 at 11:50 AM ET/);
+  matches(result.slotValues.otherDatesSection, /Venus stations retrograde: October 3, 2026 at 3:15 AM ET/);
+  matches(result.slotValues.majorTransitSections, /Sun opposition Saturn: October 4, 2026 at 8:29 AM ET/);
+  matches(result.slotValues.majorTransitSections, /Sun sextile Jupiter: October 15, 2026 at 4:21 AM ET/);
   assert.equal(prompts.length, 1);
   assert(!requested.includes("what") && !requested.includes("when") && !requested.includes("articleTitle"));
-  assert(requested.includes("majorTransitSections"));
+  assert(requested.includes('ingressTransitBody1') && !requested.includes('majorTransitSections'));
+  assert(!requested.includes('otherDatesSection'), 'The app assembles required dates instead of delegating fact copying.');
+  assert(result.generation.requestedSlots.includes('majorTransitSections'), 'Public article fields remain unchanged.');
   assert.deepEqual(result.blockedSlots.map((slot: any) => slot.name), ["priorOccurrenceSection"]);
-  assert.match(prompts[0], /INGRESS ESSAY FORMAT/);
-  assert.match(prompts[0], /astronomy-explanation-only/);
-  assert.match(prompts[0], /never repeat a standard agency sentence/i);
-  assert.match(prompts[0], /after-ingress-window/);
-  assert.doesNotMatch(prompts[0], /legacyField/);
+  matches(prompts[0], /INGRESS ESSAY FORMAT/);
+  matches(prompts[0], /astronomy-explanation-only/);
+  matches(prompts[0], /after-ingress-window/);
+  matches(prompts[0], /ZODIAC SEASON MEANING SOURCES/);
+  matches(prompts[0], /"role":"calendar-season"/);
+  matches(prompts[0], /Current writer instructions, owner corrections and eligible complete voice examples determine voice/);
+  assert.deepEqual(result.generation.generationMetadata.evidencePacket.seasonMeaning.sources.map((source: any) => source.role),
+    ['zodiac-season', 'learning-axis', 'calendar-season']);
+  assert(!requested.includes('legacyField'), 'A placeholder in the structural reference never becomes a new writer output key.');
+  assert.equal(result.slotValues.legacyField, undefined);
+  assert.equal(result.generation.generationMetadata.evidencePacket.ingressTemplateReference.role, 'structure-only');
+  assert.equal(result.generation.generationMetadata.evidencePacket.approvedVoiceStyle.id, 'libra-ingress-voice-benchmark-20261021');
+  assert.equal(result.generation.generationMetadata.evidencePacket.approvedVoiceStyle.supportingReferences[0].id, 'sun-scorpio-ingress-voice-20261020');
   const mismatch = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", {
     templateId: id, referenceDate: "2026-12-28", format: SKY_INGRESS_ESSAY_FORMAT
   });
@@ -114,9 +241,10 @@ try {
   });
   assert.equal(rejected.status, 422);
   assert.equal(rejected.ok, false);
-  assert.match(rejected.error, /en dash or semicolon in majorTransitSections/);
+  matches(rejected.error, /en dash or semicolon in majorTransitSections/);
   assert.equal(rejected.slotValues, undefined, "Rejected copy must not be admitted as article fields");
-  assert.equal(rejected.rejectedGeneration.slotValues.majorTransitSections, "Synthetic draft; punctuation needs correction.");
+  matches(rejected.rejectedGeneration.slotValues.majorTransitSections, /Synthetic draft; punctuation needs correction\./);
+  matches(rejected.rejectedGeneration.slotValues.majorTransitSections, /Sun opposition Saturn: October 4, 2026 at 8:29 AM ET/);
   assert.equal(rejected.rejectedGeneration.slotValues.what, undefined, "Existing owner fields are never returned for replacement");
   assert.equal(rejected.rejectedGeneration.responseId, "synthetic-ingress-response");
   assert.equal(rejected.rejectedGeneration.provider, "openai");
@@ -134,9 +262,9 @@ try {
   assert.notEqual(skyArticleEditionContentKey({ ...edition, validFrom: "2026-10-25" }), edition.contentKey,
     "A return visit must not overwrite an earlier edition in the same year");
   assert.equal(edition.housePassages.length, 0);
-  assert.doesNotMatch(edition.compiledMarkdown, /Horoscopes|Prior occurrence|Other dates|\{\{|legacyField/);
+  doesNotMatch(edition.compiledMarkdown, /Horoscopes|Prior occurrence|Other dates|\{\{|legacyField/);
   const revised = await reviseSkyArticleEdition(edition, skyArticleEditableFields(edition));
-  assert.doesNotMatch(revised.compiledMarkdown, /Horoscopes/);
+  doesNotMatch(revised.compiledMarkdown, /Horoscopes/);
   await assert.rejects(compileSkyArticleEdition({ format: SKY_INGRESS_ESSAY_FORMAT, templateKey: template.content_key,
     templateBody: "", planet: "sun", sign: "libra", ...facts, slotValues: { ...slots, overviewBody: "" },
     tldr: "Synthetic separate summary.", housePassages: [] }), /requires complete fields/);
@@ -190,21 +318,58 @@ try {
   const withoutHistory = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", generationRequest);
   assert.equal(withoutHistory.status, 200, JSON.stringify(withoutHistory));
   assert(withoutHistory.blockedSlots.some((slot: any) => slot.name === "priorOccurrenceSection"));
-  assert.doesNotMatch(prompts.at(-1)!, /2018-10-05T19:04/);
+  doesNotMatch(prompts.at(-1)!, /2018-10-05T19:04/);
   const withHistory = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", { ...generationRequest, includeRetrogradeHistory: true });
   assert.equal(withHistory.status, 200, JSON.stringify(withHistory));
   assert(!withHistory.blockedSlots.some((slot: any) => slot.name === "priorOccurrenceSection"));
   assert(requested.includes("priorOccurrenceSection"));
-  assert.match(prompts.at(-1)!, /2018-10-05T19:04/);
-  assert.match(prompts.at(-1)!, /not proof of a prior ingress/);
-  assert.match(prompts.at(-1)!, /2034-09-30T19:36/);
-  assert.match(prompts.at(-1)!, /future calculation, not historical evidence/);
+  matches(prompts.at(-1)!, /2018-10-05T19:04/);
+  matches(prompts.at(-1)!, /not proof of a prior ingress/);
+  matches(prompts.at(-1)!, /2034-09-30T19:36/);
+  matches(prompts.at(-1)!, /future calculation, not historical evidence/);
   assert.deepEqual(withHistory.facts.retrogradeHistory, venusResult.facts.retrogradeHistory);
   assert.deepEqual(withHistory.generation.retrogradeHistory, venusResult.facts.retrogradeHistory, "The generation keeps its exact receipt even if the editor later reloads different facts");
   assert.equal(withoutHistory.generation.retrogradeHistory, null);
   const beforeInvalid = prompts.length;
   assert.equal((await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", { ...generationRequest, includeRetrogradeHistory: "yes" })).status, 400);
   assert.equal(prompts.length, beforeInvalid);
+  template.content_key = 'sky/article-template/sun/libra';
+  const claude = await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', {
+    templateId: id, referenceDate: '2026-10-09', format: SKY_INGRESS_ESSAY_FORMAT, provider: 'claude',
+    voiceNotes: 'Synthetic exact owner direction for this dated article.'
+  });
+  assert.equal(claude.status, 200, JSON.stringify(claude));
+  assert.equal(claude.generation.provider, 'claude');
+  assert.deepEqual([...summaryGuidanceProviders].sort(), ['claude', 'openai'],
+    'Both provider requests deliver the revised What guidance without changing the article fields.');
+  assert(prompts.at(-1)!.includes('Synthetic exact owner direction for this dated article.'));
+  assert(prompts.at(-1)!.includes('ZODIAC SEASON MEANING SOURCES'));
+  const sentFacts = JSON.parse(prompts.at(-1)!.split('ASTROLOGY FACTS\n')[1].split('\nNEUTRAL HELLENISTIC')[0]);
+  assert.equal(sentFacts.slotValues.when, facts.slotValues.when);
+  assert.equal(sentFacts.events, undefined, 'Do not duplicate the entire event packet in the writer prompt.');
+  assert.deepEqual(result.facts.events, facts.events, 'The authenticated Studio response retains complete calculated event evidence.');
+  const sentPlan = JSON.parse(prompts.at(-1)!.match(/DATED INGRESS COVERAGE AND EVENT MEANING\n\n([^\n]+)/u)![1]);
+  assert.deepEqual(sentPlan.coverage, facts.eventCoverage);
+  assert(sentPlan.requiredDates.some((event: any) => event.event.title === 'Full Moon in Aries'));
+  assert.deepEqual(sentFacts.eventCoverage, facts.eventCoverage);
+  const beforeInspect = prompts.length;
+  const inspect = await invoke(slotsHandler, 'GET', '/api/admin/sky-article-template-slots?inspect=ingress-voice');
+  assert.equal(inspect.status, 200, JSON.stringify(inspect));
+  assert.equal(inspect.voiceBenchmark.id, 'libra-ingress-voice-benchmark-20261021');
+  assert.equal(inspect.voiceBenchmark.textSha256, '2e25f72d7fddd6db112a4e8b3c8ff9fed8250844940a263742ab630d0a937fd8');
+  assert.equal(inspect.voiceBenchmark.supportingReferences[0].id, 'sun-scorpio-ingress-voice-20261020');
+  assert.equal(inspect.providerCalls, 0);assert.equal(inspect.saved, false);assert.equal(inspect.published, false);
+  assert.equal(prompts.length, beforeInspect);
+  doesNotMatch(JSON.stringify(inspect), /"text":|"reference":|"slotValues":/);
+  assert.equal((await invoke(slotsHandler, 'GET', '/api/admin/sky-article-template-slots?inspect=ingress-voice', undefined, false)).status, 401);
+  const privateState = { CI: process.env.CI, PRIVATE_INGRESS_STYLE_REFERENCES: process.env.PRIVATE_INGRESS_STYLE_REFERENCES };
+  try {
+    process.env.CI = 'true';delete process.env.PRIVATE_INGRESS_STYLE_REFERENCES;
+    assert.equal((await invoke(slotsHandler, 'GET', '/api/admin/sky-article-template-slots?inspect=ingress-voice')).status, 500);
+    assert.equal(prompts.length, beforeInspect);
+  } finally {
+    for (const [key, value] of Object.entries(privateState)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; }
+  }
   globalThis.fetch = async () => Response.json({ signature: { source: "Synthetic NASA response" }, result: "$$SOE\n2026-Oct-09, , 191.5, 0.1,\n$$EOE" });
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191.5)).status, "matched");
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191)).status, "disagreement");

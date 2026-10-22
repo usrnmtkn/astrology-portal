@@ -19,9 +19,22 @@ Object.assign(process.env, env);
 const existing = 'Synthetic complete existing article. Its final sentence must reach the writer intact.';
 const generated = 'Virgo season brings a temporary focus on the choices you make each day.';
 const requests: any[] = [];
+const seasonSources = [
+  { id: 'synthetic-season', content_key: 'fallback-hook/zodiac-season/virgo', status: 'DRAFT', updated_at: '2026-10-21T12:00:00Z',
+    body: 'Complete synthetic season meaning. Preserve its full ending.' },
+  { id: 'synthetic-axis', content_key: 'fallback-hook/zodiac-season-polar-axis/virgo', status: 'LIVE', updated_at: '2026-10-21T12:00:00Z',
+    body: 'Complete synthetic learning axis. Preserve both sides of its meaning.' },
+  { id: 'synthetic-calendar', content_key: 'authored/lunar-journal/season/virgo/20250822t000000z', status: 'DRAFT', updated_at: '2026-10-21T12:00:00Z',
+    body: 'Complete synthetic Calendar season passage. Its historical event is not a current fact.' },
+];
 let nextValues: Record<string, unknown> | null = null;
+let sourcesUnavailable = false;
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (url, init = {}) => {
+  if (String(url).startsWith(`${env.SUPABASE_URL}/rest/v1/generated_interpretations?`)) {
+    assert.equal(init.method ?? 'GET', 'GET', 'Meaning retrieval must never save content.');
+    return sourcesUnavailable ? Response.json({ error: 'synthetic outage' }, { status: 503 }) : Response.json(seasonSources);
+  }
   if (String(url) === `${env.TLDRASTRO_API_URL}/sky/current`) {
     return Response.json({ generatedAt: '2026-09-01T12:00:00Z', positions: [
       { planet: 'Sun', longitude: 158, sign: 'Virgo', speed: 1, motion: 'direct' },
@@ -77,6 +90,15 @@ try {
     assert(request.prompt.includes('not for a person who has a natal Sun'), 'Preserve the Sky season register.');
     assert(request.prompt.includes('Neutral source notes cannot override calculated facts'), 'Preserve fact authority.');
     assert(request.prompt.includes('not approved and cannot serve by itself'), 'Preserve owner approval.');
+    assert(request.prompt.includes('ZODIAC SEASON MEANING SOURCES'), 'Load the actual season sources, not only an instruction to consult them.');
+    assert(request.prompt.includes('existing draft text cannot override them'), 'Revision context cannot perpetuate a source-inconsistent argument.');
+    for (const source of seasonSources) assert(request.prompt.includes(source.body), 'Deliver every complete selected meaning passage.');
+    assert(request.prompt.includes('TRANSIT AND INGRESS EDITORIAL AUTHORITY'), 'Use current writer guidance for reusable seasons too.');
+    assert(!request.prompt.includes('One idea per sentence'), 'Historical cadence rules must not replace current owner voice instructions.');
+    const meaningReceipt = revised.result.generation.generationMetadata.evidencePacket.seasonMeaning;
+    assert.equal(meaningReceipt.sources.length, 3);
+    assert.equal(meaningReceipt.sources[0].positiveVoiceEvidence, false);
+    assert(!JSON.stringify(meaningReceipt).includes(seasonSources[0].body), 'Receipts expose identities and hashes, not private source bodies.');
     assertOutputContract(request, ['articleDraft']);
 
     const empty = await revise('', provider);
@@ -93,6 +115,7 @@ try {
     });
     assert.equal(filled.slotValues.opener, nextValues.opener);
     assert(requests.at(-1).prompt.includes("The template's fixed prose is immutable"), 'Fixed templates must retain their protection.');
+    assert(requests.at(-1).prompt.includes('and the supplied article or fixed template context for meaning'), 'Unrelated slot callers retain their existing source-authority instruction.');
     assert(requests.at(-1).prompt.includes(templateBody));
     assert(requests.at(-1).prompt.includes('{{when}}'));
     assertOutputContract(requests.at(-1), ['opener']);
@@ -113,6 +136,15 @@ try {
   const count = requests.length;
   assert.equal((await revise(existing, 'openai', false)).statusCode, 401);
   assert.equal(requests.length, count, 'An unauthorized request cannot reach a provider.');
+  sourcesUnavailable = true;
+  assert.equal((await revise(existing, 'openai')).statusCode, 503);
+  assert.equal(requests.length, count, 'A meaning-source outage must stop before a paid request.');
+  sourcesUnavailable = false;
+  const sourceBody = seasonSources[0].body;
+  seasonSources[0].body = '';
+  assert.equal((await revise(existing, 'claude')).statusCode, 409);
+  assert.equal(requests.length, count, 'An empty saved meaning source cannot silently fall back or spend a call.');
+  seasonSources[0].body = sourceBody;
   console.log('Studio prompt contract passed: both providers, existing and empty articles, exact source delivery, immutable template filling, licensed variables, unchanged schemas, invalid output rejection and authenticated dispatch.');
 } finally {
   globalThis.fetch = originalFetch;

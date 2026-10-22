@@ -11,6 +11,7 @@ type Target = { surface: string; eventType: string; contentKey: string; facts: R
 const words = (value: unknown) => new Set(JSON.stringify(value).toLowerCase().match(/[a-z][a-z'-]+/gu) ?? []);
 
 function sourceFamilies(input: Target) {
+  if (input.surface === 'sky' && input.facts.articleFormat === 'ingress-essay-v2') return ['sky-season'];
   const identity = `${input.surface} ${input.eventType} ${input.contentKey}`.toLowerCase();
   if (["synastry", "composite", "relationship", "friends"].includes(input.surface)
     || /synastry|bond-effect/u.test(identity)) return ["relationship-astrology"];
@@ -28,6 +29,7 @@ export function sharedGenerationOwnerExamples(index: { entries: VoiceEntry[] }, 
   }
   const families = sourceFamilies(input);
   const ingressEssay = input.surface === "sky" && input.facts.articleFormat === "ingress-essay-v2";
+  const seasonEssay = ingressEssay && input.facts.planet === 'sun';
   const register = ingressEssay ? "current_sky_direct_address" : input.surface === "sky" ? "collective" : "second_person";
   // Field descriptions, template plumbing and revision directions are not the
   // article's topic. Dated ingress prose can address its reader, unlike the
@@ -39,20 +41,31 @@ export function sharedGenerationOwnerExamples(index: { entries: VoiceEntry[] }, 
     && entry.useAsNegativeEvidence !== true && families.includes(entry.surface)
     && typeof entry.sourcePath === "string" && Boolean(entry.sourcePath.trim()) && /^[a-f0-9]{64}$/u.test(entry.sourceSha256)
     && typeof entry.text === "string" && Boolean(entry.text.trim())
-    && /^(?:article paragraph|published article (?:opening|body) excerpt|paragraph under )/u.test(entry.structuralFunction)
+    && (seasonEssay ? entry.structuralFunction === 'article paragraph'
+      : /^(?:article paragraph|published article (?:opening|body) excerpt|paragraph under )/u.test(entry.structuralFunction))
     && !/^\s*(?:jump to horoscopes|horoscopes for)\b/iu.test(entry.text)
   ).map(entry => {
     const sourceRegister = /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(entry.text) ? "second_person" : "collective";
-    return { entry, sourceRegister, score: [...words({ key: entry.sourceId, text: entry.text })].filter(word => needles.has(word)).length };
+    const sourceTokens = `${entry.sourceId} ${entry.sourcePath}`.toLowerCase().split(/[^a-z]+/u);
+    const exactSeason = seasonEssay && sourceTokens.includes(String(input.facts.sign).toLowerCase());
+    return { entry, sourceRegister, score: (exactSeason ? 100 : 0)
+      + [...words({ key: entry.sourceId, text: entry.text })].filter(word => needles.has(word)).length };
   }).filter(candidate => ingressEssay || candidate.sourceRegister === register)
     .sort((a, b) => b.score - a.score || a.entry.sourceId.localeCompare(b.entry.sourceId));
+  // The owner designated the complete Libra overview for this guide's voice.
+  // Preserve its eligible paragraphs in original order, rather than selecting
+  // disconnected topical snippets or its separate rising-sign companion.
+  const ordered = ingressEssay ? candidates.filter(({ entry }) => entry.structuralFunction === 'article paragraph'
+    && entry.sourcePath.endsWith('/libra-season-autumn-equinox.md'))
+    .sort((a, b) => a.entry.sourceId.localeCompare(b.entry.sourceId)) : candidates;
   const seen = new Set<string>();
-  const unique = candidates.filter(({ entry }) => {
+  const complete = ordered.filter(({ entry }) => {
     if (seen.has(entry.text)) return false;
     seen.add(entry.text);
     return true;
-  }).slice(0, 4);
-  if (unique.length < 3) throw new Error(`OWNER_POSITIVE_EVIDENCE_BELOW_FLOOR: ${families.join("|")}/${register}; no provider call is allowed.`);
+  });
+  const unique = ingressEssay ? complete : complete.slice(0, 4);
+  if (unique.length < (ingressEssay ? 1 : 3)) throw new Error(`OWNER_POSITIVE_EVIDENCE_BELOW_FLOOR: ${families.join("|")}/${register}; no provider call is allowed.`);
   const sources = ownerPositiveEvidenceFromVoiceIndexBySourceIds(index, unique.map(({ entry }) => entry.sourceId), "shared-generation");
   const byId = new Map<string, OwnerExampleSource>(sources.map((source: OwnerExampleSource) => [source.id, source]));
   return unique.map(({ entry }) => {

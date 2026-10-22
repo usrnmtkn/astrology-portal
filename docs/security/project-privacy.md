@@ -71,3 +71,18 @@ indexes, verify complete text and provenance, and check that deployed memory
 endpoints still require owner access. Check public downloads independently of
 the admin graph. Follow the existing content and technology freshness direction
 in the memory runbook; a local rebuild alone does not update production.
+
+## Private ingress voice references
+
+The complete owner-selected Libra benchmark and approved Scorpio reference are
+internal style evidence. Public `data/writing/approved-voice-style` records retain
+metadata and exact-text hashes only. Full bodies come from the server-only
+`PRIVATE_INGRESS_STYLE_REFERENCES` secret, a gzip/base64 JSON object with schema
+`private-ingress-style-references/v1` and a `references` object keyed by source ID.
+Each entry has complete `text` and `textSha256`; both must match public metadata.
+Local work can use ignored `.private-documents/ingress-style-references.json`.
+CI and Vercel never fall back to a local file. Missing or corrupt evidence stops
+dated writing before a paid call. Provision the dedicated secret for the Studio
+API CI workflow and production server. Never put its value, source paragraphs or
+private provider payloads in public logs or artifacts. Owner-only inspection
+returns hashes and roles without prose, generation, draft saves or publication.

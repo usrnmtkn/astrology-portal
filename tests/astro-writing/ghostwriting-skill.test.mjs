@@ -6,7 +6,7 @@ import { callOpenAIResponses, governedInstructionsForRole, instructionsForRole,
 import { reviseDraft } from '../../src/astro-writing/reviseDraft.mjs';
 
 test('new prose requests receive Ghostwriter once and preserve the canonical prefix', async () => {
-  for (const [surface, family] of [['sky','sky-placement'], ['horoscopes','horoscope'],
+  for (const [surface, family] of [['sky','sky-placement'], ['sky','sky-ingress-essay'], ['horoscopes','horoscope'],
     ['calendar-daily','calendar-daily'], ['calendar-lunation','lunations'], ['lunation-article','lunation-article']]) {
     let sent;
     await callOpenAIResponses({ apiKey:'synthetic', role:'WRITER', surface, family,
