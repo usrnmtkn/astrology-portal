@@ -6,6 +6,7 @@ import {createEvidenceRegistry,digest} from './editorial/evidenceRegistry.mjs';
 import {latest} from './editorial/controller.mjs';
 import {object,text,list,evaluationSchema,evaluationInstructions} from './editorial/evaluation.mjs';
 import {resolveExplicitWritingFeedback} from './explicitWritingFeedback.mjs';
+import {feedbackTimestamp} from './feedbackTimestamp.mjs';
 import {seasonalManifestInput} from './seasonalRequestEvidence.mjs';
 
 export const SEASONAL_EDITORIAL_WORKFLOW='seasonal-editorial/v2';
@@ -61,7 +62,7 @@ export function seasonalEvidenceRegistry(input) {
       const seasonal=row.target_keys.includes('horoscope/seasonal');
       if(!sameTarget&&!seasonal)continue;
       selected.push({id:`studio-writing:${row.id}:v${row.version}`,role:'rejected',authority:'explicit_owner_rejection',text:row.rejected_text,
-        source:{locator:`studio_writing_feedback/${row.id}`,version:String(row.version),provenance:{sourceUri:row.source_uri,sourceDate:row.source_date,targetKeys:row.target_keys}},
+        source:{locator:`studio_writing_feedback/${row.id}`,version:String(row.version),provenance:{sourceUri:row.source_uri,sourceDate:feedbackTimestamp(row.source_date),targetKeys:row.target_keys}},
         scope:'Only the stored rejected passage/spans are rejected. The owner reason is exact; infer neither a replacement nor a global rule from unchanged surrounding prose.',
         relevance:{score:sameTarget?100:50,reason:sameTarget?'Prior rejected Seasonal draft for this audience.':'Explicit Seasonal correction with same reading register.'},
         ownerReason:row.owner_reason,rejectedSpans:row.rejected_spans??[row.rejected_text]});

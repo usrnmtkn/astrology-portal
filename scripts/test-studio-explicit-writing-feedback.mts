@@ -7,7 +7,7 @@ import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProf
 installHoroscopeWriterFixture();process.env.STUDIO_MEMORY_FEEDBACK_ENABLED='true';
 const feedback=(id:string,target:string)=>({id,version:1,status:'active',kind:'rejection',target_keys:[target],
  rejected_text:`PRIVATE synthetic rejected wording ${id}.`,owner_reason:`PRIVATE synthetic correction ${id}.`,
- source_roles:null,source_uri:'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',source_date:'2026-10-21T05:00:00Z'});
+ source_roles:null,source_uri:'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',source_date:'2026-10-21 05:00:00.123456+00'});
 for(const period of ['daily','weekly','monthly','seasonal'] as const){
  fixture.rows=[feedback('fixture-all','writing/all'),feedback(`fixture-${period}`,`horoscope/${period}`),
   feedback('fixture-unrelated',period==='monthly'?'horoscope/weekly':'horoscope/monthly')];
@@ -23,6 +23,9 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  let prepared=await action('prepare');assert.equal(prepared.status,200,JSON.stringify(prepared.payload));row=prepared.payload.rows[0];
  assert.deepEqual(prepared.payload.plan.feedback.selected.map((r:any)=>r.id),['fixture-all',`fixture-${period}`]);
  const firstHash=prepared.payload.plan.planHash,calls=writerFixture.calls;
+ fixture.rows=fixture.rows.map(row=>({...row,source_date:'2026-10-21T05:00:00.123456+00:00'}));
+ const transported=await action('prepare');assert.equal(transported.status,200,JSON.stringify(transported.payload));row=transported.payload.rows[0];
+ assert.equal(transported.payload.plan.planHash,firstHash,`${period}: SQL/JSON date formatting cannot invalidate plan approval`);
  fixture.rows[1]={...fixture.rows[1],version:2,owner_reason:`PRIVATE updated direction for ${period}.`};
  assert.equal((await action('generate',{sign:edition.passages[0].sign,approvedPlanHash:firstHash})).status,409);
  assert.equal(writerFixture.calls,calls,'A changed correction cannot dispatch under stale approval');
@@ -49,6 +52,7 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  }
  if(period==='monthly'){
   assert(reserved.draftRequest.input.includes('[PRIVATE_OWNER_WRITING_FEEDBACK:'));
+  fixture.rows=fixture.rows.map(row=>({...row,source_date:'2026-10-21 05:00:00.123456+00'}));
   const synthesis=await action('poll');assert.equal(synthesis.status,202);row=synthesis.payload.rows[0];
   fixture.rows=fixture.rows.map(r=>({...r,status:'retired',version:r.version+1}));
   const continued=await action('continue');assert.equal(continued.status,202,JSON.stringify(continued.payload));row=continued.payload.rows[0];

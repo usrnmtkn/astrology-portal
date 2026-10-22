@@ -1,12 +1,15 @@
 import {createHash} from 'node:crypto';
+import {feedbackTimestamp,legacyFeedbackTimestamps} from './feedbackTimestamp.mjs';
 
 export const EXPLICIT_WRITING_FEEDBACK_VERSION='explicit-writing-feedback/v1';
 const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'
   ?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
 const hash=value=>createHash('sha256').update(typeof value==='string'?value:JSON.stringify(canonical(value))).digest('hex');
 const keyPattern=/^[a-zA-Z0-9][a-zA-Z0-9._:/-]{0,511}$/u;
-const immutable=row=>[row.id,row.kind,row.target_keys,row.rejected_text,row.source_roles??null,row.owner_reason,row.source_uri,row.source_date];
+const immutable=(row,sourceDate=feedbackTimestamp(row.source_date))=>[row.id,row.kind,row.target_keys,row.rejected_text,row.source_roles??null,row.owner_reason,row.source_uri,sourceDate];
 export const explicitFeedbackContentHash=row=>hash(immutable(row));
+const feedbackHashMatches=(row,expected)=>explicitFeedbackContentHash(row)===expected
+  ||legacyFeedbackTimestamps(row.source_date).some(date=>hash(immutable(row,date))===expected);
 
 export function writingFeedbackKeys({contentKey,surface,period,eventType}={}) {
   const keys=['writing/all'];
@@ -85,7 +88,7 @@ export function resolveExplicitWritingFeedback(receipt,rows) {
       ||!/^[a-f0-9]{64}$/u.test(ref.contentHash)||!/^[a-f0-9]{64}$/u.test(ref.rejectedTextHash)))throw new Error('Saved writing feedback receipt is invalid.');
   const selected=receipt.selected.map(ref=>{
     const row=rows.find(row=>row.id===ref.id);
-    if(!row||row.kind!=='rejection'||row.version<ref.version||explicitFeedbackContentHash(row)!==ref.contentHash
+    if(!row||row.kind!=='rejection'||row.version<ref.version||!feedbackHashMatches(row,ref.contentHash)
       ||hash(row.rejected_text.trim())!==ref.rejectedTextHash||!row.target_keys.some(key=>receipt.targetKeys.includes(key)))throw new Error('Saved writing feedback changed or is unavailable.');
     return row;
   });

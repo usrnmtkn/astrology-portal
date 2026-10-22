@@ -65,6 +65,8 @@ try {
   const packet = selectStudioFeedback(await activeStudioFeedback(),key);
   assert(packet.prompt.includes(before)); assert(packet.prompt.includes(after));
   assert.equal(packet.receipt.selected[0].bodySha256,feedbackHash(active));
+  assert.equal(feedbackHash({...active,before_version:'2026-09-11 12:00:00+00',after_version:'2026-09-11 12:00:01+00'}),
+    feedbackHash({...active,before_version:t1,after_version:t2}),'Existing edit-capture hashes already normalize SQL/JSON timestamp syntax');
   assert(!JSON.stringify(packet.receipt).includes(before));
   assert.equal(selectStudioFeedback([active],'sky.placement.base.moon.cancer').receipt.selected.length,0);
   const shared = {...active,scope:'family'};
