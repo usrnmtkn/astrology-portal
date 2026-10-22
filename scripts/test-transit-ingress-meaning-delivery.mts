@@ -1,3 +1,4 @@
+import { ingressWriterFixture } from './fixtures/ingress-writer-context.mts';
 import assert from "node:assert/strict";
 import {
   generateSkyArticleTemplateSlots,
@@ -17,6 +18,7 @@ Object.assign(process.env, {
   WRITING_KERNEL_SKY_GLOBAL_ENABLE: "0", WRITING_KERNEL_SKY_CANARY_PERCENT: "0"
 });
 
+const ingress = await ingressWriterFixture();
 const fixtures: GenerateSkyArticleTemplateSlotsInput[] = [
   {
     templateKey: "authored/transit-aspect/neptune/jupiter/trine", templateBody: "",
@@ -39,9 +41,8 @@ const fixtures: GenerateSkyArticleTemplateSlotsInput[] = [
     requestedSlots: [{ name: "friendDraft" }]
   },
   {
-    templateKey: "sky/article-template/sun/libra", templateBody: "{{overviewBody}}",
-    planet: "sun", sign: "libra", facts: { planet: "sun", sign: "libra", articleFormat: "ingress-essay-v2" },
-    requestedSlots: [{ name: "overviewBody" }]
+    templateKey: "sky/article-template/sun/libra", templateBody: "{{articleBody}}",
+    planet: "sun", sign: "libra", ...ingress, requestedSlots: [{ name: "articleBody" }]
   }
 ];
 
@@ -95,7 +96,7 @@ try {
         assert(captured.includes("CURRENT PERSONAL TRANSIT READER-COPY RULE BUNDLE"));
       } else {
         const style=JSON.parse(captured.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
-        const ingressStyle = fixture.facts.articleFormat === 'ingress-essay-v2';
+        const ingressStyle = fixture.facts.articleFormat === 'ingress-essay-v3';
         assert.equal(style.reference.id, ingressStyle ? 'libra-ingress-voice-benchmark-20261021' : 'saturn-aries-voice-20261020');
         assert.equal(style.reference.textSha256, ingressStyle
           ? '2e25f72d7fddd6db112a4e8b3c8ff9fed8250844940a263742ab630d0a937fd8'
@@ -114,6 +115,12 @@ try {
         assert.equal(captured.split('NEUTRAL HELLENISTIC MEANING SUPPORT\n').length-1,1);
         if(fixture.eventType==='transit-house')assert(neutral.records.some((r:any)=>r.id==='HB-24'));
         else assert(!neutral.records.some((r:any)=>r.id==='HB-24'),'A sign cannot supply a house');
+        if (ingressStyle) {
+          assert(!captured.includes('GOVERNED KNOWLEDGE EVIDENCE'), 'The dedicated ingress retains collective meaning instead of a natal packet.');
+          assert(captured.includes('DATED INGRESS COVERAGE AND EVENT MEANING'));
+          assert(captured.includes('WRITER CONTRACT ingress-article/v4-2026-10-22'));
+          assert(captured.includes('ZODIAC SEASON MEANING SOURCES'));
+        } else {
         assert(captured.includes(`GOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`),
           `${provider}/${fixture.templateKey}: include the complete validated meaning packet`);
         assert.equal(captured.split("GOVERNED KNOWLEDGE EVIDENCE\n").length - 1, 1);
@@ -122,6 +129,7 @@ try {
         assert(captured.includes("Passing vocabulary checks alone does not establish voice"));
         assert(captured.includes("Develop emotional stakes and explain how a situation arose only when supported meaning"));
         assert(captured.includes("different factual and structural requirements"));
+        }
       }
       assert.doesNotMatch(captured, /Write in this order: placement or event named plainly/);
       assert.doesNotMatch(captured, /This guide sits above the voice spec/);
@@ -144,7 +152,7 @@ try {
   // Stop at the real planner/provider boundaries. An intentional error makes
   // it impossible for this check to generate prose or dispatch a review.
   const generic={contentKey:'sky/article-template/sun/libra',surface:'sky' as const,mode:'article' as const,
-    eventType:'sky-article-template-slots',facts:{planet:'sun',sign:'libra',articleFormat:'ingress-essay-v2'},
+    eventType:'sky-article-template-slots',facts:{planet:'sun',sign:'libra'},
     knowledgeIds:['sky-placement-sun-libra']};
   globalThis.fetch=async(url,init={})=>{
     const request=JSON.parse(String(init.body));

@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { isSkyIngressEssay } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { ownerPositiveEvidenceFromVoiceIndexBySourceIds } from "../../src/astro-writing/ownerPositiveEvidence.mjs";
 
 type VoiceEntry = {
@@ -11,7 +12,7 @@ type Target = { surface: string; eventType: string; contentKey: string; facts: R
 const words = (value: unknown) => new Set(JSON.stringify(value).toLowerCase().match(/[a-z][a-z'-]+/gu) ?? []);
 
 function sourceFamilies(input: Target) {
-  if (input.surface === 'sky' && input.facts.articleFormat === 'ingress-essay-v2') return ['sky-season'];
+  if (input.surface === 'sky' && isSkyIngressEssay(input.facts.articleFormat)) return ['sky-season'];
   const identity = `${input.surface} ${input.eventType} ${input.contentKey}`.toLowerCase();
   if (["synastry", "composite", "relationship", "friends"].includes(input.surface)
     || /synastry|bond-effect/u.test(identity)) return ["relationship-astrology"];
@@ -28,7 +29,7 @@ export function sharedGenerationOwnerExamples(index: { entries: VoiceEntry[] }, 
     throw new Error("PERSONAL_TRANSIT_WRITER_CONTEXT_REQUIRED: use the dedicated meaning and voice inputs; no article fallback is allowed.");
   }
   const families = sourceFamilies(input);
-  const ingressEssay = input.surface === "sky" && input.facts.articleFormat === "ingress-essay-v2";
+  const ingressEssay = input.surface === "sky" && isSkyIngressEssay(input.facts.articleFormat);
   const seasonEssay = ingressEssay && input.facts.planet === 'sun';
   const register = ingressEssay ? "current_sky_direct_address" : input.surface === "sky" ? "collective" : "second_person";
   // Field descriptions, template plumbing and revision directions are not the

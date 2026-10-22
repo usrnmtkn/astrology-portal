@@ -3,9 +3,9 @@ import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } f
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
 import { sharedGenerationOwnerExamples } from "./shared-generation-owner-examples.js";
 import { assertPersonalTransitWriterContext, type PersonalTransitWriterContext } from "./personal-transit-writer-context.js";
-import { TRANSIT_INGRESS_EDITORIAL_AUTHORITY } from "./transit-ingress-editorial-authority.js";
+import { TRANSIT_INGRESS_EDITORIAL_AUTHORITY, INGRESS_WRITER_CONTRACT } from "./transit-ingress-editorial-authority.js";
 import { GeneratedRowWriteConflict, confirmedGeneratedRowWrite } from "./generated-row-writes.js";
-import { isSkyIngressEssay, SKY_INGRESS_ESSAY_INSTRUCTIONS } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { isSkyIngressEssay, isSkyIngressArticle, SKY_INGRESS_ARTICLE_TEMPLATE } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { studioArticleWritingMemory } from './studio-article-memory.js';
 import type { SkySeasonMeaningContext } from './sky-season-meaning.js';
 import { validateSkyIngressWriting, ingressProviderSlots, assembleIngressFields, ingressWriterFacts, validateIngressTemplateReference, type SkyIngressWritingContext, type IngressTemplateReference } from './sky-ingress-writing.js';
@@ -5612,7 +5612,13 @@ async function reviseGeneratedContentWithOpenAI({
   };
 }
 
+function assertNotDatedIngressGeneralRequest(input: GenerateContentInput) {
+  if (input.surface === 'sky' && (isSkyIngressEssay(input.facts.articleFormat) || input.eventType === 'sky-ingress-essay'))
+    throw new Error('Dated ingresses require the dedicated current ingress writer, not the general article generator. No provider call was started.');
+}
+
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  assertNotDatedIngressGeneralRequest(input);
   const evidenceInput = input;
   if (isSynastryAspectInput(input)) input = prepareSynastrySourceInput(input);
   if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
@@ -5724,6 +5730,7 @@ function claudeToolInput(payload: {
 }
 
 export async function generateWithClaude(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  assertNotDatedIngressGeneralRequest(input);
   const evidenceInput = input;
   if (isSynastryAspectInput(input)) input = prepareSynastrySourceInput(input);
   if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
@@ -5888,29 +5895,45 @@ function skyArticleTemplateSlotPrompt(
   input: GenerateSkyArticleTemplateSlotsInput,
   approvedExamples: ApprovedExample[]
 ) {
+  if ((input.surface ?? 'sky') === 'sky' && isSkyIngressArticle(input.facts.articleFormat)) return [
+    `WRITER CONTRACT ${INGRESS_WRITER_CONTRACT.version}`,
+    RHETORICAL_WRITER_POLICY,
+    'TASK',
+    INGRESS_WRITER_CONTRACT.task,
+    INGRESS_WRITER_CONTRACT.craft,
+    INGRESS_WRITER_CONTRACT.layout,
+    'SOURCE ROLES',
+    INGRESS_WRITER_CONTRACT.sourceRoles,
+    'OUTPUT CONTRACT',
+    INGRESS_WRITER_CONTRACT.output,
+    bannedPhraseRules(),
+    'ASTROLOGY FACTS',
+    JSON.stringify(ingressWriterFacts(input.facts), null, 2),
+    hellenisticMeaningPrompt({ facts: input.facts, surface: 'sky', family: input.eventType ?? 'sky-article-template-slots' }),
+    ...(input.facts.retrogradeHistoryIncluded ? [
+      INGRESS_WRITER_CONTRACT.history
+    ] : []),
+    'REQUESTED TEMPLATE FIELDS', JSON.stringify(input.requestedSlots, null, 2),
+    'DATED ARTICLE OUTPUT LAYOUT', SKY_INGRESS_ARTICLE_TEMPLATE,
+  ].join('\n\n');
   const personalTransit = input.surface === "you" || (input.surface === "friends" && input.eventType === "bond-effect");
   const revisingArticle = input.templateContextRole === "existing-draft";
-  const datedIngress = (input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat) && Boolean(input.ingressWriting);
   const scopedEditorial = (input.surface === "you" && ["transit-aspect", "transit-house"].includes(input.eventType ?? ""))
     || ((input.surface ?? "sky") === "sky" && (isSkyIngressEssay(input.facts.articleFormat) || Boolean(input.seasonMeaning)));
   return [
     // Dated ingress already receives its scoped authority and Ghostwriter in
     // the system layer. Do not repeat the multi-surface transit authority here.
-    datedIngress ? "" : scopedEditorial ? TRANSIT_INGRESS_EDITORIAL_AUTHORITY
+    scopedEditorial ? TRANSIT_INGRESS_EDITORIAL_AUTHORITY
       : readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
     RHETORICAL_WRITER_POLICY,
     "",
     "TASK",
-    datedIngress
-      ? "Write one connected dated ingress article from the complete supplied meaning and voice sources, returning its prose in the requested fields. The fields are output containers, not separate writing jobs."
-      : personalTransit
+    personalTransit
       ? "Fill only the requested Personal Transit audience fields for one locked destination. Apply the owner's revision direction to existing fields when supplied."
       : revisingArticle
       ? "Write or revise only the requested article fields. When existing article prose is supplied, apply the owner's direction to that prose; otherwise write a new passage for the declared subject."
       : "Fill only the requested unfinished fields in an owner-authored Sky article template.",
-    datedIngress
-      ? "The dated output layout is fixed. Use the separately supplied complete saved article as structural reference and the complete eligible author passages for voice. Develop the article from the KB/Calendar meaning and current calculated events. Historical reference prose is not immutable wording for this new edition."
-      : personalTransit
+    personalTransit
       ? `Return reader-facing prose only. Do not save, approve, or publish.${
         typeof input.facts.placementScope === "string" && input.facts.placementScope.trim()
           ? ` ${input.facts.placementScope.trim()}`
@@ -5930,10 +5953,8 @@ function skyArticleTemplateSlotPrompt(
       : "Returned fields must not contain {{ or }} placeholders.",
     "Return one value for every requested field and no other fields.",
     "Do not invent dates, aspect hits, historical events, quotations, or astronomical facts.",
-    ...(!datedIngress || input.facts.retrogradeHistoryIncluded ? ["If retrogradeHistoryIncluded is true, retrogradeHistory supplies the previous and next complete retrograde cycles through its named sign, the exact previousCrossing of the current station degree when available, and separately the most recent path within its degree tolerance. Use full cycles, signTransitions and in-sign segments precisely. durationDays and daysInStationSign are exact elapsed days; civil calendar dates depend on the reference time zone. nextSameSign is a future calculation, not historical evidence. A null crossing means the previous same-sign cycle did not reach that degree. The degree reference is the current cycle's retrograde-start station. This is not proof of a prior ingress, aspect recurrence, repeated life experience, or world event. Do not invent historical context or imply causation. Missing matches are unknown outside the stated coverage."] : []),
-    datedIngress
-      ? "Use ASTROLOGY FACTS and the calculated ingress coverage plan for placements and timing. Its complete collective event-meaning sources, supplied ZODIAC SEASON MEANING SOURCES and applicable NEUTRAL HELLENISTIC MEANING SUPPORT establish interpretation. Eligible complete owner passages and owner-approved style references establish voice. The ingress uses temporary collective meaning, not a lifelong natal placement packet. Historical voice and Calendar passages cannot supply this year's facts."
-      : input.seasonMeaning
+    ...(["If retrogradeHistoryIncluded is true, retrogradeHistory supplies the previous and next complete retrograde cycles through its named sign, the exact previousCrossing of the current station degree when available, and separately the most recent path within its degree tolerance. Use full cycles, signTransitions and in-sign segments precisely. durationDays and daysInStationSign are exact elapsed days; civil calendar dates depend on the reference time zone. nextSameSign is a future calculation, not historical evidence. A null crossing means the previous same-sign cycle did not reach that degree. The degree reference is the current cycle's retrograde-start station. This is not proof of a prior ingress, aspect recurrence, repeated life experience, or world event. Do not invent historical context or imply causation. Missing matches are unknown outside the stated coverage."]),
+    input.seasonMeaning
       ? "Use only ASTROLOGY FACTS for placements and timing. Use GOVERNED KNOWLEDGE EVIDENCE, supplied ZODIAC SEASON MEANING SOURCES and applicable NEUTRAL HELLENISTIC MEANING SUPPORT for interpretation. The article or fixed template defines the editorial task, not additional factual authority. OWNER-APPROVED STYLE REFERENCE supplies voice only, with current owner rules and surface constraints retained. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority."
       : "Use only ASTROLOGY FACTS, GOVERNED KNOWLEDGE EVIDENCE, applicable NEUTRAL HELLENISTIC MEANING SUPPORT, and the supplied article or fixed template context for meaning. OWNER-APPROVED STYLE REFERENCE supplies voice only, with current owner rules and surface constraints retained. Neutral source notes cannot override calculated facts, governed meaning or owner writing authority.",
     "The result is an owner-review draft. It is not approved and cannot serve by itself.",
@@ -5962,24 +5983,19 @@ function skyArticleTemplateSlotPrompt(
     "REQUESTED TEMPLATE FIELDS",
     JSON.stringify(input.requestedSlots, null, 2),
     "",
-    datedIngress ? "DATED ARTICLE OUTPUT LAYOUT"
-      : personalTransit ? "EXISTING AUDIENCE COPY TO REVISE ONLY AS DIRECTED"
+    personalTransit ? "EXISTING AUDIENCE COPY TO REVISE ONLY AS DIRECTED"
       : revisingArticle ? "EXISTING ARTICLE CONTEXT" : "IMMUTABLE OWNER TEMPLATE CONTEXT",
     input.templateBody,
     "",
     "APPROVED TLDR ASTRO VOICE EXAMPLES",
-    datedIngress
-      ? "Use the complete owner-selected revised Libra article as the primary ingress voice benchmark, alongside the complete original author season passages and supporting approved Scorpio reference. Follow how meaning develops across sentences and paragraphs. Use the current meaning and calculated facts for this article; the voice references do not supply its wording, scenarios or historical astrology facts."
-      : "Use these only for voice, pacing, specificity, and sentence shape. Do not copy their astrology facts.",
+    "Use these only for voice, pacing, specificity, and sentence shape. Do not copy their astrology facts.",
     approvedExamplesPrompt(approvedExamples),
     "",
     "EXTRA VOICE NOTES",
     input.voiceNotes ?? "None.",
-    ...(input.surface !== "you" && input.surface !== "friends" && isSkyIngressEssay(input.facts.articleFormat)
-      ? [SKY_INGRESS_ESSAY_INSTRUCTIONS] : []),
     "",
     "BEFORE RETURNING",
-    ...(datedIngress ? ["Read the requested fields together in article order beside the complete revised Libra voice benchmark, original author season passages and supporting approved Scorpio reference. Check that the overview develops the season's meaning and each transit adds its own relevant facet, without repeated primers, detached aspect formulas or a fact-then-example rhythm. Preserve source-supported lightness and enjoyment as well as serious insight. This is an internal check in the same writing call, not another plan, judge or rewrite call."] : []),
+    ...([]),
     "Check that every requested key is present once, no unrequested key is present, and each string follows its field description and existing empty-value rules. Preserve only explicitly licensed reader variables. Keep facts within supplied coverage, preserve fixed template text outside the requested fields, and keep drafting notes outside reader values. Return only the structured result."
   ].join("\n");
 }
@@ -6015,6 +6031,11 @@ function skyArticleVoiceStyleContext(input: GenerateSkyArticleTemplateSlotsInput
 export async function generateSkyArticleTemplateSlots(
   input: GenerateSkyArticleTemplateSlotsInput
 ): Promise<GeneratedSkyArticleTemplateSlots> {
+  if ((input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat)) {
+    if (!isSkyIngressArticle(input.facts.articleFormat)) throw new Error('Generation for this ingress format is retired. Select Ingress article to use the current ingress writer. Saved text remains unchanged.');
+    if (!input.ingressWriting || input.ingressWriting.plan.articleFormat !== input.facts.articleFormat)
+      throw new Error('The complete calculated ingress context is required before writing. No provider call was started.');
+  }
   if (!input.requestedSlots.length) {
     throw new Error("No unfinished template slots were requested.");
   }
@@ -6023,6 +6044,8 @@ export async function generateSkyArticleTemplateSlots(
   const datedIngress = (input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat);
   const providerSlots = input.ingressWriting ? ingressProviderSlots(input.requestedSlots, input.ingressWriting) : input.requestedSlots;
   if (datedIngress && input.ingressWriting && providerSlots.length) validateIngressTemplateReference(input.ingressTemplateReference);
+  if (datedIngress && providerSlots.length && input.planet === 'sun' && !input.seasonMeaning)
+    throw new Error('Complete KB and Calendar season meaning is required by the current ingress writer. No provider call was started.');
   if (new Set(names).size !== names.length || names.some((name) => !/^[A-Za-z][A-Za-z0-9]*$/u.test(name))) {
     throw new Error("Template slot names must be unique alphanumeric identifiers.");
   }
@@ -6049,8 +6072,18 @@ export async function generateSkyArticleTemplateSlots(
       ? [`GOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`] : [])
   ].join("\n\n");
   // Private corrections must not enter prompt-shadow artifacts or row snapshots.
+  const narrativeIngress = datedIngress && isSkyIngressArticle(input.facts.articleFormat);
   const prompt = [transitContext?.prompt ?? publicPrompt, datedIngress ? input.ingressTemplateReference?.prompt : undefined, input.seasonMeaning?.prompt, memory?.prompt, writingFeedback.prompt,
-    input.ingressWriting?.prompt].filter(Boolean).join("\n\n");
+    input.ingressWriting?.prompt,
+    // Finish the narrative request with the complete positive prose sources,
+    // rather than a late instruction to produce independent technical blocks.
+    ...(narrativeIngress ? [
+      'APPROVED TLDR ASTRO VOICE EXAMPLES', approvedExamplesPrompt(approvedExamples),
+      approvedVoiceStylePrompt(skyArticleVoiceStyleContext(input)),
+      'CURRENT OWNER DIRECTION', input.voiceNotes ?? 'Use the supplied approved voice references.',
+      'BEFORE RETURNING',
+      INGRESS_WRITER_CONTRACT.beforeReturning
+    ] : [])].filter(Boolean).join("\n\n");
   const writingReceipt = transitContext ? { ...transitContext.receipt,
     contextSha256: transitContext.receipt.promptSha256,
     promptSha256: createHash("sha256").update(prompt).digest("hex") } : undefined;

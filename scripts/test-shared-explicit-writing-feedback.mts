@@ -1,3 +1,4 @@
+import { ingressWriterFixture } from './fixtures/ingress-writer-context.mts';
 import assert from 'node:assert/strict';
 import {generateWithOpenAI,generateWithClaude,generateSkyArticleTemplateSlots} from '../api/_lib/content-generation.js';
 import {buildPersonalTransitWriterContext} from '../api/_lib/personal-transit-writer-context.js';
@@ -6,6 +7,7 @@ import {syntheticTransitSources} from './fixtures/personal-transit-writing.mjs';
 Object.assign(process.env,{NODE_ENV:'test',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic',
  SUPABASE_URL:'https://writing-feedback.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',STUDIO_MEMORY_FEEDBACK_ENABLED:'true',
  WRITING_KERNEL_GOVERNED_SURFACES:'',WRITING_KERNEL_SKY_GLOBAL_ENABLE:'0',WRITING_KERNEL_SKY_CANARY_PERCENT:'0'});
+const ingress = await ingressWriterFixture();
 const correction=(id:string,target:string)=>({id,version:1,status:'active',kind:'rejection',target_keys:[target],
  rejected_text:`PRIVATE rejected synthetic passage ${id}.`,owner_reason:`PRIVATE exact owner reason ${id}.`,source_roles:null,
  source_uri:'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',source_date:'2026-10-21T05:00:00Z'});
@@ -47,8 +49,8 @@ try{
  const fixtures=[{templateKey:contact.contentKey,templateBody:'',planet:'neptune',sign:'base',surface:'you' as const,eventType:'transit-aspect',
   knowledgeIds:['transit-aspect/neptune/jupiter/trine'],facts:{transiting:'neptune',natal:'jupiter',aspect:'trine',housesExcluded:true,signsExcluded:true},
   requestedSlots:[{name:'youDraft'},{name:'friendDraft'}],personalTransitContext},
- {templateKey:'sky/article-template/sun/libra',templateBody:'{{overviewBody}}',planet:'sun',sign:'libra',
-  facts:{planet:'sun',sign:'libra',articleFormat:'ingress-essay-v2'},requestedSlots:[{name:'overviewBody'}]}];
+ {templateKey:'sky/article-template/sun/libra',templateBody:'{{articleBody}}',planet:'sun',sign:'libra',
+  ...ingress, requestedSlots:[{name:'articleBody'}]}];
  for(const fixture of fixtures)for(const provider of ['openai','claude'] as const){
   sent='';await assert.rejects(generateSkyArticleTemplateSlots({...fixture,provider,writingMemory:null}),/synthetic writer boundary stop/u);
   assert(sent.includes(rows[0].owner_reason));assert(sent.includes(rows[fixture.surface==='you'?2:3].rejected_text));

@@ -5,14 +5,12 @@ const owner = { id: 'preview-owner', email: 'owner@example.test', app_metadata: 
 const source = { id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: 'sky/article-template/sun/libra',
   event_type: 'sky-article-template', status: 'REVIEWED', lane: 'reference', review_state: null,
   body: 'Complete original synthetic template. The original final sentence is preserved.', source_snapshot: { review_status: 'approved' } };
-const facts = { planet: 'sun', sign: 'libra', articleFormat: 'ingress-essay-v2', slotValues: {
+const facts = { planet: 'sun', sign: 'libra', articleFormat: 'ingress-essay-v3', slotValues: {
   articleTitle: 'Libra Season 2026', when: 'September 22, 2026 at 8:05 PM ET to October 23, 2026 at 5:37 AM ET'
 } };
-const values = { what: 'Synthetic season meaning.', takeaway: 'Synthetic specific takeaway.', overviewHeading: 'Synthetic overview',
-  overviewBody: 'Complete synthetic opening paragraph. Its second sentence develops the same thought.',
-  majorTransitSections: '## Synthetic dated transit\n\nSynthetic exact degrees and motion.\n\nThe complete transit interpretation stays here. This is its second sentence.',
-  otherDatesSection: '## Other dates\n\n- Synthetic additional calculated event.', closingHeading: 'Synthetic close',
-  closingBody: 'The synthetic close develops its thought. The complete final sentence stays in this preview.' };
+const values = { what: 'Synthetic season meaning.', takeaway: 'Synthetic specific takeaway.',
+  articleBody: 'Complete synthetic opening paragraph. Its second sentence develops the same thought.\n\nThe complete transit interpretation stays here. This is its second sentence.\n\nThe synthetic close develops its thought. The complete final sentence stays in this preview.',
+  otherDatesSection: '## Key dates\n\n- Synthetic additional calculated event.' };
 
 async function prepare(page: Page, status = 200, expired = false) {
   await page.addInitScript(({ token, owner, expired }) => {
@@ -35,7 +33,7 @@ async function prepare(page: Page, status = 200, expired = false) {
       observed.headers.push(route.request().headers()['x-content-admin-session'] ?? '');
       expect(route.request().headers()['x-content-generation-secret']).toBeUndefined();
       expect(route.request().postDataJSON()).toEqual({ templateId: source.id, referenceDate: '2026-10-21',
-        format: 'ingress-essay-v2', provider: 'openai', expectedModel: 'gpt-5.6-sol', existingSlotValues: {}, includeRetrogradeHistory: false });
+        format: 'ingress-essay-v3', provider: 'openai', expectedModel: 'gpt-5.6-sol', existingSlotValues: {}, includeRetrogradeHistory: false });
       const generation = { model: 'gpt-5.6-sol', responseId: 'synthetic-preview-response', providerCalls: 1,
         generationMetadata: { evidencePacket: { approvedVoiceStyle: { id: 'synthetic-approved-benchmark', textSha256: 'synthetic-exact-hash' } } } };
       if (status === 422) await route.fulfill({ status, json: { ok: false, error: 'Synthetic returned candidate needs review.', rejectedGeneration: { ...generation, slotValues: values } } });
@@ -82,7 +80,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(draft).toHaveValue(/^# Libra Season 2026/);
     await expect(draft).toHaveValue(/Complete synthetic opening paragraph/);
     await expect(draft).toHaveValue(/The complete transit interpretation stays here/);
-    await expect(draft).toHaveValue(/The complete final sentence stays in this preview\.$/);
+    await expect(draft).toHaveValue(/The complete final sentence stays in this preview\./);
+    await expect(draft).toHaveValue(/## Key dates\n\n- Synthetic additional calculated event\.$/);
+    await expect(draft).not.toHaveValue(/## Summary|Synthetic season meaning|Synthetic specific takeaway/);
     await expect(draft).toHaveAttribute('readonly', '');
     await expect(preview).toContainText('Not saved or published.');
     await expect(preview.getByRole('button', { name: /save|publish/i }).filter({ hasText: /^(Save|Publish)/ })).toHaveCount(0);
@@ -109,7 +109,7 @@ for (const status of [401, 409, 500, 422]) test(`preview preserves returned cand
   await preview.getByRole('button', { name: 'Preview without saving', exact: true }).click();
   await expect(preview.getByRole('alert')).toBeVisible();
   if (status === 401) await expect(preview.getByRole('link', { name: 'Sign in as owner' })).toBeVisible();
-  if (status === 422) await expect(preview.getByLabel('Unsaved ingress draft')).toHaveValue(/The complete final sentence stays in this preview\.$/);
+  if (status === 422) await expect(preview.getByLabel('Unsaved ingress draft')).toHaveValue(/The complete final sentence stays in this preview\./);
   else await expect(preview.getByLabel('Unsaved ingress draft')).toHaveCount(0);
   await page.waitForTimeout(1300);
   expect(observed.generationCalls).toBe(1);

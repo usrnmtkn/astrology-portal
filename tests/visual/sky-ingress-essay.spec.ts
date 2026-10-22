@@ -1,3 +1,4 @@
+import { ingressArticleFields } from '../../api/_lib/transit-ingress-editorial-authority.ts';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
@@ -6,8 +7,11 @@ import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { skyIngressEssayFields } from '../../apps/web/src/content/skyIngressEssay.mjs';
 
-for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
- test(`Ingress essay draft saves, reopens and compiles without a horoscope companion at ${width} ${theme}`, async ({ page }) => {
+for (const format of ['ingress-essay-v2', 'ingress-essay-v3']) for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
+ const narrative = format === 'ingress-essay-v3';
+ const fields = narrative ? ingressArticleFields() : skyIngressEssayFields;
+ const finalField = narrative ? 'articleBody' : 'closingBody';
+ test(`Ingress essay draft saves, reopens and compiles without a horoscope companion at ${width} ${theme} ${format}`, async ({ page }) => {
   await page.clock.install();
   const temporary = mkdtempSync(path.join(tmpdir(), 'ingress-browser-'));
   const fixture = path.join(temporary, 'rows.json');
@@ -44,6 +48,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    }, answer: async (route, url) => {
     if (url.pathname === '/api/admin/sky-article-template-slots') {
      const request = route.request().postDataJSON();
+     expect(request.format).toBe('ingress-essay-v3');
      expect(request.voiceNotes).toBe(writingDirection);
      expect(request.existingSlotValues.overviewBody).toBeUndefined();
      generationCalls += 1;
@@ -64,9 +69,9 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
      return true;
     }
     if (url.pathname !== '/api/admin/sky-article-facts') return false;
-    expect(url.searchParams.get('format')).toBe('ingress-essay-v2');
-    articleFacts = { schema: 'tldrastro-sky-article-engine-facts-v1', articleFormat: 'ingress-essay-v2',
-      templateFields: skyIngressEssayFields,
+    expect(url.searchParams.get('format')).toBe(format);
+    articleFacts = { schema: 'tldrastro-sky-article-engine-facts-v1', articleFormat: format,
+      templateFields: fields,
       calculationSource: 'synthetic browser fixture', generatedAt: '2026-10-09T12:00:00Z', referenceTimeZone: 'America/New_York',
       planet: 'sun', sign: 'libra', entryYear: 2026, validFrom: '2026-09-22', validTo: '2026-10-23',
       transitStartInstant: '2026-09-23T00:05:14Z', transitEndInstant: '2026-10-23T09:37:57Z',
@@ -79,7 +84,8 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(page.getByLabel('Search Sky write-ups')).toHaveValue('sky/article-template/sun/libra');
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
    const editor = page.getByRole('dialog');
-   await expect(editor.getByLabel('Sky article format')).toHaveValue('ingress-essay-v2');
+   await expect(editor.getByLabel('Sky article format')).toHaveValue('ingress-essay-v3');
+   if (!narrative) await editor.getByLabel('Sky article format').selectOption(format);
    const loadFacts = editor.getByRole('button', { name: 'Load calculated facts', exact: true });
    await expect(loadFacts).toBeEnabled();
    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
@@ -87,7 +93,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    const loadedNotice = editor.getByRole('status').filter({hasText: /^Loaded the calculated/});
    await expect(loadedNotice).toBeVisible();
    await expect(editor.getByLabel('Template field when', { exact: true })).toHaveValue(/8:05 PM ET/);
-   await expect(editor.getByText(skyIngressEssayFields.find(field => field.name === 'overviewBody')!.description, { exact: true })).toBeVisible();
+   await expect(editor.getByText(fields.find(field => field.name === (narrative ? 'articleBody' : 'overviewBody'))!.description, { exact: true })).toBeVisible();
    await editor.getByLabel('Sky article writing direction').fill(writingDirection);
    await page.clock.runFor(1_000);
    await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
@@ -103,14 +109,20 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await page.clock.resume();
    await page.reload();
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await editor.getByLabel('Sky article format').selectOption(format);
    await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
    await expect(editor.getByLabel('Sky article writing direction')).toHaveValue(writingDirection);
+   const generate = editor.getByRole('button', { name: 'Generate unfinished fields', exact: true });
+   const textStyle = (el: Element) => { const s = getComputedStyle(el); return { font: s.fontFamily, size: s.fontSize, weight: s.fontWeight, leading: s.lineHeight, tracking: s.letterSpacing, casing: s.textTransform }; };
+   expect(await generate.evaluate(textStyle)).toEqual(await loadFacts.evaluate(textStyle));
+   if (narrative) {
    await editor.getByRole('button', { name: 'Generate unfinished fields', exact: true }).click();
    const builder = editor.getByRole('region', { name: 'Create an article edition from this template', exact: true });
    await expect(builder.getByRole('alert')).toHaveText('/api/admin/sky-article-template-slots failed with HTTP 500: Synthetic writer failure remains available for diagnosis.');
    await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
    await page.reload();
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await editor.getByLabel('Sky article format').selectOption(format);
    await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
    await expect(builder.getByRole('alert')).toHaveText('/api/admin/sky-article-template-slots failed with HTTP 500: Synthetic writer failure remains available for diagnosis.');
    expect(generationCalls).toBe(1); // Reload must never replay a paid request.
@@ -122,6 +134,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
    await page.reload();
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await editor.getByLabel('Sky article format').selectOption(format);
    await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
    await editor.getByText('Returned draft needs correction', { exact: true }).click();
    await expect(editor.getByLabel('Returned draft what', { exact: true })).toHaveValue('Synthetic rejected draft; exact original.');
@@ -134,17 +147,23 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await expect(builder.getByRole('alert')).toHaveCount(0);
    await expect(editor.getByLabel('Template field what', { exact: true })).toHaveValue('Synthetic generated what.', { timeout: 20_000 });
    expect(generationCalls).toBe(3);
-   for (const field of ['what', 'takeaway', 'overviewHeading', 'overviewBody', 'majorTransitSections', 'closingHeading', 'closingBody']) {
+   } else {
+    await expect(generate).toBeDisabled();
+    expect(generationCalls).toBe(0);
+    await expect(editor).toContainText('Saved ingress layouts can be edited and compiled.');
+   }
+   for (const field of narrative ? ['what', 'takeaway', 'articleBody'] : ['what', 'takeaway', 'overviewHeading', 'overviewBody', 'majorTransitSections', 'closingHeading', 'closingBody']) {
     await editor.getByLabel(`Template field ${field}`, { exact: true }).fill(`Synthetic ${field} opening.\n\nSynthetic ${field} final sentence.`);
    }
    await editor.getByLabel('Sky article edition TL;DR').fill('Synthetic explicit summary.');
    await expect(editor.getByText('Draft saved automatically', { exact: true })).toBeVisible();
    await page.reload();
    await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await editor.getByLabel('Sky article format').selectOption(format);
    await editor.getByRole('button', { name: 'Load calculated facts', exact: true }).click();
    await expect(editor.getByLabel('Sky article writing direction')).toHaveValue(writingDirection);
-   await expect(editor.getByText('Drafted 1 field with fixture / isolated. Review every field before compilation.', { exact: true })).toBeVisible();
-   await expect(editor.getByLabel('Template field closingBody', { exact: true })).toHaveValue('Synthetic closingBody opening.\n\nSynthetic closingBody final sentence.');
+   if (narrative) await expect(editor.getByText('Drafted 1 field with fixture / isolated. Review every field before compilation.', { exact: true })).toBeVisible();
+   await expect(editor.getByLabel(`Template field ${finalField}`, { exact: true })).toHaveValue(`Synthetic ${finalField} opening.\n\nSynthetic ${finalField} final sentence.`);
    await expect(editor.getByRole('button', { name: 'Compile edition draft', exact: true })).toBeEnabled();
    await editor.getByRole('button', { name: 'Compile edition draft', exact: true }).click();
    await expect.poll(async () => (await call({ method: 'rows' })).some((row: any) => row.event_type === 'sky-article-edition')).toBe(true);
@@ -157,9 +176,9 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    expect(workspace.sections.skyArticleWorkspace.writingDirection).toBe(writingDirection);
    expect(workspace.sections.skyArticleWorkspace.generationError).toBeNull();
    expect(workspace.sections.skyArticleWorkspace.rejectedGeneration).toBeNull();
-   expect(workspace.sections.skyArticleWorkspace.slotGeneration.responseId).toBe('synthetic-response');
+   if (narrative) expect(workspace.sections.skyArticleWorkspace.slotGeneration.responseId).toBe('synthetic-response');
    expect(edition.sections.skyArticleEdition.housePassages).toEqual([]);
-   expect(edition.body).toContain('Synthetic closingBody final sentence.');
+   expect(edition.body).toContain(`Synthetic ${finalField} final sentence.`);
    expect(edition.body).not.toContain('Synthetic rejected draft');
    expect(rows.find((row: any) => row.content_key === 'sky/article-template/sun/libra').body).toBe('# Immutable synthetic owner article\n\n{{entryDate}}');
    const compiled = editor.getByRole('region', { name: 'Compiled Sky article edition', exact: true });
@@ -186,10 +205,10 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await page.getByLabel('Search Sky write-ups').fill(edition.content_key);
    await page.getByRole('row').filter({ hasText: edition.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
    await expect(compiled).toBeVisible();
-   await expect(editor.getByLabel('Sky article general copy', { exact: true })).toHaveValue(/Synthetic closingBody final sentence\./);
+   await expect(editor.getByLabel('Sky article general copy', { exact: true })).toHaveValue(new RegExp(`Synthetic ${finalField} final sentence\\.`));
    expect(dialogs).toEqual([]);
    expect(errors).toEqual([]);
-   await editor.screenshot({ path: `test-results/sky-ingress-essay-${width}-${theme}.png` });
+   await editor.screenshot({ path: `test-results/sky-ingress-essay-${width}-${theme}-${format}.png` });
   } finally { child.kill(); rmSync(temporary, { recursive: true, force: true }); }
  });
 }

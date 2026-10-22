@@ -146,7 +146,7 @@ function templateWriterRequiresMeaning(input) {
   // migration canary. This does not enable other generation routes or serving.
   if (input?.mode !== "article" || input?.sourceSnapshot?.contentType !== "sky-article-template-slots") return false;
   return (input.surface === "you" && ["transit-aspect", "transit-house"].includes(input.eventType))
-    || (input.surface === "sky" && input.facts?.articleFormat === "ingress-essay-v2");
+    || (input.surface === "sky" && ["ingress-essay-v2", "ingress-essay-v3"].includes(input.facts?.articleFormat));
 }
 
 function reportEvidenceContract(input) {

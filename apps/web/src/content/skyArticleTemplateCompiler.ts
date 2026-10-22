@@ -1,4 +1,4 @@
-import { isSkyIngressEssay, SKY_INGRESS_ESSAY_TEMPLATE, type SkyArticleFormat } from "./skyIngressEssay.mjs";
+import { isSkyIngressEssay, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
 
 export const SKY_ARTICLE_TEMPLATE_SCHEMA = "tldrastro-sky-article-template-v1";
 export const SKY_ARTICLE_EDITION_SCHEMA = "tldrastro-sky-article-edition-v2";
@@ -383,11 +383,11 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
   const ingress = isSkyIngressEssay(input.format);
   if (ingress) {
     const optional = new Set(["priorOccurrenceSection", "otherDatesSection"]);
-    const missing = skyArticleTemplatePlaceholders(SKY_INGRESS_ESSAY_TEMPLATE).filter(({ name }) => !optional.has(name) && !input.slotValues[name]?.trim());
+    const missing = skyArticleTemplatePlaceholders(skyIngressTemplateForFormat(input.format)).filter(({ name }) => !optional.has(name) && !input.slotValues[name]?.trim());
     if (missing.length) throw new Error(`Ingress essay requires complete fields: ${missing.map(({ name }) => name).join(", ")}.`);
     // The companion remains separate. Never append inherited house copy merely
     // because the selected source template contains an older horoscope section.
-    input = { ...input, templateBody: SKY_INGRESS_ESSAY_TEMPLATE, templateSections: undefined,
+    input = { ...input, templateBody: skyIngressTemplateForFormat(input.format), templateSections: undefined,
       housePassages: [], aspectPassages: [], slotValues: {
         priorOccurrenceSection: "", otherDatesSection: "", ...input.slotValues
       } };
