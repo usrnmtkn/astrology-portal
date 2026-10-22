@@ -1,6 +1,21 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 
+export function horoscopeRequestMeaningPassages(input) {
+  const passages=[];
+  const visit=value=>{
+    if(Array.isArray(value))return value.forEach(visit);
+    if(!value||typeof value!=='object')return;
+    if(value.temporaryMeaning?.id&&typeof value.temporaryMeaning.text==='string')passages.push(value.temporaryMeaning);
+    Object.values(value).forEach(visit);
+  };
+  for(const label of ['GOVERNED PERIOD DEVELOPMENTS','PRIVATE MONTHLY SYNTHESIS']){
+    const match=input.match(new RegExp(`${label}\n([^\n]+)\n\n`,'u'));
+    if(match)visit(JSON.parse(match[1]));
+  }
+  return passages;
+}
+
 export function resolveHoroscopeRequestPassage(input,passage) {
   if(!passage.completePassageRef)return passage.text;
   const match=input.match(/DAILY COMPLETE SOURCE PASSAGES\n([^\n]+)\n\n/u);
@@ -42,8 +57,14 @@ export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
     assert(passages.length>=(input.includes('SCOPED REJECTED OWNER EVIDENCE')?1:3)&&passages.length<=5);
     assert.equal(new Set(passages.map(p=>p.textSha256)).size,passages.length);
     for(const p of passages){
-      assert.equal(createHash('sha256').update(p.text).digest('hex'),p.textSha256);
-      assert.equal(input.split(JSON.stringify(p.text).slice(1,-1)).length-1,1,'Complete selected source appears once');
+      let text=p.text;
+      if(p.profilePassageRef){
+        assert.equal(p.profilePassageRef,'voiceGuidance/COMPLETE OWNER PREFERRED REVISION');
+        text=input.match(/BEGIN COMPLETE OWNER PREFERRED REVISION\s*\n([\s\S]*?)\nEND COMPLETE OWNER PREFERRED REVISION/u)?.[1];
+        assert(text,'Complete bounded profile passage resolves');
+      }
+      assert.equal(createHash('sha256').update(text).digest('hex'),p.textSha256);
+      assert.equal(input.split(p.profilePassageRef?text:JSON.stringify(text).slice(1,-1)).length-1,1,'Complete selected source appears once');
     }
     assert(!input.includes('SHARED FIVE-ROLE EVIDENCE\n'),'Full retrieval packet stays outside drafting');
     assert(!input.includes('CURRENT OWNER CORRECTIONS\n'),'Correction history stays outside drafting');
@@ -55,6 +76,7 @@ export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
     const match=input.match(new RegExp(`${label}\\n([^\\n]+)\\n\\n`,'u'));
     if(match)for(const passage of JSON.parse(match[1]))passages.set(passage.id,passage);
   }
+  for(const p of horoscopeRequestMeaningPassages(input))passages.set(p.id,p);
   const entries=new Map(packet.entries.map(e=>[e.id,e]));
   assert.equal(entries.size,packet.entries.length,'Evidence identities are unique');
   const resolve=(e,visited=new Set())=>{
@@ -71,5 +93,6 @@ export function assertHoroscopeRequestEvidence(input, additionalLabels=[]) {
   const texts=packet.entries.filter(e=>e.text).map(e=>e.text);
   assert.equal(new Set(texts).size,texts.length,'All shared evidence text is serialized once');
   for(const e of packet.entries)assert(resolve(e).trim());
+  for(const e of packet.supportingArgumentCandidates??[])assert(resolve(e).trim());
   for(const p of passages.values())assert.equal(input.split(JSON.stringify(p.text).slice(1,-1)).length-1,1,'Complete owner source occurs once, byte-for-byte');
 }

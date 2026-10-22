@@ -1,5 +1,6 @@
 import {approvedVoiceStyleReference,renderApprovedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {createHash} from 'node:crypto';
+import {seasonalProfilePassageReferences} from './seasonalRequestEvidence.mjs';
 import {buildHoroscopePromptVariables} from './horoscopePromptVariables.mjs';
 import {horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {SEASONAL_PLAN_SLOT,validateSeasonalDevelopmentPlan,selectSeasonalPlanFacts} from './seasonalDevelopmentPlan.mjs';
@@ -83,7 +84,10 @@ export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutlin
   const primary = passages.filter(p => p.role === 'primary owner voice');
   const supporting = passages.filter(p => p.role !== 'primary owner voice');
   const factsText = `GOVERNED SEASONAL FACTS\n${JSON.stringify(developmentPlan?selectSeasonalPlanFacts(catalog,developmentPlan):catalog)}`;
-  const variables = buildHoroscopePromptVariables({writingProfile,context,primaryPassages:primary,supportingPassages:supporting,factsText});
+  const selectedPrimary=seasonalProfilePassageReferences(primary,writingProfile.profile,writingProfile.profile.voiceGuidance);
+  const selectedSupporting=seasonalProfilePassageReferences(supporting,writingProfile.profile,writingProfile.profile.voiceGuidance);
+  const variables = buildHoroscopePromptVariables({writingProfile,context,primaryPassages:selectedPrimary,supportingPassages:selectedSupporting,factsText});
+  if([...selectedPrimary,...selectedSupporting].some(p=>p.profilePassageRef)&&!variables.prompt.includes(writingProfile.profile.voiceGuidance))throw new Error('Complete Seasonal profile passage is missing from the rendered instructions.');
   const label = overview ? horoscopeOverviewHeadline(engineFacts.window) : `${horoscopeSignLabel(engineFacts.risingSign)} & ${horoscopeSignLabel(engineFacts.risingSign)} Rising`;
   return [
     'SURFACE\nhoroscopes\nCONTENT FAMILY\nhoroscope\nREGISTER\nsecond_person',
@@ -91,8 +95,9 @@ export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutlin
     `CURRENT SEASONAL WRITING INSTRUCTIONS\n${variables.prompt}`,
     `AUDIENCE\n${overview ? 'One shared introduction for all signs. No personal houses or biography.' : `One ${engineFacts.risingSign} rising forecast using the supplied whole-sign houses.`}`,
     developmentPlan ? `COMPACT SEASONAL DEVELOPMENT PLAN\n${JSON.stringify(developmentPlan)}` : `OWNER-APPROVED WRITING PLAN\n${JSON.stringify(argumentOutline)}\n\nCOMPACT SEASONAL DEVELOPMENT PLAN\n${SEASONAL_PLAN_SLOT}`,
-    ...(!variables.uses('primaryOwnerVoiceSources') ? [`SELECTED COMPLETE OWNER PASSAGES\n${JSON.stringify(primary)}`] : []),
-    ...(!variables.uses('supportingOwnerVoiceSources') && supporting.length ? [`SELECTED SUPPORTING OWNER PASSAGE\n${JSON.stringify(supporting)}`] : []),
+    ...(!variables.uses('primaryOwnerVoiceSources') ? [`SELECTED COMPLETE OWNER PASSAGES\n${JSON.stringify(selectedPrimary)}`] : []),
+    ...(!variables.uses('supportingOwnerVoiceSources') && supporting.length ? [`SELECTED SUPPORTING OWNER PASSAGE\n${JSON.stringify(selectedSupporting)}`] : []),
+    ...([...selectedPrimary,...selectedSupporting].some(p=>p.profilePassageRef)?['PROFILE PASSAGE REFERENCES\nA profilePassageRef names the complete text between BEGIN COMPLETE OWNER PREFERRED REVISION and END COMPLETE OWNER PREFERRED REVISION in the unchanged Voice guidance above. Read that full passage with the selected source identity, hash and role. Sharing text transfers no factual authority or approval.']:[]),
     ...(!variables.uses('governedFacts') ? [factsText] : []),
     ...(meaningSupport?.records?.length?[`NEUTRAL HELLENISTIC MEANING SUPPORT\n${JSON.stringify(meaningSupport)}`]:[]),
     ...(approvedStyleReference?[renderApprovedVoiceStyleReference(approvedStyleReference)]:[]),

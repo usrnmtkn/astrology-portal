@@ -6,6 +6,7 @@ import {createEvidenceRegistry,digest} from './editorial/evidenceRegistry.mjs';
 import {latest} from './editorial/controller.mjs';
 import {object,text,list,evaluationSchema,evaluationInstructions} from './editorial/evaluation.mjs';
 import {resolveExplicitWritingFeedback} from './explicitWritingFeedback.mjs';
+import {seasonalManifestInput} from './seasonalRequestEvidence.mjs';
 
 export const SEASONAL_EDITORIAL_WORKFLOW='seasonal-editorial/v2';
 export const seasonalEditorialModels=()=>Object.fromEntries(['mechanism','plan','prose','plan_review','voice','meaning'].map(stage=>[stage,
@@ -101,7 +102,7 @@ export function seasonalEditorialAdapter(input) {
       const ownerFeedback=input.explicitWritingFeedback?resolveExplicitWritingFeedback(input.explicitWritingFeedback.receipt,input.explicitWritingFeedback.rows):'';
       let schema,prompt,instructions,role;
       const feedback=latest(run,'routing');
-      const base={audience:facts.audience,governedFacts:facts,evidenceManifest:manifest,
+      const base={audience:facts.audience,governedFacts:facts,evidenceManifest:seasonalManifestInput(manifest,facts),
         ...(input.template.seasonalPreparation.meaningSupport?{neutralMeaningSupport:input.template.seasonalPreparation.meaningSupport}:{})};
       if(stage==='mechanism'){
         schema=mechanismSchema(facts);role='SEASONAL_MECHANISM';
@@ -121,10 +122,11 @@ export function seasonalEditorialAdapter(input) {
         const candidate=scope==='plan'?{mechanism,plan}:latest(run,'candidate');
         schema=evaluationSchema(scope,manifest);role=stage==='plan_review'?'SEASONAL_PLAN_REVIEWER':stage==='voice'?'SEASONAL_VOICE_REVIEWER':'SEASONAL_MEANING_REVIEWER';
         instructions=evaluationInstructions(scope);
-        prompt=JSON.stringify({audience:facts.audience,candidate,candidateHash:digest(candidate),manifestHash:manifest.hash,evidenceManifest:manifest,
+        prompt=JSON.stringify({audience:facts.audience,candidate,candidateHash:digest(candidate),manifestHash:manifest.hash,evidenceManifest:scope==='voice'?manifest:seasonalManifestInput(manifest,facts),
           ...(['plan','voice'].includes(scope)&&ownerFeedback?{currentOwnerWritingCorrections:ownerFeedback}:{}),
           ...(scope==='voice'?{approvedStyleReference:input.template.seasonalPreparation.approvedStyleReference??null}:{governedFacts:facts,mechanism,...(scope==='meaning'?{plan}:{})})});
       }
+      if(stage!=='voice')instructions+=' A serializedJsonRef resolves to JSON.stringify of the named complete object in this request. Expand it before checking the original manifest hash; all source roles and authority remain unchanged.';
       return {stage,role,input:prompt,schema,config,instructions:responses.governedInstructionsForRole(role,{taskInstructions:instructions,surface:'horoscopes',family:'horoscope'})};
     },
     validate(stage,value,run){
