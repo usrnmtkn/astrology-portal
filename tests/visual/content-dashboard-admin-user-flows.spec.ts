@@ -1,3 +1,4 @@
+import { natalEditorialDraftForKey, natalEditorialIdentity, natalSectPlanets, type NatalEditorialSelection } from "../../apps/admin/src/natalEditorialLibrary";
 import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
 import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
 import { studioApiStore } from "../helpers/studio-api-store";
@@ -9253,4 +9254,152 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
     }
     expect(writes).toEqual([]);
   } finally { api.close(); }
+});
+
+const natalEditorialSelections: NatalEditorialSelection[] = (["you", "they"] as const).flatMap(audience => [
+  ...["introduction", ...Array.from({ length: 12 }, (_, index) => String(index + 1))].map(passage => ({ area: "rulership" as const, audience, passage, sect: "day" as const })),
+  ...(["day", "night"] as const).flatMap(sect => ["overview", ...natalSectPlanets].map(passage => ({ area: "day-night" as const, audience, passage, sect })))
+]);
+const natalEditorialFixtures = natalEditorialSelections.map((selection, index) => {
+  const draft = natalEditorialDraftForKey(natalEditorialIdentity(selection).contentKey)!;
+  return { id: `natal-editorial-${index}`, content_key: draft.contentKey, headline: draft.headline, surface: "natal", mode: "in_depth", status: "DRAFT", lane: "serving", review_state: "EDITORIAL_REVIEW_REQUIRED",
+    body: `${selection.audience === "they" ? "{{ownerName}}" : "You"} opening fixture ${index}.\n\nComplete final fixture ${index}.`, summary: "", sections: {}, source_snapshot: draft.sourceSnapshot, facts: draft.facts,
+    event_type: draft.eventType, block_type: "essay", updated_at: now, created_at: now };
+});
+
+for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["dark", 1440]] as const) test(`Natal editorial library saves rulership and day-night passages ${theme} ${width}`, async ({ page }) => {
+  const writes: Record<string, unknown>[] = [];
+  await seedAdminApi(page, { generatedRows: natalEditorialFixtures, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write.payload); } });
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+  await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart");
+  const styles = (element: Element) => { const style = getComputedStyle(element); return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.marginTop, style.marginBottom, style.textAlign, style.textTransform]; };
+  await page.getByRole("tab", { name: "Empty houses", exact: true }).click();
+  const headingStyle = await page.getByRole("heading", { name: "House meaning", exact: true }).evaluate(styles);
+  const cases: NatalEditorialSelection[] = [
+    { area: "rulership", audience: "you", passage: "introduction", sect: "day" },
+    { area: "rulership", audience: "they", passage: "6", sect: "day" },
+    { area: "day-night", audience: "you", passage: "overview", sect: "day" },
+    { area: "day-night", audience: "they", passage: "saturn", sect: "night" }
+  ];
+  for (const selection of cases) {
+    await page.getByRole("tab", { name: selection.area === "rulership" ? "Rulership" : "Day & night", exact: true }).click();
+    const workspace = page.getByRole("region", { name: selection.area === "rulership" ? "Twelfth-house rulership" : "Day and night charts", exact: true });
+    const heading = workspace.getByRole("heading", { level: 3 });
+    expect(await heading.evaluate(styles)).toEqual(headingStyle);
+    await workspace.getByLabel("Natal reading audience", { exact: true }).selectOption(selection.audience);
+    await workspace.getByLabel("Natal reading passage", { exact: true }).selectOption(selection.passage);
+    if (selection.area === "day-night") await workspace.getByLabel("Natal reading sect", { exact: true }).selectOption(selection.sect);
+    const identity = natalEditorialIdentity(selection);
+    const index = natalEditorialSelections.findIndex(value => natalEditorialIdentity(value).contentKey === identity.contentKey);
+    await expect(workspace).toContainText(`Complete final fixture ${index}.`);
+    await expect(workspace.getByRole("heading", { level: 4 })).toHaveText(identity.title);
+    await expect(workspace.locator("h3,h4")).toHaveText([selection.area === "rulership" ? "Twelfth-house rulership" : "Day and night charts", identity.title]);
+    if (selection.audience === "they") {
+      await workspace.getByLabel("Friend’s name in preview").fill("Robin");
+      await expect(workspace).toContainText(`Robin opening fixture ${index}.`);
+      await expect(workspace).not.toContainText("{{ownerName}}");
+    }
+    await workspace.getByRole("button", { name: "Edit saved passage", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByText("Natal reading library", { exact: true })).toBeVisible();
+    await expect(editor).not.toContainText("A published row replaces prose on the named app surface immediately.");
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(identity.contentKey);
+    await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(natalEditorialFixtures[index].body);
+    const changed = `${natalEditorialFixtures[index].body}\n\nSaved final revision ${index}.`;
+    await fillAdminEditorField(editor, "Full passage / body", changed);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(cases.indexOf(selection) + 1);
+    await closeGeneratedEditor(page);
+    await expect(workspace).toContainText(`Saved final revision ${index}.`);
+    await page.reload();
+    await expect(page.getByRole("tab", { name: selection.area === "rulership" ? "Rulership" : "Day & night", exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tab", { name: selection.area === "rulership" ? "Rulership" : "Day & night", exact: true })).toBeInViewport({ ratio: 1 });
+    await expect(workspace.getByLabel("Natal reading passage", { exact: true })).toHaveValue(selection.passage);
+    await expect(workspace).toContainText(`Saved final revision ${index}.`);
+    await expectNoHorizontalOverflow(page, `Natal editorial library ${theme} ${width}`);
+  }
+  if (theme === "light" && width === 1440) for (const selection of natalEditorialSelections) {
+    await page.getByRole("tab", { name: selection.area === "rulership" ? "Rulership" : "Day & night", exact: true }).click();
+    const workspace = page.getByRole("region", { name: selection.area === "rulership" ? "Twelfth-house rulership" : "Day and night charts", exact: true });
+    await workspace.getByLabel("Natal reading audience", { exact: true }).selectOption(selection.audience);
+    await workspace.getByLabel("Natal reading passage", { exact: true }).selectOption(selection.passage);
+    if (selection.area === "day-night") await workspace.getByLabel("Natal reading sect", { exact: true }).selectOption(selection.sect);
+    const index = natalEditorialSelections.indexOf(selection);
+    await expect(workspace).toContainText(`Complete final fixture ${index}.`);
+  }
+  expect(writes).toHaveLength(4);
+  expect(writes.every(write => write.status === "DRAFT")).toBe(true);
+  await page.screenshot({ path: `test-results/natal-editorial-library-${theme}-${width}.png`, fullPage: true });
+});
+
+test("Natal editorial library read errors, empty selection and late responses preserve identity", async ({ page }) => {
+  const missingKey = "cms/natal-planet-sect/they/venus/day";
+  const writes: Record<string, unknown>[] = [];
+  await seedAdminApi(page, { generatedRows: natalEditorialFixtures.filter(row => row.content_key !== missingKey), useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write.payload); } });
+  let fail = true;
+  let release: (() => void) | undefined;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  let started = false;
+  await page.route("**/api/admin/generated-content-inventory**", async route => {
+    const key = new URL(route.request().url()).searchParams.get("contentKey");
+    if (key === "cms/natal-twelfth-ruler/you/introduction" && fail) {
+      fail = false; await route.fulfill({ status: 503, json: { ok: false, error: "Fixture source temporarily unavailable." } }); return;
+    }
+    if (key === "cms/natal-twelfth-ruler/you/ruler-house/1") {
+      started = true; await held;
+      await route.fulfill({ json: { ok: true, rows: natalEditorialFixtures.filter(row => row.content_key === key) } }); return;
+    }
+    await route.fallback();
+  });
+  await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart&natalView=rulership");
+  const ruler = page.getByRole("region", { name: "Twelfth-house rulership", exact: true });
+  await expect(ruler.getByRole("alert")).toContainText("temporarily unavailable");
+  await expect(ruler.getByRole("button", { name: "Create passage draft", exact: true })).toBeDisabled();
+  await ruler.getByRole("button", { name: "Retry passage", exact: true }).click();
+  await expect(ruler).toContainText("Complete final fixture 0.");
+  await ruler.getByLabel("Natal reading passage").selectOption("1");
+  await expect.poll(() => started).toBe(true);
+  await expect(ruler).toContainText("Loading saved passage");
+  await ruler.getByLabel("Natal reading passage").selectOption("2");
+  await expect(ruler).toContainText("Complete final fixture 2.");
+  release!();
+  await expect(ruler).not.toContainText("Complete final fixture 1.");
+  await page.getByRole("tab", { name: "Day & night", exact: true }).click();
+  const sect = page.getByRole("region", { name: "Day and night charts", exact: true });
+  await sect.getByLabel("Natal reading audience").selectOption("they");
+  await sect.getByLabel("Natal reading passage").selectOption("venus");
+  await expect(sect).toContainText("No passage has been saved");
+  await sect.getByRole("button", { name: "Create passage draft", exact: true }).click();
+  const editor = page.getByRole("dialog", { name: "Generated content editor" });
+  await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(missingKey);
+  await fillAdminEditorField(editor, "Full passage / body", "{{ownerName}} opening for a newly saved passage.\n\nComplete final sentence for the new passage.");
+  await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+  await expect.poll(() => writes.length).toBe(1);
+  await closeGeneratedEditor(page);
+  await expect(sect).toContainText("Maya opening for a newly saved passage.");
+  await page.reload();
+  await expect(sect).toContainText("Complete final sentence for the new passage.");
+});
+
+test("Natal editorial library owner draft preview", async ({ page }) => {
+  const source = process.env.NATAL_EDITORIAL_PREVIEW_ROWS;
+  test.skip(!source, "Private owner draft preview is opt-in and read-only.");
+  const rows = JSON.parse(readFileSync(source!, "utf8")) as Record<string, unknown>[];
+  const writes: unknown[] = [];
+  await seedAdminApi(page, { generatedRows: rows, onGeneratedContentWrite: write => { writes.push(write); } });
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart&natalView=rulership&natalAudience=they&natalPassage=6");
+  const ruler = page.getByRole("region", { name: "Twelfth-house rulership", exact: true });
+  const fullBody = String(rows.find(row => row.content_key === "cms/natal-twelfth-ruler/they/ruler-house/6")!.body).replaceAll("{{ownerName}}", "Maya");
+  await expect(ruler.locator(".admin-natal-reader-preview-part p")).toHaveText(fullBody.split(/\n\s*\n/u));
+  await page.screenshot({ path: "test-results/natal-editorial-owner-rulership.png", fullPage: true });
+  await page.getByRole("tab", { name: "Day & night", exact: true }).click();
+  const sect = page.getByRole("region", { name: "Day and night charts", exact: true });
+  await sect.getByLabel("Natal reading passage").selectOption("saturn");
+  await sect.getByLabel("Natal reading sect").selectOption("night");
+  const saturn = String(rows.find(row => row.content_key === "cms/natal-planet-sect/they/saturn/night")!.body).replaceAll("{{ownerName}}", "Maya");
+  await expect(sect.locator(".admin-natal-reader-preview-part p")).toHaveText(saturn.split(/\n\s*\n/u));
+  await page.screenshot({ path: "test-results/natal-editorial-owner-day-night.png", fullPage: true });
+  expect(writes).toEqual([]);
 });

@@ -6012,6 +6012,16 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (!row) {
+        const { natalEditorialDraftForKey } = await import("./natalEditorialLibrary");
+        const natalDraft = natalEditorialDraftForKey(contentKey);
+        if (natalDraft) {
+          if (!confirmSkyEditorNavigation()) return;
+          setSelectedRowId(null); setEditorSourceRow(null); setCompositionEditorContext(null);
+          setEditorSaveError(""); rememberSavedDraft(natalDraft);
+          setMessage("Natal reading draft opened. Save your edits before reviewing it for publication.");
+          scrollEditorToTop(fieldPath);
+          return;
+        }
         if (/^fallback-hook\/(?:synastry-pair\/|bond-effect-)/u.test(contentKey)) {
           const {missingFriendsSource} = await import("./missingFriendsSource");
           const missing = await missingFriendsSource(contentKey, key => readStudioContentDocument(key, secret));
@@ -10480,6 +10490,7 @@ export function GeneratedContentAdminDashboard() {
     const savedArticleStatusRow = skyArticleEditor ? rows.find(row => row.id === skyArticleEditor.rowId) : null;
     const editorStatusRow = savedArticleStatusRow ?? { status: currentDraft.status, id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
     const isCmsSurfaceDraft = currentDraft.sourceSnapshot?.contentSystem === "cms-surface-override" || currentDraft.contentKey.startsWith("cms/");
+    const isNatalEditorialLibrary = currentDraft.sourceSnapshot?.contentSystem === "editorial-library" && currentDraft.surface === "natal";
     const cmsAllowedSlots = Array.isArray(currentDraft.sourceSnapshot?.allowedSlots)
       ? currentDraft.sourceSnapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
       : [];
@@ -12128,8 +12139,10 @@ export function GeneratedContentAdminDashboard() {
           )}
           {isCmsSurfaceDraft && (
             <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
-              <strong>Reader-facing CMS override</strong>
-              <p>A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below.</p>
+              <strong>{isNatalEditorialLibrary ? "Natal reading library" : "Reader-facing CMS override"}</strong>
+              <p>{isNatalEditorialLibrary
+                ? "Edit the complete passage for this audience. Saving a draft keeps it available for review. Existing natal placements and empty-house readings have separate sources."
+                : "A published row replaces prose on the named app surface immediately. Astrology facts remain calculated by the app and can enter this copy only through the allowed slots below."}</p>
               <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
               {currentDraft.contentKey.startsWith("cms/sky-daily-summary/sun/") && <div role="group" aria-label="Insert Sun passage variable">
                 {cmsAllowedSlots.map(slot => <StudioButton key={slot} type="button" disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{${slot}}`)}>Insert {slot === "sunPlacement" ? "Sun placement" : "ruler name"}</StudioButton>)}
@@ -12143,7 +12156,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
               ) : (
                 <div aria-label="CMS template preview">
-                  <strong>Preview with representative chart facts</strong>
+                  <strong>{isNatalEditorialLibrary ? "Passage preview" : "Preview with representative chart facts"}</strong>
                   {!isSkySummaryDraft && currentDraft.headline.trim() && <h4>{renderCmsTemplatePreview(currentDraft.headline, cmsTemplateValidation.previewSlots, "headline")}</h4>}
                   {!isSkySummaryDraft && currentDraft.summary.trim() && <p>{renderCmsTemplatePreview(currentDraft.summary, cmsTemplateValidation.previewSlots, "summary")}</p>}
                   <p>{renderCmsTemplatePreview(currentDraft.body, cmsTemplateValidation.previewSlots, "body")}</p>
