@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import { studioServingStatusRow } from "./studioServingStatus";
 import EmptyHouseReaderPreview from "./EmptyHouseReaderPreview";
+import NatalEditorialSources from "./NatalEditorialSources";
 import NatalPlacementSourceEditor, { type NatalEditableRow, type NatalSourceEdits } from "./NatalPlacementSourceEditor";
 import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./NatalPlacementReaderPreview";
 import { natalPlacementReaderHref, openContextualReaderHref } from "./adminReaderDestinations";
@@ -54,7 +55,12 @@ type Props = {
   sign: NatalPlacementSign | "";
 };
 
-type NatalChartWritingView = "placements" | "empty-houses";
+type NatalChartWritingView = "placements" | "empty-houses" | "rulership" | "day-night";
+
+function savedNatalWritingView(): NatalChartWritingView {
+  const value = new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("natalView");
+  return value === "empty-houses" || value === "rulership" || value === "day-night" ? value : "placements";
+}
 
 type EmptyHouseSourceGroup = {
   id: string;
@@ -117,7 +123,31 @@ function emptyHouseSourceScope(key: string) {
 }
 
 export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onDirtyChange, onSaveSource, onOpenSource, onOpenEmptyHouseCompositions, onSelectionChange, planet, rows, secret, sign }: Props) {
-  const [view, setView] = useState<NatalChartWritingView>("placements");
+  const [view, setView] = useState<NatalChartWritingView>(savedNatalWritingView);
+  const finder = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const list = finder.current?.querySelector<HTMLElement>('[role="tablist"]');
+    const selected = list?.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!list || !selected) return;
+    const revealSelection = () => {
+      if (!list.clientWidth) return;
+      const strip = list.getBoundingClientRect();
+      const tab = selected.getBoundingClientRect();
+      if (tab.left < strip.left) list.scrollLeft += Math.floor(tab.left - strip.left);
+      else if (tab.right > strip.right) list.scrollLeft += Math.ceil(tab.right - strip.right);
+    };
+    revealSelection();
+    const observer = new ResizeObserver(revealSelection);
+    observer.observe(list); observer.observe(selected);
+    return () => observer.disconnect();
+  }, [view, isLoading]);
+  function changeView(next: NatalChartWritingView) {
+    setView(next);
+    const params = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
+    params.set("natalView", next);
+    params.delete("natalPassage");
+    window.history.replaceState(null, "", `#exact-content?${params}`);
+  }
   const [emptyHouse, setEmptyHouse] = useState(1);
   const [emptyHouseSign, setEmptyHouseSign] = useState("aries");
   const [emptyHouseRulerHouse, setEmptyHouseRulerHouse] = useState(2);
@@ -220,15 +250,17 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
   };
 
   return (
-    <section className="admin-natal-placement-finder" aria-label="Find natal chart source writing">
+    <section ref={finder} className="admin-natal-placement-finder" aria-label="Find natal chart source writing">
       <h2 className="sr-only">Natal chart writing</h2>
       <StudioTabs
         label="Natal Chart writing areas"
         value={view}
-        onValueChange={setView}
+        onValueChange={changeView}
         tabs={[
           { value: "placements", label: "Planet placements" },
-          { value: "empty-houses", label: "Empty houses" }
+          { value: "empty-houses", label: "Empty houses" },
+          { value: "rulership", label: "Rulership" },
+          { value: "day-night", label: "Day & night" }
         ] as const}
       >
         {view === "placements" ? <>
@@ -322,7 +354,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
             </details>
           ))}
-        </> : <section className="admin-empty-house-workspace" aria-label="Empty house writing">
+        </> : view === "empty-houses" ? <section className="admin-empty-house-workspace" aria-label="Empty house writing">
           <header>
             <Stack gap="sm">
               <Text size="meta" tone="secondary">Empty houses</Text>
@@ -385,7 +417,8 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               </section>
             ))}
           </section>
-        </section>}
+        </section> : <NatalEditorialSources key={view} area={view} secret={secret} disabled={isLoading} onOpen={onOpenSource}
+          revision={rows.filter(row => /^(?:cms\/natal-twelfth-ruler\/|cms\/natal-chart-context\/|cms\/natal-planet-sect\/)/u.test(row.content_key)).map(row => `${row.id}:${row.updated_at}:${row.status}`).join("|")} />}
       </StudioTabs>
     </section>
   );
