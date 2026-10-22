@@ -110,6 +110,23 @@ affects future plans, while a reserved Monthly request retains its original
 correction. Seasonal runs retain their frozen correction in the existing private
 run store. Shared prompt shadows and edition rows contain no feedback bodies.
 
+Feedback identity normalizes SQL and JSON timestamp syntax before hashing
+`source_date`, retaining fractional-second precision. Equivalent timestamp
+spellings cannot invalidate a new horoscope plan or saved-request recovery;
+different instants, wording, reasons and target scopes still change identity.
+The resolver also verifies legacy v1 hashes against equivalent SQL/JSON spellings
+of that same source instant. It never drops the timestamp from the hash or edits
+stored feedback. Seasonal rejection provenance uses the same normalization for
+new evidence manifests; existing frozen requests and manifests remain intact.
+
+The October 22 audit traced explicit-feedback use through shared OpenAI/Claude
+generation, Sky slots and placements, lunar writing, all four horoscope periods,
+and saved Daily/Weekly/Monthly hydration. Report feedback has its own contract;
+the separate Sky edit-capture hash already normalizes its source-version dates.
+Regressions reproduce the SQL/JSON mismatch, check actual horoscope handlers and
+Monthly continuation, preserve legacy references, and reject real source changes.
+These are integrity checks with isolated fixtures, not paid prose comparisons.
+
 The actual-handler and intercepted-provider regressions verify all four horoscope
 periods, Synastry, Personal Transit and Sky template delivery, scope isolation,
 storage failures and saved-request recovery. These checks establish delivery,

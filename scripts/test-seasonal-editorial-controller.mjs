@@ -15,6 +15,13 @@ const rejectedRow={id:'same-audience-unknown-period',version:1,kind:'rejection',
 const retrieved=await seasonalEvidenceRegistry({template:{seasonalPreparation:{context:{primaryRegisterPassages:[{id:'synthetic-source',sourcePath:'test:approved',text:entries[0].text,authorityClass:'owner_authored_final',ownerAuthored:true,ownerApproved:true,seasonalArgumentPrimary:true}]}}},rejections:[rejectedRow,{...rejectedRow,id:'explicit-seasonal',target_keys:['horoscope/seasonal']}]}).retrieve('seasonal',{target:'fixture',audience:'taurus'});
 assert.equal(retrieved.entries.filter(e=>e.role==='rejected').length,1);
 assert.equal(retrieved.excluded[0].reason,'period_not_established_by_provenance');
+const timestampInput={template:{seasonalPreparation:{context:{primaryRegisterPassages:[{id:'synthetic-source',sourcePath:'test:approved',text:entries[0].text,authorityClass:'owner_authored_final',ownerAuthored:true,ownerApproved:true,seasonalArgumentPrimary:true}]}}},
+  rejections:[{...rejectedRow,id:'timestamp-seasonal',target_keys:['horoscope/seasonal'],source_date:'2026-10-21 05:00:00.123456+00'}]};
+const timestampManifest=await seasonalEvidenceRegistry(timestampInput).retrieve('seasonal',{target:'fixture',audience:'taurus'});
+const apiTimestampInput=structuredClone(timestampInput);apiTimestampInput.rejections[0].source_date='2026-10-21T05:00:00.123456+00:00';
+assert.equal((await seasonalEvidenceRegistry(apiTimestampInput).retrieve('seasonal',{target:'fixture',audience:'taurus'})).hash,timestampManifest.hash,'Seasonal source provenance is independent of SQL/JSON date spelling');
+apiTimestampInput.rejections[0].source_date='2026-10-21T05:00:00.123457+00:00';
+assert.notEqual((await seasonalEvidenceRegistry(apiTimestampInput).retrieve('seasonal',{target:'fixture',audience:'taurus'})).hash,timestampManifest.hash,'A distinct source instant changes Seasonal evidence identity');
 const currentPreferred=await seasonalEvidenceRegistry({template:{seasonalPreparation:{context:{},writingProfile:{id:'fixture-profile',revision:2,sha256:digest('fixture-profile'),updatedAt:'2026-10-05',profile:{voiceGuidance:'BEGIN COMPLETE OWNER PREFERRED REVISION\nComplete current synthetic owner revision.\nEND COMPLETE OWNER PREFERRED REVISION'}}}},rejections:[{...rejectedRow,id:'explicit-seasonal',target_keys:['horoscope/seasonal']}]}).retrieve('seasonal',{target:'fixture',audience:'taurus'});
 assert.equal(currentPreferred.entries[0].text,'Complete current synthetic owner revision.');assert.equal(currentPreferred.entries[0].authority,'exact_owner_approved');
 assert.throws(()=>evidenceManifest({surface:'seasonal',target:'fixture',query:{},entries:[{...entries[0],authority:'serving-review-status-approved'},entries[1]]}));

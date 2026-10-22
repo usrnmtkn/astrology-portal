@@ -5,9 +5,44 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {writingFeedbackKeys,selectExplicitWritingFeedback,hydrateExplicitWritingFeedback,validateExplicitWritingFeedback} from '../../src/astro-writing/explicitWritingFeedback.mjs';
 import {runFeedbackCommand} from '../../scripts/studio-writing-feedback.mjs';
+import {createHash} from 'node:crypto';
 
 const row=(id,target)=>({id,version:1,status:'active',kind:'rejection',target_keys:[target],rejected_text:`Synthetic rejected passage ${id}.`,
   source_roles:null,owner_reason:`Synthetic owner reason ${id}.`,source_uri:'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',source_date:'2026-10-21T05:00:00Z'});
+
+test('SQL and API timestamp representations preserve exact feedback and saved-request identity',()=>{
+  const original={...row('timestamp','writing/all'),source_date:'2026-10-21 05:00:00.123456+00'};
+  const current={...original,source_date:'2026-10-21T05:00:00.123456+00:00'};
+  const prepared=selectExplicitWritingFeedback([original],['writing/all']);
+  assert.deepEqual(selectExplicitWritingFeedback([current],['writing/all']).receipt,prepared.receipt);
+  const stored={input:prepared.marker};
+  assert.equal(hydrateExplicitWritingFeedback(stored,prepared.receipt,[current]).input,prepared.prompt);
+  assert.equal(hydrateExplicitWritingFeedback(stored,prepared.receipt,[{...current,source_date:'2026-10-21T06:00:00.123456+01:00'}]).input,prepared.prompt);
+  for(const change of [{source_date:'2026-10-21T05:00:00.123457+00:00'}, {owner_reason:'Changed correction.'},
+    {rejected_text:'Changed rejected passage.'}, {target_keys:['writing/sky']}, {source_roles:{knowledge:['different']}},
+    {source_uri:'thread:bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'}, {version:0}]){
+    assert.throws(()=>hydrateExplicitWritingFeedback(stored,prepared.receipt,[{...current,...change}]));
+  }
+  assert.equal(original.source_date,'2026-10-21 05:00:00.123456+00','Source metadata is not rewritten.');
+});
+
+test('legacy v1 feedback hashes remain usable after SQL/JSON timestamp roundtrips',()=>{
+  const source={...row('legacy-date','horoscope/monthly'),source_date:'2026-10-21 05:00:00.123400+00'};
+  const current={...source,source_date:'2026-10-21T05:00:00.1234+00:00',status:'retired',version:2};
+  const prepared=selectExplicitWritingFeedback([source],['writing/all','horoscope/monthly']);
+  const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'
+    ?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
+  const hash=value=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+  for(const sourceDate of ['2026-10-21 05:00:00.123400+00','2026-10-21T05:00:00.1234Z']){
+    const receipt=structuredClone(prepared.receipt);
+    receipt.selected[0].contentHash=hash([source.id,source.kind,source.target_keys,source.rejected_text,source.source_roles,
+      source.owner_reason,source.source_uri,sourceDate]);
+    const marker=`[PRIVATE_OWNER_WRITING_FEEDBACK:${hash(receipt)}]`;
+    assert.equal(hydrateExplicitWritingFeedback({input:marker},receipt,[current]).input,prepared.prompt);
+    assert.throws(()=>hydrateExplicitWritingFeedback({input:marker},receipt,[{...current,source_date:'2026-10-21T05:00:00.123401+00:00'}]),/changed/);
+    assert.throws(()=>hydrateExplicitWritingFeedback({input:marker},receipt,[{...current,owner_reason:'New direction.'}]),/changed/);
+  }
+});
 
 test('explicit scopes isolate periods, relationships, personal transits and exact passages',()=>{
   const rows=['writing/all','horoscope/daily','horoscope/weekly','horoscope/monthly','horoscope/seasonal','writing/synastry','writing/sky','writing/personal-transit','exact/one'].map((target,i)=>row(`r${i}`,target));
