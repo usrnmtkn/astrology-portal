@@ -21,6 +21,7 @@ on:
       - 'tests/visual/you-report-page.spec.ts'
       - 'tests/visual/report-source-completion.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
+      - 'scripts/ci-install-playwright.sh'
   push:
     branches: [main]
     paths:
@@ -42,6 +43,7 @@ on:
       - 'tests/visual/you-report-page.spec.ts'
       - 'tests/visual/report-source-completion.spec.ts'
       - '.github/workflows/report-reader-contract.yml'
+      - 'scripts/ci-install-playwright.sh'
 
 permissions:
   contents: read
@@ -124,7 +126,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Fresh built Reports reader, account isolation and generation states
         run: >-
           npx playwright test -c playwright.config.ts
