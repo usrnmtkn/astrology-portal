@@ -44,6 +44,25 @@ test('new plans exclude retired feedback; a frozen request resolves the exact im
   assert.throws(()=>hydrateExplicitWritingFeedback({input:prepared.marker+prepared.marker},prepared.receipt,[retired]),/once/);
 });
 
+test('reusable synastry families retrieve their own exact-member corrections without global or opposite-aspect expansion',()=>{
+  const prefix='fallback-hook/synastry-pair/moon/mercury/';
+  const rows=[row('square',prefix+'square'),row('opposition',prefix+'opposition'),row('trine',prefix+'trine'),
+    row('other-pair','fallback-hook/synastry-pair/moon/venus/square'),row('reversed','fallback-hook/synastry-pair/mercury/moon/square')];
+  const original=JSON.stringify(rows);
+  const family=selectExplicitWritingFeedback(rows,writingFeedbackKeys({surface:'synastry',contentKey:prefix+'hard'}));
+  assert.deepEqual(family.rows.map(r=>r.id),['opposition','square']);
+  assert(family.prompt.includes(rows[0].rejected_text));assert(family.prompt.includes(rows[0].owner_reason));
+  assert(family.prompt.includes('exact original target'));assert(family.prompt.includes('square-only claim for an opposition'));
+  assert(family.prompt.includes('not an approved voice reference'));
+  assert.deepEqual(selectExplicitWritingFeedback(rows,writingFeedbackKeys({surface:'synastry',contentKey:prefix+'square'})).rows.map(r=>r.id),['square']);
+  assert.deepEqual(selectExplicitWritingFeedback(rows,writingFeedbackKeys({surface:'synastry',contentKey:prefix+'soft'})).rows.map(r=>r.id),['trine']);
+  assert.equal(selectExplicitWritingFeedback(rows,writingFeedbackKeys({surface:'composite',contentKey:prefix+'hard'})).rows.length,0);
+  assert.equal(JSON.stringify(rows),original,'Stored feedback scopes and complete owner text are unchanged.');
+  assert.equal(hydrateExplicitWritingFeedback({input:family.marker},family.receipt,rows).input,family.prompt);
+  const legacy=selectExplicitWritingFeedback([row('legacy','writing/synastry')],['writing/all','writing/synastry',prefix+'hard']);
+  assert(!legacy.prompt.includes('This reusable library entry covers an aspect family.'), 'An older frozen receipt without member aliases retains its previous rendering.');
+});
+
 test('scope and feedback version changes invalidate new request references without truncation',()=>{
   const original=row('fixture','horoscope/weekly');
   const before=selectExplicitWritingFeedback([original],writingFeedbackKeys({period:'weekly'}));
