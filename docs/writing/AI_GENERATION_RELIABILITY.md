@@ -720,7 +720,7 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
-The shared synastry writer uses `synastry-aspect/v6-2026-10-21` for directional
+The shared synastry writer uses `synastry-aspect/v7-2026-10-21` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,
 fixed paragraph count or instruction to keep planetary reasoning out of the body.
@@ -782,6 +782,27 @@ The check does not scrub a rejected result or alter source passages, historical
 drafts, saved owner prose or other writing families. The exact entry's requested
 order and wording corrections remain complete private feedback, scoped to that
 entry; they do not impose a universal paragraph formula or approve a replacement.
+
+The v7 authority develops a source-supported response to the other person's
+response, instead of listing their separate planetary functions or restating
+one contrast. The existing meaning-plan fields retain possible intention,
+effect and supported consequences if an exchange repeats. The writer keeps
+both people capable of reasoning and emotional understanding, and does not
+treat an aspect as evidence of permanent habits. A useful quality can retain
+its value even where its expression causes friction. These are conditional
+meaning checks: supportive contacts need no invented conflict, repeated cycle,
+cost or remedy, and no new paragraph sequence or vocabulary blacklist is added.
+The existing no-em-dash rule is explicit in the shared synastry authority;
+historical source punctuation remains unchanged and creates no output exception.
+
+Complete owner comparison feedback and the proposed revision remain in the
+private exact-entry feedback store. A comparative starting-point choice is
+separate from psychological strengths identified in another candidate. Neither
+choice makes the rejected passages or proposed rewrite approved voice evidence
+or publication-ready copy. No private passage or raw owner reason is reproduced
+here. Model settings, schemas, complete source selection, existing checks and
+call budgets are unchanged. Provider-boundary fixtures establish instruction
+delivery only; no new paid generation is part of this prompt repair.
 
 `scripts/test-synastry-writing-contract.mts` intercepts both providers at the
 actual generation handler. It covers supported and challenging contacts, the

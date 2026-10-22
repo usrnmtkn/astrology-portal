@@ -81,7 +81,13 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('A meaning plan establishes supported interpretation, not reader wording'), 'The writer must not paraphrase planner labels into reader copy.');
   assert(instructions.includes('Do not repeat the same contrast in new vocabulary'), 'Additional sentences must develop the interaction rather than restate it.');
   assert(instructions.includes("Use ordinary sentences about people's feelings and actions without interrupting them with a planetary label"));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v6-2026-10-21'));
+  assert(instructions.includes("how one person's response may change what the other does next"), 'The writer must develop a supported reciprocal response rather than repeat two planetary categories.');
+  assert(instructions.includes('Keep both people capable of reasoning and emotional understanding'));
+  assert(instructions.includes('the aspect is not proof of habitual behavior'));
+  assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
+  assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
+  assert(instructions.includes('New reader fields must contain no em dashes'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v7-2026-10-21'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
   // Inspect both actual provider fields: OpenAI's canonical transport can add
   // instructions that are absent from the assembled user prompt.
@@ -160,6 +166,9 @@ try {
         assert(stages[0].body.instructions.includes('A broad contrast such as logic versus feelings is incomplete'));
         assert(stages[0].body.instructions.includes('observable_behaviors must describe supported things people say or do'), 'The planner must distinguish behavior from an emotional verdict.');
         assert(stages[0].body.instructions.includes('Do not infer a fear or need merely to explain a planetary function'));
+        assert(stages[0].body.instructions.includes("how that response may affect the first person's next response"), 'The meaning plan must retain the supported response to a response.');
+        assert(stages[0].body.instructions.includes('Keep each possible intention distinct from its effect'));
+        assert(stages[0].body.instructions.includes('A supportive contact may remain uncomplicated'));
         assert.deepEqual(JSON.parse(stages[0].body.input).governedFacts, JSON.parse(JSON.stringify(variant.facts)), 'Complete directional facts remain unchanged in the planner input.');
         assert(stages[3].body.instructions.includes('SYNASTRY REVIEW AUTHORITY'));
         for (const stage of stages) assert(!stage.body.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
