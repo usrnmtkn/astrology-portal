@@ -13,8 +13,8 @@ test.afterEach(async({page},testInfo)=>{
   const effects=await page.evaluate(()=> (window as any).__connectionEffectTrace ?? []).catch(()=>[]);
   if(effects.length) await testInfo.attach('connection-source-effects',{body:JSON.stringify(effects,null,2),contentType:'application/json'});
 });
-async function seed(page: Page, theme: string, multipleContacts = false) {
-  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart, theme, multipleContacts }) => {
+async function seed(page: Page, theme: string, multipleContacts = false, mixedContacts = false) {
+  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart, theme, multipleContacts, mixedContacts }) => {
     if (window.localStorage.getItem("tldrastro:friendsPerformanceSeeded")) {
       return;
     }
@@ -100,9 +100,15 @@ async function seed(page: Page, theme: string, multipleContacts = false) {
     if (multipleContacts) {
       for (const point of friendNatal.positions) {
         if (["Venus", "Mercury", "Chiron", "Jupiter"].includes(point.planet)) {
-          Object.assign(point, { sign: "Sagittarius", signGlyph: "♐", degree: 12, longitude: 252 });
+          Object.assign(point, mixedContacts && point.planet === "Venus"
+            ? { sign: "Pisces", signGlyph: "♓", degree: 12, longitude: 342 }
+            : { sign: "Sagittarius", signGlyph: "♐", degree: 12, longitude: 252 });
         }
       }
+    }
+    if (mixedContacts) {
+      Object.assign(friendNatal.positions.find(point => point.planet === "Saturn")!,
+        { sign: "Sagittarius", signGlyph: "♐", degree: 12, longitude: 252 });
     }
     const friendChart = {
       id: incompleteChart ? "friend-incomplete" : "friend-nikki",
@@ -132,7 +138,7 @@ async function seed(page: Page, theme: string, multipleContacts = false) {
   }, {
     fixtureUserId,
     fixtureFriendName,
-    incompleteChart: false, theme, multipleContacts
+    incompleteChart: false, theme, multipleContacts, mixedContacts
   });
 }
 test('transit titles identify the sky sign and natal chart owner in both sections', async ({ page }, testInfo) => {
@@ -169,15 +175,22 @@ test('transit titles identify the sky sign and natal chart owner in both section
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/friend-transit-titles-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
 
-  await between.getByRole('button', { name: `Open full entry for ${readerTitle}`, exact: true }).click();
+  const relationshipCard = between.getByRole('button', { name: `Open full entry for ${readerTitle}`, exact: true });
+  await expect(relationshipCard).toContainText('This transit may bring your existing Mars connections with Nikki into focus.');
+  await expect(relationshipCard).toContainText('Direct transits to both charts:');
+  await expect(relationshipCard).not.toContainText('activating the connections');
+  await relationshipCard.click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(readerTitle);
   await expect(page.locator('.article-eyebrow')).toHaveAttribute('aria-label', 'Aspect: Saturn trine Mars');
   const facts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) });
-  await expect(facts.locator('p').first()).toHaveText("This transit reaches your natal Mars. That natal point also forms these aspects with Nikki's chart:");
+  await expect(facts.locator('p').first()).toHaveText("This transit may bring your existing Mars connections with Nikki into focus.");
   await expect(facts).toContainText("Your natal Mars conjunct Nikki's natal Saturn · Orb 1° 51′");
   for (const point of ['Venus', 'Mercury', 'Chiron', 'Jupiter']) {
     await expect(facts).toContainText(`Your natal Mars conjunct Nikki's natal ${point} · Orb 1° 51′`);
   }
+  await expect(facts).toContainText('Direct transits to both charts:');
+  await expect(facts).toContainText("Saturn in Aries trine Nikki's natal Mercury · Orb");
+  await expect(facts).toContainText('These natal connections do not by themselves establish a direct Saturn transit to the other chart.');
   const factCopy = await facts.innerText();
   await page.reload();
   await expect(facts).toHaveText(factCopy, { useInnerText: true, timeout: 60000 });
@@ -205,6 +218,32 @@ test('transit titles identify the sky sign and natal chart owner in both section
   const switchedFacts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Casey', exact: true }) });
   await expect(switchedFacts).toContainText("Your natal Mars conjunct Casey's natal Saturn · Orb 1° 51′");
   await expect(page.locator('.sky-detail-page')).not.toContainText('Nikki');
+});
+
+test('relationship context separates direct transits from connections through one natal planet', async ({ page }, testInfo) => {
+  await page.clock.setFixedTime(new Date('2026-10-15T16:00:00Z'));
+  await seed(page, testInfo.project.name.endsWith('dark') ? 'dark' : 'light', true, true);
+  await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status: 503, body: 'Isolated calculation fallback.' }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: [] } }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([], []) }));
+  await page.goto('/#friends?tab=charts&chart=friend-nikki&view=transits');
+  const card = page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn in Aries trine your natal Mars', exact: true });
+  await expect(card).toContainText('This transit may bring your existing Mars connections with Nikki into focus.', { timeout: 60000 });
+  await expect(card).toContainText('Direct transits to both charts:');
+  await expect(card).toContainText("Other connections through your natal Mars: Nikki's natal Venus.");
+  await expect(card).not.toContainText('activating the connections');
+  await card.click();
+  const facts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) });
+  await expect(facts).toContainText("Saturn in Aries trine Nikki's natal Mercury · Orb");
+  await expect(facts).toContainText("Your natal Mars square Nikki's natal Venus · Orb 1° 51′");
+  await expect(facts).toContainText('Other connections through your natal Mars:');
+  await expect(facts).toContainText('These natal connections do not by themselves establish a direct Saturn transit to the other chart.');
+  await expect(facts).not.toContainText("Saturn in Aries square Nikki's natal Venus");
+  const copy = await facts.innerText();
+  await page.reload();
+  await expect(facts).toHaveText(copy, { useInnerText: true, timeout: 60000 });
+  await page.screenshot({ path: `test-results/connection-directness-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
 });
 
 for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,true]]) test(`connection detail separates transit, activation ${activationLive ? 'published' : 'draft'}, bridge ${bridgeLive ? 'published' : 'draft'}`, async ({ page }, testInfo) => {
@@ -292,7 +331,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     if(bridgeLive) await expect(page.getByText(/connecting this transit to the pattern below/).first()).toBeVisible();
     else await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
   } else {
-    await expect(page.getByText('What this activates',{exact:true})).toHaveCount(0);
+    await expect(page.getByText('About these connections',{exact:true})).toHaveCount(0);
     await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
   }
   await page.screenshot({path:`test-results/connection-transit-${activationLive?'published':'draft'}-bridge-${bridgeLive?'published':'draft'}-${testInfo.project.name}.png`,fullPage:true,animations:'disabled'});
@@ -428,7 +467,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     expect(sourceRequests).toBe(beforeBridgeRetirement+1);
     phase='activation-retirement';
     await install([...activationKeys].map(content_key=>({...unrelated,content_key,state:'retired',revision:708})));
-    await expect(page.getByText('What this activates',{exact:true})).toHaveCount(0);
+    await expect(page.getByText('About these connections',{exact:true})).toHaveCount(0);
     await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
     await expect(page.getByRole('heading',{level:1})).toBeVisible();
     await expect(aBody).toHaveText(completeABody);

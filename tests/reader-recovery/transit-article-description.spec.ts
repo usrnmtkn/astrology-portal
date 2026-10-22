@@ -156,7 +156,7 @@ for (const theme of ["light", "dark"]) {
     await verifyFooter(page, footer, theme, "bond");
     const reading = page.locator('.sky-detail-page:has(.article-section__eyebrow)');
     await expect(reading).toBeVisible();
-    await expect(reading.locator(".article-section__eyebrow")).toHaveText("What this activates");
+    await expect(reading.locator(".article-section__eyebrow")).toHaveText("About these connections");
     const section = reading.locator(".article-section").filter({ has: page.locator(".article-section__eyebrow") });
     await expect(section.locator("h2")).toContainText(/^Your /);
     await expect(section.locator("h2")).toHaveText("Your Pluto trine Example Friend's Midheaven");
@@ -199,8 +199,8 @@ for (const theme of ["light", "dark"]) {
     const endpoint = friendEndpointTitle.split("Example Friend's natal ")[1];
     await namedBond.click();
     const friendFacts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Example Friend', exact: true }) });
-    await expect(friendFacts.locator('p').first()).toHaveText(`This transit reaches Example Friend's natal ${endpoint}. That natal point also forms these aspects with your chart:`);
-    for (const contact of (await friendFacts.locator('p').allTextContents()).slice(1)) {
+    await expect(friendFacts.locator('p').first()).toHaveText(`This transit may bring Example Friend's existing ${endpoint} connections with you into focus.`);
+    for (const contact of (await friendFacts.locator('p').allTextContents()).filter(text => text.startsWith('Your natal '))) {
       expect(contact).toContain(`Example Friend's natal ${endpoint} · Orb `);
       expect(contact).toMatch(/^Your natal /);
     }

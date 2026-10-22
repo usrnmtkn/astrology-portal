@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { createTransitSynastryRenderer as browserFactory } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser";
 import { createTransitSynastryRenderer as shippedFactory } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import fs from "node:fs";
-import { connectionActivationKey, connectionBridgeTemplates, connectionSourceErrors, fillConnectionSource } from "../apps/web/src/content/connectionTransit";
+import { connectionActivationKey, connectionAspectWord, connectionBridgeTemplates, connectionSourceErrors, fillConnectionSource } from "../apps/web/src/content/connectionTransit";
 import { publishedConnectionCopy, connectionBridgeCopy } from "../apps/web/src/features/friends/connectionTransitSources";
 import { connectionSourceDraft } from "../apps/admin/src/connectionTransitSources";
 import { packagePublicationAdmissionIssue } from "../api/_lib/content-studio-package-admission";
@@ -110,3 +110,54 @@ for (const factory of [browserFactory, shippedFactory]) {
 }
 assert.match(decision,/normalizePersonalTransitSurface/);
 console.log("Connection separation passed: exact directed sources, missing/draft/retired handling, literal names, isolated drafts and no cross-type fallback.");
+
+// Direct transits must be independently calculated for the other chart. A
+// synastry aspect alone never manufactures one, even when its planet matches.
+const { connectionTransitContext } = await import('../apps/web/src/services/connectionTransitContext');
+const factTransit = (natalPoint: string, aspect = 'conjunction', transitPlanet = 'Mars', orb = "0° 30'") => ({
+ id: `${transitPlanet}-${aspect}-${natalPoint}`, transitPlanet, transitSign: 'Leo', natalPoint, aspect, orb
+}) as import('../apps/web/src/App').TransitItem;
+const factContact = (yourPoint: string, friendPoint: string, aspect: string) => ({
+ id: `${yourPoint}-${aspect}-${friendPoint}`, yourPoint: {name:yourPoint}, friendPoint:{name:friendPoint}, aspect, orb:0.4
+}) as import('../apps/web/src/App').SynastryContact;
+const contextOptions = {
+ activation:factTransit('Moon','square'), endpointOwner:'reader' as const,
+ contacts:[factContact('Moon','Mercury','square'),factContact('Moon','Chiron','opposition'),factContact('Moon','Venus','trine')],
+ friendName:'Nikki', windowLabel:'Until October 30, 2026',
+ titleOf:(transit:import('../apps/web/src/App').TransitItem,owner:string)=>`${transit.transitPlanet} in ${transit.transitSign} ${connectionAspectWord(transit.aspect)} ${owner==='you'?'your':`${owner}'s`} natal ${transit.natalPoint}`,
+ orbOf:(transit:import('../apps/web/src/App').TransitItem)=>{
+ const parts=transit.orb.match(/^(\d+)° (\d+)'$/);return parts?Number(parts[1])+Number(parts[2])/60:NaN;
+ },
+ aspectWord:connectionAspectWord
+};
+const snapshot=JSON.stringify(contextOptions);
+const mixed=connectionTransitContext({...contextOptions,counterpartTransits:[
+ factTransit('Mercury','conjunction','Mars',"2° 30'"),factTransit('Chiron','square'),
+ factTransit('Venus','conjunction','Jupiter'),factTransit('Sun'),factTransit('Venus','quincunx'),
+ factTransit('Venus','conjunction','Mars','unknown')
+]});
+assert.equal(mixed.directTransits.length,2,'Match the moving planet, exact opposite natal endpoint and a supported calculated aspect, including beyond the one-degree bond-card cutoff');
+assert.match(mixed.cardBody,/Direct transits to both charts:/);
+assert.match(mixed.cardBody,/Other connections through your natal Moon: Nikki's natal Venus\./);
+assert.match(mixed.cardBody,/Until October 30, 2026/,'Retain the primary transit date');
+assert.match(mixed.detailBody,/Mars in Leo conjunct Nikki's natal Mercury · Orb 2° 30′/);
+assert.match(mixed.detailBody,/Your natal Moon opposite Nikki's natal Chiron · Orb 0° 24′/);
+assert.match(mixed.detailBody,/Your natal Moon trine Nikki's natal Venus · Orb 0° 24′/);
+assert.doesNotMatch(mixed.detailBody,/Mars in Leo quincunx/);
+assert.equal(JSON.stringify(contextOptions),snapshot,'Context formatting cannot mutate source facts');
+const indirect=connectionTransitContext({...contextOptions,counterpartTransits:[]});
+assert.equal(indirect.directTransits.length,0);
+assert.doesNotMatch(indirect.cardBody,/Direct transits to both charts/);
+assert.match(indirect.cardBody,/This transit may bring your existing Moon connections with Nikki into focus\./);
+assert.match(indirect.detailBody,/Direct transit to your chart:/);
+assert.match(indirect.detailBody,/Connections through your natal Moon:/);
+const allDirect=connectionTransitContext({...contextOptions,contacts:[contextOptions.contacts[0]],counterpartTransits:[factTransit('Mercury')]});
+assert.match(allDirect.cardBody,/Direct transits to both charts:/);
+assert.doesNotMatch(allDirect.cardBody,/Other connections through/,'An all-direct group has no empty indirect section');
+const reversed=connectionTransitContext({...contextOptions,endpointOwner:'friend',contacts:[factContact('Venus','Moon','trine'),factContact('Saturn','Moon','sextile')],counterpartTransits:[factTransit('Venus','opposition')]});
+assert.match(reversed.cardBody,/This transit may bring Nikki's existing Moon connections with you into focus\./);
+assert.match(reversed.cardBody,/Mars in Leo opposite your natal Venus/);
+assert.match(reversed.cardBody,/Other connections through Nikki's natal Moon: your natal Saturn\./);
+assert.match(reversed.detailBody,/Your natal Saturn sextile Nikki's natal Moon · Orb 0° 24′/);
+assert.equal(connectionTransitContext({...contextOptions,contacts:[],counterpartTransits:[factTransit('Mercury')]}).cardBody,'');
+console.log('Connection context passed: independent direct transits, mixed and indirect groups, both endpoint owners, complete orbs, dates, empty groups and immutable facts.');
