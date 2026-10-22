@@ -8777,8 +8777,9 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     expect(focusedBounds.x).toBeGreaterThanOrEqual(stripBounds.x);
     expect(focusedBounds.x + focusedBounds.width).toBeLessThanOrEqual(stripBounds.x + stripBounds.width + 1);
     await preview.press(' ');
-    await expect(page.getByRole('tabpanel', { name: 'Preview without saving', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Preview without saving', exact: true })).toBeVisible();
+    const previewPanel = page.getByRole('tabpanel', { name: 'Preview without saving', exact: true });
+    await expect(previewPanel).toBeVisible();
+    await expect(previewPanel.getByRole('button', { name: 'Preview without saving', exact: true })).toBeVisible();
     await preview.press('ArrowLeft');
     const house = tabs.getByRole('tab', { name: 'House Transits' });
     await expect(house).toBeFocused();
