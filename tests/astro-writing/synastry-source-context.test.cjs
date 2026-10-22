@@ -1,7 +1,8 @@
 const assert = require('node:assert/strict');
 const { readFileSync, readdirSync } = require('node:fs');
 const { test } = require('node:test');
-const { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan } = require('../../src/astro-writing/synastrySourceContext.cjs');
+const { createHash } = require('node:crypto');
+const { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastryMeaningPlanSchema, designatedSynastryVoiceReferences } = require('../../src/astro-writing/synastrySourceContext.cjs');
 
 test('both chart roles remain explicit, including the same planet in both charts', () => {
   for (const readerPerson of ['A', 'B']) {
@@ -63,4 +64,22 @@ test('internal plans permit uncomplicated support and empty remedy fields, while
   assert.equal(validateSynastryMeaningPlan(plan), plan);
   assert.throws(() => validateSynastryMeaningPlan({ ...plan, core_tension: 'Their caution presses on your confidence.' }), /OWNERSHIP_UNRESOLVED/);
   assert.throws(() => validateSynastryMeaningPlan({ core_tension: 'A vague relationship observation.' }), /OWNERSHIP_UNRESOLVED/);
+  const remedy = { ...plan, constructive_expression: 'Person A should ask Person B to listen.' };
+  assert.throws(() => validateSynastryMeaningPlan(remedy), /UNREQUESTED_REMEDY/);
+  assert.equal(validateSynastryMeaningPlan(remedy, { adviceRequested: true }), remedy);
+  const schema = { properties: { constructive_expression: { type: 'string' } } };
+  assert.deepEqual(synastryMeaningPlanSchema(schema).properties.constructive_expression.enum, ['']);
+  assert.equal(synastryMeaningPlanSchema(schema, { adviceRequested: true }), schema);
+});
+
+test('designated complete voice references retain their declared role and cannot be replaced with rejection text or damaged excerpts', () => {
+  const text='Complete synthetic approved voice reference. Its final sentence remains intact.';
+  const reference={role:'owner_approved_voice_only_not_astrology_for_target',path:'/private/synthetic-reference.txt',text,
+    sha256:createHash('sha256').update(text).digest('hex')};
+  const snapshot={positiveVoiceReferences:[reference],bookReferences:[{text:'Meaning only.'}],ownerReason:'A proposed rewrite is not positive voice.'};
+  assert.equal(designatedSynastryVoiceReferences(snapshot),snapshot.positiveVoiceReferences);
+  assert.deepEqual(designatedSynastryVoiceReferences({bookReferences:snapshot.bookReferences,ownerReason:snapshot.ownerReason}),[]);
+  for(const invalid of [{...reference,text:'A shortened version.'},{...reference,role:'rejected_draft'},{...reference,path:''}]){
+    assert.throws(()=>designatedSynastryVoiceReferences({positiveVoiceReferences:[invalid]}),/VOICE_REFERENCE_INVALID/);
+  }
 });

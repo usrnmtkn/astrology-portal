@@ -66,12 +66,37 @@ function prepareSynastrySourceInput(input) {
   return { ...input, facts, sourceSnapshot };
 }
 
-function validateSynastryMeaningPlan(plan) {
+function synastryMeaningPlanSchema(schema, facts = {}) {
+  if (facts.adviceRequested === true) return schema;
+  return { ...schema, properties: { ...schema.properties,
+    constructive_expression: { type: "string", enum: [""],
+      description: "Advice was not requested. Leave this field empty. Supported affection, ease or other constructive interaction belongs in core_tension and observable_behaviors, not a repair plan." } } };
+}
+
+function designatedSynastryVoiceReferences(snapshot = {}) {
+  const references = snapshot.positiveVoiceReferences;
+  if (references === undefined) return [];
+  if (!Array.isArray(references) || references.length > 32) throw new Error("SYNASTRY_VOICE_REFERENCE_INVALID: complete designated references are required.");
+  for (const reference of references) {
+    if (!object(reference) || reference.role !== "owner_approved_voice_only_not_astrology_for_target"
+      || typeof reference.path !== "string" || !reference.path.trim()
+      || typeof reference.text !== "string" || !reference.text.trim()
+      || !/^[a-f0-9]{64}$/u.test(reference.sha256 ?? "") || textHash(reference.text) !== reference.sha256) {
+      throw new Error("SYNASTRY_VOICE_REFERENCE_INVALID: a designated reference must retain its exact complete text, source and declared voice-only role.");
+    }
+  }
+  return references;
+}
+
+function validateSynastryMeaningPlan(plan, facts = {}) {
   if (!object(plan)) throw new Error("SYNASTRY_MEANING_OWNERSHIP_UNRESOLVED: a role-qualified meaning plan is required before the writer runs.");
   const fields = ["core_tension", "what_changes", "constructive_expression", "overcorrection", "observable_behaviors", "possible_consequences"];
   const text = fields.map(field => Array.isArray(plan[field]) ? plan[field].join("\n") : String(plan[field] ?? "")).join("\n");
   if (/\b(?:you|your|yours|yourself|yourselves)\b/iu.test(text) || !/\bPerson A\b/iu.test(text) || !/\bPerson B\b/iu.test(text)) {
     throw new Error("SYNASTRY_MEANING_OWNERSHIP_UNRESOLVED: describe Person A and Person B explicitly before the writer runs; source-reader pronouns are not a verified binding.");
+  }
+  if (facts.adviceRequested !== true && String(plan.constructive_expression ?? "").trim()) {
+    throw new Error("SYNASTRY_UNREQUESTED_REMEDY: the unrequested remedy field must be empty before the writer runs.");
   }
   return plan;
 }
@@ -80,7 +105,10 @@ function synastrySourceReceipt(input) {
   const context = input.sourceSnapshot?.synastrySourceContext;
   if (!context) return null;
   return { version: VERSION, planetA: context.ownership.personA.planet, planetB: context.ownership.personB.planet,
-    readerPerson: context.ownership.readerPerson, exclusions: context.exclusions };
+    readerPerson: context.ownership.readerPerson, exclusions: context.exclusions,
+    designatedVoiceReferences: designatedSynastryVoiceReferences(input.sourceSnapshot).map(reference => ({
+      textSha256: reference.sha256, wordCount: reference.text.trim().split(/\s+/u).length,
+      evidenceRole: "designated_voice_only", sourceApprovalUnchanged: true })) };
 }
 
-module.exports = { SYNASTRY_SOURCE_CONTEXT_VERSION: VERSION, synastryContactOwnership, prepareSynastrySourceInput, validateSynastryMeaningPlan, synastrySourceReceipt };
+module.exports = { SYNASTRY_SOURCE_CONTEXT_VERSION: VERSION, synastryContactOwnership, prepareSynastrySourceInput, synastryMeaningPlanSchema, designatedSynastryVoiceReferences, validateSynastryMeaningPlan, synastrySourceReceipt };

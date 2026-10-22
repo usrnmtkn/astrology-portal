@@ -112,10 +112,15 @@ function renderEffectiveRulesForPrompt(input = {}) {
   const advisory = rules.filter((rule) => rule.tier === "advisory");
   // The dated essay keeps this owner standard without turning a useful next
   // move into an instruction to finish every interpretive paragraph with advice.
-  // Other surfaces and the registry's enforcement tiers remain unchanged.
+  // Synastry's current owner correction also makes advice opt-in. Render the
+  // qualification here, where every provider and prompt consumer gets it;
+  // a later generic rule must not reinstate a mandatory next move.
   const datedIngress = input.surface === 'sky' && input.family === 'sky-ingress-essay';
+  const synastry = surface === 'synastry';
   const render = (entries) => entries.map((rule) => `- ${rule.id}: ${datedIngress && rule.id === 'lived-cause-consequence-v2'
     ? 'Use supported human experience, direct consequences and enough personality to sound written rather than generated. A useful next move belongs when it develops the thought or is required by the field; it is not a default paragraph ending. Concrete means an observable action, decision, exchange or consequence, not a decorative prop or an unsupported life domain.'
+    : synastry && rule.id === 'lived-cause-consequence-v2'
+    ? 'Develop the supported relationship experience in ordinary language. An observable action, exchange or consequence can clarify it; no scene or consequence is compulsory. Advice is opt-in for the requested field. End when the observation is complete, without adding a remedy or a useful next move by default.'
     : rule.promptText}`).join("\n");
   return [
     `# Effective TLDR Astro writing rules (${REGISTRY.registryId})`,

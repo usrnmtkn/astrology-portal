@@ -86,6 +86,15 @@ also be selected. Legacy content keys containing pipes cannot be explicit target
 under the database contract. Broader guidance still requires the owner's express
 scope decision; an ordinary rejection never becomes global automatically.
 
+Reusable Synastry library family requests also retrieve their own exact-member
+corrections: `hard` includes square/opposition and `soft` includes trine/sextile.
+Each complete record retains its original target and the request explicitly
+limits its use to overlapping meaning supported for every family member. This
+does not make an exact square request inherit opposition feedback, reverse a
+planet-pair key, extend guidance to another surface or change stored scopes.
+Proposed replacements in rejection reasons remain correction evidence, never
+automatically approved positive voice examples.
+
 With `STUDIO_MEMORY_FEEDBACK_ENABLED=true`, fresh shared writer, template-slot,
 Sky Placement and horoscope requests read the existing private snapshot. Lunar
 writing merges these applicable scopes with its existing exact-target feedback.

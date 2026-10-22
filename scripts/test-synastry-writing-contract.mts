@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { REVIEW_FIELDS } from '../src/astro-writing/canonicalInstructions.mjs';
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY } from '../src/astro-writing/rhetoricalPatterns.mjs';
 import handler from '../api/generate-content.js';
@@ -91,13 +92,18 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v8-2026-10-21'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v9-2026-10-21'));
   assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
   assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
   // Inspect both actual provider fields: OpenAI's canonical transport can add
   // instructions that are absent from the assembled user prompt.
   const combined = `${instructions}\n${prompt}`;
+  assert(!combined.includes('Use a specific situation, a direct consequence, a useful next move,'),
+    'The final provider request must not reintroduce default advice through the appended effective rules.');
+  assert.equal(combined.split('# Effective TLDR Astro writing rules').length - 1, 1,
+    'The final request must contain one effective-rule layer, not conflicting copies in user and system fields.');
+  assert(!prompt.includes('PRIMARY NATAL PLACEMENT PRIMITIVES'), 'A relationship writer must not receive the unrelated natal instruction layer.');
   assert(!combined.includes('Lead with how one person makes the other feel'));
   assert(!combined.includes('Open with the felt experience of being around this person.'));
   assert(instructions.includes(RHETORICAL_WRITER_POLICY), 'The complete existing rhetorical writer policy remains in the system instructions.');
@@ -110,9 +116,9 @@ function assertSynastryRequest(request: any, input: typeof base) {
     'Flag relationship blocks for a dedicated voice pass', 'Put the readable hook, advice',
     'Write in this order:', 'Daily horoscope rule: include lunar contacts'
   ]) assert(!combined.includes(conflict), `Cross-surface instruction remains: ${conflict}`);
-  const universal = sharedStyle.match(/^## Universal rules \(all surfaces\)[\s\S]*?(?=^## )/mu)?.[0].trim();
   const universalBans = sharedStyle.match(/^### Universal \(all voices\)[\s\S]*?(?=^### )/mu)?.[0].trim();
-  assert(universal && prompt.includes(universal), 'Complete shared safety and wording rules remain intact.');
+  assert(!combined.includes('Build pressure, movement, and consequence inside one charged sequence.'),
+    'The old mandatory scene arc must not contradict the current optional-interaction contract.');
   assert(universalBans && prompt.includes(universalBans), 'Complete applicable shared word policy remains intact.');
   assert(prompt.includes('OUTPUT SHAPE FOR SYNASTRY ASPECT'));
   assert(prompt.includes("do not leave the astrological reasoning entirely in the drilldown"));
@@ -238,7 +244,7 @@ try {
     const generated = await generate({ ...sourceFixture, provider });
     assert.equal(generated.statusCode, 200);
     const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-    assert.equal(receipt.editorialVersion, 'synastry-aspect/v8-2026-10-21');
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v9-2026-10-21');
     assert.equal(receipt.readerPerson, 'B');
     assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
     assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
@@ -257,10 +263,34 @@ try {
     if (provider === 'openai') {
       const ownership = JSON.parse(stages[0].body.input).contactOwnership;
       assert.equal(ownership.personA.planet, 'Sun'); assert.equal(ownership.personB.planet, 'Saturn'); assert.equal(ownership.readerPerson, 'B');
+      assert.deepEqual(stages[0].body.text.format.schema.properties.constructive_expression.enum, [''],
+        'The actual planner schema cannot solicit an unrequested remedy.');
     }
   }
   assert.equal(JSON.stringify(sourceFixture), sourceBefore, 'The original sources and saved input are never mutated.');
   nextDraft = draft;
+  const voiceText = 'Complete synthetic designated voice passage. Its original punctuation — and its final sentence remain intact.';
+  const reference = { role: 'owner_approved_voice_only_not_astrology_for_target', path: '/private/synthetic-owner-reference.txt',
+    text: voiceText, sha256: createHash('sha256').update(voiceText).digest('hex') };
+  const benchmarkFixture = { ...base, sourceSnapshot: { meaning: base.sourceSnapshot.meaning, positiveVoiceReferences: [reference] } };
+  for (const provider of ['openai', 'claude'] as const) {
+    const start = requests.length;
+    const result = await generate({ ...benchmarkFixture, provider });
+    assert.equal(result.statusCode, 200);
+    const writer = requests.slice(start).find(request => request.kind === 'tldr_astro_generated_content');
+    const prompt = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+    assert(prompt.includes('DESIGNATED SYNASTRY VOICE REFERENCES'));
+    assert.equal(prompt.split(voiceText).length - 1, 1, 'Complete designated wording appears once, unchanged.');
+    assert(!prompt.includes('relationship-year-libra-2025-to-venus-rx-2026'), 'Designated benchmarks cannot be padded with the automatic adjacent article.');
+    const receipt = result.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
+    assert.equal(receipt.designatedVoiceReferences[0].textSha256, reference.sha256);
+    assert(!JSON.stringify(receipt).includes(voiceText));
+    const beforeInvalid = requests.length;
+    const invalid = await generate({ ...benchmarkFixture, provider, sourceSnapshot: { ...benchmarkFixture.sourceSnapshot,
+      positiveVoiceReferences: [{ ...reference, text: 'A damaged excerpt.' }] } });
+    assert.notEqual(invalid.statusCode, 200); assert.match(invalid.result.error, /VOICE_REFERENCE_INVALID/u);
+    assert.equal(requests.length, beforeInvalid, 'Damaged designated evidence stops before either provider.');
+  }
   for (const unsafePlan of [{}, { core_tension: 'Their caution presses on your confidence.' },
     { core_tension: 'Person A wants you to agree with Person B.' }]) {
     nextPlan = unsafePlan; const start = requests.length;
@@ -269,6 +299,14 @@ try {
     assert.match(result.result.error, /SYNASTRY_MEANING_OWNERSHIP_UNRESOLVED/u);
     assert.deepEqual(requests.slice(start).map(request => request.kind), ['tldr_astro_meaning_plan'], 'Ambiguous plan stops before writer, reviewer or rewrite.');
   }
+  nextPlan = validPlan;
+  nextPlan = { ...validPlan, constructive_expression: 'Person A should listen patiently so Person B feels understood.' };
+  const remedyStart = requests.length;
+  const remedyResult = await generate({ ...base, provider: 'openai' });
+  assert.notEqual(remedyResult.statusCode, 200);
+  assert.match(remedyResult.result.error, /SYNASTRY_UNREQUESTED_REMEDY/u);
+  assert.deepEqual(requests.slice(remedyStart).map(request => request.kind), ['tldr_astro_meaning_plan'],
+    'A provider ignoring the empty-remedy schema must stop before the writer; it must not trigger another draft.');
   nextPlan = validPlan;
   const beforeConflict = requests.length;
   const conflict = await generate({ ...base, provider: 'openai', facts: { ...base.facts, readerPlanet: 'Mercury' } });

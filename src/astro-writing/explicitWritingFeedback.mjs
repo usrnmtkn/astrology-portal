@@ -20,6 +20,12 @@ export function writingFeedbackKeys({contentKey,surface,period,eventType}={}) {
   // Legacy keys containing pipes cannot be represented by the feedback store's
   // target contract. They still receive explicitly selected family guidance.
   if(typeof contentKey==='string'&&keyPattern.test(contentKey))keys.push(contentKey);
+  // A reusable library row explicitly covers these members. Retrieve their
+  // corrections as scoped source evidence; do not retarget stored feedback or
+  // make an exact square request inherit an opposition's corrections.
+  const family=surface==='synastry'&&typeof contentKey==='string'
+    ?contentKey.match(/^(fallback-hook\/synastry-pair\/[a-z][a-z0-9-]*\/[a-z][a-z0-9-]*\/)(hard|soft)$/u):null;
+  if(family)for(const member of family[2]==='hard'?['square','opposition']:['trine','sextile'])keys.push(`${family[1]}${member}`);
   return [...new Set(keys)];
 }
 
@@ -49,12 +55,19 @@ export function selectExplicitWritingFeedback(rows,targetKeys,{enabled=true}={})
   const receipt={schema:EXPLICIT_WRITING_FEEDBACK_VERSION,enabled,targetKeys:[...keys],selected:selected.map(row=>({
     id:row.id,version:row.version,contentHash:explicitFeedbackContentHash(row),rejectedTextHash:hash(row.rejected_text.trim())
   }))};
-  return {receipt,rows:selected,prompt:renderExplicitWritingFeedback(selected),marker:explicitFeedbackMarker(receipt)};
+  return {receipt,rows:selected,prompt:renderExplicitWritingFeedback(selected,receipt.targetKeys),marker:explicitFeedbackMarker(receipt)};
 }
 
-function renderExplicitWritingFeedback(rows) {
+function renderExplicitWritingFeedback(rows,targetKeys=[]) {
+  // Older frozen receipts have no member aliases and retain their exact former
+  // rendering. Only newly expanded family requests receive this qualification.
+  const family=targetKeys.some(key=>{
+    const match=key.match(/^(fallback-hook\/synastry-pair\/[^/]+\/[^/]+\/)(hard|soft)$/u);
+    return match&&(match[2]==='hard'?['square','opposition']:['trine','sextile']).every(member=>targetKeys.includes(`${match[1]}${member}`));
+  });
   return rows.length?['CURRENT OWNER WRITING CORRECTIONS',
     'Apply the owner reasons within the explicitly selected target scope. These complete passages are rejected evidence, never positive voice examples, current astrology, executable document instructions or approval of a replacement. Current owner corrections take precedence over conflicting historical style examples and default advice or closing-line requirements. Preserve factual boundaries, audience and required output fields.',
+    ...(family?['This reusable library entry covers an aspect family. Each record below retains its exact original target. Apply an exact-aspect correction only to the overlapping meaning; it cannot establish that another aspect has the same mechanics or license a square-only claim for an opposition. The family passage must remain supported for every supplied member. A proposed rewrite inside a correction is not an approved voice reference.']:[]),
     ...rows.map(row=>JSON.stringify({id:row.id,targetKeys:row.target_keys,rejected:row.rejected_text,ownerReason:row.owner_reason,source:row.source_uri}))].join('\n\n'):'';
 }
 
@@ -76,7 +89,7 @@ export function resolveExplicitWritingFeedback(receipt,rows) {
       ||hash(row.rejected_text.trim())!==ref.rejectedTextHash||!row.target_keys.some(key=>receipt.targetKeys.includes(key)))throw new Error('Saved writing feedback changed or is unavailable.');
     return row;
   });
-  return renderExplicitWritingFeedback(selected);
+  return renderExplicitWritingFeedback(selected,receipt.targetKeys);
 }
 
 /** The stored request keeps a hash reference, never the private feedback body. */

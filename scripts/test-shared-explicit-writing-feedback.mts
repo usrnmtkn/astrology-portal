@@ -32,6 +32,15 @@ try{
   const before=calls;outage=true;await assert.rejects(writer(synastry),/feedback could not load/u);outage=false;
   assert.equal(calls,before,'Storage failure precedes both planner and writer');
  }
+ const square=correction('moon-mercury-square','fallback-hook/synastry-pair/moon/mercury/square');
+ rows.push(square,correction('other-pair','fallback-hook/synastry-pair/moon/saturn/square'));
+ const family={...synastry,contentKey:'fallback-hook/synastry-pair/moon/mercury/hard',facts:{planetA:'Mercury',planetB:'Moon',aspect:'hard',aspectFamilyMembers:['square','opposition']}};
+ for(const writer of [generateWithOpenAI,generateWithClaude]){
+  sent='';await assert.rejects(writer(family),/synthetic writer boundary stop/u);
+  assert(sent.includes(square.rejected_text));assert(sent.includes(square.owner_reason));
+  assert(sent.includes(square.target_keys[0]));assert(sent.includes('exact original target'));
+  assert(!sent.includes('PRIVATE exact owner reason other-pair.'));
+ }
  const contact={contentKey:'authored/transit-aspect/neptune/jupiter/trine',transiting:'neptune',natal:'jupiter',aspect:'trine',
   requested:['you','friend'],instruction:'',record:{contentKey:'authored/transit-aspect/neptune/jupiter/trine'},youText:'',friendText:'',facts:{}};
  const personalTransitContext=buildPersonalTransitWriterContext(contact,syntheticTransitSources());

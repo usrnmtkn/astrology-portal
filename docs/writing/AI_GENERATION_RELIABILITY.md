@@ -837,3 +837,47 @@ schemas, complete voice evidence, Ghostwriter guidance, model settings, provider
 stages and review/publication boundaries remain unchanged. These checks establish
 source separation and request behavior; they cannot certify the new prose's voice
 or prove that every semantic role in a generated sentence is correct.
+
+The v8 live sample exposed an assembly defect that the prior scoped assertions
+missed: the shared effective-rule renderer still appended a default useful-next-
+move instruction, in both the OpenAI system and user inputs. The generic user
+builder also supplied unrelated natal instructions. Presence of the corrected
+synastry authority did not prove absence of those later conflicts. Earlier
+request tests were insufficient evidence for a complete repair.
+
+The v9 assembly gives relationship copy its own evidence-and-format builder.
+Effective rules appear once, with the current synastry advice qualification
+rendered at their shared source for both providers. Complete owner passages,
+knowledge meaning and reader output fields remain intact. Without an explicit
+advice request, the planner's `constructive_expression` field is constrained to
+an empty string; supported positive interaction remains in the other meaning
+fields. A provider returning a populated remedy field stops before the writer,
+without another generation or automatic repair. The actual-handler regression
+first reproduced the surviving default-advice conflict, then checked the complete
+system and user request, planner schema and pre-writer stop for both providers.
+
+The v8 family sample did not receive the exact-entry corrections. Reusable
+Synastry library family requests now retrieve corrections for their own named
+members: square/opposition for hard, trine/sextile for soft. Stored target keys,
+complete rejected passages, owner reasons and hashes remain unchanged. The prompt
+retains each correction's original scope and requires family claims to hold for
+every supplied member. An exact square request never inherits an opposition's
+correction; other planet pairs, reversed keys and other surfaces are excluded.
+A proposed rewrite inside a rejection reason is not approved voice evidence.
+
+When the owner supplies designated complete Synastry voice references, their
+declared voice-only role, source and exact text hash are checked before any model
+call. Those benchmarks replace automatic adjacent-article retrieval for that
+request. They appear once, separately from book/knowledge meaning and the existing
+draft; no weaker article is appended to satisfy an evidence-count floor. A broken
+reference stops generation rather than falling back to different voice evidence.
+Reference approval and source attribution are retained, not newly established by
+the hash check. Requests without designated references retain their existing
+registered-owner retrieval; this change does not populate a new private reference
+store or silently change saved Studio profiles. Hash-only generation receipts
+identify the selected benchmarks and keep an empty feedback selection visible.
+
+Actual-handler fixtures cover both providers, complete designated references,
+no adjacent-article padding, exact-member correction delivery and scope isolation.
+Offline assembly checks establish delivery only, not improved prose or owner
+approval. No new paid draft is part of this repair.
