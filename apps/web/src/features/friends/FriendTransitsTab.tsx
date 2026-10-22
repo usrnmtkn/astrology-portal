@@ -267,11 +267,11 @@ export function FriendTransitsTab({
                   <span className="updates-aspect-row__content">
                     <h3 className="updates-aspect-row__title">{card.headline}</h3>
                     <p className="updates-aspect-row__description">{card.effectBody}</p>
-                    {card.activationBody ? (
-                      <p className="updates-aspect-row__description friend-bond-transit-activation">
-                        {card.activationBody}
+                    {card.activationBody.split("\n\n").filter(Boolean).map((paragraph) => (
+                      <p className="updates-aspect-row__description friend-bond-transit-activation" key={paragraph}>
+                        {paragraph}
                       </p>
-                    ) : null}
+                    ))}
                     {card.detailAvailable ? <CardReadMore /> : null}
                   </span>
                 </button>

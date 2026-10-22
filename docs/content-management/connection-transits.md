@@ -7,7 +7,13 @@ Between You Two list openings, their publication identities or other consumers.
 Calculated evidence is also shown under “Why this involves [friend]”, independently
 of those prose sources. It identifies the natal endpoint receiving the transit
 and lists that endpoint's actual grouped synastry contacts, including aspect type
-and orb. Missing or unpublished activation/bridge prose cannot hide these facts.
+and orb. The cards and detail use “may bring your existing connections into focus”
+wording. Direct transits to both charts are identified only when the same moving
+planet independently aspects the opposite endpoint in the current calculated
+transit inventory. These facts include their own aspect and orb, independently of
+card caps and prose publication. Other connections are explicitly described as
+connections through the natal endpoint; their synastry aspects do not imply a
+direct transit to the other chart. Missing or unpublished activation/bridge prose cannot hide these facts.
 This factual section does not supply a missing interpretation or change publication
 eligibility; all three prose-source boundaries below still apply.
 

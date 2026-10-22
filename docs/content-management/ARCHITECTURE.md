@@ -155,8 +155,12 @@ Bond transits group by:
 (transiting planet, aspect, endpoint planet, endpoint owner)
 ```
 
-One grouped activation becomes one card. The transit aspects the endpoint; the
-activation then flows through every synastry connection made by that endpoint.
+One grouped activation becomes one card. The transit aspects the endpoint; its
+existing synastry connections supply possible relationship context. A direct
+transit to the other chart is checked independently against that chart's complete
+calculated transit inventory. The reader distinguishes direct transits to both
+charts from connections through one natal endpoint; synastry alone does not
+establish a direct transit to the other person.
 
 ## 4. The reader-content package
 

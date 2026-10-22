@@ -1,6 +1,6 @@
 import { PortalVisibility } from "../../components/portalVisibility";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
-import { precisePersonalOrb } from "../../services/personalDailyTransits";
+import { connectionTransitContext } from "../../services/connectionTransitContext";
 import { connectionActivationKey, connectionAspectWord, connectionPointTitle, CONNECTION_BRIDGE_PREFIX } from "../../content/connectionTransit";
 import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeCopy } from "./connectionTransitSources";
 import { connectionTransitReading } from "./connectionTransitReading";
@@ -71,6 +71,7 @@ import { groupAspectsByGiftLesson } from "../../services/aspectGiftLesson";
 import { transitHouseContentKey } from "../../services/generatedContentKeys";
 import type { LiveGeneratedContent } from "../../services/generatedContent";
 import {
+  manualChartHasReliableBirthTime,
   manualChartNeedsNatalRepair,
   type ManualChart
 } from "../../services/manualCharts";
@@ -298,6 +299,8 @@ export function ManualChartsPanel({
 }) {
   const {
     activationTimingOverridesForTransits,
+    buildNatalTransitItems,
+    natalTransitTargets,
     bondEffectFamily,
     compatibilityDynamicHeading,
     compatibilityPlanets,
@@ -582,6 +585,14 @@ export function ManualChartsPanel({
     friendPronouns: PronounChoice | null | undefined,
     generatedAt: string
   ) {
+    const directInventories = {
+      reader: currentSky && profileNatalSky
+        ? buildNatalTransitItems(currentSky.positions, natalTransitTargets(profileNatalSky, profileNatalSky.birthTimeKnown === true), sunriseOrbDegrees, currentSky.location.timeZone)
+        : [],
+      friend: currentSky && selectedFriendReadyNatalChart && selectedChart
+        ? buildNatalTransitItems(currentSky.positions, natalTransitTargets(selectedFriendReadyNatalChart, manualChartHasReliableBirthTime(selectedChart)), sunriseOrbDegrees, currentSky.location.timeZone)
+        : []
+    };
     const rawCandidates = contacts.flatMap((contact) => {
       const activations = [
         ...readerTransits.map((transit) => ({
@@ -669,10 +680,23 @@ export function ManualChartsPanel({
           window: timingRange
         });
 
+        const activatedContacts = contactsForBondTransitGroup(group, contacts);
+        const connectionContext = connectionTransitContext({
+          activation: group.activation,
+          endpointOwner: group.endpointOwner,
+          contacts: activatedContacts,
+          counterpartTransits: group.endpointOwner === "reader" ? directInventories.friend : directInventories.reader,
+          friendName,
+          windowLabel: timingRange,
+          titleOf: friendTransitTitle,
+          orbOf: transitOrbValue,
+          aspectWord: transitAspectTechnicalVerb
+        });
         return [{
           activation: group.activation,
           endpointOwner: group.endpointOwner,
-          activatedContacts: contactsForBondTransitGroup(group, contacts),
+          activatedContacts,
+          connectionContext,
           id: `${group.key}-${group.activationId}`,
           effectFamily: bondEffectFamily(group.transiting, group.aspect) as "soft" | "hard",
           effectContentKey: rendered.contentKey,
@@ -682,7 +706,7 @@ export function ManualChartsPanel({
           timingRange,
           body: rendered.parts.join("\n\n"),
           effectBody: rendered.parts[0] ?? "",
-          activationBody: rendered.parts.slice(1).join("\n\n")
+          activationBody: connectionContext.cardBody
         }];
       } catch (error) {
         if (error instanceof FallbackV3SourceGapError) {
@@ -1429,6 +1453,9 @@ export function ManualChartsPanel({
     selectedChart,
     selectedChartIsEvent,
     selectedFriendTransits,
+    profileNatalSky,
+    selectedFriendReadyNatalChart,
+    sunriseOrbDegrees,
     selectedSynastryContacts
   ]);
   const connectionSourceKeys = selectedBondTransitCards.flatMap(card => card.activatedContacts.flatMap(contact => {
@@ -2186,16 +2213,9 @@ export function ManualChartsPanel({
     const voice = card.endpointOwner === "reader" ? "you" : selectedChart.displayName;
     const transitSections = selectedBondTransitSections.get(card.id) ?? [];
     if (!transitSections.length) return;
-    const endpoint = card.endpointOwner === "reader"
-      ? `your natal ${card.activation.natalPoint}`
-      : `${possessiveLabel(selectedChart.displayName)} natal ${card.activation.natalPoint}`;
-    const counterpartChart = card.endpointOwner === "reader" ? `${possessiveLabel(selectedChart.displayName)} chart` : "your chart";
     const connectionFacts = {
       heading: `Why this involves ${selectedChart.displayName}`,
-      body: [
-        `This transit reaches ${endpoint}. That natal point also forms these aspects with ${counterpartChart}:`,
-        ...card.activatedContacts.map(contact => `Your natal ${contact.yourPoint.name} ${transitAspectTechnicalVerb(contact.aspect)} ${possessiveLabel(selectedChart.displayName)} natal ${contact.friendPoint.name} · Orb ${precisePersonalOrb(contact.orb)}`)
-      ].join("\n\n")
+      body: card.connectionContext.detailBody
     };
     let activationCount = 0;
     const activatedConnectionSections = card.activatedContacts.flatMap(contact => {
@@ -2214,7 +2234,7 @@ export function ManualChartsPanel({
       const bridge = connectionBridgeCopy(connectionSources, bridgeKey, variables);
       return [
         ...(bridge ? [{ heading: "", body: bridge, sourceKeys: [bridgeKey] }] : []),
-        { eyebrow: activationCount++ === 0 ? "What this activates" : undefined,
+        { eyebrow: activationCount++ === 0 ? "About these connections" : undefined,
           heading: `Your ${variables.yourPoint} ${variables.synastryAspectWord} ${selectedChart.displayName}'s ${variables.theirPoint}`,
           body, sourceKeys: [key] }
       ];

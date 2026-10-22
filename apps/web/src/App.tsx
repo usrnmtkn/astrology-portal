@@ -18656,6 +18656,8 @@ function ProfileView({
 
 export const friendsViewModelDependencies = {
   activationTimingOverridesForTransits,
+  buildNatalTransitItems,
+  natalTransitTargets,
   bondEffectFamily,
   compatibilityDynamicHeading,
   compatibilityPlanets,
