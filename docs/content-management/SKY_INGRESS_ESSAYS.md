@@ -2,6 +2,24 @@
 
 Status: October 9 authoring format integrated; generated wording still requires exact owner review before serving.
 
+## Preview without saving
+
+Open **Sky Write-ups → Preview without saving** while signed in as the owner.
+Choose a planet or point and a reference date during its placement, then select
+**Preview without saving**. This starts one OpenAI `gpt-5.6-sol` generation through
+the existing dated ingress handler. The server rejects a different configured
+model before billing. The existing knowledge-base, Calendar, calculated-event,
+saved-template and approved voice-benchmark sources remain the writer's inputs.
+
+The complete draft and its model/source receipt stay in this view's memory.
+They never enter the article editor, autosave, workspace, local/session storage,
+approval or publication paths. **Discard preview**, leaving the view or reloading
+removes the result. A rejected candidate remains visible for review. Failed or
+interrupted requests are never retried automatically. Starting another preview
+is a separate explicit paid action.
+
+## Saved edition workflow
+
 Open **Sky Write-ups**, select the planet/sign article template, and use
 **Create a complete edition → Ingress essay · October 9 format**. Load the
 reference date's calculated facts, complete the fields, and compile a draft.

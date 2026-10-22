@@ -256,6 +256,7 @@ const SkyPlacementCompanions = lazy(() => import("./SkyPlacementCompanions"));
 const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyArticleSourceDetails })));
 const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementEditorNav })));
 const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementWritingLinks })));
+const UnsavedIngressPreview = lazy(() => import('./UnsavedIngressPreview'));
 const SkyPlacementReusableSources = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementReusableSources })));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
@@ -402,7 +403,7 @@ type AdminWritingSurfaceMapPayload = {
 };
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
-type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits";
+type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits" | "ingress-preview";
 type CalendarWriteupWorkspaceView = SkyForecastPeriod | "daily-writing" | "season-transitions" | "season-writeups" | "moon-transition-phrases" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
@@ -422,7 +423,8 @@ const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }
   { value: "daily-summary", label: "Daily Sky Summary" },
   { value: "catalog", label: "Placements & lunations" },
   { value: "transits-to-natal", label: "Personal Transits" },
-  { value: "house-transits", label: "House Transits" }
+  { value: "house-transits", label: "House Transits" },
+  { value: "ingress-preview", label: "Preview without saving" }
 ];
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
@@ -7108,7 +7110,8 @@ export function GeneratedContentAdminDashboard() {
                     {(item.page === "calendarWriteups" ? calendarWriteupWorkspaceTabs : [
                       skyWriteupWorkspaceTabs[0],
                       { value: "transits-to-natal", label: "Transit to Natal Charts" },
-                      skyWriteupWorkspaceTabs[3]
+                      skyWriteupWorkspaceTabs[3],
+                      skyWriteupWorkspaceTabs[4]
                     ]).map(tab => <StudioButton key={tab.value} type="button"
                       onClick={() => navigateAdminPage(item.page, new URLSearchParams({ view: tab.value }))}
                       aria-current={activePage === item.page && (item.page === "calendarWriteups" ? calendarWriteupWorkspaceView : skyWriteupWorkspaceView) === tab.value ? "page" : undefined}>
@@ -7608,7 +7611,9 @@ export function GeneratedContentAdminDashboard() {
                 }
                 navigateAdminPage("skyWriteups", params);
               }}>
-            {skyWriteupWorkspaceView === "daily-summary" ? (
+            {skyWriteupWorkspaceView === "ingress-preview" ? (
+              <Suspense fallback={<PageLoading message="Loading unsaved preview…" />}><UnsavedIngressPreview /></Suspense>
+            ) : skyWriteupWorkspaceView === "daily-summary" ? (
               <>
                 <Suspense fallback={<PageLoading message="Loading Daily Sky Summary editor…" />}>
                   <SkyDailySummaryStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} focusSunSummaries={focusSunSummaries} />

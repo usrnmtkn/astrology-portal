@@ -4,7 +4,7 @@ import base from "./playwright.config";
 export default defineConfig({
   ...base,
   testDir: "./tests/studio-auth",
-  testMatch: "studio-owner-login.spec.ts",
+  testMatch: ["studio-owner-login.spec.ts", "unsaved-ingress-preview.spec.ts"],
   workers: 1,
   use: { ...base.use, baseURL: "http://127.0.0.1:4296" },
   webServer: {
