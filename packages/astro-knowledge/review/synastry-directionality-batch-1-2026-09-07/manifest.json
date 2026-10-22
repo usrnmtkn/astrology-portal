@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_directionality_review_batch",
+  "batchId": "synastry-directionality-batch-1-2026-09-07",
+  "baseSha": "6a7621fb4163e3fcaf689634dd22e07bc2f882ef",
+  "servingChangesAuthorized": false,
+  "purpose": "Calibrate semantic reverse writing for Friends synastry while preserving all current serving copy.",
+  "readerQuestion": "What does {{Name}} bring out in me?",
+  "records": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mars/hard",
+      "existingSemanticDirection": "mars_to_sun",
+      "existingStatus": "exact_owner_approved_locked",
+      "existingApprovalPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mars/hard/exact-approval.json",
+      "action": "AUTHOR_REVERSE",
+      "missingSemanticDirection": "sun_to_mars",
+      "friendsUseCase": "Your Mars hard-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can make a decision sound settled before you feel included in it. That is when you are more likely to push back, move ahead on your own, or take control of the part that is still yours because waiting starts to feel like giving up your say. The argument gets bigger when you stop talking about the decision and start fighting over who gets to make it.",
+      "candidateStatus": "owner_positive_calibration_feedback_2026-09-07_not_serving_authorization"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mercury/hard",
+      "existingSemanticDirection": "mercury_to_sun",
+      "existingStatus": "exact_owner_approved_locked",
+      "existingApprovalPath": "packages/astro-knowledge/review/dedupe-chunk-1-card-drafts-v1/sun-mercury/hard/exact-approval.json",
+      "action": "AUTHOR_REVERSE",
+      "missingSemanticDirection": "sun_to_mercury",
+      "friendsUseCase": "Your Mercury hard-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can sound so certain that you immediately start looking for what they missed. You ask another question, point out the assumption, or keep explaining after they consider the matter settled because their confidence makes you less willing to let a weak argument pass. The conversation gets harder when they hear your questions as disrespect and you hear their certainty as proof that they are not listening.",
+      "candidateStatus": "owner_positive_calibration_feedback_2026-09-07_not_serving_authorization"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/venus/ascendant/soft",
+      "existingSemanticDirection": "venus_to_ascendant",
+      "existingStatus": "exact_owner_approved_locked",
+      "existingApprovalPath": "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/venus-ascendant/soft/exact-approval.json",
+      "action": "AUTHOR_REVERSE",
+      "missingSemanticDirection": "ascendant_to_venus",
+      "friendsUseCase": "Your Venus soft-aspect {{Name}}'s Ascendant",
+      "candidateNameToYou": "Something about the way {{Name}} naturally shows up makes liking them easy. Compliments may come faster, affection can feel less self-conscious, and you may simply enjoy being around them without needing a complicated reason for it. You do not have to talk yourself into seeing what you like about them.",
+      "candidateStatus": "owner_positive_calibration_feedback_2026-09-07_not_serving_authorization"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/neptune/midheaven/soft",
+      "existingSemanticDirection": "neptune_to_midheaven",
+      "existingStatus": "legacy_reviewed_after_owner_approved_stock_closer_removal",
+      "action": "AUTHOR_REVERSE",
+      "missingSemanticDirection": "midheaven_to_neptune",
+      "friendsUseCase": "Your Neptune soft-aspect {{Name}}'s Midheaven",
+      "candidateNameToYou": "The way {{Name}} takes their direction seriously can make one of your own ideas feel less abstract. Seeing them commit to work, build something over time, or let themselves be known for what they care about may help you picture what one of your own hopes would require in practice. You do not need their exact path; sometimes seeing someone else choose theirs is enough to make yours easier to imagine.",
+      "candidateStatus": "owner_positive_calibration_feedback_2026-09-07_not_serving_authorization"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/moon/south-node/soft",
+      "existingSemanticDirection": "shared_reciprocal_candidate",
+      "existingStatus": "legacy_reviewed_after_owner_approved_stock_closer_removal",
+      "action": "RECIPROCAL_REVIEW",
+      "missingSemanticDirection": null,
+      "candidateNameToYou": null,
+      "candidateStatus": "do_not_author_until_directionality_review"
+    }
+  ],
+  "nextStepIfModelApproved": "Build a read-only 483-row inventory classified as AUTHOR_REVERSE, RECIPROCAL_NO_REVERSE, or NEEDS_DIRECTION_REVIEW. Preserve current keys, approval states, and existing copy hashes. Do not modify serving content."
+}
