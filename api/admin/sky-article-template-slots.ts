@@ -2,7 +2,7 @@ import { articleTemplateWithHoroscopes } from "../../apps/web/src/content/skyArt
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
-import { generateSkyArticleTemplateSlots, RejectedSkyArticleDraftError } from "../_lib/content-generation.js";
+import { defaultIngressOpenAiModel, generateSkyArticleTemplateSlots, RejectedSkyArticleDraftError } from "../_lib/content-generation.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
 import {
@@ -32,6 +32,7 @@ type TemplateRow = {
 };
 
 type RequestBody = {
+  expectedModel?: string;
   includeRetrogradeHistory?: boolean;
   format?: SkyArticleFormat;
   templateId?: string;
@@ -114,6 +115,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return;
     }
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);
+    if (body.expectedModel !== undefined) {
+      if (typeof body.expectedModel !== 'string' || !body.expectedModel.trim()
+        || !isSkyIngressEssay(body.format) || body.provider !== 'openai') throw new AdminHttpError(400, 'expectedModel requires an OpenAI ingress request.');
+      if (body.expectedModel !== (process.env.OPENAI_INGRESS_MODEL ?? defaultIngressOpenAiModel)) {
+        throw new AdminHttpError(409, 'The configured ingress model differs from the requested model. No generation was sent.');
+      }
+    }
     if (body.includeRetrogradeHistory !== undefined && typeof body.includeRetrogradeHistory !== "boolean") throw new AdminHttpError(400, "includeRetrogradeHistory must be a boolean.");
     if (body.format !== undefined && body.format !== "saved-template" && !isSkyIngressEssay(body.format)) throw new AdminHttpError(400, "Unsupported article format.");
     if (typeof body.templateId !== "string" || !body.templateId.trim()) throw new AdminHttpError(400, "templateId is required.");

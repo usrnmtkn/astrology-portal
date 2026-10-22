@@ -199,8 +199,16 @@ try {
     }
   }
   assert(facts.events.some((event: any) => event.type === "ingress" && event.planet === "Venus" && event.period === "after-ingress-window"));
+  const guardedRequest = { templateId: id, referenceDate: '2026-10-09', format: SKY_INGRESS_ESSAY_FORMAT, provider: 'openai', expectedModel: 'gpt-5.6-sol' };
+  assert.equal((await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', { ...guardedRequest, expectedModel: 7 })).status, 400);
+  assert.equal((await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', { ...guardedRequest, provider: 'claude' })).status, 400);
+  process.env.OPENAI_INGRESS_MODEL = 'synthetic-other-model';
+  assert.equal((await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', guardedRequest)).status, 409);
+  delete process.env.OPENAI_INGRESS_MODEL;
+  assert.equal(prompts.length, 0, 'A mismatched preview model stops before any paid request.');
   const result = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", {
     templateId: id, referenceDate: "2026-10-09", format: SKY_INGRESS_ESSAY_FORMAT, provider: "openai",
+    expectedModel: 'gpt-5.6-sol',
     existingSlotValues: { what: "Synthetic existing owner field." }
   });
   assert.equal(result.status, 200, JSON.stringify(result));
