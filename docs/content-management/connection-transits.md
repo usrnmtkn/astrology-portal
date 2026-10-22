@@ -17,6 +17,13 @@ direct transit to the other chart. Missing or unpublished activation/bridge pros
 This factual section does not supply a missing interpretation or change publication
 eligibility; all three prose-source boundaries below still apply.
 
+In Read More, the outlined “Why this involves [friend]” button opens these facts
+in a dialog. Its groups separate the primary transit, independently calculated
+transits to the other chart, the natal connections to those same points, and
+remaining connections through the natal endpoint. Each row retains its aspect
+glyph, complete title and exact orb. The dialog also retains the primary
+placement/house description and the indirect-connection caveat when applicable.
+
 The detail has three independent prose sources:
 
 1. One complete existing authored personal transit-aspect unit for the activated
