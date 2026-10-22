@@ -4,7 +4,7 @@ import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { getAstrodienstSky, getRetrogradeHistory, defaultLocation } from "../../apps/web/src/services/ephemeris";
 import { skyArticleEditionFactsFromSnapshot } from "../../api/_lib/sky-article-facts";
-import { skyIngressEssayFields } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { skyIngressArticleFields } from "../../apps/web/src/content/skyIngressEssay.mjs";
 
 async function assertFacts(panel: Locator) {
   await expect(panel).toContainText("Previous retrograde in Scorpio", { timeout: 60_000 });
@@ -66,7 +66,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const date = new Date("2026-10-10T12:00:00Z");
     const snapshot = await getAstrodienstSky(defaultLocation, date, { includeDailyEvents: false, includeTransitWindows: true });
     const history = await getRetrogradeHistory({ planet: "venus", sign: "scorpio", referenceDate: date });
-    const facts = { ...skyArticleEditionFactsFromSnapshot(snapshot, "venus", "ingress-essay-v2"), retrogradeHistory: history, templateFields: skyIngressEssayFields };
+    const facts = { ...skyArticleEditionFactsFromSnapshot(snapshot, "venus", "ingress-essay-v3"), retrogradeHistory: history, templateFields: skyIngressArticleFields };
     const directHistory = await getRetrogradeHistory({ planet: "venus", sign: "scorpio", referenceDate: new Date("2026-09-20T12:00:00Z") });
     const store = await studioApiStore([{ id: "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa", content_key: "sky/article-template/venus/scorpio",
       surface: "sky", mode: "article", status: "REVIEWED", lane: "reference", review_state: null, event_type: "sky-article-template",
@@ -91,11 +91,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         }
         if (url.pathname === "/api/admin/sky-article-template-slots") {
           const request = route.request().postDataJSON();
+          expect(request.format).toBe("ingress-essay-v3");
           generated = true;
           if (!request.includeRetrogradeHistory) {
-            await route.fulfill({ json: { ok: true, facts, slotValues: { overviewBody: "Synthetic later overview." }, blockedSlots: [],
-              generation: { provider: "fixture", model: "isolated", responseId: "synthetic-overview-response", generatedAt: date.toISOString(),
-                requestedSlots: ["overviewBody"], retrogradeHistory: null }
+            await route.fulfill({ json: { ok: true, facts, slotValues: { articleBody: "Synthetic later article." }, blockedSlots: [],
+              generation: { provider: "fixture", model: "isolated", responseId: "synthetic-article-response", generatedAt: date.toISOString(),
+                requestedSlots: ["articleBody"], retrogradeHistory: null }
             } }); return true;
           }
           const alreadyWritten = request.existingSlotValues.priorOccurrenceSection !== undefined;
@@ -139,7 +140,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       expect(savedReceipt.sections.skyArticleWorkspace.retrogradeGenerations).toHaveLength(1);
       await include.uncheck();
       await editor.getByRole("button", { name: "Generate unfinished fields", exact: true }).click();
-      await expect(editor.getByLabel("Template field overviewBody", { exact: true })).toHaveValue("Synthetic later overview.");
+      await expect(editor.getByLabel("Template field articleBody", { exact: true })).toHaveValue("Synthetic later article.");
       await expect(editor.getByText("Draft saved automatically", { exact: true })).toBeVisible();
       await page.reload();
       await openEditor();
