@@ -61,7 +61,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Run Friends loading performance matrix on a fresh runner
         run: npm run qa:friends-loading-matrix
       - name: Upload Friends performance artifacts
@@ -103,7 +103,7 @@ jobs:
       - name: Verify publication lifecycle and offline retirement
         run: npm run test:content-publications
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: bash scripts/ci-install-playwright.sh
       - name: Enforce fresh browser release path
         run: npm run test:playwright-release-path
       - name: Build app
@@ -162,7 +162,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Run client-facing user flows
         run: npx playwright test -c playwright.reader-release.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/client-facing-user-flows.spec.ts tests/visual/report-library-ui.spec.ts
       - name: Upload client-facing flow artifacts
@@ -193,7 +193,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Run Content Studio admin user flows
         run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/studio-publication-recovery.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/calendar-aspect-create.spec.ts tests/visual/compatibility-aspect-create.spec.ts tests/visual/calendar-aspect-retrograde.spec.ts tests/visual/calendar-planetary-studio.spec.ts tests/visual/studio-section-visibility.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-dedicated-editor-routing.spec.ts tests/visual/studio-inventory-loading.spec.ts tests/visual/studio-formatting-publication.spec.ts tests/visual/astro-101-reader-recovery.spec.ts tests/visual/calendar-subscriptions.spec.ts tests/visual/studio-csv.spec.ts tests/visual/studio-article-memory.spec.ts tests/visual/studio-owner-publishing.spec.ts tests/visual/personal-transit-copy-versions.spec.ts
       - name: Upload Content Studio flow artifacts
@@ -217,7 +217,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build -w @tldr/astro-knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Verify independent connection sources and Studio draft editing
         run: npx playwright test -c playwright.connection-transit.config.ts
       - name: Upload connection transit artifacts
@@ -249,7 +249,7 @@ jobs:
         # The required Content Studio API workflow runs the full unfiltered
         # contract on this exact head. Keep the Sky-specific checks here.
         run: npm run build:knowledge && npm run test:sky-evergreen-sections
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Verify placement composition editing
         run: |
           npx playwright test -c playwright.studio-secondary.config.ts
@@ -284,7 +284,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Verify exact placement scan parity and calculation reuse
         run: node --import tsx scripts/test-sky-placement-scan-reuse.mts
       - name: Verify Calendar Moon ingress facts and complete reader copy
@@ -319,7 +319,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - run: npm run build:knowledge
       - name: Verify daily Sky summary composition
         if: matrix.phase == 'reader'
@@ -376,7 +376,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Run the ${{ matrix.suite }} suite
         env:
           STUDIO_PRODUCTION_ENTRY: ${{ matrix.suite == 'horoscope-writing' && '1' || '0' }}
@@ -417,7 +417,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Run Horoscope editor and reader journeys
         run: node scripts/balanced-browser-tests.mjs --config playwright.horoscope-reader.config.ts ${{ matrix.shard }}/3
       - name: Upload Horoscope artifacts
@@ -452,7 +452,7 @@ jobs:
       - name: Verify personal daily peak calculations
         if: matrix.shard == 1
         run: npm run test:transit-pass-engine
-      - run: npx playwright install --with-deps chromium
+      - run: bash scripts/ci-install-playwright.sh
       - name: Run Calendar, learning, and date consistency screens
         run: node scripts/balanced-browser-tests.mjs --config playwright.reader-surfaces.config.ts ${{ matrix.shard }}/3
       - name: Verify modals, menus, and populated city dropdowns

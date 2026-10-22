@@ -198,14 +198,16 @@ for (const theme of ["light", "dark"]) {
     const friendEndpointTitle = await namedBond.locator('.updates-aspect-row__title').innerText();
     const endpoint = friendEndpointTitle.split("Example Friend's natal ")[1];
     await namedBond.click();
-    const friendFacts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Example Friend', exact: true }) });
+    await page.getByRole('button', {name: 'Why this involves Example Friend', exact: true}).click();
+    const friendFacts = page.getByRole('dialog', {name: 'Why this involves Example Friend', exact: true});
     await expect(friendFacts.locator('p').first()).toHaveText(`This transit may bring Example Friend's existing ${endpoint} connections with you into focus.`);
-    for (const contact of (await friendFacts.locator('p').allTextContents()).filter(text => text.startsWith('Your natal '))) {
-      expect(contact).toContain(`Example Friend's natal ${endpoint} · Orb `);
+    for (const contact of (await friendFacts.locator('.connection-facts__title').allTextContents()).filter(text => text.startsWith('Your natal '))) {
+      expect(contact).toContain(`Example Friend's natal ${endpoint}`);
       expect(contact).toMatch(/^Your natal /);
     }
     const friendFactCopy = await friendFacts.innerText();
     await page.reload();
+    await page.getByRole('button', {name: 'Why this involves Example Friend', exact: true}).click();
     await expect(friendFacts).toHaveText(friendFactCopy, { useInnerText: true, timeout: 60000 });
   });
 }

@@ -1,9 +1,22 @@
-import { test, expect, type Page, type Request } from '@playwright/test';
+import { test, expect, type Page, type Request, type Locator } from '@playwright/test';
 import { readerResponse } from '../helpers/reader-response';
 import { fork } from 'node:child_process';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { connectionBridgeTemplates } from '../../apps/web/src/content/connectionTransit';
+
+async function openConnectionFacts(page: Page, name = 'Nikki') {
+  await page.getByRole('button', { name: `Why this involves ${name}`, exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: `Why this involves ${name}`, exact: true });
+  await expect(dialog).toBeVisible();
+  return dialog;
+}
+async function expectConnectionFact(dialog: Locator, title: string, orb?: string) {
+  const row = dialog.getByRole('listitem').filter({ hasText: title });
+  await expect(row).toHaveCount(1);
+  if (orb) await expect(row.locator('.connection-facts__orb')).toHaveText(`Orb ${orb}`);
+}
+
 const fixtureUserId = 'qa-connection-source-user';
 const fixtureFriendName = 'Nikki';
 const cadenceLogs = new WeakMap<Page, unknown[]>();
@@ -182,27 +195,47 @@ test('transit titles identify the sky sign and natal chart owner in both section
   await relationshipCard.click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(readerTitle);
   await expect(page.locator('.article-eyebrow')).toHaveAttribute('aria-label', 'Aspect: Saturn trine Mars');
-  const facts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) });
+  const facts = await openConnectionFacts(page);
   await expect(facts.locator('p').first()).toHaveText("This transit may bring your existing Mars connections with Nikki into focus.");
-  await expect(facts).toContainText("Your natal Mars conjunct Nikki's natal Saturn · Orb 1° 51′");
+  await expectConnectionFact(facts, "Your natal Mars conjunct Nikki's natal Saturn", '1° 51′');
   for (const point of ['Venus', 'Mercury', 'Chiron', 'Jupiter']) {
-    await expect(facts).toContainText(`Your natal Mars conjunct Nikki's natal ${point} · Orb 1° 51′`);
+    await expectConnectionFact(facts, `Your natal Mars conjunct Nikki's natal ${point}`, '1° 51′');
   }
-  await expect(facts).toContainText('Direct transits to both charts:');
-  await expect(facts).toContainText("Saturn in Aries trine Nikki's natal Mercury · Orb");
+  await expect(facts.getByRole('heading', {level: 3}).first()).toHaveText('Saturn is touching your Mars');
+  await expectConnectionFact(facts, "Saturn in Aries trine Nikki's natal Mercury");
   await expect(facts).toContainText('These natal connections do not by themselves establish a direct Saturn transit to the other chart.');
   const factCopy = await facts.innerText();
   await page.reload();
+  await openConnectionFacts(page);
   await expect(facts).toHaveText(factCopy, { useInnerText: true, timeout: 60000 });
-  const headings = await page.locator('.sky-detail-page h1, .sky-detail-page h2').allTextContents();
-  expect(headings.slice(0, 2)).toEqual([readerTitle, 'Why this involves Nikki']);
-  const factStyles = await facts.locator('p').first().evaluate(element => {
-    const pick = (node: Element) => { const s = getComputedStyle(node); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
-    return { actual: pick(element), reference: pick(document.querySelector('.sky-detail-intro-section p')!) };
+  const headings = await facts.locator('h2, h3').allTextContents();
+  expect(headings[0]).toEqual('Why this involves Nikki');
+  expect(headings[1]).toEqual('Saturn is touching your Mars');
+  const factStyles = await facts.locator('.connection-facts__row').first().evaluate(element => {
+    const s = getComputedStyle(element), reference = getComputedStyle(document.querySelector('.sky-detail-intro-section p')!);
+    return { font: s.fontFamily, size: s.fontSize, line: s.lineHeight, tracking: s.letterSpacing,
+      weight: s.fontWeight, expectedFont: reference.fontFamily };
   });
-  expect(factStyles.actual).toEqual(factStyles.reference);
+  expect(factStyles.font).toBe(factStyles.expectedFont);
+  expect(factStyles.size).toBe('16px');
+  expect(factStyles.weight).toBe('400');
+  expect(factStyles.line).toBe('25.6px');
+  expect(factStyles.tracking).toBe('normal');
+  const headingStyles = await facts.evaluate(element => {
+    const title = getComputedStyle(element.querySelector('h2')!);
+    const label = getComputedStyle(element.querySelector('h3')!);
+    return { titleFont: title.fontFamily, titleSize: title.fontSize,
+      articleFont: getComputedStyle(document.querySelector('.sky-detail-page h1')!).fontFamily,
+      labelFont: label.fontFamily, labelWeight: label.fontWeight, labelSize: label.fontSize };
+  });
+  expect(headingStyles.titleFont).toBe(headingStyles.articleFont);
+  expect(headingStyles.titleSize).toBe(testInfo.project.name.startsWith('390') ? '28px' : '42px');
+  expect(headingStyles.labelFont).toBe(factStyles.font);
+  expect(headingStyles.labelWeight).toBe('600');
+  expect(headingStyles.labelSize).toBe('18px');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/connection-facts-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
+  await facts.getByRole('button', { name: 'Close connection details' }).click();
   await page.getByRole('button', { name: 'Close detail', exact: true }).click();
   await expect(active).toBeVisible();
   const personalTitle = activeTitles[0];
@@ -215,8 +248,9 @@ test('transit titles identify the sky sign and natal chart owner in both section
   await expect(page.getByRole('region', { name: 'Short-term themes', exact: true }).getByRole('heading', { level: 3 }).first()).toHaveText(personalTitle.replace("Nikki's", "Casey's"), { timeout: 60000 });
   await expect(page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('heading', { name: "Pluto in Aquarius conjunct Casey's natal Pluto", exact: true })).toBeVisible();
   await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: `Open full entry for ${readerTitle}`, exact: true }).click();
-  const switchedFacts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Casey', exact: true }) });
-  await expect(switchedFacts).toContainText("Your natal Mars conjunct Casey's natal Saturn · Orb 1° 51′");
+  const switchedFacts = await openConnectionFacts(page, 'Casey');
+  await expectConnectionFact(switchedFacts, "Your natal Mars conjunct Casey's natal Saturn", '1° 51′');
+  await expect(switchedFacts).not.toContainText('Nikki');
   await expect(page.locator('.sky-detail-page')).not.toContainText('Nikki');
 });
 
@@ -234,16 +268,51 @@ test('relationship context separates direct transits from connections through on
   await expect(card).toContainText("Other connections through your natal Mars: Nikki's natal Venus.");
   await expect(card).not.toContainText('activating the connections');
   await card.click();
-  const facts = page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) });
-  await expect(facts).toContainText("Saturn in Aries trine Nikki's natal Mercury · Orb");
-  await expect(facts).toContainText("Your natal Mars square Nikki's natal Venus · Orb 1° 51′");
+  const facts = await openConnectionFacts(page);
+  await expectConnectionFact(facts, "Saturn in Aries trine Nikki's natal Mercury");
+  await expectConnectionFact(facts, "Your natal Mars square Nikki's natal Venus", '1° 51′');
   await expect(facts).toContainText('Other connections through your natal Mars:');
   await expect(facts).toContainText('These natal connections do not by themselves establish a direct Saturn transit to the other chart.');
   await expect(facts).not.toContainText("Saturn in Aries square Nikki's natal Venus");
+  expect(await facts.getByRole('heading', {level: 3}).allTextContents()).toEqual([
+    'Saturn is touching your Mars',
+    "Saturn is also touching four of Nikki's natal points",
+    'Your Mars already connects to those same four natal points',
+    'Other connections through your natal Mars:'
+  ]);
+  const close = facts.getByRole('button', {name: 'Close connection details'});
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(facts).toHaveCount(0);
+  const trigger = page.getByRole('button', {name: 'Why this involves Nikki', exact: true});
+  await expect(trigger).toBeFocused();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(trigger).toHaveCSS('border-top-style', 'solid');
+  await trigger.press('Enter');
+  await expect(facts).toBeVisible();
+  await expect(facts.locator('.connection-facts__footer p').last()).toContainText('Saturn in Aries');
+  expect(await facts.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+  const rowGeometry = await facts.locator('.connection-facts__row').evaluateAll(rows => rows.map(row => {
+    const label = row.querySelector('.connection-facts__title')!.getBoundingClientRect();
+    const orb = row.querySelector('.connection-facts__orb')!.getBoundingClientRect();
+    return {labelRight:label.right, orbLeft:orb.left, orbRight:orb.right};
+  }));
+  for (const row of rowGeometry) {
+    expect(row.labelRight).toBeLessThan(row.orbLeft);
+    expect(Math.abs(row.orbRight - rowGeometry[0].orbRight)).toBeLessThan(1);
+  }
   const copy = await facts.innerText();
   await page.reload();
+  await openConnectionFacts(page);
   await expect(facts).toHaveText(copy, { useInnerText: true, timeout: 60000 });
   await page.screenshot({ path: `test-results/connection-directness-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
+  await facts.locator('.connection-facts__footer').scrollIntoViewIfNeeded();
+  await expect(facts.locator('.connection-facts__footer p').last()).toBeInViewport();
+  await page.screenshot({ path: `test-results/connection-directness-bottom-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
 });
 
 for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,true]]) test(`connection detail separates transit, activation ${activationLive ? 'published' : 'draft'}, bridge ${bridgeLive ? 'published' : 'draft'}`, async ({ page }, testInfo) => {
@@ -324,8 +393,9 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   await expect(page.getByRole('heading',{level:1})).toBeVisible();
   await expect(page.locator('.sky-detail-intro-section, .sky-detail-section').first()).not.toContainText(opening);
   await expect(page.locator('main')).not.toContainText('{{untilDate}}');
-  await expect(page.getByRole('heading', { name: 'Why this involves Nikki', exact: true })).toBeVisible();
-  await expect(page.locator('.article-section').filter({ has: page.getByRole('heading', { name: 'Why this involves Nikki', exact: true }) })).toContainText("Your natal Mars conjunct Nikki's natal Saturn · Orb 1° 51′");
+  const disclosure = await openConnectionFacts(page);
+  await expectConnectionFact(disclosure, "Your natal Mars conjunct Nikki's natal Saturn", '1° 51′');
+  await disclosure.getByRole('button', {name: 'Close connection details'}).click();
   if(activationLive){
     await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true}).first()).toBeVisible();
     if(bridgeLive) await expect(page.getByText(/connecting this transit to the pattern below/).first()).toBeVisible();

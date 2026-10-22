@@ -131,6 +131,7 @@ const contextOptions = {
  aspectWord:connectionAspectWord
 };
 const snapshot=JSON.stringify(contextOptions);
+const factsText = (context: ReturnType<typeof connectionTransitContext>) => context.facts?.groups.map(group => [group.heading, ...group.rows.map(row => `${row.title} · Orb ${row.orb}`)].join('\n')).join('\n') ?? '';
 const mixed=connectionTransitContext({...contextOptions,counterpartTransits:[
  factTransit('Mercury','conjunction','Mars',"2° 30'"),factTransit('Chiron','square'),
  factTransit('Venus','conjunction','Jupiter'),factTransit('Sun'),factTransit('Venus','quincunx'),
@@ -140,24 +141,37 @@ assert.equal(mixed.directTransits.length,2,'Match the moving planet, exact oppos
 assert.match(mixed.cardBody,/Direct transits to both charts:/);
 assert.match(mixed.cardBody,/Other connections through your natal Moon: Nikki's natal Venus\./);
 assert.match(mixed.cardBody,/Until October 30, 2026/,'Retain the primary transit date');
-assert.match(mixed.detailBody,/Mars in Leo conjunct Nikki's natal Mercury · Orb 2° 30′/);
-assert.match(mixed.detailBody,/Your natal Moon opposite Nikki's natal Chiron · Orb 0° 24′/);
-assert.match(mixed.detailBody,/Your natal Moon trine Nikki's natal Venus · Orb 0° 24′/);
-assert.doesNotMatch(mixed.detailBody,/Mars in Leo quincunx/);
+assert.match(factsText(mixed),/Mars in Leo conjunct Nikki's natal Mercury · Orb 2° 30′/);
+assert.match(factsText(mixed),/Your natal Moon opposite Nikki's natal Chiron · Orb 0° 24′/);
+assert.match(factsText(mixed),/Your natal Moon trine Nikki's natal Venus · Orb 0° 24′/);
+assert.doesNotMatch(factsText(mixed),/Mars in Leo quincunx/);
+assert.deepEqual(mixed.facts?.groups.map(group => [group.key, group.rows.length]), [['primary',1],['direct',2],['shared',2],['through',1]]);
+assert.equal(mixed.facts?.groups[1].heading, "Mars is also touching two of Nikki's natal points");
+assert.equal(mixed.facts?.groups[2].heading, 'Your Moon already connects to those same two natal points');
+assert.deepEqual(mixed.facts?.groups[1].rows[0], {key:'Nikki:Mercury:conjunction',title:"Mars in Leo conjunct Nikki's natal Mercury",aspect:'conjunction',orb:'2° 30′'});
 assert.equal(JSON.stringify(contextOptions),snapshot,'Context formatting cannot mutate source facts');
 const indirect=connectionTransitContext({...contextOptions,counterpartTransits:[]});
 assert.equal(indirect.directTransits.length,0);
 assert.doesNotMatch(indirect.cardBody,/Direct transits to both charts/);
 assert.match(indirect.cardBody,/This transit may bring your existing Moon connections with Nikki into focus\./);
-assert.match(indirect.detailBody,/Direct transit to your chart:/);
-assert.match(indirect.detailBody,/Connections through your natal Moon:/);
+assert.match(factsText(indirect),/Mars is touching your Moon/);
+assert.match(factsText(indirect),/Connections through your natal Moon:/);
 const allDirect=connectionTransitContext({...contextOptions,contacts:[contextOptions.contacts[0]],counterpartTransits:[factTransit('Mercury')]});
 assert.match(allDirect.cardBody,/Direct transits to both charts:/);
+assert.equal(allDirect.facts?.groups[1].heading, "Mars is also touching one of Nikki's natal points");
+assert.equal(allDirect.facts?.groups[2].heading, 'Your Moon already connects to that same natal point');
+assert.deepEqual(allDirect.facts?.groups.map(group => group.key), ['primary','direct','shared']);
 assert.doesNotMatch(allDirect.cardBody,/Other connections through/,'An all-direct group has no empty indirect section');
 const reversed=connectionTransitContext({...contextOptions,endpointOwner:'friend',contacts:[factContact('Venus','Moon','trine'),factContact('Saturn','Moon','sextile')],counterpartTransits:[factTransit('Venus','opposition')]});
 assert.match(reversed.cardBody,/This transit may bring Nikki's existing Moon connections with you into focus\./);
 assert.match(reversed.cardBody,/Mars in Leo opposite your natal Venus/);
 assert.match(reversed.cardBody,/Other connections through Nikki's natal Moon: your natal Saturn\./);
-assert.match(reversed.detailBody,/Your natal Saturn sextile Nikki's natal Moon · Orb 0° 24′/);
+assert.equal(reversed.facts?.groups[0].heading, "Mars is touching Nikki's Moon");
+assert.equal(reversed.facts?.groups[1].heading, 'Mars is also touching one of your natal points');
+assert.match(factsText(reversed),/Your natal Saturn sextile Nikki's natal Moon · Orb 0° 24′/);
 assert.equal(connectionTransitContext({...contextOptions,contacts:[],counterpartTransits:[factTransit('Mercury')]}).cardBody,'');
 console.log('Connection context passed: independent direct transits, mixed and indirect groups, both endpoint owners, complete orbs, dates, empty groups and immutable facts.');
+
+assert.equal(connectionTransitContext({...contextOptions,contacts:[],counterpartTransits:[]}).facts,null);
+assert.deepEqual(indirect.facts?.groups.map(group => group.key), ['primary','through']);
+assert.equal(allDirect.facts?.caution,'');

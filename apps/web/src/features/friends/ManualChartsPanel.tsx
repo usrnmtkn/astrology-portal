@@ -1,6 +1,7 @@
 import { PortalVisibility } from "../../components/portalVisibility";
 import { transitArticleDescription } from "../../services/transitArticleDescription";
 import { connectionTransitContext } from "../../services/connectionTransitContext";
+import { ConnectionTransitDisclosure } from "./ConnectionTransitDisclosure";
 import { connectionActivationKey, connectionAspectWord, connectionPointTitle, CONNECTION_BRIDGE_PREFIX } from "../../content/connectionTransit";
 import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeCopy } from "./connectionTransitSources";
 import { connectionTransitReading } from "./connectionTransitReading";
@@ -2213,9 +2214,16 @@ export function ManualChartsPanel({
     const voice = card.endpointOwner === "reader" ? "you" : selectedChart.displayName;
     const transitSections = selectedBondTransitSections.get(card.id) ?? [];
     if (!transitSections.length) return;
+    const description = transitArticleDescription(
+      card.activation,
+      card.endpointOwner === "reader" ? profileNatalSky : selectedFriendReadyNatalChart,
+      transitAspectTechnicalVerb(card.activation.aspect),
+      voice
+    );
     const connectionFacts = {
-      heading: `Why this involves ${selectedChart.displayName}`,
-      body: card.connectionContext.detailBody
+      heading: "",
+      body: card.connectionContext.facts ? <ConnectionTransitDisclosure key={`${selectedChart.id}:${card.id}`}
+        heading={`Why this involves ${selectedChart.displayName}`} facts={card.connectionContext.facts} description={description} /> : null
     };
     let activationCount = 0;
     const activatedConnectionSections = card.activatedContacts.flatMap(contact => {
@@ -2249,12 +2257,7 @@ export function ManualChartsPanel({
       glyph: pointGlyph(card.transitPlanet),
       kicker: "Connection transit",
       title: card.headline,
-      transitDescription: transitArticleDescription(
-        card.activation,
-        card.endpointOwner === "reader" ? profileNatalSky : selectedFriendReadyNatalChart,
-        transitAspectTechnicalVerb(card.activation.aspect),
-        voice
-      ),
+      transitDescription: description,
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: true,
       body: transitSections.map(section => section.body),
