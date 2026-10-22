@@ -18,7 +18,7 @@ try{
    return outage?Response.json({}, {status:503}):Response.json([{snapshot:{rows:[],writingFeedback:rows}}]);
   if(!['https://api.openai.com/v1/responses','https://api.anthropic.com/v1/messages'].includes(String(url)))throw Error('External network forbidden');
   const request=JSON.parse(String(init.body));calls++;
-  if(request.text?.format?.name==='tldr_astro_meaning_plan')return Response.json({output_text:'{}'});
+  if(request.text?.format?.name==='tldr_astro_meaning_plan')return Response.json({output_text:JSON.stringify({core_tension:'Person A and Person B respond to the synthetic contact.'})});
   sent=request.input??request.messages[0].content[0].text;
   return Response.json({error:{message:'synthetic writer boundary stop'}},{status:422});
  };

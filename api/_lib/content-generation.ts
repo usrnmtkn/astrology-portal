@@ -18,6 +18,7 @@ import { generatedReportWritingContract } from "./transit-reading-writing-contra
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
 import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
+import { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastrySourceReceipt } from "../../src/astro-writing/synastrySourceContext.cjs";
 import { loadExplicitWritingFeedback } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
@@ -4700,6 +4701,8 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
     "",
     "ASTROLOGY FACTS",
     JSON.stringify(input.facts, null, 2),
+    ...(isSynastryAspectInput(input) ? ["CONTACT OWNERSHIP", JSON.stringify(synastryContactOwnership(input.facts), null, 2),
+      "These chart roles govern the contact. Legacy source pronouns and existing-draft pronouns cannot assign a planet to the current reader. Apply the meaning to the declared reader only; retain supplied names when no reader is declared."] : []),
     hellenisticMeaningPrompt({facts:input.facts,surface:input.surface,family:input.eventType}),
     approvedVoiceStylePrompt({surface:input.surface,family:input.eventType}),
     "",
@@ -5461,6 +5464,7 @@ async function planGeneratedContentWithOpenAI({
         mode: input.mode,
         contentKey: input.contentKey,
         governedFacts: input.facts,
+        ...(isSynastryAspectInput(input) ? { contactOwnership: synastryContactOwnership(input.facts) } : {}),
         neutralMeaningSupport:buildHellenisticMeaningSupport({facts:input.facts,surface:input.surface,family:input.eventType}),
         ...(productionGate.governedPromptEnabled
           ? { governedKnowledgeEvidence: productionGate.governedPrompt }
@@ -5484,7 +5488,9 @@ async function planGeneratedContentWithOpenAI({
   if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI meaning plan failed with ${response.status}.`);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI meaning planner returned no structured output.");
-  return JSON.parse(output) as Record<string, unknown>;
+  const meaningPlan = JSON.parse(output) as Record<string, unknown>;
+  if (isSynastryAspectInput(input)) validateSynastryMeaningPlan(meaningPlan);
+  return meaningPlan;
 }
 
 const generatedContentRevisionFields = new Set(["headline", "tldr", "summary", "body", "action", "timing"]);
@@ -5565,11 +5571,16 @@ async function reviseGeneratedContentWithOpenAI({
     retryCount: 1,
     ...generatedApprovalState(),
     generation_metadata: writeGenerationMetadata({ role: "REVISER", model, reasoningEffort,
-      ...(writingFeedback?.receipt.selected.length?{evidencePacket:{writingFeedback:writingFeedback.receipt}}:{}) })
+      ...((writingFeedback?.receipt.selected.length || isSynastryAspectInput(input)) ? { evidencePacket: {
+        ...(writingFeedback?.receipt.selected.length ? { writingFeedback: writingFeedback.receipt } : {}),
+        ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {})
+      } } : {}) })
   };
 }
 
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  const evidenceInput = input;
+  if (isSynastryAspectInput(input)) input = prepareSynastrySourceInput(input);
   if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
     return deterministicNatalPlacementDraft(input);
   }
@@ -5583,7 +5594,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
   const lockedHeadline = factualHeadlineFor(input);
-  const approvedExamples = (isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input))
+  const approvedExamples = (isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(evidenceInput))
     .filter(example => !(writingFeedback?.rows ?? []).some(row => JSON.stringify(example).includes(JSON.stringify(row.rejected_text).slice(1,-1))));
   const meaningPlan = isFriendTransitReadingInput(input)
     ? friendTransitReadingMeaningPlan(friendTransitReadingBriefFromFacts(input.facts))
@@ -5635,6 +5646,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       reasoningEffort,
       sourceIds: approvedExamples.map((example) => example.contentKey),
       evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
+        ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
         ...(writingFeedback?.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
     })
   };
@@ -5678,6 +5690,8 @@ function claudeToolInput(payload: {
 }
 
 export async function generateWithClaude(input: GenerateContentInput): Promise<StoredGeneratedContent> {
+  const evidenceInput = input;
+  if (isSynastryAspectInput(input)) input = prepareSynastrySourceInput(input);
   if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
     return deterministicNatalPlacementDraft(input);
   }
@@ -5690,7 +5704,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
   const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
   const lockedHeadline = factualHeadlineFor(input);
-  const approvedExamples = (isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input))
+  const approvedExamples = (isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(evidenceInput))
     .filter(example => !(writingFeedback?.rows ?? []).some(row => JSON.stringify(example).includes(JSON.stringify(row.rejected_text).slice(1,-1))));
   let qualityFeedback = "";
   let lastError: Error | null = null;
@@ -5776,6 +5790,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
           model,
           sourceIds: approvedExamples.map((example) => example.contentKey),
           evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
+            ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
             ...(writingFeedback?.receipt.selected.length?{writingFeedback:writingFeedback.receipt}:{})}
         })
       };

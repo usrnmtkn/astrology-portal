@@ -813,3 +813,27 @@ unknown variables and denied access.
 These fixtures establish request delivery and field behavior, not literary
 quality. A further live prose comparison needs its own bounded authorization
 and exact owner review; no paid generation is part of this repair's tests.
+
+The v8 synastry repair separates current chart ownership from legacy source
+pronouns. Both provider paths project recognized interaspect knowledge records
+for the active request: the complete primary `plainTranslation` relation is
+retained with an explicit distinction between its meaning and its source pronouns.
+Unrequested `advice` fields and supplementary narrative fields containing an
+unresolved source reader are excluded with field hashes and reasons.
+Their original records, saved drafts and complete owner voice passages are not
+edited. Retained knowledge fields remain complete. This conservative projection
+does not claim to resolve every source's narrative perspective or replace missing
+pair-specific meaning with invented detail.
+
+The planner receives explicit Person A / planet and Person B / planet bindings.
+Its interpretation fields use those role labels rather than source-reader
+pronouns; an ambiguous returned plan stops before the writer. Contradictory
+reader facts stop before either provider. A named chart pair without an explicit
+reader retains its supplied names instead of assigning one chart to `you`.
+The existing plan schema accepts empty unsupported fields: `what_changes` describes
+the contact's effect, and `constructive_expression` is not a course of correction.
+Supportive contacts need no generic warning about complacency. Writer output
+schemas, complete voice evidence, Ghostwriter guidance, model settings, provider
+stages and review/publication boundaries remain unchanged. These checks establish
+source separation and request behavior; they cannot certify the new prose's voice
+or prove that every semantic role in a generated sentence is correct.

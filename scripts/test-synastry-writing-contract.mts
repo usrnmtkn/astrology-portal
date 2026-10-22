@@ -6,6 +6,7 @@ import handler from '../api/generate-content.js';
 import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { validateGeneratedContentQuality } from '../api/_lib/content-generation.js';
+import { sharedGenerationOwnerExamples } from '../api/_lib/shared-generation-owner-examples.js';
 
 const sharedStyle = readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/style-guide.md', import.meta.url), 'utf8');
 
@@ -42,6 +43,9 @@ const draft = {
 };
 const requests: any[] = [];
 let nextDraft: any = draft;
+const validPlan = { core_tension: 'Person A and Person B understand the synthetic exchange differently.',
+  what_changes: '', constructive_expression: '', overcorrection: '', observable_behaviors: [], possible_consequences: [] };
+let nextPlan: any = validPlan;
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (url, init = {}) => {
   const openai = String(url) === 'https://api.openai.com/v1/responses';
@@ -50,7 +54,7 @@ globalThis.fetch = async (url, init = {}) => {
   const kind = openai ? body.text.format.name : body.tools[0].name;
   requests.push({ kind, provider: openai ? 'openai' : 'claude', body });
   let result: unknown = nextDraft;
-  if (kind === 'tldr_astro_meaning_plan') result = {};
+  if (kind === 'tldr_astro_meaning_plan') result = nextPlan;
   if (kind === 'tldr_astro_cold_rendered_prose_review') result = {
     decision: 'PASS', cold_rendered_prose: { status: 'PASS', reason: 'Synthetic review.' }, violations: []
   };
@@ -87,7 +91,9 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v7-2026-10-21'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v8-2026-10-21'));
+  assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
+  assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
   // Inspect both actual provider fields: OpenAI's canonical transport can add
   // instructions that are absent from the assembled user prompt.
@@ -169,6 +175,10 @@ try {
         assert(stages[0].body.instructions.includes("how that response may affect the first person's next response"), 'The meaning plan must retain the supported response to a response.');
         assert(stages[0].body.instructions.includes('Keep each possible intention distinct from its effect'));
         assert(stages[0].body.instructions.includes('A supportive contact may remain uncomplicated'));
+        assert(stages[0].body.instructions.includes('unsupported text fields may be empty strings'));
+        assert(stages[0].body.instructions.includes('what_changes describes the contact\'s effect'));
+        assert.equal(JSON.parse(stages[0].body.input).contactOwnership.personA.planet, variant.facts.planetA);
+        assert.equal(JSON.parse(stages[0].body.input).contactOwnership.personB.planet, variant.facts.planetB);
         assert.deepEqual(JSON.parse(stages[0].body.input).governedFacts, JSON.parse(JSON.stringify(variant.facts)), 'Complete directional facts remain unchanged in the planner input.');
         assert(stages[3].body.instructions.includes('SYNASTRY REVIEW AUTHORITY'));
         for (const stage of stages) assert(!stage.body.instructions.includes('SKY PLACEMENT ARTICLE SPINE'));
@@ -203,6 +213,67 @@ try {
     }
     nextDraft = draft;
   }
+  // Reproduce the source leak at the real planner/writer transport, preserving
+  // complete owner passages and the caller's original records in both providers.
+  const legacyRecord = { id: 'synthetic-sun-saturn', kind: 'interaspect', planetA: 'sun', planetB: 'saturn', aspect: 'square',
+    plainTranslation: 'The Sun person expresses identity; the Saturn person evaluates limits.',
+    summaryDeep: 'Their caution presses on your confidence. Complete conflicting source ending.',
+    tension: 'Person A may seek approval and Person B may impose a condition. Complete neutral ending.',
+    advice: 'Keep making an effort. Complete unrequested advice ending.' };
+  const sourceFixture = { ...base, headline: 'Sun square Saturn', facts: { ...base.facts, planetA: 'Sun', planetB: 'Saturn', readerPlanet: 'Saturn', otherPlanet: 'Sun',
+      neutralKnowledge: { records: [legacyRecord] } },
+    sourceSnapshot: { knowledgeSources: [{ record: legacyRecord }],
+      bookReferences: [{ text: 'Complete protected owner passage. You retain its advice and original punctuation — final sentence.' }] } };
+  const sourceBefore = JSON.stringify(sourceFixture);
+  const ownerIndex = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json', import.meta.url), 'utf8'));
+  const expectedVoiceExamples = sharedGenerationOwnerExamples(ownerIndex, sourceFixture);
+  nextDraft = { ...draft, headline: sourceFixture.headline,
+    body: 'This synthetic fixture addresses the Saturn reader and Rowan’s Sun. It retains both named roles without making an event claim.\n\nThe complete fixture ends without an instruction.',
+    astrologyDrilldown: { ...draft.astrologyDrilldown, factors: [
+      { label: 'Their Sun', technicalFact: 'Sun belongs to Rowan.', plainMeaning: 'The other person’s expression.' },
+      { label: 'Your Saturn', technicalFact: 'Saturn belongs to the reader.', plainMeaning: 'The reader’s caution.' }
+    ] } };
+  for (const provider of ['openai', 'claude'] as const) {
+    const start = requests.length;
+    const generated = await generate({ ...sourceFixture, provider });
+    assert.equal(generated.statusCode, 200);
+    const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v8-2026-10-21');
+    assert.equal(receipt.readerPerson, 'B');
+    assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
+    assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
+    const stages = requests.slice(start);
+    for (const stage of stages.filter(request => ['tldr_astro_meaning_plan', 'tldr_astro_generated_content'].includes(request.kind))) {
+      const prompt = stage.provider === 'openai' ? stage.body.input : stage.body.messages[0].content[0].text;
+      assert(prompt.includes(legacyRecord.plainTranslation));
+      assert(prompt.includes(legacyRecord.tension));
+      assert(!prompt.includes(legacyRecord.summaryDeep), 'Unbound source-reader wording must not reach a paid stage.');
+      assert(!prompt.includes(legacyRecord.advice), 'Unrequested knowledge advice must not reach a paid stage.');
+    }
+    const writer = stages.find(request => request.kind === 'tldr_astro_generated_content');
+    const writerText = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+    assert(writerText.includes(sourceFixture.sourceSnapshot.bookReferences[0].text), 'Complete protected owner wording is unchanged.');
+    for (const example of expectedVoiceExamples) assert(writerText.includes(example.body), 'Knowledge projection cannot alter the selected complete owner voice examples.');
+    if (provider === 'openai') {
+      const ownership = JSON.parse(stages[0].body.input).contactOwnership;
+      assert.equal(ownership.personA.planet, 'Sun'); assert.equal(ownership.personB.planet, 'Saturn'); assert.equal(ownership.readerPerson, 'B');
+    }
+  }
+  assert.equal(JSON.stringify(sourceFixture), sourceBefore, 'The original sources and saved input are never mutated.');
+  nextDraft = draft;
+  for (const unsafePlan of [{}, { core_tension: 'Their caution presses on your confidence.' },
+    { core_tension: 'Person A wants you to agree with Person B.' }]) {
+    nextPlan = unsafePlan; const start = requests.length;
+    const result = await generate({ ...base, provider: 'openai' });
+    assert.notEqual(result.statusCode, 200);
+    assert.match(result.result.error, /SYNASTRY_MEANING_OWNERSHIP_UNRESOLVED/u);
+    assert.deepEqual(requests.slice(start).map(request => request.kind), ['tldr_astro_meaning_plan'], 'Ambiguous plan stops before writer, reviewer or rewrite.');
+  }
+  nextPlan = validPlan;
+  const beforeConflict = requests.length;
+  const conflict = await generate({ ...base, provider: 'openai', facts: { ...base.facts, readerPlanet: 'Mercury' } });
+  assert.notEqual(conflict.statusCode, 200); assert.match(conflict.result.error, /SYNASTRY_OWNERSHIP_CONFLICT/u);
+  assert.equal(requests.length, beforeConflict, 'Conflicting reader facts stop before any paid stage.');
   validateGeneratedContentQuality({ ...draft, body: draft.body + ' Synthetic sentence — continued.' } as any,
     { ...base, surface: 'composite', eventType: 'composite-aspect', facts: {} } as any);
   const reviser = governedInstructionsForRole('REVISER', { surface: 'synastry', family: 'synastry-aspect' });
