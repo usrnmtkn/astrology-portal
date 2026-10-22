@@ -258,7 +258,7 @@ deployment never approves or publishes these drafts. Reader integration is a
 separate requirement from making a source editable.
 
 The focused regression is `node --import tsx scripts/test-natal-editorial-library.mts`.
-The browser matrix is `npx playwright test --config playwright.natal-editorial.config.ts`;
+The focused browser matrix uses the existing CI config: `npx playwright test --config playwright.config.ts --workers=1 tests/visual/content-dashboard-admin-user-flows.spec.ts --grep "Natal editorial library|Natal Empty Houses opens|surface map organizes editable"`;
 all mutations use isolated storage. An opt-in private saved-row preview is local
 only and is skipped when `NATAL_EDITORIAL_PREVIEW_ROWS` is absent.
 
