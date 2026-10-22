@@ -4,7 +4,7 @@ import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
 import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
-import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
+import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { isStudioReadRequest, studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
@@ -5953,7 +5953,7 @@ export function GeneratedContentAdminDashboard() {
       generationError: null,
       rejectedGeneration: null,
       writingDirection: "",
-      format: SKY_INGRESS_ESSAY_FORMAT,
+      format: SKY_INGRESS_ARTICLE_FORMAT,
       referenceDate: new Date().toISOString().slice(0, 10),
       facts: null,
       tldr: "",
@@ -11557,7 +11557,7 @@ export function GeneratedContentAdminDashboard() {
                   <p>
                     {skyArticleNeedsHouses
                       ? "Combine the saved template with calculated residency facts, edition fields and twelve approved house horoscopes."
-                      : "Write a dated ingress essay with When, What, Takeaway, an overview, major transits and a close. Prior occurrences and other dates are optional. House horoscopes remain a separate companion."}
+                      : "Use KB and Calendar for meaning, approved writing for voice, and calculated dates."}
                   </p>
                 </div>
                 <div>
@@ -11580,8 +11580,9 @@ export function GeneratedContentAdminDashboard() {
                   setSkyArticleEditionForm({ format: event.target.value as SkyArticleFormat, referenceDate: skyArticleEditionForm.referenceDate,
                     facts: null, tldr: "", writingDirection: "", generationError: null, rejectedGeneration: null, slotValues: {}, slotGeneration: null, factBlockedSlots: [], saveState: "idle", workspaceId: null });
                 }}>
-                  <option value={SKY_INGRESS_ESSAY_FORMAT}>Ingress essay · October 9 format</option>
-                  <option value="saved-template">Saved article template and horoscopes</option>
+                  <option value={SKY_INGRESS_ARTICLE_FORMAT}>Ingress article</option>
+                  <option value={SKY_INGRESS_ESSAY_FORMAT}>Saved ingress layout</option>
+                  <option value="saved-template">Saved guide template and horoscopes</option>
                 </AdminSelect>
               </label>
               <div className="admin-sky-edition-facts-row">
@@ -11674,13 +11675,13 @@ export function GeneratedContentAdminDashboard() {
                     <StudioButton
                       type="button"
                       onClick={() => void generateSkyArticleEditionSlots(selectedRow)}
-                      disabled={isLoading}
+                      disabled={isLoading || skyArticleEditionForm.format === SKY_INGRESS_ESSAY_FORMAT}
                     >
                       <Sparkles size={16} aria-hidden="true" />
                       Generate unfinished fields
                     </StudioButton>
                     <p className="admin-field-hint">
-                      Sends the selected format, calculated facts, writing direction and unfinished fields to the writing provider. Review the generated draft before publication.
+                      Use Ingress article for dated generation. Saved ingress layouts can be edited and compiled.
                     </p>
                   </div>
                   {skyArticleEditionForm.generationError && (

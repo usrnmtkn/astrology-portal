@@ -10,7 +10,8 @@ import {
   unfinishedSkyArticleTemplateSlots
 } from "../_lib/sky-article-template-slots.js";
 import { skyArticleTemplatePlaceholders } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
-import { isSkyIngressEssay, SKY_INGRESS_ESSAY_TEMPLATE, skyIngressEssayFields, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { isSkyIngressEssay, isSkyIngressArticle, skyIngressTemplateForFormat, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { ingressWriterContractReceipt } from '../_lib/transit-ingress-editorial-authority.js';
 import { hasVerifiedSameSignHistory } from "../../apps/web/src/services/retrogradeHistory.js";
 import { loadSkySeasonMeaning } from '../_lib/sky-season-meaning.js';
 import { buildSkyIngressWritingContext, buildIngressTemplateReference } from '../_lib/sky-ingress-writing.js';
@@ -110,11 +111,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (inspect) {
       const source = approvedVoiceStyleReference({surface:'sky',family:'sky-ingress-essay'});
       sendAdminJson(res, 200, {ok:true,scope:'sky-ingress-essay',voiceBenchmark:source.receipt,
+        writerContract:ingressWriterContractReceipt(),
         sourcePolicy:{meaning:'knowledge-base-and-calendar',facts:'calculated-ingress-coverage',voice:'selected-style-references'},
         providerCalls:0,saved:false,published:false});
       return;
     }
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);
+    if (body.format === undefined) throw new AdminHttpError(400, "Choose an explicit ingress or saved-guide format before generation.");
     if (body.expectedModel !== undefined) {
       if (typeof body.expectedModel !== 'string' || !body.expectedModel.trim()
         || !isSkyIngressEssay(body.format) || body.provider !== 'openai') throw new AdminHttpError(400, 'expectedModel requires an OpenAI ingress request.');
@@ -124,6 +127,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (body.includeRetrogradeHistory !== undefined && typeof body.includeRetrogradeHistory !== "boolean") throw new AdminHttpError(400, "includeRetrogradeHistory must be a boolean.");
     if (body.format !== undefined && body.format !== "saved-template" && !isSkyIngressEssay(body.format)) throw new AdminHttpError(400, "Unsupported article format.");
+    if (isSkyIngressEssay(body.format) && !isSkyIngressArticle(body.format)) throw new AdminHttpError(409, 'Generation for this ingress format is retired. Select Ingress article to use the current ingress writer. Saved text remains unchanged.');
     if (typeof body.templateId !== "string" || !body.templateId.trim()) throw new AdminHttpError(400, "templateId is required.");
     if (body.provider !== undefined && !["openai", "claude", "anthropic"].includes(body.provider)) throw new AdminHttpError(400, "Invalid provider.");
     if (body.voiceNotes !== undefined && typeof body.voiceNotes !== "string") throw new AdminHttpError(400, "voiceNotes must be text.");
@@ -140,8 +144,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (ingress && "nasa" in facts && facts.nasa.status === "disagreement") throw new AdminHttpError(422, "Swiss and NASA/JPL positions disagree. Resolve the calculation evidence before writing.");
     const templateSign = template.content_key.split("/").at(-1);
     if (ingress && ![facts.sign, "ingress"].includes(templateSign ?? "")) throw new AdminHttpError(422, "The reference date is in a different sign. Open the template for the calculated placement.");
-    const completeTemplate = ingress ? SKY_INGRESS_ESSAY_TEMPLATE : articleTemplateWithHoroscopes(template.body ?? "", template.sections);
-    const placeholders = ingress ? [...skyIngressEssayFields] : skyArticleTemplatePlaceholders(completeTemplate)
+    const completeTemplate = ingress ? skyIngressTemplateForFormat(body.format) : articleTemplateWithHoroscopes(template.body ?? "", template.sections);
+    const placeholders = ingress ? [...facts.templateFields] : skyArticleTemplatePlaceholders(completeTemplate)
       .filter((placeholder) => placeholder.name !== "risingBlocks")
       .map((placeholder) => ({ ...placeholder,
         description: (template.source_snapshot?.editorialImport as {slotDescriptions?: Record<string, string[]>} | undefined)?.slotDescriptions?.[placeholder.name]?.join("\n") || placeholder.description

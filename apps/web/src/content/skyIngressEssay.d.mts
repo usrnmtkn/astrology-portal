@@ -1,6 +1,11 @@
 export const SKY_INGRESS_ESSAY_FORMAT: "ingress-essay-v2";
-export type SkyArticleFormat = typeof SKY_INGRESS_ESSAY_FORMAT | "saved-template";
+export const SKY_INGRESS_ARTICLE_FORMAT: "ingress-essay-v3";
+export type SkyArticleFormat = typeof SKY_INGRESS_ESSAY_FORMAT | typeof SKY_INGRESS_ARTICLE_FORMAT | "saved-template";
 export const SKY_INGRESS_ESSAY_TEMPLATE: string;
-export const SKY_INGRESS_ESSAY_INSTRUCTIONS: string;
 export const skyIngressEssayFields: readonly { name: string; description: string }[];
-export function isSkyIngressEssay(format: unknown): format is typeof SKY_INGRESS_ESSAY_FORMAT;
+export const skyIngressArticleFields: readonly { name: string; description: string }[];
+export const SKY_INGRESS_ARTICLE_TEMPLATE: string;
+export function isSkyIngressArticle(format: unknown): format is typeof SKY_INGRESS_ARTICLE_FORMAT;
+export function isSkyIngressEssay(format: unknown): format is typeof SKY_INGRESS_ESSAY_FORMAT | typeof SKY_INGRESS_ARTICLE_FORMAT;
+export function skyIngressFieldsForFormat(format: unknown): typeof skyIngressEssayFields;
+export function skyIngressTemplateForFormat(format: unknown): string;

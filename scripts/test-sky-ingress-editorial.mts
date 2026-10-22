@@ -1,3 +1,4 @@
+import { ingressWriterFixture } from './fixtures/ingress-writer-context.mts';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -8,7 +9,8 @@ import { buildSkyIngressWritingContext, ingressDignityEvidence, validateSkyIngre
 import { generateSkyArticleTemplateSlots } from '../api/_lib/content-generation.ts';
 import { calculateSkyArticleEditionFacts } from '../api/_lib/sky-article-facts.ts';
 import { sharedGenerationOwnerExamples } from '../api/_lib/shared-generation-owner-examples.ts';
-import { skyIngressEssayFields } from '../apps/web/src/content/skyIngressEssay.mjs';
+import { ingressArticleFields } from '../api/_lib/transit-ingress-editorial-authority.ts';
+const skyIngressEssayFields = ingressArticleFields();
 import { ingressFixtureValues } from './fixtures/sky-ingress-writing.mjs';
 
 assert.match(responses.instructionsForRole('WRITER', '', { surface: 'sky', family: 'sky-ingress-essay' }),
@@ -40,12 +42,13 @@ globalThis.fetch = async target => {
 };
 let libra: any, taurus: any;
 try {
-  libra = await calculateSkyArticleEditionFacts(new Date('2026-10-21T12:00:00Z'), 'sun', 'ingress-essay-v2');
-  taurus = await calculateSkyArticleEditionFacts(new Date('2027-05-10T12:00:00Z'), 'sun', 'ingress-essay-v2');
+  libra = await calculateSkyArticleEditionFacts(new Date('2026-10-21T12:00:00Z'), 'sun', 'ingress-essay-v3');
+  taurus = await calculateSkyArticleEditionFacts(new Date('2027-05-10T12:00:00Z'), 'sun', 'ingress-essay-v3');
 } finally { globalThis.fetch = sourceFetch; }
 const context = buildSkyIngressWritingContext(libra);
 assert.deepEqual(context.plan.developed.map(event => event.title), ['Sun opposition Neptune', 'Sun opposition Saturn', 'Sun sextile Jupiter']);
-assert.match(context.plan.developed[1].heading, /October 4, 2026 at 8:29 AM ET/);
+assert.equal(context.plan.developed[1].event.dateLabel, 'October 4, 2026');
+assert.equal(context.plan.developed[1].event.timeLabel, '8:29 AM ET');
 assert.match(context.plan.developed[1].positionsLine, /Sun at 11°18′ Libra, direct, in fall\. Saturn at 11°18′ Aries, retrograde, in fall\./);
 const required = context.plan.requiredDates;
 assert(!required.some(event => event.title === 'Sun enters Libra'), 'The calculated summary already covers the ingress, including subsecond root differences.');
@@ -74,14 +77,14 @@ const names = skyIngressEssayFields.map(field => field.name).filter(name => !['a
 const values = ingressFixtureValues(context.prompt, names);
 const providerSlots = ingressProviderSlots(names.map(name => ({ name })), context);
 assert(!providerSlots.some(slot => ['majorTransitSections', 'otherDatesSection'].includes(slot.name)));
-assert.equal(providerSlots.filter(slot => slot.name.startsWith('ingressTransitBody')).length, 3);
+assert.deepEqual(providerSlots.map(slot => slot.name), ['what', 'takeaway', 'articleBody']);
 const prose = ingressFixtureValues(context.prompt, providerSlots.map(slot => slot.name));
 const assembled = assembleIngressFields(prose, names.map(name => ({ name })), context);
-assert.deepEqual(Object.keys(assembled), names, 'Public article string fields and their order are preserved.');
-assert.equal(assembled.otherDatesSection, values.otherDatesSection);
-assert.match(assembled.majorTransitSections, /Sun opposition Saturn: October 4, 2026 at 8:29 AM ET/);
+Object.assign(values, assembled);
+assert.deepEqual(Object.keys(assembled), names);
+assert.match(assembled.otherDatesSection, /Sun opposition Saturn: October 4, 2026 at 8:29 AM ET/);
 assert.throws(() => assembleIngressFields({ ...prose, otherDatesSection: 'A replacement event list.' }, names.map(name => ({ name })), context), /exactly the requested prose fields/);
-assert.throws(() => assembleIngressFields({ ...prose, ingressTransitBody1: '# An invented event' }, names.map(name => ({ name })), context), /cannot replace/);
+assert.throws(() => ingressProviderSlots([{ name: 'ingressTransitBody1' }], context), /writer contract/);
 assert.equal(validateSkyIngressWriting(values, context).passed, true);
 assert(validateSkyIngressWriting(values, context).advisories.length, 'Structural fixtures cannot establish developed prose.');
 const invalid = (key: string, edit: (text: string) => string, expected: RegExp) => {
@@ -92,21 +95,17 @@ const invalid = (key: string, edit: (text: string) => string, expected: RegExp) 
 invalid('otherDatesSection', text => text.split('\n').filter(line => !line.includes('Full Moon in Aries')).join('\n'), /required event|Other dates/);
 invalid('otherDatesSection', text => text.replace('Pluto stations direct: October 15, 2026', 'Pluto stations direct: October 15-16, 2026'), /Pluto|Date outside/);
 invalid('otherDatesSection', text => text.replace('- Follow through: Venus enters Libra', '- Venus enters Libra'), /Venus enters Libra/);
-invalid('majorTransitSections', text => text.replace('October 4, 2026 at 8:29 AM ET', 'October 5, 2026 at 8:29 AM ET'), /header|Date outside/);
-invalid('majorTransitSections', text => text.replace('Saturn at 11°18′ Aries, retrograde', 'Saturn at 12°18′ Aries, direct'), /participant facts/);
-invalid('majorTransitSections', text => `${text}\nThe Sun is at 99 degrees.`, /numeric participant positions/);
-invalid('overviewBody', () => 'Synthetic claim: the Sun is in fall due to the rulership of Venus.', /Sign rulership/);
-invalid('overviewBody', () => 'Synthetic claim: your natal Sun determines this event.', /natal biography/);
-invalid('closingBody', () => 'Synthetic claim: Libra’s whole-sign house of partnership describes your life.', /No rising sign/);
-invalid('closingBody', () => 'Synthetic claim: this is your seventh house.', /No rising sign/);
-assert.equal(validateSkyIngressWriting({ closingBody: 'Find Libra in your own whole-sign chart, counting houses from your rising sign.' }, context).passed, true);
-const lookupMethod = 'Find the sign in your whole sign chart by counting signs from your rising sign, with the rising sign as the first house.';
-assert.equal(validateSkyIngressWriting({ closingBody: lookupMethod }, context).passed, true,
-  'A general rising-sign lookup method does not assign a personal house to the season sign.');
-assert.equal(validateSkyIngressWriting({ closingBody: `${lookupMethod} This season activates your seventh house.` }, context).passed, false,
-  'A valid lookup cannot license a separate unsupported personal house claim.');
-assert.equal(validateSkyIngressWriting({ closingBody: 'Count from Libra as the first house.' }, context).passed, false);
-assert.equal(validateSkyIngressWriting({ closingBody: 'Use the rising sign as the seventh house.' }, context).passed, false);
+invalid('articleBody', () => 'Synthetic time: October 4, 2026 at 9:29 AM ET.', /date and time/);
+invalid('articleBody', () => 'Synthetic position: 99 degrees.', /numeric participant positions/);
+invalid('articleBody', () => 'Synthetic claim: the Sun is in fall due to the rulership of Venus.', /Sign rulership/);
+invalid('articleBody', () => 'Synthetic claim: your natal Sun determines this event.', /natal biography/);
+invalid('articleBody', () => 'Synthetic claim: Libra’s whole-sign house of partnership describes your life.', /No rising sign/);
+invalid('articleBody', () => 'Synthetic claim: this is your seventh house.', /No rising sign/);
+for (const edit of [{ degree: 99 }, { motion: 'unknown' }]) {
+  const corrupt = { ...libra, events: libra.events.map((event: any) => event.id === context.plan.developed[1].id
+    ? { ...event, participants: event.participants.map((point: any, index: number) => index === 0 ? { ...point, ...edit } : point) } : event) };
+  assert.throws(() => buildSkyIngressWritingContext(corrupt), /Incomplete ingress event positions/);
+}
 assert.deepEqual(ingressDignityEvidence('Sun', 'Libra').exaltationSigns, ['Aries']);
 assert.deepEqual(ingressDignityEvidence('Venus', 'Scorpio').domicileSigns, ['Taurus', 'Libra']);
 assert.equal(ingressDignityEvidence('Pluto', 'Aquarius').status, 'not_applicable');
@@ -115,7 +114,7 @@ assert.throws(() => buildSkyIngressWritingContext({ ...libra, events: [libra.eve
 assert.throws(() => buildSkyIngressWritingContext({}), /Complete calculated/);
 const second = buildSkyIngressWritingContext(taurus);
 assert.equal(second.plan.selectedSign, 'taurus');
-assert(second.plan.developed.every(event => event.heading.includes('2027')));
+assert(second.plan.developed.every(event => event.event.dateLabel.includes('2027')));
 assert(!second.prompt.includes('September 26, 2026'));
 assert.doesNotMatch(second.prompt, /self\/other learning axis|Give cooperation and the ability to consider another view/,
   'A different season must not inherit a hardcoded Libra lesson.');
@@ -143,8 +142,9 @@ try {
 } finally { globalThis.fetch = sourceFetch; }
 const baselineModel = process.env.OPENAI_MODEL;
 let modelCalls = 0;
-const writerInput = { templateKey: target.contentKey, templateBody: '{{overviewBody}}', planet: 'sun', sign: 'libra',
-  facts: libra, writingMemory: null, requestedSlots: [{ name: 'overviewBody' }] };
+const completeIngress = await ingressWriterFixture();
+const writerInput = { seasonMeaning: completeIngress.seasonMeaning, templateKey: target.contentKey, templateBody: '{{articleBody}}', planet: 'sun', sign: 'libra',
+  facts: libra, writingMemory: null, requestedSlots: [{ name: 'articleBody' }] };
 const templateReference = buildIngressTemplateReference(target.contentKey, 'Synthetic complete saved event-led guide. {{entryDate}} stays reference data.');
 assert.equal(templateReference.reference.bodySha256, createHash('sha256').update(templateReference.reference.body).digest('hex'));
 assert.equal(templateReference.receipt.factUseAuthorized, false);
@@ -164,7 +164,7 @@ globalThis.fetch = async (_url, init) => {
     'Exclude the natal packet only when the dated writer has its own complete ingress context.');
   const expected = process.env.OPENAI_INGRESS_MODEL ?? (request.instructions.includes('DATED INGRESS EDITORIAL AUTHORITY') ? 'gpt-5.6-sol' : 'synthetic-other-writer');
   assert.equal(request.model, expected);
-  return Response.json({ id: 'synthetic', output_text: JSON.stringify({ slotValues: { overviewBody: 'Synthetic complete interpretation.' } }) });
+  return Response.json({ id: 'synthetic', output_text: JSON.stringify({ slotValues: { articleBody: 'Synthetic complete interpretation.' } }) });
 };
 try {
   process.env.OPENAI_MODEL = 'synthetic-other-writer';

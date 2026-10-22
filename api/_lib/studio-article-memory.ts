@@ -10,13 +10,14 @@ export function studioArticleWritingMemoryKey(input: { planet: string; sign: str
     || !/^[a-z_]+$/.test(input.planet) || !/^[a-z]+$/.test(input.sign))
     throw new Error('Article memory requires the calculated edition identity. No draft was generated.');
 
-  const ingress = isSkyIngressEssay(input.facts.articleFormat);
+  const format = input.facts.articleFormat;
+  const ingress = isSkyIngressEssay(format);
   const validFrom = typeof input.facts.validFrom === 'string' ? input.facts.validFrom : '';
   if (ingress && (!/^\d{4}-\d{2}-\d{2}$/.test(validFrom) || Number(validFrom.slice(0, 4)) !== year)) {
     throw new Error('Ingress article memory requires the calculated visit date. No draft was generated.');
   }
   return skyArticleEditionContentKey({ planet: input.planet, sign: input.sign, entryYear: Number(year), validFrom,
-    format: ingress ? 'ingress-essay-v2' : 'saved-template' });
+    format: ingress ? format : 'saved-template' });
 }
 
 export async function studioArticleWritingMemory(input: { planet: string; sign: string; facts: Record<string, unknown> }) {
