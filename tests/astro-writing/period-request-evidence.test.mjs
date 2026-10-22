@@ -93,7 +93,7 @@ test('Monthly synthesis/review project only governed facts; candidate, profiles 
   for(const key of ['ownerExamples','writingProfile','corrections'])assert.deepEqual(projected.evidence[key],evidence[key]);
   assert.equal(definitions(projected.evidence.engineFacts).size,1);
   assert.deepEqual(evidence,before,'Projection never edits original audit evidence');
-  for(const period of ['daily','weekly','seasonal']){
+  for(const period of ['daily','seasonal']){
     const other={...evidence,engineFacts:{...engineFacts,window:{period}}};
     assert.equal(horoscopeReviewInput(candidate,other),JSON.stringify({candidate,evidence:other}));
   }

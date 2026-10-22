@@ -48,7 +48,7 @@ result=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window)
 assert.equal(result.status,200);let row=result.payload.rows[0];
 const action=async(action:string,extra:any={})=>{const r=await invoke({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});if(r.payload.rows?.[0])row=r.payload.rows[0];return r;};
 result=await action('prepare');assert.equal(result.status,200,JSON.stringify(result.payload));assert.equal(writerFixture.calls,0);
-assert.equal(result.payload.plan.version,'horoscope-writer/v21-weekly-rejections','Changed negative evidence invalidates pre-release plan approval');
+assert.equal(result.payload.plan.version,'horoscope-writer/v25-weekly-evidence-refs','Changed negative evidence invalidates pre-release plan approval');
 const preview=result.payload.plan.readings.find(e=>e.sign==='aries').ownerEvidence;
 assert.equal(preview.selection.eligible.filter(e=>e.proseFunction==='complete weekly sign reading').length,48);
 assert.equal(preview.selection.eligible.length,88,'48 Weekly readings plus 39 Seasonal complete units and one Monthly essay');

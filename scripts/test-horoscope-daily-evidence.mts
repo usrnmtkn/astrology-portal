@@ -63,7 +63,7 @@ for(const sign of edition.passages.map((p:any)=>p.sign)){
  assertHoroscopeRequestEvidence(request.input,['primaryOwnerVoiceSources','supportingOwnerVoiceSources']);
 }
 assert.deepEqual(prepared.entries.map((e:any)=>e.ownerContext),before,'Daily serialization never mutates selected evidence or audit receipts');
-assert.equal(horoscopeWritingVersionFor('weekly'),'horoscope-writer/v21-weekly-rejections');
+assert.equal(horoscopeWritingVersionFor('weekly'),'horoscope-writer/v25-weekly-evidence-refs');
 assert.equal(horoscopeWritingVersionFor('monthly'),'horoscope-writer/v24-monthly-evidence-refs');
 assert.equal(horoscopeWritingVersionFor('seasonal'),'horoscope-writer/v23-seasonal-evidence-refs');
 console.log('PASS Daily evidence: actual handler, all three intercepted providers, both profile-variable modes, all twelve audiences, complete source/hash/metadata preservation, resolvable references, authorization and unchanged saved prose. Zero paid calls.');
