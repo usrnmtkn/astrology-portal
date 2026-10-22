@@ -1,6 +1,6 @@
 import {applyCheckpointFixture} from '../tests/helpers/horoscope-checkpoint-fixture.mts';
 import {loadWeeklyOwnerEvidence} from '../src/astro-writing/weeklyOwnerEvidence.mjs';
-import {assertHoroscopeRequestEvidence,resolveHoroscopeRequestPassage} from './assert-horoscope-request-evidence.mjs';
+import {assertHoroscopeRequestEvidence,resolveHoroscopeRequestPassage,restoreWeeklyRequestMeanings} from './assert-horoscope-request-evidence.mjs';
 import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
@@ -100,7 +100,7 @@ for(const request of writerFixture.requests.values()){
  const developmentSection=request.input.match(/PERIOD DEVELOPMENTS — EACH FACT WITH ITS OWN MEANING AND LIFE AREA\n([^\n]+)\n\n/);
  assert(developmentSection,'Inspect the actual provider boundary, not only the plan object');
  const developments=JSON.parse(developmentSection[1]);
- assert.deepEqual(developments,plan.payload.plan.readings.find((e:any)=>e.sign===request.sign).developments);
+ assert.deepEqual(restoreWeeklyRequestMeanings(developments),plan.payload.plan.readings.find((e:any)=>e.sign===request.sign).developments,'Delivered references reconstruct the exact complete planned facts and source roles');
  assert(developments.events.every((d:any)=>d.meaning.role.includes('not owner voice')));
 
  assert(request.input.includes(horoscopeEditorialPrompt(writingProfile.profile)),'Every sign must receive the complete saved weekly guidance, including sign specificity and flexible interpretation');
@@ -109,13 +109,13 @@ for(const request of writerFixture.requests.values()){
  const passages=JSON.parse(section[1]);assert.equal(passages.length,3);
  for(const passage of passages){
   const source=forecastSources.get(passage.id);
-  assert.equal(passage.text,source.text,'Preserve the complete original sign reading');
+  assert.equal(resolveHoroscopeRequestPassage(request.input,passage),source.text,'Preserve the complete original sign reading');
   assert.equal(passage.sourceRecordSha256,createHash('sha256').update(source.text).digest('hex'));
   assert.equal(source.ownerAuthored,true);assert.equal(source.ownerApproved,true);
  }
  assert(request.input.indexOf(section[0])<request.input.indexOf('CONTENT STUDIO WRITING INSTRUCTIONS'));
  assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings[request.sign].sourceIds.slice(0,3),passages.map((e:any)=>e.id));
- assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v21-weekly-rejections');
+ assert.equal(row.source_snapshot.horoscopeGeneration.readings[request.sign].version,'horoscope-writer/v25-weekly-evidence-refs');
 }
 // The lunation is distinct from the Monday snapshot Moon. Houses must bind to
 // the named subject, rather than matching the Sun's house or any available house.
