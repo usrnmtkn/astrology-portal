@@ -133,7 +133,12 @@ for (const width of [390, 1440]) test(`cold guest selected and aspect transport 
     const selected = await page.evaluate(() => JSON.parse(localStorage.getItem('tldrastro:sky-publication-rows:v2') ?? '[]'));
     expect(selected.filter((row: any) => row.id === id)).toHaveLength(1);
     expect(errors).toEqual([]);
-  } finally { release(); await page.unrouteAll({ behavior: 'wait' }); }
+  } finally {
+    release();
+    // The assertions have completed. Optional background reads can still be
+    // in flight when these fixture routes are removed.
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
+  }
 });
 
 for (const width of [390, 1440]) test(`cold article sources overlap revision without an early passage ${width}`, async ({ page }) => {
@@ -199,7 +204,7 @@ for (const width of [390, 1440]) test(`cold article sources overlap revision wit
     expect(errors).toEqual([]);
   } finally {
     releaseRevision();
-    await page.unrouteAll({ behavior: 'wait' });
+    await page.unrouteAll({ behavior: 'ignoreErrors' });
   }
 });
 
