@@ -25,13 +25,19 @@ coverage without exposing the source bodies. Missing coverage is recorded,
 while a malformed or integrity-invalid provision is rejected.
 
 Directional Synastry writing uses the same server-only store for
-`private:writing/synastry/approved-sample-20261022`. Its
-`synastry-approved-voice/v1` envelope contains the complete eight explicitly
-approved readings, their exact hashes and approval provenance. Keep this record
+`private:writing/synastry/approved-sample-20261022` and
+`private:writing/synastry/approved-ten-20261023`. Their separate
+`synastry-approved-voice/v1` envelopes contain the complete eight and ten explicitly
+approved readings, their exact hashes and distinct approval provenance. Keep this record
 outside Git, public bundles, logs and PR attachments. Explicit complete source
 selection retains precedence; otherwise missing or corrupt evidence holds new
 Synastry generation before a provider call. Merge this record into the protected
-store without replacing the existing report documents. A prepared local payload
+store without replacing the existing report documents. Production may provision
+these two writing records in the separate server-only
+`PRIVATE_SYNASTRY_VOICE_REFERENCES` secret using the same `private-reports/v1`
+format. It takes precedence only for the registered Synastry voice IDs; the
+existing report secret is untouched. Local use may read the ignored
+`.private-documents/synastry-voice.json`. A prepared local payload
 does not establish production provisioning.
 
 Original database content records are archived in the restricted

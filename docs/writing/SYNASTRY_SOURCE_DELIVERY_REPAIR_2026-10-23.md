@@ -38,16 +38,17 @@ as well as the supplied facts. Previously, knowledge supplied only in the source
 snapshot reached the writer but not the planner.
 
 The shared OpenAI and Claude Synastry writers and private body writer load the
-complete owner-approved eight references from the existing protected document
+complete owner-approved eighteen references in two collections from the existing protected document
 store when no explicit complete references were selected. These replace the
-automatic adjacent-article selection. The neutral source ID is
-`private:writing/synastry/approved-sample-20261022` in `PRIVATE_REPORT_DOCUMENTS`.
+automatic adjacent-article selection. The neutral source IDs are
+`private:writing/synastry/approved-sample-20261022` and
+`private:writing/synastry/approved-ten-20261023` in `PRIVATE_REPORT_DOCUMENTS`.
 The envelope is `synastry-approved-voice/v1`; every complete passage retains
 its exact text hash and the owner's explicit approval provenance. Missing,
 malformed or corrupt default evidence stops before a provider call. Explicit
 source selection retains precedence. No source body is committed or added to a
 browser bundle.
-The repository approval manifest pins all eight exact passage hashes. Changing
+The repository approval manifests pin all eighteen exact passage hashes. Changing
 text and recomputing its storage hash cannot reuse the old prose approval.
 Both the generic API function pattern and the generated-content route's explicit
 override package `data/writing`, including that text-free approval manifest. The
@@ -109,3 +110,32 @@ The private merged protected-source payload is prepared separately. Deployment
 must provision that payload without replacing existing protected documents,
 pass the exact-head PR checks, deploy from main and verify deployed evidence.
 A local fixture or prepared payload is not evidence of production provisioning.
+
+## October 23 approved reference addition
+
+The owner selected the second ten-reading attachment as final for both the named
+reader slots and voice references in the current writing task. The selection is
+recorded by `call_dbde683ecad34036a709b8b3520b50fb` in
+`thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b`. The first overlapping attachment
+remains historical; its different nine bodies are not substituted. The selected
+attachment's exact hash, approval statement hash and ten body hashes are pinned
+in the second text-free approval manifest. The complete statement and original
+source stay private.
+
+Both collections retain their own approval provenance. Default requests load all
+eighteen complete references through the existing protected document reader;
+explicit complete source selection still takes precedence. Missing or modified
+source evidence holds dispatch, including a self-consistently rehashed edit or
+a request that supplies only the earlier collection. The hash-only receipt names
+both source documents separately. This is source delivery, not an added writing
+stage or a claim of literary quality. Model defaults and call budgets are unchanged.
+
+The ten selected reader bodies were published separately through the existing
+owner Content Studio editor, with complete-text checks and private receipts.
+That database publication does not establish that the deployed generator has
+the new protected documents or loader. Because the existing report secret cannot be read back, the additional writing
+records can be provisioned as `PRIVATE_SYNASTRY_VOICE_REFERENCES` using the same
+protected document reader and schema. This does not replace any report source.
+Production voice activation still requires
+provisioning and deployment verification; local provider-boundary fixtures do not
+establish it.

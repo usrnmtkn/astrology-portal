@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { prepareSynastryBodyWriting, generateSynastryBody, validateSynastryBody, RejectedSynastryBodyError } from '../api/_lib/synastry-body-writing.js';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
-import { syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
+import { syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
 const restoreApprovalFixture = installSyntheticSynastryApproval();
 
 Object.assign(process.env, { OPENAI_API_KEY: 'synthetic', OPENAI_GENERATION_MODEL: 'gpt-4.1-mini',
@@ -58,8 +58,8 @@ try {
   const defaultInput = structuredClone(input);
   delete defaultInput.sourceSnapshot.positiveVoiceReferences;
   const defaultPrepared = await prepareSynastryBodyWriting(defaultInput, selection);
-  for (const reference of syntheticSynastryVoice().entries) assert.equal(defaultPrepared.request.input.split(reference.text).length - 1, 1);
-  assert.equal(defaultPrepared.receipt.protectedVoice.referenceCount, 8);
+  for (const reference of [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries]) assert.equal(defaultPrepared.request.input.split(reference.text).length - 1, 1);
+  assert.equal(defaultPrepared.receipt.protectedVoice.referenceCount, 18);
   assert.equal(defaultPrepared.input, defaultInput, 'Revalidation must reload protected sources from the original request.');
   const revisedBundle = syntheticSynastryVoice();
   revisedBundle.entries.reverse();

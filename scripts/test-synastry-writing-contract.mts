@@ -7,7 +7,7 @@ import handler from '../api/generate-content.js';
 import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { validateGeneratedContentQuality } from '../api/_lib/content-generation.js';
-import { syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
+import { syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
 const restoreApprovalFixture = installSyntheticSynastryApproval();
 
 const sharedStyle = readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/style-guide.md', import.meta.url), 'utf8');
@@ -158,7 +158,7 @@ function assertSynastryRequest(request: any, input: typeof base) {
     assert(prompt.includes('This reusable contact has no supplied planet signs'));
     assert(!prompt.includes('SUPPLIED SYNASTRY SIGN CONTEXT'));
   }
-  for (const reference of syntheticSynastryVoice().entries) {
+  for (const reference of [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries]) {
     assert.equal(prompt.split(reference.text).length - 1, 1, 'The shared writer receives every complete protected benchmark once.');
   }
   assert(!prompt.includes('relationship-year-libra-2025-to-venus-rx-2026'), 'Default protected references replace the old adjacent article.');
@@ -313,8 +313,15 @@ try {
         for (const leak of ['Keep it active so comfort does not turn into autopilot', 'The problem is that easy can become lazy', 'The problem is leaving it half-open']) assert(!sent.includes(leak));
       }
       const receipt = result.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-      assert.equal(receipt.protectedVoice.referenceCount, 8);
-      assert(receipt.protectedVoice.documentSha256);
+      assert.equal(receipt.protectedVoice.referenceCount, 18);
+      assert.equal(receipt.protectedVoice.sources.length, 2);
+      for (const source of receipt.protectedVoice.sources) assert(source.documentSha256);
+      for (const reference of [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries]) {
+        const writer = requests.slice(start).find(request => request.kind === 'tldr_astro_generated_content');
+        assert(writer);
+        const sent = writer.provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+        assert.equal(sent.split(reference.text).length - 1, 1, 'Both approved collections reach the actual writer once, completely.');
+      }
     }
   }
   for (const provider of ['openai', 'claude'] as const) {
