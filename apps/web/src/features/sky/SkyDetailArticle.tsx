@@ -1,3 +1,4 @@
+import { NatalChartReadings } from "../../components/NatalChartReadings";
 import { PreparedProse as FormattedProse } from "../../components/FormattedWritingContent";
 import { RetrogradeHistoryDisclosure, type RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
@@ -82,6 +83,7 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   retrogradeHistoryContext?: RetrogradeHistoryContext;
   placementFactsPending?: boolean;
   pills?: ArticlePillData;
@@ -671,6 +673,7 @@ export function SkyDetailArticle({
                   ) : null}
                 </>
               )}
+              {detail.natalPlanetReading ? <NatalChartReadings {...detail.natalPlanetReading} /> : null}
               {detail.keyDates?.length ? (
                 <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="sky-detail-key-dates-title">
                   <h2 id="sky-detail-key-dates-title">Key dates</h2>

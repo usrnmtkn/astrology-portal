@@ -2,6 +2,8 @@ import type { SkySnapshot } from "../types";
 import type { ManualChart } from "./manualCharts";
 import { getSupabaseClient, getVerifiedAuthUser } from "./auth";
 import { natalSnapshotBirthTimeIsKnown, natalSnapshotWithBirthTimeReliability } from "./birthTimeReliability";
+import { friendSafeNatalChart } from "./friendSafeNatalChart";
+export { friendSafeNatalChart } from "./friendSafeNatalChart";
 
 export type SocialProfile = {
   userId: string;
@@ -320,30 +322,6 @@ function rowToProfile(row: SocialProfileRow): SocialProfile {
     avatarUrl: row.avatar_url ?? undefined,
     isPrivate: row.discoverable === false,
     hasNatalChart: row.natal_chart != null
-  };
-}
-
-export function friendSafeNatalChart(
-  chart: SkySnapshot | null | undefined,
-  birthTimeKnown = false
-): SkySnapshot | null {
-  const reliableChart = natalSnapshotWithBirthTimeReliability(chart, birthTimeKnown);
-
-  if (!reliableChart) {
-    return null;
-  }
-
-  return {
-    ...reliableChart,
-    location: {
-      label: "Private birth location",
-      latitude: 0,
-      longitude: 0
-    },
-    generatedAt: "",
-    solarDaylight: undefined,
-    moonEvent: undefined,
-    moonSignTransition: undefined
   };
 }
 

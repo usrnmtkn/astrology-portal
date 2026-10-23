@@ -40,6 +40,8 @@ export function natalSnapshotWithBirthTimeReliability(
   return {
     ...snapshot,
     birthTimeKnown: false,
+    solarHorizon: undefined,
+    sharedNatalSect: undefined,
     ascendant: "",
     ascendantLongitude: undefined,
     midheaven: "",

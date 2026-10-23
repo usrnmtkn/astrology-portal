@@ -297,7 +297,7 @@ assert.match(
   "Only the request recipient may atomically accept or decline a pending request."
 );
 assert.match(
-  service,
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/services/friendSafeNatalChart.ts"), "utf8"),
   /export function friendSafeNatalChart[\s\S]*label: "Private birth location"[\s\S]*generatedAt: ""/,
   "The social chart projection must redact birth location and source timestamp."
 );

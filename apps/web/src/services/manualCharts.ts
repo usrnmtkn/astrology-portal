@@ -5,6 +5,7 @@ import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "
 import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
 import { natalChartHasCompletePlacements } from "./natalChartCompleteness";
 import { natalSnapshotWithBirthTimeReliability } from "./birthTimeReliability";
+import { hasCalculatedSolarHorizon } from "../../../../src/shared/solarHorizon.js";
 import { listLocalManualChartUserIds } from "./manualChartLocalOwners";
 import type { LocationInput, SkySnapshot } from "../types";
 
@@ -88,6 +89,7 @@ export function manualChartNeedsNatalRepair(chart: ManualChart) {
 
   // Never let a legacy partial snapshot masquerade as a complete chart.
   return !chart.birthLocation.timeZone
+    || (chart.chartType !== "event" && !chart.birthTimeUnknown && !hasCalculatedSolarHorizon(chart.natalChart))
     || !natalChartHasCompletePlacements(chart.natalChart, chart.birthTimeUnknown);
 }
 

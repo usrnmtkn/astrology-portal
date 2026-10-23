@@ -1,5 +1,6 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
 import { remainingSkyMinutes } from "./skyClock.js";
+import { SOLAR_HORIZON_VERSION, solarAltitudeFromEquatorial } from "../../../../src/shared/solarHorizon.js";
 import {
   calculateSkyAspects,
   canonicalizeNodeAxisAspects,
@@ -3913,6 +3914,16 @@ export async function getAstrodienstSky(
   const snapshot: SkySnapshot = {
     location,
     generatedAt: date.toISOString(),
+    solarHorizon: (() => {
+      const equatorial = calculateSwissUt(swe, jd, swe.SE_SUN, flags | swe.SEFLG_EQUATORIAL);
+      returnedEphemerisFlags.add(equatorial.returnedFlags);
+      return {
+        version: SOLAR_HORIZON_VERSION,
+        instant: date.toISOString(),
+        altitude: solarAltitudeFromEquatorial(equatorial.values[0], equatorial.values[1],
+          swe.sidtime(jd), location.latitude, location.longitude)
+      };
+    })(),
     calculationProvenance: astrologyCalculationProvenance(returnedEphemerisFlags),
     ascendant,
     ascendantLongitude,
