@@ -15,6 +15,7 @@ import {
   watchBrowserErrors
 } from "./qaRuntimeGuards";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
+import { friendSafeNatalChart } from "../../apps/web/src/services/friendSafeNatalChart";
 import { resolveSkyAspectGeneratedContent } from "../../apps/web/src/services/skyAspectContent";
 import { zonedDateTimeToUtc } from "../../apps/web/src/services/timezones";
 import {
@@ -6288,4 +6289,85 @@ test("Natal published readings distinguish an outage from missing writing and re
   await error.getByRole("button", { name: "Retry", exact: true }).click();
   await expect(page.getByText("The complete recovery final sentence.", { exact: true })).toBeVisible();
   await expect(error).toHaveCount(0);
+});
+
+for (const width of [390, 1440]) test(`shared Friend natal URL retains selection when manual charts arrive first ${width}`, async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.setViewportSize({ width, height: 1000 });
+  const updatedAt = "2026-10-23T12:00:00Z";
+  const row = { id: "shared-natal-introduction", content_key: "cms/natal-twelfth-ruler/they/introduction",
+    surface: "natal", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null, updated_at: updatedAt,
+    body: "{{ownerName}} shared natal opening.\n\nComplete shared natal final sentence.", headline: "", summary: "", sections: {},
+    source_snapshot: { contentType: "mustache-template", contentSystem: "editorial-library" } };
+  const publication = { content_key: row.content_key, row_id: row.id,
+    row_updated_at: updatedAt, state: "live", revision: 1, updated_at: updatedAt };
+  await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true,
+    generatedInterpretations: [row], contentPublications: [publication] });
+  await seedSignedInSession(page);
+  const natal = friendSafeNatalChart(await getAstrodienstSky(fixtureLocation, new Date("1994-04-12T16:00:00Z"), { includeDailyEvents: false }), true);
+  const friend = { friendship_id: "shared-friendship", user_id: "00000000-0000-4000-8000-000000000099",
+    handle: "sharedrowan", display_name: "Rowan", avatar_url: null, natal_chart: natal,
+    viewer_shares_chart: true, friend_shares_chart: true, accepted_at: updatedAt };
+  let socialReads = 0;
+  let completedSocialReads = 0;
+  let manualRead = false;
+  let shareChart = true;
+  let socialGate = Promise.resolve();
+  await page.route("**/rest/v1/**", route => route.fulfill({ json: [] }));
+  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [publication] }));
+  await page.route("**/rest/v1/manual_charts*", async route => {
+    manualRead = true;
+    await route.fulfill({ json: [] });
+  });
+  await page.route("**/rest/v1/rpc/list_social_friends", async route => {
+    socialReads++;
+    // Startup resolves the handle first. The mounted panel then receives the
+    // actual shared chart after the unrelated manual-chart list has resolved.
+    if (socialReads > 1) {
+      await socialGate;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    await route.fulfill({ json: shareChart ? [friend] : [] });
+    completedSocialReads++;
+  });
+  const introduction = page.getByRole("region", { name: "Understanding Undoing", exact: true });
+  async function expectSharedReading() {
+    await expect(page.getByRole("heading", { name: "Rowan", exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole("tab", { name: "Natal", exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(introduction).toContainText("Rowan shared natal opening.");
+    await expect(introduction).toContainText("Complete shared natal final sentence.");
+    expect(manualRead).toBe(true);
+    expect(socialReads).toBeGreaterThanOrEqual(2);
+    await expect(page).toHaveURL(/\/sharedrowan\/natal$/u);
+  }
+  await page.goto("/sharedrowan/natal");
+  await expectSharedReading();
+  socialReads = 0;
+  manualRead = false;
+  await page.reload();
+  await expectSharedReading();
+
+  // Navigating away while the fresh authorized list is pending must win.
+  let releaseSocial!: () => void;
+  socialGate = new Promise<void>(resolve => { releaseSocial = resolve; });
+  socialReads = 0;
+  completedSocialReads = 0;
+  manualRead = false;
+  await page.reload();
+  await expect.poll(() => manualRead).toBe(true);
+  await page.getByRole("tab", { name: /^Circle/u }).click();
+  releaseSocial();
+  await expect.poll(() => completedSocialReads).toBeGreaterThanOrEqual(2);
+  await expect(page.getByRole("tab", { name: /^Circle/u })).toHaveAttribute("aria-selected", "true");
+  await expect(introduction).toHaveCount(0);
+
+  // The remembered handle alone must never expose a no-longer-shared chart.
+  shareChart = false;
+  socialReads = 0;
+  completedSocialReads = 0;
+  await page.goto("/sharedrowan/natal");
+  await expect(page.getByRole("tab", { name: /^Circle/u })).toBeVisible();
+  await expect.poll(() => completedSocialReads).toBeGreaterThanOrEqual(2);
+  await expect(page.getByRole("heading", { name: "Rowan", exact: true })).toHaveCount(0);
+  await expect(introduction).toHaveCount(0);
 });

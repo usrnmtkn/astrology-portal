@@ -78,6 +78,7 @@ import {
 } from "../../services/manualCharts";
 import {
   isSocialFriendChart,
+  socialFriendChartId,
   socialFriendToChart,
   type ConnectedSocialFriend
 } from "../../services/socialFriends";
@@ -131,6 +132,7 @@ import {
   friendDetailRoutePath,
   friendsRouteStateFromUrl,
   initialFriendsTab,
+  registerFriendHandleRoute,
   storeFriendsTab,
   updateFriendProfileUrl,
   updateFriendsTabUrl,
@@ -2486,6 +2488,25 @@ export function ManualChartsPanel({
       updateFriendsTabUrl(nextTab, "replace");
     }
   }, [landingKey]);
+
+  useEffect(() => {
+    for (const friend of socialFriends) {
+      registerFriendHandleRoute(friend.handle, socialFriendChartId(friend.userId));
+    }
+    const routeState = friendsRouteStateFromUrl();
+    if (
+      !routeState?.chartId
+      || !socialFriendCharts.some((chart) => chart.id === routeState.chartId)
+    ) {
+      return;
+    }
+
+    // A direct shared profile can resolve before its authorized chart arrives,
+    // or lose selection while the unrelated manual-chart list hydrates.
+    if (selectedChartId !== routeState.chartId) setSelectedChartId(routeState.chartId);
+    if (friendsMainView !== "profile") setFriendsMainView("profile");
+    if (friendProfileTab !== routeState.view) setFriendProfileTab(routeState.view);
+  }, [socialFriends, socialFriendCharts, selectedChartId, friendsMainView, friendProfileTab]);
 
   useEffect(() => {
     const requestedTab = activeFriendProfileContentRequest({
