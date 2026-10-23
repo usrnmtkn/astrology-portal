@@ -901,3 +901,18 @@ Actual-handler fixtures cover both providers, complete designated references,
 no adjacent-article padding, exact-member correction delivery and scope isolation.
 Offline assembly checks establish delivery only, not improved prose or owner
 approval. No new paid draft is part of this repair.
+
+The separate [Synastry bulk body writer](SYNASTRY_BODY_WRITER_REVIEW_2026-10-22.md)
+prepares one complete directional body through the canonical Ghostwriter
+transport. It uses complete verified KB sources, preserved book units, deliberate
+complete prose selections through the existing governed compiler, and current
+scoped feedback. It omits generated planning language and the full generator's
+other eight output fields. One authorized execution permits one writer call;
+there is no model judge, retry, rewrite, Studio save or publication in this path.
+Preparation itself makes no model call. Changed sources, feedback, instructions
+or model hold execution before dispatch rather than refreshing an approved
+payload silently. The shared Studio nine-field generator and other writing
+surfaces retain their contracts. Fixture tests establish request delivery and
+failure behavior only. The rejected eight remain rejected, and the held bulk
+run requires a separately authorized varied sample and owner assessment before
+continuing. No new prose has been approved by this implementation.
