@@ -238,6 +238,11 @@ fails closed and shows the emergency access field.
 
 ## Finding content from the reader surface
 
+Sky Write-ups groups each planet/sign's dated visit articles, default reading
+and reusable writing setup into separate views. See the
+[planet and sign workspace](SKY_WRITEUP_WORKSPACE.md) for the draft workflow,
+source preservation and verification boundaries.
+
 ### Natal rulership and day/night libraries
 
 Natal Chart > Rulership edits Understanding Undoing and the twelve twelfth-house

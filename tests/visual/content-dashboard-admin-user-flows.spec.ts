@@ -2,6 +2,7 @@ import { natalEditorialDraftForKey, natalEditorialIdentity, natalSectPlanets, ty
 import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
 import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
 import { studioApiStore } from "../helpers/studio-api-store";
+import { workspaceFixtureRows, workspaceVisitFacts } from "../helpers/sky-placement-workspace-fixtures";
 import { readerResponse } from '../helpers/reader-response';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
@@ -9166,6 +9167,7 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     for (const planet of planets) await expect(library.locator(".admin-content-row").filter({ hasText: `fallback-hook/planet-lived/${planet}` })).toHaveCount(1);
     await page.getByLabel("Sky placement planet or point").selectOption("saturn");
     await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+    await page.getByText("Content library sources", { exact: true }).click();
     for (const motion of ["direct", "retrograde"]) {
       await page.getByLabel("Sky write-up motion").selectOption(motion);
       await expect(library.locator(".admin-content-row")).toHaveCount(1);
@@ -9186,6 +9188,7 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
     await page.getByLabel("Search Sky write-ups").fill("fallback-hook/planet-lived/saturn");
+    await page.getByText("Content library sources", { exact: true }).click();
     await open();
     await expect(body).toHaveValue(edited);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
@@ -9450,4 +9453,178 @@ test("Natal editorial library owner draft preview", async ({ page }) => {
   await expect(sect.locator(".admin-natal-reader-preview-part p")).toHaveText(saturn.split(/\n\s*\n/u));
   await page.screenshot({ path: "test-results/natal-editorial-owner-day-night.png", fullPage: true });
   expect(writes).toEqual([]);
+});
+
+for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
+  test(`Sky planet and sign workspace preserves separate writing ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    const initial = await workspaceFixtureRows();
+    const writes: Array<{ method: string; payload: Record<string, any> }> = [];
+    const generated: string[] = [];
+    await seedAdminApi(page, { generatedRows: initial, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+    await page.route('**/api/admin/sky-article-template-slots**', async route => { generated.push(route.request().url()); await route.abort(); });
+    await page.route('**/api/admin/sky-article-facts?**', route => {
+      const url = new URL(route.request().url());
+      return route.fulfill({ json: { ok: true, facts: workspaceVisitFacts(url.searchParams.get('planet')!, 'scorpio') } });
+    });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    const noErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
+    const workspace = page.getByRole('region', { name: 'Sun in Scorpio workspace', exact: true });
+    const tabs = workspace.getByRole('tablist', { name: 'Planet and sign writing' });
+    await expect(tabs.getByRole('tab')).toHaveText(['This visit', 'Default reading', 'Writing setup']);
+    await expect(workspace.getByRole('button', { name: 'Open saved draft', exact: true })).toBeVisible();
+    expect(writes).toHaveLength(0);
+    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    const body = workspace.getByRole('textbox', { name: 'Visit article body', exact: true });
+    await expect(body).toHaveValue(initial[0].body!);
+    await expect(workspace.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Scorpio 2026 draft');
+    await expect(workspace.getByRole('region', { name: 'Article for this visit', exact: true }).locator('p').first()).toContainText('2026-11-22');
+    await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
+    await expectNoHorizontalOverflow(page, 'Planet and sign dated editor');
+    const headings = await page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })));
+    expect(headings.slice(0, 4)).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Currently live' }, { level: 3, text: 'Saved visits' }]);
+    const typography = await workspace.getByRole('heading', { name: 'Currently live' }).evaluate(node => {
+      const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
+      return { size: style.fontSize, expectedSize: shell.getPropertyValue('--type-section-heading-size').trim(), weight: style.fontWeight,
+        family: style.fontFamily, leading: style.lineHeight, tracking: style.letterSpacing, margin: style.margin, casing: style.textTransform, alignment: style.textAlign };
+    });
+    expect(typography.size).toBe(typography.expectedSize);
+    expect(typography.weight).toBe('600'); expect(typography.margin).toBe('0px');
+    expect(typography.casing).toBe('none'); expect(typography.alignment).toBe('start');
+    const paragraph = workspace.getByText('Write for one calculated visit.', { exact: false });
+    await expect(paragraph).toHaveCSS('font-size', '16px'); await expect(paragraph).toHaveCSS('line-height', '24px');
+    await mkdir('test-results/sky-placement-workspace', { recursive: true });
+    await workspace.getByRole('heading', { name: 'Currently live', exact: true }).evaluate(node => node.scrollIntoView({ block: 'center' }));
+    await page.screenshot({ path: `test-results/sky-placement-workspace/visit-${theme}-${width}.png` });
+
+    await tabs.getByRole('tab', { name: 'Default reading', exact: true }).click();
+    await expect(workspace.getByText('This reusable reading supplies content', { exact: false })).toBeVisible();
+    await expect(workspace.getByText('Synthetic year-neutral default remains intact.', { exact: true })).toBeVisible();
+    const establishedHeadingTypography = await workspace.getByRole('heading', { name: 'Sun in Scorpio', exact: true }).evaluate(node => {
+      const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
+      return { size: style.fontSize, expectedSize: shell.getPropertyValue('--type-section-heading-size').trim(), weight: style.fontWeight,
+        family: style.fontFamily, leading: style.lineHeight, tracking: style.letterSpacing, margin: style.margin, casing: style.textTransform, alignment: style.textAlign };
+    });
+    expect(typography).toEqual(establishedHeadingTypography);
+    await expectNoHorizontalOverflow(page, 'Default reading');
+    await page.screenshot({ path: `test-results/sky-placement-workspace/default-${theme}-${width}.png` });
+    await tabs.getByRole('tab', { name: 'Writing setup', exact: true }).click();
+    await workspace.getByRole('button', { name: 'Edit reusable template', exact: true }).click();
+    const editor = page.getByRole('dialog', { name: 'Generated content editor' });
+    await expect(editor.getByRole('textbox', { name: 'Article body', exact: true })).toHaveValue(initial[2].body!);
+    expect(writes).toHaveLength(0);
+    await editor.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(editor).toHaveCount(0);
+    await tabs.getByRole('tab', { name: 'This visit', exact: true }).click();
+    await expect(body).toHaveValue(initial[0].body!);
+    await workspace.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Scorpio edited draft');
+    page.once('dialog', dialog => dialog.dismiss());
+    await page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true }).selectOption('venus');
+    await expect(page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true })).toHaveValue('sun');
+    await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+    expect(writes).toHaveLength(1); expect(writes[0].payload.ownerAction).toBe('save-sky-article-edition-revision');
+    await page.reload();
+    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await expect(workspace.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Scorpio edited draft');
+    await expect(body).toHaveValue(initial[0].body!);
+
+    await page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true }).selectOption('venus');
+    const venus = page.getByRole('region', { name: 'Venus in Scorpio workspace', exact: true });
+    await expect(venus.getByText('No dated article is saved for this placement.', { exact: false })).toBeVisible();
+    await venus.getByRole('button', { name: 'Load calculated dates', exact: true }).click();
+    await venus.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Venus visit');
+    await venus.getByRole('textbox', { name: 'Visit article summary', exact: true }).fill('Synthetic Venus summary.');
+    await venus.getByRole('textbox', { name: 'Visit article body', exact: true }).fill('Synthetic Venus opening.\n\nSynthetic Venus ending.');
+    await venus.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect(venus.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+    expect(writes).toHaveLength(2);
+    expect(writes[1].payload.rows[0].contentKey).toBe('sky-article/venus/scorpio/2026/2026-10-23');
+    expect(writes[1].payload.rows[0].status).toBe('DRAFT');
+    expect(generated).toHaveLength(0);
+    await page.reload();
+    await venus.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await expect(venus.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Venus visit');
+    await expect(venus.getByRole('textbox', { name: 'Visit article body', exact: true })).toHaveValue(/Synthetic Venus ending\.$/);
+    await noErrors();
+  });
+}
+
+test('Sky planet and sign workspace distinguishes failed reads and keeps text after a save conflict', async ({ page }) => {
+  const initial = await workspaceFixtureRows();
+  await seedAdminApi(page, { generatedRows: initial });
+  let failInventory = true;
+  await page.route('**/api/admin/generated-content-inventory?**', route => {
+    const url = new URL(route.request().url());
+    return failInventory && url.searchParams.get('contentKeyPrefix')?.startsWith('sky-article/')
+      ? route.fulfill({ status: 503, json: { ok: false, error: 'Synthetic visit inventory unavailable.' } }) : route.fallback();
+  });
+  await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
+  const workspace = page.getByRole('region', { name: 'Sun in Scorpio workspace', exact: true });
+  await expect(workspace.getByRole('alert').filter({ hasText: 'Saved visits could not be loaded.' })).toBeVisible();
+  await expect(workspace.getByText('No dated article is saved', { exact: false })).toHaveCount(0);
+  failInventory = false;
+  await workspace.getByRole('button', { name: 'Reload saved writing', exact: true }).click();
+  await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+  await workspace.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic unsaved title remains');
+  await page.route('**/api/admin/generated-content', route => route.request().method() === 'PATCH'
+    ? route.fulfill({ status: 409, json: { ok: false, error: 'Synthetic stale saved version.' } }) : route.fallback());
+  await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();
+  await expect(workspace.getByRole('alert')).toContainText('This article changed in another editor.');
+  await expect(workspace.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic unsaved title remains');
+  await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
+});
+
+test('Sky planet and sign workspace covers every selector and preserves published copy', async ({ page }) => {
+  test.setTimeout(90_000);
+  const initial = await workspaceFixtureRows();
+  const edition = initial[0].sections.skyArticleEdition!;
+  const live = { ...initial[0], status: 'LIVE', lane: 'serving', review_state: null,
+    source_snapshot: { ...initial[0].source_snapshot, review_status: 'approved', ownerApproval: {
+      approved: true, action: 'approve-sky-article-edition', contentKey: edition.contentKey,
+      templateKey: edition.templateKey, templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash
+    } } };
+  const writes: unknown[] = [];
+  await seedAdminApi(page, { generatedRows: [live, ...initial.slice(1)], onGeneratedContentWrite: write => { writes.push(write); } });
+  await page.clock.setFixedTime(new Date('2026-10-30T12:00:00Z'));
+  await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
+  const current = page.getByRole('region', { name: 'Currently live', exact: true });
+  await expect(current.getByText('Synthetic Scorpio 2026 draft', { exact: true })).toBeVisible();
+  await current.getByText('Read published article', { exact: true }).click();
+  await expect(current.getByRole('textbox', { name: 'Published dated article', exact: true })).toHaveValue(live.body!);
+  const planets = page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true });
+  const signs = page.getByRole('combobox', { name: 'Sky placement zodiac sign', exact: true });
+  const bodies = await planets.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value).filter(value => value !== 'all'));
+  const zodiac = await signs.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value).filter(value => value !== 'all'));
+  expect(bodies).toHaveLength(14); expect(zodiac).toHaveLength(12);
+  for (const body of bodies) {
+    await planets.selectOption(body);
+    await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Load calculated dates', exact: true })).toBeVisible();
+  }
+  for (const sign of zodiac) {
+    await signs.selectOption(sign);
+    await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Load calculated dates', exact: true })).toBeVisible();
+  }
+  expect(writes).toHaveLength(0);
+});
+
+test('Sky planet and sign workspace shows the evergreen default when the complete article is empty', async ({ page }) => {
+  const rows = await workspaceFixtureRows();
+  const source = rows[1].sections.packageRecord!;
+  rows[1].sections = { packageRecord: { ...source, placementArticle: '', fallback: {
+    hook: 'Synthetic evergreen opening remains available.', lived: 'Synthetic evergreen development.', turn: 'Synthetic evergreen ending.'
+  } } } as typeof rows[1]['sections'];
+  const writes: unknown[] = [];
+  await seedAdminApi(page, { generatedRows: rows, onGeneratedContentWrite: write => { writes.push(write); } });
+  await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
+  await page.getByRole('tab', { name: 'Default reading', exact: true }).click();
+  const reading = page.getByRole('region', { name: 'Default placement reading', exact: true });
+  await expect(reading.getByText('Synthetic evergreen opening remains available.', { exact: true })).toBeVisible();
+  await expect(reading.getByText('Synthetic evergreen ending.', { exact: true })).toBeVisible();
+  await expect(reading.getByRole('combobox', { name: 'Placement writing path' })).toHaveCount(0);
+  expect(writes).toHaveLength(0);
 });
