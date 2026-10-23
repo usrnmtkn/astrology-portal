@@ -18,7 +18,14 @@ for(const width of [390,1440]) test(`Public Sky is usable while the login SDK is
   await page.route('**/api/calendar?**',route=>route.fulfill({json:{ok:true,calendar:{days:[]}}}));
   let release!:()=>void;
   const gate=new Promise<void>(resolve=>{release=resolve;});
-  await page.route(/\/assets\/supabase-[^/]+\.js$/u,async route=>{await gate;await route.continue();});
+  let loginDownloads = 0;
+  let loginInitiator: unknown;
+  const network = await page.context().newCDPSession(page);
+  await network.send('Network.enable');
+  network.on('Network.requestWillBeSent', event => {
+    if (/\/assets\/supabase-[^/]+\.js$/u.test(event.request.url)) loginInitiator = event.initiator;
+  });
+  await page.route(/\/assets\/supabase-[^/]+\.js$/u,async route=>{loginDownloads++;await gate;await route.continue();});
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   try {
     await page.goto('/?date=2026-09-21#sky');
@@ -27,5 +34,6 @@ for(const width of [390,1440]) test(`Public Sky is usable while the login SDK is
     await expect(page.locator('.planet-placement-row--sky[aria-busy="true"]')).toHaveCount(0);
     expect((await page.locator('.planet-placement-row--sky .planet-placement-row__description').allTextContents()).every(text=>text.trim().length>20)).toBe(true);
     expect(errors).toEqual([]);
+    expect(loginDownloads, `Anonymous Sky must not download the login SDK before usable content. Initiator: ${JSON.stringify(loginInitiator)}`).toBe(0);
   } finally {release();}
 });

@@ -68,6 +68,14 @@ export const isPhoneAuthEnabled = (
 );
 
 let supabaseClientPromise: Promise<SupabaseClient | null> | null = null;
+const authClientRequestedListeners = new Set<() => void>();
+
+/** Passive features can follow authentication without starting its download. */
+export function onAuthClientRequested(listener: () => void) {
+  if (supabaseClientPromise) listener();
+  else authClientRequestedListeners.add(listener);
+  return () => { authClientRequestedListeners.delete(listener); };
+}
 let verifiedAuthUserRequest: {
   accessToken: string;
   checkedAt: number;
@@ -85,9 +93,13 @@ export async function getSupabaseClient() {
     return null;
   }
 
-  supabaseClientPromise ??= import("@supabase/supabase-js").then(({ createClient }) => (
-    createClient(supabaseUrl as string, supabasePublishableKey as string)
-  ));
+  if (!supabaseClientPromise) {
+    supabaseClientPromise = import("@supabase/supabase-js").then(({ createClient }) => (
+      createClient(supabaseUrl as string, supabasePublishableKey as string)
+    ));
+    for (const listener of authClientRequestedListeners) listener();
+    authClientRequestedListeners.clear();
+  }
 
   return supabaseClientPromise;
 }

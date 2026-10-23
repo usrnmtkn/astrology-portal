@@ -254,6 +254,7 @@ import {
   loadPersistedProfile,
   normalizePersistedProfileBirthTimes,
   onAuthAccountChange,
+  onAuthClientRequested,
   signOutAuth,
   upsertPersistedProfile
 } from "./services/auth";
@@ -2736,7 +2737,7 @@ function shouldBootstrapAuth(currentMode: PortalMode) {
   }
 
   const urlMode = portalModeFromUrl();
-  const authDependentModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
+  const authDependentModes: PortalMode[] = ["profile", "friends", "account", "settings"];
 
   return authDependentModes.includes(urlMode ?? currentMode);
 }
@@ -11044,6 +11045,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [socialInvitationStatus, setSocialInvitationStatus] = useState<"idle" | "loading">("idle");
   const [socialInvitationMessage, setSocialInvitationMessage] = useState("");
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
+  const [authRequested, setAuthRequested] = useState(false);
   const [authAccountError, setAuthAccountError] = useState<string | null>(null);
   const appActiveRef = useRef(true);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
@@ -13952,9 +13954,26 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   useEffect(() => {
-    if (!shouldBootstrapAuth(mode)) {
+    if (!shouldBootstrapAuth(mode) && !authRequested) {
       setAuthAccountChecked(true);
-      return;
+      if (!isAuthConfigured) return;
+      // Keep anonymous Sky free of SDK work while still joining a sign-in
+      // started elsewhere in this tab or a session restored from another tab.
+      const activate = () => setAuthRequested(true);
+      const stopWaiting = onAuthClientRequested(activate);
+      const storage = (event: StorageEvent) => {
+        if (isAuthSessionStorageKey(event.key) && event.newValue) activate();
+      };
+      const focus = () => { if (hasStoredSupabaseSession()) activate(); };
+      window.addEventListener("storage", storage);
+      window.addEventListener("focus", focus);
+      window.addEventListener("pageshow", focus);
+      return () => {
+        stopWaiting();
+        window.removeEventListener("storage", storage);
+        window.removeEventListener("focus", focus);
+        window.removeEventListener("pageshow", focus);
+      };
     }
 
     let cancelled = false;
@@ -13996,7 +14015,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       window.removeEventListener("pageshow", recover);
       window.removeEventListener("storage", recoverStoredSession);
     };
-  }, [applyAuthAccount, mode, recoverAuthAccount]);
+  }, [applyAuthAccount, mode, recoverAuthAccount, authRequested]);
 
   useEffect(() => {
     if (hasLocationPreference || !("geolocation" in navigator)) {

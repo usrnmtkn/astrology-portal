@@ -125,13 +125,16 @@ test('Placement reader offers retry when its canonical package fails', async ({ 
  await page.clock.setFixedTime(new Date('2026-09-10T04:20:00Z'));
  await bundledPublications(page);
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok:true, calendar:{ days:[] } } }));
- let failPackage = true;
- await page.route('**/canonical-sky-reader-transport-v1*.json', route => failPackage
-  ? route.fulfill({ status:503, body:'Unavailable' }) : route.continue());
+ // Keep the outage in place until the actual Retry click. Restoring it before
+ // clicking lets an independent source revalidation recover and remove Retry.
+ await page.addInitScript(() => document.addEventListener('click', event => {
+  if ((event.target as Element)?.closest('button')?.textContent?.match(/retry|try again/iu)) (window as any).__canonicalRetryClicked = true;
+ }, true));
+ await page.route('**/canonical-sky-reader-transport-v1*.json', async route => (await page.evaluate(() => (window as any).__canonicalRetryClicked))
+  ? route.continue() : route.fulfill({ status:503, body:'Unavailable' }));
  await page.goto('/?date=2026-09-10#sky/placement/sun/virgo');
  await expect(page.getByText('The placement reading could not load. Please try again.')).toBeVisible({ timeout:60_000 });
  await expect(page.locator('#sky-detail-title')).toHaveCount(0);
- failPackage = false;
  await page.getByRole('button', { name:/retry|try again/i }).click();
  await expect(page.locator('.article-body-inner').first()).toContainText('The Sun in Virgo makes the systems', { timeout:60_000 });
 });

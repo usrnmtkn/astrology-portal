@@ -86,6 +86,9 @@ if (!entryKey || !appKey || readerStyleKeys.some((key) => !manifest[key])) {
 }
 
 const bootFiles = collectStaticManifestGraph(manifest, [entryKey, appKey]);
+if ([...bootFiles].some(file => file.includes('fallback-content-reader-support-'))) {
+  throw new Error('Public reader startup downloads deferred personal interpretation sources.');
+}
 const bootItems = [...bootFiles]
   .map((file) => filesByName.get(file))
   .filter(Boolean);
