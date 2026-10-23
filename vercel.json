@@ -151,7 +151,7 @@
       "maxDuration": 300
     },
     "api/**/*.ts": {
-      "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank}/**/*.{cjs,js,json,md,mjs,ts}"
+      "includeFiles": "{api/_lib,artifacts,config,src/astro-writing,packages/astro-knowledge/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/{public/content,src/content},tldr-astro-phrasebank,data/writing}/**/*.{cjs,js,json,md,mjs,ts}"
     }
   },
   "rewrites": [

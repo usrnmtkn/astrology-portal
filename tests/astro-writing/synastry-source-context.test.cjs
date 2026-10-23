@@ -3,6 +3,7 @@ const { readFileSync, readdirSync } = require('node:fs');
 const { test } = require('node:test');
 const { createHash } = require('node:crypto');
 const { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastryMeaningPlanSchema, designatedSynastryVoiceReferences } = require('../../src/astro-writing/synastrySourceContext.cjs');
+const { withSynastryKnowledgeSources } = require('../../api/_lib/synastry-knowledge-sources.cjs');
 
 test('both chart roles remain explicit, including the same planet in both charts', () => {
   for (const readerPerson of ['A', 'B']) {
@@ -56,6 +57,54 @@ test('requested advice remains a source possibility without importing an unknown
   const record = { kind: 'interaspect', planetA: 'sun', planetB: 'saturn', advice: 'Person A could ask Person B what they meant.' };
   const projected = prepareSynastrySourceInput({ facts: { planetA: 'Sun', planetB: 'Saturn', adviceRequested: true, neutralKnowledge: { records: [record] } } });
   assert.equal(projected.facts.neutralKnowledge.records[0].advice, record.advice);
+});
+
+test('shared generation loads complete registered directional records before planning', () => {
+  const path = require('node:path').resolve(__dirname, '../../packages/astro-knowledge/data/synastry/aspects');
+  for (const name of readdirSync(path).filter(name => name.endsWith('.json'))) {
+    const bytes = readFileSync(`${path}/${name}`, 'utf8'); const record = JSON.parse(bytes);
+    const input = { facts: { planetA: record.planetA, planetB: record.planetB, aspect: record.aspect } };
+    const hydrated = withSynastryKnowledgeSources(input);
+    const source = hydrated.sourceSnapshot.knowledgeSources[0];
+    assert.deepEqual(source.record, record);
+    assert.equal(source.sha256, createHash('sha256').update(bytes).digest('hex'));
+    assert.equal(input.sourceSnapshot, undefined);
+  }
+  const sources = withSynastryKnowledgeSources({ facts: { planetA: 'Moon', planetB: 'Sun', aspect: 'soft' } }).sourceSnapshot.knowledgeSources;
+  assert.deepEqual(sources.map(source => source.record.aspect), ['trine', 'sextile']);
+  const node = withSynastryKnowledgeSources({ facts: { planetA: 'North Node', planetB: 'Ascendant', aspect: 'conjunction' } });
+  assert.equal(node.sourceSnapshot.knowledgeSources[0].record.planetA, 'north-node');
+  for (const facts of [{ planetA: '../sun', planetB: 'moon', aspect: 'trine' }, { planetA: 'sun', planetB: 'moon', aspect: 'invented' }]) {
+    assert.throws(() => withSynastryKnowledgeSources({ facts }), /KNOWLEDGE_UNAVAILABLE/);
+  }
+});
+
+test('the repaired neutral draft sources separate exact source commands from interpretation', () => {
+  const path = require('node:path');
+  const root = path.resolve(__dirname, '../../packages/astro-knowledge');
+  const audit = JSON.parse(readFileSync(path.join(root, 'review/synastry-source-separation-20261023.json'), 'utf8'));
+  assert.equal(audit.changes.length, 88);
+  assert.equal(audit.ownerProseApproval, false);
+  for (const change of audit.changes) {
+    const bytes = readFileSync(path.join(root, 'data/synastry/aspects', change.id + '.json'), 'utf8');
+    const record = JSON.parse(bytes);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), change.updatedFileSha256);
+    assert.equal(record.status, 'DRAFT');
+    assert.equal(record.authoringStatus, 'draft');
+    assert.equal(record.voiceNeutral, true);
+    assert(record.plainTranslation.trim());
+    assert.equal(createHash('sha256').update(record.advice).digest('hex'), change.updatedAdviceSha256);
+  }
+  for (const planets of ['moon_B-sun', 'sun_B-moon']) for (const aspect of ['trine', 'sextile']) {
+    const record = JSON.parse(readFileSync(path.join(root, 'data/synastry/aspects', `A-${planets}_${aspect}.json`), 'utf8'));
+    const input = { facts: { planetA: record.planetA, planetB: record.planetB, readerPerson: 'A' }, sourceSnapshot: { knowledgeSources: [{ record }] } };
+    const projected = prepareSynastrySourceInput(input).sourceSnapshot.knowledgeSources[0].record;
+    assert.equal(projected.tension, undefined);
+    assert(!JSON.stringify(projected).includes('Keep it active so comfort does not turn into autopilot'));
+    assert(!JSON.stringify(projected).includes('The problem is that easy can become lazy'));
+    assert(!JSON.stringify(projected).includes('Failure mode: comfort breeds passivity'));
+    assert.equal(projected.advice, undefined);
+  }
 });
 
 test('internal plans permit uncomplicated support and empty remedy fields, while rejecting an unresolved source reader', () => {

@@ -7,11 +7,13 @@ import handler from '../api/generate-content.js';
 import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { validateGeneratedContentQuality } from '../api/_lib/content-generation.js';
-import { sharedGenerationOwnerExamples } from '../api/_lib/shared-generation-owner-examples.js';
+import { syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
+const restoreApprovalFixture = installSyntheticSynastryApproval();
 
 const sharedStyle = readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/style-guide.md', import.meta.url), 'utf8');
 
 Object.assign(process.env, {
+  PRIVATE_REPORT_DOCUMENTS: encodedSynastryVoice(),
   NODE_ENV: 'test', CONTENT_GENERATION_SECRET: 'synthetic-synastry-secret',
   OPENAI_API_KEY: 'synthetic', ANTHROPIC_API_KEY: 'synthetic',
   STUDIO_MEMORY_FEEDBACK_ENABLED: 'false', WRITING_KERNEL_GOVERNED_SURFACES: '',
@@ -99,7 +101,7 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v10-2026-10-22'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v11-2026-10-23'));
   assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
   assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
@@ -113,8 +115,8 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(!prompt.includes('PRIMARY NATAL PLACEMENT PRIMITIVES'), 'A relationship writer must not receive the unrelated natal instruction layer.');
   assert(!combined.includes('Lead with how one person makes the other feel'));
   assert(!combined.includes('Open with the felt experience of being around this person.'));
-  assert(instructions.includes(RHETORICAL_WRITER_POLICY), 'The complete existing rhetorical writer policy remains in the system instructions.');
-  assert.equal(combined.split(RHETORICAL_WRITER_POLICY).length - 1, 1, 'Shared rhetorical policy is delivered once.');
+  assert(!instructions.includes(RHETORICAL_WRITER_POLICY), 'The writer receives Ghostwriter craft, without the redundant evaluator specification.');
+  assert(!instructions.includes('HARD FLAG – REWRITE'));
   for (const conflict of [
     'SPINE QUALITY GATES', 'SKY PLACEMENT ARTICLE SPINE',
     'Strategy needs at least two short imperatives', 'LONG-FORM SENTENCE ARCHITECTURE',
@@ -154,7 +156,10 @@ function assertSynastryRequest(request: any, input: typeof base) {
     assert(prompt.includes('This reusable contact has no supplied planet signs'));
     assert(!prompt.includes('SUPPLIED SYNASTRY SIGN CONTEXT'));
   }
-  assert(prompt.includes('owner_authored_final'), 'Existing eligible owner retrieval is retained.');
+  for (const reference of syntheticSynastryVoice().entries) {
+    assert.equal(prompt.split(reference.text).length - 1, 1, 'The shared writer receives every complete protected benchmark once.');
+  }
+  assert(!prompt.includes('relationship-year-libra-2025-to-venus-rx-2026'), 'Default protected references replace the old adjacent article.');
   const voiceAt = Math.max(prompt.indexOf('DESIGNATED SYNASTRY VOICE REFERENCES'), prompt.indexOf('APPROVED TLDR ASTRO EXAMPLES'));
   const briefAt = prompt.lastIndexOf('WRITE THE READER INTERPRETATION');
   assert(voiceAt > prompt.indexOf('SOURCE SNAPSHOT') && briefAt > voiceAt,
@@ -247,8 +252,6 @@ try {
     sourceSnapshot: { knowledgeSources: [{ record: legacyRecord }],
       bookReferences: [{ text: 'Complete protected owner passage. You retain its advice and original punctuation — final sentence.' }] } };
   const sourceBefore = JSON.stringify(sourceFixture);
-  const ownerIndex = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json', import.meta.url), 'utf8'));
-  const expectedVoiceExamples = sharedGenerationOwnerExamples(ownerIndex, sourceFixture);
   nextDraft = { ...draft, headline: sourceFixture.headline,
     body: 'This synthetic fixture addresses the Saturn reader and Rowan’s Sun. It retains both named roles without making an event claim.\n\nThe complete fixture ends without an instruction.',
     astrologyDrilldown: { ...draft.astrologyDrilldown, factors: [
@@ -260,7 +263,7 @@ try {
     const generated = await generate({ ...sourceFixture, provider });
     assert.equal(generated.statusCode, 200);
     const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-    assert.equal(receipt.editorialVersion, 'synastry-aspect/v10-2026-10-22');
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v11-2026-10-23');
     assert.equal(receipt.readerPerson, 'B');
     assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
     assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
@@ -275,7 +278,7 @@ try {
     const writer = stages.find(request => request.kind === 'tldr_astro_generated_content');
     const writerText = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
     assert(writerText.includes(sourceFixture.sourceSnapshot.bookReferences[0].text), 'Complete protected owner wording is unchanged.');
-    for (const example of expectedVoiceExamples) assert(writerText.includes(example.body), 'Knowledge projection cannot alter the selected complete owner voice examples.');
+    for (const example of syntheticSynastryVoice().entries) assert(writerText.includes(example.text), 'Knowledge projection cannot alter complete protected voice examples.');
     if (provider === 'openai') {
       const ownership = JSON.parse(stages[0].body.input).contactOwnership;
       assert.equal(ownership.personA.planet, 'Sun'); assert.equal(ownership.personB.planet, 'Saturn'); assert.equal(ownership.readerPerson, 'B');
@@ -284,6 +287,43 @@ try {
     }
   }
   assert.equal(JSON.stringify(sourceFixture), sourceBefore, 'The original sources and saved input are never mutated.');
+  // Use the actual repaired KB records through the real handler, not a second
+  // handcrafted interpretation that could conceal the source contamination.
+  for (const aspect of ['trine', 'sextile']) {
+    const record = JSON.parse(readFileSync(new URL(`../packages/astro-knowledge/data/synastry/aspects/A-moon_B-sun_${aspect}.json`, import.meta.url), 'utf8'));
+    const fixture = { ...base, headline: `Moon ${aspect} Sun`, knowledgeIds: [`synastry-moon-${aspect}-sun`],
+      facts: { planetA: 'Moon', planetB: 'Sun', personA: 'you', personB: 'Rowan', readerPerson: 'A', aspect },
+      sourceSnapshot: { meaning: 'Synthetic context.', knowledgeSources: [{ record }] } };
+    nextDraft = { ...draft, headline: fixture.headline,
+      body: 'You tell Rowan about a plan. This complete synthetic fixture retains the Moon reader and the other person’s Sun. Its ending is a complete observation.',
+      astrologyDrilldown: { ...draft.astrologyDrilldown, factors: [
+        { label: 'Your Moon', technicalFact: 'Moon belongs to the reader.', plainMeaning: 'The reader’s emotional response.' },
+        { label: 'Their Sun', technicalFact: 'Sun belongs to Rowan.', plainMeaning: 'The other person’s self-expression.' }
+      ] } };
+    for (const provider of ['openai', 'claude'] as const) {
+      const start = requests.length;
+      const result = await generate({ ...fixture, provider });
+      assert.equal(result.statusCode, 200, JSON.stringify(result.result));
+      for (const stage of requests.slice(start).filter(request => ['tldr_astro_meaning_plan', 'tldr_astro_generated_content'].includes(request.kind))) {
+        const sent = stage.provider === 'openai' ? stage.body.input : stage.body.messages[0].content[0].text;
+        assert(sent.includes(record.plainTranslation));
+        assert(!sent.includes(record.advice));
+        for (const leak of ['Keep it active so comfort does not turn into autopilot', 'The problem is that easy can become lazy', 'The problem is leaving it half-open']) assert(!sent.includes(leak));
+      }
+      const receipt = result.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
+      assert.equal(receipt.protectedVoice.referenceCount, 8);
+      assert(receipt.protectedVoice.documentSha256);
+    }
+  }
+  for (const provider of ['openai', 'claude'] as const) {
+    const start = requests.length;
+    process.env.PRIVATE_REPORT_DOCUMENTS = 'invalid';
+    const missing = await generate({ ...base, provider });
+    assert.notEqual(missing.statusCode, 200);
+    assert.match(missing.result.error, /SYNASTRY_APPROVED_VOICE_UNAVAILABLE/);
+    assert.equal(requests.length, start, 'Missing protected benchmarks hold before any provider stage.');
+    process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice();
+  }
   nextDraft = draft;
   const voiceText = 'Complete synthetic designated voice passage. Its original punctuation — and its final sentence remain intact.';
   const reference = { role: 'owner_approved_voice_only_not_astrology_for_target', path: '/private/synthetic-owner-reference.txt',
@@ -376,7 +416,8 @@ try {
     { ...base, surface: 'composite', eventType: 'composite-aspect', facts: {} } as any);
   const reviser = governedInstructionsForRole('REVISER', { surface: 'synastry', family: 'synastry-aspect' });
   assert(reviser.includes('Revise only the supplied failed fields'));
-  assert(reviser.includes(RHETORICAL_WRITER_POLICY));
+  assert(!reviser.includes(RHETORICAL_WRITER_POLICY));
+  assert(reviser.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
   assert(reviser.includes('A meaning plan establishes supported interpretation, not reader wording'));
   assert(!reviser.includes('SKY PLACEMENT ARTICLE SPINE'));
   const suppliedInstructions='Complete server-selected instructions.';
@@ -401,4 +442,4 @@ try {
     assert(prompt.includes('action: one specific useful move.'));
   }
   console.log('PASS synastry actual handler and both providers: directional facts, complete source and owner evidence, developed interpretation without forced advice, unchanged schema, valid and invalid results, denied access and composite isolation. All provider responses intercepted; zero billed calls.');
-} finally { globalThis.fetch = originalFetch; }
+} finally { globalThis.fetch = originalFetch; restoreApprovalFixture(); }

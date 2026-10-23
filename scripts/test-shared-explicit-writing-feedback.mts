@@ -3,8 +3,11 @@ import assert from 'node:assert/strict';
 import {generateWithOpenAI,generateWithClaude,generateSkyArticleTemplateSlots} from '../api/_lib/content-generation.js';
 import {buildPersonalTransitWriterContext} from '../api/_lib/personal-transit-writer-context.js';
 import {syntheticTransitSources} from './fixtures/personal-transit-writing.mjs';
+import {encodedSynastryVoice,installSyntheticSynastryApproval} from '../tests/fixtures/synastry-approved-voice.cjs';
+const restoreApprovalFixture=installSyntheticSynastryApproval();
 
 Object.assign(process.env,{NODE_ENV:'test',OPENAI_API_KEY:'synthetic',ANTHROPIC_API_KEY:'synthetic',
+ PRIVATE_REPORT_DOCUMENTS:encodedSynastryVoice(),
  SUPABASE_URL:'https://writing-feedback.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic',STUDIO_MEMORY_FEEDBACK_ENABLED:'true',
  WRITING_KERNEL_GOVERNED_SURFACES:'',WRITING_KERNEL_SKY_GLOBAL_ENABLE:'0',WRITING_KERNEL_SKY_CANARY_PERCENT:'0'});
 const ingress = await ingressWriterFixture();
@@ -57,5 +60,5 @@ try{
   assert(!sent.includes(rows[1].owner_reason));assert(!sent.includes(rows[4].owner_reason));
   assert(sent.includes('CURRENT OWNER WRITING CORRECTIONS'));assert(sent.includes('never positive voice examples'));
  }
-}finally{globalThis.fetch=originalFetch;}
+}finally{globalThis.fetch=originalFetch;restoreApprovalFixture();}
 console.log('PASS actual Synastry, Personal Transit and Sky template provider boundaries receive scoped complete feedback; storage failures stop before paid requests. All network intercepted; no prose generated.');

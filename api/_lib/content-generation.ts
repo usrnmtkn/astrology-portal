@@ -19,6 +19,8 @@ import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs
 import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
 import { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastrySourceReceipt, synastryMeaningPlanSchema, designatedSynastryVoiceReferences } from "../../src/astro-writing/synastrySourceContext.cjs";
+import { withApprovedSynastryVoice } from "./synastry-approved-voice.cjs";
+import { withSynastryKnowledgeSources } from "./synastry-knowledge-sources.cjs";
 import { loadExplicitWritingFeedback, ingressWritingFeedbackTarget } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
@@ -5521,6 +5523,10 @@ async function planGeneratedContentWithOpenAI({
         contentKey: input.contentKey,
         governedFacts: input.facts,
         ...(isSynastryAspectInput(input) ? { contactOwnership: synastryContactOwnership(input.facts) } : {}),
+        ...(isSynastryAspectInput(input) ? { relationshipKnowledge: {
+          knowledgeSource: input.sourceSnapshot?.knowledgeSource ?? null,
+          knowledgeSources: input.sourceSnapshot?.knowledgeSources ?? []
+        } } : {}),
         neutralMeaningSupport:buildHellenisticMeaningSupport({facts:input.facts,surface:input.surface,family:input.eventType}),
         ...(productionGate.governedPromptEnabled
           ? { governedKnowledgeEvidence: productionGate.governedPrompt }
@@ -5639,8 +5645,28 @@ function assertNotDatedIngressGeneralRequest(input: GenerateContentInput) {
     throw new Error('Dated ingresses require the dedicated current ingress writer, not the general article generator. No provider call was started.');
 }
 
+/** Single body dispatch stays in the shared provider owner. Preparation and
+ * source/feedback freshness are checked by the body writer; the production
+ * role gate and canonical transport are checked again at this boundary. */
+export async function writeSynastryBodyWithOpenAI(input: GenerateContentInput, request: {
+  model: string; max_output_tokens: number; input: string;
+  text: { format: { type: string; name: string; strict: boolean; schema: Record<string, unknown> } };
+}) {
+  if (input.surface !== "synastry" || input.eventType !== "synastry-aspect" || input.mode !== "in_depth"
+    || input.reportPayload || request.max_output_tokens !== 4096
+    || request.text.format.name !== "tldr_astro_synastry_body" || request.text.format.strict !== true) {
+    throw new Error("SYNASTRY_BODY_HELD: the shared body dispatch contract does not match.");
+  }
+  const projected = prepareSynastrySourceInput(input);
+  const gate = prepareProductionPreCallGate(projected);
+  assertProductionRoleGate(gate, "WRITER", projected);
+  return callOpenAIResponses({ apiKey: requireEnv("OPENAI_API_KEY"), role: "WRITER",
+    ...synastryInstructionContext(projected), request });
+}
+
 export async function generateWithOpenAI(input: GenerateContentInput): Promise<StoredGeneratedContent> {
   assertNotDatedIngressGeneralRequest(input);
+  if (isSynastryAspectInput(input)) input = withApprovedSynastryVoice(withSynastryKnowledgeSources(input));
   const evidenceInput = input;
   if (isSynastryAspectInput(input)) input = prepareSynastrySourceInput(input);
   if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
@@ -5759,6 +5785,7 @@ function claudeToolInput(payload: {
 
 export async function generateWithClaude(input: GenerateContentInput): Promise<StoredGeneratedContent> {
   assertNotDatedIngressGeneralRequest(input);
+  if (isSynastryAspectInput(input)) input = withApprovedSynastryVoice(withSynastryKnowledgeSources(input));
   const evidenceInput = input;
   if (isSynastryAspectInput(input)) input = prepareSynastrySourceInput(input);
   if (isPrimaryNatalPlacementGeneration(input) && !allowsPrivateSourceModelGeneration()) {
