@@ -12,7 +12,7 @@ import { getSupabaseClient } from "./auth";
 import { publicReaderConfigurationPresent } from "./publicReaderConfiguration";
 
 async function anonymousReader() {
-  if (!publicReaderConfigurationPresent()) return null;
+  if (!publicReaderConfigurationPresent) return null;
   const transport = await import("./anonymousReaderTransport");
   return transport.anonymousReaderAvailable() ? transport : null;
 }

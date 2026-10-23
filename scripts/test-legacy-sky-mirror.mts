@@ -57,7 +57,7 @@ function harness() {
   const context: any = { fixture, module: { exports: {} }, console: { warn: () => { fixture.warnings++; } },
     publicationLedgerReady: () => fixture.ledger, contentPublicationRecords: () => [],
     isSkyPlacementPublishedReaderKey: () => false, loadPublishedSkyBundle: async () => 'published',
-    getSupabaseClient: async () => fixture.client, readCachedFallbackArchitectureV3SkyPlacementBundle: async () => fixture.cached,
+    publicReaderAvailable: async () => Boolean(fixture.client), readCachedFallbackArchitectureV3SkyPlacementBundle: async () => fixture.cached,
     loadReaderRows: async (query: any) => { fixture.requests.push(query); return query.latestVersion ? fixture.latest : fixture.rows; },
     fallbackArchitectureV3SkyPlacementProvider: 'synthetic-provider', fallbackArchitectureV3DashboardVersionFromRows: () => fixture.version,
     clearCachedFallbackArchitectureV3SkyPlacementBundle: () => { fixture.clears++; },

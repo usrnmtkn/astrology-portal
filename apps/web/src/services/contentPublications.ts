@@ -39,7 +39,7 @@ export async function refreshContentPublications(force = false, readRelay?: () =
         return;
       } catch { /* Older/offline deployments retain the existing direct read. */ }
     }
-    if (publicReaderConfigurationPresent()) {
+    if (publicReaderConfigurationPresent) {
       try {
         const transport = await import("./anonymousReaderTransport");
         if (transport.anonymousReaderAvailable()) {
