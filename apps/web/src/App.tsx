@@ -12398,13 +12398,15 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       }) : undefined;
     const sourceRequest = prepareSkyPlacementSources(selection || undefined, compiledGuest ? { compiledGuest } : undefined);
     if (preparation?.early) prefetchColdSkyPlacementSources(selection || undefined);
-    void sourceRequest.then(async ({ coreBundle, placementBundle, identity, scope }) => {
-      if (!recoveryIsCurrent()) return;
+    const editionsRequest = refreshContentPublications().then(async () => {
       const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
         skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
         })) : [];
       const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map());
+      return { editionKeys, publishedEditions };
+    });
+    void Promise.all([sourceRequest, editionsRequest]).then(([{ coreBundle, placementBundle, identity, scope }, { editionKeys, publishedEditions }]) => {
       if (!recoveryIsCurrent()) return;
       if (scope === "compiled-guest" && (!contentPublicationsAvailableOnline() || !isSettledGuestReader())) throw new Error("Sky publication state is unavailable.");
       if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");

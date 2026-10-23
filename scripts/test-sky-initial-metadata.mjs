@@ -102,6 +102,8 @@ for (const path of ['/#sky', '/#sky/', '/#/sky', '/#sky/placement/sun', '/#sky/r
   const runResult = await run({ href: 'https://synthetic.test' + path });
   assert.equal(await runResult.result(), runResult.captured);
   assert.equal(runResult.counts.apiReads, 1); assert.equal(runResult.counts.localReads, 0);
+  assert.equal(runResult.counts.assetReads, path.includes('/placement/') || path.includes('/retrograde/') ? 1 : 0,
+    'List sources wait for App; direct articles retain their early complete-source load.');
 }
 for (const path of ['/#calendar', '/#you', '/#friends', '/#articles', '/#sky/aspect/sun/trine/pluto',
   '/#sky/placement/sun/libra/extra', '/#access_token=synthetic', '/admin/content#sky/placement/sun/libra',

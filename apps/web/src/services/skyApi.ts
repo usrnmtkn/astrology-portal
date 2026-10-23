@@ -74,11 +74,13 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const now = new Date();
   const date = skyDateTimeFromInput(day, location, true, now);
   const result = getSkyFromApi(location, date).catch(() => null);
-  // The complete authored package is needed for every Sky selection. Fetch its
-  // shared assets during App's download instead of waiting for React to mount.
-  // The mounted source gate still owns validation, publication selection and retry.
-  void import("../content/skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) =>
-    loadSkyPlacementSourceAssets()).catch(() => {});
+  // Direct articles benefit from early sources. On the list, let App mount and
+  // start the selected publication reads before large source downloads compete.
+  // The mounted source gate still requires the same complete package.
+  if (!/^#\/?sky\/?$/u.test(url.hash)) {
+    void import("../content/skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) =>
+      loadSkyPlacementSourceAssets()).catch(() => {});
+  }
   let calculation: Promise<SkySnapshot> | undefined;
   const initial: InitialSkyLoad = {
     day, location, date, live: Boolean(liveSkyReference(day, location.timeZone, now)), startedAt: performance.now(), result,

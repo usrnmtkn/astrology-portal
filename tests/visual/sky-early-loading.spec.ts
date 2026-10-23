@@ -64,13 +64,17 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     try {
       await page.goto(`/${initialRoute}`, { waitUntil: 'commit' });
       await expect.poll(() => requests.some(url => /\/assets\/App-[^/]+\.js$/.test(url.pathname))).toBe(true);
-      await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
+      if (initialRoute !== '#sky') await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
+      else expect(requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(false);
       releaseReact();
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
-      await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
+      if (warm) await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
+      else expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
       await expect.poll(() => requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname))).toBe(true);
-      await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
-      expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
+      if (initialRoute !== '#sky') await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
+      else expect(requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(false);
+      if (warm) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
+      else await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
@@ -126,6 +130,40 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     await expect.poll(() => requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(true);
   });
 }
+
+for (const width of [390, 1440]) test(`Sky list reads published editions alongside its source planes ${width}`, async ({ page }) => {
+  test.setTimeout(60_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await bundledPublications(page);
+  await page.clock.setFixedTime(new Date('2026-09-21T16:00:00Z'));
+  const editionKey = 'sky-article/sun/virgo/2026/2026-08-22';
+  const ledger = [{ content_key: editionKey, state: 'live', revision: 1,
+    row_id: 'synthetic-published-edition', row_updated_at: '2026-09-21T16:00:00Z', updated_at: '2026-09-21T16:00:00Z' }];
+  await page.route('**/rest/v1/content_publications?**', route => route.fulfill({ json: ledger }));
+  await page.route('**/api/sky?**', async route => {
+    const response = { statusCode: 200, setHeader() {}, end(body: string) {
+      void route.fulfill({ status: this.statusCode, contentType: 'application/json', body });
+    } };
+    await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
+  });
+  let release!: () => void;
+  const coreGate = new Promise<void>(resolve => { release = resolve; });
+  let coreReads = 0, editionReads = 0;
+  await page.route('**/api/content-reader', async route => {
+    const query = route.request().postDataJSON();
+    if (query.scope === 'sky-list') { coreReads++; await coreGate; }
+    if (query.keys?.includes(editionKey)) editionReads++;
+    await route.fulfill({ json: readerResponse([], ledger) });
+  });
+  try {
+    await page.goto('/?date=2026-09-21#sky');
+    await expect.poll(() => coreReads).toBeGreaterThan(0);
+    await expect.poll(() => editionReads).toBeGreaterThan(0);
+  } finally { release(); }
+  // Parallel transport cannot authorize a missing published edition or expose
+  // the bundled alternative as a completed reading.
+  await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible();
+});
 
 for (const width of [390, 1440]) test(`Cold article stages core transport behind its complete publication gate ${width}`, async ({ page }) => {
   test.setTimeout(90_000);

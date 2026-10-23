@@ -127,9 +127,10 @@ async function startApp() {
     && /^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(callbackUrl.hash)) {
     // Resolve publication state alongside App. Cold readers otherwise wait for
     // App, the SDK and every ledger page before their first content read begins.
-    void import("./services/contentPublications").then(({ refreshContentPublications }) =>
-      refreshContentPublications(false, () => import("./services/publicationLedgerTransport")
-        .then(({ loadPublicationLedgerFromApi }) => loadPublicationLedgerFromApi()))).catch(() => {});
+    void import("./services/contentPublications").then(({ refreshContentPublications, contentPublicationsResolved }) =>
+      refreshContentPublications(false, contentPublicationsResolved()
+        ? () => import("./services/publicationLedgerTransport").then(({ loadPublicationLedgerFromApi }) => loadPublicationLedgerFromApi())
+        : undefined)).catch(() => {});
   }
   // A direct You link needs the profile page immediately. Fetch it alongside
   // App instead of adding a second module/CSS waterfall after React mounts.
