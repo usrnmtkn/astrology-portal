@@ -101,3 +101,26 @@ into browser fixtures or public files. The existing reader resolver and its
 source distribution remain unchanged. The default editor can show saved drafts;
 the published-reader link is the final view of the complete default reading,
 including its calculated additions and personalized sections.
+
+## Configured Admin feature cost
+
+Matched builds use independent `npm ci --ignore-scripts` installations, Node
+22.20.0, identical CI visual-smoke Supabase placeholders, and empty publishable
+key / natal-aspect flag settings. Each workspace package link resolves inside
+its own checkout. The baseline is main `993f23c048`; the layout is `8a250cbbd2`.
+
+| Measurement | Main | Layout | Added cost |
+| --- | ---: | ---: | ---: |
+| Entry JavaScript, raw bytes | 796,901 | 798,194 | 1,293 |
+| Entry JavaScript, gzip bytes | 229,977 | 230,423 | 446 |
+| All JavaScript, gzip bytes | 803,560 | 809,602 | 6,042 |
+| JavaScript assets | 82 | 83 | 1 |
+
+The requested workspace remains a separate dynamic entry. The feature allowance
+adds 1,500 bytes to the entry/largest raw ceilings and 6,250 bytes to aggregate
+gzip, leaving 456 and 248 measured bytes respectively. Entry gzip, memory graph,
+reader startup, dependencies, CSS and forbidden-content limits are unchanged.
+The guard additionally requires this workspace to remain dynamic and absent
+from the initial import graph. This is interface-cost accounting, not a runtime
+performance improvement. No source corpus, writer prompt or owner article was
+added to the browser bundle or shortened to meet a limit.

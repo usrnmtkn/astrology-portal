@@ -118,6 +118,7 @@ function visitInitial(key) {
   for (const dependency of manifest[key].imports ?? []) visitInitial(dependency);
 }
 visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
+if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
   const file = manifest[key].file;
@@ -154,6 +155,7 @@ const expectedDynamicEntries = [
   "src/HoroscopeEditionsStudio.tsx",
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
+  "src/SkyPlacementWorkspace.tsx",
   "src/SkyFallbackFieldsEditor.tsx",
   "src/MemoryGraphDashboard.tsx",
   "src/StudioMemoryFeedback.tsx",
