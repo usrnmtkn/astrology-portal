@@ -158,7 +158,7 @@ export function buildIngressTemplateReference(contentKey: string, body: string) 
   return { reference, receipt: { version: 'ingress-template-reference/v1', contentKey, bodySha256: reference.bodySha256,
     role: 'structure-only', ownerAuthorshipEstablished: false, positiveVoiceEvidence: false, factUseAuthorized: false },
     prompt: ['COMPLETE SAVED INGRESS TEMPLATE REFERENCE',
-      'This approved, non-serving saved article supplies structural context: establish the dated event, develop the season and its meaning, connect relevant transits, and finish that thought. Keep the complete reference unchanged. It is not the new edition’s immutable prose, a proof of owner authorship, a current astronomy/ephemeris source or a substitute for the KB/Calendar meaning and eligible voice passages. Its old variables and separate horoscope companion are not this request’s output fields. Current owner corrections take precedence over historical wording and claims.',
+      'Keep this approved, non-serving saved article complete as structural context. The current ingress brief controls the new prose. This reference does not establish immutable wording, owner authorship, current facts or voice authority. Its old variables and separate horoscope companion are not this request’s output fields. Current owner corrections take precedence over historical wording and claims.',
       JSON.stringify(reference)].join('\n\n') };
 }
 

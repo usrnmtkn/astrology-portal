@@ -4,6 +4,7 @@ import fs from "node:fs";
 import { ingressFixtureValues } from './fixtures/sky-ingress-writing.mjs';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { RHETORICAL_WRITER_POLICY } from '../src/astro-writing/rhetoricalPatterns.mjs';
+import { validateExplicitWritingFeedback } from '../src/astro-writing/explicitWritingFeedback.mjs';
 import { approvedVoiceStyleReference } from '../src/astro-writing/approvedVoiceStyle.mjs';
 import { studioRequestTimeoutMs } from "../apps/admin/src/studioRequestPolicy.ts";
 const deploymentConfig = JSON.parse(fs.readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
@@ -50,17 +51,21 @@ const syntheticPassageFeedback = {
 };
 const syntheticExplicitFeedback = {
   id: 'synthetic-ingress-rejection', version: 1, status: 'active', kind: 'rejection',
-  target_keys: ['sky/article-template/sun/libra'],
+  target_keys: ['writing/sky/ingress/sun/libra'],
   rejected_text: 'Synthetic complete rejected introduction. Final rejected sentence.',
   owner_reason: 'Synthetic reason: definitions replace the connected human thought.',
   source_roles: null, source_uri: 'thread:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', source_date: '2026-10-21T12:00:00Z'
 };
+// Optional local verification of complete protected owner rejections. The
+// checked-in fixtures remain synthetic; private bodies never enter logs.
+const privateRejections = process.env.INGRESS_REJECTION_FIXTURES_JSON
+  ? validateExplicitWritingFeedback(JSON.parse(process.env.INGRESS_REJECTION_FIXTURES_JSON)) : [];
 const summaryGuidanceProviders = new Set<string>();
 const narrativeProviders = new Set<string>();
 function assertSummaryGuidance(provider: string, prompt: string, schema: any, system: string) {
   const narrative = Boolean(schema.properties.slotValues.properties.articleBody);
   if (narrative) {
-    const completeRequest = `${system}\n\n${prompt}`;
+    const completeRequest = `${system}\n\n${prompt}\n\n${JSON.stringify(schema)}`;
     assert.equal(completeRequest.split('Effective TLDR Astro writing rules (').length - 1, 1,
       'The complete provider request must contain one scoped rule bundle, including article memory.');
     doesNotMatch(completeRequest, /Use a specific situation, a direct consequence, a useful next move/,
@@ -68,7 +73,13 @@ function assertSummaryGuidance(provider: string, prompt: string, schema: any, sy
     matches(completeRequest, /not a default paragraph ending/);
     assert(prompt.includes(INGRESS_WRITER_CONTRACT.factualReference));
     assert(prompt.includes(INGRESS_WRITER_CONTRACT.layout));
-    matches(schema.properties.slotValues.properties.articleBody.description, /develop its human meaning in the opening/);
+    assert.equal(completeRequest.split(INGRESS_WRITER_CONTRACT.craft).length-1, 1,
+      'The complete request has one current ingress prose brief.');
+    assert.equal(completeRequest.split('develop its human meaning in the opening').length-1, 1,
+      'Opening guidance is not repeated by system, field description, wrapper or final review.');
+    doesNotMatch(completeRequest, /what draws us toward another person or a choice|why a response can feel compelling|why a response can matter or feel compelling/);
+    matches(completeRequest, /opening need not repeat both timestamps/);
+    matches(completeRequest, /including contractions where natural/);
     const evidence=JSON.parse(prompt.match(/DATED INGRESS COVERAGE AND EVENT MEANING\n\n([^\n]+)/u)![1]);
     assert.equal(JSON.stringify(evidence).split('Fall is opposite exaltation.').length-1,1);
     if (liveCorrections) {
@@ -76,12 +87,20 @@ function assertSummaryGuidance(provider: string, prompt: string, schema: any, sy
         assert(prompt.includes(JSON.stringify(text).slice(1,-1)), 'Keep complete scoped passage correction documents.');
       assert(prompt.includes(syntheticExplicitFeedback.rejected_text)&&prompt.includes(syntheticExplicitFeedback.owner_reason),
         'Deliver the complete exact-target rejection and reason without turning it into positive voice evidence.');
+      const positive=prompt.slice(prompt.indexOf('APPROVED TLDR ASTRO VOICE EXAMPLES'));
+      for (const row of privateRejections) {
+        for (const text of [row.rejected_text,row.owner_reason]) {
+          const encoded=JSON.stringify(text).slice(1,-1);
+          assert.equal(prompt.split(encoded).length-1,1,'Complete protected correction text and reason reach the provider exactly once.');
+          assert(!positive.includes(encoded),'Private rejections never become positive voice examples.');
+        }
+      }
       doesNotMatch(prompt, /Synthetic unrelated rejection/);
     }
     matches(prompt, /Write one complete dated ingress article in articleBody/);
     doesNotMatch(prompt, /ingressTransitBody\d|100–180|120–180|60–100|INGRESS ESSAY FORMAT/);
     assert(Object.keys(schema.properties.slotValues.properties).every(name => ['what', 'takeaway', 'articleBody', 'priorOccurrenceSection'].includes(name)));
-    matches(prompt, /WRITER CONTRACT ingress-article\/v5-2026-10-22/);
+    matches(prompt, /WRITER CONTRACT ingress-article\/v6-2026-10-22/);
     assert.equal(schema.properties.slotValues.properties.articleBody.description,
       skyIngressArticleFields.find(field => field.name === 'articleBody')!.description);
     const meaningPosition = prompt.indexOf('DATED INGRESS COVERAGE AND EVENT MEANING');
@@ -182,7 +201,7 @@ try {
       if (String(url).endsWith('/rpc/studio_memory_active_snapshot')) {
         assert.equal(init.method, 'POST');assert.equal(init.body, '{}', 'Feedback RPC is a read-only snapshot.');
         if (correctionStoreUnavailable) return Response.json({ error: 'Synthetic unavailable snapshot' }, { status: 503 });
-        return Response.json([{ snapshot: { rows: [syntheticPassageFeedback], writingFeedback: [syntheticExplicitFeedback,
+        return Response.json([{ snapshot: { rows: [syntheticPassageFeedback], writingFeedback: [syntheticExplicitFeedback, ...privateRejections,
           {...syntheticExplicitFeedback,id:'synthetic-unrelated',target_keys:['sky/article-template/sun/taurus'],rejected_text:'Synthetic unrelated rejection.'}] } }]);
       }
       assert.equal(init.method ?? 'GET', 'GET', 'Generation must not save a source or draft.');
@@ -290,7 +309,7 @@ try {
   assert(!requested.includes('otherDatesSection'), 'The app assembles required dates instead of delegating fact copying.');
   assert(result.generation.requestedSlots.includes('articleBody'), 'Public article fields remain unchanged.');
   assert.deepEqual(result.blockedSlots.map((slot: any) => slot.name), ["priorOccurrenceSection"]);
-  matches(prompts[0], /WRITER CONTRACT ingress-article\/v5/);
+  matches(prompts[0], /WRITER CONTRACT ingress-article\/v6/);
   matches(prompts[0], /astronomy-explanation-only/);
   matches(prompts[0], /after-ingress-window/);
   matches(prompts[0], /ZODIAC SEASON MEANING SOURCES/);
@@ -492,12 +511,28 @@ try {
     assert.equal(withFeedback.generation.memoryReceipt.effectiveRulesLocation, 'provider-system');
     assert(withFeedback.generation.memoryReceipt.selected.some((ref:any)=>ref.memoryId===`studio-${syntheticPassageFeedback.id}`));
     assert.deepEqual(withFeedback.generation.generationMetadata.evidencePacket.writingFeedback.selected.map((ref:any)=>ref.id),
-      [syntheticExplicitFeedback.id]);
+      [syntheticExplicitFeedback.id,...privateRejections.map((row:any)=>row.id)].sort());
+    assert(withFeedback.generation.generationMetadata.evidencePacket.writingFeedback.targetKeys.includes('writing/sky/ingress/sun/libra'));
     assert(prompts.at(-1)!.includes(INGRESS_WRITER_CONTRACT.ownerDirection), 'The no-notes Preview receives the current ingress correction.');
     assert(!JSON.stringify(withFeedback.generation).includes(syntheticExplicitFeedback.rejected_text), 'Private rejection text stays out of receipts.');
+    const beforeInspection=prompts.length;
+    const delivery=await invoke(slotsHandler,'GET',`/api/admin/sky-article-template-slots?inspect=ingress-voice&templateId=${id}`);
+    assert.equal(delivery.status,200);
+    const {templateKey,sectionSha256,...receipt}=delivery.correctionDelivery;
+    assert.equal(templateKey,template.content_key);
+    assert.deepEqual(receipt,withFeedback.generation.generationMetadata.evidencePacket.writingFeedback,
+      'Read-only inspection uses the exact correction selection delivered by the actual writer.');
+    assert.match(sectionSha256,/^[a-f0-9]{64}$/u);
+    assert.equal(delivery.providerCalls,0);assert.equal(prompts.length,beforeInspection);
+    for(const row of [syntheticExplicitFeedback,...privateRejections]) {
+      assert(!JSON.stringify(delivery).includes(row.rejected_text));
+      assert(!JSON.stringify(delivery).includes(row.owner_reason));
+    }
+    assert.equal((await invoke(slotsHandler,'GET',`/api/admin/sky-article-template-slots?inspect=ingress-voice&templateId=${id}`,undefined,false)).status,401);
   }
   assert.equal(prompts.length, beforeFeedback + 2, 'Exactly one intercepted call per provider, with no judge or retry.');
   correctionStoreUnavailable = true;
+  assert.equal((await invoke(slotsHandler,'GET',`/api/admin/sky-article-template-slots?inspect=ingress-voice&templateId=${id}`)).status,503);
   assert.equal((await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', {
     templateId: id, referenceDate: '2026-10-22', format: SKY_INGRESS_ARTICLE_FORMAT, provider: 'openai'
   })).status, 503);

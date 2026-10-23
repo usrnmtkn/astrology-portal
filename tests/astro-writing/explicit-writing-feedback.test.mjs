@@ -61,6 +61,24 @@ test('explicit scopes isolate periods, relationships, personal transits and exac
   assert.throws(()=>writingFeedbackKeys({period:'all'}));
 });
 
+test('dated ingress adds only its planet/sign correction target and preserves existing template feedback',()=>{
+  const contentKey='sky/article-template/sun/libra';
+  const target={surface:'sky',eventType:'sky-ingress-essay',contentKey};
+  const rows=[row('ingress','writing/sky/ingress/sun/libra'),row('template',contentKey),
+    row('other-sign','writing/sky/ingress/sun/scorpio'),row('other-planet','writing/sky/ingress/venus/libra')];
+  const selected=selectExplicitWritingFeedback(rows,writingFeedbackKeys(target));
+  assert.deepEqual(selected.rows.map(r=>r.id),['ingress','template']);
+  assert.equal(selected.prompt.split(rows[0].rejected_text).length-1,1);
+  assert(selected.prompt.includes('rejected evidence, never positive voice examples'));
+  for(const changed of [{eventType:'sky-article-template-slots'}, {eventType:'sky-placement'},
+    {surface:'calendar'}, {surface:'you'}, {contentKey:'sky/article-template/sun/scorpio'},
+    {contentKey:'sky/article-template/venus/libra'}]) {
+    assert(!selectExplicitWritingFeedback(rows,writingFeedbackKeys({...target,...changed})).rows.some(r=>r.id==='ingress'));
+  }
+  assert(!JSON.stringify(selected.receipt).includes(rows[0].rejected_text));
+  assert.equal(hydrateExplicitWritingFeedback({input:selected.marker},selected.receipt,rows).input,selected.prompt);
+});
+
 test('new plans exclude retired feedback; a frozen request resolves the exact immutable source once',()=>{
   const feedback=row('fixture','horoscope/monthly');
   const prepared=selectExplicitWritingFeedback([feedback],writingFeedbackKeys({period:'monthly'}));

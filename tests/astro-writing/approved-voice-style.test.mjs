@@ -68,10 +68,12 @@ test('dated ingress uses the exact revised Libra benchmark with complete support
   assert.deepEqual(value.receipt.supportingReferences,[supporting.receipt]);
   const prompt=approvedVoiceStylePrompt({surface:'sky',family:'sky-ingress-essay'});
   for(const entry of [value,supporting])assert.equal(prompt.split(JSON.stringify(entry.reference.text)).length-1,1);
-  assert.match(value.authority,/primary voice benchmark/);
+  assert.match(value.authority,/primary owner-selected voice benchmark/);
   assert.match(value.authority,/complete original author season passages/);
-  assert.match(value.authority,/does not require a hidden motive, difficulty, hook or advice/);
-  assert.match(value.authority,/KB and Calendar establish meaning; calculated facts and coverage establish this occurrence/);
+  assert.match(value.authority,/style-only use/);
+  assert.match(value.authority,/current owner corrections/);
+  assert.doesNotMatch(value.authority,/Establish the actual dated event|why a response|feel compelling/,
+    'The source wrapper defines authority rather than another prose assignment.');
   assert.equal(approvedVoiceStyleReference({surface:'sky',family:'sky-article-template-slots'}).reference.id,'saturn-aries-voice-20261020');
   assert.equal(approvedVoiceStyleReference({surface:'you',family:'sky-ingress-essay'}).reference.id,'saturn-aries-voice-20261020');
 });

@@ -16,6 +16,8 @@ import { hasVerifiedSameSignHistory } from "../../apps/web/src/services/retrogra
 import { loadSkySeasonMeaning } from '../_lib/sky-season-meaning.js';
 import { buildSkyIngressWritingContext, buildIngressTemplateReference } from '../_lib/sky-ingress-writing.js';
 import { approvedVoiceStyleReference } from '../../src/astro-writing/approvedVoiceStyle.mjs';
+import { loadExplicitWritingFeedback, ingressWritingFeedbackTarget } from '../_lib/studio-explicit-writing-feedback.js';
+import { createHash } from 'node:crypto';
 
 loadLocalWebEnv();
 
@@ -109,9 +111,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     if (inspect) {
+      const params = new URL(req.url ?? '/', 'http://studio.invalid').searchParams;
+      let correctionDelivery;
+      if (params.has('templateId')) {
+        const templateId = params.get('templateId')?.trim();
+        if (!templateId) throw new AdminHttpError(400, 'templateId is required for correction inspection.');
+        const template = await loadApprovedTemplate(templateId);
+        const templateKey = template.content_key.replace(/^sky-article-template\//u, 'sky/article-template/');
+        const feedback = await loadExplicitWritingFeedback(ingressWritingFeedbackTarget(templateKey));
+        correctionDelivery = { templateKey, ...feedback.receipt,
+          sectionSha256: createHash('sha256').update(feedback.prompt).digest('hex') };
+      }
       const source = approvedVoiceStyleReference({surface:'sky',family:'sky-ingress-essay'});
       sendAdminJson(res, 200, {ok:true,scope:'sky-ingress-essay',voiceBenchmark:source.receipt,
         writerContract:ingressWriterContractReceipt(),
+        ...(correctionDelivery ? {correctionDelivery} : {}),
         sourcePolicy:{meaning:'knowledge-base-and-calendar',facts:'calculated-ingress-coverage',voice:'selected-style-references'},
         providerCalls:0,saved:false,published:false});
       return;

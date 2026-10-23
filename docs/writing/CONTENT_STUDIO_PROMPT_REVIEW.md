@@ -64,6 +64,15 @@ shortening examples.
    uncertainty. Live comparison needs a separately authorized generation run and
    the owner's review of exact prose. Saving a prompt does not approve prose.
 
+## October 22 narrower ingress correction
+
+The v6 local candidate consolidates prose direction into one ingress brief and
+adds a private exact planet/sign ingress feedback target. The owner-authorized
+quoted rejections remain negative evidence in the existing protected store.
+Meaning, facts, complete approved voice sources and output fields are unchanged.
+See the [narrow repair and test cases](INGRESS_NARROW_VOICE_REPAIR_2026-10-22.md).
+This local repair does not establish deployment or improved generated prose.
+
 ## Runtime inventory
 
 | Owner action / surface | Prompt and instruction sources | Contract to preserve |

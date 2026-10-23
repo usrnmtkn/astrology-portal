@@ -23,6 +23,9 @@ export type UnsavedIngressPreview = {
   generation: Pick<Generation, 'model' | 'responseId' | 'providerCalls' | 'ingressValidation'> & { voiceBenchmark?: unknown };
 };
 
+export type IngressInputInspection = { writerContract: unknown; voiceBenchmark: unknown; correctionDelivery: unknown;
+  providerCalls: number; saved: boolean; published: boolean; placement: { planet: string; sign: string; when: string } };
+
 export function renderUnsavedIngress(facts: IngressFacts, slotValues: Record<string, string>) {
   const values: Record<string, string> = { priorOccurrenceSection: '', otherDatesSection: '', ...facts.slotValues, ...slotValues };
   const missingFields: string[] = [];
@@ -34,7 +37,7 @@ export function renderUnsavedIngress(facts: IngressFacts, slotValues: Record<str
 }
 
 // This path has no editor callbacks, content mutations, persistence, or request retries.
-export async function generateUnsavedIngress(planet: string, referenceDate: string, signal: AbortSignal): Promise<UnsavedIngressPreview> {
+async function prepareIngressRequest(planet: string, referenceDate: string, signal: AbortSignal) {
   const credential = await loadOwnerSessionAccessToken(undefined, true);
   if (!credential) throw new PreviewOwnerAccessError('Sign in with your Content Studio owner account before generating a preview.');
   const request = async (path: string, body?: unknown) => {
@@ -58,8 +61,22 @@ export async function generateUnsavedIngress(planet: string, referenceDate: stri
   if (!Array.isArray(inventory.rows) || inventory.rows.length !== 1 || inventory.rows[0].content_key !== contentKey || typeof inventory.rows[0].id !== 'string') {
     throw new Error('One approved ingress template could not be found for this placement. No generation was sent.');
   }
+  return {request, facts, templateId: inventory.rows[0].id as string};
+}
+
+export async function inspectIngressInputs(planet: string, referenceDate: string, signal: AbortSignal): Promise<IngressInputInspection> {
+  const {request,facts,templateId} = await prepareIngressRequest(planet,referenceDate,signal);
+  const {payload} = await request(`/api/admin/sky-article-template-slots?${new URLSearchParams({inspect:'ingress-voice',templateId})}`);
+  if (!payload.correctionDelivery || payload.providerCalls !== 0 || payload.saved !== false || payload.published !== false)
+    throw new Error('The read-only writer input check could not be verified.');
+  return {writerContract:payload.writerContract,voiceBenchmark:payload.voiceBenchmark,correctionDelivery:payload.correctionDelivery,
+    providerCalls:0,saved:false,published:false,placement:{planet:facts.planet,sign:facts.sign,when:facts.slotValues.when}};
+}
+
+export async function generateUnsavedIngress(planet: string, referenceDate: string, signal: AbortSignal): Promise<UnsavedIngressPreview> {
+  const {request,facts,templateId} = await prepareIngressRequest(planet,referenceDate,signal);
   const { status, payload } = await request('/api/admin/sky-article-template-slots', {
-    templateId: inventory.rows[0].id, referenceDate, format: SKY_INGRESS_ARTICLE_FORMAT,
+    templateId, referenceDate, format: SKY_INGRESS_ARTICLE_FORMAT,
     provider: 'openai', expectedModel: ingressPreviewModel, existingSlotValues: {}, includeRetrogradeHistory: false
   });
   const generation = (payload.generation ?? payload.rejectedGeneration) as Generation | undefined;

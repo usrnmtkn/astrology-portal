@@ -118,7 +118,7 @@ try {
         if (ingressStyle) {
           assert(!captured.includes('GOVERNED KNOWLEDGE EVIDENCE'), 'The dedicated ingress retains collective meaning instead of a natal packet.');
           assert(captured.includes('DATED INGRESS COVERAGE AND EVENT MEANING'));
-          assert(captured.includes('WRITER CONTRACT ingress-article/v5-2026-10-22'));
+          assert(captured.includes('WRITER CONTRACT ingress-article/v6-2026-10-22'));
           assert(captured.includes('ZODIAC SEASON MEANING SOURCES'));
         } else {
         assert(captured.includes(`GOVERNED KNOWLEDGE EVIDENCE\n${gate.governedPrompt}`),

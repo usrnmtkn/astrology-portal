@@ -86,6 +86,16 @@ also be selected. Legacy content keys containing pipes cannot be explicit target
 under the database contract. Broader guidance still requires the owner's express
 scope decision; an ordinary rejection never becomes global automatically.
 
+Dated ingress requests additionally select
+`writing/sky/ingress/{planet}/{sign}` from the verified template identity.
+This exact target does not apply to saved guides, other signs or other planets.
+Existing exact template-key feedback is retained. Store only the owner-authorized
+rejected passages and exact reasons through the existing private rejection RPC,
+with actual thread provenance. An instruction not to save a preview also forbids
+retaining its full text as a local test fixture. Quoted rejection passages can be
+tested in process memory without saving the full preview. These records remain
+negative evidence, never positive voice examples or reader drafts.
+
 Reusable Synastry library family requests also retrieve their own exact-member
 corrections: `hard` includes square/opposition and `soft` includes trine/sextile.
 Each complete record retains its original target and the request explicitly

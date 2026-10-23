@@ -17,7 +17,8 @@ assert.match(responses.instructionsForRole('WRITER', '', { surface: 'sky', famil
   /DATED INGRESS EDITORIAL AUTHORITY/, 'A dated ingress must not inherit the natal/placement article spine.');
 const connectedIngress = responses.instructionsForRole('WRITER', '', { surface: 'sky', family: 'sky-ingress-essay' });
 assert.match(connectedIngress, /Use Ghostwriter to write one connected article/);
-assert.match(connectedIngress, /do not assemble a report from definitions followed by examples/iu);
+assert.match(connectedIngress, /current ingress brief supplies the prose direction once/iu);
+assert.match(connectedIngress, /private owner rejections are negative evidence/iu);
 assert.match(connectedIngress, /without a detachable aspect maxim or opportunity-and-response formula/);
 assert.doesNotMatch(responses.instructionsForRole('WRITER', '', { surface: 'you', family: 'transit-aspect' }),
   /Use Ghostwriter to write one connected article/, 'The full-article method is scoped to dated ingress.');

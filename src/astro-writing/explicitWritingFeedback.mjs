@@ -23,6 +23,11 @@ export function writingFeedbackKeys({contentKey,surface,period,eventType}={}) {
   // Legacy keys containing pipes cannot be represented by the feedback store's
   // target contract. They still receive explicitly selected family guidance.
   if(typeof contentKey==='string'&&keyPattern.test(contentKey))keys.push(contentKey);
+  // Dated ingress corrections must not spill into reusable guides or another
+  // planet/sign. Keep the original template key for existing exact feedback.
+  const ingress=surface==='sky'&&eventType==='sky-ingress-essay'&&typeof contentKey==='string'
+    ?contentKey.match(/^sky\/article-template\/([a-z][a-z-]*)\/([a-z][a-z-]*)$/u):null;
+  if(ingress)keys.push(`writing/sky/ingress/${ingress[1]}/${ingress[2]}`);
   // A reusable library row explicitly covers these members. Retrieve their
   // corrections as scoped source evidence; do not retarget stored feedback or
   // make an exact square request inherit an opposition's corrections.
