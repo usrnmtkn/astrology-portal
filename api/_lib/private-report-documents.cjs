@@ -5,15 +5,20 @@ const { createHash } = require('node:crypto');
 
 const ids = new Set(['general-2026', 'work-money-2026', 'love-connection-2026', 'personal-health-2026', 'social-writing-references-20260921'].map(id => `private:report/${id}`));
 ids.add('private:writing/synastry/approved-sample-20261022');
+ids.add('private:writing/synastry/approved-ten-20261023');
 
 /** Original owner evidence lives in protected storage, never in Git or web assets. */
 function readDocument(id, optional = false) {
   if (!ids.has(id)) throw new Error('Unknown private report document.');
-  const encoded = process.env.PRIVATE_REPORT_DOCUMENTS;
+  // A separate secret can extend writing evidence without replacing unreadable
+  // report secrets. Both use this same document format and integrity boundary.
+  const writingSource = id.startsWith('private:writing/synastry/');
+  const encoded = (writingSource && process.env.PRIVATE_SYNASTRY_VOICE_REFERENCES) || process.env.PRIVATE_REPORT_DOCUMENTS;
   let raw;
   if (encoded) raw = gunzipSync(Buffer.from(encoded, 'base64'), { maxOutputLength: 1024 * 1024 }).toString('utf8');
   else if (!process.env.VERCEL && !process.env.CI) {
-    const file = path.join(process.cwd(), '.private-documents/reports.json');
+    const voiceFile = path.join(process.cwd(), '.private-documents/synastry-voice.json');
+    const file = writingSource && fs.existsSync(voiceFile) ? voiceFile : path.join(process.cwd(), '.private-documents/reports.json');
     if (fs.existsSync(file)) raw = fs.readFileSync(file, 'utf8');
   }
   if (!raw) {
