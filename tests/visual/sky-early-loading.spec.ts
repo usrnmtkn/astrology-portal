@@ -67,12 +67,10 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
       await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
       releaseReact();
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
-      if (warm) await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
-      else expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
+      await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
       await expect.poll(() => requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname))).toBe(true);
       await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
-      if (warm) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
-      else await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
+      expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
@@ -116,6 +114,7 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
       await expect(page.getByRole('button', { name: 'Read more about Sun in Aries', exact: true })).toBeVisible();
     }
     expect(requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(false);
+    expect(requests.some(url => /studio-editor-tools-/.test(url.pathname))).toBe(false);
     expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(1);
     expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
     expect(wasmPaths()).toEqual([]);

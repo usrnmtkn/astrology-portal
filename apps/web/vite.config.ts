@@ -255,6 +255,9 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks(id) {
+            // The reader shares this pure field contract with Studio. Keep it
+            // separate so a Sky visit does not download the editor workspace.
+            if (id.endsWith("/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs")) return "sky-fields";
             // Eligibility helpers are already read at startup. Share their small
             // transport instead of adding a preload and gzip header per identity.
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|generatedContentEligibility)\.ts$/u.test(id)

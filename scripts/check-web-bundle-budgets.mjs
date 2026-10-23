@@ -96,6 +96,14 @@ const readerStyleItems = [...readerStyleFiles]
 const readerBootItems = [...new Set([...bootFiles, ...readerStyleFiles])]
   .map((file) => filesByName.get(file))
   .filter(Boolean);
+// A lazy Sky reader must not inherit Studio's editor workspace through a
+// shared validator. Its download cost is absent from the static boot budget.
+const skyPlacementReaderKey = Object.keys(manifest).find(key => key.endsWith("/fallbackArchitectureV3SkyPlacementBundle.ts"));
+if (!skyPlacementReaderKey) throw new Error("The Sky placement reader is missing from the build manifest.");
+const skyReaderFiles = collectStaticManifestGraph(manifest, [skyPlacementReaderKey]);
+if ([...skyReaderFiles].some(file => file.includes("studio-editor-tools-"))) {
+  throw new Error("The Sky reader downloads Studio editor tools through a shared dependency.");
+}
 const appItem = filesByName.get(manifest[appKey].file);
 const deferredTransitFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-transit-"));
 const deferredRelationshipFallbackItems = javaScriptFiles.filter((item) => item.file.includes("fallback-content-relationships-"));

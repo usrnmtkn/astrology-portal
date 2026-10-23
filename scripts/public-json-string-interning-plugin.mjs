@@ -1,6 +1,7 @@
 // Transform Vite's JavaScript output, never its governed JSON input.
 const sourceFiles = [
   "/apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json",
+  "/apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
   "/apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"
 ];
 
