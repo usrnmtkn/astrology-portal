@@ -4,7 +4,7 @@
   "deterministic": "This payload contains no timestamps. Identical inputs produce a byte-identical file.",
   "totals": {
     "canonicalObjects": 15738,
-    "sourceRecordsIndexed": 26665,
+    "sourceRecordsIndexed": 26714,
     "objectsFoundInMoreThanOneStore": 2050,
     "unresolved": 0,
     "skipped": 55,
@@ -23,11 +23,11 @@
     "matrix-v9-delta": 1033,
     "book-ms-ca": 110,
     "ac-reference": 172,
-    "serving": 9756
+    "serving": 9805
   },
   "authorityTotals": {
     "machine-proposal": 725,
-    "owner-approved-prose": 10406,
+    "owner-approved-prose": 10455,
     "unverified": 7748,
     "factual-evidence": 7786
   },
@@ -230,9 +230,9 @@
     },
     "serving-row": {
       "objects": 9586,
-      "records": 9727,
+      "records": 9776,
       "stores": {
-        "serving": 9727
+        "serving": 9776
       }
     },
     "sign-generic": {
@@ -386211,6 +386211,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 46
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
+          "rowKey": "fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 684
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -387927,6 +387943,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 7
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/aquarius",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/aquarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 225
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -387942,6 +387974,22 @@
       "id": "serving/fallback_hook_sky_placement_hook_moon_aries",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/aries",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/aries",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 11
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-hook/moon/aries",
@@ -387971,6 +388019,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 15
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/cancer",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/cancer",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 233
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -387986,6 +388050,22 @@
       "id": "serving/fallback_hook_sky_placement_hook_moon_capricorn",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/capricorn",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/capricorn",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 0
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-hook/moon/capricorn",
@@ -388015,6 +388095,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 19
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/gemini",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/gemini",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 237
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -388030,6 +388126,22 @@
       "id": "serving/fallback_hook_sky_placement_hook_moon_leo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/leo",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/leo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 23
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-hook/moon/leo",
@@ -388059,6 +388171,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 27
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/libra",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/libra",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 245
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -388074,6 +388202,22 @@
       "id": "serving/fallback_hook_sky_placement_hook_moon_pisces",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/pisces",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/pisces",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 31
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-hook/moon/pisces",
@@ -388103,6 +388247,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 35
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/sagittarius",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/sagittarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 253
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -388118,6 +388278,22 @@
       "id": "serving/fallback_hook_sky_placement_hook_moon_scorpio",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/scorpio",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/scorpio",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 3
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-hook/moon/scorpio",
@@ -388147,6 +388323,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 39
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/taurus",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/taurus",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 257
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -388162,6 +388354,22 @@
       "id": "serving/fallback_hook_sky_placement_hook_moon_virgo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-hook/moon/virgo",
+          "rowKey": "fallback-hook/sky-placement-hook/moon/virgo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 43
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-hook/moon/virgo",
@@ -391667,6 +391875,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 8
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/aquarius",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/aquarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 226
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -391682,6 +391906,22 @@
       "id": "serving/fallback_hook_sky_placement_lived_moon_aries",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/aries",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/aries",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 12
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-lived/moon/aries",
@@ -391711,6 +391951,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 16
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/cancer",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/cancer",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 234
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -391726,6 +391982,22 @@
       "id": "serving/fallback_hook_sky_placement_lived_moon_capricorn",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/capricorn",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/capricorn",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 1
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-lived/moon/capricorn",
@@ -391755,6 +392027,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 20
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/gemini",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/gemini",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 238
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -391770,6 +392058,22 @@
       "id": "serving/fallback_hook_sky_placement_lived_moon_leo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/leo",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/leo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 24
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-lived/moon/leo",
@@ -391799,6 +392103,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 28
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/libra",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/libra",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 246
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -391814,6 +392134,22 @@
       "id": "serving/fallback_hook_sky_placement_lived_moon_pisces",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/pisces",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/pisces",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 32
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-lived/moon/pisces",
@@ -391843,6 +392179,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 36
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/sagittarius",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/sagittarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 254
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -391858,6 +392210,22 @@
       "id": "serving/fallback_hook_sky_placement_lived_moon_scorpio",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/scorpio",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/scorpio",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 4
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-lived/moon/scorpio",
@@ -391887,6 +392255,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 40
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/taurus",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/taurus",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 258
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -391902,6 +392286,22 @@
       "id": "serving/fallback_hook_sky_placement_lived_moon_virgo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-lived/moon/virgo",
+          "rowKey": "fallback-hook/sky-placement-lived/moon/virgo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 44
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-lived/moon/virgo",
@@ -396903,6 +397303,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 6
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/aquarius",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/aquarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 224
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -396918,6 +397334,22 @@
       "id": "serving/fallback_hook_sky_placement_tagline_moon_aries",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/aries",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/aries",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 10
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-tagline/moon/aries",
@@ -396947,6 +397379,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 14
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/cancer",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/cancer",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 232
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -396962,6 +397410,22 @@
       "id": "serving/fallback_hook_sky_placement_tagline_moon_capricorn",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/capricorn",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/capricorn",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 47
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-tagline/moon/capricorn",
@@ -396991,6 +397455,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 18
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/gemini",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/gemini",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 236
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -397006,6 +397486,22 @@
       "id": "serving/fallback_hook_sky_placement_tagline_moon_leo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/leo",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/leo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 22
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-tagline/moon/leo",
@@ -397035,6 +397531,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 26
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/libra",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/libra",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 244
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -397050,6 +397562,22 @@
       "id": "serving/fallback_hook_sky_placement_tagline_moon_pisces",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/pisces",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/pisces",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 30
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-tagline/moon/pisces",
@@ -397079,6 +397607,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 34
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/sagittarius",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/sagittarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 252
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -397094,6 +397638,22 @@
       "id": "serving/fallback_hook_sky_placement_tagline_moon_scorpio",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/scorpio",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/scorpio",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 48
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-tagline/moon/scorpio",
@@ -397123,6 +397683,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 38
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/taurus",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/taurus",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 256
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -397138,6 +397714,22 @@
       "id": "serving/fallback_hook_sky_placement_tagline_moon_virgo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-tagline/moon/virgo",
+          "rowKey": "fallback-hook/sky-placement-tagline/moon/virgo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 42
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-tagline/moon/virgo",
@@ -400599,6 +401191,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 9
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/aquarius",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/aquarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 227
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -400614,6 +401222,22 @@
       "id": "serving/fallback_hook_sky_placement_turn_moon_aries",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/aries",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/aries",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 13
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-turn/moon/aries",
@@ -400643,6 +401267,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 17
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/cancer",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/cancer",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 235
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -400658,6 +401298,22 @@
       "id": "serving/fallback_hook_sky_placement_turn_moon_capricorn",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/capricorn",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/capricorn",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 2
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-turn/moon/capricorn",
@@ -400687,6 +401343,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 21
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/gemini",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/gemini",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 239
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -400702,6 +401374,22 @@
       "id": "serving/fallback_hook_sky_placement_turn_moon_leo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/leo",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/leo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 25
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-turn/moon/leo",
@@ -400731,6 +401419,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 29
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/libra",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/libra",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 247
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -400746,6 +401450,22 @@
       "id": "serving/fallback_hook_sky_placement_turn_moon_pisces",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/pisces",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/pisces",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 33
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-turn/moon/pisces",
@@ -400775,6 +401495,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 37
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/sagittarius",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/sagittarius",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 255
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -400790,6 +401526,22 @@
       "id": "serving/fallback_hook_sky_placement_turn_moon_scorpio",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/scorpio",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/scorpio",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 5
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-turn/moon/scorpio",
@@ -400819,6 +401571,22 @@
           "status": "approved",
           "locator": {
             "collection": "hookRows",
+            "index": 41
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/taurus",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/taurus",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
             "index": 259
           },
           "path": "apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json",
@@ -400834,6 +401602,22 @@
       "id": "serving/fallback_hook_sky_placement_turn_moon_virgo",
       "kind": "serving-row",
       "sources": [
+        {
+          "store": "serving",
+          "nativeKey": "fallback-hook/sky-placement-turn/moon/virgo",
+          "rowKey": "fallback-hook/sky-placement-turn/moon/virgo",
+          "status": "approved",
+          "locator": {
+            "collection": "hookRows",
+            "index": 45
+          },
+          "path": "apps/web/src/content/fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json",
+          "sourceSha256": "c186c4852009c2e9130b60cec3a45f44cdcbd670ed59284db163dcee7c76364b",
+          "authorityClass": "owner-approved-prose",
+          "surfacePermission": [
+            "serving-source-only"
+          ]
+        },
         {
           "store": "serving",
           "nativeKey": "fallback-hook/sky-placement-turn/moon/virgo",
@@ -543925,7 +544709,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "097039273674f6d36c6a5dcd2a0df3c7fd346ac2a1b311df16fe2d6ad2445b40",
-    "distinctSourceFiles": 3457
+    "contentSha256": "3fd7d6a51a0e2c93792313d1055293c9fe79e9d34279655e9fa9346918a4d58a",
+    "distinctSourceFiles": 3458
   }
 }

@@ -124,6 +124,7 @@ import {
   loadLunationBookFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
+  loadInitialSkyListFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   skyV4ReaderRenderer,
   fallbackRendererV3,
@@ -4937,6 +4938,7 @@ function skyPlacementWritingSection(
   beats: SkyWritingAspectBeat[] = [],
   generatedAt = new Date().toISOString(),
   articleOptions?: {
+    collectiveList?: boolean;
     articleMode?: "current" | "archive";
     articleKey?: string | null;
     hasPriorIngress?: boolean;
@@ -4988,7 +4990,7 @@ function skyPlacementWritingSection(
   let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement> | null = null;
 
   try {
-    rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
+    if (!articleOptions?.collectiveList || planet === "moon") rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
       planet,
       sign,
       events,
@@ -5131,7 +5133,7 @@ function skyPlacementWritingSection(
   if (!body || !isReaderFacingCopy(body)) {
     return null;
   }
-  const risingHoroscopes = rendered.risingHoroscopes?.length
+  const risingHoroscopes = articleOptions?.collectiveList ? undefined : rendered.risingHoroscopes?.length
     ? rendered.risingHoroscopes
     : exactSkyPlacementRisingHoroscopes(planet, sign, risingHouseMap);
 
@@ -5146,7 +5148,7 @@ function skyPlacementWritingSection(
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-sign/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-sign-copy/")
   ) ? "authored" : "fallback";
-  const keyDates = skyPlacementKeyDates(
+  const keyDates = articleOptions?.collectiveList ? [] : skyPlacementKeyDates(
     position,
     articleOptions?.aspectFacts,
     rendered.keyDates?.length ? rendered.keyDates : undefined,
@@ -5225,6 +5227,7 @@ function normalizeSkyPlacementSurface(
     positions: PlanetPosition[];
   },
   articleOptions?: {
+    collectiveList?: boolean;
     articleMode?: "current" | "archive";
     articleKey?: string | null;
     hasPriorIngress?: boolean;
@@ -12368,7 +12371,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       || window.location.href === recoveryRoute && placementTargetRef.current === target);
 
     if (shouldLoadPlacementContent && selection === "pending") {
-      void loadSkyPlacementFallbackArchitectureV3Bundle(false).catch(() => { /* The source gate retries and reports errors. */ });
+      const initialList = isTodayMode && !skyDetailRoutePath;
+      void (initialList ? loadInitialSkyListFallbackArchitectureV3Bundle() : loadSkyPlacementFallbackArchitectureV3Bundle(false))
+        .catch(() => { /* The source gate retries and reports errors. */ });
     }
     if (!shouldLoadPlacementContent || selection === "pending") {
       // Keep a resolved Sky reading. Resetting to idle made every return visit
@@ -12396,7 +12401,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           activeInstant: placementSky.generatedAt, planet: normalizeContentIdPart(planet), sign: normalizeContentIdPart(sign)
         }, contentPublication) ? skyPlacementPublicationIdentity() : null;
       }) : undefined;
-    const sourceRequest = prepareSkyPlacementSources(selection || undefined, compiledGuest ? { compiledGuest } : undefined);
+    const sourceRequest = prepareSkyPlacementSources(selection || undefined, {
+      compiledGuest, initialList: isTodayMode && !skyDetailRoutePath
+    });
     if (preparation?.early) prefetchColdSkyPlacementSources(selection || undefined);
     const editionsRequest = refreshContentPublications().then(async () => {
       const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
@@ -16853,6 +16860,7 @@ function PlacementTable({
               generatedAt,
               { aspects, positions: displayPositions },
               {
+                collectiveList: true,
                 locationLatitude,
                 moonEvent,
                 positions: displayPositions

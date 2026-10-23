@@ -119,7 +119,7 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     }
     expect(requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(false);
     expect(requests.some(url => /studio-editor-tools-/.test(url.pathname))).toBe(false);
-    expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(1);
+    expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(0);
     expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
     expect(wasmPaths()).toEqual([]);
     expect(errors).toEqual([]);
@@ -127,6 +127,7 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     expect(requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname) && url.host === new URL(page.url()).host)).toBe(true);
     await page.getByRole('button', { name: `Read more about Sun in ${changeSelection ? 'Aries' : 'Virgo'}`, exact: true }).click();
     await expect(page.locator('.article-shell')).toBeVisible({ timeout: 30_000 });
+    await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
     await expect.poll(() => requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(true);
   });
 }

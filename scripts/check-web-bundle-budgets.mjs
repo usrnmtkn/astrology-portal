@@ -101,7 +101,13 @@ const readerBootItems = [...new Set([...bootFiles, ...readerStyleFiles])]
 const skyPlacementReaderKey = Object.keys(manifest).find(key => key.endsWith("/fallbackArchitectureV3SkyPlacementBundle.ts"));
 if (!skyPlacementReaderKey) throw new Error("The Sky placement reader is missing from the build manifest.");
 const skyReaderFiles = collectStaticManifestGraph(manifest, [skyPlacementReaderKey]);
-if ([...skyReaderFiles].some(file => file.includes("studio-editor-tools-"))) {
+const skyListReaderKey = Object.keys(manifest).find(key => key.endsWith('/fallbackArchitectureV3SkyListBundle.ts'));
+if (!skyListReaderKey) throw new Error('The initial Sky list reader is missing from the build manifest.');
+const skyListReaderFiles = collectStaticManifestGraph(manifest, [skyListReaderKey]);
+if ([...skyListReaderFiles].some(file => /fallback-content-sky-placement-(?!manifest-)/u.test(file))) {
+  throw new Error('The initial Sky list downloads the full legacy placement archive.');
+}
+if ([...skyReaderFiles, ...skyListReaderFiles].some(file => file.includes("studio-editor-tools-"))) {
   throw new Error("The Sky reader downloads Studio editor tools through a shared dependency.");
 }
 const appItem = filesByName.get(manifest[appKey].file);

@@ -137,7 +137,7 @@ assert.doesNotMatch(runtimeSource, /^import .*sky-(?:planet-frames|placement-inv
 assert.match(placementBundleSource, /bundled-sky-placement-rows-v3\.json/u);
 assert.match(readSource("apps/web/src/content/fallbackArchitectureV3SkyPlacementHouseBundle.ts"), /bundled-sky-placement-house-rows-v3\.json/u);
 assert.match(appSource, /const selection = recovery \? recovery\.selection : placementSelection;/u);
-assert.match(appSource, /prepareSkyPlacementSources\(selection \|\| undefined, compiledGuest \? \{ compiledGuest \} : undefined\)/u);
+assert.match(appSource, /prepareSkyPlacementSources\(selection \|\| undefined, \{\s*compiledGuest, initialList: isTodayMode && !skyDetailRoutePath\s*\}\)/u);
 const preparationSource = readSource("apps/web/src/services/skyPlacementHydration.ts");
 assert.match(preparationSource, /loadSkyPlacementFallbackArchitectureV3Bundle\(!selection \|\| selection\.startsWith\("article:"\)\)/u);
 assert.match(generatedContentSource, /tldrastro-fallback-architecture-v3-sky-placement/u);
