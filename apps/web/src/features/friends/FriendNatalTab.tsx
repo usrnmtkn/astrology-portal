@@ -1,3 +1,4 @@
+import { NatalChartReadings } from "../../components/NatalChartReadings";
 import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
 import type { NatalAspectPatternsSectionStatus } from "../you/NatalAspectPatternsSection";
@@ -34,8 +35,10 @@ export function FriendNatalTab({
   patternItems,
   patternStatus,
   patternTitle,
-  placementRows
+  placementRows,
+  natalSky
 }: {
+  natalSky?: import("../../types").SkySnapshot | null;
   bigThreeRows: SocialPlacementRow[];
   birthTimeUnknown: boolean;
   emptyHouseRows: FriendNatalEmptyHouseRow[];
@@ -78,6 +81,7 @@ export function FriendNatalTab({
   return (
     <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
       <div className="friend-profile-copy-column">
+        <NatalChartReadings snapshot={natalSky} audience="they" ownerName={friendName} disabled={isEventChart || birthTimeUnknown} />
         {patternStatus && (
           <NatalAspectPatternsSection
             items={patternItems}

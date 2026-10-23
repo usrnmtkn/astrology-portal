@@ -144,7 +144,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
   const profileBirthDate = options.profileBirthDate ?? "1990-01-01";
   const profileBirthDateTime = zonedDateTimeToUtc(
     profileBirthDate,
-    options.profileBirthTime ?? "12:00 PM",
+    options.profileBirthTime === "Time unknown" ? "12:00 PM" : options.profileBirthTime ?? "12:00 PM",
     fixtureLocation.timeZone
   );
   const shouldPreloadNatalSky = options.profile && options.preloadProfileNatalSky;
@@ -173,7 +173,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify(readerResponse(options.generatedInterpretations))
+        body: JSON.stringify(readerResponse(options.generatedInterpretations, options.contentPublications))
       });
       return;
     }
@@ -274,6 +274,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         aspectPatterns: options.aspectPatterns,
         location: fixtureLocation,
         generatedAt: "2026-06-16T16:00:00.000Z",
+        // Deliberately constructed, current natal fixture; retain its controlled
+        // positions rather than invoking the separate legacy repair workflow.
+        solarHorizon: { version: "solar-horizon-v1", instant: "2026-06-16T16:00:00.000Z", altitude: 30 },
         ascendant: signs[(11 + signOffset) % signs.length][0],
         ascendantLongitude: 351 + signOffset * 30,
         midheaven: signs[(8 + signOffset) % signs.length][0],
@@ -6146,4 +6149,143 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   await expect.poll(async () => (await friendDetail.locator('.sky-detail-section > p').allTextContents()).join('\n\n')).toBe(friendBody);
   await expectNoHorizontalOverflow(page, 'Moon Friend reader');
   errors();
+});
+
+
+for (const theme of ["light", "dark"] as const) for (const width of [1440, 390]) {
+  test(`Natal published readings reach You and Friend ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const sect = theme === "light" ? "day" : "night";
+    const rows: Array<Record<string, unknown>> = [];
+    const row = (key: string, body: string) => ({ id: key, content_key: key, surface: "natal", status: "LIVE", lane: "serving", review_state: null,
+      mode: "in_depth", updated_at: "2026-10-22T12:00:00Z", body, headline: "", summary: "", sections: {}, source_snapshot: { contentType: "mustache-template", contentSystem: "editorial-library" } });
+    for (const audience of ["you", "they"]) {
+      const subject = audience === "you" ? "You" : "{{ownerName}}";
+      rows.push(row(`cms/natal-twelfth-ruler/${audience}/introduction`, `${subject} introduction opening.\n\nComplete introduction final sentence.`));
+      for (let house = 1; house <= 12; house++) rows.push(row(`cms/natal-twelfth-ruler/${audience}/ruler-house/${house}`,
+        `${subject} ruler house ${house} opening.\n\nThe entire ruler house ${house} final sentence.`));
+      for (const period of ["day", "night"]) {
+        rows.push(row(`cms/natal-chart-context/${audience}/sect/${period}`, `${subject} ${period} overview opening.\n\nComplete ${period} overview final sentence.`));
+        for (const planet of ["jupiter", "venus", "mars", "saturn"]) rows.push(row(`cms/natal-planet-sect/${audience}/${planet}/${period}`,
+          `${subject} ${planet} ${period} opening.\n\nThe complete ${planet} ${period} final sentence.`));
+      }
+    }
+    await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true, preloadProfileNatalSky: true,
+      profileBirthDate: "1994-04-12", profileBirthTime: sect === "day" ? "12:00 PM" : "12:00 AM", theme, generatedInterpretations: rows, contentPublications: rows.map(row => ({ content_key: row.content_key, state: "live", revision: 1, row_id: row.id, row_updated_at: row.updated_at, published_at: row.updated_at, updated_at: row.updated_at })) });
+    await expectClientRouteLoads(page, "/#you");
+    await selectYouNatalTab(page);
+    const chartRegion = page.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true });
+    await expect(chartRegion).toContainText(`You ${sect} overview opening.`);
+    await expect(chartRegion).toContainText(`Complete ${sect} overview final sentence.`);
+    await expect(page.getByRole("region", { name: "Understanding Undoing", exact: true })).toContainText("Complete introduction final sentence.");
+    const rulerRegion = page.getByRole("region", { name: /^Twelfth-house ruler/ });
+    await expect(rulerRegion).toContainText(/You ruler house \d+ opening/);
+    await expect(rulerRegion).toContainText(/The entire ruler house \d+ final sentence/);
+    await page.reload();
+    await selectYouNatalTab(page);
+    await expect(chartRegion).toContainText(`Complete ${sect} overview final sentence.`);
+    const saturnRow = page.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first();
+    await saturnRow.click();
+    const youArticle = page.locator(".you-transit-article-page");
+    await expect(youArticle).toContainText(`You saturn ${sect} opening.`);
+    await expect(youArticle).toContainText(`The complete saturn ${sect} final sentence.`);
+    await expect(youArticle.locator("h1")).toContainText("Saturn");
+    await expectNoHorizontalOverflow(page, `natal You ${theme} ${width}`);
+    await page.goto("/#friends?tab=charts&chart=friend-nikki&view=natal");
+    const friendPane = page.locator('.friend-tab-pane[aria-label="Natal"]');
+    await expect(friendPane.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true })).toContainText(`Nikki ${sect} overview opening.`, { timeout: 60_000 });
+    await expect(friendPane).toContainText("Nikki introduction opening.");
+    await expect(friendPane).not.toContainText("{{ownerName}}");
+    await expect(friendPane).not.toContainText("Maya");
+    await friendPane.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first().click();
+    const friendArticle = page.locator(".sky-detail-article");
+    await expect(friendArticle).toContainText(`Nikki saturn ${sect} opening.`);
+    await expect(friendArticle).toContainText(`The complete saturn ${sect} final sentence.`);
+    await page.reload();
+    await expect(friendArticle).toContainText(`Nikki saturn ${sect} opening.`, { timeout: 60_000 });
+    await page.goto("/#friends?tab=charts&chart=friend-nikki&view=natal");
+    await page.evaluate(() => {
+      const key = "tldrastro:manualCharts:qa-flow-user";
+      const charts = JSON.parse(localStorage.getItem(key)!);
+      charts.find((chart: any) => chart.id === "friend-nikki").displayName = "Robin";
+      charts.find((chart: any) => chart.id === "friend-nikki").firstName = "Robin";
+      localStorage.setItem(key, JSON.stringify(charts));
+    });
+    await page.reload();
+    await expect(friendPane).toContainText(`Robin ${sect} overview opening.`, { timeout: 60_000 });
+    await expect(friendPane).not.toContainText(`Nikki ${sect} overview opening.`);
+    await expectSharedBodyContract(page, `natal Friend ${theme} ${width}`, [`section[aria-label="${sect === "day" ? "Day chart" : "Night chart"}"] .you-signatures-main p`, 'section[aria-label="Understanding Undoing"] p', 'section[aria-label^="Twelfth-house ruler"] p']);
+    await expectNoHorizontalOverflow(page, `natal Friend ${theme} ${width}`);
+    const comparison = friendPane.getByRole("button", { name: /^Read more about Empty .* (Scorpio|Aquarius|Pisces)$/ }).first();
+    await expect(comparison).toBeVisible();
+    await comparison.click();
+    await expect(friendArticle.getByRole("heading", { name: "Hellenistic interpretation", exact: true })).toBeVisible();
+    await expect(friendArticle.getByRole("heading", { name: "Modern interpretation", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
+    await page.screenshot({ path: `test-results/natal-readings-${theme}-${width}.png`, fullPage: true });
+  });
+}
+
+test("Natal published readings stay unavailable for unknown birth times", async ({ page }) => {
+  await seedClientState(page, { profile: true, profileBirthTime: "Time unknown" });
+  await expectClientRouteLoads(page, "/#you");
+  await selectYouNatalTab(page);
+  await expect(page.getByRole("region", { name: "Day chart", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Night chart", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Understanding Undoing", exact: true })).toHaveCount(0);
+});
+
+
+for (const sect of ["day", "night"] as const) test(`Natal approved saved bodies reach each person ${sect}`, async ({ page }) => {
+  test.skip(!process.env.NATAL_PUBLISHED_READER_SNAPSHOT, "Private approved-row snapshot is local opt-in only.");
+  test.setTimeout(120_000);
+  const saved = JSON.parse(readFileSync(process.env.NATAL_PUBLISHED_READER_SNAPSHOT!, "utf8"));
+  await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true, preloadProfileNatalSky: true,
+    profileBirthDate: "1994-04-12", profileBirthTime: sect === "day" ? "12:00 PM" : "12:00 AM",
+    generatedInterpretations: saved.rows, contentPublications: saved.publications });
+  const body = (key: string, name = "Nikki") => saved.rows.find((row: any) => row.content_key === key).body.replaceAll("{{ownerName}}", name);
+  for (const audience of ["you", "they"]) {
+    await page.goto(audience === "you" ? "/#you" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+    if (audience === "you") await selectYouNatalTab(page);
+    const overview = page.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true });
+    await expect(overview.locator(".you-signatures-main > p")).toHaveText(body(`cms/natal-chart-context/${audience}/sect/${sect}`).split(/\n{2,}/u), { timeout: 60_000 });
+    const introduction = page.getByRole("region", { name: "Understanding Undoing", exact: true });
+    await expect(introduction.locator(".you-signatures-main > p")).toHaveText(body(`cms/natal-twelfth-ruler/${audience}/introduction`).split(/\n{2,}/u));
+    const ruler = page.getByRole("region", { name: /^Twelfth-house ruler/ });
+    const label = await ruler.getAttribute("aria-label");
+    const house = label!.match(/(\d+)(?:st|nd|rd|th)/)![1];
+    await expect(ruler.locator(".you-signatures-main > p")).toHaveText(body(`cms/natal-twelfth-ruler/${audience}/ruler-house/${house}`).split(/\n{2,}/u));
+    for (const planet of ["Jupiter", "Venus", "Mars", "Saturn"]) {
+      await page.locator("button.placement-table-row").filter({ hasText: new RegExp(planet) }).first().click();
+      const article = page.locator(audience === "you" ? ".you-transit-article-page" : ".sky-detail-article");
+      const addition = article.getByRole("region", { name: sect === "day" ? "Day chart" : "Night chart", exact: true });
+      await expect(addition.locator("p")).toHaveText(body(`cms/natal-planet-sect/${audience}/${planet.toLowerCase()}/${sect}`).split(/\n{2,}/u));
+      await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+    }
+  }
+});
+
+test("Natal published readings distinguish an outage from missing writing and retry", async ({ page }) => {
+  const updatedAt = "2026-10-22T12:00:00Z";
+  const rows = ["day", "night"].map(sect => ({ id: `natal-retry-${sect}`, content_key: `cms/natal-chart-context/you/sect/${sect}`,
+    surface: "natal", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null, updated_at: updatedAt,
+    body: "Recovery fixture opening.\n\nThe complete recovery final sentence.", sections: {}, source_snapshot: { contentType: "manual" } }));
+  await seedClientState(page, { profile: true, preloadProfileNatalSky: true, generatedInterpretations: rows,
+    contentPublications: rows.map(row => ({ content_key: row.content_key, row_id: row.id, row_updated_at: updatedAt, state: "live", revision: 1, updated_at: updatedAt })) });
+  let fail = true;
+  await page.route("**/api/content-reader", async route => {
+    const query = route.request().postDataJSON();
+    if (fail && query.keys?.some((key: string) => key.startsWith("cms/natal-chart-context/"))) {
+      await route.fulfill({ status: 503, json: { error: "Synthetic reading outage" } });
+    } else await route.fallback();
+  });
+  await expectClientRouteLoads(page, "/#you");
+  await selectYouNatalTab(page);
+  const error = page.getByRole("alert").filter({ hasText: "Chart readings could not be loaded." });
+  await expect(error).toBeVisible();
+  fail = false;
+  await error.getByRole("button", { name: "Retry", exact: true }).click();
+  await expect(page.getByText("The complete recovery final sentence.", { exact: true })).toBeVisible();
+  await expect(error).toHaveCount(0);
 });

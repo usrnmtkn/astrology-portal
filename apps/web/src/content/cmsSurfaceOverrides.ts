@@ -8,6 +8,7 @@ import type { TemplateSlotValues } from "../services/templateInterpolation";
 import { skyDebilityFields } from "./skyDebilityCatalog";
 import { skyDebilityInterpretationKey } from "./skyDebilityInterpretation";
 import type { SkyDebilityDisplayPosition } from "./skyDebilityPresentation";
+import { emptyHouseCmsKeys } from "./emptyHouseRulership.js";
 
 export type CmsGeneratedContentMap = ReadonlyMap<string, LiveGeneratedContent>;
 
@@ -34,11 +35,7 @@ export const cmsSurfaceKeys = {
     `cms/chart-placement-row/${keyPart(planet)}`,
     "cms/chart-placement-row/template"
   ],
-  emptyHouse: (kind: "card" | "detail", voice: "you" | "they", house: number, sign: string) => [
-    `cms/natal-empty-house/${kind}/${voice}/${house}/${keyPart(sign)}`,
-    `cms/natal-empty-house/${kind}/${voice}/${house}`,
-    `cms/natal-empty-house/${kind}/${voice}/template`
-  ],
+  emptyHouse: emptyHouseCmsKeys,
   transitHouse: (voice: "you" | "they", planet: string, house: number, sign: string, motion: string) => [
     `cms/personal-transit-house/${voice}/${keyPart(planet)}/${house}/${keyPart(sign)}/${keyPart(motion)}`,
     `cms/personal-transit-house/${voice}/${keyPart(planet)}/${house}`,

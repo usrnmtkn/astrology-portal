@@ -409,10 +409,10 @@ assert.deepEqual(
   "The review contract must retain all 33 pre-assigned traditional house-1 keys."
 );
 
-assert.match(appSource, /const activeEmptyHouseRulerSystem: EmptyHouseRulerSystem = "modern"/u);
-assert.match(appSource, /const emptyHouseV14ModernSignRulers[\s\S]*?Scorpio: "Pluto"[\s\S]*?Aquarius: "Uranus"[\s\S]*?Pisces: "Neptune"/u);
-assert.match(appSource, /emptyHouseSignRulersBySystem[\s\S]*?traditional: traditionalSignRulers/u);
-assert.match(appSource, /function emptyHouseContext[\s\S]*?emptyHouseSignRulersBySystem\[activeEmptyHouseRulerSystem\]\[sign\][\s\S]*?positions\.find\(\(candidate\) => candidate\.planet === ruler\)/u);
+assert.match(appSource, /function emptyHouseContext[\s\S]*?rulerSystem: EmptyHouseRulerSystem = "traditional"[\s\S]*?emptyHouseRulerName\(sign, rulerSystem\)[\s\S]*?positions\.find\(\(candidate\) => candidate\.planet === ruler\)/u);
+assert.match(appSource, /emptyHouseContext\(house, natalSky, "modern"\)/u);
+assert.match(appSource, /heading: "Hellenistic interpretation"/u);
+assert.match(appSource, /heading: "Modern interpretation"/u);
 assert.doesNotMatch(appSource, /rulerOccurrence: emptyHouseRulerOccurrence/u);
 
 if (promoted) {

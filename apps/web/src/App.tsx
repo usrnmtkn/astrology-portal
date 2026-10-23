@@ -1,3 +1,4 @@
+import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
@@ -744,6 +745,7 @@ type CalendarContentCacheEntry = {
 };
 
 export type YouTransitArticle = {
+  natalPlanetReading?: import("./content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
   transitDescription?: string;
   id: string;
@@ -2220,28 +2222,6 @@ const lunarMeanDailyMotion = 13.176358;
 const traditionalSignRulers: Record<string, string> = Object.fromEntries(
   zodiacSigns.map((sign) => [sign, fallbackV3SignRuler(sign)])
 );
-type EmptyHouseRulerSystem = "modern" | "traditional";
-// Surface-local launch setting. The owner-authored traditional house-1 rows
-// will make the second option fully servable in the next additive phase.
-const activeEmptyHouseRulerSystem: EmptyHouseRulerSystem = "modern";
-const emptyHouseV14ModernSignRulers: Record<string, string> = {
-  Aries: "Mars",
-  Taurus: "Venus",
-  Gemini: "Mercury",
-  Cancer: "Moon",
-  Leo: "Sun",
-  Virgo: "Mercury",
-  Libra: "Venus",
-  Scorpio: "Pluto",
-  Sagittarius: "Jupiter",
-  Capricorn: "Saturn",
-  Aquarius: "Uranus",
-  Pisces: "Neptune"
-};
-const emptyHouseSignRulersBySystem: Record<EmptyHouseRulerSystem, Record<string, string>> = {
-  modern: emptyHouseV14ModernSignRulers,
-  traditional: traditionalSignRulers
-};
 
 function getInitialAccountIntent(): AuthMode {
   if (rememberStudioReturnPath()) return "login";
@@ -7051,13 +7031,14 @@ function displayRulerName(ruler: string) {
 
 function emptyHouseContext(
   house: number,
-  natalSky: SkySnapshot | null
+  natalSky: SkySnapshot | null,
+  rulerSystem: EmptyHouseRulerSystem = "traditional"
 ) {
   const sign = natalSky?.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : "";
-  const ruler = sign ? emptyHouseSignRulersBySystem[activeEmptyHouseRulerSystem][sign] ?? "" : "";
+  const ruler = emptyHouseRulerName(sign, rulerSystem);
   const rulerPosition = ruler ? natalSky?.positions.find((candidate) => candidate.planet === ruler) ?? null : null;
 
-  return { sign, ruler, rulerPosition, rulerSystem: activeEmptyHouseRulerSystem };
+  return { sign, ruler, rulerPosition, rulerSystem };
 }
 
 type EmptyHouseSlot = "card-summary" | "house-sign" | "ruler-guide" | "ruler-placement" | "activation" | "hint";
@@ -7110,7 +7091,7 @@ function normalizeEmptyHouseCardSurface(
   const voice = context === "self" ? "you" : "they";
   const override = resolveCmsSurfaceOverride(
     generatedContent,
-    cmsSurfaceKeys.emptyHouse("card", voice, house, sign),
+    cmsSurfaceKeys.emptyHouse("card", voice, house, sign, rulerSystem),
     {
       house,
       houseOrdinal: ordinalHouse(house),
@@ -7212,7 +7193,8 @@ function normalizeEmptyHouseDetailSurface({
   rulerSystem,
   rulerPosition,
   sign,
-  generatedContent
+  generatedContent,
+  rulerOnly = false
 }: {
   compositionContext: "self" | "friend";
   context: "self" | "friend";
@@ -7224,6 +7206,7 @@ function normalizeEmptyHouseDetailSurface({
   rulerPosition: PlanetPosition | null;
   sign: string;
   generatedContent?: GeneratedContentMap;
+  rulerOnly?: boolean;
 }): NormalizedEmptyHouseArticle {
   void compositionContext;
   void context;
@@ -7238,7 +7221,7 @@ function normalizeEmptyHouseDetailSurface({
   const voice = context === "self" ? "you" : "they";
   const override = resolveCmsSurfaceOverride(
     generatedContent,
-    cmsSurfaceKeys.emptyHouse("detail", voice, house, sign),
+    cmsSurfaceKeys.emptyHouse("detail", voice, house, sign, rulerSystem),
     {
       house,
       houseOrdinal: ordinalHouse(house),
@@ -7277,7 +7260,7 @@ function normalizeEmptyHouseDetailSurface({
       sign: normalizeContentIdPart(sign),
       voice
     }, { includeEmptyHouseBridge: true });
-    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
+    const body = fullDetailReaderFacingCopy(rulerOnly ? rendered.parts.slice(1) : rendered.parts) ?? "";
     const section = normalizedEmptyHouseSection(
       "house-sign",
       rendered.headline || `${ordinalHouse(house)} house sign`,
@@ -7341,6 +7324,16 @@ function emptyHouseDetailArticle(
     generatedContent
   });
   const paragraphs = normalized.sections.map((section) => taggedSectionBody(section));
+  const modernContext = emptyHouseRulerSystems(sign).includes("modern")
+    ? emptyHouseContext(house, natalSky, "modern") : null;
+  const modernReading = modernContext ? normalizeEmptyHouseDetailSurface({
+    compositionContext, context, house, natalSky, ownerAwareParagraph,
+    ...modernContext, generatedContent, rulerOnly: true
+  }) : null;
+  const modernParagraphs = modernReading?.sections.map((section) => taggedSectionBody(section)) ?? [];
+  const rulerMeta = (label: string, position: PlanetPosition | null) => ({
+    label, value: position?.house ? `${position.sign} · ${ordinalHouse(position.house)} House` : ""
+  });
 
   return {
     id: `empty-house-${house}-${normalizeContentIdPart(sign || "unknown")}`,
@@ -7351,15 +7344,22 @@ function emptyHouseDetailArticle(
     compactHeader: true,
     plainBody: true,
     bodyBeforeSections: true,
-    body: paragraphs,
+    body: modernContext ? [] : paragraphs,
     summary: "",
     summaryHeading: "",
-    sections: [],
+    sections: modernContext ? [
+      ...(paragraphs.length ? [{ heading: "Hellenistic interpretation", tldr: "", body: paragraphs.join("\n\n") }] : []),
+      ...(modernParagraphs.length ? [{ heading: "Modern interpretation", tldr: "", body: modernParagraphs.join("\n\n") }] : [])
+    ] : [],
     meta: [
       { label: "House", value: `${ordinalHouse(house)} House` },
       { label: "Sign", value: sign },
-      { label: "Ruler", value: ruler },
-      { label: "Ruler placement", value: rulerPosition?.house ? `${rulerPosition.sign} · ${ordinalHouse(rulerPosition.house)} House` : "" }
+      { label: "Hellenistic ruler", value: ruler },
+      rulerMeta(`${ruler} placement`, rulerPosition),
+      ...(modernContext ? [
+        { label: "Modern ruler", value: modernContext.ruler },
+        rulerMeta(`${modernContext.ruler} placement`, modernContext.rulerPosition)
+      ] : [])
     ]
   };
 }
@@ -16116,6 +16116,12 @@ function natalPlacementDetailArticle(
 
   return {
     id: natalPlacementRouteId(position),
+    natalPlanetReading: natalSky && ownerContext?.ownerKind !== "chart" ? {
+      snapshot: natalSky,
+      audience: ownerContext ? "they" : "you",
+      ownerName: ownerContext?.ownerName,
+      planet: position.planet
+    } : undefined,
     pills: {
       dignity: ownerContext ? dignitiesFor(position.planet, position.sign, "they") : placementDignity(position),
       statuses: isDisplayRetrograde(position) ? [{ label: "RETROGRADE", tone: "retrograde" }] : []

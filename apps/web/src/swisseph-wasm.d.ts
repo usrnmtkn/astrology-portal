@@ -15,6 +15,8 @@ declare module "swisseph-wasm" {
     readonly SEFLG_SWIEPH: number;
     readonly SEFLG_MOSEPH: number;
     readonly SEFLG_SPEED: number;
+    readonly SEFLG_EQUATORIAL: number;
+    readonly SE_ECL2HOR: number;
 
     readonly SweModule: {
       _malloc(size: number): number;
@@ -32,6 +34,12 @@ declare module "swisseph-wasm" {
     initSwissEph(): Promise<void>;
     julday(year: number, month: number, day: number, hour: number): number;
     calc_ut(jd: number, planet: number, flags: number): Float64Array;
+    sidtime(jd: number): number;
+    azalt(jd: number, flag: number, geopos: number[], pressure: number, temperature: number, coordinates: ArrayLike<number>): {
+      azimuth: number;
+      trueAltitude: number;
+      apparentAltitude: number;
+    };
     houses(jd: number, latitude: number, longitude: number, hsys: string): {
       cusps: Float64Array;
       ascmc: Float64Array;

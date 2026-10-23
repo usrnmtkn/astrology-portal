@@ -913,6 +913,7 @@ export function ManualChartsPanel({
 
     return {
       pills: article.pills,
+      natalPlanetReading: article.natalPlanetReading,
       glyph: article.glyph || pointGlyph(position.planet),
       kicker: "",
       title: article.title,
@@ -2150,6 +2151,24 @@ export function ManualChartsPanel({
       }))
     });
   };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (!route?.detail || route.view !== "natal" || route.chartId !== selectedChart?.id || !selectedFriendReadyNatalChart) return;
+    const refreshKey = `natal:${connectionNavigation}:${route.chartId}:${route.detail}:${selectedChart.updatedAt}:${selectedChart.displayName}:${fallbackArchitectureV3Version}`;
+    if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
+    const placement = selectedFriendPlacementRows.find(row => `natal-placement-${normalizeContentIdPart(row.label)}` === route.detail);
+    if (placement && placement.detailAvailable !== false) {
+      friendRouteDetailRefreshKeyRef.current = refreshKey;
+      openFriendNatalPlacementDetail(placement);
+      return;
+    }
+    const house = /^empty-house-([1-9]|1[0-2])$/u.exec(route.detail);
+    if (house && selectedFriendEmptyHouses.includes(Number(house[1]))) {
+      friendRouteDetailRefreshKeyRef.current = refreshKey;
+      openFriendEmptyHouseDetail(Number(house[1]));
+    }
+  }, [connectionNavigation, selectedChart, selectedFriendReadyNatalChart, selectedFriendPlacementRows, selectedFriendEmptyHouses, fallbackArchitectureV3Version]);
+
   const openFriendHouseTransitDetail = (
     card: (typeof selectedFriendHouseTransitCards)[number]
   ) => {
@@ -2920,6 +2939,7 @@ export function ManualChartsPanel({
 
           {friendProfileTab === "natal" && (
             <FriendNatalTab
+              natalSky={selectedFriendReadyNatalChart}
               bigThreeRows={selectedFriendBigThreeDisplayRows}
               birthTimeUnknown={selectedChart.birthTimeUnknown}
               emptyHouseRows={selectedFriendEmptyHouseViewRows}

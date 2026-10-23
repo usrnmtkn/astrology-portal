@@ -254,8 +254,33 @@ The libraries use `cms/natal-twelfth-ruler/{you|they}/introduction`,
 `cms/natal-planet-sect/{you|they}/{jupiter|venus|mars|saturn}/{day|night}`.
 Missing writing opens a blank draft. Failed reads require retry and cannot be
 mistaken for missing content. Saving uses the normal version-checked editor;
-deployment never approves or publishes these drafts. Reader integration is a
-separate requirement from making a source editable.
+deployment never approves or publishes these drafts.
+
+The You Natal Chart and Friend Natal tab select the published overview,
+Understanding Undoing and one Hellenistic twelfth-house ruler destination.
+The ruler reading applies to both occupied and empty twelfth houses. Jupiter,
+Venus, Mars and Saturn placement details add the matching planetary sect passage
+after the existing interpretation. No sign-specific claims are inferred from a
+general sect passage. Existing foundation copy remains intact.
+
+`natalChartReadings.ts` selects exact library keys from reliable natal facts.
+`NatalChartReadings.tsx` loads only the selected LIVE, serving, review-clear rows
+through the public reader and interpolates the Friend name without changing the
+stored template or deduplicating paragraphs. Publication retirement and revisions
+retain the shared reader's admission rules. Unknown birth time omits the timed
+sections; a solar altitude within 0.25 degrees of the horizon omits sect while a
+reliable house calculation can still select the ruler reading. This margin is an
+application reliability policy, not an additional astrological doctrine.
+
+The browser engine records geometric solar-centre altitude from Swiss equatorial
+coordinates and sidereal time. Shared account charts retain only the day/night
+result, without the birth instant or horizon receipt. Existing manual charts use
+their repair flow to refresh older calculations. No generation occurs on reading.
+`npm run test:natal-chart-readings` checks direct Swiss horizontal coordinates,
+all 46 identities, Hellenistic rulers and exact name/body handling. The fresh
+browser matrix is `npx playwright test -c playwright.reader-release.config.ts
+ tests/visual/client-facing-user-flows.spec.ts --grep "Natal published readings"`.
+
 
 The owner can publish these reusable library sources with Save & publish. The
 publication guard recognizes only the registered natal library keys with matching

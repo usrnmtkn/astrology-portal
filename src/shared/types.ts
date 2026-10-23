@@ -70,6 +70,8 @@ export type SkyPlacementAspectFacts = {
 };
 
 export type SkySnapshot = {
+  solarHorizon?: import("./solarHorizon.js").SolarHorizon;
+  sharedNatalSect?: import("./solarHorizon.js").SharedNatalSect;
   dailyEvents?: import("../../apps/web/src/services/ephemeris").LunarCalendarEvent[];
   placementAspectFacts?: SkyPlacementAspectFacts;
   location: LocationInput;

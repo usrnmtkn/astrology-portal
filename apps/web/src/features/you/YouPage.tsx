@@ -1,3 +1,4 @@
+import { NatalChartReadings } from "../../components/NatalChartReadings";
 import { ViewportMenu } from "../../components/ViewportMenu";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
@@ -75,6 +76,7 @@ export type DailyHoroscopeAssembly = {
 };
 
 export type YouTransitArticle = {
+  natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
   transitDescription?: string;
   id: string;
@@ -994,7 +996,8 @@ function YouTransitArticlePage({
         .filter((paragraph, paragraphIndex) => !(paragraphIndex === 0 && sourceTag && paragraph === sourceTag))
         // Axis cards retain both complete source units, even when an authored
         // paragraph occurs in each. Deduplication must not edit either unit.
-        .filter((paragraph) => displayArticle.id.startsWith("personal-aspect:") || !isDuplicateArticleCopy(paragraph, seenCopy));
+        .filter((paragraph) => displayArticle.id.startsWith("personal-aspect:")
+          || displayArticle.id.startsWith("empty-house-") || !isDuplicateArticleCopy(paragraph, seenCopy));
       const displayTldr = tldr && !contentSourceQaTag(section.tldr) && !isDuplicateArticleCopy(tldr, seenCopy) ? tldr : "";
 
       return {
@@ -1128,6 +1131,7 @@ function YouTransitArticlePage({
                 </section>
                 );
               })}
+              {displayArticle.natalPlanetReading ? <NatalChartReadings {...displayArticle.natalPlanetReading} /> : null}
               {passKeyDates.length ? (
                 <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="you-transit-key-dates-title">
                   <h2 id="you-transit-key-dates-title">Key dates</h2>
@@ -1393,6 +1397,8 @@ export function YouPage({
           />
 
           {profileTab === "chart" && (
+            <>
+            <NatalChartReadings snapshot={natalSky} audience="you" />
             <YouNatalTab
               bigThreeRows={bigThreeRows}
               elementalSummaryLabel={elementalSummaryLabel}
@@ -1408,6 +1414,7 @@ export function YouPage({
               signatureBody={signatureBody}
               signatureTitle={signatureTitle}
             />
+            </>
           )}
 
           {profileTab === "transits" && (
