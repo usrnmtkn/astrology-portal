@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
@@ -54,6 +55,7 @@ async function openSunInVirgo(page: import('@playwright/test').Page) {
   await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('sun');
   await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel('Sky write-up motion').selectOption('direct');
   return errors;
 }

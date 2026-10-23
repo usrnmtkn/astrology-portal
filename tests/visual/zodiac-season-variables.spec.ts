@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
@@ -30,6 +31,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    const selectSunVirgo = async () => {
     await page.getByLabel('Sky placement planet or point').selectOption('sun');
     await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
+    await openSkyPlacementSourceDetails(page);
    };
    await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
    await selectSunVirgo();

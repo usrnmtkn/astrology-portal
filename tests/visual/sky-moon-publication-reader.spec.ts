@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test } from "@playwright/test";
 import { studioApiStore } from "../helpers/studio-api-store";
 import { moonStudioRows } from "../helpers/sky-moon-studio";
@@ -51,6 +52,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    await page.goto("/admin/content#sky-writeups");
    await page.getByLabel("Sky placement planet or point").selectOption("moon");
    await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
+   await openSkyPlacementSourceDetails(page);
+   await page.getByText("Content library sources", { exact: true }).click();
    const map = page.getByRole("region", { name: "Sky placement composition map" });
    const table = page.getByRole("complementary", { name: "Sky write-up rows" });
    const keys = skyMoonWriteupKeys("cancer");
@@ -100,6 +103,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.reload();
     await page.getByLabel("Sky placement planet or point").selectOption("moon");
     await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
+    await openSkyPlacementSourceDetails(page);
+    await page.getByText("Content library sources", { exact: true }).click();
     for (let section = 0; section < keys.length; section++) await expect(map.getByRole("button", { name: `Edit ${labels[section].toLowerCase()}`, exact: true })).toHaveText(copies[section]);
     await expect(table.getByRole("row").filter({ hasText: `Moon in Cancer · ${labels[index]}` }).locator(".studio-status-badge:visible").first()).toHaveText("Live");
    }

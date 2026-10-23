@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 
@@ -153,6 +154,8 @@ test("placement filters keep the composition, keyword results, advanced filters 
   await expect(list).not.toContainText("Mars in Taurus");
   await filters.getByLabel("Sky placement zodiac sign").selectOption("aries");
   await filters.getByLabel("Sky write-up motion").selectOption("direct");
+  await openSkyPlacementSourceDetails(page);
+  await page.getByText("Content library sources", { exact: true }).click();
   await expect(map.getByRole("heading", { level: 3, name: "Saturn in Aries", exact: true })).toBeVisible();
   await expect(map.getByLabel("Composition planet or point", { exact: true })).toHaveCount(0);
   await expect(map.getByLabel("Composition zodiac sign", { exact: true })).toHaveCount(0);

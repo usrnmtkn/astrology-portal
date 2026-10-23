@@ -1,3 +1,4 @@
+import { openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { fork } from "node:child_process";
@@ -73,6 +74,7 @@ async function openStudioPage(page: Page, name: string) {
 async function selectSaturnPlacement(page: Page) {
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementDefaultReading(page);
 }
 
 for (const { status, width, theme, late, action } of [
