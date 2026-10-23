@@ -162,7 +162,7 @@ for (const width of [390, 1440]) test(`Sky list reads published editions alongsi
   } finally { release(); }
   // Parallel transport cannot authorize a missing published edition or expose
   // the bundled alternative as a completed reading.
-  await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible();
+  await expect(page.getByText('The placement readings could not load. Please try again.', { exact: true })).toBeVisible();
 });
 
 for (const width of [390, 1440]) test(`Cold article stages core transport behind its complete publication gate ${width}`, async ({ page }) => {
