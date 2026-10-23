@@ -106,7 +106,7 @@ function governedInstructionsForRole(role, {
   const reviewerGovernance = role === "REVIEWER"
     ? "MODEL REVIEW GOVERNANCE: Model editorial findings are advisory except the three evidenced contextual rhetorical-pattern blockers. Do not claim approval authority, and do not use severity to authorize an automatic rewrite."
     : "";
-  const proseInstructions = GHOSTWRITING_ROLES.has(role) ? withGhostwritingSkill(canonical) : canonical;
+  const proseInstructions = GHOSTWRITING_ROLES.has(role) ? withGhostwritingSkill(canonical, {surface, family}) : canonical;
   const base = [proseInstructions, effectiveRules, reviewerGovernance].filter(Boolean).join("\n\n");
   return taskInstructions.trim() ? `${base}\n\n${taskInstructions.trim()}` : base;
 }

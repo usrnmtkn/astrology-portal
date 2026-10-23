@@ -6075,7 +6075,7 @@ export async function generateSkyArticleTemplateSlots(
   ].join("\n\n");
   // Private corrections must not enter prompt-shadow artifacts or row snapshots.
   const narrativeIngress = datedIngress && isSkyIngressArticle(input.facts.articleFormat);
-  const prompt = [transitContext?.prompt ?? publicPrompt, datedIngress ? input.ingressTemplateReference?.prompt : undefined, input.seasonMeaning?.prompt, memory?.prompt, writingFeedback.prompt,
+  const prompt = [transitContext?.prompt ?? publicPrompt, input.seasonMeaning?.prompt, memory?.prompt, writingFeedback.prompt,
     input.ingressWriting?.prompt,
     // Finish the narrative request with the complete positive prose sources,
     // rather than a late instruction to produce independent technical blocks.

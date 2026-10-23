@@ -2,7 +2,6 @@ import { INGRESS_WRITER_CONTRACT, ingressWriterContractReceipt } from '../api/_l
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { ingressFixtureValues } from './fixtures/sky-ingress-writing.mjs';
-import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { RHETORICAL_WRITER_POLICY } from '../src/astro-writing/rhetoricalPatterns.mjs';
 import { validateExplicitWritingFeedback } from '../src/astro-writing/explicitWritingFeedback.mjs';
 import { approvedVoiceStyleReference } from '../src/astro-writing/approvedVoiceStyle.mjs';
@@ -66,6 +65,10 @@ function assertSummaryGuidance(provider: string, prompt: string, schema: any, sy
   const narrative = Boolean(schema.properties.slotValues.properties.articleBody);
   if (narrative) {
     const completeRequest = `${system}\n\n${prompt}\n\n${JSON.stringify(schema)}`;
+    doesNotMatch(completeRequest, /Keep the reason a response can feel compelling|develop how the planet's function interacts/,
+      'The assembled ingress request must omit the shared analytical craft assignment.');
+    assert(!completeRequest.includes(JSON.stringify(template.body))&&!completeRequest.includes(template.body),
+      'The saved prose template is retained for provenance, outside every provider instruction and input.');
     assert.equal(completeRequest.split('Effective TLDR Astro writing rules (').length - 1, 1,
       'The complete provider request must contain one scoped rule bundle, including article memory.');
     doesNotMatch(completeRequest, /Use a specific situation, a direct consequence, a useful next move/,
@@ -82,6 +85,12 @@ function assertSummaryGuidance(provider: string, prompt: string, schema: any, sy
     matches(completeRequest, /including contractions where natural/);
     const evidence=JSON.parse(prompt.match(/DATED INGRESS COVERAGE AND EVENT MEANING\n\n([^\n]+)/u)![1]);
     assert.equal(JSON.stringify(evidence).split('Fall is opposite exaltation.').length-1,1);
+    assert.equal(evidence.calendarReference.role,'date-reference-only');
+    assert.equal(evidence.technicalReference.role,'accuracy-reference-only');
+    assert(!Object.hasOwn(evidence,'requiredDates')&&!Object.hasOwn(evidence,'participantConditions'),
+      'Calendar and technical evidence must not be flattened into prose assignments.');
+    matches(prompt,/These events do not assign prose paragraphs/);
+    assert.equal(system.split(INGRESS_WRITER_CONTRACT.ghostwriter).length-1,1);
     if (liveCorrections) {
       for (const text of [syntheticPassageFeedback.before_text, syntheticPassageFeedback.after_text])
         assert(prompt.includes(JSON.stringify(text).slice(1,-1)), 'Keep complete scoped passage correction documents.');
@@ -100,7 +109,7 @@ function assertSummaryGuidance(provider: string, prompt: string, schema: any, sy
     matches(prompt, /Write one complete dated ingress article in articleBody/);
     doesNotMatch(prompt, /ingressTransitBody\d|100–180|120–180|60–100|INGRESS ESSAY FORMAT/);
     assert(Object.keys(schema.properties.slotValues.properties).every(name => ['what', 'takeaway', 'articleBody', 'priorOccurrenceSection'].includes(name)));
-    matches(prompt, /WRITER CONTRACT ingress-article\/v6-2026-10-22/);
+    matches(prompt, /WRITER CONTRACT ingress-article\/v7-2026-10-23/);
     assert.equal(schema.properties.slotValues.properties.articleBody.description,
       skyIngressArticleFields.find(field => field.name === 'articleBody')!.description);
     const meaningPosition = prompt.indexOf('DATED INGRESS COVERAGE AND EVENT MEANING');
@@ -133,8 +142,7 @@ function assertSummaryGuidance(provider: string, prompt: string, schema: any, sy
     'The scoped system authority is not repeated as multi-surface user guidance.');
   assert.equal(prompt.split(RHETORICAL_WRITER_POLICY).length - 1, 1,
     'Keep the complete contextual rhetorical policy exactly once.');
-  assert(prompt.includes(JSON.stringify(template.body)), 'Keep the saved article reference complete instead of discarding its event-led structure.');
-  matches(prompt, /COMPLETE SAVED INGRESS TEMPLATE REFERENCE/);
+  doesNotMatch(prompt, /COMPLETE SAVED INGRESS TEMPLATE REFERENCE/);
   const style = approvedVoiceStyleReference({ surface: 'sky', family: 'sky-ingress-essay' });
   for (const reference of [style.reference, ...style.supportingReferences.map(entry => entry.reference)]) {
     assert.equal(prompt.split(JSON.stringify(reference.text)).length - 1, 1,
@@ -222,8 +230,8 @@ try {
       assert.equal(request.instructions.split(INGRESS_WRITER_CONTRACT.authority).length - 1, 1);
       doesNotMatch(request.instructions, /TRANSIT AND INGRESS EDITORIAL AUTHORITY|Friend personal-transit fields/);
       matches(request.instructions, /not a default paragraph ending/);
-      assert.equal(request.instructions.split(GHOSTWRITING_SKILL_INSTRUCTIONS).length - 1, 1,
-        'The dated writer receives the complete current Ghostwriter policy once.');
+      assert.equal(request.instructions.split(INGRESS_WRITER_CONTRACT.ghostwriter).length - 1, 1,
+        'The dated writer receives its scoped Ghostwriter guidance once.');
       assert.equal(request.model, 'gpt-5.6-sol', 'The dated ingress route uses its documented scoped writer.');
       assert.equal(request.reasoning.effort, 'xhigh');
       doesNotMatch(request.instructions, /SKY PLACEMENT ARTICLE SPINE|cultural rule and beneficiary|Maintain register consistently\. These sign cores/);
@@ -237,8 +245,8 @@ try {
       assert.equal(request.system.split(INGRESS_WRITER_CONTRACT.authority).length - 1, 1);
       doesNotMatch(request.system, /TRANSIT AND INGRESS EDITORIAL AUTHORITY|Friend personal-transit fields/);
       matches(request.system, /not a default paragraph ending/);
-      assert.equal(request.system.split(GHOSTWRITING_SKILL_INSTRUCTIONS).length - 1, 1,
-        'The Claude dated writer receives the same complete Ghostwriter policy.');
+      assert.equal(request.system.split(INGRESS_WRITER_CONTRACT.ghostwriter).length - 1, 1,
+        'The Claude dated writer receives the same scoped Ghostwriter guidance.');
       doesNotMatch(request.system, /SKY PLACEMENT ARTICLE SPINE/);
       return Response.json({ id: 'synthetic-claude-ingress', content: [{ type: 'tool_use', name: 'tldr_astro_sky_article_template_slots',
         input: { slotValues: ingressFixtureValues(request.messages[0].content[0].text, requested) } }] });
@@ -309,7 +317,7 @@ try {
   assert(!requested.includes('otherDatesSection'), 'The app assembles required dates instead of delegating fact copying.');
   assert(result.generation.requestedSlots.includes('articleBody'), 'Public article fields remain unchanged.');
   assert.deepEqual(result.blockedSlots.map((slot: any) => slot.name), ["priorOccurrenceSection"]);
-  matches(prompts[0], /WRITER CONTRACT ingress-article\/v6/);
+  matches(prompts[0], /WRITER CONTRACT ingress-article\/v7/);
   matches(prompts[0], /astronomy-explanation-only/);
   matches(prompts[0], /after-ingress-window/);
   matches(prompts[0], /ZODIAC SEASON MEANING SOURCES/);
@@ -319,7 +327,7 @@ try {
     ['zodiac-season', 'learning-axis', 'calendar-season']);
   assert(!requested.includes('legacyField'), 'A placeholder in the structural reference never becomes a new writer output key.');
   assert.equal(result.slotValues.legacyField, undefined);
-  assert.equal(result.generation.generationMetadata.evidencePacket.ingressTemplateReference.role, 'structure-only');
+  assert.equal(result.generation.generationMetadata.evidencePacket.ingressTemplateReference.role, 'provenance-only');
   assert.equal(result.generation.generationMetadata.evidencePacket.approvedVoiceStyle.id, 'libra-ingress-voice-benchmark-20261021');
   assert.equal(result.generation.generationMetadata.evidencePacket.approvedVoiceStyle.supportingReferences[0].id, 'sun-scorpio-ingress-voice-20261020');
   const mismatch = await invoke(slotsHandler, "POST", "/api/admin/sky-article-template-slots", {
@@ -442,7 +450,7 @@ try {
   assert.deepEqual(result.facts.events, facts.events, 'The authenticated Studio response retains complete calculated event evidence.');
   const sentPlan = JSON.parse(prompts.at(-1)!.match(/DATED INGRESS COVERAGE AND EVENT MEANING\n\n([^\n]+)/u)![1]);
   assert.deepEqual(sentPlan.coverage, facts.eventCoverage);
-  assert(sentPlan.requiredDates.some((event: any) => event.event.title === 'Full Moon in Aries'));
+  assert(sentPlan.calendarReference.events.some((event: any) => event.event.title === 'Full Moon in Aries'));
   assert.deepEqual(sentFacts.eventCoverage, facts.eventCoverage);
   const beforeInspect = prompts.length;
   const inspect = await invoke(slotsHandler, 'GET', '/api/admin/sky-article-template-slots?inspect=ingress-voice');
