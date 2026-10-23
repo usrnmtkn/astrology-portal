@@ -4373,11 +4373,11 @@ export function GeneratedContentAdminDashboard() {
       setSkyWriteupMotionFilter("all");
       setSkyWriteupDestinationFilter("all");
     }
-    if (page === "skyWriteups" && search === null) {
+    if (page === "skyWriteups" && search === null && (!view || view === "catalog")) {
       const planet = params.get("planet");
       const sign = params.get("sign");
-      if (planet && skyPlacementBodies.includes(planet as typeof skyPlacementBodies[number])) setSkyPlacementBody(planet);
-      if (sign && skyPlacementSigns.includes(sign as typeof skyPlacementSigns[number])) setSkyPlacementSign(sign);
+      setSkyPlacementBody(planet && skyPlacementBodies.includes(planet as typeof skyPlacementBodies[number]) ? planet : "all");
+      setSkyPlacementSign(sign && skyPlacementSigns.includes(sign as typeof skyPlacementSigns[number]) ? sign : "all");
     }
     setFocusSunSummaries(params.get("section") === "sun");
     setCalendarWriteupWorkspaceView(page === "calendarWriteups" && calendarWriteupWorkspaceTabs.some(tab => tab.value === view) ? view as CalendarWriteupWorkspaceView : "daily-sky");
