@@ -720,7 +720,7 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
-The shared synastry writer uses `synastry-aspect/v7-2026-10-21` for directional
+The shared synastry writer uses `synastry-aspect/v10-2026-10-22` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,
 fixed paragraph count or instruction to keep planetary reasoning out of the body.
@@ -876,6 +876,26 @@ the hash check. Requests without designated references retain their existing
 registered-owner retrieval; this change does not populate a new private reference
 store or silently change saved Studio profiles. Hash-only generation receipts
 identify the selected benchmarks and keep an empty feedback selection visible.
+
+The v10 writer assembly orders context by evidence role. Complete knowledge,
+existing-draft context, meaning-only planning and complete scoped rejections
+precede the selected complete positive voice passages. A final reader brief
+then binds the addressed person to their planet and distinguishes internal
+Person A / Person B labels from reader names. Neither provider appends a plan,
+knowledge packet or rejected draft after those positive references. Current
+owner corrections retain precedence over historical examples regardless of
+their position; a proposed rewrite inside rejection feedback remains negative
+evidence, never an approved benchmark.
+
+This changes request ordering, not source selection, protected wording, model
+settings, schemas, provider stages, retry budgets or admission. Private feedback
+remains outside the public evidence shadow, with its existing hash receipt.
+The actual-handler regression checks both reader directions and both providers,
+complete rejected text/reasons and positive passages, missing reader identity,
+and requests without designated benchmarks. Offline captures can establish
+this assembly and preserve the eight existing cases without generating new
+prose. They cannot establish a Satori voice match. The rejected sample stays
+rejected; further generation and exact prose approval remain separate decisions.
 
 Actual-handler fixtures cover both providers, complete designated references,
 no adjacent-article padding, exact-member correction delivery and scope isolation.
