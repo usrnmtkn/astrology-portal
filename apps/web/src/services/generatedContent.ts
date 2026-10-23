@@ -1119,7 +1119,7 @@ export function prefetchColdSkyArticleRows(publications: Promise<void>): ColdSky
           && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date)))
   };
   let consumed = false;
-  const request = getSupabaseClient().then(client => client
+  const request = publicReaderAvailable().then(client => client
     ? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope: "sky-article" }, signal, admission)
     : { data: null, error: new Error("Reader storage is unavailable.") }, error => ({ data: null, error }))
     .finally(() => { if (pendingColdSkyArticleRead === entry) pendingColdSkyArticleRead = undefined; });
@@ -1140,7 +1140,7 @@ function prefetchColdSkyKeys(keys: Promise<string[]>, publications: Promise<void
   let consumed = false, admissionEnabled = true;
   const request = keys.then(async candidates => {
     const selected = [...new Set(candidates)];
-    if (!selected.length || selected.length > limit || signal.aborted || !await getSupabaseClient() || !admissionEnabled || signal.aborted) {
+    if (!selected.length || selected.length > limit || signal.aborted || !await publicReaderAvailable() || !admissionEnabled || signal.aborted) {
       return { data: null, error: null };
     }
     return loadReaderRows({ keys: selected }, signal, {

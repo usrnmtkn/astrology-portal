@@ -20,7 +20,8 @@ async function deliveredValues(name) {
 }
 
 const sources = [
-  ["bundled-sky-core-rows-v3.json", "fallback-content-sky-core"],
+  ["initial-sky-core-transport-v1.json", "fallback-content-sky-core"],
+  ["deferred-reader-support-transport-v1.json", "fallback-content-reader-support"],
   ["bundled-sky-authored-cards-v3.json", "fallback-content-sky-core"],
   ["bundled-initial-reader-rows-v3.json", "fallback-content-sky-core"],
   ["authored-inputs/owner-authored-sky-placement-house-passages-v1.json", "fallback-content-sky-placement"],

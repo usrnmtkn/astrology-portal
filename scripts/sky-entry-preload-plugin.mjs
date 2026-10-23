@@ -28,7 +28,7 @@ export function skyEntryPreloadPlugin() {
           && Object.keys(chunk.modules ?? {}).some(id => id.endsWith("/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")));
         if (!placements) throw new Error("Sky preload could not locate the built placement rows.");
         visit(placements.fileName);
-        return [{ tag: "script", injectTo: "head", children:
+        return [{ tag: "script", injectTo: "head-prepend", children:
           `(()=>{if(location.pathname!=="/"||!(${isInitialSkyReaderHash.toString()})(location.hash))return;const files=!location.hash||/^#\\/?sky\\/?$/.test(location.hash)?${JSON.stringify(appFiles)}:${JSON.stringify([...files])};for(const file of files){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.href=href;document.head.appendChild(link);}})();`
         }];
       }

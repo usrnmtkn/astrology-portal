@@ -345,7 +345,11 @@ export default defineConfig(({ mode }) => {
               return "fallback-content-lunation-book";
             }
             if (
+              id.includes("fallbackArchitectureV3/deferred-reader-support-transport-v1.json")
+            ) return "fallback-content-reader-support";
+            if (
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
+              || id.includes("fallbackArchitectureV3/initial-sky-core-transport-v1.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-initial-reader-rows-v3.json")
             ) {
