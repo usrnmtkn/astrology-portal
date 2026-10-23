@@ -77,7 +77,7 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   // Direct articles benefit from early sources. On the list, let App mount and
   // start the selected publication reads before large source downloads compete.
   // The mounted source gate still requires the same complete package.
-  if (!/^#\/?sky\/?$/u.test(url.hash)) {
+  if (url.hash && !/^#\/?sky\/?$/u.test(url.hash)) {
     void import("../content/skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) =>
       loadSkyPlacementSourceAssets()).catch(() => {});
   }

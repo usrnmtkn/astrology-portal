@@ -11,9 +11,10 @@ const publishedAspect = JSON.parse(readFileSync('apps/web/public/content-studio-
   .rows.find((row: { content_key: string }) => row.content_key === 'sky.aspect.sun.sextile.mars');
 
 test.use({ timezoneId: 'America/New_York', viewport: { width: 390, height: 844 } });
-for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde/neptune"]) for (const warm of [false, true]) for (const changeSelection of [false, true]) {
-  test(`${warm ? 'Cached' : 'Cold'} Sky ${initialRoute} starts before App and ${changeSelection ? 'rejects a changed selection' : 'reuses the exact initial response'}`, async ({ page }) => {
+for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrograde/neptune"]) for (const warm of [false, true]) for (const changeSelection of [false, true]) {
+  test(`${warm ? 'Cached' : 'Cold'} Sky ${initialRoute || "/"} starts before App and ${changeSelection ? 'rejects a changed selection' : 'reuses the exact initial response'}`, async ({ page }) => {
     test.setTimeout(90_000);
+    const initialList = !initialRoute || initialRoute === '#sky';
     await bundledPublications(page);
     const cached = [{ content_key: '__content-publication-ledger/v1', state: 'live' as const, revision: 1,
       row_id: null, row_updated_at: null, updated_at: '2026-09-21T16:00:00Z' }];
@@ -64,14 +65,14 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     try {
       await page.goto(`/${initialRoute}`, { waitUntil: 'commit' });
       await expect.poll(() => requests.some(url => /\/assets\/App-[^/]+\.js$/.test(url.pathname))).toBe(true);
-      if (initialRoute !== '#sky') await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
+      if (!initialList) await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
       else expect(requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(false);
       releaseReact();
       await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
       if (warm) await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
       else expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
       await expect.poll(() => requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname))).toBe(true);
-      if (initialRoute !== '#sky') await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
+      if (!initialList) await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
       else expect(requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(false);
       if (warm) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
       else await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
@@ -91,7 +92,7 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
       await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
       await expect(page.locator('.app-shell')).toBeVisible();
     } finally { releasePlacement(); }
-    if (initialRoute !== '#sky' && !changeSelection) {
+    if (!initialList && !changeSelection) {
       await expect(page.locator('.sky-detail-article .article-body-inner').first()).toBeVisible({ timeout: 60_000 });
       await expect(page.locator('#sky-detail-title')).toContainText(initialRoute.includes('neptune') ? 'Neptune' : 'Sun');
       const kinds = await page.evaluate(() => (window as any).__initialSkyWorkerKinds as string[]);
@@ -121,7 +122,7 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     expect(requests.some(url => /studio-editor-tools-/.test(url.pathname))).toBe(false);
     // Direct articles preload their complete archive before a subsequent route
     // change; a fresh list entry never requests that archive.
-    expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(initialRoute === '#sky' ? 0 : 1);
+    expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(initialList ? 0 : 1);
     expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
     expect(wasmPaths()).toEqual([]);
     expect(errors).toEqual([]);

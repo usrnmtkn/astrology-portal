@@ -24,7 +24,7 @@ const bundle = {
 };
 const [hint] = preloadPlugin.transformIndexHtml.handler("", { bundle });
 for (const [pathname, hash, expected] of [
-  ["/", "#sky", 2], ["/", "#/sky/", 2], ["/", "#sky/placement/sun/virgo", 3], ["/", "#sky/placement/north-node", 3], ["/", "#sky/retrograde/venus", 3], ["/", "#sky/archive/sun/virgo/2026", 0], ["/", "#sky/placement/sun/virgo/extra", 0],
+  ["/", "", 2], ["/", "#sky", 2], ["/", "#/sky/", 2], ["/", "#sky/placement/sun/virgo", 3], ["/", "#sky/placement/north-node", 3], ["/", "#sky/retrograde/venus", 3], ["/", "#sky/archive/sun/virgo/2026", 0], ["/", "#sky/placement/sun/virgo/extra", 0],
   ["/admin/content", "#sky", 0], ["/", "#calendar", 0], ["/", "#you", 0]
 ]) {
   const links = [];
@@ -34,6 +34,11 @@ for (const [pathname, hash, expected] of [
   } });
   assert.equal(links.length, expected, `${pathname}${hash}: preload scope`);
   assert(links.every(link => link.rel === "modulepreload" && !link.href.includes("article")));
+}
+for (const saved of ['profile', 'friends', 'calendar', 'horoscopes', 'account', 'settings']) {
+  const links = [];
+  runInNewContext(hint.children, { location: { pathname: '/', hash: '' }, window: { localStorage: { getItem: () => saved } }, document: { head: { appendChild: link => links.push(link) } } });
+  assert.equal(links.length, 0, 'Bare entry preserves a saved non-Sky destination.');
 }
 assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: {} }), /locate/);
 const { "assets/placements.js": _placements, ...withoutPlacements } = bundle;
