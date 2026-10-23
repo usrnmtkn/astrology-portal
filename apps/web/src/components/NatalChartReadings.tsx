@@ -22,7 +22,7 @@ export function NatalChartReadings({ snapshot, audience, ownerName, planet, disa
     const requestedKeys: string[] = JSON.parse(keys);
     if (!requestedKeys.length) return;
     let active = true;
-    void loadLiveGeneratedContentForKeys(requestedKeys).then(rows => {
+    void loadLiveGeneratedContentForKeys(requestedKeys, { requireFresh: true }).then(rows => {
       if (active) setState({ keys, revision, rows });
     }).catch(() => {
       if (active) setState({ keys, revision, rows: null });

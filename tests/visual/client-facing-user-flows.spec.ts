@@ -6262,3 +6262,27 @@ for (const sect of ["day", "night"] as const) test(`Natal approved saved bodies 
     }
   }
 });
+
+test("Natal published readings distinguish an outage from missing writing and retry", async ({ page }) => {
+  const updatedAt = "2026-10-22T12:00:00Z";
+  const rows = ["day", "night"].map(sect => ({ id: `natal-retry-${sect}`, content_key: `cms/natal-chart-context/you/sect/${sect}`,
+    surface: "natal", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null, updated_at: updatedAt,
+    body: "Recovery fixture opening.\n\nThe complete recovery final sentence.", sections: {}, source_snapshot: { contentType: "manual" } }));
+  await seedClientState(page, { profile: true, preloadProfileNatalSky: true, generatedInterpretations: rows,
+    contentPublications: rows.map(row => ({ content_key: row.content_key, row_id: row.id, row_updated_at: updatedAt, state: "live", revision: 1, updated_at: updatedAt })) });
+  let fail = true;
+  await page.route("**/api/content-reader", async route => {
+    const query = route.request().postDataJSON();
+    if (fail && query.keys?.some((key: string) => key.startsWith("cms/natal-chart-context/"))) {
+      await route.fulfill({ status: 503, json: { error: "Synthetic reading outage" } });
+    } else await route.fallback();
+  });
+  await expectClientRouteLoads(page, "/#you");
+  await selectYouNatalTab(page);
+  const error = page.getByRole("alert").filter({ hasText: "Chart readings could not be loaded." });
+  await expect(error).toBeVisible();
+  fail = false;
+  await error.getByRole("button", { name: "Retry", exact: true }).click();
+  await expect(page.getByText("The complete recovery final sentence.", { exact: true })).toBeVisible();
+  await expect(error).toHaveCount(0);
+});
