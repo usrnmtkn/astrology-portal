@@ -1,0 +1,99 @@
+name: Apply transit source isolation repair
+on:
+  push:
+    branches: [fix/transit-natal-exact-editing-20260916]
+    paths:
+      - '.github/repairs/transit-exact-isolation/**'
+      - '.github/workflows/transit-editor-verification.yml'
+permissions:
+  contents: write
+concurrency:
+  group: transit-isolation-repair
+  cancel-in-progress: false
+jobs:
+  apply-and-verify:
+    if: github.ref == 'refs/heads/fix/transit-natal-exact-editing-20260916'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: fix/transit-natal-exact-editing-20260916
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify canonical source and read relevant repository memory
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git fetch --prune origin
+          git remote -v
+          git log -1
+          git rev-list --left-right --count origin/main...HEAD
+          mkdir -p "$RUNNER_TEMP/transit-isolation-evidence"
+          node scripts/agent-memory.mjs recall "personal transits exact source shared fallback editor" --repo . --ref origin/main --fetch --limit 4 --state "$RUNNER_TEMP/transit-isolation-memory" > "$RUNNER_TEMP/transit-isolation-evidence/memory.json"
+          cat "$RUNNER_TEMP/transit-isolation-evidence/memory.json"
+          node .github/repairs/transit-exact-isolation/apply.mjs --write
+      - run: npm ci
+      - name: Rebuild the actual shipped runtime and dependent indexes
+        run: |
+          set -euo pipefail
+          node_modules/.bin/esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+          npm run build:fallback-manifest
+          npm run build:knowledge
+          node scripts/build-knowledge-index.mjs
+          node scripts/build-phrase-index.mjs
+          node scripts/build-admin-hook-catalog.mjs
+      - name: Verify source, shipped artifact and actual preview API isolation
+        run: |
+          set -euo pipefail
+          node --experimental-strip-types scripts/test-admin-transit-natal-sources.mjs | tee "$RUNNER_TEMP/transit-isolation-evidence/source-and-shipped.log"
+          node --import tsx scripts/test-transit-natal-preview-api.mts | tee "$RUNNER_TEMP/transit-isolation-evidence/preview-api.log"
+          npm run typecheck -w @tldr/admin | tee "$RUNNER_TEMP/transit-isolation-evidence/admin-typecheck.log"
+      - name: Materialize verified source on the feature branch only
+        env:
+          PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = 'fix/transit-natal-exact-editing-20260916'
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const manifest=JSON.parse(fs.readFileSync('.github/repairs/transit-exact-isolation/manifest.json','utf8'));
+          const source=new Set(manifest.files.map(entry=>entry.path));
+          const changed=execFileSync('git',['diff','HEAD','--name-only','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);
+          const generated=path=>path==='apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js'
+            || /^apps\/web\/src\/content\/fallbackArchitectureV3\/(bundled-[^/]+\.json|approved-serving-(projection|lineage)-v1\.json)$/.test(path)
+            || path.startsWith('packages/astro-knowledge/generated/')
+            || /^apps\/admin\/src\/(generated\/|generated[A-Z])/.test(path);
+          for(const path of changed)if(!source.has(path)&&!generated(path))throw new Error(`Unexpected changed file: ${path}`);
+          execFileSync('git',['add','--',...new Set([...source,...changed])]);
+          JS
+          git rm -r .github/repairs/transit-exact-isolation
+          git rm .github/workflows/transit-editor-verification.yml
+          npm run privacy:check -- --staged
+          git diff --cached --check
+          git diff --cached --stat
+          git -c user.name='TLDR Astro repair' -c user.email='repair@users.noreply.github.com' commit -m 'fix: isolate exact transit authoring and prioritize exact sources'
+          git push origin HEAD:refs/heads/fix/transit-natal-exact-editing-20260916
+          git rev-parse HEAD > "$RUNNER_TEMP/transit-isolation-evidence/materialized-commit.txt"
+      - name: Verify full Content Studio API contract
+        env:
+          PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}
+        run: npm run test:content-studio-api
+      - name: Verify CSS and browser editing flows from a fresh build
+        run: |
+          set -euo pipefail
+          npm run qa:css-audit
+          node_modules/.bin/playwright install --with-deps chromium
+          node_modules/.bin/playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts --grep 'Transit exact editor|canonical Personal Transit Studio|Friends transit source|transit preview|transit source'
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: transit-isolation-verification
+          path: |
+            ${{ runner.temp }}/transit-isolation-evidence
+            test-results/content-dashboard-admin-flow
+          retention-days: 2
