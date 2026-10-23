@@ -12,7 +12,9 @@ const value = JSON.stringify({
   sourceSha256: createHash('sha256').update(source).digest('hex'),
   hookRows: rows
 }, null, 2) + '\n';
-const target = new URL('bundled-initial-sky-list-rows-v1.json', root);
+// This is a transport mirror, not another writing-evidence source. The original
+// bundled archive remains the indexed authority for every one of these units.
+const target = new URL('initial-sky-list-rows-v1.json', root);
 if (process.argv.includes('--check')) {
   if (!fs.existsSync(target) || fs.readFileSync(target, 'utf8') !== value) throw new Error('Initial Sky list rows are stale.');
 } else fs.writeFileSync(target, value);

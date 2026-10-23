@@ -6,7 +6,7 @@ import { createServer } from 'vite';
 
 const content = 'apps/web/src/content/fallbackArchitectureV3/';
 const source = fs.readFileSync(content + 'bundled-sky-placement-rows-v3.json');
-const initial = JSON.parse(fs.readFileSync(content + 'bundled-initial-sky-list-rows-v1.json', 'utf8'));
+const initial = JSON.parse(fs.readFileSync(content + 'initial-sky-list-rows-v1.json', 'utf8'));
 assert.equal(initial.sourceSha256, createHash('sha256').update(source).digest('hex'));
 assert.deepEqual(initial.hookRows, JSON.parse(String(source)).hookRows.filter((row: any) => /(?:^|\/)moon\//u.test(row.contentKey)), 'Every Moon source unit remains complete and unchanged.');
 

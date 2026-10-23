@@ -1,4 +1,4 @@
-import rows from './fallbackArchitectureV3/bundled-initial-sky-list-rows-v1.json';
+import rows from './fallbackArchitectureV3/initial-sky-list-rows-v1.json';
 import type { FallbackArchitectureV3Bundle, HookRow } from './fallbackArchitectureV3Runtime';
 export { loadCanonicalSkyV4ReaderRoute } from './skyCanonicalReader';
 
