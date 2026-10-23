@@ -5,6 +5,7 @@ import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type Arti
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
+import { seasonArticleKey } from "../../../src/shared/seasonArticle";
 import { hasVerifiedSameSignHistory, type RetrogradeHistory } from "../../web/src/services/retrogradeHistory";
 import { useStudioCustomVariables } from "./studioCustomVariableClient";
 import { isStudioReadRequest, studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
@@ -254,6 +255,7 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 const RetrogradeHistoryFacts = lazy(() => import("../../../src/shared/components/RetrogradeHistory").then(module => ({ default: module.RetrogradeHistoryFacts })));
 const SkyPlacementCompanions = lazy(() => import("./SkyPlacementCompanions"));
 const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyArticleSourceDetails })));
+const SeasonArticleWorkspace = lazy(() => import("./SeasonArticleWorkspace"));
 const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementEditorNav })));
 const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementWritingLinks })));
 const UnsavedIngressPreview = lazy(() => import('./UnsavedIngressPreview'));
@@ -6413,7 +6415,7 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string, articleKind: "article" | "guide" = "article") {
+  function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string, articleKind: "article" | "guide" = "article", season?: { sign: string; year: number }) {
     const isCalendarWriteup = page === "knowledge" && lunarWorkspaceActive;
     if (isCalendarWriteup && !calendarSign) {
       setIsCreateMenuOpen(false);
@@ -6431,11 +6433,11 @@ export function GeneratedContentAdminDashboard() {
     if (page === "articles") {
       setDraft({
         id: null,
-        contentKey: `article/${articleKind === "guide" ? "guide" : "manual"}/${crypto.randomUUID()}`,
+        contentKey: season ? seasonArticleKey(season.sign, season.year)! : `article/${articleKind === "guide" ? "guide" : "manual"}/${crypto.randomUUID()}`,
         surface: "sky",
         mode: "article",
         status: "DRAFT",
-        headline: "",
+        headline: season ? `${titleFromKey(season.sign)} Season ${season.year}` : "",
         summary: "",
         body: "",
         lane: "serving",
@@ -7598,6 +7600,9 @@ export function GeneratedContentAdminDashboard() {
                 onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>}
               {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions" || calendarWriteupWorkspaceView === "season-writeups" || calendarWriteupWorkspaceView === "lunar-ingresses" || calendarWriteupWorkspaceView === "moon-transition-phrases") && (
                 <Suspense fallback={<PageLoading message="Loading Calendar passages…" />}>
+                  {calendarWriteupWorkspaceView === "season-writeups" && <SeasonArticleWorkspace loadRows={loadCalendarPreviewRows}
+                    onOpen={row => void openRow(row as AdminGeneratedContentRow)}
+                    onCreate={(sign, year) => handleCreateAction("articles", "Season article opened. Add your complete write-up, then save.", undefined, "article", { sign, year })} />}
                   <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "daily-sky" ? "all" : calendarWriteupWorkspaceView} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
                     editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow, null, calendarWriteupWorkspaceView !== "daily-sky" ? "body" : undefined)}
@@ -7738,6 +7743,11 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 </section>
+                {skyPlacementBody === "sun" && skyPlacementSign !== "all" && <Suspense fallback={<PageLoading message="Loading season article…" />}>
+                  <SeasonArticleWorkspace sign={skyPlacementSign} loadRows={loadCalendarPreviewRows}
+                    onOpen={row => void openRow(row as AdminGeneratedContentRow)}
+                    onCreate={(sign, year) => handleCreateAction("articles", "Season article opened. Add your complete write-up, then save.", undefined, "article", { sign, year })} />
+                </Suspense>}
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <Suspense fallback={null}><SkyPlacementUnwiredNotice rows={publishedButUnwiredSkyRows} statusLabel="Not live" /></Suspense>
                 )}

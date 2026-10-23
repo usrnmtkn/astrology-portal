@@ -5438,6 +5438,9 @@ function currentSkyPlacementDetailArticle({
         ? undefined
         : effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
+    seasonArticle: normalizeContentIdPart(position.planet) === "sun" ? {
+      sign: position.sign, startsAt: visit.start.toISOString(), timeZone: locationTimeZone || position.transitTimeZone || "UTC"
+    } : undefined,
     keyDates: placementSection?.keyDates ?? [],
     keyDatesIntro: placementSection?.keyDatesIntro ?? null,
     closingCharge: placementSection?.closingCharge,

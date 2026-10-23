@@ -1,3 +1,5 @@
+import { seasonArticleIdentity } from "../../../src/shared/seasonArticle";
+
 export type ContentMotion = "retrograde" | "direct" | "unspecified";
 export type ContentMotionFilter = "all" | ContentMotion;
 export type ContentDestinationFilter = "all" | "sky" | "calendar";
@@ -77,7 +79,7 @@ export function contentDestinations(row: MotionInspectableRow): Set<"sky" | "cal
     source.surface,
     source.destination
   ].filter((value) => typeof value === "string").join(" ").toLowerCase();
-  if (/(?:calendar|lunation|lunar|moon-phase|new-moon|full-moon|station|retrograde|ingress)/u.test(identity)) {
+  if (seasonArticleIdentity(row.content_key) || /(?:calendar|lunation|lunar|moon-phase|new-moon|full-moon|station|retrograde|ingress)/u.test(identity)) {
     destinations.add("calendar");
   }
   return destinations;

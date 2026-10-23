@@ -1,4 +1,5 @@
 import { memoByObject } from "./derivedCache";
+import { seasonArticleIdentity } from "../../../src/shared/seasonArticle";
 export type SkyWriteupRelationRow = {
   id: string;
   content_key: string;
@@ -203,6 +204,8 @@ export function skyWriteupSubjectTypeForRow(row: SkyWriteupRelationRow): SkyWrit
 }
 
 function skyWriteupContextForRowUncached(row: SkyWriteupRelationRow): SkyWriteupContext | null {
+  const season = seasonArticleIdentity(row.content_key);
+  if (season) return { planet: "sun", sign: season.sign };
   // This shared planet source belongs to every sign and motion, regardless of
   // older imported natal metadata or the wording of its headline.
   if (isSkyPlanetLivedKey(row.content_key)) return { planet: row.content_key.split("/")[2], sign: null };

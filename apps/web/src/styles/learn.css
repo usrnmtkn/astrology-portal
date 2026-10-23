@@ -689,6 +689,7 @@
 }
 
 /* Articles share the same reading surface and typography as Learn. */
+.learn-page.articles-page { background: transparent; }
 .articles-page .article-title { font-weight: var(--weight-regular); }
 .articles-library-header { display: grid; gap: var(--space-3); }
 .articles-library-header p,

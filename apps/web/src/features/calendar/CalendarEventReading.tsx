@@ -1,4 +1,5 @@
 import { RetrogradeCycles } from "./RetrogradeCycles";
+import { SeasonArticleLink } from "../../components/SeasonArticleLink";
 import { FormattedProse } from "../../components/FormattedProse";
 import { RetrogradeHistoryDisclosure } from "../../components/RetrogradeHistory";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -286,6 +287,8 @@ export function CalendarEventReading({
         </div>
         <h2 className="calendar-reading__title" id="calendar-reading-title">{title}</h2>
         <p className="calendar-reading__meta">{dateLine}</p>
+        {event.type === "ingress" && event.planet?.toLowerCase() === "sun" && (event.toSign || event.sign) && <SeasonArticleLink
+          sign={(event.toSign || event.sign)!} startsAt={event.startsAt} timeZone={timeZone} className="calendar-reading__article-pill" />}
       </div>
       <div className="calendar-reading__body">
         {hasJournal
