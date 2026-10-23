@@ -556,8 +556,8 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /getSkyOnlineFirst\(skyLocation, selectedDateTime\)[\s\S]*publishFreshSky\(nextSky\)/u,
-  "Initial Sky must publish one complete API-first calculation without starting the browser ephemeris download."
+  /getSkyOnlineFirst\(skyLocation, selectedDateTime, skyCalculationDetail === "placements" \? skyCalculationDetail : true\)[\s\S]*publishFreshSky\(nextSky\)/u,
+  "Sky must publish one API-first calculation with the requested scope without starting the browser ephemeris download."
 );
 assert.match(
   appSource,
