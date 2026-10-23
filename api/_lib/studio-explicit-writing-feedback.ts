@@ -3,6 +3,10 @@ import {studioStorage} from './sky-studio-sources.js';
 import {studioFeedbackEnabled} from './studio-memory-feedback.js';
 import {selectExplicitWritingFeedback,validateExplicitWritingFeedback,writingFeedbackKeys,hydrateExplicitWritingFeedback} from '../../src/astro-writing/explicitWritingFeedback.mjs';
 
+export function ingressWritingFeedbackTarget(templateKey:string) {
+  return {contentKey:templateKey,surface:'sky',eventType:'sky-ingress-essay'};
+}
+
 export async function explicitWritingFeedbackRows() {
   const {url,headers}=studioStorage();
   const response=await adminFetchJson(url.replace(/generated_interpretations$/u,'rpc/studio_memory_active_snapshot'),{method:'POST',headers,body:'{}'});

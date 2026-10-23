@@ -19,7 +19,7 @@ import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs
 import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
 import { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastrySourceReceipt, synastryMeaningPlanSchema, designatedSynastryVoiceReferences } from "../../src/astro-writing/synastrySourceContext.cjs";
-import { loadExplicitWritingFeedback } from "./studio-explicit-writing-feedback.js";
+import { loadExplicitWritingFeedback, ingressWritingFeedbackTarget } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
@@ -6055,7 +6055,8 @@ export async function generateSkyArticleTemplateSlots(
     ? input.writingMemory
     : await studioArticleWritingMemory(input);
   const generationInput = skyArticleSlotGenerationInput(input);
-  const writingFeedback = await loadExplicitWritingFeedback(generationInput);
+  const writingFeedback = await loadExplicitWritingFeedback(datedIngress
+    ? ingressWritingFeedbackTarget(input.templateKey) : generationInput);
   const productionGate = prepareProductionPreCallGate(generationInput);
   const evidenceShadow = buildProductionEvidenceShadow(generationInput);
   const transitContext = input.surface === "you" && input.eventType === "transit-aspect"

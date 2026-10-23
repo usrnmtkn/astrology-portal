@@ -12,13 +12,13 @@ const values = { what: 'Synthetic season meaning.', takeaway: 'Synthetic specifi
   articleBody: 'Complete synthetic opening paragraph. Its second sentence develops the same thought.\n\nThe complete transit interpretation stays here. This is its second sentence.\n\nThe synthetic close develops its thought. The complete final sentence stays in this preview.',
   otherDatesSection: '## Key dates\n\n- Synthetic additional calculated event.' };
 
-async function prepare(page: Page, status = 200, expired = false) {
+async function prepare(page: Page, status = 200, expired = false, inspectionStatus = 200) {
   await page.addInitScript(({ token, owner, expired }) => {
     localStorage.removeItem('tldrastro:contentAdminSecret');
     localStorage.setItem('sb-studio-auth-auth-token', JSON.stringify({ access_token: token, refresh_token: 'synthetic-refresh',
       expires_at: Math.floor(Date.now() / 1000) + (expired ? -60 : 3600), token_type: 'bearer', user: owner }));
   }, { token, owner, expired });
-  const observed = { generationCalls: 0, refreshes: 0, writes: [] as string[], headers: [] as string[] };
+  const observed = { generationCalls: 0, inspectionCalls: 0, refreshes: 0, writes: [] as string[], headers: [] as string[] };
   await page.route('https://studio-auth.supabase.test/**', async route => {
     const refresh = new URL(route.request().url()).pathname.endsWith('/token');
     if (refresh) observed.refreshes++;
@@ -29,6 +29,16 @@ async function prepare(page: Page, status = 200, expired = false) {
     const url = new URL(route.request().url());
     const method = route.request().method();
     if (url.pathname === '/api/admin/sky-article-template-slots') {
+      if(method==='GET') {
+        observed.inspectionCalls++;
+        expect(url.searchParams.get('inspect')).toBe('ingress-voice');
+        expect(url.searchParams.get('templateId')).toBe(source.id);
+        expect(route.request().headers()['x-content-admin-session']).toBe(token);
+        if(inspectionStatus!==200) return route.fulfill({status:inspectionStatus,json:{ok:false,error:'Synthetic correction inspection unavailable.'}});
+        return route.fulfill({json:{ok:true,writerContract:{version:'ingress-article/v6-2026-10-22'},voiceBenchmark:{id:'synthetic-approved-benchmark'},
+          correctionDelivery:{templateKey:source.content_key,enabled:true,targetKeys:['writing/sky/ingress/sun/libra'],selected:[{id:'synthetic-exact-rejection',version:1,contentHash:'synthetic-hash'}]},
+          providerCalls:0,saved:false,published:false}});
+      }
       observed.generationCalls++;
       observed.headers.push(route.request().headers()['x-content-admin-session'] ?? '');
       expect(route.request().headers()['x-content-generation-secret']).toBeUndefined();
@@ -75,6 +85,18 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await previewTab.click();
     await expect(page.getByRole('heading', { level: 1, name: 'Sky Write-ups', exact: true })).toBeVisible();
     await preview.getByLabel('Preview reference date').fill('2026-10-21');
+    await preview.getByRole('button',{name:'Verify writer inputs',exact:true}).click();
+    const inputReceipt=preview.getByLabel('Ingress writer input receipt',{exact:true});
+    await expect(inputReceipt).toHaveValue(/ingress-article\/v6-2026-10-22/);
+    await expect(inputReceipt).toHaveValue(/synthetic-exact-rejection/);
+    await expect(inputReceipt).toHaveValue(/"providerCalls": 0/);
+    await expect(inputReceipt).toHaveAttribute('readonly','');
+    expect(observed.generationCalls).toBe(0);expect(observed.inspectionCalls).toBe(1);expect(observed.writes).toEqual([]);
+    expect(await preview.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+    await preview.screenshot({path:`test-results/ingress-input-inspection-${width}-${theme}.png`});
+    await preview.getByLabel('Preview reference date').fill('2026-10-20');
+    await expect(inputReceipt).toHaveCount(0);
+    await preview.getByLabel('Preview reference date').fill('2026-10-21');
     await preview.getByRole('button', { name: 'Preview without saving', exact: true }).click();
     const draft = preview.getByLabel('Unsaved ingress draft', { exact: true });
     await expect(draft).toHaveValue(/^# Libra Season 2026/);
@@ -114,6 +136,15 @@ for (const status of [401, 409, 500, 422]) test(`preview preserves returned cand
   await page.waitForTimeout(1300);
   expect(observed.generationCalls).toBe(1);
   expect(observed.writes).toEqual([]);
+});
+
+for(const status of [401,503]) test(`writer input inspection fails without generation or persistence: ${status}`,async({page})=>{
+  const {observed,preview}=await prepare(page,200,false,status);
+  await preview.getByRole('button',{name:'Verify writer inputs',exact:true}).click();
+  await expect(preview.getByRole('alert')).toBeVisible();
+  await expect(preview.getByLabel('Ingress writer input receipt')).toHaveCount(0);
+  expect(observed.inspectionCalls).toBe(1);expect(observed.generationCalls).toBe(0);expect(observed.writes).toEqual([]);
+  if(status===401)await expect(preview.getByRole('link',{name:'Sign in as owner'})).toBeVisible();
 });
 
 test('owner session renews before preview and a double click sends one generation', async ({ page }) => {
