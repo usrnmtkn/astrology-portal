@@ -24,6 +24,16 @@ does not establish that the deployment secret contains it; verify deployment
 coverage without exposing the source bodies. Missing coverage is recorded,
 while a malformed or integrity-invalid provision is rejected.
 
+Directional Synastry writing uses the same server-only store for
+`private:writing/synastry/approved-sample-20261022`. Its
+`synastry-approved-voice/v1` envelope contains the complete eight explicitly
+approved readings, their exact hashes and approval provenance. Keep this record
+outside Git, public bundles, logs and PR attachments. Explicit complete source
+selection retains precedence; otherwise missing or corrupt evidence holds new
+Synastry generation before a provider call. Merge this record into the protected
+store without replacing the existing report documents. A prepared local payload
+does not establish production provisioning.
+
 Original database content records are archived in the restricted
 `project_privacy.content_archive` table before identifier removal. The schema
 and table deny access to `anon` and `authenticated`, and the table has RLS with

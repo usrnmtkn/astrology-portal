@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { prepareSynastryBodyWriting, generateSynastryBody, validateSynastryBody, RejectedSynastryBodyError } from '../api/_lib/synastry-body-writing.js';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
+import { syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
+const restoreApprovalFixture = installSyntheticSynastryApproval();
 
 Object.assign(process.env, { OPENAI_API_KEY: 'synthetic', OPENAI_GENERATION_MODEL: 'gpt-4.1-mini',
   SUPABASE_URL: 'https://synthetic-body.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'synthetic',
@@ -44,6 +46,40 @@ try {
   assert(prepared.request.input.includes(JSON.parse(source).plainTranslation));
   assert(!prepared.request.input.includes('GOVERNED MEANING PLAN'));
   assert(!prepared.request.input.includes('sceneLock'));
+  const oldDraft = 'Complete synthetic old prose with an unwanted recommendation. This wording remains preserved privately.';
+  const freshInput = structuredClone(input);
+  freshInput.sourceSnapshot.existingDraft = { path: 'synthetic-old-draft', text: oldDraft, sha256: hash(oldDraft) };
+  const fresh = await prepareSynastryBodyWriting(freshInput, selection);
+  assert.equal(fresh.input.sourceSnapshot!.existingDraft.text, oldDraft);
+  assert(!fresh.request.input.includes(oldDraft), 'A fresh body does not imitate the old wording.');
+  assert.equal(fresh.receipt.existingDraft?.sha256, hash(oldDraft));
+  assert.equal(fresh.receipt.existingDraft?.sentToWriter, false);
+  process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice();
+  const defaultInput = structuredClone(input);
+  delete defaultInput.sourceSnapshot.positiveVoiceReferences;
+  const defaultPrepared = await prepareSynastryBodyWriting(defaultInput, selection);
+  for (const reference of syntheticSynastryVoice().entries) assert.equal(defaultPrepared.request.input.split(reference.text).length - 1, 1);
+  assert.equal(defaultPrepared.receipt.protectedVoice.referenceCount, 8);
+  assert.equal(defaultPrepared.input, defaultInput, 'Revalidation must reload protected sources from the original request.');
+  const revisedBundle = syntheticSynastryVoice();
+  revisedBundle.entries.reverse();
+  process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice(revisedBundle);
+  await assert.rejects(() => generateSynastryBody(defaultPrepared), /Prepared sources/u);
+  assert.equal(providerCalls, 0, 'Changed protected source stops before a paid call.');
+  process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice();
+  for (const aspect of ['trine', 'sextile']) {
+    const relative = `packages/astro-knowledge/data/synastry/aspects/A-moon_B-sun_${aspect}.json`;
+    const bytes = fs.readFileSync(relative, 'utf8'); const record = JSON.parse(bytes);
+    const support = structuredClone(defaultInput);
+    support.contentKey = `fallback-hook/synastry-pair/sun/moon/${aspect}`;
+    support.knowledgeIds = [`synastry-moon-${aspect}-sun`];
+    support.facts = { planetA: 'Moon', planetB: 'Sun', aspect, personA: '{{holder2}}', personB: 'you', readerPerson: 'B' };
+    support.sourceSnapshot.knowledgeSources = [{ path: relative, sha256: hash(bytes), record }];
+    const request = await prepareSynastryBodyWriting(support, selection);
+    assert(request.request.input.includes(record.plainTranslation));
+    assert(!request.request.input.includes(record.advice));
+    for (const leak of ['Keep it active so comfort does not turn into autopilot', 'The problem is that easy can become lazy', 'The problem is leaving it half-open']) assert(!request.request.input.includes(leak));
+  }
   const oppositeReader = structuredClone(input);
   Object.assign(oppositeReader.facts, { readerPerson: 'A', personA: 'you', personB: '{{holder2}}' });
   const opposite = await prepareSynastryBodyWriting(oppositeReader, selection);
@@ -99,4 +135,4 @@ try {
   await assert.rejects(() => prepareSynastryBodyWriting(input, selection), /feedback must be enabled/u);
   assert.equal(providerCalls, 3);
   console.log('Synastry body writing: request delivery, complete sources, feedback freshness, strict body output, failure isolation and no writes passed. Synthetic transport only; voice unverified.');
-} finally { globalThis.fetch = originalFetch; }
+} finally { globalThis.fetch = originalFetch; restoreApprovalFixture(); }
