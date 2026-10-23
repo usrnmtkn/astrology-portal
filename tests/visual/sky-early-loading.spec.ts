@@ -119,7 +119,9 @@ for (const initialRoute of ["#sky", "#sky/placement/sun/virgo", "#sky/retrograde
     }
     expect(requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(false);
     expect(requests.some(url => /studio-editor-tools-/.test(url.pathname))).toBe(false);
-    expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(0);
+    // Direct articles preload their complete archive before a subsequent route
+    // change; a fresh list entry never requests that archive.
+    expect(requests.filter(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toHaveLength(initialRoute === '#sky' ? 0 : 1);
     expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
     expect(wasmPaths()).toEqual([]);
     expect(errors).toEqual([]);
