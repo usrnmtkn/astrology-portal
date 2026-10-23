@@ -13015,6 +13015,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
   const currentSkyCalculationNeeded = shouldRunCurrentSkyCalculation(mode, friendCalculationNeeds);
   const skyCalculationDetail = isTodayMode && !skyDetailRoutePath ? "placements" : "full";
+  const skyUsesLiveClock = isTodayMode || mode === "calendar";
+  const coreSkyDelayMs = mode === "profile" ? 500 : 0;
   useEffect(() => {
     let cancelled = false;
     let coreSkyFrame = 0;
@@ -13038,8 +13040,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       && sky.location.timeZone === skyLocation.timeZone
       && skyCivilDate(skyLocation.timeZone, new Date(sky.generatedAt)) === skyDate;
     const selectedDateTime = initialRequest?.date ?? (upgradingList ? new Date(sky.generatedAt)
-      : skyDateTimeFromInput(skyDate, skyLocation, (isTodayMode || mode === "calendar")));
-    const live = (isTodayMode || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
+      : skyDateTimeFromInput(skyDate, skyLocation, skyUsesLiveClock));
+    const live = skyUsesLiveClock && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = scopedSkySnapshotCacheKey(skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`), skyCalculationDetail);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
@@ -13049,7 +13051,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       ?? (skyCalculationDetail === "placements" ? readCachedSkySnapshot(cacheKey) : null);
     // Give the lazy You route its first paint before starting CPU-heavy
     // background astronomy. Sky itself still starts immediately.
-    const coreSkyDelayMs = mode === "profile" ? 500 : 0;
 
     if (!refreshing) {
       setSkyTimingStatus(cachedSky && skySnapshotHasTransitWindows(cachedSky) ? "ready" : "loading");
@@ -13117,7 +13118,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       window.cancelAnimationFrame(coreSkyFrame);
       window.clearTimeout(coreSkyTimer);
     };
-  }, [currentSkyCalculationNeeded, location.latitude, location.longitude, location.timeZone, mode, skyDate, skyRefreshKey, skyCalculationDetail]);
+    // Guest/member identity does not change public astronomy inputs. Session
+    // recovery must not repeat an already completed exact-selection request.
+  }, [currentSkyCalculationNeeded, location.latitude, location.longitude, location.timeZone, isTodayMode, skyUsesLiveClock, coreSkyDelayMs, skyDate, skyRefreshKey, skyCalculationDetail]);
 
   const sunSeasonEnd = sky?.positions.find(position => position.planet === "Sun")?.transitEnd;
   useEffect(() => {

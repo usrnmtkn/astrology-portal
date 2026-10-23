@@ -116,6 +116,12 @@ export default defineConfig(({ command, mode }) => {
     define: {
       __LOCAL_CONTENT_GENERATION_SECRET__: JSON.stringify(localContentSecret)
     },
+    resolve: {
+      alias: [{
+        find: /^(?:.*\/)?publicReaderConfiguration(?:\.ts)?$/u,
+        replacement: resolve(repoRoot, "apps/admin/src/publicReaderConfiguration.ts")
+      }]
+    },
     server: {
       host: "127.0.0.1",
       port: 5174,
@@ -133,6 +139,9 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
+            // The same summary workspaces use these two small source loaders.
+            // Share their transport without moving the complete JSON artifacts.
+            if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-sources";
             // Calendar editing, preview and their exclusive models share one lazy workspace.
             if (/apps\/admin\/src\/(?:SkyForecastTemplateStudio|CalendarPassageEditor|CalendarPassageTemplateEditor|CalendarTemplatePreview|CalendarOverviewEditor|CalendarVariableText)\.tsx$/u.test(id)
               || /apps\/admin\/src\/(?:calendarPreviewModel|calendarOverviewTemplate)\.ts$/u.test(id)
