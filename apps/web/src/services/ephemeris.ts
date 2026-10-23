@@ -115,6 +115,8 @@ export type SkyCalculationOptions = {
   /** Natal charts need positions and aspects, not searches for daily events. */
   includeDailyEvents?: boolean;
   includeTransitWindows?: boolean;
+  /** The collective placement list does not display the expensive aspect timelines. */
+  includeAspectTiming?: boolean;
   /** Placement articles need expensive windows only for their selected point. */
   transitWindowPlanets?: readonly string[];
 };
@@ -3908,10 +3910,11 @@ export async function getAstrodienstSky(
   const moon = displayPositions.find((position) => position.planet === "Moon") ?? displayPositions[1];
   const houseCusps = wholeSignHouseCusps(ascendant);
   const calculatedAspects = canonicalizeNodeAxisAspects(calculateSkyAspects(displayPositions));
-  const timedAspects = options.includeTransitWindows
+  const timedAspects = options.includeTransitWindows && options.includeAspectTiming !== false
     ? enrichSkyAspectTiming(swe, calculatedAspects, positions, date, location.timeZone)
     : calculatedAspects;
   const snapshot: SkySnapshot = {
+    calculationDetail: options.includeTransitWindows ? options.includeAspectTiming === false ? "placements" : "full" : "core",
     location,
     generatedAt: date.toISOString(),
     solarHorizon: {

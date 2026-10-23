@@ -316,6 +316,7 @@ import {
   natalSkySnapshotCacheKey,
   readCachedSkySnapshot,
   skySnapshotCacheKey,
+  scopedSkySnapshotCacheKey,
   VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS,
   writeCachedSkySnapshot
 } from "./services/verifiedSkyCache";
@@ -5558,6 +5559,7 @@ function skyDetailFromRoutePath(
   generatedContent: GeneratedContentMap,
   onOpenDetail?: (detail: SkyDetail) => void
 ) {
+  if (sky.calculationDetail === "placements") return null;
   const [surface, detailType, firstPart, secondPart, thirdPart] = decodeSkyRouteParts(routePath);
 
   if (surface !== "sky") {
@@ -11092,7 +11094,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       ? `live-${skyDateTimeFromInput(getInitialTransitDate(), initialLocationState.location, true).toISOString()}`
       : getInitialTransitDate()
   );
-  const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
+  const initialCacheDetail = isTodayMode && !skyDetailRoutePathFromUrl() ? "placements" : "full";
+  const initialCachedSky = readCachedSkySnapshot(scopedSkySnapshotCacheKey(initialSkyCacheKey, initialCacheDetail))
+    ?? (initialCacheDetail === "placements" ? readCachedSkySnapshot(initialSkyCacheKey) : null);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
   const [skyTimingStatus, setSkyTimingStatus] = useState<"loading" | "ready" | "error">(
@@ -13008,6 +13012,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   const currentSkyCalculationNeeded = shouldRunCurrentSkyCalculation(mode, friendCalculationNeeds);
+  const skyCalculationDetail = isTodayMode && !skyDetailRoutePath ? "placements" : "full";
   useEffect(() => {
     let cancelled = false;
     let coreSkyFrame = 0;
@@ -13022,18 +13027,24 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     const skyLocation = withTimeZone(location);
     const initialRequest = initialSkyRefreshKey.current === skyRefreshKey && isTodayMode
-      ? (initialSkyLoadRef.current?.matches(skyDate, skyLocation) ?? null) : null;
+      ? (initialSkyLoadRef.current?.matches(skyDate, skyLocation, skyCalculationDetail) ?? null) : null;
     // A changed selection, refresh or expired bootstrap permanently abandons it.
     // Keeping the promise for the matching mount also supports StrictMode replay.
     if (!initialRequest) initialSkyLoadRef.current = null;
-    const selectedDateTime = initialRequest?.date ?? skyDateTimeFromInput(skyDate, skyLocation, (isTodayMode || mode === "calendar"));
+    const upgradingList = isTodayMode && skyCalculationDetail === "full" && sky?.calculationDetail === "placements"
+      && sky.location.latitude === skyLocation.latitude && sky.location.longitude === skyLocation.longitude
+      && sky.location.timeZone === skyLocation.timeZone
+      && skyCivilDate(skyLocation.timeZone, new Date(sky.generatedAt)) === skyDate;
+    const selectedDateTime = initialRequest?.date ?? (upgradingList ? new Date(sky.generatedAt)
+      : skyDateTimeFromInput(skyDate, skyLocation, (isTodayMode || mode === "calendar")));
     const live = (isTodayMode || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
-    const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
+    const selectionKey = scopedSkySnapshotCacheKey(skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`), skyCalculationDetail);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
     // A noon snapshot or earlier live calculation must never stand in for now.
     const cacheKey = skySnapshotCacheKey(skyLocation, live ? `live-${selectedDateTime.toISOString()}` : skyDate);
-    const cachedSky = readCachedSkySnapshot(cacheKey);
+    const cachedSky = readCachedSkySnapshot(scopedSkySnapshotCacheKey(cacheKey, skyCalculationDetail))
+      ?? (skyCalculationDetail === "placements" ? readCachedSkySnapshot(cacheKey) : null);
     // Give the lazy You route its first paint before starting CPU-heavy
     // background astronomy. Sky itself still starts immediately.
     const coreSkyDelayMs = mode === "profile" ? 500 : 0;
@@ -13066,7 +13077,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
       setSky(nextSky);
       setSkyStatus("ready");
-      if (!writeCachedSkySnapshot(cacheKey, nextSky)) {
+      if (!writeCachedSkySnapshot(scopedSkySnapshotCacheKey(cacheKey, skyCalculationDetail), nextSky)) {
         logSkyFactDiagnostic(
           "cache-write",
           nextSky,
@@ -13082,7 +13093,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         // downloading the browser ephemeris on the initial Sky route.
         const calculation = initialRequest
           ? initialRequest.resolve().then(snapshot => ({ ...snapshot, location: skyLocation }))
-          : import("./services/skyApi").then(({ getSkyOnlineFirst }) => getSkyOnlineFirst(skyLocation, selectedDateTime));
+          : import("./services/skyApi").then(({ getSkyOnlineFirst }) => getSkyOnlineFirst(skyLocation, selectedDateTime, skyCalculationDetail === "placements" ? skyCalculationDetail : true));
         void calculation
           .then((nextSky) => {
             const published = publishFreshSky(nextSky);
@@ -13104,7 +13115,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       window.cancelAnimationFrame(coreSkyFrame);
       window.clearTimeout(coreSkyTimer);
     };
-  }, [currentSkyCalculationNeeded, location.latitude, location.longitude, location.timeZone, mode, skyDate, skyRefreshKey]);
+  }, [currentSkyCalculationNeeded, location.latitude, location.longitude, location.timeZone, mode, skyDate, skyRefreshKey, skyCalculationDetail]);
 
   const sunSeasonEnd = sky?.positions.find(position => position.planet === "Sun")?.transitEnd;
   useEffect(() => {

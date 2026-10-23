@@ -38,8 +38,8 @@ const functions = ['startInitialSkyLoad', 'matchingInitialSkyLoad'].map(name => 
 const transpile = source => ts.transpileModule(source, {
   compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext }
 }).outputText;
-assert.equal((functions.match(/import\("\.\.\/content\/skyPlacementSourceAssets"\)/gu) ?? []).length, 1);
-const runnableApi = transpile(functions).replace('import("../content/skyPlacementSourceAssets")', 'loadAssets()');
+assert.equal((functions.match(/import\("\.\.\/content\/canonicalSkyReaderAssets"\)/gu) ?? []).length, 1);
+const runnableApi = transpile(functions).replace('import("../content/canonicalSkyReaderAssets")', 'loadAssets()');
 const entryAst = parse('apps/web/src/main.tsx', ts.ScriptKind.TSX);
 const declarations = [];
 function visit(node) {
@@ -74,7 +74,7 @@ async function run({ href = valid, holdMetadata = false, rejectMetadata = false,
     getSkyFromApi: (value, at) => { assert.equal(value, selectedLocation); assert.equal(at, date); apiReads++; return api.promise; },
     getSkyLocally: () => { localReads++; throw Error('Speculative local calculation forbidden'); },
     loadAssets: () => { assetImports++; return rejectAssets ? Promise.reject(Error('Synthetic asset import failure')) : Promise.resolve({
-      loadSkyPlacementSourceAssets: () => { assetReads++; return rejectAssetRead ? Promise.reject(Error('Synthetic asset failure')) : Promise.resolve(); }
+      loadCanonicalSkyReaderAssets: () => { assetReads++; return rejectAssetRead ? Promise.reject(Error('Synthetic asset failure')) : Promise.resolve(); }
     }); },
     loadSkyApi: () => { metadataImports++; return metadata.promise; }
   });

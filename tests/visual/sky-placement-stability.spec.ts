@@ -89,7 +89,7 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) test(`Su
   }).observe(document, { subtree:true, childList:true, characterData:true });
  });
  await bundledPublications(page);
- await page.route('**/sky-v4-canonical-content-studio-stage-v1*.json', async route => {
+ await page.route('**/canonical-sky-reader-transport-v1*.json', async route => {
   await new Promise(resolve => setTimeout(resolve, 2500));
   await route.continue();
  });
@@ -126,7 +126,7 @@ test('Placement reader offers retry when its canonical package fails', async ({ 
  await bundledPublications(page);
  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok:true, calendar:{ days:[] } } }));
  let failPackage = true;
- await page.route('**/sky-v4-canonical-content-studio-stage-v1*.json', route => failPackage
+ await page.route('**/canonical-sky-reader-transport-v1*.json', route => failPackage
   ? route.fulfill({ status:503, body:'Unavailable' }) : route.continue());
  await page.goto('/?date=2026-09-10#sky/placement/sun/virgo');
  await expect(page.getByText('The placement reading could not load. Please try again.')).toBeVisible({ timeout:60_000 });

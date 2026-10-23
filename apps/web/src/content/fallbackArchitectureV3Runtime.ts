@@ -772,7 +772,7 @@ export function loadInitialSkyListFallbackArchitectureV3Bundle() {
   if (loadedSkyV4ReaderRoute && (localInitialSkyListReaderBundle || localSkyPlacementReaderBundle)) return Promise.resolve(false);
   initialSkyListBundlePromise ??= Promise.all([
     import('./fallbackArchitectureV3SkyListBundle'),
-    import('./skyPlacementSourceAssets').then(({ loadSkyPlacementSourceAssets }) => loadSkyPlacementSourceAssets())
+    import('./canonicalSkyReaderAssets').then(({ loadCanonicalSkyReaderAssets }) => loadCanonicalSkyReaderAssets())
   ]).then(async ([{ initialSkyListBundle, loadCanonicalSkyV4ReaderRoute }]) => {
     const render = await loadCanonicalSkyV4ReaderRoute(() => [
       ...hookRowsByKey.values(), ...transitAuthoredCardsByKey.values()
@@ -810,7 +810,7 @@ async function loadSkyPlacementListBundle() {
   // available. Prefetching them at entry delayed the shell on slow networks.
   skyPlacementFallbackBundlePromise ??= Promise.all([
     import("./fallbackArchitectureV3SkyPlacementBundle"),
-    import("./skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) => loadSkyPlacementSourceAssets()),
+    import("./canonicalSkyReaderAssets").then(({ loadCanonicalSkyReaderAssets }) => loadCanonicalSkyReaderAssets()),
     import("./protectedOwnerSkyPlacementPassages").then(({ loadProtectedOwnerSkyPlacementPassages }) => loadProtectedOwnerSkyPlacementPassages())
   ]).then(async ([{ skyPlacementFallbackArchitectureV3Bundle, loadCanonicalSkyV4ReaderRoute }]) => {
       loadedSkyV4ReaderRoute = await loadCanonicalSkyV4ReaderRoute(() => [

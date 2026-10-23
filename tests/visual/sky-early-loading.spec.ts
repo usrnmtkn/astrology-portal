@@ -72,13 +72,14 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
       if (warm) await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
       else expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
       await expect.poll(() => requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname))).toBe(true);
-      if (!initialList) await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
-      else expect(requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(false);
+      if (!initialList) await expect.poll(() => requests.some(url => /canonical-sky-reader-transport-v1.*\.json$/.test(url.pathname))).toBe(true);
+      else expect(requests.some(url => /canonical-sky-reader-transport-v1.*\.json$/.test(url.pathname))).toBe(false);
       if (warm) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
       else await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
       expect(await page.locator('.app-shell').count()).toBe(0);
       expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
       expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
+      expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('detail')).toBe(initialList ? 'placements' : 'full');
       expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
       expect(wasmPaths()).toEqual([]);
       if (changeSelection) {
@@ -89,7 +90,7 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
       }
     } catch (error) { releasePlacement(); throw error; } finally { releaseReact(); releaseApp(); }
     try {
-      await expect.poll(() => requests.some(url => /sky-v4-canonical-content-studio-stage.*\.json$/.test(url.pathname))).toBe(true);
+      await expect.poll(() => requests.some(url => /canonical-sky-reader-transport-v1.*\.json$/.test(url.pathname))).toBe(true);
       await expect(page.locator('.app-shell')).toBeVisible();
     } finally { releasePlacement(); }
     if (!initialList && !changeSelection) {
@@ -130,6 +131,8 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
     expect(requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname) && url.host === new URL(page.url()).host)).toBe(true);
     await page.getByRole('button', { name: `Read more about Sun in ${changeSelection ? 'Aries' : 'Virgo'}`, exact: true }).click();
     await expect(page.locator('.article-shell')).toBeVisible({ timeout: 30_000 });
+    await expect.poll(() => requests.filter(url => url.pathname === '/api/sky').at(-1)?.searchParams.get('detail')).toBe('full');
+    expect(requests.filter(url => url.pathname === '/api/sky').at(-1)?.searchParams.get('at')).toBe(skyRequests.at(-1)?.searchParams.get('at'));
     await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
     await expect.poll(() => requests.some(url => /fallback-content-sky-horoscopes-/.test(url.pathname))).toBe(true);
   });
