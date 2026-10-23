@@ -74,7 +74,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await page.reload(); await select(); await edit.click(); await expect(writing).toHaveValue(copy);
    await editor.getByRole('button', { name: 'Close', exact: true }).click();
 
-   await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await page.getByRole('region', { name: 'Reusable writing setup', exact: true }).getByRole('button', { name: 'Edit reusable template', exact: true }).click();
    await expect(editor.getByRole('button', { name: 'Publish to app', exact: true })).toHaveCount(0);
    await editor.getByRole('button', { name: 'Complete edition', exact: true }).click();
    await expect(editor.getByLabel('Sky article reference date')).toBeFocused();
