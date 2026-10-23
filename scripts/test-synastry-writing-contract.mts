@@ -15,6 +15,7 @@ Object.assign(process.env, {
   NODE_ENV: 'test', CONTENT_GENERATION_SECRET: 'synthetic-synastry-secret',
   OPENAI_API_KEY: 'synthetic', ANTHROPIC_API_KEY: 'synthetic',
   STUDIO_MEMORY_FEEDBACK_ENABLED: 'false', WRITING_KERNEL_GOVERNED_SURFACES: '',
+  SUPABASE_URL: 'https://synthetic-synastry.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'synthetic',
   WRITING_KERNEL_SHADOW_SURFACES: '', WRITING_KERNEL_SKY_GLOBAL_ENABLE: '0',
   WRITING_KERNEL_SKY_CANARY_PERCENT: '0'
 });
@@ -47,8 +48,14 @@ let nextDraft: any = draft;
 const validPlan = { core_tension: 'Person A and Person B understand the synthetic exchange differently.',
   what_changes: '', constructive_expression: '', overcorrection: '', observable_behaviors: [], possible_consequences: [] };
 let nextPlan: any = validPlan;
+let feedbackRows: any[] = [];
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (url, init = {}) => {
+  if (String(url) === 'https://synthetic-synastry.supabase.co/rest/v1/rpc/studio_memory_active_snapshot') {
+    assert.equal(init.method, 'POST');
+    assert.equal(init.body, '{}');
+    return Response.json([{ snapshot: { writingFeedback: feedbackRows } }]);
+  }
   const openai = String(url) === 'https://api.openai.com/v1/responses';
   assert(openai || String(url) === 'https://api.anthropic.com/v1/messages', 'All storage and unexpected network calls are forbidden.');
   const body = JSON.parse(String(init.body));
@@ -92,7 +99,7 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v9-2026-10-21'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v10-2026-10-22'));
   assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
   assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
@@ -148,6 +155,15 @@ function assertSynastryRequest(request: any, input: typeof base) {
     assert(!prompt.includes('SUPPLIED SYNASTRY SIGN CONTEXT'));
   }
   assert(prompt.includes('owner_authored_final'), 'Existing eligible owner retrieval is retained.');
+  const voiceAt = Math.max(prompt.indexOf('DESIGNATED SYNASTRY VOICE REFERENCES'), prompt.indexOf('APPROVED TLDR ASTRO EXAMPLES'));
+  const briefAt = prompt.lastIndexOf('WRITE THE READER INTERPRETATION');
+  assert(voiceAt > prompt.indexOf('SOURCE SNAPSHOT') && briefAt > voiceAt,
+    'The final task follows complete positive voice evidence, not a plan or rejected draft.');
+  assert(prompt.indexOf('EXTRA VOICE NOTES') < voiceAt);
+  if (request.provider === 'openai') assert(prompt.indexOf('GOVERNED MEANING PLAN') < voiceAt,
+    'The planner must not displace the positive references at the end of the writer request.');
+  assert(prompt.slice(briefAt).includes('Current owner corrections still govern'));
+  assert(prompt.slice(briefAt).includes('internal chart labels, not names to print in reader fields'));
   assert.equal(schema.additionalProperties, false);
   assert.deepEqual(schema.required, ['headline', 'tldr', 'summary', 'body', 'action', 'timing', 'sections', 'sceneLock', 'astrologyDrilldown']);
   assert.deepEqual(schema.properties.astrologyDrilldown.properties.factors.items.required, ['label', 'technicalFact', 'plainMeaning']);
@@ -244,7 +260,7 @@ try {
     const generated = await generate({ ...sourceFixture, provider });
     assert.equal(generated.statusCode, 200);
     const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-    assert.equal(receipt.editorialVersion, 'synastry-aspect/v9-2026-10-21');
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v10-2026-10-22');
     assert.equal(receipt.readerPerson, 'B');
     assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
     assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
@@ -291,6 +307,50 @@ try {
     assert.notEqual(invalid.statusCode, 200); assert.match(invalid.result.error, /VOICE_REFERENCE_INVALID/u);
     assert.equal(requests.length, beforeInvalid, 'Damaged designated evidence stops before either provider.');
   }
+  // Reproduce the whole-request ordering defect with complete negative evidence,
+  // an existing draft and a designated benchmark. No body is shortened or promoted.
+  const rejection = { id: 'synthetic-context-rejection', version: 1, status: 'active', kind: 'rejection',
+    target_keys: [base.contentKey], rejected_text: 'Complete synthetic rejected passage. It retains its final sentence.',
+    source_roles: null, owner_reason: 'Complete synthetic owner reason: this wording was rejected, including its ending.',
+    source_uri: 'thread:11111111-1111-4111-8111-111111111111', source_date: '2026-10-22T00:00:00Z' };
+  feedbackRows = [rejection]; process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'true';
+  const existing = { text: 'Complete synthetic existing draft. Its ending remains revision context only.' };
+  for (const provider of ['openai', 'claude'] as const) {
+    for (const readerPerson of ['A', 'B'] as const) {
+      const fixture = { ...benchmarkFixture, facts: { ...base.facts, readerPerson,
+        personA: readerPerson === 'A' ? 'you' : 'Rowan', personB: readerPerson === 'B' ? 'you' : 'Rowan' },
+        sourceSnapshot: { ...benchmarkFixture.sourceSnapshot, existingDraft: existing } };
+      const start = requests.length;
+      const result = await generate({ ...fixture, provider });
+      assert.equal(result.statusCode, 200);
+      const stages = requests.slice(start);
+      const writer = stages.find(request => request.kind === 'tldr_astro_generated_content');
+      const prompt = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+      const rejectedAt = prompt.indexOf('BEGIN REJECTED WRITING AND OWNER CORRECTIONS');
+      const rejectedEnd = prompt.indexOf('END REJECTED WRITING AND OWNER CORRECTIONS');
+      const voiceAt = prompt.indexOf('DESIGNATED SYNASTRY VOICE REFERENCES');
+      const briefAt = prompt.lastIndexOf('WRITE THE READER INTERPRETATION');
+      assert(rejectedAt > prompt.indexOf(existing.text));
+      assert(rejectedEnd > rejectedAt && voiceAt > rejectedEnd && briefAt > voiceAt);
+      for (const exact of [rejection.rejected_text, rejection.owner_reason, voiceText, existing.text]) {
+        assert.equal(prompt.split(exact).length - 1, 1, 'Every complete unit is preserved once in its evidence role.');
+      }
+      assert(prompt.slice(briefAt).includes(`Address the ${readerPerson === 'A' ? 'Mercury' : 'Moon'} person as you.`));
+      assert.equal(result.result.generated.generation_metadata.evidencePacket.writingFeedback.selected.length, 1);
+      assert(!JSON.stringify(result.result.generated.generation_metadata).includes(rejection.rejected_text),
+        'Private rejected wording cannot enter the persisted public evidence shadow.');
+      assert.equal(stages.filter(request => request.kind === 'tldr_astro_generated_content').length, 1);
+      if (provider === 'openai') assert(prompt.indexOf(JSON.stringify(validPlan, null, 2)) < rejectedAt,
+        'Meaning-only planning precedes negative evidence and complete positive references.');
+    }
+    const start = requests.length;
+    const unnamed = await generate({ ...benchmarkFixture, provider, facts: { ...base.facts, personA: 'Rowan', personB: 'Casey' } });
+    assert.equal(unnamed.statusCode, 200);
+    const writer = requests.slice(start).find(request => request.kind === 'tldr_astro_generated_content');
+    const prompt = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+    assert(prompt.slice(prompt.lastIndexOf('WRITE THE READER INTERPRETATION')).includes('No reader has been identified'));
+  }
+  feedbackRows = []; process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'false';
   for (const unsafePlan of [{}, { core_tension: 'Their caution presses on your confidence.' },
     { core_tension: 'Person A wants you to agree with Person B.' }]) {
     nextPlan = unsafePlan; const start = requests.length;

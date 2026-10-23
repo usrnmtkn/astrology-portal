@@ -1,7 +1,7 @@
 "use strict";
 const { RHETORICAL_WRITER_POLICY } = require("./rhetoricalPatterns.cjs");
 
-const SYNASTRY_EDITORIAL_VERSION = "synastry-aspect/v9-2026-10-21";
+const SYNASTRY_EDITORIAL_VERSION = "synastry-aspect/v10-2026-10-22";
 const SYNASTRY_EDITORIAL_AUTHORITY = [
   `SYNASTRY EDITORIAL AUTHORITY ${SYNASTRY_EDITORIAL_VERSION}`,
   "Interpret the supplied directional contact between two charts. The other person's planet and the reader's planet have distinct roles. Explain how their responses affect one another without turning either person into a fixed type.",
