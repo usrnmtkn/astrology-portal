@@ -150,6 +150,9 @@ const templateReference = buildIngressTemplateReference(target.contentKey, 'Synt
 assert.equal(templateReference.reference.bodySha256, createHash('sha256').update(templateReference.reference.body).digest('hex'));
 assert.equal(templateReference.receipt.factUseAuthorized, false);
 assert.equal(templateReference.receipt.positiveVoiceEvidence, false);
+assert.equal(templateReference.receipt.role, 'provenance-only');
+assert.equal(Object.hasOwn(templateReference, 'prompt'), false,
+  'The complete saved template remains internally verifiable without a prose prompt.');
 validateIngressTemplateReference(templateReference);
 assert.throws(() => validateIngressTemplateReference(undefined), /missing or changed/);
 assert.throws(() => validateIngressTemplateReference({ ...templateReference,

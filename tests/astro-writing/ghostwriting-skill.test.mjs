@@ -1,9 +1,21 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from '../../src/astro-writing/ghostwritingSkill.mjs';
+import { GHOSTWRITING_SKILL_INSTRUCTIONS, ghostwritingInstructionsForContext, withGhostwritingSkill } from '../../src/astro-writing/ghostwritingSkill.mjs';
 import { callOpenAIResponses, governedInstructionsForRole, instructionsForRole,
   startStoredNativeWritingResponse } from '../../src/astro-writing/openAIResponses.cjs';
 import { reviseDraft } from '../../src/astro-writing/reviseDraft.mjs';
+
+test('dated ingress omits analytical craft assignments without changing other writers', () => {
+  const context={surface:'sky',family:'sky-ingress-essay'};
+  const instructions=governedInstructionsForRole('WRITER',context);
+  for(const phrase of ["develop how the planet's function interacts",'Keep the reason a response can feel compelling'])
+    assert(!instructions.includes(phrase),'Dated ingress must not inherit the shared analytical assignment.');
+  assert.equal(instructions.split('GHOSTWRITER CRAFT GUIDANCE').length-1,1);
+  assert.equal(withGhostwritingSkill(instructions,context),instructions);
+  for(const [surface,family] of [['sky','sky-placement'],['horoscopes','horoscope'],['you','transit-aspect'],['synastry','synastry-aspect']])
+    assert(governedInstructionsForRole('WRITER',{surface,family}).includes(GHOSTWRITING_SKILL_INSTRUCTIONS),
+      'The scoped ingress change must preserve complete shared guidance for other writers.');
+});
 
 test('new prose requests receive Ghostwriter once and preserve the canonical prefix', async () => {
   for (const [surface, family] of [['sky','sky-placement'], ['sky','sky-ingress-essay'], ['horoscopes','horoscope'],
@@ -13,8 +25,8 @@ test('new prose requests receive Ghostwriter once and preserve the canonical pre
       request:{model:'synthetic',input:'Synthetic source material.'},
       fetchImpl:async (_url, init) => { sent=JSON.parse(init.body); return Response.json({id:'resp_fixture'}); } });
     assert(sent.instructions.startsWith(instructionsForRole('WRITER','',{surface,family})));
-    assert.equal(sent.instructions.split(GHOSTWRITING_SKILL_INSTRUCTIONS).length-1,1);
-    assert.equal(withGhostwritingSkill(sent.instructions),sent.instructions);
+    assert.equal(sent.instructions.split(ghostwritingInstructionsForContext({surface,family})).length-1,1);
+    assert.equal(withGhostwritingSkill(sent.instructions,{surface,family}),sent.instructions);
     assert.equal(sent.input,'Synthetic source material.');
   }
   for (const role of ['REVISER','CARD_WRITER_V3','CARD_REVISER_V3']) {

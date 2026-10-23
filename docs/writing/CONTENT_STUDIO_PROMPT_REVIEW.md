@@ -73,6 +73,18 @@ Meaning, facts, complete approved voice sources and output fields are unchanged.
 See the [narrow repair and test cases](INGRESS_NARROW_VOICE_REPAIR_2026-10-22.md).
 This local repair does not establish deployment or improved generated prose.
 
+## October 23 ingress request repair
+
+The subsequent v6 preview still failed the owner's voice review. Its actual
+response log confirmed that the complete benchmarks and four exact rejections
+arrived. The remaining request included analytical shared Ghostwriter guidance,
+the full saved prose template, and a flat event packet that encouraged a calendar
+walkthrough. The [v7 request repair](INGRESS_REQUEST_REPAIR_2026-10-23.md) scopes
+Ghostwriter for ingress, retains the template only for internal provenance, and
+separates developed contacts from calendar and technical reference evidence.
+Complete meaning/voice sources, calculated facts and public output fields remain
+unchanged. Intercepted-provider checks establish delivery, not improved voice.
+
 ## Runtime inventory
 
 | Owner action / surface | Prompt and instruction sources | Contract to preserve |

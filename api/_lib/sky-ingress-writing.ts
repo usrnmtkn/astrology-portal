@@ -126,13 +126,16 @@ export function buildSkyIngressWritingContext(facts: Record<string, any>) {
   // The prose writer needs each fact, not repeated formatted position lines,
   // app-owned date bullets or the same dignity explanation for every participant.
   const withoutBasis = ({ basis: _basis, ...condition }: ReturnType<typeof ingressDignityEvidence>) => condition;
-  const writerEvidence = { ...plan, condition: withoutBasis(condition),
-    participantConditions: participantConditions.map(withoutBasis),
-    dignityBasis: condition.basis,
+  const writerEvidence = { version, articleFormat: plan.articleFormat, coverage: plan.coverage,
+    selectedPlanet: plan.selectedPlanet, selectedSign: plan.selectedSign, traditionalRuler: ruler,
     developed: developed.map(({ positionsLine: _line, ...item }) => item),
-    requiredDates: requiredDates.map(({ prefix: _prefix, ...item }) => item) };
+    calendarReference: { role: 'date-reference-only', events: requiredDates.map(({ prefix: _prefix, ...item }) => item) },
+    technicalReference: { role: 'accuracy-reference-only', condition: withoutBasis(condition),
+      participantConditions: participantConditions.map(withoutBasis), dignityBasis: condition.basis },
+    verifiedHistoryInstants: plan.verifiedHistoryInstants, uninterpreted: plan.uninterpreted,
+    meaningSources: plan.meaningSources };
   const receipt = { version, writerContract: ingressWriterContractReceipt(), planSha256: hash(plan),
-    writerEvidence: { version: 'ingress-writer-evidence/v1', sha256: hash(writerEvidence) },
+    writerEvidence: { version: 'ingress-writer-evidence/v2', sha256: hash(writerEvidence) },
     developedEventIds: developed.map(event => event.id),
     requiredDateEventIds: requiredDates.map(event => event.id),
     developedEventFacts: developed.map(({ id, event, positionsLine }) => ({ id,
@@ -149,17 +152,13 @@ export function buildSkyIngressWritingContext(facts: Record<string, any>) {
 
 export type SkyIngressWritingContext = ReturnType<typeof buildSkyIngressWritingContext>;
 
-/** Keep the complete saved article available without importing its old facts,
- * immutable wording or separate rising-sign companion into the dated format. */
+/** Retain complete saved prose and its identity outside the writing request. */
 export function buildIngressTemplateReference(contentKey: string, body: string) {
   if (!/^sky(?:\/|-)article-template\//u.test(contentKey) || typeof body !== 'string' || !body.trim())
     throw new Error('A complete approved article template reference is required before ingress writing.');
   const reference = { contentKey, body, bodySha256: hash(body) };
-  return { reference, receipt: { version: 'ingress-template-reference/v1', contentKey, bodySha256: reference.bodySha256,
-    role: 'structure-only', ownerAuthorshipEstablished: false, positiveVoiceEvidence: false, factUseAuthorized: false },
-    prompt: ['COMPLETE SAVED INGRESS TEMPLATE REFERENCE',
-      'Keep this approved, non-serving saved article complete as structural context. The current ingress brief controls the new prose. This reference does not establish immutable wording, owner authorship, current facts or voice authority. Its old variables and separate horoscope companion are not this request’s output fields. Current owner corrections take precedence over historical wording and claims.',
-      JSON.stringify(reference)].join('\n\n') };
+  return { reference, receipt: { version: 'ingress-template-reference/v2', contentKey, bodySha256: reference.bodySha256,
+    role: 'provenance-only', ownerAuthorshipEstablished: false, positiveVoiceEvidence: false, factUseAuthorized: false } };
 }
 
 export type IngressTemplateReference = ReturnType<typeof buildIngressTemplateReference>;
@@ -167,7 +166,7 @@ export type IngressTemplateReference = ReturnType<typeof buildIngressTemplateRef
 export function validateIngressTemplateReference(value: IngressTemplateReference | undefined) {
   const expected = value && buildIngressTemplateReference(value.reference.contentKey, value.reference.body);
   if (!value || !expected || hash(value.reference.body) !== value.reference.bodySha256
-    || hash(value.receipt) !== hash(expected.receipt) || value.prompt !== expected.prompt)
+    || hash(value.receipt) !== hash(expected.receipt))
     throw new Error('The complete ingress template reference is missing or changed. No writing call was started.');
 }
 

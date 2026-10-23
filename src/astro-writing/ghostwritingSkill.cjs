@@ -1,5 +1,7 @@
 "use strict";
 
+const { INGRESS_WRITER_CONTRACT } = require('./transitIngressEditorialAuthority.cjs');
+
 // Adapted from cdeistopened/skill-stack at 6b2dfeb94b719bc458ec4a4487dea1d5ff76d841.
 // The upstream MIT notice is preserved in ghostwritingSkill.LICENSE.txt.
 const GHOSTWRITING_SKILL_VERSION = "ghostwriter/v3-2026-10-21";
@@ -23,12 +25,18 @@ EDITORIAL PATTERN REVIEW: Apply the shared context-sensitive AI-writing-pattern 
 
 EDIT IN THE SAME WRITING CALL: Read the complete candidate as ordinary prose beside the selected author passages before returning it. Resolve generic coaching, corporate jargon and the contextual pattern findings by rewriting the thought, not swapping synonyms. Preserve useful imagery, rhythm and warranted uncertainty. Never invent numbers, evidence, personal history or certainty to make a sentence sound specific. Hooks, persuasion frameworks, human-desire categories and quotable lines are optional craft tools, never required structures. Do not force fear, status, belonging, a crisis or a slogan onto unrelated astrology. Finish only the requested draft or revision; this guidance adds no model call, automatic rewrite, publication authority or claim of owner approval.`;
 
-function withGhostwritingSkill(instructions) {
+function ghostwritingInstructionsForContext({surface = '', family = ''} = {}) {
+  return surface === 'sky' && family === 'sky-ingress-essay'
+    ? INGRESS_WRITER_CONTRACT.ghostwriter : GHOSTWRITING_SKILL_INSTRUCTIONS;
+}
+
+function withGhostwritingSkill(instructions, context = {}) {
   const base = String(instructions ?? "").trim();
-  return base.includes(GHOSTWRITING_SKILL_INSTRUCTIONS)
+  const guidance = ghostwritingInstructionsForContext(context);
+  return base.includes(guidance)
     ? base
-    : [base, GHOSTWRITING_SKILL_INSTRUCTIONS].filter(Boolean).join("\n\n");
+    : [base, guidance].filter(Boolean).join("\n\n");
 }
 
 module.exports = { GHOSTWRITING_SKILL_VERSION, GHOSTWRITING_SKILL_SOURCES,
-  GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill };
+  GHOSTWRITING_SKILL_INSTRUCTIONS, ghostwritingInstructionsForContext, withGhostwritingSkill };
