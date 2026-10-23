@@ -49,6 +49,10 @@ source selection retains precedence. No source body is committed or added to a
 browser bundle.
 The repository approval manifest pins all eight exact passage hashes. Changing
 text and recomputing its storage hash cannot reuse the old prose approval.
+Both the generic API function pattern and the generated-content route's explicit
+override package `data/writing`, including that text-free approval manifest. The
+horoscope packaging regression checks that the explicit route preserves every
+source selected by the generic pattern; the initial override omitted this folder.
 
 The body writer's fresh-draft input excludes the old draft's prose, while keeping
 the complete original draft and hash in private audit input. Revalidation reloads
@@ -86,6 +90,20 @@ held. These source fixes do not establish that the writing quality is repaired;
 the next model comparison must keep the prepared request fixed to avoid changing
 the model and prompt together again. No further provider call is authorized by
 that completed one-call test.
+
+One further explicitly authorized GPT-6.1 Sol comparison used the identical
+provider request apart from the model. Its complete raw response, token usage,
+request equality check and subsequent owner feedback remain in protected storage.
+It is a single development case, not evidence that the remaining library is
+ready for bulk rewriting or that a default-model change is approved.
+
+The v12 Synastry instruction revision tightens two existing paragraphs: use plain
+words for what a person wants or intends to do, develop a supported thought
+instead of repeating reassurance, and state an unclear phrase's supported meaning
+directly. The exact sentence correction remains private and scoped to its source
+entry. This revision adds no vocabulary blacklist, compulsory scene, conflict,
+advice ending, provider stage, model change or prose approval. The frozen model
+comparison remains unchanged; its result does not evaluate this later revision.
 
 The private merged protected-source payload is prepared separately. Deployment
 must provision that payload without replacing existing protected documents,

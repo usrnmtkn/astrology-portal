@@ -88,6 +88,8 @@ function assertSynastryRequest(request: any, input: typeof base) {
   const instructions = request.provider === 'openai' ? request.body.instructions : request.body.system;
   const schema = request.provider === 'openai' ? request.body.text.format.schema : request.body.tools[0].input_schema;
   assert(instructions.includes('Show what each person says, hears, wants or does'), 'The actual writer receives interaction-led guidance.');
+  assert(instructions.includes('Use plain words for what the person wants or intends to do'), 'The actual writer receives plain-language guidance.');
+  assert(instructions.includes('Let each sentence develop the thought instead of restating support, comfort or confidence'), 'Reassurance is not substituted for development in the dispatched instructions.');
   assert(instructions.includes('Prefer direct causal sentences to report transitions'), 'Report-like wording is addressed in the dispatched instructions.');
   assert(instructions.includes('"As a result"'), 'The owner-identified transition is retained as a negative style example.');
   assert(instructions.includes('a feeling word alone does not explain the interaction'));
@@ -101,7 +103,7 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v11-2026-10-23'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v12-2026-10-23'));
   assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
   assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
@@ -263,7 +265,7 @@ try {
     const generated = await generate({ ...sourceFixture, provider });
     assert.equal(generated.statusCode, 200);
     const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-    assert.equal(receipt.editorialVersion, 'synastry-aspect/v11-2026-10-23');
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v12-2026-10-23');
     assert.equal(receipt.readerPerson, 'B');
     assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
     assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
