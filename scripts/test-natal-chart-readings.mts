@@ -23,8 +23,15 @@ for (const iso of ["1994-04-12T16:00:00Z", "1994-04-12T04:00:00Z", "2000-12-20T1
   const sky = natalSnapshotWithBirthTimeReliability(await getAstrodienstSky(location, date, { includeDailyEvents: false }), true)!;
   const jd = swiss.julday(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), date.getUTCHours());
   const sun = swiss.calc_ut(jd, swiss.SE_SUN, swiss.SEFLG_SWIEPH | swiss.SEFLG_EQUATORIAL);
-  const direct = (swiss as any).azalt(jd, 1, [location.longitude, location.latitude, 0], 0, 15, sun).trueAltitude;
-  assert(Math.abs(sky.solarHorizon!.altitude - direct) < 1e-8, `${iso}: altitude agrees with direct Swiss horizontal coordinates`);
+  // Independently transform equatorial coordinates rather than calling the
+  // runtime's Swiss horizontal-coordinate helper as the expected result.
+  const radians = Math.PI / 180;
+  const latitude = location.latitude * radians;
+  const declination = sun[1] * radians;
+  const hourAngle = (swiss.sidtime(jd) * 15 + location.longitude - sun[0]) * radians;
+  const direct = Math.asin(Math.sin(latitude) * Math.sin(declination)
+    + Math.cos(latitude) * Math.cos(declination) * Math.cos(hourAngle)) / radians;
+  assert(Math.abs(sky.solarHorizon!.altitude - direct) < 1e-8, `${iso}: Swiss altitude agrees with independent horizontal-coordinate transform`);
   assert.equal(natalSectForSnapshot(sky), iso.includes("T16:") ? "day" : "night");
   if (!day!) day = sky;
 }

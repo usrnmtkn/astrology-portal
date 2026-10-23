@@ -19,18 +19,6 @@ export function hasCalculatedSolarHorizon(snapshot: { generatedAt: string; solar
     && Number.isFinite(horizon.altitude) && Math.abs(horizon.altitude) <= 90);
 }
 
-/** Geometric solar-centre altitude. No refraction, civil-time or house inference. */
-export function solarAltitudeFromEquatorial(rightAscension: number, declination: number,
-  siderealHours: number, latitude: number, longitude: number): number {
-  if (![rightAscension, declination, siderealHours, latitude, longitude].every(Number.isFinite)
-    || Math.abs(latitude) > 90 || Math.abs(longitude) > 180 || Math.abs(declination) > 90) return NaN;
-  const radians = Math.PI / 180;
-  const hourAngle = (siderealHours * 15 + longitude - rightAscension) * radians;
-  const sine = Math.sin(latitude * radians) * Math.sin(declination * radians)
-    + Math.cos(latitude * radians) * Math.cos(declination * radians) * Math.cos(hourAngle);
-  return Math.asin(Math.max(-1, Math.min(1, sine))) / radians;
-}
-
 export function natalSectFromAltitude(altitude: number | null | undefined, birthTimeKnown: boolean): NatalSect | null {
   if (!birthTimeKnown || typeof altitude !== "number" || !Number.isFinite(altitude)
     || Math.abs(altitude) > 90 || Math.abs(altitude) <= SECT_HORIZON_MARGIN_DEGREES) return null;
