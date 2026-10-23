@@ -12370,6 +12370,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const recoveryIsCurrent = () => !cancelled && (!recovery
       || window.location.href === recoveryRoute && placementTargetRef.current === target);
 
+    if (shouldLoadPlacementContent && isTodayMode && !skyDetailRoutePath) {
+      // The complete reading uses the formatted-text renderer. Download it
+      // alongside its sources so the final text does not open another waterfall.
+      void import("./components/FormattedWritingContent").catch(() => { /* The visible reader retains its own recovery boundary. */ });
+    }
     if (shouldLoadPlacementContent && selection === "pending") {
       const initialList = isTodayMode && !skyDetailRoutePath;
       void (initialList ? loadInitialSkyListFallbackArchitectureV3Bundle() : loadSkyPlacementFallbackArchitectureV3Bundle(false))

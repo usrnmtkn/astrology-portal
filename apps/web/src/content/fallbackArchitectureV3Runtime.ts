@@ -770,7 +770,10 @@ export function isSkyPlacementFallbackArchitectureV3BundleLoaded(includeHouses =
 
 export function loadInitialSkyListFallbackArchitectureV3Bundle() {
   if (loadedSkyV4ReaderRoute && (localInitialSkyListReaderBundle || localSkyPlacementReaderBundle)) return Promise.resolve(false);
-  initialSkyListBundlePromise ??= import('./fallbackArchitectureV3SkyListBundle').then(async ({ initialSkyListBundle, loadCanonicalSkyV4ReaderRoute }) => {
+  initialSkyListBundlePromise ??= Promise.all([
+    import('./fallbackArchitectureV3SkyListBundle'),
+    import('./skyPlacementSourceAssets').then(({ loadSkyPlacementSourceAssets }) => loadSkyPlacementSourceAssets())
+  ]).then(async ([{ initialSkyListBundle, loadCanonicalSkyV4ReaderRoute }]) => {
     const render = await loadCanonicalSkyV4ReaderRoute(() => [
       ...hookRowsByKey.values(), ...transitAuthoredCardsByKey.values()
     ]);

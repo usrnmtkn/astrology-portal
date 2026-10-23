@@ -127,6 +127,18 @@ try {
   assert.deepEqual(queries.at(-1), [], 'The list must not reuse the broader article inventory');
   const client = (globalThis as any).fixtureClient;
   const normalRpc = client.rpc;
+  qa.clearCachedFallbackArchitectureV3Bundle('sky-list');
+  let releaseListRevision!: () => void;
+  client.rpc = () => new Promise(resolve => { releaseListRevision = () => resolve({ data: rows[0].updated_at }); });
+  const beforeListQueries = queries.length;
+  let listSettled = false;
+  const coldList = qa.loadFallbackArchitectureV3DashboardBundle('sky-list');
+  void coldList.then(() => { listSettled = true; });
+  for (let tick = 0; queries.length === beforeListQueries && tick < 100; tick++) await new Promise(resolve => setTimeout(resolve, 0));
+  assert.equal(queries.length, beforeListQueries + 1, 'Cold list rows must start before the revision RPC finishes.');
+  assert.equal(listSettled, false, 'Parallel rows cannot bypass revision and manifest admission.');
+  releaseListRevision(); await coldList;
+  client.rpc = normalRpc;
   const oldStation = { body: rows[2].body, updated_at: rows[2].updated_at };
   const newerRevision = '2099-01-01T00:00:00Z';
   let releaseRevision!: () => void;

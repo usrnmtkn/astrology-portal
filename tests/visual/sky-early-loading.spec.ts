@@ -152,7 +152,8 @@ for (const width of [390, 1440]) test(`Sky list reads published editions alongsi
   });
   let release!: () => void;
   const coreGate = new Promise<void>(resolve => { release = resolve; });
-  let coreReads = 0, editionReads = 0;
+  let coreReads = 0, editionReads = 0, formattedReads = 0;
+  page.on('request', request => { if (/\/assets\/FormattedWritingContent-[^/]+\.js$/u.test(new URL(request.url()).pathname)) formattedReads++; });
   await page.route('**/api/content-reader', async route => {
     const query = route.request().postDataJSON();
     if (query.scope === 'sky-list') { coreReads++; await coreGate; }
@@ -163,6 +164,7 @@ for (const width of [390, 1440]) test(`Sky list reads published editions alongsi
     await page.goto('/?date=2026-09-21#sky');
     await expect.poll(() => coreReads).toBeGreaterThan(0);
     await expect.poll(() => editionReads).toBeGreaterThan(0);
+    await expect.poll(() => formattedReads).toBeGreaterThan(0);
   } finally { release(); }
   // Parallel transport cannot authorize a missing published edition or expose
   // the bundled alternative as a completed reading.

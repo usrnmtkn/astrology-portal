@@ -1221,10 +1221,10 @@ async function readFallbackArchitectureV3DashboardBundle(
 
   if (!supabase) return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
 
-  // A cold article has no cached bundle for the revision check to reuse.
-  // Fetch its rows and immutable manifest while that check runs, then retain
+  // Cold Sky readers have no cached bundle for the revision check to reuse.
+  // Fetch their rows and immutable manifest while that check runs, then retain
   // the same publication, revision and package admission below.
-  const coldArticleRows = !cached && scope === "sky-article"
+  const coldArticleRows = !cached && (scope === "sky-article" || scope === "sky-list")
     ? earlyRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope }) : undefined;
   const coldArticleManifest = coldArticleRows ? loadFallbackArchitectureV3BundledCoreManifest() : undefined;
   void coldArticleManifest?.catch(() => { /* Joined by the existing recovery below. */ });
