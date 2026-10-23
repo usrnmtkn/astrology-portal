@@ -274,6 +274,9 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         aspectPatterns: options.aspectPatterns,
         location: fixtureLocation,
         generatedAt: "2026-06-16T16:00:00.000Z",
+        // Deliberately constructed, current natal fixture; retain its controlled
+        // positions rather than invoking the separate legacy repair workflow.
+        solarHorizon: { version: "solar-horizon-v1", instant: "2026-06-16T16:00:00.000Z", altitude: 30 },
         ascendant: signs[(11 + signOffset) % signs.length][0],
         ascendantLongitude: 351 + signOffset * 30,
         midheaven: signs[(8 + signOffset) % signs.length][0],

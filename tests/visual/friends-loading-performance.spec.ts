@@ -134,6 +134,9 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     const fixtureSky = (signOffset: number) => ({
       location,
       generatedAt: "2026-08-08T16:00:00.000Z",
+      // The complete-chart performance fixture already has current natal facts.
+      // The explicit incompleteChart case below still exercises legacy repair.
+      solarHorizon: { version: "solar-horizon-v1", instant: "2026-08-08T16:00:00.000Z", altitude: 30 },
       ascendant: signs[(11 + signOffset) % signs.length][0],
       ascendantLongitude: (330 + signOffset * 30) % 360,
       midheaven: signs[(8 + signOffset) % signs.length][0],

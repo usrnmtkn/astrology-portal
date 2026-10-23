@@ -6,11 +6,14 @@ import { getAstrodienstSky } from "../apps/web/src/services/ephemeris.ts";
 import { natalSnapshotWithBirthTimeReliability } from "../apps/web/src/services/birthTimeReliability.ts";
 import { friendSafeNatalChart } from "../apps/web/src/services/friendSafeNatalChart.ts";
 import { build } from "esbuild";
-const bundled = await build({ entryPoints: ["apps/web/src/content/natalChartReadings.ts"], bundle: true, platform: "node", format: "esm", write: false,
+const bundled = await build({ stdin: { resolveDir: process.cwd(), contents: `
+  export { natalChartReadings, natalReadingBody } from "./apps/web/src/content/natalChartReadings.ts";
+  export { manualChartNeedsNatalRepair } from "./apps/web/src/services/manualCharts.ts";
+` }, bundle: true, platform: "node", format: "esm", write: false,
   define: { "import.meta.env": "{}" }, logLevel: "silent", plugins: [{ name: "no-auth-fixture", setup(builder) {
-    builder.onLoad({ filter: /[/\\]services[/\\]auth\.ts$/ }, () => ({ contents: "export async function getSupabaseClient(){return null}", loader: "js" }));
+    builder.onLoad({ filter: /[/\\]services[/\\]auth\.ts$/ }, () => ({ contents: "export async function getSupabaseClient(){return null} export async function getVerifiedAuthUser(){return null}", loader: "js" }));
   } }] });
-const { natalChartReadings, natalReadingBody } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString("base64")}`);
+const { natalChartReadings, natalReadingBody, manualChartNeedsNatalRepair } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString("base64")}`);
 import { natalSectForSnapshot, natalSectFromAltitude } from "../src/shared/solarHorizon.ts";
 import type { LiveGeneratedContent } from "../apps/web/src/services/generatedContent.ts";
 
@@ -42,6 +45,18 @@ const unknown = natalSnapshotWithBirthTimeReliability(day!, false)!;
 assert.equal(unknown.solarHorizon, undefined);
 assert.equal(unknown.sharedNatalSect, undefined);
 assert.deepEqual(natalChartReadings(unknown, "you"), []);
+const currentChart = { chartType: "person", birthDate: "1994-04-12", birthTime: "12:00", birthTimeUnknown: false,
+  birthLocation: location, natalChart: day! };
+assert.equal(manualChartNeedsNatalRepair(currentChart), false, "current complete charts retain their saved placements");
+assert.equal(manualChartNeedsNatalRepair({ ...currentChart, natalChart: { ...day!, solarHorizon: undefined } }), true,
+  "legacy complete known-time charts must gain the missing sect calculation");
+assert.equal(manualChartNeedsNatalRepair({ ...currentChart, natalChart: { ...day!, solarHorizon: { ...day!.solarHorizon!, instant: "2000-01-01T00:00:00Z" } } }), true,
+  "stale horizon receipts must be recalculated");
+assert.equal(manualChartNeedsNatalRepair({ ...currentChart, birthTime: null, birthTimeUnknown: true, natalChart: unknown }), false,
+  "unknown-time charts do not gain an invented sect calculation");
+assert.equal(manualChartNeedsNatalRepair({ ...currentChart, chartType: "event", natalChart: { ...day!, solarHorizon: undefined } }), false,
+  "event charts do not require natal sect");
+console.log("PASS current versus legacy chart repair, stale receipts, unknown birth times and event exclusion.");
 const shared = friendSafeNatalChart(day!, true)!;
 assert.equal(shared.generatedAt, "");
 assert.equal(shared.solarHorizon, undefined);

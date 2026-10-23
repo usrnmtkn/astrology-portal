@@ -62,6 +62,9 @@ async function seed(page: Page, theme: string, multipleContacts = false, mixedCo
     const fixtureSky = (signOffset: number) => ({
       location,
       generatedAt: "2026-08-08T16:00:00.000Z",
+      // Current synthetic chart: legacy repair must not replace the deliberately
+      // constructed contacts that this source-isolation suite is exercising.
+      solarHorizon: { version: "solar-horizon-v1", instant: "2026-08-08T16:00:00.000Z", altitude: 30 },
       ascendant: signs[(11 + signOffset) % signs.length][0],
       ascendantLongitude: (330 + signOffset * 30) % 360,
       midheaven: signs[(8 + signOffset) % signs.length][0],
