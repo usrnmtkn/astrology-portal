@@ -264,12 +264,17 @@ const compositeSourceKey = new RegExp(`^composite\\.(?:${compositeSourceBody}|ho
 const compositeSignSourceKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-in-(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$`, "u");
 
 const compositeHouseAliasKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-house-?(?:[1-9]|1[0-2])$`, "u");
+const natalEditorialSourceKey = /^cms\/(?:natal-twelfth-ruler\/(?:you|they)\/(?:introduction|ruler-house\/(?:[1-9]|1[0-2]))|natal-chart-context\/(?:you|they)\/sect\/(?:day|night)|natal-planet-sect\/(?:you|they)\/(?:jupiter|venus|mars|saturn)\/(?:day|night))$/u;
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string, metadata?: { facts?: unknown; sourceSnapshot?: unknown }) {
   if (contentKey?.startsWith("sample-") || isRecord(metadata?.facts) && metadata.facts.sampleOnly || isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.sampleOnly) return true;
   // These are reusable reader-bank identities, not generated personal reports.
   const reusableComposite = surface === "composite" && Boolean(contentKey && (compositeSourceKey.test(contentKey) || compositeSignSourceKey.test(contentKey) || compositeHouseAliasKey.test(contentKey)));
-  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite;
+  const reusableNatal = surface === "natal" && Boolean(contentKey && natalEditorialSourceKey.test(contentKey))
+    && isRecord(metadata?.facts) && metadata.facts.scope === "editorial_library"
+    && metadata.facts.audience === contentKey?.split("/")[2]
+    && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "editorial-library";
+  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal;
 }
 
 function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {

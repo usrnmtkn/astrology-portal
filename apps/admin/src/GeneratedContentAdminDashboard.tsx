@@ -2622,7 +2622,7 @@ function draftSourceSnapshot(draft: AdminDraft) {
       ...(draft.sourceSnapshot ?? {}),
       contentType: "mustache-template",
       authoringSource: "admin-dashboard",
-      contentSystem: "cms-surface-override",
+      contentSystem: draft.sourceSnapshot?.contentSystem === "editorial-library" ? "editorial-library" : "cms-surface-override",
       contentLevel: "owner-authored"
     };
   }

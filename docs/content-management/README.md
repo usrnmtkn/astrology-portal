@@ -257,6 +257,11 @@ mistaken for missing content. Saving uses the normal version-checked editor;
 deployment never approves or publishes these drafts. Reader integration is a
 separate requirement from making a source editable.
 
+The owner can publish these reusable library sources with Save & publish. The
+publication guard recognizes only the registered natal library keys with matching
+audience, editorial-library scope and source metadata. Personal reports, explicit
+sample rows and malformed library keys remain ineligible for global publication.
+
 The focused regression is `node --import tsx scripts/test-natal-editorial-library.mts`.
 The focused browser matrix uses the existing CI config: `npx playwright test --config playwright.config.ts --workers=1 tests/visual/content-dashboard-admin-user-flows.spec.ts --grep "Natal editorial library|Natal Empty Houses opens|surface map organizes editable"`;
 all mutations use isolated storage. An opt-in private saved-row preview is local

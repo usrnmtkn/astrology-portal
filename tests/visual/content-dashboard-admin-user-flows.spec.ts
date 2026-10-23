@@ -9330,7 +9330,55 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
   }
   expect(writes).toHaveLength(4);
   expect(writes.every(write => write.status === "DRAFT")).toBe(true);
+  expect(writes.every(write => (write.sourceSnapshot as Record<string, unknown>).contentSystem === "editorial-library")).toBe(true);
   await page.screenshot({ path: `test-results/natal-editorial-library-${theme}-${width}.png`, fullPage: true });
+});
+
+for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["dark", 1440]] as const) test(`Natal editorial library publishes exact approved passages ${theme} ${width}`, async ({ page }) => {
+  const writes: Record<string, unknown>[] = [];
+  const approved = natalEditorialFixtures.map(row => ({ ...row, status: "REVIEWED", review_state: null,
+    source_snapshot: { ...row.source_snapshot, review_status: "approved", ownerApproved: true } }));
+  await seedAdminApi(page, { generatedRows: approved, useGeneratedContentHandler: true,
+    onGeneratedContentWrite: write => { writes.push(write.payload); } });
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+  await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Natal+Chart");
+  for (const selection of [
+    { area: "rulership", audience: "you", passage: "6", sect: "day" },
+    { area: "day-night", audience: "they", passage: "saturn", sect: "night" }
+  ] as NatalEditorialSelection[]) {
+    await page.getByRole("tab", { name: selection.area === "rulership" ? "Rulership" : "Day & night", exact: true }).click();
+    const workspace = page.getByRole("region", { name: selection.area === "rulership" ? "Twelfth-house rulership" : "Day and night charts", exact: true });
+    await workspace.getByLabel("Natal reading audience", { exact: true }).selectOption(selection.audience);
+    await workspace.getByLabel("Natal reading passage", { exact: true }).selectOption(selection.passage);
+    if (selection.area === "day-night") await workspace.getByLabel("Natal reading sect", { exact: true }).selectOption(selection.sect);
+    const identity = natalEditorialIdentity(selection);
+    const saved = approved.find(row => row.content_key === identity.contentKey)!;
+    await expect(workspace).toContainText("Saved status: REVIEWED");
+    await workspace.getByRole("button", { name: "Edit saved passage", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(saved.body);
+    const completed = page.waitForResponse(response => new URL(response.url()).pathname === "/api/admin/generated-content"
+      && response.request().method() === "PATCH" && response.request().postDataJSON()?.status === "LIVE");
+    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+    const response = await completed;
+    expect(response.status()).toBe(200);
+    const published = (await response.json()).rows[0];
+    expect(published.status).toBe("LIVE");
+    expect(published.body).toBe(saved.body);
+    expect(published.facts).toEqual(saved.facts);
+    expect(published.source_snapshot.contentSystem).toBe("editorial-library");
+    await closeGeneratedEditor(page);
+    await page.reload();
+    await expect(workspace).toContainText("Saved status: LIVE");
+    await expect(workspace).toContainText(saved.body.split("\n\n").at(-1)!);
+    await workspace.getByRole("button", { name: "Edit saved passage", exact: true }).click();
+    await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(saved.body);
+    await closeGeneratedEditor(page);
+  }
+  expect(writes).toHaveLength(2);
+  expect(writes.every(write => write.status === "LIVE")).toBe(true);
+  await expectNoHorizontalOverflow(page, `Natal publication ${theme} ${width}`);
 });
 
 test("Natal editorial library read errors, empty selection and late responses preserve identity", async ({ page }) => {
