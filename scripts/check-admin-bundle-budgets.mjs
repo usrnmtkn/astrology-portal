@@ -62,6 +62,9 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
     ? [`${metric}: ${formatBytes(measurements[metric])} (${measurements[metric]} bytes) exceeds ${formatBytes(limit)} (${limit} bytes) by ${measurements[metric] - limit} bytes`]
     : []
 ));
+if (Object.keys(manifest).some(key => key.endsWith('/anonymousReaderTransport.ts'))) {
+  failures.push('Standalone Studio includes the public reader startup transport.');
+}
 
 const editorGuidanceAsset = path.join(distRoot, "generated/admin-fallback-hook-editor-guidance-v1.json");
 if (!fs.existsSync(editorGuidanceAsset)) {
@@ -118,6 +121,7 @@ function visitInitial(key) {
   for (const dependency of manifest[key].imports ?? []) visitInitial(dependency);
 }
 visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
+if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
   const file = manifest[key].file;
@@ -158,6 +162,7 @@ const expectedDynamicEntries = [
   "src/SeasonArticleWorkspace.tsx",
   "src/CompositionMapWorkspace.tsx",
   "src/SkyPlacementComposition.tsx",
+  "src/SkyPlacementWorkspace.tsx",
   "src/SkyFallbackFieldsEditor.tsx",
   "src/MemoryGraphDashboard.tsx",
   "src/StudioMemoryFeedback.tsx",

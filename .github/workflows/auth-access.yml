@@ -24,7 +24,10 @@ jobs:
       - run: npm run test:auth-access
       - run: node scripts/test-you-report-session.mjs
       - run: npm run test:account-view
-      - run: npx playwright install --with-deps chromium webkit
+      - name: Install Chromium and WebKit with the shared Ubuntu mirror recovery
+        run: |
+          bash scripts/ci-install-playwright.sh
+          npx playwright install --with-deps webkit
       - run: npm run qa:auth-access
       - run: npm run qa:bundle
       - uses: actions/upload-artifact@v6

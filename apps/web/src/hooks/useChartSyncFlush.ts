@@ -1,4 +1,4 @@
-import { getAuthAccount, onAuthAccountChange } from "../services/auth";
+import { getAuthAccount, onAuthAccountChange, onAuthClientRequested } from "../services/auth";
 import { flushManualChartSync } from "../services/manualCharts";
 
 let activeUserId: string | null = null;
@@ -78,8 +78,14 @@ function installChartSyncFlushListeners() {
   };
 }
 
-const removeChartSyncFlushListeners = installChartSyncFlushListeners();
+let removeChartSyncFlushListeners: () => void = () => {};
+const stopWaitingForAuth = onAuthClientRequested(() => {
+  removeChartSyncFlushListeners = installChartSyncFlushListeners();
+});
 
 if (import.meta.hot) {
-  import.meta.hot.dispose(removeChartSyncFlushListeners);
+  import.meta.hot.dispose(() => {
+    stopWaitingForAuth();
+    removeChartSyncFlushListeners();
+  });
 }

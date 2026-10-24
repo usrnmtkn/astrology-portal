@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 const key = 'sky-placement/article/saturn/aries';
@@ -35,6 +36,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme);
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel('Sky write-up motion').selectOption('retrograde');
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
   await expect(map.getByRole('heading')).toHaveText('Saturn Rx in Aries');
@@ -138,6 +140,7 @@ test('Phrase variable from Sky write-ups stays a phrase editor', async ({ page }
   await page.goto('/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel('Sky write-up motion').selectOption('direct');
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
   await map.getByRole('tab', { name: 'Main template', exact: true }).click();
@@ -170,6 +173,7 @@ test('Shared zodiac season polar axis stays readable from Sky write-ups', async 
   await page.goto('/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel('Sky write-up motion').selectOption('direct');
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
   await map.getByRole('tab', { name: 'Main template', exact: true }).click();

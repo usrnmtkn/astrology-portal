@@ -37,7 +37,7 @@ function compare(a, b, pairs = new WeakMap(), reverse = new WeakMap()) {
 const long = 'Synthetic repeated string with Unicode 🌙 é and separators \u2028\u2029. '.repeat(3);
 const filterPlugin = internPublicJsonStringsPlugin();
 const filterCode = transformJson(JSON.stringify({ first: long, second: long }));
-for (const file of ['bundled-sky-core-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
+for (const file of ['bundled-sky-core-rows-v3.json', 'bundled-sky-placement-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
   const id = `/repo/apps/web/src/content/fallbackArchitectureV3/${file}`;
   assert(filterPlugin.transform.call({ parse: parseAst }, filterCode, id));
   for (const suffix of ['?raw', '?url', '?import']) assert.equal(filterPlugin.transform.call({ parse: parseAst }, filterCode, id + suffix), undefined);
@@ -70,7 +70,7 @@ const output = await bundle.generate({ format: 'es' });
 assert(!output.output[0].code.includes('unused'));
 assert.equal((await evaluate(output.output[0].code)).used, long);
 await bundle.close();
-for (const file of ['bundled-sky-core-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
+for (const file of ['bundled-sky-core-rows-v3.json', 'bundled-sky-placement-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
   const path = new URL(`../apps/web/src/content/fallbackArchitectureV3/${file}`, import.meta.url);
   const raw = await readFile(path);
   const digest = createHash('sha256').update(raw).digest('hex');

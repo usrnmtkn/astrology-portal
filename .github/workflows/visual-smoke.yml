@@ -327,6 +327,12 @@ jobs:
       - name: Verify daily Sky summary reader
         if: matrix.phase == 'reader'
         run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
+      - name: Verify public Sky does not wait for the login SDK
+        if: matrix.phase == 'reader'
+        env:
+          TLDR_NATIVE_PUBLIC_READER: "1"
+          VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_visual_fixture"
+        run: npx playwright test -c playwright.config.ts --project=chromium-desktop --workers=1 tests/visual/sky-anonymous-startup.spec.ts
       - name: Verify daily Sky summary Studio
         if: matrix.phase == 'studio'
         run: |

@@ -22,6 +22,8 @@ The short version:
   wiring, dashboard hydration, and worked examples.
 - [Sky writing systems](./SKY_WRITING_SYSTEMS.md): current contracts, independent
   version tracks, source selection, and dated reference history.
+- [Year-specific season articles](./SEASON_ARTICLES.md): one annual essay shared
+  by Sky and Calendar, with normal article editing and publication controls.
 - [Placement composition](./SKY_PLACEMENT_V5.md): editable sentence sources,
   named variables, ordered sections, calculated previews, and publication checks.
 - [Governed approvals](./GOVERNED-APPROVALS.md): atomic owner decisions,
@@ -237,6 +239,11 @@ refreshes the same-origin Supabase session; if verification fails, the API
 fails closed and shows the emergency access field.
 
 ## Finding content from the reader surface
+
+Sky Write-ups groups each planet/sign's dated visit articles, default reading
+and reusable writing setup into separate views. See the
+[planet and sign workspace](SKY_WRITEUP_WORKSPACE.md) for the draft workflow,
+source preservation and verification boundaries.
 
 ### Natal rulership and day/night libraries
 

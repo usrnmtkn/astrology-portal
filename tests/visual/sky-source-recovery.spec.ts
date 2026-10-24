@@ -26,11 +26,11 @@ for (const failure of ['headers', '503'] as const) for (const width of [390, 144
     page.on('requestfailed', request => failures.push(new URL(request.url()).pathname));
     // Keep the first header request withheld until context teardown. The reader
     // must abort it at its real deadline and recover without a click or reload.
-    await page.route(/\/assets\/sky-v4-.*\.json$/, async route => {
+    await page.route(/\/assets\/canonical-sky-reader-transport-v1.*\.json$/, async route => {
       const url = new URL(route.request().url()).pathname;
       const count = (requests.get(url) ?? 0) + 1;
       requests.set(url, count);
-      if (url.includes('canonical-content-studio-stage') && count === 1) {
+      if (url.includes('canonical-sky-reader-transport') && count === 1) {
         if (failure === 'headers') return;
         return route.fulfill({ status: 503, body: 'Temporary source outage' });
       }
@@ -41,15 +41,15 @@ for (const failure of ['headers', '503'] as const) for (const width of [390, 144
     await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 20_000 });
     await expect(page.locator('.planet-placement-row--sky')).toHaveCount(14);
     expect(performance.now() - start).toBeLessThan(20_000);
-    // Vite embeds the two small manifests; the other seven sources use HTTP.
-    expect([...requests.values()].sort()).toEqual([1, 1, 1, 1, 1, 1, 2]);
-    if (failure === 'headers') expect(failures.some(url => url.includes('canonical-content-studio-stage'))).toBe(true);
+    // The complete compiled reader inventory is one immutable request.
+    expect([...requests.values()].sort()).toEqual([2]);
+    if (failure === 'headers') expect(failures.some(url => url.includes('canonical-sky-reader-transport'))).toBe(true);
     await page.getByRole('button', { name: 'Read more about Sun in Virgo', exact: true }).click();
     const article = page.locator('.article-body-inner').first();
     await expect(article).toContainText('The Sun in Virgo makes the systems', { timeout: 15_000 });
     await expect(article).toContainText('The system that works is the one that makes your life easier to live.');
     await expect(article).toContainText('Today’s New Moon');
-    expect([...requests.values()].sort()).toEqual([1, 1, 1, 1, 1, 1, 2]);
+    expect([...requests.values()].sort()).toEqual([2]);
     expect(errors).toEqual([]);
   });
 }

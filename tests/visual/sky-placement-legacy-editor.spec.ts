@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
@@ -44,6 +45,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    const select = async () => {
     await page.getByLabel('Sky placement planet or point').selectOption('sun');
     await page.getByLabel('Sky placement zodiac sign').selectOption('libra');
+    await openSkyPlacementSourceDetails(page);
     await page.getByLabel('Seasonal preview hemisphere').selectOption('northern');
    };
    await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
@@ -72,7 +74,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    await page.reload(); await select(); await edit.click(); await expect(writing).toHaveValue(copy);
    await editor.getByRole('button', { name: 'Close', exact: true }).click();
 
-   await page.getByRole('row').filter({ hasText: 'sky/article-template/sun/libra' }).getByRole('button', { name: 'Edit', exact: true }).click();
+   await page.getByRole('region', { name: 'Reusable writing setup', exact: true }).getByRole('button', { name: 'Edit reusable template', exact: true }).click();
    await expect(editor.getByRole('button', { name: 'Publish to app', exact: true })).toHaveCount(0);
    await editor.getByRole('button', { name: 'Complete edition', exact: true }).click();
    await expect(editor.getByLabel('Sky article reference date')).toBeFocused();

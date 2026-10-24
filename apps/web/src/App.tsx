@@ -124,6 +124,7 @@ import {
   loadLunationBookFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
+  loadInitialSkyListFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
   skyV4ReaderRenderer,
   fallbackRendererV3,
@@ -253,6 +254,7 @@ import {
   loadPersistedProfile,
   normalizePersistedProfileBirthTimes,
   onAuthAccountChange,
+  onAuthClientRequested,
   signOutAuth,
   upsertPersistedProfile
 } from "./services/auth";
@@ -315,6 +317,7 @@ import {
   natalSkySnapshotCacheKey,
   readCachedSkySnapshot,
   skySnapshotCacheKey,
+  scopedSkySnapshotCacheKey,
   VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS,
   writeCachedSkySnapshot
 } from "./services/verifiedSkyCache";
@@ -2734,7 +2737,7 @@ function shouldBootstrapAuth(currentMode: PortalMode) {
   }
 
   const urlMode = portalModeFromUrl();
-  const authDependentModes: PortalMode[] = ["member", "profile", "friends", "account", "settings"];
+  const authDependentModes: PortalMode[] = ["profile", "friends", "account", "settings"];
 
   return authDependentModes.includes(urlMode ?? currentMode);
 }
@@ -4937,6 +4940,7 @@ function skyPlacementWritingSection(
   beats: SkyWritingAspectBeat[] = [],
   generatedAt = new Date().toISOString(),
   articleOptions?: {
+    collectiveList?: boolean;
     articleMode?: "current" | "archive";
     articleKey?: string | null;
     hasPriorIngress?: boolean;
@@ -4988,7 +4992,7 @@ function skyPlacementWritingSection(
   let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement> | null = null;
 
   try {
-    rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
+    if (!articleOptions?.collectiveList || planet === "moon") rendered = transitSynastryFallbackRendererV3.renderSkyPlacement({
       planet,
       sign,
       events,
@@ -5131,7 +5135,7 @@ function skyPlacementWritingSection(
   if (!body || !isReaderFacingCopy(body)) {
     return null;
   }
-  const risingHoroscopes = rendered.risingHoroscopes?.length
+  const risingHoroscopes = articleOptions?.collectiveList ? undefined : rendered.risingHoroscopes?.length
     ? rendered.risingHoroscopes
     : exactSkyPlacementRisingHoroscopes(planet, sign, risingHouseMap);
 
@@ -5146,7 +5150,7 @@ function skyPlacementWritingSection(
     || rendered.contentKey?.startsWith("fallback-hook/sky-placement-sign/")
     || rendered.contentKey?.startsWith("fallback-hook/sky-sign-copy/")
   ) ? "authored" : "fallback";
-  const keyDates = skyPlacementKeyDates(
+  const keyDates = articleOptions?.collectiveList ? [] : skyPlacementKeyDates(
     position,
     articleOptions?.aspectFacts,
     rendered.keyDates?.length ? rendered.keyDates : undefined,
@@ -5225,6 +5229,7 @@ function normalizeSkyPlacementSurface(
     positions: PlanetPosition[];
   },
   articleOptions?: {
+    collectiveList?: boolean;
     articleMode?: "current" | "archive";
     articleKey?: string | null;
     hasPriorIngress?: boolean;
@@ -5558,6 +5563,7 @@ function skyDetailFromRoutePath(
   generatedContent: GeneratedContentMap,
   onOpenDetail?: (detail: SkyDetail) => void
 ) {
+  if (sky.calculationDetail === "placements") return null;
   const [surface, detailType, firstPart, secondPart, thirdPart] = decodeSkyRouteParts(routePath);
 
   if (surface !== "sky") {
@@ -11042,6 +11048,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [socialInvitationStatus, setSocialInvitationStatus] = useState<"idle" | "loading">("idle");
   const [socialInvitationMessage, setSocialInvitationMessage] = useState("");
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
+  const [authRequested, setAuthRequested] = useState(false);
   const [authAccountError, setAuthAccountError] = useState<string | null>(null);
   const appActiveRef = useRef(true);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
@@ -11092,7 +11099,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       ? `live-${skyDateTimeFromInput(getInitialTransitDate(), initialLocationState.location, true).toISOString()}`
       : getInitialTransitDate()
   );
-  const initialCachedSky = readCachedSkySnapshot(initialSkyCacheKey);
+  const initialCacheDetail = isTodayMode && !skyDetailRoutePathFromUrl() ? "placements" : "full";
+  const initialCachedSky = readCachedSkySnapshot(scopedSkySnapshotCacheKey(initialSkyCacheKey, initialCacheDetail))
+    ?? (initialCacheDetail === "placements" ? readCachedSkySnapshot(initialSkyCacheKey) : null);
   const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
   const [skyTimingStatus, setSkyTimingStatus] = useState<"loading" | "ready" | "error">(
@@ -12370,8 +12379,15 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const recoveryIsCurrent = () => !cancelled && (!recovery
       || window.location.href === recoveryRoute && placementTargetRef.current === target);
 
+    if (shouldLoadPlacementContent && isTodayMode && !skyDetailRoutePath) {
+      // The complete reading uses the formatted-text renderer. Download it
+      // alongside its sources so the final text does not open another waterfall.
+      void import("./components/FormattedWritingContent").catch(() => { /* The visible reader retains its own recovery boundary. */ });
+    }
     if (shouldLoadPlacementContent && selection === "pending") {
-      void loadSkyPlacementFallbackArchitectureV3Bundle(false).catch(() => { /* The source gate retries and reports errors. */ });
+      const initialList = isTodayMode && !skyDetailRoutePath;
+      void (initialList ? loadInitialSkyListFallbackArchitectureV3Bundle() : loadSkyPlacementFallbackArchitectureV3Bundle(false))
+        .catch(() => { /* The source gate retries and reports errors. */ });
     }
     if (!shouldLoadPlacementContent || selection === "pending") {
       // Keep a resolved Sky reading. Resetting to idle made every return visit
@@ -12399,15 +12415,19 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           activeInstant: placementSky.generatedAt, planet: normalizeContentIdPart(planet), sign: normalizeContentIdPart(sign)
         }, contentPublication) ? skyPlacementPublicationIdentity() : null;
       }) : undefined;
-    const sourceRequest = prepareSkyPlacementSources(selection || undefined, compiledGuest ? { compiledGuest } : undefined);
+    const sourceRequest = prepareSkyPlacementSources(selection || undefined, {
+      compiledGuest, initialList: isTodayMode && !skyDetailRoutePath
+    });
     if (preparation?.early) prefetchColdSkyPlacementSources(selection || undefined);
-    void sourceRequest.then(async ({ coreBundle, placementBundle, identity, scope }) => {
-      if (!recoveryIsCurrent()) return;
+    const editionsRequest = refreshContentPublications().then(async () => {
       const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
         skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
         })) : [];
       const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map());
+      return { editionKeys, publishedEditions };
+    });
+    void Promise.all([sourceRequest, editionsRequest]).then(([{ coreBundle, placementBundle, identity, scope }, { editionKeys, publishedEditions }]) => {
       if (!recoveryIsCurrent()) return;
       if (scope === "compiled-guest" && (!contentPublicationsAvailableOnline() || !isSettledGuestReader())) throw new Error("Sky publication state is unavailable.");
       if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
@@ -12997,6 +13017,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   const currentSkyCalculationNeeded = shouldRunCurrentSkyCalculation(mode, friendCalculationNeeds);
+  const skyCalculationDetail = isTodayMode && !skyDetailRoutePath ? "placements" : "full";
+  const skyUsesLiveClock = isTodayMode || mode === "calendar";
+  const coreSkyDelayMs = mode === "profile" ? 500 : 0;
   useEffect(() => {
     let cancelled = false;
     let coreSkyFrame = 0;
@@ -13011,21 +13034,26 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     const skyLocation = withTimeZone(location);
     const initialRequest = initialSkyRefreshKey.current === skyRefreshKey && isTodayMode
-      ? (initialSkyLoadRef.current?.matches(skyDate, skyLocation) ?? null) : null;
+      ? (initialSkyLoadRef.current?.matches(skyDate, skyLocation, skyCalculationDetail) ?? null) : null;
     // A changed selection, refresh or expired bootstrap permanently abandons it.
     // Keeping the promise for the matching mount also supports StrictMode replay.
     if (!initialRequest) initialSkyLoadRef.current = null;
-    const selectedDateTime = initialRequest?.date ?? skyDateTimeFromInput(skyDate, skyLocation, (isTodayMode || mode === "calendar"));
-    const live = (isTodayMode || mode === "calendar") && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
-    const selectionKey = skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`);
+    const upgradingList = isTodayMode && skyCalculationDetail === "full" && sky?.calculationDetail === "placements"
+      && sky.location.latitude === skyLocation.latitude && sky.location.longitude === skyLocation.longitude
+      && sky.location.timeZone === skyLocation.timeZone
+      && skyCivilDate(skyLocation.timeZone, new Date(sky.generatedAt)) === skyDate;
+    const selectedDateTime = initialRequest?.date ?? (upgradingList ? new Date(sky.generatedAt)
+      : skyDateTimeFromInput(skyDate, skyLocation, skyUsesLiveClock));
+    const live = skyUsesLiveClock && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
+    const selectionKey = scopedSkySnapshotCacheKey(skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`), skyCalculationDetail);
     const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
     skyCalculationSelectionRef.current = selectionKey;
     // A noon snapshot or earlier live calculation must never stand in for now.
     const cacheKey = skySnapshotCacheKey(skyLocation, live ? `live-${selectedDateTime.toISOString()}` : skyDate);
-    const cachedSky = readCachedSkySnapshot(cacheKey);
+    const cachedSky = readCachedSkySnapshot(scopedSkySnapshotCacheKey(cacheKey, skyCalculationDetail))
+      ?? (skyCalculationDetail === "placements" ? readCachedSkySnapshot(cacheKey) : null);
     // Give the lazy You route its first paint before starting CPU-heavy
     // background astronomy. Sky itself still starts immediately.
-    const coreSkyDelayMs = mode === "profile" ? 500 : 0;
 
     if (!refreshing) {
       setSkyTimingStatus(cachedSky && skySnapshotHasTransitWindows(cachedSky) ? "ready" : "loading");
@@ -13055,7 +13083,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
       setSky(nextSky);
       setSkyStatus("ready");
-      if (!writeCachedSkySnapshot(cacheKey, nextSky)) {
+      if (!writeCachedSkySnapshot(scopedSkySnapshotCacheKey(cacheKey, skyCalculationDetail), nextSky)) {
         logSkyFactDiagnostic(
           "cache-write",
           nextSky,
@@ -13071,7 +13099,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         // downloading the browser ephemeris on the initial Sky route.
         const calculation = initialRequest
           ? initialRequest.resolve().then(snapshot => ({ ...snapshot, location: skyLocation }))
-          : import("./services/skyApi").then(({ getSkyOnlineFirst }) => getSkyOnlineFirst(skyLocation, selectedDateTime));
+          : import("./services/skyApi").then(({ getSkyOnlineFirst }) => getSkyOnlineFirst(skyLocation, selectedDateTime, skyCalculationDetail === "placements" ? skyCalculationDetail : true));
         void calculation
           .then((nextSky) => {
             const published = publishFreshSky(nextSky);
@@ -13093,7 +13121,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       window.cancelAnimationFrame(coreSkyFrame);
       window.clearTimeout(coreSkyTimer);
     };
-  }, [currentSkyCalculationNeeded, location.latitude, location.longitude, location.timeZone, mode, skyDate, skyRefreshKey]);
+    // Guest/member identity does not change public astronomy inputs. Session
+    // recovery must not repeat an already completed exact-selection request.
+  }, [currentSkyCalculationNeeded, location.latitude, location.longitude, location.timeZone, isTodayMode, skyUsesLiveClock, coreSkyDelayMs, skyDate, skyRefreshKey, skyCalculationDetail]);
 
   const sunSeasonEnd = sky?.positions.find(position => position.planet === "Sun")?.transitEnd;
   useEffect(() => {
@@ -13930,9 +13960,26 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   useEffect(() => {
-    if (!shouldBootstrapAuth(mode)) {
+    if (!shouldBootstrapAuth(mode) && !authRequested) {
       setAuthAccountChecked(true);
-      return;
+      if (!isAuthConfigured) return;
+      // Keep anonymous Sky free of SDK work while still joining a sign-in
+      // started elsewhere in this tab or a session restored from another tab.
+      const activate = () => setAuthRequested(true);
+      const stopWaiting = onAuthClientRequested(activate);
+      const storage = (event: StorageEvent) => {
+        if (isAuthSessionStorageKey(event.key) && event.newValue) activate();
+      };
+      const focus = () => { if (hasStoredSupabaseSession()) activate(); };
+      window.addEventListener("storage", storage);
+      window.addEventListener("focus", focus);
+      window.addEventListener("pageshow", focus);
+      return () => {
+        stopWaiting();
+        window.removeEventListener("storage", storage);
+        window.removeEventListener("focus", focus);
+        window.removeEventListener("pageshow", focus);
+      };
     }
 
     let cancelled = false;
@@ -13974,7 +14021,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       window.removeEventListener("pageshow", recover);
       window.removeEventListener("storage", recoverStoredSession);
     };
-  }, [applyAuthAccount, mode, recoverAuthAccount]);
+  }, [applyAuthAccount, mode, recoverAuthAccount, authRequested]);
 
   useEffect(() => {
     if (hasLocationPreference || !("geolocation" in navigator)) {
@@ -16854,6 +16901,7 @@ function PlacementTable({
               generatedAt,
               { aspects, positions: displayPositions },
               {
+                collectiveList: true,
                 locationLatitude,
                 moonEvent,
                 positions: displayPositions

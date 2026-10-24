@@ -1,3 +1,4 @@
+import { openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
@@ -30,6 +31,7 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
    const selectSunVirgo = async () => {
     await page.getByLabel('Sky placement planet or point').selectOption('sun');
     await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
+    await openSkyPlacementDefaultReading(page);
    };
    const recoverChunk = !legacyDraft && width === 1440;
    let missingChunk = recoverChunk;

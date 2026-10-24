@@ -38,8 +38,8 @@ const functions = ['startInitialSkyLoad', 'matchingInitialSkyLoad'].map(name => 
 const transpile = source => ts.transpileModule(source, {
   compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext }
 }).outputText;
-assert.equal((functions.match(/import\("\.\.\/content\/skyPlacementSourceAssets"\)/gu) ?? []).length, 1);
-const runnableApi = transpile(functions).replace('import("../content/skyPlacementSourceAssets")', 'loadAssets()');
+assert.equal((functions.match(/import\("\.\.\/content\/canonicalSkyReaderAssets"\)/gu) ?? []).length, 1);
+const runnableApi = transpile(functions).replace('import("../content/canonicalSkyReaderAssets")', 'loadAssets()');
 const entryAst = parse('apps/web/src/main.tsx', ts.ScriptKind.TSX);
 const declarations = [];
 function visit(node) {
@@ -60,13 +60,13 @@ const deferred = () => {
 const drain = async () => { for (let tick = 0; tick < 24; tick++) await Promise.resolve(); };
 const valid = 'https://synthetic.test/#sky/placement/sun/libra';
 async function run({ href = valid, holdMetadata = false, rejectMetadata = false, rejectAssets = false,
-  rejectAssetRead = false, throwCapture = false, studioReturn = false, rejectApi = false } = {}) {
+  rejectAssetRead = false, throwCapture = false, studioReturn = false, rejectApi = false, storedMode = null } = {}) {
   const metadata = deferred(), api = deferred();
   const location = { href, hash: new URL(href).hash };
   const selectedLocation = { label: 'Synthetic location', latitude: 40, longitude: -74, timeZone: 'America/New_York' };
   const date = new Date('2026-10-16T07:00:00Z');
   let metadataImports = 0, captures = 0, apiReads = 0, assetImports = 0, assetReads = 0, localReads = 0, captured;
-  const context = vm.createContext({ URL, Date, performance, window: { location }, isInitialSkyReaderHash,
+  const context = vm.createContext({ URL, Date, performance, window: { location, localStorage: { getItem: () => storedMode } },
     rememberStudioReturnPath: () => studioReturn,
     getInitialTransitDate: () => { if (throwCapture) throw Error('Synthetic capture failure'); return '2026-10-16'; },
     getInitialLocation: () => ({ location: selectedLocation }), withTimeZone: value => value,
@@ -74,10 +74,11 @@ async function run({ href = valid, holdMetadata = false, rejectMetadata = false,
     getSkyFromApi: (value, at) => { assert.equal(value, selectedLocation); assert.equal(at, date); apiReads++; return api.promise; },
     getSkyLocally: () => { localReads++; throw Error('Speculative local calculation forbidden'); },
     loadAssets: () => { assetImports++; return rejectAssets ? Promise.reject(Error('Synthetic asset import failure')) : Promise.resolve({
-      loadSkyPlacementSourceAssets: () => { assetReads++; return rejectAssetRead ? Promise.reject(Error('Synthetic asset failure')) : Promise.resolve(); }
+      loadCanonicalSkyReaderAssets: () => { assetReads++; return rejectAssetRead ? Promise.reject(Error('Synthetic asset failure')) : Promise.resolve(); }
     }); },
     loadSkyApi: () => { metadataImports++; return metadata.promise; }
   });
+  vm.runInContext('const isInitialSkyReaderHash = ' + isInitialSkyReaderHash.toString() + ';', context);
   vm.runInContext(runnableApi, context);
   vm.runInContext(runnableMain, context);
   const releaseMetadata = () => rejectMetadata ? metadata.reject(Error('Synthetic metadata import failure')) : metadata.resolve({
@@ -98,10 +99,12 @@ for (const point of points) for (const sign of signs) for (const slash of ['', '
   assert.equal(await runResult.result(), runResult.captured, 'Return exact selection metadata without awaiting its unresolved API request.');
   assert.deepEqual(runResult.counts, { metadataImports: 1, captures: 1, apiReads: 1, assetImports: 1, assetReads: 1, localReads: 0 });
 }
-for (const path of ['/#sky', '/#sky/', '/#/sky', '/#sky/placement/sun', '/#sky/retrograde/venus']) {
+for (const path of ['/', '/#sky', '/#sky/', '/#/sky', '/#sky/placement/sun', '/#sky/retrograde/venus']) {
   const runResult = await run({ href: 'https://synthetic.test' + path });
   assert.equal(await runResult.result(), runResult.captured);
   assert.equal(runResult.counts.apiReads, 1); assert.equal(runResult.counts.localReads, 0);
+  assert.equal(runResult.counts.assetReads, path.includes('/placement/') || path.includes('/retrograde/') ? 1 : 0,
+    'List sources wait for App; direct articles retain their early complete-source load.');
 }
 for (const path of ['/#calendar', '/#you', '/#friends', '/#articles', '/#sky/aspect/sun/trine/pluto',
   '/#sky/placement/sun/libra/extra', '/#access_token=synthetic', '/admin/content#sky/placement/sun/libra',
@@ -131,3 +134,10 @@ for (const options of [{ rejectAssets: true }, { rejectAssetRead: true }, { reje
   if (options.rejectApi) assert.equal(await runResult.captured.result, null);
 }
 console.log('PASS: actual initial Sky dispatcher and capture, 168 placements with slash variants, exact unresolved metadata identity, route/login/Studio guards, delayed route changes, asset/API failures and no speculative local calculation.');
+
+for (const storedMode of [null, 'guest', 'member', 'profile', 'friends', 'calendar', 'horoscopes', 'account', 'settings']) {
+  const entry = await run({ href: 'https://synthetic.test/', storedMode });
+  await entry.result();
+  assert.equal(entry.counts.apiReads, [null, 'guest', 'member'].includes(storedMode) ? 1 : 0, 'Bare entry preserves the saved destination.');
+  assert.equal(entry.counts.assetReads, 0, 'Bare entry cannot preload the full article sources.');
+}

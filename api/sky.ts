@@ -17,6 +17,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   let date: Date;
   let location: LocationInput;
   let complete: boolean;
+  let includeAspectTiming = true;
   try {
     const params = new URL(req.url ?? "/api/sky", "http://localhost").searchParams;
     date = parseCalculationDate(params.get("at"));
@@ -28,17 +29,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       || !Number.isFinite(date.getTime()) || date.getUTCFullYear() < 1800 || date.getUTCFullYear() > 2399
       || !Number.isFinite(latitude) || Math.abs(latitude) > 90
       || !Number.isFinite(longitude) || Math.abs(longitude) > 180
-      || detail !== null && detail !== "core" && detail !== "full") throw new Error("Invalid Sky inputs.");
+      || detail !== null && detail !== "core" && detail !== "placements" && detail !== "full") throw new Error("Invalid Sky inputs.");
     new Intl.DateTimeFormat("en", { timeZone }).format(date);
     location = { label: "Selected location", latitude, longitude, timeZone };
     complete = detail !== "core";
+    includeAspectTiming = detail !== "placements";
   } catch {
     res.statusCode = 400;
     res.end(JSON.stringify({ error: "Invalid Sky inputs or calculation version." }));
     return;
   }
   try {
-    const sky = await getAstrodienstSky(location, date, { includeTransitWindows: complete });
+    const sky = await getAstrodienstSky(location, date, { includeTransitWindows: complete, includeAspectTiming });
     sky.calculationProvenance = { ...sky.calculationProvenance!, source: "server-swisseph-wasm" };
     sky.facts = factsFromSkySnapshot(sky);
     if (complete) {

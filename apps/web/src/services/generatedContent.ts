@@ -9,6 +9,16 @@ import { contentPublicationsAvailableOnline, refreshContentPublications } from "
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
+import { publicReaderConfigurationPresent } from "./publicReaderConfiguration";
+
+async function anonymousReader() {
+  if (!publicReaderConfigurationPresent) return null;
+  const transport = await import("./anonymousReaderTransport");
+  return transport.anonymousReaderAvailable() ? transport : null;
+}
+async function publicReaderAvailable() {
+  return Boolean(await anonymousReader() || await getSupabaseClient());
+}
 
 let loadedLastKnownGoodRows: GeneratedContentRow[] = [];
 export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedContentRow[]> {
@@ -1109,7 +1119,7 @@ export function prefetchColdSkyArticleRows(publications: Promise<void>): ColdSky
           && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date)))
   };
   let consumed = false;
-  const request = getSupabaseClient().then(client => client
+  const request = publicReaderAvailable().then(client => client
     ? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope: "sky-article" }, signal, admission)
     : { data: null, error: new Error("Reader storage is unavailable.") }, error => ({ data: null, error }))
     .finally(() => { if (pendingColdSkyArticleRead === entry) pendingColdSkyArticleRead = undefined; });
@@ -1130,7 +1140,7 @@ function prefetchColdSkyKeys(keys: Promise<string[]>, publications: Promise<void
   let consumed = false, admissionEnabled = true;
   const request = keys.then(async candidates => {
     const selected = [...new Set(candidates)];
-    if (!selected.length || selected.length > limit || signal.aborted || !await getSupabaseClient() || !admissionEnabled || signal.aborted) {
+    if (!selected.length || selected.length > limit || signal.aborted || !await publicReaderAvailable() || !admissionEnabled || signal.aborted) {
       return { data: null, error: null };
     }
     return loadReaderRows({ keys: selected }, signal, {
@@ -1211,7 +1221,8 @@ async function readFallbackArchitectureV3DashboardBundle(
   canCache: () => boolean,
   earlyRows?: ReturnType<typeof loadReaderRows>
 ): Promise<FallbackArchitectureV3Bundle | null> {
-  const supabase = await getSupabaseClient();
+  const anonymous = scope === "sky-list" ? await anonymousReader() : null;
+  const supabase = anonymous ? null : await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
   const recoverUnavailableOverlay = (error: unknown) => {
     if (scope === "sky-list" && !(publicationLedgerReady() && loadedLastKnownGoodRows.length)) throw new Error("Current Sky content did not load.");
@@ -1219,18 +1230,19 @@ async function readFallbackArchitectureV3DashboardBundle(
     return cached?.bundle ?? loadContentStudioLastKnownGoodCoreBundle(scope);
   };
 
-  if (!supabase) return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
+  if (!supabase && !anonymous) return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle(scope);
 
-  // A cold article has no cached bundle for the revision check to reuse.
-  // Fetch its rows and immutable manifest while that check runs, then retain
+  // Cold Sky readers have no cached bundle for the revision check to reuse.
+  // Fetch their rows and immutable manifest while that check runs, then retain
   // the same publication, revision and package admission below.
-  const coldArticleRows = !cached && scope === "sky-article"
+  const coldArticleRows = !cached && (scope === "sky-article" || scope === "sky-list")
     ? earlyRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope }) : undefined;
   const coldArticleManifest = coldArticleRows ? loadFallbackArchitectureV3BundledCoreManifest() : undefined;
   void coldArticleManifest?.catch(() => { /* Joined by the existing recovery below. */ });
 
-  const { data: runtimeRevision, error: runtimeRevisionError } = await supabase
-    .rpc("content_runtime_revision", { p_provider: fallbackArchitectureV3Provider });
+  const { data: runtimeRevision, error: runtimeRevisionError } = anonymous
+    ? await anonymous.readAnonymousRuntimeRevision(fallbackArchitectureV3Provider)
+    : await supabase!.rpc("content_runtime_revision", { p_provider: fallbackArchitectureV3Provider });
   let dashboardVersion = typeof runtimeRevision === "string" ? Date.parse(runtimeRevision) : 0;
 
   if (runtimeRevisionError || !Number.isFinite(dashboardVersion)) {
@@ -1335,7 +1347,7 @@ async function loadPublishedSkyBundle(selection?: string, staged?: ReturnType<ty
   // Only rows matching the current ledger can recover a failed targeted read.
   // Do not turn an 8-second timeout into a full snapshot download.
   const fallback = () => complete(cached);
-  const client = await getSupabaseClient();
+  const client = await publicReaderAvailable();
   if (!client || typeof navigator !== "undefined" && navigator.onLine === false) return fallback();
   const retainedRows = cached.filter(eligible);
   const completeCache = publications.every(publication => retainedRows.some(row => row.id === publication.row_id));
@@ -1374,7 +1386,7 @@ async function readSkyPlacementBundle(selection: string | undefined, staged: Ret
     return loadPublishedSkyBundle(selection, staged?.request, canCache);
   }
   staged?.cancel();
-  const supabase = await getSupabaseClient();
+  const supabase = await publicReaderAvailable();
   const cached = await readCachedFallbackArchitectureV3SkyPlacementBundle();
 
   if (!supabase) return cached?.bundle ?? null;
@@ -1527,7 +1539,7 @@ async function readLiveGeneratedContentForSurfaces(
   previewMode: GeneratedContentPreviewMode,
   vocabularyOnly: boolean
 ) {
-  const supabase = await getSupabaseClient();
+  const supabase = await publicReaderAvailable();
 
   if (!supabase) {
     return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
@@ -1563,7 +1575,7 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[], opt
 }
 
 async function readLiveGeneratedContentForKeys(keys: string[], options: { requireFresh?: boolean }) {
-  const supabase = await getSupabaseClient();
+  const supabase = await publicReaderAvailable();
 
   if (!supabase) {
     if (options.requireFresh) throw new Error("Live content is unavailable.");

@@ -124,7 +124,8 @@ async function startApp() {
     ? import("./services/skyApi").then(({ startInitialSkyLoad }) => startInitialSkyLoad()).catch(() => null)
     : Promise.resolve(null);
   if (callbackUrl.pathname === "/" && callbackUrl.searchParams.get("auth") !== "login"
-    && /^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(callbackUrl.hash)) {
+    && (/^#\/?(?:sky|calendar)(?:[/?]|$)/u.test(callbackUrl.hash)
+      || !callbackUrl.hash && isInitialSkyReaderHash(callbackUrl.hash))) {
     // Resolve publication state alongside App. Cold readers otherwise wait for
     // App, the SDK and every ledger page before their first content read begins.
     void import("./services/contentPublications").then(({ refreshContentPublications, contentPublicationsResolved }) =>

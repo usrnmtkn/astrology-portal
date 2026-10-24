@@ -1,4 +1,4 @@
-import { loadSkyPlacementFallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
+import { loadInitialSkyListFallbackArchitectureV3Bundle, loadSkyPlacementFallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
 import { loadContentStudioLastKnownGoodRows, loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows, prefetchColdSkyPlacementRows } from "./generatedContent";
 import { contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications } from "./contentPublications";
 import { missingSkyPlacementPublications, skyPlacementPublicationIdentity } from "./skyPlacementPublicationGuard";
@@ -75,15 +75,19 @@ function requiredCompletion(key: string, selection: string | undefined, entry: S
 
 /** One readiness owner, distinct required completions. Transport sharing and
  * retry lifetime belong to the existing generation-scoped loader owners. */
-export function prepareSkyPlacementSources(selection?: string, options?: { compiledGuest: Promise<string | null> }) {
-  const key = selection ?? "all", identity = skyPlacementPublicationIdentity();
+export function prepareSkyPlacementSources(selection?: string, options?: { compiledGuest?: Promise<string | null>; initialList?: boolean }) {
+  // The list may use a smaller local source package. A full reader must never
+  // inherit that readiness, even when both callers select the same placements.
+  const key = `${options?.initialList ? "initial-list:" : ""}${selection ?? "all"}`, identity = skyPlacementPublicationIdentity();
   let entry = pending.get(key);
   if (entry?.epoch && entry.epoch !== identity) {
     entry.superseded = true; entry = undefined;
   }
   if (!entry) {
     const publications = refreshContentPublications();
-    const bundled = loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith("article:"));
+    const bundled = options?.initialList
+      ? loadInitialSkyListFallbackArchitectureV3Bundle()
+      : loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith("article:"));
     void bundled.catch(() => { /* Required completions join this rejection. */ });
     entry = { publications, bundled, epoch: null, waiters: 0, setup: Promise.resolve() };
     const current = entry;

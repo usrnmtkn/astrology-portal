@@ -33,6 +33,10 @@ try {
 const day = new Intl.DateTimeFormat('en-CA', { timeZone: ny.timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 const initial: InitialSkyLoad = { day, location: ny, date: new Date(), live: true, startedAt: performance.now(), result: Promise.resolve(null), matches: () => initial, resolve: async () => { throw new Error("Unused test stub"); } };
 assert.equal(matchingInitialSkyLoad(initial, day, ny), initial);
+const listInitial={...initial,detail:'placements' as const};
+assert.equal(matchingInitialSkyLoad(listInitial,day,ny),null,'A full reader cannot adopt a placement-list bootstrap.');
+assert.equal(matchingInitialSkyLoad(listInitial,day,ny,'placements'),listInitial);
+assert.equal(matchingInitialSkyLoad({...initial,detail:'full'},day,ny,'placements'),null,'Bootstrap completion must match the requested scope.');
 assert.equal(matchingInitialSkyLoad(initial, day, ny), initial, 'StrictMode replay retains the same exact request');
 assert.equal(matchingInitialSkyLoad(initial, day, { ...ny, label: 'Renamed' }), initial);
 assert.equal(matchingInitialSkyLoad(initial, '2026-01-02', ny), null);

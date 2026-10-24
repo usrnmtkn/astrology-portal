@@ -7,6 +7,7 @@ const built = await build({ entryPoints: ['apps/web/src/services/skyPlacementHyd
     builder.onResolve({ filter: /fallbackArchitectureV3Runtime|generatedContent|contentPublications|skyPlacementPublicationGuard/ }, args => ({ path: args.path, namespace: 'source-fixture' }));
     builder.onLoad({ filter: /.*/, namespace: 'source-fixture' }, () => ({ contents: `
       export const loadSkyPlacementFallbackArchitectureV3Bundle = () => fixture.bundle();
+      export const loadInitialSkyListFallbackArchitectureV3Bundle = () => fixture.listBundle();
       export const loadContentStudioLastKnownGoodRows = () => fixture.offline();
       const pendingCore = new Map(), pendingSelected = new Map();
       function owned(map, key, read) {
@@ -30,6 +31,7 @@ function harness(overrides = {}, clock = { setTimeout, clearTimeout }) {
   const fixture: any = {
     identity: 'current', online: true, resolved: true, missing: [],
     bundle: async () => { calls.push('bundle'); }, refresh: async () => { calls.push('refresh'); },
+    listBundle: async () => { calls.push('list-bundle'); },
     offline: async () => { calls.push('offline'); },
     prefetch: () => { calls.push('prefetch'); return undefined; },
     selected: () => { calls.push('selected'); return undefined; },
@@ -114,6 +116,21 @@ function harness(overrides = {}, clock = { setTimeout, clearTimeout }) {
   assert(h.calls.indexOf('discard') < h.calls.indexOf('offline'), 'A failed live ledger discards transport before offline recovery.');
 }
 console.log('PASS: live Sky avoids the offline download, coalesces requests, recovers coherent offline identities, and fails closed on missing or changing publications.');
+
+{
+  let release!: () => void;
+  const fullBundle = new Promise<void>(resolve => { release = resolve; });
+  const h = harness({ bundle: () => { h.calls.push('bundle'); return fullBundle; }, core: async () => 'core' });
+  const list = h.prepare('sun/aries', { initialList: true });
+  let fullDone = false;
+  const full = h.prepare('sun/aries');
+  void full.then(() => { fullDone = true; });
+  await list;
+  assert.equal(fullDone, false, 'A full consumer cannot inherit initial-list readiness for the same selection.');
+  assert.equal(h.calls.filter(call => call === 'list-bundle').length, 1);
+  assert.equal(h.calls.filter(call => call === 'bundle').length, 1);
+  release(); await full;
+}
 
 {
   let release!: () => void;

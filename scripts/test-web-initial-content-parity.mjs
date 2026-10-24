@@ -20,7 +20,8 @@ async function deliveredValues(name) {
 }
 
 const sources = [
-  ["bundled-sky-core-rows-v3.json", "fallback-content-sky-core"],
+  ["initial-sky-core-transport-v1.json", "fallback-content-sky-core"],
+  ["deferred-reader-support-transport-v1.json", "fallback-content-reader-support"],
   ["bundled-sky-authored-cards-v3.json", "fallback-content-sky-core"],
   ["bundled-initial-reader-rows-v3.json", "fallback-content-sky-core"],
   ["authored-inputs/owner-authored-sky-placement-house-passages-v1.json", "fallback-content-sky-placement"],
@@ -31,7 +32,11 @@ for (const [source, chunk] of sources) {
   const expected = JSON.parse(readFileSync(path.join(root, "apps/web/src/content/fallbackArchitectureV3", source), "utf8"));
   // The protected passage import serves rows; its source-only policy/version
   // metadata is not part of the reader payload. Every row field must survive.
-  const select = source.startsWith("authored-inputs/") ? value => value?.rows : value => value;
+  // Vite removes the initial transport's unused build-provenance property.
+  // The generator gate checks that hash; compare every complete reader row here.
+  const select = source.startsWith("authored-inputs/") ? value => value?.rows
+    : source === "initial-sky-core-transport-v1.json" ? value => value && ({ hookRows: value.hookRows, vocabularyRows: value.vocabularyRows })
+    : value => value;
   assert.ok(delivered.some(value => isDeepStrictEqual(select(value), select(expected))),
     `The shipped ${source} content must exactly match its complete source values.`);
 }

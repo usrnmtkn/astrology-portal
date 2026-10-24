@@ -23,6 +23,7 @@ const result = await build({
       export const getVerifiedAuthUser = async () => f.user;
       export const getAuthAccount = async () => f.verify ? f.verify() : f.user;
       export const isAuthSessionStorageKey = () => true;
+      export const onAuthClientRequested = () => () => {};
       export const onAuthAccountChange = callback => { f.listener = callback; return () => { f.listener = null; }; };
     ` }));
   } }]

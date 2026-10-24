@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
@@ -69,6 +70,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
       await page.goto(entry + '#sky-writeups');
       await page.getByLabel('Sky placement planet or point').selectOption('sun');
       await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
+      await openSkyPlacementSourceDetails(page);
       await page.getByRole('region', { name: 'Sky placement composition map' }).getByRole('button', { name: 'Edit placement article', exact: true }).click();
       const editor = page.getByRole('dialog');
       const writing = editor.locator('textarea[data-sky-field="placementArticle"]');
