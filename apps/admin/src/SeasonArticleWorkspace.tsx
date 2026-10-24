@@ -40,7 +40,9 @@ export default function SeasonArticleWorkspace({ sign: selectedSign, loadRows, o
   const row = current?.rows.slice().sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))[0];
   const title = `${currentSign[0].toUpperCase()}${currentSign.slice(1)} Season ${year}`;
   return <section className="studio-surface studio-section" aria-label="Year-specific season article">
-    <p>Save a complete season article for a specific year. Sky’s Sun in {currentSign[0].toUpperCase() + currentSign.slice(1)} and the Calendar reference this same article.</p>
+    {selectedSign
+      ? <p>This optional article is linked from Sky and Calendar. It is separate from the dated Sky reading managed in This visit.</p>
+      : <p>Save a complete season article for a specific year. Sky’s Sun in {currentSign[0].toUpperCase() + currentSign.slice(1)} and the Calendar reference this same article.</p>}
     <div className="admin-review-filter-grid">
       {!selectedSign && <label><span>Article season</span><AdminSelect aria-label="Article season" value={sign} onChange={event => setSign(event.target.value)}>
         {skyPlacementSigns.map(value => <option key={value} value={value}>{value[0].toUpperCase() + value.slice(1)}</option>)}
@@ -50,7 +52,7 @@ export default function SeasonArticleWorkspace({ sign: selectedSign, loadRows, o
         {row ? `Open ${title} article` : `Write ${title} article`}
       </StudioButton>
     </div>
-    <p role="status">{!key ? "Enter a year from 1900 to 2200." : !current ? "Loading saved article…" : current.error ? "" : row ? row.headline || title : "No article saved for this season and year."}</p>
+    <p role="status">{!key ? "Enter a year from 1900 to 2200." : !current ? "Loading saved article…" : current.error ? "" : row ? row.headline || title : selectedSign ? "No additional linked article saved for this season and year." : "No article saved for this season and year."}</p>
     {row && <ContentLiveStatusBadge row={row} />}
     {current?.error && <p role="alert">{current.error} <StudioButton onClick={() => setRetry(value => value + 1)}>Retry article</StudioButton></p>}
   </section>;

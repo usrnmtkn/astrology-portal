@@ -31,10 +31,10 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, l
   const working = useRef(false);
   const selected = rows.filter(row => exportIds.has(row.id));
   const scope = selected.length ? selected : rows;
-  const saved = scope.filter(row => !row.id.startsWith('package:') && row.status !== 'ARCHIVED');
+  const saved = scope.filter(row => !csvUnavailableReason(row));
   const types = [...new Set(saved.map(csvContentType))].sort();
   const chosenType = types.includes(type) ? type : types.length === 1 ? types[0] : '';
-  const selectable = rows.filter(row => !row.id.startsWith('package:') && row.status !== 'ARCHIVED');
+  const selectable = rows.filter(row => !csvUnavailableReason(row));
   const changed = preview.filter(item => item.changes.length && !item.error && !item.saved);
   const pending = preview.filter(item => (item.changes.length || item.publish) && !item.error && !item.saved);
   const toPublish = pending.filter(item => item.publish);
@@ -153,9 +153,10 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, l
       <p>Export saved text, edit it in Excel or Numbers, then save as UTF-8 CSV and import it here. Keep the identity columns and variable names unchanged. Set publish to yes for rows you want live, or no to save edits as drafts. Nothing changes until you review and save this import.</p>
       <p>Publication status, source role, dates and reader links are read-only context and are ignored during import. The publish column controls your next import action. Shared fallbacks and pending revisions can differ from the article currently selected in Sky.</p>
       <p className="admin-field-hint">{selected.length ? `${selected.length} selected ${selected.length === 1 ? 'row' : 'rows'}` : `${rows.length} rows matching these filters`}. Export includes all matching pages. Unsaved sources and archived rows are excluded. Structured editions use their dedicated editor.</p>
+      {scope.length > saved.length && <p className="admin-field-hint">{saved.length} available for CSV editing · {scope.length - saved.length} excluded. Open structured articles in their dedicated editor.</p>}
       <details className="admin-disclosure" onToggle={event => setSelectionOpen(event.currentTarget.open)}>
         <summary>Choose rows for this export</summary>
-        <p className="admin-field-hint">Leave all unchecked to export every matching saved row.</p>
+        <p className="admin-field-hint">Leave all unchecked to export every matching supported source.</p>
         <StudioButton type="button" disabled={busy || disabled || !exportIds.size} onClick={() => setExportIds(new Set())}>Clear export selection</StudioButton>
         <div className="studio-csv-selection">
           {selectionOpen && selectable.slice(0, selectionLimit).map(row => <label key={row.id}>

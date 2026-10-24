@@ -4,6 +4,7 @@ import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { readStudioCsv, writeStudioCsv } from '../../apps/admin/src/studioCsv';
 import { fixtures as calendarFixtures } from '../helpers/calendar-review-api.mjs';
+import { skyPlacementSourceFixture } from '../helpers/sky-placement-source-fixture.mts';
 
 async function routeCsvInventoryApi(page: Parameters<typeof routeStudioInventoryApi>[0], options: Parameters<typeof routeStudioInventoryApi>[1]) {
   await routeStudioInventoryApi(page, { ...options, answer: async (route, url) => {
@@ -26,6 +27,59 @@ const fixtures = Array.from({ length: 31 }, (_, index) => ({
 test.use({ actionTimeout: 15_000 });
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`CSV picker excludes dedicated editions and exports supported sources at ${width} ${theme}`, async ({ page, context }) => {
+    test.setTimeout(120_000);
+    const fixture = await skyPlacementSourceFixture();
+    const editions = [{ ...fixture.active, headline: 'Unavailable CSV edition' }, { ...fixture.pending, headline: 'Unavailable CSV revision' }];
+    const store = await studioApiStore([fixtures[0], ...editions]);
+    const writes: unknown[] = [], errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    try {
+      await context.route('**/*', route => {
+        const request = route.request();
+        if (new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())) return route.abort();
+        return route.continue();
+      });
+      await context.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeCsvInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write) });
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto('/admin/content#exact-content');
+      await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
+      const panel = page.getByRole('region', { name: 'CSV offline editing' });
+      await expect(panel).toContainText('1 available for CSV editing · 2 excluded.');
+      const types = panel.getByLabel('CSV content type', { exact: true });
+      await expect(types.locator('option')).toHaveText(['Choose a content type', 'essay (1)']);
+      await panel.getByText('Choose rows for this export', { exact: true }).click();
+      await expect(panel.getByRole('checkbox')).toHaveCount(1);
+      await expect(panel.getByRole('checkbox', { name: `Export ${fixtures[0].headline}`, exact: true })).toBeVisible();
+      for (const row of editions) await expect(panel.getByRole('checkbox', { name: `Export ${row.headline}`, exact: true })).toHaveCount(0);
+      await panel.getByText('Choose rows for this export', { exact: true }).click();
+      const download = page.waitForEvent('download');
+      await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+      const records = readStudioCsv(await readFile((await (await download).path())!, 'utf8'));
+      expect(records.map(record => record.content_id)).toEqual([fixtures[0].id]);
+      expect(records[0].body).toBe(fixtures[0].body);
+      await expect(panel).toContainText('Exported 1 rows.');
+      await page.getByRole('searchbox', { name: 'Search content', exact: true }).fill('Unavailable');
+      await expect(panel).toContainText('0 available for CSV editing · 2 excluded.');
+      await expect(types.locator('option')).toHaveText(['Choose a content type']);
+      await expect(panel.getByRole('button', { name: 'Download CSV', exact: true })).toBeDisabled();
+      const typography = (element: Element) => {
+        const style = getComputedStyle(element);
+        return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];
+      };
+      expect(await panel.getByText('0 available for CSV editing · 2 excluded. Open structured articles in their dedicated editor.', { exact: true }).evaluate(typography))
+        .toEqual(await panel.locator('.admin-field-hint').first().evaluate(typography));
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await panel.screenshot({ path: `test-results/studio-csv-eligibility-${width}-${theme}.png` });
+      expect(writes).toEqual([]);
+      expect(errors).toEqual([]);
+    } finally { store.close(); }
+  });
+
   test(`CSV export, offline edit, preview, save and reload at ${width} ${theme}`, async ({ page, context }) => {
     test.setTimeout(120_000);
     const store = await studioApiStore(fixtures);

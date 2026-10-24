@@ -7804,9 +7804,12 @@ export function GeneratedContentAdminDashboard() {
                 {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 </section>
                 {skyPlacementBody === "sun" && skyPlacementSign !== "all" && <Suspense fallback={<PageLoading message="Loading season article…" />}>
-                  <SeasonArticleWorkspace sign={skyPlacementSign} loadRows={loadCalendarPreviewRows}
-                    onOpen={row => void openRow(row as AdminGeneratedContentRow)}
-                    onCreate={(sign, year) => handleCreateAction("articles", "Season article opened. Add your complete write-up, then save.", undefined, "article", { sign, year })} />
+                  <details className="admin-workspace-details" aria-label="Additional linked season article">
+                    <AdminDisclosureSummary>Additional linked season article</AdminDisclosureSummary>
+                    <SeasonArticleWorkspace sign={skyPlacementSign} loadRows={loadCalendarPreviewRows}
+                      onOpen={row => void openRow(row as AdminGeneratedContentRow)}
+                      onCreate={(sign, year) => handleCreateAction("articles", "Season article opened. Add your complete write-up, then save.", undefined, "article", { sign, year })} />
+                  </details>
                 </Suspense>}
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <Suspense fallback={null}><SkyPlacementUnwiredNotice rows={publishedButUnwiredSkyRows} statusLabel="Not live" /></Suspense>
