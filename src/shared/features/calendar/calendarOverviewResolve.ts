@@ -1,5 +1,5 @@
 import type { LunarCalendarEvent } from "../../../../apps/web/src/services/ephemeris";
-import { calendarConditionalText } from '../../../calendar-writing/conditionals';
+import { calendarConditionalText } from '../../../calendar-writing/conditionals.js';
 
 const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 
