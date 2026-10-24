@@ -16,6 +16,7 @@ export function startStartupAnimation() {
   let script: HTMLScriptElement | undefined;
   let disposed = false;
   let ready = false;
+  let decorationTimer: ReturnType<typeof setTimeout> | undefined;
 
   const syncPlayback = () => {
     if (!animation || !ready) return;
@@ -26,6 +27,7 @@ export function startStartupAnimation() {
 
   const dispose = () => {
     disposed = true;
+    clearTimeout(decorationTimer);
     observer.disconnect();
     motionObserver.disconnect();
     document.removeEventListener("visibilitychange", syncPlayback);
@@ -44,9 +46,9 @@ export function startStartupAnimation() {
     script = document.createElement("script");
     script.src = playerUrl;
     script.async = true;
-    // This visible loading feedback must download while app chunks are pending.
-    // Async scripts default to low priority, so "auto" can still defer it.
-    script.fetchPriority = "high";
+    // The inline poster remains visible while the optional player yields
+    // bandwidth to the calculation, reader modules and complete readings.
+    script.fetchPriority = "low";
     script.setAttribute("data-startup-decoration", "");
     script.onerror = dispose;
     script.onload = () => {
@@ -79,5 +81,7 @@ export function startStartupAnimation() {
   const motionObserver = new MutationObserver(onMotionChange);
   motionObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-reduce-motion"] });
   document.addEventListener("visibilitychange", syncPlayback);
-  loadPlayer();
+  // The CSS poster already signals progress. Most starts finish before this
+  // optional player is useful; do not let its download lengthen that wait.
+  decorationTimer = setTimeout(loadPlayer, 1200);
 }

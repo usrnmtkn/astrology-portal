@@ -1,6 +1,7 @@
 import type { GeneratedContentRow } from './generatedContent';
 import { READER_ROW_SCHEMA } from '../content/readerRowSchema.mjs';
 import { installContentPublications, publicationAllowsContent, validContentPublication, type ContentPublication } from '../content/contentPublicationState';
+import { initialSkyReaderRows } from './initialSkyReader';
 
 type ReaderQuery = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; scope?: "sky" | "sky-list" | "sky-article"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string;at:string;timeZone?:string} };
 type ReaderAdmission = { ready: Promise<boolean>; validate?: (rows: readonly GeneratedContentRow[], publications: readonly ContentPublication[]) => boolean };
@@ -43,6 +44,8 @@ async function readPage(body: string, signal: AbortSignal) {
  * has no table name, arbitrary select, or authoring-field escape hatch. */
 export async function loadReaderRows(query: ReaderQuery, signal?: AbortSignal, admission?: ReaderAdmission) {
   try {
+    const prepared = !admission && initialSkyReaderRows(query);
+    if (prepared) { signal?.throwIfAborted(); return { data: prepared, error: null }; }
     const rows: GeneratedContentRow[] = [];
     const bufferedPublications: ContentPublication[] = [];
     let afterId: string | undefined;

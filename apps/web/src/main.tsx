@@ -136,8 +136,8 @@ async function startApp() {
       || !callbackUrl.hash && isInitialSkyReaderHash(callbackUrl.hash))) {
     // Resolve publication state alongside App. Cold readers otherwise wait for
     // App, the SDK and every ledger page before their first content read begins.
-    void import("./services/contentPublications").then(({ refreshContentPublications, contentPublicationsResolved }) =>
-      refreshContentPublications(false, contentPublicationsResolved()
+    void import("./services/contentPublications").then(({ refreshContentPublications, contentPublicationsResolved, refreshSkyListPublications }) =>
+      !callbackUrl.hash || /^#\/?sky\/?$/u.test(callbackUrl.hash) ? refreshSkyListPublications() : refreshContentPublications(false, contentPublicationsResolved()
         ? () => import("./services/publicationLedgerTransport").then(({ loadPublicationLedgerFromApi }) => loadPublicationLedgerFromApi())
         : undefined)).catch(() => {});
   }
@@ -181,13 +181,13 @@ async function startApp() {
   if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) preloadCalendarExperience();
   const initialSkyLoad = await initialSkyLoadPromise;
   if (!isAdminContentPath()) {
-    const { refreshContentPublications } = await import("./services/contentPublications");
+    const { refreshContentPublications, refreshSkyListPublications } = await import("./services/contentPublications");
     // Publication state restores its verified cache synchronously. Revalidate
     // in the background: an unavailable content service must not block the
     // entire reader or delay starting the live ephemeris calculation.
     // Content loaders still await this shared request before selecting rows;
     // installed revisions notify mounted readers through contentUpdateSignal.
-    void refreshContentPublications();
+    void (initialSkyLoad?.detail === "placements" ? refreshSkyListPublications() : refreshContentPublications());
   }
   const reportPath = isReportPath();
 

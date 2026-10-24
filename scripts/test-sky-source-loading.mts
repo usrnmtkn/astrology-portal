@@ -20,8 +20,10 @@ const built = await build({ entryPoints: ['apps/web/src/services/skyPlacementHyd
       export const prefetchColdSkyPlacementRows = (selection, publications) => fixture.selected(selection, publications);
       export const loadFallbackArchitectureV3SkyPlacementDashboardBundle = (selection, early) => owned(pendingSelected, fixture.identity + ':' + selection, () => fixture.placement(selection, early));
       export const refreshContentPublications = () => fixture.refresh();
+      export const refreshSkyListPublications = () => fixture.refreshList();
       export const contentPublicationsResolved = () => fixture.resolved;
       export const contentPublicationsAvailableOnline = () => fixture.online;
+      export const skyListPublicationsAvailableOnline = () => fixture.listOnline ?? fixture.online;
       export const skyPlacementPublicationIdentity = () => fixture.identity;
       export const missingSkyPlacementPublications = () => fixture.missing;
     `, loader: 'js' }));
@@ -31,6 +33,7 @@ function harness(overrides = {}, clock = { setTimeout, clearTimeout }) {
   const fixture: any = {
     identity: 'current', online: true, resolved: true, missing: [],
     bundle: async () => { calls.push('bundle'); }, refresh: async () => { calls.push('refresh'); },
+    refreshList: async () => { calls.push('refresh-list'); },
     listBundle: async () => { calls.push('list-bundle'); },
     offline: async () => { calls.push('offline'); },
     prefetch: () => { calls.push('prefetch'); return undefined; },

@@ -40,6 +40,7 @@ import {
 import { usePageTransition, readAnimationPreference, animationPreferenceKey } from "./hooks/usePageTransition";
 import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
+import { initialSkyReaderKey, initialSkyReaderAvailable, initialSkyReaderPreview, pendingInitialSkyReaderRequest } from "./services/initialSkyReader";
 import { calendarDayDistance } from "./services/calendarDayDistance";
 import { liveSkyReference, remainingSkyMinutes, skyCivilDate } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
@@ -53,7 +54,7 @@ import { YouRoute } from "./routes/YouRoute";
 import { loadYouPage, readYouPage } from "./features/you/youExperienceLoader";
 import type { YouPageProps } from "./features/you/YouPage";
 import { isStandaloneLearnPath } from "./content/learnRoutePath";
-import { subscribeToContentPublicationAvailability, contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate } from "./services/contentPublications";
+import { subscribeToContentPublicationAvailability, contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications, refreshContentPublicationsAfterUpdate, refreshSkyListPublications } from "./services/contentPublications";
 import { preparePersonalReportTiming } from "./services/personalReportTiming";
 import {
   ArrowDownRight,
@@ -8238,6 +8239,27 @@ function normalizedSurfacePreview(article: NormalizedSurfaceArticle<string, stri
       : "";
 }
 
+/** Shared by the live list and its server transport. Preserve the complete
+ * current list text and exactly the same facts, publication and source rules. */
+export function skyListPlacementPreview({ position, displayPositions, aspects, generatedAt, generatedContent, locationLatitude, moonEvent }: {
+  position: PlanetPosition; displayPositions: PlanetPosition[]; aspects: SkySnapshot["aspects"];
+  generatedAt: string; generatedContent: GeneratedContentMap; locationLatitude?: number | null;
+  moonEvent?: SkySnapshot["moonEvent"] | null;
+}) {
+  if (!isFallbackOnlySkyPlacementPreview()) {
+    const prepared = initialSkyReaderPreview(position.planet, { displayPositions, aspects, generatedAt, locationLatitude, moonEvent });
+    if (prepared !== null) return prepared;
+  }
+  const transitRange = isDisplayRetrograde(position)
+    ? retrogradeRangeText(position) : placementTransitRangeLabel(position, generatedAt);
+  return normalizedSurfacePreview(normalizeSkyPlacementSurface(
+    position, transitRange, generatedContent,
+    skyPlacementWritingBeats({ aspects, generatedAt, planet: position.planet, positions: displayPositions }),
+    generatedAt, { aspects, positions: displayPositions },
+    { collectiveList: true, locationLatitude, moonEvent, positions: displayPositions }
+  ));
+}
+
 function renderReaderDirectedSynastryContact(
   contact: Omit<SynastryContact, "summary">,
   friendName: string,
@@ -11156,7 +11178,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [resolvedPlacementSelection, setResolvedPlacementSelection] = useState<string | null>(null);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
-  const skyListEditionMissing = sky && !skyDetailRoutePath && isTodayMode
+  const preparedInitialReaderKey = sky && isTodayMode && !skyDetailRoutePath && !isFallbackOnlySkyPlacementPreview()
+    ? initialSkyReaderKey(sky) : undefined;
+  const hasPreparedInitialReader = preparedInitialReaderKey !== undefined && initialSkyReaderAvailable(preparedInitialReaderKey);
+  const skyListEditionMissing = sky && !skyDetailRoutePath && isTodayMode && !hasPreparedInitialReader
     && sky.positions.some(position => skyIngressEssayPublicationKeys(contentPublicationRecords(), {
       planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
     }).some(key => !skyGeneratedContent.has(key)));
@@ -11974,7 +11999,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, [mode, skyDetailRoutePath]);
   useEffect(() => {
     if (
-      placementContentNeeded || !shouldHydrateFallbackDashboardContent({
+      isTodayMode || placementContentNeeded || !shouldHydrateFallbackDashboardContent({
   mode,
   friendNatalContentRequested,
   friendRelationshipContentRequests
@@ -12393,7 +12418,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }
     if (shouldLoadPlacementContent && selection === "pending") {
       const initialList = isTodayMode && !skyDetailRoutePath;
-      void (initialList ? loadInitialSkyListFallbackArchitectureV3Bundle() : loadSkyPlacementFallbackArchitectureV3Bundle(false))
+      void (initialList ? (pendingInitialSkyReaderRequest()?.catch(() => {}) ?? Promise.resolve()).then(() =>
+        initialSkyReaderAvailable() && !isFallbackOnlySkyPlacementPreview() ? false : loadInitialSkyListFallbackArchitectureV3Bundle())
+        : loadSkyPlacementFallbackArchitectureV3Bundle(false))
         .catch(() => { /* The source gate retries and reports errors. */ });
     }
     if (!shouldLoadPlacementContent || selection === "pending") {
@@ -12423,10 +12450,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         }, contentPublication) ? skyPlacementPublicationIdentity() : null;
       }) : undefined;
     const sourceRequest = prepareSkyPlacementSources(selection || undefined, {
-      compiledGuest, initialList: isTodayMode && !skyDetailRoutePath
+      compiledGuest, initialList: isTodayMode && !skyDetailRoutePath, initialReaderKey: preparedInitialReaderKey
     });
     if (preparation?.early) prefetchColdSkyPlacementSources(selection || undefined);
-    const editionsRequest = refreshContentPublications().then(async () => {
+    const editionsRequest = hasPreparedInitialReader ? Promise.resolve({ editionKeys: [] as string[], publishedEditions: new Map<string, LiveGeneratedContent>() })
+      : (isTodayMode && !skyDetailRoutePath ? refreshSkyListPublications() : refreshContentPublications()).then(async () => {
       const editionKeys = !skyDetailRoutePath ? (sky?.positions ?? []).flatMap(position =>
         skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
@@ -12523,7 +12551,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     };
     const stopPublications = subscribeToContentPublications((source) => {
       admitInitialSkyArticlePublication(skyArticlePreparationRef.current, source);
-      if (source !== "complete-live") void refreshContentPublicationsAfterUpdate();
+      if (source !== "complete-live" && source !== "complete-sky-list") void refreshContentPublicationsAfterUpdate();
       refreshInstalledContent();
     });
     const stopAvailability = subscribeToContentPublicationAvailability(() => {
@@ -12537,7 +12565,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   useEffect(() => {
     let cancelled = false;
 
-    loadPlanetTopicVocabulary()
+    loadPlanetTopicVocabulary(isTodayMode && !skyDetailRoutePath)
       .then(() => {
         if (!cancelled) {
           setPlanetTopicVocabularyVersion((version) => version + 1);
@@ -12553,6 +12581,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, [contentRefreshVersion]);
 
   useEffect(() => {
+    if (!shouldLoadEmptyHouseFallbackContent({ mode, friendNatalContentRequested })) return;
     let cancelled = false;
 
     loadNatalCardTaglines()
@@ -12568,7 +12597,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     return () => {
       cancelled = true;
     };
-  }, [contentRefreshVersion]);
+  }, [contentRefreshVersion, mode, friendNatalContentRequested]);
 
   useEffect(() => {
     let cancelled = false;
@@ -16894,27 +16923,9 @@ function PlacementTable({
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
           const placementReady = contentStatus === "ready" && Boolean(position.transitStart && position.transitEnd);
-          const rowSummary = placementReady ? normalizedSurfacePreview(
-            normalizeSkyPlacementSurface(
-              position,
-              transitRangeLabel,
-              generatedContent,
-              skyPlacementWritingBeats({
-                aspects,
-                generatedAt,
-                planet: position.planet,
-                positions: displayPositions
-              }),
-              generatedAt,
-              { aspects, positions: displayPositions },
-              {
-                collectiveList: true,
-                locationLatitude,
-                moonEvent,
-                positions: displayPositions
-              }
-            )
-          ) : "";
+          const rowSummary = placementReady ? skyListPlacementPreview({
+            position, displayPositions, aspects, generatedAt, generatedContent, locationLatitude, moonEvent
+          }) : "";
           const descriptionState = skyPlacementDescriptionState(rowSummary,
             contentStatus === "ready" && !placementReady ? "loading" : contentStatus);
           const openDetail = () => onOpenDetail(currentSkyPlacementDetailArticle({

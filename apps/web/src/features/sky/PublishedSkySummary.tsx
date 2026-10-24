@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "re
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { skyDailySummaryParts, type SkyDailySummaryFacts, type SummaryPart } from "../../content/skyDailySummary";
 import { skySummaryEventFacts } from "../../content/skySummaryEvents";
-import { contentPublicationsResolved, refreshContentPublications } from "../../services/contentPublications";
+import { skyListPublicationsResolved, refreshSkyListPublications } from "../../services/contentPublications";
 import { loadLiveGeneratedContentForKeys, type LiveGeneratedContent } from "../../services/generatedContent";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
 import { subscribeToContentPublications } from "../../content/contentPublicationState";
@@ -50,14 +50,14 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     setState(previous => previous.key === sourceKey && previous.status === "ready"
       ? previous : { key: sourceKey, content: previous.key === sourceKey ? previous.content : new Map(), status: "loading" });
     const fail = () => setState(previous => previous.key === sourceKey && previous.status === "ready"
-      && contentPublicationsResolved() && !missingPublishedSkySummaryKeys(requestedKeys, previous.content).length
+      && skyListPublicationsResolved() && !missingPublishedSkySummaryKeys(requestedKeys, previous.content).length
       ? previous : { key: sourceKey, content: new Map(), status: "error" });
     const timeout = window.setTimeout(() => { if (active) { fail(); active = false; } }, 20_000);
     void (async () => {
-      await refreshContentPublications();
+      await refreshSkyListPublications();
       const content = await loadLiveGeneratedContentForKeys(requestedKeys);
       const missing = missingPublishedSkySummaryKeys(requestedKeys, content);
-      const publicationsResolved = contentPublicationsResolved();
+      const publicationsResolved = skyListPublicationsResolved();
       if (!publicationsResolved || missing.length) {
         throw new Error("The current Daily Sky publication could not be loaded.");
       }
@@ -67,7 +67,7 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
   }, [sourceKey, refresh]);
 
   const current = state.key === sourceKey;
-  const ready = current && state.status === "ready" && contentPublicationsResolved()
+  const ready = current && state.status === "ready" && skyListPublicationsResolved()
     && missingPublishedSkySummaryKeys(keys, state.content).length === 0;
   const failed = factsError || current && state.status === "error";
   const loading = !failed && (!factsReady || !ready);
@@ -82,7 +82,7 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     return () => observer.disconnect();
   }, [loading, failed, sourceKey]);
   const retry = () => {
-    void refreshContentPublications(true).finally(() => {
+    void refreshSkyListPublications(true).finally(() => {
       onRetryFacts();
       setRefresh(value => value + 1);
     });

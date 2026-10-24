@@ -1,6 +1,6 @@
 import { isContentRetired, publicationAllowsContent, subscribeToContentPublications } from "../content/contentPublicationState";
 import { loadLiveGeneratedContentForSurfaces } from "./generatedContent";
-import { refreshContentPublications } from "./contentPublications";
+import { refreshContentPublications, refreshSkyListPublications } from "./contentPublications";
 import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
@@ -364,12 +364,12 @@ function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[]) {
   return cachedVocabulary;
 }
 
-export async function loadPlanetTopicVocabulary() {
-  await refreshContentPublications();
+export async function loadPlanetTopicVocabulary(initialSkyList = false) {
+  await (initialSkyList ? refreshSkyListPublications() : refreshContentPublications());
   if (loadingVocabulary) return loadingVocabulary;
   const epoch = cacheEpoch;
   loadingVocabulary = (async () => {
-    const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"], undefined, undefined, true)).values()]
+    const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"], undefined, undefined, true, initialSkyList ? "sky-list" : "all")).values()]
       .filter((row) => row.contentKey.startsWith("fallback-vocab/")
         || row.contentKey.startsWith("cc/planet/")
         || row.contentKey.startsWith("cc/sign/"))

@@ -230,7 +230,8 @@
     "test:moon-transit-routing": "node --import tsx scripts/test-moon-transit-routing.mts",
     "test:connection-transits": "node --import tsx scripts/test-connection-transit-separation.mts && node --import tsx scripts/test-connection-transit-publication.mts",
     "test:sky-placement-workspace": "node --import tsx scripts/test-sky-placement-workspace.mts",
-    "test:studio-reader-edit": "node --import tsx --test scripts/test-studio-reader-edit.mts scripts/test-studio-reader-edit-access.mts"
+    "test:studio-reader-edit": "node --import tsx --test scripts/test-studio-reader-edit.mts scripts/test-studio-reader-edit-access.mts",
+    "build:initial-sky-reader": "node scripts/build-initial-sky-reader.mjs"
   },
   "overrides": {
     "@tiptap/markdown": {

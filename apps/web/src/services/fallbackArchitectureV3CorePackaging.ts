@@ -182,7 +182,7 @@ export function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow
 
 export function packageFallbackArchitectureV3CoreRows(
   rows: GeneratedContentRow[],
-  currentCoreManifest: FallbackArchitectureV3PackageManifest,
+  currentCoreManifest: Pick<FallbackArchitectureV3PackageManifest, "keys">,
   allowsPublication: typeof publicationAllowsContent = publicationAllowsContent,
   options: { includeSkyPlacement?: boolean } = {}
 ): FallbackArchitectureV3Bundle | null {

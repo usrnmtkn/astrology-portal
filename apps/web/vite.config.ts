@@ -253,6 +253,10 @@ export default defineConfig(({ mode }) => {
         }
       },
       rollupOptions: {
+        input: {
+          reader: resolve(__dirname, "index.html"),
+          initialSkyBootstrap: resolve(__dirname, "src/initialSkyBootstrap.ts")
+        },
         output: {
           manualChunks(id) {
             // The reader shares this pure field contract with Studio. Keep it
@@ -276,11 +280,12 @@ export default defineConfig(({ mode }) => {
               || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache|skyPlacementSourceScope|generatedContentKeys)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
-            if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
+            if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)
+              || id.endsWith("/services/initialSkyRoute.mjs")) return "sky-time";
             // Reader publication state, transport and update notices share one
             // startup boundary; avoid three separate imports and gzip headers.
             if (id.endsWith("/content/contentPublicationState.ts")
-              || /\/services\/(?:contentPublications|contentUpdateSignal|readerContentClient)\.ts$/u.test(id)) return "content-publications";
+              || /\/services\/(?:contentPublications|contentUpdateSignal|readerContentClient|anonymousReaderTransport|publicationLedgerTransport)\.ts$/u.test(id)) return "content-publications";
             // Keep the shared reader/Studio return paths with their authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
             if (/\/services\/(?:auth|studioAuthReturn|readerAuthReturn)\.ts$/u.test(id)) {

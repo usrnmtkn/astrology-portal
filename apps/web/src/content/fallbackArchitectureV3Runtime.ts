@@ -1,7 +1,5 @@
 import { publicationRestoresBaseline, publicationAllowsContent, contentPublicationRecords, subscribeToContentPublications } from "./contentPublicationState";
-import bundledInitialReaderRowsV3 from "./fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/initial-sky-core-transport-v1.json";
-import bundledSkyAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-sky-authored-cards-v3.json";
 import approvedServingProjectionV1 from "./fallbackArchitectureV3/approved-serving-projection-v1.json";
 import bundledManifestSummaryV3 from "./fallbackArchitectureV3/bundled-manifest-summary-v3.json";
 import { isGovernedReaderEligible } from "./fallbackArchitectureV3/resolver/readerEligibility.browser";
@@ -233,23 +231,20 @@ function latestByContentKey<T extends { contentKey: string }>(rows: T[]): T[] {
 }
 
 const approvedInitialAuthoredCards = latestByContentKey([
-  ...(bundledSkyAuthoredCardsV3.authoredCards as AuthoredCard[]),
-  ...(bundledInitialReaderRowsV3.authoredCards as AuthoredCard[])
+  ...(bundledSkyCoreRowsV3.authoredCards as AuthoredCard[])
 ]);
 const approvedInitialHookRows = latestByContentKey([
-  ...(bundledSkyCoreRowsV3.hookRows as HookRow[]),
-  ...(bundledInitialReaderRowsV3.hookRows as HookRow[])
+  ...(bundledSkyCoreRowsV3.hookRows as HookRow[])
 ]);
 const approvedInitialVocabularyRows = latestByContentKey([
-  ...(bundledSkyCoreRowsV3.vocabularyRows as VocabRow[]),
-  ...(bundledInitialReaderRowsV3.vocabularyRows as VocabRow[])
+  ...(bundledSkyCoreRowsV3.vocabularyRows as VocabRow[])
 ]);
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
     authoredCards: approvedInitialAuthoredCards
   },
   templatesFile: {
-    templates: bundledInitialReaderRowsV3.templates as TemplateRow[]
+    templates: bundledSkyCoreRowsV3.templates as TemplateRow[]
   },
   rowsFile: {
     hookRows: approvedInitialHookRows,
@@ -382,7 +377,7 @@ let readerSupportPromise: Promise<void> | null = null;
 function loadReaderSupportBundle() {
   if (localReaderSupportBundle) return Promise.resolve();
   readerSupportPromise ??= import('./fallbackArchitectureV3/deferred-reader-support-transport-v1.json').then(({ default: rows }) => {
-    localReaderSupportBundle = readerEligibleBundle({ transitLib: { authoredCards: [] }, templatesFile: { templates: [] }, rowsFile: rows });
+    localReaderSupportBundle = readerEligibleBundle({ transitLib: { authoredCards: rows.authoredCards }, templatesFile: { templates: rows.templates }, rowsFile: rows });
     recomposeReaderBundle();
   }).catch(error => { readerSupportPromise = null; throw error; });
   return readerSupportPromise;

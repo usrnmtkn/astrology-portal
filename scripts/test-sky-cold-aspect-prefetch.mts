@@ -15,7 +15,7 @@ await build({ stdin: { resolveDir: process.cwd(), contents: `
   export { SKY_BODY_ORDER, SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from './apps/web/src/astrologyConfig.ts';
 ` }, bundle: true, platform: 'node', format: 'esm', outfile: file, logLevel: 'silent', define: { 'import.meta.env': '{}' }, plugins: [{ name: 'online-fixture', setup(builder) {
   builder.onResolve({ filter: /^\.\/contentPublications$/ }, () => ({ path: 'online', namespace: 'fixture' }));
-  builder.onLoad({ filter: /.*/, namespace: 'fixture' }, () => ({ contents: 'export const contentPublicationsAvailableOnline = () => globalThis.fixtureOnline === true; export const refreshContentPublications = async () => {};' }));
+  builder.onLoad({ filter: /.*/, namespace: 'fixture' }, () => ({ contents: 'export const contentPublicationsAvailableOnline = () => globalThis.fixtureOnline === true; export const refreshContentPublications = async () => {}; export const refreshSkyListPublications = refreshContentPublications; export const skyListPublicationReadStarted = () => false;' }));
 } }] });
 const qa = await import(pathToFileURL(file).href);
 const stamp = '2026-10-16T07:00:00.000001Z';

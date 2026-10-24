@@ -4,6 +4,7 @@ export const publicationLedgerBoundaries = [null, "authored/compat-pair/s", "aut
   "authored/transit-house-sign/s", "fallback-hook/n", "sky-placement", null] as const;
 
 import { isRetiredCompositionKey } from "./fallbackArchitectureV3/resolver/retiredCompositions.mjs";
+import { isSkyListPublicationKey } from "./skyListPublicationScope";
 /** Shared lifecycle identity. A retirement survives deletion of its editable row. */
 export type ContentPublication = {
   content_key: string;
@@ -17,7 +18,8 @@ export const publicationLedgerKey = "__content-publication-ledger/v1";
 export function publicationLedgerReady() { return publications.has(publicationLedgerKey); }
 export const publicationCacheKey = "tldrastro:content-publications:v1";
 const publications = new Map<string, ContentPublication>();
-export type ContentPublicationInstallSource = "partial" | "complete-live";
+export type ContentPublicationInstallSource = "partial" | "complete-live" | "complete-sky-list";
+let completeLiveSkyList = false;
 const listeners = new Set<(source: ContentPublicationInstallSource) => void>();
 export let contentPublicationGeneration = 0;
 
@@ -59,6 +61,15 @@ if (typeof window !== "undefined") {
 }
 
 export function installContentPublications(incoming: readonly unknown[], source: ContentPublicationInstallSource = "partial") {
+  if (source === "complete-sky-list") {
+    if (!incoming.every(row => validContentPublication(row) && isSkyListPublicationKey(row.content_key))) throw new Error("Invalid Sky list publication coverage.");
+    completeLiveSkyList = true;
+  }
+  // A scoped response never installs the full-ledger marker. Content pages
+  // received afterward cannot upgrade that scope through their partial marker.
+  if (source === "complete-sky-list" || source === "partial" && completeLiveSkyList) {
+    incoming = incoming.filter(row => !(validContentPublication(row) && row.content_key === publicationLedgerKey));
+  }
   if (!mergeContentPublications(publications, incoming)) return;
   contentPublicationGeneration += 1;
   if (typeof window !== "undefined") {
@@ -84,7 +95,8 @@ export function publicationRestoresBaseline(publication: ContentPublication) {
 export function publicationAllowsContent(contentKey: string, rowId?: string | null, rowUpdatedAt?: string | null, targetDate?: string | null, records: ReadonlyMap<string, ContentPublication> = publications) {
   if (isRetiredCompositionKey(contentKey)) return false;
   const publication = records.get(contentKey);
-  if (!publication) return !rowId || Boolean(targetDate) || !records.has(publicationLedgerKey);
+  if (!publication) return !rowId || Boolean(targetDate) || !(records.has(publicationLedgerKey)
+    || records === publications && completeLiveSkyList && isSkyListPublicationKey(contentKey));
   if (publication.state === "retired") return false;
   if (publicationRestoresBaseline(publication)) return rowId == null && rowUpdatedAt == null;
   if (targetDate) return true;

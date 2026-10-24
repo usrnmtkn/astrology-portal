@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import handler from '../api/content-publications';
 import { canonicalPublicationLedger, loadPublicationLedgerFromApi } from '../apps/web/src/services/publicationLedgerTransport';
+import { isSkyListPublicationKey } from '../apps/web/src/content/skyListPublicationScope';
+import { installContentPublications, publicationLedgerReady, publicationAllowsContent, publicationLedgerKey } from '../apps/web/src/content/contentPublicationState';
 
 const keys = ['!', '__content-publication-ledger/v1', 'authored/compat-pair/s', 'authored/transit-aspect/s', 'authored/transit-house-sign/s', 'fallback-hook/n', 'sky-placement', 'zz/future',
   ...Array.from({ length: 2010 }, (_, i) => `authored/compat-pair/a-${String(i).padStart(4, '0')}`)].sort();
@@ -10,10 +12,10 @@ let rows = structuredClone(originalRows), requests: URL[] = [], failure = '', he
 const originalFetch = globalThis.fetch;
 const envKeys = ['SUPABASE_URL', 'VITE_SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_ANON_KEY', 'VITE_SUPABASE_PUBLISHABLE_KEY', 'VITE_SUPABASE_ANON_KEY'];
 const saved = Object.fromEntries(envKeys.map(key => [key, process.env[key]]));
-async function invoke(tag?: string, method = 'GET') {
+async function invoke(tag?: string, method = 'GET', url = '/api/content-publications') {
   const headers: Record<string, string> = {}; let body: string | undefined;
   const response = { statusCode: 200, setHeader(name: string, value: string) { headers[name] = value; }, end(value?: string) { body = value; } };
-  await handler({ method, headers: { 'if-none-match': tag, authorization: 'Bearer synthetic-owner-token' } } as any, response as any);
+  await handler({ method, url, headers: { 'if-none-match': tag, authorization: 'Bearer synthetic-owner-token' } } as any, response as any);
   return { status: response.statusCode, headers, body };
 }
 try {
@@ -21,9 +23,9 @@ try {
   process.env.SUPABASE_URL = 'https://publication-fixture.supabase.test';
   process.env.SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_synthetic_fixture';
   globalThis.fetch = async (input: any, options: any) => {
-    if (String(input) === '/api/content-publications') {
+    if (String(input).startsWith('/api/content-publications')) {
       assert.equal(options.cache, 'no-store');
-      const result = await invoke(options.headers['if-none-match']);
+      const result = await invoke(options.headers['if-none-match'], 'GET', String(input));
       if (compressed && result.headers.etag) result.headers.etag = `W/${result.headers.etag}`;
       return new Response(result.body ?? null, { status: result.status, headers: result.headers });
     }
@@ -85,6 +87,41 @@ try {
     assert.equal(requests.length, 6, 'Balanced families return every publication in one concurrent wave');
     assert.deepEqual(JSON.parse(balanced.body!).publications, canonicalPublicationLedger(rows));
     rows = savedRows;
+  }
+  {
+    const scopeUrl='/api/content-publications?scope=sky-list';
+    rows.push(...['sky-placement/article/sun/scorpio','sky-nodes/north-node/aquarius','sky-article/sun/scorpio/2026/2026-10-23',
+      'sky-season-fallback/sun/scorpio/future','fallback-vocab/planet-topic/sun','cc/sign/future/actions'].map((content_key,index)=>({
+        ...originalRows[0],content_key,state:index===1?'retired':'live',row_id:index===1?null:content_key
+      })) as any);
+    rows.sort((a,b)=>a.content_key<b.content_key?-1:1);
+    requests=[];
+    const scoped=await invoke(undefined,'GET',scopeUrl);
+    assert.equal(scoped.status,200);
+    const scopedRows=JSON.parse(scoped.body!).publications;
+    assert.equal(JSON.parse(scoped.body!).schema,'tldr-sky-list-publications/v1');
+    assert.deepEqual(scopedRows,canonicalPublicationLedger(rows.filter(row=>isSkyListPublicationKey(row.content_key))));
+    assert(scopedRows.some((row:any)=>row.state==='retired'),'Retirements remain in the scoped proof.');
+    assert.equal(requests.length,8,'The smaller response still verifies all upstream ranges/pages.');
+    assert.equal((await invoke(scoped.headers.etag,'GET',scopeUrl)).status,304);
+    assert.deepEqual(await loadPublicationLedgerFromApi([], 'sky-list'),scopedRows);
+    assert.deepEqual(await loadPublicationLedgerFromApi(scopedRows, 'sky-list'),scopedRows);
+    assert.throws(()=>installContentPublications([originalRows.find(row=>row.content_key===publicationLedgerKey)!],'complete-sky-list'),/coverage/);
+    installContentPublications(scopedRows,'complete-sky-list');
+    assert.equal(publicationLedgerReady(),false,'List coverage cannot establish full-reader readiness.');
+    installContentPublications([originalRows.find(row=>row.content_key===publicationLedgerKey)!]);
+    assert.equal(publicationLedgerReady(),false,'A partial content page cannot upgrade the scoped proof.');
+    const live=scopedRows.find((row:any)=>row.state==='live');
+    assert(publicationAllowsContent(live.content_key,live.row_id,live.row_updated_at));
+    assert(!publicationAllowsContent(live.content_key,'older-id',live.row_updated_at));
+    assert(!publicationAllowsContent('sky-nodes/north-node/aquarius','anything',originalRows[0].updated_at));
+    assert(!publicationAllowsContent('sky-placement/article/future/new-sign','unpublished-row',originalRows[0].updated_at),'An absent Studio publication cannot enter scoped readers.');
+    rows.push({...originalRows[0],content_key:'sky-placement/new-family/future',state:'live'});
+    rows.sort((a,b)=>a.content_key<b.content_key?-1:1);
+    assert.equal((await invoke(scoped.headers.etag,'GET',scopeUrl)).status,200,'New covered families invalidate scoped coverage.');
+    assert.equal((await invoke(undefined,'GET','/api/content-publications?scope=unknown')).status,400);
+    const savedRows=rows;rows=rows.filter(row=>row.content_key!==publicationLedgerKey);
+    assert.equal((await invoke(undefined,'GET',scopeUrl)).status,503,'Missing upstream ledger marker cannot establish scoped coverage.');rows=savedRows;
   }
   for (failure of ['network', 'invalid', 'cursor']) {
     const bad = await invoke(tag);
