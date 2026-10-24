@@ -49,6 +49,8 @@ try {
   // The library exports are re-exported from other handlers, and a .ts import specifier here fails
   // only once Node loads the emitted modules.
   await emit("api/admin/generated-content-libraries.ts");
+  await emit("api/admin/generated-content.ts");
+  await emit("src/shared/features/calendar/calendarOverviewResolve.ts");
   await emit("api/content-publications.ts");
   await emit("api/admin/review-records.ts");
   // Keep the shared chart module's emitted imports unchanged. Rewriting its
@@ -82,6 +84,11 @@ try {
     assert.equal(response.statusCode, 401);
     const libraries = await import("./api/admin/generated-content-libraries.js");
     assert.equal(typeof libraries.astro101PublicationIssue, "function");
+    const { default: generatedContentHandler } = await import("./api/admin/generated-content.js");
+    await generatedContentHandler({ headers: {}, method: "GET", url: "/api/admin/generated-content?writingProfiles=true" }, response);
+    assert.equal(response.statusCode, 401, "The generated-content entry must load in plain Node before rejecting anonymous profile access");
+    const { calendarTemplateSegments } = await import("./src/shared/features/calendar/calendarOverviewResolve.js");
+    assert.equal(calendarTemplateSegments("Synthetic {{date}}.", { date: { text: "October 21", kind: "fact" } }).map(part => part.text).join(""), "Synthetic October 21.");
     const { default: ledgerHandler } = await import("./api/content-publications.js");
     await ledgerHandler({ headers: {}, method: "POST" }, response);
     assert.equal(response.statusCode, 405, "Public ledger must start in plain Node before handling requests");
