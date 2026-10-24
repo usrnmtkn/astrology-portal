@@ -170,16 +170,19 @@ async function startApp() {
   } else {
     await readerStylesPromise;
   }
-  // Start fonts as soon as their stylesheet exists. Waiting for App added a
-  // second network waterfall and let Calendar first paint with fallback metrics.
-  for (const face of ['400 16px Newsreader', '500 16px "Geist Mono"']) {
-    void document.fonts.load(face).catch(() => {});
+  const initialSkyLoad = await initialSkyLoadPromise;
+  // Calendar needs its fonts before its responsive controls first paint.
+  // On the opening Sky list, CSS requests the fonts actually used when App
+  // renders; speculative faces would compete with the complete reader modules.
+  if (initialSkyLoad?.detail !== "placements") {
+    for (const face of ['400 16px Newsreader', '500 16px "Geist Mono"']) {
+      void document.fonts.load(face).catch(() => {});
+    }
   }
   const { App, preloadCalendarExperience } = await appModulePromise;
   // Fetch the route and view together before React mounts, after the base
   // stylesheet so Calendar's responsive controls retain their cascade order.
   if (/^#\/?calendar(?:[/?]|$)/u.test(window.location.hash)) preloadCalendarExperience();
-  const initialSkyLoad = await initialSkyLoadPromise;
   if (!isAdminContentPath()) {
     const { refreshContentPublications, refreshSkyListPublications } = await import("./services/contentPublications");
     // Publication state restores its verified cache synchronously. Revalidate

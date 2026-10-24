@@ -249,6 +249,12 @@ function normalizeDegrees(degrees: number) {
   return ((degrees % 360) + 360) % 360;
 }
 
+function signNameForLongitude(longitude: number) {
+  // Astronomical scans need only the sign, not a display degree rounded into
+  // a temporary string/object at each sample. Keep the identical normalization.
+  return signs[Math.floor(normalizeDegrees(longitude) / 30)][0];
+}
+
 function signForLongitude(longitude: number) {
   const normalized = normalizeDegrees(longitude);
   const signIndex = Math.floor(normalized / 30);
@@ -426,7 +432,7 @@ function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
 }
 
 function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date, longitudeOffset = 0) {
-  return signForLongitude(exactPlanetLongitude(swe, planetId, date) + longitudeOffset).sign;
+  return signNameForLongitude(exactPlanetLongitude(swe, planetId, date) + longitudeOffset);
 }
 
 function planetSunOrb(swe: SwissEphInstance, planetId: number, date: Date) {
@@ -931,7 +937,7 @@ function horizonSignFor(swe: SwissEphInstance, location: LocationInput, date: Da
     ? ascendantLongitude
     : normalizeDegrees(ascendantLongitude + 180);
 
-  return signForLongitude(longitude).sign;
+  return signNameForLongitude(longitude);
 }
 
 function solarDaylightForDay(swe: SwissEphInstance, location: LocationInput, date: Date): SolarDaylight {
@@ -955,7 +961,7 @@ function solarDaylightForDay(swe: SwissEphInstance, location: LocationInput, dat
 }
 
 function moonSignAt(swe: SwissEphInstance, date: Date) {
-  return signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, date)).sign;
+  return signNameForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, date));
 }
 
 function moonIngressAfter(swe: SwissEphInstance, date: Date) {
@@ -1303,7 +1309,7 @@ function nextMoonEvent(swe: SwissEphInstance, date: Date): MoonEvent {
 
   return {
     name,
-    sign: signForLongitude(moonLongitude).sign,
+    sign: signNameForLongitude(moonLongitude),
     occursAt: occursAt.toISOString(),
     days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000),
     eclipseType: eclipseType ?? undefined
@@ -1456,8 +1462,8 @@ function findLunations(
         }
 
         const occursAt = refinePhaseEvent(swe, phaseTarget.target, previous.date, current.date);
-        const moonSign = signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt)).sign;
-        const sunSign = signForLongitude(exactPlanetLongitude(swe, swe.SE_SUN, occursAt)).sign;
+        const moonSign = signNameForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt));
+        const sunSign = signNameForLongitude(exactPlanetLongitude(swe, swe.SE_SUN, occursAt));
         const sign = moonSign;
         const dateKey = localDateKey(occursAt, timeZone);
         const eclipseType = eclipseTypeForLunation(swe, occursAt, phaseTarget.target);
@@ -3843,8 +3849,8 @@ export async function getAstrodienstSky(
   };
   const ascendantLongitude = normalizeDegrees(houses.ascmc[0]);
   const midheavenLongitude = normalizeDegrees(houses.ascmc[1]);
-  const ascendant = signForLongitude(ascendantLongitude).sign;
-  const midheaven = signForLongitude(midheavenLongitude).sign;
+  const ascendant = signNameForLongitude(ascendantLongitude);
+  const midheaven = signNameForLongitude(midheavenLongitude);
   const planetIds = [
     swe.SE_SUN,
     swe.SE_MOON,
