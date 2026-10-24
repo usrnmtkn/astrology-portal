@@ -86,7 +86,10 @@ if (ownerRewrites.payloads[laterRewrite.legacyProjectionKey]) {
 await build({
   bundle: true,
   define: { "import.meta.env": "{}" },
-  entryPoints: [path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx")],
+  stdin: {resolveDir:repoRoot,loader:"tsx",contents:`
+    export {normalizeCalendarEventSurface} from './apps/web/src/features/calendar/LunarCalendar';
+    export {loadCalendarFallbackArchitectureV3Bundle} from './apps/web/src/content/fallbackArchitectureV3Runtime';
+  `},
   format: "esm",
   loader: { ".css": "empty" },
   logLevel: "silent",
@@ -104,9 +107,10 @@ await build({
   platform: "node"
 });
 
-const { normalizeCalendarEventSurface } = await import(
+const { normalizeCalendarEventSurface, loadCalendarFallbackArchitectureV3Bundle } = await import(
   `${pathToFileURL(bundleFile).href}?t=${Date.now()}`
 );
+await loadCalendarFallbackArchitectureV3Bundle();
 const { approvedExactSkyAspectCopy: exactLookup } = await import(
   `${pathToFileURL(registryBundleFile).href}?t=${Date.now()}`
 );

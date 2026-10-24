@@ -8,6 +8,7 @@ import { publicationAllowsContent } from "../apps/web/src/content/contentPublica
 import type { SkySnapshot } from "../apps/web/src/types.js";
 import type { GeneratedContentRow } from "../apps/web/src/services/generatedContent.js";
 import { lunationReaderContentKeys } from "../apps/web/src/content/lunationArticleIdentity.js";
+import { calculateInitialSky } from "./_lib/sky-reader-calculation.js";
 
 type Handler = (req: IncomingMessage, res: ServerResponse) => Promise<void>;
 async function readPublic(handler: Handler, request: object) {
@@ -45,7 +46,8 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
   };
   const publications = timed("publications", readPublic(publicationsHandler, { method: "GET", url: "/api/content-publications?scope=sky-list", headers: {} }));
   void publications.catch(() => {});
-  const calculated = await timed("sky", readPublic(skyHandler, { method: "GET", url: req.url, headers: {} }));
+  const calculated = await timed("sky", calculateInitialSky(req.url!).catch(() =>
+    readPublic(skyHandler, { method: "GET", url: req.url, headers: {} })));
   if (calculated.status !== 200) { res.statusCode = calculated.status; res.end(JSON.stringify(calculated.value)); return; }
   const sky = calculated.value.sky as SkySnapshot;
   let initialReader: unknown = null;
