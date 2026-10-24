@@ -9,7 +9,7 @@ parentPort!.on('message',({id,url,prefetch}:{id:number;url:string;prefetch?:bool
         const {date,location}=readSkyCalculationInputs(url);
         // Select public source keys while the unchanged complete calculation
         // continues. This preliminary result is never returned to the browser.
-        const selection=await getAstrodienstSky(location,date,{includeTransitWindows:false,includeAspectTiming:false});
+        const selection=await getAstrodienstSky(location,date,{includeTransitWindows:false,includeAspectTiming:false,includeDailyEvents:false});
         parentPort!.postMessage({id,selection});
       }
       let body='';const headers:Record<string,string>={};

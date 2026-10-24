@@ -48,6 +48,7 @@ import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calend
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { skySunTransition } from "./content/skySunTransition";
 import { useMinimumLoading } from "./hooks/useMinimumLoading";
+import {loadFormattedWriting} from '../../../src/shared/components/formattedWritingLoader.js';
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
 import { YouRoute } from "./routes/YouRoute";
@@ -12422,7 +12423,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     if (shouldLoadPlacementContent && isTodayMode && !skyDetailRoutePath) {
       // The complete reading uses the formatted-text renderer. Download it
       // alongside its sources so the final text does not open another waterfall.
-      void import("./components/FormattedWritingContent").catch(() => { /* The visible reader retains its own recovery boundary. */ });
+      void loadFormattedWriting().catch(() => { /* The visible reader retains its own recovery boundary. */ });
     }
     if (shouldLoadPlacementContent && selection === "pending") {
       const initialList = isTodayMode && !skyDetailRoutePath;

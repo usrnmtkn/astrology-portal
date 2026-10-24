@@ -10,6 +10,7 @@ import { isVerifiedSkySnapshot } from "./verifiedSkyCache";
 import { withRequestDeadline } from "./requestDeadline";
 import { acceptInitialSkyReader, trackInitialSkyReaderRequest } from "./initialSkyReader";
 import {matchingInitialSkyTransport,takeInitialSkyTransport} from "./initialSkyTransport";
+import {loadFormattedWriting} from '../../../../src/shared/components/formattedWritingLoader.js';
 
 const pending = new Map<string, Promise<SkySnapshot>>();
 let primedInitialSkyLoad: InitialSkyLoad | null = null;
@@ -55,7 +56,7 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
         admitInitialSkyReaderPublications();
         // The complete selected reading is known now. Prepare its existing
         // renderer while App downloads, keeping Markdown outside static boot.
-        void import("../components/FormattedWritingContent").catch(() => {});
+        void loadFormattedWriting().catch(() => {});
       }
       return sky;
     }, { timeoutMs: primedTransport ? Math.max(1, 8_000 - (performance.now() - primedTransport.startedAt)) : 8_000 }).finally(() => pending.delete(key));

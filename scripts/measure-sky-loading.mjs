@@ -59,7 +59,13 @@ for (const profile of (process.env.SKY_PERF_PROFILES || 'desktop,mobile').split(
    requests.length=0; errors.length=0;failedRequests.length=0;
    if (process.env.SKY_PERF_CPU_PROFILE) { await cdp.send('Profiler.enable'); await cdp.send('Profiler.start'); }
    let error=null;
-   try {if(warm)await page.reload({waitUntil:'domcontentloaded'});else await page.goto(`${baseURL}/?date=${date}${hash}`,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__skyPerf.marks.reading!==undefined || window.__skyPerf.marks.failure!==undefined,{},{timeout:60000});}catch(e){error=e.message;}
+   try {if(warm)await page.reload({waitUntil:'domcontentloaded'});else await page.goto(`${baseURL}/?date=${date}${hash}`,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__skyPerf.marks.reading!==undefined || window.__skyPerf.marks.failure!==undefined,{},{timeout:60000});
+    // Preserve the original first-complete-reading checkpoint. Let remaining
+    // fonts settle before collecting geometry or reloading, so a benchmark's
+    // own navigation does not abort fonts and create an artificial cold reload.
+    await page.waitForFunction(()=>document.fonts.status==='loaded',{},{timeout:10000});
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+   }catch(e){error=e.message;}
    const data=await page.evaluate(()=>({...window.__skyPerf,prose: [...document.querySelectorAll('[aria-label="Daily sky summary"],.planet-placement-row--sky .planet-placement-row__description')].map(el=>el.textContent),copy: [...document.querySelectorAll('[aria-label="Daily sky summary"],.planet-placement-row--sky')].map(el=>el.textContent),navigation:performance.getEntriesByType('navigation').map(e=>e.toJSON()),resources:performance.getEntriesByType('resource').map(e=>({name:e.name,start:e.startTime,duration:e.duration,transferSize:e.transferSize,encodedBodySize:e.encodedBodySize,decodedBodySize:e.decodedBodySize}))}));
    if(data.marks.failure)error='Reader displayed an error before usable content';
    const result={profile,run,warm,error,errors:[...errors],failedRequests:[...failedRequests],...data,requests:[...requests]};results.push(result);await fs.writeFile(out,JSON.stringify(results,null,2));

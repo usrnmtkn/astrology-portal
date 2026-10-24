@@ -268,6 +268,7 @@ export default defineConfig(({ mode }) => {
             // transport instead of adding a preload and gzip header per identity.
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|generatedContentEligibility)\.ts$/u.test(id)
               || id.endsWith("/services/templateInterpolation.ts")
+              || id.endsWith("/shared/components/formattedWritingLoader.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
             // These shared readers already belong to boot. Keep them outside
             // Studio's deferred editor group so an editor import cannot pull it into boot.

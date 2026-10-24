@@ -56,7 +56,7 @@ import { skyDailySummaryParts, skySummaryParagraphs } from "../apps/web/src/cont
   assert.equal(skySunSummaryExcerpt("First sentence.\n\n- One\n- Two\n\nThird sentence stays out."), "First sentence.\n\n- One\n- Two");
   assert.equal(skySunSummaryExcerpt("One sentence. Two sentences.\n\n- This list stays in Calendar."), "One sentence. Two sentences.");
   const readerSource = readFileSync(new URL("../apps/web/src/features/sky/PublishedSkySummary.tsx", import.meta.url), "utf8");
-  assert.ok(readerSource.includes('state.content, { sunSummaryLength: "short" }'), "The live Sky reader must opt in to the excerpt");
+  assert.ok(readerSource.includes('displayed.content, { sunSummaryLength: "short" }'), "The live Sky reader must opt in to the excerpt");
   console.log("Sky Sun excerpt: supplied Libra copy, unchanged Calendar/source/Moon/link/void behavior, sentence boundaries, and live reader opt-in passed.");
 }
 

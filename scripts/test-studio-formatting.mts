@@ -7,6 +7,7 @@ import FormattedWritingContent, { PreparedProse as PreparedFormattedProse } from
 import { writingDocument, preserveWritingVariables } from '../apps/web/src/content/formattedText';
 import { fullDetailReaderFacingCopy } from '../apps/web/src/content/readerSafety';
 import { hasWritingFormatting as hasFormatting } from '../apps/web/src/content/formattedText';
+import {loadFormattedWriting,preparedFormattedWriting} from '../src/shared/components/formattedWritingLoader.js';
 for (const text of ['Plain paragraph.', '**Bold**', '*italic*', 'under_score', '\\literal', '- First', '+ First', '* First', '3. Third', 'Text\n  4. Fourth', '3.14 is a number', '-not a list', '', 'Line one\nLine two']) {
  assert.equal(hasFormatting(text), /(?:[*_\\]|^\s*(?:[-+]|\d+\.)\s)/mu.test(text));
 }
@@ -18,6 +19,16 @@ for (const child of [
 ]) {
  const initial = renderToStaticMarkup(React.createElement(Suspense, { fallback: React.createElement('span', null, 'Loading fixture') }, child));
  assert.equal(initial, '<span>Loading fixture</span>', 'The owning boundary must retain loading until formatted copy is ready.');
+}
+const preparing=loadFormattedWriting();assert.equal(loadFormattedWriting(),preparing,'Concurrent readers share the same complete formatter load.');
+await preparing;
+assert.equal(preparedFormattedWriting(),FormattedWritingContent);
+for(const [child,expected]of [
+ [React.createElement(FormattedProse,{text:'**Complete** passage.'}),'<p><strong>Complete</strong> passage.</p>'],
+ [React.createElement(FormattedText,{text:'**Complete** inline.'}),'<strong>Complete</strong> inline.'],
+ [React.createElement(FormattedParagraph,{parts:[{text:'- **Complete** list.'}],renderPart:()=>null}),'<ul class="formatted-prose-list"><li><p><strong>Complete</strong> list.</p></li></ul>']
+]as const){
+ assert.equal(renderToStaticMarkup(React.createElement(Suspense,{fallback:React.createElement('span',null,'Loading fixture')},child)),expected,'Prepared complete formatting renders on the first frame without suspending on a new lazy promise.');
 }
 assert.equal(renderToStaticMarkup(React.createElement(FormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
 assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
