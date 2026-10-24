@@ -319,8 +319,9 @@ try {
   assert(reviser.includes(RHETORICAL_WRITER_POLICY));
   assert(reviser.includes('A meaning plan establishes supported interpretation, not reader wording'));
   assert(!reviser.includes('SKY PLACEMENT ARTICLE SPINE'));
-  assert.throws(() => governedInstructionsForRole('WRITER', { surface: 'synastry', family: 'synastry-aspect',
-    governedInstructions: 'An unrelated instruction override.' }), /canonical role instructions/);
+  const suppliedInstructions='Complete server-selected instructions.';
+  assert.equal(governedInstructionsForRole('WRITER', { surface: 'synastry', family: 'synastry-aspect',
+    governedInstructions: suppliedInstructions }),suppliedInstructions);
   await assert.rejects(callOpenAIResponses({ apiKey: 'synthetic', role: 'WRITER', surface: 'synastry', family: 'synastry-aspect',
     request: { input: 'Synthetic request.', instructions: 'An unrelated override.' } }), /may not override/);
   // Sharing a surface name alone cannot change an unrelated call's authority.
