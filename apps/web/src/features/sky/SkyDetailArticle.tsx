@@ -1,4 +1,5 @@
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { SeasonArticleLink } from "../../components/SeasonArticleLink";
 import { PreparedProse as FormattedProse } from "../../components/FormattedWritingContent";
 import { RetrogradeHistoryDisclosure, type RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
@@ -110,6 +111,7 @@ export type SkyDetail = {
   tldr?: string;
   suppressTldr?: boolean;
   lensHint?: ReactNode;
+  seasonArticle?: { sign: string; startsAt: string; timeZone: string };
   compactHeader?: boolean;
   plainBody?: boolean;
   bodyBeforeSections?: boolean;
@@ -608,6 +610,7 @@ export function SkyDetailArticle({
                 <FormattedProse className="article-sub article-tldr__copy" text={articleSub} />
               </div>
             ) : null}
+            {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
           </header>
 
           {hasReadableBody ? <hr className="article-rule" /> : null}

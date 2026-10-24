@@ -2,6 +2,7 @@ import { articleLibraryPrefixes } from "../../../src/shared/articleLibrary";
 import { astro101ResolvedReaderPath, isAstro101ContentKey } from "../../web/src/content/astro101";
 import { skyMoonWriteupSection } from "./skyMoonWriteup";
 import { isSkyPlanetLivedKey } from "./skyWriteupRelations";
+import { seasonArticleIdentity } from "../../../src/shared/seasonArticle";
 
 export type ArticleWorkspaceRow = {
   block_type?: string | null;
@@ -32,6 +33,7 @@ export function isAstro101ContentRow(row: Pick<ArticleWorkspaceRow, "content_key
 
 export function isSkyWriteupContentRow(row: ArticleWorkspaceRow) {
   const key = row.content_key.toLowerCase();
+  if (seasonArticleIdentity(key)) return true;
   if (skyMoonWriteupSection(key) || isSkyPlanetLivedKey(key)) return true;
   return row.block_type === "sky_placement"
     || row.block_type === "sky_article"
@@ -74,6 +76,11 @@ export function articleAppDestination(row: ArticleWorkspaceRow): ArticleAppDesti
       label: learnPath,
       state: "connected"
     };
+  }
+
+  const season = seasonArticleIdentity(row.content_key);
+  if (season) {
+    return { detail: `This article is referenced by Sun in ${season.sign[0].toUpperCase() + season.sign.slice(1)} and Calendar for the season that begins in ${season.year}, and remains available in Articles & Guides.`, label: "Sky & Calendar", state: "connected" };
   }
 
   if (articleLibraryPrefixes.some(prefix => row.content_key.startsWith(prefix))) {

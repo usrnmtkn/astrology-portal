@@ -27,6 +27,7 @@ export const STUDIO_HOUSE_TRANSIT_PREFIXES = [
 ] as const;
 
 export const STUDIO_SKY_WRITEUP_PREFIXES = [
+  "article/manual/",
   "fallback-hook/planet-lived/",
   "sky-placement/",
   "sky-article",
