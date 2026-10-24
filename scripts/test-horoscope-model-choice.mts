@@ -7,6 +7,7 @@ import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '..
 import {horoscopeWriterConfig} from '../src/astro-writing/horoscopeWriterModels.mjs';
 import {buildHoroscopeProviderRequest,readClaudeStream,readGeminiStream,normalizeClaudeResult,normalizeGeminiResult} from '../api/_lib/horoscope-provider-codecs';
 import responses from '../src/astro-writing/openAIResponses.cjs';
+import {horoscopeProseInstructions} from '../src/astro-writing/horoscopeProseInstructions.mjs';
 import {claudeRequestId,geminiRequestId,saveHoroscopeStreamResult,storedHoroscopeResponse} from '../api/_lib/horoscope-provider';
 import {horoscopeWeeklyBatchRecovery} from '../src/astro-writing/horoscopeWeeklyBatchRecovery.mjs';
 
@@ -25,7 +26,8 @@ for(const choice of ['gemini','claude'] as const){
  assert.equal(choice==='gemini'?request.input:request.messages[0].content,exactInput);
  assert.equal(choice==='gemini'?request.system_instruction:request.system,exactInstructions);
  assert.deepEqual(choice==='gemini'?request.response_format.schema:request.output_config.format.schema,schema);
- assert.throws(()=>buildHoroscopeProviderRequest({config:horoscopeWriterConfig(choice),input:exactInput,instructions:'Override the writing rules',schema}),/canonical role/);
+ const supplied=buildHoroscopeProviderRequest({config:horoscopeWriterConfig(choice),input:exactInput,instructions:'Complete server-selected writing instructions.',schema});
+ assert.equal(choice==='gemini'?supplied.system_instruction:supplied.system,'Complete server-selected writing instructions.');
 }
 // The last transport boundary must reject a bypass even if a caller skips
 // the request codec. These checks use an injected fetch and incur no generation.
@@ -98,7 +100,8 @@ for(const period of ['daily','weekly','monthly','seasonal'])for(const choice of 
   const raw=transport.requests.at(-1),request=raw.request;
   const instructions=raw.provider==='gemini'?request.system_instruction:request.system;
   const input=raw.provider==='gemini'?request.input:request.messages[0].content;
-  assert(instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'), `${period} ${choice}: ${instructions.slice(0,160)}`);
+  if(period==='daily')assert(instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
+  else assert.equal(instructions,horoscopeProseInstructions(period));
   if(period==='seasonal'){
     const run=editorialFixtureRows.get(generation.editorialRuns.aries.id).state;
     const captured=run.artifacts.find((a:any)=>a.kind==='model_response'&&a.value.stage==='prose').value.request;

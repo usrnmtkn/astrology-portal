@@ -43,7 +43,12 @@ assert(!voice.input.includes('neutralMeaningSupport'),'External mechanics do not
 const style=JSON.parse(writer.input.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
 assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');
 assert.equal(writer.input.split('OWNER-APPROVED STYLE REFERENCE\n').length-1,1);
-assert.deepEqual(JSON.parse(voice.input).approvedStyleReference,style,'Voice review sees the exact pinned approved reference');
+const pinnedStyle=run.input.template.seasonalPreparation.approvedStyleReference;
+assert.deepEqual(JSON.parse(voice.input).approvedStyleReference,pinnedStyle,'Voice review sees the exact full pinned approved reference');
+const {authority:styleAuthority,...pinnedStyleData}=pinnedStyle;
+assert(styleAuthority.length>0);
+assert.deepEqual(style,pinnedStyleData,'Prose retains the complete reference and receipt without repeating app authority');
+assert(!Object.hasOwn(style,'authority'));
 assert(!meaning.input.includes(style.reference.textSha256),'Style does not supply meaning-review facts');
 const legacyInput=structuredClone(run.input);delete legacyInput.template.seasonalPreparation.meaningSupport;delete legacyInput.template.seasonalPreparation.approvedStyleReference;
 const legacyDraft=completeSeasonalDraftRequest(legacyInput.template,latest(run,'plan'),latest(run,'evidence'));

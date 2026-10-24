@@ -6,6 +6,7 @@ import {createEvidenceRegistry,digest} from './editorial/evidenceRegistry.mjs';
 import {latest} from './editorial/controller.mjs';
 import {object,text,list,evaluationSchema,evaluationInstructions} from './editorial/evaluation.mjs';
 import {resolveExplicitWritingFeedback} from './explicitWritingFeedback.mjs';
+import {HOROSCOPE_PROSE_INSTRUCTIONS_VERSION} from './horoscopeProseInstructions.mjs';
 import {feedbackTimestamp} from './feedbackTimestamp.mjs';
 import {seasonalManifestInput} from './seasonalRequestEvidence.mjs';
 
@@ -75,14 +76,16 @@ export function mechanismSchema(facts) {
   return object({core:text,links:{type:'array',minItems:1,items:object({eventId:enumOf(facts.events.map(e=>e.id)),meaningRef:enumOf(Object.keys(facts.meanings)),explanation:text})},
     humanDomains:list(text),limits:list(text),placementSpecificity:text});
 }
-export function developmentSchema(facts,manifest) {
+export function developmentSchema(facts,manifest,{allowUnresolved=false}={}) {
+  const development=allowUnresolved?{type:['string','null'],description:'Use null when the supported reading has no such development; do not invent one.'}:text;
   return object({humanConcern:text,startingSituation:text,humanWant:text,
     developments:{type:'array',minItems:1,items:object({eventId:enumOf(facts.events.map(e=>e.id)),whatChanges:text})},
-    consequentialDistinction:text,changedUnderstanding:text,differentResponse:text,plausibleManifestations:list(text),notAssumed:list(text),
+    consequentialDistinction:development,changedUnderstanding:development,differentResponse:development,plausibleManifestations:list(text),notAssumed:list(text),
     passageSelections:{type:'array',minItems:1,items:object({id:enumOf(manifest.entries.filter(e=>e.role==='approved').map(e=>e.id)),why:text})},
     sourceDifferences:list(object({id:enumOf(manifest.entries.filter(e=>e.role==='approved').map(e=>e.id)),difference:text}))});
 }
 function checkStructure(value,schema,path='') {
+  if(value===null&&Array.isArray(schema.type)&&schema.type.includes('null'))return;
   if(schema.type==='object'){
     if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).sort().join('|')!==schema.required.slice().sort().join('|'))throw new Error(`invalid_plan_shape:${path}`);
     for(const [key,s] of Object.entries(schema.properties))checkStructure(value[key],s,`${path}.${key}`);
@@ -92,6 +95,7 @@ function checkStructure(value,schema,path='') {
   }else if(typeof value!=='string'||!value.trim()||schema.enum&&!schema.enum.includes(value))throw new Error(`invalid_plan_value:${path}`);
 }
 export function seasonalEditorialAdapter(input) {
+  const allowUnresolved=input.template.seasonalPreparation.proseInstructionsVersion===HOROSCOPE_PROSE_INSTRUCTIONS_VERSION;
   const facts=seasonalWriterFacts(input.template.seasonalPreparation.engineFacts),registry=seasonalEvidenceRegistry(input);
   const data=run=>({facts,manifest:latest(run,'evidence'),mechanism:latest(run,'mechanism'),plan:latest(run,'plan')});
   return {
@@ -110,8 +114,9 @@ export function seasonalEditorialAdapter(input) {
         instructions='Build the astrology mechanism for one Seasonal reading from the governed catalog. Explain how the selected event meanings and their attached whole-sign life areas combine and what they cannot establish. Cite supplied event IDs and their actual meaning references. Season-axis sources are interpretive context, not dated events. Do not create a miniature story, invent a personal event, imitate an owner argument, or write prose. Distinguish the mechanism from materially different placements. Return only the schema.';
         prompt=JSON.stringify({...base,feedback});
       }else if(stage==='plan'){
-        schema=developmentSchema(facts,manifest);role='SEASONAL_PLANNER';
-        instructions='Develop an underlying human concern and consequential distinction from the validated source-bound astrology mechanism. This is a plan, not horoscope prose. startingSituation describes the concern a person could recognize, not a compulsory invented activity. A project, chore, errand, conversation, cooking or shopping must not become the plot merely to appear concrete. Several possible manifestations may illustrate the same concern; leave them optional. Identify what each selected event changes in the reasoning, using its supplied meaning rather than its date alone. No compulsory conflict, advice, permission or fixed ending. Use complete approved passages for reasoning and movement, while making sourceDifferences explicit so you do not transplant their argument. Compare the scoped owner rejections. Select only relevant approved evidence, with no quota. Return the schema.';
+        schema=developmentSchema(facts,manifest,{allowUnresolved});role='SEASONAL_PLANNER';
+        instructions=(allowUnresolved?'Develop a supported human concern from the validated source-bound astrology mechanism.':'Develop an underlying human concern and consequential distinction from the validated source-bound astrology mechanism.')+' This is a plan, not horoscope prose. startingSituation describes the concern a person could recognize, not a compulsory invented activity. A project, chore, errand, conversation, cooking or shopping must not become the plot merely to appear concrete. Several possible manifestations may illustrate the same concern; leave them optional. Identify what each selected event changes in the reasoning, using its supplied meaning rather than its date alone. No compulsory conflict, advice, permission or fixed ending. Use complete approved passages for reasoning and movement, while making sourceDifferences explicit so you do not transplant their argument. Compare the scoped owner rejections. Select only relevant approved evidence, with no quota. Return the schema.';
+        if(allowUnresolved)instructions+=' Return null for consequentialDistinction, changedUnderstanding or differentResponse when the supplied interpretation does not support one. A continuing feeling, unchanged condition or unresolved question is valid; do not invent a resolution to fill these fields.';
         prompt=JSON.stringify({...base,mechanism,feedback,...(ownerFeedback?{currentOwnerWritingCorrections:ownerFeedback}:{})});
       }else if(stage==='prose'){
         const request=completeSeasonalDraftRequest(input.template,plan,manifest);
@@ -122,7 +127,7 @@ export function seasonalEditorialAdapter(input) {
         const scope=stage==='plan_review'?'plan':stage;
         const candidate=scope==='plan'?{mechanism,plan}:latest(run,'candidate');
         schema=evaluationSchema(scope,manifest);role=stage==='plan_review'?'SEASONAL_PLAN_REVIEWER':stage==='voice'?'SEASONAL_VOICE_REVIEWER':'SEASONAL_MEANING_REVIEWER';
-        instructions=evaluationInstructions(scope);
+        instructions=evaluationInstructions(scope,{allowUnresolved});
         prompt=JSON.stringify({audience:facts.audience,candidate,candidateHash:digest(candidate),manifestHash:manifest.hash,evidenceManifest:scope==='voice'?manifest:seasonalManifestInput(manifest,facts),
           ...(['plan','voice'].includes(scope)&&ownerFeedback?{currentOwnerWritingCorrections:ownerFeedback}:{}),
           ...(scope==='voice'?{approvedStyleReference:input.template.seasonalPreparation.approvedStyleReference??null}:{governedFacts:facts,mechanism,...(scope==='meaning'?{plan}:{})})});
@@ -131,7 +136,7 @@ export function seasonalEditorialAdapter(input) {
       return {stage,role,input:prompt,schema,config,instructions:responses.governedInstructionsForRole(role,{taskInstructions:instructions,surface:'horoscopes',family:'horoscope'})};
     },
     validate(stage,value,run){
-      checkStructure(value,stage==='mechanism'?mechanismSchema(facts):developmentSchema(facts,latest(run,'evidence')));
+      checkStructure(value,stage==='mechanism'?mechanismSchema(facts):developmentSchema(facts,latest(run,'evidence'),{allowUnresolved}));
       if(stage==='mechanism')for(const link of value.links){
         const event=facts.events.find(e=>e.id===link.eventId);
         const refs=[event.meaningRef,...(event.placementRefs??[event.placementRef]).filter(Boolean).map(id=>facts.placements[id].meaningRef)];

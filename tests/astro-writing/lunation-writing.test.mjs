@@ -26,7 +26,7 @@ for (const event of [
 
 for (const [family,surface] of [['lunations','calendar-lunation'],['lunation-article','lunation-article']]) {
   assert.equal(responses.instructionsForRole('WRITER','',{family,surface}),LUNATION_EDITORIAL_AUTHORITY);
-  assert.throws(()=>responses.governedInstructionsForRole('WRITER',{family,surface,governedInstructions:canonicalAstrologyWritingInstructions}),/canonical role instructions/);
+  assert.equal(responses.governedInstructionsForRole('WRITER',{family,surface,governedInstructions:canonicalAstrologyWritingInstructions}),canonicalAstrologyWritingInstructions);
 }
 assert.equal(responses.instructionsForRole('WRITER'),canonicalAstrologyWritingInstructions);
 assert.equal(responses.instructionsForRole('WRITER','',{family:'horoscope',surface:'horoscopes'}),HOROSCOPE_EDITORIAL_AUTHORITY);
