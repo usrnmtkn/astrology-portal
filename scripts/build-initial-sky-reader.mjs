@@ -1,6 +1,7 @@
 import { build, loadConfigFromFile } from 'vite';
 import { fileURLToPath } from 'node:url';
 import {build as buildWorker} from 'esbuild';
+import {buildInitialSkySwiss} from './build-initial-sky-swiss.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const loaded = await loadConfigFromFile({ command: 'build', mode: 'production' }, root + 'apps/web/vite.config.ts');
 await build({ ...loaded.config, configFile: false, root: root + 'apps/web',
@@ -16,6 +17,10 @@ await build({ ...loaded.config, configFile: false, root: root + 'apps/web',
       output: { format: 'es', entryFileNames: 'initial-reader.mjs', chunkFileNames: 'chunks/[name]-[hash].mjs' } }
   }
 });
+await buildInitialSkySwiss(root,root+'server/initial-sky-reader/dist/swiss');
 await buildWorker({entryPoints:[root+'scripts/initial-sky-calculation-worker.ts'],
   bundle:true,platform:'node',format:'esm',packages:'external',minify:true,
+  plugins:[{name:'initial-worker-swiss-transport',setup(builder){
+    builder.onResolve({filter:/^swisseph-wasm$/},()=>({path:'./swiss/sdk.mjs',external:true}));
+  }}],
   outfile:root+'server/initial-sky-reader/dist/sky-worker.mjs',logLevel:'silent'});

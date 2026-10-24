@@ -4,6 +4,7 @@ import {tmpdir} from 'node:os';
 import {join,dirname,resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import ts from 'typescript';
+import {createHash} from 'node:crypto';
 const temp=await mkdtemp(join(tmpdir(),'initial-reader-node-'));
 try {
   await writeFile(join(temp,'package.json'),'{"type":"module"}');
@@ -26,7 +27,17 @@ try {
   await readFile(resolve('server/initial-sky-reader/dist/initial-reader.mjs'));
   const artifactFiles=(await readdir(resolve('server/initial-sky-reader/dist'),{recursive:true,withFileTypes:true})).filter(entry=>entry.isFile()).map(entry=>entry.name);
   assert(artifactFiles.includes('sky-worker.mjs'));
-  assert(artifactFiles.every(file=>file.endsWith('.mjs')),'The function must not copy browser downloads, fonts, HTML or duplicate WASM assets.');
+  const extraFiles=artifactFiles.filter(file=>!file.endsWith('.mjs')).sort();
+  assert.deepEqual(extraFiles,['LICENSE','swisseph.data','swisseph.wasm','transport.json'],'Only the verified server Swiss transport may accompany the renderer; no browser downloads, fonts or HTML.');
+  const swiss=resolve('server/initial-sky-reader/dist/swiss');
+  const transport=JSON.parse(await readFile(join(swiss,'transport.json'),'utf8'));
+  assert.deepEqual(transport.omitted,['/sweph/seasnam.txt']);
+  assert.equal(transport.files.length,6);
+  const compact=await readFile(join(swiss,'swisseph.data'));
+  assert.equal(compact.length,2_151_204);
+  const sha=value=>createHash('sha256').update(value).digest('hex');
+  assert.equal(sha(await readFile(join(swiss,'swisseph.wasm'))),sha(await readFile('node_modules/swisseph-wasm/wasm/swisseph.wasm')),'The exact original mathematical engine must be packaged.');
+  for(const file of transport.files)assert.equal(sha(compact.subarray(file.start,file.end)),file.sha256,`${file.filename} remains complete and byte-identical.`);
   assert(!artifactFiles.some(file=>/GeneratedContentAdminDashboard|MemoryGraphDashboard|WritingStudio/u.test(file)),'Unused Studio routes must not enter the initial-reader function.');
 } finally {await rm(temp,{recursive:true,force:true});}
 console.log('PASS: plain Node packaged publication imports, separate full readiness and actual initial-reader/Swiss function artifact inclusion.');

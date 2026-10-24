@@ -1,6 +1,6 @@
 import type { AnimationItem, LottiePlayer } from "lottie-web";
 import playerUrl from "lottie-web/build/player/lottie_light.min.js?url";
-import animationData from "./assets/startup-celestial.json";
+import animationDataUrl from "./assets/startup-celestial.json?url";
 
 /** Optional decoration. App readiness never waits for the player or a loop. */
 export function startStartupAnimation() {
@@ -17,6 +17,7 @@ export function startStartupAnimation() {
   let disposed = false;
   let ready = false;
   let decorationTimer: ReturnType<typeof setTimeout> | undefined;
+  let dataRequest: AbortController | undefined;
 
   const syncPlayback = () => {
     if (!animation || !ready) return;
@@ -28,6 +29,7 @@ export function startStartupAnimation() {
   const dispose = () => {
     disposed = true;
     clearTimeout(decorationTimer);
+    dataRequest?.abort();
     observer.disconnect();
     motionObserver.disconnect();
     document.removeEventListener("visibilitychange", syncPlayback);
@@ -51,11 +53,16 @@ export function startStartupAnimation() {
     script.fetchPriority = "low";
     script.setAttribute("data-startup-decoration", "");
     script.onerror = dispose;
-    script.onload = () => {
+    script.onload = async () => {
       if (disposed || !startup.isConnected || startup.getAttribute("aria-busy") !== "true") return;
       try {
         const player = (window as Window & { lottie?: LottiePlayer }).lottie;
         if (!player) { dispose(); return; }
+        dataRequest = new AbortController();
+        const response = await fetch(animationDataUrl, {priority: "low", signal: dataRequest.signal});
+        if (!response.ok) throw new Error("Startup decoration unavailable.");
+        const animationData = await response.json();
+        if (disposed || !startup.isConnected || startup.getAttribute("aria-busy") !== "true") return;
         animation = player.loadAnimation({ container, renderer: "svg", loop: true, autoplay: false, animationData });
         animation.addEventListener("data_failed", dispose);
         animation.addEventListener("error", dispose);
