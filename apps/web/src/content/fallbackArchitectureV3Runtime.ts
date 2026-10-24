@@ -1,5 +1,6 @@
 import { publicationRestoresBaseline, publicationAllowsContent, contentPublicationRecords, subscribeToContentPublications } from "./contentPublicationState";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/initial-sky-core-transport-v1.json";
+import { authoredCards as readerAuthoredCards } from "./fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import approvedServingProjectionV1 from "./fallbackArchitectureV3/approved-serving-projection-v1.json";
 import bundledManifestSummaryV3 from "./fallbackArchitectureV3/bundled-manifest-summary-v3.json";
 import { isGovernedReaderEligible } from "./fallbackArchitectureV3/resolver/readerEligibility.browser";
@@ -376,10 +377,7 @@ let localReaderSupportBundle: FallbackArchitectureV3Bundle | null = null;
 let readerSupportPromise: Promise<void> | null = null;
 function loadReaderSupportBundle() {
   if (localReaderSupportBundle) return Promise.resolve();
-  readerSupportPromise ??= Promise.all([
-    import('./fallbackArchitectureV3/deferred-reader-support-transport-v1.json'),
-    import('./fallbackArchitectureV3ReaderAuthored')
-  ]).then(([{ default: rows }, { readerAuthoredCards }]) => {
+  readerSupportPromise ??= import('./fallbackArchitectureV3/deferred-reader-support-transport-v1.json').then(({ default: rows }) => {
     const authoredCards = [...new Map([...rows.authoredCards, ...readerAuthoredCards].map(row => [row.contentKey, row])).values()];
     localReaderSupportBundle = readerEligibleBundle({ transitLib: { authoredCards }, templatesFile: { templates: rows.templates }, rowsFile: rows });
     recomposeReaderBundle();

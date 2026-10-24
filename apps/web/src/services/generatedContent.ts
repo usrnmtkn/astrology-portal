@@ -1,6 +1,5 @@
 import type { FallbackArchitectureV3MirrorMetadata } from "./fallbackArchitectureV3MirrorValidation";
 import { isSkyArticleDashboardRow, isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
-import initialSkyCoreKeys from "../content/fallbackArchitectureV3/initial-sky-core-keys-v1.json";
 import { loadReaderRows, ReaderAdmissionError } from "./readerContentClient";
 import { isRecord, isApprovedFallbackArchitectureV3Row, isSkyPlacementFallbackPartitionKey, packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
@@ -1066,7 +1065,7 @@ function cacheFallbackArchitectureV3Bundle(
 
 async function loadContentStudioLastKnownGoodCoreBundle(scope: DashboardScope = "all") {
   try {
-    const manifest = scope === "sky-list" ? initialSkyCoreKeys : await loadFallbackArchitectureV3BundledCoreManifest();
+    const manifest = await loadFallbackArchitectureV3BundledCoreManifest();
     const rows = await loadContentStudioLastKnownGoodRows();
     return packageFallbackArchitectureV3CoreRows(scope === "all" ? rows : rows.filter(scope === "sky" ? isSkyDashboardRow : scope === "sky-article" ? isSkyArticleDashboardRow : isSkyListDashboardRow), manifest);
   } catch {
@@ -1240,7 +1239,7 @@ async function readFallbackArchitectureV3DashboardBundle(
   const coldArticleRows = !cached && (scope === "sky-article" || scope === "sky-list")
     ? earlyRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope }) : undefined;
   const coldArticleManifest = coldArticleRows
-    ? scope === "sky-list" ? Promise.resolve(initialSkyCoreKeys) : loadFallbackArchitectureV3BundledCoreManifest()
+    ? loadFallbackArchitectureV3BundledCoreManifest()
     : undefined;
   void coldArticleManifest?.catch(() => { /* Joined by the existing recovery below. */ });
 
@@ -1271,7 +1270,7 @@ async function readFallbackArchitectureV3DashboardBundle(
 
   let currentCoreManifest: Pick<FallbackArchitectureV3PackageManifest, "keys">;
   try {
-    currentCoreManifest = await (coldArticleManifest ?? (scope === "sky-list" ? initialSkyCoreKeys : loadFallbackArchitectureV3BundledCoreManifest()));
+    currentCoreManifest = await (coldArticleManifest ?? loadFallbackArchitectureV3BundledCoreManifest());
   } catch (error) {
     console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);
     return cached?.bundle ?? null;

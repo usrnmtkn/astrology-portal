@@ -1,4 +1,5 @@
 import { internPublicJsonStringsPlugin } from "../../scripts/public-json-string-interning-plugin.mjs";
+import { sharedReaderAuthoredRowsPlugin } from "../../scripts/reader-authored-sharing-plugin.mjs";
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
@@ -211,6 +212,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      sharedReaderAuthoredRowsPlugin(),
       memoryGraphReferencePlugin(),
       appStartupHtmlPlugin(),
       readerStartupLoadingStylesPlugin(),
@@ -265,6 +267,7 @@ export default defineConfig(({ mode }) => {
             // Eligibility helpers are already read at startup. Share their small
             // transport instead of adding a preload and gzip header per identity.
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|generatedContentEligibility)\.ts$/u.test(id)
+              || id.endsWith("/services/templateInterpolation.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
             // These shared readers already belong to boot. Keep them outside
             // Studio's deferred editor group so an editor import cannot pull it into boot.

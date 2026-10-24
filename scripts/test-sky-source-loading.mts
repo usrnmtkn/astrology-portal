@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 
 const built = await build({ entryPoints: ['apps/web/src/services/skyPlacementHydration.ts'], bundle: true,
   platform: 'node', format: 'cjs', write: false, plugins: [{ name: 'sources', setup(builder) {
-    builder.onResolve({ filter: /fallbackArchitectureV3Runtime|generatedContent|contentPublications|skyPlacementPublicationGuard/ }, args => ({ path: args.path, namespace: 'source-fixture' }));
+    builder.onResolve({ filter: /fallbackArchitectureV3Runtime|generatedContent|contentPublications|skyPlacementPublicationGuard|initialSkyReader|skyPlacementPreviewMode/ }, args => ({ path: args.path, namespace: 'source-fixture' }));
     builder.onLoad({ filter: /.*/, namespace: 'source-fixture' }, () => ({ contents: `
       export const loadSkyPlacementFallbackArchitectureV3Bundle = () => fixture.bundle();
       export const loadInitialSkyListFallbackArchitectureV3Bundle = () => fixture.listBundle();
@@ -26,6 +26,8 @@ const built = await build({ entryPoints: ['apps/web/src/services/skyPlacementHyd
       export const skyListPublicationsAvailableOnline = () => fixture.listOnline ?? fixture.online;
       export const skyPlacementPublicationIdentity = () => fixture.identity;
       export const missingSkyPlacementPublications = () => fixture.missing;
+      export const initialSkyReaderAvailable = key => fixture.preparedKey === key;
+      export const isFallbackOnlySkyPlacementPreview = () => false;
     `, loader: 'js' }));
   } }] });
 function harness(overrides = {}, clock = { setTimeout, clearTimeout }) {
@@ -366,3 +368,18 @@ for (const online of [true, false]) {
   assert.equal(callbacks.size, 0);
 }
 console.log('PASS: no guest shadow deadline, late full joins selected, and abandoned setup starts no loaders.');
+
+{
+ const h=harness({preparedKey:'exact-facts',core:async(scope:string)=>{assert.equal(scope,'sky-list');h.calls.push('core');return 'core';}});
+ const result=await h.prepare('sun/aries',{initialList:true,initialReaderKey:'exact-facts'});
+ assert.equal(result.scope,'initial-reader');assert.equal(result.coreBundle,null);assert.equal(result.placementBundle,null);
+ assert.deepEqual(h.calls,['refresh-list'],'A validated prepared list requires no browser corpus or content query.');
+ const full=await h.prepare('sun/aries');
+ assert.equal(full.scope,'full');assert(h.calls.includes('bundle'));assert(h.calls.includes('core'));assert(h.calls.includes('placement'));
+}
+{
+ const h=harness({preparedKey:'other-facts',core:async(scope:string)=>{assert.equal(scope,'sky-list');h.calls.push('core');return 'core';}});
+ const result=await h.prepare('sun/aries',{initialList:true,initialReaderKey:'exact-facts'});
+ assert.equal(result.scope,'full');assert(h.calls.includes('list-bundle'));assert(h.calls.includes('core'));assert(h.calls.includes('placement'));
+}
+console.log('PASS: exact prepared-list readiness avoids corpus downloads, mismatched facts retain ordinary sources, and full readers still require all source planes.');

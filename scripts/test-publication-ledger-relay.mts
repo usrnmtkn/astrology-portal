@@ -40,7 +40,15 @@ try {
     await held;
     const filters = url.searchParams.getAll('content_key');
     if (failure === 'network' && filters.some(f => f.startsWith('gte.'))) return new Response('{}', { status: 503 });
-    let page = rows.filter(row => filters.every(filter => {
+    const scopeFilter = url.searchParams.get('or');
+    const inScope = (key:string) => !scopeFilter || scopeFilter.slice(1,-1).split(',').some(expression => {
+      const prefix='content_key.';assert(expression.startsWith(prefix));
+      const condition=expression.slice(prefix.length),dot=condition.indexOf('.');
+      const op=condition.slice(0,dot),value=condition.slice(dot+1);
+      assert(op==='eq'||op==='like');
+      return op==='eq'?key===value:key.startsWith(value.slice(0,-1));
+    });
+    let page = rows.filter(row => inScope(row.content_key) && filters.every(filter => {
       const dot = filter.indexOf('.'), op = filter.slice(0, dot), value = filter.slice(dot + 1);
       return op === 'gte' ? row.content_key >= value : op === 'lt' ? row.content_key < value : row.content_key > value;
     })).slice(0, Number(url.searchParams.get('limit')));
@@ -107,7 +115,7 @@ try {
     requests=[];
     await invoke(undefined,'GET',scopeUrl);
     assert(scopedRows.some((row:any)=>row.state==='retired'),'Retirements remain in the scoped proof.');
-    assert.equal(requests.length,8,'The smaller response still verifies all upstream ranges/pages.');
+    assert.equal(requests.length,1,'The scoped query verifies its complete families without downloading unrelated metadata.');
     assert.equal((await invoke(scoped.headers.etag,'GET',scopeUrl)).status,304);
     assert.deepEqual(await loadPublicationLedgerFromApi([], 'sky-list'),scopedRows);
     assert.deepEqual(await loadPublicationLedgerFromApi(scopedRows, 'sky-list'),scopedRows);
@@ -127,6 +135,13 @@ try {
     assert.equal((await invoke(undefined,'GET','/api/content-publications?scope=unknown')).status,400);
     const savedRows=rows;rows=rows.filter(row=>row.content_key!==publicationLedgerKey);
     assert.equal((await invoke(undefined,'GET',scopeUrl)).status,503,'Missing upstream ledger marker cannot establish scoped coverage.');rows=savedRows;
+    const beforeGrowth=rows;
+    rows=[...rows,...Array.from({length:2010},(_,i)=>({...originalRows[0],content_key:`sky-placement/future/${String(i).padStart(4,'0')}`}))].sort((a,b)=>a.content_key<b.content_key?-1:1);
+    requests=[];
+    const grown=await invoke(undefined,'GET',scopeUrl);
+    assert.equal(grown.status,200);assert.equal(requests.length,3,'Future covered families still require every keyset page.');
+    assert.deepEqual(JSON.parse(grown.body!).publications,canonicalPublicationLedger(rows.filter(row=>isSkyListPublicationKey(row.content_key))));
+    rows=beforeGrowth;
   }
   for (failure of ['network', 'invalid', 'cursor']) {
     const bad = await invoke(tag);

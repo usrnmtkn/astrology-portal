@@ -79,7 +79,7 @@ async function run({ href = valid, holdMetadata = false, rejectMetadata = false,
     loadSkyApi: () => { metadataImports++; return metadata.promise; }
   });
   vm.runInContext('const isInitialSkyReaderHash = ' + isInitialSkyReaderHash.toString() + ';', context);
-  vm.runInContext(runnableApi, context);
+  vm.runInContext('let primedInitialSkyLoad = null;\n' + runnableApi, context);
   vm.runInContext(runnableMain, context);
   const releaseMetadata = () => rejectMetadata ? metadata.reject(Error('Synthetic metadata import failure')) : metadata.resolve({
     startInitialSkyLoad: () => { captures++; captured = context.startInitialSkyLoad(); return captured; }

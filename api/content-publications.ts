@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { publicationLedgerBoundaries } from "../apps/web/src/content/contentPublicationState.js";
 import { canonicalPublicationLedger, publicationLedgerTag, publicationLedgerTagMatches } from "../apps/web/src/services/publicationLedgerTransport.js";
-import { isSkyListPublicationKey } from "../apps/web/src/content/skyListPublicationScope.js";
+import { isSkyListPublicationKey, skyListPublicationDatabaseFilter } from "../apps/web/src/content/skyListPublicationScope.js";
 import { publicationLedgerKey } from "../apps/web/src/content/contentPublicationState.js";
 
 /** Aggregate the existing anonymous reads close to the database. Every request
@@ -30,7 +30,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!base || !anonymous) throw new Error("Public reader configuration unavailable.");
     const headers: Record<string, string> = { apikey: key };
     if (!key.startsWith("sb_publishable_")) headers.authorization = `Bearer ${key}`;
-    const boundaries = publicationLedgerBoundaries;
+    const boundaries = scope === "sky-list" ? [null, null] : publicationLedgerBoundaries;
     const signal = AbortSignal.timeout(7000);
     const pages = await Promise.all(boundaries.slice(0, -1).map(async (lower, index) => {
       const upper = boundaries[index + 1], records = [];
@@ -40,6 +40,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
           select: "content_key,state,revision,row_id,row_updated_at,updated_at",
           order: "content_key.asc", limit: "1000"
         });
+        if (scope === "sky-list") params.set("or", skyListPublicationDatabaseFilter);
         if (lower) params.append("content_key", `gte.${lower}`);
         if (upper) params.append("content_key", `lt.${upper}`);
         if (cursor) params.append("content_key", `gt.${cursor}`);

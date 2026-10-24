@@ -1,6 +1,5 @@
 import type { PlanetPosition, SkySnapshot } from "../types";
 import type { GeneratedContentRow } from "./generatedContent";
-import { skyNodeDisplayPositions } from "../features/sky/skyHelpers";
 import { contentPublicationGeneration, contentPublicationRecords, publicationAllowsContent } from "../content/contentPublicationState";
 import { isSkyListPublicationKey } from "../content/skyListPublicationScope";
 import { canonicalPublicationLedger, publicationLedgerTag, publicationLedgerTagMatches } from "./publicationLedgerTransport";
@@ -30,7 +29,14 @@ function contextKey(context: InitialReaderPreviewContext) {
     || contextMemo?.generatedAt !== context.generatedAt || contextMemo?.locationLatitude !== context.locationLatitude
     || contextMemo?.moonEvent !== context.moonEvent) {
     contextMemo = context;
-    contextMemoKey = JSON.stringify([context.displayPositions, context.aspects, context.generatedAt,
+    // Display order and node glyph normalization are presentation details. Bind
+    // every underlying placement field without importing the chart UI into the
+    // small publication/bootstrap transport. Missing calculated nodes fail below.
+    const positions = context.displayPositions.map(position => position.planet === "True Node" || position.planet === "North Node"
+      ? { ...position, planet: "North Node", glyph: "☊" }
+      : position.planet === "South Node" ? { ...position, glyph: "☋" } : position)
+      .sort((a, b) => a.planet < b.planet ? -1 : a.planet > b.planet ? 1 : 0);
+    contextMemoKey = JSON.stringify([positions, context.aspects, context.generatedAt,
       context.locationLatitude ?? null, context.moonEvent ?? null]);
   }
   return contextMemoKey;
@@ -49,8 +55,9 @@ export async function acceptInitialSkyReader(sky: SkySnapshot, input: unknown) {
   if (!input || typeof input !== "object") return false;
   try {
     const value = input as InitialReader;
-    const planets = new Set(skyNodeDisplayPositions(sky.positions).map(row => row.planet));
-    if (value.schema !== "tldr-initial-sky-reader/v1" || !Array.isArray(value.previews)
+    const planets = new Set(sky.positions.map(row => row.planet === "True Node" ? "North Node" : row.planet));
+    if (!planets.has("North Node") || !planets.has("South Node") || planets.size !== 14
+      || value.schema !== "tldr-initial-sky-reader/v1" || !Array.isArray(value.previews)
       || value.previews.length !== 14 || new Set(value.previews.map(row => row.planet)).size !== 14
       || value.previews.some(row => !planets.has(row.planet) || typeof row.body !== "string" || !row.body.trim())
       || !Array.isArray(value.sources) || value.sources.some(row => !row || typeof row.content_key !== "string")
@@ -62,7 +69,7 @@ export async function acceptInitialSkyReader(sky: SkySnapshot, input: unknown) {
     const digest = Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, "0")).join("");
     if (digest !== value.digest) return false;
     stored = { value: { ...value, publications }, key: initialSkyReaderKey(sky), receivedAt: performance.now(),
-      ledger: JSON.stringify(publications), context: contextKey({ displayPositions: skyNodeDisplayPositions(sky.positions),
+      ledger: JSON.stringify(publications), context: contextKey({ displayPositions: sky.positions,
         aspects: sky.aspects, generatedAt: sky.generatedAt, locationLatitude: sky.location.latitude, moonEvent: sky.moonEvent }) };
     checkedGeneration = -1;
     return true;
