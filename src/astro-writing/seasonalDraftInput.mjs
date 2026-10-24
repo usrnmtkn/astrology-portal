@@ -6,6 +6,7 @@ import {horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/c
 import {SEASONAL_PLAN_SLOT,validateSeasonalDevelopmentPlan,selectSeasonalPlanFacts} from './seasonalDevelopmentPlan.mjs';
 import {seasonalContextBudget} from './seasonalContextBudget.mjs';
 import {buildHellenisticMeaningSupport} from './hellenisticMeaningSupport.mjs';
+import {HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,renderHoroscopeProseAppendices} from './horoscopeProseInstructions.mjs';
 
 const hash = value => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
 const pick = (value, keys) => Object.fromEntries(keys.filter(k => value[k] !== undefined).map(k => [k,value[k]]));
@@ -71,11 +72,12 @@ export function selectSeasonalDraftPassages(context,argumentOutline={}) {
     role:p.draftingRole,text:p.text}));
 }
 
-export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile,evidenceManifest=null,
+export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile,evidenceManifest=null,proseInstructionsVersion=null,
   meaningSupport=buildHellenisticMeaningSupport({facts:engineFacts,family:'horoscope',surface:'horoscopes'}),
   approvedStyleReference=approvedVoiceStyleReference({family:'horoscope',surface:'horoscopes'})}) {
   if (engineFacts.window?.period !== 'seasonal' || writingProfile.profile.period !== 'seasonal') throw new Error('Seasonal drafting requires a matching profile and window.');
   const overview = engineFacts.risingSign === 'overview';
+  const refined=proseInstructionsVersion===HOROSCOPE_PROSE_INSTRUCTIONS_VERSION;
   const candidates = evidenceManifest ? evidenceManifest.entries.filter(e=>e.role==='approved').map(e=>({id:e.id,sourcePath:e.source.locator,textSha256:e.textHash,text:e.text,role:'primary owner voice'})) : selectSeasonalDraftPassages(context,argumentOutline);
   const catalog = seasonalWriterFacts(engineFacts);
   const developmentPlan = engineFacts.seasonalDevelopmentPlan;
@@ -99,10 +101,11 @@ export function buildSeasonalDraftInput({context,task,engineFacts,argumentOutlin
     ...(!variables.uses('supportingOwnerVoiceSources') && supporting.length ? [`SELECTED SUPPORTING OWNER PASSAGE\n${JSON.stringify(selectedSupporting)}`] : []),
     ...([...selectedPrimary,...selectedSupporting].some(p=>p.profilePassageRef)?['PROFILE PASSAGE REFERENCES\nA profilePassageRef names the complete text between BEGIN COMPLETE OWNER PREFERRED REVISION and END COMPLETE OWNER PREFERRED REVISION in the unchanged Voice guidance above. Read that full passage with the selected source identity, hash and role. Sharing text transfers no factual authority or approval.']:[]),
     ...(!variables.uses('governedFacts') ? [factsText] : []),
-    ...(meaningSupport?.records?.length?[`NEUTRAL HELLENISTIC MEANING SUPPORT\n${JSON.stringify(meaningSupport)}`]:[]),
-    ...(approvedStyleReference?[renderApprovedVoiceStyleReference(approvedStyleReference)]:[]),
+    ...(refined?[renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference})]:[
+      ...(meaningSupport?.records?.length?[`NEUTRAL HELLENISTIC MEANING SUPPORT\n${JSON.stringify(meaningSupport)}`]:[]),
+      ...(approvedStyleReference?[renderApprovedVoiceStyleReference(approvedStyleReference)]:[])]),
     ...(evidenceManifest ? [`SCOPED REJECTED OWNER EVIDENCE\n${JSON.stringify(evidenceManifest.entries.filter(e=>e.role==='rejected'))}`] : []),
-    'FACT BOUNDARIES\nChoose from this catalog; it is not an event checklist. Every house belongs to its attached planet or lunation. Exact events and sampled relationships are separate: samples establish only the stated instant, orb and phase. Configurations require their supplied simultaneous aspects. Rulership and the symbolic season axis are meaning, not extra events. A reference position does not establish an ingress, duration or earlier cycle. Unknown circumstances remain possible, never guaranteed. Do not invent history or outcomes. Include the supplied local date when first mentioning a selected event; keep exact times outside prose.'
+    ...(!refined?['FACT BOUNDARIES\nChoose from this catalog; it is not an event checklist. Every house belongs to its attached planet or lunation. Exact events and sampled relationships are separate: samples establish only the stated instant, orb and phase. Configurations require their supplied simultaneous aspects. Rulership and the symbolic season axis are meaning, not extra events. A reference position does not establish an ingress, duration or earlier cycle. Unknown circumstances remain possible, never guaranteed. Do not invent history or outcomes. Include the supplied local date when first mentioning a selected event; keep exact times outside prose.']:[])
   ].join('\n\n');
 }
 
