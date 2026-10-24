@@ -49,6 +49,14 @@ Passing these checks establishes the repaired input boundary. Prose quality stil
 requires an authorized untouched output and exact owner review; no paid writing
 or publication is part of the source repair.
 
+The first hosted bundle check caught the expanded meaning in browser JavaScript.
+Full/server bundles retain every complete primary meaning. The web projection
+omits that unused fallback only for DRAFT authoring records with both complete
+summary fields: `domainRegistry` already chooses those fields first. Reviewed or
+locked records and records missing either summary retain the fallback. This
+preserves the actual registry response without reducing meaning or increasing
+the bundle budget.
+
 ## Source defects and changes
 
 The neutral draft knowledge combined interpretation with reader instructions.

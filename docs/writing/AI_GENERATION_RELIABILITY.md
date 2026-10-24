@@ -720,6 +720,18 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
+The October 24 source follow-up replaces twenty DRAFT directional keyword
+records with qualified pair-specific meaning and explicit planet ownership.
+The shared loader, explicit source projection and private body preparer hold
+the remaining known keyword scaffolds before a provider call. Complete original
+source and advice units retain their separate roles; owner passages and reader
+approval stay unchanged. Source hashes, derivation limits, delivery checks and
+the server/browser boundary are documented in
+[the Synastry source repair](SYNASTRY_SOURCE_DELIVERY_REPAIR_2026-10-23.md#october-24-meaning-coverage-repair).
+The guard detects the exact legacy missing-meaning scaffold; it is not a voice
+score or proof that every other record is complete. No paid prose acceptance or
+production deployment follows from this source repair.
+
 The shared synastry writer uses `synastry-aspect/v10-2026-10-22` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,
