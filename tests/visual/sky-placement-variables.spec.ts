@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test } from "@playwright/test";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
@@ -25,6 +26,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await expect(map).toBeVisible();

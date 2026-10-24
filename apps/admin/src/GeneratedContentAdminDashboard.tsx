@@ -257,7 +257,7 @@ const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").th
 const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementEditorNav })));
 const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementWritingLinks })));
 const UnsavedIngressPreview = lazy(() => import('./UnsavedIngressPreview'));
-const SkyPlacementReusableSources = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementReusableSources })));
+const SkyPlacementWorkspace = lazy(() => import("./SkyPlacementWorkspace"));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
 const ConnectionTransitStudio = lazy(() => import("./ConnectionTransitStudio"));
@@ -281,7 +281,6 @@ const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CalendarDailyWritingStudio = lazy(() => import("./CalendarDailyWritingStudio"));
 const LunationWritingStudio = lazy(() => import("./LunationWritingStudio"));
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
-const SkyPlacementComposition = lazy(() => import("./SkyPlacementComposition"));
 const SkyFallbackFieldsEditor = lazy(() => import("./SkyFallbackFieldsEditor"));
 const AspectPatternDiagnostics = lazy(async () => {
   const module = await import("./AspectPatternDiagnostics");
@@ -3234,6 +3233,8 @@ export function GeneratedContentAdminDashboard() {
   const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
   const dailyWritingDirtyRef = useRef(false);
+  const skyPlacementWorkspaceDirtyRef = useRef(false);
+  const skyPlacementWorkspaceBusyRef = useRef(false);
   const lunationWritingDirtyRef = useRef(false);
   const [calendarWriteupWorkspaceView, setCalendarWriteupWorkspaceView] = useState<CalendarWriteupWorkspaceView>("daily-sky");
   const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
@@ -4372,6 +4373,12 @@ export function GeneratedContentAdminDashboard() {
       setSkyWriteupMotionFilter("all");
       setSkyWriteupDestinationFilter("all");
     }
+    if (page === "skyWriteups" && search === null && (!view || view === "catalog")) {
+      const planet = params.get("planet");
+      const sign = params.get("sign");
+      setSkyPlacementBody(planet && skyPlacementBodies.includes(planet as typeof skyPlacementBodies[number]) ? planet : "all");
+      setSkyPlacementSign(sign && skyPlacementSigns.includes(sign as typeof skyPlacementSigns[number]) ? sign : "all");
+    }
     setFocusSunSummaries(params.get("section") === "sun");
     setCalendarWriteupWorkspaceView(page === "calendarWriteups" && calendarWriteupWorkspaceTabs.some(tab => tab.value === view) ? view as CalendarWriteupWorkspaceView : "daily-sky");
     setTransitReadingContext(page === "skyWriteups" && view === "transits-to-natal" ? {
@@ -4433,7 +4440,7 @@ export function GeneratedContentAdminDashboard() {
 
   function hasPendingArticleChanges() {
     return Boolean(
-      subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || dailyWritingDirtyRef.current
+      subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || dailyWritingDirtyRef.current || skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current
       || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
     );
@@ -4442,6 +4449,17 @@ export function GeneratedContentAdminDashboard() {
   function confirmNatalNavigation() {
     return natalUnsavedSourcesRef.current.size === 0
       || window.confirm("Discard the unsaved changes in the natal source editors?");
+  }
+
+  function selectSkyPlacement(planet: string, sign: string) {
+    if (skyPlacementWorkspaceBusyRef.current) { setMessage("Finish the current dated article operation before changing placements."); return false; }
+    if (skyPlacementWorkspaceDirtyRef.current && !window.confirm("Discard the unsaved changes to this dated article?")) return false;
+    setSkyPlacementBody(planet); setSkyPlacementSign(sign);
+    const params = new URLSearchParams();
+    if (planet !== "all") params.set("planet", planet);
+    if (sign !== "all") params.set("sign", sign);
+    setAdminHash(`#sky-writeups${params.size ? `?${params}` : ""}`, "replace");
+    return true;
   }
 
   useEffect(() => {
@@ -4465,7 +4483,7 @@ export function GeneratedContentAdminDashboard() {
       || skyArticleEditor
       || skyArticleEditionForm
     );
-    if (isLoading && hasOpenEditor) {
+    if (skyPlacementWorkspaceBusyRef.current || isLoading && hasOpenEditor) {
       setMessage("Finish the current editor operation before leaving this section.");
       return false;
     }
@@ -7650,14 +7668,18 @@ export function GeneratedContentAdminDashboard() {
                   <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
                     <label>
                       <span>Planet or point</span>
-                      <AdminSelect aria-label="Sky placement planet or point" value={skyPlacementBody} onChange={(event) => setSkyPlacementBody(event.target.value)}>
+                      <AdminSelect aria-label="Sky placement planet or point" value={skyPlacementBody} onChange={(event) => {
+                        selectSkyPlacement(event.target.value, skyPlacementSign);
+                      }}>
                         <option value="all">All planets and points</option>
                         {skyPlacementBodies.map((body) => <option key={body} value={body}>{titleFromKey(body)}</option>)}
                       </AdminSelect>
                     </label>
                     <label>
                       <span>Zodiac sign</span>
-                      <AdminSelect aria-label="Sky placement zodiac sign" value={skyPlacementSign} onChange={(event) => setSkyPlacementSign(event.target.value)}>
+                      <AdminSelect aria-label="Sky placement zodiac sign" value={skyPlacementSign} onChange={(event) => {
+                        selectSkyPlacement(skyPlacementBody, event.target.value);
+                      }}>
                         <option value="all">All signs</option>
                         {skyPlacementSigns.map((sign) => <option key={sign} value={sign}>{titleFromKey(sign)}</option>)}
                       </AdminSelect>
@@ -7711,14 +7733,13 @@ export function GeneratedContentAdminDashboard() {
                   <div className="admin-filter-actions">
                     <p className="admin-filter-result-count" aria-live="polite">
                       {skyPlacementBody !== "all" && skyPlacementSign !== "all"
-                        ? <>Composition sources below · <strong>{filteredSkyWriteupRows.length}</strong> matching library rows</>
+                        ? <>Planet and sign workspace · <strong>{filteredSkyWriteupRows.length}</strong> matching library rows</>
                         : <><strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown</>}
                     </p>
                     <StudioButton
                       type="button"
                       onClick={() => {
-                        setSkyPlacementBody("all");
-                        setSkyPlacementSign("all");
+                        if (!selectSkyPlacement("all", "all")) return;
                         setSkyWriteupSubjectFilter("all");
                         setSkyWriteupMotionFilter("all");
                         setSkyWriteupDestinationFilter("all");
@@ -7741,9 +7762,23 @@ export function GeneratedContentAdminDashboard() {
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <Suspense fallback={null}><SkyPlacementUnwiredNotice rows={publishedButUnwiredSkyRows} statusLabel="Not live" /></Suspense>
                 )}
+                {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
+                  <Suspense fallback={<PageLoading message="Loading planet and sign writing…" />}>
+                    <SkyPlacementWorkspace key={`${skyPlacementBody}/${skyPlacementSign}`} rows={compositionRows}
+                      selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }}
+                      request={(path, options) => adminJsonRequest(path, secret, options)}
+                      onRows={saved => setRows(current => mergeContentInventory(current, saved as AdminGeneratedContentRow[]))}
+                      onDirty={(dirty, busy) => { skyPlacementWorkspaceDirtyRef.current = dirty; skyPlacementWorkspaceBusyRef.current = busy; }}
+                      onEditRow={row => void openRow(row as AdminGeneratedContentRow)}
+                      onEditField={(row, path, selection) => void openRow(row as AdminGeneratedContentRow, null, path, selection)}
+                      onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
+                  </Suspense>
+                )}
                 <section className="admin-workbench admin-review-workspace">
                   {renderEditor()}
-                  <aside className="admin-list-panel" aria-label="Sky write-up rows">
+                  <details className="admin-workspace-details" open={skyPlacementBody === "all" || skyPlacementSign === "all"}>
+                    <AdminDisclosureSummary>Content library sources</AdminDisclosureSummary>
+                    <aside className="admin-list-panel" aria-label="Sky write-up rows">
                     {filteredSkyWriteupRows.length > 0
                       ? renderContentTable(filteredSkyWriteupRows, false, true)
                       : (
@@ -7751,18 +7786,13 @@ export function GeneratedContentAdminDashboard() {
                           {skyWriteupQuery.trim()
                             ? `No Sky write-ups match “${skyWriteupQuery.trim()}”. Try another keyword or clear the filters.`
                             : skyPlacementBody !== "all" && skyPlacementSign !== "all"
-                              ? "Use the Composition Map above to edit the sources for this placement. There are no additional matching library rows."
+                              ? "Use the planet and sign workspace above. There are no additional matching library rows."
                               : "No Sky write-ups match these filters. Try another filter or clear the filters."}
                         </p>
                       )}
                   </aside>
+                  </details>
                 </section>
-                {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
-                  <Suspense fallback={<PageLoading message="Loading Composition Map…" />}>
-                  <SkyPlacementReusableSources open={!filteredSkyWriteupRows.some(row => row.content_key.startsWith("sky-article/") || row.content_key.startsWith("sky/article-edition/"))}>
-                    <SkyPlacementComposition onEditField={(row, path, selection) => openRow(row as AdminGeneratedContentRow, null, path, selection)} rows={compositionRows} selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }} onEditRow={row => void openRow(row as AdminGeneratedContentRow)} onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)} />
-                  </SkyPlacementReusableSources></Suspense>
-                )}
 
               </>
             )}

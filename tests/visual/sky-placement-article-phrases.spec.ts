@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { ZODIAC_SEASON_SOURCE_STARTERS } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { test, expect } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
@@ -40,6 +41,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   await page.goto(process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content#sky-writeups' : '/#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption('saturn');
   await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel('Sky write-up motion').selectOption('direct');
   const map = page.getByRole('region', { name: 'Sky placement composition map' });
   const edit = map.getByRole('button', { name: 'Edit placement article', exact: true });

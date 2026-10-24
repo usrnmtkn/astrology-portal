@@ -1,3 +1,4 @@
+import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { studioApiStore } from "../helpers/studio-api-store";
 import { skyMoonWriteupKeys } from "../../apps/admin/src/skyMoonWriteup";
 import { expect, test } from "@playwright/test";
@@ -42,6 +43,7 @@ test("Moon sources name loading sections and recover from a read failure", async
   await page.goto("/admin/content#sky-writeups");
   await page.getByLabel("Sky placement planet or point").selectOption("moon");
   await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
+  await openSkyPlacementSourceDetails(page);
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await expect(map.getByRole("status")).toHaveText(["Loading opening…", "Loading how it shows up…", "Loading challenge and response…"]);
   await expect(map.getByRole("button", { name: "Edit opening", exact: true })).toHaveCount(0);
@@ -78,6 +80,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await expect(map.getByRole("heading", { name: "Saturn Rx in Aries", level: 3 })).toBeVisible();
@@ -224,6 +227,7 @@ test("Saturn waits for initial inventory and preserves an open editor during ext
   releaseInitial();
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   await page.getByRole("button", { name: "Edit placement article", exact: true }).click();
   const editor = page.getByRole("dialog");
@@ -295,6 +299,7 @@ test("retrograde editor saves two revisions to its own source and preserves the 
  await page.goto("/#sky-writeups");
  await page.getByLabel("Sky placement planet or point").selectOption("saturn");
  await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+ await openSkyPlacementSourceDetails(page);
  await page.getByLabel("Sky write-up motion").selectOption("retrograde");
  await page.getByRole("button", { name: "Edit placement article", exact: true }).click();
  const editor = page.getByRole("dialog");
@@ -346,6 +351,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel("Sky write-up motion").selectOption("retrograde");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   await map.getByLabel("Placement writing path").selectOption("fallback");
@@ -436,6 +442,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(page.getByRole("button", { name: `Switch to ${theme === "light" ? "dark" : "light"} theme`, exact: true })).toBeVisible();
   await page.getByLabel("Sky placement planet or point").selectOption("sun");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementSourceDetails(page);
   await page.getByLabel("Sky write-up motion").selectOption("direct");
   const map = page.getByRole("region", { name: "Sky placement composition map" });
   const actions = map.getByRole("group", { name: "Open placement section editors" });
@@ -478,6 +485,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    await editor.getByRole("button", { name: "Close", exact: true }).click();
   }
   await page.getByLabel("Sky placement zodiac sign").selectOption("taurus");
+  await openSkyPlacementSourceDetails(page);
   await expect(map.getByLabel("Seasonal preview hemisphere")).toHaveCount(0);
   await expect(map.getByRole("button", { name: "Open seasonal context copy editor", exact: true })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
