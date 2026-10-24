@@ -33,7 +33,8 @@ export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,a
   const referencedEvidence=daily||(weekly&&!weeklyV2);
   if(daily)context=dailyHoroscopeEvidence(context);
   if(weekly&&!weeklyV2)context=weeklyHoroscopeEvidence(context);
-  const {developments:originalDevelopments,seasonalMeaning,relationalContext,...calculatedFacts}=engineFacts??{};
+  const {developments:originalDevelopments,seasonalMeaning,relationalContext,...fullFacts}=engineFacts??{};
+  const calculatedFacts=weekly?{...fullFacts,signs:fullFacts.signs?.filter(s=>s.sign===engineFacts.risingSign)}:fullFacts;
   const developments=weekly?weeklyMeaningReferences(originalDevelopments):originalDevelopments;
   const seasonal=writingProfile?.profile?.period==='seasonal';
   const primary=context.primaryRegisterPassages??[];
@@ -54,8 +55,7 @@ export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,a
       `RENDER TARGET\n${JSON.stringify(target)}`,
       ...(!variables.uses('governedFacts')?[factsText]:[]),
       `OWNER-APPROVED WRITING PLAN\n${JSON.stringify(argumentOutline)}`,
-      'Use only the supplied calculated facts for this edition. Historical examples teach voice, never current events, houses, dates or personal biography. Use whole-sign houses for the requested rising sign. Keep weekdays in the edition time zone. A reference position does not establish a duration or ingress. Do not invent missing events, outcomes or natal history.',
-      'Return only headline and body in the required schema, preserving natural paragraph breaks. Follow the saved weekly Voice and Structure. This is one sign, with no access to other signs in the edition; do not claim to compare unseen readings. No model verdict approves or publishes this draft.'
+      'Apply the complete saved Weekly profile to this requested sign and approved scope.'
     ].join('\n\n');
   }
   return [
