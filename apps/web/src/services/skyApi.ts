@@ -53,6 +53,9 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
       if (detail === "placements" && await acceptInitialSkyReader(sky, payload.initialReader)) {
         const { admitInitialSkyReaderPublications } = await import("./contentPublications");
         admitInitialSkyReaderPublications();
+        // The complete selected reading is known now. Prepare its existing
+        // renderer while App downloads, keeping Markdown outside static boot.
+        void import("../components/FormattedWritingContent").catch(() => {});
       }
       return sky;
     }, { timeoutMs: primedTransport ? Math.max(1, 8_000 - (performance.now() - primedTransport.startedAt)) : 8_000 }).finally(() => pending.delete(key));

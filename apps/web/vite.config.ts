@@ -271,8 +271,10 @@ export default defineConfig(({ mode }) => {
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
             // These shared readers already belong to boot. Keep them outside
             // Studio's deferred editor group so an editor import cannot pull it into boot.
-            if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)
-              || /\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader)\.mjs$/u.test(id)
+            // UI-only shared primitives travel with their existing React
+            // dependency; pure eligibility/bootstrap code must not await it.
+            if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)) return "react";
+            if (/\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader)\.mjs$/u.test(id)
               || /\/(?:content\/transitNatalIdentity|services\/transitReturns)\.ts$/u.test(id)) return "reader-eligibility";
             // Studio's reader-copy editors share one lazy workspace.
             if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";

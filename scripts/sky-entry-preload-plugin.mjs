@@ -39,7 +39,7 @@ export function skyEntryPreloadPlugin() {
         // calculation and complete publication-ledger reads.
         visit(bootstrap.fileName);
         const bootstrapFiles = [...files];
-        if ([...files].some(file => Object.keys(bundle[file].modules ?? {}).some(id => /\/(?:main\.tsx|react-dom\/)/u.test(id)))) {
+        if ([...files].some(file => Object.keys(bundle[file].modules ?? {}).some(id => /\/(?:main\.tsx|react(?:-dom)?\/)/u.test(id)))) {
           throw new Error("Sky data entry must start independently of the component entry.");
         }
         visit(app.fileName);

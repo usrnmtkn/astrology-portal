@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import {createServer} from 'vite';
 import {resolve} from 'node:path';
+import {readFile} from 'node:fs/promises';
 import {createElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {getSkyFromApi} from '../apps/web/src/services/skyApi';
@@ -122,6 +123,20 @@ try {
   installContentPublications([{...publication,state:'retired',row_id:null,revision:2}],'complete-sky-list');
   assert.equal(initialSkyReaderAvailable(),false,'Retirement invalidates every cached preview and projected source.');
   assert.equal(initialSkyReaderPreview('Sun',context),null);assert.equal(initialSkyReaderRows({keys:[publication.content_key]}),undefined);
+  const selectedPublication={...publication,content_key:'fallback-hook/sky-placement-hook/sun/scorpio',row_id:'synthetic-selected'};
+  const source=JSON.parse(await readFile('apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json','utf8')).hookRows.find((row:any)=>row.contentKey===selectedPublication.content_key);
+  assert(source);
+  ledger=[marker,selectedPublication];
+  let selectedReads=0;
+  const prefetched=await invoke(undefined,'GET',createInitialSkyReaderHandler(async query=>{
+    assert.deepEqual(query,{ids:[selectedPublication.row_id],keys:[selectedPublication.content_key]});selectedReads++;
+    return {status:200,headers:{},value:{schema:'content-reader-row-v1',nextCursor:null,rows:[{id:selectedPublication.row_id,content_key:selectedPublication.content_key,updated_at:stamp,target_date:null,provider:'tldrastro-fallback-architecture-v3',body:source.body_you,sections:{packageRecord:source},review_status:'approved',surface:'sky'}]}};
+  }));
+  assert(prefetched.body.initialReader);assert.equal(selectedReads,1,'Selected public rows are fetched once, then reused after complete fact validation.');
+  assert.deepEqual(prefetched.body.sky,sky,'Prefetch never substitutes preliminary positions for complete verified facts.');
+  const timing=prefetched.headers['server-timing'];
+  assert(timing.indexOf('selected_rows;')<timing.indexOf('sky;'),'The actual selected source read overlaps the unchanged complete calculation.');
+  ledger=[marker,publication];
   rowVersion='2026-10-23T15:01:00.000000Z';assert.equal((await invoke()).body.initialReader,null,'A source race cannot serve stale prepared prose.');rowVersion=stamp;
   failRows=true;const rowFailure=await invoke();assert.equal(rowFailure.body.initialReader,null);assert.deepEqual(rowFailure.body.sky,sky);failRows=false;
   failLedger=true;assert.equal((await invoke()).body.initialReader,null);failLedger=false;

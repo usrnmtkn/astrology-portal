@@ -45,6 +45,11 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
     try { return await work; } finally { timings.push(`${name};dur=${(performance.now() - start).toFixed(1)}`); }
   };
   const sharedSourceKey = (key: string) => /^(?:cms\/sky-|fallback-vocab\/|cc\/(?:planet|sign)\/|sky[.-]ingress[./-]|sky-[a-z-]+-enters-)/u.test(key);
+  // Load the shared renderer while the worker and publication I/O run, rather
+  // than introducing an additional cold import after astronomy completes.
+  // @ts-ignore Generated from the shared App renderer before API packaging.
+  const renderer = import("../server/initial-sky-reader/dist/initial-reader.mjs");
+  void renderer.catch(() => {});
   const readBatches = (current: ReturnType<typeof canonicalPublicationLedger>) => Promise.all(
     Array.from({length: Math.ceil(current.length / 100)}, (_, index) => {
       const batch = current.slice(index * 100, (index + 1) * 100);
@@ -64,11 +69,23 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
     return {keys: new Set(current.map(row => row.content_key)), responses};
   });
   void earlyRows.catch(() => {});
+  let resolveSelection!: (sky:SkySnapshot|null)=>void;
+  const selection = new Promise<SkySnapshot|null>(resolve=>{resolveSelection=resolve;});
+  const selectedRows = Promise.all([publications,renderer,selection]).then(([response,reader,sky])=>{
+    if(!sky||response.status!==200||response.value.schema!=="tldr-sky-list-publications/v1")return null;
+    const ledger=canonicalPublicationLedger(response.value.publications);
+    const keys=reader.requiredInitialSkySourceKeys(sky,ledger) as string[];
+    const selected=new Set(keys);
+    return {keys,responses:timed("selected_rows",readBatches(ledger.filter(row=>row.state==="live"&&row.row_id&&selected.has(row.content_key)&&!sharedSourceKey(row.content_key))))};
+  });
+  void selectedRows.then(value=>value?.responses.catch(()=>{})).catch(()=>{});
   let calculationMode = "worker";
-  const calculated = await timed("sky", calculateInitialSky(req.url!).catch(() => {
+  const calculated = await timed("sky", calculateInitialSky(req.url!,resolveSelection).catch(() => {
+    resolveSelection(null);
     calculationMode = "inline-recovery";
     return readPublic(skyHandler, { method: "GET", url: req.url, headers: {} });
   }));
+  resolveSelection(calculated.status === 200 ? calculated.value.sky : null);
   res.setHeader("x-sky-calculation-mode", calculationMode);
   if (calculated.status !== 200) { res.statusCode = calculated.status; res.end(JSON.stringify(calculated.value)); return; }
   const sky = calculated.value.sky as SkySnapshot;
@@ -80,16 +97,19 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
     if (ledgerResponse.status !== 200 || ledgerResponse.value.schema !== "tldr-sky-list-publications/v1") throw new Error("Sky lifecycle unavailable.");
     const ledger = canonicalPublicationLedger(ledgerResponse.value.publications);
     const byKey = new Map(ledger.map(row => [row.content_key, row]));
-    // @ts-ignore Generated from the shared App renderer before API packaging.
-    const { renderInitialSkyReader, requiredInitialSkySourceKeys } = await import("../server/initial-sky-reader/dist/initial-reader.mjs");
+    const { renderInitialSkyReader, requiredInitialSkySourceKeys } = await renderer;
     const lunationKeys = sky.moonEvent ? lunationReaderContentKeys({ startsAt: sky.moonEvent.occursAt,
       sign: sky.moonEvent.sign, title: sky.moonEvent.name }) : [];
     const sharedKey = (key: string) => sharedSourceKey(key) || lunationKeys.includes(key);
     const requiredKeys = new Set<string>(requiredInitialSkySourceKeys(sky, ledger));
     const current = ledger.filter(row => row.state === "live" && row.row_id && (requiredKeys.has(row.content_key) || sharedKey(row.content_key)));
     const early = await earlyRows;
+    const selected = await selectedRows;
+    if(selected && JSON.stringify([...requiredKeys].sort())!==JSON.stringify([...selected.keys].sort()))throw new Error("Sky source selection changed during calculation.");
+    const prefetched = selected ? await selected.responses : [];
+    const prefetchedKeys = new Set(selected?.keys.filter(key=>!sharedSourceKey(key)));
     const responses = (await Promise.all([early.responses,
-      timed("rows", readBatches(current.filter(row => !early.keys.has(row.content_key))))])).flat();
+      timed("rows", readBatches(current.filter(row => !early.keys.has(row.content_key)&&!prefetchedKeys.has(row.content_key))))])).flat().concat(prefetched);
     if (responses.some(response => response.status !== 200 || response.value.schema !== "content-reader-row-v1"
       || response.value.nextCursor !== null || !Array.isArray(response.value.rows))) throw new Error(`Sky reader rows unavailable (${responses.map(response => `${response.status}:${response.value.error ?? response.value.schema}`).join(", ")}).`);
     const rows = responses.flatMap(response => response.value.rows) as GeneratedContentRow[];
