@@ -11,11 +11,11 @@ Object.assign(process.env, { OPENAI_API_KEY: 'synthetic', OPENAI_GENERATION_MODE
   STUDIO_MEMORY_FEEDBACK_ENABLED: 'true', WRITING_KERNEL_GOVERNED_SURFACES: '',
   WRITING_KERNEL_SHADOW_SURFACES: '', WRITING_KERNEL_SKY_CANARY_PERCENT: '0', WRITING_KERNEL_SKY_GLOBAL_ENABLE: '0' });
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
-const sourcePath = 'packages/astro-knowledge/data/synastry/aspects/A-mercury_B-moon_square.json';
+const sourcePath = 'packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_square.json';
 const source = fs.readFileSync(sourcePath, 'utf8');
 const text = 'Complete synthetic approved voice fixture. Its final sentence remains present.';
-const input: any = { contentKey: 'fallback-hook/synastry-pair/moon/mercury/square', surface: 'synastry', mode: 'in_depth', knowledgeIds: ['synastry-mercury-square-moon'],
-  eventType: 'synastry-aspect', facts: { planetA: 'Mercury', planetB: 'Moon', aspect: 'square', personA: '{{holder2}}', personB: 'you', readerPerson: 'B' },
+const input: any = { contentKey: 'fallback-hook/synastry-pair/mercury/mars/square', surface: 'synastry', mode: 'in_depth', knowledgeIds: ['synastry-mercury-square-mars'],
+  eventType: 'synastry-aspect', facts: { planetA: 'Mercury', planetB: 'Mars', aspect: 'square', personA: '{{holder2}}', personB: 'you', readerPerson: 'B' },
   sourceSnapshot: { knowledgeSources: [{ path: sourcePath, sha256: hash(source), record: JSON.parse(source) }],
     positiveVoiceReferences: [{ path: 'synthetic-owner-approved-reference', text, sha256: hash(text), role: 'owner_approved_voice_only_not_astrology_for_target' }] } };
 const selection = { ownerSourceIds: ['owner-article:venus-in-cancer:p001'], reason: 'Synthetic selection tests complete source delivery, not prose quality.' };
@@ -93,10 +93,33 @@ try {
     assert(!request.request.input.includes(record.advice));
     for (const leak of ['Keep it active so comfort does not turn into autopilot', 'The problem is that easy can become lazy', 'The problem is leaving it half-open']) assert(!request.request.input.includes(leak));
   }
+  const meaningRepair = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/synastry-meaning-repair-20261024.json', 'utf8'));
+  for (const change of meaningRepair.changes) {
+    const bytes = fs.readFileSync(change.sourcePath, 'utf8'); const record = JSON.parse(bytes);
+    const contact = structuredClone(defaultInput);
+    contact.contentKey = `fallback-hook/synastry-pair/${record.planetA}/${record.planetB}/${record.aspect}`;
+    contact.facts = { planetA: record.planetA, planetB: record.planetB, aspect: record.aspect,
+      personA: '{{holder2}}', personB: 'you', readerPerson: 'B' };
+    contact.sourceSnapshot.knowledgeSources = [{ path: change.sourcePath, sha256: hash(bytes), record }];
+    const ready = await prepareSynastryBodyWriting(contact, selection);
+    assert.equal(ready.request.input.split(record.plainTranslation).length - 1, 1);
+    assert(!ready.request.input.includes(record.advice));
+    assert(ready.request.input.includes(`Address the ${record.planetB} person as you. The other person owns ${record.planetA}.`));
+    for (const reference of [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries, ...syntheticLatestTen().entries]) {
+      assert.equal(ready.request.input.split(reference.text).length - 1, 1);
+    }
+  }
+  const placeholder = structuredClone(defaultInput);
+  const placeholderPath = 'packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_conjunction.json';
+  const placeholderBytes = fs.readFileSync(placeholderPath, 'utf8');
+  placeholder.facts = { planetA: 'jupiter', planetB: 'venus', aspect: 'conjunction', personA: '{{holder2}}', personB: 'you', readerPerson: 'B' };
+  placeholder.sourceSnapshot.knowledgeSources = [{ path: placeholderPath, sha256: hash(placeholderBytes), record: JSON.parse(placeholderBytes) }];
+  await assert.rejects(() => prepareSynastryBodyWriting(placeholder, selection), /SYNASTRY_KNOWLEDGE_INCOMPLETE/);
+  assert.equal(providerCalls, 0, 'An unrepaired keyword scaffold cannot reach a paid body call.');
   const oppositeReader = structuredClone(input);
   Object.assign(oppositeReader.facts, { readerPerson: 'A', personA: 'you', personB: '{{holder2}}' });
   const opposite = await prepareSynastryBodyWriting(oppositeReader, selection);
-  assert(opposite.request.input.includes('Address the Mercury person as you. The other person owns Moon.'));
+  assert(opposite.request.input.includes('Address the Mercury person as you. The other person owns Mars.'));
   const index = JSON.parse(fs.readFileSync('packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json', 'utf8'));
   const complete = index.entries.find((item: any) => item.sourceId === selection.ownerSourceIds[0]);
   assert(prepared.request.input.includes(complete.text));
@@ -118,7 +141,7 @@ try {
   const clone = () => structuredClone(input);
   const badSource = clone(); badSource.sourceSnapshot.knowledgeSources[0].record.plainTranslation += 'changed';
   const badVoice = clone(); badVoice.sourceSnapshot.positiveVoiceReferences[0].text += 'changed';
-  const wrongDirection = clone(); wrongDirection.facts.planetA = 'Moon'; wrongDirection.facts.planetB = 'Mercury';
+  const wrongDirection = clone(); wrongDirection.facts.planetA = 'Mars'; wrongDirection.facts.planetB = 'Mercury';
   const noReader = clone(); delete noReader.facts.readerPerson; noReader.facts.personB = 'Rowan';
   const conflictingReader = clone(); conflictingReader.facts.readerPerson = 'A';
   const badFamily = clone(); badFamily.facts.aspect = 'soft'; badFamily.facts.aspectFamilyMembers = ['square'];

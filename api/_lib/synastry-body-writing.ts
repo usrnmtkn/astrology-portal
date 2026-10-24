@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { writeSynastryBodyWithOpenAI, type GenerateContentInput } from './content-generation.js';
 import { loadExplicitWritingFeedback } from './studio-explicit-writing-feedback.js';
 import { ownerPositiveEvidenceFromVoiceIndexBySourceIds } from '../../src/astro-writing/ownerPositiveEvidence.mjs';
-import { designatedSynastryVoiceReferences, prepareSynastrySourceInput, synastryContactOwnership, synastrySourceReceipt } from '../../src/astro-writing/synastrySourceContext.cjs';
+import { assertSynastryMeaningComplete, designatedSynastryVoiceReferences, prepareSynastrySourceInput, synastryContactOwnership, synastrySourceReceipt } from '../../src/astro-writing/synastrySourceContext.cjs';
 import { governedInstructionsForRole } from '../../src/astro-writing/openAIResponses.cjs';
 import { prepareProductionPreCallGate, assertProductionPreCallGate } from '../../src/astro-writing/productionPreCallGate.cjs';
 import { validateCopy } from '../../src/astro-writing/validateCopy.mjs';
@@ -53,6 +53,7 @@ function verifiedSources(input: GenerateContentInput) {
     if (record.kind !== 'interaspect' || normalize(record.planetA) !== normalize(input.facts.planetA)
       || normalize(record.planetB) !== normalize(input.facts.planetB) || !members.includes(normalize(record.aspect))
       || seen.has(normalize(record.aspect)) || typeof record.plainTranslation !== 'string' || !record.plainTranslation.trim()) fail('Knowledge ownership or aspect does not match the target.');
+    assertSynastryMeaningComplete(record);
     seen.add(normalize(record.aspect));
   }
   for (const reference of (snapshot.bookReferences ?? []) as Reference[]) {

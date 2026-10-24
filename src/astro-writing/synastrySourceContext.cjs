@@ -1,10 +1,19 @@
 "use strict";
 const { createHash } = require("node:crypto");
 
-const VERSION = "synastry-source-context/v2-2026-10-23";
+const VERSION = "synastry-source-context/v3-2026-10-24";
 const key = value => String(value ?? "").trim().toLowerCase().replace(/[_\s]+/gu, "-");
 const textHash = value => createHash("sha256").update(value).digest("hex");
 const object = value => value && typeof value === "object" && !Array.isArray(value);
+
+// Recognize the complete legacy scaffold, not individual words or prose style.
+// These five generated descriptions supply no pair-specific interpretation.
+const keywordScaffold = /^A's [^.\n]+ meets B's [^.\n]+\. The (?:conjunction fuses them - intense and inseparable|square puts them in friction|opposition pulls them into push-and-pull|trine lets them flow together easily|sextile supports them, if you act on it)\.$/u;
+function assertSynastryMeaningComplete(record) {
+  if (record?.kind === "interaspect" && keywordScaffold.test(String(record.plainTranslation ?? "").trim())) {
+    throw new Error(`SYNASTRY_KNOWLEDGE_INCOMPLETE: ${record.id ?? "contact"} still contains a keyword placeholder. Source-backed contact meaning is required before generation.`);
+  }
+}
 
 function synastryContactOwnership(facts) {
   const planetA = String(facts.planetA ?? facts.body1 ?? facts.from ?? "").trim();
@@ -29,6 +38,7 @@ function synastryContactOwnership(facts) {
 
 function projectRecord(record, path, exclusions, adviceRequested) {
   if (!object(record) || record.kind !== "interaspect" || !record.planetA || !record.planetB) return record;
+  assertSynastryMeaningComplete(record);
   const projected = { ...record };
   // These are complete legacy knowledge fields, not protected author passages.
   // Unknown source pronouns cannot be rebound to the current reader by position.
@@ -118,4 +128,4 @@ function synastrySourceReceipt(input) {
       evidenceRole: "designated_voice_only", sourceApprovalUnchanged: true })) };
 }
 
-module.exports = { SYNASTRY_SOURCE_CONTEXT_VERSION: VERSION, synastryContactOwnership, prepareSynastrySourceInput, synastryMeaningPlanSchema, designatedSynastryVoiceReferences, validateSynastryMeaningPlan, synastrySourceReceipt };
+module.exports = { SYNASTRY_SOURCE_CONTEXT_VERSION: VERSION, assertSynastryMeaningComplete, synastryContactOwnership, prepareSynastrySourceInput, synastryMeaningPlanSchema, designatedSynastryVoiceReferences, validateSynastryMeaningPlan, synastrySourceReceipt };

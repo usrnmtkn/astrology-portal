@@ -39,7 +39,9 @@ try{
  }
  const square=correction('moon-mercury-square','fallback-hook/synastry-pair/moon/mercury/square');
  rows.push(square,correction('other-pair','fallback-hook/synastry-pair/moon/saturn/square'));
- const family={...synastry,contentKey:'fallback-hook/synastry-pair/moon/mercury/hard',facts:{planetA:'Mercury',planetB:'Moon',aspect:'hard',aspectFamilyMembers:['square','opposition']}};
+ const family={...synastry,contentKey:'fallback-hook/synastry-pair/moon/mercury/hard',facts:{planetA:'Mercury',planetB:'Moon',aspect:'hard',aspectFamilyMembers:['square','opposition']},
+  sourceSnapshot:{knowledgeSources:['square','opposition'].map(aspect=>({record:{id:`synthetic-feedback-${aspect}`,kind:'interaspect',planetA:'mercury',planetB:'moon',aspect,
+   plainTranslation:'Complete synthetic relationship meaning for Person A (Mercury) and Person B (Moon). Its final sentence stays present.'}}))}};
  for(const writer of [generateWithOpenAI,generateWithClaude]){
   sent='';await assert.rejects(writer(family),/synthetic writer boundary stop/u);
   assert(sent.includes(square.rejected_text));assert(sent.includes(square.owner_reason));

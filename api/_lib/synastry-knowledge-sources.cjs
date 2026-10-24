@@ -2,6 +2,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { createHash } = require("node:crypto");
+const { assertSynastryMeaningComplete } = require("../../src/astro-writing/synastrySourceContext.cjs");
 const root = path.resolve(__dirname, "../..");
 
 function withSynastryKnowledgeSources(input) {
@@ -22,6 +23,7 @@ function withSynastryKnowledgeSources(input) {
     try { bytes = fs.readFileSync(path.join(root, relative), "utf8"); record = JSON.parse(bytes); } catch { return fail(); }
     if (record.kind !== "interaspect" || record.planetA !== planetA || record.planetB !== planetB
       || record.aspect !== member || !record.plainTranslation?.trim()) return fail();
+    assertSynastryMeaningComplete(record);
     return { path: relative, sha256: createHash("sha256").update(bytes).digest("hex"), record };
   });
   return { ...input, sourceSnapshot: { ...snapshot, knowledgeSources: sources } };

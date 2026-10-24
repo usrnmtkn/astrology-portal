@@ -5,6 +5,50 @@ writing. It does not establish a successful voice evaluation, owner approval of
 new prose, or a production deployment. The previously generated samples remain
 rejected or held under their existing decisions.
 
+## October 24 meaning coverage repair
+
+The next ten private drafts exposed a separate input defect. Fourteen of their
+twenty selected directional records contained only a generated planet-keyword
+sentence and a stock aspect sentence. Some reverse directions therefore supplied
+less interpretation than their counterparts. Moving advice out of other records
+had not repaired this missing meaning.
+
+Twenty neutral DRAFT records now contain pair-specific meaning for Mercury–Mars
+square/opposition, Venus–Jupiter trine/sextile and square/opposition, and Mars–Saturn
+trine/sextile and square/opposition, in both directions. Person A and Person B are
+bound explicitly to their own planets. The source is Davison's *Synastry*: PDF
+pages 72, 76 and 80–81 supply the dedicated pair discussions; pages 52–53 and 55
+qualify aspect synthesis and single-contact limits. The source's gender claims,
+guaranteed outcomes, diagnoses, karmic obligations and predictions of harm are
+excluded. Unknown chart conditions remain unknown. These are technical knowledge
+paraphrases, not approved reader passages or positive voice examples.
+
+`review/synastry-meaning-repair-20261024.json` in the knowledge package records
+the source hash, page references, derivation limits, original and updated record
+hashes, and complete moved-unit hashes. Two primary-field commands and four
+complete legacy maintenance/caution units move into the existing advice field.
+Current unrequested-advice projection excludes them while preserving their exact
+original wording. Approved reader rows, private author passages, all 28 approved
+voice references, reader output schemas, model defaults and publication state
+remain unchanged.
+
+The shared loader, explicit-record projection and private body preparation now
+hold the five exact legacy keyword scaffolds before provider dispatch. This is a
+missing-meaning check, not a word-count threshold, a ban on ordinary phrases or a
+literary-quality score. After this repair, 364 other records still contain those
+scaffolds and require their own source-backed repair before new generation. The
+guard does not rewrite them, publish anything, or certify the completeness of
+every nonmatching record. Existing approved readings remain independently served.
+
+Intercepted-provider checks exercise all twenty repaired records through both
+shared providers and the private body preparer, complete source delivery, explicit
+and default placeholder holds, unchanged approved-reference delivery and excluded
+advice. Fixture-only instruction and feedback tests supply controlled synthetic
+meaning rather than treating an unrepaired production placeholder as ready.
+Passing these checks establishes the repaired input boundary. Prose quality still
+requires an authorized untouched output and exact owner review; no paid writing
+or publication is part of the source repair.
+
 ## Source defects and changes
 
 The neutral draft knowledge combined interpretation with reader instructions.

@@ -28,7 +28,9 @@ const base = {
   headline: 'Mercury square Moon', knowledgeIds: ['synastry-mercury-square-moon'],
   facts: { blockType: 'synastry_aspect', planetA: 'Mercury', planetB: 'Moon', aspect: 'square',
     personA: 'Rowan', personB: 'you', housesExcluded: true, signsExcluded: true },
-  sourceSnapshot: { meaning: 'Complete synthetic meaning source, including its final sentence.' },
+  sourceSnapshot: { meaning: 'Complete synthetic meaning source, including its final sentence.',
+    knowledgeSources: [{ record: { id: 'synthetic-contract-meaning', kind: 'interaspect', planetA: 'mercury', planetB: 'moon', aspect: 'square',
+      plainTranslation: 'Complete synthetic contact evidence for Person A (Mercury) and Person B (Moon). Its final sentence is retained.' } }] },
   voiceNotes: 'Synthetic owner direction: retain the Moon reader and do not add advice.'
 };
 const draft = {
@@ -177,6 +179,47 @@ function assertSynastryRequest(request: any, input: typeof base) {
 }
 
 try {
+  const meaningRepair = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/review/synastry-meaning-repair-20261024.json', import.meta.url), 'utf8'));
+  for (const change of meaningRepair.changes) {
+    const record = JSON.parse(readFileSync(new URL('../' + change.sourcePath, import.meta.url), 'utf8'));
+    const fixture = { ...base, headline: 'Synthetic repaired-contact fixture',
+      knowledgeIds: [`synastry-${record.planetA}-${record.aspect}-${record.planetB}`],
+      facts: { planetA: record.planetA, planetB: record.planetB, personA: 'Rowan', personB: 'you', readerPerson: 'B', aspect: record.aspect },
+      sourceSnapshot: { meaning: 'Synthetic context.' } };
+    nextDraft = { ...draft, headline: fixture.headline,
+      body: `You consider the supplied contact with Rowan. The fixture retains your ${record.planetB} and their ${record.planetA}. This is synthetic contract evidence.`,
+      astrologyDrilldown: { ...draft.astrologyDrilldown, factors: [
+        { label: `Your ${record.planetB}`, technicalFact: 'The second planet belongs to the reader.', plainMeaning: 'Synthetic role evidence.' },
+        { label: `Their ${record.planetA}`, technicalFact: 'The first planet belongs to Rowan.', plainMeaning: 'Synthetic role evidence.' }
+      ] } };
+    for (const provider of ['openai', 'claude'] as const) {
+      const start = requests.length;
+      const result = await generate({ ...fixture, provider });
+      assert.equal(result.statusCode, 200, JSON.stringify(result.result));
+      for (const stage of requests.slice(start).filter(item => ['tldr_astro_meaning_plan', 'tldr_astro_generated_content'].includes(item.kind))) {
+        const sent = stage.provider === 'openai' ? stage.body.input : stage.body.messages[0].content[0].text;
+        assert(sent.includes(record.plainTranslation), `Complete repaired meaning reaches ${provider}: ${record.id}`);
+        assert(!sent.includes(record.advice), 'The complete separated advice remains outside the request.');
+        assert(!sent.includes('Channel it into a shared project'));
+        assert(!sent.includes('Aim the drive at a concrete, long-term goal'));
+        assert(!sent.includes('A relationship can feel good and still need attention'));
+        assert(!sent.includes('This is where the connection needs honesty'));
+      }
+    }
+  }
+  for (const provider of ['openai', 'claude'] as const) {
+    for (const explicit of [false, true]) {
+      const record = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_conjunction.json', import.meta.url), 'utf8'));
+      const start = requests.length;
+      const held = await generate({ ...base, provider,
+        facts: { planetA: 'jupiter', planetB: 'venus', aspect: 'conjunction', personA: 'Rowan', personB: 'you' },
+        sourceSnapshot: explicit ? { knowledgeSources: [{ record }] } : {} });
+      assert.notEqual(held.statusCode, 200);
+      assert.match(held.result.error, /SYNASTRY_KNOWLEDGE_INCOMPLETE/);
+      assert.equal(requests.length, start, 'Default and explicitly selected keyword scaffolds stop before any provider call.');
+    }
+  }
+  nextDraft = draft;
   for (const provider of ['openai', 'claude'] as const) {
     for (const variant of [base, { ...base, eventType: 'aspect', facts: { ...base.facts, blockType: undefined } },
       { ...base, mode: 'feed', contentKey: 'fixture/synastry-moon-trine-venus', knowledgeIds: ['synastry-moon-trine-venus'],
@@ -185,7 +228,14 @@ try {
         facts: { ...base.facts, planetA: 'Moon', planetB: 'Venus', aspect: 'conjunction' } },
       { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini', planetBSign: 'Virgo' },
         sourceSnapshot: { meaning: 'Complete synthetic source with an em dash — its original punctuation stays intact.' } },
-      { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini' } }]) {
+      { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini' } }].map(variant => ({ ...variant,
+        // These cases test instruction/schema contracts with controlled meaning.
+        // Real default KB delivery and placeholder holds are exercised above.
+        sourceSnapshot: { ...variant.sourceSnapshot, knowledgeSources: [{ record: {
+          ...base.sourceSnapshot.knowledgeSources[0].record,
+          planetA: variant.facts.planetA.toLowerCase(), planetB: variant.facts.planetB.toLowerCase(), aspect: variant.facts.aspect
+        } }] }
+      }))) {
       const start = requests.length;
       const response = await generate({ ...variant, provider });
       assert.equal(response.statusCode, 200, JSON.stringify(response.result));
@@ -337,7 +387,7 @@ try {
   const voiceText = 'Complete synthetic designated voice passage. Its original punctuation — and its final sentence remain intact.';
   const reference = { role: 'owner_approved_voice_only_not_astrology_for_target', path: '/private/synthetic-owner-reference.txt',
     text: voiceText, sha256: createHash('sha256').update(voiceText).digest('hex') };
-  const benchmarkFixture = { ...base, sourceSnapshot: { meaning: base.sourceSnapshot.meaning, positiveVoiceReferences: [reference] } };
+  const benchmarkFixture = { ...base, sourceSnapshot: { ...base.sourceSnapshot, positiveVoiceReferences: [reference] } };
   for (const provider of ['openai', 'claude'] as const) {
     const start = requests.length;
     const result = await generate({ ...benchmarkFixture, provider });
