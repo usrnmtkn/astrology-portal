@@ -1,7 +1,7 @@
 "use strict";
 const { createHash } = require("node:crypto");
 
-const VERSION = "synastry-source-context/v1-2026-10-21";
+const VERSION = "synastry-source-context/v2-2026-10-23";
 const key = value => String(value ?? "").trim().toLowerCase().replace(/[_\s]+/gu, "-");
 const textHash = value => createHash("sha256").update(value).digest("hex");
 const object = value => value && typeof value === "object" && !Array.isArray(value);
@@ -106,6 +106,13 @@ function synastrySourceReceipt(input) {
   if (!context) return null;
   return { version: VERSION, planetA: context.ownership.personA.planet, planetB: context.ownership.personB.planet,
     readerPerson: context.ownership.readerPerson, exclusions: context.exclusions,
+    protectedVoice: input.sourceSnapshot.protectedSynastryVoice ? {
+      sources: (input.sourceSnapshot.protectedSynastryVoice.sources ?? []).map(source => ({
+        sourceId: source.sourceId, documentSha256: source.documentSha256,
+        approvalToolCall: source.approvalToolCall, referenceCount: source.referenceCount
+      })),
+      referenceCount: input.sourceSnapshot.protectedSynastryVoice.referenceCount
+    } : null,
     designatedVoiceReferences: designatedSynastryVoiceReferences(input.sourceSnapshot).map(reference => ({
       textSha256: reference.sha256, wordCount: reference.text.trim().split(/\s+/u).length,
       evidenceRole: "designated_voice_only", sourceApprovalUnchanged: true })) };
