@@ -22,7 +22,8 @@ The newer main fixes for source references, feedback timestamps, ingress instruc
 | Request comparison against clean main with the same live profile snapshots | Captured: Weekly, Monthly, two Seasonal audiences and a Daily control, with all raw inputs retained privately. |
 | Daily remains unchanged | Passed: complete provider request matches main after normalizing only the independently generated operation UUID in owner-action audit references. Raw requests are untouched and separate. |
 | Transport and contextual rhetorical regressions | Passed: focused transport/pattern checks and effective-rule integration. |
-| Full unfiltered Content Studio API gate | Running; result must be recorded before merge. |
+| Full unfiltered Content Studio API gate | Passed on the combined #1330 integration at `a72500f9c3cf8c0e41d3b393208fc645164c34b1`; the rebased release `f7b82c0f96fc6baaed97b010162af7b156207f28` has the identical tracked tree. |
+| Profile browser journeys | Passed: five fresh-build desktop/mobile, light/dark save, reload, conflict and recovery journeys with isolated storage. |
 | Exact-head hosted CI | Pending. |
 | Reader-content publication | None authorized or performed. |
 | Paid generation or model review | None; provider credentials are synthetic during offline tests. |
@@ -34,4 +35,4 @@ Private captures include the complete requests and separate review requests, sou
 
 Before activation, reload Weekly and Monthly through the authenticated profile API, compare the exact current versions and complete profiles with the frozen baselines, then save only the reviewed profile fields through the existing handler. Refuse a stale version or unexpected difference. Confirm the saved full text, new revision and unchanged Source guidance. Daily and Seasonal profile records must remain unchanged. Do not generate a horoscope or publish reader content to verify activation.
 
-The branch starts at main `8df504a4bcad409bbb6bf7c64f43037258537cbb`, including Sky workspace release #1332. Preserve the coordinated loading release #1329, then #1330, before a later main release. Recheck main and integration gates immediately before merge. No production claim follows from a local test or an open PR.
+The release is rebased onto merged #1330 at main `ecfc3104fd161ed6345f74432ecc33a84c390ec4`, preserving Sky workspace release #1332 and loading release #1329. Its tracked application tree is identical to the combined integration used for the complete API and browser checks. The subsequent release-note update changes documentation only. Exact-head hosted CI remains required before merging. No production claim follows from a local test or an open PR.
