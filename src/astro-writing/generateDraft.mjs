@@ -20,6 +20,7 @@ import { assertLunationWritingFacts } from './lunationWritingFacts.mjs';
 import {composeMonthlyHoroscopeDraft} from './monthlyHoroscopeFormat.mjs';
 import { LUNATION_EDITORIAL_AUTHORITY } from './lunationEditorialConstraints.mjs';
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from './hellenisticMeaningSupport.mjs';
+import {HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,usesRefinedHoroscopeProse,horoscopeProseInstructions,renderHoroscopeProseAppendices} from './horoscopeProseInstructions.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -236,12 +237,14 @@ export async function generateDraft({
   const meaningSupport=buildHellenisticMeaningSupport({facts:engineFacts??{},plan,family,surface});
   const approvedStyleReference=approvedVoiceStyleReference({family,surface});
   const seasonalPreparation=family==='horoscope'&&engineFacts?.window?.period==='seasonal'
-    ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport,approvedStyleReference}:null;
+    ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport,approvedStyleReference,proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION}:null;
   const draftInput=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
-  const input=seasonalPreparation?draftInput:[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface}),renderApprovedVoiceStyleReference(approvedStyleReference)].filter(Boolean).join('\n\n');
+  const refined=family==='horoscope'&&usesRefinedHoroscopeProse(engineFacts?.window?.period);
+  const input=seasonalPreparation?draftInput:refined?[draftInput,renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference})].filter(Boolean).join('\n\n')
+    :[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface}),renderApprovedVoiceStyleReference(approvedStyleReference)].filter(Boolean).join('\n\n');
   const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
     ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
-  const instructions=withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
+  const instructions=refined?horoscopeProseInstructions(engineFacts.window.period):withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
   const value = await modelClient({
     stage: "draft",
     role,

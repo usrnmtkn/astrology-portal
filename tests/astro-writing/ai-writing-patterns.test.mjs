@@ -66,5 +66,6 @@ for(const version of [HOROSCOPE_RHETORICAL_REVIEW,LEGACY_HOROSCOPE_RHETORICAL_RE
   const got=responses.governedInstructionsForRole('RHETORICAL_REVIEWER',{surface:'horoscopes',family:'horoscope',governedInstructions:frozen});
   assert.equal(got,frozen,'Saved request must retain its exact policy.');
 }
-assert.throws(()=>responses.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope',governedInstructions:`${horoscopeReviewPolicy(LEGACY_HOROSCOPE_RHETORICAL_REVIEW)}\n\nSaved task.`}),/canonical role instructions/);
+const customSavedInstructions=`${horoscopeReviewPolicy(LEGACY_HOROSCOPE_RHETORICAL_REVIEW)}\n\nSaved task.`;
+assert.equal(responses.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope',governedInstructions:customSavedInstructions}),customSavedInstructions);
 console.log('PASS AI-pattern transport, contextual exceptions, evidence admission, hidden-label controls and frozen-review compatibility. Injected responses only; no literary calibration or paid calls.');

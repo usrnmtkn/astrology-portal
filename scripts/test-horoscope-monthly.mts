@@ -1,5 +1,5 @@
 import policyHistory from '../src/astro-writing/rhetoricalPatternHistory.cjs';
-import {HOROSCOPE_EDITORIAL_AUTHORITY} from '../src/astro-writing/canonicalInstructions.mjs';
+import {horoscopeProseInstructions} from '../src/astro-writing/horoscopeProseInstructions.mjs';
 import {LEGACY_HOROSCOPE_RHETORICAL_REVIEW} from '../src/astro-writing/horoscopeRhetoricalReview.mjs';
 import {assertHoroscopeRequestEvidence,horoscopeRequestMeaningPassages} from './assert-horoscope-request-evidence.mjs';
 import assert from 'node:assert/strict';
@@ -86,13 +86,17 @@ const synthesis=structuredClone(row.source_snapshot.horoscopeGeneration.active.s
 await action('poll');assert.equal(writerFixture.calls,1,'Polling a ready synthesis must not charge for prose');
 // Resume a saved monthly synthesis whose future prose request was frozen before the rule update.
 const frozenMonthly=store.rows.get(row.id)!.source_snapshot.horoscopeGeneration.active;
+const currentMonthlyInstructions=frozenMonthly.draftRequest.instructions;
+assert.equal(currentMonthlyInstructions,horoscopeProseInstructions('monthly'));
 frozenMonthly.reviewVersion=LEGACY_HOROSCOPE_RHETORICAL_REVIEW;
-frozenMonthly.draftRequest.instructions=frozenMonthly.draftRequest.instructions.replace(HOROSCOPE_EDITORIAL_AUTHORITY,policyHistory.LEGACY_HOROSCOPE_WRITER_POLICY);
+const legacyMonthlyInstructions=policyHistory.LEGACY_HOROSCOPE_WRITER_POLICY+'\n\nFrozen synthetic Monthly instructions.';
+frozenMonthly.draftRequest.instructions=legacyMonthlyInstructions;
 result=await action('continue');assert.equal(result.status,202);row=result.payload.rows[0];
 assert.equal(writerFixture.calls,2);
 assert.equal((await action('continue')).status,409,'A second continue cannot launch a duplicate prose request');
 const request=writerFixture.requests.get(row.source_snapshot.horoscopeGeneration.active.responseId);
 assert(request.instructions.startsWith(policyHistory.LEGACY_HOROSCOPE_WRITER_POLICY));
+assert.equal(request.instructions,legacyMonthlyInstructions,'Resuming a prepared request keeps its exact original instructions');
 assert(!request.instructions.includes('AVOID AI WRITING PATTERNS'));
 assert.deepEqual(request.reasoning,{effort:'medium'},'Monthly prose must not inherit the general extra-high reasoning budget');
 assert.equal(request.max_output_tokens,12000,'The response-limit repair does not raise the per-request output ceiling');
@@ -116,15 +120,18 @@ assert(!request.input.includes('permission earned by the passage'),'Monthly no l
 assert(!request.input.includes('BEGIN EXACT OCTOBER TLDR'),'Starter profiles never lock a historical summary');
 assert(request.input.includes('Preserve meaning before changing expression.'));
 assert(request.input.includes('Do not turn every development into a reason to reconsider an attachment.'));
-assert(request.input.includes('MONTHLY SPECIFICITY CONTRACT'));
-assert(request.input.includes('roadmap, management memo or generic relationship article'));
+assert(request.input.includes("Preserve each story's particular astrological cause and human consequence"));
+assert(request.input.includes('a generic planning, productivity or relationship maxim cannot replace that meaning'));
 
 assert(!/450[–-]700/.test(profile.structure),'Monthly depth must not be compressed to the old word-count target');
-assert(request.instructions.includes('HOROSCOPE EDITORIAL AUTHORITY'));
+assert(currentMonthlyInstructions.startsWith('MONTHLY HOROSCOPE\n'));
+assert(currentMonthlyInstructions.includes('Follow the profile\'s explicit primary reference before supporting examples'));
+assert(!request.input.includes('retain their primary voice role'));
+assert(!currentMonthlyInstructions.includes('a useful next move'));
 for(const unrelated of ['SKY PLACEMENT ARTICLE SPINE','SPINE QUALITY GATES','NEGATION-PIVOT CAP','at least two short imperatives','4-12 word sentences']) {
- assert(!request.instructions.includes(unrelated),`A horoscope must not receive the conflicting general article rule: ${unrelated}`);
+ assert(!currentMonthlyInstructions.includes(unrelated),`A horoscope must not receive the conflicting general article rule: ${unrelated}`);
 }
-for(const boundary of ['factual-safety-v1','grammar-v1','source-licensing-v1','register-direction-v1','unsupported-astrology-claims-v1'])assert(request.instructions.includes(boundary),boundary);
+for(const boundary of ['Only the supplied calculations and governed meaning','Keep grammar, clear references','Preserve complete sources, corrections, identities','one shared calendar-month overview, without a personal rising sign or houses','A sign is not its associated house'])assert(currentMonthlyInstructions.includes(boundary),boundary);
 assertHoroscopeRequestEvidence(request.input);
 const essays=JSON.parse(request.input.match(/COMPLETE OWNER COLLECTIVE ESSAYS — PRIMARY PROSE EVIDENCE\n([^\n]+)\n\n/)[1]);
 assert.equal(essays.length,4);

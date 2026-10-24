@@ -4,6 +4,7 @@ import {assertHoroscopeRequestEvidence,resolveHoroscopeRequestPassage,restoreWee
 import {loadSeasonalArgumentEvidence,SEASONAL_ARGUMENT_MANIFEST} from '../src/astro-writing/seasonalArgumentEvidence.mjs';
 import assert from 'node:assert/strict';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
+import {horoscopeProseInstructions} from '../src/astro-writing/horoscopeProseInstructions.mjs';
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import fs from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -14,7 +15,6 @@ import {prepareHoroscopeBrief} from '../api/_lib/horoscope-editions';
 import {prepareHoroscopeWriting} from '../src/astro-writing/horoscopeWriting.mjs';
 import {retrieveOwnerContext} from '../src/astro-writing/retrieveOwnerContext.mjs';
 import {loadSeasonalHoroscopeEvidence} from '../src/astro-writing/seasonalHoroscopeEvidence.mjs';
-import {HOROSCOPE_EDITORIAL_AUTHORITY} from '../src/astro-writing/horoscopeDraftInput.mjs';
 import {defaultHoroscopeProfile,horoscopeEditorialPrompt,HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE,HOROSCOPE_CONNECTED_READING_GUIDANCE,HOROSCOPE_PUBLICATION_TIMING_GUIDANCE,HOROSCOPE_OWNER_EDIT_GUIDANCE} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();
 const savedProfile=await store.invoke('POST',{profile:defaultHoroscopeProfile('weekly'),expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
@@ -88,7 +88,7 @@ for(const sign of edition.passages.slice(1).map(p=>p.sign)){
 }
 assert.equal(writerFixture.calls,13);assert.equal(row.sections.horoscopeEdition.passages.filter((p:any)=>p.body).length,12);
 for(const request of writerFixture.requests.values()){
- assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
+ assert.equal(request.instructions,horoscopeProseInstructions('weekly'));
  assert(request.input.includes(HOROSCOPE_EMOTIONAL_DEVELOPMENT_GUIDANCE));
  assert(request.input.includes(HOROSCOPE_CONNECTED_READING_GUIDANCE));
  assert(request.input.includes(HOROSCOPE_PUBLICATION_TIMING_GUIDANCE));
@@ -379,7 +379,7 @@ assert.equal(seasonalRow.status,'DRAFT');
 for(const reading of seasonalEdition.passages){
  const request:any=[...writerFixture.requests.values()].reverse().find((r:any)=>r.sign===reading.sign&&r.input.includes('COMPACT SEASONAL DEVELOPMENT PLAN')&&r.text.format.schema.required.includes('body'));
  assert(request,`Missing seasonal provider request for ${reading.sign}`);
- assert(request.instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
+ assert.equal(request.instructions,horoscopeProseInstructions('seasonal'));
  assertHoroscopeRequestEvidence(request.input);
  const facts=JSON.parse(request.input.split('GOVERNED SEASONAL FACTS\n')[1].split('\n\n')[0]);
  const meaning=facts.seasonalMeaning;
@@ -397,11 +397,11 @@ for(const reading of seasonalEdition.passages){
  }
  assert(request.input.includes('Write from a recognizable situation'));
  assert(request.input.includes('No em dashes'));
- assert(request.instructions.includes(HOROSCOPE_EDITORIAL_AUTHORITY));
+ assert(request.instructions.includes('Only the supplied calculations and governed meaning'));
  assert(!request.instructions.includes('SPINE QUALITY GATES'));
  assert(!request.instructions.includes('NEGATION-PIVOT CAP'));
  assert(!request.instructions.includes('at least two short imperatives'));
- assert(request.instructions.includes('factual-safety-v1'));
+ assert(request.instructions.includes("Keep each participant's sign, motion, house and timing attached to that participant"));
  assert(request.input.includes(horoscopeEditorialPrompt(seasonalProfile)));
  assert(!request.input.includes('FINISH THE NEW DRAFT USING THE SAVED EDITORIAL GUIDANCE'));
  assert(!request.input.includes('These complete owner weekly sign readings'));
