@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Create, edit, tag, preview and delete custom variables at ${width} ${theme}`, async ({ page }) => {
   const child = fork(path.resolve('tests/helpers/sky-article-save-api.mts'), [], { env: { ...process.env, SKY_SAVE_LEGACY_DRAFT: '', ZODIAC_TEMPLATE_FIXTURE: '' }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
@@ -15,7 +16,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
     await routeStudioInventoryApi(page, {
-      call,
+      call, answer: (route, url) => routeStudioPublicReader(route, url, call),
       listRows: rows => rows.filter((row: any) => row.event_type !== 'studio-variable')
     });
     const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
@@ -79,7 +80,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Cr
       await editor.locator('.admin-editor-toolbar-actions').getByRole('button', { name: 'Variables', exact: true }).click();
       const picker = editor.locator('[data-sky-article-variable-picker]');
       await picker.getByText('My variables', { exact: true }).click();
+      await picker.getByLabel('Find my variable',{exact:true}).fill('{{myOpening}} reusable');
       await picker.getByLabel('Variable', { exact: true }).selectOption('myOpening');
+      await expect(picker.getByText('Value used here · placement override',{exact:true})).toBeVisible();
+      await expect(picker.locator('.studio-variable-value')).toContainText('Fixture Sun in Virgo opening.');
       await picker.getByRole('button', { name: 'Insert variable', exact: true }).click();
       const template = 'During this transit, {{myOpening}} Fixture ending.';
       await expect(writing).toHaveValue(template);

@@ -52,6 +52,9 @@ export function publicationRpcFixture(getRows, saveRows) {
             await db.query("insert into content_publications(revision,state,row_id,row_updated_at,content_key) overriding system value values($1,'live',$2,$3,$4)",[dependency.publicationRevision,uuid(dependency.id),source.updated_at,source.content_key]);
           }
         }
+        // Explicitly imported ledger revisions must advance the identity sequence,
+        // just as the already-existing production sequence precedes a publication.
+        await db.query("select setval(pg_get_serial_sequence('public.content_publications','revision'), greatest(coalesce((select max(revision) from content_publications),1), nextval(pg_get_serial_sequence('public.content_publications','revision'))), true)");
       }
         }
       const mappedArgs = mapIds(args);

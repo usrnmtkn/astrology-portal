@@ -1,9 +1,10 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { moonEventNames, type MoonSummaryKind } from "../../web/src/content/skyMoonSummary";
+import { AssemblySections } from './AssemblySections';
 import { SkyInlineTemplate } from "./SkyInlineTemplate";
-import { useState, type ReactNode } from "react";
-import { skyAssemblyFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
+import { useRef, useState, type ReactNode } from "react";
+import { skyAssemblyFields, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { skyDailySummaryParts, skySummaryParagraphs } from "../../web/src/content/skyDailySummary";
 import { publishedSkySummaryContent, type SummaryCompositionRow } from "./skySummaryComposition";
 
@@ -11,14 +12,29 @@ const layoutField = skyAssemblyFields.find(field => field.key.endsWith("/layout"
 const categories = ["exactAspectsSentence", "stationsSentence", "ingressesSentence"] as const;
 const labels = { exactAspectsSentence: "Exact aspects", stationsSentence: "Stations", ingressesSentence: "Ingresses" };
 
+const sectionTemplates: Record<string, { label: string; keys: string[] }> = {
+  openingSentence: { label: 'Sun and Moon opening', keys: ['assembly/opening', 'assembly/openingSameSign', 'assembly/sunOnly', 'assembly/moonOnly'] },
+  voidSentence: { label: 'Moon void of course', keys: ['void', 'voidRemaining'] },
+  ingressesSentence: { label: 'Ingresses', keys: ['assembly/ingressesFirstOne', 'assembly/ingressesFirstMany', 'assembly/ingressesAlsoOne', 'assembly/ingressesAlsoMany'] },
+  stationsSentence: { label: 'Stations', keys: skyAssemblyFields.filter(field => /\/stations?[A-Z]/u.test(field.key)).map(field => field.key.replace('cms/sky-daily-summary/', '')) },
+  exactAspectsSentence: { label: 'Exact aspects', keys: skyAssemblyFields.filter(field => /\/aspects/u.test(field.key)).map(field => field.key.replace('cms/sky-daily-summary/', '')) },
+  currentRetrogradesSentence: { label: 'Current retrogrades', keys: ['assembly/retrogrades', 'retrograde'] },
+  seasonTransitionSentence: { label: 'Season transition', keys: ['seasonTransition', 'assembly/sunIngressBefore', 'assembly/sunIngressAfter'] },
+  lunationSentence: { label: 'Lunation', keys: ['lunation', 'assembly/lunationToday', 'assembly/lunationAlsoToday'] }
+};
+
 export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign, openingSlots, moonKind }: {
   rows: SummaryCompositionRow[]; onEdit: (field: SkySummaryField, initialBody?: string) => void;
   busy: boolean; sunSign: string; moonSign: string; openingSlots: Record<string, ReactNode>; moonKind: MoonSummaryKind;
 }) {
+  const layoutDetails = useRef<HTMLDetailsElement>(null);
+  const layoutInput = useRef<HTMLTextAreaElement>(null);
+  const sentenceSelect = useRef<HTMLSelectElement>(null);
   const content = publishedSkySummaryContent(rows);
   const publishedLayout = content.get(layoutField.key)?.body ?? layoutField.body;
   const [editedLayout, setEditedLayout] = useState<string | null>(null);
   const layout = editedLayout ?? publishedLayout;
+  const [paragraphSlots, setParagraphSlots] = useState<string[] | null>(null);
   const [selected, setSelected] = useState(skyAssemblyFields[1].key);
   const [aspectExamples, setAspectExamples] = useState("");
   const [stationExamples, setStationExamples] = useState("");
@@ -29,7 +45,10 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
   const [voidRemaining, setVoidRemaining] = useState("");
   const [lunation, setLunation] = useState("none");
   const errors = skySummaryTemplateErrors(layoutField.key, layout);
-  const selectedField = skyAssemblyFields.find(field => field.key === selected)!;
+  const templateFields = skyDailySummaryFields.filter(field => field !== layoutField && (paragraphSlots
+    ? paragraphSlots.some(slot => sectionTemplates[slot]?.keys.includes(field.key.replace('cms/sky-daily-summary/', '')))
+    : field.group === 'Assembly templates'));
+  const selectedField = skyDailySummaryFields.find(field => field.key === selected)!;
   const examples = (text: string, prefix: string) => text.split(";").map(label => label.trim()).filter(Boolean).map((label, i) => ({ id: `${prefix}-${i}`, label }));
   // Explicit editor examples, never imported by the reader or used as calculated facts.
   const previewContent = new Map(content);
@@ -57,8 +76,21 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
       <h4>Full summary template</h4>
       <p>Click the white words to edit a sentence around its protected variables. Edit the opening with the Sun and Moon examples below. Paragraph and event controls are available here too.</p>
     </div></header>
-    <details className="admin-workspace-details"><AdminDisclosureSummary>Paragraphs and event order</AdminDisclosureSummary>
-    <label><span>Assembly layout</span><StudioTextarea aria-label="Assembly layout" rows={6} value={layout} onChange={event => setEditedLayout(event.target.value)} /></label>
+    <AssemblySections label="Sky summary paragraph order">
+      {layout.split(/\n\s*\n/gu).filter(paragraph => paragraph.trim()).map((paragraph, index) => {
+        const slots = [...paragraph.matchAll(/\{([^{}]+)\}/gu)].map(match => match[1]);
+        const fields = skyDailySummaryFields.filter(field => slots.some(slot => sectionTemplates[slot]?.keys.includes(field.key.replace('cms/sky-daily-summary/', ''))));
+        return <li key={index}><div><strong>Paragraph {index + 1}</strong><p>{slots.map(slot => sectionTemplates[slot]?.label ?? slot).join(' · ') || paragraph}</p></div>
+          <StudioButton disabled={busy} onClick={() => {
+            if (fields.length) { setParagraphSlots(slots); setSelected(fields[0].key); requestAnimationFrame(() => { sentenceSelect.current?.focus(); sentenceSelect.current?.scrollIntoView({ block: 'center' }); }); }
+            else if (layoutDetails.current) { layoutDetails.current.open = true; layoutInput.current?.focus(); layoutInput.current?.scrollIntoView({ block: 'center' }); }
+          }}>Edit paragraph {index + 1} wording</StudioButton>
+        </li>;
+      })}
+    </AssemblySections>
+    <p className="admin-field-hint">Paragraphs follow the layout above. Sections without matching facts are omitted. The preview uses example facts. Choose a sentence variant by event count and order, then use the existing review, save, and publish controls.</p>
+    <details ref={layoutDetails} className="admin-workspace-details"><AdminDisclosureSummary>Paragraphs and event order</AdminDisclosureSummary>
+    <label><span>Assembly layout</span><StudioTextarea ref={layoutInput} aria-label="Assembly layout" rows={6} value={layout} onChange={event => setEditedLayout(event.target.value)} /></label>
     <div className="admin-editor-guidance">
       <p>Use single braces for slots. Blank lines start new paragraphs. The opening is required; other sections can be removed. Event wording uses the first or additional variant according to this order.</p>
       {categories.map(slot => <div key={slot}>
@@ -70,9 +102,11 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
       {editedLayout !== null && <StudioButton type="button" onClick={() => setEditedLayout(null)}>Use published layout</StudioButton>}
     </div>
     </details>
-    <label><span>Sentence template</span><AdminSelect aria-label="Sentence template" value={selected} onChange={event => setSelected(event.target.value)}>
-      {skyAssemblyFields.filter(field => field !== layoutField).map(field => <option key={field.key} value={field.key}>{field.label}</option>)}
+    <label><span>Sentence template</span><AdminSelect ref={sentenceSelect} aria-label="Sentence template" value={selected} onChange={event => setSelected(event.target.value)}>
+      {templateFields.map(field => <option key={field.key} value={field.key}>{field.label}</option>)}
     </AdminSelect></label>
+    {paragraphSlots && <StudioButton onClick={() => { setParagraphSlots(null); setSelected(skyAssemblyFields[1].key); }}>Show all assembly templates</StudioButton>}
+    <p className="admin-field-hint">Editing shared wording: {selectedField.label} · {content.has(selected) ? 'Published source' : 'Built-in source'} · <code>{selectedField.key}</code></p>
     <div className="admin-template-reader-surface"><div className="admin-template-reader-copy"><section className="admin-composition-preview-field field-body">
       <SkyInlineTemplate key={`${selected}:${content.get(selected)?.body ?? selectedField.body}`} field={selectedField} body={content.get(selected)?.body ?? selectedField.body}
         slots={openingSlots} busy={busy} onEdit={onEdit} label="Sentence wording editor" />

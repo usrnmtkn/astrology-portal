@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:4174';
 export default defineConfig({
+ outputDir: "./test-results/studio-variables",
  testDir: './tests/visual', testMatch: ['studio-variables.spec.ts', 'studio-variable-crud.spec.ts'],
  timeout: 90000, expect: { timeout: 20000 }, workers: 1, retries: 0,
  reporter: [['list']],

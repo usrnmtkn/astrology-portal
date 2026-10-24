@@ -2,18 +2,22 @@ import { useRef, useState } from 'react';
 import { StudioButton, StudioInput } from './StudioControls';
 import { AdminSelect } from './AdminNativeControls';
 import { csvChanges, csvContentType, csvCreateTransitBody, csvMaxBytes, csvMaxRows, csvRecordForRow, csvUnavailableReason, csvWantsPublication, newTransitCsvRow, readStudioCsv, writeStudioCsv, type CsvContentRow, type CsvRecord } from './studioCsv';
+import { csvSourceContext } from './studioCsvContext';
+import { downloadCsv } from '../../../src/shared/csvDownload';
+import type { LiveStatus } from './ContentLiveStatus';
 
 type Preview = { record: CsvRecord; changes: ReturnType<typeof csvChanges>; row?: CsvContentRow; publish?: boolean; error?: string; saved?: boolean; published?: boolean };
 type Props = {
   rows: CsvContentRow[]; selectedIds: Set<string>; disabled: boolean;
   loadRow: (id: string) => Promise<CsvContentRow>;
+  loadStatus: (row: CsvContentRow & { requestRevision?: number }) => Promise<LiveStatus>;
   saveRow: (record: CsvRecord, createBody?: Record<string, unknown>) => Promise<CsvContentRow>;
   publishRow: (row: CsvContentRow) => Promise<CsvContentRow>;
   onBusy: (busy: boolean) => void;
   onResult: (message: string) => void;
 };
 const errorText = (error: unknown) => error instanceof Error ? error.message : String(error);
-export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, saveRow, publishRow, onBusy, onResult }: Props) {
+export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, loadStatus, saveRow, publishRow, onBusy, onResult }: Props) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [type, setType] = useState('');
@@ -48,23 +52,24 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, s
       const candidates = saved.filter(row => csvContentType(row) === chosenType);
       if (candidates.length > csvMaxRows) throw new Error(`Filter or select up to ${csvMaxRows} rows before exporting.`);
       const records: CsvRecord[] = [], excluded: string[] = [];
+      const instant = new Date().toISOString();
+      const requestRevision = performance.now();
       // Bound document hydration. A failed read never produces a partial export.
       for (let offset = 0; offset < candidates.length; offset += 4) {
         setMessage(`Loading full text: ${offset} of ${candidates.length}…`);
         const documents = await Promise.all(candidates.slice(offset, offset + 4).map(row => loadRow(row.id)));
+        const exportable: CsvContentRow[] = [];
         for (const row of documents) {
           const reason = csvUnavailableReason(row);
           if (reason) excluded.push(`${row.headline || row.content_key}: ${reason}`);
-          else records.push(csvRecordForRow(row));
+          else exportable.push(row);
         }
+        const statuses = await Promise.all(exportable.map(row => loadStatus({ ...row, requestRevision })));
+        exportable.forEach((row, index) => records.push(csvRecordForRow(row, csvSourceContext(row, statuses[index], window.location.origin, instant))));
       }
       if (!records.length) throw new Error(excluded.join('\n') || 'No saved rows match this export.');
       const csv = writeStudioCsv(records);
-      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-      const link = document.createElement('a');
-      link.href = url; link.download = `content-studio-${chosenType.replace(/[^a-z0-9_-]/gi, '-')}-${new Date().toISOString().slice(0, 10)}.csv`;
-      document.body.appendChild(link); link.click(); link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      downloadCsv(csv, `content-studio-editable-${chosenType.replace(/[^a-z0-9_-]/gi, '-')}-${instant.slice(0, 10)}.csv`);
       setMessage(`Exported ${records.length} rows.${excluded.length ? ` ${excluded.length} excluded:\n${excluded.join('\n')}` : ''}`);
     });
   }
@@ -138,7 +143,7 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, s
   }
   return <div className="studio-csv-tools">
     <div className="admin-toolbar-actions">
-      <StudioButton type="button" disabled={disabled || busy} onClick={() => { setOpen(true); setMessage(''); }}>Export CSV</StudioButton>
+      <StudioButton type="button" disabled={disabled || busy} onClick={() => { setOpen(true); setMessage(''); }}>Export sources for bulk editing</StudioButton>
       <StudioButton type="button" disabled={disabled || busy} onClick={() => { setOpen(true); file.current?.click(); }}>Import CSV</StudioButton>
       <input ref={file} className="studio-csv-file" type="file" accept=".csv,text/csv" aria-label="Import Content Studio CSV" disabled={busy || disabled} onChange={event => {
         const input = event.target.files?.[0]; event.target.value = ''; if (input) { setOpen(true); void importCsv(input); }
@@ -146,6 +151,7 @@ export default function StudioCsvTools({ rows, selectedIds, disabled, loadRow, s
     </div>
     {open && <section className="admin-detail-card studio-csv-panel" aria-label="CSV offline editing" aria-busy={busy}>
       <p>Export saved text, edit it in Excel or Numbers, then save as UTF-8 CSV and import it here. Keep the identity columns and variable names unchanged. Set publish to yes for rows you want live, or no to save edits as drafts. Nothing changes until you review and save this import.</p>
+      <p>Publication status, source role, dates and reader links are read-only context and are ignored during import. The publish column controls your next import action. Shared fallbacks and pending revisions can differ from the article currently selected in Sky.</p>
       <p className="admin-field-hint">{selected.length ? `${selected.length} selected ${selected.length === 1 ? 'row' : 'rows'}` : `${rows.length} rows matching these filters`}. Export includes all matching pages. Unsaved sources and archived rows are excluded. Structured editions use their dedicated editor.</p>
       <details className="admin-disclosure" onToggle={event => setSelectionOpen(event.currentTarget.open)}>
         <summary>Choose rows for this export</summary>

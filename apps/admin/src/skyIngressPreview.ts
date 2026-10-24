@@ -25,3 +25,11 @@ export async function calculateSkyIngressPreview(planet: string, sign: string, d
   const facts = await getSkyPlacementTransitFactsOffMainThread(planet, sign, requested, timeZone);
   return { input: skyIngressPreviewInput(facts, requested) };
 }
+
+/** Dated editions retain their original reference instant, including motion. */
+export async function calculateSkyDatedArticlePreview(planet: string, sign: string, reference: string, timeZone: string) {
+  const requested = new Date(reference);
+  if (!Number.isFinite(requested.getTime())) throw new Error('The article has no valid calculation reference.');
+  const facts = await getSkyPlacementTransitFactsOffMainThread(planet, sign, requested, timeZone);
+  return { input: skyIngressPreviewInput(facts, requested) };
+}

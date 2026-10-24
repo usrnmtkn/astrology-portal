@@ -1,4 +1,5 @@
 import { isSkyIngressEssay, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
+import { resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../../../src/shared/skyArticleVariableDraft.js';
 
 export const SKY_ARTICLE_TEMPLATE_SCHEMA = "tldrastro-sky-article-template-v1";
 export const SKY_ARTICLE_EDITION_SCHEMA = "tldrastro-sky-article-edition-v2";
@@ -285,9 +286,11 @@ function assertEditableRevisionShape(base: CompiledSkyArticleEdition, fields: Sk
 
 export async function reviseSkyArticleEdition(
   base: CompiledSkyArticleEdition,
-  fields: SkyArticleEditableFields
+  fields: SkyArticleEditableFields,
+  variables?: SkyArticleVariableDraft | null
 ): Promise<CompiledSkyArticleEdition> {
   assertCompiledSkyArticleEdition(base);
+  fields = resolveSkyArticleVariableFields(fields, variables);
   assertEditableRevisionShape(base, fields);
   const headline = compactBlankLines(fields.headline);
   const tldr = compactBlankLines(fields.tldr);

@@ -279,7 +279,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           }}
           onReplaceBody={changeWriting}
           onCompositionChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} />
-        : <SkyPlacementVariableKey facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}
+        : <SkyPlacementVariableKey usedNames={[...field.value.matchAll(/\{\{\s*(\w+)\s*\}\}/gu)].map(match => match[1])} facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}
       {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
       {!supportsArticlePhrases && <details className="admin-workspace-details">
         <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>

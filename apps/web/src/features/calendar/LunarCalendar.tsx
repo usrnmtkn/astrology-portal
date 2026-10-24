@@ -4,6 +4,8 @@ import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
 import { calendarWeeklyDayParagraphs } from './calendarWeeklyPresentation';
 import { CalendarPassageProse } from './CalendarPassageProse';
 import { calendarPassageRequestKeys, useCalendarPassages } from './useCalendarPassages';
+import { calendarPassageKey } from './calendarPassageTemplates';
+import { studioPassageEditHref } from '../../../../../src/shared/studioPassageEdit';
 import { calendarMoonResolvedByDate, packagedWeeklyMoon, moonWritingForDay, calendarMoonCycleFallbackPiece } from './calendarMoonSources';
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
@@ -69,7 +71,7 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { isContentRetired, publicationAllowsContent } from "../../content/contentPublicationState";
+import { isContentRetired } from "../../content/contentPublicationState";
 import { resolveCalendarAspectPublication } from "./calendarAspectPublication";
 import { calendarAspectPublicationKeys, isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned } from "../../services/skyAspectContent";
 import {
@@ -90,7 +92,8 @@ import { calendarMoonPhaseCopy } from "./calendarMoonPhaseCopy";
 import { calendarTransitionPhraseKeys } from "./calendarTransitionPhrases";
 import { moonContinuationSummaryKey } from "./moonContinuationSummaries";
 import { calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "./calendarSeasonTransitions";
-import { moonSignTransitionForPair, moonSignTransitionKey, nextZodiacSignName } from "./moonSignTransitions";
+import { calendarMoonTransitionReading } from '../../../../../src/shared/features/calendar/calendarMoonTransitionReading';
+import { moonSignTransitionKey, nextZodiacSignName } from './moonSignTransitions';
 import type { SkyPlacementContentStatus } from "../sky/skyPlacementContentState";
 import {
   resolveCalendarV9Transit,
@@ -1248,21 +1251,13 @@ export function normalizeCalendarEventSurface(
     if(selected)return selected.body ? {surface:'calendar-event',status:'servable',sections:[{slot:'description',required:false,layer:'authored',tier:'stored-source',sourceKeys:selected.sourceKeys,body:selected.body.split(/\n\s*\n/u)[0]}]} : {surface:'calendar-event',status:'not-servable',sections:[]};
   }
   if (event.type === "ingress" && event.planet === "Moon") {
-    const from = event.fromSign ?? "";
-    const to = event.toSign ?? event.sign ?? "";
-    const key = moonSignTransitionKey(from, to);
-    const validPair = Boolean(to) && nextZodiacSignName(from) === to.toLowerCase().trim();
-    const live = generatedContent?.get(key) ?? (content?.contentKey === key ? content : null);
-    const body = live && (!live.status || live.status === "LIVE")
-      && publicationAllowsContent(key, live.id, live.updatedAt)
-      ? live.body
-      : publicationAllowsContent(key) ? moonSignTransitionForPair(from, to) : "";
+    const transition = calendarMoonTransitionReading(event, generatedContent, undefined, content);
     // Keep the complete Calendar unit and its lifecycle identity. A source gap
     // must not fall through to the unrelated Sky placement article.
-    return validPair && isReaderFacingCopy(body) ? {
+    return transition ? {
       surface: "calendar-event", status: "servable",
       sections: [{ slot: "description", required: false, layer: "authored",
-        tier: "calendar-moon-transition", sourceKeys: [key], body }]
+        tier: "calendar-moon-transition", sourceKeys: [transition.key], body: transition.body }]
     } : { surface: "calendar-event", status: "not-servable", sections: [] };
   }
 
@@ -2809,6 +2804,8 @@ export function LunarCalendar({
   const weeklyDayParagraphs = calendarWeeklyDayParagraphs(assembledPassages.weekly?.body, selectedWeekDays, zone);
   const selectedAssembledPassage = selectedDay ? assembledPassages.daily.get(selectedDay.dateKey) : undefined;
   const dayPanelProps = selectedDay ? {
+    editHref: studioPassageEditHref({ surface: 'calendar', date: selectedDay.dateKey, timeZone: zone,
+      sourceKey: calendarPassageKey('daily', selectedDay.dateKey, zone) }),
     checkInEntry: checkInData.value,
     contentState: assembledPassages.error ? "error" as const : assembledPassages.loading ? "loading" as const : dayReadingState,
     onRetryContent: retryCalendarContent,
@@ -3326,6 +3323,11 @@ export function LunarCalendar({
       )}
       {readingEvent && readingReady && (
         <CalendarEventReading
+          editHref={readingEvent.type === 'ingress' && readingEvent.planet === 'Moon' ? (() => {
+            const source = calendarMoonTransitionReading(readingEvent, generatedContent);
+            return source ? studioPassageEditHref({ surface: 'calendar', date: selectedDay?.dateKey ?? readingEvent.dateKey,
+              timeZone: zone, sourceKey: source.key }) : null;
+          })() : undefined}
           backLabel={selectedDay ? formatCheckInDate(selectedDay, zone) : undefined}
           dateLine={`${formatEventDate(readingEvent.startsAt, zone)} · ${formatEventTime(readingEvent.startsAt, zone)}`}
           element={signElements[readingEvent.sign ?? readingEvent.toSign ?? ""]}

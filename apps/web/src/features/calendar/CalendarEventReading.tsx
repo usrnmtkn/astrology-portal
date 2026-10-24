@@ -4,6 +4,7 @@ import { FormattedProse } from "../../components/FormattedProse";
 import { RetrogradeHistoryDisclosure } from "../../components/RetrogradeHistory";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { ReaderPassageEditLink } from '../../components/ReaderPassageEditLink';
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import { AstroGlyph } from "./AstroGlyph";
 import { CalendarKindLabel, CalendarKindTag } from "./CalendarKindTag";
@@ -198,6 +199,7 @@ export function CalendarEventReading({
   title,
   dateLine,
   paragraphs,
+  editHref,
   journalBlocks,
   kind,
   natalSun,
@@ -214,6 +216,7 @@ export function CalendarEventReading({
   title: string;
   dateLine: string;
   paragraphs: string[];
+  editHref?: string | null;
   journalBlocks?: LunarJournalBlock[];
   kind?: CalendarEventKind;
   element?: string;
@@ -305,6 +308,7 @@ export function CalendarEventReading({
             />
           ))
           : paragraphs.filter(Boolean).map((text) => <FormattedProse key={text.slice(0, 48)} text={text} />)}
+        <ReaderPassageEditLink href={editHref} />
         {event.type === "station" && event.planet && event.sign && <RetrogradeHistoryDisclosure context={{
           planet: event.planet, sign: event.sign, timeZone,
           referenceDate: new Date(Date.parse(event.retrogradeStart ?? event.startsAt)

@@ -1,4 +1,5 @@
 import type { LunarCalendarEvent } from "../../../../apps/web/src/services/ephemeris";
+import { calendarConditionalText } from '../../../calendar-writing/conditionals';
 
 const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 
@@ -157,7 +158,7 @@ export function calendarTemplateSegments(pattern: string, values: Record<string,
   for (const name in templates) if (pattern.includes(`{{${name}}}`)) nested[name] = {
     text: path.includes(name) ? `{{${name}}}` : calendarTemplateSegments(templates[name], values, templates, [...path, name]).map(segment => segment.text).join(""), kind: "copy"
   };
-  const expanded = pattern.replace(/\{\{#(\w+)\}\}([\s\S]*?)\{\{\/\1\}\}/gu, (_block, name: string, body: string) => nested[name] ? body : "");
+  const expanded = calendarConditionalText(pattern, name => Boolean(nested[name]));
   return expanded.split(/(\{\{\s*[\w.]+\s*\}\})/u).filter(Boolean).map(text => {
     const name = text.match(/^\{\{\s*([\w.]+)\s*\}\}$/u)?.[1];
     return { text: name && nested[name] ? nested[name].text : text, name, value: name ? nested[name] : undefined };

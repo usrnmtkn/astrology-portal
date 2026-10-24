@@ -8,6 +8,8 @@ import { compositionVariableColors } from './CompositionVariableKey';
 import { decodeStudioVariableCatalog, filterStudioVariables, matchingVariableSources, type StudioVariable, type StudioVariableCatalog } from './studioVariableCatalog';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
 
+import { variableLabel } from './variablePresentation';
+
 const kindLabels = { readonly: 'Calculated fact', editable: 'Reusable phrase', unmapped: 'Internal token' };
 
 function VariableCard({ variable, color, query, onOpenSource }: { variable: StudioVariable; color?: string; query: string; onOpenSource: (key: string, label: string, field: string) => void }) {
@@ -31,6 +33,7 @@ function VariableCard({ variable, color, query, onOpenSource }: { variable: Stud
     </header>
     {copyState && <p role="status">{copyState}</p>}
     <div className="studio-variable-description">
+      <p className="admin-field-hint">{variableLabel(variable.name)}</p>
       <p>{variable.description}</p>
       <p className="admin-field-hint">Source: {variable.source}</p>
     </div>

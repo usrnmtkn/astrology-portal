@@ -3,6 +3,7 @@ import { fork } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 
 const editorialSourceBank = JSON.parse(readFileSync(path.resolve('apps/web/src/content/fallbackArchitectureV3/source-rows/editorial-source-bank-v1.json'), 'utf8'));
 const virgoAxisBody: string = editorialSourceBank.collections.find((collection: any) => collection.id === 'sign-axis-tensions')
@@ -30,7 +31,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    page.on('pageerror', error => errors.push(error.message));
    await page.setViewportSize({ width, height: 1000 });
    await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
-   await routeStudioInventoryApi(page, { call, onWrite: ({ result }) => responses.push(result) });
+   await routeStudioInventoryApi(page, { call, answer: (route, url) => routeStudioPublicReader(route, url, call), onWrite: ({ result }) => responses.push(result) });
    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
    const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
    await page.goto(entry + '#variables');
@@ -64,7 +65,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    const angleToken = directory.locator('code[data-variable-name="angleTitle"]');
    expect(await angleToken.getAttribute('data-variable-color')).toBe(initialStyle.colors.find(token => token.name === '{{angleTitle}}')?.id);
    await page.screenshot({path: `test-results/variables-directory-${width}-${theme}.png`, fullPage: true});
-   await directory.getByLabel('Search variables', {exact: true}).fill('entryDate');
+   await directory.getByLabel('Search variables', {exact: true}).fill('entry date');
    await directory.getByLabel('Library', {exact: true}).selectOption('readonly');
    await directory.getByLabel('Available in', {exact: true}).selectOption('Sky');
    const entryCard = directory.getByRole('article', {name: '{{entryDate}} · Calculated residency dates; not the retrograde window', exact: true});
