@@ -51,7 +51,7 @@ for (const profile of (process.env.SKY_PERF_PROFILES || 'desktop,mobile').split(
   const cdp=await context.newCDPSession(page);
   if(profile==='mobile') {await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:80,downloadThroughput:1_600_000/8,uploadThroughput:750_000/8});}
   const requests=[];const errors=[];const failedRequests=[];
-  page.on('response',async r=>{const req=r.request();const u=new URL(r.url());if(['fetch','xhr'].includes(req.resourceType())||u.pathname.includes('wasm'))requests.push({url:u.origin+u.pathname+u.search,status:r.status(),timing:req.timing()});});
+  page.on('response',async r=>{const req=r.request();const u=new URL(r.url());if(['fetch','xhr'].includes(req.resourceType())||u.pathname.includes('wasm'))requests.push({url:u.origin+u.pathname+u.search,status:r.status(),timing:req.timing(),serverTiming:r.headers()['server-timing'],calculationMode:r.headers()['x-sky-calculation-mode']});});
   page.on('pageerror',e=>errors.push(e.message));
   page.on('requestfailed',request=>failedRequests.push({url:request.url(),error:request.failure()?.errorText}));
   if (process.env.SKY_PERF_TRACE) await context.tracing.start({screenshots:true,snapshots:true});

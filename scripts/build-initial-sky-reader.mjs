@@ -17,5 +17,5 @@ await build({ ...loaded.config, configFile: false, root: root + 'apps/web',
   }
 });
 await buildWorker({entryPoints:[root+'scripts/initial-sky-calculation-worker.ts'],
-  bundle:true,platform:'node',format:'esm',packages:'external',
+  bundle:true,platform:'node',format:'esm',packages:'external',minify:true,
   outfile:root+'server/initial-sky-reader/dist/sky-worker.mjs',logLevel:'silent'});

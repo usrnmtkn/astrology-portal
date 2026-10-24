@@ -407,10 +407,10 @@ import {
 import {
   type PersonalTimingResponse
 } from "./services/tldrastroApi";
-import {
-  generateUserContent,
-  loadUserGeneratedInterpretation
-} from "./services/userGeneratedContent";
+const generateUserContent: typeof import("./services/userGeneratedContent").generateUserContent = (...args) =>
+  import("./services/userGeneratedContent").then(module => module.generateUserContent(...args));
+const loadUserGeneratedInterpretation: typeof import("./services/userGeneratedContent").loadUserGeneratedInterpretation = (...args) =>
+  import("./services/userGeneratedContent").then(module => module.loadUserGeneratedInterpretation(...args));
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
 import { normalizedArticleAspectToneBucket } from "./utils/articleAspects";
 import {

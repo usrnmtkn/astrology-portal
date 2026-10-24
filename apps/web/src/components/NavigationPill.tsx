@@ -14,6 +14,11 @@ export function NavigationPill({ children }: { children: ReactNode }) {
       const focused = buttons.find(button => button === document.activeElement);
       buttons.forEach(button => { button.hidden = false; });
       const compact = getComputedStyle(nav).display === "none";
+      if (compact) {
+        pill.style.maxWidth = "";
+        if (focused) actions.querySelector<HTMLButtonElement>(".menu-toggle")?.focus();
+        return;
+      }
       const style = getComputedStyle(header);
       // Desktop navigation is centered: reserve the controls and gutter on both sides.
       pill.style.maxWidth = compact ? "" : `${header.clientWidth - 2 * (

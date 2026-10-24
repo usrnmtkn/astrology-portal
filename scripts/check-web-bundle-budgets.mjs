@@ -90,6 +90,9 @@ const bootFiles = collectStaticManifestGraph(manifest, [entryKey, bootstrapKey, 
 if ([...bootFiles].some(file => /fallback-content-(?:reader|base)-support-/u.test(file))) {
   throw new Error('Public reader startup downloads deferred personal interpretation sources.');
 }
+if ([...bootFiles].some(file => /\/userGeneratedContent-/u.test(file))) {
+  throw new Error('Public reader startup downloads account writing requests before an account consumer needs them.');
+}
 const bootItems = [...bootFiles]
   .map((file) => filesByName.get(file))
   .filter(Boolean);
