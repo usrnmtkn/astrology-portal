@@ -3,7 +3,8 @@ import { test } from 'node:test';
 import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import { createApiStore, fixtures as calendarFixtures } from '../tests/helpers/calendar-review-api.mjs';
-import { csvChanges, csvDraftPatch, csvRecordForRow, csvWantsPublication, readStudioCsv, writeStudioCsv } from '../apps/admin/src/studioCsv.js';
+import { csvChanges, csvDraftPatch, csvRecordForRow, csvUnavailableReason, csvWantsPublication, readStudioCsv, writeStudioCsv } from '../apps/admin/src/studioCsv.js';
+import { studioListingFacts, studioListingRow } from '../src/shared/studio-listing-facts';
 import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
 import { csvSourceContext } from '../apps/admin/src/studioCsvContext';
 import { skyReaderCsvRecord } from '../apps/web/src/features/sky/skyReaderCsvExport';
@@ -17,6 +18,26 @@ const original = {
   sections: {}, facts: {}, source_snapshot: {}, provider: 'manual-admin',
 };
 const importBody = (record: Record<string, string>) => ({ id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2), ownerAction: 'import-csv-draft', csvRecord: record });
+
+test('CSV eligibility excludes dedicated article editions before their full documents load', () => {
+  for (const [content_key, event_type] of [
+    ['sky-article/sun/libra/2026/2026-09-22', 'sky-article-edition'],
+    ['sky-article-revision/sun/libra/2026/2026-09-22', 'sky-article-edition-revision'],
+    ['horoscope/daily/20261021040000000/America/New_York', 'horoscope-edition'],
+    ['content/manual/synthetic-edition', 'sky-article-edition'],
+  ]) {
+    const row = { ...original, content_key, event_type, sections: { skyArticleEdition: { schema: 'synthetic' } } };
+    const listing = studioListingRow(row, studioListingFacts(row)) as unknown as typeof row;
+    assert.equal(listing.sections, null);
+    assert.match(csvUnavailableReason(listing) ?? '', /dedicated editor/, content_key);
+    assert.throws(() => csvRecordForRow(row), /dedicated editor/);
+  }
+  assert.equal(csvUnavailableReason(original), null);
+  assert.equal(csvUnavailableReason({ ...original, content_key: 'sky-season-fallback/libra-2026/moon/pisces/2026-10-21' }), null);
+  for (const field of ['skyArticleEdition', 'horoscopeEdition', 'articleHoroscopes']) {
+    assert.match(csvUnavailableReason({ ...original, sections: { [field]: {} } }) ?? '', /dedicated editor/);
+  }
+});
 
 test('export context identifies source roles, verified publication, dates and exact reader links without granting import authority', () => {
   const row = { ...original, content_key: 'sky-placement/article/saturn/aries' };

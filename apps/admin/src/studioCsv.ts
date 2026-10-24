@@ -45,7 +45,9 @@ export function csvUnavailableReason(row: CsvContentRow): string | null {
   if (row.status === 'ARCHIVED') return 'Archived rows cannot be edited through CSV.';
   if (/^(studio-lunation|studio-variable|studio-writing-profile|studio-daily|studio-lunar)\//.test(row.content_key)) return 'Use this item’s dedicated writing workspace.';
   const sections = object(row.sections);
-  if (sections.skyArticleEdition || sections.horoscopeEdition || sections.articleHoroscopes) return 'This structured edition requires its dedicated editor.';
+  if (/^(sky-article|sky-article-revision|horoscope)\//.test(row.content_key)
+    || ['sky-article-edition', 'sky-article-edition-revision', 'horoscope-edition'].includes(row.event_type ?? '')
+    || sections.skyArticleEdition || sections.horoscopeEdition || sections.articleHoroscopes) return 'This structured edition requires its dedicated editor.';
   return null;
 }
 type Field = { column: string; path: string; value: string; package: boolean; section?: boolean };
