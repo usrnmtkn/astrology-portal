@@ -28,6 +28,7 @@ const fullRelationshipMeaning = new Map(readPackage("relationships").synastryAsp
 for (const entry of relationshipSynastry.synastryAspects) {
   const full = fullRelationshipMeaning.get(entry.id);
   assert(full?.plainTranslation, 'Full relationship meaning remains available for authoring.');
+  assert.equal(entry.interpretiveDetail, undefined, 'Detailed authoring meaning and hypothetical examples stay out of the browser package.');
   if (entry.plainTranslation === undefined) {
     assert.equal(full.status, 'DRAFT');
     assert.equal(full.authoringStatus, 'draft');

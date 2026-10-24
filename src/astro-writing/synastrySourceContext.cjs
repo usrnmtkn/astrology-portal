@@ -1,7 +1,7 @@
 "use strict";
 const { createHash } = require("node:crypto");
 
-const VERSION = "synastry-source-context/v3-2026-10-24";
+const VERSION = "synastry-source-context/v4-2026-10-24";
 const key = value => String(value ?? "").trim().toLowerCase().replace(/[_\s]+/gu, "-");
 const textHash = value => createHash("sha256").update(value).digest("hex");
 const object = value => value && typeof value === "object" && !Array.isArray(value);
@@ -12,6 +12,20 @@ const keywordScaffold = /^A's [^.\n]+ meets B's [^.\n]+\. The (?:conjunction fus
 function assertSynastryMeaningComplete(record) {
   if (record?.kind === "interaspect" && keywordScaffold.test(String(record.plainTranslation ?? "").trim())) {
     throw new Error(`SYNASTRY_KNOWLEDGE_INCOMPLETE: ${record.id ?? "contact"} still contains a keyword placeholder. Source-backed contact meaning is required before generation.`);
+  }
+  const detail = record?.interpretiveDetail;
+  if (detail !== undefined && (!object(detail)
+    || detail.version !== "synastry-interpretive-detail/v1"
+    || detail.comparison !== "natal_to_natal"
+    || detail.evidenceRole !== "interpretive_meaning_not_voice"
+    || detail.people?.personA?.planet !== record.planetA
+    || detail.people?.personB?.planet !== record.planetB
+    || detail.aspectExpression?.aspect !== record.aspect
+    || !Array.isArray(detail.examples)
+    || detail.examples.some(example => example?.status !== "hypothetical_illustration_not_event_or_biography"
+      || !object(example.planetResponses)
+      || Object.keys(example.planetResponses).some(planet => ![record.planetA, record.planetB].includes(planet))))) {
+    throw new Error(`SYNASTRY_KNOWLEDGE_CONTEXT_CONFLICT: ${record?.id ?? "contact"} detail must preserve both natal owners, the aspect and hypothetical example roles.`);
   }
 }
 

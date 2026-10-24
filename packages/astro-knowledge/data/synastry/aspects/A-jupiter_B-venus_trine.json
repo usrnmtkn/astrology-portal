@@ -14,5 +14,119 @@
   "advice": "Enjoy the vibe and everything that flows easily between you, but don't just coast on it. Keep showing up, keep putting something into it. The connections that last are the ones people choose again and again, not just the ones that start out easy.\n\nA relationship can feel good and still need attention, effort, and honest conversation to keep moving forward.",
   "weight": 4,
   "authoringStatus": "draft",
-  "summaryShort": "Their confidence, encouragement, and appetite for possibility work smoothly with your affections, tastes, and sense of worth."
+  "summaryShort": "Their confidence, encouragement, and appetite for possibility work smoothly with your affections, tastes, and sense of worth.",
+  "interpretiveDetail": {
+    "version": "synastry-interpretive-detail/v1",
+    "comparison": "natal_to_natal",
+    "evidenceRole": "interpretive_meaning_not_voice",
+    "people": {
+      "personA": {
+        "planet": "jupiter",
+        "functionInContact": "Person A (Jupiter) contributes generosity, encouragement, enthusiasm and a broad view of what can be enjoyed or offered. The question is how this person's goodwill is received, rather than a permanent role as provider, teacher or rescuer."
+      },
+      "personB": {
+        "planet": "venus",
+        "functionInContact": "Person B (Venus) contributes affection, taste, enjoyment and what makes an exchange feel personally welcome. The question is how this person's way of liking and expressing affection responds to the other person's goodwill and expansiveness."
+      }
+    },
+    "facets": [
+      {
+        "topic": "Affection draws out generosity",
+        "meaning": "The pair discussion links Person B (Venus)'s appeal and affection with Person A (Jupiter)'s goodwill. Appreciation of Person B (Venus)'s taste, artistic expression or way of relating can make Person A (Jupiter) more inclined to give or encourage. Receiving that appreciation can make affection easier for Person B (Venus) to express. This is a responsive exchange between people, not a temporary period of good fortune.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          76
+        ]
+      },
+      {
+        "topic": "Mutual esteem and enjoyment",
+        "meaning": "Person B (Venus) may value Person A (Jupiter)'s optimism or wider perspective, while Person A (Jupiter) enjoys qualities Person B (Venus) brings to the connection. Enjoying each other's response can matter as much as having identical interests. The source includes social and recreational enjoyment and mutual esteem in friendship as well as romantic partnership; marriage and sexual attraction are not established by this contact alone.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          76
+        ]
+      },
+      {
+        "topic": "Personal contribution rather than interchangeable kindness",
+        "meaning": "Jansky distinguishes what one person's planet contributes from the way the aspect connects it to the other's Venus. Applied here, Person A (Jupiter) supplies generous or expansive goodwill to Person B (Venus)'s enjoyment and affection. This method helps retain the particular pair; a generic statement that the two people support each other is insufficient. The passage is general method, not a dedicated Venus-Jupiter delineation.",
+        "basis": "qualified_method_application",
+        "sourceId": "jansky-synastry",
+        "pdfPages": [
+          52
+        ]
+      }
+    ],
+    "aspectExpression": {
+      "aspect": "trine",
+      "meaning": "The trine describes a potentially easier exchange between the pair's functions. The quality of that ease still depends on the planets and the rest of both charts. A trine does not make Mars-Saturn identical to Venus-Jupiter and does not establish constant harmony. Jansky distinguishes available potential from its actual use; this does not require a warning about complacency in the reading.",
+      "basis": "qualified_pair_and_aspect_synthesis",
+      "sourceRefs": [
+        "davison-synastry",
+        "jansky-synastry"
+      ]
+    },
+    "examples": [
+      {
+        "status": "hypothetical_illustration_not_event_or_biography",
+        "setting": "A possible response to something one person has made or enjoys.",
+        "planetResponses": {
+          "venus": "Person B (Venus) shares an interest or creative work and responds affectionately when the other person takes an enthusiastic interest.",
+          "jupiter": "Person A (Jupiter) appreciates the expression and enjoys seeing that the appreciation is welcome."
+        },
+        "illustrates": "Mutual admiration can make affection and enthusiasm easier to express. A creative interest is an optional illustration, not an inferred occupation or talent."
+      },
+      {
+        "status": "hypothetical_illustration_not_event_or_biography",
+        "setting": "A possible affectionate gift or invitation.",
+        "planetResponses": {
+          "venus": "Person B (Venus) enjoys the thought behind an offer and shows that it has been received warmly.",
+          "jupiter": "Person A (Jupiter) enjoys giving something the other appreciates, without requiring identical tastes."
+        },
+        "illustrates": "The reciprocal enjoyment can explain the appeal of time together. The contact does not establish a giver-receiver hierarchy or a history of gifts."
+      }
+    ],
+    "interpretiveLimits": [
+      "This is a contact between two natal charts, not a current transit, date window or prediction of an event.",
+      "Person A and Person B identify the actual planet owners. Swapping the reader changes perspective on this contact; it does not establish the separate reciprocal contact between the other two natal planets.",
+      "The examples are derived hypothetical illustrations, not historical cases, chart facts, biography, voice references or a required scene inventory.",
+      "Signs, houses, natal aspects, planetary condition and relationship history are not supplied by this reusable entry. They may qualify a chart-specific reading only when actually supplied.",
+      "A combined aspect-family reading may use only meaning supported by every included member. An aspect-specific distinction cannot be asserted of the entire family.",
+      "Attraction, attachment, psychological motives and relationship outcomes require the relevant evidence; no isolated contact proves a permanent personality trait or full compatibility.",
+      "Source gender roles, diagnostic and medical claims, guaranteed outcomes, moral or karmic obligations and predictions of harm are not retained as interpretive facts."
+    ],
+    "sources": [
+      {
+        "id": "davison-synastry",
+        "title": "Synastry",
+        "author": "Ronald C. Davison",
+        "sha256": "2ff806457401a161af779e94d273ddeec4f10c08fb47fd0d6fded00bb9b7d94e",
+        "pdfPages": [
+          53,
+          55,
+          57,
+          72,
+          76,
+          80,
+          81
+        ]
+      },
+      {
+        "id": "jansky-synastry",
+        "title": "Synastry",
+        "author": "Robert C. Jansky",
+        "sha256": "53cc9976919ba596b58720de4c098893f39d43dd1923b91b6db1f5c98c0b9edd",
+        "pdfPages": [
+          39,
+          40,
+          52,
+          67,
+          68,
+          69,
+          70
+        ]
+      }
+    ]
+  }
 }

@@ -732,6 +732,17 @@ The guard detects the exact legacy missing-meaning scaffold; it is not a voice
 score or proof that every other record is complete. No paid prose acceptance or
 production deployment follows from this source repair.
 
+The subsequent October 24 detail enrichment adds source-backed natal-to-natal
+interpretation, explicit planet owners, aspect qualifications and optional
+hypothetical examples to those same twenty records. Davison and Jansky supply
+meaning and method; their wording is not positive voice evidence. Complete detail
+reaches the shared planner/writers and private body writer through the existing
+source path, while remaining absent from browser bundles. Examples establish
+neither events nor biography, and facets are not a required paragraph sequence.
+Inconsistent chart scope or ownership holds before a provider call. See the
+[detail record and delivery review](SYNASTRY_SOURCE_DELIVERY_REPAIR_2026-10-23.md#october-24-detailed-synastry-knowledge).
+Earlier source fields, approved passages and publication state are preserved.
+
 The shared synastry writer uses `synastry-aspect/v10-2026-10-22` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,

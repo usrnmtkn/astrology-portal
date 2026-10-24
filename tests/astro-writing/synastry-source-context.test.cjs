@@ -97,6 +97,7 @@ test('the repaired neutral draft sources separate exact source commands from int
   const root = path.resolve(__dirname, '../../packages/astro-knowledge');
   const audit = JSON.parse(readFileSync(path.join(root, 'review/synastry-source-separation-20261023.json'), 'utf8'));
   const meaningRepair = JSON.parse(readFileSync(path.join(root, 'review/synastry-meaning-repair-20261024.json'), 'utf8'));
+  const detailed = JSON.parse(readFileSync(path.join(root, 'review/synastry-interpretive-detail-20261024.json'), 'utf8'));
   assert.equal(audit.changes.length, 88);
   assert.equal(audit.ownerProseApproval, false);
   for (const change of audit.changes) {
@@ -104,7 +105,9 @@ test('the repaired neutral draft sources separate exact source commands from int
     const record = JSON.parse(bytes);
     const later = meaningRepair.changes.find(item => item.id === change.id);
     if (later) assert.equal(later.originalFileSha256, change.updatedFileSha256, 'A later repair must continue the exact prior source revision.');
-    assert.equal(createHash('sha256').update(bytes).digest('hex'), later?.updatedFileSha256 ?? change.updatedFileSha256);
+    const detail = detailed.changes.find(item => item.id === change.id);
+    if (detail) assert.equal(detail.originalFileSha256, later.updatedFileSha256);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), detail?.updatedFileSha256 ?? later?.updatedFileSha256 ?? change.updatedFileSha256);
     assert.equal(record.status, 'DRAFT');
     assert.equal(record.authoringStatus, 'draft');
     assert.equal(record.voiceNeutral, true);
@@ -127,6 +130,7 @@ test('twenty repaired directional sources retain sourced meaning, role ownership
   const path = require('node:path');
   const root = path.resolve(__dirname, '../../packages/astro-knowledge');
   const audit = JSON.parse(readFileSync(path.join(root, 'review/synastry-meaning-repair-20261024.json'), 'utf8'));
+  const detailed = JSON.parse(readFileSync(path.join(root, 'review/synastry-interpretive-detail-20261024.json'), 'utf8'));
   assert.equal(audit.changes.length, 20);
   assert.equal(audit.readerProseApproval, false);
   assert.equal(audit.publicationAuthorized, false);
@@ -134,7 +138,9 @@ test('twenty repaired directional sources retain sourced meaning, role ownership
   for (const change of audit.changes) {
     const bytes = readFileSync(path.join(root, 'data/synastry/aspects', change.id + '.json'), 'utf8');
     const record = JSON.parse(bytes);
-    assert.equal(sha(bytes), change.updatedFileSha256);
+    const detail = detailed.changes.find(item => item.id === change.id);
+    assert.equal(detail.originalFileSha256, change.updatedFileSha256);
+    assert.equal(sha(bytes), detail.updatedFileSha256);
     assert.equal(sha(record.plainTranslation), change.updatedMeaningSha256);
     assert.equal(sha(record.advice), change.updatedAdviceSha256);
     assert(record.plainTranslation.includes(`Person A (${record.planetA[0].toUpperCase() + record.planetA.slice(1)})`));
@@ -158,6 +164,47 @@ test('twenty repaired directional sources retain sourced meaning, role ownership
   assert(source('mars_B-saturn', 'trine').includes('trust'));
   assert(source('saturn_B-mars', 'opposition').includes('authority'));
   assert(source('mars_B-mercury', 'square').includes('defending'));
+});
+
+test('detailed synastry knowledge preserves complete natal roles, sourced facets and optional hypothetical examples', () => {
+  const path = require('node:path');
+  const root = path.resolve(__dirname, '../../packages/astro-knowledge');
+  const original = JSON.parse(readFileSync(path.join(root, 'review/synastry-meaning-repair-20261024.json'), 'utf8'));
+  for (const change of original.changes) {
+    const record = JSON.parse(readFileSync(path.join(root, 'data/synastry/aspects', change.id + '.json'), 'utf8'));
+    const detail = record.interpretiveDetail;
+    assert(detail, `The selected ${record.id} needs its detailed source knowledge.`);
+    assert.equal(detail.version, 'synastry-interpretive-detail/v1');
+    assert.equal(detail.evidenceRole, 'interpretive_meaning_not_voice');
+    assert.equal(detail.comparison, 'natal_to_natal');
+    assert.equal(detail.people.personA.planet, record.planetA);
+    assert.equal(detail.people.personB.planet, record.planetB);
+    const sources = new Map(detail.sources.map(source => [source.id, source]));
+    for (const facet of detail.facets) {
+      const source = sources.get(facet.sourceId);
+      assert(source, 'An interpretive facet identifies its source.');
+      for (const page of facet.pdfPages) assert(source.pdfPages.includes(page));
+    }
+    const projected = prepareSynastrySourceInput({ facts: { planetA: record.planetA, planetB: record.planetB },
+      sourceSnapshot: { knowledgeSources: [{ record }] } }).sourceSnapshot.knowledgeSources[0].record;
+    assert.deepEqual(projected.interpretiveDetail, detail, 'The complete detailed meaning reaches the active projection.');
+    assert.equal(projected.advice, undefined);
+    for (const example of detail.examples) {
+      assert.equal(example.status, 'hypothetical_illustration_not_event_or_biography');
+      assert.deepEqual(Object.keys(example.planetResponses).sort(), [record.planetA, record.planetB].sort());
+    }
+    for (const mutate of [
+      value => { value.comparison = 'transit_to_natal'; },
+      value => { value.people.personA.planet = 'incorrect-planet'; },
+      value => { value.aspectExpression.aspect = 'incorrect-aspect'; },
+      value => { value.examples[0].status = 'known_event'; }
+    ]) {
+      const invalid = structuredClone(record);
+      mutate(invalid.interpretiveDetail);
+      assert.throws(() => prepareSynastrySourceInput({ facts: { planetA: invalid.planetA, planetB: invalid.planetB },
+        sourceSnapshot: { knowledgeSources: [{ record: invalid }] } }), /SYNASTRY_KNOWLEDGE_CONTEXT_CONFLICT/);
+    }
+  }
 });
 
 test('the placeholder hold is an exact scaffold check, not a ban on ordinary wording or complete selected sources', () => {

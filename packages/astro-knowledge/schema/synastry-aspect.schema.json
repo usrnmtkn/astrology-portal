@@ -12,6 +12,56 @@
     "planetB": { "type": "string" },
     "aspect": { "type": "string" },
     "plainTranslation": { "type": "string" },
+    "interpretiveDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "comparison", "evidenceRole", "people", "facets", "aspectExpression", "examples", "interpretiveLimits", "sources"],
+      "properties": {
+        "version": { "const": "synastry-interpretive-detail/v1" },
+        "comparison": { "const": "natal_to_natal" },
+        "evidenceRole": { "const": "interpretive_meaning_not_voice" },
+        "people": {
+          "type": "object", "additionalProperties": false, "required": ["personA", "personB"],
+          "properties": { "personA": { "$ref": "#/$defs/detailPerson" }, "personB": { "$ref": "#/$defs/detailPerson" } }
+        },
+        "facets": { "type": "array", "items": {
+          "type": "object", "additionalProperties": false,
+          "required": ["topic", "meaning", "basis", "sourceId", "pdfPages"],
+          "properties": {
+            "topic": { "type": "string", "minLength": 1 }, "meaning": { "type": "string", "minLength": 1 },
+            "basis": { "enum": ["qualified_paraphrase", "qualified_method_application"] },
+            "sourceId": { "type": "string", "minLength": 1 }, "pdfPages": { "$ref": "#/$defs/detailPages" }
+          }
+        } },
+        "aspectExpression": {
+          "type": "object", "additionalProperties": false, "required": ["aspect", "meaning", "basis", "sourceRefs"],
+          "properties": {
+            "aspect": { "enum": ["conjunction", "square", "opposition", "trine", "sextile"] },
+            "meaning": { "type": "string", "minLength": 1 },
+            "basis": { "const": "qualified_pair_and_aspect_synthesis" },
+            "sourceRefs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+          }
+        },
+        "examples": { "type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["status", "setting", "planetResponses", "illustrates"],
+          "properties": {
+            "status": { "const": "hypothetical_illustration_not_event_or_biography" },
+            "setting": { "type": "string", "minLength": 1 },
+            "planetResponses": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string", "minLength": 1 } },
+            "illustrates": { "type": "string", "minLength": 1 }
+          }
+        } },
+        "interpretiveLimits": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "sources": { "type": "array", "items": {
+          "type": "object", "additionalProperties": false, "required": ["id", "title", "author", "sha256", "pdfPages"],
+          "properties": {
+            "id": { "type": "string", "minLength": 1 }, "title": { "type": "string", "minLength": 1 },
+            "author": { "type": "string", "minLength": 1 }, "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+            "pdfPages": { "$ref": "#/$defs/detailPages" }
+          }
+        } }
+      }
+    },
     "humanMoment": { "type": "string" },
     "summaryShort": { "type": "string" },
     "summaryDeep": { "type": "string" },
@@ -23,5 +73,12 @@
     "note": { "type": "string" },
     "voiceNeutral": { "const": true },
     "status": { "type": "string", "enum": ["TODO", "DRAFT", "REVIEWED", "LIVE"] }
+  },
+  "$defs": {
+    "detailPerson": {
+      "type": "object", "additionalProperties": false, "required": ["planet", "functionInContact"],
+      "properties": { "planet": { "type": "string", "minLength": 1 }, "functionInContact": { "type": "string", "minLength": 1 } }
+    },
+    "detailPages": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "integer", "minimum": 1 } }
   }
 }

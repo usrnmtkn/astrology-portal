@@ -14,5 +14,140 @@
   "advice": "This connection works best when both people recognize that passion and discipline serve different purposes. Desire provides the motivation to move forward. Wisdom helps determine how and when to act. When those forces work together, the relationship can accomplish far more than either could alone.",
   "weight": 4,
   "authoringStatus": "draft",
-  "summaryShort": "Their standards, caution, and sense of responsibility press against your drive, timing, and willingness to act."
+  "summaryShort": "Their standards, caution, and sense of responsibility press against your drive, timing, and willingness to act.",
+  "interpretiveDetail": {
+    "version": "synastry-interpretive-detail/v1",
+    "comparison": "natal_to_natal",
+    "evidenceRole": "interpretive_meaning_not_voice",
+    "people": {
+      "personA": {
+        "planet": "saturn",
+        "functionInContact": "Person A (Saturn) contributes restraint, practical commitment, caution and expectations about responsibility. This person's response to the other's initiative can range from dependable participation to imposing conditions; the contact does not grant authority over the other person."
+      },
+      "personB": {
+        "planet": "mars",
+        "functionInContact": "Person B (Mars) contributes assertion, initiative, desire and the way an intention becomes action. This person's response to the other's restraint can range from appreciating continuity to feeling inhibited; the contact is not a diagnosis of recklessness or anger."
+      }
+    },
+    "facets": [
+      {
+        "topic": "Why the two capacities matter to each other",
+        "meaning": "Person B (Mars)'s readiness to act can make Person A (Saturn)'s experience or preparation usable, while Person A (Saturn)'s continuity can give Person B (Mars)'s initial effort something dependable to work with. Cooperation can influence confidence in the other's participation and a willingness to rely on that person. This is relational trust in effort, not merely successful task completion or proof of affection, marriage or permanence.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          80,
+          81
+        ]
+      },
+      {
+        "topic": "The experience of being inhibited or overridden",
+        "meaning": "Person B (Mars) may experience Person A (Saturn)'s delay or conditions as a limit on personal agency. Person A (Saturn) may regard the same conditions as legitimate care about consequences, and experience stronger assertion as disregard for that concern. A repeated exchange can become a dispute about who is entitled to direct the other, even when the original intention was shared. The source supports this possibility without establishing which person is correct or normally holds power.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          80,
+          81
+        ]
+      },
+      {
+        "topic": "How the response can reinforce the problem",
+        "meaning": "Stronger assertion from Person B (Mars) can meet firmer restraint from Person A (Saturn), which can further intensify Person B (Mars)'s urge to act independently. Repeated frustration can consume goodwill or make participation feel conditional. The result need not be a conversation: action, refusal to participate, delay and restrictions can express the contact too. Violence, abuse, coercion and a predetermined ending cannot be inferred from the aspect.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          80,
+          81
+        ]
+      },
+      {
+        "topic": "Neither difficulty nor inhibition is compulsory",
+        "meaning": "Jansky gives Mars-Saturn square as a direct cross-chart example and explicitly allows Person A (Saturn) to refrain from interfering or to support Person B (Mars) despite personal reservations. The retained meaning is that a challenging contact does not make restraint inevitable. The source's prescriptive instructions and blame language are not reader advice or a claim that people can simply choose away every relationship problem.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "jansky-synastry",
+        "pdfPages": [
+          69
+        ]
+      },
+      {
+        "topic": "Domain depends on the actual relationship",
+        "meaning": "Jansky's general Venus/Mars method includes desire and physical expression as well as activity. In a supplied romantic context, the pace of initiating physical closeness can be one qualified application of assertion meeting restraint. Neither sexual attraction nor a particular intimate behavior follows from Mars-Saturn alone. In friendship or another partnership, the same pair can concern support for independent initiative or willingness to sustain an effort. Unknown relationship type, houses and natal conditions remain unknown.",
+        "basis": "qualified_method_application",
+        "sourceId": "jansky-synastry",
+        "pdfPages": [
+          52
+        ]
+      }
+    ],
+    "aspectExpression": {
+      "aspect": "opposition",
+      "meaning": "The opposition can place the two functions in contrasting positions, making each person's response more apparent. Different views can be stimulating, complementary or difficult. This is not a square renamed and is not proof that someone must dominate. The source's general discussion licenses contrasting viewpoints; the particular pair discussion supplies the relationship subject.",
+      "basis": "qualified_pair_and_aspect_synthesis",
+      "sourceRefs": [
+        "davison-synastry",
+        "jansky-synastry"
+      ]
+    },
+    "examples": [
+      {
+        "status": "hypothetical_illustration_not_event_or_biography",
+        "setting": "A possible decision about acting independently.",
+        "planetResponses": {
+          "mars": "Person B (Mars) wants to proceed and hears the other's conditions as a requirement to obtain approval.",
+          "saturn": "Person A (Saturn) considers the conditions responsible and becomes firmer when the other pushes ahead."
+        },
+        "illustrates": "The disagreement can come to concern authority over action. It is not evidence of a controlling relationship, a fixed household role or an event that has occurred."
+      },
+      {
+        "status": "hypothetical_illustration_not_event_or_biography",
+        "setting": "A possible situation where one person disagrees with the other's approach.",
+        "planetResponses": {
+          "mars": "Person B (Mars) maintains the intention and can continue without having to intensify assertion.",
+          "saturn": "Person A (Saturn) has reservations but does not necessarily interfere and may still contribute support."
+        },
+        "illustrates": "Jansky's direct Mars-Saturn example qualifies the assumption of inevitable obstruction. This is an alternative possibility, not a prescribed remedy or an ideal ending every hard-contact reading must add."
+      }
+    ],
+    "interpretiveLimits": [
+      "This is a contact between two natal charts, not a current transit, date window or prediction of an event.",
+      "Person A and Person B identify the actual planet owners. Swapping the reader changes perspective on this contact; it does not establish the separate reciprocal contact between the other two natal planets.",
+      "The examples are derived hypothetical illustrations, not historical cases, chart facts, biography, voice references or a required scene inventory.",
+      "Signs, houses, natal aspects, planetary condition and relationship history are not supplied by this reusable entry. They may qualify a chart-specific reading only when actually supplied.",
+      "A combined aspect-family reading may use only meaning supported by every included member. An aspect-specific distinction cannot be asserted of the entire family.",
+      "Attraction, attachment, psychological motives and relationship outcomes require the relevant evidence; no isolated contact proves a permanent personality trait or full compatibility.",
+      "Source gender roles, diagnostic and medical claims, guaranteed outcomes, moral or karmic obligations and predictions of harm are not retained as interpretive facts."
+    ],
+    "sources": [
+      {
+        "id": "davison-synastry",
+        "title": "Synastry",
+        "author": "Ronald C. Davison",
+        "sha256": "2ff806457401a161af779e94d273ddeec4f10c08fb47fd0d6fded00bb9b7d94e",
+        "pdfPages": [
+          53,
+          55,
+          57,
+          72,
+          76,
+          80,
+          81
+        ]
+      },
+      {
+        "id": "jansky-synastry",
+        "title": "Synastry",
+        "author": "Robert C. Jansky",
+        "sha256": "53cc9976919ba596b58720de4c098893f39d43dd1923b91b6db1f5c98c0b9edd",
+        "pdfPages": [
+          39,
+          40,
+          52,
+          67,
+          68,
+          69,
+          70
+        ]
+      }
+    ]
+  }
 }

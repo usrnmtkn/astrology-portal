@@ -57,7 +57,54 @@ locked records and records missing either summary retain the fallback. This
 preserves the actual registry response without reducing meaning or increasing
 the bundle budget.
 
-## Source defects and changes
+## October 24 detailed Synastry knowledge
+
+The owner requested detailed knowledge and examples after the brief contact
+summaries sounded interchangeable with transit explanations. The twenty selected
+records now also contain `interpretiveDetail`: each person's natal function,
+source-backed relational facets, the specific aspect's interpretation, optional
+derived examples, provenance and limits. Their existing fields remain unchanged.
+These are authoring knowledge, not approved reader copy or voice evidence.
+
+Davison's dedicated Mercury–Mars, Venus–Jupiter and Mars–Saturn passages supply
+the pair-specific meaning. His general aspect and planetary-function discussions
+qualify it. Jansky's Mercury cross-communication discussion, Venus/Mars method,
+cross-aspect distinctions and direct Mars–Saturn square example add bounded
+method and qualifications. Each facet distinguishes qualified pair paraphrase
+from application of a general method; source IDs, PDF pages and exact file hashes
+remain attached. The reread does not certify the sources' deterministic,
+gendered, diagnostic or spiritual claims, which are excluded. An unreadable
+Greene body extraction and the secondary Module 18 comparison are not claimed
+as authorities for the new records.
+
+The forty examples are assistant-derived hypothetical illustrations, not cases
+quoted from the books or events inferred about a couple. They retain both planet
+owners and explain the meaning they illustrate. Facets differ by contact and
+aspect; supportive records do not receive challenging facets just to fill a
+symmetrical inventory. Romantic context, sexual attraction, signs, houses,
+natal conditions and histories remain unknown unless actually supplied. Reading
+one contact from the other person's perspective does not establish a second
+reciprocal aspect between their other natal planets.
+
+The shared planner/writers and private body writer receive the complete detail
+through the existing source-record path. Their scoped authority treats facets
+as alternative supported meaning and examples as optional illustrations, without
+a paragraph order or scene quota. Family requests retain only meaning supported
+by every member. An inconsistent transit scope, planet owner, aspect or example
+role holds before provider dispatch. The full/server bundles retain detail;
+the existing browser projection excludes the authoring field. Registry outputs
+remain unchanged for all 732 entries.
+
+`review/synastry-interpretive-detail-20261024.json` records this separate source
+revision and chains its before/after hashes to the preceding meaning repair.
+Actual-handler tests intercept both providers, retain every complete facet and
+example, and preserve protected voice passages, advice exclusion and output
+contracts. These tests establish delivery and boundaries, not improved prose.
+No new model stage, paid call, automatic rewrite, reader save or publication is
+part of the change. Other library records have not acquired this detailed review
+merely because the schema now supports it.
+
+## Earlier source defects and changes
 
 The neutral draft knowledge combined interpretation with reader instructions.
 The Sun–Moon trine's `plainTranslation`, for example, ended with an instruction

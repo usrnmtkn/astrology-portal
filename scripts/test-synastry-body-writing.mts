@@ -103,6 +103,14 @@ try {
     contact.sourceSnapshot.knowledgeSources = [{ path: change.sourcePath, sha256: hash(bytes), record }];
     const ready = await prepareSynastryBodyWriting(contact, selection);
     assert.equal(ready.request.input.split(record.plainTranslation).length - 1, 1);
+    for (const facet of record.interpretiveDetail.facets) assert(ready.request.input.includes(facet.meaning));
+    for (const example of record.interpretiveDetail.examples) {
+      assert(ready.request.input.includes(example.setting));
+      assert(ready.request.input.includes(example.illustrates));
+      for (const response of Object.values(example.planetResponses)) assert(ready.request.input.includes(response as string));
+    }
+    assert(ready.instructions.includes('Hypothetical examples are optional teaching illustrations'));
+    assert(ready.instructions.includes('not a checklist or prose order'));
     assert(!ready.request.input.includes(record.advice));
     assert(ready.request.input.includes(`Address the ${record.planetB} person as you. The other person owns ${record.planetA}.`));
     for (const reference of [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries, ...syntheticLatestTen().entries]) {

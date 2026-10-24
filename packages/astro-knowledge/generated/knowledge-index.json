@@ -486773,7 +486773,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_opposition.json",
-          "sourceSha256": "51d3919a2e4e98c27e8a32f8fb0ed8071d93bbc86518d860d0a5f614df11b60a"
+          "sourceSha256": "614cfca0730c8c88b9b8aef68adf2d2d70e34e62a484c7a16153fcae6b00d0e3"
         },
         {
           "store": "phrasebank",
@@ -486810,7 +486810,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_sextile.json",
-          "sourceSha256": "7ac1d36d99b1de3fc1be6589d62086d1b1b8cd8be606995f76f45ee648595d51"
+          "sourceSha256": "f7cbd0fad5e9c6a04e930a023d56aaa747fb4f1919792d8ed27a369b44f6cac4"
         },
         {
           "store": "phrasebank",
@@ -486847,7 +486847,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_square.json",
-          "sourceSha256": "e3a5f994f3c0cac48c957175b0f09e63a485e349cfff10f5f63e0b38755801a9"
+          "sourceSha256": "c3e1ec18c9a2a983e3f2d6d422995326e27f6d6b06bd6959ca8354f2e2ff4b3f"
         },
         {
           "store": "phrasebank",
@@ -486884,7 +486884,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_trine.json",
-          "sourceSha256": "ffa306e5b24d5e98f9d6da4c8b5f57590107ff02f49c43651ca97bae5acf12b1"
+          "sourceSha256": "857339a86ea89cddfb9607d9c23ecced159399cf4b57a48c13be3b4add70b1af"
         },
         {
           "store": "phrasebank",
@@ -487956,7 +487956,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-mercury_opposition.json",
-          "sourceSha256": "063b4694c78232324c19e31cfa718e77d90e81d81ccce7e8493638f628560a6d"
+          "sourceSha256": "b622366b88ce674d9bd35b1c946c4f73446dddcbae846fa51e2947b71ab10498"
         },
         {
           "store": "phrasebank",
@@ -488030,7 +488030,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-mercury_square.json",
-          "sourceSha256": "dea0133f9bb2ca0941be9d917b0d61b456828ba81096db8f06c03732e30536d6"
+          "sourceSha256": "157ac65cf29851aa24d5e18f90efde91178a8054bcb6c38c2ea126f7aeb4fcee"
         },
         {
           "store": "phrasebank",
@@ -488961,7 +488961,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_opposition.json",
-          "sourceSha256": "9551484870f9e14dd195b8a1cd5b2777e77401a8a202c11e0ebd294cb5e4d796"
+          "sourceSha256": "53729b85e53a809d5d3526afa196bc307b87219bdc01e6f94f9860e0443ecbcf"
         },
         {
           "store": "phrasebank",
@@ -488998,7 +488998,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_sextile.json",
-          "sourceSha256": "141f0620cbc0ec838dd83e7d932d37d933ece4cf5f2c785f3fbfe7f2cf2d16a0"
+          "sourceSha256": "3d106bcf05a4cba1c9ed727405b7406d9d806b5f45980a3bbb802df2979a6e8d"
         },
         {
           "store": "phrasebank",
@@ -489035,7 +489035,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_square.json",
-          "sourceSha256": "7161028d67e8db2f342b8a413a7853b6c2560488c48d2c4e6af1b86663436e9b"
+          "sourceSha256": "b2ae6f9ff68aab801fe3a80dd47f933e28b2b2019a4845afedec806f0f37fa06"
         },
         {
           "store": "phrasebank",
@@ -489072,7 +489072,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mars_B-saturn_trine.json",
-          "sourceSha256": "14ca980f0d9ffbe00fd39b05330c38f5b7429f452de89ae67d68fb4defd9fab6"
+          "sourceSha256": "1b0046eea8b5ae978a316415ebf74d876d074b7ead03ee441430fa7b97ccc06d"
         },
         {
           "store": "phrasebank",
@@ -490451,7 +490451,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_opposition.json",
-          "sourceSha256": "0b488ee0bab96e08f96983317052ae90ee80ebe5ba90c45897810e8ab49098ca"
+          "sourceSha256": "f4f19b1cc9adb6445973aedd9e2e4b702f8ab00bb9937d842662aea266934659"
         },
         {
           "store": "phrasebank",
@@ -490525,7 +490525,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_square.json",
-          "sourceSha256": "3e03b1fba507fdd5a15f439fa81ea6405e34ac8e202a1683010a7310d04e99ce"
+          "sourceSha256": "61053fb02ec8d5078c51d631e9eba1bfd328bc29e773c369cff916be6de64737"
         },
         {
           "store": "phrasebank",
@@ -505274,7 +505274,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_opposition.json",
-          "sourceSha256": "5f68da9aa5bb93a31469431cceb2a696002ea53f2953d214c7f98fcaa897838a"
+          "sourceSha256": "7640775f46b4145a3b2df8a94d213a624732fd177d217e81cbca8d767f8419b8"
         },
         {
           "store": "phrasebank",
@@ -505311,7 +505311,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_sextile.json",
-          "sourceSha256": "3835790ce9819353b572976931bd3299ebaf7bdc77950806c212a4e08d61b264"
+          "sourceSha256": "28043e0aaba17fe6cad960926149e86d86c2962b9bf70789bcdfba27f092a7c0"
         },
         {
           "store": "phrasebank",
@@ -505348,7 +505348,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_square.json",
-          "sourceSha256": "e29741a67408ff87435ba551c9c4a6010feea05994deabe6792654ba18b3c811"
+          "sourceSha256": "26012aa593dcce9010b0675aaeada1737e9e93e5ddda148e110a2ed2bf7a0fd0"
         },
         {
           "store": "phrasebank",
@@ -505385,7 +505385,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-saturn_B-mars_trine.json",
-          "sourceSha256": "0c5dd6f25906371b6dcb82f5632d3a26d058eef3616288acb5072ea19ee3321f"
+          "sourceSha256": "892f062ce2542b80872fe1bcd163b3b64e5eeb7d49287e6266c15d9d699aaf19"
         },
         {
           "store": "phrasebank",
@@ -513192,7 +513192,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_opposition.json",
-          "sourceSha256": "a275bc7c32386ff3e7cf2913f7a897cd25672aaa832b3e3efc50592f8cbbbe3b"
+          "sourceSha256": "68734f3a87f672857b5f26b94adbf8a75a4e132df52c8c7d85db010fa2e3224c"
         },
         {
           "store": "phrasebank",
@@ -513229,7 +513229,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_sextile.json",
-          "sourceSha256": "0af274f91f68eff6f543bc1e1ca4d153c8509d542579380ab0690a04119045ea"
+          "sourceSha256": "78efe6ec0b1169be5d088e209ac73a562c8cf472a93b59d83196ad37d27624c6"
         },
         {
           "store": "phrasebank",
@@ -513266,7 +513266,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_square.json",
-          "sourceSha256": "5191d9ae7614bfe82a5d6aebf0f6ae9e2f4febe086fe136f4b67e240191847b7"
+          "sourceSha256": "d9327041d7d29974294dc699b49b03dd6a168f821485d40d57e7eb1b55c5f794"
         },
         {
           "store": "phrasebank",
@@ -513303,7 +513303,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/synastry/aspects/A-venus_B-jupiter_trine.json",
-          "sourceSha256": "4928e31fad6e911436e011a3709c4454fab7974ea9764154685717e072a582d3"
+          "sourceSha256": "ad250dc86d3a63b77f2f1c0f6289b2d2bc394abeac6dcf7029876bacf2224225"
         },
         {
           "store": "phrasebank",
@@ -543925,7 +543925,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "77aad7859d274e1b6ba4f30bfaf24bffc5aa9da8d158ea1d2fc2b5c896d43ace",
+    "contentSha256": "71bf47b5ec17a49d8c1af2c3a22fb5db41cd571d66fa72010301c42ea72f360d",
     "distinctSourceFiles": 3457
   }
 }

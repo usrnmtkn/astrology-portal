@@ -105,7 +105,7 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v12-2026-10-23'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v13-2026-10-24'));
   assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
   assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
@@ -199,6 +199,15 @@ try {
       for (const stage of requests.slice(start).filter(item => ['tldr_astro_meaning_plan', 'tldr_astro_generated_content'].includes(item.kind))) {
         const sent = stage.provider === 'openai' ? stage.body.input : stage.body.messages[0].content[0].text;
         assert(sent.includes(record.plainTranslation), `Complete repaired meaning reaches ${provider}: ${record.id}`);
+        for (const facet of record.interpretiveDetail.facets) assert(sent.includes(facet.meaning));
+        for (const example of record.interpretiveDetail.examples) {
+          assert(sent.includes(example.setting));
+          assert(sent.includes(example.illustrates));
+          for (const response of Object.values(example.planetResponses)) assert(sent.includes(response as string));
+        }
+        const instructions = stage.provider === 'openai' ? stage.body.instructions : stage.body.system;
+        assert(instructions.includes('Hypothetical examples are optional teaching illustrations'));
+        assert(instructions.includes('not a checklist or prose order'));
         assert(!sent.includes(record.advice), 'The complete separated advice remains outside the request.');
         assert(!sent.includes('Channel it into a shared project'));
         assert(!sent.includes('Aim the drive at a concrete, long-term goal'));
@@ -220,6 +229,23 @@ try {
     }
   }
   nextDraft = draft;
+  const detailRecord = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_square.json', import.meta.url), 'utf8'));
+  for (const provider of ['openai', 'claude'] as const) {
+    for (const field of ['comparison', 'owner', 'aspect', 'example']) {
+      const record = structuredClone(detailRecord);
+      if (field === 'comparison') record.interpretiveDetail.comparison = 'transit_to_natal';
+      if (field === 'owner') record.interpretiveDetail.people.personA.planet = 'incorrect-planet';
+      if (field === 'aspect') record.interpretiveDetail.aspectExpression.aspect = 'incorrect-aspect';
+      if (field === 'example') record.interpretiveDetail.examples[0].status = 'known_event';
+      const start = requests.length;
+      const held = await generate({ ...base, provider,
+        facts: { planetA: 'mercury', planetB: 'mars', aspect: 'square', personA: 'Rowan', personB: 'you', readerPerson: 'B' },
+        sourceSnapshot: { knowledgeSources: [{ record }] } });
+      assert.notEqual(held.statusCode, 200);
+      assert.match(held.result.error, /SYNASTRY_KNOWLEDGE_CONTEXT_CONFLICT/);
+      assert.equal(requests.length, start, 'Inconsistent detailed scope, ownership or example roles stop before either provider.');
+    }
+  }
   for (const provider of ['openai', 'claude'] as const) {
     for (const variant of [base, { ...base, eventType: 'aspect', facts: { ...base.facts, blockType: undefined } },
       { ...base, mode: 'feed', contentKey: 'fixture/synastry-moon-trine-venus', knowledgeIds: ['synastry-moon-trine-venus'],
@@ -315,7 +341,7 @@ try {
     const generated = await generate({ ...sourceFixture, provider });
     assert.equal(generated.statusCode, 200);
     const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-    assert.equal(receipt.editorialVersion, 'synastry-aspect/v12-2026-10-23');
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v13-2026-10-24');
     assert.equal(receipt.readerPerson, 'B');
     assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
     assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
