@@ -94,6 +94,7 @@ try {
       'sky-season-fallback/sun/scorpio/future','fallback-vocab/planet-topic/sun','cc/sign/future/actions'].map((content_key,index)=>({
         ...originalRows[0],content_key,state:index===1?'retired':'live',row_id:index===1?null:content_key
       })) as any);
+    rows.push({...originalRows[0],content_key:'sky.aspect.sun.square.mars',state:'live'});
     rows.sort((a,b)=>a.content_key<b.content_key?-1:1);
     requests=[];
     const scoped=await invoke(undefined,'GET',scopeUrl);
@@ -101,6 +102,10 @@ try {
     const scopedRows=JSON.parse(scoped.body!).publications;
     assert.equal(JSON.parse(scoped.body!).schema,'tldr-sky-list-publications/v1');
     assert.deepEqual(scopedRows,canonicalPublicationLedger(rows.filter(row=>isSkyListPublicationKey(row.content_key))));
+    assert(!scopedRows.some((row:any)=>row.content_key==='sky.aspect.sun.square.mars'),'Deferred aspect articles retain the full publication path.');
+    assert(JSON.parse((await invoke()).body!).publications.some((row:any)=>row.content_key==='sky.aspect.sun.square.mars'),'The full reader still receives every aspect publication.');
+    requests=[];
+    await invoke(undefined,'GET',scopeUrl);
     assert(scopedRows.some((row:any)=>row.state==='retired'),'Retirements remain in the scoped proof.');
     assert.equal(requests.length,8,'The smaller response still verifies all upstream ranges/pages.');
     assert.equal((await invoke(scoped.headers.etag,'GET',scopeUrl)).status,304);

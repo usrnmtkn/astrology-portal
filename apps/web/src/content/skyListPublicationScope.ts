@@ -3,7 +3,8 @@
  * Articles, Calendar and personal readers still require the full ledger.
  */
 export function isSkyListPublicationKey(key: string) {
-  // Legacy event aliases use flat/dotted Sky keys. Cover the whole Sky family
-  // so a new ingress alias cannot restart the full unrelated ledger download.
-  return /^(?:sky[./-]|fallback-(?:vocab|template)\/|fallback-hook\/(?:sky-|transit-retro\/|dignity-line\/)|cc\/(?:planet|sign)\/|cms\/(?:sky-|lunation-article\/)|authored\/sky-lunation-macro\/)/u.test(key);
+  // Retain flat/dotted legacy event aliases across all signs. Aspect articles
+  // belong to the full reader and have their own complete publication check.
+  return !/^(?:sky[./-]aspect[./-]|fallback-hook\/sky-aspect-)/u.test(key)
+    && /^(?:sky[./-]|fallback-(?:vocab|template)\/|fallback-hook\/(?:sky-|transit-retro\/|dignity-line\/)|cc\/(?:planet|sign)\/|cms\/(?:sky-|lunation-article\/)|authored\/sky-lunation-macro\/)/u.test(key);
 }

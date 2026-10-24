@@ -376,8 +376,12 @@ let localReaderSupportBundle: FallbackArchitectureV3Bundle | null = null;
 let readerSupportPromise: Promise<void> | null = null;
 function loadReaderSupportBundle() {
   if (localReaderSupportBundle) return Promise.resolve();
-  readerSupportPromise ??= import('./fallbackArchitectureV3/deferred-reader-support-transport-v1.json').then(({ default: rows }) => {
-    localReaderSupportBundle = readerEligibleBundle({ transitLib: { authoredCards: rows.authoredCards }, templatesFile: { templates: rows.templates }, rowsFile: rows });
+  readerSupportPromise ??= Promise.all([
+    import('./fallbackArchitectureV3/deferred-reader-support-transport-v1.json'),
+    import('./fallbackArchitectureV3ReaderAuthored')
+  ]).then(([{ default: rows }, { readerAuthoredCards }]) => {
+    const authoredCards = [...new Map([...rows.authoredCards, ...readerAuthoredCards].map(row => [row.contentKey, row])).values()];
+    localReaderSupportBundle = readerEligibleBundle({ transitLib: { authoredCards }, templatesFile: { templates: rows.templates }, rowsFile: rows });
     recomposeReaderBundle();
   }).catch(error => { readerSupportPromise = null; throw error; });
   return readerSupportPromise;

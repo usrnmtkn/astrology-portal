@@ -22,7 +22,10 @@ const initialVocabulary = row => /^fallback-vocab\/(?:sky-|planet-function\/|pla
 const initialTemplate = row => row.contentKey === 'fallback-template/sky-placement-frame-v3';
 const initial = { authoredCards: [], hookRows: hooks.filter(neededOnList),
   vocabularyRows: vocabulary.filter(initialVocabulary), templates: reader.templates.filter(initialTemplate) };
-const support = { authoredCards: latest([...authored.authoredCards, ...reader.authoredCards]),
+// The original initial-reader module is also consumed synchronously by the
+// weekly reader. Reuse that module at the full-reader boundary, rather than
+// embedding a second copy of its complete authored passages here.
+const support = { authoredCards: authored.authoredCards,
   hookRows: hooks.filter(row => !neededOnList(row)), vocabularyRows: vocabulary.filter(row => !initialVocabulary(row)),
   templates: reader.templates.filter(row => !initialTemplate(row)) };
 if (new Set([...initial.hookRows, ...support.hookRows].map(row => row.contentKey)).size !== hooks.length) throw new Error('Sky core transport must preserve the complete source inventory.');

@@ -4,7 +4,7 @@ export const publicationLedgerBoundaries = [null, "authored/compat-pair/s", "aut
   "authored/transit-house-sign/s", "fallback-hook/n", "sky-placement", null] as const;
 
 import { isRetiredCompositionKey } from "./fallbackArchitectureV3/resolver/retiredCompositions.mjs";
-import { isSkyListPublicationKey } from "./skyListPublicationScope";
+import { isSkyListPublicationKey } from "./skyListPublicationScope.js";
 /** Shared lifecycle identity. A retirement survives deletion of its editable row. */
 export type ContentPublication = {
   content_key: string;

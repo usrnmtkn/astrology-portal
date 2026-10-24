@@ -26,7 +26,7 @@ for(const [field,expected] of [['vocabularyRows',allVocabulary],['templates',rea
  assert.equal(restored.size,expected.length);
  for(const row of expected)assert.deepEqual(restored.get(row.contentKey),row);
 }
-assert.deepEqual([...initial.authoredCards,...support.authoredCards],latest([...authored.authoredCards,...reader.authoredCards]));
+assert.deepEqual(latest([...initial.authoredCards,...support.authoredCards,...reader.authoredCards]),latest([...authored.authoredCards,...reader.authoredCards]));
 const joined=new Map([...initial.hookRows,...support.hookRows].map(row=>[row.contentKey,row]));
 const hooks=latest([...source.hookRows,...reader.hookRows]);
 assert.equal(joined.size,hooks.length);
@@ -56,6 +56,7 @@ try {
   await baseline[loader]();
   for(const row of hooks)for(const voice of ['you','they'])assert.equal(runtime.fallbackV3HookBody(row.contentKey,voice),baseline.fallbackV3HookBody(row.contentKey,voice),`${loader}/${row.contentKey}/${voice}: complete text matches unchanged main.`);
   for(const row of allVocabulary)assert.equal(runtime.fallbackV3VocabularyBody(row.contentKey),baseline.fallbackV3VocabularyBody(row.contentKey));
+  for(const row of latest([...authored.authoredCards,...reader.authoredCards]))assert.deepEqual(runtime.transitV3AuthoredCardForContentKey(row.contentKey),baseline.transitV3AuthoredCardForContentKey(row.contentKey),`${loader}/${row.contentKey}: complete authored unit is preserved.`);
  }
 } finally {await fs.rm(temp,{recursive:true,force:true});}
 console.log('PASS: complete source union and hashes, smaller startup, every full unit/voice through five actual full-reader loaders matches unchanged main; separate list readiness.');

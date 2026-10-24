@@ -11,7 +11,6 @@ import re
 import fontTools
 from fontTools.ttLib import TTFont
 from fontTools.varLib.instancer import instantiateVariableFont
-from fontTools import subset
 from fontTools.pens.recordingPen import DecomposingRecordingPen
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -19,7 +18,6 @@ FONTS = ROOT / "apps/web/src/assets/fonts"
 CSS = ROOT / "apps/web/src/styles/reader-fonts.css"
 SOURCE = FONTS / "newsreader-latin.woff2"
 ORIGINAL_RANGE = "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
-BASIC_RANGE = "U+0000-007F, U+00A0, U+00B0, U+2010-2027, U+202F, U+2032-2033, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
 
 def codepoints(value):
     result = set()
@@ -44,20 +42,12 @@ def sha(data):
 original_bytes = SOURCE.read_bytes()
 original = TTFont(BytesIO(original_bytes), recalcTimestamp=False)
 allowed = codepoints(ORIGINAL_RANGE) & set(original.getBestCmap())
-basic = codepoints(BASIC_RANGE) & allowed
-groups = [("newsreader-latin-basic.woff2", basic), ("newsreader-latin-additional.woff2", allowed - basic)]
+groups = [("newsreader.woff2", allowed)]
 outputs = []
 max_deviation = 0
 for name, characters in groups:
     font = instantiateVariableFont(TTFont(BytesIO(original_bytes), recalcTimestamp=False), {"wght": (400, 500)}, inplace=True, optimize=False)
-    options = subset.Options()
-    options.name_IDs = ["*"]
-    options.name_languages = ["*"]
-    options.layout_features = ["*"]
-    options.glyph_names = True
-    subsetter = subset.Subsetter(options=options)
-    subsetter.populate(unicodes=characters)
-    subsetter.subset(font)
+    # Retain every glyph and shaping table together, including accented kerning.
     font.flavor = "woff2"
     font.save(FONTS / name)
     decoded = TTFont(FONTS / name, recalcTimestamp=False)
@@ -86,16 +76,15 @@ for name, characters in groups:
     data = (FONTS / name).read_bytes()
     outputs.append({"file": name, "sha256": sha(data), "bytes": len(data), "characters": sorted(characters), "unicodeRange": css_range(characters)})
 
-assert set(outputs[0]["characters"]).isdisjoint(outputs[1]["characters"])
-assert set(outputs[0]["characters"]) | set(outputs[1]["characters"]) == allowed
-faces = "\n".join(f"""/* Newsreader: Latin {'basic' if index == 0 else 'additional'} */
+assert set(outputs[0]["characters"]) == allowed
+faces = "\n".join(f"""/* Newsreader: Latin */
 @font-face {{
   font-family: 'Newsreader';
   font-style: normal;
   font-weight: 400 500;
   font-display: swap;
   src: url(../assets/fonts/{item['file']}) format('woff2');
-  unicode-range: {item['unicodeRange']};
+  unicode-range: {ORIGINAL_RANGE};
 }}""" for index, item in enumerate(outputs))
 block = "/* BEGIN generated Newsreader Latin transports */\n" + faces + "\n/* END generated Newsreader Latin transports */"
 css = CSS.read_text()

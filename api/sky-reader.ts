@@ -4,7 +4,7 @@ import skyHandler, { readSkyCalculationInputs } from "./sky.js";
 import publicationsHandler from "./content-publications.js";
 import readerHandler from "./content-reader.js";
 import { canonicalPublicationLedger, publicationLedgerTag } from "../apps/web/src/services/publicationLedgerTransport.js";
-import { publicationAllowsContent, type ContentPublication } from "../apps/web/src/content/contentPublicationState.js";
+import { publicationAllowsContent } from "../apps/web/src/content/contentPublicationState.js";
 import type { SkySnapshot } from "../apps/web/src/types.js";
 import type { GeneratedContentRow } from "../apps/web/src/services/generatedContent.js";
 import { lunationReaderContentKeys } from "../apps/web/src/content/lunationArticleIdentity.js";
@@ -24,7 +24,7 @@ async function readPublic(handler: Handler, request: object) {
  * No owner session, private row, writing provider or production write is used.
  */
 export function createInitialSkyReaderHandler(readRows = (query: { ids: string[]; keys: string[] }) =>
-  readPublic(readerHandler, { method: "POST", url: "/api/content-reader", headers: {}, body: query })) {
+  readPublic(readerHandler, { method: "POST", url: "/api/content-reader", headers: {}, body: query }), assemblyTimeoutMs = 5_000) {
 return async function handler(req: IncomingMessage, res: ServerResponse) {
   res.setHeader("content-type", "application/json");
   res.setHeader("cache-control", "private, no-store");
@@ -37,13 +37,21 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
   } catch {
     res.statusCode = 400; res.end(JSON.stringify({ error: "Invalid initial Sky inputs." })); return;
   }
-  const publications = readPublic(publicationsHandler, { method: "GET", url: "/api/content-publications?scope=sky-list", headers: {} });
+  const started = performance.now();
+  const timings: string[] = [];
+  const timed = async <T,>(name: string, work: Promise<T>) => {
+    const start = performance.now();
+    try { return await work; } finally { timings.push(`${name};dur=${(performance.now() - start).toFixed(1)}`); }
+  };
+  const publications = timed("publications", readPublic(publicationsHandler, { method: "GET", url: "/api/content-publications?scope=sky-list", headers: {} }));
   void publications.catch(() => {});
-  const calculated = await readPublic(skyHandler, { method: "GET", url: req.url, headers: {} });
+  const calculated = await timed("sky", readPublic(skyHandler, { method: "GET", url: req.url, headers: {} }));
   if (calculated.status !== 200) { res.statusCode = calculated.status; res.end(JSON.stringify(calculated.value)); return; }
   const sky = calculated.value.sky as SkySnapshot;
   let initialReader: unknown = null;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
   try {
+    const assembly = (async () => {
     const ledgerResponse = await publications;
     if (ledgerResponse.status !== 200 || ledgerResponse.value.schema !== "tldr-sky-list-publications/v1") throw new Error("Sky lifecycle unavailable.");
     const ledger = canonicalPublicationLedger(ledgerResponse.value.publications);
@@ -61,19 +69,29 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
       const batch = current.slice(index, index + 100);
       pages.push(readRows({ ids: [...new Set(batch.map(row => row.row_id!))], keys: batch.map(row => row.content_key) }));
     }
-    const responses = await Promise.all(pages);
+    const responses = await timed("rows", Promise.all(pages));
     if (responses.some(response => response.status !== 200 || response.value.schema !== "content-reader-row-v1"
       || response.value.nextCursor !== null || !Array.isArray(response.value.rows))) throw new Error(`Sky reader rows unavailable (${responses.map(response => `${response.status}:${response.value.error ?? response.value.schema}`).join(", ")}).`);
     const rows = responses.flatMap(response => response.value.rows) as GeneratedContentRow[];
     if (rows.some(row => !publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date, byKey))) throw new Error("Sky source revision changed.");
-    const previews = await renderInitialSkyReader(sky, rows, ledger);
+    const previews = await timed("render", renderInitialSkyReader(sky, rows, ledger));
     const sources = rows.filter(row => sharedKey(row.content_key));
     const digest = createHash("sha256").update(JSON.stringify([sky, previews, ledger, sources])).digest("hex");
-    initialReader = { schema: "tldr-initial-sky-reader/v1", previews, publications: ledger,
+    return { schema: "tldr-initial-sky-reader/v1", previews, publications: ledger,
       publicationTag: await publicationLedgerTag(ledger), sources, digest };
+    })();
+    // Optional assembly cannot consume the existing eight-second facts deadline.
+    // Failure returns verified facts and leaves ordinary source readiness intact.
+    initialReader = await Promise.race([assembly, new Promise<never>((_, reject) => {
+      timeout = setTimeout(() => reject(new Error("Initial assembly deadline exceeded.")),
+        Math.max(1, assemblyTimeoutMs - (performance.now() - started)));
+    })]);
   } catch (error) {
     console.warn("Initial Sky assembly unavailable; the normal source loader remains required.", error instanceof Error ? error.message : "Unknown source error.");
+  } finally {
+    clearTimeout(timeout);
   }
+  res.setHeader("server-timing", timings.join(", "));
   res.statusCode = 200;
   res.end(JSON.stringify({ sky, initialReader }));
 }
