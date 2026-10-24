@@ -1,4 +1,5 @@
 import { getSupabaseClient } from "./auth";
+import { publicReaderConfigurationPresent } from "./publicReaderConfiguration";
 import { installContentPublications, validContentPublication, publicationLedgerReady, publicationLedgerBoundaries } from "../content/contentPublicationState";
 
 let pending: Promise<void> | null = null;
@@ -37,6 +38,18 @@ export async function refreshContentPublications(force = false, readRelay?: () =
         checkedAt = Date.now();
         return;
       } catch { /* Older/offline deployments retain the existing direct read. */ }
+    }
+    if (publicReaderConfigurationPresent) {
+      try {
+        const transport = await import("./anonymousReaderTransport");
+        if (transport.anonymousReaderAvailable()) {
+          const rows = await transport.loadAnonymousPublicationLedger();
+          installContentPublications(rows, "complete-live");
+          resolved = completedOnline = true;
+          checkedAt = Date.now();
+          return;
+        }
+      } catch { /* Preserve the existing SDK/offline recovery on transport failure. */ }
     }
     const client = await getSupabaseClient();
     // Unconfigured local readers have no remote publication plane to resolve.

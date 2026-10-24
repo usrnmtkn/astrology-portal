@@ -1303,6 +1303,34 @@ async function expectAspectInspector(
 }
 
 test.describe("client-facing user flow case studies", () => {
+  test("anonymous Sky joins a new cross-tab session and clears it on sign-out", async ({ page }) => {
+    test.setTimeout(60_000);
+    await seedClientState(page);
+    await seedSignedInSession(page, { storeSession: false });
+    let verifications = 0;
+    await page.route("**/auth/v1/user", route => {
+      verifications++;
+      return route.fulfill({ json: fixtureAuthUser });
+    });
+    await page.goto("/#sky");
+    await expect(page.getByLabel("Daily sky summary", { exact: true })).toHaveAttribute("aria-busy", "false");
+    expect(verifications).toBe(0);
+    await page.evaluate(({ key, user }) => {
+      const value = JSON.stringify({ access_token: "fixture-new-session", refresh_token: "fixture-refresh", expires_at: Math.floor(Date.now()/1000)+3600, token_type: "bearer", user });
+      localStorage.setItem(key, value);
+      window.dispatchEvent(new StorageEvent("storage", { key, newValue: value }));
+    }, { key: supabaseAuthStorageKey(), user: fixtureAuthUser });
+    await expect.poll(() => verifications).toBeGreaterThan(0);
+    await page.getByRole("button", { name: "Open menu", exact: true }).click();
+    await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toBeVisible();
+    await page.evaluate(key => {
+      localStorage.removeItem(key);
+      window.dispatchEvent(new StorageEvent("storage", { key, newValue: null }));
+    }, supabaseAuthStorageKey());
+    await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toHaveCount(0);
+    if (!await page.getByRole("menuitem", { name: "Login", exact: true }).isVisible()) await page.getByRole("button", { name: "Open menu", exact: true }).click();
+    await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeVisible();
+  });
   test("guest can read the current sky and open a detail article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 

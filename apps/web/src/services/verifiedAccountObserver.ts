@@ -1,14 +1,17 @@
-import { getAuthAccount, isAuthSessionStorageKey, onAuthAccountChange } from "./auth";
+import { getAuthAccount, isAuthSessionStorageKey, onAuthAccountChange, onAuthClientRequested } from "./auth";
 
 export type VerifiedAccountState = { id: string | null; checked: boolean; error: boolean };
 
 // Auth callbacks are signals, not verification. Keep nested SDK calls outside
 // its auth lock, and invalidate old responses before resolving a new account.
-export function observeVerifiedAccount(notify: (state: VerifiedAccountState) => void) {
+export function observeVerifiedAccount(notify: (state: VerifiedAccountState) => void, options?: { deferUntilAuthRequested?: boolean }) {
   let generation = 0;
   let disposed = false;
   let id: string | null = null;
+  let active = false;
+  let unsubscribe = () => {};
   const recover = () => {
+    if (!active) return;
     const version = ++generation;
     void getAuthAccount().then((account) => {
       if (disposed || version !== generation) return;
@@ -18,7 +21,7 @@ export function observeVerifiedAccount(notify: (state: VerifiedAccountState) => 
       if (!disposed && version === generation) notify({ id: null, checked: true, error: true });
     });
   };
-  const unsubscribe = onAuthAccountChange((account, event) => {
+  const changed: Parameters<typeof onAuthAccountChange>[0] = (account, event) => {
     if (event === "INITIAL_SESSION") return;
     if (event === "SIGNED_OUT" || account?.id !== id) {
       ++generation;
@@ -26,9 +29,18 @@ export function observeVerifiedAccount(notify: (state: VerifiedAccountState) => 
       notify({ id: null, checked: event === "SIGNED_OUT", error: false });
     }
     if (event !== "SIGNED_OUT") queueMicrotask(recover);
-  });
+  };
+  const activate = () => {
+    if (active || disposed) return;
+    active = true;
+    unsubscribe = onAuthAccountChange(changed);
+    recover();
+  };
+  const stopWaiting = options?.deferUntilAuthRequested ? onAuthClientRequested(activate) : () => {};
   const storage = (event: StorageEvent) => {
     if (!isAuthSessionStorageKey(event.key)) return;
+    // A session created in another tab still requires real user verification.
+    if (!active && event.newValue) activate();
     let nextId: string | null = null;
     try { nextId = JSON.parse(event.newValue ?? "null")?.user?.id ?? null; } catch { /* Invalid storage is unverified. */ }
     if (nextId !== id) {
@@ -44,10 +56,11 @@ export function observeVerifiedAccount(notify: (state: VerifiedAccountState) => 
   window.addEventListener("online", recover);
   window.addEventListener("storage", storage);
   document.addEventListener("visibilitychange", visible);
-  recover();
+  if (!options?.deferUntilAuthRequested) activate();
   return () => {
     disposed = true;
     ++generation;
+    stopWaiting();
     unsubscribe();
     window.removeEventListener("focus", recover);
     window.removeEventListener("pageshow", recover);

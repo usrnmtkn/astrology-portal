@@ -3,6 +3,7 @@ import handler from '../api/sky';
 import { getAstrodienstSky, getLunarCalendarWeek } from '../apps/web/src/services/ephemeris';
 import { getSkyFromApi, getSkyOnlineFirst } from '../apps/web/src/services/skyApi';
 import SwissEph from 'swisseph-wasm';
+import { readCachedSkySnapshot, writeCachedSkySnapshot, scopedSkySnapshotCacheKey } from '../apps/web/src/services/verifiedSkyCache';
 const json = (value: unknown) => JSON.parse(JSON.stringify(value));
 const swe = new SwissEph(); await swe.initSwissEph();
 const fixtures = [
@@ -35,6 +36,23 @@ for(const fixture of fixtures) {
   const calendar=await getLunarCalendarWeek(location,new Date(at),{detail:'full'});
   const day=new Intl.DateTimeFormat('en-CA',{timeZone:location.timeZone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(at));
   assert.deepEqual(sky.dailyEvents,json(calendar.days.find(d=>d.dateKey===day)?.events));
+  const list=await invoke(`/api/sky?${params}&detail=placements`);
+  assert.equal(list.status,200);
+  assert.equal(list.payload.sky.calculationDetail,'placements');
+  assert.deepEqual(list.payload.sky.positions,sky.positions,'List mode retains every complete placement window, station, shadow and residency fact.');
+  assert.deepEqual(list.payload.sky.aspects,sky.aspects.map(({timing,exactAt,series,...aspect}:any)=>aspect),'Only the undisplayed aspect timelines and their exact-pass series are deferred.');
+  for(const key of ['moonStatus','moonSignTransition','moonEvent','solarDaylight','dailyEvents']) assert.deepEqual(list.payload.sky[key],sky[key],`${key} remains complete.`);
+  assert.equal(list.headers['cache-control'],'private, no-store','An exact live instant is never approximated or cached under another time.');
+  const items=new Map<string,string>();
+  const storage={get length(){return items.size;},getItem:(key:string)=>items.get(key)??null,setItem:(key:string,value:string)=>{items.set(key,value);},removeItem:(key:string)=>{items.delete(key);},key:(index:number)=>[...items.keys()][index]??null};
+  const key='synthetic-full',listKey=scopedSkySnapshotCacheKey(key,'placements');
+  assert.equal(writeCachedSkySnapshot(key,list.payload.sky,{storage}),false,'A placement snapshot cannot populate a full-consumer cache.');
+  assert.equal(writeCachedSkySnapshot(listKey,list.payload.sky,{storage}),true);
+  assert.equal(readCachedSkySnapshot(listKey,{storage})?.calculationDetail,'placements');
+  items.set(key,JSON.stringify({...JSON.parse(items.get(listKey)!),cacheKey:key}));
+  assert.equal(readCachedSkySnapshot(key,{storage}),null,'Even a misplaced partial envelope cannot satisfy a full cache read.');
+  assert.equal(writeCachedSkySnapshot(key,sky,{storage}),true);
+  assert.equal(readCachedSkySnapshot(key,{storage})?.calculationDetail,'full');
   assert.equal(result.headers['cache-control'],'private, no-store');
 }
 for(const query of ['','at=invalid','at=2026-09-21T16:00:00Z&lat=91&lon=0&version=tldrastro-calculation-v3',
@@ -50,7 +68,7 @@ try {
   for(const corrupt of [ (s:any)=>{s.generatedAt='2026-09-20T16:00:00.000Z';}, (s:any)=>{s.location.longitude=0;},
     (s:any)=>{s.calculationProvenance.nodeType='mean';},
     (s:any)=>{s.calculationProvenance.lilithType='mean';},(s:any)=>{s.calculationProvenance.returnedEphemerisFlags=[4];},
-    (s:any)=>{s.dailyEvents=undefined;},(s:any)=>{s.positions[0].transitEnd=undefined;}]) {
+    (s:any)=>{s.dailyEvents=undefined;},(s:any)=>{s.positions[0].transitEnd=undefined;},(s:any)=>{s.calculationDetail='placements';}]) {
     const sky=structuredClone(first.sky);corrupt(sky);globalThis.fetch=async()=>new Response(JSON.stringify({sky}));
     await assert.rejects(getSkyFromApi(first.location,first.date),/incomplete or mismatched/);
   }

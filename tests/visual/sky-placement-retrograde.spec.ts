@@ -130,7 +130,7 @@ test("both retrograde endpoints survive standalone aspect rendering", async ({ p
 
 test("missing canonical Rx content never exposes direct-only placement prose", async ({ page }) => {
   test.setTimeout(90_000);
-  await page.route("**/sky-v4-canonical-content-studio-stage-v1*.json", route => route.abort());
+  await page.route("**/canonical-sky-reader-transport-v1*.json", route => route.abort());
   await page.goto("/?date=2026-09-07#sky/placement/neptune/aries");
   await expect(page.getByText("The placement reading could not load. Please try again.")).toBeVisible({ timeout: 60_000 });
   await expect(page.locator("#sky-detail-title")).toHaveCount(0);

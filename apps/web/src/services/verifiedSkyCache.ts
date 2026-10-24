@@ -51,6 +51,7 @@ export function isVerifiedSkySnapshot(value: unknown): value is SkySnapshot {
   const returnedEphemerisFlags = snapshot.calculationProvenance?.returnedEphemerisFlags;
 
   return typeof snapshot.generatedAt === "string"
+    && (snapshot.calculationDetail === undefined || ["core", "placements", "full"].includes(snapshot.calculationDetail))
     && Number.isFinite(Date.parse(snapshot.generatedAt))
     && typeof snapshot.ascendant === "string"
     && typeof snapshot.midheaven === "string"
@@ -97,6 +98,16 @@ function isCacheRecord(value: unknown, cacheKey: string): value is VerifiedSkyCa
     && typeof record.verifiedAt === "string"
     && Number.isFinite(Date.parse(record.verifiedAt))
     && isVerifiedSkySnapshot(record.snapshot);
+}
+
+function snapshotScopeMatchesKey(snapshot: SkySnapshot, cacheKey: string) {
+  return cacheKey.endsWith(":placements")
+    ? snapshot.calculationDetail === "placements"
+    : snapshot.calculationDetail !== "placements";
+}
+
+export function scopedSkySnapshotCacheKey(cacheKey: string, detail: "placements" | "full") {
+  return detail === "placements" ? `${cacheKey}:placements` : cacheKey;
 }
 
 function removeQuietly(storage: StorageLike, cacheKey: string) {
@@ -172,7 +183,7 @@ export function readCachedSkySnapshot(
     const raw = storage.getItem(cacheKey);
     const parsed = raw ? JSON.parse(raw) : null;
 
-    if (!isCacheRecord(parsed, cacheKey)) {
+    if (!isCacheRecord(parsed, cacheKey) || !snapshotScopeMatchesKey(parsed.snapshot, cacheKey)) {
       removeQuietly(storage, cacheKey);
       return null;
     }
@@ -217,7 +228,7 @@ export function writeCachedSkySnapshot(
   } = {}
 ) {
   const storage = options.storage ?? browserStorage();
-  if (!storage || !isVerifiedSkySnapshot(snapshot)) {
+  if (!storage || !isVerifiedSkySnapshot(snapshot) || !snapshotScopeMatchesKey(snapshot, cacheKey)) {
     return false;
   }
 

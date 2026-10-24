@@ -72,6 +72,8 @@ export type SkyPlacementAspectFacts = {
 export type SkySnapshot = {
   solarHorizon?: import("./solarHorizon.js").SolarHorizon;
   sharedNatalSect?: import("./solarHorizon.js").SharedNatalSect;
+  /** Placement-list snapshots retain every placement window; full aspect timelines are deferred. */
+  calculationDetail?: "core" | "placements" | "full";
   dailyEvents?: import("../../apps/web/src/services/ephemeris").LunarCalendarEvent[];
   placementAspectFacts?: SkyPlacementAspectFacts;
   location: LocationInput;

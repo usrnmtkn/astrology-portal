@@ -377,6 +377,13 @@ for (const { width, hasEdition, account, flow } of cases) {
             history.pushState({}, '', url); window.dispatchEvent(new PopStateEvent('popstate'));
           });
           await expect.poll(() => newSkyHeld).toBe(true);
+          // Closing the article may already have started the old day's list
+          // calculation. Observe the changed selection before capturing its URL.
+          if (flow === 'date') await expect.poll(() => new URL(newSkyUrl).searchParams.get('at')).toContain('2026-10-13');
+          else await expect.poll(() => {
+            const url = new URL(newSkyUrl);
+            return [url.searchParams.get('lat'), url.searchParams.get('lon'), url.searchParams.get('timeZone')];
+          }).toEqual(['-5.5', '-105.5', 'America/Los_Angeles']);
           const requested = new URL(newSkyUrl);
           if (flow === 'date') {
             expect(requested.searchParams.get('at')).toContain('2026-10-13');

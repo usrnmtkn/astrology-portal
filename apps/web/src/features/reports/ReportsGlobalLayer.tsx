@@ -77,7 +77,7 @@ export function ReportsGlobalLayer() {
         notifiedThisSessionRef.current.clear();
       }
       if (id) void refresh();
-    });
+    }, { deferUntilAuthRequested: true });
     const timer = window.setInterval(() => {
       if (document.visibilityState === "visible") void refresh();
     }, pollIntervalMs);

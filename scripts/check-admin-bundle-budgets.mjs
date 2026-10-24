@@ -62,6 +62,9 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
     ? [`${metric}: ${formatBytes(measurements[metric])} (${measurements[metric]} bytes) exceeds ${formatBytes(limit)} (${limit} bytes) by ${measurements[metric] - limit} bytes`]
     : []
 ));
+if (Object.keys(manifest).some(key => key.endsWith('/anonymousReaderTransport.ts'))) {
+  failures.push('Standalone Studio includes the public reader startup transport.');
+}
 
 const editorGuidanceAsset = path.join(distRoot, "generated/admin-fallback-hook-editor-guidance-v1.json");
 if (!fs.existsSync(editorGuidanceAsset)) {

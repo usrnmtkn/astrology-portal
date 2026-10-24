@@ -12,10 +12,11 @@ import { withRequestDeadline } from "./requestDeadline";
 const pending = new Map<string, Promise<SkySnapshot>>();
 
 /** Share exact inputs only. Never reuse an earlier live instant or another location. */
-export function getSkyFromApi(location: LocationInput, date: Date, complete = true): Promise<SkySnapshot> {
+export function getSkyFromApi(location: LocationInput, date: Date, complete: boolean | "placements" = true): Promise<SkySnapshot> {
+  const detail = complete === "placements" ? complete : complete ? "full" : "core";
   const params = new URLSearchParams({ at: date.toISOString(), lat: String(location.latitude),
     lon: String(location.longitude), timeZone: location.timeZone || "UTC",
-    version: ASTROLOGY_CALCULATION_CONTRACT.calculationVersion, detail: complete ? "full" : "core" });
+    version: ASTROLOGY_CALCULATION_CONTRACT.calculationVersion, detail });
   const key = params.toString();
   let request = pending.get(key);
   if (!request) {
@@ -24,6 +25,8 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete = tr
       if (!response.ok) throw new Error("Sky API unavailable.");
       const { sky } = await response.json() as { sky: SkySnapshot };
       if (!isVerifiedSkySnapshot(sky) || sky.generatedAt !== date.toISOString()
+        || sky.calculationDetail !== undefined && sky.calculationDetail !== detail
+        || detail === "placements" && sky.calculationDetail !== detail
         || sky.calculationProvenance?.nodeType !== ASTROLOGY_CALCULATION_CONTRACT.nodeType
         || sky.location.latitude !== location.latitude || sky.location.longitude !== location.longitude
         || sky.location.timeZone !== (location.timeZone || "UTC")
@@ -38,7 +41,7 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete = tr
   return request.then(sky => ({ ...sky, location }));
 }
 
-export async function getSkyOnlineFirst(location: LocationInput, date: Date, complete = true) {
+export async function getSkyOnlineFirst(location: LocationInput, date: Date, complete: boolean | "placements" = true) {
   try {
     return await getSkyFromApi(location, date, complete);
   } catch {
@@ -47,19 +50,20 @@ export async function getSkyOnlineFirst(location: LocationInput, date: Date, com
   }
 }
 
-async function getSkyLocally(location: LocationInput, date: Date, complete: boolean) {
+async function getSkyLocally(location: LocationInput, date: Date, complete: boolean | "placements") {
   const { getAstrodienstSkyOffMainThread } = await import("./skyCalculationClient");
-  return getAstrodienstSkyOffMainThread(location, date, { includeTransitWindows: complete });
+  return getAstrodienstSkyOffMainThread(location, date, { includeTransitWindows: Boolean(complete), includeAspectTiming: complete !== "placements" });
 }
 
 export type InitialSkyLoad = {
+  detail?: "placements" | "full";
   day: string;
   location: LocationInput;
   date: Date;
   live: boolean;
   startedAt: number;
   result: Promise<SkySnapshot | null>;
-  matches: (day: string, location: LocationInput) => InitialSkyLoad | null;
+  matches: (day: string, location: LocationInput, detail?: "placements" | "full") => InitialSkyLoad | null;
   resolve: () => Promise<SkySnapshot>;
 };
 
@@ -73,19 +77,22 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const location = withTimeZone(getInitialLocation().location);
   const now = new Date();
   const date = skyDateTimeFromInput(day, location, true, now);
-  const result = getSkyFromApi(location, date).catch(() => null);
-  // The complete authored package is needed for every Sky selection. Fetch its
-  // shared assets during App's download instead of waiting for React to mount.
-  // The mounted source gate still owns validation, publication selection and retry.
-  void import("../content/skyPlacementSourceAssets").then(({ loadSkyPlacementSourceAssets }) =>
-    loadSkyPlacementSourceAssets()).catch(() => {});
+  const detail = !url.hash || /^#\/?sky\/?$/u.test(url.hash) ? "placements" : "full";
+  const result = getSkyFromApi(location, date, detail === "placements" ? detail : true).catch(() => null);
+  // Direct articles benefit from early sources. On the list, let App mount and
+  // start the selected publication reads before large source downloads compete.
+  // The mounted source gate still requires the same complete package.
+  if (url.hash && !/^#\/?sky\/?$/u.test(url.hash)) {
+    void import("../content/canonicalSkyReaderAssets").then(({ loadCanonicalSkyReaderAssets }) =>
+      loadCanonicalSkyReaderAssets()).catch(() => {});
+  }
   let calculation: Promise<SkySnapshot> | undefined;
   const initial: InitialSkyLoad = {
-    day, location, date, live: Boolean(liveSkyReference(day, location.timeZone, now)), startedAt: performance.now(), result,
-    matches: (selectedDay, selectedLocation) => matchingInitialSkyLoad(initial, selectedDay, selectedLocation),
+    day, location, date, detail, live: Boolean(liveSkyReference(day, location.timeZone, now)), startedAt: performance.now(), result,
+    matches: (selectedDay, selectedLocation, selectedDetail) => matchingInitialSkyLoad(initial, selectedDay, selectedLocation, selectedDetail),
     resolve: () => calculation ??= result.then(async snapshot => {
       if (snapshot) return snapshot;
-      return getSkyLocally(location, date, true);
+      return getSkyLocally(location, date, detail === "placements" ? detail : true);
     })
   };
   return initial;
@@ -93,8 +100,8 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
 
 /** Never apply a preloaded response to a changed location, date or clock mode.
  * Bound live adoption by monotonic time, including a delayed/suspended mount. */
-export function matchingInitialSkyLoad(initial: InitialSkyLoad | null, day: string, location: LocationInput): InitialSkyLoad | null {
-  if (!initial || initial.day !== day || initial.location.latitude !== location.latitude
+export function matchingInitialSkyLoad(initial: InitialSkyLoad | null, day: string, location: LocationInput, detail: "placements" | "full" = "full"): InitialSkyLoad | null {
+  if (!initial || (initial.detail ?? "full") !== detail || initial.day !== day || initial.location.latitude !== location.latitude
     || initial.location.longitude !== location.longitude || initial.location.timeZone !== location.timeZone
     || initial.live !== Boolean(liveSkyReference(day, location.timeZone))
     || performance.now() - initial.startedAt > 10_000) return null;
