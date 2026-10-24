@@ -877,6 +877,9 @@
   --container-calendar-content: 1080px;
   --container-narrow: 1120px;
   --container-article: 1140px;
+  /* Embedded reader pages use the same spacing scale within a bounded viewport. */
+  --reader-preview-height: min(80dvh, calc(var(--size-8) * 12));
+  --reader-preview-compact-height: min(50dvh, calc(var(--size-8) * 8));
   --learn-page-bg: #f2f2f4;
   --learn-ink: #1c1f26;
   --learn-ink-secondary: #5b6270;

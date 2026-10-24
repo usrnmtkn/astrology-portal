@@ -47,6 +47,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       const memory=editor.getByLabel('Studio memory corrections');
       await memory.locator('summary').first().click();
       await expect(memory).toContainText('No captured corrections');
+      await editor.getByLabel('Dated article variable target').selectOption('tldr');
       await editor.getByLabel('Sky article TL;DR',{exact:true}).fill('Synthetic revised summary. Complete final sentence.');
       await expect(editor.locator('.admin-sky-article-editor header')).toContainText('Saved');
       const savedRevision=(await call({method:'rows'})).find((row:any)=>row.status==='DRAFT'&&row.sections?.skyArticleRevisionBase);
@@ -56,6 +57,7 @@ for (const width of [390,1440]) for (const colorScheme of ['light','dark'] as co
       await page.reload();
       await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',colorScheme);
       await page.locator('.admin-content-row').filter({hasText:savedRevision.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+      await editor.getByLabel('Dated article variable target').selectOption('tldr');
       await expect(editor.getByLabel('Sky article TL;DR',{exact:true})).toHaveValue('Synthetic revised summary. Complete final sentence.');
       await expect(editor.getByRole('button',{name:'Review & publish',exact:true})).toBeVisible();
       // Observe beyond the autosave debounce: saved differences from the live

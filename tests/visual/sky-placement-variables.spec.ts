@@ -5,7 +5,7 @@ import { servingPackageRecords } from "../../api/_lib/content-live-status";
 
 const key = "sky-placement/article/saturn/aries";
 const template = "Fixture {{planetTitle}} in {{signTitle}}, {{motion}}. Entry: {{entryDate}}.";
-for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+for (const width of [390, 730, 1440]) for (const theme of ["light", "dark"]) {
  test(`Sky variable insertion and named template ${width} ${theme}`, async ({ page }) => {
   const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
   await page.setViewportSize({ width, height: 1000 });
@@ -74,42 +74,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     else expect(row.definition.x).toBeGreaterThan(row.term.x);
     if (index) expect(row.top).toBeGreaterThanOrEqual(rowsGeometry[index - 1].bottom);
   }
-  const phraseKey = editor.getByLabel("Editable phrase variables");
-  if (!(await phraseKey.evaluate(el => el.hasAttribute("open")))) await phraseKey.locator(":scope > summary").click();
-  const planetLanguage = phraseKey.locator("details").filter({ has: page.locator(":scope > summary").filter({ hasText: /^Planet language$/ }) });
-  if (!(await planetLanguage.evaluate(el => el.hasAttribute("open")))) await planetLanguage.locator(":scope > summary").click();
-  const phraseRows = planetLanguage.locator("tbody tr");
-  await expect(phraseRows.first()).toBeVisible();
-  const phraseGeometry = await phraseRows.evaluateAll(rows => rows.slice(0, 4).map(row => {
-    const term = row.querySelector("th")!.getBoundingClientRect();
-    const definition = row.querySelector("td")!.getBoundingClientRect();
-    const bounds = row.getBoundingClientRect();
-    const style = getComputedStyle(row.querySelector("th")!);
-    const token = row.querySelector("th code") as HTMLElement | null;
-    return {
-      term: { x: term.x, bottom: term.bottom },
-      definition: { x: definition.x, y: definition.y },
-      top: bounds.top, bottom: bounds.bottom,
-      padding: parseFloat(style.paddingLeft),
-      color: token?.getAttribute("data-variable-color") ?? "",
-      background: token ? getComputedStyle(token).backgroundColor : "",
-      label: row.querySelector("th p")?.textContent ?? "",
-      status: row.querySelector("small")?.textContent ?? ""
-    };
-  }));
-  const phraseBackgrounds = new Set(phraseGeometry.map(row => row.background));
-  expect(phraseBackgrounds.size).toBeGreaterThanOrEqual(2);
-  for (const [index, row] of phraseGeometry.entries()) {
-    expect(row.padding).toBe(16);
-    expect(row.color).toMatch(/^[1-6]$/);
-    expect(row.label).toMatch(/^[A-Z].+\. /);
-    expect(row.status).toMatch(/^(Empty|Loaded)$/);
-    expect(row.label + row.status).not.toMatch(/descriptorEmpty|functionLoaded/u);
-    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(0);
-    else expect(row.definition.x).toBeGreaterThan(row.term.x);
-    if (index) expect(row.top).toBeGreaterThanOrEqual(phraseGeometry[index - 1].bottom);
-  }
-  await phraseKey.screenshot({ path: `test-results/sky-phrase-variable-key-${width}-${theme}.png` });
+  await expect(editor.getByLabel('Editable phrase variables')).toHaveCount(0);
+  await expect(editor.getByLabel('Sky variable type').locator('option[value=writing]')).toHaveCount(0);
   for (const label of ["Source history and validation", "Aspects and horoscopes"]) {
     const summary = editor.locator("summary").filter({ hasText: new RegExp(`^${label}$`) });
     const disclosure = summary.locator("..");
@@ -129,10 +95,28 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(disclosure).not.toHaveAttribute("open");
   }
   await expect(editor.getByRole("alert")).toHaveCount(0);
+  const search=editor.getByLabel('Find Sky variable',{exact:true});
+  await search.fill('entry date');
+  await expect(variableKey.locator('tbody tr')).toHaveCount(1);
+  await expect(variableKey).toContainText('Needs calculated occurrence');
+  await editor.getByLabel('Sky variable availability',{exact:true}).selectOption('ready');
+  await expect(editor.getByRole('status').filter({hasText:'No matching Sky variables'})).toBeVisible();
+  await editor.getByRole('button',{name:'Clear variable filters',exact:true}).click();
+  await search.fill('zodiac sign');
+  await expect(variableKey.locator('tbody tr')).toHaveCount(1);
+  await expect(variableKey).toContainText('Aries');
   await editor.getByRole("button", { name: "Insert {{signTitle}}", exact: true }).click();
   await expect(writing).toHaveValue("Before {{signTitle}} after");
   await expect(writing).toBeFocused();
   expect(await writing.evaluate((el: HTMLTextAreaElement) => el.selectionStart)).toBe(20);
+  await editor.getByRole('button',{name:'Clear variable filters',exact:true}).click();
+  await editor.getByLabel('Only variables used in this section',{exact:true}).check();
+  await expect(variableKey.locator('tbody tr')).toHaveCount(1);
+  await expect(variableKey).toContainText('{{signTitle}}');
+  await editor.getByLabel('Only variables used in this section',{exact:true}).uncheck();
+  await editor.getByRole('group',{name:'Sky variable filters',exact:true}).screenshot({path:`test-results/sky-variable-filters-${width}-${theme}.png`});
+  await page.screenshot({path:`test-results/sky-variable-filters-viewport-${width}-${theme}.png`});
+
   await editor.getByText("Preview this section", { exact: true }).click();
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("Before Aries after");
   await writing.fill("{{unknown}}");
@@ -145,6 +129,44 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await openVariableKey();
   await writing.fill("{{planetTitle}} in {{signTitle}}");
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("Saturn in Aries");
+  const phraseKey = editor.getByLabel("Editable phrase variables");
+  if (!(await phraseKey.evaluate(el => el.hasAttribute("open")))) await phraseKey.locator(":scope > summary").click();
+  const planetLanguage = phraseKey.locator("details").filter({ has: page.locator(":scope > summary").filter({ hasText: /^Planet language$/ }) });
+  if (!(await planetLanguage.evaluate(el => el.hasAttribute("open")))) await planetLanguage.locator(":scope > summary").click();
+  const phraseRows = planetLanguage.locator("tbody tr");
+  await expect(phraseRows.first()).toBeVisible();
+  const phraseGeometry = await phraseRows.evaluateAll(rows => rows.slice(0, 4).map(row => {
+    const term = row.querySelector("th")!.getBoundingClientRect();
+    const definition = row.querySelector("td")!.getBoundingClientRect();
+    const bounds = row.getBoundingClientRect();
+    const style = getComputedStyle(row.querySelector("th")!);
+    const token = row.querySelector("th code") as HTMLElement | null;
+    return {
+      term: { x: term.x, bottom: term.bottom },
+      definition: { x: definition.x, y: definition.y },
+      top: bounds.top, bottom: bounds.bottom,
+      padding: parseFloat(style.paddingLeft),
+      color: token?.getAttribute("data-variable-color") ?? "",
+      background: token ? getComputedStyle(token).backgroundColor : "",
+      label: row.querySelector("th > span")?.textContent ?? "",
+      visibleText: (row as HTMLElement).innerText,
+      status: row.querySelector("small")?.textContent ?? ""
+    };
+  }));
+  const phraseBackgrounds = new Set(phraseGeometry.map(row => row.background));
+  expect(phraseBackgrounds.size).toBeGreaterThanOrEqual(2);
+  for (const [index, row] of phraseGeometry.entries()) {
+    expect(row.padding).toBe(16);
+    expect(row.color).toMatch(/^[1-6]$/);
+    expect(row.label).toMatch(/^[A-Z].+/);
+    expect(row.status).toMatch(/^(Empty|Loaded)$/);
+    expect(row.visibleText).not.toMatch(/descriptorEmpty|functionLoaded/u);
+    if (width < 720) expect(row.definition.y - row.term.bottom).toBeGreaterThanOrEqual(0);
+    else expect(row.definition.x).toBeGreaterThan(row.term.x);
+    if (index) expect(row.top).toBeGreaterThanOrEqual(phraseGeometry[index - 1].bottom);
+  }
+  await phraseKey.screenshot({ path: `test-results/sky-phrase-variable-key-${width}-${theme}.png` });
+
   for (const name of ["planetTitle", "signTitle"]) {
     const badge = variableKey.locator("code", { hasText: `{{${name}}}` });
     const previewVariable = editor.locator(`.admin-sky-writing-preview [title^="{{${name}}}"]`);

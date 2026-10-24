@@ -7,7 +7,7 @@ import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-list
 // older path, so every list came back empty as soon as the Studio moved to the inventory endpoint.
 type StudioApiCall = (message: { method: string; body?: unknown; url?: string }) => Promise<any>;
 
-export async function routeStudioInventoryApi(page: Page, options: {
+export async function routeStudioInventoryApi(page: Pick<Page, "route">, options: {
   call: StudioApiCall;
   listRows?: (rows: any[]) => any[];
   onWrite?: (write: { body: any; result: any }) => void;

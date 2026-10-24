@@ -27,7 +27,11 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
         const filtered = rows.filter((row:any)=>query.getAll('content_key').every(value => value.startsWith('gte.') ? row.content_key>=value.slice(4) : value.startsWith('lt.') ? row.content_key<value.slice(3) : true));
         return route.fulfill({json:filtered});
       });
-      await context.route('**/api/calendar?**',route=>route.fulfill({json:{ok:true,calendar}}));
+      await context.route('**/api/calendar?**',async route=>{
+        const selected = new URL(route.request().url()).searchParams.get('date') ?? date;
+        const selectedCalendar = selected === date ? calendar : await getLunarCalendarMonth(location, new Date(`${selected}T16:00:00Z`));
+        await route.fulfill({json:{ok:true,calendar:selectedCalendar}});
+      });
       await context.route('**/api/content-reader', async route => {
         const result=await store.call({method:'POST',body:route.request().postDataJSON(),url:'/api/content-reader'});
         await route.fulfill({status:result.status,json:result.payload});
@@ -47,11 +51,52 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await page.setViewportSize({width,height:1000});
       await page.goto('/admin/content#calendar-writeups');
       const editor=page.getByRole('region',{name:'Assembled Calendar passage',exact:true});
+      const openPanel=async (name:string)=>{const panel=editor.locator('details').filter({has:page.locator(':scope > summary').filter({hasText:name})}).first();if(await panel.getAttribute('open')===null) await panel.locator(':scope > summary').click();};
       await editor.getByLabel('Passage date',{exact:true}).fill(date);
       await editor.getByLabel('Passage time zone',{exact:true}).fill(location.timeZone);
       await editor.getByRole('button',{name:'Load passage',exact:true}).click();
       const field=editor.getByRole('textbox',{name:'Complete passage wording',exact:true});
       await expect(field).toBeVisible({timeout:60000});
+      const timing = editor.getByRole('group',{name:'Moon timing for selected day',exact:true});
+      for (const selected of ['2026-10-21', '2026-10-22', '2026-10-23']) {
+        await editor.getByLabel('Passage date',{exact:true}).fill(selected);
+        await expect(timing).toBeHidden();
+        await editor.getByRole('button',{name:'Load passage',exact:true}).click();
+        await expect(field).toBeVisible({timeout:60000});
+        await editor.getByText('Source and Moon timing',{exact:true}).click();
+        await expect(timing).toBeVisible();
+        await expect(timing).toContainText('America/New_York',{timeout:60000});
+        expect(await timing.locator('dt').allTextContents()).toEqual(selected === '2026-10-22'
+          ? ['Day starts in:', 'Change today:', 'Next change:', 'Reader Moon sign at noon:']
+          : ['Day starts in:', 'Change today:', 'Reader Moon sign at noon:']);
+        if (selected === '2026-10-21') {
+          await expect(timing).toContainText('Day starts in: Aquarius');
+          await expect(timing).toContainText('Change today: Aquarius → Pisces · Oct 21, 2026, 8:35 AM EDT');
+          await expect(timing).toContainText('Reader Moon sign at noon: Pisces');
+          await editor.getByText('Insert a variable',{exact:true}).click();
+          await editor.getByLabel('Find passage variable',{exact:true}).fill('start of day');
+          await expect(editor.getByLabel('Passage variable',{exact:true})).toHaveValue('moonSign');
+          await expect(editor.getByLabel('Selected passage variable')).toContainText('Moon sign at start of day');
+          await expect(editor.getByLabel('Selected passage variable')).toContainText('departing sign');
+          const styles = await editor.locator('.studio-variable-description').evaluateAll(nodes => nodes.map(node => {
+            const style=getComputedStyle(node.querySelector('p')!);
+            return [style.fontFamily,style.fontSize,style.lineHeight,style.letterSpacing];
+          }));
+          expect(styles[0]).toEqual(styles[1]);
+          await timing.evaluate(node=>node.scrollIntoView({block:'center'}));
+          await timing.screenshot({path:`test-results/calendar-moon-timing-${width}-${theme}.png`});
+          await page.screenshot({path:`test-results/calendar-moon-timing-viewport-${width}-${theme}.png`});
+          await editor.getByRole('button',{name:'Clear variable search',exact:true}).click();
+        } else {
+          await expect(timing).toContainText('Day starts in: Pisces');
+          await expect(timing).toContainText('Reader Moon sign at noon: Pisces');
+          await expect(timing).toContainText('Pisces → Aries · Oct 23, 2026, 3:53 PM EDT');
+          if (selected === '2026-10-22') await expect(timing).toContainText('No Moon sign change this local day.');
+        }
+      }
+      await editor.getByLabel('Passage date',{exact:true}).fill(date);
+      await editor.getByRole('button',{name:'Load passage',exact:true}).click();
+      await expect(field).toBeEnabled({timeout:60000});
       if (width === 1440 && theme === 'light') {
         const key = 'authored/sky-lunation-macro/full-moon/aries';
         const result = await store.call({method:'GET',url:'/api/admin/generated-content?' + new URLSearchParams({contentKeys:key,status:'LIVE',limit:'200'})});
@@ -91,7 +136,7 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       });
       await page.mouse.click(target.x,target.y);
       await expect(editor.getByRole('textbox',{name:'Sun summary wording',exact:true})).toBeFocused();
-      await editor.getByRole('button',{name:'Edit Moon passage',exact:true}).click();
+      await editor.getByLabel('Calendar editing section',{exact:true}).selectOption({label:'Moon passage'});
       await expect(sectionField).toBeFocused();
       await expect(sectionField).toHaveValue(selected);
       await expect(field).toBeHidden();
@@ -100,13 +145,59 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       expect(await editor.locator('textarea[aria-label="Complete passage wording"]').inputValue()).toBe(originalTemplate.slice(0,sectionStart)+'Synthetic selected section.'+originalTemplate.slice(sectionEnd));
       await page.keyboard.press('ControlOrMeta+z');
       await expect(sectionField).toHaveValue(selected);
+      await editor.getByText('Insert a variable',{exact:true}).click();
+      const variableSearch=editor.getByLabel('Find passage variable',{exact:true});
+      await variableSearch.fill('moon sign');
+      await expect(editor.getByLabel('Passage variable',{exact:true})).toHaveValue('moonSign');
+      await expect(editor.getByLabel('Selected passage variable')).toContainText('Calculated value');
+      await editor.getByLabel('Selected passage variable').getByText('Current value',{exact:true}).click();
+      await expect(editor.getByLabel('Selected passage variable')).toContainText('Aries');
+      await editor.getByRole('group',{name:'Passage variable picker',exact:true}).screenshot({path:`test-results/calendar-variable-picker-${width}-${theme}.png`});
+      await page.screenshot({path:`test-results/calendar-variable-picker-viewport-${width}-${theme}.png`});
+
+      await variableSearch.fill('no such variable fixture');
+      await expect(editor.getByRole('button',{name:'Insert variable at cursor',exact:true})).toBeDisabled();
+      await expect(editor.getByRole('status').filter({hasText:'No matching passage variables'})).toBeVisible();
+      await editor.getByRole('button',{name:'Clear variable search',exact:true}).click();
+      await editor.getByLabel('Include unavailable variables',{exact:true}).check();
+      await variableSearch.fill('hasFullMoon');
+      await expect(editor.getByLabel('Passage variable',{exact:true})).toHaveValue('hasFullMoon');
+      await sectionField.evaluate((node:HTMLTextAreaElement)=>node.setSelectionRange(0,10));
+      await editor.getByRole('button',{name:'Wrap selection in condition',exact:true}).click();
+      await expect(sectionField).toHaveValue('{{#hasFullMoon}}'+selected.slice(0,10)+'{{/hasFullMoon}}'+selected.slice(10));
+      expect(await sectionField.evaluate((node:HTMLTextAreaElement)=>node.value.slice(node.selectionStart,node.selectionEnd))).toBe(selected.slice(0,10));
+      await sectionField.fill(selected);
+      await editor.getByRole('button',{name:'Clear variable search',exact:true}).click();
+      await editor.getByLabel('Include unavailable variables',{exact:true}).uncheck();
+      // Both insertion entry points respect the active section and selection.
+      await sectionField.evaluate((node:HTMLTextAreaElement)=>node.setSelectionRange(0,0));
+      await editor.getByLabel('Passage variable',{exact:true}).selectOption('moonSign');
+      await editor.getByRole('button',{name:'Insert variable at cursor',exact:true}).click();
+      await expect(sectionField).toBeFocused();
+      await expect(sectionField).toHaveValue('{{moonSign}}'+selected);
+      expect(await editor.locator('textarea[aria-label="Complete passage wording"]').inputValue()).toBe(originalTemplate.slice(0,sectionStart)+'{{moonSign}}'+selected+originalTemplate.slice(sectionEnd));
+      await sectionField.fill(selected);
+      await sectionField.evaluate((node:HTMLTextAreaElement)=>node.setSelectionRange(0,0));
+      await editor.getByText('Sources and variables',{exact:true}).click();
+      await editor.getByRole('button',{name:'Insert Moon sign at start of day',exact:true}).click();
+      await expect(sectionField).toHaveValue('{{moonSign}}'+selected);
+      await expect(sectionField).toBeFocused();
+      await sectionField.fill(selected);
+      await editor.getByText('Sources and variables',{exact:true}).click();
       const save=editor.getByRole('button',{name:'Save draft',exact:true});
       const fieldBox=await sectionField.boundingBox();
       const saveBox=await save.boundingBox();
       expect(saveBox!.y-fieldBox!.y-fieldBox!.height).toBeLessThan(140);
       await sectionField.evaluate((node:HTMLTextAreaElement)=>{node.setSelectionRange(0,0);node.blur();});
       await editor.locator('.studio-calendar-template-editor').screenshot({path:`test-results/calendar-focused-editor-${width}-${theme}.png`});
+      await editor.getByText('Template details',{exact:true}).click();
       await editor.getByRole('button',{name:'Edit complete template',exact:true}).click();
+      await expect(field).toHaveValue(originalTemplate);
+      await editor.getByRole('button',{name:'Move Moon passage earlier',exact:true}).click();
+      await expect(editor.getByLabel('Template passage sections').locator('li').first()).toContainText('Moon passage');
+      const moved = await field.inputValue();
+      expect(moved.indexOf('{{#moonWriteup}}')).toBeLessThan(moved.indexOf('{{#sunSummary}}'));
+      await editor.getByRole('button',{name:'Move Moon passage later',exact:true}).click();
       await expect(field).toHaveValue(originalTemplate);
       await field.press('ControlOrMeta+End');
       await expect.poll(()=>field.evaluate((node:HTMLTextAreaElement)=>Math.abs(node.scrollTop-(node.parentElement!.querySelector('.studio-highlighted-backdrop') as HTMLElement).scrollTop))).toBeLessThan(2);
@@ -130,15 +221,16 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await editor.locator('.studio-calendar-template-editor').screenshot({path:`test-results/calendar-template-colors-${width}-${theme}.png`});
       await page.evaluate(()=>window.scrollTo(0,0));
       await page.screenshot({fullPage:true,path:`test-results/calendar-template-colors-page-${width}-${theme}.png`});
-      const copy='{{#moonWriteup}}Synthetic opening for {{moonSign}}.\n\nComplete synthetic ending.\n\n[Read more](?date=2026-09-26#sky/lunation/2026-09-26/aries){{/moonWriteup}}';
+      const copy='{{#moonWriteup}}Synthetic opening for {{moonSign}}.\n\n{{#hasFullMoon}}Conditional synthetic wording.{{/hasFullMoon}}Complete synthetic ending.\n\n[Read more](?date=2026-09-26#sky/lunation/2026-09-26/aries){{/moonWriteup}}';
+      await editor.getByRole('button',{name:'Draft',exact:true}).click();
       await field.fill('{{#moonWriteup}}Synthetic starter.{{/moonWriteup}}');
       await editor.getByRole('button',{name:'Edit Moon passage',exact:true}).click();
       await sectionField.fill(copy.slice('{{#moonWriteup}}'.length,-'{{/moonWriteup}}'.length));
       await expect(editor.getByLabel('Assembled passage preview')).toContainText('Synthetic opening for Aries.');
-      await expect(editor.getByLabel('Assembled passage preview').locator('p')).toHaveCount(3);
+      await expect(editor.getByLabel('Assembled passage preview').locator('p').filter({hasText:/synthetic|Read more/i})).toHaveCount(3);
       await expect(editor.getByLabel('Assembled passage preview').getByRole('link',{name:'Read more'})).toHaveAttribute('href','/?date=2026-09-26#sky/lunation/2026-09-26/aries');
       await editor.getByRole('button',{name:'Save draft',exact:true}).click();
-      await expect(editor.getByRole('status')).toContainText('Draft saved.');
+      await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Draft saved.');
       await expect(sectionField).toBeVisible();
       await page.reload();
       await editor.getByLabel('Passage date',{exact:true}).fill(date);
@@ -146,25 +238,27 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await editor.getByRole('button',{name:'Load passage',exact:true}).click();
       await expect(field).toHaveValue(copy,{timeout:60000});
       await editor.getByRole('button',{name:'Publish passage',exact:true}).click();
-      await expect(editor.getByRole('status')).toContainText('Published.');
+      await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Published.');
       const reader=await context.newPage();
       await emptyLastKnownGoodSnapshot(reader);
       await reader.goto(`/?date=${date}#calendar?view=day&date=${date}`);
       await expect(reader.getByLabel('Selected lunar day',{exact:true})).toContainText('Complete synthetic ending.',{timeout:60000});
       await expect(reader.getByLabel('Selected lunar day',{exact:true})).toContainText('Synthetic opening for Aries.');
+      await expect(reader.getByLabel('Selected lunar day',{exact:true})).not.toContainText('Conditional synthetic wording.');
       const revised='Synthetic revised opening.\n\nComplete revised ending.';
       await field.fill(revised);
       await editor.getByRole('button',{name:'Save draft',exact:true}).click();
-      await expect(editor.getByRole('status')).toContainText('Draft saved.');
+      await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Draft saved.');
       await reader.reload();
       await expect(reader.getByLabel('Selected lunar day',{exact:true})).toContainText('Complete synthetic ending.',{timeout:60000});
       await expect(reader.getByLabel('Selected lunar day',{exact:true})).not.toContainText('Complete revised ending.');
       await editor.getByRole('button',{name:'Publish passage',exact:true}).click();
-      await expect(editor.getByRole('status')).toContainText('Published.');
+      await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Published.');
       await reader.goto(`/?date=${date}#calendar?view=week&date=${date}`);
       await reader.getByRole('tablist',{name:'Calendar view'}).getByRole('tab',{name:'Week',exact:true}).click();
       await expect(reader.getByRole('tabpanel',{name:'Week',exact:true})).toBeVisible();
       await expect(reader.getByLabel('Lunar calendar')).toContainText('Complete revised ending.',{timeout:60000});
+      await editor.getByText('Publication and history',{exact:true}).click();
       await editor.getByRole('button',{name:'Version history',exact:true}).click();
       await expect(editor.getByText('Saved versions',{exact:true})).toBeVisible();
       await expect(editor.locator('details details')).not.toHaveCount(0);
@@ -173,22 +267,24 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       const shared='Shared synthetic opening.\n\nShared synthetic final sentence.';
       await field.fill(shared);
       await editor.getByRole('button',{name:'Save draft',exact:true}).click();
-      await expect(editor.getByRole('status')).toContainText('Draft saved.');
+      await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Draft saved.');
       await editor.getByRole('button',{name:'Publish passage',exact:true}).click();
-      await expect(editor.getByRole('status')).toContainText('Published.');
+      await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Published.');
       await editor.getByLabel('Passage editing scope').selectOption('date');
       await expect(field).toHaveValue(revised);
+      await openPanel('Publication and history');
       await editor.getByRole('button',{name:'Use shared template for this date',exact:true}).click();
       await expect(field).toHaveValue(shared);
       await reader.reload();
       await expect(reader.getByLabel('Lunar calendar')).toContainText('Shared synthetic final sentence.',{timeout:60000});
       await expect(reader.getByLabel('Lunar calendar')).not.toContainText('Complete revised ending.');
+      await openPanel('Publication and history');
       await expect(editor.getByRole('button',{name:'Version history',exact:true})).toBeVisible();
       if (width===1440 && theme==='light') {
         const restored='Synthetic new dated opening.\n\nSynthetic new dated final sentence.';
         await field.fill(restored);
         await editor.getByRole('button',{name:'Save draft',exact:true}).click();
-        await expect(editor.getByRole('status')).toContainText('Draft saved.');
+        await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Draft saved.');
         await reader.evaluate(() => localStorage.setItem('tldrastro:content-update', JSON.stringify({contentKey:'calendar-passage/daily/shared',published:true,updatedAt:new Date().toISOString()})));
         await expect(editor.getByRole('note')).toContainText('Your wording has been preserved.');
         await expect(field).toHaveValue(restored);
@@ -196,18 +292,25 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
         await editor.getByRole('button',{name:'Reload saved status',exact:true}).click();
         await expect(field).toHaveValue(restored);
         await editor.getByRole('button',{name:'Publish passage',exact:true}).click();
-        await expect(editor.getByRole('status')).toContainText('Published.');
+        await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Published.');
         await reader.reload();
         await expect(reader.getByLabel('Lunar calendar')).toContainText('Synthetic new dated final sentence.',{timeout:60000});
-        await editor.getByRole('button',{name:'Use shared template for this date',exact:true}).click();
+        await openPanel('Publication and history');
+      await editor.getByRole('button',{name:'Use shared template for this date',exact:true}).click();
         await expect(field).toHaveValue(shared);
       }
+      await editor.getByRole('button',{name:'Draft',exact:true}).click();
       // Invalid slots remain editable but cannot publish; an outage retains the draft.
       await field.fill('{{unknownVariable}}');
-      await expect(editor.getByLabel('Assembled passage preview')).toContainText('Unknown variable');
+      await expect(editor.getByLabel('Calendar publication impact')).toContainText('Unknown variable');
+      await expect(editor.getByLabel('Daily overview impact')).toContainText('Cannot compare');
+      await expect(editor.getByLabel('Moon event card impact')).toContainText('Cannot compare');
+      await expect(editor.getByLabel('Calendar publication impact')).not.toContainText('Unchanged');
       await expect(editor.getByLabel('Template variable key')).toContainText('Unknown variable');
       await expect(editor.getByRole('button',{name:'Publish passage',exact:true})).toBeDisabled();
       await field.fill('');
+      await expect(editor.getByLabel('Daily overview impact')).toContainText('Cannot compare');
+      await expect(editor.getByLabel('Moon event card impact')).toContainText('Cannot compare');
       await expect(editor.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
       await expect(editor.getByLabel('Template variable key')).toHaveCount(0);
       await editor.getByRole('button',{name:'Discard unsaved changes'}).click();
@@ -220,10 +323,10 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await page.unroute('**/api/admin/generated-content');
       await editor.getByLabel('Passage date',{exact:true}).fill('2026-09-29');
       await expect(field).toHaveCount(0);
-      await expect(editor.getByRole('status')).toContainText('Choose Load passage');
+      await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Choose Load passage');
       await editor.getByLabel('Passage date',{exact:true}).fill(date);
       await expect(field).toHaveValue(shared);
-      await editor.getByRole('button',{name:'Sources and variables',exact:true}).click();
+      await editor.getByText('Sources and variables',{exact:true}).click();
       await expect(editor.getByRole('link',{name:'Edit Moon transition and timing templates'})).toHaveAttribute('href','#calendar-writeups?view=moon-transition-phrases');
       const style = (node: Element) => {const c=getComputedStyle(node); return [c.fontFamily,c.fontSize,c.fontWeight,c.lineHeight,c.letterSpacing,c.marginTop,c.marginBottom,c.textTransform,c.textAlign];};
       await page.getByText('Reference templates and source previews',{exact:true}).click();
@@ -245,10 +348,20 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
           await expect(field).toBeVisible({timeout:60000});
           if (view==='weekly') {
             let week=await field.inputValue();
+            const picker=editor.getByLabel('Passage variable',{exact:true});
+            const variable=await picker.inputValue();
+            expect(variable).not.toBe('');
+            expect(variable).not.toBe('date');
+            await field.evaluate((node:HTMLTextAreaElement)=>node.setSelectionRange(0,0));
+            await editor.getByText('Insert a variable',{exact:true}).click();
+          await editor.getByRole('button',{name:'Insert variable at cursor',exact:true}).click();
+            await expect(field).toHaveValue(`{{${variable}}}`+week);
+            await field.fill(week);
             for (const day of ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']) {
               const name=day.toLowerCase()+'Writeup';
               const start=week.indexOf('{{#'+name+'}}')+('{{#'+name+'}}').length;
               const end=week.indexOf('{{/'+name+'}}',start);
+              await openPanel('Template details');
               await editor.getByRole('button',{name:`Edit ${day} Writeup`,exact:true}).click();
               const weekdayField=editor.getByRole('textbox',{name:`${day} Writeup wording`,exact:true});
               await expect(weekdayField).toHaveValue(week.slice(start,end));
@@ -260,15 +373,15 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
             await editor.getByRole('textbox',{name:'Sunday Writeup wording',exact:true}).evaluate((node:HTMLTextAreaElement)=>node.blur());
             await editor.locator('.studio-calendar-template-editor').screenshot({path:`test-results/calendar-weekday-editor-${width}-${theme}.png`});
             await editor.getByRole('button',{name:'Save draft',exact:true}).click();
-            await expect(editor.getByRole('status')).toContainText('Draft saved.');
+            await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Draft saved.');
             await editor.getByRole('button',{name:'Reload saved status',exact:true}).click();
             await expect(field).toHaveValue(week,{timeout:60000});
           }
           await field.fill(`Synthetic ${view} opening.\n\nSynthetic ${view} complete ending.`);
           await editor.getByRole('button',{name:'Save draft',exact:true}).click();
-          await expect(editor.getByRole('status')).toContainText('Draft saved.');
+          await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Draft saved.');
           await editor.getByRole('button',{name:'Publish passage',exact:true}).click();
-          await expect(editor.getByRole('status')).toContainText('Published.');
+          await expect(editor.getByRole('status',{name:'Calendar save status'})).toContainText('Published.');
           await expect(editor.getByRole('link',{name:'Open published Calendar'})).toHaveAttribute('href',`/?date=${date}#calendar?view=${view}&date=${date}`);
           await reader.goto('about:blank');
           await reader.goto(`/?date=${date}#calendar?view=${view}&date=${date}`);

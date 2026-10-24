@@ -53,7 +53,19 @@ try {
     const revision = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, sections: { ...row.sections, packageDraft: { body: body + '\n\nSynthetic second revision.' } }, reviewStatus: 'needs_review' });
     assert.equal(revision.status, 200, JSON.stringify(revision.payload));
     const readBack = await inventory(new URLSearchParams({ contentKey: key }));
-    assert.equal(readBack.payload.rows.length, 1, 'One editable source per ingress after editing a publication.');
+    assert.equal(readBack.payload.rows.length, 2, 'The editable pending revision and complete published source have separate rows.');
+    const pending = revision.payload.rows[0];
+    assert.notEqual(pending.id,row.id);
+    assert.equal(pending.mode,'studio-draft');
+    assert.equal(pending.source_snapshot.targetRowId,row.id);
+    assert.deepEqual(store.rows.get(row.id),row,'Saving a new revision preserves all published fields.');
+    const unchanged = await reader.loadLiveGeneratedContentForKeys([key]);
+    assert.equal(unchanged.get(key)?.body,body,'The actual reader retains the complete publication.');
+    const promoted = await store.invoke('PATCH',{id:pending.id,expectedUpdatedAt:pending.updated_at,ownerAction:'approve-package-revision'});
+    assert.equal(promoted.status,200,JSON.stringify(promoted.payload));
+    assert.equal(promoted.payload.rows[0].id,row.id,'Explicit publication updates the original target.');
+    assert.equal(promoted.payload.rows[0].body,body+'\n\nSynthetic second revision.');
+    assert.equal(store.rows.get(pending.id).status,'ARCHIVED');
   }
   for (const key of ['authored/calendar-moon-transition/aries/pisces', 'authored/calendar-moon-transition/aquarius/unknown']) assert.equal(isCalendarMoonIngressContentKey(key), false);
   const denied = await store.invoke('GET', undefined, '/api/admin/generated-content-inventory?contentKeyPrefix=authored/calendar-moon-transition/', 'invalid');

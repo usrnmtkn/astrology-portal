@@ -318,6 +318,7 @@ if (process.send) process.on('message', async ({ id, method, body, url, headers 
   }
   if (method === 'writing') { process.send!({id,result:await invokeHoroscopeWriting(body,undefined,headers)});return; }
   if (method === 'reader') { const response = await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}); process.send!({id,result:{status:response.status,payload:await response.json()}}); return; }
+  if (method === 'publications') { process.send!({id,result:[...new Map([...fixturePublications([...store.rows.values()]), ...await store.publication.publications()].map(row=>[row.content_key,row])).values()]}); return; }
   process.send!({ id, result: method === 'rows' ? [...store.rows.values()] : await store.invoke(method, body, url) });
  }
  catch (error) { process.send!({ id, error: String(error) }); }

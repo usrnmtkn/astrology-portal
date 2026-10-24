@@ -5,6 +5,16 @@ import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { readStudioCsv, writeStudioCsv } from '../../apps/admin/src/studioCsv';
 import { fixtures as calendarFixtures } from '../helpers/calendar-review-api.mjs';
 
+async function routeCsvInventoryApi(page: Parameters<typeof routeStudioInventoryApi>[0], options: Parameters<typeof routeStudioInventoryApi>[1]) {
+  await routeStudioInventoryApi(page, { ...options, answer: async (route, url) => {
+    if (options.answer && await options.answer(route, url)) return true;
+    if (url.pathname !== '/api/admin/content-live-status') return false;
+    const result = await options.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+    await route.fulfill({ status: result.status, json: result.payload });
+    return true;
+  } });
+}
+
 const fixtures = Array.from({ length: 31 }, (_, index) => ({
   id: `10000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}`, content_key: `content/manual/csv-${index + 1}`,
   headline: `CSV example ${String(index + 1).padStart(2, '0')}`, summary: 'Synthetic summary.',
@@ -31,13 +41,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
         localStorage.setItem('tldrastro:studio-theme', theme);
       }, theme);
-      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
+      await routeCsvInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
         if (url.pathname !== '/api/admin/content-live-status') return false;
         await route.fulfill({ json: { ok: true, statuses: await store.call({ method: 'statuses', body: route.request().postDataJSON() }) } }); return true;
       } });
       await page.setViewportSize({ width, height: 1000 });
       await page.goto('/admin/content#exact-content');
-      const exportButton = page.getByRole('button', { name: 'Export CSV', exact: true });
+      const exportButton = page.getByRole('button', { name: 'Export sources for bulk editing', exact: true });
       await expect(exportButton).toBeEnabled();
       await exportButton.click();
       const panel = page.getByRole('region', { name: 'CSV offline editing' });
@@ -49,6 +59,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       const records = readStudioCsv(text);
       expect(records).toHaveLength(31);
       expect(records.every(record => record.publish === 'no')).toBe(true);
+      expect(records.every(record => record.publication_status === 'DRAFT' && record.source_role === 'Editable source')).toBe(true);
+      expect(records.every(record => record.exported_at && record.reference_date)).toBe(true);
       for (const row of fixtures) expect(records.find(record => record.content_id === row.id)?.body).toBe(row.body);
       await panel.getByText('Choose rows for this export', { exact: true }).click();
       const selection = panel.getByRole('checkbox', { name: `Export ${fixtures[0].headline}`, exact: true });
@@ -127,9 +139,9 @@ test('CSV stops on a mid-batch conflict and reports confirmed saves', async ({ p
       return route.continue();
     });
     await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
-    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write) });
+    await routeCsvInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write) });
     await page.goto('/admin/content#exact-content');
-    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
     const panel = page.getByRole('region', { name: 'CSV offline editing' });
     const download = page.waitForEvent('download');
     await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
@@ -165,20 +177,20 @@ test('CSV empty state and failed reads recover without partial exports or writes
       return route.continue();
     });
     await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
-    await routeStudioInventoryApi(page, {
+    await routeCsvInventoryApi(page, {
       listRows: rows => showRows ? rows : [], actualDocumentRoute: true, onWrite: write => writes.push(write),
       call: request => failDocuments && request.method === 'GET' && request.url?.includes('?id=')
         ? Promise.resolve({ status: 503, payload: { ok: false, error: 'Synthetic document load failure.' } })
         : store.call(request)
     });
     await page.goto('/admin/content#exact-content');
-    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
     const panel = page.getByRole('region', { name: 'CSV offline editing' });
     await expect(panel).toContainText('0 rows matching these filters');
     await expect(panel.getByRole('button', { name: 'Download CSV', exact: true })).toBeDisabled();
     showRows = true;
     await page.reload();
-    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
     failDocuments = true;
     await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
     await expect(panel).toContainText('Could not load the complete saved row.');
@@ -207,7 +219,7 @@ for (const failure of ['validation', 'race', 'lost-response']) {
         return route.continue();
       });
       await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
-      await routeStudioInventoryApi(page, { actualDocumentRoute: true, onWrite: write => writes.push(write), call: async request => {
+      await routeCsvInventoryApi(page, { actualDocumentRoute: true, onWrite: write => writes.push(write), call: async request => {
         const result = await store.call(request);
         const body = request.body as any;
         if (request.method === 'PATCH' && body?.id === rows[1].id) {
@@ -224,7 +236,7 @@ for (const failure of ['validation', 'race', 'lost-response']) {
         return result;
       } });
       await page.goto('/admin/content#exact-content');
-      await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+      await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
       const panel = page.getByRole('region', { name: 'CSV offline editing' });
       const download = page.waitForEvent('download');
       await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
@@ -261,9 +273,9 @@ test('CSV publishes a separately saved package revision and reloads the exact li
     });
     await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
     const writes: any[] = [];
-    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write) });
+    await routeCsvInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write) });
     await page.goto('/admin/content#exact-content');
-    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
     const panel = page.getByRole('region', { name: 'CSV offline editing' });
     const download = page.waitForEvent('download');
     await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
@@ -280,7 +292,7 @@ test('CSV publishes a separately saved package revision and reloads the exact li
     const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [live.content_key] } });
     expect(reader.payload.rows[0].body).toBe(records[0].Body);
     await page.reload();
-    await page.getByRole('button', { name: 'Export CSV', exact: true }).click();
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
     const exported = page.waitForEvent('download');
     await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
     const reopened = readStudioCsv(await readFile((await (await exported).path())!, 'utf8'));
@@ -299,9 +311,9 @@ test('CSV author publication accepts exact Sky wording without a model verdict',
       return new URL(request.url()).pathname.startsWith('/api/')||!['GET','HEAD'].includes(request.method())?route.abort():route.continue();
     });
     await context.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    await routeStudioInventoryApi(page,{actualDocumentRoute:true,call:store.call});
+    await routeCsvInventoryApi(page,{actualDocumentRoute:true,call:store.call});
     await page.goto('/admin/content#exact-content');
-    await page.getByRole('button',{name:'Export CSV',exact:true}).click();
+    await page.getByRole('button',{name:'Export sources for bulk editing',exact:true}).click();
     const panel=page.getByRole('region',{name:'CSV offline editing'});
     const download=page.waitForEvent('download');
     await panel.getByRole('button',{name:'Download CSV',exact:true}).click();
@@ -316,4 +328,33 @@ test('CSV author publication accepts exact Sky wording without a model verdict',
     const reader=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[row.content_key]}});
     expect(reader.payload.rows[0].body).toBe(row.body);
   } finally {store.close();}
+});
+
+test('Editable export stops when publication status is unavailable and recovers without a partial file', async ({ page, context }) => {
+  const store = await studioApiStore(fixtures.slice(0, 2));
+  let failStatus = false;
+  const downloads: unknown[] = [], writes: unknown[] = [];
+  page.on('download', download => downloads.push(download));
+  try {
+    await context.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await routeCsvInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
+      if (url.pathname !== '/api/admin/content-live-status' || !failStatus) return false;
+      await route.fulfill({ status: 503, json: { ok: false, error: 'Synthetic publication status outage.' } });
+      return true;
+    } });
+    await page.goto('/admin/content#exact-content');
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'CSV offline editing' });
+    failStatus = true;
+    await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+    await expect(panel.getByRole('status')).toContainText('/api/admin/content-live-status failed with HTTP 503.');
+    expect(downloads).toHaveLength(0);
+    failStatus = false;
+    const download = page.waitForEvent('download');
+    await panel.getByRole('button', { name: 'Download CSV', exact: true }).click();
+    const exported = readStudioCsv(await readFile((await (await download).path())!, 'utf8'));
+    expect(exported).toHaveLength(2);
+    expect(exported.every(row => row.publication_status === 'DRAFT')).toBe(true);
+    expect(writes).toEqual([]);
+  } finally { store.close(); }
 });

@@ -1,14 +1,17 @@
 /** Shared CSV contract. No browser, storage, or provider dependencies. */
 import { isDynamicTransitNatalLibraryKey } from "../../web/src/content/transitNatalIdentity.js";
+import { decodeCsvCell, quoteCsvCell } from '../../../src/shared/csvText';
 export type CsvContentRow = {
   id: string; content_key: string; updated_at?: string | null; event_type?: string | null;
   block_type?: string | null; status: string; headline?: string | null; summary?: string | null;
   body?: string | null; sections?: unknown; source_snapshot?: Record<string, unknown> | null;
   inventory_only?: boolean;
+  target_date?: string | null; facts?: unknown;
 };
 export type CsvRecord = Record<string, string>;
 export const csvFormat = 'content-studio-csv/v1';
 export const csvIdentityColumns = ['format', 'content_id', 'content_key', 'saved_version', 'content_type'];
+export const csvContextColumns = ['source_role', 'saved_status', 'publication_status', 'publication_detail', 'target_date', 'valid_from', 'valid_to', 'validity_note', 'reference_date', 'reader_url', 'reader_link_detail', 'exported_at'];
 export const csvMaxBytes = 10 * 1024 * 1024;
 export const csvMaxRows = 5000;
 export function csvRetainsTransitAlternate(record: CsvRecord): boolean {
@@ -76,7 +79,7 @@ export function csvTextFields(row: CsvContentRow): Field[] {
   if (fields.some(field => field.section)) fields.splice(fields.findIndex(field => field.path === 'body' && !field.section), 1);
   return fields;
 }
-export function csvRecordForRow(row: CsvContentRow): CsvRecord {
+export function csvRecordForRow(row: CsvContentRow, context?: CsvRecord): CsvRecord {
   const unavailable = csvUnavailableReason(row);
   if (unavailable) throw new Error(unavailable);
   if (row.inventory_only) throw new Error('Load the complete saved document before exporting.');
@@ -85,20 +88,17 @@ export function csvRecordForRow(row: CsvContentRow): CsvRecord {
   return Object.fromEntries([
     ['format', csvFormat], ['content_id', row.id], ['content_key', row.content_key],
     ['saved_version', `v:${row.updated_at}`], ['content_type', csvContentType(row)], ['publish', 'no'],
+    ...(context ? csvContextColumns.map(column => [column, context[column] ?? '']) : []),
     ...(row.content_key.startsWith('authored/transit-aspect/') ? [['keep_current_as_alternate', 'no'], ['primary_owner_authored', 'no'], ['owner_source_uri', '']] : []),
     ...fields.map(field => [field.column, field.value]),
   ]);
 }
-// Prefix spreadsheet formula-like text, including existing apostrophes, reversibly.
-const formulaPrefix = /^(?:[ \t\r\n]*[=+\-@]|[\t\r'])/;
-function encodeCell(value: string) { return formulaPrefix.test(value) ? `'${value}` : value; }
-function decodeCell(value: string) { return value.startsWith("'") && formulaPrefix.test(value.slice(1)) ? value.slice(1) : value; }
 export function writeStudioCsv(records: CsvRecord[]): string {
   if (!records.length) throw new Error('No saved rows match this export.');
   if (records.length > csvMaxRows) throw new Error(`Export up to ${csvMaxRows} rows at a time.`);
   if (new Set(records.map(row => row.content_type)).size !== 1) throw new Error('Export one content type at a time.');
   const columns = [...csvIdentityColumns, ...new Set(records.flatMap(row => Object.keys(row).filter(key => !csvIdentityColumns.includes(key))))];
-  const line = (values: string[]) => values.map(value => `"${encodeCell(value).replaceAll('"', '""')}"`).join(',');
+  const line = (values: string[]) => values.map(quoteCsvCell).join(',');
   const csv = '\uFEFF' + [line(columns), ...records.map(record => line(columns.map(column => record[column] ?? '')))].join('\r\n') + '\r\n';
   if (new TextEncoder().encode(csv).length > csvMaxBytes) throw new Error('Export fewer rows; CSV files are limited to 10 MB.');
   return csv;
@@ -108,7 +108,7 @@ export function readStudioCsv(input: string): CsvRecord[] {
   const text = input.replace(/^\uFEFF/, '');
   const rows: string[][] = [];
   let row: string[] = [], cell = '', quoted = false, closed = false;
-  const endCell = () => { row.push(decodeCell(cell)); cell = ''; closed = false; };
+  const endCell = () => { row.push(decodeCsvCell(cell)); cell = ''; closed = false; };
   const endRow = () => { endCell(); if (row.some(value => value !== '')) rows.push(row); row = []; if (rows.length > csvMaxRows + 1) throw new Error(`Import up to ${csvMaxRows} rows at a time.`); };
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
@@ -126,6 +126,7 @@ export function readStudioCsv(input: string): CsvRecord[] {
   const columns = rows.shift();
   if (!columns || !rows.length) throw new Error('The CSV has no content rows.');
   if (new Set(columns).size !== columns.length || columns.some(column => !safePath(column))) throw new Error('CSV column names must be unique and unchanged.');
+  if (rows.some(values => values[columns.indexOf('format')] === 'content-studio-reader-csv/v1')) throw new Error('Reader exports are read-only. Use Export sources for bulk editing to prepare an import.');
   if (csvIdentityColumns.some(column => !columns.includes(column))) throw new Error('Use a CSV exported by Content Studio. Keep all identity columns.');
   const records = rows.map((values, index) => {
     if (values.length !== columns.length) throw new Error(`CSV row ${index + 2} has the wrong number of columns.`);
@@ -150,6 +151,7 @@ export function csvChanges(row: CsvContentRow, imported: CsvRecord) {
   const fields = csvTextFields(row);
   if (fields.some(field => !Object.hasOwn(imported, field.column))) throw new Error('An editable column is missing. Keep the exported columns.');
   for (const column of Object.keys(imported)) {
+    if (csvContextColumns.includes(column)) continue;
     if (!Object.hasOwn(current, column) && imported[column] !== '') throw new Error(`The field ${column} is not editable for this row.`);
   }
   return fields.filter(field => field.value !== imported[field.column]).map(field => ({ ...field, before: field.value, after: imported[field.column] }));

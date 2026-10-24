@@ -1,11 +1,14 @@
 import { NatalChartReadings } from "../../components/NatalChartReadings";
 import { SeasonArticleLink } from "../../components/SeasonArticleLink";
 import { PreparedProse as FormattedProse } from "../../components/FormattedWritingContent";
+import { ReaderPassageEditLink } from '../../components/ReaderPassageEditLink';
+import { skyPassageEditSource, studioPassageEditHref } from '../../../../../src/shared/studioPassageEdit';
+import { skyPreviewReferenceDate } from '../../../../../src/shared/skyReaderPreview';
 import { RetrogradeHistoryDisclosure, type RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
 import { ChevronLeft } from "lucide-react";
-import { Fragment, isValidElement, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
+import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { ContentBundle } from "../../content/types";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import {
@@ -85,6 +88,8 @@ export type SkyPersonalizedPlacement = {
 
 export type SkyDetail = {
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
+  previewLabel?: string;
+  readerExport?: { keys: string[]; instant: string; timeZone: string; rows: Array<{ id?: string; contentKey: string; updatedAt?: string; status?: string; sections?: unknown }> };
   retrogradeHistoryContext?: RetrogradeHistoryContext;
   placementFactsPending?: boolean;
   pills?: ArticlePillData;
@@ -392,6 +397,20 @@ export function SkyDetailArticle({
   detail: SkyDetail;
   onClose: () => void;
 }) {
+  const articleRef = useRef<HTMLElement>(null);
+  const editSource = detail.readerExport && skyPassageEditSource(detail.readerExport.keys);
+  const editHref = editSource && detail.readerExport && !detail.placementFactsPending && !detail.previewLabel
+    ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
+      date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone) }) : null;
+  const [csvExportStatus, setCsvExportStatus] = useState('');
+  useEffect(() => {
+    if (!detail.readerExport || detail.placementFactsPending || new URL(window.location.href).searchParams.get('studioExport') !== 'sky-article-csv') return;
+    let cancelled = false;
+    void import('./skyReaderCsvExport').then(({ exportRequestedSkyReaderCsv }) => {
+      if (!cancelled && articleRef.current && exportRequestedSkyReaderCsv(articleRef.current, detail)) setCsvExportStatus('Sky article CSV downloaded.');
+    }).catch(() => { if (!cancelled) setCsvExportStatus('The article CSV could not be downloaded. Reload this page to try again.'); });
+    return () => { cancelled = true; };
+  }, [detail]);
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [detail.routePath ?? detail.title]);
@@ -577,9 +596,11 @@ export function SkyDetailArticle({
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
-      <article aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
+      <article ref={articleRef} aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
+          {csvExportStatus && <p role="status" className="article-sub">{csvExportStatus}</p>}
           <header className="article-id sky-detail-id">
+            {detail.previewLabel && <p className="article-sub" role="status">{detail.previewLabel}</p>}
             <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
@@ -603,6 +624,7 @@ export function SkyDetailArticle({
               <p className="article-duration">{headerDate}</p>
             ) : null}
             {detail.residencyDuration ? <p className="article-duration">{detail.residencyDuration}</p> : null}
+            <ReaderPassageEditLink href={editHref} />
             <ArticlePills pills={detail.pills} />
             {articleSub ? (
               <div className="article-tldr">

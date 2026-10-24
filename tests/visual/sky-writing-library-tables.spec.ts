@@ -72,6 +72,12 @@ test('Editing a shared planet phrase stays on the placement that was opened', as
   await expect(planetRow.locator('th[scope="row"] code')).toHaveText('{{planetFunction}}');
   await expect(planetRow.locator('td').first()).toContainText(sharedPlanetFunction);
   await expect(planetRow.getByRole('button', { name: 'Edit planet function', exact: true })).toBeVisible();
+  await map.getByLabel('Find Sky variable',{exact:true}).fill('{{planetFunction}}');
+  await map.getByLabel('Sky variable type',{exact:true}).selectOption('writing');
+  await expect(phrases.locator('tbody tr')).toHaveCount(1);
+  await expect(planetRow).toContainText(sharedPlanetFunction);
+  await map.getByRole('button',{name:'Clear variable filters',exact:true}).click();
+
 
   await planetRow.getByRole('button', { name: 'Edit planet function', exact: true }).click();
   const editor = page.getByRole('dialog');

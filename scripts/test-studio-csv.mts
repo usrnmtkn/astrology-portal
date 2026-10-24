@@ -5,6 +5,9 @@ import { writeFileSync } from 'node:fs';
 import { createApiStore, fixtures as calendarFixtures } from '../tests/helpers/calendar-review-api.mjs';
 import { csvChanges, csvDraftPatch, csvRecordForRow, csvWantsPublication, readStudioCsv, writeStudioCsv } from '../apps/admin/src/studioCsv.js';
 import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
+import { csvSourceContext } from '../apps/admin/src/studioCsvContext';
+import { skyReaderCsvRecord } from '../apps/web/src/features/sky/skyReaderCsvExport';
+import { articleKeyFromHash } from '../src/shared/articleLibrary';
 
 const original = {
   id: '10000000-0000-4000-8000-000000000001', content_key: 'cms/csv/first',
@@ -14,6 +17,63 @@ const original = {
   sections: {}, facts: {}, source_snapshot: {}, provider: 'manual-admin',
 };
 const importBody = (record: Record<string, string>) => ({ id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2), ownerAction: 'import-csv-draft', csvRecord: record });
+
+test('export context identifies source roles, verified publication, dates and exact reader links without granting import authority', () => {
+  const row = { ...original, content_key: 'sky-placement/article/saturn/aries' };
+  const status = { id: row.id, live: false, label: 'Not live' as const, detail: 'Not the current published version.', source: null, updatedAt: row.updated_at };
+  const context = csvSourceContext(row, status, 'https://example.invalid', '2026-10-21T12:00:00Z');
+  assert.equal(context.publication_status, 'Inactive');
+  assert.equal(context.source_role, 'Shared fallback');
+  assert.equal(context.valid_from, '');
+  assert.match(context.reader_url, /^https:\/\/example.invalid\/\?date=2026-10-21#\/sky\/placement\/saturn\/aries$/);
+  const exported = csvRecordForRow(row, context);
+  assert.deepEqual(readStudioCsv(writeStudioCsv([exported])), [exported]);
+  assert.deepEqual(csvChanges(row, { ...exported, publication_status: 'Live', reader_url: 'https://changed.invalid' }), []);
+  const patch = csvDraftPatch(row, { ...exported, body: 'Synthetic pending wording.', publication_status: 'Live' });
+  assert.equal(patch.status, 'DRAFT');
+  assert.equal(patch.publication_status, undefined);
+  const seasonal = { ...row, content_key: 'sky-season-fallback/libra-2026/moon/aries/2026-09-25', target_date: '2026-09-25', sections: { seasonFallback: {
+    entry: '2026-09-25T00:00:00Z', exit: '2026-09-28T00:00:00Z', seasonStart: '2026-09-26T00:00:00Z', seasonEnd: '2026-09-27T00:00:00Z'
+  } } };
+  const live = csvSourceContext(seasonal, { ...status, live: true, label: 'Live' }, 'https://example.invalid', '2026-09-26T12:00:00Z');
+  assert.equal(live.publication_status, 'Live');
+  assert.equal(live.source_role, 'Dated article');
+  assert.equal(live.target_date, '2026-09-25');
+  assert.equal(live.valid_from, seasonal.sections.seasonFallback.seasonStart);
+  assert.equal(live.valid_to, seasonal.sections.seasonFallback.seasonEnd);
+  assert.match(live.reader_url, /#\/sky\/placement\/moon\/aries$/);
+});
+
+test('bulk-edit CSV article links resolve the exact published source in the reader router', () => {
+  for (const key of ['article/manual/synthetic-csv-guide', 'cms/guide/synthetic-csv-guide']) {
+    const row = { ...original, content_key: key };
+    const status = { id: row.id, live: true, label: 'Live' as const, detail: 'Published.', source: null, updatedAt: row.updated_at };
+    const live = csvSourceContext(row, status, 'https://example.invalid', '2026-10-21T12:00:00Z');
+    assert.equal(articleKeyFromHash(new URL(live.reader_url).hash), key);
+    assert.equal(csvSourceContext(row, { ...status, live: false }, 'https://example.invalid', '2026-10-21T12:00:00Z').reader_url, '');
+  }
+});
+
+test('reader snapshot reports the selected seasonal publication window and local reference date', () => {
+  const text = { innerText: 'Synthetic public paragraph.', closest: () => null, parentElement: null };
+  const article = { querySelectorAll: () => [text], querySelector: () => text } as unknown as HTMLElement;
+  const record = skyReaderCsvRecord(article, { title: 'Synthetic seasonal article', glyph: '', kicker: '', meta: '', body: [], readerExport: {
+    keys: ['sky-season-fallback/libra-2026/moon/aries/2026-09-25'], instant: '2026-09-27T01:00:00Z', timeZone: 'America/New_York',
+    rows: [{ contentKey: 'sky-season-fallback/libra-2026/moon/aries/2026-09-25', status: 'LIVE', sections: { seasonFallback: {
+      entry: '2026-09-25T00:00:00Z', exit: '2026-09-28T00:00:00Z', seasonStart: '2026-09-26T00:00:00Z', seasonEnd: '2026-09-27T00:00:00Z'
+    } } }]
+  } }, 'https://example.invalid/?studioExport=sky-article-csv#sky/placement/moon/aries');
+  assert.equal(record.valid_from, '2026-09-26T00:00:00Z');
+  assert.equal(record.valid_to, '2026-09-27T00:00:00Z');
+  assert.equal(record.reference_date, '2026-09-26');
+  assert.equal(record.publication_status, 'Live');
+  assert.match(record.reader_url, /\?date=2026-09-26#sky\/placement\/moon\/aries$/);
+});
+
+test('reader snapshots cannot be imported as editable source files', () => {
+  const snapshot = { format: 'content-studio-reader-csv/v1', content_type: 'sky-reader', title: 'Synthetic reader snapshot', body: 'Synthetic public prose.' };
+  assert.throws(() => readStudioCsv(writeStudioCsv([snapshot])), /Reader exports are read-only/);
+});
 
 test('CSV round-trips full Unicode, formulas, commas, quotes, multiline and leading whitespace', () => {
   for (const text of [original.body, '=1+2', '+SUM(A1)', '-text', '@name', "'quotation", '\t=1', '  spaces  ', '', 'CR\r\nLF']) {
@@ -134,7 +194,7 @@ test('actual handler imports draft, preserves source history, reloads exactly an
   const store = await createApiStore([original]);
   try {
     const record = csvRecordForRow(original);
-    const revised = { ...record, body: 'Synthetic revised opening, "quoted".\n\nSynthetic final paragraph — café.\n', summary: '' };
+    const revised = { ...record, publication_status: 'Live', source_role: 'Editable source', valid_from: '2026-10-21', reader_url: 'https://example.invalid', body: 'Synthetic revised opening, "quoted".\n\nSynthetic final paragraph — café.\n', summary: '' };
     for (const body of [{ ...importBody(revised), status: 'LIVE' }, importBody({ ...revised, content_key: 'cms/csv/other' }), importBody({ ...revised, facts: '{"changed":true}' }), importBody({ ...revised, body: 123 } as any)]) {
       assert.ok((await store.invoke('PATCH', body)).status >= 400);
       assert.deepEqual(store.rows.get(original.id), original);

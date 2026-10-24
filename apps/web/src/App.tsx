@@ -5415,6 +5415,11 @@ function currentSkyPlacementDetailArticle({
     : placementSection?.articleWindow ?? transitRangeLabel;
   const historicalLookback = null;
   return {
+    readerExport: {
+      keys: placementSection?.sourceKeys ?? [], instant: generatedAt,
+      timeZone: locationTimeZone || position.transitTimeZone || "UTC",
+      rows: (placementSection?.sourceKeys ?? []).flatMap(key => { const row = generatedContent.get(key); return row ? [row] : []; })
+    },
     routePath: articleMode === "archive" && articleKey
       ? skyArticleArchiveRoutePath(articleKey)
       : skyPlacementRoutePath(position),
@@ -10942,6 +10947,8 @@ async function prepareSkyPlacementArticleContent(
     loadLiveGeneratedContentForKeys, aspectKeys);
   return { placementSky, content };
 }
+
+export { requestSkyPlacementArticleSnapshot, prepareSkyPlacementArticleContent, loadContentRegistry, skyDetailFromRoutePath };
 
 async function buildWeeklyHoroscope(
   ...args: Parameters<typeof import("./services/weeklyHoroscope").buildWeeklyHoroscope>

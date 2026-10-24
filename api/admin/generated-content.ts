@@ -1,4 +1,5 @@
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
+import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
 import {standaloneArticleKind} from '../../src/shared/articleLibrary.js';
 import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
@@ -2339,7 +2340,7 @@ function assertSkyArticleRevisionIdentity(
   }
 }
 
-async function verifiedSkyArticleRevision(baseValue: unknown, revisedValue: unknown) {
+async function verifiedSkyArticleRevision(baseValue: unknown, revisedValue: unknown, allowVariableOnly = false) {
   const base = libs().assertCompiledSkyArticleEdition(baseValue);
   const submitted = libs().assertCompiledSkyArticleEdition(revisedValue);
   assertSkyArticleRevisionIdentity(base, submitted);
@@ -2348,8 +2349,20 @@ async function verifiedSkyArticleRevision(baseValue: unknown, revisedValue: unkn
     throw new Error("Sky article revision hash does not match its exact submitted fields.");
   }
   const changes = libs().skyArticleEditionFieldChanges(base, libs().skyArticleEditableFields(canonical));
-  if (changes.length === 0) throw new Error("Sky article revision contains no changed fields.");
+  if (changes.length === 0 && !allowVariableOnly) throw new Error("Sky article revision contains no changed fields.");
   return { base, revised: canonical, changes };
+}
+
+async function verifiedSkyArticleVariableDraft(base: ReturnType<ContentLibraries['assertCompiledSkyArticleEdition']>, revised: ReturnType<ContentLibraries['assertCompiledSkyArticleEdition']>, value: unknown): Promise<SkyArticleVariableDraft | null> {
+  if (value === undefined || value === null) return null;
+  const draft = skyArticleVariableDraftRecord(value);
+  if (!draft) throw new GeneratedContentRequestError('The dated article variable sources are invalid. Reopen the article before saving.', 400);
+  let fields;
+  try { fields = resolveSkyArticleVariableFields({ ...libs().skyArticleEditableFields(revised), ...draft.templates }, draft); }
+  catch (reason) { throw new GeneratedContentRequestError((reason as Error).message, 400); }
+  const resolved = await libs().reviseSkyArticleEdition(base, fields);
+  if (resolved.compiledHash !== revised.compiledHash) throw new GeneratedContentRequestError('The dated article variable sources do not match its complete compiled wording.', 400);
+  return draft;
 }
 
 function skyArticleApprovalSnapshot(
@@ -2628,7 +2641,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
 
-    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft"].includes(existing.event_type ?? "");
+    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft", "calendar-moon-transition-draft"].includes(existing.event_type ?? "");
     const targetRowId = isVersionedReaderDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
     if (!targetRowId) throw new Error("This governed revision is missing its live target row.");
     const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
@@ -2845,7 +2858,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const baseValue = existing.event_type === "sky-article-edition-revision"
       ? existingSections.skyArticleRevisionBase
       : existingSections.skyArticleEdition;
-    const { base, revised, changes } = await verifiedSkyArticleRevision(baseValue, sections?.skyArticleEdition);
+    const { base, revised, changes } = await verifiedSkyArticleRevision(baseValue, sections?.skyArticleEdition, Boolean(sections?.skyArticleVariableDraft));
+    const variableDraft = await verifiedSkyArticleVariableDraft(base, revised, sections?.skyArticleVariableDraft);
+    const variableBase = existing.event_type === 'sky-article-edition-revision' ? existingSections.skyArticleVariableBase ?? null : existingSections.skyArticleVariableDraft ?? null;
+    const changedFields = [...changes.map(({ fieldId, label }) => ({ fieldId, label })), ...(!isDeepStrictEqual(variableDraft, variableBase) ? [{ fieldId: 'variableSources', label: 'Variable sources' }] : [])];
     const now = new Date().toISOString();
     const targetRowId = existing.event_type === "sky-article-edition-revision"
       ? stringFrom(existing.source_snapshot?.targetRowId)
@@ -2860,12 +2876,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
         ? existing.source_snapshot?.targetRowUpdatedAt : existing.updated_at,
       targetContentKey,
       baseCompiledHash: base.compiledHash,
-      changedFields: changes.map(({ fieldId, label }) => ({ fieldId, label })),
+      changedFields,
       savedAt: now
     };
     const revisionSections = {
       skyArticleEdition: revised,
-      skyArticleRevisionBase: base
+      skyArticleRevisionBase: base,
+      skyArticleVariableBase: variableBase,
+      ...(variableDraft ? { skyArticleVariableDraft: variableDraft } : {})
     };
     const revisionPatch = {
       headline: revised.headline,
@@ -2908,8 +2926,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const sections = isRecord(existing.sections) ? existing.sections : {};
     const { base, revised, changes } = await verifiedSkyArticleRevision(
       sections.skyArticleRevisionBase,
-      sections.skyArticleEdition
+      sections.skyArticleEdition,
+      Boolean(sections.skyArticleVariableDraft)
     );
+    const variableDraft = await verifiedSkyArticleVariableDraft(base, revised, sections.skyArticleVariableDraft);
     const targetRowId = stringFrom(existing.source_snapshot?.targetRowId);
     if (!targetRowId) throw new Error("Sky article revision is missing its live target row.");
     const target = await fetchExistingRowById(targetRowId);
@@ -2931,13 +2951,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
       : [];
     history.push({
       edition: current,
+      ...(target.sections?.skyArticleVariableDraft ? { skyArticleVariableDraft: target.sections.skyArticleVariableDraft } : {}),
       ownerApproval: targetSnapshot.ownerApproval ?? null,
       replacedAt: now
     });
     const approvedSnapshot = skyArticleApprovalSnapshot(targetSnapshot, revised, now);
     approvedSnapshot.skyArticleRevisionHistory = history;
     approvedSnapshot.lastFieldRevision = {
-      changedFields: changes.map(({ fieldId, label }) => ({ fieldId, label })),
+      changedFields: [...changes.map(({ fieldId, label }) => ({ fieldId, label })), ...(!isDeepStrictEqual(variableDraft, sections.skyArticleVariableBase ?? null) ? [{ fieldId: 'variableSources', label: 'Variable sources' }] : [])],
       revisionRowId: existing.id,
       publishedAt: now
     };
@@ -2945,7 +2966,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       headline: revised.headline,
       summary: revised.tldr,
       body: revised.body,
-      sections: { skyArticleEdition: revised },
+      sections: { skyArticleEdition: revised, ...(variableDraft ? { skyArticleVariableDraft: variableDraft } : {}) },
       source_snapshot: approvedSnapshot,
       status: "LIVE",
       lane: "serving",
@@ -3023,6 +3044,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish edition cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
     const edition = libs().assertCompiledSkyArticleEdition(existing.sections?.skyArticleEdition);
+    await verifiedSkyArticleVariableDraft(edition, edition, existing.sections?.skyArticleVariableDraft);
     if (
       existing.content_key !== edition.contentKey
       || existing.headline !== edition.headline
@@ -3306,18 +3328,20 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
   const forksCalendarPassageDraft = Boolean(isPackageRow && existing?.status === "LIVE" && calendarPassageIdentity(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
-  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft || forksCalendarPassageDraft) && existing) {
+  const forksCalendarMoonDraft = Boolean(isPackageRow && existing?.status === "LIVE" && libs().isCalendarMoonIngressContentKey(existing.content_key)
+    && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
+  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft || forksCalendarPassageDraft || forksCalendarMoonDraft) && existing) {
     const skyV4ReaderDraft = forksSkyV4ServingDraft && !forksGovernedAspectDraft;
     return upsertGeneratedContentRow({
       content_key: existing.content_key,
       surface: existing.surface,
       target_date: existing.target_date,
       mode: "studio-draft",
-      event_type: forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
+      event_type: forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       block_type: existing.block_type,
       provider: "owner-content-studio",
-      prompt_version: forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
-      reviewer_notes: forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
+      prompt_version: forksCalendarMoonDraft ? "calendar-moon-transition-draft-v1" : forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
+      reviewer_notes: forksCalendarMoonDraft ? "Shared Moon transition draft. The published overview and event source remain unchanged until this revision is published." : forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
         ? "Versioned reader-copy draft. The approved SKY V4 serving baseline remains LIVE and unchanged."
         : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
       knowledge_ids: [],

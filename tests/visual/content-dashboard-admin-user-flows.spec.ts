@@ -4,6 +4,7 @@ import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
 import { studioApiStore } from "../helpers/studio-api-store";
 import { workspaceFixtureRows, workspaceVisitFacts } from "../helpers/sky-placement-workspace-fixtures";
 import { readerResponse } from '../helpers/reader-response';
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 import { approveNatalAspectStudioCopy } from "../../api/_lib/content-studio-approval";
@@ -1849,7 +1850,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(contentRows.filter({ hasText: reusablePassage.content_key })).toHaveCount(1);
     await expect(contentRows.filter({ hasText: generatedContentRows[0].content_key })).toHaveCount(0);
 
-    await contentRows.filter({ hasText: composedCard.content_key }).getByRole("button", { name: "Edit" }).click();
+    await contentRows.filter({ hasText: composedCard.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
     await expect(editor.getByLabel("Reader copy")).toHaveValue(composedCard.body);
@@ -2344,7 +2345,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const contentSystemPanel = editor.locator("section[aria-label='Article content system']");
     await expect(async () => {
       if (!await editor.isVisible()) {
-        await savedRow.getByRole("button", { name: "Edit" }).click();
+        await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
       }
       await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
       await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
@@ -2488,7 +2489,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.chiron.taurus");
     const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.chiron.taurus" });
     await expect(savedRow).toHaveCount(1);
-    await savedRow.getByRole("button", { name: "Edit" }).click();
+    await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
@@ -2733,7 +2734,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Sky Write-ups", "Admin / Write / Sky write-ups");
     const macroListRow = page.locator(".admin-content-row", { hasText: "authored/sky-lunation-macro/full-moon/pisces" });
     await expect(macroListRow).toHaveCount(1);
-    await macroListRow.getByRole("button", { name: "Edit" }).click();
+    await macroListRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
@@ -3764,7 +3765,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const directionalCompatibilityResult = page.locator(".admin-content-row", { hasText: "authored/compat-deep/sun/pisces/aquarius" });
     await expect(directionalCompatibilityResult.getByText("Sun · Pisces → Aquarius", { exact: true })).toBeVisible();
     await expect(directionalCompatibilityResult).toContainText("You: Pisces · Friend: Aquarius");
-    await directionalCompatibilityResult.getByRole("button", { name: "Edit" }).click();
+    await directionalCompatibilityResult.getByRole("button", { name: "Edit", exact: true }).click();
     const compatibilityEditor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(compatibilityEditor.getByRole("heading", { name: "Edit Sun · Pisces → Aquarius" })).toBeVisible();
     const compatibilityIdentity = compatibilityEditor.getByRole("region", { name: "Compatibility record identity" });
@@ -3804,10 +3805,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByLabel("TL;DR (optional)")).toBeVisible();
     await expect(compatibilityWriteup).toBeVisible();
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
-    await expect(directionalCompatibilityResult.getByRole("button", { name: "Edit" })).toBeFocused();
+    await expect(directionalCompatibilityResult.getByRole("button", { name: "Edit", exact: true })).toBeFocused();
 
     await page.getByLabel("Search compatibility").fill("you aries friend libra");
-    await compatibilityRow.getByRole("button", { name: "Edit" }).click();
+    await compatibilityRow.getByRole("button", { name: "Edit", exact: true }).click();
     await expect(compatibilityEditor.getByRole("button", { name: "Reverse record unavailable" })).toBeDisabled();
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
 
@@ -4083,7 +4084,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const listRow = page.locator(".admin-content-row", { hasText: "fallback-vocab/dodont-moon-dont/pisces" });
     await expect(listRow).toHaveCount(1);
-    await listRow.getByRole("button", { name: "Edit" }).click();
+    await listRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor.locator("details.admin-editor-brief > summary")).toContainText("Edit this variable value");
@@ -4177,7 +4178,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#vocabulary?category=planets&q=sun");
 
     const listRow = page.locator(".admin-content-row", { hasText: "fallback-vocab/planet-function/sun" });
-    await listRow.getByRole("button", { name: "Edit" }).click();
+    await listRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor.getByLabel("You version")).toHaveValue("identity, vitality, and where you're meant to shine");
@@ -4449,7 +4450,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const reviewRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: "sky.placement.sun.cancer" });
     await expect(reviewRow).toHaveCount(1);
-    await reviewRow.getByRole("button", { name: "Edit" }).click();
+    await reviewRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
@@ -4540,7 +4541,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(currentSkyRow.locator(".admin-content-type-label")).toBeVisible();
     await expectNoHorizontalOverflow(page, "aspect-context review rows");
-    await currentSkyRow.getByRole("button", { name: "Edit" }).click();
+    await currentSkyRow.getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · current sky");
     await expectNoHorizontalOverflow(page, "aspect-context editor");
@@ -4980,7 +4981,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search fallback articles and passages").fill("Jupiter in Leo 10th House");
     await expect(articleGroup).toBeHidden();
     await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
-    await houseGroup.getByRole("button", { name: "Edit" }).click();
+    await houseGroup.getByRole("button", { name: "Edit", exact: true }).click();
     const houseEditor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(houseEditor.getByLabel("Editor label"))
       .toHaveValue("Jupiter in Leo · 10th House");
@@ -5040,7 +5041,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.base.jupiter.leo");
     const candidate = page.locator(".admin-content-row", { hasText: "sky.placement.base.jupiter.leo" });
     await expect(candidate).toHaveCount(1);
-    await candidate.getByRole("button", { name: "Edit" }).click();
+    await candidate.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const readerStatus = editor.getByRole("region", { name: "Reader source status" });
@@ -5889,7 +5890,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await sort.selectOption("title-desc");
     await expect(list.locator(".admin-content-row-title")).toHaveText(["Zeta · Qa", "Pluto · Relationship role phrase", "Jupiter in Leo", "Alpha · Qa"]);
 
-    await list.locator(".admin-content-row", { hasText: "Pluto · Relationship role phrase" }).getByRole("button", { name: "Edit" }).click();
+    await list.locator(".admin-content-row", { hasText: "Pluto · Relationship role phrase" }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Pluto · Relationship role phrase" })).toBeVisible();
     await editor.locator("details.admin-editor-brief > summary").click();
@@ -5975,7 +5976,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(list.getByText("Sun · About the Sun", { exact: true })).toBeVisible();
     await expect(list.getByText("Sun in Virgo", { exact: true })).toBeVisible();
 
-    await list.locator(".admin-content-row", { hasText: "Sun · Transit dates and opening" }).getByRole("button", { name: "Edit" }).click();
+    await list.locator(".admin-content-row", { hasText: "Sun · Transit dates and opening" }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await editor.locator("details.admin-editor-brief > summary").click();
     const sourceGuidance = editor.getByRole("region", { name: "How this source is used" });
@@ -6008,7 +6009,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       } else await route.fallback();
     });
     await expectAdminRouteLoads(page, "/admin/content#templates");
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit" }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const draftText = "{{planetBest}} QA unsaved template change.";
     await editor.getByLabel("You view copy").fill(draftText);
@@ -6090,7 +6091,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
     await expect(savedRow).toHaveCount(1);
     await expect(savedRow.locator(".admin-content-row-title")).toHaveText("Sun in a Sign");
-    await savedRow.getByRole("button", { name: "Edit" }).click();
+    await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Sun in a Sign" })).toBeVisible();
@@ -6219,7 +6220,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#vocabulary");
 
     const phrase = page.locator(".admin-content-row", { hasText: "fallback-vocab/aspect-verb/trine" });
-    await phrase.getByRole("button", { name: "Edit" }).click();
+    await phrase.getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await editor.getByRole("button", { name: "Variables (2)" }).click();
     const variableGuide = page.getByRole("complementary", { name: "Template variable reference" });
@@ -6484,6 +6485,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
     await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
+    await editor.getByLabel("Dated article variable target").selectOption("tldr");
     const summary = editor.getByLabel("Sky article TL;DR", { exact: true });
     await summary.fill("QA first revision.");
     await expect.poll(() => writes.length).toBe(1);
@@ -9484,8 +9486,9 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
     await expectNoHorizontalOverflow(page, 'Planet and sign dated editor');
     const headings = await page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })));
-    expect(headings.slice(0, 4)).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Currently live' }, { level: 3, text: 'Saved visits' }]);
-    const typography = await workspace.getByRole('heading', { name: 'Currently live' }).evaluate(node => {
+    expect(headings.slice(0, 4)).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Reader sources' }, { level: 3, text: 'Saved visits' }]);
+    await expect(workspace.getByRole('region', { name: 'Currently live', exact: true })).toHaveCount(0);
+    const typography = await workspace.getByRole('heading', { name: 'Reader sources' }).evaluate(node => {
       const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
       return { size: style.fontSize, expectedSize: shell.getPropertyValue('--type-section-heading-size').trim(), weight: style.fontWeight,
         family: style.fontFamily, leading: style.lineHeight, tracking: style.letterSpacing, margin: style.margin, casing: style.textTransform, alignment: style.textAlign };
@@ -9496,7 +9499,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     const paragraph = workspace.getByText('Write for one calculated visit.', { exact: false });
     await expect(paragraph).toHaveCSS('font-size', '16px'); await expect(paragraph).toHaveCSS('line-height', '24px');
     await mkdir('test-results/sky-placement-workspace', { recursive: true });
-    await workspace.getByRole('heading', { name: 'Currently live', exact: true }).evaluate(node => node.scrollIntoView({ block: 'center' }));
+    await workspace.getByRole('heading', { name: 'Reader sources', exact: true }).evaluate(node => node.scrollIntoView({ block: 'center' }));
     await page.screenshot({ path: `test-results/sky-placement-workspace/visit-${theme}-${width}.png` });
 
     await tabs.getByRole('tab', { name: 'Default reading', exact: true }).click();
@@ -9581,19 +9584,40 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   test.setTimeout(90_000);
   const initial = await workspaceFixtureRows();
   const edition = initial[0].sections.skyArticleEdition!;
-  const live = { ...initial[0], status: 'LIVE', lane: 'serving', review_state: null,
+  const live = { ...initial[0], id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', status: 'LIVE', lane: 'serving', review_state: null,
     source_snapshot: { ...initial[0].source_snapshot, review_status: 'approved', ownerApproval: {
       approved: true, action: 'approve-sky-article-edition', contentKey: edition.contentKey,
       templateKey: edition.templateKey, templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash
     } } };
   const writes: unknown[] = [];
   await seedAdminApi(page, { generatedRows: [live, ...initial.slice(1)], onGeneratedContentWrite: write => { writes.push(write); } });
+  const publications = canonicalPublicationLedger([{ content_key: live.content_key, state: 'live', revision: 1,
+    row_id: live.id, row_updated_at: live.updated_at, updated_at: live.updated_at }]);
+  await page.route('**/api/content-publications', async route => route.fulfill({
+    headers: { etag: await publicationLedgerTag(publications) }, json: { schema: 'tldr-publications/v1', publications }
+  }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: route.request().url().includes('/content_publications') ? publications : [] }));
+  await page.route('**/api/content-reader', route => {
+    const keys = route.request().postDataJSON().keys ?? [];
+    return route.fulfill({ json: readerResponse(keys.includes(live.content_key) ? [live] : [], publications) });
+  });
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
+    schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
+  } }));
   await page.clock.setFixedTime(new Date('2026-10-30T12:00:00Z'));
   await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
-  const current = page.getByRole('region', { name: 'Currently live', exact: true });
-  await expect(current.getByText('Synthetic Scorpio 2026 draft', { exact: true })).toBeVisible();
-  await current.getByText('Read published article', { exact: true }).click();
-  await expect(current.getByRole('textbox', { name: 'Published dated article', exact: true })).toHaveValue(live.body!);
+  const current = page.getByRole('region', { name: 'Sky placement reader sources', exact: true });
+  await expect(current.getByLabel('Sky reader date')).toHaveValue('2026-10-30');
+  await expect(current.getByLabel('Active dated article')).toContainText('Synthetic Scorpio 2026 draft');
+  await current.getByRole('button', { name: 'Preview reader', exact: true }).click();
+  const reader = current.frameLocator('iframe');
+  await expect(reader.locator('.sky-detail-body')).toContainText('Synthetic approved opening kept exactly.');
+  await expect(reader.locator('.sky-detail-body')).toContainText('Synthetic final sentence kept exactly.');
+  await current.getByRole('button', { name: 'Edit active article', exact: true }).click();
+  const editor = page.getByRole('dialog');
+  await expect(editor.getByRole('textbox', { name: 'Sky article general copy', exact: true })).toHaveValue(live.body!);
+  await editor.getByRole('button', { name: 'Done', exact: true }).click();
   const planets = page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true });
   const signs = page.getByRole('combobox', { name: 'Sky placement zodiac sign', exact: true });
   const bodies = await planets.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value).filter(value => value !== 'all'));

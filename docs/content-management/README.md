@@ -167,7 +167,219 @@ scripts/
 
 ## Content Studio access
 
+### Sky reader preview
+
+**Reader date** is shared by the source panel, Published/Draft preview,
+**Read in Sky**, and **Export what readers see**. It stays selected when opening
+an article editor or returning to the catalog. **Editing** identifies the source
+being changed; **Readers see** identifies the published placement calculated for
+that date and the reader's time zone. Pending revisions remain scoped to the
+editing placement. Reader links and CSV exports always use the published view,
+including when Draft is selected in the preview. Source verification runs when
+a placement is chosen, so these actions do not require opening the preview.
+
+Choose a Sky placement, then **Preview reader** in **Reader sources**. The
+preview opens inside Studio and uses the public Sky article builder, source
+loaders, calculated placement facts and article renderer. **Published** reads
+the current published versions. **Draft** simulates publishing a selected dated
+article revision in an isolated reader frame; it does not write or install draft
+text in the public content caches. An open article editor supplies its current
+fields, including edits still being saved. The normal Review & publish flow
+remains the publication action.
+
+The date selector stays on the selected civil date in the reader's time zone
+(local noon for other dates, the live instant for today). If the selected planet
+occupies another sign, the preview explicitly names that placement and shows
+its article for the same date. It never advances to a future occurrence of the
+editor's placement. The reader link opens the actual placement on that date.
+A revision for another sign is not selected, and publication impact explains
+that it would not affect the reading. Source
+details show the selected dated article or shared fallback, its keys, available
+saved versions and validity window. Publication impact names the changed
+fields, target article window and whether that revision would be selected on
+the preview date. Dates outside its window retain the other published reading;
+newer eligible dated articles retain their selection precedence. Starts are
+inclusive and ends exclusive. Stale published baselines and failed public reads
+stop the comparison instead of presenting unverified copy as Published.
+
+The preview includes the public article; personalized chart sections require
+their own reader context. Without a dated draft, Published remains available
+and Draft explains that a dated revision is needed. Shared fallback source
+editing retains its existing source editor; this Draft view previews dated
+article revisions.
+
+The main web app serves the isolated frame at `/studio/sky-reader-preview`.
+Local development uses the existing Studio `5174` / reader `5173` pair.
+For a separately hosted standalone Studio, set `VITE_STUDIO_READER_ORIGIN` at
+build time to the web reader origin, and set `VITE_STUDIO_PARENT_ORIGIN` in the
+reader build to that Studio origin. Main-app Studio needs neither setting.
+Only public article inputs and the local
+compiled proposal cross the frame boundary; Studio credentials and raw private
+source snapshots are never sent. Origin, frame identity, channel and request
+IDs guard responses. Refresh preview rechecks publication state; publishing a
+matching source also refreshes the frame.
+
+### Dated Sky article variables
+
+Dated articles keep the active passage, captured variable values and the actual
+Published/Draft reader in one workspace. **Editing passage** selects the
+headline, TL;DR or general article. The panes sit beside each other on wider
+screens and stack on mobile. **How this article is assembled** shows each used
+token's complete captured value and source; **Saved version** and **Resolved
+passage** expose the version and complete expanded field. **Article variables**
+opens the searchable Sky fact/phrase controls and **My variables**. These panels
+start closed, with the editable passage, reader preview and **Save draft** first.
+Save draft requests the existing serialized save immediately; the same autosave
+queue still saves later edits after its normal delay. Saved, saving and failed
+states remain beside the passage. Insertion replaces the native selection and
+restores the cursor.
+
+**Reader wording unchanged** appears only after the reader verifies the selected
+date's draft against the published article and all resolved article and companion
+fields match. A variable-only edit says **Publishing saves variable sources
+only**. Wording edits, unavailable sources, stale baselines and dates that do not
+select this revision cannot receive that assurance. Publication details stay
+available in the workspace; no action publishes automatically. Equivalent
+calculated facts do not offer a redundant replacement solely because their
+calculation reference changed; complete captured provenance remains available.
+
+**Original compilation values** exposes the saved template inputs, identifying
+calculated slots from the original engine snapshot and the other saved writing.
+These original values use `edition_` tokens, such as `{{edition_entryDate}}`,
+to distinguish a saved dated visit's input from current Sky residency variables.
+Later manual article edits can differ from these original inputs.
+
+**Calculate dated article values** uses the article's original calculated
+reference instant when available, otherwise the beginning of its saved window.
+The actual calculated instant, motion and zone remain visible. A calculated
+occurrence outside that article's window is refused. This source calculation
+does not change the shared Reader date or advance the public preview.
+
+Editable tokens and captured values persist privately in
+`sections.skyArticleVariableDraft`. Autosave compiles the resolved fields into
+the existing complete `skyArticleEdition`; invalid or missing values stop the
+save and Draft preview. The API verifies the source snapshot against the exact
+compiled hash at save and publication. Reader responses and the preview frame
+contain only complete compiled text. Changes to shared writing after capture
+do not automatically change a dated article; **Use current value** explicitly
+updates its captured value. Source-only edits can publish without changing any
+reader wording. Existing conflict checks, publication review and history remain.
+
+### Editing assembled sections
+
+Variable controls use readable labels alongside the unchanged saved tokens.
+Sky supports search by name, meaning, token, or existing wording; type and
+availability filters; and an option to show only variables used in the active
+article or fallback section. Its source tables still open the same complete
+Writing Library fields. The Variables directory also recognizes the readable
+labels, and My variables searches names, descriptions, and tags together. An
+inserted custom variable identifies whether its value comes from shared writing
+or a planet/sign/placement override.
+
+Calendar's passage picker groups saved writing, calculated values, and
+conditions. Search narrows the choices; **Include unavailable variables** makes
+the rest of the supported contract discoverable. Current values are available
+without leaving the field. Normal insertion replaces the selection with the
+canonical token. Conditions such as `hasFullMoon` use **Wrap selection in
+condition**, which preserves the selected wording inside an opening/closing
+block and selects that wording for continued editing. The real Calendar
+renderer resolves nested conditions; malformed blocks still fail validation.
+
+The daily Calendar workspace keeps **Editing passage**, **Editing scope**, the
+editable wording, used variable values and sources, and **Published / Draft**
+together. **Editing section** switches between the complete passage and its
+sections without opening template tools. Used values/sources, variable insertion,
+template ordering/colors, source keys and Moon timing start in closed panels.
+The primary **Save draft** action stays directly after the passage. Publication
+impact and validation errors remain visible; fuller publication details and
+history are expandable. Both reader views use the loaded date and time zone. A pending date or
+time-zone change hides the old preview until **Load passage** completes.
+
+Calendar and dated Sky editors use the same framed editing and reader panes.
+Source context, variable values and publication impact have separate inset
+surfaces. Template sections keep their numbered reading order with individual
+borders and spacing. Moon timing uses label/value pairs, stacked on narrow
+screens. Narrative text keeps the shared body typography in both themes.
+The main Studio page header scrolls with the page so it cannot obscure passage
+controls; the editor side sheet keeps its own header and scrolling body.
+
+The same reading surfaces apply to composite variants, compatibility identity
+and report previews. Full composition-source and report passages preserve their
+paragraph breaks. Composite relationship types use separate context panels;
+calculated context chips wrap and filter groups keep their shared spacing.
+Daily At-a-Glance uses the standard editor header and readable context layout.
+These treatments do not change source selection, saved wording or publication.
+
+**Daily overview** edits the complete daily passage or its shared template.
+**Moon transition passage** opens the Moon section of a date-only passage, or
+the complete shared Moon-sign transition source. A custom complete passage with
+no Moon section stays intact and is identified explicitly. Date-only passages
+apply to that local date and time zone. Shared edits apply wherever the reader
+selects that source.
+
+The reader preview shows the daily overview and the Moon transition event card
+separately. A dated daily overview takes precedence over the shared daily
+template, but the event card still uses its shared Moon transition source.
+Separate **Changed / Unchanged** labels for **Daily overview** and **Moon event
+card** compare Draft with Published for the loaded date, in either view and for
+both editing scopes. Invalid drafts show **Cannot compare**; a date without a
+Moon event card is identified explicitly.
+**Reader wording unchanged** requires valid draft wording and equality of both
+reader passages. This preview covers these two Calendar units; other event
+readings and the rest of the Calendar remain outside this workspace.
+
+Calculated Calendar values resolve for the selected date and time zone, rather
+than being captured as dated Sky article values. Condition blocks control
+visibility without inserting their source wording. Used values and complete
+source text remain visible beside the editable passage. Shared Moon-transition
+sources store complete literal wording; use a date-only passage or shared daily
+template for calculated tokens. Saving and publishing remain separate, version
+checked actions. Published and Draft source selection use the reader's shared
+assembly and Moon event resolver without changing the publication ledger.
+
+Verified Studio owners can use **Edit this passage** in the Calendar daily
+overview, the Moon transition event reading, and Sky placement articles with an
+editable reader source. It opens Studio in a new tab with the selected local
+date, time zone, and exact editing source. The Calendar overview opens that
+date's workspace and prefers its existing date-only draft. A Moon event opens
+the shared transition for its actual sign pair. Sky prefers a saved revision
+for the dated article being read, or opens the selected shared source through
+the existing package-source loader. The original reader remains open.
+
+Opening a passage creates no draft and performs no publication. Existing
+source and draft loading, version checks, owner access, save and publication
+controls still apply. Unavailable or invalid handoffs report an error instead
+of opening unrelated writing. The links contain no credentials and do not
+appear when owner access cannot be verified.
+
+Review Queue's **Edit** action for a dated daily Calendar passage opens the
+same workspace in the current tab. Its canonical source key supplies the date
+and time zone; the workspace reloads the saved draft and offers Published and
+Draft for that date. Invalid dated keys remain in the queue with an error.
+Shared sources keep their existing editor because they have no single date.
+
+Calendar's **Complete passage** lists conditional sections in reading order,
+with their variable type and availability for the selected date. **Edit** opens
+only that section's wording. **Earlier/Later** moves intact top-level blocks,
+including nested conditions; invalid templates cannot be reordered. Literal
+text between sections stays in place. **Edit complete template** exposes the
+whole pattern. Both **Insert variable at cursor** and source-table insertion
+replace the selection in the active section, or the complete template when no
+section is open. Source values remain complete in the source table. Saving a
+draft and publishing remain separate actions.
+
+Sky's **Full summary template** lists paragraphs in layout order. **Edit
+paragraph wording** filters the sentence-template selector to that paragraph's
+variants and focuses it. The selected shared source is identified as published
+or built in. Event count, event order, and available facts still determine which
+variant the reader uses. Custom literal paragraphs open the layout editor.
+Existing layout, example-fact preview, and review/save/publish controls remain
+the authority; the paragraph index performs no writes.
+
 ### Offline CSV editing
+
+Personal Transit primary/alternate retention and new-source imports are documented in
+[Personal Transit copy versions](PERSONAL_TRANSIT_COPY_VERSIONS.md).
 
 Personal Transit primary/alternate retention and new-source imports are documented in
 [Personal Transit copy versions](PERSONAL_TRANSIT_COPY_VERSIONS.md).

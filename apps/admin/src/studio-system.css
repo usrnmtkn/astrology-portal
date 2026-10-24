@@ -98,6 +98,10 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-template-value { text-decoration: underline; }
 #root .admin-dashboard .studio-template-marker { text-decoration: underline dotted; }
 #root .admin-dashboard :is(.studio-calendar-template-editor,.studio-template-variable-key) { display: grid; min-width: 0; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-assembly-sections { display: grid; min-width: 0; gap: var(--workspace-panel-inset); margin: 0; padding-inline-start: var(--workspace-card-padding); }
+#root .admin-dashboard .studio-assembly-sections > li { padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-canvas); }
+#root .admin-dashboard .studio-assembly-sections > li::marker, #root .admin-dashboard .studio-assembly-sections strong { font-family: var(--font-display); font-weight: var(--weight-semibold); }
+#root .admin-dashboard .studio-assembly-sections p { margin-block: var(--workspace-field-gap); overflow-wrap: anywhere; }
 #root .admin-dashboard .studio-template-variable-key { grid-template-columns: repeat(auto-fit,minmax(min(100%,var(--studio-menu-width)),1fr)); }
 @media (forced-colors: active) {
   #root .admin-dashboard .studio-highlighted-backdrop { display: none; }
@@ -155,7 +159,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-sidebar-status.is-error .admin-sidebar-status-dot { background: var(--workspace-danger); }
 #root .admin-dashboard .admin-sidebar-status-link { border: 0; padding: 0; min-height: 0; font-size: inherit; line-height: inherit; }
 #root .admin-dashboard .admin-main { min-width: 0; width: 100%; max-width: var(--workspace-max-width); margin-inline: auto; padding: var(--workspace-gutter); display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--workspace-block-gap); }
-#root .admin-dashboard .admin-dashboard-header { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: var(--workspace-panel-inset); position: sticky; top: 0; z-index: var(--studio-layer-page-header); background: var(--workspace-canvas); border-radius: 0; }
+#root .admin-dashboard .admin-dashboard-header { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: var(--workspace-panel-inset); position: static; background: var(--workspace-canvas); border-radius: 0; }
 #root .admin-dashboard .admin-page-heading { display: grid; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-breadcrumb ol { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
 #root .admin-dashboard .admin-breadcrumb li { font: inherit; }
@@ -182,7 +186,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard dt { color: var(--workspace-muted); }
 #root .admin-dashboard dd { display: flex; align-items: center; flex-wrap: wrap; gap: var(--workspace-field-gap); }
 #root .admin-dashboard :where(.admin-copy-preview,.admin-article-preview,.admin-template-reader-preview) { white-space: pre-wrap; display: grid; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard :is(.admin-sky-voice-body,.admin-variable-source-prose,.memory-detail-content,.admin-calendar-template-text,blockquote) { white-space: pre-wrap; overflow-wrap: anywhere; }
+#root .admin-dashboard :is(.admin-sky-voice-body,.admin-variable-source-prose,.admin-composition-source-copy,.admin-template-rendered-preview p,.memory-detail-content,.admin-calendar-template-text,blockquote) { white-space: pre-wrap; overflow-wrap: anywhere; }
 #root .admin-dashboard :where(.admin-hook-detail-section,.admin-template-card) > * + * { margin-top: var(--workspace-panel-inset); }
 
 #root .admin-dashboard .admin-studio-map { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--workspace-panel-inset); }
@@ -217,7 +221,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-sky-summary-composition { display: grid; grid-template-columns: minmax(0,1fr); align-content: start; gap: var(--workspace-block-gap); }
 
 /* Summary workbenches contain their controls; inset surfaces frame the resulting prose. */
-#root .admin-dashboard .admin-daily-glance-studio .admin-template-reader-surface { padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-canvas); gap: var(--workspace-panel-inset); }
+#root .admin-dashboard :is(.admin-daily-glance-studio,.studio-workspace-pane) .admin-template-reader-surface { padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-canvas); gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-daily-glance-studio .admin-composition-preview-chrome { justify-content: space-between; padding-bottom: var(--workspace-control-inset); border-bottom: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-daily-glance-studio .admin-composition-preview-field { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-sky-summary-composition > .admin-editor-guidance { padding-top: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
@@ -325,7 +329,16 @@ body:has(.admin-dashboard) { margin: 0; }
 /* Editor is a side sheet with a fixed header/footer and its own scrolling body. */
 #root .admin-dashboard .studio-section { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-block-gap); }
 #root .admin-dashboard .studio-section-header { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: start; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard .studio-section-header > div { display: grid; gap: var(--workspace-field-gap); }
+#root .admin-dashboard :is(.studio-section-header,.admin-section-heading-row) > div { display: grid; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-workspace-pane { min-width: 0; padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-radius); background: var(--workspace-surface); gap: var(--workspace-panel-inset); }
+#root .admin-dashboard :is(.studio-context-panel,.admin-dependency-map-grid > article,.admin-compatibility-identity-preview) { display: grid; gap: var(--workspace-field-gap); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--workspace-line); border-radius: var(--workspace-control-radius); background: var(--workspace-raised); }
+#root .admin-dashboard :is(.admin-dependency-map-grid > article > span:first-child,.admin-compatibility-identity-preview > strong) { font-family: var(--font-label); font-size: var(--type-label-size); font-weight: var(--weight-semibold); line-height: var(--leading-label); letter-spacing: var(--tracking-body); }
+#root .admin-dashboard .studio-context-panel > p:first-child > strong, #root .admin-dashboard .studio-workspace-pane .admin-template-reader-copy > p:first-child > strong { font-family: var(--font-display); font-weight: var(--weight-semibold); }
+#root .admin-dashboard .studio-context-panel code { background: var(--workspace-canvas); }
+#root .admin-dashboard .studio-detail-list { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .studio-detail-list > div { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,2fr); gap: var(--workspace-panel-inset); align-items: baseline; }
+#root .admin-dashboard .studio-detail-list dt { font-family: var(--font-label); font-size: var(--type-label-size); line-height: var(--leading-label); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-body); }
+#root .admin-dashboard .studio-detail-list dd { display: block; }
 #root .admin-dashboard .admin-fallback-library-filter-grid { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-fallback-library-controls > .admin-filter-choices { padding-block: var(--workspace-panel-inset); border-block: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-fallback-library .admin-sky-edition-fields { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-block-gap); }
@@ -337,7 +350,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-editor-brief[open] > .admin-editor-brief-body { margin-top: var(--workspace-panel-inset); padding-top: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-editor-backdrop { position: fixed; inset: 0; z-index: var(--studio-layer-editor-backdrop); width: 100%; height: 100%; padding: 0; border: 0; border-radius: 0; background: var(--studio-scrim); }
 #root .admin-dashboard .admin-editor-panel { position: fixed; inset-block: 0; inset-inline-end: 0; z-index: var(--studio-layer-editor-panel); width: var(--studio-sheet-width); max-width: 100%; height: 100dvh; display: flex; flex-direction: column; background: var(--workspace-canvas); border-radius: var(--studio-sheet-radius) 0 0 var(--studio-sheet-radius); overflow: hidden; box-shadow: var(--workspace-menu-shadow); }
-#root .admin-dashboard .admin-editor-header { align-items: center; flex-shrink: 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--workspace-panel-inset); padding: var(--workspace-card-padding); background: var(--workspace-surface); }
+#root .admin-dashboard :is(.admin-editor-header,.admin-daily-glance-pair-editor > .admin-editor-toolbar) { align-items: center; flex-shrink: 0; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--workspace-panel-inset); padding: var(--workspace-card-padding); background: var(--workspace-surface); }
+#root .admin-dashboard .admin-daily-glance-pair-editor > .admin-editor-toolbar > div:first-child { display: grid; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-editor-header > h2 { align-self: center; overflow-wrap: break-word; }
 #root .admin-dashboard .admin-editor-close { grid-column: 2; grid-row: 1; }
 #root .admin-dashboard .admin-editor-meta { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--workspace-control-inset); }
@@ -393,6 +407,9 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-composition-source-tools > label { grid-column: 1 / -1; }
 #root .admin-dashboard .admin-composition-source-tools > button { align-self: start; }
 #root .admin-dashboard .admin-composition-source-card { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-filter-disclosure-content { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-daily-glance-current { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-daily-glance-current-facts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-composition-source-card .admin-composition-source-card { padding-block-start: var(--workspace-panel-inset); border-top: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .admin-composition-surface-route-list { display: grid; gap: var(--workspace-control-inset); }
 #root .admin-dashboard .admin-composition-surface-route-list a { grid-template-columns: minmax(0,1fr) auto; align-items: center; }
@@ -606,11 +623,14 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-text[data-size="label"] { font-family: var(--font-label); font-size: var(--type-label-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); }
 #root .admin-dashboard .studio-text[data-tone="primary"] { color: var(--studio-text-primary); }
 #root .admin-dashboard .studio-text[data-tone="secondary"] { color: var(--studio-text-secondary); }
-#root .admin-dashboard .studio-preview-canvas { background: var(--studio-preview-canvas); color: var(--studio-text-primary); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--studio-border-default); border-radius: var(--workspace-control-radius); }
+#root .admin-dashboard :is(.studio-preview-canvas,.admin-template-rendered-preview) { background: var(--studio-preview-canvas); color: var(--studio-text-primary); padding: var(--workspace-panel-inset); border: var(--border-width-thin) solid var(--studio-border-default); border-radius: var(--workspace-control-radius); }
+#root .admin-dashboard .admin-template-rendered-preview, #root .admin-dashboard .admin-template-rendered-preview :is(article,section) { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .studio-reader-preview-frame { display: block; width: 100%; height: var(--reader-preview-height); border: var(--border-width-thin) solid var(--studio-border-default); border-radius: var(--workspace-control-radius); }
+#root .admin-dashboard .studio-reader-preview-frame-compact { height: var(--reader-preview-compact-height); }
+#root .admin-dashboard .studio-reader-preview-frame[hidden] { display: none; }
 
 /* AI Writing uses Studio controls and the shared workspace rhythm. */
 #root .admin-dashboard .admin-main--ai-writing > .admin-dashboard-header {
-  position: static;
   padding: 0;
 }
 #root .admin-dashboard :is(.admin-writing-workspace, .admin-writing-profile) {
@@ -725,6 +745,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-horoscope-actions .admin-danger-button:not(:disabled) { background: var(--studio-error-container); color: var(--studio-on-error-container); border-color: var(--workspace-danger); }
 #root .admin-dashboard .admin-horoscope-wizard progress { width: 100%; accent-color: var(--workspace-primary); }
 @media (max-width: 720px) {
+  #root .admin-dashboard .studio-detail-list > div { grid-template-columns: minmax(0,1fr); gap: var(--space-1); }
   #root .admin-dashboard .studio-csv-diff { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-horoscope-steps { grid-template-columns: repeat(2,minmax(0,1fr)); }
   #root .admin-dashboard .admin-horoscope-signs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); }
@@ -786,7 +807,7 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard .admin-data-table td { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-field-gap); }
   #root .admin-dashboard .admin-data-table td::before { content: attr(data-label); color: var(--workspace-muted); font-size: var(--type-meta-size); line-height: var(--leading-meta); }
   #root .admin-dashboard .admin-editor-panel { border-radius: 0; width: 100%; }
-  #root .admin-dashboard :is(.admin-post-editor,.admin-editor-header) { padding: var(--workspace-panel-inset); }
+  #root .admin-dashboard :is(.admin-post-editor,.admin-editor-header,.admin-daily-glance-pair-editor > .admin-editor-toolbar) { padding: var(--workspace-panel-inset); }
   #root .admin-dashboard .admin-post-editor { padding-block-end: var(--workspace-gutter); }
   #root .admin-dashboard .admin-editor-savebar { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); margin: 0 var(--workspace-panel-inset) var(--workspace-panel-inset); padding: var(--workspace-control-inset); }
   #root .admin-dashboard .admin-editor-savebar > :is(.admin-editor-save-state,.admin-savebar-next-step,.admin-publish-button) { grid-column: 1 / -1; }
@@ -812,6 +833,8 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard .admin-review-filter-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
 }
 @media (min-width: 1001px) {
+  #root .admin-dashboard .admin-editor-panel.has-dated-workspace { width: var(--container-article); }
+  #root .admin-dashboard .studio-dated-reader { position: sticky; top: 0; }
   #root .admin-dashboard .admin-editor-panel.has-variables-rail { inset-inline-end: var(--studio-rail-width); width: var(--studio-docked-sheet-width); }
 }
 @media (prefers-reduced-motion: reduce) { #root .admin-dashboard * { transition: none !important; scroll-behavior: auto !important; } }

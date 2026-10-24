@@ -89,6 +89,14 @@ async function startApp() {
     return;
   }
 
+  if (window.location.pathname === '/studio/sky-reader-preview') {
+    const [, { default: Preview }] = await Promise.all([
+      import('./styles.css'), import('./features/sky/StudioSkyReaderPreviewPage')
+    ]);
+    createRoot(document.getElementById('root')!).render(<Preview />);
+    return;
+  }
+
   if (isAdminContentPath()) {
     await loadAdminPresentationStyles();
     const { AdminPageError, AdminPageLoading } = await import("../../admin/src/AdminPageError");

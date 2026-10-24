@@ -1,4 +1,5 @@
 import { CalendarPassageProse } from './CalendarPassageProse';
+import { ReaderPassageEditLink } from '../../components/ReaderPassageEditLink';
 import { useId, useState } from "react";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
@@ -155,6 +156,7 @@ export function CalendarDayPanel({
   paragraphs,
   moonPassages = [],
   prompt,
+  editHref,
   events,
   seasonTransits,
   checkInEntry,
@@ -180,6 +182,7 @@ export function CalendarDayPanel({
   paragraphs: string[];
   moonPassages?: CalendarMoonPassage[];
   prompt?: string;
+  editHref?: string | null;
   events: CalendarDayEventCard[];
   seasonTransits: CalendarSeasonTransit[];
   checkInEntry?: CalendarCheckInEntry;
@@ -242,6 +245,7 @@ export function CalendarDayPanel({
               </section>
             ) : null}
             {prompt ? <FormattedProse className="calendar-sky-card__prompt" text={prompt} /> : null}
+            <ReaderPassageEditLink href={editHref} />
             </>}
           </div>
         </section>

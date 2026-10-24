@@ -370,7 +370,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, lunation-studio]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, lunation-studio, studio-ui, sky-reader-preview]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -385,7 +385,7 @@ jobs:
       - run: bash scripts/ci-install-playwright.sh
       - name: Run the ${{ matrix.suite }} suite
         env:
-          STUDIO_PRODUCTION_ENTRY: ${{ matrix.suite == 'horoscope-writing' && '1' || '0' }}
+          STUDIO_PRODUCTION_ENTRY: ${{ (matrix.suite == 'horoscope-writing' || matrix.suite == 'studio-ui') && '1' || '0' }}
         run: npx playwright test -c playwright.${{ matrix.suite }}.config.ts
       - name: Verify standalone Studio notification containment
         if: matrix.suite == 'studio-style'

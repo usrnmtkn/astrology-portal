@@ -41,9 +41,10 @@ for (const width of [390, 1440]) {
   for (const theme of ["light", "dark"]) {
     test(`summary studio navigation, populated summary fields ${width} ${theme}`, async ({ page }) => {
       await mockStudio(page, []);
+      await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), theme);
       await page.setViewportSize({ width, height: 1000 });
       await page.goto("/#sky-writeups?view=daily-summary");
-      await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
+      await expect(page.locator("[data-studio-theme]")).toHaveAttribute("data-studio-theme", theme);
       const studio = page.getByRole("region", { name: "Daily Sky Summary editor" });
       const heading = studio.getByRole("heading", { name: "Daily Sky Summary", level: 3 });
       await expect(heading).toBeVisible();
@@ -82,6 +83,13 @@ for (const width of [390, 1440]) {
       expect(await assemblyHeading.evaluate(typeStyle)).toEqual(summaryHeadingStyle);
       await expect(studio.locator("h4")).toHaveText(["Full summary template", "Sun and Moon together"]);
       await studio.getByRole("region", { name: "Full summary assembly", exact: true }).screenshot({ path: `test-results/assembly-${width}-${theme}.png` });
+      const assembly = studio.getByRole("region", { name: "Full summary assembly", exact: true });
+      await assembly.getByRole('list', { name: 'Sky summary paragraph order' }).scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `test-results/assembly-viewport-${width}-${theme}.png` });
+      await assembly.getByRole('button', { name: 'Edit paragraph 2 wording', exact: true }).click();
+      await expect(assembly.getByLabel('Sentence template', { exact: true })).toBeFocused();
+      await assembly.getByRole('button', { name: 'Show all assembly templates', exact: true }).click();
+
       const sourceLink = map.getByRole("link", { name: "Edit Sun in Virgo summary", exact: true });
       expect(await sourceLink.evaluate(el => getComputedStyle(el).display)).toBe("inline");
       await page.evaluate(() => document.fonts.ready);
@@ -330,6 +338,17 @@ test("full template controls preview order, publish, and reload", async ({ page,
   await mockStudio(page, stored);
   await page.goto("/#sky-writeups?view=daily-summary");
   const assembly = page.getByRole("region", { name: "Full summary assembly", exact: true });
+  const sections = assembly.getByRole("list", { name: "Sky summary paragraph order" });
+  await expect(sections.locator("li")).toHaveCount(5);
+  await expect(sections.locator("li").nth(1)).toContainText("Ingresses · Stations");
+  await assembly.getByRole("button", { name: "Edit paragraph 2 wording", exact: true }).click();
+  const variants = await assembly.getByLabel("Sentence template", { exact: true }).locator("option").evaluateAll(options => options.map(option => (option as HTMLOptionElement).value));
+  expect(variants.every(value => /assembly\/(ingresses|stations?)/.test(value))).toBe(true);
+  await assembly.getByLabel("Sentence template", { exact: true }).selectOption("cms/sky-daily-summary/assembly/stationDirectFirst");
+  await expect(assembly.getByLabel("Sentence wording editor")).toContainText("station List");
+  await expect(assembly.getByText(/Editing shared wording:/)).toContainText("cms/sky-daily-summary/assembly/stationDirectFirst");
+  await assembly.getByRole("button", { name: "Show all assembly templates", exact: true }).click();
+  expect(stored).toEqual([]);
   await assembly.getByText("Preview event examples", { exact: true }).click();
   await assembly.getByLabel("Exact aspect examples").fill("Saturn squares Lilith");
   await assembly.getByLabel("Station examples", { exact: true }).fill("Mercury stations retrograde in Scorpio");

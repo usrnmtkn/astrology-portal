@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { studioLazy as lazy } from './studioLazy';
 import { AdminDisclosureSummary } from './AdminNativeControls';
 import { StudioButton, StudioInput, StudioStatusBadge, StudioTabs, StudioTextarea } from './StudioControls';
@@ -14,6 +14,7 @@ import type { LiveStatus } from './ContentLiveStatus';
 type Request = <T>(path: string, options?: RequestInit) => Promise<T>;
 type Props = {
   rows: Row[]; selection: SkyPlacementSelection; request: Request;
+  readerSources?: ReactNode;
   onRows: (rows: Row[]) => void; onDirty: (dirty: boolean, busy: boolean) => void;
   onEditRow: (row: Row) => void; onEditField: (row: Row, path: string, selection: SkyPlacementSelection) => void;
   onLoadRow: (row: Row) => Promise<unknown>;
@@ -106,6 +107,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   const refreshedEditing = editing ? allRows.find(row => row.id === editing.id) : null;
   useEffect(() => {
     if (busy || dirty || !refreshedEditing || refreshedEditing.updated_at === editing?.updated_at) return;
+    if (openVariableArticle(refreshedEditing)) return;
     const edition = placementEdition(refreshedEditing);
     if (!edition) return;
     const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
@@ -121,8 +123,15 @@ export default function SkyPlacementWorkspace(props: Props) {
   })), { ...selection, activeInstant: new Date().toISOString() }) : null;
 
   function discard() { return !dirty || window.confirm('Discard the unsaved changes to this dated article?'); }
+  function openVariableArticle(row: Row) {
+    if (!(row.sections as Record<string, unknown> | null)?.skyArticleVariableDraft) return false;
+    setEditing(null); setFields(empty); setBaseline(empty); setFacts(null); setError(''); setMessage('');
+    latest.current.onEditRow(row);
+    return true;
+  }
   function edit(row: Row) {
     if (busy || !discard()) return;
+    if (openVariableArticle(row)) return;
     const edition = placementEdition(row);
     if (!edition) return;
     const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
@@ -139,6 +148,7 @@ export default function SkyPlacementWorkspace(props: Props) {
       const key = skyArticleEditionContentKey({ ...payload.facts, format: SKY_INGRESS_ARTICLE_FORMAT });
       const saved = visits.find(row => placementEdition(row)?.contentKey === key);
       if (saved) {
+        if (openVariableArticle(saved)) return;
         const edition = placementEdition(saved)!;
         const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
         setEditing(saved); setFields(next); setBaseline(next);
@@ -156,6 +166,7 @@ export default function SkyPlacementWorkspace(props: Props) {
       let payload: { ok: boolean; rows: Row[]; skippedLiveRows?: unknown[] };
       const base = editing && placementEdition(editing);
       if (editing && base) {
+        if ((editing.sections as Record<string, unknown> | null)?.skyArticleVariableDraft) throw new Error('Open this article in its passage workspace to preserve its variables before saving.');
         if (!editing.updated_at) throw new Error('Reload this saved article to get its current version before saving.');
         const revised = await reviseSkyArticleEdition(base, { ...skyArticleEditableFields(base), headline: fields.headline, tldr: fields.summary, body: fields.body });
         payload = await latest.current.request('/api/admin/generated-content', { method: 'PATCH', body: JSON.stringify({
@@ -188,7 +199,7 @@ export default function SkyPlacementWorkspace(props: Props) {
 
   const update = (key: keyof typeof fields, value: string) => setFields(current => ({ ...current, [key]: value }));
   return <section className="admin-workspace" aria-label={`${title(selection.planet)} in ${title(selection.sign)} workspace`}>
-    <section className="studio-section" aria-label="Currently live">
+    {props.readerSources !== undefined ? props.readerSources : <section className="studio-section" aria-label="Currently live">
       <h3>Currently live</h3>
       {!ready && !error ? <p role="status">Loading saved visits…</p> : statusError ? <p role="alert">{statusError}</p> : statuses === null ? <p role="status">Checking publication…</p> : published ? <>
         <p><strong>{published.edition.headline}</strong> · Published dated article</p>
@@ -197,7 +208,7 @@ export default function SkyPlacementWorkspace(props: Props) {
         </details>
       </> : <p>No published dated article covers right now. The reader uses its approved default sources for this placement.</p>}
       <StudioButton onClick={() => openContextualReaderHref(`/#sky/placement/${selection.planet}/${selection.sign}`)}>Open published reader</StudioButton>
-    </section>
+    </section>}
     <StudioTabs label="Planet and sign writing" tabs={placementWorkspaceTabs} value={tab} onValueChange={value => setTab(value)}>
       {tab === 'visit' ? <section className="admin-workspace" aria-label="Dated visit articles" aria-busy={busy}>
         <p>Write for one calculated visit. Your default reading and reusable templates stay separate. Drafts stay private until you explicitly review and publish.</p>

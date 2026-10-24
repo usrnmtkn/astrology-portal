@@ -12,9 +12,9 @@ export function renderCalendarPassage(body: string, values: Record<string, Calen
   return rendered || null;
 }
 export function resolveCalendarPassage(period: CalendarPassagePeriod, date: string, timeZone: string,
-  content: ReadonlyMap<string, LiveGeneratedContent> | undefined, values: Record<string, CalendarOverviewValue>) {
+  content: ReadonlyMap<string, LiveGeneratedContent> | undefined, values: Record<string, CalendarOverviewValue>, retired = isContentRetired) {
   for (const key of [calendarPassageKey(period, date, timeZone), calendarPassageKey(period)]) {
-    if (isContentRetired(key)) continue; // Returning a dated edition to the shared template is explicit retirement.
+    if (retired(key)) continue; // Returning a dated edition to the shared template is explicit retirement.
     const row = content?.get(key);
     if (!row || row.status !== 'LIVE') continue;
     const body = renderCalendarPassage(row.body || '', values);

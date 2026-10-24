@@ -64,3 +64,4 @@ export const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.
 export { publicationTimestamp, validContentPublication } from '../../apps/web/src/content/contentPublicationState.js';
 
 export {skyAspectReaderCopyPassesBoundary} from "../../apps/web/src/services/skyAspectContent.js";
+export { isCalendarMoonIngressContentKey } from '../_lib/calendar-moon-ingress-sources.js';
