@@ -30,6 +30,7 @@ try{
   assert.equal(full.value.sky.generatedAt,worker.value.sky.generatedAt);
   assert.deepEqual(full.value.sky.positions,expected.value.sky.positions,'Opening a full article restores every original history field for the same instant.');
   assert(selection && selectedAt < start+elapsed,'Source selection arrives before the complete calculation.');
+  assert.deepEqual(JSON.parse(JSON.stringify(selection.moonEvent)),worker.value.sky.moonEvent,'Early lunation selection retains the exact serialized final event, date and selected zone.');
   for(const position of selection.positions){
     const complete=worker.value.sky.positions.find((row:any)=>row.planet===position.planet);
     for(const field of ['planet','sign','longitude','retrograde'])assert.deepEqual(position[field],complete[field],`${position.planet}/${field}: preliminary selection matches complete facts.`);

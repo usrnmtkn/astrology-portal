@@ -26,6 +26,7 @@ try {
   await readFile(resolve('server/initial-sky-reader/dist/initial-reader.mjs'));
   const artifactFiles=(await readdir(resolve('server/initial-sky-reader/dist'),{recursive:true,withFileTypes:true})).filter(entry=>entry.isFile()).map(entry=>entry.name);
   assert(artifactFiles.includes('sky-worker.mjs'));
+  assert(artifactFiles.includes('initial-selection.mjs'));
   assert(artifactFiles.every(file=>file.endsWith('.mjs')),'The function must not copy browser downloads, fonts, HTML or duplicate WASM assets.');
   assert(!artifactFiles.some(file=>/GeneratedContentAdminDashboard|MemoryGraphDashboard|WritingStudio/u.test(file)),'Unused Studio routes must not enter the initial-reader function.');
 } finally {await rm(temp,{recursive:true,force:true});}

@@ -1351,6 +1351,15 @@ function moonEventForLocalDayOrNext(
   };
 }
 
+/** Internal prefetch facts only; never substitutes for the complete list.
+ * Include the same calculated lunation identity early so its exact public
+ * source rows can join the selected-row read rather than a later round trip. */
+export async function getInitialSkySourceSelection(location: LocationInput, date: Date) {
+  const sky=await getAstrodienstSky(location,date,{includeTransitWindows:false,includeAspectTiming:false,includeDailyEvents:false});
+  sky.moonEvent=moonEventForLocalDayOrNext(await getSwissEph(),date,location.timeZone||Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC');
+  return sky;
+}
+
 function localDateParts(date: Date, timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,

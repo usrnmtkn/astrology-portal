@@ -50,6 +50,10 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
   // @ts-ignore Generated from the shared App renderer before API packaging.
   const renderer = import("../server/initial-sky-reader/dist/initial-reader.mjs");
   void renderer.catch(() => {});
+  // @ts-ignore Small, self-contained key selector built beside the renderer.
+  const sourceSelection=import("../server/initial-sky-reader/dist/initial-selection.mjs");
+  void sourceSelection.catch(()=>{});
+  void renderer.then(()=>timings.push(`renderer_ready;dur=${(performance.now()-started).toFixed(1)}`)).catch(()=>{});
   const readBatches = (current: ReturnType<typeof canonicalPublicationLedger>) => Promise.all(
     Array.from({length: Math.ceil(current.length / 100)}, (_, index) => {
       const batch = current.slice(index * 100, (index + 1) * 100);
@@ -71,10 +75,11 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
   void earlyRows.catch(() => {});
   let resolveSelection!: (sky:SkySnapshot|null)=>void;
   const selection = new Promise<SkySnapshot|null>(resolve=>{resolveSelection=resolve;});
-  const selectedRows = Promise.all([publications,renderer,selection]).then(([response,reader,sky])=>{
+  const selectedRows = Promise.all([publications,sourceSelection,selection]).then(([response,reader,sky])=>{
     if(!sky||response.status!==200||response.value.schema!=="tldr-sky-list-publications/v1")return null;
     const ledger=canonicalPublicationLedger(response.value.publications);
     const keys=reader.requiredInitialSkySourceKeys(sky,ledger) as string[];
+    timings.push(`selection_ready;dur=${(performance.now()-started).toFixed(1)}`);
     const selected=new Set(keys);
     return {keys,responses:timed("selected_rows",readBatches(ledger.filter(row=>row.state==="live"&&row.row_id&&selected.has(row.content_key)&&!sharedSourceKey(row.content_key))))};
   });

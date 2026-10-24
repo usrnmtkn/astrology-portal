@@ -2,13 +2,13 @@ import { skyListPlacementPreview } from "../apps/web/src/App";
 import { skyNodeDisplayPositions } from "../apps/web/src/features/sky/skyHelpers";
 import { installContentPublications, publicationAllowsContent, type ContentPublication } from "../apps/web/src/content/contentPublicationState";
 import { loadInitialSkyListFallbackArchitectureV3Bundle, installSkyCoreFallbackArchitectureV3Bundle, installSkyPlacementFallbackArchitectureV3Bundle } from "../apps/web/src/content/fallbackArchitectureV3Runtime";
-import { packageFallbackArchitectureV3CoreRows, packageHookRowFromRow, isSkyPlacementFallbackPartitionKey } from "../apps/web/src/services/fallbackArchitectureV3CorePackaging";
+import { packageFallbackArchitectureV3CoreRows, packageHookRowFromRow } from "../apps/web/src/services/fallbackArchitectureV3CorePackaging";
 import { generatedContentMapFromRows, type GeneratedContentRow } from "../apps/web/src/services/generatedContent";
-import { skyPlacementSelection, skyPlacementSourceInSelection } from "../apps/web/src/services/skyPlacementSourceScope";
+import {selectedInitialSkySourceKey as selectedSourceKey,requiredInitialSkySourceKeys} from './initial-sky-source-selection';
+export {requiredInitialSkySourceKeys};
 import { isSkyListDashboardRow } from "../apps/web/src/services/skyDashboardScope";
 import { skyIngressEssayPublicationKeys } from "../apps/web/src/content/skyIngressEssayReader";
 import keys from "../apps/web/src/content/fallbackArchitectureV3/initial-sky-core-keys-v1.json";
-import placementManifest from "../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json";
 import type { SkySnapshot } from "../apps/web/src/types";
 
 // The shared browser renderer owns mutable public overlay indexes. Serialize
@@ -17,20 +17,6 @@ let queue: Promise<void> = Promise.resolve();
 // Load the complete local reader sources while the independent calculation
 // worker and public I/O run. No request publication or overlay is installed.
 void loadInitialSkyListFallbackArchitectureV3Bundle().catch(() => {});
-const placementKeys = new Set(placementManifest.keys.map(key => key.slice(key.indexOf(":") + 1)));
-function selectedSourceKey(sky: SkySnapshot) {
-  const selection = skyPlacementSelection(sky.positions);
-  return (key: string) => (placementKeys.has(key) || isSkyPlacementFallbackPartitionKey(key)
-    || /^sky-placement\/(?:article|retrograde)\//u.test(key)) && skyPlacementSourceInSelection(key, selection);
-}
-export function requiredInitialSkySourceKeys(sky: SkySnapshot, publications: ContentPublication[]) {
-  const selectedKey = selectedSourceKey(sky);
-  const editions = new Set(skyNodeDisplayPositions(sky.positions).flatMap(position => skyIngressEssayPublicationKeys(publications, {
-    planet: position.planet.toLowerCase().replace(/\s+/gu, "-"), sign: position.sign.toLowerCase()
-  })));
-  return publications.filter(row => selectedKey(row.content_key) || isSkyListDashboardRow(row) || editions.has(row.content_key))
-    .map(row => row.content_key);
-}
 export function renderInitialSkyReader(sky: SkySnapshot, inputRows: GeneratedContentRow[], publications: ContentPublication[]) {
   const result = queue.then(async () => {
     installContentPublications(publications, "complete-sky-list");

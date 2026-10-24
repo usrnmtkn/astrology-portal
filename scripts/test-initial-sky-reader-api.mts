@@ -3,6 +3,9 @@ import { createHash } from 'node:crypto';
 import {createServer} from 'vite';
 import {resolve} from 'node:path';
 import {readFile} from 'node:fs/promises';
+import {lunationReaderContentKeys} from '../apps/web/src/content/lunationArticleIdentity';
+// @ts-ignore Built, self-contained Node key selector is part of the actual function artifact.
+import {requiredInitialSkySourceKeys} from '../server/initial-sky-reader/dist/initial-selection.mjs';
 import {createElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {getSkyFromApi} from '../apps/web/src/services/skyApi';
@@ -63,8 +66,15 @@ try {
   assert.equal(initialReader.previews.length,14);assert(initialReader.previews.every((row:any)=>row.body.trim()));
   assert.equal(first.headers['cache-control'],'private, no-store');
   assert(first.headers['server-timing'].includes('render;dur='));
+  const phaseTimings=Object.fromEntries(first.headers['server-timing'].split(', ').map(value=>{const [name,duration]=value.split(';dur=');return [name,Number(duration)];}));
+  assert(Number.isFinite(phaseTimings.renderer_ready));assert(Number.isFinite(phaseTimings.selection_ready));
+  assert(phaseTimings.selection_ready<=phaseTimings.sky,'Exact selected-row discovery starts before the complete calculation, independently of renderer loading.');
   assert.equal(first.headers['x-sky-calculation-mode'],'worker');
   assert.equal(sky.calculationDetail,'placements');assert.equal(sky.positions.length,14);
+  const lunationKeys=lunationReaderContentKeys({startsAt:sky.moonEvent.occursAt,sign:sky.moonEvent.sign,title:sky.moonEvent.name});
+  assert(lunationKeys.length>0);
+  const lunarPublications=lunationKeys.map((content_key,index)=>({...publication,content_key,row_id:`synthetic-lunation-${index}`}));
+  assert.deepEqual(requiredInitialSkySourceKeys(sky,lunarPublications),lunationKeys,'Every exact lunar source joins the early selected-row batch instead of a later round trip.');
   assert.equal(await acceptInitialSkyReader(sky,initialReader),true);
   installContentPublications(initialReader.publications,'complete-sky-list');
   assert.equal(initialSkyReaderAvailable(initialSkyReaderKey(sky)),true);

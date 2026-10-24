@@ -1,6 +1,6 @@
 import { parentPort } from 'node:worker_threads';
 import {createSkyHandler,readSkyCalculationInputs} from '../api/sky';
-import {getAstrodienstSky} from '../apps/web/src/services/ephemeris';
+import {getInitialSkySourceSelection} from '../apps/web/src/services/ephemeris';
 let queue=Promise.resolve();
 // The list retains every displayed fact and complete paragraph. Full articles
 // already upgrade the exact same instant through the original full handler.
@@ -12,7 +12,7 @@ parentPort!.on('message',({id,url,prefetch}:{id:number;url:string;prefetch?:bool
         const {date,location}=readSkyCalculationInputs(url);
         // Select public source keys while the complete list calculation
         // continues. This preliminary result is never returned to the browser.
-        const selection=await getAstrodienstSky(location,date,{includeTransitWindows:false,includeAspectTiming:false,includeDailyEvents:false});
+        const selection=await getInitialSkySourceSelection(location,date);
         parentPort!.postMessage({id,selection});
       }
       let body='';const headers:Record<string,string>={};
