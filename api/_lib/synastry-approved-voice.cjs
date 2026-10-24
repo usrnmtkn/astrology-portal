@@ -11,7 +11,10 @@ const COLLECTIONS = [
     toolCall: "call_523ff83c43574e3eab4fe2bdeb55d597", answer: "Approve all eight as written" },
   { sourceId: "private:writing/synastry/approved-ten-20261023", date: "2026-10-23", count: 10,
     toolCall: "call_dbde683ecad34036a709b8b3520b50fb",
-    answer: "Use the second attachment: Ten Synastry Readings (Recommended)" }
+    answer: "Use the second attachment: Ten Synastry Readings (Recommended)" },
+  { sourceId: "private:writing/synastry/approved-next-ten-20261023", date: "2026-10-23", count: 10,
+    toolCall: "call_1cde9e68fd9b4d94a73fc0c522236b91", answer: "Approve these ten for publication",
+    manifestFile: "synastry-voice-approval-20261023-next-ten.json" }
 ];
 const hash = text => createHash("sha256").update(text).digest("hex");
 const fail = () => { throw new Error("SYNASTRY_APPROVED_VOICE_UNAVAILABLE: provision the complete approved voice references in protected document storage before generation."); };
@@ -36,7 +39,8 @@ function readApprovedCollection(collection) {
   try { bundle = JSON.parse(body); } catch { return fail(); }
   const approval = bundle?.approval;
   let manifest;
-  try { manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../data/writing/synastry-voice-approval-${collection.date.replaceAll("-", "")}.json`), "utf8")); } catch { return fail(); }
+  const manifestFile = collection.manifestFile ?? `synastry-voice-approval-${collection.date.replaceAll("-", "")}.json`;
+  try { manifest = JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../data/writing/${manifestFile}`), "utf8")); } catch { return fail(); }
   if (bundle?.schema !== "synastry-approved-voice/v1" || !approval
     || approval.sourceUri !== "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b"
     || approval.sourceDate !== collection.date
@@ -55,6 +59,8 @@ function readApprovedCollection(collection) {
     || hash(approval.exactOwnerStatement) !== manifest.ownerStatementSha256
     || approval.sourceSha256 !== manifest.sourceSha256
     || !approval.scope?.includes("positive_voice_references"))) return fail();
+  if (manifest.voiceDesignationStatementSha256 && (typeof approval.voiceDesignationStatement !== "string"
+    || hash(approval.voiceDesignationStatement) !== manifest.voiceDesignationStatementSha256)) return fail();
   const references = bundle.entries.map(entry => ({
     role: "owner_approved_voice_only_not_astrology_for_target", path: collection.sourceId,
     caseId: entry.caseId, text: entry.text, sha256: entry.sha256,
@@ -63,7 +69,8 @@ function readApprovedCollection(collection) {
   }));
   try { designatedSynastryVoiceReferences({ positiveVoiceReferences: references }); } catch { return fail(); }
   return { references, receipt: { sourceId: collection.sourceId, documentSha256: hash(body),
-    approvalToolCall: approval.toolCall, referenceCount: references.length } };
+    approvalToolCall: approval.toolCall, referenceCount: references.length,
+    ...(manifest.voiceDesignationStatementSha256 ? { voiceDesignationStatementSha256: manifest.voiceDesignationStatementSha256 } : {}) } };
 }
 
 module.exports = { withApprovedSynastryVoice, SYNASTRY_APPROVED_VOICE_SOURCE: SOURCE };

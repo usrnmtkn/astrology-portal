@@ -26,14 +26,17 @@ while a malformed or integrity-invalid provision is rejected.
 
 Directional Synastry writing uses the same server-only store for
 `private:writing/synastry/approved-sample-20261022` and
-`private:writing/synastry/approved-ten-20261023`. Their separate
-`synastry-approved-voice/v1` envelopes contain the complete eight and ten explicitly
-approved readings, their exact hashes and distinct approval provenance. Keep this record
+`private:writing/synastry/approved-ten-20261023`, plus
+`private:writing/synastry/approved-next-ten-20261023`. Their separate
+`synastry-approved-voice/v1` envelopes contain the complete eight, ten and latest ten
+approved readings, their exact hashes and distinct approval provenance. The latest
+collection separately binds its publication decision and later voice designation.
+Keep these records
 outside Git, public bundles, logs and PR attachments. Explicit complete source
 selection retains precedence; otherwise missing or corrupt evidence holds new
 Synastry generation before a provider call. Merge this record into the protected
 store without replacing the existing report documents. Production may provision
-these two writing records in the separate server-only
+these three writing records in the separate server-only
 `PRIVATE_SYNASTRY_VOICE_REFERENCES` secret using the same `private-reports/v1`
 format. It takes precedence only for the registered Synastry voice IDs; the
 existing report secret is untouched. Local use may read the ignored
