@@ -1,9 +1,18 @@
 import { isInitialSkyReaderHash } from "../apps/web/src/services/initialSkyRoute.mjs";
+import {buildSync} from 'esbuild';
+import {fileURLToPath} from 'node:url';
+import {gzipSync} from 'node:zlib';
 
 /** Discover App before the entry waits for React. Direct articles also preload
  * placement rows; the list starts those large downloads after App mounts so
  * its selected publication reads can begin sooner. */
 export function skyEntryPreloadPlugin() {
+  const primer=buildSync({entryPoints:[fileURLToPath(new URL('../apps/web/src/initialSkyRequestPrimer.ts',import.meta.url))],
+    bundle:true,write:false,format:'iife',platform:'browser',minify:true,target:'es2022',metafile:true});
+  if(gzipSync(primer.outputFiles[0].contents).length>4_000
+    ||Object.keys(primer.metafile.inputs).some(id=>/react|supabase|App\.tsx|generatedContent|contentPublications/u.test(id))) {
+    throw new Error('The inline Sky request entry must stay small and independent of UI, sources and login.');
+  }
   return {
     name: "tldr-sky-entry-preload",
     apply: "build",
@@ -44,7 +53,7 @@ export function skyEntryPreloadPlugin() {
         visit(placements.fileName);
         return [{ tag: "script", injectTo: "head-prepend", children:
           `(()=>{if(location.pathname!=="/"||!(${isInitialSkyReaderHash.toString()})(location.hash))return;const boot=${JSON.stringify(bootstrapFiles)};const files=!location.hash||/^#\\/?sky\\/?$/.test(location.hash)?${JSON.stringify(appFiles)}:${JSON.stringify([...files])};const preload=(items,priority)=>{for(const file of items){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.fetchPriority=priority;link.href=href;document.head.appendChild(link);}};preload(boot,"high");window.addEventListener("tldr:sky-bootstrap-started",()=>{const style=document.createElement("link");style.rel="preload";style.as="style";style.fetchPriority="high";style.href="/${readerStyles.fileName}";document.head.appendChild(style);preload(files,"low");},{once:true});})();`
-        }, { tag: "script", injectTo: "head-prepend", children:
+        }, {tag:"script",injectTo:"head-prepend",children:primer.outputFiles[0].text}, { tag: "script", injectTo: "head-prepend", children:
           `if(location.pathname==="/"&&(${isInitialSkyReaderHash.toString()})(location.hash)&&!new URL(location.href).searchParams.has("code"))void import("/${bootstrap.fileName}").catch(()=>{});`
         }];
       }

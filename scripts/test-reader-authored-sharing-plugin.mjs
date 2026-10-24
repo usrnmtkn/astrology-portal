@@ -15,6 +15,6 @@ assert.deepEqual(module.default,original,'Actual Vite output preserves every ori
 assert.deepEqual(module.authoredCards,original.authoredCards);
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 assert.equal(digest(module.default),digest(original));
-const shared=JSON.parse(await fs.readFile(new URL('../apps/web/src/content/fallbackArchitectureV3/deferred-reader-support-transport-v1.json',import.meta.url),'utf8')).authoredCards;
+const shared=JSON.parse(await fs.readFile(new URL('../apps/web/src/content/fallbackArchitectureV3/deferred-base-reader-support-v1.json',import.meta.url),'utf8')).authoredCards;
 for(const row of shared)assert.deepEqual(module.authoredCards.find(item=>item.contentKey===row.contentKey),row);
 console.log(`PASS: actual Vite shared transport preserves all ${original.authoredCards.length} complete authored units and all ${shared.length} shared units, exact object hash, order and original approval fields.`);

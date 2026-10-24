@@ -11131,10 +11131,14 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const initialCacheDetail = isTodayMode && !skyDetailRoutePathFromUrl() ? "placements" : "full";
   const initialCachedSky = readCachedSkySnapshot(scopedSkySnapshotCacheKey(initialSkyCacheKey, initialCacheDetail))
     ?? (initialCacheDetail === "placements" ? readCachedSkySnapshot(initialSkyCacheKey) : null);
-  const [sky, setSky] = useState<SkySnapshot | null>(() => initialCachedSky);
-  const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialCachedSky ? "cached" : "loading");
+  const [initialFreshSky] = useState<SkySnapshot | null>(() => {
+    const initial = initialSkyLoad?.matches(getInitialTransitDate(), withTimeZone(initialLocationState.location), initialCacheDetail);
+    return initial?.snapshot && skyFactValidation(initial.snapshot).ok ? initial.snapshot : null;
+  });
+  const [sky, setSky] = useState<SkySnapshot | null>(() => initialFreshSky ?? initialCachedSky);
+  const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialFreshSky ? "ready" : initialCachedSky ? "cached" : "loading");
   const [skyTimingStatus, setSkyTimingStatus] = useState<"loading" | "ready" | "error">(
-    initialCachedSky && skySnapshotHasTransitWindows(initialCachedSky) ? "ready" : "loading"
+    (initialFreshSky ?? initialCachedSky) && skySnapshotHasTransitWindows((initialFreshSky ?? initialCachedSky)!) ? "ready" : "loading"
   );
   const [skyGeneratedContent, setSkyGeneratedContent] = useState<GeneratedContentMap>(() => normalizedSkySnapshotContent);
   const [calendarContentStatus, setCalendarContentStatus] = useState<CalendarContentStatus>("idle");
@@ -11178,7 +11182,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [resolvedPlacementSelection, setResolvedPlacementSelection] = useState<string | null>(null);
   const [skyPlacementLoadStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementResolvedIdentity, setSkyPlacementResolvedIdentity] = useState<string | null>(null);
-  const preparedInitialReaderKey = sky && isTodayMode && !skyDetailRoutePath && !isFallbackOnlySkyPlacementPreview()
+  const preparedInitialReaderKey = sky && skyStatus === "ready" && skyTimingStatus === "ready"
+    && sky.location.latitude === location.latitude && sky.location.longitude === location.longitude
+    && sky.location.timeZone === location.timeZone
+    && skyCivilDate(location.timeZone, new Date(sky.generatedAt)) === skyDate
+    && isTodayMode && !skyDetailRoutePath && !isFallbackOnlySkyPlacementPreview()
     ? initialSkyReaderKey(sky) : undefined;
   const hasPreparedInitialReader = preparedInitialReaderKey !== undefined && initialSkyReaderAvailable(preparedInitialReaderKey);
   const skyListEditionMissing = sky && !skyDetailRoutePath && isTodayMode && !hasPreparedInitialReader
@@ -11187,7 +11195,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }).some(key => !skyGeneratedContent.has(key)));
   // A ledger change invalidates prose during render, before asynchronous effects
   // can install the new source set. A clock tick does not change this identity.
-  const skyPlacementFallbackStatus: SkyPlacementContentStatus = skyPlacementLoadStatus === "ready"
+  const skyPlacementFallbackStatus: SkyPlacementContentStatus = hasPreparedInitialReader ? "ready" : skyPlacementLoadStatus === "ready"
     && (skyListEditionMissing || skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementRequirementSelection) ? "loading" : skyPlacementLoadStatus;
   const [personalTransitLoadStatus, setPersonalTransitLoadStatus] = useState<SkyPlacementContentStatus>("idle");
   const [personalTransitResolvedIdentity, setPersonalTransitResolvedIdentity] = useState<string | null>(null);
@@ -13082,7 +13090,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       : skyDateTimeFromInput(skyDate, skyLocation, skyUsesLiveClock));
     const live = skyUsesLiveClock && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = scopedSkySnapshotCacheKey(skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`), skyCalculationDetail);
-    const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky);
+    const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky)
+      || Boolean(initialRequest?.snapshot && sky && sky.generatedAt === initialRequest.snapshot.generatedAt);
     skyCalculationSelectionRef.current = selectionKey;
     // A noon snapshot or earlier live calculation must never stand in for now.
     const cacheKey = skySnapshotCacheKey(skyLocation, live ? `live-${selectedDateTime.toISOString()}` : skyDate);

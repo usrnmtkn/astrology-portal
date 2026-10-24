@@ -71,6 +71,7 @@ async function run({ href = valid, holdMetadata = false, rejectMetadata = false,
     getInitialTransitDate: () => { if (throwCapture) throw Error('Synthetic capture failure'); return '2026-10-16'; },
     getInitialLocation: () => ({ location: selectedLocation }), withTimeZone: value => value,
     skyDateTimeFromInput: () => date, liveSkyReference: () => true,
+    matchingInitialSkyTransport: () => null,
     getSkyFromApi: (value, at) => { assert.equal(value, selectedLocation); assert.equal(at, date); apiReads++; return api.promise; },
     getSkyLocally: () => { localReads++; throw Error('Speculative local calculation forbidden'); },
     loadAssets: () => { assetImports++; return rejectAssets ? Promise.reject(Error('Synthetic asset import failure')) : Promise.resolve({

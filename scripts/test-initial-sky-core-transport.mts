@@ -15,7 +15,9 @@ const authored=JSON.parse(await fs.readFile(folder+'bundled-sky-authored-cards-v
 const reader=JSON.parse(await fs.readFile(folder+'bundled-initial-reader-rows-v3.json','utf8'));
 const latest=(rows:any[])=>[...new Map(rows.map(row=>[row.contentKey,row])).values()];
 const initial=JSON.parse(await fs.readFile(folder+'initial-sky-core-transport-v1.json','utf8'));
-const support=JSON.parse(await fs.readFile(folder+'deferred-reader-support-transport-v1.json','utf8'));
+const personal=JSON.parse(await fs.readFile(folder+'deferred-reader-support-transport-v1.json','utf8'));
+const base=JSON.parse(await fs.readFile(folder+'deferred-base-reader-support-v1.json','utf8'));
+const support={...base,hookRows:[...base.hookRows,...personal.hookRows]};
 const hash=createHash('sha256').update(bytes).digest('hex');
 assert.equal(initial.sourceSha256,hash);assert.equal(support.sourceSha256,hash);
 for(const [file,expected] of Object.entries(initial.sourceHashes))assert.equal(createHash('sha256').update(await fs.readFile(folder+file)).digest('hex'),expected);
@@ -46,7 +48,7 @@ try {
   builder.onLoad({filter:/(?:initial-sky-core|deferred-reader-support)-transport-v1\.json$/},args=>({contents:execFileSync('git',['show','origin/main:'+path.relative(process.cwd(),args.path)]).toString(),loader:'json'}));
  }}]});
  await build({entryPoints:['apps/web/src/content/fallbackArchitectureV3Runtime.ts'],bundle:true,platform:'node',format:'esm',outfile:target,logLevel:'silent'});
- for(const loader of ['loadCalendarFallbackArchitectureV3Bundle','loadDeferredFallbackArchitectureV3Bundle','loadEmptyHouseFallbackArchitectureV3Bundle','loadRelationshipFallbackArchitectureV3Bundle','loadSkyPlacementFallbackArchitectureV3Bundle']) {
+ for(const loader of ['loadCalendarFallbackArchitectureV3Bundle','loadDeferredFallbackArchitectureV3Bundle','loadEmptyHouseFallbackArchitectureV3Bundle','loadRelationshipFallbackArchitectureV3Bundle','loadSkyPlacementFallbackArchitectureV3Bundle','loadLunationBookFallbackArchitectureV3Bundle']) {
   const runtime=await import(pathToFileURL(target).href+'?loader='+loader);
   const baseline=await import(pathToFileURL(baselineTarget).href+'?loader='+loader);
   for(const row of support.hookRows)assert.equal(runtime.fallbackV3HookBody(row.contentKey),'');
@@ -59,4 +61,4 @@ try {
   for(const row of latest([...authored.authoredCards,...reader.authoredCards]))assert.deepEqual(runtime.transitV3AuthoredCardForContentKey(row.contentKey),baseline.transitV3AuthoredCardForContentKey(row.contentKey),`${loader}/${row.contentKey}: complete authored unit is preserved.`);
  }
 } finally {await fs.rm(temp,{recursive:true,force:true});}
-console.log('PASS: complete source union and hashes, smaller startup, every full unit/voice through five actual full-reader loaders matches unchanged main; separate list readiness.');
+console.log('PASS: complete source union and hashes, smaller startup, every full unit/voice through six actual full-reader loaders matches unchanged main; separate list readiness.');

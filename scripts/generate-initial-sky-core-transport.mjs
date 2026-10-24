@@ -25,11 +25,13 @@ const initial = { authoredCards: [], hookRows: hooks.filter(neededOnList),
 // The original initial-reader module is also consumed synchronously by the
 // weekly reader. Reuse that module at the full-reader boundary, rather than
 // embedding a second copy of its complete authored passages here.
-const support = { authoredCards: authored.authoredCards,
-  hookRows: hooks.filter(row => !neededOnList(row)), vocabularyRows: vocabulary.filter(row => !initialVocabulary(row)),
+const personal = row => /^fallback-hook\/transit-effect-(?:soft|hard)\//u.test(row.contentKey);
+const base = { authoredCards: authored.authoredCards,
+  hookRows: hooks.filter(row => !neededOnList(row) && !personal(row)), vocabularyRows: vocabulary.filter(row => !initialVocabulary(row)),
   templates: reader.templates.filter(row => !initialTemplate(row)) };
-if (new Set([...initial.hookRows, ...support.hookRows].map(row => row.contentKey)).size !== hooks.length) throw new Error('Sky core transport must preserve the complete source inventory.');
-for (const [name, rows] of [['initial-sky-core-transport-v1', initial], ['deferred-reader-support-transport-v1', support]]) {
+const support = {authoredCards:[],hookRows:hooks.filter(personal),vocabularyRows:[],templates:[]};
+if (new Set([...initial.hookRows, ...base.hookRows, ...support.hookRows].map(row => row.contentKey)).size !== hooks.length) throw new Error('Sky core transport must preserve the complete source inventory.');
+for (const [name, rows] of [['initial-sky-core-transport-v1', initial], ['deferred-base-reader-support-v1',base], ['deferred-reader-support-transport-v1', support]]) {
   const value = JSON.stringify({ ...rows, sourceSha256: sourceHashes['bundled-sky-core-rows-v3.json'], sourceHashes }) + '\n';
   const target = new URL(`${name}.json`, root);
   if (process.argv.includes('--check')) {

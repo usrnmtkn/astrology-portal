@@ -373,13 +373,23 @@ export function loadFallbackArchitectureV3BundledSkyPlacementManifest() {
 }
 
 const initialReaderBundle = readerEligibleBundle(snapshotBundle);
+let localBaseReaderSupportBundle: FallbackArchitectureV3Bundle | null = null;
+let baseReaderSupportPromise: Promise<void> | null = null;
+function loadBaseReaderSupportBundle() {
+  if (localBaseReaderSupportBundle) return Promise.resolve();
+  baseReaderSupportPromise ??= import('./fallbackArchitectureV3/deferred-base-reader-support-v1.json').then(({default:rows})=>{
+    const authoredCards=[...new Map([...rows.authoredCards,...readerAuthoredCards].map(row=>[row.contentKey,row])).values()];
+    localBaseReaderSupportBundle=readerEligibleBundle({transitLib:{authoredCards},templatesFile:{templates:rows.templates},rowsFile:rows});
+    recomposeReaderBundle();
+  }).catch(error=>{baseReaderSupportPromise=null;throw error;});
+  return baseReaderSupportPromise;
+}
 let localReaderSupportBundle: FallbackArchitectureV3Bundle | null = null;
 let readerSupportPromise: Promise<void> | null = null;
 function loadReaderSupportBundle() {
   if (localReaderSupportBundle) return Promise.resolve();
-  readerSupportPromise ??= import('./fallbackArchitectureV3/deferred-reader-support-transport-v1.json').then(({ default: rows }) => {
-    const authoredCards = [...new Map([...rows.authoredCards, ...readerAuthoredCards].map(row => [row.contentKey, row])).values()];
-    localReaderSupportBundle = readerEligibleBundle({ transitLib: { authoredCards }, templatesFile: { templates: rows.templates }, rowsFile: rows });
+  readerSupportPromise ??= Promise.all([loadBaseReaderSupportBundle(),import('./fallbackArchitectureV3/deferred-reader-support-transport-v1.json')]).then(([, { default: rows }]) => {
+    localReaderSupportBundle = readerEligibleBundle({ transitLib: { authoredCards: rows.authoredCards }, templatesFile: { templates: rows.templates }, rowsFile: rows });
     recomposeReaderBundle();
   }).catch(error => { readerSupportPromise = null; throw error; });
   return readerSupportPromise;
@@ -458,6 +468,7 @@ function recomposeReaderBundle() {
   // and current dashboard rows override it. A Calendar-only load is replaced
   // by the complete deferred bundle; a partial CMS response cannot erase it.
   activateReaderBundle([
+    localBaseReaderSupportBundle,
     localReaderSupportBundle,
     lastKnownGoodReaderBundle,
     localDeferredReaderBundle ?? localCalendarReaderBundle,
@@ -850,7 +861,7 @@ export function isLunationBookFallbackArchitectureV3BundleLoaded() {
 }
 
 export const loadLunationBookFallbackArchitectureV3Bundle = localBundleLoader(
-  () => import("./fallbackArchitectureV3LunationBookBundle").then(module => module.lunationBookFallbackArchitectureV3Bundle),
+  () => Promise.all([loadBaseReaderSupportBundle(),import("./fallbackArchitectureV3LunationBookBundle")]).then(([,module])=>module.lunationBookFallbackArchitectureV3Bundle),
   isLunationBookFallbackArchitectureV3BundleLoaded,
   bundle => { localLunationBookReaderBundle = bundle; }
 );

@@ -1,5 +1,10 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import {createServer} from 'vite';
+import {resolve} from 'node:path';
+import {createElement} from 'react';
+import {renderToStaticMarkup} from 'react-dom/server';
+import {getSkyFromApi} from '../apps/web/src/services/skyApi';
 import { createInitialSkyReaderHandler } from '../api/sky-reader';
 import { acceptInitialSkyReader, initialSkyReaderAvailable, initialSkyReaderKey, initialSkyReaderPreview, initialSkyReaderRows } from '../apps/web/src/services/initialSkyReader';
 import { installContentPublications, publicationLedgerReady } from '../apps/web/src/content/contentPublicationState';
@@ -66,6 +71,37 @@ try {
   const context={displayPositions:skyNodeDisplayPositions(sky.positions),aspects:sky.aspects,generatedAt:sky.generatedAt,locationLatitude:sky.location.latitude,moonEvent:sky.moonEvent};
   const sun=initialReader.previews.find((row:any)=>row.planet==='Sun').body;
   assert.equal(initialSkyReaderPreview('Sun',context),sun);
+  const oldWindow=(globalThis as any).window,ledgerFetch=globalThis.fetch;
+  try{
+    let network=0;globalThis.fetch=async()=>{network++;return Response.json({sky});};
+    const location={...sky.location,label:'Synthetic selection'},date=new Date(sky.generatedAt);
+    const key=new URLSearchParams({at:date.toISOString(),lat:String(location.latitude),lon:String(location.longitude),timeZone:location.timeZone,version:'tldrastro-calculation-v3',detail:'placements'}).toString();
+    const prime=(request:Promise<unknown>,startedAt=performance.now())=>(globalThis as any).window={__tldrInitialSkyTransport:{key,request,startedAt}};
+    prime(Promise.resolve({sky}));
+    assert.deepEqual((await getSkyFromApi(location,date,'placements')).positions,sky.positions);assert.equal(network,0,'The real client adopts the exact inline request without a duplicate fetch.');
+    assert.equal((globalThis as any).window.__tldrInitialSkyTransport,undefined);
+    const wrong=structuredClone(sky);wrong.location.longitude=0;prime(Promise.resolve({sky:wrong}));
+    await assert.rejects(getSkyFromApi(location,date,'placements'),/incomplete or mismatched/,'Primed payloads still undergo the full real-client fact validation.');
+    prime(new Promise(()=>{}),performance.now()-7900);const before=performance.now();
+    await assert.rejects(getSkyFromApi(location,date,'placements'));
+    assert(performance.now()-before<1000,'Inline elapsed time is deducted from the unchanged eight-second total deadline.');assert.equal(network,0);
+  }finally{globalThis.fetch=ledgerFetch;if(oldWindow===undefined)delete (globalThis as any).window;else (globalThis as any).window=oldWindow;}
+  const vite=await createServer({root:resolve('apps/web'),appType:'custom',logLevel:'silent',server:{middlewareMode:true}});
+  try{
+    const widget=await vite.ssrLoadModule('/src/features/sky/PublishedSkySummary.tsx');
+    const cache=await vite.ssrLoadModule('/src/services/initialSkyReader.ts');
+    const proof=await vite.ssrLoadModule('/src/services/contentPublications.ts');
+    const state=await vite.ssrLoadModule('/src/content/contentPublicationState.ts');
+    const sunPosition=sky.positions.find((p:any)=>p.planet==='Sun'),moonPosition=sky.positions.find((p:any)=>p.planet==='Moon');
+    const render=(factsReady=true)=>renderToStaticMarkup(createElement(widget.PublishedSkySummary,{facts:{sun:sunPosition,moon:moonPosition},events:[],factsReady,factsError:false,onRetryFacts(){},children:(parts:any[])=>createElement('p',null,parts.map(part=>part.text).join(''))}));
+    assert.match(render(),/aria-busy="true"/,'No prepared proof means normal source loading remains required.');
+    assert.equal(await cache.acceptInitialSkyReader(sky,initialReader),true);proof.admitInitialSkyReaderPublications();
+    const markup=render();assert.match(markup,/aria-busy="false"/,'The real component renders complete prepared sources without waiting for an effect.');
+    assert(markup.includes('Sun in Scorpio'));assert(markup.includes('Moon in Pisces'));assert(markup.length>200);assert(!markup.includes('Loading the daily sky summary'));
+    assert.match(render(false),/aria-busy="true"/,'Prepared prose cannot replace unavailable current facts.');
+    state.installContentPublications([publication],'complete-sky-list');
+    assert.match(render(),/aria-busy="true"/,'Changed publication proof invalidates the synchronous prepared source path.');
+  }finally{await vite.close();}
   assert.equal(initialSkyReaderPreview('Sun',{...context,generatedAt:'2026-10-24T16:00:00.000Z'}),null);
   assert.equal(initialSkyReaderPreview('Sun',{...context,locationLatitude:35}),null);
   assert.equal(initialSkyReaderAvailable(initialSkyReaderKey({...sky,location:{...sky.location,longitude:0}})),false);

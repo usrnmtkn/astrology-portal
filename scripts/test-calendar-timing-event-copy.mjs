@@ -42,16 +42,20 @@ const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-timing-copy.bundle
 await build({
   bundle: true,
   define: { "import.meta.env": "{}" },
-  entryPoints: [path.join(repoRoot, "apps/web/src/services/generatedContent.ts")],
+  stdin: {resolveDir:repoRoot,loader:"ts",contents:`
+    export {fallbackArchitectureV3AuthoredContentForKey} from './apps/web/src/services/generatedContent';
+    export {loadCalendarFallbackArchitectureV3Bundle} from './apps/web/src/content/fallbackArchitectureV3Runtime';
+  `},
   format: "esm",
   logLevel: "silent",
   outfile: bundleFile,
   platform: "node"
 });
 
-const { fallbackArchitectureV3AuthoredContentForKey } = await import(
+const { fallbackArchitectureV3AuthoredContentForKey, loadCalendarFallbackArchitectureV3Bundle } = await import(
   `${pathToFileURL(bundleFile).href}?t=${Date.now()}`
 );
+await loadCalendarFallbackArchitectureV3Bundle();
 
 for (const approved of approval.cards) {
   const resolved = fallbackArchitectureV3AuthoredContentForKey(approved.contentKey);

@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../apps/web/src/content/fallbackArchitectureV3/',import.meta.url));
 export function sharedReaderAuthoredRowsPlugin() {
   const original=path.join(root,'bundled-transit-core-authored-cards-v3.json');
-  const shared=path.join(root,'deferred-reader-support-transport-v1.json');
+  const shared=path.join(root,'deferred-base-reader-support-v1.json');
   return {name:'share-complete-reader-authored-rows',enforce:'post',transform(_code,id){
     if(id!==original)return;
     const source=JSON.parse(fs.readFileSync(original,'utf8'));

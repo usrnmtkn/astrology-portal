@@ -87,7 +87,7 @@ if (!manifest[entryKey]?.isEntry || !manifest[bootstrapKey]?.isEntry || !appKey 
 }
 
 const bootFiles = collectStaticManifestGraph(manifest, [entryKey, bootstrapKey, appKey]);
-if ([...bootFiles].some(file => file.includes('fallback-content-reader-support-'))) {
+if ([...bootFiles].some(file => /fallback-content-(?:reader|base)-support-/u.test(file))) {
   throw new Error('Public reader startup downloads deferred personal interpretation sources.');
 }
 const bootItems = [...bootFiles]

@@ -50,18 +50,19 @@ for (const profile of (process.env.SKY_PERF_PROFILES || 'desktop,mobile').split(
   const page=await context.newPage();
   const cdp=await context.newCDPSession(page);
   if(profile==='mobile') {await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});await cdp.send('Network.emulateNetworkConditions',{offline:false,latency:80,downloadThroughput:1_600_000/8,uploadThroughput:750_000/8});}
-  const requests=[];const errors=[];
+  const requests=[];const errors=[];const failedRequests=[];
   page.on('response',async r=>{const req=r.request();const u=new URL(r.url());if(['fetch','xhr'].includes(req.resourceType())||u.pathname.includes('wasm'))requests.push({url:u.origin+u.pathname+u.search,status:r.status(),timing:req.timing()});});
   page.on('pageerror',e=>errors.push(e.message));
+  page.on('requestfailed',request=>failedRequests.push({url:request.url(),error:request.failure()?.errorText}));
   if (process.env.SKY_PERF_TRACE) await context.tracing.start({screenshots:true,snapshots:true});
   for(const warm of [false,true]) {
-   requests.length=0; errors.length=0;
+   requests.length=0; errors.length=0;failedRequests.length=0;
    if (process.env.SKY_PERF_CPU_PROFILE) { await cdp.send('Profiler.enable'); await cdp.send('Profiler.start'); }
    let error=null;
    try {if(warm)await page.reload({waitUntil:'domcontentloaded'});else await page.goto(`${baseURL}/?date=${date}${hash}`,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.__skyPerf.marks.reading!==undefined || window.__skyPerf.marks.failure!==undefined,{},{timeout:60000});}catch(e){error=e.message;}
    const data=await page.evaluate(()=>({...window.__skyPerf,prose: [...document.querySelectorAll('[aria-label="Daily sky summary"],.planet-placement-row--sky .planet-placement-row__description')].map(el=>el.textContent),copy: [...document.querySelectorAll('[aria-label="Daily sky summary"],.planet-placement-row--sky')].map(el=>el.textContent),navigation:performance.getEntriesByType('navigation').map(e=>e.toJSON()),resources:performance.getEntriesByType('resource').map(e=>({name:e.name,start:e.startTime,duration:e.duration,transferSize:e.transferSize,encodedBodySize:e.encodedBodySize,decodedBodySize:e.decodedBodySize}))}));
    if(data.marks.failure)error='Reader displayed an error before usable content';
-   const result={profile,run,warm,error,errors:[...errors],...data,requests:[...requests]};results.push(result);await fs.writeFile(out,JSON.stringify(results,null,2));
+   const result={profile,run,warm,error,errors:[...errors],failedRequests:[...failedRequests],...data,requests:[...requests]};results.push(result);await fs.writeFile(out,JSON.stringify(results,null,2));
    console.log(JSON.stringify({profile,run,warm,marks:data.marks,error,worker:data.workers}));
    if (process.env.SKY_PERF_CPU_PROFILE) {
     const {profile:cpu}=await cdp.send('Profiler.stop');
