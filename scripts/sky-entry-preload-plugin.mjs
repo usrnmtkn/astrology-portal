@@ -35,12 +35,15 @@ export function skyEntryPreloadPlugin() {
         }
         visit(app.fileName);
         const appFiles = [...files];
+        const readerStyles = Object.values(bundle).find(asset => asset.type === "asset"
+          && /^assets\/styles-[^/]+\.css$/u.test(asset.fileName));
+        if (!readerStyles) throw new Error("Sky preload could not locate the reader stylesheet.");
         const placements = Object.values(bundle).find(chunk => chunk.type === "chunk"
           && Object.keys(chunk.modules ?? {}).some(id => id.endsWith("/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json")));
         if (!placements) throw new Error("Sky preload could not locate the built placement rows.");
         visit(placements.fileName);
         return [{ tag: "script", injectTo: "head-prepend", children:
-          `(()=>{if(location.pathname!=="/"||!(${isInitialSkyReaderHash.toString()})(location.hash))return;const boot=${JSON.stringify(bootstrapFiles)};const files=!location.hash||/^#\\/?sky\\/?$/.test(location.hash)?${JSON.stringify(appFiles)}:${JSON.stringify([...files])};const preload=(items,priority)=>{for(const file of items){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.fetchPriority=priority;link.href=href;document.head.appendChild(link);}};preload(boot,"high");window.addEventListener("tldr:sky-bootstrap-started",()=>preload(files,"low"),{once:true});})();`
+          `(()=>{if(location.pathname!=="/"||!(${isInitialSkyReaderHash.toString()})(location.hash))return;const boot=${JSON.stringify(bootstrapFiles)};const files=!location.hash||/^#\\/?sky\\/?$/.test(location.hash)?${JSON.stringify(appFiles)}:${JSON.stringify([...files])};const preload=(items,priority)=>{for(const file of items){const href="/"+file;if([...document.querySelectorAll('link[rel="modulepreload"]')].some(link=>link.getAttribute("href")===href))continue;const link=document.createElement("link");link.rel="modulepreload";link.crossOrigin="";link.fetchPriority=priority;link.href=href;document.head.appendChild(link);}};preload(boot,"high");window.addEventListener("tldr:sky-bootstrap-started",()=>{const style=document.createElement("link");style.rel="preload";style.as="style";style.fetchPriority="high";style.href="/${readerStyles.fileName}";document.head.appendChild(style);preload(files,"low");},{once:true});})();`
         }, { tag: "script", injectTo: "head-prepend", children:
           `if(location.pathname==="/"&&(${isInitialSkyReaderHash.toString()})(location.hash)&&!new URL(location.href).searchParams.has("code"))void import("/${bootstrap.fileName}").catch(()=>{});`
         }];

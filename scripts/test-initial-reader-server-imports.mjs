@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {mkdtemp,writeFile,readFile,cp,rm,mkdir} from 'node:fs/promises';
+import {mkdtemp,writeFile,readFile,readdir,cp,rm,mkdir} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,dirname,resolve} from 'node:path';
 import {execFileSync} from 'node:child_process';
@@ -24,5 +24,9 @@ try {
   assert(config.functions['api/sky-reader.ts'].includeFiles.includes('server/initial-sky-reader/dist/**'));
   assert(config.functions['api/sky-reader.ts'].includeFiles.includes('swisseph-wasm/wasm/*'));
   await readFile(resolve('server/initial-sky-reader/dist/initial-reader.mjs'));
+  const artifactFiles=(await readdir(resolve('server/initial-sky-reader/dist'),{recursive:true,withFileTypes:true})).filter(entry=>entry.isFile()).map(entry=>entry.name);
+  assert(artifactFiles.includes('sky-worker.mjs'));
+  assert(artifactFiles.every(file=>file.endsWith('.mjs')),'The function must not copy browser downloads, fonts, HTML or duplicate WASM assets.');
+  assert(!artifactFiles.some(file=>/GeneratedContentAdminDashboard|MemoryGraphDashboard|WritingStudio/u.test(file)),'Unused Studio routes must not enter the initial-reader function.');
 } finally {await rm(temp,{recursive:true,force:true});}
 console.log('PASS: plain Node packaged publication imports, separate full readiness and actual initial-reader/Swiss function artifact inclusion.');

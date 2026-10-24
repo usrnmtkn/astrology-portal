@@ -25,12 +25,12 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
     request = withRequestDeadline(async signal => {
       let payload: { sky: SkySnapshot; initialReader?: unknown };
       try {
-        const response = await fetch(`/api/${detail === "placements" ? "sky-reader" : "sky"}?${key}`, { signal });
+        const response = await fetch(`/api/${detail === "placements" ? "sky-reader" : "sky"}?${key}`, { signal, priority: detail === "placements" ? "high" : "auto" });
         if (!response.ok) throw new Error("Sky API unavailable.");
         payload = await response.json();
       } catch (error) {
         if (detail !== "placements" || signal.aborted) throw error;
-        const response = await fetch(`/api/sky?${key}`, { signal });
+        const response = await fetch(`/api/sky?${key}`, { signal, priority: "high" });
         if (!response.ok) throw new Error("Sky API unavailable.");
         payload = await response.json();
       }

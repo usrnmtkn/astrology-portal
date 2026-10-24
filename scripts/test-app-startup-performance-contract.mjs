@@ -12,6 +12,7 @@ import { skyEntryPreloadPlugin } from "./sky-entry-preload-plugin.mjs";
 const preloadPlugin = skyEntryPreloadPlugin();
 const chunk = (fileName, imports, extra = {}) => ({ type: "chunk", fileName, imports, ...extra });
 const bundle = {
+  "assets/styles-test.css": {type:"asset",fileName:"assets/styles-test.css"},
   "assets/bootstrap.js": chunk("assets/bootstrap.js", ["assets/sky-api.js", "assets/publications.js"], { facadeModuleId: "/repo/apps/web/src/initialSkyBootstrap.ts" }),
   "assets/sky-api.js": chunk("assets/sky-api.js", [], { modules: { "/repo/apps/web/src/services/skyApi.ts": {} } }),
   "assets/publications.js": chunk("assets/publications.js", [], { modules: { "/repo/apps/web/src/services/contentPublications.ts": {} } }),
@@ -42,8 +43,11 @@ for (const [pathname, hash, expected] of [
   assert.equal(links.length, expected ? 3 : 0, `${pathname}${hash}: only the independent request graph starts first`);
   assert(links.every(link => link.fetchPriority === "high"));
   for (const listener of listeners) listener();
-  assert.equal(links.length, expected, `${pathname}${hash}: preload scope`);
-  assert(links.every(link => link.rel === "modulepreload" && !link.href.includes("article")));
+  assert.equal(links.filter(link=>link.rel==='modulepreload').length, expected, `${pathname}${hash}: preload scope`);
+  assert(links.filter(link=>link.rel==='modulepreload').every(link => !link.href.includes("article")));
+  const styles=links.filter(link=>link.rel==='preload');
+  assert.equal(styles.length,expected?1:0);
+  if(expected)assert.deepEqual([styles[0].as,styles[0].href,styles[0].fetchPriority],['style','/assets/styles-test.css','high']);
 }
 for (const saved of ['profile', 'friends', 'calendar', 'horoscopes', 'account', 'settings']) {
   const links = [];

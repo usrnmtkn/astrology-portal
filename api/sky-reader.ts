@@ -44,10 +44,32 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
     const start = performance.now();
     try { return await work; } finally { timings.push(`${name};dur=${(performance.now() - start).toFixed(1)}`); }
   };
+  const sharedSourceKey = (key: string) => /^(?:cms\/sky-|fallback-vocab\/|cc\/(?:planet|sign)\/|sky[.-]ingress[./-]|sky-[a-z-]+-enters-)/u.test(key);
+  const readBatches = (current: ReturnType<typeof canonicalPublicationLedger>) => Promise.all(
+    Array.from({length: Math.ceil(current.length / 100)}, (_, index) => {
+      const batch = current.slice(index * 100, (index + 1) * 100);
+      return readRows({ids: [...new Set(batch.map(row => row.row_id!))], keys: batch.map(row => row.content_key)});
+    }));
   const publications = timed("publications", readPublic(publicationsHandler, { method: "GET", url: "/api/content-publications?scope=sky-list", headers: {} }));
   void publications.catch(() => {});
-  const calculated = await timed("sky", calculateInitialSky(req.url!).catch(() =>
-    readPublic(skyHandler, { method: "GET", url: req.url, headers: {} })));
+  // These complete public sources do not depend on the calculated placements.
+  // Read them while the worker calculates; selected editions retain their own
+  // exact-key read after facts arrive and all rows pass the same admission below.
+  const earlyRows = publications.then(response => {
+    if (response.status !== 200 || response.value.schema !== "tldr-sky-list-publications/v1") throw new Error("Sky lifecycle unavailable.");
+    const current = canonicalPublicationLedger(response.value.publications)
+      .filter(row => row.state === "live" && row.row_id && sharedSourceKey(row.content_key));
+    const responses = timed("shared_rows", readBatches(current));
+    void responses.catch(() => {});
+    return {keys: new Set(current.map(row => row.content_key)), responses};
+  });
+  void earlyRows.catch(() => {});
+  let calculationMode = "worker";
+  const calculated = await timed("sky", calculateInitialSky(req.url!).catch(() => {
+    calculationMode = "inline-recovery";
+    return readPublic(skyHandler, { method: "GET", url: req.url, headers: {} });
+  }));
+  res.setHeader("x-sky-calculation-mode", calculationMode);
   if (calculated.status !== 200) { res.statusCode = calculated.status; res.end(JSON.stringify(calculated.value)); return; }
   const sky = calculated.value.sky as SkySnapshot;
   let initialReader: unknown = null;
@@ -62,16 +84,12 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
     const { renderInitialSkyReader, requiredInitialSkySourceKeys } = await import("../server/initial-sky-reader/dist/initial-reader.mjs");
     const lunationKeys = sky.moonEvent ? lunationReaderContentKeys({ startsAt: sky.moonEvent.occursAt,
       sign: sky.moonEvent.sign, title: sky.moonEvent.name }) : [];
-    const sharedKey = (key: string) => /^(?:cms\/sky-|fallback-vocab\/|cc\/(?:planet|sign)\/|sky[.-]ingress[./-]|sky-[a-z-]+-enters-)/u.test(key)
-      || lunationKeys.includes(key);
+    const sharedKey = (key: string) => sharedSourceKey(key) || lunationKeys.includes(key);
     const requiredKeys = new Set<string>(requiredInitialSkySourceKeys(sky, ledger));
     const current = ledger.filter(row => row.state === "live" && row.row_id && (requiredKeys.has(row.content_key) || sharedKey(row.content_key)));
-    const pages = [];
-    for (let index = 0; index < current.length; index += 100) {
-      const batch = current.slice(index, index + 100);
-      pages.push(readRows({ ids: [...new Set(batch.map(row => row.row_id!))], keys: batch.map(row => row.content_key) }));
-    }
-    const responses = await timed("rows", Promise.all(pages));
+    const early = await earlyRows;
+    const responses = (await Promise.all([early.responses,
+      timed("rows", readBatches(current.filter(row => !early.keys.has(row.content_key))))])).flat();
     if (responses.some(response => response.status !== 200 || response.value.schema !== "content-reader-row-v1"
       || response.value.nextCursor !== null || !Array.isArray(response.value.rows))) throw new Error(`Sky reader rows unavailable (${responses.map(response => `${response.status}:${response.value.error ?? response.value.schema}`).join(", ")}).`);
     const rows = responses.flatMap(response => response.value.rows) as GeneratedContentRow[];

@@ -9,7 +9,7 @@ import { timestampInInclusiveWindow } from "../apps/web/src/services/skyPlacemen
 const vite = await createServer({
   root: path.join(process.cwd(), "apps/web"), appType: "custom", logLevel: "silent", server: { middlewareMode: true },
   plugins: [{ name: "key-dates-test-exports", enforce: "pre", transform(code, id) {
-    if (id.endsWith("/src/App.tsx")) return code + "\nexport { skyPlacementKeyDates, currentSkyPlacementDetailArticle, loadContentRegistry };";
+    if (id.endsWith("/src/App.tsx")) return code + "\nexport { skyPlacementKeyDates, currentSkyPlacementDetailArticle };";
     if (id.includes("/fallbackArchitectureV3/authored-inputs/") && id.endsWith(".json?url")) return `export default ${fs.readFileSync(id.slice(0, -4), "utf8")};`;
   } }]
 });

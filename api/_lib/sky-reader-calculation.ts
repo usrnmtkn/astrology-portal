@@ -12,7 +12,7 @@ function stop(error:Error) {
 /** Keep Swiss CPU work off the request's I/O thread. The worker executes the
  * unchanged Sky handler with the exact inputs and carries no owner credentials.
  */
-export function calculateInitialSky(url:string):Promise<Result> {
+export async function calculateInitialSky(url:string):Promise<Result> {
   if(!worker){
     const current=new Worker(new URL('../../server/initial-sky-reader/dist/sky-worker.mjs',import.meta.url),{env:{NODE_ENV:process.env.NODE_ENV||'production'},execArgv:[]});
     worker=current;

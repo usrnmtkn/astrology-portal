@@ -7,10 +7,10 @@ try{
   const query=new URLSearchParams({at,lat:String(lat),lon:String(lon),timeZone:zone,version:'tldrastro-calculation-v3',detail:'placements'});
   const url='/api/sky-reader?'+query;
   let ticks=0;const start=performance.now(),interval=setInterval(()=>ticks++,10);
-  const worker=await calculateInitialSky(url);clearInterval(interval);
+  const worker=await calculateInitialSky(url);const elapsed=performance.now()-start;clearInterval(interval);
   const expected=await direct(url);
   assert.equal(worker.status,expected.status);assert.deepEqual(worker.value,expected.value,'Every calculated position, motion/window, event, provenance and fact matches the unchanged handler.');
-  assert(performance.now()-start<100||ticks>0,'The request event loop must remain available while Swiss work executes.');
+  assert(elapsed<100||ticks>0,'The request event loop must remain available while Swiss work executes.');
  }
  assert.equal((await calculateInitialSky('/api/sky-reader?at=invalid')).status,400);
  disposeInitialSkyWorker();

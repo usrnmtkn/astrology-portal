@@ -57,6 +57,7 @@ try {
   assert.equal(initialReader.previews.length,14);assert(initialReader.previews.every((row:any)=>row.body.trim()));
   assert.equal(first.headers['cache-control'],'private, no-store');
   assert(first.headers['server-timing'].includes('render;dur='));
+  assert.equal(first.headers['x-sky-calculation-mode'],'worker');
   assert.equal(sky.calculationDetail,'placements');assert.equal(sky.positions.length,14);
   assert.equal(await acceptInitialSkyReader(sky,initialReader),true);
   installContentPublications(initialReader.publications,'complete-sky-list');
@@ -76,6 +77,7 @@ try {
   assert.equal(await acceptInitialSkyReader(anotherSky,initialReader),false);
   ledger=[marker,publication];
   const current=await invoke(); assert(current.body.initialReader);
+  assert(current.headers['server-timing'].indexOf('shared_rows;')<current.headers['server-timing'].indexOf('sky;'),'Placement-independent source reads overlap the exact calculation worker.');
   assert.deepEqual(calls.at(-1),{ids:[publication.row_id],keys:[publication.content_key]});
   assert.equal(await acceptInitialSkyReader(current.body.sky,current.body.initialReader),true);
   installContentPublications(current.body.initialReader.publications,'complete-sky-list');

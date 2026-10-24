@@ -4,10 +4,15 @@ import {build as buildWorker} from 'esbuild';
 const root = fileURLToPath(new URL('../', import.meta.url));
 const loaded = await loadConfigFromFile({ command: 'build', mode: 'production' }, root + 'apps/web/vite.config.ts');
 await build({ ...loaded.config, configFile: false, root: root + 'apps/web',
+  plugins: loaded.config.plugins.filter(plugin => plugin?.name !== 'tldr-versioned-swiss-assets'),
   ssr: { noExternal: true },
   build: { ...loaded.config.build, ssr: root + 'scripts/initial-sky-reader-server-entry.ts',
-    manifest: false, outDir: root + 'server/initial-sky-reader/dist', emptyOutDir: true,
+    copyPublicDir: false, manifest: false, outDir: root + 'server/initial-sky-reader/dist', emptyOutDir: true,
     rollupOptions: { input: root + 'scripts/initial-sky-reader-server-entry.ts',
+      // The server imports the shared list formatter, not App's UI routes.
+      // React's unused wrapper declarations are pure; do not package their
+      // deferred Studio/readers into the opening-screen function.
+      treeshake: {manualPureFunctions: ['lazy', 'memo', 'forwardRef', 'createContext']},
       output: { format: 'es', entryFileNames: 'initial-reader.mjs', chunkFileNames: 'chunks/[name]-[hash].mjs' } }
   }
 });
