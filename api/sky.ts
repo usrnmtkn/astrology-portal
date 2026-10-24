@@ -24,7 +24,8 @@ export function readSkyCalculationInputs(url: string) {
 }
 
 /** Same engine as Calendar and the browser worker; no alternative fact model. */
-export default async function handler(req: IncomingMessage, res: ServerResponse) {
+export function createSkyHandler({deferPlacementHistory = false} = {}) {
+return async function handler(req: IncomingMessage, res: ServerResponse) {
   res.setHeader("content-type", "application/json");
   res.setHeader("cache-control", "private, no-store");
   if (req.method !== "GET") {
@@ -45,7 +46,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
   try {
-    const sky = await getAstrodienstSky(location, date, { includeTransitWindows: complete, includeAspectTiming });
+    const sky = await getAstrodienstSky(location, date, { includeTransitWindows: complete, includeAspectTiming,
+      deferPlacementHistory: deferPlacementHistory && !includeAspectTiming });
     sky.calculationProvenance = { ...sky.calculationProvenance!, source: "server-swisseph-wasm" };
     sky.facts = factsFromSkySnapshot(sky);
     if (complete) {
@@ -58,3 +60,5 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     res.end(JSON.stringify({ error: "Sky calculation unavailable." }));
   }
 }
+}
+export default createSkyHandler();

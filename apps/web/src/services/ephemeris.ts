@@ -117,6 +117,9 @@ export type SkyCalculationOptions = {
   includeTransitWindows?: boolean;
   /** The collective placement list does not display the expensive aspect timelines. */
   includeAspectTiming?: boolean;
+  /** Opening lists do not use the prior-sign/prior-residency article history.
+   * Keep every current window, residency station and retrograde fact intact. */
+  deferPlacementHistory?: boolean;
   /** Placement articles need expensive windows only for their selected point. */
   transitWindowPlanets?: readonly string[];
 };
@@ -3883,7 +3886,7 @@ export async function getAstrodienstSky(
     const residencyStations = includePositionWindows && transitWindow.residencyPasses
       ? residencyStationsFor(swe, planet, planetIds[index], transitWindow.residencyPasses)
       : undefined;
-    const structuralTransitFacts = includePositionWindows
+    const structuralTransitFacts = includePositionWindows && !(options.deferPlacementHistory && options.includeAspectTiming === false)
       ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow, date)
       : {};
     const retrogradeWindow = includePositionWindows
@@ -3921,6 +3924,8 @@ export async function getAstrodienstSky(
     : calculatedAspects;
   const snapshot: SkySnapshot = {
     calculationDetail: options.includeTransitWindows ? options.includeAspectTiming === false ? "placements" : "full" : "core",
+    ...(options.includeTransitWindows && options.deferPlacementHistory && options.includeAspectTiming === false
+      ? { placementHistoryDetail: "deferred" as const } : {}),
     location,
     generatedAt: date.toISOString(),
     solarHorizon: {

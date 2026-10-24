@@ -52,6 +52,8 @@ export function isVerifiedSkySnapshot(value: unknown): value is SkySnapshot {
 
   return typeof snapshot.generatedAt === "string"
     && (snapshot.calculationDetail === undefined || ["core", "placements", "full"].includes(snapshot.calculationDetail))
+    && (snapshot.placementHistoryDetail === undefined
+      || snapshot.placementHistoryDetail === "deferred" && snapshot.calculationDetail === "placements")
     && Number.isFinite(Date.parse(snapshot.generatedAt))
     && typeof snapshot.ascendant === "string"
     && typeof snapshot.midheaven === "string"

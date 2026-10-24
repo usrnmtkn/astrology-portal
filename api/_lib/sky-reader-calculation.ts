@@ -11,7 +11,8 @@ function stop(error:Error) {
   void current?.terminate();
 }
 /** Keep Swiss CPU work off the request's I/O thread. The worker executes the
- * unchanged Sky handler with the exact inputs and carries no owner credentials.
+ * shared Sky handler with its declared list scope and exact inputs, carrying
+ * no owner credentials. Full articles retain the original complete scope.
  */
 export async function calculateInitialSky(url:string,onSelection?: (sky:SkySnapshot)=>void):Promise<Result> {
   if(!worker){
