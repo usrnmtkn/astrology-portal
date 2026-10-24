@@ -1850,7 +1850,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(contentRows.filter({ hasText: reusablePassage.content_key })).toHaveCount(1);
     await expect(contentRows.filter({ hasText: generatedContentRows[0].content_key })).toHaveCount(0);
 
-    await contentRows.filter({ hasText: composedCard.content_key }).getByRole("button", { name: "Edit" }).click();
+    await contentRows.filter({ hasText: composedCard.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
     await expect(editor.getByLabel("Reader copy")).toHaveValue(composedCard.body);
@@ -2345,7 +2345,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const contentSystemPanel = editor.locator("section[aria-label='Article content system']");
     await expect(async () => {
       if (!await editor.isVisible()) {
-        await savedRow.getByRole("button", { name: "Edit" }).click();
+        await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
       }
       await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
       await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
@@ -2489,7 +2489,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.chiron.taurus");
     const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.chiron.taurus" });
     await expect(savedRow).toHaveCount(1);
-    await savedRow.getByRole("button", { name: "Edit" }).click();
+    await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
@@ -2734,7 +2734,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Sky Write-ups", "Admin / Write / Sky write-ups");
     const macroListRow = page.locator(".admin-content-row", { hasText: "authored/sky-lunation-macro/full-moon/pisces" });
     await expect(macroListRow).toHaveCount(1);
-    await macroListRow.getByRole("button", { name: "Edit" }).click();
+    await macroListRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
@@ -3765,7 +3765,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const directionalCompatibilityResult = page.locator(".admin-content-row", { hasText: "authored/compat-deep/sun/pisces/aquarius" });
     await expect(directionalCompatibilityResult.getByText("Sun · Pisces → Aquarius", { exact: true })).toBeVisible();
     await expect(directionalCompatibilityResult).toContainText("You: Pisces · Friend: Aquarius");
-    await directionalCompatibilityResult.getByRole("button", { name: "Edit" }).click();
+    await directionalCompatibilityResult.getByRole("button", { name: "Edit", exact: true }).click();
     const compatibilityEditor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(compatibilityEditor.getByRole("heading", { name: "Edit Sun · Pisces → Aquarius" })).toBeVisible();
     const compatibilityIdentity = compatibilityEditor.getByRole("region", { name: "Compatibility record identity" });
@@ -3805,10 +3805,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByLabel("TL;DR (optional)")).toBeVisible();
     await expect(compatibilityWriteup).toBeVisible();
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
-    await expect(directionalCompatibilityResult.getByRole("button", { name: "Edit" })).toBeFocused();
+    await expect(directionalCompatibilityResult.getByRole("button", { name: "Edit", exact: true })).toBeFocused();
 
     await page.getByLabel("Search compatibility").fill("you aries friend libra");
-    await compatibilityRow.getByRole("button", { name: "Edit" }).click();
+    await compatibilityRow.getByRole("button", { name: "Edit", exact: true }).click();
     await expect(compatibilityEditor.getByRole("button", { name: "Reverse record unavailable" })).toBeDisabled();
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
 
@@ -4084,7 +4084,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const listRow = page.locator(".admin-content-row", { hasText: "fallback-vocab/dodont-moon-dont/pisces" });
     await expect(listRow).toHaveCount(1);
-    await listRow.getByRole("button", { name: "Edit" }).click();
+    await listRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor.locator("details.admin-editor-brief > summary")).toContainText("Edit this variable value");
@@ -4178,7 +4178,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#vocabulary?category=planets&q=sun");
 
     const listRow = page.locator(".admin-content-row", { hasText: "fallback-vocab/planet-function/sun" });
-    await listRow.getByRole("button", { name: "Edit" }).click();
+    await listRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor.getByLabel("You version")).toHaveValue("identity, vitality, and where you're meant to shine");
@@ -4450,7 +4450,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const reviewRow = page.locator(".admin-review-queue-rows .admin-content-row", { hasText: "sky.placement.sun.cancer" });
     await expect(reviewRow).toHaveCount(1);
-    await reviewRow.getByRole("button", { name: "Edit" }).click();
+    await reviewRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
@@ -4541,7 +4541,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(currentSkyRow.locator(".admin-content-type-label")).toBeVisible();
     await expectNoHorizontalOverflow(page, "aspect-context review rows");
-    await currentSkyRow.getByRole("button", { name: "Edit" }).click();
+    await currentSkyRow.getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · current sky");
     await expectNoHorizontalOverflow(page, "aspect-context editor");
@@ -4981,7 +4981,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search fallback articles and passages").fill("Jupiter in Leo 10th House");
     await expect(articleGroup).toBeHidden();
     await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
-    await houseGroup.getByRole("button", { name: "Edit" }).click();
+    await houseGroup.getByRole("button", { name: "Edit", exact: true }).click();
     const houseEditor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(houseEditor.getByLabel("Editor label"))
       .toHaveValue("Jupiter in Leo · 10th House");
@@ -5041,7 +5041,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.base.jupiter.leo");
     const candidate = page.locator(".admin-content-row", { hasText: "sky.placement.base.jupiter.leo" });
     await expect(candidate).toHaveCount(1);
-    await candidate.getByRole("button", { name: "Edit" }).click();
+    await candidate.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const readerStatus = editor.getByRole("region", { name: "Reader source status" });
@@ -5890,7 +5890,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await sort.selectOption("title-desc");
     await expect(list.locator(".admin-content-row-title")).toHaveText(["Zeta · Qa", "Pluto · Relationship role phrase", "Jupiter in Leo", "Alpha · Qa"]);
 
-    await list.locator(".admin-content-row", { hasText: "Pluto · Relationship role phrase" }).getByRole("button", { name: "Edit" }).click();
+    await list.locator(".admin-content-row", { hasText: "Pluto · Relationship role phrase" }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Pluto · Relationship role phrase" })).toBeVisible();
     await editor.locator("details.admin-editor-brief > summary").click();
@@ -5976,7 +5976,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(list.getByText("Sun · About the Sun", { exact: true })).toBeVisible();
     await expect(list.getByText("Sun in Virgo", { exact: true })).toBeVisible();
 
-    await list.locator(".admin-content-row", { hasText: "Sun · Transit dates and opening" }).getByRole("button", { name: "Edit" }).click();
+    await list.locator(".admin-content-row", { hasText: "Sun · Transit dates and opening" }).getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await editor.locator("details.admin-editor-brief > summary").click();
     const sourceGuidance = editor.getByRole("region", { name: "How this source is used" });
@@ -6009,7 +6009,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       } else await route.fallback();
     });
     await expectAdminRouteLoads(page, "/admin/content#templates");
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit" }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const draftText = "{{planetBest}} QA unsaved template change.";
     await editor.getByLabel("You view copy").fill(draftText);
@@ -6091,7 +6091,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
     await expect(savedRow).toHaveCount(1);
     await expect(savedRow.locator(".admin-content-row-title")).toHaveText("Sun in a Sign");
-    await savedRow.getByRole("button", { name: "Edit" }).click();
+    await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Sun in a Sign" })).toBeVisible();
@@ -6220,7 +6220,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#vocabulary");
 
     const phrase = page.locator(".admin-content-row", { hasText: "fallback-vocab/aspect-verb/trine" });
-    await phrase.getByRole("button", { name: "Edit" }).click();
+    await phrase.getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await editor.getByRole("button", { name: "Variables (2)" }).click();
     const variableGuide = page.getByRole("complementary", { name: "Template variable reference" });
@@ -6485,6 +6485,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
     await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
+    await editor.getByLabel("Dated article variable target").selectOption("tldr");
     const summary = editor.getByLabel("Sky article TL;DR", { exact: true });
     await summary.fill("QA first revision.");
     await expect.poll(() => writes.length).toBe(1);
