@@ -25,9 +25,23 @@ function syntheticApprovedTen() {
     return { caseId: `synthetic-ten-${i + 1}`, text, sha256: hash(text) };
   }) };
 }
-function encodedSynastryVoice(bundle = syntheticSynastryVoice(), ten = syntheticApprovedTen()) {
+function syntheticLatestTen() {
+  const bundle = syntheticApprovedTen();
+  Object.assign(bundle.approval, {
+    toolCall: 'call_1cde9e68fd9b4d94a73fc0c522236b91', exactOwnerAnswer: 'Approve these ten for publication',
+    exactOwnerStatement: 'Synthetic instruction to use the latest approved set for voice.',
+    voiceDesignationStatement: 'Synthetic proposal to add the latest set, followed by the explicit owner direction.'
+  });
+  bundle.entries = Array.from({ length: 10 }, (_, i) => {
+    const text = `Complete synthetic latest reference ${i + 1}. The ending belongs to the latest approved collection.`;
+    return { caseId: `synthetic-latest-${i + 1}`, text, sha256: hash(text) };
+  });
+  return bundle;
+}
+function encodedSynastryVoice(bundle = syntheticSynastryVoice(), ten = syntheticApprovedTen(), latest = syntheticLatestTen()) {
   const documents = {};
-  for (const [id, value] of [[source, bundle], ['private:writing/synastry/approved-ten-20261023', ten]]) {
+  for (const [id, value] of [[source, bundle], ['private:writing/synastry/approved-ten-20261023', ten],
+    ['private:writing/synastry/approved-next-ten-20261023', latest]]) {
     if (value === null) continue;
     const body = JSON.stringify(value); documents[id] = { body, sha256: hash(body) };
   }
@@ -46,11 +60,18 @@ function installSyntheticSynastryApproval() {
     approvalToolCall: ten.approval.toolCall, exactOwnerAnswer: ten.approval.exactOwnerAnswer,
     ownerStatementSha256: hash(ten.approval.exactOwnerStatement), sourceSha256: ten.approval.sourceSha256,
     references: ten.entries.map(entry => ({ caseId: entry.caseId, textSha256: entry.sha256 })) };
+  const latest = syntheticLatestTen();
+  const latestManifest = { ...tenManifest, sourceId: 'private:writing/synastry/approved-next-ten-20261023',
+    approvalToolCall: latest.approval.toolCall, exactOwnerAnswer: latest.approval.exactOwnerAnswer,
+    ownerStatementSha256: hash(latest.approval.exactOwnerStatement),
+    voiceDesignationStatementSha256: hash(latest.approval.voiceDesignationStatement),
+    references: latest.entries.map(entry => ({ caseId: entry.caseId, textSha256: entry.sha256 })) };
   fs.readFileSync = function(file, ...args) {
+    if (String(file).endsWith('/data/writing/synastry-voice-approval-20261023-next-ten.json')) return JSON.stringify(latestManifest);
     if (String(file).endsWith('/data/writing/synastry-voice-approval-20261023.json')) return JSON.stringify(tenManifest);
     if (String(file).endsWith('/data/writing/synastry-voice-approval-20261022.json')) return JSON.stringify(manifest);
     return original.call(this, file, ...args);
   };
   return () => { fs.readFileSync = original; };
 }
-module.exports = { syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval };
+module.exports = { syntheticLatestTen, syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval };

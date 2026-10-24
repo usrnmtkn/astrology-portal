@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 const { withApprovedSynastryVoice } = require('../../api/_lib/synastry-approved-voice.cjs');
-const { syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } = require('../fixtures/synastry-approved-voice.cjs');
+const { syntheticLatestTen, syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } = require('../fixtures/synastry-approved-voice.cjs');
 
 test('protected defaults preserve complete approved units and bind a text-free document receipt', () => {
   const previous = process.env.PRIVATE_REPORT_DOCUMENTS;
@@ -14,16 +14,16 @@ test('protected defaults preserve complete approved units and bind a text-free d
     const before = JSON.stringify(input);
     const result = withApprovedSynastryVoice(input);
     assert.equal(JSON.stringify(input), before);
-    assert.equal(result.sourceSnapshot.positiveVoiceReferences.length, 18);
+    assert.equal(result.sourceSnapshot.positiveVoiceReferences.length, 28);
     for (const [i, reference] of result.sourceSnapshot.positiveVoiceReferences.entries()) {
-      assert.equal(reference.text, [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries][i].text);
-      assert.equal(reference.sha256, [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries][i].sha256);
+      assert.equal(reference.text, [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries, ...syntheticLatestTen().entries][i].text);
+      assert.equal(reference.sha256, [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries, ...syntheticLatestTen().entries][i].sha256);
       assert(!JSON.stringify(result.sourceSnapshot.protectedSynastryVoice).includes(reference.text));
     }
-    assert.equal(result.sourceSnapshot.protectedSynastryVoice.referenceCount, 18);
-    assert.deepEqual(result.sourceSnapshot.protectedSynastryVoice.sources.map(source => source.referenceCount), [8, 10]);
+    assert.equal(result.sourceSnapshot.protectedSynastryVoice.referenceCount, 28);
+    assert.deepEqual(result.sourceSnapshot.protectedSynastryVoice.sources.map(source => source.referenceCount), [8, 10, 10]);
     assert.deepEqual(result.sourceSnapshot.protectedSynastryVoice.sources.map(source => source.approvalToolCall), [
-      syntheticSynastryVoice().approval.toolCall, syntheticApprovedTen().approval.toolCall
+      syntheticSynastryVoice().approval.toolCall, syntheticApprovedTen().approval.toolCall, syntheticLatestTen().approval.toolCall
     ]);
     assert.equal(withApprovedSynastryVoice(result), result, 'Explicit complete source selection retains precedence.');
     const changed = syntheticSynastryVoice(); changed.entries[0].text += ' Changed.';
@@ -53,6 +53,17 @@ test('protected defaults preserve complete approved units and bind a text-free d
     }
     process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice(syntheticSynastryVoice(), null);
     assert.throws(() => withApprovedSynastryVoice(input), /APPROVED_VOICE_UNAVAILABLE/, 'The earlier eight do not silently replace the selected ten.');
+    for (const mutate of [
+      bundle => { delete bundle.approval.voiceDesignationStatement; },
+      bundle => { bundle.approval.voiceDesignationStatement += ' Changed.'; },
+      bundle => { bundle.approval.scope = ['publication_only']; }
+    ]) {
+      const latest = syntheticLatestTen(); mutate(latest);
+      process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice(syntheticSynastryVoice(), syntheticApprovedTen(), latest);
+      assert.throws(() => withApprovedSynastryVoice(input), /APPROVED_VOICE_UNAVAILABLE/, 'Publication alone cannot establish voice use.');
+    }
+    process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice(syntheticSynastryVoice(), syntheticApprovedTen(), null);
+    assert.throws(() => withApprovedSynastryVoice(input), /APPROVED_VOICE_UNAVAILABLE/, 'Missing latest references cannot silently revert to the prior eighteen.');
     process.env.PRIVATE_REPORT_DOCUMENTS = 'invalid';
     assert.throws(() => withApprovedSynastryVoice(input), /APPROVED_VOICE_UNAVAILABLE/);
     assert.equal(withApprovedSynastryVoice(result), result, 'An explicit selection does not depend on a default store.');
@@ -79,7 +90,7 @@ test('dedicated writing storage preserves report storage and fails closed when c
     } })).toString('base64');
     const reportStore = process.env.PRIVATE_REPORT_DOCUMENTS;
     process.env.PRIVATE_SYNASTRY_VOICE_REFERENCES = encodedSynastryVoice();
-    assert.equal(withApprovedSynastryVoice({ sourceSnapshot: {} }).sourceSnapshot.positiveVoiceReferences.length, 18);
+    assert.equal(withApprovedSynastryVoice({ sourceSnapshot: {} }).sourceSnapshot.positiveVoiceReferences.length, 28);
     assert.equal(readPrivateReportDocument('private:report/general-2026'), body);
     assert.equal(process.env.PRIVATE_REPORT_DOCUMENTS, reportStore);
     process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice();

@@ -139,3 +139,29 @@ protected document reader and schema. This does not replace any report source.
 Production voice activation still requires
 provisioning and deployment verification; local provider-boundary fixtures do not
 establish it.
+
+## Latest ten approved readings as voice references
+
+The owner approved ten further complete Synastry bodies for publication and then
+instructed this task to add that finished set to the writer's references. The
+publication approval and the later source-role designation are separate evidence.
+The third collection, `private:writing/synastry/approved-next-ten-20261023`, pins
+both decisions and all ten exact text hashes in its protected envelope and
+text-free repository manifest. The complete designation context stays private;
+its hash is carried in the source receipt. Publication alone cannot establish
+voice use.
+
+Default shared OpenAI/Claude requests and private body requests now require all
+28 complete approved references across the three collections. The earlier
+eighteen remain byte-identical. Missing latest references, changed wording with
+recomputed storage hashes, or absent/tampered voice designation stop before
+provider dispatch. Explicit complete source selection retains its existing
+precedence; report storage, other writing surfaces, generation stages, model
+defaults and publication decisions remain unchanged.
+
+Focused intercepted-provider checks verify complete delivery once per writer,
+feedback freshness and source-role integrity. These checks establish delivery,
+not literary quality. The next ten draft requests exclude all 28 approved case
+identities and require their own bounded generation approval. Updating protected
+storage and releasing this PR are separate steps; this source change alone does
+not establish that the live app uses the new references.

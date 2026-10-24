@@ -6,6 +6,7 @@ const { createHash } = require('node:crypto');
 const ids = new Set(['general-2026', 'work-money-2026', 'love-connection-2026', 'personal-health-2026', 'social-writing-references-20260921'].map(id => `private:report/${id}`));
 ids.add('private:writing/synastry/approved-sample-20261022');
 ids.add('private:writing/synastry/approved-ten-20261023');
+ids.add('private:writing/synastry/approved-next-ten-20261023');
 
 /** Original owner evidence lives in protected storage, never in Git or web assets. */
 function readDocument(id, optional = false) {
