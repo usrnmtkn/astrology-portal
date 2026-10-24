@@ -14,6 +14,9 @@ import type { SkySnapshot } from "../apps/web/src/types";
 // The shared browser renderer owns mutable public overlay indexes. Serialize
 // only their install/render section; request I/O and astronomy stay parallel.
 let queue: Promise<void> = Promise.resolve();
+// Load the complete local reader sources while the independent calculation
+// worker and public I/O run. No request publication or overlay is installed.
+void loadInitialSkyListFallbackArchitectureV3Bundle().catch(() => {});
 const placementKeys = new Set(placementManifest.keys.map(key => key.slice(key.indexOf(":") + 1)));
 function selectedSourceKey(sky: SkySnapshot) {
   const selection = skyPlacementSelection(sky.positions);
