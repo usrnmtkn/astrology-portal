@@ -180,7 +180,9 @@ try {
   }
 
   const dashboardSource = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
-  const ownerSessionSource = fs.readFileSync(new URL("../apps/admin/src/ownerSession.ts", import.meta.url), "utf8");
+  const ownerSessionBridge = fs.readFileSync(new URL("../apps/admin/src/ownerSession.ts", import.meta.url), "utf8");
+  assert.match(ownerSessionBridge, /export \* from "\.\.\/\.\.\/\.\.\/src\/shared\/studioOwnerSession"/u, "Studio and reader must share the same session refresh implementation.");
+  const ownerSessionSource = fs.readFileSync(new URL("../src/shared/studioOwnerSession.ts", import.meta.url), "utf8");
   assert.match(dashboardSource, /loadOwnerSessionAccessToken/u, "Content Studio must try the same-origin owner session before emergency access.");
   assert.match(dashboardSource, /watchOwnerSessionAccessToken/u, "Content Studio must keep a long-running owner session current.");
   assert.match(ownerSessionSource, /auth\/v1\/token\?grant_type=refresh_token/u, "The lightweight owner-session handoff must refresh expiring sessions.");

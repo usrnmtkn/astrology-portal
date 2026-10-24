@@ -1,3 +1,4 @@
+import { articleReaderHref } from '../../../src/shared/articleLibrary';
 import type { LiveStatus } from './ContentLiveStatus';
 import type { CsvContentRow, CsvRecord } from './studioCsv';
 import { placementSourcesReaderHref, placementSourcesReferenceDate } from './skyPlacementSourceSelection';
@@ -21,7 +22,7 @@ export function csvSourceContext(row: CsvContentRow, status: LiveStatus, origin:
         : /^sky\/article-template\//u.test(key) ? 'Reusable template'
           : planet && sign ? 'Shared fallback' : 'Editable source';
   let href = planet && sign ? placementSourcesReaderHref(planet, sign, instant) : '';
-  if (status.live && /^(?:article\/(?:manual|guide)|cms\/(?:article|guide))\//u.test(key)) href = `/#articles/${encodeURIComponent(key)}`;
+  if (status.live && /^(?:article\/(?:manual|guide)|cms\/(?:article|guide))\//u.test(key)) href = articleReaderHref(key);
   const facts = object(row.facts);
   if (status.live && key.startsWith('education/astro-101/') && typeof facts.slug === 'string' && facts.slug.startsWith('/learn/')) href = facts.slug;
   return {

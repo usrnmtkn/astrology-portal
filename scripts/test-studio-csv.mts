@@ -7,6 +7,7 @@ import { csvChanges, csvDraftPatch, csvRecordForRow, csvWantsPublication, readSt
 import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
 import { csvSourceContext } from '../apps/admin/src/studioCsvContext';
 import { skyReaderCsvRecord } from '../apps/web/src/features/sky/skyReaderCsvExport';
+import { articleKeyFromHash } from '../src/shared/articleLibrary';
 
 const original = {
   id: '10000000-0000-4000-8000-000000000001', content_key: 'cms/csv/first',
@@ -41,6 +42,16 @@ test('export context identifies source roles, verified publication, dates and ex
   assert.equal(live.valid_from, seasonal.sections.seasonFallback.seasonStart);
   assert.equal(live.valid_to, seasonal.sections.seasonFallback.seasonEnd);
   assert.match(live.reader_url, /#\/sky\/placement\/moon\/aries$/);
+});
+
+test('bulk-edit CSV article links resolve the exact published source in the reader router', () => {
+  for (const key of ['article/manual/synthetic-csv-guide', 'cms/guide/synthetic-csv-guide']) {
+    const row = { ...original, content_key: key };
+    const status = { id: row.id, live: true, label: 'Live' as const, detail: 'Published.', source: null, updatedAt: row.updated_at };
+    const live = csvSourceContext(row, status, 'https://example.invalid', '2026-10-21T12:00:00Z');
+    assert.equal(articleKeyFromHash(new URL(live.reader_url).hash), key);
+    assert.equal(csvSourceContext(row, { ...status, live: false }, 'https://example.invalid', '2026-10-21T12:00:00Z').reader_url, '');
+  }
 });
 
 test('reader snapshot reports the selected seasonal publication window and local reference date', () => {
