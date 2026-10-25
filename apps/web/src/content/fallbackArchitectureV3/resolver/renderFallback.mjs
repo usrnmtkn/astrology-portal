@@ -1,3 +1,4 @@
+import { natalPlacementOwnerCopy } from "./natalPlacementVariables.mjs";
 import { bindStudioVariableReference } from "../../studioCustomVariables.mjs";
 import { assertNodePublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
@@ -198,7 +199,7 @@ function renderNatalPlacementReference(facts, opts = {}) {
     ? getReaderLivedRow(exactCompleteKey, voice, { allowUnreviewed })
     : null;
   if (exactCompleteLived) {
-    const body = exactCompleteLived.body ?? "";
+    const body = natalPlacementOwnerCopy(exactCompleteLived.body ?? "", facts.voice);
     return {
       headline: `${title(planet)} in ${title(sign)} in the ${ordinal(house)} house`,
       parts: [body],

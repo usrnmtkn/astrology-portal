@@ -6399,3 +6399,44 @@ for (const width of [390, 1440]) test(`shared Friend natal URL retains selection
   await expect(page.getByRole("heading", { name: "Rowan", exact: true })).toHaveCount(0);
   await expect(introduction).toHaveCount(0);
 });
+
+
+for (const width of [390,1440]) test(`Complete Friend natal placement bodies reach each person ${width}`, async ({page}) => {
+  test.skip(!process.env.NATAL_FRIEND_READER_SNAPSHOT, 'Private approved-pair snapshot is local opt-in only.');
+  test.setTimeout(120_000);
+  const saved=JSON.parse(readFileSync(process.env.NATAL_FRIEND_READER_SNAPSHOT!,'utf8'));
+  await page.setViewportSize({width,height:1000});
+  await seedClientState(page,{profile:true,friends:true,friendMatchesProfile:true,preloadProfileNatalSky:true,
+    profileBirthDate:'1979-02-17',profileBirthTime:'11:00 AM',generatedInterpretations:saved.rows,contentPublications:saved.publications});
+  const check=async(audience:'you'|'they',name='Nikki')=>{
+    await page.goto(audience==='you'?'/#you':'/#friends?tab=charts&chart=friend-nikki&view=natal');
+    if(audience==='you')await selectYouNatalTab(page);
+    for(const planet of ['Chiron','Lilith']){
+      const target=saved.rows.find((row:any)=>row.content_key.includes('/'+planet.toLowerCase()+'/'));
+      const record=target.sections.packageRecord;
+      const expected=(audience==='you'?record.body:record.body_they.replaceAll('{{ownerName}}',name)).replace(/\s+/gu,' ').trim();
+      await page.locator('button.placement-table-row').filter({hasText:new RegExp(planet)}).first().click();
+      const article=page.locator(audience==='you'?'.you-transit-article-page':'.sky-detail-article');
+      const assertCompleteCopy=async()=>{
+        if(audience==='you') await expect(article).toContainText(expected);
+        else await expect(article.locator('.sky-detail-section').first().locator(':scope > p')).toHaveText(record.body_they.replaceAll('{{ownerName}}',name).split(/\n{2,}/u));
+      };
+      await assertCompleteCopy();
+      await expect(article).not.toContainText('{{ownerName}}');
+      await expectNoHorizontalOverflow(page,`complete natal ${audience} ${width}`);
+      if(audience==='they'){
+        await page.reload();
+        await assertCompleteCopy();
+        await article.screenshot({path:`test-results/approved-friend-${planet}-${width}-${name}.png`});
+      }
+      await page.getByRole('button',{name:audience==='you'?'Back to updates':'Close detail',exact:true}).click();
+    }
+  };
+  await check('you'); await check('they');
+  await page.evaluate(()=>{
+    const key='tldrastro:manualCharts:qa-flow-user';const charts=JSON.parse(localStorage.getItem(key)!);
+    Object.assign(charts.find((chart:any)=>chart.id==='friend-nikki'),{displayName:'Robin',firstName:'Robin'});
+    localStorage.setItem(key,JSON.stringify(charts));
+  });
+  await check('they','Robin');
+});

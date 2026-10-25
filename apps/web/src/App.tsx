@@ -16015,7 +16015,8 @@ function natalPlacementV3NormalizedSections(
     const parts = rawParts
       .map((part: unknown, index: number) => natalPlacementReaderSectionCopy(
         typeof part === "string" ? part : "",
-        rendered.partKeys?.[index]
+        rendered.partKeys?.[index],
+        Boolean(ownerContext?.ownerName)
       ))
       .filter((part: string | null): part is string => Boolean(part));
 

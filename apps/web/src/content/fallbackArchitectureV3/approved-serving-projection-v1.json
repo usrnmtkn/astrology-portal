@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-10-17-studio-owner-daily",
+  "packageVersion": "v3-2026-10-25-natal-friend-name",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "7fb5ee0c4d684cb05833742a557a2935fa341f0b0a40388ba1d5fcb4fb4f6bbc",
+    "sha256": "c6ac5f0eecfc78cc7d0881836c70de929f21a915878f6724b89aca90c8342cff",
     "count": 9826,
     "emissionCount": 9902,
     "exactSourceMatchCount": 7663

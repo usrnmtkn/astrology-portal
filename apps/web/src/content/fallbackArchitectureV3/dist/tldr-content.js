@@ -978,6 +978,11 @@ function skyIngressPublicationIssues(owner, records = []) {
   return [...new Set(issues)];
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/natalPlacementVariables.mjs
+function natalPlacementOwnerCopy(body, voice) {
+  return voice === "you" ? body : body.replaceAll("{{ownerName}}", () => voice);
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/publicationGuard.mjs
 function assertPublicationKey(key, blockedKeys, SourceGapError2) {
   if (!isRetiredCompositionKey(key) && !blockedKeys.has(key)) return;
@@ -1123,7 +1128,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const exactCompleteKey = natalPlacementMotionExactKey(facts2);
     const exactCompleteLived = exactCompleteKey ? getReaderLivedRow(exactCompleteKey, voice, opts2) : null;
     if (exactCompleteLived) {
-      const body = exactCompleteLived.body ?? "";
+      const body = natalPlacementOwnerCopy(exactCompleteLived.body ?? "", facts2.voice);
       return {
         headline: `${title6(planet)} in ${title6(sign)} in the ${ordinal(house)} house`,
         parts: [body],
@@ -6614,7 +6619,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-17-studio-owner-daily";
+var PACKAGE_VERSION = "v3-2026-10-25-natal-friend-name";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
