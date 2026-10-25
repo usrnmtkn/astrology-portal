@@ -264,3 +264,40 @@ not literary quality. The next ten draft requests exclude all 28 approved case
 identities and require their own bounded generation approval. Updating protected
 storage and releasing this PR are separate steps; this source change alone does
 not establish that the live app uses the new references.
+
+## October 25 primary natal style delivery
+
+The owner's October 24 instruction in the current writing task designates the
+displayed natal aspect passages as the exact style target. The shared default
+loader previously supplied only the 28 protected Synastry references; the four
+natal passages were included only in separately prepared private runs. A new
+default-loader regression failed at the absent primary references before repair.
+
+`data/writing/synastry-primary-style-20261024.json` retains four complete passages
+already present in published canonical reader copy, with exact hashes, published
+blob provenance and the explicit style-use statement. It introduces no private
+book, private report, unpublished Synastry text or identifying profile. Source
+reader rows and their final sentences remain byte-identical.
+
+`withApprovedSynastryVoice` adds this primary style group without replacing the
+existing protected supporting collections or a deliberately selected supporting
+reference. Both shared provider requests and the private body request label the
+groups separately, deliver matching text once and keep hash-only receipts. A
+changed or incomplete group holds before provider dispatch. Existing schemas,
+models, provider stages, feedback scope, budgets and publication boundaries stay
+unchanged. The body adapter becomes `synastry-body/v3-2026-10-25` and the shared
+authority becomes `synastry-aspect/v16-2026-10-25`.
+
+The primary examples establish language and sentence movement. Their natal facts,
+advice and repeated aspect closing are not instructions for the new passage.
+Current wording corrections override historical examples. The earlier mandatory
+reciprocal-response instruction is qualified so uncomplicated affection can remain
+complete without an invented answering reaction, difficulty or remedy.
+
+Actual-handler checks intercept OpenAI and Claude transports and verify complete
+primary and supporting references, current correction delivery, exact chart roles,
+source hashes, no duplicate benchmark text, changed-reference refusal and unchanged
+output contracts. The private body check covers the same primary selection and
+revalidation. These tests establish request behavior, not improved prose. No paid
+call, automatic rewrite, Studio save or publication is part of this code repair.
+Release and raw-output literary acceptance remain separate verification steps.

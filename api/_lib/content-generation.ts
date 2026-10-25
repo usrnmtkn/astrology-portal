@@ -19,7 +19,7 @@ import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs
 import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
 import { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastrySourceReceipt, synastryMeaningPlanSchema, designatedSynastryVoiceReferences } from "../../src/astro-writing/synastrySourceContext.cjs";
-import { withApprovedSynastryVoice } from "./synastry-approved-voice.cjs";
+import { withApprovedSynastryVoice, synastryVoicePromptReferences } from "./synastry-approved-voice.cjs";
 import { withSynastryKnowledgeSources } from "./synastry-knowledge-sources.cjs";
 import { loadExplicitWritingFeedback, ingressWritingFeedbackTarget } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
@@ -4641,7 +4641,7 @@ function buildSynastryPrompt(input: GenerateContentInput, approvedExamples: Appr
   // intact; it is data, never another instruction layer or proof of approval.
   const lockedHeadline = factualHeadlineFor(input);
   const voiceReferences = designatedSynastryVoiceReferences(input.sourceSnapshot);
-  const { positiveVoiceReferences: _voiceReferences, ...sourceSnapshot } = input.sourceSnapshot ?? {};
+  const { positiveVoiceReferences: _voiceReferences, primarySynastryStyleReferences: _primaryStyleReferences, ...sourceSnapshot } = input.sourceSnapshot ?? {};
   const ownership = synastryContactOwnership(input.facts);
   const reader = ownership.readerPerson === "A" ? ownership.personA : ownership.readerPerson === "B" ? ownership.personB : null;
   const other = ownership.readerPerson === "A" ? ownership.personB : ownership.personA;
@@ -4670,7 +4670,7 @@ function buildSynastryPrompt(input: GenerateContentInput, approvedExamples: Appr
     voiceReferences.length
       ? "DESIGNATED SYNASTRY VOICE REFERENCES\nThese complete passages are the selected prose benchmarks. Learn their ordinary language, development and stopping point. Their facts, incidents and challenging contacts do not transfer to this contact; a supportive contact needs no invented difficulty."
       : "APPROVED TLDR ASTRO EXAMPLES\nUse these complete eligible passages for voice and sentence movement only, never their astrology facts or situations.",
-    voiceReferences.length ? JSON.stringify(voiceReferences, null, 2) : approvedExamplesPrompt(approvedExamples),
+    voiceReferences.length ? JSON.stringify(synastryVoicePromptReferences(input.sourceSnapshot), null, 2) : approvedExamplesPrompt(approvedExamples),
     "WRITE THE READER INTERPRETATION",
     reader
       ? `Address the ${reader.planet} person as you. The other person's planet is ${other.planet}; use their supplied name or licensed variable when present. Person A and Person B are internal chart labels, not names to print in reader fields.`

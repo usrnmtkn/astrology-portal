@@ -1,7 +1,40 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const { withApprovedSynastryVoice } = require('../../api/_lib/synastry-approved-voice.cjs');
+const { withApprovedSynastryVoice, synastryVoicePromptReferences } = require('../../api/_lib/synastry-approved-voice.cjs');
 const { syntheticLatestTen, syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } = require('../fixtures/synastry-approved-voice.cjs');
+
+test('primary natal benchmarks preserve complete published units without duplicating explicit references', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../data/writing/synastry-primary-style-20261024.json'), 'utf8'));
+  const published = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../packages/astro-knowledge/canonical-content/index/canonical-content-index.json'), 'utf8'));
+  const explicit = { sourceSnapshot: { positiveVoiceReferences: source.references } };
+  const original = JSON.stringify(explicit);
+  const selected = withApprovedSynastryVoice(explicit);
+  assert.equal(JSON.stringify(explicit), original);
+  assert.deepEqual(selected.sourceSnapshot.primarySynastryStyleReferences, source.references);
+  const prompt = synastryVoicePromptReferences(selected.sourceSnapshot);
+  assert.deepEqual(prompt.primaryNatalStyleBenchmarks, source.references);
+  assert.deepEqual(prompt.supportingSynastryExamples, []);
+  for (const reference of source.references) {
+    assert.equal(require('node:crypto').createHash('sha256').update(reference.text).digest('hex'), reference.sha256);
+    const contentHash = reference.publishedSourcePath.match(/#contentSha256=([a-f0-9]{64})\//u)[1];
+    assert.equal(published.contentBlobs.find(blob => blob.contentSha256 === contentHash)?.byPerspective.you.body, reference.text,
+      'The primary reference is the complete published natal passage, including its final sentence.');
+  }
+  const invalid = structuredClone(selected);
+  invalid.sourceSnapshot.primarySynastryStyleReferences[0].text += ' Changed.';
+  assert.throws(() => withApprovedSynastryVoice(invalid), /PRIMARY_STYLE_UNAVAILABLE/);
+  assert.throws(() => synastryVoicePromptReferences(invalid.sourceSnapshot), /PRIMARY_STYLE_UNAVAILABLE/);
+  const originalRead = fs.readFileSync;
+  try {
+    fs.readFileSync = function(file, ...args) {
+      if (String(file).endsWith('/synastry-primary-style-20261024.json')) return JSON.stringify({ ...source, references: source.references.slice(1) });
+      return originalRead.call(this, file, ...args);
+    };
+    assert.throws(() => withApprovedSynastryVoice(explicit), /PRIMARY_STYLE_UNAVAILABLE/);
+  } finally { fs.readFileSync = originalRead; }
+});
 
 test('protected defaults preserve complete approved units and bind a text-free document receipt', () => {
   const previous = process.env.PRIVATE_REPORT_DOCUMENTS;
@@ -14,6 +47,8 @@ test('protected defaults preserve complete approved units and bind a text-free d
     const before = JSON.stringify(input);
     const result = withApprovedSynastryVoice(input);
     assert.equal(JSON.stringify(input), before);
+    assert.equal(result.sourceSnapshot.primarySynastryStyleReferences?.length, 4, 'Studio defaults must include the four owner-designated natal style benchmarks.');
+    assert.equal(result.sourceSnapshot.primarySynastryStyleReferences[0].selectionPriority, 'primary_owner_designated_style');
     assert.equal(result.sourceSnapshot.positiveVoiceReferences.length, 28);
     for (const [i, reference] of result.sourceSnapshot.positiveVoiceReferences.entries()) {
       assert.equal(reference.text, [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries, ...syntheticLatestTen().entries][i].text);

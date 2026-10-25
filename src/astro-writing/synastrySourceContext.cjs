@@ -130,6 +130,10 @@ function synastrySourceReceipt(input) {
   if (!context) return null;
   return { version: VERSION, planetA: context.ownership.personA.planet, planetB: context.ownership.personB.planet,
     readerPerson: context.ownership.readerPerson, exclusions: context.exclusions,
+    primaryStyleReferences: (input.sourceSnapshot.primarySynastryStyleReferences ?? []).map(reference => ({
+      path: reference.path, textSha256: reference.sha256,
+      wordCount: reference.text.trim().split(/\s+/u).length,
+      evidenceRole: "primary_natal_style_only", sourceApprovalUnchanged: true })),
     protectedVoice: input.sourceSnapshot.protectedSynastryVoice ? {
       sources: (input.sourceSnapshot.protectedSynastryVoice.sources ?? []).map(source => ({
         sourceId: source.sourceId, documentSha256: source.documentSha256,

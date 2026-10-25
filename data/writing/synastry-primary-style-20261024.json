@@ -1,0 +1,73 @@
+{
+  "schema": "synastry-primary-style/v1",
+  "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+  "sourceDate": "2026-10-24",
+  "exactOwnerStatement": "review the writing for the natal chart aspects. The writing in the natal chart aspects IS exactly the writing style you need to match",
+  "scope": "Synastry voice only. These complete natal passages already exist in published reader copy. Their facts, advice, first-person chart structure and closing formula are not requirements for new Synastry prose. Current corrections govern new output.",
+  "references": [
+    {
+      "role": "owner_approved_voice_only_not_astrology_for_target",
+      "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/moon/venus/soft",
+      "caseId": "owner-designated-natal-style:fallback-hook/aspect-pair/moon/venus/soft",
+      "text": "You have a knack for making people and places feel good, and things you want seem to come to you more easily than they do for most. That is not luck so much as the goodwill you put out and the small chances you notice and take. Just watch the urge to please everyone or to soothe yourself with treats; your charm doesn't need either. That's your Moon sextile Venus: the feeling body and connection backing each other up whenever called on.",
+      "sha256": "f9c3060c56a6a9cb64dd6ce68a01de4481abb97b62c4604ff337777c9769cb20",
+      "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+      "sourceDate": "2026-10-24",
+      "approvalStatement": "review the writing for the natal chart aspects. The writing in the natal chart aspects IS exactly the writing style you need to match",
+      "sourceReviewStatus": "approved",
+      "selectionPriority": "primary_owner_designated_style",
+      "sourceSurface": "natal-aspect",
+      "useForTargetFacts": false,
+      "useAsRequiredStructure": false,
+      "publishedSourcePath": "packages/astro-knowledge/canonical-content/index/canonical-content-index.json#contentSha256=cff1d1eb1a3e2add4f9922a5ad3f546f0fc2ab71e20236f418c2683cc4c65a08/byPerspective/you/body"
+    },
+    {
+      "role": "owner_approved_voice_only_not_astrology_for_target",
+      "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/venus/saturn/soft",
+      "caseId": "owner-designated-natal-style:fallback-hook/aspect-pair/venus/saturn/soft",
+      "text": "You are loyal, solid, and careful with your heart, opening up only after someone has shown who they are. You learn from every relationship and rarely repeat a mistake, in love or with money. Partners and friends who value reliability find you, and what you build with them tends to last. That's your Venus trine Saturn: connection and structure flowing into each other without effort.",
+      "sha256": "f80d062ec6ab5ab66a3efa1842a02285cb6be80144ae030e06109679f768d2df",
+      "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+      "sourceDate": "2026-10-24",
+      "approvalStatement": "review the writing for the natal chart aspects. The writing in the natal chart aspects IS exactly the writing style you need to match",
+      "sourceReviewStatus": "approved",
+      "selectionPriority": "primary_owner_designated_style",
+      "sourceSurface": "natal-aspect",
+      "useForTargetFacts": false,
+      "useAsRequiredStructure": false,
+      "publishedSourcePath": "packages/astro-knowledge/canonical-content/index/canonical-content-index.json#contentSha256=27ee169e8af5cc03463976a0d371463892d82eeba732cad239ebfffbea745072/byPerspective/you/body"
+    },
+    {
+      "role": "owner_approved_voice_only_not_astrology_for_target",
+      "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/venus/pluto/hard",
+      "caseId": "owner-designated-natal-style:fallback-hook/aspect-pair/venus/pluto/hard",
+      "text": "Your feelings run so hot that love can turn into a tug of war over control, jealousy included. The people closest to you can hurt you most, and you sometimes test them without meaning to. Intense relationships are where you grow, and learning to hold someone with an open hand instead of a closed one changes everything. That's your Venus square Pluto: connection and transformation pulling against each other until the friction builds muscle.",
+      "sha256": "57d36a420700c153883bfc7b124e6d588b282418a75e2aa0849d37db4ebac3e0",
+      "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+      "sourceDate": "2026-10-24",
+      "approvalStatement": "review the writing for the natal chart aspects. The writing in the natal chart aspects IS exactly the writing style you need to match",
+      "sourceReviewStatus": "approved",
+      "selectionPriority": "primary_owner_designated_style",
+      "sourceSurface": "natal-aspect",
+      "useForTargetFacts": false,
+      "useAsRequiredStructure": false,
+      "publishedSourcePath": "packages/astro-knowledge/canonical-content/index/canonical-content-index.json#contentSha256=12f8b20adf14ce3fea2ed4fb67aaf3ab104d94da947c9e0907a531dc3ebc2570/byPerspective/you/body"
+    },
+    {
+      "role": "owner_approved_voice_only_not_astrology_for_target",
+      "path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json#fallback-hook/aspect-pair/north-node/venus/soft",
+      "caseId": "owner-designated-natal-style:fallback-hook/aspect-pair/north-node/venus/soft",
+      "text": "The people you attract tend to be good for your path, and the path keeps improving your taste. Love and growth feed each other here. Enjoy it; this is what alignment feels like when it is working. That's your Venus trine North Node: connection and the road forward flowing into each other without effort.",
+      "sha256": "28816161bbf178d20d6e1b6e8e412c396d7326c7a1aebeda7f609d61a283c488",
+      "sourceUri": "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b",
+      "sourceDate": "2026-10-24",
+      "approvalStatement": "review the writing for the natal chart aspects. The writing in the natal chart aspects IS exactly the writing style you need to match",
+      "sourceReviewStatus": "approved",
+      "selectionPriority": "primary_owner_designated_style",
+      "sourceSurface": "natal-aspect",
+      "useForTargetFacts": false,
+      "useAsRequiredStructure": false,
+      "publishedSourcePath": "packages/astro-knowledge/canonical-content/index/canonical-content-index.json#contentSha256=e42ecf9ab13aedb9aafabadd935e808bac06b8b9f167d9bac0018b58489a13dd/byPerspective/you/body"
+    }
+  ]
+}

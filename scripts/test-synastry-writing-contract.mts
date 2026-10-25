@@ -94,18 +94,29 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(instructions.includes('Let each sentence develop the thought instead of restating support, comfort or confidence'), 'Reassurance is not substituted for development in the dispatched instructions.');
   assert(instructions.includes('Prefer direct causal sentences to report transitions'), 'Report-like wording is addressed in the dispatched instructions.');
   assert(instructions.includes('"As a result"'), 'The owner-identified transition is retained as a negative style example.');
-  assert(instructions.includes('a feeling word alone does not explain the interaction'));
+  assert(instructions.includes('Retain a developed interaction when the source supports one'));
+  assert(instructions.includes('without making every observation about affection explain an answering reaction from both people'));
+  assert(!instructions.includes("Explain how one person's response may change what the other does next; a feeling word alone does not explain the interaction"), 'A simple affectionate observation must not inherit an unqualified response-to-response instruction.');
   assert(instructions.includes('constructive_expression is not a required resolution'));
   assert(instructions.includes('A meaning plan establishes supported interpretation, not reader wording'), 'The writer must not paraphrase planner labels into reader copy.');
   assert(instructions.includes('Do not repeat the same contrast in new vocabulary'), 'Additional sentences must develop the interaction rather than restate it.');
   assert(instructions.includes("Use ordinary sentences about people's feelings and actions without interrupting them with a planetary label"));
-  assert(instructions.includes("how one person's response may change what the other does next"), 'The writer must develop a supported reciprocal response rather than repeat two planetary categories.');
   assert(instructions.includes('Keep both people capable of reasoning and emotional understanding'));
   assert(instructions.includes('the aspect is not proof of habitual behavior'));
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v13-2026-10-24'));
+  assert(instructions.includes('Use familiar language for affection and enjoyment'));
+  assert(instructions.includes('rather than classifying their responses or explaining an abstract exchange of feelings'));
+  assert(instructions.includes('do not use "pleasure", "whether", "out loud" or "aloud"'), 'Existing explicit wording restrictions must reach both actual writer transports.');
+  assert(instructions.includes('Preserve complete historical source passages unchanged'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v16-2026-10-25'));
+  assert(instructions.includes('natal style benchmarks are primary for ordinary language'));
+  const primaryStyle = JSON.parse(readFileSync('data/writing/synastry-primary-style-20261024.json', 'utf8')).references;
+  assert(prompt.includes('primaryNatalStyleBenchmarks') && prompt.includes('supportingSynastryExamples'));
+  for (const reference of primaryStyle) {
+    assert.equal(prompt.split(reference.text).length - 1, 1, 'Each complete natal benchmark reaches the actual writer exactly once.');
+  }
   assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
   assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
@@ -341,7 +352,7 @@ try {
     const generated = await generate({ ...sourceFixture, provider });
     assert.equal(generated.statusCode, 200);
     const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-    assert.equal(receipt.editorialVersion, 'synastry-aspect/v13-2026-10-24');
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v16-2026-10-25');
     assert.equal(receipt.readerPerson, 'B');
     assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
     assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
@@ -425,12 +436,21 @@ try {
     assert(!prompt.includes('relationship-year-libra-2025-to-venus-rx-2026'), 'Designated benchmarks cannot be padded with the automatic adjacent article.');
     const receipt = result.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
     assert.equal(receipt.designatedVoiceReferences[0].textSha256, reference.sha256);
+    assert.equal(receipt.primaryStyleReferences.length, 4);
+    assert(!JSON.stringify(receipt).includes('You have a knack for making people and places feel good'));
     assert(!JSON.stringify(receipt).includes(voiceText));
     const beforeInvalid = requests.length;
     const invalid = await generate({ ...benchmarkFixture, provider, sourceSnapshot: { ...benchmarkFixture.sourceSnapshot,
       positiveVoiceReferences: [{ ...reference, text: 'A damaged excerpt.' }] } });
     assert.notEqual(invalid.statusCode, 200); assert.match(invalid.result.error, /VOICE_REFERENCE_INVALID/u);
     assert.equal(requests.length, beforeInvalid, 'Damaged designated evidence stops before either provider.');
+    const primary = JSON.parse(readFileSync('data/writing/synastry-primary-style-20261024.json', 'utf8')).references;
+    primary[0].text += ' Unapproved edit.';
+    const invalidPrimary = await generate({ ...benchmarkFixture, provider, sourceSnapshot: { ...benchmarkFixture.sourceSnapshot,
+      primarySynastryStyleReferences: primary } });
+    assert.notEqual(invalidPrimary.statusCode, 200);
+    assert.match(invalidPrimary.result.error, /PRIMARY_STYLE_UNAVAILABLE/);
+    assert.equal(requests.length, beforeInvalid, 'Changed primary benchmarks stop before either provider.');
   }
   // Reproduce the whole-request ordering defect with complete negative evidence,
   // an existing draft and a designated benchmark. No body is shortened or promoted.

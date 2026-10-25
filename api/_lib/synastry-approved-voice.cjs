@@ -22,6 +22,12 @@ const fail = () => { throw new Error("SYNASTRY_APPROVED_VOICE_UNAVAILABLE: provi
 // This store is server-only. Its approval provenance is provisioned from the
 // owner's exact decision, never inferred from generated content or feedback.
 function withApprovedSynastryVoice(input) {
+  const primary = readPrimarySynastryStyle();
+  const supplied = input.sourceSnapshot?.primarySynastryStyleReferences;
+  if (supplied !== undefined && JSON.stringify(supplied) !== JSON.stringify(primary)) {
+    throw new Error("SYNASTRY_PRIMARY_STYLE_UNAVAILABLE: the designated natal benchmarks changed.");
+  }
+  if (supplied === undefined) input = { ...input, sourceSnapshot: { ...input.sourceSnapshot, primarySynastryStyleReferences: primary } };
   if (designatedSynastryVoiceReferences(input.sourceSnapshot).length) return input;
   const collections = COLLECTIONS.map(readApprovedCollection);
   const references = collections.flatMap(collection => collection.references);
@@ -30,6 +36,34 @@ function withApprovedSynastryVoice(input) {
     positiveVoiceReferences: references,
     protectedSynastryVoice: { sources: collections.map(collection => collection.receipt), referenceCount: references.length }
   } };
+}
+
+function readPrimarySynastryStyle() {
+  let source;
+  try { source = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../data/writing/synastry-primary-style-20261024.json"), "utf8")); }
+  catch { throw new Error("SYNASTRY_PRIMARY_STYLE_UNAVAILABLE: complete designated natal benchmarks are required."); }
+  if (source.schema !== "synastry-primary-style/v1" || source.sourceUri !== "thread:01a15c03-cf10-71e3-b5e9-798c9f87bd3b"
+    || source.sourceDate !== "2026-10-24" || source.exactOwnerStatement !== "review the writing for the natal chart aspects. The writing in the natal chart aspects IS exactly the writing style you need to match"
+    || !Array.isArray(source.references) || source.references.length !== 4
+    || new Set(source.references.map(reference => reference.caseId)).size !== 4
+    || source.references.some(reference => reference.selectionPriority !== "primary_owner_designated_style"
+      || reference.sourceSurface !== "natal-aspect" || reference.useForTargetFacts !== false || reference.useAsRequiredStructure !== false
+      || reference.sourceUri !== source.sourceUri || reference.sourceDate !== source.sourceDate
+      || reference.approvalStatement !== source.exactOwnerStatement)) {
+    throw new Error("SYNASTRY_PRIMARY_STYLE_UNAVAILABLE: natal style designation is invalid.");
+  }
+  designatedSynastryVoiceReferences({ positiveVoiceReferences: source.references });
+  return source.references;
+}
+
+function synastryVoicePromptReferences(snapshot = {}) {
+  const primary = readPrimarySynastryStyle();
+  if (JSON.stringify(snapshot.primarySynastryStyleReferences) !== JSON.stringify(primary)) {
+    throw new Error("SYNASTRY_PRIMARY_STYLE_UNAVAILABLE: load the designated natal benchmarks before preparing the writer.");
+  }
+  const hashes = new Set(primary.map(reference => reference.sha256));
+  return { primaryNatalStyleBenchmarks: primary,
+    supportingSynastryExamples: designatedSynastryVoiceReferences(snapshot).filter(reference => !hashes.has(reference.sha256)) };
 }
 
 function readApprovedCollection(collection) {
@@ -73,4 +107,4 @@ function readApprovedCollection(collection) {
     ...(manifest.voiceDesignationStatementSha256 ? { voiceDesignationStatementSha256: manifest.voiceDesignationStatementSha256 } : {}) } };
 }
 
-module.exports = { withApprovedSynastryVoice, SYNASTRY_APPROVED_VOICE_SOURCE: SOURCE };
+module.exports = { withApprovedSynastryVoice, synastryVoicePromptReferences, SYNASTRY_APPROVED_VOICE_SOURCE: SOURCE };

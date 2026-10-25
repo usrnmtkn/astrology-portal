@@ -11,9 +11,9 @@ import { prepareProductionPreCallGate, assertProductionPreCallGate } from '../..
 import { validateCopy } from '../../src/astro-writing/validateCopy.mjs';
 import { governValidationResult } from '../../src/astro-writing/effectiveRuleGovernance.mjs';
 import { assertCleanReaderCopy } from '../../apps/web/src/content/editorialCopyBoundary.mjs';
-import { withApprovedSynastryVoice } from './synastry-approved-voice.cjs';
+import { withApprovedSynastryVoice, synastryVoicePromptReferences } from './synastry-approved-voice.cjs';
 
-export const SYNASTRY_BODY_WRITER_VERSION = 'synastry-body/v2-2026-10-23';
+export const SYNASTRY_BODY_WRITER_VERSION = 'synastry-body/v3-2026-10-25';
 const context = { surface: 'synastry', family: 'synastry-aspect' };
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const hash = (value: unknown) => createHash('sha256').update(typeof value === 'string' ? value : JSON.stringify(value)).digest('hex');
@@ -86,10 +86,11 @@ export async function prepareSynastryBodyWriting(input: GenerateContentInput, se
   const evidenceInput = withApprovedSynastryVoice(input);
   const originalEvidence = selectedOwnerEvidence(selection);
   const designated = designatedSynastryVoiceReferences(evidenceInput.sourceSnapshot);
+  const voiceReferences = synastryVoicePromptReferences(evidenceInput.sourceSnapshot);
   if (!originalEvidence.length && !designated.length) fail('Complete eligible prose evidence is required.');
   const feedback = await loadExplicitWritingFeedback(input);
   if (feedback.receipt.enabled !== true) fail('Current owner feedback must be enabled and available.');
-  const positive = [...originalEvidence.map(source => source.text), ...designated.map((source: Reference) => source.text)];
+  const positive = [...originalEvidence.map(source => source.text), ...voiceReferences.primaryNatalStyleBenchmarks.map((source: Reference) => source.text), ...designated.map((source: Reference) => source.text)];
   if (feedback.rows.some(row => positive.some(text => text === row.rejected_text || row.rejected_text.includes(text)))) fail('Rejected wording cannot be a positive voice reference.');
   const projected = prepareSynastrySourceInput(evidenceInput);
   const gate = prepareProductionPreCallGate(projected);
@@ -99,7 +100,7 @@ export async function prepareSynastryBodyWriting(input: GenerateContentInput, se
   // Bulk metadata and the duplicate neutralKnowledge are retained in the input
   // receipt. Neither is a prose task or an additional source of interpretation.
   const { neutralKnowledge: _neutral, perspective: _perspective, aspectScope: _scopeNotes, ...facts } = projected.facts;
-  const { bulkTarget: _target, positiveVoiceReferences: _references, synastrySourceContext: _projection,
+  const { bulkTarget: _target, positiveVoiceReferences: _references, primarySynastryStyleReferences: _primaryStyleReferences, synastrySourceContext: _projection,
     existingDraft: _existingDraft, protectedSynastryVoice: _protectedVoice, ...sources } = projected.sourceSnapshot ?? {};
   const prompt = [
     'TASK\nWrite only the complete directional synastry body for owner review. Return {"body":"..."}. No other fields are requested.',
@@ -111,7 +112,7 @@ export async function prepareSynastryBodyWriting(input: GenerateContentInput, se
     feedback.prompt ? `REJECTED WRITING AND CURRENT OWNER CORRECTIONS\n${feedback.prompt}\nEND REJECTED WRITING` : '',
     input.voiceNotes ? `CURRENT TASK NOTES\n${input.voiceNotes}` : '',
     'COMPLETE VOICE REFERENCES\nUse these for ordinary language, development, rhythm and emotional range only. Their facts, scenes, signs, timing and aspect mechanisms do not transfer. Current corrections override historical wording. Do not turn an opposition example into a compulsory conflict for a supportive contact.',
-    JSON.stringify({ originalOwnerPassages: originalEvidence, designatedApprovedPassages: designated }, null, 2),
+    JSON.stringify({ originalOwnerPassages: originalEvidence, ...voiceReferences }, null, 2),
     'WRITE THE BODY\n' + `Address the ${reader.planet} person as you. The other person owns ${other.planet}. Use only their supplied name or licensed variable when needed; they is also available. `
       + 'Develop the source-supported interpretation in connected prose. Let the astrology explain the interaction naturally. Do not produce planning fields, summaries, headings, report transitions, internal Person A/B labels or an astrology drilldown. Do not add suggestions or advice unless explicitly requested. No required problem, cycle, lesson or closing reassurance. No em dashes. Return only the body JSON.'
   ].filter(Boolean).join('\n\n');
@@ -123,6 +124,7 @@ export async function prepareSynastryBodyWriting(input: GenerateContentInput, se
     receipt: { inputSha256: hash(input), requestSha256: hash({ ...request, instructions }), feedback: feedback.receipt,
       sourceContext: synastrySourceReceipt(projected), selectionReason: selection.reason,
       protectedVoice: evidenceInput.sourceSnapshot?.protectedSynastryVoice ?? null,
+      primaryStyleReferences: voiceReferences.primaryNatalStyleBenchmarks.map((source: Reference) => ({ path: source.path, sha256: source.sha256 })),
       existingDraft: _existingDraft ? { sha256: (_existingDraft as Reference).sha256, sentToWriter: false } : null,
       originalOwnerPassages: originalEvidence.map(source => ({ sourceId: source.id, sourcePath: source.sourcePath,
         textSha256: hash(source.text), wordCount: source.text.trim().split(/\s+/u).length })),

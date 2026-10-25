@@ -720,6 +720,24 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
+The October 25 v16 repair connects the four complete published natal passages
+the owner explicitly designated as the Synastry style benchmark. Shared Studio
+OpenAI/Claude requests and private body requests receive these as primary style
+evidence, separately from the 28 protected supporting Synastry examples. Explicit
+supporting selections retain their scope; matching natal text is delivered once.
+Current corrections govern both groups. Natal facts, advice and repeated closing
+formulas are not transferred to the target relationship. Missing, changed or
+incomplete primary references stop before dispatch, and receipts retain identities
+and hashes without copying their text.
+
+The v16 authority also retains the October 25 plain-language corrections and
+qualifies the earlier response-to-response direction: supported interactions may
+develop, but a simple affectionate observation does not require an answering
+reaction, a conflict, a cost or a remedy. These changes affect request delivery,
+not literary approval. Intercepted-provider checks do not establish deployment or
+improved raw prose; paid generation and publication require their existing owner
+authorization. See the [primary-style delivery review](SYNASTRY_SOURCE_DELIVERY_REPAIR_2026-10-23.md#october-25-primary-natal-style-delivery).
+
 The October 24 source follow-up replaces twenty DRAFT directional keyword
 records with qualified pair-specific meaning and explicit planet ownership.
 The shared loader, explicit source projection and private body preparer hold
