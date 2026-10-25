@@ -4,6 +4,12 @@ import type { SkyDetail } from './SkyDetailArticle';
 
 export const skyReaderCsvRequest = 'sky-article-csv';
 
+/** CSV-specific completion work stays outside ordinary article loading. */
+export function exportStatus(article: HTMLElement | null, detail: SkyDetail, aspectsFailed: boolean) {
+  if (aspectsFailed) throw new Error('Aspect details could not load.');
+  return article && exportRequestedSkyReaderCsv(article, detail) ? 'Sky article CSV downloaded.' : '';
+}
+
 /** Export the resolved public article after the reader has rendered it. */
 export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href: string) {
   const source = detail.readerExport;
