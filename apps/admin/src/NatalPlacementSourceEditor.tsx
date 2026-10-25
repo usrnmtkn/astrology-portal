@@ -1,7 +1,6 @@
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { useEffect, useState } from "react";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
-import { isDynamicNatalPlacementExactKey } from "../../web/src/content/fallbackArchitectureV3/dashboardExtensions";
 
 export type NatalSourceEdits = Record<string, string>;
 export type NatalEditableRow = { id?: string | null; content_key: string; body: string | null; sections: unknown; updated_at?: string | null; status?: string };
@@ -13,7 +12,7 @@ export function natalSourceFields(row: NatalEditableRow): NatalSourceEdits {
     if (typeof record[field] === "string") fields[field] = record[field];
   }
   if (!Object.keys(fields).length) fields.body = row.body ?? "";
-  if (isDynamicNatalPlacementExactKey(row.content_key)) fields.body_they ??= "";
+  if (row.content_key.startsWith("fallback-hook/natal-you-placement-complete-final/")) fields.body_they ??= "";
   return fields;
 }
 
@@ -51,7 +50,7 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
       {Object.entries(fields).map(([field, value]) => (
         <label key={field}>
           <span>{field === "body_they" ? "Friend view copy" : "You view copy"}</span>
-          {field === "body_they" && isDynamicNatalPlacementExactKey(row.content_key)
+          {field === "body_they" && row.content_key.startsWith("fallback-hook/natal-you-placement-complete-final/")
             && <span className="admin-field-hint">Use {"{{ownerName}}"} for the person's name. Friend copy is approved separately when you publish.</span>}
           <StudioTextarea aria-label={`${label}: ${field === "body_they" ? "Friend" : "You"} copy`} rows={row.content_key.includes("placement-sign-final/") ? 14 : 4} value={value} disabled={disabled || saving}
             onChange={(event) => {
