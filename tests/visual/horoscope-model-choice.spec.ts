@@ -189,10 +189,13 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
    const requests:any[]=[];page.on('request',request=>{if(request.url().includes('/api/admin/horoscope-writing'))requests.push(request.postDataJSON());});
    const studio=await f.open();
    await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aquarius',exact:true}).click();
-   const generate=studio.getByRole('button',{name:'Generate Aquarius draft',exact:true});
+   const generate=studio.getByRole('button',{name:'Generate Aquarius',exact:true});
    await expect(generate).toBeDisabled();
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await generate.click();
+   await expect(studio.getByText('1/12 readings ready',{exact:false})).toBeVisible({timeout:120000});
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Aquarius/}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(/Your saved fixture ends here/,{timeout:120000});
    const saved=await f.latest();expect(saved.status).toBe('DRAFT');
    expect(saved.sections.horoscopeEdition.passages.filter((p:any)=>p.body.trim())).toHaveLength(1);
@@ -205,7 +208,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(saved.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aquarius').body);
    await studio.getByRole('button',{name:'2 · Generate',exact:true}).click();
    await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aquarius',exact:true}).click();
-   await expect(studio.getByRole('button',{name:'Generate Aquarius draft',exact:true})).toBeDisabled();
+   await expect(studio.getByRole('button',{name:'Generate Aquarius',exact:true})).toBeDisabled();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   }finally{f.child.kill();}
  });
