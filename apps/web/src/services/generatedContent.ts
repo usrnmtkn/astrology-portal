@@ -1549,12 +1549,11 @@ async function readLiveGeneratedContentForSurfaces(
   if (!supabase) {
     return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
   }
-  // The publication ledger has its own deadline. Give the content request its
-  // full budget instead of expiring it while it is still waiting for that ledger.
-  const requestSignal = AbortSignal.timeout(8000);
-
+  // Surface inventories span many pages. Use the transport's per-page deadline
+  // so healthy progress can finish the complete collection. Stalled pages and
+  // non-advancing or excessive pagination remain bounded by the transport.
   const { data, error } = await loadReaderRows({ surfaces, ...(vocabularyOnly ? { vocabularyOnly: true } : {}),
-    ...(targetDate ? { targetDate } : {}) }, requestSignal);
+    ...(targetDate ? { targetDate } : {}) });
   if (error) {
     console.warn("Content surface read failed.", error);
     return loadLastKnownGoodGeneratedContentForSurfaces(surfaces, targetDate, previewMode);
