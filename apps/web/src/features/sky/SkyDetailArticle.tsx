@@ -403,24 +403,16 @@ export function SkyDetailArticle({
     ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
       date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone) }) : null;
   const [csvExportStatus, setCsvExportStatus] = useState('');
-  useEffect(() => {
-    if (!detail.readerExport || detail.placementFactsPending || new URL(window.location.href).searchParams.get('studioExport') !== 'sky-article-csv') return;
-    let cancelled = false;
-    void import('./skyReaderCsvExport').then(({ exportRequestedSkyReaderCsv }) => {
-      if (!cancelled && articleRef.current && exportRequestedSkyReaderCsv(articleRef.current, detail)) setCsvExportStatus('Sky article CSV downloaded.');
-    }).catch(() => { if (!cancelled) setCsvExportStatus('The article CSV could not be downloaded. Reload this page to try again.'); });
-    return () => { cancelled = true; };
-  }, [detail]);
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [detail.routePath ?? detail.title]);
 
   const residencyContext = detail.placementResidencyContext;
   const residencyContextKey = residencyContext
-    ? `${residencyContext.referenceDate}|${residencyContext.timeZone}`
+    ? `${residencyContext.planet}|${residencyContext.sign}|${residencyContext.referenceDate}|${residencyContext.timeZone}`
     : "";
   const hasInlineAspectSections = (detail.sections ?? []).some((section) => section.role === "aspect");
-  const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[]] | null>(null);
+  const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[] | null] | null>(null);
 
   useEffect(() => {
     if (!residencyContext || hasInlineAspectSections) return;
@@ -429,7 +421,7 @@ export function SkyDetailArticle({
       .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
       .then(
         ({ sections }) => !cancelled && setResidencyAspectState([residencyContextKey, sections]),
-        () => undefined
+        () => !cancelled && setResidencyAspectState([residencyContextKey, null])
       );
     return () => {
       cancelled = true;
@@ -439,6 +431,20 @@ export function SkyDetailArticle({
   const residencyAspectSections = !hasInlineAspectSections && residencyAspectState?.[0] === residencyContextKey
     ? residencyAspectState[1]
     : null;
+  const residencyAspectsPending = Boolean(residencyContext && !hasInlineAspectSections && residencyAspectState?.[0] !== residencyContextKey);
+  const residencyAspectsFailed = Boolean(residencyContext && !hasInlineAspectSections && residencyAspectState?.[0] === residencyContextKey && residencyAspectState[1] === null);
+  useEffect(() => {
+    if (!detail.readerExport || detail.placementFactsPending || residencyAspectsPending || new URL(window.location.href).searchParams.get('studioExport') !== 'sky-article-csv') return;
+    if (residencyAspectsFailed) {
+      setCsvExportStatus('The article CSV could not be downloaded. Reload this page to try again.');
+      return;
+    }
+    let cancelled = false;
+    void import('./skyReaderCsvExport').then(({ exportRequestedSkyReaderCsv }) => {
+      if (!cancelled && articleRef.current && exportRequestedSkyReaderCsv(articleRef.current, detail)) setCsvExportStatus('Sky article CSV downloaded.');
+    }).catch(() => { if (!cancelled) setCsvExportStatus('The article CSV could not be downloaded. Reload this page to try again.'); });
+    return () => { cancelled = true; };
+  }, [detail, residencyAspectsPending, residencyAspectsFailed]);
   const detailSections = residencyAspectSections
   ? [
       ...residencyAspectSections,
