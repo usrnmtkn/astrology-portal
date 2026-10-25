@@ -1222,7 +1222,7 @@ async function readFallbackArchitectureV3DashboardBundle(
   canCache: () => boolean,
   earlyRows?: ReturnType<typeof loadReaderRows>
 ): Promise<FallbackArchitectureV3Bundle | null> {
-  const anonymous = scope === "sky-list" ? await anonymousReader() : null;
+  const anonymous = scope === "sky-list" || scope === "sky-article" ? await anonymousReader() : null;
   const supabase = anonymous ? null : await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
   const recoverUnavailableOverlay = (error: unknown) => {

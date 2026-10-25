@@ -307,16 +307,19 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       expect(published.body).toContain('Synthetic dated opening. Libra');
       expect(published.body).toContain('Synthetic published final sentence.');
       expect(published.body).toContain('Synthetic dated final sentence.');
+      const publicPage = await page.context().newPage();
+      await publicPage.addInitScript(() => localStorage.removeItem('tldrastro:contentAdminSecret'));
       let loginSdkRequests = 0;
-      page.on('request', request => {
+      publicPage.on('request', request => {
         if (/\/assets\/supabase-[^/]+\.js$/u.test(new URL(request.url()).pathname)) loginSdkRequests++;
       });
-      await page.goto(`${datedReaderOrigin}/?date=2026-10-21#sky/placement/sun/libra`);
-      await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic dated opening. Libra', { timeout: 60_000 });
-      await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic dated final sentence.');
-      await page.reload();
-      await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic dated final sentence.');
+      await publicPage.goto(`${datedReaderOrigin}/?date=2026-10-21#sky/placement/sun/libra`);
+      await expect(publicPage.locator('.sky-detail-body').first()).toContainText('Synthetic dated opening. Libra', { timeout: 60_000 });
+      await expect(publicPage.locator('.sky-detail-body').first()).toContainText('Synthetic dated final sentence.');
+      await publicPage.reload();
+      await expect(publicPage.locator('.sky-detail-body').first()).toContainText('Synthetic dated final sentence.');
       expect(loginSdkRequests, 'The anonymous full reader must not wait for the login SDK.').toBe(0);
+      await publicPage.close();
     } finally { await state.close(); }
   });
 }
