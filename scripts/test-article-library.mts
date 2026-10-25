@@ -34,14 +34,28 @@ try {
     const stale: any = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, body: 'Stale replacement.' });
     assert.equal(stale.status, 409);
     assert.equal(store.rows.get(saved.id).body, body);
-    const revisionBody = `${body}\n\nComplete revised ending.`;
+    let revisionBody = `${body}\n\nComplete revised ending.`;
+    const liveBeforeDraft = structuredClone(store.rows.get(saved.id));
     const revision = await store.invoke('PATCH', { id: saved.id, expectedUpdatedAt: saved.updated_at,
       status: 'DRAFT', headline: saved.headline, body: revisionBody });
     assert.equal(revision.status, 200, JSON.stringify(revision));
+    assert.deepEqual(store.rows.get(saved.id), liveBeforeDraft, 'Every live field and its saved version remain unchanged');
     assert.equal((await read()).payload.rows[0]?.body, body, 'Saving a revision preserves the complete published article');
-    const revisionRow = revision.payload.rows[0];
+    let revisionRow = revision.payload.rows[0];
     assert.equal(revisionRow.status, 'DRAFT');
     assert.equal(revisionRow.body, revisionBody);
+    const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${revisionRow.id}`);
+    assert.equal(reopened.status, 200, JSON.stringify(reopened));
+    const openedRevision = reopened.payload.rows[0];
+    assert.equal(openedRevision.body, revisionBody);
+    revisionBody += '\n\nComplete second saved ending.';
+    const resaved = await store.invoke('PATCH', { id: openedRevision.id, expectedUpdatedAt: openedRevision.updated_at,
+      status: 'DRAFT', body: revisionBody });
+    assert.equal(resaved.status, 200, JSON.stringify(resaved));
+    assert.equal(resaved.payload.rows[0].id, revisionRow.id);
+    revisionRow = resaved.payload.rows[0];
+    assert.deepEqual(store.rows.get(saved.id), liveBeforeDraft, 'Repeated draft saves leave published bytes and version intact');
+    assert.equal((await read()).payload.rows[0]?.body, body);
     const publishRevision = (row = revisionRow, secret?: string) => store.invoke('PATCH', {
       id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'publish-standalone-article-revision'
     }, '/api/admin/generated-content', secret);
@@ -58,6 +72,17 @@ try {
     const replayed = await publishRevision();
     assert.equal(replayed.status, 200, JSON.stringify(replayed));
     assert.equal(replayed.payload.rows[0].updated_at, saved.updated_at, 'A recovered publication receipt does not replay the write');
+    const firstPublished = structuredClone(store.rows.get(saved.id));
+    revisionBody += '\n\nComplete next publication cycle.';
+    const nextCycle = await store.invoke('PATCH', { id: saved.id, expectedUpdatedAt: saved.updated_at,
+      status: 'DRAFT', body: revisionBody });
+    assert.equal(nextCycle.status, 200, JSON.stringify(nextCycle));
+    assert.equal(nextCycle.payload.rows[0].id, revisionRow.id, 'The archived private revision is safely reused');
+    assert.deepEqual(store.rows.get(saved.id), firstPublished, 'Next cycle draft leaves the current edition intact');
+    const nextPublication = await publishRevision(nextCycle.payload.rows[0]);
+    assert.equal(nextPublication.status, 200, JSON.stringify(nextPublication));
+    saved = nextPublication.payload.rows[0];
+    assert.equal((await read()).payload.rows[0]?.body, revisionBody);
     const pending = await store.invoke('PATCH', { id: saved.id, expectedUpdatedAt: saved.updated_at, status: 'DRAFT', body: 'Retained pending revision.' });
     assert.equal(pending.status, 200, JSON.stringify(pending));
     const concurrentBody = `${revisionBody}\n\nAnother complete explicit revision.`;

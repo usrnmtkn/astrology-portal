@@ -222,6 +222,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
         .getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(revisedTemplate);
+      const resavedTemplate = `${revisedTemplate}\n\nSynthetic complete second saved ending.`;
+      await editor.getByLabel('Article body', { exact: true }).fill(resavedTemplate);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
+      await page.reload();
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(resavedTemplate);
       await page.goto(directURL);
       await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.']);
       await page.goto('/admin/content#articles-guides');
@@ -231,7 +239,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
       await page.goto(directURL);
       await page.reload();
-      await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.', 'Synthetic complete revised ending.']);
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.', 'Synthetic complete revised ending.', 'Synthetic complete second saved ending.']);
       await page.screenshot({ path: `test-results/articles-reading-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       readerFailure = true;
