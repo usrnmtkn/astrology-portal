@@ -40,13 +40,36 @@ async function prepare(page: any, theme = 'light', saved: boolean | 'active' = t
     return false;
   } });
   await page.context().route('**/content-studio-last-known-good.json', (route: any) => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
-  await page.context().route('**/rest/v1/**', async (route: any) => route.fulfill({ json: new URL(route.request().url()).pathname.endsWith('/content_publications') ? await store.call({ method: 'publications' }) : [] }));
+  await page.context().route('**/rest/v1/**', async (route: any) => {
+    const url = new URL(route.request().url());
+    const publications = url.pathname.endsWith('/content_publications') ? await store.call({ method: 'publications' }) : [];
+    const filters = url.searchParams.getAll('content_key');
+    await route.fulfill({ json: publications.filter((row: any) => filters.every(filter => {
+      const [operator, ...parts] = filter.split('.');
+      const key = parts.join('.');
+      if (operator === 'eq') return row.content_key === key;
+      if (operator === 'gte') return row.content_key >= key;
+      if (operator === 'lt') return row.content_key < key;
+      if (operator === 'gt') return row.content_key > key;
+      throw new Error(`Unsupported publication fixture filter: ${operator}`);
+    })) });
+  });
   await page.goto('/admin/content#sky-writeups');
   await page.getByLabel('Sky placement planet or point').selectOption(planet);
   await page.getByLabel('Sky placement zodiac sign').selectOption(sign);
   const sources = page.getByRole('region', { name: 'Sky placement reader sources', exact: true });
   await expect(sources.getByRole('button', { name: 'Preview reader', exact: true })).toBeEnabled();
-  return { fixture, store, writes, sources, failReader: (value: boolean) => { failReader = value; } };
+  return {
+    fixture, store, writes, sources,
+    failReader: (value: boolean) => { failReader = value; },
+    close: async () => {
+      // Assertions have finished. Detach background routes before terminating
+      // their API process, so expected shutdown cannot reject a pending route.
+      // Waiting for every optional background route can itself hang cleanup.
+      await page.context().unrouteAll({ behavior: 'ignoreErrors' });
+      store.close();
+    }
+  };
 }
 
 for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
@@ -111,7 +134,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await page.getByLabel('Sky placement planet or point').selectOption('saturn');
       await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
       await expect(state.sources.getByRole('button', { name: 'Open pending revision' })).toBeVisible();
-    } finally { state.store.close(); }
+    } finally { await state.close(); }
   });
 }
 
@@ -129,7 +152,7 @@ test('Sky reader preview recovers from a public read failure without substitutin
     await preview.getByRole('button', { name: 'Refresh preview' }).click();
     await expect(preview.frameLocator('iframe').locator('.sky-detail-body').first()).toContainText('Synthetic published final sentence.', { timeout: 60_000 });
     expect(state.writes).toEqual([]);
-  } finally { state.store.close(); }
+  } finally { await state.close(); }
 });
 
 test('Sky reader preview follows editor changes, preserves the selected date and verifies the published result', async ({ page }) => {
@@ -184,7 +207,7 @@ test('Sky reader preview follows editor changes, preserves the selected date and
     await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic second preview final sentence.', { timeout: 60_000 });
     await page.reload();
     await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic second preview final sentence.');
-  } finally { state.store.close(); }
+  } finally { await state.close(); }
 });
 
 for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
@@ -284,12 +307,17 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       expect(published.body).toContain('Synthetic dated opening. Libra');
       expect(published.body).toContain('Synthetic published final sentence.');
       expect(published.body).toContain('Synthetic dated final sentence.');
+      let loginSdkRequests = 0;
+      page.on('request', request => {
+        if (/\/assets\/supabase-[^/]+\.js$/u.test(new URL(request.url()).pathname)) loginSdkRequests++;
+      });
       await page.goto(`${datedReaderOrigin}/?date=2026-10-21#sky/placement/sun/libra`);
       await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic dated opening. Libra', { timeout: 60_000 });
       await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic dated final sentence.');
       await page.reload();
       await expect(page.locator('.sky-detail-body').first()).toContainText('Synthetic dated final sentence.');
-    } finally { state.store.close(); }
+      expect(loginSdkRequests, 'The anonymous full reader must not wait for the login SDK.').toBe(0);
+    } finally { await state.close(); }
   });
 }
 
@@ -308,7 +336,7 @@ test('Sky reader preview explains bundled writing when no dated revision is save
     await expect(preview.locator('p').filter({ hasText: /^Reference:/ })).toContainText('2026-01-01T');
     await expect(preview.getByRole('link', { name: 'Read this date in Sky' })).toHaveAttribute('href', /\?date=2026-01-01#\/sky\/placement\/saturn\/pisces$/);
     expect(state.writes).toEqual([]);
-  } finally { state.store.close(); }
+  } finally { await state.close(); }
 });
 
 for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
@@ -375,7 +403,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await page.reload();
       await expect(page.locator('.sky-detail-body').first()).toHaveText(outsideBody);
       expect(state.writes).toEqual([]);
-    } finally { state.store.close(); }
+    } finally { await state.close(); }
   });
 }
 
@@ -396,7 +424,7 @@ test('Sky reader preview also renders Sun and Moon placement articles', async ({
       await preview.getByRole('button', { name: 'Close preview', exact: true }).click();
     }
     expect(state.writes).toEqual([]);
-  } finally { state.store.close(); }
+  } finally { await state.close(); }
 });
 
 for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
@@ -502,6 +530,6 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await expect(preview.locator('p').filter({ hasText: /^Source used:/ })).toContainText('Scorpio', { timeout: 60_000 });
       await expect(comparison).toHaveCount(0);
       expect((await state.store.call({ method: 'rows' })).find((row: any) => row.id === state.fixture.active.id).body).toBe(state.fixture.active.body);
-    } finally { state.store.close(); }
+    } finally { await state.close(); }
   });
 }
