@@ -1,5 +1,6 @@
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
 import { calendarMoonIngressPackageRecordForKey } from "./calendar-moon-ingress-sources.js";
+import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
 import { isRegisteredLunarJournalKey } from "./content-studio-package-admission.js";
 import { isZodiacSeasonSourceKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
@@ -140,6 +141,21 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
   return rows.map((row) => {
     if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    // Dated daily overviews are selected directly by Calendar, outside the bundled package keys.
+    if (row.content_key.startsWith('calendar-passage/daily/')) {
+      const identity = calendarPassageIdentity(row.content_key);
+      const current = identity ? [...candidates].sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))
+        .find(candidate => candidate.content_key === row.content_key && allowsPublication(candidate)
+          && candidate.status === 'LIVE' && candidate.lane === 'serving' && !candidate.review_state
+          && candidate.body?.trim() && !calendarPassageErrors(candidate.body).length
+          && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate)) : undefined;
+      const requested = row.sections?.packageDraft?.body ?? row.body;
+      const live = Boolean(current && row.status !== 'ARCHIVED' && requested === current.body);
+      return { id: row.id, live, label: live ? 'Live' : 'Not live', source: live ? 'studio' : null,
+        detail: live ? `Readers can receive this ${identity?.date ? 'date-only daily overview' : 'shared daily overview template'}.`
+          : 'This Calendar daily overview revision is not published.', updatedAt: row.updated_at ?? null,
+        servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
     if (isRegisteredLunarJournalKey(row.content_key)) {
       const current = [...candidates].sort((a,b)=>(b.updated_at??"").localeCompare(a.updated_at??""))
         .find(candidate=>candidate.content_key===row.content_key && allowsPublication(candidate)

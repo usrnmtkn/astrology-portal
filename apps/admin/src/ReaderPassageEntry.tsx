@@ -4,8 +4,8 @@ import { requestStudioJson } from './generatedContentClient';
 import { StudioButton } from './StudioControls';
 import type { PlacementSourceRow } from './skyPlacementSourceSelection';
 
-export default function ReaderPassageEntry({ context, secret, onOpen }: {
-  context: StudioPassageEdit; secret: string; onOpen: (row: PlacementSourceRow) => Promise<boolean>;
+export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrary = false }: {
+  context: StudioPassageEdit; secret: string; onOpen: (row: PlacementSourceRow) => Promise<boolean>; fromLibrary?: boolean;
 }) {
   const open = useRef(onOpen); open.current = onOpen;
   const [attempt, setAttempt] = useState(0), [status, setStatus] = useState(''), [error, setError] = useState('');
@@ -39,8 +39,8 @@ export default function ReaderPassageEntry({ context, secret, onOpen }: {
     })().catch(reason => { if (active) { setStatus(''); setError(reason instanceof Error ? reason.message : 'The passage could not open.'); } });
     return () => { active = false; };
   }, [context.sourceKey, context.date, context.timeZone, secret, attempt]);
-  return <div className="studio-variable-description studio-context-panel" aria-label="Passage opened from reader">
-    <p>Opened from reader · {context.date} · {context.timeZone}</p>
+  return <div className="studio-variable-description studio-context-panel" aria-label={fromLibrary ? 'Passage opened from Content Library' : 'Passage opened from reader'}>
+    <p>{fromLibrary ? 'Opened from Content Library' : 'Opened from reader'} · {context.date} · {context.timeZone}</p>
     <p>Reader source: <code>{context.sourceKey}</code></p>
     {status && <p role="status">{status}</p>}
     {error && <><p role="alert">{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry opening passage</StudioButton></>}

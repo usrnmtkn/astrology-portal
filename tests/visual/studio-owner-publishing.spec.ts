@@ -209,7 +209,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Owner 
       await route.fulfill({json:{ok:true,statuses:await store.call({method:'statuses',body:route.request().postDataJSON()})}});return true;
     }});
     await page.goto('/admin/content#exact-content');
-    await page.getByRole('row').filter({hasText:baseline.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    await page.getByRole('row').filter({hasText:baseline.content_key}).getByRole('button',{name:'Continue draft',exact:true}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor'});
     const revised=original+'\n\nAn additional author paragraph is preserved.';
     await editor.getByRole('textbox',{name:'Full passage / body',exact:true}).fill(revised);

@@ -5,6 +5,15 @@ import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { contentLiveStatuses, servingPackageRecords } from "../api/_lib/content-live-status";
+const dailyKey = 'calendar-passage/daily/2026-10-21/America%2FNew_York';
+const daily = { id: 'daily', content_key: dailyKey, status: 'LIVE', lane: 'serving', review_state: null,
+  body: 'Complete daily overview for {{moonSign}}.', surface: 'sky', provider: 'tldrastro-fallback-architecture-v3',
+  sections: { packageRecord: { contentKey: dailyKey, content_role: 'full_copy', review_status: 'approved' } } };
+assert.equal(contentLiveStatuses([daily])[0].live, true);
+assert.equal(contentLiveStatuses([daily], [daily], () => false)[0].live, false, 'A retired or replaced ledger version cannot appear published.');
+assert.equal(contentLiveStatuses([{ ...daily, content_key: 'calendar-passage/daily/2026-02-30/UTC' }])[0].live, false);
+assert.equal(contentLiveStatuses([{ ...daily, body: '{{unknown}}' }])[0].live, false);
+assert.equal(contentLiveStatuses([{ ...daily, sections: { ...daily.sections, packageDraft: { body: 'Different unpublished wording.' } } }], [daily])[0].live, false);
 for (const key of ["cms/personal-transit-aspect/you/template", "fallback-hook/transit-house-event-frame/sun", "fallback-template/transit.house-event"]) {
   const staleLive = { id: key, content_key: key, status: "LIVE", lane: "serving", body: "Historical approved copy.", provider: "tldrastro-fallback-architecture-v3", sections: { packageRecord: { contentKey: key, review_status: "approved", body: "Historical approved copy." } } };
   assert.equal(contentLiveStatuses([staleLive], [staleLive], () => true, () => true)[0].live, false, "Retirement wins even over a stale explicit publication.");

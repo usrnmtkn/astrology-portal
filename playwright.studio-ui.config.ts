@@ -13,6 +13,7 @@ export default defineConfig({
   metadata: { anonymousReaderFixture: true },
   testDir: './tests/visual',
   testMatch: [
+    'content-library-navigation.spec.ts',
     'calendar-passage-editor.spec.ts', 'calendar-workspace.spec.ts',
     'reader-passage-edit.spec.ts', 'review-calendar-workspace.spec.ts',
     'sky-reader-csv.spec.ts', 'sky-reader-preview.spec.ts',
