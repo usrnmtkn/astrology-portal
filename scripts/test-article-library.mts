@@ -133,9 +133,13 @@ try {
     p_target_id: target.id, p_target_version: target.updated_at, p_patch: { body: proposal.body, status: 'LIVE', lane: 'serving', review_state: null },
     p_validation_context: { targetPublication: publications.rows[0].publication }, p_dependencies: [] };
   await assert.rejects(callPublicationRpc(db, 'content_studio_publish_revision', args), { code: '22023' }, 'SQL itself rejects cross-key article promotion');
-  await db.query('update generated_interpretations set content_key=$1,mode=$2 where id=$3', [target.content_key, 'article', proposal.id]);
-  await assert.rejects(callPublicationRpc(db, 'content_studio_publish_revision', args), { code: '22023' }, 'SQL itself requires a private revision row');
+  await assert.rejects(callPublicationRpc(db, 'content_studio_publish_revision', { ...args,
+    p_proposal_id: target.id, p_proposal_version: target.updated_at }), { code: '22023' }, 'SQL itself requires a distinct private revision row');
+  await assert.rejects(db.query("update generated_interpretations set mode='article' where id=$1", [proposal.id]),
+    { code: '23514' }, 'Private revision identity cannot be changed into a normal article');
   const retained = await db.query('select body,status from generated_interpretations where id=$1', [target.id]);
   assert.deepEqual(retained.rows[0], { body: target.body, status: 'LIVE' });
+  await assert.rejects(db.query("update generated_interpretations set status='LIVE',lane='serving' where id=$1", [proposal.id]),
+    { code: '23514' }, 'An older server cannot publish a private revision as its own serving row');
   console.log('PASS standalone article revision SQL target boundaries and unchanged server-only grants.');
 } finally { await db.close(); }

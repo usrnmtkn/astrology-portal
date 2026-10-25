@@ -24,3 +24,11 @@ begin
   execute definition;
 end
 $migration$;
+
+-- Older servers must fail closed rather than publish a private proposal itself.
+alter table public.generated_interpretations
+  add constraint standalone_article_revision_is_private check (
+    event_type is distinct from 'standalone-article-revision'
+    or (mode is not distinct from 'studio-draft' and lane is not distinct from 'reference'
+      and status is distinct from 'LIVE')
+  );
