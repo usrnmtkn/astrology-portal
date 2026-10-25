@@ -5637,10 +5637,10 @@ export function GeneratedContentAdminDashboard() {
     if (saved) await approveAndScheduleSkyRow(saved, true, activeDraft.id ? activeDraft : undefined);
   }
 
-  async function publishStandaloneArticle(activeDraft: AdminDraft) {
+  async function publishStandaloneArticle(activeDraft: AdminDraft, saveBeforePublishing = false) {
     if (pendingPublication) return;
     const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
-    const saved = activeDraft.id && unchanged
+    const saved = activeDraft.id && unchanged && !saveBeforePublishing
       ? editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id)
       : await saveDraft("DRAFT", activeDraft);
     if (!saved) return;
@@ -12912,7 +12912,7 @@ export function GeneratedContentAdminDashboard() {
                   Move to draft
                 </StudioButton>
               ) : (
-                <StudioButton className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                <StudioButton className="admin-publish-button" type="button" onClick={() => void (isStandaloneArticleDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
                   Publish to app
                 </StudioButton>
