@@ -235,6 +235,23 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.goto('/admin/content#articles-guides');
       await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+      if (width === 390 && theme === 'light') {
+        // A failed lazy publication control must retain the saved revision and
+        // leave the complete live edition intact until a fresh-page retry.
+        const publishedBefore = (await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id);
+        await page.route('**/studioRevisionPublication-*.js', route => route.abort('failed'));
+        await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
+        await expect(editor.getByRole('alert')).toBeVisible();
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+        expect((await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id)).toEqual(publishedBefore);
+        expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
+          .payload.rows[0]?.body).toBe(body);
+        await page.unroute('**/studioRevisionPublication-*.js');
+        await page.reload();
+        await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+          .getByRole('button', { name: 'Edit', exact: true }).click();
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+      }
       await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
         .payload.rows[0]?.body).toBe(body.replace('Synthetic complete opening.', 'Updated complete author opening.'));

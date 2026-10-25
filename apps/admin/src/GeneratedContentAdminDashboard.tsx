@@ -2754,13 +2754,18 @@ function isCompositeRelationshipRow(row: AdminGeneratedContentRow | AdminReviewR
 }
 
 
-type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: "approve-package-revision" | "publish-sky-article-edition-revision" | "publish-standalone-article-revision" };
+const packageRevisionPublicationAction = "approve-package-revision";
+const skyRevisionPublicationAction = "publish-sky-article-edition-revision";
+const standaloneRevisionPublicationAction = "publish-standalone-article-revision";
+const skyEditionApprovalAction = "approve-sky-article-edition";
+const standaloneRevisionEvent = "standalone-article-revision";
+type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: typeof packageRevisionPublicationAction | typeof skyRevisionPublicationAction | typeof standaloneRevisionPublicationAction };
 const pendingPublicationStorageKey = "tldr-studio-pending-publication-v1";
 function restorePendingPublication(): PendingStudioPublication | null {
   try {
     const value = JSON.parse(sessionStorage.getItem(pendingPublicationStorageKey) ?? "null");
     if (value && typeof value.id === "string" && typeof value.expectedUpdatedAt === "string"
-      && ["approve-package-revision", "publish-sky-article-edition-revision", "publish-standalone-article-revision"].includes(value.ownerAction)) return value;
+      && [packageRevisionPublicationAction, skyRevisionPublicationAction, standaloneRevisionPublicationAction].includes(value.ownerAction)) return value;
   } catch { /* Storage may be disabled; the database receipt remains durable. */ }
   return null;
 }
@@ -5192,7 +5197,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-sky-article-edition" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: skyEditionApprovalAction })
       });
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
@@ -5277,9 +5282,9 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       const ownerAction = revisionRow.event_type === "sky-article-edition-revision"
-        ? "publish-sky-article-edition-revision"
-        : "approve-sky-article-edition";
-      const payload = ownerAction === "publish-sky-article-edition-revision"
+        ? skyRevisionPublicationAction
+        : skyEditionApprovalAction;
+      const payload = ownerAction === skyRevisionPublicationAction
         ? await submitSavedPublication(revisionRow, ownerAction)
         : await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, {
           method: "PATCH", body: JSON.stringify({ id: revisionRow.id, expectedUpdatedAt: revisionRow.updated_at, ownerAction })
@@ -5415,7 +5420,7 @@ export function GeneratedContentAdminDashboard() {
       const savedDraft = saved ? draftFromRow(saved) : null;
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
         (draftForSave.id && saved.id !== draftForSave.id && !(standaloneArticleKind(draftForSave.contentKey)
-          && status === "DRAFT" && saved.event_type === "standalone-article-revision" && saved.mode === "studio-draft"
+          && status === "DRAFT" && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
           && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
         || (["LIVE", "REVIEWED"].includes(status) && saved.review_state)
@@ -5601,7 +5606,7 @@ export function GeneratedContentAdminDashboard() {
         const saved = await saveDraft("DRAFT", revised, undefined, false, false, true);
         if (!saved) throw new Error("The saved source was not returned. Your writing is still here.");
         return saved;
-      }, row => approvePackageRevision(row as AdminGeneratedContentRow, false, true));
+      }, row => publishSavedRevision(row as AdminGeneratedContentRow, false, true));
       setSelectedRowId(null);
       setDraft(null);
       setDailyGlancePairSelector(pair.selector);
@@ -5644,25 +5649,11 @@ export function GeneratedContentAdminDashboard() {
       ? editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id)
       : await saveDraft("DRAFT", activeDraft);
     if (!saved) return;
-    if (saved.event_type !== "standalone-article-revision") {
+    if (saved.event_type !== standaloneRevisionEvent) {
       await approveAndScheduleSkyRow(saved, true);
       return;
     }
-    setIsLoading(true);
-    setEditorSaveError("");
-    try {
-      const result = await submitSavedPublication(saved, "publish-standalone-article-revision");
-      const published = result.rows[0];
-      if (published.id !== saved.source_snapshot?.targetRowId || published.content_key !== saved.content_key
-        || published.status !== "LIVE" || published.body !== saved.body || published.headline !== saved.headline
-        || published.summary !== saved.summary) throw new Error("Article publication was not confirmed. Check its current status.");
-      setRows(current => [published, ...current.filter(row => row.id !== saved.id && row.id !== published.id)]);
-      setEditorSourceRow(published); setSelectedRowId(published.id); rememberSavedDraft(draftFromRow(published));
-      announceContentUpdate({ contentKey: published.content_key, published: result.publicationReceipt?.currentPublicationState === "live",
-        updatedAt: published.updated_at ?? new Date().toISOString() });
-      setMessage(publicationStateMessage(result));
-    } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); }
-    finally { setIsLoading(false); }
+    await publishSavedRevision(saved, true, false, standaloneRevisionPublicationAction);
   }
 
   async function publishPackageDraft(activeDraft: AdminDraft) {
@@ -5679,20 +5670,19 @@ export function GeneratedContentAdminDashboard() {
     const existing = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id);
     const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
     const saved = existing && unchanged && !personalCopy && draftHasPackageProposal(activeDraft) ? existing : await saveDraft(undefined, proposal);
-    if (saved && !personalCopy) await approvePackageRevision(saved);
+    if (saved && !personalCopy) await publishSavedRevision(saved);
   }
 
-  async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true, propagateError = false) {
+  async function publishSavedRevision(row: AdminGeneratedContentRow, updateEditor = true, propagateError = false,
+    ownerAction: typeof packageRevisionPublicationAction | typeof standaloneRevisionPublicationAction = packageRevisionPublicationAction) {
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const payload = await submitSavedPublication(row, "approve-package-revision");
+      const { assertPublishedRevision } = await import("./studioRevisionPublication");
+      const payload = await submitSavedPublication(row, ownerAction);
       const published = payload.rows[0];
-      if (published.content_key !== row.content_key) throw new Error("The saved publication identity did not match this source. Reload its status.");
       const publishedDraft = draftFromRow(published);
-      if (draftHasPackageProposal(publishedDraft)) {
-        throw new Error("The API returned an unpublished revision. Your revision is saved; check publication status before publishing again.");
-      }
+      assertPublishedRevision(row, published, ownerAction, draftHasPackageProposal(publishedDraft));
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
       if (updateEditor) {
         setEditorSourceRow(published);
@@ -5701,7 +5691,8 @@ export function GeneratedContentAdminDashboard() {
       }
       announceContentUpdate({
         contentKey: published.content_key,
-        published: published.status === "LIVE",
+        published: ownerAction === standaloneRevisionPublicationAction
+          ? payload.publicationReceipt?.currentPublicationState === "live" : published.status === "LIVE",
         updatedAt: published.updated_at ?? new Date().toISOString()
       });
       setMessage(publicationStateMessage(payload));
@@ -5770,7 +5761,7 @@ export function GeneratedContentAdminDashboard() {
         const hasProposal = Boolean(objectRecord(objectRecord(row.sections)?.packageDraft));
         const requestBody = isPackageRow
           ? bulkStatus === "LIVE" && hasProposal
-            ? { id: row.id, ownerAction: "approve-package-revision" }
+            ? { id: row.id, ownerAction: packageRevisionPublicationAction }
             : { id: row.id, reviewStatus: bulkStatus === "LIVE" ? "approved" : "needs_review" }
           : {
               id: row.id,
@@ -5778,7 +5769,7 @@ export function GeneratedContentAdminDashboard() {
               reviewState: bulkStatus === "LIVE" || bulkStatus === "REVIEWED" ? null : row.review_state ?? null
             };
           const result = isPackageRow && bulkStatus === "LIVE" && hasProposal
-            ? await submitSavedPublication(row, "approve-package-revision")
+            ? await submitSavedPublication(row, packageRevisionPublicationAction)
             : await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, {
               method: "PATCH", body: JSON.stringify({ ...requestBody, expectedUpdatedAt: row.updated_at })
             });
@@ -8651,7 +8642,7 @@ export function GeneratedContentAdminDashboard() {
     const saved = alreadySaved ? row : await saveDraft(undefined, revised, undefined, false);
     if (!saved) return false;
     if (row.id.startsWith("package:")) setRows((current) => current.filter((candidate) => candidate.id !== row.id));
-    return publish ? Boolean(await approvePackageRevision(saved, false)) : true;
+    return publish ? Boolean(await publishSavedRevision(saved, false)) : true;
   }
 
   function renderNatalPlacementSourceFinder() {
@@ -9384,7 +9375,7 @@ export function GeneratedContentAdminDashboard() {
       return { published: saved.source.published };
     }
     if (!saved.row) throw new Error("Save this passage before publishing.");
-    const result = await submitSavedPublication(saved.row, "approve-package-revision");
+    const result = await submitSavedPublication(saved.row, packageRevisionPublicationAction);
     if (result.publicationReceipt?.currentPublicationState !== "live") throw new Error(publicationStateMessage(result));
     const published = result.rows[0];
     const source = acknowledgeHouseTransitPublication(published);
@@ -9964,10 +9955,10 @@ export function GeneratedContentAdminDashboard() {
     if (row.block_type === 'sky_placement') throw new Error('This source requires its dedicated package review and release.');
     try {
       const isPackage = rowIsFallbackArchitectureV3(row);
-      const result = row.event_type === 'standalone-article-revision' && standaloneArticleKind(row.content_key)
-        ? await submitSavedPublication(row, 'publish-standalone-article-revision')
+      const result = row.event_type === standaloneRevisionEvent && standaloneArticleKind(row.content_key)
+        ? await submitSavedPublication(row, standaloneRevisionPublicationAction)
         : isPackage && objectRecord(objectRecord(row.sections)?.packageDraft)
-        ? await submitSavedPublication(row, 'approve-package-revision')
+        ? await submitSavedPublication(row, packageRevisionPublicationAction)
         : await adminJsonRequest<StudioPublicationResult>('/api/admin/generated-content', secret, {
           method: 'PATCH', body: JSON.stringify({ id: row.id, expectedUpdatedAt: row.updated_at,
             ...(isPackage ? { reviewStatus: 'approved' } : { ownerAction: 'publish-owner-content' }) })
