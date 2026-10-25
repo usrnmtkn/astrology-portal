@@ -4,7 +4,7 @@ import {brotliCompressSync,brotliDecompressSync,constants} from 'node:zlib';
 // These records are still complete JSON, losslessly encoded at the storage
 // boundary. Keeping large nested history expanded in JSONB makes every lease,
 // provider checkpoint and immutable audit write expand the entire history.
-const fields=['rejections','failures','interruptions','lastInterrupted','readings','batches','candidateResolutions'];
+const fields=['rejections','failures','interruptions','lastInterrupted','readings','batches','candidateResolutions','weeklyEditorialHistory'];
 const archiveKey='historyArchive';
 const limit=128*1024*1024;
 const storedRows=new WeakMap<object,any>();

@@ -9,6 +9,7 @@ const history='Synthetic full source opening. '.repeat(30000)+'Exact final sente
 const row:any={id:'synthetic',status:'DRAFT',body:'Unchanged complete reading.',sections:{horoscopeEdition:{window:{period:'weekly'},passages:[]}},
   source_snapshot:{horoscopeGeneration:{active:{id:'retained-provider-id',state:'running'},batch:{status:'paused'},
     rejections:[{id:'r1',passages:[{sign:'aries',headline:'Original headline',body:'Original complete body'}],generation:{history}}],
+    weeklyEditorialHistory:[{operation:{input:{profile:{sourceGuidance:history}}},result:{status:'passed'}}],
     readings:{aries:{ownerEvidence:{history},responseId:'response-1',rhetoricalReview:{status:'passed'}}},failures:[{history}],interruptions:[{history}],lastInterrupted:{history}}}};
 const original=structuredClone(row),stored={...row,source_snapshot:encodeWeeklyHistory(row.source_snapshot)};
 assert(Buffer.byteLength(JSON.stringify(stored))<10000);

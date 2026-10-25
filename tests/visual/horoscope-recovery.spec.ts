@@ -67,7 +67,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    const review={checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:label==='CORRECTIO'?'fail':'pass',reason:'Synthetic transport fixture.'})),findings:[finding]};
    await f.call({method:'writer-state',body:{nextReviewResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(review)}]}]}}});
    const studio=await f.open();
-   await expect(studio.getByText(/Up to 4 paid AI requests/)).toBeVisible();
+   await expect(studio.getByText(/Up to 6 paid AI requests/)).toBeVisible();
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await studio.getByRole('button',{name:'Generate missing readings',exact:true}).click();
    await expect(studio.getByRole('region',{name:'Aquarius prose review'})).toBeVisible();

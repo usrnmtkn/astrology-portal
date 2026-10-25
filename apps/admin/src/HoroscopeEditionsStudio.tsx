@@ -1,3 +1,4 @@
+import WeeklyBatchEditorial from './WeeklyBatchEditorial';
 import { studioLazy as lazy } from "./studioLazy";
 import {Suspense,useEffect,useRef,useState} from 'react';
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
@@ -20,6 +21,7 @@ const HoroscopeGenerationDetails=lazy(()=>import('./HoroscopeWritingStudio').the
 const HoroscopeSaveRecovery=lazy(()=>import('./HoroscopeSaveRecovery'));
 const HoroscopePublicationReview=lazy(()=>import('./HoroscopePublicationReview'));
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
+
 const endpoint = '/api/admin/generated-content';
 const steps = ['setup','generate','edit','publish'] as const;
 const pendingReadings=(edition:any,generation:any)=>horoscopePendingReadings(edition,generation).filter((p:any)=>edition.window.period!=='seasonal'||!generation?.editorialRuns?.[p.sign]);
@@ -358,10 +360,11 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       row=await readSaved(row.id,controller.signal);
       if(!isCurrent(controller))return;
       const active=row.source_snapshot?.horoscopeGeneration?.active;
+      const sharedPending=row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.pending;
       let failure:any;
-      if(pollExisting&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(heldSign||active||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
+      if(pollExisting&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(sharedPending||heldSign||active||row.source_snapshot?.horoscopeGeneration?.lastError?.code==='invalid_synthesis')){
         try{
-          const data=await request(secret,'/api/admin/horoscope-writing',{action:heldSign?'recover-review':'poll',...editionVersion(row),...(heldSign?{sign:heldSign}:{})},'POST',controller.signal);
+          const data=await request(secret,'/api/admin/horoscope-writing',{action:sharedPending?'poll-weekly':heldSign?'recover-review':'poll',...editionVersion(row),...(heldSign?{sign:heldSign}:{})},'POST',controller.signal);
           if(data.rows?.[0]?.id!==row.id)throw new Error('The saved result could not be confirmed.');
           row=data.rows[0];
         }catch(reason){
@@ -412,6 +415,17 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     try{
       const data=await request(secret,'/api/admin/horoscope-writing',{action,...editionVersion(saved),...(action==='start-batch'?{approvedPlanHash:plan?.planHash}:{})});
       retain(data.rows[0]);setPlanApproved(false);setMessage(action==='pause-batch'?'Batch paused. A request already sent can still finish.':'The saved batch will continue through the remaining signs. You can leave this page.');
+    }catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
+  }
+  async function editorialAction(action:string){
+    if(!saved||dirty)return;
+    if(action==='release-weekly'&&!window.confirm('This interrupted batch check may have been billed. Release it with an unknown outcome? Another request requires separate approval.'))return;
+    setBusy(true);setError('');
+    try{
+      const data=await request(secret,'/api/admin/horoscope-writing',{action,...editionVersion(saved),
+        ...(['plan-weekly','review-weekly'].includes(action)?{approvedPlanHash:plan?.planHash}:{}),
+        ...(action==='release-weekly'?{acknowledgeUnknownOutcome:true}:{})});
+      retain(data.rows[0]);setMessage(data.pending?'The shared batch check is saved. Check its progress without starting another request.':'Loaded the saved batch check.');
     }catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
   async function generate(singleSign?:string){
@@ -501,13 +515,13 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
   const available=draft?pendingReadings(draft,generation).length:0;
   const remainingAfterActive=draft&&active?pendingReadings(draft,generation).filter((p:any)=>p.sign!==active.sign).length:0;
   const weeklyResume=isWeekly&&remainingAfterActive>0;
-  const resumeCalls=2*remainingAfterActive+(active?.phase==='review'?(active.state==='ready'?1:0):(active?.reviewVersion?1:0));
+  const resumeCalls=2*remainingAfterActive+(active?.phase==='review'?(active.state==='ready'?1:0):(active?.reviewVersion?1:0))+(generation?.weeklyEditorial?1:0);
   // List refreshes cannot erase an operation error or pause a saved batch.
   const visibleError=error||(step==='setup'?listError:'');
   const needsSignIn=visibleError===ownerSignInMessage;
   useEffect(()=>{
-    const idle=!active&&!needsSync;
-    if(!secret||!saved||needsSignIn||step!=='generate'||dirty||instructions||checking||busy&&!running.current||idle&&(!isWeekly||busy))return;
+    const idle=!active&&!generation?.weeklyEditorial?.pending&&!needsSync;
+    if(!secret||!saved||needsSignIn||(step!=='generate'&&!generation?.weeklyEditorial?.pending)||dirty||instructions||checking||busy&&!running.current||idle&&(!isWeekly||busy))return;
     const controller=new AbortController();let inFlight=false;
     // Recover active requests as before. Idle Weeklies check only the version
     // first, preserving approval and avoiding unchanged large-history reads.
@@ -550,7 +564,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     setMessage('Edit this saved response, then save the draft. Your changes still need your final approval before publication. No AI request is started.');
   }
   const retrySign=!active&&!generation?.heldRequests?.[failedSign]&&!generation?.candidateHolds?.[failedSign]&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
-  const locked=busy||Boolean(saveConflict)||Boolean(active)||serverRunning||needsSync;
+  const locked=busy||Boolean(saveConflict)||Boolean(active)||Boolean(generation?.weeklyEditorial?.pending)||serverRunning||needsSync;
   const stepIndex=steps.indexOf(step),signIndex=readingSigns.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
   const isPublished=saved?.status==='LIVE'&&!dirty;
   const rejectAllButton=saved?.status==='DRAFT'&&(empty<total||candidateHolds.length>0)?<StudioButton className="admin-danger-button" disabled={locked} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>:null;
@@ -578,6 +592,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     </header>
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
+    {draft?.window.period==='weekly'&&step!=='setup'&&<WeeklyBatchEditorial
+      gate={generation?.weeklyEditorial} complete={complete===12} dirty={dirty} disabled={busy||needsSync||Boolean(active)||saved?.status==='LIVE'}
+      running={serverRunning} hasPlan={Boolean(plan)} onPrepare={()=>void reviewPlan()} onAction={(action:string)=>void editorialAction(action)}/>}
     {saveConflict&&<Suspense fallback={<p role="status">Loading saved changes…</p>}><HoroscopeSaveRecovery conflict={saveConflict} busy={busy}
       onChoose={state=>void useReconciledDraft(saveConflict.row,state)} onDownload={()=>download('horoscope-unsaved-draft.json',{schema:'horoscope-draft/v1',edition:draft})}/></Suspense>}
     {punctuationHold&&step==='generate'&&<StudioButton className="admin-primary-button" disabled={locked} onClick={editPunctuation}>Edit punctuation</StudioButton>}
@@ -651,13 +668,13 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
         {!serverRunning&&weeklyResume&&!plan&&!busy&&<StudioButton disabled={needsSync||dirty} onClick={()=>void reviewPlan()}>Review plan for remaining readings</StudioButton>}
         {complete+empty<total&&<p>{total-complete-empty} partially written readings need your edits in Review. Your existing text will be kept.</p>}
         {!serverRunning&&weeklyResume&&plan&&!busy&&<p>{planApproved?'Finish the saved request, then continue through the remaining signs.':`Resume generation finishes only ${horoscopeSignLabel(active.sign)}. Approve the plan to continue through the other ${remainingAfterActive} readings too.`} Up to {resumeCalls} additional paid AI requests. No automatic rewrites or paid retries.</p>}
-        {serverRunning&&<p role="status">{active?`${active.phase==='review'?'Reviewing':'Writing'} ${horoscopeSignLabel(active.sign)}`:'Continuing batch'} · {complete}/{total} saved</p>}{serverBatch?.error&&<p role="alert">{serverBatch.error}</p>}{progress&&<p role="status">{progress}</p>}
+        {serverRunning&&<p role="status">{active?`${active.phase==='review'?'Reviewing':'Writing'} ${horoscopeSignLabel(active.sign)}`:generation?.weeklyEditorial?.pending?.phase==='planning'?'Planning twelve concerns':generation?.weeklyEditorial?.pending?'Checking all twelve readings':'Continuing batch'} · {complete}/{total} saved</p>}{serverBatch?.error&&<p role="alert">{serverBatch.error}</p>}{progress&&<p role="status">{progress}</p>}
         <progress aria-label="Drafts saved" value={complete} max={total}/>
         <footer className={`admin-writing-savebar admin-horoscope-actions${candidateHolds.length?' admin-horoscope-held-actions':''}`}>
           {!serverRunning&&!serverPaused&&plan&&(!active||weeklyResume)&&available>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={busy||needsSync} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
           <p>{serverRunning?'Generating the approved batch. You can leave this page.':serverPaused?'The batch is paused. Resume to continue its saved approval.':checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':available===0?'The remaining readings need attention above. Edit or reject a saved draft, or resolve an interrupted request.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:'Ready to generate the missing readings.'}</p>
-          {!serverRunning&&!serverPaused&&plan&&!active&&available>0&&<p>{isWeekly&&`This batch covers all ${available} remaining ${available===1?'reading':'readings'}. `}{draft.window.period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.`:draft.window.period==='monthly'?'Up to 3 paid AI requests: one plan, one draft, and one prose check. Matching saved plans are reused.':`Up to ${2*(retrySign&&!isWeekly?1:available)} paid AI requests: one draft and one prose check per reading.`}{draft.window.period!=='seasonal'&&' No automatic rewrites or paid retries. You approve the final wording.'}</p>}
+          {!serverRunning&&!serverPaused&&plan&&!active&&available>0&&<p>{isWeekly&&`This batch covers all ${available} remaining ${available===1?'reading':'readings'}. `}{draft.window.period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.`:isWeekly?`Up to ${2*available+2} paid AI requests: one shared twelve-sign plan, one draft and one prose check per remaining reading, and one comparison of the complete set.`:draft.window.period==='monthly'?'Up to 3 paid AI requests: one plan, one draft, and one prose check. Matching saved plans are reused.':`Up to ${2*(retrySign?1:available)} paid AI requests: one draft and one prose check per reading.`}{draft.window.period!=='seasonal'&&' No automatic rewrites or paid retries. You approve the final wording.'}</p>}
           <div className="admin-toolbar-actions"><StudioButton disabled={busy&&!running.current&&!checking} onClick={()=>void moveTo('setup')}>Back to editions</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
             <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
             {isWeekly&&<StudioButton disabled={locked||dirty||serverPaused||isPublished||!planApproved||!configured||!pendingReadings(draft,generation).includes(passage)} onClick={()=>generate(sign)}>{"Generate "+horoscopeSignLabel(sign)}</StudioButton>}

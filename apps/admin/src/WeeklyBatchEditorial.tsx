@@ -1,0 +1,31 @@
+import {AdminDisclosureSummary} from './AdminNativeControls';
+import {StudioButton} from './StudioControls';
+
+export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,running,hasPlan,onPrepare,onAction}:any){
+  const pending=gate?.pending;
+  const plan=gate?.plan,review=gate?.review;
+  const findings=[...(plan?.status==='failed'?plan.findings??[]:[]),...(review?.matchesCurrent===true?review.findings??[]:[])];
+  const current=review?.status==='passed'&&review.current&&!dirty;
+  return <section className="admin-horoscope-plan" aria-label="Weekly batch editorial gate">
+    <p>{pending?pending.phase==='planning'?'Planning twelve distinct concerns…':'Checking the complete twelve-sign set…':current?'The current twelve-sign set passed its batch comparison. Your wording approval is still required.':review&&(!review.matchesCurrent||dirty)?'The saved batch comparison is out of date. Review the current readings again.':review?.status==='failed'?'The batch needs an editorial edit. All saved readings are kept.':plan?.status==='passed'?'The shared twelve-sign concern plan is saved.':'Weekly generation plans twelve distinct concerns before drafting.'}</p>
+    <p>The final check compares interpretations, phrases and endings across all twelve readings. Editing a reading invalidates its previous batch check. No automatic rewrites or paid retries.</p>
+    {plan?.error&&<p role="alert">{plan.error}</p>}
+    {review?.error&&<p role="alert">{review.error}</p>}
+    {findings.map((finding:any,index:number)=><div className="admin-inline-warning" role="note" key={index}>
+      <p>{finding.category.replaceAll('_',' ')}: {finding.reason}</p>
+      {finding.evidence.map((e:any,i:number)=><p key={i}>{e.sign}: “{e.quote}”</p>)}
+    </div>)}
+    {plan?.concerns&&<details className="admin-workspace-details"><AdminDisclosureSummary>Shared concerns for all twelve signs</AdminDisclosureSummary>
+      {plan.concerns.map((concern:any)=><div key={concern.sign}><p><strong>{concern.sign}: </strong>{concern.coreConcern}</p><p>{concern.stakes}</p><p>{concern.distinctiveObservation}</p></div>)}
+    </details>}
+    {!running&&<div className="admin-toolbar-actions">
+      {pending?<>
+        <StudioButton disabled={disabled||dirty} onClick={()=>onAction('poll-weekly')}>Check saved batch progress</StudioButton>
+        {Date.now()-Date.parse(pending.startedAt)>=310000&&<StudioButton disabled={disabled||dirty} onClick={()=>onAction('release-weekly')}>Release interrupted batch check</StudioButton>}
+      </>:!hasPlan?<StudioButton disabled={disabled||dirty} onClick={onPrepare}>Load batch review plan</StudioButton>:<>
+        {complete&&!current&&<StudioButton disabled={disabled||dirty} onClick={()=>onAction('review-weekly')}>Review all twelve · 1 AI request</StudioButton>}
+        {plan&&plan.status!=='passed'&&<StudioButton disabled={disabled||dirty} onClick={()=>onAction('plan-weekly')}>Plan twelve concerns again · 1 AI request</StudioButton>}
+      </>}
+    </div>}
+  </section>;
+}
