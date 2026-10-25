@@ -4,15 +4,138 @@
   "planetA": "jupiter",
   "planetB": "venus",
   "aspect": "square",
-  "plainTranslation": "A's growth meets B's love and values. The square puts them in friction.",
+  "plainTranslation": "Affection, generosity and enjoyment can still be present between the Person B (Venus) and Person A (Jupiter) people. The square can make their responses excessive or poorly matched: Person A (Jupiter)'s enthusiasm may encourage more indulgence than Person B (Venus) originally wanted, while Person B (Venus)'s enjoyment may encourage Person A (Jupiter) to keep expanding an offer or expectation. Spending, gifts and shared entertainment are possible expressions of this contact, not facts about the people. The difficulty is that a genuinely warm response can encourage more giving or enjoyment without establishing agreement about limits or priorities. The source makes some stronger claims conditional on planetary strength; without that chart information, the contact does not identify a habitual giver, a possessive person or someone who necessarily feels neglected.",
   "policy": "Governed by synastry-policy. Descriptive, not deterministic; intensity is never treated as obligation, safety concerns override astrology.",
-  "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json.",
+  "note": "Synced from authored synastry bundle synastry-authored__19_ (2).json. Meaning revised from the qualified source paraphrase in review/synastry-meaning-repair-20261024.json; this is draft knowledge, not approved reader copy.",
   "voiceNeutral": true,
   "status": "DRAFT",
   "summaryDeep": "Their confidence, encouragement, and appetite for possibility press against your affections, tastes, and sense of worth. It catches often enough that you both feel it, and it keeps asking to be worked out. Name it directly instead of letting it build in silence.",
-  "tension": "The challenge is excess. Too much spending. Too much saying yes because the moment feels good. Too much relying on good feelings to carry the relationship instead of addressing what needs attention. This is where the connection needs honesty. Pleasure is not the problem. Avoidance is. Generosity is not the problem. Lack of limits is.",
-  "advice": "Let this person broaden your perspective without losing sight of your priorities. This connection works best when both people appreciate the opportunities in front of them while staying realistic.",
+  "tension": "",
+  "advice": "Let this person broaden your perspective without losing sight of your priorities. This connection works best when both people appreciate the opportunities in front of them while staying realistic.\n\nThe challenge is excess. Too much spending. Too much saying yes because the moment feels good. Too much relying on good feelings to carry the relationship instead of addressing what needs attention. This is where the connection needs honesty. Pleasure is not the problem. Avoidance is. Generosity is not the problem. Lack of limits is.",
   "weight": 4,
   "authoringStatus": "draft",
-  "summaryShort": "Their confidence, encouragement, and appetite for possibility press against your affections, tastes, and sense of worth."
+  "summaryShort": "Their confidence, encouragement, and appetite for possibility press against your affections, tastes, and sense of worth.",
+  "interpretiveDetail": {
+    "version": "synastry-interpretive-detail/v1",
+    "comparison": "natal_to_natal",
+    "evidenceRole": "interpretive_meaning_not_voice",
+    "people": {
+      "personA": {
+        "planet": "jupiter",
+        "functionInContact": "Person A (Jupiter) contributes generosity, encouragement, enthusiasm and a broad view of what can be enjoyed or offered. The question is how this person's goodwill is received, rather than a permanent role as provider, teacher or rescuer."
+      },
+      "personB": {
+        "planet": "venus",
+        "functionInContact": "Person B (Venus) contributes affection, taste, enjoyment and what makes an exchange feel personally welcome. The question is how this person's way of liking and expressing affection responds to the other person's goodwill and expansiveness."
+      }
+    },
+    "facets": [
+      {
+        "topic": "Affection draws out generosity",
+        "meaning": "The pair discussion links Person B (Venus)'s appeal and affection with Person A (Jupiter)'s goodwill. Appreciation of Person B (Venus)'s taste, artistic expression or way of relating can make Person A (Jupiter) more inclined to give or encourage. Receiving that appreciation can make affection easier for Person B (Venus) to express. This is a responsive exchange between people, not a temporary period of good fortune.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          76
+        ]
+      },
+      {
+        "topic": "Mutual esteem and enjoyment",
+        "meaning": "Person B (Venus) may value Person A (Jupiter)'s optimism or wider perspective, while Person A (Jupiter) enjoys qualities Person B (Venus) brings to the connection. Enjoying each other's response can matter as much as having identical interests. The source includes social and recreational enjoyment and mutual esteem in friendship as well as romantic partnership; marriage and sexual attraction are not established by this contact alone.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          76
+        ]
+      },
+      {
+        "topic": "Warmth can remain in a challenging contact",
+        "meaning": "The source retains possible affection, generosity and mutual enjoyment under adverse aspects. The difficulty can concern amount, judgment or response: enthusiasm encourages more than feels suitable, an offered benefit is not what the other wanted, or enjoyment makes excess easier. Stronger claims about possessiveness, unequal giving or neglected affection depend on planetary condition or other chart information not available in a reusable contact entry.",
+        "basis": "qualified_paraphrase",
+        "sourceId": "davison-synastry",
+        "pdfPages": [
+          76
+        ]
+      },
+      {
+        "topic": "Personal contribution rather than interchangeable kindness",
+        "meaning": "Jansky distinguishes what one person's planet contributes from the way the aspect connects it to the other's Venus. Applied here, Person A (Jupiter) supplies generous or expansive goodwill to Person B (Venus)'s enjoyment and affection. This method helps retain the particular pair; a generic statement that the two people support each other is insufficient. The passage is general method, not a dedicated Venus-Jupiter delineation.",
+        "basis": "qualified_method_application",
+        "sourceId": "jansky-synastry",
+        "pdfPages": [
+          52
+        ]
+      }
+    ],
+    "aspectExpression": {
+      "aspect": "square",
+      "meaning": "The square describes a potential for the two functions to work at cross-purposes. The contact's concrete subject still comes from the planet pair. Friction can influence how each responds to the other, but obstruction, a repeated argument and a negative ending are not guaranteed. Jansky's Mars-Saturn square example specifically rejects compulsory interference.",
+      "basis": "qualified_pair_and_aspect_synthesis",
+      "sourceRefs": [
+        "davison-synastry",
+        "jansky-synastry"
+      ]
+    },
+    "examples": [
+      {
+        "status": "hypothetical_illustration_not_event_or_biography",
+        "setting": "A possible generous invitation that becomes larger than expected.",
+        "planetResponses": {
+          "venus": "Person B (Venus) enjoys the original offer and may feel less enthusiastic when it expands into something less suited to what was wanted.",
+          "jupiter": "Person A (Jupiter) responds to the initial enthusiasm by adding more, expecting the extra offer to be welcome."
+        },
+        "illustrates": "Giving more and giving something satisfying need not be the same. Warm intentions can coexist with a mismatch without establishing that either person is ungrateful or habitually excessive."
+      },
+      {
+        "status": "hypothetical_illustration_not_event_or_biography",
+        "setting": "A possible shared outing where enthusiasm increases the scale of the plan.",
+        "planetResponses": {
+          "venus": "Person B (Venus) enjoys the experience and responds in a way that encourages more enjoyment.",
+          "jupiter": "Person A (Jupiter) takes the warm response as support for a larger offer or more spending."
+        },
+        "illustrates": "Two people can encourage excess together before establishing agreement about enough. Money is one possible domain, not proof of debt, financial conflict or an existing shared account."
+      }
+    ],
+    "interpretiveLimits": [
+      "This is a contact between two natal charts, not a current transit, date window or prediction of an event.",
+      "Person A and Person B identify the actual planet owners. Swapping the reader changes perspective on this contact; it does not establish the separate reciprocal contact between the other two natal planets.",
+      "The examples are derived hypothetical illustrations, not historical cases, chart facts, biography, voice references or a required scene inventory.",
+      "Signs, houses, natal aspects, planetary condition and relationship history are not supplied by this reusable entry. They may qualify a chart-specific reading only when actually supplied.",
+      "A combined aspect-family reading may use only meaning supported by every included member. An aspect-specific distinction cannot be asserted of the entire family.",
+      "Attraction, attachment, psychological motives and relationship outcomes require the relevant evidence; no isolated contact proves a permanent personality trait or full compatibility.",
+      "Source gender roles, diagnostic and medical claims, guaranteed outcomes, moral or karmic obligations and predictions of harm are not retained as interpretive facts."
+    ],
+    "sources": [
+      {
+        "id": "davison-synastry",
+        "title": "Synastry",
+        "author": "Ronald C. Davison",
+        "sha256": "2ff806457401a161af779e94d273ddeec4f10c08fb47fd0d6fded00bb9b7d94e",
+        "pdfPages": [
+          53,
+          55,
+          57,
+          72,
+          76,
+          80,
+          81
+        ]
+      },
+      {
+        "id": "jansky-synastry",
+        "title": "Synastry",
+        "author": "Robert C. Jansky",
+        "sha256": "53cc9976919ba596b58720de4c098893f39d43dd1923b91b6db1f5c98c0b9edd",
+        "pdfPages": [
+          39,
+          40,
+          52,
+          67,
+          68,
+          69,
+          70
+        ]
+      }
+    ]
+  }
 }

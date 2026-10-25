@@ -720,7 +720,48 @@ changed by this repair.
 
 ### Synastry interpretation and field contract — October 21
 
-The shared synastry writer uses `synastry-aspect/v7-2026-10-21` for directional
+The October 25 v16 repair connects the four complete published natal passages
+the owner explicitly designated as the Synastry style benchmark. Shared Studio
+OpenAI/Claude requests and private body requests receive these as primary style
+evidence, separately from the 28 protected supporting Synastry examples. Explicit
+supporting selections retain their scope; matching natal text is delivered once.
+Current corrections govern both groups. Natal facts, advice and repeated closing
+formulas are not transferred to the target relationship. Missing, changed or
+incomplete primary references stop before dispatch, and receipts retain identities
+and hashes without copying their text.
+
+The v16 authority also retains the October 25 plain-language corrections and
+qualifies the earlier response-to-response direction: supported interactions may
+develop, but a simple affectionate observation does not require an answering
+reaction, a conflict, a cost or a remedy. These changes affect request delivery,
+not literary approval. Intercepted-provider checks do not establish deployment or
+improved raw prose; paid generation and publication require their existing owner
+authorization. See the [primary-style delivery review](SYNASTRY_SOURCE_DELIVERY_REPAIR_2026-10-23.md#october-25-primary-natal-style-delivery).
+
+The October 24 source follow-up replaces twenty DRAFT directional keyword
+records with qualified pair-specific meaning and explicit planet ownership.
+The shared loader, explicit source projection and private body preparer hold
+the remaining known keyword scaffolds before a provider call. Complete original
+source and advice units retain their separate roles; owner passages and reader
+approval stay unchanged. Source hashes, derivation limits, delivery checks and
+the server/browser boundary are documented in
+[the Synastry source repair](SYNASTRY_SOURCE_DELIVERY_REPAIR_2026-10-23.md#october-24-meaning-coverage-repair).
+The guard detects the exact legacy missing-meaning scaffold; it is not a voice
+score or proof that every other record is complete. No paid prose acceptance or
+production deployment follows from this source repair.
+
+The subsequent October 24 detail enrichment adds source-backed natal-to-natal
+interpretation, explicit planet owners, aspect qualifications and optional
+hypothetical examples to those same twenty records. Davison and Jansky supply
+meaning and method; their wording is not positive voice evidence. Complete detail
+reaches the shared planner/writers and private body writer through the existing
+source path, while remaining absent from browser bundles. Examples establish
+neither events nor biography, and facets are not a required paragraph sequence.
+Inconsistent chart scope or ownership holds before a provider call. See the
+[detail record and delivery review](SYNASTRY_SOURCE_DELIVERY_REPAIR_2026-10-23.md#october-24-detailed-synastry-knowledge).
+Earlier source fields, approved passages and publication state are preserved.
+
+The shared synastry writer uses `synastry-aspect/v10-2026-10-22` for directional
 aspect copy, including the legacy `surface: synastry`, `eventType: aspect` route.
 It no longer receives the generic advice field instructions, daily scene lock,
 fixed paragraph count or instruction to keep planetary reasoning out of the body.
@@ -877,7 +918,42 @@ registered-owner retrieval; this change does not populate a new private referenc
 store or silently change saved Studio profiles. Hash-only generation receipts
 identify the selected benchmarks and keep an empty feedback selection visible.
 
+The v10 writer assembly orders context by evidence role. Complete knowledge,
+existing-draft context, meaning-only planning and complete scoped rejections
+precede the selected complete positive voice passages. A final reader brief
+then binds the addressed person to their planet and distinguishes internal
+Person A / Person B labels from reader names. Neither provider appends a plan,
+knowledge packet or rejected draft after those positive references. Current
+owner corrections retain precedence over historical examples regardless of
+their position; a proposed rewrite inside rejection feedback remains negative
+evidence, never an approved benchmark.
+
+This changes request ordering, not source selection, protected wording, model
+settings, schemas, provider stages, retry budgets or admission. Private feedback
+remains outside the public evidence shadow, with its existing hash receipt.
+The actual-handler regression checks both reader directions and both providers,
+complete rejected text/reasons and positive passages, missing reader identity,
+and requests without designated benchmarks. Offline captures can establish
+this assembly and preserve the eight existing cases without generating new
+prose. They cannot establish a Satori voice match. The rejected sample stays
+rejected; further generation and exact prose approval remain separate decisions.
+
 Actual-handler fixtures cover both providers, complete designated references,
 no adjacent-article padding, exact-member correction delivery and scope isolation.
 Offline assembly checks establish delivery only, not improved prose or owner
 approval. No new paid draft is part of this repair.
+
+The separate [Synastry bulk body writer](SYNASTRY_BODY_WRITER_REVIEW_2026-10-22.md)
+prepares one complete directional body through the canonical Ghostwriter
+transport. It uses complete verified KB sources, preserved book units, deliberate
+complete prose selections through the existing governed compiler, and current
+scoped feedback. It omits generated planning language and the full generator's
+other eight output fields. One authorized execution permits one writer call;
+there is no model judge, retry, rewrite, Studio save or publication in this path.
+Preparation itself makes no model call. Changed sources, feedback, instructions
+or model hold execution before dispatch rather than refreshing an approved
+payload silently. The shared Studio nine-field generator and other writing
+surfaces retain their contracts. Fixture tests establish request delivery and
+failure behavior only. The rejected eight remain rejected, and the held bulk
+run requires a separately authorized varied sample and owner assessment before
+continuing. No new prose has been approved by this implementation.

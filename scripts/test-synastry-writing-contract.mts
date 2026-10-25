@@ -7,14 +7,17 @@ import handler from '../api/generate-content.js';
 import { callOpenAIResponses, governedInstructionsForRole } from '../src/astro-writing/openAIResponses.cjs';
 import { GHOSTWRITING_SKILL_INSTRUCTIONS } from '../src/astro-writing/ghostwritingSkill.mjs';
 import { validateGeneratedContentQuality } from '../api/_lib/content-generation.js';
-import { sharedGenerationOwnerExamples } from '../api/_lib/shared-generation-owner-examples.js';
+import { syntheticLatestTen, syntheticApprovedTen, syntheticSynastryVoice, encodedSynastryVoice, installSyntheticSynastryApproval } from '../tests/fixtures/synastry-approved-voice.cjs';
+const restoreApprovalFixture = installSyntheticSynastryApproval();
 
 const sharedStyle = readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/style-guide.md', import.meta.url), 'utf8');
 
 Object.assign(process.env, {
+  PRIVATE_REPORT_DOCUMENTS: encodedSynastryVoice(),
   NODE_ENV: 'test', CONTENT_GENERATION_SECRET: 'synthetic-synastry-secret',
   OPENAI_API_KEY: 'synthetic', ANTHROPIC_API_KEY: 'synthetic',
   STUDIO_MEMORY_FEEDBACK_ENABLED: 'false', WRITING_KERNEL_GOVERNED_SURFACES: '',
+  SUPABASE_URL: 'https://synthetic-synastry.supabase.co', SUPABASE_SERVICE_ROLE_KEY: 'synthetic',
   WRITING_KERNEL_SHADOW_SURFACES: '', WRITING_KERNEL_SKY_GLOBAL_ENABLE: '0',
   WRITING_KERNEL_SKY_CANARY_PERCENT: '0'
 });
@@ -25,7 +28,9 @@ const base = {
   headline: 'Mercury square Moon', knowledgeIds: ['synastry-mercury-square-moon'],
   facts: { blockType: 'synastry_aspect', planetA: 'Mercury', planetB: 'Moon', aspect: 'square',
     personA: 'Rowan', personB: 'you', housesExcluded: true, signsExcluded: true },
-  sourceSnapshot: { meaning: 'Complete synthetic meaning source, including its final sentence.' },
+  sourceSnapshot: { meaning: 'Complete synthetic meaning source, including its final sentence.',
+    knowledgeSources: [{ record: { id: 'synthetic-contract-meaning', kind: 'interaspect', planetA: 'mercury', planetB: 'moon', aspect: 'square',
+      plainTranslation: 'Complete synthetic contact evidence for Person A (Mercury) and Person B (Moon). Its final sentence is retained.' } }] },
   voiceNotes: 'Synthetic owner direction: retain the Moon reader and do not add advice.'
 };
 const draft = {
@@ -47,8 +52,14 @@ let nextDraft: any = draft;
 const validPlan = { core_tension: 'Person A and Person B understand the synthetic exchange differently.',
   what_changes: '', constructive_expression: '', overcorrection: '', observable_behaviors: [], possible_consequences: [] };
 let nextPlan: any = validPlan;
+let feedbackRows: any[] = [];
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (url, init = {}) => {
+  if (String(url) === 'https://synthetic-synastry.supabase.co/rest/v1/rpc/studio_memory_active_snapshot') {
+    assert.equal(init.method, 'POST');
+    assert.equal(init.body, '{}');
+    return Response.json([{ snapshot: { writingFeedback: feedbackRows } }]);
+  }
   const openai = String(url) === 'https://api.openai.com/v1/responses';
   assert(openai || String(url) === 'https://api.anthropic.com/v1/messages', 'All storage and unexpected network calls are forbidden.');
   const body = JSON.parse(String(init.body));
@@ -79,20 +90,33 @@ function assertSynastryRequest(request: any, input: typeof base) {
   const instructions = request.provider === 'openai' ? request.body.instructions : request.body.system;
   const schema = request.provider === 'openai' ? request.body.text.format.schema : request.body.tools[0].input_schema;
   assert(instructions.includes('Show what each person says, hears, wants or does'), 'The actual writer receives interaction-led guidance.');
+  assert(instructions.includes('Use plain words for what the person wants or intends to do'), 'The actual writer receives plain-language guidance.');
+  assert(instructions.includes('Let each sentence develop the thought instead of restating support, comfort or confidence'), 'Reassurance is not substituted for development in the dispatched instructions.');
   assert(instructions.includes('Prefer direct causal sentences to report transitions'), 'Report-like wording is addressed in the dispatched instructions.');
   assert(instructions.includes('"As a result"'), 'The owner-identified transition is retained as a negative style example.');
-  assert(instructions.includes('a feeling word alone does not explain the interaction'));
+  assert(instructions.includes('Retain a developed interaction when the source supports one'));
+  assert(instructions.includes('without making every observation about affection explain an answering reaction from both people'));
+  assert(!instructions.includes("Explain how one person's response may change what the other does next; a feeling word alone does not explain the interaction"), 'A simple affectionate observation must not inherit an unqualified response-to-response instruction.');
   assert(instructions.includes('constructive_expression is not a required resolution'));
   assert(instructions.includes('A meaning plan establishes supported interpretation, not reader wording'), 'The writer must not paraphrase planner labels into reader copy.');
   assert(instructions.includes('Do not repeat the same contrast in new vocabulary'), 'Additional sentences must develop the interaction rather than restate it.');
   assert(instructions.includes("Use ordinary sentences about people's feelings and actions without interrupting them with a planetary label"));
-  assert(instructions.includes("how one person's response may change what the other does next"), 'The writer must develop a supported reciprocal response rather than repeat two planetary categories.');
   assert(instructions.includes('Keep both people capable of reasoning and emotional understanding'));
   assert(instructions.includes('the aspect is not proof of habitual behavior'));
   assert(instructions.includes('Do not require a cycle, a cost or a remedy'));
   assert(instructions.includes('A requested order in current feedback is scoped to its entry'));
   assert(instructions.includes('New reader fields must contain no em dashes'));
-  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v9-2026-10-21'));
+  assert(instructions.includes('Use familiar language for affection and enjoyment'));
+  assert(instructions.includes('rather than classifying their responses or explaining an abstract exchange of feelings'));
+  assert(instructions.includes('do not use "pleasure", "whether", "out loud" or "aloud"'), 'Existing explicit wording restrictions must reach both actual writer transports.');
+  assert(instructions.includes('Preserve complete historical source passages unchanged'));
+  assert(instructions.includes('SYNASTRY EDITORIAL AUTHORITY synastry-aspect/v16-2026-10-25'));
+  assert(instructions.includes('natal style benchmarks are primary for ordinary language'));
+  const primaryStyle = JSON.parse(readFileSync('data/writing/synastry-primary-style-20261024.json', 'utf8')).references;
+  assert(prompt.includes('primaryNatalStyleBenchmarks') && prompt.includes('supportingSynastryExamples'));
+  for (const reference of primaryStyle) {
+    assert.equal(prompt.split(reference.text).length - 1, 1, 'Each complete natal benchmark reaches the actual writer exactly once.');
+  }
   assert(instructions.includes('Legacy knowledge and existing drafts may use you for a different planet owner'));
   assert(instructions.includes('Do not reconstruct those excluded fields from old drafts'));
   assert(instructions.includes(GHOSTWRITING_SKILL_INSTRUCTIONS), 'Complete craft guidance remains in the system instructions.');
@@ -106,8 +130,8 @@ function assertSynastryRequest(request: any, input: typeof base) {
   assert(!prompt.includes('PRIMARY NATAL PLACEMENT PRIMITIVES'), 'A relationship writer must not receive the unrelated natal instruction layer.');
   assert(!combined.includes('Lead with how one person makes the other feel'));
   assert(!combined.includes('Open with the felt experience of being around this person.'));
-  assert(instructions.includes(RHETORICAL_WRITER_POLICY), 'The complete existing rhetorical writer policy remains in the system instructions.');
-  assert.equal(combined.split(RHETORICAL_WRITER_POLICY).length - 1, 1, 'Shared rhetorical policy is delivered once.');
+  assert(!instructions.includes(RHETORICAL_WRITER_POLICY), 'The writer receives Ghostwriter craft, without the redundant evaluator specification.');
+  assert(!instructions.includes('HARD FLAG – REWRITE'));
   for (const conflict of [
     'SPINE QUALITY GATES', 'SKY PLACEMENT ARTICLE SPINE',
     'Strategy needs at least two short imperatives', 'LONG-FORM SENTENCE ARCHITECTURE',
@@ -147,13 +171,92 @@ function assertSynastryRequest(request: any, input: typeof base) {
     assert(prompt.includes('This reusable contact has no supplied planet signs'));
     assert(!prompt.includes('SUPPLIED SYNASTRY SIGN CONTEXT'));
   }
-  assert(prompt.includes('owner_authored_final'), 'Existing eligible owner retrieval is retained.');
+  for (const reference of [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries, ...syntheticLatestTen().entries]) {
+    assert.equal(prompt.split(reference.text).length - 1, 1, 'The shared writer receives every complete protected benchmark once.');
+  }
+  assert(!prompt.includes('relationship-year-libra-2025-to-venus-rx-2026'), 'Default protected references replace the old adjacent article.');
+  const voiceAt = Math.max(prompt.indexOf('DESIGNATED SYNASTRY VOICE REFERENCES'), prompt.indexOf('APPROVED TLDR ASTRO EXAMPLES'));
+  const briefAt = prompt.lastIndexOf('WRITE THE READER INTERPRETATION');
+  assert(voiceAt > prompt.indexOf('SOURCE SNAPSHOT') && briefAt > voiceAt,
+    'The final task follows complete positive voice evidence, not a plan or rejected draft.');
+  assert(prompt.indexOf('EXTRA VOICE NOTES') < voiceAt);
+  if (request.provider === 'openai') assert(prompt.indexOf('GOVERNED MEANING PLAN') < voiceAt,
+    'The planner must not displace the positive references at the end of the writer request.');
+  assert(prompt.slice(briefAt).includes('Current owner corrections still govern'));
+  assert(prompt.slice(briefAt).includes('internal chart labels, not names to print in reader fields'));
   assert.equal(schema.additionalProperties, false);
   assert.deepEqual(schema.required, ['headline', 'tldr', 'summary', 'body', 'action', 'timing', 'sections', 'sceneLock', 'astrologyDrilldown']);
   assert.deepEqual(schema.properties.astrologyDrilldown.properties.factors.items.required, ['label', 'technicalFact', 'plainMeaning']);
 }
 
 try {
+  const meaningRepair = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/review/synastry-meaning-repair-20261024.json', import.meta.url), 'utf8'));
+  for (const change of meaningRepair.changes) {
+    const record = JSON.parse(readFileSync(new URL('../' + change.sourcePath, import.meta.url), 'utf8'));
+    const fixture = { ...base, headline: 'Synthetic repaired-contact fixture',
+      knowledgeIds: [`synastry-${record.planetA}-${record.aspect}-${record.planetB}`],
+      facts: { planetA: record.planetA, planetB: record.planetB, personA: 'Rowan', personB: 'you', readerPerson: 'B', aspect: record.aspect },
+      sourceSnapshot: { meaning: 'Synthetic context.' } };
+    nextDraft = { ...draft, headline: fixture.headline,
+      body: `You consider the supplied contact with Rowan. The fixture retains your ${record.planetB} and their ${record.planetA}. This is synthetic contract evidence.`,
+      astrologyDrilldown: { ...draft.astrologyDrilldown, factors: [
+        { label: `Your ${record.planetB}`, technicalFact: 'The second planet belongs to the reader.', plainMeaning: 'Synthetic role evidence.' },
+        { label: `Their ${record.planetA}`, technicalFact: 'The first planet belongs to Rowan.', plainMeaning: 'Synthetic role evidence.' }
+      ] } };
+    for (const provider of ['openai', 'claude'] as const) {
+      const start = requests.length;
+      const result = await generate({ ...fixture, provider });
+      assert.equal(result.statusCode, 200, JSON.stringify(result.result));
+      for (const stage of requests.slice(start).filter(item => ['tldr_astro_meaning_plan', 'tldr_astro_generated_content'].includes(item.kind))) {
+        const sent = stage.provider === 'openai' ? stage.body.input : stage.body.messages[0].content[0].text;
+        assert(sent.includes(record.plainTranslation), `Complete repaired meaning reaches ${provider}: ${record.id}`);
+        for (const facet of record.interpretiveDetail.facets) assert(sent.includes(facet.meaning));
+        for (const example of record.interpretiveDetail.examples) {
+          assert(sent.includes(example.setting));
+          assert(sent.includes(example.illustrates));
+          for (const response of Object.values(example.planetResponses)) assert(sent.includes(response as string));
+        }
+        const instructions = stage.provider === 'openai' ? stage.body.instructions : stage.body.system;
+        assert(instructions.includes('Hypothetical examples are optional teaching illustrations'));
+        assert(instructions.includes('not a checklist or prose order'));
+        assert(!sent.includes(record.advice), 'The complete separated advice remains outside the request.');
+        assert(!sent.includes('Channel it into a shared project'));
+        assert(!sent.includes('Aim the drive at a concrete, long-term goal'));
+        assert(!sent.includes('A relationship can feel good and still need attention'));
+        assert(!sent.includes('This is where the connection needs honesty'));
+      }
+    }
+  }
+  for (const provider of ['openai', 'claude'] as const) {
+    for (const explicit of [false, true]) {
+      const record = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/data/synastry/aspects/A-jupiter_B-venus_conjunction.json', import.meta.url), 'utf8'));
+      const start = requests.length;
+      const held = await generate({ ...base, provider,
+        facts: { planetA: 'jupiter', planetB: 'venus', aspect: 'conjunction', personA: 'Rowan', personB: 'you' },
+        sourceSnapshot: explicit ? { knowledgeSources: [{ record }] } : {} });
+      assert.notEqual(held.statusCode, 200);
+      assert.match(held.result.error, /SYNASTRY_KNOWLEDGE_INCOMPLETE/);
+      assert.equal(requests.length, start, 'Default and explicitly selected keyword scaffolds stop before any provider call.');
+    }
+  }
+  nextDraft = draft;
+  const detailRecord = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/data/synastry/aspects/A-mercury_B-mars_square.json', import.meta.url), 'utf8'));
+  for (const provider of ['openai', 'claude'] as const) {
+    for (const field of ['comparison', 'owner', 'aspect', 'example']) {
+      const record = structuredClone(detailRecord);
+      if (field === 'comparison') record.interpretiveDetail.comparison = 'transit_to_natal';
+      if (field === 'owner') record.interpretiveDetail.people.personA.planet = 'incorrect-planet';
+      if (field === 'aspect') record.interpretiveDetail.aspectExpression.aspect = 'incorrect-aspect';
+      if (field === 'example') record.interpretiveDetail.examples[0].status = 'known_event';
+      const start = requests.length;
+      const held = await generate({ ...base, provider,
+        facts: { planetA: 'mercury', planetB: 'mars', aspect: 'square', personA: 'Rowan', personB: 'you', readerPerson: 'B' },
+        sourceSnapshot: { knowledgeSources: [{ record }] } });
+      assert.notEqual(held.statusCode, 200);
+      assert.match(held.result.error, /SYNASTRY_KNOWLEDGE_CONTEXT_CONFLICT/);
+      assert.equal(requests.length, start, 'Inconsistent detailed scope, ownership or example roles stop before either provider.');
+    }
+  }
   for (const provider of ['openai', 'claude'] as const) {
     for (const variant of [base, { ...base, eventType: 'aspect', facts: { ...base.facts, blockType: undefined } },
       { ...base, mode: 'feed', contentKey: 'fixture/synastry-moon-trine-venus', knowledgeIds: ['synastry-moon-trine-venus'],
@@ -162,7 +265,14 @@ try {
         facts: { ...base.facts, planetA: 'Moon', planetB: 'Venus', aspect: 'conjunction' } },
       { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini', planetBSign: 'Virgo' },
         sourceSnapshot: { meaning: 'Complete synthetic source with an em dash — its original punctuation stays intact.' } },
-      { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini' } }]) {
+      { ...base, facts: { ...base.facts, signsExcluded: false, planetASign: 'Gemini' } }].map(variant => ({ ...variant,
+        // These cases test instruction/schema contracts with controlled meaning.
+        // Real default KB delivery and placeholder holds are exercised above.
+        sourceSnapshot: { ...variant.sourceSnapshot, knowledgeSources: [{ record: {
+          ...base.sourceSnapshot.knowledgeSources[0].record,
+          planetA: variant.facts.planetA.toLowerCase(), planetB: variant.facts.planetB.toLowerCase(), aspect: variant.facts.aspect
+        } }] }
+      }))) {
       const start = requests.length;
       const response = await generate({ ...variant, provider });
       assert.equal(response.statusCode, 200, JSON.stringify(response.result));
@@ -231,8 +341,6 @@ try {
     sourceSnapshot: { knowledgeSources: [{ record: legacyRecord }],
       bookReferences: [{ text: 'Complete protected owner passage. You retain its advice and original punctuation — final sentence.' }] } };
   const sourceBefore = JSON.stringify(sourceFixture);
-  const ownerIndex = JSON.parse(readFileSync(new URL('../packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json', import.meta.url), 'utf8'));
-  const expectedVoiceExamples = sharedGenerationOwnerExamples(ownerIndex, sourceFixture);
   nextDraft = { ...draft, headline: sourceFixture.headline,
     body: 'This synthetic fixture addresses the Saturn reader and Rowan’s Sun. It retains both named roles without making an event claim.\n\nThe complete fixture ends without an instruction.',
     astrologyDrilldown: { ...draft.astrologyDrilldown, factors: [
@@ -244,7 +352,7 @@ try {
     const generated = await generate({ ...sourceFixture, provider });
     assert.equal(generated.statusCode, 200);
     const receipt = generated.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
-    assert.equal(receipt.editorialVersion, 'synastry-aspect/v9-2026-10-21');
+    assert.equal(receipt.editorialVersion, 'synastry-aspect/v16-2026-10-25');
     assert.equal(receipt.readerPerson, 'B');
     assert(receipt.exclusions.some((entry: any) => entry.reason === 'advice_not_requested'));
     assert(!JSON.stringify(receipt).includes('Rowan'), 'The persisted source receipt contains no person names or source bodies.');
@@ -259,7 +367,7 @@ try {
     const writer = stages.find(request => request.kind === 'tldr_astro_generated_content');
     const writerText = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
     assert(writerText.includes(sourceFixture.sourceSnapshot.bookReferences[0].text), 'Complete protected owner wording is unchanged.');
-    for (const example of expectedVoiceExamples) assert(writerText.includes(example.body), 'Knowledge projection cannot alter the selected complete owner voice examples.');
+    for (const example of syntheticSynastryVoice().entries) assert(writerText.includes(example.text), 'Knowledge projection cannot alter complete protected voice examples.');
     if (provider === 'openai') {
       const ownership = JSON.parse(stages[0].body.input).contactOwnership;
       assert.equal(ownership.personA.planet, 'Sun'); assert.equal(ownership.personB.planet, 'Saturn'); assert.equal(ownership.readerPerson, 'B');
@@ -268,11 +376,55 @@ try {
     }
   }
   assert.equal(JSON.stringify(sourceFixture), sourceBefore, 'The original sources and saved input are never mutated.');
+  // Use the actual repaired KB records through the real handler, not a second
+  // handcrafted interpretation that could conceal the source contamination.
+  for (const aspect of ['trine', 'sextile']) {
+    const record = JSON.parse(readFileSync(new URL(`../packages/astro-knowledge/data/synastry/aspects/A-moon_B-sun_${aspect}.json`, import.meta.url), 'utf8'));
+    const fixture = { ...base, headline: `Moon ${aspect} Sun`, knowledgeIds: [`synastry-moon-${aspect}-sun`],
+      facts: { planetA: 'Moon', planetB: 'Sun', personA: 'you', personB: 'Rowan', readerPerson: 'A', aspect },
+      sourceSnapshot: { meaning: 'Synthetic context.', knowledgeSources: [{ record }] } };
+    nextDraft = { ...draft, headline: fixture.headline,
+      body: 'You tell Rowan about a plan. This complete synthetic fixture retains the Moon reader and the other person’s Sun. Its ending is a complete observation.',
+      astrologyDrilldown: { ...draft.astrologyDrilldown, factors: [
+        { label: 'Your Moon', technicalFact: 'Moon belongs to the reader.', plainMeaning: 'The reader’s emotional response.' },
+        { label: 'Their Sun', technicalFact: 'Sun belongs to Rowan.', plainMeaning: 'The other person’s self-expression.' }
+      ] } };
+    for (const provider of ['openai', 'claude'] as const) {
+      const start = requests.length;
+      const result = await generate({ ...fixture, provider });
+      assert.equal(result.statusCode, 200, JSON.stringify(result.result));
+      for (const stage of requests.slice(start).filter(request => ['tldr_astro_meaning_plan', 'tldr_astro_generated_content'].includes(request.kind))) {
+        const sent = stage.provider === 'openai' ? stage.body.input : stage.body.messages[0].content[0].text;
+        assert(sent.includes(record.plainTranslation));
+        assert(!sent.includes(record.advice));
+        for (const leak of ['Keep it active so comfort does not turn into autopilot', 'The problem is that easy can become lazy', 'The problem is leaving it half-open']) assert(!sent.includes(leak));
+      }
+      const receipt = result.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
+      assert.equal(receipt.protectedVoice.referenceCount, 28);
+      assert.equal(receipt.protectedVoice.sources.length, 3);
+      for (const source of receipt.protectedVoice.sources) assert(source.documentSha256);
+      for (const reference of [...syntheticSynastryVoice().entries, ...syntheticApprovedTen().entries, ...syntheticLatestTen().entries]) {
+        const writer = requests.slice(start).find(request => request.kind === 'tldr_astro_generated_content');
+        assert(writer);
+        const sent = writer.provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+        assert.equal(sent.split(reference.text).length - 1, 1, 'All three approved collections reach the actual writer once, completely.');
+      }
+    }
+  }
+  for (const provider of ['openai', 'claude'] as const) {
+    const start = requests.length;
+    process.env.PRIVATE_REPORT_DOCUMENTS = 'invalid';
+    const missing = await generate({ ...base, provider });
+    assert.notEqual(missing.statusCode, 200);
+    assert.match(missing.result.error, /SYNASTRY_APPROVED_VOICE_UNAVAILABLE/);
+    assert.equal(requests.length, start, 'Missing protected benchmarks hold before any provider stage.');
+    process.env.PRIVATE_REPORT_DOCUMENTS = encodedSynastryVoice();
+  }
   nextDraft = draft;
   const voiceText = 'Complete synthetic designated voice passage. Its original punctuation — and its final sentence remain intact.';
   const reference = { role: 'owner_approved_voice_only_not_astrology_for_target', path: '/private/synthetic-owner-reference.txt',
     text: voiceText, sha256: createHash('sha256').update(voiceText).digest('hex') };
-  const benchmarkFixture = { ...base, sourceSnapshot: { meaning: base.sourceSnapshot.meaning, positiveVoiceReferences: [reference] } };
+  const benchmarkFixture = { ...base, sourceSnapshot: { ...base.sourceSnapshot, positiveVoiceReferences: [reference] } };
   for (const provider of ['openai', 'claude'] as const) {
     const start = requests.length;
     const result = await generate({ ...benchmarkFixture, provider });
@@ -284,13 +436,66 @@ try {
     assert(!prompt.includes('relationship-year-libra-2025-to-venus-rx-2026'), 'Designated benchmarks cannot be padded with the automatic adjacent article.');
     const receipt = result.result.generated.generation_metadata.evidencePacket.synastrySourceContext;
     assert.equal(receipt.designatedVoiceReferences[0].textSha256, reference.sha256);
+    assert.equal(receipt.primaryStyleReferences.length, 4);
+    assert(!JSON.stringify(receipt).includes('You have a knack for making people and places feel good'));
     assert(!JSON.stringify(receipt).includes(voiceText));
     const beforeInvalid = requests.length;
     const invalid = await generate({ ...benchmarkFixture, provider, sourceSnapshot: { ...benchmarkFixture.sourceSnapshot,
       positiveVoiceReferences: [{ ...reference, text: 'A damaged excerpt.' }] } });
     assert.notEqual(invalid.statusCode, 200); assert.match(invalid.result.error, /VOICE_REFERENCE_INVALID/u);
     assert.equal(requests.length, beforeInvalid, 'Damaged designated evidence stops before either provider.');
+    const primary = JSON.parse(readFileSync('data/writing/synastry-primary-style-20261024.json', 'utf8')).references;
+    primary[0].text += ' Unapproved edit.';
+    const invalidPrimary = await generate({ ...benchmarkFixture, provider, sourceSnapshot: { ...benchmarkFixture.sourceSnapshot,
+      primarySynastryStyleReferences: primary } });
+    assert.notEqual(invalidPrimary.statusCode, 200);
+    assert.match(invalidPrimary.result.error, /PRIMARY_STYLE_UNAVAILABLE/);
+    assert.equal(requests.length, beforeInvalid, 'Changed primary benchmarks stop before either provider.');
   }
+  // Reproduce the whole-request ordering defect with complete negative evidence,
+  // an existing draft and a designated benchmark. No body is shortened or promoted.
+  const rejection = { id: 'synthetic-context-rejection', version: 1, status: 'active', kind: 'rejection',
+    target_keys: [base.contentKey], rejected_text: 'Complete synthetic rejected passage. It retains its final sentence.',
+    source_roles: null, owner_reason: 'Complete synthetic owner reason: this wording was rejected, including its ending.',
+    source_uri: 'thread:11111111-1111-4111-8111-111111111111', source_date: '2026-10-22T00:00:00Z' };
+  feedbackRows = [rejection]; process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'true';
+  const existing = { text: 'Complete synthetic existing draft. Its ending remains revision context only.' };
+  for (const provider of ['openai', 'claude'] as const) {
+    for (const readerPerson of ['A', 'B'] as const) {
+      const fixture = { ...benchmarkFixture, facts: { ...base.facts, readerPerson,
+        personA: readerPerson === 'A' ? 'you' : 'Rowan', personB: readerPerson === 'B' ? 'you' : 'Rowan' },
+        sourceSnapshot: { ...benchmarkFixture.sourceSnapshot, existingDraft: existing } };
+      const start = requests.length;
+      const result = await generate({ ...fixture, provider });
+      assert.equal(result.statusCode, 200);
+      const stages = requests.slice(start);
+      const writer = stages.find(request => request.kind === 'tldr_astro_generated_content');
+      const prompt = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+      const rejectedAt = prompt.indexOf('BEGIN REJECTED WRITING AND OWNER CORRECTIONS');
+      const rejectedEnd = prompt.indexOf('END REJECTED WRITING AND OWNER CORRECTIONS');
+      const voiceAt = prompt.indexOf('DESIGNATED SYNASTRY VOICE REFERENCES');
+      const briefAt = prompt.lastIndexOf('WRITE THE READER INTERPRETATION');
+      assert(rejectedAt > prompt.indexOf(existing.text));
+      assert(rejectedEnd > rejectedAt && voiceAt > rejectedEnd && briefAt > voiceAt);
+      for (const exact of [rejection.rejected_text, rejection.owner_reason, voiceText, existing.text]) {
+        assert.equal(prompt.split(exact).length - 1, 1, 'Every complete unit is preserved once in its evidence role.');
+      }
+      assert(prompt.slice(briefAt).includes(`Address the ${readerPerson === 'A' ? 'Mercury' : 'Moon'} person as you.`));
+      assert.equal(result.result.generated.generation_metadata.evidencePacket.writingFeedback.selected.length, 1);
+      assert(!JSON.stringify(result.result.generated.generation_metadata).includes(rejection.rejected_text),
+        'Private rejected wording cannot enter the persisted public evidence shadow.');
+      assert.equal(stages.filter(request => request.kind === 'tldr_astro_generated_content').length, 1);
+      if (provider === 'openai') assert(prompt.indexOf(JSON.stringify(validPlan, null, 2)) < rejectedAt,
+        'Meaning-only planning precedes negative evidence and complete positive references.');
+    }
+    const start = requests.length;
+    const unnamed = await generate({ ...benchmarkFixture, provider, facts: { ...base.facts, personA: 'Rowan', personB: 'Casey' } });
+    assert.equal(unnamed.statusCode, 200);
+    const writer = requests.slice(start).find(request => request.kind === 'tldr_astro_generated_content');
+    const prompt = provider === 'openai' ? writer.body.input : writer.body.messages[0].content[0].text;
+    assert(prompt.slice(prompt.lastIndexOf('WRITE THE READER INTERPRETATION')).includes('No reader has been identified'));
+  }
+  feedbackRows = []; process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'false';
   for (const unsafePlan of [{}, { core_tension: 'Their caution presses on your confidence.' },
     { core_tension: 'Person A wants you to agree with Person B.' }]) {
     nextPlan = unsafePlan; const start = requests.length;
@@ -316,7 +521,8 @@ try {
     { ...base, surface: 'composite', eventType: 'composite-aspect', facts: {} } as any);
   const reviser = governedInstructionsForRole('REVISER', { surface: 'synastry', family: 'synastry-aspect' });
   assert(reviser.includes('Revise only the supplied failed fields'));
-  assert(reviser.includes(RHETORICAL_WRITER_POLICY));
+  assert(!reviser.includes(RHETORICAL_WRITER_POLICY));
+  assert(reviser.includes(GHOSTWRITING_SKILL_INSTRUCTIONS));
   assert(reviser.includes('A meaning plan establishes supported interpretation, not reader wording'));
   assert(!reviser.includes('SKY PLACEMENT ARTICLE SPINE'));
   const suppliedInstructions='Complete server-selected instructions.';
@@ -341,4 +547,4 @@ try {
     assert(prompt.includes('action: one specific useful move.'));
   }
   console.log('PASS synastry actual handler and both providers: directional facts, complete source and owner evidence, developed interpretation without forced advice, unchanged schema, valid and invalid results, denied access and composite isolation. All provider responses intercepted; zero billed calls.');
-} finally { globalThis.fetch = originalFetch; }
+} finally { globalThis.fetch = originalFetch; restoreApprovalFixture(); }

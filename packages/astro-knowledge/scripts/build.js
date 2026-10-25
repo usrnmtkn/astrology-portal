@@ -316,19 +316,28 @@ function webNatalKnowledge(packageJson, generatedAt, collections) {
 function webRelationshipKnowledge(packageJson, generatedAt, collections) {
   return withBundleMetadata(packageJson, generatedAt, {
     primitives: collections.primitives,
-    synastryAspects: collections.synastryAspects.map((entry) => pick(entry, [
-      "id",
-      "planetA",
-      "planetB",
-      "aspect",
-      "plainTranslation",
-      "summaryShort",
-      "summaryDeep",
-      "tension",
-      "advice",
-      "policy",
-      "status"
-    ])),
+    synastryAspects: collections.synastryAspects.map((entry) => {
+      const runtime = pick(entry, [
+        "id",
+        "planetA",
+        "planetB",
+        "aspect",
+        "plainTranslation",
+        "summaryShort",
+        "summaryDeep",
+        "tension",
+        "advice",
+        "policy",
+        "status"
+      ]);
+      // The relationship registry uses both complete summaries before this
+      // fallback. Keep draft authoring meaning in the full/server bundles.
+      if (entry.status === "DRAFT" && entry.authoringStatus === "draft"
+        && entry.summaryShort?.trim() && entry.summaryDeep?.trim()) {
+        delete runtime.plainTranslation;
+      }
+      return runtime;
+    }),
     synastryHouseOverlays: collections.synastryHouseOverlays.map((entry) => pick(entry, [
       "id",
       "planet",
