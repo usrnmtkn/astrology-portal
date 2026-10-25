@@ -77,7 +77,7 @@ test('bulk-edit CSV article links resolve the exact published source in the read
 
 test('reader snapshot reports the selected seasonal publication window and local reference date', () => {
   const text = { innerText: 'Synthetic public paragraph.', closest: () => null, parentElement: null };
-  const article = { querySelectorAll: () => [text], querySelector: () => text } as unknown as HTMLElement;
+  const article = { querySelectorAll: (selector: string) => selector === '.article-related-aspects-card' ? [] : [text], querySelector: () => text } as unknown as HTMLElement;
   const record = skyReaderCsvRecord(article, { title: 'Synthetic seasonal article', glyph: '', kicker: '', meta: '', body: [], readerExport: {
     keys: ['sky-season-fallback/libra-2026/moon/aries/2026-09-25'], instant: '2026-09-27T01:00:00Z', timeZone: 'America/New_York',
     rows: [{ contentKey: 'sky-season-fallback/libra-2026/moon/aries/2026-09-25', status: 'LIVE', sections: { seasonFallback: {

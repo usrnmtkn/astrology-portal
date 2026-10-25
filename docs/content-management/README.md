@@ -178,6 +178,12 @@ editing placement. Reader links and CSV exports always use the published view,
 including when Draft is selected in the preview. Source verification runs when
 a placement is chosen, so these actions do not require opening the preview.
 
+The reader CSV filename uses the selected reader date. Its `body` contains the
+main article, and `aspect_details` contains the public Aspect details in reading
+order, including group and aspect headings, dates, complete passages and reader
+links. Export waits for those details to finish loading. Personalized chart
+sections stay separate, and reader CSVs cannot be imported as editable sources.
+
 Choose a Sky placement, then **Preview reader** in **Reader sources**. The
 preview opens inside Studio and uses the public Sky article builder, source
 loaders, calculated placement facts and article renderer. **Published** reads
