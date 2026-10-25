@@ -11,12 +11,18 @@ function validDate(value?: string | null) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+const checkedTimeZones = new Map<string, string | undefined>();
+const datePartsFormatters = new Map<string, Intl.DateTimeFormat>();
 function safeTimeZone(timeZone?: string) {
   if (!timeZone) return undefined;
+  if (checkedTimeZones.has(timeZone)) return checkedTimeZones.get(timeZone);
+  if (checkedTimeZones.size >= 32) checkedTimeZones.delete(checkedTimeZones.keys().next().value!);
   try {
     new Intl.DateTimeFormat(undefined, { timeZone }).format(new Date(0));
+    checkedTimeZones.set(timeZone,timeZone);
     return timeZone;
   } catch {
+    checkedTimeZones.set(timeZone,undefined);
     return undefined;
   }
 }
@@ -30,12 +36,19 @@ function monthDay(date: Date, timeZone?: string) {
 }
 
 export function localDateParts(date: Date, timeZone?: string) {
-  return Object.fromEntries(new Intl.DateTimeFormat("en-US", {
+  const zone=safeTimeZone(timeZone);
+  let formatter=zone ? datePartsFormatters.get(zone) : undefined;
+  formatter ??= new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "numeric",
     day: "numeric",
-    timeZone: safeTimeZone(timeZone)
-  }).formatToParts(date).map((part) => [part.type, part.value]));
+    timeZone: zone
+  });
+  if(zone&&!datePartsFormatters.has(zone)){
+    if(datePartsFormatters.size>=32)datePartsFormatters.delete(datePartsFormatters.keys().next().value!);
+    datePartsFormatters.set(zone,formatter);
+  }
+  return Object.fromEntries(formatter.formatToParts(date).map((part) => [part.type, part.value]));
 }
 
 function sameLocalDate(first: Date, second: Date, timeZone?: string) {

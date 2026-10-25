@@ -2,6 +2,7 @@ import { readerResponse } from '../helpers/reader-response';
 import { expect, test } from '@playwright/test';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import {isSkyListPublicationKey} from '../../apps/web/src/content/skyListPublicationScope';
 import { publicationStorageEmitter } from '../helpers/publication-storage-emitter';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const delivery of ['external edit', 'storage ledger']) {
@@ -117,14 +118,15 @@ for (const width of [390, 1440]) test(`placement publication stays authoritative
   const unrelatedId = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
   const readDelayMs = Number(process.env.SKY_ARTICLE_READ_DELAY_MS ?? 2500);
   const contentQueries: Array<{ids?: string[];scope?: string;keys?: string[];startedAt:number;finishedAt?:number}> = [];
-  await page.route('**/api/content-publications', async route => {
+  await page.route('**/api/content-publications*', async route => {
+    const scoped=new URL(route.request().url()).searchParams.get('scope')==='sky-list';
     const publications = canonicalPublicationLedger([ledger, {content_key:'sky-placement/article/jupiter/capricorn',state:'live',revision:1,row_id:unrelatedId,row_updated_at:timestamp(),updated_at:timestamp()}, { content_key: key, state: retired ? 'retired' : 'live', revision,
-      row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }]);
+      row_id: row().id, row_updated_at: timestamp(), updated_at: timestamp() }].filter(record=>!scoped||isSkyListPublicationKey(record.content_key)));
     const etag = await publicationLedgerTag(publications);
     const unchanged = route.request().headers()['if-none-match'] === etag;
     relayStatuses.push(unchanged ? 304 : 200);
     await route.fulfill({ status: unchanged ? 304 : 200, headers: { etag: `W/${etag}`, 'cache-control': 'private, no-store', 'content-type': 'application/json' },
-      body: unchanged ? undefined : JSON.stringify({ schema: 'tldr-publications/v1', publications }) });
+      body: unchanged ? undefined : JSON.stringify({ schema: scoped?'tldr-sky-list-publications/v1':'tldr-publications/v1', publications }) });
   });
   await page.route('**/rest/v1/**', async route => {
     const path = new URL(route.request().url()).pathname;

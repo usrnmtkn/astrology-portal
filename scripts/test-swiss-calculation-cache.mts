@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rm, readFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { build } from "esbuild";
@@ -51,6 +51,13 @@ try {
       platform: "node", format: "esm", outfile, external: ["swisseph-wasm"],
       define: { "import.meta.env": "{}" }, logLevel: "silent",
       plugins: uncached ? [{ name: "uncached-ephemeris", setup(builder) {
+        builder.onLoad({ filter: /\/ephemeris\.ts$/ }, async ({path}) => {
+          const source = await readFile(path, "utf8");
+          const originalSignPath = source.replace(/function signNameForLongitude\(longitude: number\) \{[\s\S]*?\n\}/u,
+            "function signNameForLongitude(longitude: number) { return signForLongitude(longitude).sign; }");
+          assert.notEqual(originalSignPath, source, "The direct fixture must use the original display formatter for sign-only scans.");
+          return {loader: "ts", contents: originalSignPath};
+        });
         builder.onResolve({ filter: /swissCalculationCache\.js$/ }, () => ({ path: "uncached", namespace: "fixture" }));
         builder.onLoad({ filter: /.*/, namespace: "fixture" }, () => ({
           loader: "js", contents: "export const memoizeSwissCalculation = calculate => calculate;"

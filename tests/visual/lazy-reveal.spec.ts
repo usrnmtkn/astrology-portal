@@ -8,10 +8,16 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`static card loading and mount-only fade at ${width} ${theme}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 1000 });
     await page.emulateMedia({ reducedMotion: theme === "dark" ? "reduce" : "no-preference" });
-    const css = readdirSync("apps/web/dist/assets").filter(file => file.endsWith(".css") && (file.startsWith("index-") || /\.card-skeleton-bar|\.calendar-stoic-card/.test(readFileSync(`apps/web/dist/assets/${file}`, "utf8"))));
-    css.sort((a, b) => (a.startsWith("index-") ? 0 : a.startsWith("styles-") ? 1 : 2) - (b.startsWith("index-") ? 0 : b.startsWith("styles-") ? 1 : 2));
+    // Use the built entry's actual shared theme/font CSS. Entry chunk names
+    // change when startup is split; an "index-*" guess can leave this fixture
+    // entirely unstyled while its isolated card styles still load successfully.
+    const entryStyles = [...readFileSync("apps/web/dist/index.html", "utf8").matchAll(/<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="\/assets\/([^"]+\.css)"/gu)].map(match => match[1]);
+    expect(entryStyles.length).toBeGreaterThan(0);
+    const css = readdirSync("apps/web/dist/assets").filter(file => file.endsWith(".css") && (entryStyles.includes(file) || /\.card-skeleton-bar|\.calendar-stoic-card/.test(readFileSync(`apps/web/dist/assets/${file}`, "utf8"))));
+    css.sort((a, b) => (entryStyles.includes(a) ? 0 : a.startsWith("styles-") ? 1 : 2) - (entryStyles.includes(b) ? 0 : b.startsWith("styles-") ? 1 : 2));
     await page.route("**/__card-fixture", route => route.fulfill({ contentType: "text/html", body: `<!doctype html><html data-theme="${theme}"><head>${css.map(file => `<link rel="stylesheet" href="/assets/${file}">`).join("")}</head><body><main class="app-shell theme-${theme}"><div id="fixture"></div></main></body></html>` }));
     await page.goto("/__card-fixture");
+    expect(await page.evaluate(() => getComputedStyle(document.body).getPropertyValue("--text-body").trim())).not.toBe("");
     await page.addScriptTag({ type: "module", content: fixture });
     await page.waitForFunction(() => Boolean((window as any).renderFixture));
     await page.evaluate(() => document.fonts.ready);

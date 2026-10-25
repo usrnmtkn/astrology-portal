@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { bundledPublications } from '../helpers/bundled-publications';
 import skyHandler from '../../api/sky';
+import {createInitialSkyReaderHandler} from '../../api/sky-reader';
 import { getLunarCalendarMonth } from '../../apps/web/src/services/ephemeris';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { readerResponse } from '../helpers/reader-response';
@@ -15,6 +16,8 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
   test(`${warm ? 'Cached' : 'Cold'} Sky ${initialRoute || "/"} starts before App and ${changeSelection ? 'rejects a changed selection' : 'reuses the exact initial response'}`, async ({ page }) => {
     test.setTimeout(90_000);
     const initialList = !initialRoute || initialRoute === '#sky';
+    const isSkyRequest=(url:URL)=>url.pathname==='/api/sky'||url.pathname==='/api/sky-reader';
+    const newsreaderPath='/'+JSON.parse(readFileSync('apps/web/dist/.vite/manifest.json','utf8'))['src/assets/fonts/newsreader.woff2'].file;
     await bundledPublications(page);
     const cached = [{ content_key: '__content-publication-ledger/v1', state: 'live' as const, revision: 1,
       row_id: null, row_updated_at: null, updated_at: '2026-09-21T16:00:00Z' }];
@@ -23,6 +26,7 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
       json: { schema: 'tldr-publications/v1', publications: cached }, headers: { etag: emptyTag }
     }));
     if (warm) await page.addInitScript(cached => localStorage.setItem('tldrastro:content-publications:v1', JSON.stringify(cached)), cached);
+    const preparedHandler=createInitialSkyReaderHandler(async()=>({status:200,headers:{},value:readerResponse([])}));
     // The two normal reader fonts must work without the optional external
     // accessibility/symbol stylesheet or another origin's font connection.
     await page.route('https://fonts.googleapis.com/**', route => route.abort());
@@ -55,11 +59,23 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
     const errors: string[] = [];
     page.on('request', request => requests.push(new URL(request.url())));
     page.on('pageerror', error => errors.push(error.message));
-    await page.route('**/api/sky?**', async route => {
-      const response = { statusCode: 200, setHeader() {}, end(body: string) {
-        void route.fulfill({ status: this.statusCode, contentType: 'application/json', body });
-      } };
-      await skyHandler({ method: 'GET', url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
+    await page.route(/\/api\/(?:sky|sky-reader)\?/, async route => {
+      let body='';const response={statusCode:200,setHeader(){},end(value:string){body=value;}};
+      if(new URL(route.request().url()).pathname==='/api/sky-reader'){
+        const originalFetch=globalThis.fetch;
+        const envKeys=['SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','SUPABASE_ANON_KEY'];
+        const saved=envKeys.map(key=>process.env[key]);
+        process.env.SUPABASE_URL='https://early-sky-fixture.supabase.test';
+        process.env.SUPABASE_PUBLISHABLE_KEY='sb_publishable_synthetic_early_sky';delete process.env.SUPABASE_ANON_KEY;
+        globalThis.fetch=async input=>{
+          const url=new URL(String(input));expect(url.origin).toBe(process.env.SUPABASE_URL);expect(url.pathname).toBe('/rest/v1/content_publications');
+          const filters=url.searchParams.getAll('content_key');
+          return Response.json(cached.filter(row=>filters.every(filter=>{const [op,...parts]=filter.split('.'),key=parts.join('.');return op==='eq'?row.content_key===key:op==='gte'?row.content_key>=key:op==='lt'?row.content_key<key:true;})));
+        };
+        try{await preparedHandler({method:'GET',url:route.request().url(),headers:{}} as IncomingMessage,response as unknown as ServerResponse);}
+        finally{globalThis.fetch=originalFetch;envKeys.forEach((key,index)=>{if(saved[index]===undefined)delete process.env[key];else process.env[key]=saved[index];});}
+      }else await skyHandler({method:'GET',url:route.request().url()} as IncomingMessage,response as unknown as ServerResponse);
+      await route.fulfill({status:response.statusCode,contentType:'application/json',body});
     });
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
     try {
@@ -68,18 +84,19 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
       if (!initialList) await expect.poll(() => requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(true);
       else expect(requests.some(url => /\/assets\/fallback-content-sky-placement-(?!manifest-)[^/]+\.js$/.test(url.pathname))).toBe(false);
       releaseReact();
-      await expect.poll(() => requests.some(url => url.pathname === '/api/sky')).toBe(true);
-      if (warm) await expect.poll(() => requests.some(url => url.pathname === '/api/content-publications')).toBe(true);
-      else expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
-      await expect.poll(() => requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname))).toBe(true);
+      await expect.poll(() => requests.some(url => url.pathname === (initialList?'/api/sky-reader':'/api/sky'))).toBe(true);
+      // The prepared list carries scoped publication proof. Full articles keep
+      // the complete six-range live ledger read, including with a warm cache;
+      // a cached marker must never substitute for fresh publication authority.
+      expect(requests.some(url => url.pathname === '/api/content-publications')).toBe(false);
       if (!initialList) await expect.poll(() => requests.some(url => /canonical-sky-reader-transport-v1.*\.json$/.test(url.pathname))).toBe(true);
       else expect(requests.some(url => /canonical-sky-reader-transport-v1.*\.json$/.test(url.pathname))).toBe(false);
-      if (warm) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
-      else await expect.poll(() => requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(true);
+      if (initialList) expect(requests.some(url => url.pathname.endsWith('/content_publications'))).toBe(false);
+      else await expect.poll(() => requests.filter(url => url.pathname.endsWith('/content_publications')).length).toBe(6);
       expect(await page.locator('.app-shell').count()).toBe(0);
-      expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
-      expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
-      expect(requests.find(url => url.pathname === '/api/sky')?.searchParams.get('detail')).toBe(initialList ? 'placements' : 'full');
+      expect(requests.filter(isSkyRequest)).toHaveLength(1);
+      expect(requests.find(isSkyRequest)?.searchParams.get('at')).toBe('2026-09-21T16:00:00.000Z');
+      expect(requests.find(isSkyRequest)?.searchParams.get('detail')).toBe(initialList?'placements':'full');
       expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
       expect(wasmPaths()).toEqual([]);
       if (changeSelection) {
@@ -90,7 +107,7 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
       }
     } catch (error) { releasePlacement(); throw error; } finally { releaseReact(); releaseApp(); }
     try {
-      await expect.poll(() => requests.some(url => /canonical-sky-reader-transport-v1.*\.json$/.test(url.pathname))).toBe(true);
+      if(!initialList)await expect.poll(()=>requests.some(url=>/canonical-sky-reader-transport-v1.*\.json$/.test(url.pathname))).toBe(true);
       await expect(page.locator('.app-shell')).toBeVisible();
     } finally { releasePlacement(); }
     if (!initialList && !changeSelection) {
@@ -107,12 +124,15 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
         expect(new Set(wasmPaths().map(path => path.slice(0, path.lastIndexOf('/')))).size).toBe(1);
       }
       expect(requests.filter(url => url.pathname === '/api/sky')).toHaveLength(1);
+      await page.evaluate(() => document.fonts.ready);
+      expect(await page.evaluate(() => document.fonts.check('400 16px Newsreader') && document.fonts.check('500 16px "Geist Mono"'))).toBe(true);
+      expect(requests.some(url => url.pathname === newsreaderPath && url.host === new URL(page.url()).host)).toBe(true);
       expect(errors).toEqual([]);
       return;
     }
     await expect(page.getByLabel('Daily sky summary', { exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(page.locator('.planet-placement-row--sky')).toHaveCount(14);
-    const skyRequests = requests.filter(url => url.pathname === '/api/sky');
+    const skyRequests = requests.filter(isSkyRequest);
     expect(skyRequests).toHaveLength(changeSelection ? 2 : 1);
     if (changeSelection) {
       expect(skyRequests[1].searchParams.get('at')).toBe('2026-03-27T03:00:00.000Z');
@@ -127,8 +147,9 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
     expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
     expect(wasmPaths()).toEqual([]);
     expect(errors).toEqual([]);
+    await page.evaluate(()=>document.fonts.ready);
     expect(await page.evaluate(() => document.fonts.check('400 16px Newsreader') && document.fonts.check('500 16px "Geist Mono"'))).toBe(true);
-    expect(requests.some(url => /newsreader-latin.*\.woff2$/.test(url.pathname) && url.host === new URL(page.url()).host)).toBe(true);
+    expect(requests.some(url=>url.pathname===newsreaderPath&&url.host===new URL(page.url()).host)).toBe(true);
     await page.getByRole('button', { name: `Read more about Sun in ${changeSelection ? 'Aries' : 'Virgo'}`, exact: true }).click();
     await expect(page.locator('.article-shell')).toBeVisible({ timeout: 30_000 });
     await expect.poll(() => requests.filter(url => url.pathname === '/api/sky').at(-1)?.searchParams.get('detail')).toBe('full');

@@ -231,7 +231,7 @@ test("reduced motion signals progress before the entry bundle without moving the
   await page.emulateMedia({ reducedMotion: "reduce" });
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
-  await page.route(/\/assets\/index-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
+  await page.route(/\/assets\/reader-.*\.js$/, async route => { await held; await route.continue().catch(() => {}); });
   let playerRequests = 0;
   page.on("request", request => { if (playerAsset.test(new URL(request.url()).pathname)) playerRequests++; });
   await page.goto("/#sky", { waitUntil: "commit" });

@@ -1,4 +1,5 @@
 import { internPublicJsonStringsPlugin } from "../../scripts/public-json-string-interning-plugin.mjs";
+import { sharedReaderAuthoredRowsPlugin } from "../../scripts/reader-authored-sharing-plugin.mjs";
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
@@ -211,6 +212,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      sharedReaderAuthoredRowsPlugin(),
       memoryGraphReferencePlugin(),
       appStartupHtmlPlugin(),
       readerStartupLoadingStylesPlugin(),
@@ -253,6 +255,10 @@ export default defineConfig(({ mode }) => {
         }
       },
       rollupOptions: {
+        input: {
+          reader: resolve(__dirname, "index.html"),
+          initialSkyBootstrap: resolve(__dirname, "src/initialSkyBootstrap.ts")
+        },
         output: {
           manualChunks(id) {
             // The reader shares this pure field contract with Studio. Keep it
@@ -261,11 +267,15 @@ export default defineConfig(({ mode }) => {
             // Eligibility helpers are already read at startup. Share their small
             // transport instead of adding a preload and gzip header per identity.
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|generatedContentEligibility)\.ts$/u.test(id)
+              || id.endsWith("/services/templateInterpolation.ts")
+              || id.endsWith("/shared/components/formattedWritingLoader.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
             // These shared readers already belong to boot. Keep them outside
             // Studio's deferred editor group so an editor import cannot pull it into boot.
-            if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)
-              || /\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader)\.mjs$/u.test(id)
+            // UI-only shared primitives travel with their existing React
+            // dependency; pure eligibility/bootstrap code must not await it.
+            if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)) return "react";
+            if (/\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader)\.mjs$/u.test(id)
               || /\/(?:content\/transitNatalIdentity|services\/transitReturns)\.ts$/u.test(id)) return "reader-eligibility";
             // Studio's reader-copy editors share one lazy workspace.
             if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
@@ -276,11 +286,12 @@ export default defineConfig(({ mode }) => {
               || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache|skyPlacementSourceScope|generatedContentKeys)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
-            if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)) return "sky-time";
+            if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)
+              || id.endsWith("/services/initialSkyRoute.mjs")) return "sky-time";
             // Reader publication state, transport and update notices share one
             // startup boundary; avoid three separate imports and gzip headers.
             if (id.endsWith("/content/contentPublicationState.ts")
-              || /\/services\/(?:contentPublications|contentUpdateSignal|readerContentClient)\.ts$/u.test(id)) return "content-publications";
+              || /\/services\/(?:contentPublications|contentUpdateSignal|readerContentClient|anonymousReaderTransport|publicationLedgerTransport)\.ts$/u.test(id)) return "content-publications";
             // Keep the shared reader/Studio return paths with their authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
             if (/\/services\/(?:auth|studioAuthReturn|readerAuthReturn)\.ts$/u.test(id)) {
@@ -347,6 +358,7 @@ export default defineConfig(({ mode }) => {
             if (
               id.includes("fallbackArchitectureV3/deferred-reader-support-transport-v1.json")
             ) return "fallback-content-reader-support";
+            if(id.includes("fallbackArchitectureV3/deferred-base-reader-support-v1.json")) return "fallback-content-base-support";
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
               || id.includes("fallbackArchitectureV3/initial-sky-core-transport-v1.json")

@@ -1,4 +1,5 @@
 import { contentPublicationRecords, validContentPublication, type ContentPublication } from "../content/contentPublicationState.js";
+import { isSkyListPublicationKey } from "../content/skyListPublicationScope.js";
 
 /** The tag describes the complete public ledger, including retirements. No
  * publication timestamp or subset is sufficient to validate the cached set. */
@@ -23,10 +24,10 @@ export function publicationLedgerTagMatches(received: unknown, expected: string)
   return received === expected || received === `W/${expected}`;
 }
 
-export async function loadPublicationLedgerFromApi(cached: readonly ContentPublication[] = contentPublicationRecords()) {
-  const snapshot = canonicalPublicationLedger(cached);
+export async function loadPublicationLedgerFromApi(cached: readonly ContentPublication[] = contentPublicationRecords(), scope?: "sky-list") {
+  const snapshot = canonicalPublicationLedger(scope ? cached.filter(row => isSkyListPublicationKey(row.content_key)) : cached);
   const tag = snapshot.length ? await publicationLedgerTag(snapshot) : null;
-  const response = await fetch("/api/content-publications", {
+  const response = await fetch(`/api/content-publications${scope ? "?scope=sky-list" : ""}`, {
     cache: "no-store", signal: AbortSignal.timeout(5000),
     headers: tag ? { "if-none-match": tag } : {}
   });
@@ -36,8 +37,9 @@ export async function loadPublicationLedgerFromApi(cached: readonly ContentPubli
   }
   if (!response.ok) throw new Error("Publication service unavailable.");
   const payload = await response.json();
-  if (payload.schema !== "tldr-publications/v1") throw new Error("Invalid publication response.");
+  if (payload.schema !== (scope ? "tldr-sky-list-publications/v1" : "tldr-publications/v1")) throw new Error("Invalid publication response.");
   const rows = canonicalPublicationLedger(payload.publications);
+  if (scope && !rows.every(row => isSkyListPublicationKey(row.content_key))) throw new Error("Invalid Sky list publication coverage.");
   if (!publicationLedgerTagMatches(response.headers.get("etag"), await publicationLedgerTag(rows))) throw new Error("Unverified publication response.");
   return rows;
 }

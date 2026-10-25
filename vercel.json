@@ -94,6 +94,10 @@
       "includeFiles": "node_modules/swisseph-wasm/wasm/*",
       "maxDuration": 15
     },
+    "api/sky-reader.ts": {
+      "includeFiles": "{api/_lib/local-env.ts,node_modules/swisseph-wasm/wasm/*,server/initial-sky-reader/dist/**}",
+      "maxDuration": 15
+    },
     "api/admin/sky-article-facts.ts": {
       "includeFiles": "node_modules/swisseph-wasm/wasm/*"
     },

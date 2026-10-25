@@ -12,6 +12,7 @@ const fixture = buildSync({
       import { createRoot } from "react-dom/client";
       import { flushSync } from "react-dom";
       import { useMinimumLoading } from "./apps/web/src/hooks/useMinimumLoading";
+      import { SkyReadingLayout, useSkySummarySettled, useSkyCardsSettled } from "./apps/web/src/features/sky/SkyReadingLayout";
       let root;
       let commitAdvance = 0;
       function Probe({ loading, minimum }) {
@@ -25,17 +26,26 @@ const fixture = buildSync({
         });
         return <output>{String(pending)}</output>;
       }
+      function Reading({summary,cards}) {
+        useSkySummarySettled(summary);
+        useSkyCardsSettled(cards);
+        return <p>Complete prepared summary and placement readings.</p>;
+      }
       window.probe = {
         render(loading, minimum = 280) {
           root ??= createRoot(document.getElementById("root"));
           flushSync(() => root.render(<StrictMode><Probe loading={loading} minimum={minimum} /></StrictMode>));
         },
         advanceOnNextCommit(ms) { commitAdvance = ms; },
+        reading(pending,summary,cards) {
+          root ??= createRoot(document.getElementById("root"));
+          flushSync(() => root.render(<StrictMode><SkyReadingLayout persistKey="synthetic" pending={pending} failed={false}><Reading summary={summary} cards={cards} /></SkyReadingLayout></StrictMode>));
+        },
         unmount() { flushSync(() => root.unmount()); root = null; }
       };
     `,
     resolveDir: process.cwd(), loader: "tsx"
-  }, bundle: true, write: false, jsx: "automatic", format: "iife"
+  }, bundle: true, write: false, jsx: "automatic", format: "iife", define: {"import.meta.env":"{}"}
 }).outputFiles[0].text;
 
 let browser: Browser;
@@ -61,6 +71,24 @@ async function withProbe(run: (page: Page, render: (loading: boolean, minimum?: 
 test("ready on mount does not introduce a skeleton", () => withProbe(async (_, render, pending) => {
   await render(false);
   assert.equal(await pending(), "false");
+}));
+
+test("the actual reading layout reveals two prepared children before first paint without a false loading cycle", () => withProbe(async page => {
+  await page.evaluate(() => (window as any).probe.reading(false,true,true));
+  assert.equal(await page.locator('.sky-reading-layout').getAttribute('aria-busy'),'false');
+  assert.equal(await page.locator('.sky-reading-layout__loading').count(),0);
+  assert.equal(await page.locator('.sky-reading-layout__content').getAttribute('aria-hidden'),null);
+}));
+
+test("the actual reading layout retains its 280ms minimum when either child really loads", () => withProbe(async page => {
+  await page.evaluate(() => (window as any).probe.reading(false,false,true));
+  assert.equal(await page.locator('.sky-reading-layout').getAttribute('aria-busy'),'true');
+  await page.clock.runFor(100);
+  await page.evaluate(() => (window as any).probe.reading(false,true,true));
+  await page.clock.runFor(179);
+  assert.equal(await page.locator('.sky-reading-layout').getAttribute('aria-busy'),'true');
+  await page.clock.runFor(1);
+  assert.equal(await page.locator('.sky-reading-layout').getAttribute('aria-busy'),'false');
 }));
 
 test("a fast response holds until 280ms, including StrictMode effect replay", () => withProbe(async (page, render, pending) => {

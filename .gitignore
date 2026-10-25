@@ -1,4 +1,5 @@
 node_modules/
+server/initial-sky-reader/dist/
 dist/
 .env
 .env.*

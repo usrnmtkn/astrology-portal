@@ -4,6 +4,12 @@ import type { SkyDetail } from './SkyDetailArticle';
 
 export const skyReaderCsvRequest = 'sky-article-csv';
 
+/** CSV-specific completion work stays outside ordinary article loading. */
+export function exportStatus(article: HTMLElement | null, detail: SkyDetail, aspectsFailed: boolean) {
+  if (aspectsFailed) throw new Error('Aspect details could not load.');
+  return article && exportRequestedSkyReaderCsv(article, detail) ? 'Sky article CSV downloaded.' : '';
+}
+
 /** Export the resolved public article after the reader has rendered it. */
 export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href: string) {
   const source = detail.readerExport;
@@ -17,6 +23,18 @@ export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href
   const parts = new Intl.DateTimeFormat('en-US', { timeZone: source.timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date(source.instant));
   const referenceDate = ['year', 'month', 'day'].map(type => parts.find(part => part.type === type)!.value).join('-');
   url.searchParams.set('date', referenceDate);
+  const aspectDetails = [...article.querySelectorAll<HTMLElement>('.article-related-aspects-card')].map(group => {
+    const heading = article.ownerDocument.getElementById(group.getAttribute('aria-labelledby') ?? '')?.textContent?.trim();
+    const passages = [...group.querySelectorAll<HTMLElement>('.article-related-aspects__copy')].map(passage => {
+      const text = [...passage.querySelectorAll<HTMLElement>('h4, p, li, dt, dd')]
+        .filter(node => !node.parentElement?.closest('li'))
+        .map(node => node.textContent?.trim()).filter(Boolean);
+      const links = [...passage.querySelectorAll<HTMLAnchorElement>('a[href]')].map(link => new URL(link.getAttribute('href')!, url.href).href);
+      return [...text, ...links].join('\n\n');
+    });
+    const rows = [...group.querySelectorAll<HTMLElement>('.aspect-row')].map(row => row.innerText.trim());
+    return [heading, ...passages, ...rows].filter(Boolean).join('\n\n');
+  }).join('\n\n');
   const edition = source.rows.map(row => (row.sections as { skyArticleEdition?: { validFrom?: string; validTo?: string } } | undefined)?.skyArticleEdition).find(Boolean);
   const visit = source.rows.map(row => (row.sections as { seasonFallback?: { seasonStart?: string; seasonEnd?: string } } | undefined)?.seasonFallback).find(Boolean);
   return {
@@ -40,6 +58,7 @@ export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href
     title: detail.title,
     summary: article.querySelector<HTMLElement>('.article-tldr__copy')?.innerText.trim() ?? '',
     body,
+    aspect_details: aspectDetails,
   };
 }
 
@@ -49,7 +68,7 @@ export function exportRequestedSkyReaderCsv(article: HTMLElement, detail: SkyDet
   const record = skyReaderCsvRecord(article, detail, url.href);
   const columns = Object.keys(record) as Array<keyof typeof record>;
   const csv = '\uFEFF' + [columns, columns.map(key => record[key])].map(row => row.map(quoteCsvCell).join(',')).join('\r\n') + '\r\n';
-  downloadCsv(csv, `content-studio-reader-${detail.routePath?.replaceAll('/', '-')}-${new Date().toISOString().slice(0, 10)}.csv`);
+  downloadCsv(csv, `content-studio-reader-${detail.routePath?.replaceAll('/', '-')}-${record.reference_date}.csv`);
   url.searchParams.delete('studioExport');
   window.history.replaceState(window.history.state, '', url.href);
   return true;

@@ -76,18 +76,22 @@ const builtFiles = filesRecursively(path.join(distRoot, "assets"))
 const filesByName = new Map(builtFiles.map((item) => [item.file, item]));
 const javaScriptFiles = builtFiles.filter((item) => item.file.endsWith(".js"));
 const cssFiles = builtFiles.filter((item) => item.file.endsWith(".css"));
-const entryKey = Object.keys(manifest).find((key) => manifest[key]?.isEntry);
+const entryKey = 'index.html';
+const bootstrapKey = 'src/initialSkyBootstrap.ts';
 const appKey = Object.keys(manifest).find((key) => manifest[key]?.name === "App");
 const readerStyleKeys = ["src/styles.css"];
 
-if (!entryKey || !appKey || readerStyleKeys.some((key) => !manifest[key])) {
+if (!manifest[entryKey]?.isEntry || !manifest[bootstrapKey]?.isEntry || !appKey || readerStyleKeys.some((key) => !manifest[key])) {
   console.error("Vite manifest is missing the web entry, App module, or reader startup styles.");
   process.exit(1);
 }
 
-const bootFiles = collectStaticManifestGraph(manifest, [entryKey, appKey]);
-if ([...bootFiles].some(file => file.includes('fallback-content-reader-support-'))) {
+const bootFiles = collectStaticManifestGraph(manifest, [entryKey, bootstrapKey, appKey]);
+if ([...bootFiles].some(file => /fallback-content-(?:reader|base)-support-/u.test(file))) {
   throw new Error('Public reader startup downloads deferred personal interpretation sources.');
+}
+if ([...bootFiles].some(file => /\/userGeneratedContent-/u.test(file))) {
+  throw new Error('Public reader startup downloads account writing requests before an account consumer needs them.');
 }
 const bootItems = [...bootFiles]
   .map((file) => filesByName.get(file))

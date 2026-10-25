@@ -286,12 +286,13 @@ function articleEyebrowGlyphs({
   }
 
   const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(`${title} ${meta}`));
+  const house = articleTitleHouseToken(title, meta);
 
   return uniqueArticleGlyphs([
     ...(glyph ? glyph.split(/\s+/).filter(Boolean).map((part) => textArticleGlyph(part)) : []),
     sign ? signArticleGlyph(sign) : null,
-    articleTitleHouseToken(title, meta)
-      ? { key: `house-${articleTitleHouseToken(title, meta)}`, label: articleTitleHouseToken(title, meta), text: articleTitleHouseToken(title, meta), house: true }
+    house
+      ? { key: `house-${house}`, label: house, text: house, house: true }
       : null
   ]);
 }
@@ -370,24 +371,15 @@ function normalizeRelatedAspectRow(row: ReactNode | SkyDetailRelatedAspectRow, i
 
 const skyPlacementDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?\s+(?:to|through|[-–])\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/iu;
 
-function skyPlacementDateLine(value: ReactNode) {
-  if (typeof value !== "string") {
-    return null;
-  }
-
-  const normalized = value.replace(/\s+/gu, " ").trim();
-  return skyPlacementDateLinePattern.test(normalized) ? normalized : null;
-}
-
 const skyAspectExactDateLinePattern = /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?(?:(?:,\s+and\s+|,\s+|\s+and\s+)(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:,\s+\d{4})?)*$/iu;
 
-function skyAspectExactDateLine(value: ReactNode) {
+function skyArticleDateLine(value: ReactNode, pattern: RegExp) {
   if (typeof value !== "string") {
     return null;
   }
 
   const normalized = value.replace(/\s+/gu, " ").trim();
-  return skyAspectExactDateLinePattern.test(normalized) ? normalized : null;
+  return pattern.test(normalized) ? normalized : null;
 }
 
 export function SkyDetailArticle({
@@ -403,24 +395,16 @@ export function SkyDetailArticle({
     ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
       date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone) }) : null;
   const [csvExportStatus, setCsvExportStatus] = useState('');
-  useEffect(() => {
-    if (!detail.readerExport || detail.placementFactsPending || new URL(window.location.href).searchParams.get('studioExport') !== 'sky-article-csv') return;
-    let cancelled = false;
-    void import('./skyReaderCsvExport').then(({ exportRequestedSkyReaderCsv }) => {
-      if (!cancelled && articleRef.current && exportRequestedSkyReaderCsv(articleRef.current, detail)) setCsvExportStatus('Sky article CSV downloaded.');
-    }).catch(() => { if (!cancelled) setCsvExportStatus('The article CSV could not be downloaded. Reload this page to try again.'); });
-    return () => { cancelled = true; };
-  }, [detail]);
   useLayoutEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    window.scrollTo(0, 0);
   }, [detail.routePath ?? detail.title]);
 
   const residencyContext = detail.placementResidencyContext;
   const residencyContextKey = residencyContext
-    ? `${residencyContext.referenceDate}|${residencyContext.timeZone}`
+    ? `${residencyContext.planet}|${residencyContext.sign}|${residencyContext.referenceDate}|${residencyContext.timeZone}`
     : "";
   const hasInlineAspectSections = (detail.sections ?? []).some((section) => section.role === "aspect");
-  const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[]] | null>(null);
+  const [residencyAspectState, setResidencyAspectState] = useState<[string, SkyDetailSection[] | null] | null>(null);
 
   useEffect(() => {
     if (!residencyContext || hasInlineAspectSections) return;
@@ -429,16 +413,28 @@ export function SkyDetailArticle({
       .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
       .then(
         ({ sections }) => !cancelled && setResidencyAspectState([residencyContextKey, sections]),
-        () => undefined
+        () => !cancelled && setResidencyAspectState([residencyContextKey, null])
       );
     return () => {
       cancelled = true;
     };
   }, [hasInlineAspectSections, residencyContext, residencyContextKey]);
 
-  const residencyAspectSections = !hasInlineAspectSections && residencyAspectState?.[0] === residencyContextKey
+  const needsResidencyAspects = !!residencyContext && !hasInlineAspectSections;
+  const residencyAspectsCurrent = residencyAspectState?.[0] === residencyContextKey;
+  const residencyAspectSections = !hasInlineAspectSections && residencyAspectsCurrent
     ? residencyAspectState[1]
     : null;
+  const residencyAspectsPending = needsResidencyAspects && !residencyAspectsCurrent;
+  const residencyAspectsFailed = needsResidencyAspects && residencyAspectsCurrent && residencyAspectState?.[1] === null;
+  useEffect(() => {
+    if (!detail.readerExport || detail.placementFactsPending || residencyAspectsPending || new URL(window.location.href).searchParams.get('studioExport') !== 'sky-article-csv') return;
+    let cancelled = false;
+    void import('./skyReaderCsvExport').then(({ exportStatus }) => {
+      if (!cancelled) setCsvExportStatus(exportStatus(articleRef.current, detail, residencyAspectsFailed));
+    }).catch(() => { if (!cancelled) setCsvExportStatus('The article CSV could not be downloaded. Reload this page to try again.'); });
+    return () => { cancelled = true; };
+  }, [detail, residencyAspectsPending, residencyAspectsFailed]);
   const detailSections = residencyAspectSections
   ? [
       ...residencyAspectSections,
@@ -505,7 +501,7 @@ export function SkyDetailArticle({
   const firstDisplaySectionParagraphs = typeof rawDisplaySections[0]?.body === "string"
     ? fullDetailReaderFacingParagraphs([rawDisplaySections[0].body])
     : [];
-  const leadingSectionDate = skyPlacementDateLine(firstDisplaySectionParagraphs[0]);
+  const leadingSectionDate = skyArticleDateLine(firstDisplaySectionParagraphs[0], skyPlacementDateLinePattern);
   const displaySections = leadingSectionDate
     ? rawDisplaySections.map((section, index) => (
         index === 0
@@ -516,7 +512,7 @@ export function SkyDetailArticle({
   const rawFallbackParagraphs = paragraphs.filter((paragraph) => (
     typeof paragraph !== "string" || comparableText(stripTldrPrefix(paragraph)) !== articleSubComparable
   ));
-  const leadingPlacementDate = skyPlacementDateLine(rawFallbackParagraphs[0]);
+  const leadingPlacementDate = skyArticleDateLine(rawFallbackParagraphs[0], skyPlacementDateLinePattern);
   const fallbackParagraphs = leadingPlacementDate
     ? rawFallbackParagraphs.slice(1)
     : rawFallbackParagraphs;
@@ -786,7 +782,7 @@ export function SkyDetailArticle({
                       const rawBodyParagraphs = typeof section.body === "string"
                         ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                         : [];
-                      const exactDateLine = skyAspectExactDateLine(rawBodyParagraphs[0]);
+                      const exactDateLine = skyArticleDateLine(rawBodyParagraphs[0], skyAspectExactDateLinePattern);
                       const bodyParagraphs = exactDateLine ? rawBodyParagraphs.slice(1) : rawBodyParagraphs;
                       const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                       const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;

@@ -4,12 +4,66 @@ import { readFileSync, readdirSync } from "node:fs";
 import { studioApiStore } from "../helpers/studio-api-store";
 import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { skyPlacementSourceFixture } from "../helpers/sky-placement-source-fixture.mts";
+import { expectStudioReadingType } from "../helpers/studio-readability";
 
 const key = "article/manual/scorpio-season-2026";
 const title = "Synthetic Scorpio Season 2026 article";
 const body = "Synthetic complete season opening.\n\n## Synthetic lunar section\n\nSynthetic complete season ending.";
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`Sky keeps dated season status separate from optional linked articles ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const fixture = await skyPlacementSourceFixture('sun', 'libra');
+    const store = await studioApiStore([fixture.active]);
+    const writes: unknown[] = [], errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await bundledPublications(page);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
+        if (url.pathname !== '/api/admin/content-live-status') return false;
+        const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload }); return true;
+      } });
+      await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
+      await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+      await page.goto('/admin/content#sky-writeups?planet=sun&sign=libra');
+      const visits = page.getByRole('region', { name: 'Saved visits', exact: true });
+      await expect(visits).toContainText(fixture.edition.headline);
+      await expect(visits).toContainText('Published');
+      const linked = page.locator('details[aria-label="Additional linked season article"]');
+      await expect(linked).not.toHaveAttribute('open', '');
+      await expect(page.getByText('No article saved for this season and year.', { exact: true })).not.toBeVisible();
+      await linked.locator(':scope > summary').click();
+      const workspace = linked.getByRole('region', { name: 'Year-specific season article', exact: true });
+      await workspace.getByLabel('Season year', { exact: true }).fill('2026');
+      await expect(workspace.getByRole('status')).toHaveText('No additional linked article saved for this season and year.');
+      await expect(workspace).toContainText('separate from the dated Sky reading');
+      await expect(visits).toContainText('Published');
+      await expectStudioReadingType(workspace.locator(':scope > p').first());
+      const typography = (element: Element) => {
+        const style = getComputedStyle(element);
+        return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];
+      };
+      expect(await linked.locator(':scope > summary').evaluate(typography))
+        .toEqual(await page.getByText('Content library sources', { exact: true }).evaluate(typography));
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sky Write-ups');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await linked.screenshot({ path: `test-results/season-linked-status-${width}-${theme}.png` });
+      await linked.locator(':scope > summary').click();
+      await page.reload();
+      await expect(linked).not.toHaveAttribute('open', '');
+      await expect(visits).toContainText('Published');
+      expect(writes).toEqual([]);
+      expect(errors).toEqual([]);
+    } finally { store.close(); }
+  });
+
   test(`one season article saves and reopens from Calendar and Sky ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(120_000);
     const store = await studioApiStore([], { uuidIds: true });
@@ -57,6 +111,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await page.reload();
       await page.getByLabel("Sky placement planet or point", { exact: true }).selectOption("sun");
       await page.getByLabel("Sky placement zodiac sign", { exact: true }).selectOption("scorpio");
+      await page.getByText('Additional linked season article', { exact: true }).click();
       await workspace.getByLabel("Season year", { exact: true }).fill("2026");
       await workspace.getByRole("button", { name: "Open Scorpio Season 2026 article", exact: true }).click();
       await expect(editor.getByLabel("Article body", { exact: true })).toHaveValue(body);
@@ -73,7 +128,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect.poll(async () => (await store.call({ method: "rows" })).find((row: any) => row.id === saved.id)?.status).toBe("LIVE");
       await editor.getByRole("button", { name: "Close", exact: true }).click();
       await workspace.getByLabel("Season year", { exact: true }).fill("2027");
-      await expect(workspace.getByRole("status")).toHaveText("No article saved for this season and year.");
+      await expect(workspace.getByRole("status")).toHaveText("No additional linked article saved for this season and year.");
       await expect(workspace.getByRole("button", { name: "Write Scorpio Season 2027 article", exact: true })).toBeEnabled();
       failRead = true;
       await workspace.getByLabel("Season year", { exact: true }).fill("2028");
@@ -81,7 +136,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect(workspace.getByRole("button", { name: "Write Scorpio Season 2028 article", exact: true })).toBeDisabled();
       failRead = false;
       await workspace.getByRole("button", { name: "Retry article", exact: true }).click();
-      await expect(workspace.getByRole("status")).toHaveText("No article saved for this season and year.");
+      await expect(workspace.getByRole("status")).toHaveText("No additional linked article saved for this season and year.");
       await workspace.getByLabel("Season year", { exact: true }).fill("2026");
       await expect(workspace.getByRole("status")).toContainText(title);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

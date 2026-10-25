@@ -5,6 +5,8 @@ import { generatedRowPackageRole } from "../content/generatedContentEligibility.
 import { isCanonicalSkyReaderRecord, isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions.js";
 import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3DashboardOverlay.js";
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging.js";
+import {isSkyPlacementFallbackPartitionKey} from './skyPlacementSourceScope.js';
+export {isSkyPlacementFallbackPartitionKey};
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 export function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value && typeof value === "object" && !Array.isArray(value)); }
@@ -66,13 +68,6 @@ export function isApprovedFallbackArchitectureV3Row(
         || (role === "template" && !reviewStatus)
       )
   );
-}
-
-export function isSkyPlacementFallbackPartitionKey(contentKey: string) {
-  return contentKey.startsWith("fallback-hook/sky-sign-copy/")
-    || contentKey.startsWith("fallback-hook/sky-placement-")
-    || contentKey.startsWith("house-horoscope-core/")
-    || contentKey.startsWith("fallback-hook/sky-planet-education/");
 }
 
 export function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
@@ -182,7 +177,7 @@ export function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow
 
 export function packageFallbackArchitectureV3CoreRows(
   rows: GeneratedContentRow[],
-  currentCoreManifest: FallbackArchitectureV3PackageManifest,
+  currentCoreManifest: Pick<FallbackArchitectureV3PackageManifest, "keys">,
   allowsPublication: typeof publicationAllowsContent = publicationAllowsContent,
   options: { includeSkyPlacement?: boolean } = {}
 ): FallbackArchitectureV3Bundle | null {

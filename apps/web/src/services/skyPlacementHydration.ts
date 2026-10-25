@@ -1,7 +1,9 @@
 import { loadInitialSkyListFallbackArchitectureV3Bundle, loadSkyPlacementFallbackArchitectureV3Bundle } from "../content/fallbackArchitectureV3Runtime";
 import { loadContentStudioLastKnownGoodRows, loadFallbackArchitectureV3DashboardBundle, loadFallbackArchitectureV3SkyPlacementDashboardBundle, prefetchColdSkyArticleRows, prefetchColdSkyPlacementRows } from "./generatedContent";
-import { contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications } from "./contentPublications";
+import { contentPublicationsAvailableOnline, contentPublicationsResolved, refreshContentPublications, refreshSkyListPublications, skyListPublicationsAvailableOnline } from "./contentPublications";
 import { missingSkyPlacementPublications, skyPlacementPublicationIdentity } from "./skyPlacementPublicationGuard";
+import { initialSkyReaderAvailable } from "./initialSkyReader";
+import { isFallbackOnlySkyPlacementPreview } from "../features/sky/skyPlacementPreviewMode";
 
 export { missingSkyPlacementPublications, skyPlacementPublicationIdentity };
 
@@ -9,7 +11,7 @@ type SourceResult = {
   coreBundle: Awaited<ReturnType<typeof loadFallbackArchitectureV3DashboardBundle>>;
   placementBundle: Awaited<ReturnType<typeof loadFallbackArchitectureV3SkyPlacementDashboardBundle>>;
   identity: string;
-  scope: "full" | "compiled-guest";
+  scope: "full" | "compiled-guest" | "initial-reader";
 };
 type SourcePreparation = {
   publications: Promise<void>;
@@ -21,6 +23,8 @@ type SourcePreparation = {
   epoch: string | null;
   superseded?: boolean;
   waiters: number;
+  initialList: boolean;
+  initialReaderKey?: string;
 };
 const pending = new Map<string, SourcePreparation>();
 
@@ -29,9 +33,14 @@ async function completeSources(selection: string | undefined, entry: SourcePrepa
   for (let attempt = 0; attempt < 2; attempt++) {
     if (entry.superseded) throw new Error("Sky publications changed during loading.");
     const identity = skyPlacementPublicationIdentity();
+    if (entry.initialList && entry.initialReaderKey && !isFallbackOnlySkyPlacementPreview()
+      && skyListPublicationsAvailableOnline() && initialSkyReaderAvailable(entry.initialReaderKey)) {
+      return { coreBundle: null, placementBundle: null, identity, scope: "initial-reader" };
+    }
+    if (entry.initialList && entry.initialReaderKey) await loadInitialSkyListFallbackArchitectureV3Bundle();
     // The actual loader owners share pending reads by selection/generation.
     const core = loadFallbackArchitectureV3DashboardBundle(selection?.startsWith("article:") ? "sky-article" : selection ? "sky-list" : "sky", attempt === 0 ? entry.early : undefined);
-    const selected = loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection, attempt === 0 ? entry.selected : undefined);
+    const selected = loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection, attempt === 0 ? entry.selected : undefined, entry.initialList);
     void selected.catch(() => { /* A guest may not require it; full callers do. */ });
     // Undefined means the selected plane was deliberately not required; null
     // remains a completed full-plane result with no dashboard overlay.
@@ -75,32 +84,35 @@ function requiredCompletion(key: string, selection: string | undefined, entry: S
 
 /** One readiness owner, distinct required completions. Transport sharing and
  * retry lifetime belong to the existing generation-scoped loader owners. */
-export function prepareSkyPlacementSources(selection?: string, options?: { compiledGuest?: Promise<string | null>; initialList?: boolean }) {
+export function prepareSkyPlacementSources(selection?: string, options?: { compiledGuest?: Promise<string | null>; initialList?: boolean; initialReaderKey?: string }) {
   // The list may use a smaller local source package. A full reader must never
   // inherit that readiness, even when both callers select the same placements.
-  const key = `${options?.initialList ? "initial-list:" : ""}${selection ?? "all"}`, identity = skyPlacementPublicationIdentity();
+  const key = `${options?.initialList ? `initial-list:${options.initialReaderKey ?? "fallback"}:` : ""}${selection ?? "all"}`, identity = skyPlacementPublicationIdentity();
   let entry = pending.get(key);
   if (entry?.epoch && entry.epoch !== identity) {
     entry.superseded = true; entry = undefined;
   }
   if (!entry) {
-    const publications = refreshContentPublications();
+    const initialList = options?.initialList === true;
+    const publications = initialList ? refreshSkyListPublications() : refreshContentPublications();
     const bundled = options?.initialList
-      ? loadInitialSkyListFallbackArchitectureV3Bundle()
+      ? options.initialReaderKey ? publications.then(() => initialSkyReaderAvailable(options.initialReaderKey)
+        && !isFallbackOnlySkyPlacementPreview() ? false : loadInitialSkyListFallbackArchitectureV3Bundle())
+        : loadInitialSkyListFallbackArchitectureV3Bundle()
       : loadSkyPlacementFallbackArchitectureV3Bundle(!selection || selection.startsWith("article:"));
     void bundled.catch(() => { /* Required completions join this rejection. */ });
-    entry = { publications, bundled, epoch: null, waiters: 0, setup: Promise.resolve() };
+    entry = { publications, bundled, initialList, initialReaderKey: options?.initialReaderKey, epoch: null, waiters: 0, setup: Promise.resolve() };
     const current = entry;
     current.early = selection?.startsWith("article:") ? prefetchColdSkyArticleRows(publications) : undefined;
     current.setup = publications.then(async () => {
       if (current.superseded) return;
-      if (!contentPublicationsAvailableOnline()) {
+      if (!(initialList ? skyListPublicationsAvailableOnline() : contentPublicationsAvailableOnline())) {
         current.early?.discard(); current.early = undefined;
         current.selected?.discard(); current.selected = undefined;
         await loadContentStudioLastKnownGoodRows();
         if (current.superseded) return;
       }
-      if (!contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
+      if (!(initialList && skyListPublicationsAvailableOnline()) && !contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
       current.epoch = skyPlacementPublicationIdentity();
     });
     pending.set(key, current);

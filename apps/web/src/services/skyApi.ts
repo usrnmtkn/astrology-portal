@@ -8,8 +8,12 @@ import type { LocationInput, SkySnapshot } from "../types";
 import { ASTROLOGY_CALCULATION_CONTRACT } from "./astrologyFacts";
 import { isVerifiedSkySnapshot } from "./verifiedSkyCache";
 import { withRequestDeadline } from "./requestDeadline";
+import { acceptInitialSkyReader, trackInitialSkyReaderRequest } from "./initialSkyReader";
+import {matchingInitialSkyTransport,takeInitialSkyTransport} from "./initialSkyTransport";
+import {loadFormattedWriting} from '../../../../src/shared/components/formattedWritingLoader.js';
 
 const pending = new Map<string, Promise<SkySnapshot>>();
+let primedInitialSkyLoad: InitialSkyLoad | null = null;
 
 /** Share exact inputs only. Never reuse an earlier live instant or another location. */
 export function getSkyFromApi(location: LocationInput, date: Date, complete: boolean | "placements" = true): Promise<SkySnapshot> {
@@ -20,10 +24,23 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
   const key = params.toString();
   let request = pending.get(key);
   if (!request) {
+    const primedTransport = detail === "placements" ? takeInitialSkyTransport(key) : null;
     request = withRequestDeadline(async signal => {
-      const response = await fetch(`/api/sky?${key}`, { signal });
-      if (!response.ok) throw new Error("Sky API unavailable.");
-      const { sky } = await response.json() as { sky: SkySnapshot };
+      let payload: { sky: SkySnapshot; initialReader?: unknown };
+      try {
+        if (primedTransport) payload = await primedTransport.request as typeof payload;
+        else {
+          const response = await fetch(`/api/${detail === "placements" ? "sky-reader" : "sky"}?${key}`, { signal, priority: detail === "placements" ? "high" : "auto" });
+          if (!response.ok) throw new Error("Sky API unavailable.");
+          payload = await response.json();
+        }
+      } catch (error) {
+        if (detail !== "placements" || signal.aborted) throw error;
+        const response = await fetch(`/api/sky?${key}`, { signal, priority: "high" });
+        if (!response.ok) throw new Error("Sky API unavailable.");
+        payload = await response.json();
+      }
+      const { sky } = payload;
       if (!isVerifiedSkySnapshot(sky) || sky.generatedAt !== date.toISOString()
         || sky.calculationDetail !== undefined && sky.calculationDetail !== detail
         || detail === "placements" && sky.calculationDetail !== detail
@@ -34,9 +51,17 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
         || complete && (!Array.isArray(sky.dailyEvents) || sky.positions.some(p => !p.transitStart || !p.transitEnd))) {
         throw new Error("Sky facts incomplete or mismatched.");
       }
+      if (detail === "placements" && await acceptInitialSkyReader(sky, payload.initialReader)) {
+        const { admitInitialSkyReaderPublications } = await import("./contentPublications");
+        admitInitialSkyReaderPublications();
+        // The complete selected reading is known now. Prepare its existing
+        // renderer while App downloads, keeping Markdown outside static boot.
+        void loadFormattedWriting().catch(() => {});
+      }
       return sky;
-    }, { timeoutMs: 8_000 }).finally(() => pending.delete(key));
+    }, { timeoutMs: primedTransport ? Math.max(1, 8_000 - (performance.now() - primedTransport.startedAt)) : 8_000 }).finally(() => pending.delete(key));
     pending.set(key, request);
+    if (detail === "placements") trackInitialSkyReaderRequest(request);
   }
   return request.then(sky => ({ ...sky, location }));
 }
@@ -63,6 +88,7 @@ export type InitialSkyLoad = {
   live: boolean;
   startedAt: number;
   result: Promise<SkySnapshot | null>;
+  snapshot?: SkySnapshot | null;
   matches: (day: string, location: LocationInput, detail?: "placements" | "full") => InitialSkyLoad | null;
   resolve: () => Promise<SkySnapshot>;
 };
@@ -76,8 +102,11 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const day = getInitialTransitDate();
   const location = withTimeZone(getInitialLocation().location);
   const now = new Date();
-  const date = skyDateTimeFromInput(day, location, true, now);
   const detail = !url.hash || /^#\/?sky\/?$/u.test(url.hash) ? "placements" : "full";
+  const transport = detail === "placements" ? matchingInitialSkyTransport(day, location, Boolean(liveSkyReference(day, location.timeZone, now))) : null;
+  const date = transport ? new Date(transport.at) : skyDateTimeFromInput(day, location, true, now);
+  const primed = matchingInitialSkyLoad(primedInitialSkyLoad, day, location, detail);
+  if (primed) return primed;
   const result = getSkyFromApi(location, date, detail === "placements" ? detail : true).catch(() => null);
   // Direct articles benefit from early sources. On the list, let App mount and
   // start the selected publication reads before large source downloads compete.
@@ -95,6 +124,8 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
       return getSkyLocally(location, date, detail === "placements" ? detail : true);
     })
   };
+  primedInitialSkyLoad = initial;
+  void result.then(snapshot => { initial.snapshot = snapshot; if (!snapshot && primedInitialSkyLoad === initial) primedInitialSkyLoad = null; });
   return initial;
 }
 
