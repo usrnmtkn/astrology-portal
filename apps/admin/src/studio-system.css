@@ -284,6 +284,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-col-edit { width: var(--studio-table-action-width); text-align: end; }
 #root .admin-dashboard .admin-content-table--library .admin-col-edit { width: auto; }
 #root .admin-dashboard .admin-content-table--library .admin-edit-row-button { white-space: normal; text-align: center; }
+#root .admin-dashboard .admin-content-table--library .admin-col-source .admin-disclosure-button { white-space: nowrap; }
 #root .admin-dashboard .admin-season-transition-table th:first-child { width: var(--studio-table-details-width); }
 #root .admin-dashboard .admin-season-transition-table .admin-field-hint { display: block; margin-top: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-content-expanded-row > td { padding: 0; }

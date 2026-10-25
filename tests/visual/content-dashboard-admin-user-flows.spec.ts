@@ -2345,7 +2345,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const contentSystemPanel = editor.locator("section[aria-label='Article content system']");
     await expect(async () => {
       if (!await editor.isVisible()) {
-        await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
+        await savedRow.getByRole("button", { name: "Edit source", exact: true }).click();
       }
       await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
       await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
@@ -2489,7 +2489,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.chiron.taurus");
     const savedRow = page.locator(".admin-content-row", { hasText: "sky.placement.chiron.taurus" });
     await expect(savedRow).toHaveCount(1);
-    await savedRow.getByRole("button", { name: "Edit", exact: true }).click();
+    await savedRow.getByRole("button", { name: "Edit source", exact: true }).click();
 
     const editor = page.locator(".admin-editor-panel");
     await expect(editor).toBeVisible();
@@ -5041,7 +5041,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Search content").fill("sky.placement.base.jupiter.leo");
     const candidate = page.locator(".admin-content-row", { hasText: "sky.placement.base.jupiter.leo" });
     await expect(candidate).toHaveCount(1);
-    await candidate.getByRole("button", { name: "Edit", exact: true }).click();
+    await candidate.getByRole("button", { name: "Continue draft", exact: true }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     const readerStatus = editor.getByRole("region", { name: "Reader source status" });
@@ -6483,7 +6483,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       await route.fulfill({ json: { ok: true, rows: [saved] } });
     });
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: /^(?:Open article|Edit published article)$/u, exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
     await editor.getByLabel("Dated article variable target").selectOption("tldr");
     const summary = editor.getByLabel("Sky article TL;DR", { exact: true });
@@ -6509,7 +6509,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await seedAdminApi(page, { generatedRows: [generatedContentRows[0]], onGeneratedContentWrite: (write) => writes.push(write) });
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: "Edit source", exact: true }).click();
     const editor = page.locator(".admin-editor-panel");
     const summary = editor.getByLabel("TL;DR / summary", { exact: true });
     expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
@@ -6538,7 +6538,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await expect(editor).toHaveCount(0);
     expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
-    await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
+    await page.locator(".admin-content-row").getByRole("button", { name: "Continue draft", exact: true }).click();
     await expect(summary).toHaveValue("QA final copy after restore.");
     expect(discarded).toBe(false);
     expect(writes.map((write) => write.payload.status)).toEqual(["LIVE", "LIVE", "ARCHIVED", "DRAFT", "DRAFT"]);
@@ -7272,7 +7272,7 @@ for (const theme of ["dark", "light"] as const) {
       await page.getByLabel("Search content", { exact: true }).fill("sky.placement.sun.cancer");
       const row = page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" });
       await expect(row).toHaveCount(1);
-      await row.getByRole("button", { name: "Edit", exact: true }).click();
+      await row.getByRole("button", { name: "Edit source", exact: true }).click();
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
       await expect(page.getByRole('button', {name:'Close editor',exact:true})).toHaveCSS('border-radius', '0px');
@@ -7641,7 +7641,7 @@ for (const theme of ['dark', 'light'] as const) {
       }
       await expectAdminRouteLoads(page, '/admin/content#exact-content');
       await page.getByLabel('Search content', { exact: true }).fill('sky.placement.sun.cancer');
-      await page.locator('.admin-content-row', { hasText: 'sky.placement.sun.cancer' }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await page.locator('.admin-content-row', { hasText: 'sky.placement.sun.cancer' }).getByRole('button', { name: 'Edit source', exact: true }).click();
       await expect(page.locator('.admin-editor-panel')).toBeVisible();
       await expectStudioTypography(page, 'content editor');
       await expect(page.locator('.admin-editor-toolbar h2')).toHaveCSS('font-size','22px');
@@ -7816,13 +7816,13 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(page.locator('.admin-editor-panel')).toHaveCount(0);
       if (width === 390) {
         const detailsBox = await row.locator('..').locator('.admin-content-expanded-body').boundingBox();
-        const editBox = await row.getByRole('button', {name:'Edit', exact:true}).boundingBox();
+        const editBox = await row.getByRole('button', {name:'Edit source', exact:true}).boundingBox();
         expect(detailsBox!.y).toBeGreaterThanOrEqual(editBox!.y + editBox!.height);
       }
       await row.locator('..').screenshot({path:`outputs/studio-style/native-row-${theme}-${width}.png`});
       await page.keyboard.press('Space');
       await expect(summary).toHaveAttribute('aria-expanded', 'false');
-      await row.getByRole('button', {name:'Edit', exact:true}).click();
+      await row.getByRole('button', {name:'Edit source', exact:true}).click();
       const editor = page.locator('.admin-editor-panel');
       const related = editor.locator('.admin-sky-related-editor');
       const aspectSummary = related.locator('.admin-sky-related-group > summary').first();
@@ -7904,7 +7904,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 900, 
       expect(brokenCells).toBe(0);
       await expect(toggle).toHaveCSS('font-weight','400');
       await expect(row.locator('.admin-content-row-title')).toHaveCSS('font-weight','400');
-      await expect(row.getByRole('button', {name:'Edit',exact:true})).toHaveCSS('font-weight','400');
+      await expect(row.getByRole('button', {name:route === 'exact-content' ? 'Edit source' : 'Edit',exact:true})).toHaveCSS('font-weight','400');
       await expectStudioTypography(page, `Expanded ${route}`);
       await table.screenshot({path:`outputs/studio-style/row-rhythm-${route}-${theme}-${width}.png`});
       await toggle.click();
@@ -8323,7 +8323,7 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     const noErrors=await expectNoBrowserErrors(page);
     await expectAdminRouteLoads(page,'/admin/content#exact-content');
     await page.getByLabel('Search content',{exact:true}).fill('sky.placement.sun.cancer');
-    await page.locator('.admin-content-row').getByRole('button',{name:'Edit',exact:true}).click();
+    await page.locator('.admin-content-row').getByRole('button',{name:'Edit source',exact:true}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor'});
     await editor.locator('.admin-editor-details > summary').click();
     const diagnostic=editor.locator('.admin-fallback-diagnostic-grid');
@@ -8424,7 +8424,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390])
 
     await expectAdminRouteLoads(page, '/admin/content#exact-content');
     await page.getByLabel('Search content', { exact: true }).fill('sky.placement.sun.cancer');
-    await page.locator('.admin-content-row').getByRole('button', { name: 'Edit', exact: true }).click();
+    await page.locator('.admin-content-row').getByRole('button', { name: 'Edit source', exact: true }).click();
     const editor = page.getByRole('dialog', { name: 'Generated content editor' });
     const related = editor.locator('.admin-sky-related-editor');
     await related.locator('.admin-sky-related-group > summary').nth(1).click();

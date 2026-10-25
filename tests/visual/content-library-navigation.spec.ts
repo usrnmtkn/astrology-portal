@@ -22,7 +22,7 @@ const calendarWriting = (status: 'LIVE' | 'DRAFT') => {
     created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-20T12:00:00Z' };
 };
 
-for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1440, 'dark']] as const) {
+for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1440, 'dark'], [900, 'light'], [900, 'dark']] as const) {
   test(`Content Library finds and opens Sky and Calendar writing ${width} ${theme}`, async ({ page, context }) => {
     test.setTimeout(180_000);
     const fixture = await skyPlacementSourceFixture('sun', 'libra');

@@ -96,7 +96,7 @@ function AdminContentTableRow({ row, showDestination }: { row: AdminBrowseRow; s
       </td>
     </tr>
     <tr className="admin-content-expanded-row" hidden={!expanded}>
-      <td colSpan={showDestination ? 6 : 5}>
+      <td colSpan={showDestination ? 5 : 4}>
         <div id={detailsId} className="admin-content-expanded-body" role="region" aria-label={`Details for ${row.title}`}>
           <code className="admin-content-row-key">{row.contentKey}</code>
           {row.details}

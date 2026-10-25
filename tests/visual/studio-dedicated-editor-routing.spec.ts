@@ -58,7 +58,7 @@ for(const width of [390,1440]){
       await page.goto('/admin/content#exact-content');
       if(width===390)await page.getByRole('button',{name:'Filters',exact:true}).click();
       await page.getByRole('button',{name:'Show reference',exact:true}).click();
-      await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+      await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Continue draft',exact:true}).click();
       await expect(page.getByLabel('Full article',{exact:true})).toHaveValue(row.body);
       await expect(page.getByRole('dialog',{name:'Generated content editor'})).toHaveCount(0);
       await expect(page).toHaveURL(new RegExp(`draft=${row.id}`));
