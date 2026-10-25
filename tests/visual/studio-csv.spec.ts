@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
-import { readStudioCsv, writeStudioCsv } from '../../apps/admin/src/studioCsv';
+import { csvRecordForRow, readStudioCsv, writeStudioCsv } from '../../apps/admin/src/studioCsv';
 import { fixtures as calendarFixtures } from '../helpers/calendar-review-api.mjs';
 import { skyPlacementSourceFixture } from '../helpers/sky-placement-source-fixture.mts';
 
@@ -25,6 +25,61 @@ const fixtures = Array.from({ length: 31 }, (_, index) => ({
   updated_at: '2026-10-01T12:00:00.123456Z', created_at: '2026-10-01T12:00:00Z',
 }));
 test.use({ actionTimeout: 15_000 });
+
+const standaloneCsvCases = [
+  ...[390, 1440].flatMap(width => ['manual', 'guide'].map(kind => ({ width, kind, conflict: false }))),
+  { width: 390, kind: 'manual', conflict: true }
+];
+for (const { width, kind, conflict } of standaloneCsvCases) test(`CSV standalone ${kind} revision preserves its published edition ${width}${conflict ? ' conflict' : ''}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  const source = { ...fixtures[0], content_key: `article/${kind}/csv-standalone-fixture`, mode: 'article',
+    status: 'LIVE', lane: 'serving', review_state: null };
+  const revised = 'Complete offline article opening.\n\nComplete offline article final paragraph — café.';
+  const concurrent = 'Complete newer published opening.\n\nComplete newer published final paragraph.';
+  const store = await studioApiStore([source], { uuidIds: true });
+  let readerDuringPublication: string | undefined;
+  try {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await routeCsvInventoryApi(page, { call: async request => {
+      if (request.method === 'PATCH' && (request.body as any)?.ownerAction?.startsWith('publish-')) {
+        const rows = await store.call({ method: 'rows' });
+        expect(rows.find((row: any) => row.id === source.id)).toEqual(source);
+        const before = await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [source.content_key] } });
+        readerDuringPublication = before.payload.rows[0]?.body;
+        if (conflict) {
+          const newer = await store.call({ method: 'PATCH', body: { id: source.id, expectedUpdatedAt: source.updated_at,
+            ownerAction: 'save-and-publish-owner-content', body: concurrent } });
+          expect(newer.status).toBe(200);
+        }
+      }
+      return store.call(request);
+    }, actualDocumentRoute: true, answer: async (route, url) => {
+      if (url.pathname !== '/api/content-reader') return false;
+      const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+      await route.fulfill({ status: result.status, json: result.payload }); return true;
+    } });
+    await page.goto('/admin/content#articles-guides');
+    await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
+    const panel = page.getByRole('region', { name: 'CSV offline editing' });
+    await page.getByLabel('Import Content Studio CSV', { exact: true }).setInputFiles({ name: 'article-revision.csv',
+      mimeType: 'text/csv', buffer: Buffer.from(writeStudioCsv([{ ...csvRecordForRow(source), body: revised, publish: 'yes' }])) });
+    await expect(panel).toContainText('1 changed');
+    await panel.getByRole('button', { name: 'Save & publish', exact: true }).click();
+    await expect(panel).toContainText(conflict ? '1 edit saved; 0 rows published.' : '1 edit saved; 1 row published.');
+    if (conflict) await expect(panel).toContainText('This edit was saved as a draft; publication was not confirmed.');
+    expect(readerDuringPublication).toBe(source.body);
+    const rows = await store.call({ method: 'rows' });
+    expect(rows.find((row: any) => row.id === source.id)?.body).toBe(conflict ? concurrent : revised);
+    const privateRevision = rows.find((row: any) => row.event_type === 'standalone-article-revision');
+    expect(privateRevision?.status).toBe(conflict ? 'DRAFT' : 'ARCHIVED');
+    expect(privateRevision?.body).toBe(revised);
+    await page.goto(`/#articles/${encodeURIComponent(source.content_key)}`);
+    const reader = page.getByRole('region', { name: 'Articles & Guides', exact: true }).locator('.learn-article-body');
+    await expect.poll(() => reader.innerText()).toBe(conflict ? concurrent : revised);
+    await page.reload(); await expect.poll(() => reader.innerText()).toBe(conflict ? concurrent : revised);
+  } finally { await page.unrouteAll({ behavior: 'ignoreErrors' }); await store.close(); }
+});
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`CSV picker excludes dedicated editions and exports supported sources at ${width} ${theme}`, async ({ page, context }) => {

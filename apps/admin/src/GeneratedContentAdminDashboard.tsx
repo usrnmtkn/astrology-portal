@@ -9964,7 +9964,9 @@ export function GeneratedContentAdminDashboard() {
     if (row.block_type === 'sky_placement') throw new Error('This source requires its dedicated package review and release.');
     try {
       const isPackage = rowIsFallbackArchitectureV3(row);
-      const result = isPackage && objectRecord(objectRecord(row.sections)?.packageDraft)
+      const result = row.event_type === 'standalone-article-revision' && standaloneArticleKind(row.content_key)
+        ? await submitSavedPublication(row, 'publish-standalone-article-revision')
+        : isPackage && objectRecord(objectRecord(row.sections)?.packageDraft)
         ? await submitSavedPublication(row, 'approve-package-revision')
         : await adminJsonRequest<StudioPublicationResult>('/api/admin/generated-content', secret, {
           method: 'PATCH', body: JSON.stringify({ id: row.id, expectedUpdatedAt: row.updated_at,

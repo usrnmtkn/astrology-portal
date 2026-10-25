@@ -19,6 +19,32 @@ const original = {
 };
 const importBody = (record: Record<string, string>) => ({ id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2), ownerAction: 'import-csv-draft', csvRecord: record });
 
+for (const kind of ['manual', 'guide']) test(`CSV ${kind} article import preserves its live edition until explicit revision publication`, async () => {
+  const source = { ...original, content_key: `article/${kind}/csv-revision`, mode: 'article' };
+  const store = await createApiStore([source], { uuidIds: true });
+  try {
+    const imported = { ...csvRecordForRow(source), publish: 'yes', body: 'Complete offline opening.\n\nComplete offline final paragraph.' };
+    const saved = await store.invoke('PATCH', importBody(imported));
+    assert.equal(saved.status, 200, JSON.stringify(saved));
+    const proposal = saved.payload.rows[0];
+    assert.notEqual(proposal.id, source.id);
+    assert.equal(proposal.event_type, 'standalone-article-revision');
+    assert.equal(proposal.body, imported.body);
+    assert.deepEqual(proposal.source_snapshot.editorialImport.csvHistory[0].imported, imported);
+    assert.deepEqual(store.rows.get(source.id), source);
+    const read = () => store.invoke('POST', { keys: [source.content_key] }, '/api/content-reader');
+    assert.equal((await read()).payload.rows[0]?.body, source.body);
+    assert.equal((await store.invoke('PATCH', importBody(imported))).status, 409, 'Reimport cannot overwrite a saved private revision');
+    assert.equal(store.rows.get(proposal.id).body, imported.body);
+    const published = await store.invoke('PATCH', { id: proposal.id, expectedUpdatedAt: proposal.updated_at,
+      ownerAction: 'publish-standalone-article-revision' });
+    assert.equal(published.status, 200, JSON.stringify(published));
+    assert.equal(published.payload.rows[0].id, source.id);
+    assert.equal((await read()).payload.rows[0]?.body, imported.body);
+    assert.equal(store.rows.get(proposal.id).status, 'ARCHIVED');
+  } finally { await store.close(); }
+});
+
 test('CSV eligibility excludes dedicated article editions before their full documents load', () => {
   for (const [content_key, event_type] of [
     ['sky-article/sun/libra/2026/2026-09-22', 'sky-article-edition'],
