@@ -94,7 +94,10 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       const summaryStyles=await assembly.locator(':scope > summary').evaluate(headingStyles);
       expect(summaryStyles).toEqual(await editor.getByText('Article variables',{exact:true}).evaluate(headingStyles));
       const editCopy = 'Synthetic revised opening.\n\nSynthetic revised final sentence.';
-      await page.clock.pauseAt(await page.evaluate(()=>Date.now()+50));
+      // The clock keeps running during the browser/runner round trip. Pause
+      // before editing, with enough virtual time to avoid targeting the past.
+      // This advances simulated time; it adds no real wait or deadline.
+      await page.clock.pauseAt(await page.evaluate(()=>Date.now()+5000));
       await field.fill(editCopy);
       await expect(saveDraft).toBeEnabled();
       await saveDraft.click();

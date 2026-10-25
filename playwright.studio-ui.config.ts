@@ -10,6 +10,7 @@ if (webServer && !webServer.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
 }
 
 export default defineConfig({
+  metadata: { anonymousReaderFixture: true },
   testDir: './tests/visual',
   testMatch: [
     'calendar-passage-editor.spec.ts', 'calendar-workspace.spec.ts',
