@@ -122,6 +122,7 @@ type GeneratedContentWriteBody = {
     | "save-and-publish-owner-content"
     | "import-csv-draft"
     | "approve-package-revision"
+    | "publish-standalone-article-revision"
     | "approve-sky-article-edition"
     | "save-sky-article-edition-revision"
     | "publish-sky-article-edition-revision";
@@ -1321,7 +1322,7 @@ async function readJsonBody(req: IncomingMessage) {
 
 const generatedContentOwnerActions = new Set([
   "import-csv-draft", "publish-owner-content", "save-and-publish-owner-content",
-  "approve-and-schedule", "approve-package-revision", "approve-sky-article-edition",
+  "approve-and-schedule", "approve-package-revision", "publish-standalone-article-revision", "approve-sky-article-edition",
   "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
 ]);
 
@@ -2179,7 +2180,7 @@ type PublicationContext = {
   dependencies: Map<string, PublicationDependency>; targetPublication?: unknown; receipt?: Record<string, unknown>;
 };
 const publicationContext = new AsyncLocalStorage<PublicationContext>();
-const atomicPublicationActions = new Set(["approve-package-revision", "publish-sky-article-edition-revision"]);
+const atomicPublicationActions = new Set(["approve-package-revision", "publish-sky-article-edition-revision", "publish-standalone-article-revision"]);
 
 function recordPublicationDependency(row: { id: string; updated_at: string }, publicationRevision?: string | number) {
   const context = publicationContext.getStore();
@@ -2596,6 +2597,31 @@ async function updateGeneratedContent(req: IncomingMessage) {
   };
 
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
+  if (existing.event_type === "standalone-article-revision" && (ownerPublication || body.status === "LIVE")) {
+    throw new GeneratedContentRequestError("Save this article revision, then publish its saved changes.", 409);
+  }
+  if (body.ownerAction === "publish-standalone-article-revision") {
+    const target = existing.event_type === "standalone-article-revision" && existing.mode === "studio-draft"
+      && existing.status === "DRAFT" && standaloneArticleKind(existing.content_key)
+      ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
+    if (!target || target.content_key !== existing.content_key || !standaloneArticleKind(target.content_key)
+      || target.mode !== "article" || target.status !== "LIVE"
+      || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
+      throw new GeneratedContentRequestError("The published article changed. Reopen its current source before publishing this revision.", 409);
+    }
+    if (!existing.headline?.trim() || !existing.body?.trim()) throw new GeneratedContentRequestError("Complete the article title and body before publishing.");
+    await assertVersionedStudioVariablePublication(v3PackageRecord(existing));
+    const now = nextGeneratedContentVersion(target.updated_at);
+    const approved = { ...target, headline: existing.headline, summary: existing.summary, body: existing.body, sections: existing.sections };
+    publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
+    const articlePatch = {
+      headline: existing.headline, summary: existing.summary, body: existing.body, sections: existing.sections,
+      source_snapshot: { ...target.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, now) },
+      status: "LIVE", lane: "serving", review_state: null, updated_at: now, reviewed_at: now, published_at: now
+    };
+    assertReaderEligiblePublication({ ...target, ...articlePatch });
+    return publishRevisionAtomically(body, existing, target, articlePatch);
+  }
   if (ownerPublication) {
     const fields = body.ownerAction === "save-and-publish-owner-content" ? ["headline", "summary", "body", "sections"] : [];
     if (!body.expectedUpdatedAt || Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction", "horoscopeValidationOverride", ...fields].includes(key))) {
@@ -3309,6 +3335,15 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
+  if (standaloneArticleKind(existing.content_key) && existing.mode === "article" && existing.status === "LIVE"
+    && body.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction) {
+    return upsertGeneratedContentRow({
+      ...existing, ...patch, id: undefined, mode: "studio-draft", event_type: "standalone-article-revision",
+      source_snapshot: { ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : existing.source_snapshot),
+        targetRowId: existing.id, targetRowUpdatedAt: existing.updated_at, targetContentKey: existing.content_key },
+      status: "DRAFT", lane: "reference", review_state: "owner-review-required", published_at: null
+    });
+  }
   const forksGovernedAspectDraft = Boolean(
     isPackageRow
     && existing

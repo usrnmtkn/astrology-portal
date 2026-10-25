@@ -211,6 +211,27 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await headingStyle(library.locator('.learn-article-body h2'));
       await page.reload();
       await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.']);
+      // Saving/reopening an edit must not withdraw the reader's approved edition.
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+      const revisedTemplate = `${guideTemplate}\n\nSynthetic complete revised ending.`;
+      await editor.getByLabel('Article body', { exact: true }).fill(revisedTemplate);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
+      await page.reload();
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(revisedTemplate);
+      await page.goto(directURL);
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.']);
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
+      await page.goto(directURL);
+      await page.reload();
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.', 'Synthetic complete revised ending.']);
       await page.screenshot({ path: `test-results/articles-reading-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       readerFailure = true;

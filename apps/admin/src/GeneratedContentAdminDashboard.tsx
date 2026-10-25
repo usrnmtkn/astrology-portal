@@ -1164,7 +1164,7 @@ function draftIsVocabulary(draft: AdminDraft) {
 }
 
 function draftIsArticle(draft: AdminDraft) {
-  return draft.mode === "article"
+  return Boolean(standaloneArticleKind(draft.contentKey)) || draft.mode === "article"
     || draft.blockType === "sky_article"
     || draft.contentKey.startsWith("sky/article/")
     || draft.contentKey.startsWith("sky-article/");
@@ -2754,13 +2754,13 @@ function isCompositeRelationshipRow(row: AdminGeneratedContentRow | AdminReviewR
 }
 
 
-type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: "approve-package-revision" | "publish-sky-article-edition-revision" };
+type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: "approve-package-revision" | "publish-sky-article-edition-revision" | "publish-standalone-article-revision" };
 const pendingPublicationStorageKey = "tldr-studio-pending-publication-v1";
 function restorePendingPublication(): PendingStudioPublication | null {
   try {
     const value = JSON.parse(sessionStorage.getItem(pendingPublicationStorageKey) ?? "null");
     if (value && typeof value.id === "string" && typeof value.expectedUpdatedAt === "string"
-      && ["approve-package-revision", "publish-sky-article-edition-revision"].includes(value.ownerAction)) return value;
+      && ["approve-package-revision", "publish-sky-article-edition-revision", "publish-standalone-article-revision"].includes(value.ownerAction)) return value;
   } catch { /* Storage may be disabled; the database receipt remains durable. */ }
   return null;
 }
@@ -5414,7 +5414,9 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       const savedDraft = saved ? draftFromRow(saved) : null;
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
-        (draftForSave.id && saved.id !== draftForSave.id)
+        (draftForSave.id && saved.id !== draftForSave.id && !(standaloneArticleKind(draftForSave.contentKey)
+          && status === "DRAFT" && saved.event_type === "standalone-article-revision" && saved.mode === "studio-draft"
+          && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
         || (["LIVE", "REVIEWED"].includes(status) && saved.review_state)
         || (["status", "headline", "summary", "body"] as const).some((field) => saved[field] !== draftForSave[field])
@@ -5633,6 +5635,34 @@ export function GeneratedContentAdminDashboard() {
     const saved = activeDraft.id ? { id: activeDraft.id, content_key: activeDraft.contentKey,
       updated_at: activeDraft.updatedAt, block_type: activeDraft.blockType } as AdminGeneratedContentRow : await saveDraft("DRAFT", activeDraft);
     if (saved) await approveAndScheduleSkyRow(saved, true, activeDraft.id ? activeDraft : undefined);
+  }
+
+  async function publishStandaloneArticle(activeDraft: AdminDraft) {
+    if (pendingPublication) return;
+    const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
+    const saved = activeDraft.id && unchanged
+      ? editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id)
+      : await saveDraft("DRAFT", activeDraft);
+    if (!saved) return;
+    if (saved.event_type !== "standalone-article-revision") {
+      await approveAndScheduleSkyRow(saved, true);
+      return;
+    }
+    setIsLoading(true);
+    setEditorSaveError("");
+    try {
+      const result = await submitSavedPublication(saved, "publish-standalone-article-revision");
+      const published = result.rows[0];
+      if (published.id !== saved.source_snapshot?.targetRowId || published.content_key !== saved.content_key
+        || published.status !== "LIVE" || published.body !== saved.body || published.headline !== saved.headline
+        || published.summary !== saved.summary) throw new Error("Article publication was not confirmed. Check its current status.");
+      setRows(current => [published, ...current.filter(row => row.id !== saved.id && row.id !== published.id)]);
+      setEditorSourceRow(published); setSelectedRowId(published.id); rememberSavedDraft(draftFromRow(published));
+      announceContentUpdate({ contentKey: published.content_key, published: result.publicationReceipt?.currentPublicationState === "live",
+        updatedAt: published.updated_at ?? new Date().toISOString() });
+      setMessage(publicationStateMessage(result));
+    } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); }
+    finally { setIsLoading(false); }
   }
 
   async function publishPackageDraft(activeDraft: AdminDraft) {
@@ -12780,7 +12810,9 @@ export function GeneratedContentAdminDashboard() {
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             type="button"
             onClick={() => void (async () => {
-              if (currentDraft.contentKey.startsWith("cms/lunation-article/")) {
+              if (isStandaloneArticleDraft) {
+                await publishStandaloneArticle(currentDraft);
+              } else if (currentDraft.contentKey.startsWith("cms/lunation-article/")) {
                 await publishOwnerDraft(currentDraft);
               } else if (packageOwnerCanPublish) {
                 await publishPackageDraft(currentDraft);
