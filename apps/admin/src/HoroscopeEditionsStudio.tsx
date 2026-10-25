@@ -414,14 +414,15 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       retain(data.rows[0]);setPlanApproved(false);setMessage(action==='pause-batch'?'Batch paused. A request already sent can still finish.':'The saved batch will continue through the remaining signs. You can leave this page.');
     }catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
-  async function generate(){
-    if(saved?.sections.horoscopeEdition.window.period==='weekly'&&(planApproved||!saved.source_snapshot?.horoscopeGeneration?.active)){
+  async function generate(singleSign?:string){
+    if(singleSign&&(!saved||saved.status!=='DRAFT'||saved.sections.horoscopeEdition.window.period!=='weekly'||saved.source_snapshot?.horoscopeGeneration?.active||['running','paused'].includes(saved.source_snapshot?.horoscopeGeneration?.batch?.status)||!pendingReadings(saved.sections.horoscopeEdition,saved.source_snapshot?.horoscopeGeneration).some((p:any)=>p.sign===singleSign)))return;
+    if(!singleSign&&saved?.sections.horoscopeEdition.window.period==='weekly'&&(planApproved||!saved.source_snapshot?.horoscopeGeneration?.active)){
       if(saved.source_snapshot?.horoscopeGeneration?.batch?.status==='paused')return batchAction('resume-batch');
       if(plan&&planApproved&&!dirty)return batchAction('start-batch');
       return;
     }
     if(!saved||needsSync||running.current||(!saved.source_snapshot?.horoscopeGeneration?.active&&(!plan||!planApproved)))return;
-    let retrying=retrySign;
+    let retrying=singleSign??retrySign;
     const controller=beginOperation();running.current=true;stop.current=false;setBusy(true);setError('');setMessage('');let row=saved;
     try {
       let calls=0;
@@ -458,7 +459,10 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
         }
         else{calls=0;setSign(next);if(retrying)break;retrying=null;}
       }
-      if(isCurrent(controller)&&!row.source_snapshot?.horoscopeGeneration?.active)await showRecovered(row,controller);
+      if(isCurrent(controller)&&!row.source_snapshot?.horoscopeGeneration?.active){
+        await showRecovered(row,controller);
+        if(singleSign&&row.sections.horoscopeEdition.passages.some((p:any)=>p.sign===singleSign&&p.body.trim()&&p.headline.trim())){setStep('edit');setSign(singleSign);setMessage(`Saved ${horoscopeSignLabel(singleSign)} draft. The other readings are unchanged.`);}
+      }
     }catch(reason){
       if(!isCurrent(controller))return;
       if((reason as any).batchStopped){setMessage('');setProgress('');setError((reason as Error).message);setNeedsSync(true);return;}
@@ -653,11 +657,13 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
         <progress aria-label="Drafts saved" value={complete} max={total}/>
         <footer className={`admin-writing-savebar admin-horoscope-actions${candidateHolds.length?' admin-horoscope-held-actions':''}`}>
           {!serverRunning&&serverBatch?.status!=='paused'&&plan&&(!active||weeklyResume)&&available>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={busy||needsSync} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
+          {draft.window.period==='weekly'&&plan&&!active&&!serverRunning&&serverBatch?.status!=='paused'&&<p>Generate only the selected sign with one draft and one prose check. The other readings are kept, and nothing is published.</p>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
           <p>{serverRunning?'Generating the approved batch. You can leave this page.':serverBatch?.status==='paused'?'The batch is paused. Resume to continue its saved approval.':checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':available===0?'The remaining readings need attention above. Edit or reject a saved draft, or resolve an interrupted request.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:'Ready to generate the missing readings.'}</p>
           {!serverRunning&&serverBatch?.status!=='paused'&&plan&&!active&&available>0&&<p>{draft.window.period==='weekly'&&`This batch covers all ${available} remaining ${available===1?'reading':'readings'}. `}{draft.window.period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.`:draft.window.period==='monthly'?'Up to 3 paid AI requests: one plan, one draft, and one prose check. Matching saved plans are reused.':`Up to ${2*(retrySign&&draft.window.period!=='weekly'?1:available)} paid AI requests: one draft and one prose check per reading.`}{draft.window.period!=='seasonal'&&' No automatic rewrites or paid retries. You approve the final wording.'}</p>}
           <div className="admin-toolbar-actions"><StudioButton disabled={busy&&!running.current&&!checking} onClick={()=>void moveTo('setup')}>Back to editions</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
             <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
+            {draft.window.period==='weekly'&&!active&&!serverRunning&&serverBatch?.status!=='paused'&&plan&&<StudioButton disabled={busy||needsSync||dirty||saved?.status!=='DRAFT'||!planApproved||!configured||!pendingReadings(draft,generation).some(p=>p.sign===sign)} onClick={()=>void generate(sign)}>Generate {horoscopeSignLabel(sign)} draft</StudioButton>}
             {serverRunning?<StudioButton className="admin-primary-button" disabled={busy} onClick={()=>void batchAction('pause-batch')}>Pause generation</StudioButton>:serverBatch?.status==='paused'?<StudioButton className="admin-primary-button" disabled={busy} onClick={()=>void batchAction('resume-batch')}>Resume generation</StudioButton>:busy&&running.current?<StudioButton className="admin-primary-button" onClick={pauseGeneration}>Pause generation</StudioButton>:empty===0&&!active?<StudioButton className="admin-primary-button" disabled={busy||needsSync} onClick={()=>void moveTo('edit')}>Continue to review</StudioButton>:!active&&(dirty||!plan)?<StudioButton className="admin-primary-button" disabled={busy||needsSync||saved?.status==='LIVE'} onClick={()=>void reviewPlan()}>Review writing plan</StudioButton>:<StudioButton className="admin-primary-button" disabled={busy||needsSync||dirty||!saved||saved.status==='LIVE'||(!active&&(!available||!planApproved||!configured))} onClick={()=>void generate()}>{active?weeklyResume&&planApproved?'Resume remaining readings':'Resume generation':retrySign?`Retry ${horoscopeSignLabel(retrySign)}${draft.window.period==='weekly'&&available>1?' and continue':''}`:empty===total?`Generate ${total===1?'overview':`${total} drafts`}`:'Generate missing readings'}</StudioButton>}
           </div></div>
           {active&&active.workflow!=='seasonal-editorial/v2'&&Date.now()-Date.parse(active.startedAt)>=310000&&<StudioButton disabled={busy||needsSync} onClick={()=>void release()}>Release interrupted request</StudioButton>}

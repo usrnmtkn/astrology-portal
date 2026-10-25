@@ -180,3 +180,33 @@ test('A stale model choice reloads the current Weekly plan without overwriting a
   expect((await f.call({method:'provider-state'})).requests).toEqual([]);
  }finally{f.child.kill();}
 });
+
+for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
+ test(`Generate only selected Weekly sign ${width} ${theme}`,async({page})=>{
+  test.setTimeout(180000);await page.setViewportSize({width,height:1000});
+  await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,12);try{
+   const requests:any[]=[];page.on('request',request=>{if(request.url().includes('/api/admin/horoscope-writing'))requests.push(request.postDataJSON());});
+   const studio=await f.open();
+   await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aquarius',exact:true}).click();
+   const generate=studio.getByRole('button',{name:'Generate Aquarius draft',exact:true});
+   await expect(generate).toBeDisabled();
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await generate.click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(/Your saved fixture ends here/,{timeout:120000});
+   const saved=await f.latest();expect(saved.status).toBe('DRAFT');
+   expect(saved.sections.horoscopeEdition.passages.filter((p:any)=>p.body.trim())).toHaveLength(1);
+   for(const p of saved.sections.horoscopeEdition.passages.filter((p:any)=>p.sign!=='aquarius'))expect(p).toEqual(f.original.passages.find((original:any)=>original.sign===p.sign));
+   expect(requests.filter(r=>r.action==='generate').map(r=>r.sign)).toEqual(['aquarius']);
+   expect(requests.some(r=>['start-batch','resume-batch'].includes(r.action))).toBe(false);
+   expect(await f.call({method:'writer-state'})).toMatchObject({calls:1,reviewCalls:1});
+   await f.open();await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Aquarius/}).click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(saved.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='aquarius').body);
+   await studio.getByRole('button',{name:'2 · Generate',exact:true}).click();
+   await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aquarius',exact:true}).click();
+   await expect(studio.getByRole('button',{name:'Generate Aquarius draft',exact:true})).toBeDisabled();
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  }finally{f.child.kill();}
+ });
+}
