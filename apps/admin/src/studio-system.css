@@ -282,6 +282,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-col-visibility { width: var(--studio-table-status-width); }
 #root .admin-dashboard .admin-col-source { width: var(--studio-table-details-width); }
 #root .admin-dashboard .admin-col-edit { width: var(--studio-table-action-width); text-align: end; }
+#root .admin-dashboard .admin-content-table--library .admin-col-edit { width: auto; }
+#root .admin-dashboard .admin-content-table--library .admin-edit-row-button { white-space: normal; text-align: center; }
 #root .admin-dashboard .admin-season-transition-table th:first-child { width: var(--studio-table-details-width); }
 #root .admin-dashboard .admin-season-transition-table .admin-field-hint { display: block; margin-top: var(--workspace-field-gap); }
 #root .admin-dashboard .admin-content-expanded-row > td { padding: 0; }
@@ -797,6 +799,9 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard .admin-content-table--browse .admin-content-row { display: grid; grid-template-columns: minmax(0,1fr) auto; padding: var(--workspace-panel-inset); gap: var(--workspace-control-inset); }
   #root .admin-dashboard .admin-content-table--browse .admin-content-row > td { padding: 0; border: 0; width: auto; }
   #root .admin-dashboard .admin-content-table--browse .admin-col-content { grid-column: 1 / -1; }
+  #root .admin-dashboard .admin-content-table--library .admin-content-row { grid-template-columns: max-content minmax(0,1fr); }
+  #root .admin-dashboard .admin-content-table--library .admin-col-destination { grid-column: 1 / -1; }
+  #root .admin-dashboard .admin-content-table--library .admin-col-edit { grid-column: 2; }
   #root .admin-dashboard .admin-content-table--browse .admin-col-visibility { display: none; }
   #root .admin-dashboard .admin-content-mobile-status { display: inline-flex; margin-top: var(--workspace-field-gap); }
   #root .admin-dashboard .admin-content-expanded-row:not([hidden]) { display: block; }

@@ -1,4 +1,4 @@
-import { studioLazy as lazy } from "./studioLazy";
+import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
 import { parseStudioPassageEdit, skyPassageEditPlacement } from '../../../src/shared/studioPassageEdit';
 import { calendarPassageReviewParams } from './calendarPassageReviewRoute';
 import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
@@ -443,7 +443,7 @@ function reviewQueueViewFromParam(view: string | null): SkyVoiceQueueView {
   if (view === "sky-writeups") return "sky-write";
   return view && reviewQueueViews.includes(view as SkyVoiceQueueView) ? view as SkyVoiceQueueView : "ready";
 }
-type ContentLibraryView = "all" | "compatibility";
+type ContentLibraryView = "all" | "sky" | "calendar" | "compatibility";
 type SkyReviewHorizonOccurrence = {
   kind: "aspect" | "placement";
   contentKey: string;
@@ -3605,16 +3605,30 @@ export function GeneratedContentAdminDashboard() {
     if (!Array.isArray(result.statuses)) throw new Error("Could not verify content status.");
     return result.statuses;
   }, secret);
+  const contentLibraryBrowseActive = activePage === 'content' && !['Natal Chart', 'Natal Aspects', 'Calendar Aspects'].includes(categoryFilter);
+  const [libraryTools, setLibraryTools] = useState<typeof import('./contentLibraryNavigation') | null>();
+  useEffect(() => {
+    if (!contentLibraryBrowseActive || libraryTools !== undefined) return;
+    let active = true;
+    void import('./contentLibraryNavigation').then(tools => { if (active) setLibraryTools(tools); })
+      .catch(() => { if (active) setLibraryTools(null); });
+    return () => { active = false; };
+  }, [contentLibraryBrowseActive, libraryTools]);
   const statusCountRows = useMemo(() => visibleRows.filter((row) =>
-    (contentLibraryView === "all" || isCompatibilityRow(row))
+    (contentLibraryView === "all" || (contentLibraryView === 'compatibility' ? isCompatibilityRow(row)
+      : libraryTools?.contentLibraryDestination(row)?.areas.includes(contentLibraryView)))
     && (calendarAspectFilterScopeActive || contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
     && (calendarAspectFilterScopeActive || tierFilter === "all" || tierForRow(row) === tierFilter)
     && (categoryFilter === "all" || contentCategoryForRow(row) === categoryFilter)
     && (calendarAspectFilterScopeActive
       ? calendarAspectSearchMatches(`${row.content_key} ${visibleRowSearchText(row)}`, query)
         && calendarAspectMatchesSelection(row, calendarAspectSelection)
-      : matchesFallbackLibrarySearch(row.content_key, visibleRowSearchText(row), query.trim().toLowerCase()))
-  ), [visibleRows, contentLibraryView, calendarAspectFilterScopeActive, calendarAspectSelection, contentClassFilter, tierFilter, categoryFilter, query]);
+      : contentLibraryBrowseActive && libraryTools?.contentLibraryDestination(row)
+        ? libraryTools.contentLibrarySearchRank(row, rowTitle(row), query) !== null
+        : matchesFallbackLibrarySearch(row.content_key, visibleRowSearchText(row), query.trim().toLowerCase()))
+  ).sort((a, b) => contentLibraryBrowseActive && query.trim()
+    ? (libraryTools?.contentLibrarySearchRank(a, rowTitle(a), query) ?? 5) - (libraryTools?.contentLibrarySearchRank(b, rowTitle(b), query) ?? 5) : 0),
+  [visibleRows, contentLibraryView, contentLibraryBrowseActive, libraryTools, calendarAspectFilterScopeActive, calendarAspectSelection, contentClassFilter, tierFilter, categoryFilter, query]);
   const liveStatusResults = useContentLiveStatusResults(loadLiveStatus, statusCountRows,
     activePage === "content" && (statusFiltersOpen || contentStatusFilter !== "all"));
   const statusChecking = !liveStatusResults || liveStatusResults.pending > 0;
@@ -4358,7 +4372,7 @@ export function GeneratedContentAdminDashboard() {
     setRequestedLunationId(page === "calendarWriteups" ? params.get("draft") : null);
     setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
     setShowReferenceRows(page === "content" && category === "Calendar Aspects");
-    setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
+    setContentLibraryView(page === "content" && ['sky', 'calendar', 'compatibility'].includes(view ?? '') ? view as ContentLibraryView : "all");
     setSkyVoiceQueueView(page === "reviewQueue" ? reviewQueueViewFromParam(view) : "ready");
     setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
     if (openedFromUnresolved) revealUnresolvedContentRow();
@@ -5928,6 +5942,21 @@ export function GeneratedContentAdminDashboard() {
       return false;
     }
     return navigateAdminPage('calendarWriteups', params);
+  }
+
+  async function openContentLibraryRow(row: AdminGeneratedContentRow) {
+    if (row.content_key.startsWith('calendar-passage/daily/')) return openReviewRow(row);
+    if (libraryTools?.contentLibraryDestination(row)?.sourceKey) {
+      if (csvBusy) { setMessage('Finish the CSV operation before opening an editor.'); return false; }
+      try {
+        const params = await libraryTools.contentLibrarySkyEditParams(row, skyReaderDate, skyReaderTimeZone);
+        if (params) return navigateAdminPage('skyWriteups', params);
+      } catch {
+        setMessage('Could not open the Sky editor. Please try again.');
+        return false;
+      }
+    }
+    return openRow(row);
   }
 
   async function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null, fieldPath?: string, placementSelection?: SkyPlacementSelection, preservingParentDraft = false): Promise<boolean> {
@@ -7682,7 +7711,7 @@ export function GeneratedContentAdminDashboard() {
                 }
                 navigateAdminPage("skyWriteups", params);
               }}>
-            {readerEntry?.surface === 'sky' && <Suspense fallback={<PageLoading message="Opening the reader passage…" />}><ReaderPassageEntry context={readerEntry} secret={loadState === 'loaded' ? secret : ''} onOpen={row => openRow(row as AdminGeneratedContentRow)} /></Suspense>}
+            {readerEntry?.surface === 'sky' && <Suspense fallback={<PageLoading message="Opening the reader passage…" />}><ReaderPassageEntry context={readerEntry} fromLibrary={parseAdminHash().params.get('from') === 'library'} secret={loadState === 'loaded' ? secret : ''} onOpen={row => openRow(row as AdminGeneratedContentRow)} /></Suspense>}
             {skyWriteupWorkspaceView === "ingress-preview" ? (
               <Suspense fallback={<PageLoading message="Loading unsaved preview…" />}><UnsavedIngressPreview /></Suspense>
             ) : skyWriteupWorkspaceView === "daily-summary" ? (
@@ -8565,6 +8594,11 @@ export function GeneratedContentAdminDashboard() {
 
   function handleContentSearchChange(value: string) {
     setQuery(value);
+    if (contentLibraryBrowseActive) {
+      const params = parseAdminHash().params;
+      if (value.trim()) params.set('q', value); else params.delete('q');
+      setAdminHash(adminHashForPage('content', params), 'replace');
+    }
     if (categoryFilter !== "Natal Chart") return;
     const selection = natalPlacementSelectionFromText(value);
     if (selection.planet || selection.sign || selection.house || selection.motion) {
@@ -9481,7 +9515,7 @@ export function GeneratedContentAdminDashboard() {
         searchLabel={calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}
         query={query}
         onQueryChange={handleContentSearchChange}
-        placeholder={calendarAspectWorkspaceActive ? "Search by planet, aspect, or content key" : "Search by title, surface, kind, or content key"}
+        placeholder={calendarAspectWorkspaceActive ? "Search by planet, aspect, or content key" : contentLibraryBrowseActive ? "Search titles, dates, destinations, or source keys" : "Search by title, surface, kind, or content key"}
         tabs={<>
         {calendarAspectWorkspaceActive && (
         <>
@@ -9525,12 +9559,13 @@ export function GeneratedContentAdminDashboard() {
         )}
         {!calendarAspectWorkspaceActive && (
         <div className="admin-filter-choices" role="group" aria-label="Content Library saved views">
-          <StudioButton type="button" aria-pressed={contentLibraryView === "all"} className={contentLibraryView === "all" ? "active" : ""} onClick={() => setContentLibraryView("all")}>
-            Editorial content
-          </StudioButton>
-          <StudioButton type="button" aria-pressed={contentLibraryView === "compatibility"} className={contentLibraryView === "compatibility" ? "active" : ""} onClick={() => setContentLibraryView("compatibility")}>
-            Compatibility
-          </StudioButton>
+          {(['all', 'sky', 'calendar', 'compatibility'] as const).map(view => <StudioButton key={view} type="button" aria-pressed={contentLibraryView === view} className={contentLibraryView === view ? 'active' : ''} onClick={() => {
+            setContentLibraryView(view); setCategoryFilter('all');
+            const params = parseAdminHash().params;
+            params.delete('category');
+            if (view === 'all') params.delete('view'); else params.set('view', view);
+            setAdminHash(adminHashForPage('content', params), 'replace');
+          }}>{view === 'all' ? 'Editorial content' : view === 'sky' ? 'Sky' : view === 'calendar' ? 'Calendar' : 'Compatibility'}</StudioButton>)}
         </div>
         )}
         </>}
@@ -9538,7 +9573,14 @@ export function GeneratedContentAdminDashboard() {
           {!calendarAspectWorkspaceActive && (
           <label>
             <span>Category</span>
-            <AdminSelect aria-label="Category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
+            <AdminSelect aria-label="Category" value={categoryFilter} onChange={(event) => {
+              setCategoryFilter(event.target.value as AdminContentCategoryFilter);
+              setContentLibraryView('all');
+              const params = parseAdminHash().params;
+              params.delete('view');
+              if (event.target.value === 'all') params.delete('category'); else params.set('category', event.target.value);
+              setAdminHash(adminHashForPage('content', params), 'replace');
+            }}>
               {categoryFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
             </AdminSelect>
           </label>
@@ -9582,7 +9624,7 @@ export function GeneratedContentAdminDashboard() {
               setCalendarAspectSelection({ first: "", aspect: "", second: "" });
               if (calendarAspectWorkspaceActive) {
                 setAdminHash(adminHashForPage("content", new URLSearchParams({ category: "Calendar Aspects" })), "replace");
-              }
+              } else setAdminHash(adminHashForPage('content'), 'replace');
             }}
           >
             Clear filters
@@ -9916,6 +9958,8 @@ export function GeneratedContentAdminDashboard() {
     showWiringReason = false,
     showCompatibilityIdentity = false
   ) {
+    if (contentLibraryBrowseActive && !libraryTools) return libraryTools === null
+      ? <StudioPanelLoadError /> : <PageLoading message="Loading Content Library…" />;
     const resetKey = [
       activePage,
       tableRows.length,
@@ -9950,12 +9994,15 @@ export function GeneratedContentAdminDashboard() {
       </div>
       <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey} onVisibleItems={loadVisibleRowDocuments}>
         {(visibleTableRows) => <AdminContentTable
-          showDestination={showArticleDestination}
+          showDestination={showArticleDestination || contentLibraryBrowseActive}
+          className={contentLibraryBrowseActive ? 'admin-content-table--library' : undefined}
+          destinationLabel={contentLibraryBrowseActive ? 'Where it appears' : undefined}
           emptyMessage={activePage === "content" && contentStatusFilter !== "all" && statusChecking ? "Checking reader status…" : "No rows match these filters."}
           rows={visibleTableRows.map((row) => {
               const rowClass = contentClassForRow(row);
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
-              const destination = showArticleDestination ? articleAppDestination(row) : null;
+              const libraryDestination = contentLibraryBrowseActive ? libraryTools?.contentLibraryDestination(row) : null;
+              const destination = libraryDestination ?? (showArticleDestination ? articleAppDestination(row) : null);
               const wiring = showWiringReason ? contentWiringStatus(row) : null;
               const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;
               const placement = activePage === "skyWriteups" ? skyWriteupContextForRow(row) : null;
@@ -9980,7 +10027,8 @@ export function GeneratedContentAdminDashboard() {
                 selected: selectedRowId === row.id,
                 checked: selectedIds.has(row.id),
                 onSelect: () => toggleRowSelection(row.id),
-                onOpen: () => openRow(row),
+                onOpen: () => contentLibraryBrowseActive ? openContentLibraryRow(row) : openRow(row),
+                openLabel: libraryDestination && libraryTools ? <libraryTools.ContentLibraryActionLabel row={row} destination={libraryDestination} loadStatus={loadLiveStatus} /> : undefined,
                 details: <>
                   <p className="admin-field-hint">Editorial stage: {contentStatusLabel(row.status)}</p>
                   <p className="admin-field-hint">{rowRole.label} · {contentClassLabel(rowClass)} · {tierForRow(row)}</p>

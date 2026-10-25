@@ -83,11 +83,18 @@ try {
   result = await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'approve-package-revision'});
   assert.equal(result.status,200,JSON.stringify(result));
   row=result.payload.rows[0]; assert.equal(row.status,'LIVE'); assert.equal(row.body,body); assert.ok(isReaderServableGeneratedContentRow(row));
+  const liveStatus = await store.invoke('POST', {ids:[row.id]}, '/api/admin/content-live-status');
+  assert.equal(liveStatus.status,200);
+  assert.equal(liveStatus.payload.statuses[0].live,true,'The status lookup must recognize the published dated Calendar overview.');
   const original=structuredClone(row);
   const edited='Synthetic revised opening.\n\nComplete revised ending. {{moonSign}}.';
   result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sections:{...row.sections,packageDraft:{...row.sections.packageRecord,body:edited,body_you:edited}}});
   assert.equal(result.status,200,JSON.stringify(result));
   let revision=result.payload.rows[0]; assert.notEqual(revision.id,row.id); assert.equal(revision.mode,'studio-draft'); assert.equal(store.rows.get(row.id).body,original.body); assert.equal(store.rows.get(row.id).status,'LIVE');
+  const revisionStatus = await store.invoke('POST', {ids:[row.id,revision.id]}, '/api/admin/content-live-status');
+  assert.equal(revisionStatus.status,200);
+  assert.equal(revisionStatus.payload.statuses.find(item=>item.id===row.id).live,true);
+  assert.equal(revisionStatus.payload.statuses.find(item=>item.id===revision.id).live,false,'The unpublished proposal must stay separate from the published wording.');
   const stale=await store.invoke('PATCH',{id:revision.id,expectedUpdatedAt:'2020-01-01T00:00:00Z',sections:{}}); assert.equal(stale.status,409);
   // Unknown slots must fail at the publication boundary, while the draft stays recoverable.
   result=await store.invoke('PATCH',{id:revision.id,expectedUpdatedAt:revision.updated_at,sections:{...revision.sections,packageDraft:{...revision.sections.packageDraft,body:'{{unknown}}',body_you:'{{unknown}}'}}});
@@ -106,6 +113,8 @@ try {
   const retired=await store.invoke('POST',{action:'retire',contentKey:key,id:row.id,expectedUpdatedAt:row.updated_at},'/api/admin/content-publication');
   assert.equal(retired.status,200,JSON.stringify(retired)); assert.equal(retired.payload.publication.state,'retired');
   const retiredReader=await store.invoke('POST',{keys:[key]},'/api/content-reader'); assert.equal(retiredReader.status,200); assert.equal(retiredReader.payload.rows.length,0);
+  const retiredStatus=await store.invoke('POST',{ids:[row.id]},'/api/admin/content-live-status');
+  assert.equal(retiredStatus.status,200); assert.equal(retiredStatus.payload.statuses[0].live,false,'Retirement must also remove the published Calendar edit action.');
   assert.equal((await store.invoke('POST',{action:'retire',contentKey:key,id:row.id,expectedUpdatedAt:original.updated_at},'/api/admin/content-publication')).status,409);
   const liveMap=new Map([[key,{contentKey:key,status:'LIVE',body:row.body}]]) as any;
   assert.equal(resolveCalendarPassage('daily','2026-09-28','America/New_York',liveMap,{moonSign:{text:'Test sign',kind:'fact'}})?.body, edited.replace('{{moonSign}}','Test sign'));
