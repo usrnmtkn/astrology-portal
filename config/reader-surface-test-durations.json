@@ -2,6 +2,17 @@
   "source": "https://github.com/usrnmtkn/astrology-portal/actions/runs/38953739759",
   "revision": "e6282c2d26dceb97013f8e8fc1f9a10775e4cdbf",
   "recordedAt": "2026-10-16",
+  "adjustments": [
+    {
+      "recordedAt": "2026-10-25",
+      "testFile": "tests/visual/empty-error-viewport.spec.ts",
+      "testTitlePrefix": "Account journal error stays contained",
+      "caseCount": 6,
+      "removedFixedWaitSecondsPerCase": 21,
+      "reason": "Synthetic REST 503 fixtures expose Retry-After: 0. Three request sequences retain all four attempts but each removes the 1+2+4-second SDK backoff. Subtract only those fixed waits from the original CI measurements; other estimates and original provenance remain unchanged.",
+      "validation": "Six fresh-browser cases passed without test retries at 0.783\u20131.2 seconds, versus 22.3\u201322.7 seconds before. Full 156-case viewport matrix passed without retries."
+    }
+  ],
   "fallbackSeconds": 30,
   "durations": {
     "[chromium-desktop] \u203a tests/visual/astro-101-learn.spec.ts \u203a House article keeps the long title and lede": 0.89,
@@ -164,12 +175,12 @@
     "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal empty stays contained at 360 light": 1.9,
     "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal empty stays contained at 768 dark": 2.0,
     "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal empty stays contained at 768 light": 2.0,
-    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 1440 dark": 23.2,
-    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 1440 light": 23.7,
-    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 360 dark": 23.4,
-    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 360 light": 23.1,
-    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 768 dark": 23.5,
-    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 768 light": 23.1,
+    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 1440 dark": 2.2,
+    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 1440 light": 2.7,
+    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 360 dark": 2.4,
+    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 360 light": 2.1,
+    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 768 dark": 2.5,
+    "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Account journal error stays contained at 768 light": 2.1,
     "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Articles empty stays contained at 1440 dark": 1.0,
     "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Articles empty stays contained at 1440 light": 1.1,
     "[chromium-desktop] \u203a tests/visual/empty-error-viewport.spec.ts \u203a Articles empty stays contained at 360 dark": 0.917,
