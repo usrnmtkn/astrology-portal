@@ -21,9 +21,9 @@ async function deliveredValues(name) {
 
 const sources = [
   ["initial-sky-core-transport-v1.json", "fallback-content-sky-core"],
+  ["deferred-base-reader-support-v1.json", "fallback-content-base-support"],
   ["deferred-reader-support-transport-v1.json", "fallback-content-reader-support"],
-  ["bundled-sky-authored-cards-v3.json", "fallback-content-sky-core"],
-  ["bundled-initial-reader-rows-v3.json", "fallback-content-sky-core"],
+  ["bundled-sky-authored-cards-v3.json", "fallback-content-base-support"],
   ["authored-inputs/owner-authored-sky-placement-house-passages-v1.json", "fallback-content-sky-placement"],
   ["bundled-sky-placement-manifest-v3.json", "fallback-content-sky-placement-manifest"]
 ];
@@ -35,10 +35,22 @@ for (const [source, chunk] of sources) {
   // Vite removes the initial transport's unused build-provenance property.
   // The generator gate checks that hash; compare every complete reader row here.
   const select = source.startsWith("authored-inputs/") ? value => value?.rows
-    : source === "initial-sky-core-transport-v1.json" ? value => value && ({ hookRows: value.hookRows, vocabularyRows: value.vocabularyRows })
+    : source === "initial-sky-core-transport-v1.json" ? value => value && Object.fromEntries(["authoredCards", "hookRows", "vocabularyRows", "templates"].map(field => [field, value[field]]))
+    : source === "bundled-sky-authored-cards-v3.json" ? value => value && ({ authoredCards: value.authoredCards })
     : value => value;
   assert.ok(delivered.some(value => isDeepStrictEqual(select(value), select(expected))),
     `The shipped ${source} content must exactly match its complete source values.`);
 }
 
-console.log(`PASS: ${sources.length} initial/deferred content sources match their shipped values, including every protected passage row.`);
+// The original initial-reader source is now partitioned by consumer. Import
+// the actual shipped partitions and compare every complete source row, including
+// the named authored-card export that Vite shares with the initial runtime.
+const reader = JSON.parse(readFileSync(path.join(root, "apps/web/src/content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json"), "utf8"));
+const partitions = (await Promise.all(["fallback-content-sky-core", "fallback-content-base-support", "fallback-content-reader-support"].map(deliveredValues))).flat();
+for (const [field, rows] of Object.entries(reader)) {
+  const delivered = partitions.flatMap(value => Array.isArray(value) && field === "authoredCards" ? value : value?.[field] ?? []);
+  for (const row of rows) assert.ok(delivered.some(value => isDeepStrictEqual(value, row)),
+    `The shipped initial-reader ${field}/${row.contentKey} must preserve its complete source value.`);
+}
+
+console.log(`PASS: ${sources.length + 1} initial/deferred content sources match their shipped values, including every protected passage row.`);

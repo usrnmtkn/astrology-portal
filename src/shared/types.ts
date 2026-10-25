@@ -74,6 +74,8 @@ export type SkySnapshot = {
   sharedNatalSect?: import("./solarHorizon.js").SharedNatalSect;
   /** Placement-list snapshots retain every placement window; full aspect timelines are deferred. */
   calculationDetail?: "core" | "placements" | "full";
+  /** Prior-sign/prior-residency article history must be fetched before full article readiness. */
+  placementHistoryDetail?: "deferred";
   dailyEvents?: import("../../apps/web/src/services/ephemeris").LunarCalendarEvent[];
   placementAspectFacts?: SkyPlacementAspectFacts;
   location: LocationInput;

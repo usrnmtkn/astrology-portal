@@ -83,6 +83,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+      - name: Fetch current main for complete reader comparison
+        run: git fetch --no-tags --depth=1 origin main:refs/remotes/origin/main
       - name: Set up Node
         uses: actions/setup-node@v6
         with:

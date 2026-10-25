@@ -117,6 +117,9 @@ export type SkyCalculationOptions = {
   includeTransitWindows?: boolean;
   /** The collective placement list does not display the expensive aspect timelines. */
   includeAspectTiming?: boolean;
+  /** Opening lists do not use the prior-sign/prior-residency article history.
+   * Keep every current window, residency station and retrograde fact intact. */
+  deferPlacementHistory?: boolean;
   /** Placement articles need expensive windows only for their selected point. */
   transitWindowPlanets?: readonly string[];
 };
@@ -247,6 +250,12 @@ function wholeSignHouseCusps(ascendant: string): NonNullable<SkySnapshot["houseC
 
 function normalizeDegrees(degrees: number) {
   return ((degrees % 360) + 360) % 360;
+}
+
+function signNameForLongitude(longitude: number) {
+  // Astronomical scans need only the sign, not a display degree rounded into
+  // a temporary string/object at each sample. Keep the identical normalization.
+  return signs[Math.floor(normalizeDegrees(longitude) / 30)][0];
 }
 
 function signForLongitude(longitude: number) {
@@ -426,7 +435,7 @@ function exactPlanetSpeed(swe: SwissEphInstance, planetId: number, date: Date) {
 }
 
 function exactPlanetSign(swe: SwissEphInstance, planetId: number, date: Date, longitudeOffset = 0) {
-  return signForLongitude(exactPlanetLongitude(swe, planetId, date) + longitudeOffset).sign;
+  return signNameForLongitude(exactPlanetLongitude(swe, planetId, date) + longitudeOffset);
 }
 
 function planetSunOrb(swe: SwissEphInstance, planetId: number, date: Date) {
@@ -931,7 +940,7 @@ function horizonSignFor(swe: SwissEphInstance, location: LocationInput, date: Da
     ? ascendantLongitude
     : normalizeDegrees(ascendantLongitude + 180);
 
-  return signForLongitude(longitude).sign;
+  return signNameForLongitude(longitude);
 }
 
 function solarDaylightForDay(swe: SwissEphInstance, location: LocationInput, date: Date): SolarDaylight {
@@ -955,7 +964,7 @@ function solarDaylightForDay(swe: SwissEphInstance, location: LocationInput, dat
 }
 
 function moonSignAt(swe: SwissEphInstance, date: Date) {
-  return signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, date)).sign;
+  return signNameForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, date));
 }
 
 function moonIngressAfter(swe: SwissEphInstance, date: Date) {
@@ -1303,7 +1312,7 @@ function nextMoonEvent(swe: SwissEphInstance, date: Date): MoonEvent {
 
   return {
     name,
-    sign: signForLongitude(moonLongitude).sign,
+    sign: signNameForLongitude(moonLongitude),
     occursAt: occursAt.toISOString(),
     days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000),
     eclipseType: eclipseType ?? undefined
@@ -1340,6 +1349,15 @@ function moonEventForLocalDayOrNext(
     days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000),
     eclipseType: localDayEvent.eclipseType
   };
+}
+
+/** Internal prefetch facts only; never substitutes for the complete list.
+ * Include the same calculated lunation identity early so its exact public
+ * source rows can join the selected-row read rather than a later round trip. */
+export async function getInitialSkySourceSelection(location: LocationInput, date: Date) {
+  const sky=await getAstrodienstSky(location,date,{includeTransitWindows:false,includeAspectTiming:false,includeDailyEvents:false});
+  sky.moonEvent=moonEventForLocalDayOrNext(await getSwissEph(),date,location.timeZone||Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC');
+  return sky;
 }
 
 function localDateParts(date: Date, timeZone: string) {
@@ -1456,8 +1474,8 @@ function findLunations(
         }
 
         const occursAt = refinePhaseEvent(swe, phaseTarget.target, previous.date, current.date);
-        const moonSign = signForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt)).sign;
-        const sunSign = signForLongitude(exactPlanetLongitude(swe, swe.SE_SUN, occursAt)).sign;
+        const moonSign = signNameForLongitude(exactPlanetLongitude(swe, swe.SE_MOON, occursAt));
+        const sunSign = signNameForLongitude(exactPlanetLongitude(swe, swe.SE_SUN, occursAt));
         const sign = moonSign;
         const dateKey = localDateKey(occursAt, timeZone);
         const eclipseType = eclipseTypeForLunation(swe, occursAt, phaseTarget.target);
@@ -3843,8 +3861,8 @@ export async function getAstrodienstSky(
   };
   const ascendantLongitude = normalizeDegrees(houses.ascmc[0]);
   const midheavenLongitude = normalizeDegrees(houses.ascmc[1]);
-  const ascendant = signForLongitude(ascendantLongitude).sign;
-  const midheaven = signForLongitude(midheavenLongitude).sign;
+  const ascendant = signNameForLongitude(ascendantLongitude);
+  const midheaven = signNameForLongitude(midheavenLongitude);
   const planetIds = [
     swe.SE_SUN,
     swe.SE_MOON,
@@ -3877,7 +3895,7 @@ export async function getAstrodienstSky(
     const residencyStations = includePositionWindows && transitWindow.residencyPasses
       ? residencyStationsFor(swe, planet, planetIds[index], transitWindow.residencyPasses)
       : undefined;
-    const structuralTransitFacts = includePositionWindows
+    const structuralTransitFacts = includePositionWindows && !(options.deferPlacementHistory && options.includeAspectTiming === false)
       ? skyPlacementStructuralTransitFacts(swe, planet, planetIds[index], sign, transitWindow, date)
       : {};
     const retrogradeWindow = includePositionWindows
@@ -3915,6 +3933,8 @@ export async function getAstrodienstSky(
     : calculatedAspects;
   const snapshot: SkySnapshot = {
     calculationDetail: options.includeTransitWindows ? options.includeAspectTiming === false ? "placements" : "full" : "core",
+    ...(options.includeTransitWindows && options.deferPlacementHistory && options.includeAspectTiming === false
+      ? { placementHistoryDetail: "deferred" as const } : {}),
     location,
     generatedAt: date.toISOString(),
     solarHorizon: {

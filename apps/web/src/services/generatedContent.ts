@@ -5,7 +5,8 @@ import { isRecord, isApprovedFallbackArchitectureV3Row, isSkyPlacementFallbackPa
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import { publicationLedgerKey, publicationLedgerReady, publicationAllowsContent, contentPublication, contentPublicationRecords, contentPublicationGeneration, type ContentPublication } from "../content/contentPublicationState";
-import { contentPublicationsAvailableOnline, refreshContentPublications } from "./contentPublications";
+import { contentPublicationsAvailableOnline, refreshContentPublications, refreshSkyListPublications, skyListPublicationReadStarted } from "./contentPublications";
+import { isSkyListPublicationKey } from "../content/skyListPublicationScope";
 import { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow, isEmergencyFloorContentKey } from "../content/generatedContentEligibility";
 export { isGeneratedContentReaderBoundaryAllowed, isReaderServableGeneratedContentRow } from "../content/generatedContentEligibility";
 import { getSupabaseClient } from "./auth";
@@ -1197,7 +1198,7 @@ export function prefetchColdSkyPlacementRows(selection: string, publications: Pr
 }
 
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all", earlyRead?: ColdSkyArticleRead): Promise<FallbackArchitectureV3Bundle | null> {
-  await refreshContentPublications();
+  await (scope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
   return shareDashboardBundle(scope, canCache => {
     const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
     earlyRead?.discard();
@@ -1221,7 +1222,7 @@ async function readFallbackArchitectureV3DashboardBundle(
   canCache: () => boolean,
   earlyRows?: ReturnType<typeof loadReaderRows>
 ): Promise<FallbackArchitectureV3Bundle | null> {
-  const anonymous = scope === "sky-list" ? await anonymousReader() : null;
+  const anonymous = scope === "sky-list" || scope === "sky-article" ? await anonymousReader() : null;
   const supabase = anonymous ? null : await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
   const recoverUnavailableOverlay = (error: unknown) => {
@@ -1237,7 +1238,9 @@ async function readFallbackArchitectureV3DashboardBundle(
   // the same publication, revision and package admission below.
   const coldArticleRows = !cached && (scope === "sky-article" || scope === "sky-list")
     ? earlyRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, scope }) : undefined;
-  const coldArticleManifest = coldArticleRows ? loadFallbackArchitectureV3BundledCoreManifest() : undefined;
+  const coldArticleManifest = coldArticleRows
+    ? loadFallbackArchitectureV3BundledCoreManifest()
+    : undefined;
   void coldArticleManifest?.catch(() => { /* Joined by the existing recovery below. */ });
 
   const { data: runtimeRevision, error: runtimeRevisionError } = anonymous
@@ -1265,7 +1268,7 @@ async function readFallbackArchitectureV3DashboardBundle(
   if (error) return recoverUnavailableOverlay(error);
   const rows = data ?? [];
 
-  let currentCoreManifest: FallbackArchitectureV3PackageManifest;
+  let currentCoreManifest: Pick<FallbackArchitectureV3PackageManifest, "keys">;
   try {
     currentCoreManifest = await (coldArticleManifest ?? loadFallbackArchitectureV3BundledCoreManifest());
   } catch (error) {
@@ -1372,10 +1375,10 @@ async function loadPublishedSkyBundle(selection?: string, staged?: ReturnType<ty
   return bundle;
 }
 
-export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection?: string, earlyRead?: ReturnType<typeof prefetchColdSkyPlacementRows>): Promise<FallbackArchitectureV3Bundle | null> {
+export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(selection?: string, earlyRead?: ReturnType<typeof prefetchColdSkyPlacementRows>, initialList = false): Promise<FallbackArchitectureV3Bundle | null> {
   // Claim before joining. A later caller cannot cancel the active owner's read.
   const staged = earlyRead?.consume();
-  await refreshContentPublications().catch(error => { staged?.cancel(); throw error; });
+  await (initialList ? refreshSkyListPublications() : refreshContentPublications()).catch(error => { staged?.cancel(); throw error; });
   return shareDashboardBundle(`placement:${selection ?? "all"}`,
     canCache => readSkyPlacementBundle(selection, staged, canCache).finally(() => staged?.cancel()),
     () => staged?.cancel());
@@ -1517,9 +1520,11 @@ export async function loadLiveGeneratedContentForSurfaces(
   requestedSurfaces: string[],
   targetDate?: string,
   previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode(),
-  vocabularyOnly = false
+  vocabularyOnly = false,
+  publicationScope: "all" | "sky-list" = "all"
 ) {
-  await refreshContentPublications();
+  if (publicationScope === "sky-list" && !(vocabularyOnly && requestedSurfaces.every(surface => surface === "modifier"))) throw new Error("Invalid Sky vocabulary scope.");
+  await (publicationScope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
   const surfaces = [...new Set([
     ...requestedSurfaces, "modifier", ...(requestedSurfaces.includes("sky") ? ["you"] : [])
   ])];
@@ -1560,7 +1565,8 @@ async function readLiveGeneratedContentForSurfaces(
 }
 
 export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean } = {}) {
-  await refreshContentPublications();
+  await (skyListPublicationReadStarted() && contentKeys.every(isSkyListPublicationKey)
+    ? refreshSkyListPublications() : refreshContentPublications());
   const keys = [...new Set(contentKeys.map((key) => key.trim()).filter(Boolean))].sort();
 
   if (keys.length === 0) {
@@ -1603,7 +1609,7 @@ async function readLiveGeneratedContentForKeys(keys: string[], options: { requir
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows));
 }
 
-function generatedContentMapFromRows(
+export function generatedContentMapFromRows(
   rows: GeneratedContentRow[],
   previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
 ) {

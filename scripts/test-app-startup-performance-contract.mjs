@@ -12,6 +12,10 @@ import { skyEntryPreloadPlugin } from "./sky-entry-preload-plugin.mjs";
 const preloadPlugin = skyEntryPreloadPlugin();
 const chunk = (fileName, imports, extra = {}) => ({ type: "chunk", fileName, imports, ...extra });
 const bundle = {
+  "assets/styles-test.css": {type:"asset",fileName:"assets/styles-test.css"},
+  "assets/bootstrap.js": chunk("assets/bootstrap.js", ["assets/sky-api.js", "assets/publications.js"], { facadeModuleId: "/repo/apps/web/src/initialSkyBootstrap.ts" }),
+  "assets/sky-api.js": chunk("assets/sky-api.js", [], { modules: { "/repo/apps/web/src/services/skyApi.ts": {} } }),
+  "assets/publications.js": chunk("assets/publications.js", [], { modules: { "/repo/apps/web/src/services/contentPublications.ts": {} } }),
   "assets/app.js": chunk("assets/app.js", ["assets/react.js"], {
     facadeModuleId: "/repo/apps/web/src/App.tsx", dynamicImports: ["assets/article.js"]
   }),
@@ -24,16 +28,26 @@ const bundle = {
 };
 const [hint] = preloadPlugin.transformIndexHtml.handler("", { bundle });
 for (const [pathname, hash, expected] of [
-  ["/", "", 2], ["/", "#sky", 2], ["/", "#/sky/", 2], ["/", "#sky/placement/sun/virgo", 3], ["/", "#sky/placement/north-node", 3], ["/", "#sky/retrograde/venus", 3], ["/", "#sky/archive/sun/virgo/2026", 0], ["/", "#sky/placement/sun/virgo/extra", 0],
+  ["/", "", 5], ["/", "#sky", 5], ["/", "#/sky/", 5], ["/", "#sky/placement/sun/virgo", 6], ["/", "#sky/placement/north-node", 6], ["/", "#sky/retrograde/venus", 6], ["/", "#sky/archive/sun/virgo/2026", 0], ["/", "#sky/placement/sun/virgo/extra", 0],
   ["/admin/content", "#sky", 0], ["/", "#calendar", 0], ["/", "#you", 0]
 ]) {
   const links = [];
-  runInNewContext(hint.children, { location: { pathname, hash }, document: {
+  const listeners = [];
+  runInNewContext(hint.children, { location: { pathname, hash }, window: {
+    localStorage: { getItem: () => null },
+    addEventListener(name, listener, options) { assert.equal(name, "tldr:sky-bootstrap-started"); assert.equal(options.once, true); listeners.push(listener); }
+  }, document: {
     querySelectorAll: () => links, createElement: () => ({ getAttribute(name) { return this[name]; } }),
     head: { appendChild: link => links.push(link) }
   } });
-  assert.equal(links.length, expected, `${pathname}${hash}: preload scope`);
-  assert(links.every(link => link.rel === "modulepreload" && !link.href.includes("article")));
+  assert.equal(links.length, expected ? 3 : 0, `${pathname}${hash}: only the independent request graph starts first`);
+  assert(links.every(link => link.fetchPriority === "high"));
+  for (const listener of listeners) listener();
+  assert.equal(links.filter(link=>link.rel==='modulepreload').length, expected, `${pathname}${hash}: preload scope`);
+  assert(links.filter(link=>link.rel==='modulepreload').every(link => !link.href.includes("article")));
+  const styles=links.filter(link=>link.rel==='preload');
+  assert.equal(styles.length,expected?1:0);
+  if(expected)assert.deepEqual([styles[0].as,styles[0].href,styles[0].fetchPriority],['style','/assets/styles-test.css','high']);
 }
 for (const saved of ['profile', 'friends', 'calendar', 'horoscopes', 'account', 'settings']) {
   const links = [];

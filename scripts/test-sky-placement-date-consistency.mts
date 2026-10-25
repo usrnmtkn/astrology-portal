@@ -7,7 +7,7 @@ import SwissEph from "swisseph-wasm";
 const vite = await createServer({
   root: path.join(process.cwd(), "apps/web"), appType: "custom", logLevel: "silent", server: { middlewareMode: true },
   plugins: [{ name: "placement-date-test-exports", enforce: "pre", transform(code, id) {
-    if (id.endsWith("/src/App.tsx")) return code + "\nexport { placementTransitRangeLabel, formatPlacementTransitEndpoint, formatTransitRange, currentSkyPlacementDetailArticle, retrogradeRangeText, loadContentRegistry };";
+    if (id.endsWith("/src/App.tsx")) return code + "\nexport { placementTransitRangeLabel, formatPlacementTransitEndpoint, formatTransitRange, currentSkyPlacementDetailArticle, retrogradeRangeText };";
     if (id.includes("/fallbackArchitectureV3/authored-inputs/") && id.endsWith(".json?url")) {
       return `export default ${fs.readFileSync(id.slice(0, -4), "utf8")};`;
     }

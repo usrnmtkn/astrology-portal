@@ -1,0 +1,24 @@
+import { parentPort } from 'node:worker_threads';
+import {createSkyHandler,readSkyCalculationInputs} from '../api/sky';
+import {getInitialSkySourceSelection} from '../apps/web/src/services/ephemeris';
+let queue=Promise.resolve();
+// The list retains every displayed fact and complete paragraph. Full articles
+// already upgrade the exact same instant through the original full handler.
+const handler=createSkyHandler({deferPlacementHistory:true});
+parentPort!.on('message',({id,url,prefetch}:{id:number;url:string;prefetch?:boolean})=>{
+  queue=queue.then(async()=>{
+    try{
+      if(prefetch){
+        const {date,location}=readSkyCalculationInputs(url);
+        // Select public source keys while the complete list calculation
+        // continues. This preliminary result is never returned to the browser.
+        const selection=await getInitialSkySourceSelection(location,date);
+        parentPort!.postMessage({id,selection});
+      }
+      let body='';const headers:Record<string,string>={};
+      const response={statusCode:200,setHeader(name:string,value:string){headers[name]=value;},end(value?:string){body=value??'';}};
+      await handler({method:'GET',url,headers:{}} as any,response as any);
+      parentPort!.postMessage({id,result:{status:response.statusCode,headers,value:JSON.parse(body)}});
+    }catch{parentPort!.postMessage({id,error:true});}
+  });
+});

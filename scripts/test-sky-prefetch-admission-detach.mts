@@ -16,7 +16,7 @@ const bundled = await build({ stdin: { resolveDir: process.cwd(), contents: `
   b.onResolve({ filter: /^\.\/contentPublications$/ }, () => ({ path: 'online', namespace: 'fixture' }));
   b.onLoad({ filter: /.*/, namespace: 'fixture' }, args => ({ contents: args.path === 'client'
    ? 'export const getSupabaseClient = () => fixture.client();'
-   : 'export const contentPublicationsAvailableOnline = () => true; export const refreshContentPublications = async () => {};' }));
+   : 'export const contentPublicationsAvailableOnline = () => true; export const refreshContentPublications = async () => {}; export const refreshSkyListPublications = refreshContentPublications; export const skyListPublicationReadStarted = () => false;' }));
  } }] });
 const deferred = <T = void>() => { let resolve!: (v: T) => void; const promise = new Promise<T>(r => { resolve = r; }); return { promise, resolve }; };
 const key = 'cms/reader-surface/approved';

@@ -14,6 +14,10 @@ export function useSkeletonGeometry(key: string, loading: boolean, selector: str
     // different cached height. Use its initial font state for this loading cycle.
     const loadingFontStatus = document.fonts.status;
     const measure = () => {
+      // Resolved geometry is reusable only after final font metrics exist.
+      // The existing loadingdone listener captures it then; avoid forcing a
+      // complete 14-reading layout before the first readable frame.
+      if (!loading && document.fonts.status !== "loaded") return;
       const style = getComputedStyle(container);
       const identity = [key, container.getBoundingClientRect().width, style.fontFamily, style.fontSize, style.lineHeight, style.letterSpacing, loading ? loadingFontStatus : document.fonts.status,
         document.documentElement.dataset.theme, document.documentElement.dataset.dyslexiaFont].join("|");

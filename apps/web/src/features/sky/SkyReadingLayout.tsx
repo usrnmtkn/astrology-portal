@@ -32,11 +32,15 @@ export function SkyReadingLayout({ persistKey, pending, failed, placementCount =
   children: ReactNode;
   placementCount?: number;
 }) {
-  const [summarySettled, setSummarySettled] = useState(false);
-  const [cardsSettled, setCardsSettled] = useState(false);
+  const [summarySettled, setSummarySettled] = useState<boolean | null>(null);
+  const [cardsSettled, setCardsSettled] = useState<boolean | null>(null);
   const [revealed, setRevealed] = useState(false);
-  const ready = failed || !pending && summarySettled && cardsSettled;
-  const holding = useMinimumLoading(!failed && !ready && !revealed);
+  const ready = failed || !pending && summarySettled === true && cardsSettled === true;
+  // Children report their actual state in layout effects. An unknown initial
+  // report is not a loading cycle: fully prepared children can settle before
+  // first paint. Real pending facts/copy still retain the same minimum hold.
+  const unresolved = pending || summarySettled === false || cardsSettled === false;
+  const holding = useMinimumLoading(!failed && unresolved && !revealed);
   useLayoutEffect(() => {
     if (!ready || holding && !failed) return;
     setRevealed(true);

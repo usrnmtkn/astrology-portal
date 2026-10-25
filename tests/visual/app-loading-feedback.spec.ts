@@ -348,7 +348,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
 test("an unavailable entry bundle attempts one guarded recovery before manual reload", async ({ page }) => {
   let navigations = 0;
   page.on("request", request => { if (request.isNavigationRequest() && request.frame() === page.mainFrame()) navigations++; });
-  await page.route(/\/assets\/index-.*\.js$/, route => route.abort("failed"));
+  await page.route(/\/assets\/reader-.*\.js$/, route => route.abort("failed"));
   await page.goto("/#sky", { waitUntil: "domcontentloaded" });
   const error = page.getByRole("alert");
   await expect(error).toContainText("The page could not load");

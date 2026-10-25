@@ -21,6 +21,8 @@ await build({ stdin: { resolveDir: process.cwd(), contents: `
     builder.onLoad({ filter: /.*/, namespace: 'fixture' }, () => ({ contents: `
       export const getSupabaseClient = async () => { await globalThis.fixtureClientWait; return globalThis.fixtureClient; };
       export const refreshContentPublications = () => globalThis.publicationWait ?? Promise.resolve();
+      export const refreshSkyListPublications = refreshContentPublications;
+      export const skyListPublicationReadStarted = () => false;
       export const contentPublicationsAvailableOnline = () => globalThis.fixturePublicationsOnline ?? true;
     ` }));
   } }] });

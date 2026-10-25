@@ -1,13 +1,14 @@
 import { skySummarySourceKeys, missingPublishedSkySummaryKeys } from "./skySummarySources";
 export { skySummarySourceKeys, missingPublishedSkySummaryKeys } from "./skySummarySources";
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { skyDailySummaryParts, type SkyDailySummaryFacts, type SummaryPart } from "../../content/skyDailySummary";
 import { skySummaryEventFacts } from "../../content/skySummaryEvents";
-import { contentPublicationsResolved, refreshContentPublications } from "../../services/contentPublications";
-import { loadLiveGeneratedContentForKeys, type LiveGeneratedContent } from "../../services/generatedContent";
+import { skyListPublicationsResolved, refreshSkyListPublications } from "../../services/contentPublications";
+import { generatedContentMapFromRows, loadLiveGeneratedContentForKeys, type LiveGeneratedContent } from "../../services/generatedContent";
+import { initialSkyReaderRows } from "../../services/initialSkyReader";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
-import { subscribeToContentPublications } from "../../content/contentPublicationState";
+import { contentPublicationGeneration, subscribeToContentPublications } from "../../content/contentPublicationState";
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import { useSkySummarySettled } from "./SkyReadingLayout";
 
@@ -32,6 +33,17 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
   const [state, setState] = useState<LoadState>(() => ({ key: "", content: new Map(), status: "loading" }));
   const body = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<number | undefined>();
+  // The verified opening response already contains these complete projected
+  // sources. Render through the same mapper/composer on the first facts frame;
+  // the ordinary async owner still handles refresh, expiry, failure and Retry.
+  const prepared = useMemo(() => {
+    if (!factsReady || !skyListPublicationsResolved()) return null;
+    const rows = initialSkyReaderRows({keys: JSON.parse(sourceKey)});
+    if (!rows) return null;
+    const content = generatedContentMapFromRows(rows);
+    return missingPublishedSkySummaryKeys(JSON.parse(sourceKey), content).length ? null : content;
+  }, [sourceKey, factsReady, refresh, contentPublicationGeneration]);
+  const displayed: LoadState = prepared ? {key:sourceKey,content:prepared,status:"ready"} : state;
 
   useEffect(() => {
     const update = () => setRefresh(value => value + 1);
@@ -50,14 +62,14 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     setState(previous => previous.key === sourceKey && previous.status === "ready"
       ? previous : { key: sourceKey, content: previous.key === sourceKey ? previous.content : new Map(), status: "loading" });
     const fail = () => setState(previous => previous.key === sourceKey && previous.status === "ready"
-      && contentPublicationsResolved() && !missingPublishedSkySummaryKeys(requestedKeys, previous.content).length
+      && skyListPublicationsResolved() && !missingPublishedSkySummaryKeys(requestedKeys, previous.content).length
       ? previous : { key: sourceKey, content: new Map(), status: "error" });
     const timeout = window.setTimeout(() => { if (active) { fail(); active = false; } }, 20_000);
     void (async () => {
-      await refreshContentPublications();
+      await refreshSkyListPublications();
       const content = await loadLiveGeneratedContentForKeys(requestedKeys);
       const missing = missingPublishedSkySummaryKeys(requestedKeys, content);
-      const publicationsResolved = contentPublicationsResolved();
+      const publicationsResolved = skyListPublicationsResolved();
       if (!publicationsResolved || missing.length) {
         throw new Error("The current Daily Sky publication could not be loaded.");
       }
@@ -66,10 +78,10 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     return () => { active = false; window.clearTimeout(timeout); };
   }, [sourceKey, refresh]);
 
-  const current = state.key === sourceKey;
-  const ready = current && state.status === "ready" && contentPublicationsResolved()
-    && missingPublishedSkySummaryKeys(keys, state.content).length === 0;
-  const failed = factsError || current && state.status === "error";
+  const current = displayed.key === sourceKey;
+  const ready = current && displayed.status === "ready" && skyListPublicationsResolved()
+    && missingPublishedSkySummaryKeys(keys, displayed.content).length === 0;
+  const failed = factsError || current && displayed.status === "error";
   const loading = !failed && (!factsReady || !ready);
   useSkySummarySettled(!loading);
   useLayoutEffect(() => {
@@ -82,7 +94,7 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     return () => observer.disconnect();
   }, [loading, failed, sourceKey]);
   const retry = () => {
-    void refreshContentPublications(true).finally(() => {
+    void refreshSkyListPublications(true).finally(() => {
       onRetryFacts();
       setRefresh(value => value + 1);
     });
@@ -91,6 +103,6 @@ export function PublishedSkySummary({ facts, events, factsReady, factsError, onR
     style={loading || failed ? { minHeight: height } : undefined}>
     {failed ? <PageLoadError message="The daily summary could not load. Your published writing has not changed." onRetry={retry} />
       : loading ? <PageLoading message="Loading the daily sky summary…" announce={false} />
-      : children(skyDailySummaryParts({ ...facts, ...skySummaryEventFacts(events, state.content) }, state.content, { sunSummaryLength: "short" }))}
+      : children(skyDailySummaryParts({ ...facts, ...skySummaryEventFacts(events, displayed.content) }, displayed.content, { sunSummaryLength: "short" }))}
   </div>;
 }

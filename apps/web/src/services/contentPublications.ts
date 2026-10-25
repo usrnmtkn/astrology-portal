@@ -1,11 +1,59 @@
 import { getSupabaseClient } from "./auth";
 import { publicReaderConfigurationPresent } from "./publicReaderConfiguration";
 import { installContentPublications, validContentPublication, publicationLedgerReady, publicationLedgerBoundaries } from "../content/contentPublicationState";
+import { initialSkyReaderPublications, initialSkyReaderAvailable, pendingInitialSkyReaderRequest } from "./initialSkyReader";
 
 let pending: Promise<void> | null = null;
 let checkedAt = 0;
 let resolved = false;
 let resolvedFromNetwork = false;
+let skyListPending: Promise<void> | null = null;
+let skyListCheckedAt = 0;
+let skyListOnline = false;
+export function skyListPublicationsAvailableOnline() { return skyListOnline || resolvedFromNetwork; }
+export function skyListPublicationsResolved() { return skyListOnline || contentPublicationsResolved(); }
+export function skyListPublicationReadStarted() { return skyListPending !== null || skyListOnline; }
+export function admitInitialSkyReaderPublications() {
+  const rows = initialSkyReaderPublications();
+  if (!rows) return false;
+  const wasOnline = skyListPublicationsAvailableOnline();
+  installContentPublications(rows, "complete-sky-list");
+  if (!initialSkyReaderAvailable()) return false;
+  skyListOnline = true;
+  skyListCheckedAt = Date.now();
+  if (wasOnline !== skyListPublicationsAvailableOnline()) availabilityListeners?.forEach(listener => listener());
+  return true;
+}
+/** Complete for the list's source closure, without full-reader readiness. */
+export async function refreshSkyListPublications(force = false): Promise<void> {
+  if (skyListPending) return skyListPending;
+  if (!force && (resolvedFromNetwork && Date.now() - checkedAt < 30_000
+    || skyListOnline && Date.now() - skyListCheckedAt < 30_000)) return;
+  const wasOnline = skyListPublicationsAvailableOnline();
+  skyListPending = (async () => {
+    try {
+      const initial = pendingInitialSkyReaderRequest();
+      if (initial) {
+        await initial.catch(() => {});
+        if (skyListOnline && Date.now() - skyListCheckedAt < 30_000) return;
+      }
+      const { loadPublicationLedgerFromApi } = await import("./publicationLedgerTransport");
+      const rows = await loadPublicationLedgerFromApi(undefined, "sky-list");
+      installContentPublications(rows, "complete-sky-list");
+      skyListOnline = true;
+      skyListCheckedAt = Date.now();
+    } catch (error) {
+      console.warn("Sky list publication check failed; loading the full ledger.", error);
+      skyListOnline = false;
+      // Compatibility and outage recovery retain the complete existing path.
+      await refreshContentPublications(force);
+    }
+  })().finally(() => {
+    skyListPending = null;
+    if (wasOnline !== skyListPublicationsAvailableOnline()) availabilityListeners?.forEach(listener => listener());
+  });
+  return skyListPending;
+}
 /** Only a complete successful live read can make the offline snapshot optional. */
 export function contentPublicationsAvailableOnline() { return resolvedFromNetwork; }
 let availabilityListeners: Set<() => void> | undefined;

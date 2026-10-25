@@ -1,6 +1,12 @@
 import type { PlanetPosition } from "../types";
 
 const slug = (value: string) => value.toLowerCase().replace(/\s+/gu, "-");
+export function isSkyPlacementFallbackPartitionKey(contentKey: string) {
+  return contentKey.startsWith("fallback-hook/sky-sign-copy/")
+    || contentKey.startsWith("fallback-hook/sky-placement-")
+    || contentKey.startsWith("house-horoscope-core/")
+    || contentKey.startsWith("fallback-hook/sky-planet-education/");
+}
 export function skyPlacementSelection(positions: PlanetPosition[]) {
   return positions.map(p => `${slug(p.planet)}/${slug(p.sign)}`).sort().join(",");
 }

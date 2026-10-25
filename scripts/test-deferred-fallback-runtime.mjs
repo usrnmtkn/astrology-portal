@@ -62,7 +62,8 @@ const transitFacts = {
   aspect: "square",
   window: "Until Jul 23, 2026"
 };
-const skyBefore = runtime.transitSynastryFallbackRendererV3.renderSkyAspectCard(skyFacts);
+assert.throws(() => runtime.transitSynastryFallbackRendererV3.renderSkyAspectCard(skyFacts), /SOURCE_GAP/u,
+  "Article-only aspect sources stay outside the initial placement-list transport.");
 const skyPlacementFacts = {
   planet: "sun",
   sign: "leo",
@@ -71,13 +72,6 @@ const skyPlacementFacts = {
   entryDate: "July 22, 2026",
   exitDate: "August 23, 2026"
 };
-const skySeasonBefore = runtime.transitSynastryFallbackRendererV3.renderSkySeason({ sign: "leo", events: [] });
-const skyLunationBefore = runtime.transitSynastryFallbackRendererV3.renderSkyLunation({
-  kind: "new-moon",
-  sign: "leo",
-  dateLine: "August 12, 2026",
-  events: []
-});
 const dignityBefore = runtime.fallbackV3DignityLine("fall", "moon", "you");
 const placementBefore = runtime.fallbackV3PlacementSentence("moon", "scorpio", "they");
 const bundledKeyCount = runtime.fallbackArchitectureV3BundledManifestSummary.keyCount;
@@ -87,13 +81,11 @@ assert.equal((await runtime.loadFallbackArchitectureV3BundledManifest()).keys.le
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.isEmptyHouseFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), false);
-assert.ok(skyBefore.body, "Approved specific Sky aspect copy must be available before the transit bundle loads.");
 assert.throws(
   () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(skyPlacementFacts),
   /SOURCE_GAP/u,
   "Sky Placement must wait for its canonical package instead of rendering an eager thin article."
 );
-assert.ok(skySeasonBefore.body && skyLunationBefore.body);
 assert.ok(dignityBefore, "Sky dignity copy must remain in the eager core.");
 assert.equal(placementBefore, "", "Natal and friend placement prose must remain deferred.");
 assert.ok(
@@ -131,6 +123,17 @@ assert.throws(
 assert.equal(runtime.isCalendarFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(await runtime.loadCalendarFallbackArchitectureV3Bundle(), true);
 await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(false);
+const skyBefore = runtime.transitSynastryFallbackRendererV3.renderSkyAspectCard(skyFacts);
+const skySeasonBefore = runtime.transitSynastryFallbackRendererV3.renderSkySeason({ sign: "leo", events: [] });
+const skyLunationBefore = runtime.transitSynastryFallbackRendererV3.renderSkyLunation({
+  kind: "new-moon",
+  sign: "leo",
+  dateLine: "August 12, 2026",
+  events: []
+});
+assert.ok(skyBefore.body, "Approved specific Sky aspect copy must be available before the transit bundle loads.");
+assert.ok(skySeasonBefore.body && skyLunationBefore.body);
+
 assert.equal(runtime.isCalendarFallbackArchitectureV3BundleLoaded(), true);
 assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.fallbackV3PlacementSentence("moon", "scorpio", "they"), "");

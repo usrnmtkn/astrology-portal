@@ -182,7 +182,10 @@ assert.match(dashboard, /Complete horoscope/u, "Admin must label usable house ho
 assert.match(dashboard, /Supporting passage/u, "Admin must label source candidates in plain editorial language.");
 assert.match(dashboard, /Approve &amp; publish complete edition/u, "Compiled editions need a distinct owner approval action.");
 assert.match(dashboard, /Edit the reader experience/u, "Compiled editions must open as one article-first editor.");
-assert.match(dashboard, /Drafts save automatically/u, "The article editor must explain its non-serving autosave behavior.");
+assert.match(dashboard, /<SkyDatedArticleEditor\b/u, "The dashboard must render the extracted dated article editor.");
+const datedEditor = fs.readFileSync(path.join(repoRoot, "apps/admin/src/SkyDatedArticleEditor.tsx"), "utf8");
+assert.match(datedEditor, /Drafts also save automatically as you write/u, "The article editor must explain autosave behavior.");
+assert.match(datedEditor, /Changes are not published/u, "The article editor must preserve its non-serving draft notice.");
 assert.match(dashboard, /Review only what changed/u, "The owner must review a focused field diff before publication.");
 assert.match(dashboard, /Publish changes/u, "Field edits must publish through one complete-edition action.");
 assert.match(dashboard, /Publication checklist/u, "Incomplete article workspaces must show their remaining blockers.");

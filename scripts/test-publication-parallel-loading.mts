@@ -5,7 +5,7 @@ import { validContentPublication, publicationLedgerBoundaries } from '../apps/we
 
 const built = await build({ entryPoints: ['apps/web/src/services/contentPublications.ts'], bundle: true,
   platform: 'node', format: 'cjs', write: false, plugins: [{ name: 'ledger-fixture', setup(builder) {
-    builder.onResolve({ filter: /\/auth$|contentPublicationState$/ }, args => ({ path: args.path, namespace: 'fixture' }));
+    builder.onResolve({ filter: /\/auth$|contentPublicationState$|initialSkyReader$/ }, args => ({ path: args.path, namespace: 'fixture' }));
     builder.onLoad({ filter: /.*/, namespace: 'fixture' }, () => ({ contents: `
       export const getSupabaseClient = async () => fixture.client;
       export const publicationLedgerBoundaries = ${JSON.stringify(publicationLedgerBoundaries)};
@@ -13,6 +13,9 @@ const built = await build({ entryPoints: ['apps/web/src/services/contentPublicat
       export const validContentPublication = value => fixture.valid(value);
       export const publicationLedgerReady = () => false;
       export const contentPublicationRecords = () => [];
+      export const initialSkyReaderPublications = () => undefined;
+      export const initialSkyReaderAvailable = () => false;
+      export const pendingInitialSkyReaderRequest = () => null;
     ` }));
   } }] });
 const row = (content_key: string) => ({ content_key, state: 'live', revision: 1,

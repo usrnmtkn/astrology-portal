@@ -71,6 +71,7 @@ async function run({ href = valid, holdMetadata = false, rejectMetadata = false,
     getInitialTransitDate: () => { if (throwCapture) throw Error('Synthetic capture failure'); return '2026-10-16'; },
     getInitialLocation: () => ({ location: selectedLocation }), withTimeZone: value => value,
     skyDateTimeFromInput: () => date, liveSkyReference: () => true,
+    matchingInitialSkyTransport: () => null,
     getSkyFromApi: (value, at) => { assert.equal(value, selectedLocation); assert.equal(at, date); apiReads++; return api.promise; },
     getSkyLocally: () => { localReads++; throw Error('Speculative local calculation forbidden'); },
     loadAssets: () => { assetImports++; return rejectAssets ? Promise.reject(Error('Synthetic asset import failure')) : Promise.resolve({
@@ -79,7 +80,7 @@ async function run({ href = valid, holdMetadata = false, rejectMetadata = false,
     loadSkyApi: () => { metadataImports++; return metadata.promise; }
   });
   vm.runInContext('const isInitialSkyReaderHash = ' + isInitialSkyReaderHash.toString() + ';', context);
-  vm.runInContext(runnableApi, context);
+  vm.runInContext('let primedInitialSkyLoad = null;\n' + runnableApi, context);
   vm.runInContext(runnableMain, context);
   const releaseMetadata = () => rejectMetadata ? metadata.reject(Error('Synthetic metadata import failure')) : metadata.resolve({
     startInitialSkyLoad: () => { captures++; captured = context.startInitialSkyLoad(); return captured; }
