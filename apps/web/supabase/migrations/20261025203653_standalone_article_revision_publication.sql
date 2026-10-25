@@ -13,9 +13,10 @@ begin
     $$p_action not in ('approve-package-revision','publish-sky-article-edition-revision','publish-standalone-article-revision')$$);
   definition := replace(definition, proposal_check, $guard$
   if p_action='publish-standalone-article-revision' and (
-    p_proposal_id=p_target_id or target.content_key !~ '^article/(manual|guide)/'
+    p_proposal_id=p_target_id or coalesce(target.content_key,'') !~ '^article/(manual|guide)/'
     or target.mode is distinct from 'article' or target.status is distinct from 'LIVE'
-    or proposal.mode is distinct from 'studio-draft' or proposal.event_type is distinct from 'standalone-article-revision'
+    or proposal.mode is distinct from 'studio-draft' or proposal.status is distinct from 'DRAFT'
+    or proposal.event_type is distinct from 'standalone-article-revision'
     or proposal.content_key is distinct from target.content_key
   ) then
     raise sqlstate '22023' using message='Invalid standalone article revision target';

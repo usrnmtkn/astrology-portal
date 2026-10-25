@@ -98,6 +98,10 @@ try {
     const retired: any = await store.invoke('POST', { action: 'retire', id: saved.id, contentKey, expectedUpdatedAt: saved.updated_at }, '/api/admin/content-publication');
     assert.equal(retired.status, 200, JSON.stringify(retired));
     assert.deepEqual((await read()).payload.rows, [], 'Retirement applies to the collection and direct URLs');
+    const retiredReceipt = await publishRevision(nextCycle.payload.rows[0]);
+    assert.equal(retiredReceipt.status, 200, JSON.stringify(retiredReceipt));
+    assert.equal(retiredReceipt.payload.publicationReceipt.currentPublicationState, 'retired');
+    assert.deepEqual((await read()).payload.rows, [], 'A historical receipt cannot undo later retirement');
   }
   const variableEndpoint = '/api/admin/generated-content?variables=true';
   const definition = { name: 'articleOpening', label: 'PRIVATE_VARIABLE_LABEL', description: 'PRIVATE_VARIABLE_DESCRIPTION', tags: [], value: 'Complete frozen author phrase.', overrides: [] };
@@ -158,6 +162,9 @@ try {
     p_target_id: target.id, p_target_version: target.updated_at, p_patch: { body: proposal.body, status: 'LIVE', lane: 'serving', review_state: null },
     p_validation_context: { targetPublication: publications.rows[0].publication }, p_dependencies: [] };
   await assert.rejects(callPublicationRpc(db, 'content_studio_publish_revision', args), { code: '22023' }, 'SQL itself rejects cross-key article promotion');
+  await db.query('update generated_interpretations set content_key=$1,status=null where id=$2', [target.content_key, proposal.id]);
+  await assert.rejects(callPublicationRpc(db, 'content_studio_publish_revision', args), { code: '22023' }, 'Incomplete proposal state fails closed');
+  await db.query("update generated_interpretations set status='DRAFT' where id=$1", [proposal.id]);
   await assert.rejects(callPublicationRpc(db, 'content_studio_publish_revision', { ...args,
     p_proposal_id: target.id, p_proposal_version: target.updated_at }), { code: '22023' }, 'SQL itself requires a distinct private revision row');
   await assert.rejects(db.query("update generated_interpretations set mode='article' where id=$1", [proposal.id]),
