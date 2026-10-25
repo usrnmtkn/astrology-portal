@@ -1,2 +1,0 @@
-import {defineConfig} from '@playwright/test';
-export default defineConfig({testDir:'./tests/visual',testMatch:'horoscope-model-choice.spec.ts',grep:/Generate only selected Weekly sign/,workers:1,retries:0,timeout:180000,expect:{timeout:20000},reporter:'list',use:{baseURL:'http://127.0.0.1:4189',trace:'retain-on-failure'},webServer:{command:'npm run build:admin && npm run preview -w @tldr/admin -- --port 4189 --strictPort',url:'http://127.0.0.1:4189',reuseExistingServer:false,timeout:240000}});
