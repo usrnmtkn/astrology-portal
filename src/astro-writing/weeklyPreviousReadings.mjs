@@ -27,11 +27,12 @@ export function weeklyPreviousReadings(row,sign){
   });
   const content={version:WEEKLY_PREVIOUS_READINGS,editionId:row.id,contentKey:row.content_key,window:edition.window,
     targetSign:sign,targetHash:hash(text(edition.passages.find(p=>p.sign===sign))),readings};
-  if(Buffer.byteLength(JSON.stringify(content),'utf8')>WEEKLY_PREVIOUS_READINGS_MAX_BYTES){
+  const snapshot={...content,contextHash:hash(content),sourceUpdatedAt:row.updated_at};
+  if(Buffer.byteLength(horoscopeCanonicalJson(snapshot),'utf8')>WEEKLY_PREVIOUS_READINGS_MAX_BYTES){
     const error=new Error('The complete earlier Weekly readings exceed the comparison context limit. No writing request was sent; review this edition before continuing.');
     error.code='WEEKLY_PREVIOUS_READINGS_TOO_LARGE';throw error;
   }
-  return {...content,contextHash:hash(content),sourceUpdatedAt:row.updated_at};
+  return snapshot;
 }
 
 export function weeklyPreviousReadingsCurrent(row,snapshot){

@@ -30,7 +30,7 @@ biography or calculated facts. Literal template braces inside them remain data;
 there is no new editable profile variable. This writer may compare only supplied
 earlier readings; the separate final gate compares the complete twelve-sign set.
 The packet is saved in private receipts with the native provider request before
-dispatch. Complete context larger than 256 KiB fails before spend without
+dispatch. A complete serialized packet larger than 256 KiB fails before spend without
 truncation. If earlier or target text changes while a writer or prose check is
 running, the candidate is held for editing/rejection and newer text is preserved.
 No automatic rewrite, replacement or extra paid stage is introduced. Requests

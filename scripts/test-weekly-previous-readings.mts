@@ -67,6 +67,15 @@ excluded.sections.horoscopeEdition.passages[3].body+=' New accepted version.';
 assert.deepEqual(weeklyPreviousReadings(excluded,'virgo').readings.map((p:any)=>p.sign),['cancer'],'An old rejection does not ban a newly saved version');
 const shuffled=structuredClone(row);shuffled.sections.horoscopeEdition.passages.reverse();assert.deepEqual(weeklyPreviousReadings(shuffled,'pisces').readings,snapshot.readings);
 const nonweekly=structuredClone(row);nonweekly.sections.horoscopeEdition.window.period='daily';assert.equal(weeklyPreviousReadings(nonweekly,'aries'),null);
+const boundary=structuredClone(row);for(const p of boundary.sections.horoscopeEdition.passages.slice(0,11))p.body='x'.repeat(20000);
+let bytesToFill=WEEKLY_PREVIOUS_READINGS_MAX_BYTES-Buffer.byteLength(horoscopeCanonicalJson(weeklyPreviousReadings(boundary,'pisces')));
+assert(bytesToFill>0);
+for(const p of boundary.sections.horoscopeEdition.passages.slice(0,11)){
+ const count=Math.min(bytesToFill,p.body.length);p.body='é'.repeat(count)+p.body.slice(count);bytesToFill-=count;
+}
+assert.equal(bytesToFill,0);assert.equal(Buffer.byteLength(horoscopeCanonicalJson(weeklyPreviousReadings(boundary,'pisces'))),WEEKLY_PREVIOUS_READINGS_MAX_BYTES,'The full serialized packet, including hashes and metadata, fits exactly');
+const nextByte=boundary.sections.horoscopeEdition.passages.find((p:any)=>p.body.includes('x'));nextByte.body=nextByte.body.replace('x','é');
+assert.throws(()=>weeklyPreviousReadings(boundary,'pisces'),/complete earlier Weekly readings exceed/,'One additional UTF-8 byte fails without trimming');
 
 // Actual provider boundaries: the immutable full packet and native request are
 // persisted before dispatch. The saved profile is expanded only once.
