@@ -9513,8 +9513,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expect(workspace.getByRole('region', { name: 'Article for this visit', exact: true }).locator('p').first()).toContainText('2026-11-22');
     await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
     await expectNoHorizontalOverflow(page, 'Planet and sign dated editor');
-    const headings = await page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })));
-    expect(headings.slice(0, 4)).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Reader sources' }, { level: 3, text: 'Saved visits' }]);
+    await expect.poll(() => page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.slice(0, 4).map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })))).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Reader sources' }, { level: 3, text: 'Saved visits' }]);
     await expect(workspace.getByRole('region', { name: 'Currently live', exact: true })).toHaveCount(0);
     const typography = await workspace.getByRole('heading', { name: 'Reader sources' }).evaluate(node => {
       const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
