@@ -4872,8 +4872,8 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function rememberSavedDraft(saved: AdminDraft) {
-    setDraft(saved);
+  function rememberSavedDraft(saved: AdminDraft, update?: (current: AdminDraft | null) => AdminDraft | null) {
+    setDraft(update ?? saved);
     const serialized = JSON.stringify(saved);
     editorBaselineRef.current = serialized;
     editorSavedInputRef.current = serialized;
@@ -4916,9 +4916,11 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow, ownerFinal = false, copy?: AdminDraft) {
+    const publicationSession = editorSessionRef.current;
     setEditorSaveError("");
     setIsLoading(true);
     try {
+      const { retainPendingPublicationCopy } = await import("./studioRevisionPublication");
       const write = () => adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: copy ? "save-and-publish-owner-content" : ownerFinal ? "publish-owner-content" : "approve-and-schedule",
@@ -4934,10 +4936,10 @@ export function GeneratedContentAdminDashboard() {
         throw new Error("Publication was not confirmed.");
       }
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-      if (selectedRowId === saved.id || draft?.contentKey === saved.content_key) {
+      if (publicationSession === editorSessionRef.current && (selectedRowId === saved.id || draft?.contentKey === saved.content_key)) {
         setEditorSourceRow(saved);
         const savedDraft = draftFromRow(saved);
-        rememberSavedDraft(savedDraft);
+        rememberSavedDraft(savedDraft, current => retainPendingPublicationCopy(copy ?? draftFromRow(row), current, savedDraft));
       }
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setSkyReviewHorizon((current) => current ? {
@@ -5367,6 +5369,8 @@ export function GeneratedContentAdminDashboard() {
     const expectedUpdatedAt = draftForSave.updatedAt ?? persistedRow?.updated_at ?? undefined;
 
     try {
+      const directCopy = isPackageDraft && writesPersonalTransitExactCopy(draftForSave)
+        ? await import("./studioRevisionPublication") : null;
       const body = isPackageDraft
         ? {
             ownerAuthoredWording: true,
@@ -5443,29 +5447,7 @@ export function GeneratedContentAdminDashboard() {
         setDraft((current) => {
           // A response acknowledges the submitted version, not newer typing.
           if (current && current !== editorDraftAtSave && current.contentKey === activeDraft.contentKey) {
-            if (writesPersonalTransitExactCopy(current)) {
-              const { packageDraft: _discarded, ...savedSections } = objectRecord(savedDraft.sections) ?? {};
-              const record = { ...draftPackageRecord(savedDraft) };
-              const submitted = draftEditablePackageRecord(editorDraftAtSave ?? activeDraft);
-              const edited = draftEditablePackageRecord(current);
-              // Direct-copy editors write packageRecord, not packageDraft. Keep
-              // only newer text here; the response owns publication metadata.
-              for (const field of ["body", "body_you", "body_they", "headline", "summary", "editorial_notes"]) {
-                if (typeof edited[field] === "string" && edited[field] !== submitted[field]) record[field] = edited[field];
-              }
-              return {
-                ...current,
-                id: savedDraft.id,
-                updatedAt: savedDraft.updatedAt,
-                sections: {
-                  ...savedSections,
-                  body_you: record.body_you ?? null,
-                  body_they: record.body_they ?? null,
-                  ...(current.sections?.contentStudioReview === null ? { contentStudioReview: null } : {}),
-                  packageRecord: record
-                }
-              };
-            }
+            if (directCopy) return directCopy.retainPendingPublicationCopy(editorDraftAtSave ?? activeDraft, current, savedDraft, true);
             const proposal = draftPackageProposal(current);
             const savedRecord = draftPackageRecord(savedDraft);
             return { ...current, id: savedDraft.id, updatedAt: savedDraft.updatedAt,
@@ -5498,7 +5480,7 @@ export function GeneratedContentAdminDashboard() {
           const baseline = JSON.parse(recoveryBaseline) as AdminDraft;
           if (baseline.id !== activeDraft.id || baseline.contentKey !== activeDraft.contentKey) throw error;
           if (latest.status === "ARCHIVED") throw new Error("This source was archived while you were editing. Your edits are still here; restore the saved source before applying them.");
-          const { recoverContentStudioCopy } = await import("./contentStudioCopyRecovery");
+          const { recoverContentStudioCopy } = await import("./studioRevisionPublication");
           const latestDraft = draftFromRow(latest);
           const proposal = recoverContentStudioCopy(
             draftEditablePackageRecord(baseline), draftEditablePackageRecord(activeDraft), draftEditablePackageRecord(latestDraft));
@@ -5685,19 +5667,20 @@ export function GeneratedContentAdminDashboard() {
 
   async function publishSavedRevision(row: AdminGeneratedContentRow, updateEditor = true, propagateError = false,
     ownerAction: typeof packageRevisionPublicationAction | typeof standaloneRevisionPublicationAction = packageRevisionPublicationAction) {
+    const publicationSession = editorSessionRef.current;
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const { assertPublishedRevision } = await import("./studioRevisionPublication");
+      const { assertPublishedRevision, retainPendingPublicationCopy } = await import("./studioRevisionPublication");
       const payload = await submitSavedPublication(row, ownerAction);
       const published = payload.rows[0];
       const publishedDraft = draftFromRow(published);
       assertPublishedRevision(row, published, ownerAction, draftHasPackageProposal(publishedDraft));
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
-      if (updateEditor) {
+      if (updateEditor && publicationSession === editorSessionRef.current) {
         setEditorSourceRow(published);
         setSelectedRowId(published.id);
-        rememberSavedDraft(publishedDraft);
+        rememberSavedDraft(publishedDraft, current => retainPendingPublicationCopy(draftFromRow(row), current, publishedDraft));
       }
       announceContentUpdate({
         contentKey: published.content_key,

@@ -34,7 +34,7 @@ for(const [width, theme, blockRecovery] of [[390,'light',false],[390,'dark',fals
    await field.fill(approved);await editor.getByRole('button',{name:'Save draft',exact:true}).click();
    await expect.poll(async()=>(await call({method:'rows'})).find((row:any)=>row.id===fixture.id)?.sections.packageDraft.Body).toBe(approved);
    const competing=`${fixture.body}\n\nSynthetic unsaved second-tab ending.`;
-   if (blockRecovery) await second.route('**/contentStudioCopyRecovery-*.js', route => route.abort());
+   if (blockRecovery) await second.route('**/studioRevisionPublication-*.js', route => route.abort());
    await otherField.fill(competing);await other.getByRole('button',{name:'Save draft',exact:true}).click();
    if (blockRecovery) {
     await expect(other.getByRole('alert')).toContainText(/module|fetch|load/i);

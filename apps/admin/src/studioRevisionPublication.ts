@@ -1,4 +1,30 @@
-import type { AdminGeneratedContentRow } from './GeneratedContentAdminDashboard';
+import type { AdminDraft, AdminGeneratedContentRow } from './GeneratedContentAdminDashboard';
+import { contentStudioCopyChanges } from './contentStudioCopyRecovery';
+export { recoverContentStudioCopy } from './contentStudioCopyRecovery';
+
+/** A publication acknowledges its submitted row, not text entered while it was pending. */
+export function retainPendingPublicationCopy(submitted: AdminDraft, current: AdminDraft | null, published: AdminDraft, directCopy = false) {
+  if (!current || current.contentKey !== published.contentKey) return current;
+  const result = { ...published };
+  for (const field of ['headline', 'summary', 'body', 'reviewerNotes'] as const) {
+    if (current[field] !== submitted[field]) result[field] = current[field];
+  }
+  const sections = contentStudioCopyChanges(submitted.sections ?? {}, current.sections ?? {});
+  delete sections.packageRecord;
+  delete sections.packageDraft;
+  if (published.sections?.packageRecord) {
+    const before = (submitted.sections?.packageDraft ?? submitted.sections?.packageRecord ?? {}) as Record<string, unknown>;
+    const after = (current.sections?.packageDraft ?? current.sections?.packageRecord ?? {}) as Record<string, unknown>;
+    const changes = contentStudioCopyChanges(before, after);
+    if (Object.keys(changes).length) {
+      const record = { ...published.sections.packageRecord as object, ...changes };
+      sections[directCopy ? 'packageRecord' : 'packageDraft'] = record;
+      if (directCopy) Object.assign(sections, { body_you: record.body_you ?? null, body_they: record.body_they ?? null });
+    }
+  }
+  if (Object.keys(sections).length) result.sections = { ...published.sections, ...sections };
+  return result;
+}
 
 /** Validate the published edition before replacing the editor's saved source. */
 export function assertPublishedRevision(

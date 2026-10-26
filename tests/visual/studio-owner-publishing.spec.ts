@@ -338,3 +338,120 @@ for(const width of [390,1440]) test(`Inline natal publishes an unchanged saved d
   await expect(page.getByRole('status')).toHaveText('Published. The reader preview will refresh.');
   expect(await page.evaluate(()=>(window as any).saved)).toMatchObject({row:{id:'saved-natal',updated_at:'2026-10-15T12:00:00Z'},copy:{body_you:'Complete owner copy.',body_they:'Complete Friend copy.'},publish:true});
 });
+
+import {createHash as publicationAckCreateHash} from 'node:crypto';
+import {writeFileSync as writePublicationAckProof} from 'node:fs';
+
+test.describe('Publication response copy preservation',()=>{
+const submitted='A complete submitted opening.\n\nThe submitted final sentence remains complete.';
+const newer='A newer complete opening.\n\nThe newer final sentence remains complete.';
+const hash=(text:string)=>publicationAckCreateHash('sha256').update(text).digest('hex');
+
+for(const phase of ['publication','save-before-publication'] as const) for(const kind of ['article','guide','package','initial-article'] as const) test(`held ${phase} acknowledgement preserves newer ${kind} edits`,async({page},testInfo)=>{
+  test.setTimeout(60000);
+  await page.setViewportSize({width:phase==='publication'?1440:390,height:1000});
+  await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),phase==='publication'?'light':'dark');
+  const isArticle=kind!=='package';
+  const key=isArticle?`article/${kind==='guide'?'guide':'manual'}/acknowledgement-fixture-${kind}-${phase}`:'fallback-hook/bond-effect-soft/moon';
+  const initiallyLive=kind==='article'||kind==='guide';
+  const record=kind==='package'?{...structuredClone(servingPackageRecords.get(key)!),review_status:'needs_review',body_you:submitted,body_they:'A complete Friend opening.\n\nThe Friend final sentence remains complete.'}:undefined;
+  const source={id:'dddddddd-dddd-4ddd-addd-dddddddddddd',content_key:key,surface:'sky',mode:isArticle?'article':'feed',
+    status:initiallyLive?'LIVE':'DRAFT',lane:initiallyLive?'serving':'reference',review_state:initiallyLive?null:'needs-review',
+    headline:`Synthetic acknowledgement ${kind}`,summary:'',body:isArticle?'The initial complete opening.\n\nThe initial complete ending.':submitted,
+    sections:record?{packageRecord:record}:{},facts:record?{fallbackArchitectureV3:true}:{},target_date:null,
+    provider:record?'tldrastro-fallback-architecture-v3':'manual-admin',event_type:record?'fallback-hook':'essay',block_type:record?'fallback_hook':'essay',
+    source_snapshot:record?{sourcePackage:'tldrastro-fallback-architecture-v3',contentSystem:'fallback',review_status:'needs_review'}:{contentType:kind==='guide'?'guide':'article'},
+    updated_at:'2026-10-15T12:00:00Z'};
+  const store=await studioApiStore([source],{uuidIds:true});
+  const action=initiallyLive?'publish-standalone-article-revision':kind==='initial-article'?'publish-owner-content':'approve-package-revision';
+  let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve});
+  let held=false;
+  const reader=async()=>{
+    const result=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[key]}});
+    expect(result.status).toBe(200);
+    const row=result.payload.rows.find((row:any)=>row.content_key===key);
+    return isArticle?row?.body:row?.sections?.packageRecord?.body_you;
+  };
+  try{
+    await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+    await routeStudioInventoryApi(page,{actualDocumentRoute:true,call:async request=>{
+      const result=await store.call(request);
+      const shouldHold=phase==='publication'?(request.body as any)?.ownerAction===action:!(request.body as any)?.ownerAction;
+      if(!held&&request.method==='PATCH'&&shouldHold){
+        expect(result.status).toBe(200);held=true;await gate;
+      }
+      return result;
+    },answer:async(route,url)=>{
+      if(url.pathname==='/api/admin/content-live-status'){
+        await route.fulfill({json:{ok:true,statuses:await store.call({method:'statuses',body:route.request().postDataJSON()})}});return true;
+      }
+      if(url.pathname==='/api/content-reader'){
+        const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;
+      }
+      return false;
+    }});
+    if(isArticle){
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({hasText:key}).getByRole('button',{name:'Edit',exact:true}).click();
+    }else await page.goto('/admin/content#exact-content?from=unresolved&q='+encodeURIComponent(key));
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    const input=isArticle?editor.getByLabel('Article body',{exact:true}):editor.locator('[data-sky-field="body_you"]');
+    if(isArticle)await input.fill(submitted);
+    const beforePublication=await reader();
+    const response=page.waitForResponse(response=>response.request().method()==='PATCH'&&response.request().postDataJSON()?.ownerAction===action);
+    await editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save & publish',exact:true}).click();
+    await expect.poll(()=>held).toBe(true);
+    expect(await reader()).toBe(phase==='publication'?submitted:beforePublication);
+    const editable=await input.isEditable();expect(editable).toBe(true);
+    if(editable)await input.fill(newer);
+    release();const completedResponse=await response;expect(completedResponse.status()).toBe(200);expect(await completedResponse.finished()).toBeNull();
+    await expect(editor.getByRole('button',{name:'Close',exact:true})).toBeEnabled();
+    const displayed=await input.inputValue();const published=await reader();
+    const proof={kind,phase,publicationSucceeded:true,inputEditableWhilePending:editable,readerMatchesSubmitted:published===submitted,
+      newerEditorTextRetained:editable?displayed===newer:null,submittedSha256:hash(submitted),newerSha256:hash(newer),displayedSha256:hash(displayed),publishedSha256:hash(published??'')};
+    writePublicationAckProof(testInfo.outputPath('proof.json'),JSON.stringify(proof,null,2));
+    expect(published).toBe(submitted);
+    if(editable){
+      await expect(input).toHaveValue(newer);
+      const draftResponse=page.waitForResponse(response=>response.request().method()==='PATCH'&&!response.request().postDataJSON()?.ownerAction);
+      await editor.getByRole('button',{name:isArticle?'Save draft':'Save held draft',exact:true}).click();
+      const completedDraft=await draftResponse;expect(completedDraft.status()).toBe(200);expect(await completedDraft.finished()).toBeNull();
+      await expect(editor.getByRole('button',{name:'Close',exact:true})).toBeEnabled();
+      await expect(input).toHaveValue(newer);
+      // A guided held-package save withdraws eligibility until explicit review;
+      // standalone article revisions retain their separately published target.
+      expect(await reader()).toBe(isArticle?submitted:undefined);
+      if(isArticle){
+        const rows=await store.call({method:'rows'});
+        const target=rows.find((row:any)=>row.id===source.id);
+        const proposal=rows.find((row:any)=>row.content_key===key&&row.status==='DRAFT'&&row.event_type==='standalone-article-revision');
+        expect(target.status).toBe('LIVE');expect(target.body).toBe(submitted);
+        expect(proposal?.body).toBe(newer);
+        expect(proposal?.source_snapshot.targetRowId).toBe(target.id);
+        expect(proposal?.source_snapshot.targetRowUpdatedAt).toBe(target.updated_at);
+      }else{
+        const saved=(await store.call({method:'rows'})).find((row:any)=>row.id===source.id);
+        expect(saved.sections.packageRecord.body_you).toBe(submitted);
+        expect(saved.sections.packageDraft.body_you).toBe(newer);
+      }
+      await page.reload();
+      if(isArticle)await page.getByRole('row').filter({hasText:key}).filter({hasText:'Draft'}).getByRole('button',{name:'Edit',exact:true}).click();
+      await expect(editor).toBeVisible();
+      await expect(input).toHaveValue(newer);expect(await reader()).toBe(isArticle?submitted:undefined);
+      const publish=editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save & publish',exact:true});
+      await expect(publish).toBeEnabled();
+      const next=page.waitForResponse(response=>response.request().method()==='PATCH'&&['publish-standalone-article-revision','approve-package-revision','publish-owner-content'].includes(response.request().postDataJSON()?.ownerAction));
+      await publish.click();const completedPublish=await next;expect(completedPublish.status()).toBe(200);expect(await completedPublish.finished()).toBeNull();
+      await expect(editor.getByRole('button',{name:'Close',exact:true})).toBeEnabled();
+      expect(await reader()).toBe(newer);
+      await page.reload();
+      if(isArticle)await page.getByRole('row').filter({hasText:key}).filter({hasText:'Live'}).getByRole('button',{name:'Edit',exact:true}).click();
+      await expect(editor).toBeVisible();
+      await expect(input).toHaveValue(newer);
+      expect(await reader()).toBe(newer);
+      writePublicationAckProof(testInfo.outputPath('proof.json'),JSON.stringify({...proof,republicationSucceeded:true,reopenedNewerCopy:true},null,2));
+    }
+  }finally{release();await page.unrouteAll({behavior:'ignoreErrors'});store.close();}
+});
+
+});

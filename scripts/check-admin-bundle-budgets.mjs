@@ -123,11 +123,13 @@ function visitInitial(key) {
 visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
 if (initialChunks.has('src/contentLibraryNavigation.ts')) failures.push('Content Library navigation and status actions must remain deferred from Studio startup.');
 if (initialChunks.has('src/studioRevisionPublication.ts')) failures.push('Revision publication validation must remain deferred from Studio startup.');
-if (initialChunks.has('src/contentStudioCopyRecovery.ts')) failures.push('Copy conflict recovery must remain deferred from Studio startup.');
 if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
   const file = manifest[key].file;
+  if (file?.endsWith('.js') && fs.readFileSync(path.join(distRoot, file), 'utf8').includes('The saved copy also changed in')) {
+    failures.push(`Copy conflict recovery must remain deferred from Studio startup: ${file}`);
+  }
   if (key === "src/StudioFormattingEditor.tsx" || (file?.endsWith(".js") && fs.readFileSync(path.join(distRoot, file), "utf8").includes("ProseMirror"))) {
     failures.push(`The visual writing editor must remain deferred from Studio startup: ${file}`);
   }
@@ -157,7 +159,6 @@ for (const key of initialChunks) {
 }
 
 const expectedDynamicEntries = [
-  "src/contentStudioCopyRecovery.ts",
   "src/studioRevisionPublication.ts",
   "src/contentLibraryNavigation.ts",
   "src/LunationWritingStudio.tsx",
