@@ -139,13 +139,16 @@ for (const { status, width, theme, late, action } of [
       ? route.continue() : route.abort("blockedbyclient"));
     const statuses: number[] = [];
     const dialogs: string[] = [];
-    const moduleName = action ? "HoroscopeSaveRecovery" : "HoroscopeWritingStudio";
+    // Standalone Studio shares the two optional editing panels. The web entry
+    // keeps a separate recovery chunk; exercise the actual import in both.
+    const moduleNames = action ? ["HoroscopeSaveRecovery", "HoroscopeWritingStudio"] : ["HoroscopeWritingStudio"];
+    const modulePattern = new RegExp(`/(?:${moduleNames.join("|")})-[^/]+\\.js$`);
     let unavailable = status === 503;
     page.on("response", response => {
-      if (new RegExp(`/${moduleName}-[^/]+\\.js$`).test(new URL(response.url()).pathname)) statuses.push(response.status());
+      if (modulePattern.test(new URL(response.url()).pathname)) statuses.push(response.status());
     });
     page.on("dialog", async dialog => { dialogs.push(dialog.type()); await dialog.dismiss(); });
-    await page.route(`**/${moduleName}-*.js`, async route => {
+    await page.route(modulePattern, async route => {
       requests++;
       if (late) await assetGate;
       return unavailable ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Synthetic unavailable module. */" }) : route.continue();

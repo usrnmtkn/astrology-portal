@@ -1,4 +1,6 @@
 import {approvedVoiceStyleReference} from './approvedVoiceStyle.mjs';
+import {WEEKLY_BATCH_EDITORIAL} from './weeklyBatchEditorial.mjs';
+import {weeklyPreviousReadingsInput} from './weeklyPreviousReadings.mjs';
 import {horoscopeEvidenceReceipt} from './horoscopeEvidenceReceipt.mjs';
 import {loadWeeklyOwnerEvidence,WEEKLY_EVIDENCE_VERSION} from './weeklyOwnerEvidence.mjs';
 import fs from 'node:fs';
@@ -105,7 +107,8 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const seasonalMeaning=resolveSeasonalMeaning(brief,sources.seasonalBank,seasonalSourceRows);
   const sourceHash=seasonalMeaning?digest({repository:sources.sha256,seasonalMeaning:seasonalMeaning.sha256}):sources.sha256;
   const rejectedReadings=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.rejections??[]:[];
-  const proseVersion=usesRefinedHoroscopeProse(edition.window.period)?{proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION}:{};
+  const proseVersion=usesRefinedHoroscopeProse(edition.window.period)?{proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,
+    ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL}:{})}:{};
   const cacheKey=digest({...proseVersion,...(edition.window.period==='weekly'?{rejectedReadings}:{}),...(writerSelection?{writerSelection}:{}),brief,writingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},feedbackReceipt,studioCorrections,sourceHash});
   if(preparedPlans.has(cacheKey))return {...preparedPlans.get(cacheKey),edition};
   const planet=edition.window.period==='daily'?'moon':'sun';
@@ -202,6 +205,7 @@ export function horoscopePlanPreview(prepared) {
       ...(prepared.edition.window.period==='weekly'?{ownerEvidence:horoscopeEvidenceReceipt(e.ownerContext,prepared.writingProfile)}:{})})),writerCalls,
     ...(prepared.edition.window.period==='seasonal'?{planningCalls:writerCalls*3,editorialReviewCalls:writerCalls*6,maximumPaidCalls:writerCalls*30}:{}),
     feedback:prepared.feedbackReceipt,
+    ...(prepared.edition.window.period==='weekly'?{batchEditorialVersion:WEEKLY_BATCH_EDITORIAL,batchPlanningCalls:1,batchReviewCalls:1,maximumPaidCalls:writerCalls*2+2}:{}),
     synthesisCalls:prepared.edition.window.period==='monthly'&&prepared.edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?1:0};
 }
 
@@ -211,9 +215,14 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
   const approved=approveArgumentOutline(entry.argumentOutline,{exactOwnerRuling:`Authenticated owner selected Generate drafts for plan ${approvedPlanHash}. Reference: ${approvalReference}`});
   const argumentSource={contentKey:`horoscope-plan/${approvedPlanHash}/${sign}`,sourcePath:approvalReference,ownerApproved:true,
     authority:'owner-approved-horoscope-plan',opening:approved.thesis,tension:approved.complication,development:approved.recognition,close:approved.response};
-  const currentWriter=prepared.explicitFeedbackMarker?Object.assign(async request=>writerClient({...request,
-    input:`${request.input}\n\n${prepared.explicitFeedbackMarker}`,
-    ...(request.ownerEvidence?{ownerEvidence:{...request.ownerEvidence,writingFeedback:prepared.feedbackReceipt}}:{})}),writerClient):writerClient;
+  const currentWriter=prepared.explicitFeedbackMarker||prepared.weeklyBatchPlan||prepared.previousReadings?Object.assign(async request=>{
+    const input=[request.input,...(prepared.weeklyBatchPlan?[
+      `SHARED WEEKLY CONCERNS\n${JSON.stringify(prepared.weeklyBatchPlan.concerns)}`,
+      `CURRENT SIGN CONCERN\n${JSON.stringify(prepared.weeklyBatchPlan.concerns.find(c=>c.sign===sign))}`,
+      'The shared plan supplies meaning and scope, not reader wording or a required paragraph script. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
+    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
+    return writerClient({...request,input,...(request.ownerEvidence?{ownerEvidence:{...request.ownerEvidence,inputSha256:createHash('sha256').update(input).digest('hex'),writingFeedback:prepared.feedbackReceipt}}:{})});
+  },writerClient):writerClient;
   const result=await runWritingPipeline({...entry.contextOptions,meaningInput:entry.meaningInput,
     // Reconstruct the exact input shape used by the canonical argument builder.
     argumentInput:{...entry.argumentOutline,scope_breadth:{broad_mechanism:entry.argumentOutline.scopeBreadth.broadMechanism,

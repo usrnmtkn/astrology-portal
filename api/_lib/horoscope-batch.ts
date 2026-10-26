@@ -4,6 +4,8 @@ import {studioStorage} from './sky-studio-sources.js';
 import {persistWeeklyHoroscope,horoscopeStorageTimeoutMs} from './horoscope-storage-confirmation.js';
 import {runHoroscopeWriting} from '../admin/horoscope-writing.js';
 import {horoscopePendingReadings} from '../../src/astro-writing/horoscopeRecovery.mjs';
+import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {WEEKLY_BATCH_EDITORIAL,weeklyPlanCurrent,weeklyReviewCurrent,weeklyEditorialComplete} from '../../src/astro-writing/weeklyBatchEditorial.mjs';
 
 /** Durable authorization lives in the edition, never in an open browser tab.
  * A version-checked lease fences overlapping cron invocations. Each paid stage
@@ -28,7 +30,30 @@ export async function runWeeklyHoroscopeBatch(id:string,{maxSteps=100,wait=()=>n
       row=await read();batch=row?.source_snapshot?.horoscopeGeneration?.batch;
       if(batch?.status!=='running'||batch.lease?.id!==lease.id||row.status!=='DRAFT')return {state:'stopped'};
       const generation=row.source_snapshot.horoscopeGeneration,active=generation.active;
-      const next=horoscopePendingReadings(row.sections.horoscopeEdition,generation).find((p:any)=>batch.signs.includes(p.sign)&&!batch.attempted.includes(p.sign));
+      if(batch.editorialVersion===WEEKLY_BATCH_EDITORIAL){
+        const gate=generation.weeklyEditorial;
+        const complete=weeklyEditorialComplete(row);
+        const planning=!weeklyPlanCurrent(gate,batch.planHash);
+        if(gate?.pending||planning||complete&&!weeklyReviewCurrent(row)){
+          const prior=planning?gate?.plan:gate?.review;
+          if(!gate?.pending&&prior){
+            await saveBatch({...batch,lease:null,status:'needs_attention',error:prior.error??(planning&&prior.status==='passed'?'The shared Weekly plan no longer matches the approved facts or instructions. Review its findings and prepare a fresh plan.':'The Weekly editorial gate found issues. Review the saved findings before approving another check.')});
+            return {state:'needs_attention'};
+          }
+          const action=gate?.pending?'poll-weekly':planning?'plan-weekly':'review-weekly';
+          const result=await runHoroscopeWriting({action,id,expectedUpdatedAt:row.updated_at,approvedPlanHash:batch.planHash},batch.actor,batch.id,invocationDeadline);
+          if(result.status>=400){
+            const previousVersion=row.updated_at;
+            row=await read();batch=row?.source_snapshot?.horoscopeGeneration?.batch;
+            if(batch?.status!=='running'||batch.lease?.id!==lease.id
+              ||result.status===409&&row.updated_at!==previousVersion)return {state:'changed'};
+            await saveBatch({...batch,lease:null,status:'paused',error:result.payload.error});return {state:'paused'};
+          }
+          if(result.payload.pending)await wait();
+          continue;
+        }
+      }
+      const next=horoscopePendingReadings(row.sections.horoscopeEdition,generation).sort((a:any,b:any)=>HOROSCOPE_SIGNS.indexOf(a.sign)-HOROSCOPE_SIGNS.indexOf(b.sign)).find((p:any)=>batch.signs.includes(p.sign)&&!batch.attempted.includes(p.sign));
       if(!active&&!next){
         const complete=row.sections.horoscopeEdition.passages.every((p:any)=>p.headline.trim()&&p.body.trim());
         row=await saveBatch({...batch,lease:null,status:complete?'complete':'needs_attention',finishedAt:new Date().toISOString()});

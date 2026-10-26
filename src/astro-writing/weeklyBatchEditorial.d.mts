@@ -1,0 +1,17 @@
+export const WEEKLY_BATCH_EDITORIAL:string;
+export const WEEKLY_PLAN_SCHEMA:any;
+export const WEEKLY_BATCH_REVIEW_SCHEMA:any;
+export const WEEKLY_PLAN_INSTRUCTIONS:string;
+export const WEEKLY_BATCH_REVIEW_INSTRUCTIONS:string;
+export const WEEKLY_PLAN_CHECKS:string[];
+export const WEEKLY_REVIEW_CHECKS:string[];
+export function weeklyEditorialHash(value:any):string;
+export function weeklyEditorialBinding(row:any):string;
+export function weeklyEditorialContent(row:any):string;
+export function weeklyEditorialComplete(row:any):boolean;
+export function weeklyPlanCurrent(gate:any,scopeHash:string):boolean;
+export function weeklyReviewCurrent(row:any):boolean;
+export function weeklyEditorialIssue(row:any):string|null;
+export function weeklyEditorialInput(prepared:any,row:any,phase:string):any;
+export function validateWeeklyEditorialResult(value:any,options:any):any;
+export function weeklyLexicalSignals(passages:any[]):any;

@@ -1,4 +1,5 @@
 import {horoscopeRejectionPassage} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {weeklyReviewCurrent,weeklyEditorialContent} from '../../src/astro-writing/weeklyBatchEditorial.mjs';
 
 const pick=(value:any,keys:string[])=>value?Object.fromEntries(keys.filter(key=>value[key]!==undefined).map(key=>[key,value[key]])):value;
 const operation=(value:any)=>pick(value,['id','sign','workflow','phase','state','startedAt','responseId','requestHash','planHash','config','writerModel','reviewVersion','startupDiagnostic']);
@@ -13,6 +14,9 @@ export function horoscopeEditorRow(row:any){
   const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration;
   return {...row,source_snapshot:{...pick(snapshot,['horoscopeOutlines','studioWritingProfile','editorialImport','horoscopeWriterChoice','studioOwnerApproval']),
     ...(generation?{horoscopeGeneration:{active:operation(generation.active),batch:generation.batch,
+      ...(generation.weeklyEditorial?{weeklyEditorial:{version:generation.weeklyEditorial.version,
+        plan:generation.weeklyEditorial.plan,review:generation.weeklyEditorial.review?{...generation.weeklyEditorial.review,current:weeklyReviewCurrent(row),matchesCurrent:generation.weeklyEditorial.review.contentHash===weeklyEditorialContent(row)}:null,
+        pending:operation(generation.weeklyEditorial.pending)}}:{}),
       lastError:failure(generation.lastError),candidateHolds:map(generation.candidateHolds,failure),
       heldRequests:map(generation.heldRequests,operation),readings:map(generation.readings,receipt),
       rejections:(generation.rejections??[]).map((entry:any)=>({...pick(entry,['id','scope','reason','rejectedAt']),

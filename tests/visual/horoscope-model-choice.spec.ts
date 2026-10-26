@@ -134,6 +134,14 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
     await f.open();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
     await expect(studio.getByRole('region',{name:'Pisces reading preview'})).toContainText(edited);
     const approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
+    await expect(approval).toBeDisabled();
+    const batchReview=studio.getByRole('region',{name:'Weekly batch editorial gate'});
+    await expect(batchReview).toContainText('out of date');
+    const loadBatchPlan=batchReview.getByRole('button',{name:'Load batch review plan',exact:true});
+    if(await loadBatchPlan.isVisible())await loadBatchPlan.click();
+    await batchReview.getByRole('button',{name:'Review all twelve · 1 AI request',exact:true}).click();
+    await batchReview.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
+    await expect(batchReview).toContainText('current twelve-sign set passed its batch comparison');
     await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();await approval.check();
     await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
@@ -161,7 +169,7 @@ test('Pause persists after reload and resume reuses the saved batch approval',as
   await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status).toBe('paused');
   const batchId=(await f.latest()).source_snapshot.horoscopeGeneration.batch.id;
   await page.reload();await f.open();
-  await expect(studio.getByText('The batch is paused. Resume to continue its saved approval.',{exact:true})).toBeVisible();
+  await expect(studio.getByText('The batch is paused. Sent requests can still finish; resume with its saved approval.',{exact:true})).toBeVisible();
   await f.call({method:'writer-state',body:{pendingPolls:0}});
   const resumed=page.waitForResponse(response=>response.url().includes('/api/admin/horoscope-writing')&&response.request().postDataJSON()?.action==='resume-batch');
   await studio.getByRole('button',{name:'Resume generation',exact:true}).click();
