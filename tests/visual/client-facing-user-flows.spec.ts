@@ -1,3 +1,4 @@
+import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { moonRoutingRecords, moonReaderCompetingRecords } from '../helpers/moon-routing-fixtures';
 import { personalTransitCopySeed, personalTransitId } from '../../apps/web/src/services/personalDailyTransits';
 import { selectMoonTransitVariant } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/moonTransitVariants.mjs';
@@ -6439,4 +6440,71 @@ for (const width of [390,1440]) test(`Complete Friend natal placement bodies rea
     localStorage.setItem(key,JSON.stringify(charts));
   });
   await check('they','Robin');
+});
+
+for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (const pilot of [
+  { planet: "Jupiter", sign: "Leo", house: 3, sect: "day", date: "1979-02-17", time: "11:00 AM" },
+  { planet: "Jupiter", sign: "Leo", house: 3, sect: "night", date: "1978-11-17", time: "6:00 PM" },
+  { planet: "Saturn", sign: "Aries", house: undefined, sect: "day", date: "1997-04-12", time: "12:00 PM" },
+  { planet: "Saturn", sign: "Aries", house: undefined, sect: "night", date: "1997-04-12", time: "12:00 AM" }
+] as const) test(`Natal placement sect selects one complete passage for You and Friend ${pilot.planet} ${pilot.sect} ${theme} ${width}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width, height: 1000 });
+  const timestamp = "2026-10-22T12:00:00Z";
+  const rows: Array<Record<string, unknown>> = [];
+  const bodies = new Map<string, string>();
+  for (const audience of ["you", "they"]) {
+    const subject = audience === "you" ? "You" : "{{ownerName}}";
+    const fixture = (key: string, body: string, status = "LIVE") => ({ id: key, content_key: key, surface: "natal", mode: "in_depth", status, lane: "serving", review_state: status === "LIVE" ? null : "EDITORIAL_REVIEW_REQUIRED",
+      updated_at: timestamp, body, summary: "", headline: "", sections: {}, source_snapshot: { contentType: "mustache-template", contentSystem: "editorial-library" } });
+    for (const sect of ["day", "night"]) {
+      rows.push(fixture(`cms/natal-planet-sect/${audience}/jupiter/${sect}`, `${subject} general Jupiter opening.\n\nGeneral Jupiter ending.`));
+      const jupiterKey = `cms/natal-planet-sect/${audience}/jupiter/leo/house-3/${sect}`;
+      const jupiterBody = approvedNatalPilotBody(jupiterKey, `${subject} precise third house opening.\n\nRetained complete placement ending.`);
+      bodies.set(jupiterKey, jupiterBody);
+      rows.push(fixture(jupiterKey, jupiterBody));
+      rows.push(fixture(`cms/natal-planet-sect/${audience}/jupiter/leo/house-4/${sect}`, "Wrong house must not appear."));
+      rows.push(fixture(`cms/natal-planet-sect/${audience}/saturn/${sect}`, `${subject} general Saturn opening.\n\nRetained general Saturn ending.`));
+      const saturnKey = `cms/natal-planet-sect/${audience}/saturn/aries/${sect}`;
+      const saturnBody = approvedNatalPilotBody(saturnKey, `${subject} Aries Saturn opening.\n\nRetained complete Aries ending.`);
+      bodies.set(saturnKey, saturnBody);
+      rows.push(fixture(saturnKey, saturnBody));
+      for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) for (let house = 1; house <= 12; house++) {
+        rows.push(fixture(`cms/natal-planet-sect/${audience}/saturn/${sign}/house-${house}/${sect}`, "Unpublished Saturn proposal must not appear.", "DRAFT"));
+      }
+    }
+  }
+  const liveRows = rows.filter(row => row.status === "LIVE");
+  await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true, preloadProfileNatalSky: true, profileBirthDate: pilot.date, profileBirthTime: pilot.time, theme,
+    generatedInterpretations: rows, contentPublications: liveRows.map(row => ({ content_key: row.content_key, state: "live", revision: 1, row_id: row.id, row_updated_at: timestamp, published_at: timestamp, updated_at: timestamp })) });
+  for (const audience of ["you", "they"]) {
+    await expectClientRouteLoads(page, audience === "you" ? "/#you" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+    if (audience === "you") await selectYouNatalTab(page);
+    await page.locator("button.placement-table-row").filter({ hasText: new RegExp(pilot.planet) }).first().click();
+    const article = page.locator(audience === "you" ? ".you-transit-article-page" : ".sky-detail-article");
+    const sect = article.getByRole("region", { name: pilot.sect === "day" ? "Day chart" : "Night chart", exact: true });
+    const key = `cms/natal-planet-sect/${audience}/${pilot.planet.toLowerCase()}/${pilot.sign.toLowerCase()}${pilot.house ? `/house-${pilot.house}` : ""}/${pilot.sect}`;
+    const body = bodies.get(key)!.replaceAll("{{ownerName}}", "Nikki");
+    await expect(sect.locator("p")).toHaveText(body.split(/\n\s*\n/u));
+    await expect(sect).toHaveCount(1);
+    await expect(article).not.toContainText(`General ${pilot.planet} ending.`);
+    await expect(article).not.toContainText("Wrong house must not appear.");
+    await expect(article).not.toContainText("Unpublished Saturn proposal must not appear.");
+    const precedingCopy = (element: Element) => [...element.parentElement!.children].slice(0, [...element.parentElement!.children].indexOf(element)).filter(child => child.tagName === "SECTION").map(child => child.textContent);
+    const baseCopy = await sect.evaluate(precedingCopy);
+    expect(baseCopy.some(text => (text?.length ?? 0) > 50)).toBe(true);
+    const aspects = article.locator(".article-related-aspects");
+    const aspectCopy = await aspects.allTextContents();
+    await page.reload();
+    await expect(sect.locator("p")).toHaveText(body.split(/\n\s*\n/u));
+    expect(await sect.evaluate(precedingCopy)).toEqual(baseCopy);
+    expect(await aspects.allTextContents()).toEqual(aspectCopy);
+    if (pilot.planet === "Jupiter") {
+      await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+      await page.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first().click();
+      await expect(sect).toContainText("Retained general Saturn ending.");
+      await expect(article).not.toContainText("Retained complete Aries ending.");
+      await expect(article).not.toContainText("Unpublished Saturn proposal must not appear.");
+    }
+  }
 });

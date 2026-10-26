@@ -1,3 +1,4 @@
+import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
 import {standaloneArticleKind} from '../../src/shared/articleLibrary.js';
@@ -272,7 +273,11 @@ function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string,
   if (contentKey?.startsWith("sample-") || isRecord(metadata?.facts) && metadata.facts.sampleOnly || isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.sampleOnly) return true;
   // These are reusable reader-bank identities, not generated personal reports.
   const reusableComposite = surface === "composite" && Boolean(contentKey && (compositeSourceKey.test(contentKey) || compositeSignSourceKey.test(contentKey) || compositeHouseAliasKey.test(contentKey)));
-  const reusableNatal = surface === "natal" && Boolean(contentKey && natalEditorialSourceKey.test(contentKey))
+  const placement = contentKey ? parseNatalSectPlacementKey(contentKey) : null;
+  const facts = isRecord(metadata?.facts) ? metadata.facts : {};
+  const reusablePlacement = placement && facts.planet === placement.planet && facts.sign === placement.sign
+    && facts.house === placement.house && facts.sect === placement.sect && facts.houseSystem === "whole-sign";
+  const reusableNatal = surface === "natal" && Boolean(contentKey && (natalEditorialSourceKey.test(contentKey) || reusablePlacement))
     && isRecord(metadata?.facts) && metadata.facts.scope === "editorial_library"
     && metadata.facts.audience === contentKey?.split("/")[2]
     && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "editorial-library";

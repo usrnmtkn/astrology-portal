@@ -2,7 +2,7 @@
   "entryJavaScriptRawBytes": 810150,
   "entryJavaScriptGzipBytes": 234650,
   "largestJavaScriptRawBytes": 810150,
-  "totalJavaScriptGzipBytes": 844600,
+  "totalJavaScriptGzipBytes": 847150,
   "_rationale": {
     "pendingEditorCopy20261025": "Matched standalone Admin builds in the same independently installed checkout use native Node 22.23.3, the visual-smoke Supabase URL, sb_publishable_visual_smoke_fixture, empty legacy key and enabled natal-aspect flag. Baseline f6b7f65ba168c7ccc0e4b0ff8d48efb60fec149c measures entry raw/gzip/aggregate 808982/234546/843282 bytes. The complete save/publication acknowledgement repair measures 809101/234531/843419 (+119/-15/+137). It retains text entered during a pending response and its next private save, while sharing changed-field comparison and one deferred recovery/publication module. Allocate 500 aggregate gzip bytes above the old cap, leaving 431 bytes; keep entry raw/gzip, largest chunk, memory graph, reader-payload and runtime limits unchanged. This records the measured correctness cost, not a loading-performance improvement.",
     "contentLibraryReaderLinked20261025": "Reader-linked standalone acceptance for the same scoped library sources uses the enabled natal-aspect flag, visual-smoke Supabase placeholders, and explicit local Studio/reader origins. The fresh build measures entry 809790 raw / 234365 gzip and 842234 aggregate gzip bytes. This configuration exceeds the previous entry-gzip ceiling by 215 bytes; allocate 500 entry-gzip bytes for the requested UI, leaving 285 bytes. The matched no-env-file baseline/feature measurements above remain unchanged. Raw, largest, aggregate, deferred-library, reader-corpus and other boundaries stay unchanged; this is a measured interface allocation, not a performance improvement.",
@@ -85,7 +85,36 @@
     "natalEditorialTabs20261022": "Matched independent npm-ci builds of current main 4b7e9b8d895881913b3a10e317141687bbdd81a8 and the Studio-only feature use native Node 22.20.0 with identical visual-smoke Supabase URL/anonymous-key placeholders and the publishable key empty. Baseline entry raw/gzip/aggregate is 795957/229698/799772 bytes; the combined feature is 796726/229918/803051 (+769/+220/+3279). Preserve main\u2019s separate unsaved-ingress allocation, then allocate 1000 entry/largest raw bytes and 3500 aggregate gzip bytes above main limits, leaving 424 raw and 549 aggregate bytes. Entry gzip, reader startup, memory graph JavaScript, dependency, content-payload and deferred-editor boundaries remain unchanged. Rulership and day/night selection stay in the lazy natal workspace, with complete source bodies loaded through the owner API. No reader prose or dependency is bundled. Fresh-build desktop/mobile and light/dark browser flows verify exact source selection, normal version-checked CRUD and reload. This records the requested interface cost, not a performance improvement.",
     "skyPlacementWorkspace20261023": "Matched standalone builds in independently npm-ci --ignore-scripts installed checkouts compare main 993f23c048bde0b445b5cb2b4ccf8a0c2ce1dc9e with layout 8a250cbbd275eb66f78a0607352ad38fb92cb004, using Node 22.20.0 and identical visual-smoke Supabase URL/anonymous-key placeholders with publishable key and natal-aspect flag empty. Baseline entry raw/gzip/aggregate measures 796901/229977/803560 bytes across 82 JavaScript assets; layout measures 798194/230423/809602 across 83 (+1293/+446/+6042). The requested dated-visit/default-reading/writing-setup interface adds one deferred workspace chunk. Allocate 1500 entry/largest raw bytes and 6250 aggregate gzip bytes above existing ceilings, leaving 456 raw and 248 aggregate bytes. Entry gzip, memory graph, reader startup, CSS, dependencies, content-payload restrictions and existing deferred-editor boundaries remain unchanged. Explicitly require the new workspace to stay dynamic and outside the initial graph. This records the requested interface cost, not a performance improvement; no owner copy or generation prompt is bundled or shortened. See docs/content-management/SKY_WRITEUP_WORKSPACE.md.",
     "contentStudioWorkspace20261024": "Matched standalone Admin builds in independently npm-ci-installed worktrees compare main 3343406b3 with the scoped Calendar/Sky workspace, dated variables, reader source/preview, CSV and readability release. Node 22.20.0, identical visual-smoke Supabase placeholders, empty publishable key and enabled natal-aspect flag measure entry raw/gzip/aggregate 799823/230931/811139 to 807007/233513/838898 bytes (+7184/+2582/+27759), with 83 to 91 JavaScript chunks. Allocate 8000 entry/largest raw bytes, 2250 entry gzip bytes and 29000 aggregate gzip bytes above the prior ceilings, using existing headroom and leaving 1143/637/1452 measured bytes. New dated-article, source and reader-preview panes stay lazy; no runtime dependency, reader corpus, writer profile or approved prose is added. Reader startup, graph/editor boundaries, forbidden payload and runtime-performance checks remain unchanged. This records the requested interface cost, not a performance improvement.",
-    "nativeEditorLifecycle20261026": "Matched independently npm-ci-installed main 5eddffa5d38ac38b594781f576ba24387d439b6d and lifecycle-fix builds use native Node 22.20.0 arm64, visual-smoke Supabase URL/legacy key, empty publishable key and enabled natal-aspect flag. Baseline entry raw/gzip/aggregate is 808624/234504/844039 bytes; native Horoscope and dated Sky archive/restore controls measure 809016/234596/844451 (+392/+92/+412). Reusing the existing save transports preserves exact copy, version conflicts and recoverable status without another editor chunk. Allocate 500 aggregate gzip bytes above the prior ceiling, leaving 149 bytes. Entry raw/gzip, largest-chunk, initial dependency graph, deferred editor, reader payload, privacy and performance limits remain unchanged. This records the measured cleanup-interface cost, not a loading speed improvement."
+    "nativeEditorLifecycle20261026": "Matched independently npm-ci-installed main 5eddffa5d38ac38b594781f576ba24387d439b6d and lifecycle-fix builds use native Node 22.20.0 arm64, visual-smoke Supabase URL/legacy key, empty publishable key and enabled natal-aspect flag. Baseline entry raw/gzip/aggregate is 808624/234504/844039 bytes; native Horoscope and dated Sky archive/restore controls measure 809016/234596/844451 (+392/+92/+412). Reusing the existing save transports preserves exact copy, version conflicts and recoverable status without another editor chunk. Allocate 500 aggregate gzip bytes above the prior ceiling, leaving 149 bytes. Entry raw/gzip, largest-chunk, initial dependency graph, deferred editor, reader payload, privacy and performance limits remain unchanged. This records the measured cleanup-interface cost, not a loading speed improvement.",
+    "natalPlacementSectPreview20261026": {
+      "baseRevision": "66a51e73b29369ae17d1f84b94bf1d9c44e9c446",
+      "node": "v22.20.0",
+      "measurements": {
+        "baseline": {
+          "entryRaw": 808060,
+          "entryGzip": 234167,
+          "totalGzip": 843104,
+          "chunks": 94
+        },
+        "feature": {
+          "entryRaw": 808072,
+          "entryGzip": 234179,
+          "totalGzip": 845624,
+          "chunks": 95
+        }
+      },
+      "aggregateDeltaBytes": 2520,
+      "previousTotalLimitBytes": 843850,
+      "totalLimitBytes": 846400,
+      "reason": "Measured allocation for the requested sign/optional-house sect selectors, full-reading comparison, and exact reusable source identities. The comparison is a required independent dynamic entry. Startup, entry, largest-chunk, CSS, private-payload and runtime guards remain unchanged. This is feature cost, not a performance gain."
+    },
+    "natalPlacementSectIntegration20261026": {
+      "baseRevision": "5eddffa5d38ac38b594781f576ba24387d439b6d",
+      "previousTotalLimitBytes": 844100,
+      "totalLimitBytes": 846650,
+      "allocationBytes": 2550,
+      "status": "Provisional reconciliation of the existing measured 2550-byte feature allowance with the independent 250-byte Friend release allowance. Fresh matched baseline/feature measurement is required before readiness or push; other numeric limits remain unchanged."
+    }
   },
   "memoryGraphJavaScriptGzipBytes": 64000
 }

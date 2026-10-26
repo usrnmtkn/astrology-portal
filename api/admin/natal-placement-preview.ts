@@ -96,6 +96,8 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   const sign = typeof input.sign === "string" ? input.sign : "";
   const house = typeof input.house === "string" ? input.house : "";
   const audience = input.audience === "they" ? "they" : "you";
+  if (input.ownerName !== undefined && (typeof input.ownerName !== "string" || input.ownerName.trim().length > 100)) throw new Error("The preview name must be 100 characters or fewer.");
+  const ownerName = typeof input.ownerName === "string" && input.ownerName.trim() ? input.ownerName.trim() : "Maya";
   const motion: "direct" | "retrograde" = input.motion === "retrograde" || input.isRetrograde === true ? "retrograde" : "direct";
   const rulerHouse = emptyHouse && typeof input.rulerHouse === "number" ? input.rulerHouse : null;
   if (input.kind !== undefined && input.kind !== "empty-house") throw new Error("Unknown preview kind.");
@@ -108,7 +110,7 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   const overrides = input.overrides
     .map(normalizeOverrideCandidate)
     .filter((candidate): candidate is PreviewOverrideCandidate => Boolean(candidate));
-  return { audience, house, motion, overrides, planet, sign, emptyHouse, rulerHouse };
+  return { audience, house, motion, overrides, planet, sign, emptyHouse, rulerHouse, ownerName };
 }
 
 function ignoredReason(candidate: PreviewOverrideCandidate): IgnoredPreviewOverride["reason"] | null {
@@ -219,13 +221,13 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
   }, { includeEmptyHouseBridge: true }) : isNatalPlacementAngle(input.planet) ? renderer.renderNatalAngle({
     angle: input.planet,
     sign: input.sign,
-    voice: input.audience === "you" ? "you" : "Maya"
+    voice: input.audience === "you" ? "you" : input.ownerName
   }) : renderer.renderNatalPlacement({
     ...(input.house ? { house: Number(input.house) } : {}),
     isRetrograde: input.motion === "retrograde",
     planet: input.planet,
     sign: input.sign,
-    voice: input.audience === "you" ? "you" : "Maya"
+    voice: input.audience === "you" ? "you" : input.ownerName
   });
 
   return {

@@ -18,6 +18,17 @@ assert.equal(signOnly.headline, "Sun in Aries");
 assert.equal(signOnly.parts.length, 1, "The API must return the planet-in-sign paragraph before a house is selected.");
 assert.ok(signOnly.body.trim().length > 0, "The API must load its packaged fallback data and return reader copy.");
 
+for (const ownerName of ["Robin", "Avery"]) {
+  const input = normalizeNatalPlacementPreviewInput({ audience: "they", ownerName: ` ${ownerName} `, house: "", overrides: [], planet: "saturn", sign: "aries" });
+  assert.equal(input.ownerName, ownerName);
+  const rendered = renderNatalPlacementPreview(input);
+  assert.equal(rendered.parts.length, 1, "All-houses scope never fabricates a house paragraph");
+  assert.match(rendered.body, new RegExp(ownerName, "u"));
+  assert.doesNotMatch(rendered.body, /Maya|\{\{/u);
+}
+for (const ownerName of [123, "x".repeat(101)]) assert.throws(() => normalizeNatalPlacementPreviewInput({ audience: "they", ownerName, overrides: [], planet: "saturn", sign: "aries" }), /preview name/u);
+assert.equal(normalizeNatalPlacementPreviewInput({ audience: "they", overrides: [], planet: "saturn", sign: "aries" }).ownerName, "Maya");
+
 const fullInput = normalizeNatalPlacementPreviewInput({
   audience: "you",
   house: "1",

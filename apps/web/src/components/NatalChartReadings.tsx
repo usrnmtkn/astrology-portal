@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import type { SkySnapshot } from "../types";
-import { natalChartReadings, natalReadingBody, type NatalReadingAudience } from "../content/natalChartReadings";
+import { natalChartReadings, natalReadingKeys, selectedNatalReadingBody, type NatalReadingAudience } from "../content/natalChartReadings";
 import { subscribeToContentPublications } from "../content/contentPublicationState";
 import { loadLiveGeneratedContentForKeys, type LiveGeneratedContent } from "../services/generatedContent";
 import { FormattedProse } from "./FormattedProse";
@@ -14,7 +14,7 @@ export function NatalChartReadings({ snapshot, audience, ownerName, planet, disa
   disabled?: boolean;
 }) {
   const readings = disabled ? [] : natalChartReadings(snapshot, audience, planet);
-  const keys = JSON.stringify(readings.map(reading => reading.contentKey));
+  const keys = JSON.stringify(natalReadingKeys(readings));
   const [revision, setRevision] = useState(0);
   const [state, setState] = useState<{ keys: string; revision: number; rows: Map<string, LiveGeneratedContent> | null } | null>(null);
   useEffect(() => subscribeToContentPublications(() => setRevision(value => value + 1)), []);
@@ -33,7 +33,7 @@ export function NatalChartReadings({ snapshot, audience, ownerName, planet, disa
   if (!state || state.keys !== keys || state.revision !== revision) return <PageLoading message="Loading chart readings" />;
   if (!state.rows) return <PageLoadError message="Chart readings could not be loaded." onRetry={() => setRevision(value => value + 1)} />;
   return <>{readings.map(reading => {
-    const body = natalReadingBody(state.rows!.get(reading.contentKey), audience, ownerName);
+    const body = selectedNatalReadingBody(reading, state.rows!, audience, ownerName);
     if (!body) return null;
     const paragraphs = body.split(/\n{2,}/u).map((text, index) => <FormattedProse key={index} text={text} />);
     if (planet) return <section className="article-section sky-detail-section" aria-label={reading.label} key={reading.contentKey}>

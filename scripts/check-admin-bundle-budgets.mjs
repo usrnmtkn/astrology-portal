@@ -129,6 +129,8 @@ const initialGzipBytes = initialJavaScript.reduce((sum, item) => sum + item.gzip
 if (initialRawBytes > budgets.entryJavaScriptRawBytes) failures.push(`Complete Studio startup exceeds the existing raw entry ceiling: ${initialRawBytes} bytes`);
 if (initialGzipBytes > budgets.entryJavaScriptGzipBytes) failures.push(`Complete Studio startup exceeds the existing gzip entry ceiling: ${initialGzipBytes} bytes`);
 if (initialChunks.has('src/contentLibraryNavigation.ts')) failures.push('Content Library navigation and status actions must remain deferred from Studio startup.');
+if (initialChunks.has("src/NatalSectPlacementComparison.tsx")) failures.push("Natal reading comparison must remain deferred from Studio startup.");
+if (!manifest["src/NatalSectPlacementComparison.tsx"]?.isDynamicEntry) failures.push("Natal reading comparison must remain an independently lazy entry.");
 if (initialChunks.has('src/studioRevisionPublication.ts')) failures.push('Revision publication validation must remain deferred from Studio startup.');
 if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
