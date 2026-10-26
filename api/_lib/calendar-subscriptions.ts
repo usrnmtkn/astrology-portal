@@ -1,13 +1,16 @@
 import { createHash } from "node:crypto";
 import { AdminHttpError, adminFetchJson, adminStorageRows } from "./admin-http.js";
-import { calendarFeedCategories, calendarReminders, type CalendarSubscriptionOptions, type CalendarFeedEvent } from "../../apps/web/src/features/calendar/calendarSubscription.js";
+import { calendarFeedCategories, calendarReminders, validCalendarLocation, type CalendarSubscriptionOptions, type CalendarFeedEvent } from "../../apps/web/src/features/calendar/calendarSubscription.js";
 export const hashCalendarToken = (token: string) => createHash("sha256").update(token).digest("hex");
 export function validCalendarToken(token: unknown): token is string { return typeof token === "string" && /^[A-Za-z0-9_-]{43}$/.test(token); }
 export function parseCalendarOptions(body: Record<string, unknown>): CalendarSubscriptionOptions {
-  if (!Array.isArray(body.include) || !body.include.length || body.include.length > 8 || body.include.some(key => !calendarFeedCategories.includes(key))
+  if (!Array.isArray(body.include) || !body.include.length || body.include.length > calendarFeedCategories.length || body.include.some(key => !calendarFeedCategories.includes(key))
     || !calendarReminders.includes(body.reminder as any) || typeof body.timeZone !== "string" || body.timeZone.length > 100) throw new AdminHttpError(400, "Choose calendar events, a reminder, and a valid time zone.");
   try { new Intl.DateTimeFormat("en", { timeZone: body.timeZone }); } catch { throw new AdminHttpError(400, "Choose a valid time zone."); }
-  return { include: [...new Set(body.include)] as CalendarSubscriptionOptions["include"], reminder: body.reminder as CalendarSubscriptionOptions["reminder"], timeZone: body.timeZone };
+  if ((body.location !== undefined && !validCalendarLocation(body.location)) || body.include.includes('daily-guidance') && !validCalendarLocation(body.location))
+    throw new AdminHttpError(400, 'Choose a calendar location for planetary hours.');
+  return { include: [...new Set(body.include)] as CalendarSubscriptionOptions["include"], reminder: body.reminder as CalendarSubscriptionOptions["reminder"], timeZone: body.timeZone,
+    ...(validCalendarLocation(body.location) ? { location: { latitude: body.location.latitude, longitude: body.location.longitude, label: body.location.label } } : {}) };
 }
 export async function calendarStorage<T extends object = Record<string, any>>(table: string, query: Record<string, string> = {}, method = "GET", body?: unknown): Promise<T[]> {
   const base = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "").replace(/\/$/u, "");

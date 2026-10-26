@@ -1,4 +1,5 @@
 /// <reference lib="es2022.intl" />
+import { calendarLocationParams, type CalendarLocation } from './calendarSubscription.js';
 /** Calendar subscriptions explicitly use excerpts; the full reader copy is untouched. */
 export function calendarFeedExcerpt(body: string, sentenceCount = 3) {
   // Convert formatting to plain text for calendar clients, preserving the words.
@@ -15,15 +16,15 @@ export function calendarFeedExcerpt(body: string, sentenceCount = 3) {
   return plain;
 }
 
-export function calendarReadingUrl(origin: string, date: string, eventId: string, timeZone: string) {
+export function calendarReadingUrl(origin: string, date: string, eventId: string, timeZone: string, location?: CalendarLocation) {
   const url = new URL("/", origin);
   url.searchParams.set("date", date);
-  url.hash = `calendar?${new URLSearchParams({ view: eventId.startsWith("week-") ? "weekly" : "day", date, event: eventId, timeZone })}`;
+  url.hash = `calendar?${new URLSearchParams({ view: eventId.startsWith("week-") ? "weekly" : "day", date, event: eventId, timeZone, ...calendarLocationParams(location) })}`;
   return url.href;
 }
 
-export function calendarFeedDescription(body: string, url: string) {
-  return [calendarFeedExcerpt(body), url && `Read more: ${url}`].filter(Boolean).join("\n\n");
+export function calendarFeedDescription(body: string, url: string, sentenceCount = 3) {
+  return [calendarFeedExcerpt(body, sentenceCount), url && `Read more: ${url}`].filter(Boolean).join("\n\n");
 }
 
 export type CalendarSubscriptionReading = {

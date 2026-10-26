@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadLocalWebEnv } from "./_lib/local-env.js";
 import { buildCalendarFeedEntries } from "./_lib/calendar-feed.js";
-import { calendarFeedCategories } from "../apps/web/src/features/calendar/calendarSubscription.js";
+import { calendarFeedCategories, calendarLocationFromParams } from "../apps/web/src/features/calendar/calendarSubscription.js";
 import type { CalendarSubscriptionReading } from "../apps/web/src/features/calendar/calendarFeedPreview.js";
 loadLocalWebEnv();
 
@@ -16,16 +16,22 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   const id = url.searchParams.get("id") ?? "", date = url.searchParams.get("date") ?? "";
   const timeZone = url.searchParams.get("timeZone") ?? "UTC";
   const instant = new Date(`${date}T12:00:00Z`);
-  if (!/^(?:week|event|ingress|lunation|station|aspect)-[a-zA-Z0-9:.\-]{1,180}$/u.test(id)
+  if (!/^(?:week|event|ingress|lunation|station|aspect|void|daily)-[a-zA-Z0-9:.\-]{1,180}$/u.test(id)
     || !/^\d{4}-\d{2}-\d{2}$/u.test(date) || !Number.isFinite(instant.getTime())
     || instant.toISOString().slice(0, 10) !== date || instant.getUTCFullYear() < 2020 || instant.getUTCFullYear() > 2100) {
     return send(400, { error: "Invalid calendar event link" });
   }
   try { new Intl.DateTimeFormat("en", { timeZone }); } catch { return send(400, { error: "Invalid time zone" }); }
+  if (id.startsWith('daily-') && id !== `daily-${date}`) return send(404, { error: "This calendar event is not available." });
+  const location = calendarLocationFromParams(url.searchParams);
+  if (id.startsWith('daily-') && !location) return send(400, { error: 'Choose a calendar location for planetary hours.' });
   try {
     const origin = process.env.CALENDAR_PUBLIC_ORIGIN || "https://tldrastro.vercel.app";
-    const [event] = await buildCalendarFeedEntries({ include: [...calendarFeedCategories], reminder: "None", timeZone }, origin, instant, id);
+    const [event] = await buildCalendarFeedEntries({ include: [...calendarFeedCategories], reminder: "None", timeZone, location }, origin, instant, id);
     if (!event) return send(404, { error: "This calendar event is not available." });
+    if (event.allDay ? event.start !== date : new Intl.DateTimeFormat('en-CA', {
+      timeZone, year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(new Date(event.start)) !== date) return send(404, { error: "This calendar event is not available." });
     const reading: CalendarSubscriptionReading = {
       id: event.readingId, title: event.title, body: event.description, start: event.start, end: event.end,
       allDay: event.allDay, url: event.url, sourceUrl: event.sourceUrl, cancelled: event.cancelled

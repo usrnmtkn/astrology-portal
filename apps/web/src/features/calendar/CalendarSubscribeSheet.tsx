@@ -5,16 +5,20 @@ import { AstroGlyph } from "./AstroGlyph";
 import { CalendarKindTag } from "./CalendarKindTag";
 import { CalendarSlideout } from "./CalendarSlideout";
 import type { CalendarEventKind } from "./calendarKinds";
+import type { LocationInput } from '../../types';
 
 const feedItems = [
   { key: "lunations", name: "New & Full Moons", hint: "Plus eclipses", icon: "🌑🌕", kind: "lunation" as const, on: true },
-  { key: "moon-signs", name: "Moon sign changes", hint: "Every 2–3 days", icon: "☽→♈", kind: "moon" as const, on: false },
+  { key: "quarter-moons", name: "Quarter Moons", hint: "First and last quarters", icon: "◐◑", kind: "lunation" as const, on: true },
+  { key: "void-moons", name: "Void-of-course Moon", hint: "Complete start and end times", icon: "VOC", kind: "void" as const, on: true },
+  { key: "daily-guidance", name: "Daily planning guidance", hint: "Love, work, creativity and rest", icon: "☉", kind: "note" as const, on: true },
+  { key: "moon-signs", name: "Moon sign changes", hint: "Every 2–3 days", icon: "☽→♈", kind: "moon" as const, on: true },
   { key: "seasons", name: "Season changes", hint: "Sun enters a new sign", icon: "☉→♎", kind: "season" as const, on: true },
   { key: "ingresses", name: "Planet ingresses", hint: "Planets entering signs", icon: "♀→♏", kind: "ingress" as const, on: true },
   { key: "retrogrades", name: "Retrograde stations", hint: "Turning Rx and direct", icon: "♄ Rx", kind: "station" as const, on: true },
   { key: "key", name: "Key events", hint: "Highlighted transits", icon: "⭐", kind: "key" as const, on: true },
   { key: "weekly", name: "Weekly emotional forecast", hint: "Every Monday · link to the current forecast", icon: "☾∼", kind: "note" as const, weekly: true, on: true },
-  { key: "aspects", name: "All aspects", hint: "Busy: several a day", icon: "☿□♄", kind: "aspect" as const, on: false }
+  { key: "aspects", name: "All aspects", hint: "Busy: several a day", icon: "☿□♄", kind: "aspect" as const, on: true }
 ] as const;
 
 function FeedTag({
@@ -37,12 +41,13 @@ function FeedTag({
   return <CalendarKindTag glyph={icon} kind={kind} />;
 }
 
-export function CalendarSubscribeSheet({ timeZone, onClose, onLinkReady }: {
-  timeZone: string;
+export function CalendarSubscribeSheet({ location, onClose, onLinkReady }: {
+  location: LocationInput;
   onClose: () => void;
   onLinkReady: () => void;
 }) {
   const [subscription, setSubscription] = useState(loadCalendarSubscription);
+  const timeZone = location.timeZone ?? 'UTC';
   const [enabled, setEnabled] = useState<Record<string, boolean>>(() => Object.fromEntries(
     feedItems.map(item => [item.key, subscription ? subscription.include.includes(item.key) : item.on])
   ));
@@ -59,7 +64,8 @@ export function CalendarSubscribeSheet({ timeZone, onClose, onLinkReady }: {
     if (saving.current || !include.length) return;
     saving.current = true; setBusy(true); setError("");
     try {
-      const saved = await saveCalendarSubscription({ include, reminder, timeZone }, subscription);
+      const saved = await saveCalendarSubscription({ include, reminder, timeZone,
+        location: { latitude: location.latitude, longitude: location.longitude, label: location.label } }, subscription);
       setSubscription(saved); setStep("ready"); onLinkReady();
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Your calendar link could not be saved. Please try again."); }
     finally { saving.current = false; setBusy(false); }
@@ -87,7 +93,7 @@ export function CalendarSubscribeSheet({ timeZone, onClose, onLinkReady }: {
               className={`calendar-subscribe__row${enabled[item.key] ? " is-on" : ""}${index === 0 ? " is-first" : ""}${index === feedItems.length - 1 ? " is-last" : ""}`}
               onClick={() => setEnabled(current => ({ ...current, [item.key]: !current[item.key] }))} role="switch" type="button">
               <FeedTag icon={item.icon} kind={item.kind} weekly={"weekly" in item && item.weekly} />
-              <span className="calendar-subscribe__copy"><strong>{item.name}</strong><small>{item.hint}</small></span>
+              <span className="calendar-subscribe__copy"><strong>{item.name}</strong><small>{item.key === 'daily-guidance' ? `Planetary hours · ${location.label}` : item.hint}</small></span>
               <span className="calendar-subscribe__switch" aria-hidden="true" />
             </button>
           </li>)}</ul>

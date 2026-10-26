@@ -53,6 +53,8 @@ export function daySurfaceEvents(
   const byId = new Map<string, LunarCalendarEvent>();
 
   for (const event of day.events) {
+    // The day panel owns the interval row, including a VOC begun yesterday.
+    if (event.type === "void") continue;
     if (isExactCalendarDayEvent(event, day.dateKey)) {
       byId.set(event.id, event);
     }

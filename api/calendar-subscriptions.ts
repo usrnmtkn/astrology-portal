@@ -11,7 +11,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const body = await readAdminJsonBody<Record<string, unknown>>(req, 4096);
     const options = parseCalendarOptions(body);
-    const fields = { include: options.include, reminder: options.reminder, time_zone: options.timeZone };
+    const fields = { include: options.include, reminder: options.reminder, time_zone: options.timeZone,
+      latitude: options.location?.latitude ?? null, longitude: options.location?.longitude ?? null, location_label: options.location?.label ?? null };
     if (req.method === "POST") {
       const token = randomBytes(32).toString("base64url"), manageToken = randomBytes(32).toString("base64url");
       const [row] = await calendarStorage("calendar_subscriptions", {}, "POST", { ...fields, token_hash: hashCalendarToken(token), manage_token_hash: hashCalendarToken(manageToken) });

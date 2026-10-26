@@ -1,5 +1,6 @@
 import { PGlite } from "@electric-sql/pglite";
 import { readFileSync } from "node:fs";
+import { Writable } from 'node:stream';
 import createSubscription from "../../api/calendar-subscriptions.js";
 import feed from "../../api/calendar-feed.js";
 import reading from "../../api/calendar-reading.js";
@@ -10,6 +11,7 @@ export async function calendarSubscriptionFixture() {
   const db = new PGlite();
   await db.exec("create role anon; create role authenticated; create role service_role bypassrls;");
   await db.exec(readFileSync(new URL("../../apps/web/supabase/migrations/20260922000528_calendar_subscriptions.sql", import.meta.url), "utf8"));
+  await db.exec(readFileSync(new URL("../../apps/web/supabase/migrations/20261026015340_calendar_planning_categories.sql", import.meta.url), "utf8"));
   await db.exec(`create table content_publications(content_key text primary key,state text,revision int,row_id uuid,row_updated_at timestamptz,updated_at timestamptz);
     create table generated_interpretations(id uuid primary key,content_key text,target_date date,status text,lane text,review_state text,updated_at timestamptz,body text,summary text,headline text,sections jsonb,source_snapshot jsonb,facts jsonb,provider text,flags text[],event_type text,surface text);`);
   const savedEnv = Object.fromEntries(["NODE_ENV", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "CONTENT_GENERATION_SECRET"].map(key => [key, process.env[key]]));
@@ -53,12 +55,15 @@ export async function calendarSubscriptionFixture() {
   return {
     db, setStorageFailure(value: boolean) { failStorage = value; },
     async invoke(path: string, method = "GET", body?: unknown, headers: Record<string, string> = {}) {
-      const collected: Record<string, string> = {}; let responseBody = "";
+      const collected: Record<string, string> = {}; const chunks: Buffer[] = [];
       const req = { url: path, method, body, headers };
-      const res = { statusCode: 200, setHeader(key: string, value: string) { collected[key.toLowerCase()] = String(value); }, end(value?: string) { responseBody = value ?? ""; } };
+      const res = Object.assign(new Writable({ write(chunk, _encoding, callback) { chunks.push(Buffer.from(chunk)); callback(); } }),
+        { statusCode: 200, setHeader(key: string, value: string) { collected[key.toLowerCase()] = String(value); } });
       const handler = path.startsWith("/api/admin/") ? events : path.startsWith("/api/calendar-reading") ? reading : path.startsWith("/feed/") || path.startsWith("/api/calendar-feed") ? feed : createSubscription;
       await handler(req as any, res as any);
-      return { status: res.statusCode, headers: collected, body: responseBody, json: () => JSON.parse(responseBody) };
+      const responseBody = Buffer.concat(chunks).toString('utf8');
+      return { status: res.statusCode, headers: collected, body: responseBody, chunkCount: chunks.length,
+        maxChunkBytes: Math.max(0, ...chunks.map(chunk => chunk.length)), json: () => JSON.parse(responseBody) };
     },
     async close() { globalThis.fetch = originalFetch; for (const [key, value] of Object.entries(savedEnv)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } await db.close(); }
   };
