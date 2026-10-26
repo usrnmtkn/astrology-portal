@@ -1,3 +1,4 @@
+import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 import { natalEditorialDraftForKey, natalEditorialIdentity, natalSectPlanets, type NatalEditorialSelection } from "../../apps/admin/src/natalEditorialLibrary";
 import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
 import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
@@ -9654,4 +9655,90 @@ test('Sky planet and sign workspace shows the evergreen default when the complet
   await expect(reading.getByText('Synthetic evergreen ending.', { exact: true })).toBeVisible();
   await expect(reading.getByRole('combobox', { name: 'Placement writing path' })).toHaveCount(0);
   expect(writes).toHaveLength(0);
+});
+
+
+test.describe("Report correction pending responses",()=>{
+const initial='The initial complete report opening.\n\nThe initial report ending remains complete.';
+const submitted='The submitted complete report opening.\n\nThe submitted report ending remains complete.';
+const newer='The newer complete report opening.\n\nThe newer report ending remains complete.';
+
+async function fixture(page:any,phase:'save'|'publish'|'dirty',holdAt:'action'|'dashboard'|'inspection'='action'){
+  let staged:any=phase==='save'?null:{headline:'Synthetic report section',summary:'A complete summary.',timing:'A date-neutral passage.',body:submitted,sections:[{heading:'Synthetic section heading',body:'Complete synthetic section body.'}]};
+  let published=initial,held=false,changed=false,release!:()=>void;
+  const gate=new Promise<void>(resolve=>{release=resolve});
+  const hold=async(at:typeof holdAt)=>{if(phase!=='dirty'&&changed&&!held&&at===holdAt){held=true;await gate;}};
+  const reportId='qa-report-ack',unitId='qa-report-ack-unit';
+  const metrics={orders:1,entitlementStatuses:{active:1},fulfillmentStatuses:{live:1},jobStates:{complete:1},exceptionDepth:0,auditDepth:0,averageDeliveryMinutes:0,averageJudgeScore:1,averageAcceptedTokenCount:0,averageTotalTokenCount:0,averageEstimatedSpendUsd:0,validatorPassRate:1,judgePassRate:1,attemptDistribution:{'1':1},judgeScoreDistribution:{'1':1}};
+  const reportRow={id:reportId,entitlement_id:'qa-entitlement-ack',entitlement_source:'comp',report_domain:'general',report_horizon:'12_months',fulfillment_status:'live',token_count:0,token_count_total:0,token_budget_lifetime:0,token_spend_usd_estimate:0,attempt_counts:{},validator_results:[],failure_history:[]};
+  await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+  await routeStudioInventoryApi(page,{call:async request=>request.method==='rows'?[]:{status:200,payload:{ok:true,rows:[]}},answer:async(route,url)=>{
+    if(url.pathname!=='/api/admin/report-fulfillment')return false;
+    if(route.request().method()==='POST'){
+      const payload=route.request().postDataJSON();
+      expect(['save_report_unit_draft','publish_report_unit_correction']).toContain(payload.action);
+      if(payload.action==='save_report_unit_draft')staged=payload;
+      else{published=staged.body;staged=null;}
+      changed=true;await hold('action');
+      await route.fulfill({json:{ok:true}});return true;
+    }
+    if(url.searchParams.has('reportId')){
+      await hold('inspection');
+      await route.fulfill({json:{report:reportRow,units:[{id:unitId,updated_at:'2026-10-15T12:00:00.123456Z',content_key:`report:${reportId}:overview`,headline:'Synthetic report section',timing:'A date-neutral passage.',summary:'A complete summary.',body:published,sections:[{heading:'Synthetic section heading',body:'Complete synthetic section body.'}],source_snapshot:staged?{adminCorrectionDraft:staged}:{}}]}});return true;
+    }
+    await hold('dashboard');
+    await route.fulfill({json:{billingMode:'free_test',metrics,reports:[reportRow],audits:[],users:[],callEstimates:{}}});return true;
+  }});
+  await page.goto('/admin/content#report-fulfillment');
+  await page.getByRole('button',{name:'Preview and edit',exact:true}).click();
+  const editor=page.getByRole('region',{name:'Report reader-copy editor'});
+  await expect(editor).toBeVisible();
+  return{editor,input:editor.getByRole('textbox',{name:'Body',exact:true}),held:()=>held,release:()=>release(),published:()=>published,staged:()=>staged};
+}
+
+for(const phase of ['save','publish'] as const)for(const holdAt of ['action','dashboard','inspection'] as const)test(`report ${phase} keeps copy locked through ${holdAt}`,async({page},testInfo)=>{
+  await page.setViewportSize({width:phase==='save'?390:1440,height:1000});
+  const f=await fixture(page,phase,holdAt);
+  try{
+    if(phase==='save')await f.input.fill(submitted);
+    const action=phase==='save'?'save_report_unit_draft':'publish_report_unit_correction';
+    const response=page.waitForResponse(response=>response.request().method()==='POST'&&response.request().postDataJSON()?.action===action);
+    await f.editor.getByRole('button',{name:phase==='save'?'Save correction draft':'Publish correction',exact:true}).click();
+    await expect.poll(f.held).toBe(true);
+    const editable=await f.input.isEditable();expect(editable).toBe(false);
+    for(const input of await f.editor.getByRole('textbox').all())await expect(input).toBeDisabled();
+    await expect(f.editor.getByRole('combobox',{name:'Report section',exact:true})).toBeDisabled();
+    await expect(f.editor.getByRole('button',{name:'Close preview',exact:true})).toBeDisabled();
+    f.release();const completed=await response;expect(completed.status()).toBe(200);expect(await completed.finished()).toBeNull();
+    const publish=f.editor.getByRole('button',{name:'Publish correction',exact:true});
+    if(phase==='save')await expect(publish).toBeVisible();else await expect(publish).toHaveCount(0);
+    await expect(f.editor.getByRole('button',{name:'Save correction draft',exact:true})).toBeEnabled();
+    const displayed=await f.input.inputValue();
+    await testInfo.attach('report-ack-proof',{body:JSON.stringify({phase,inputEditableWhilePending:editable,newerRetained:editable?displayed===newer:null,publishedMatchesSubmitted:phase==='publish'?f.published()===submitted:null,stagedMatchesSubmitted:phase==='save'?f.staged()?.body===submitted:null}),contentType:'application/json'});
+    expect(f.published()).toBe(phase==='save'?initial:submitted);
+    await expect(f.input).toHaveValue(editable?newer:submitted);
+  }finally{f.release();}
+});
+
+test('report correction cannot publish stale staged text while the editor has newer unsaved text',async({page})=>{
+  const f=await fixture(page,'dirty');
+  await f.input.fill(newer);
+  await expect(f.editor.getByRole('button',{name:'Publish correction',exact:true})).toBeDisabled();
+  expect(f.published()).toBe(initial);
+  await expect(f.input).toHaveValue(newer);
+  const saved=page.waitForResponse(response=>response.request().method()==='POST'&&response.request().postDataJSON()?.action==='save_report_unit_draft');
+  await f.editor.getByRole('button',{name:'Save correction draft',exact:true}).click();
+  const savedResponse=await saved;expect(savedResponse.status()).toBe(200);expect(await savedResponse.finished()).toBeNull();
+  await expect(f.editor.getByRole('button',{name:'Publish correction',exact:true})).toBeEnabled();
+  expect(f.published()).toBe(initial);expect(f.staged().body).toBe(newer);
+  const published=page.waitForResponse(response=>response.request().method()==='POST'&&response.request().postDataJSON()?.action==='publish_report_unit_correction');
+  await f.editor.getByRole('button',{name:'Publish correction',exact:true}).click();
+  const publishedResponse=await published;expect(publishedResponse.status()).toBe(200);expect(await publishedResponse.finished()).toBeNull();
+  await expect(f.editor.getByRole('button',{name:'Publish correction',exact:true})).toHaveCount(0);
+  expect(f.published()).toBe(newer);
+  await page.reload();
+  await page.getByRole('button',{name:'Preview and edit',exact:true}).click();
+  await expect(f.input).toHaveValue(newer);
+});
+
 });
