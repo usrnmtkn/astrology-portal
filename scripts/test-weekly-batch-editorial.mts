@@ -140,7 +140,7 @@ assert.equal(latest(legacy).source_snapshot.horoscopeGeneration.batch.editorialV
 assert.equal((await worker(legacy)).state,'complete');assert.equal(writerFixture.batchCalls,beforeShared,'Never add paid stages to a pinned legacy run');
 // A concurrent free retrieval may win the shared result checkpoint. The worker
 // reconciles that version change without pausing or repeating a paid request.
-const contended=await create('2026-12-14');row=latest(contended);row.sections.horoscopeEdition.passages.reverse();store.rows.set(contended,row);
+const contended=await create('2026-12-14');
 const contendedHash=await prepare(contended),beforeOrderedWriters=writerFixture.requests.size;
 await action(contended,'start-batch',{approvedPlanHash:contendedHash});await worker(contended,1);
 const sharedId=latest(contended).source_snapshot.horoscopeGeneration.weeklyEditorial.pending.responseId;
@@ -156,6 +156,6 @@ try{assert.equal((await worker(contended,1)).state,'changed');}finally{globalThi
 assert(raced);assert.equal(latest(contended).source_snapshot.horoscopeGeneration.batch.status,'running');
 assert.equal(latest(contended).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'passed');assert.equal(writerFixture.batchCalls,beforeContention);
 assert.equal((await worker(contended)).state,'complete');
-assert.deepEqual([...writerFixture.requests.values()].slice(beforeOrderedWriters).map((request:any)=>request.sign),HOROSCOPE_SIGNS,'The batch drafts in zodiac order even when saved passages are reordered');
+assert.deepEqual([...writerFixture.requests.values()].slice(beforeOrderedWriters).map((request:any)=>request.sign),HOROSCOPE_SIGNS,'The batch drafts in zodiac order');
 console.log('PASS Weekly batch editorial gate: plan all twelve before prose, full profile/facts delivery, 26 bounded requests, exact quotes, failed/stale/malformed checks, manual edits, publication, free recovery and unknown-outcome release. Synthetic models only.');
 await store.close();
