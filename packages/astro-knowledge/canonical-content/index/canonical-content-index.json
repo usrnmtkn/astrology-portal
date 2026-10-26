@@ -163038,7 +163038,7 @@
       },
       {
         "path": "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js",
-        "sha256": "bd78916e546138b50b2a399466ec58d26ea521a029b50738cfca97297bb96306"
+        "sha256": "ca3bfbb5736d8a8b5a3cb5bb303f170c542d4802348103963f7ba9a2fd4ce328"
       },
       {
         "path": "apps/web/public/content/knowledge-matrix-v13/v13-direct-language-owner-approved/knowledge-matrix-v13-owner-approved-locked.json",
@@ -166917,7 +166917,7 @@
     },
     "version": "global-foundation-natal-wave-1"
   },
-  "sourceStoreSha256": "76e9b37ef25bd5a6930a1895343b4e9b7cc507a44ca0d1b920568f0955f0bbe1",
+  "sourceStoreSha256": "8ce3541ae8104cbf8d1e6ba6b22f66653aba855bfe580ee60a72fb2bb521cafb",
   "units": [
     {
       "candidates": [],

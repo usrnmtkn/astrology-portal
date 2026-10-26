@@ -980,7 +980,7 @@ function skyIngressPublicationIssues(owner, records = []) {
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/natalPlacementVariables.mjs
 function natalPlacementOwnerCopy(body, voice) {
-  return voice === "you" ? body : body.replaceAll("{{ownerName}}", () => voice);
+  return voice === "you" ? body : body.split("{{ownerName}}").join(voice);
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/publicationGuard.mjs
@@ -6619,7 +6619,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-25-natal-friend-name";
+var PACKAGE_VERSION = "v3-2026-10-26-friend";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

@@ -51,7 +51,7 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
         <label key={field}>
           <span>{field === "body_they" ? "Friend view copy" : "You view copy"}</span>
           {field === "body_they" && row.content_key.startsWith("fallback-hook/natal-you-placement-complete-final/")
-            && <span className="admin-field-hint">Use {"{{ownerName}}"} for the person's name. Friend copy is approved separately when you publish.</span>}
+            && <span className="admin-field-hint">Use {"{{ownerName}}"} for names.</span>}
           <StudioTextarea aria-label={`${label}: ${field === "body_they" ? "Friend" : "You"} copy`} rows={row.content_key.includes("placement-sign-final/") ? 14 : 4} value={value} disabled={disabled || saving}
             onChange={(event) => {
               if (!edits) setBaseline(row);

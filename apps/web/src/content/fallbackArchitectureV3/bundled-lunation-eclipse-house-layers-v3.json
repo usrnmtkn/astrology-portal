@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-lunation-eclipse-house-layers/v1",
-  "packageVersion": "v3-2026-10-25-natal-friend-name",
+  "packageVersion": "v3-2026-10-26-friend",
   "source": {
     "schema": "lunation-eclipse-house-layers/v1",
     "count": 12
