@@ -111,6 +111,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const view = requestUrl.searchParams.get("view") ?? (id || contentKey || contentKeys.length ? "detail" : "inventory");
     const inventoryView = view === "inventory" && !id && !contentKey && contentKeys.length === 0;
     const partition = requestUrl.searchParams.get("partition");
+    const excludeArchivedArticleRevisions = requestUrl.searchParams.get("excludeArchivedArticleRevisions");
+    if (excludeArchivedArticleRevisions !== null && excludeArchivedArticleRevisions !== "true") {
+      throw new AdminHttpError(400, "excludeArchivedArticleRevisions must be true when provided.");
+    }
     if (partition !== null && (!/^[0-2]$/u.test(partition) || !inventoryView || scope !== "all" || contentKeyPrefix || mode)) {
       throw new AdminHttpError(400, "partition is only supported for full inventory lists.");
     }
@@ -161,6 +165,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const index = Number(partition);
       const filters = [bounds[index] && `id.gte.${bounds[index]}`, bounds[index + 1] && `id.lt.${bounds[index + 1]}`].filter(Boolean);
       params.set("and", `(${filters.join(",")})`);
+    }
+    if (!id && excludeArchivedArticleRevisions === "true") {
+      // Filter before limit: a published revision must not hide its live target.
+      // Original articles can have no event type and remain accessible when archived.
+      params.append("or", "(event_type.is.null,event_type.neq.standalone-article-revision,status.neq.ARCHIVED)");
     }
 
     const url = supabaseUrl();

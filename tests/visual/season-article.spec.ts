@@ -79,7 +79,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       }, theme);
       await bundledPublications(page);
       await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
-        if (url.pathname === "/api/content-reader") {
+        if (url.pathname === "/api/content-reader" || url.pathname === "/api/admin/content-live-status") {
           const result = await store.call({ method: "POST", url: url.pathname, body: route.request().postDataJSON() });
           await route.fulfill({ status: result.status, json: result.payload }); return true;
         }
@@ -118,15 +118,65 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect(editor.getByLabel("Article title", { exact: true })).toHaveValue(title);
       await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
       await expect.poll(async () => (await store.call({ method: "rows" })).find((row: any) => row.id === saved.id)?.status).toBe("LIVE");
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+      const published = (await store.call({ method: "rows" })).find((row: any) => row.id === saved.id);
       await editor.getByRole("button", { name: "Close", exact: true }).click();
       await workspace.getByRole("button", { name: "Open Scorpio Season 2026 article", exact: true }).click();
       const revised = body + "\n\nSynthetic latest saved paragraph.";
       await editor.getByLabel("Article body", { exact: true }).fill(revised);
       await editor.getByRole("button", { name: "Save draft", exact: true }).click();
-      await expect.poll(async () => (await store.call({ method: "rows" })).find((row: any) => row.id === saved.id)?.body).toBe(revised);
+      await expect(editor.getByText("All changes saved", { exact: true })).toBeVisible();
+      const revisions = () => store.call({ method: "rows" }).then(rows => rows.filter((row: any) =>
+        row.content_key === key && row.event_type === "standalone-article-revision"));
+      await expect.poll(async () => (await revisions()).map((row: any) => row.body)).toEqual([revised]);
+      const proposal = (await revisions())[0];
+      expect(proposal).toMatchObject({ mode: "studio-draft", status: "DRAFT", lane: "reference",
+        source_snapshot: { targetRowId: saved.id, targetRowUpdatedAt: published.updated_at } });
+      expect(proposal.id).not.toBe(saved.id);
+      expect((await store.call({ method: "rows" })).find((row: any) => row.id === saved.id)).toEqual(published);
+      const readerArticle = () => store.call({ method: "POST", url: "/api/content-reader", body: { keys: [key] } });
+      expect((await readerArticle()).payload.rows.map((row: any) => row.body)).toEqual([body]);
+
+      // Both entry points must reopen the private saved revision while readers
+      // continue to receive the complete published edition.
+      await page.goto("/admin/content#calendar-writeups?view=season-writeups");
+      await page.reload();
+      await workspace.getByLabel("Article season", { exact: true }).selectOption("scorpio");
+      await workspace.getByLabel("Season year", { exact: true }).fill("2026");
+      await workspace.getByRole("button", { name: "Open Scorpio Season 2026 article", exact: true }).click();
+      await expect(editor.getByLabel("Article body", { exact: true })).toHaveValue(revised);
+      await page.goto("/admin/content#sky-writeups?planet=sun&sign=scorpio");
+      await page.reload();
+      await page.getByText("Additional linked season article", { exact: true }).click();
+      await workspace.getByLabel("Season year", { exact: true }).fill("2026");
+      await workspace.getByRole("button", { name: "Open Scorpio Season 2026 article", exact: true }).click();
+      await expect(editor.getByLabel("Article body", { exact: true })).toHaveValue(revised);
+      expect((await readerArticle()).payload.rows.map((row: any) => row.body)).toEqual([body]);
       await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
-      await expect.poll(async () => (await store.call({ method: "rows" })).find((row: any) => row.id === saved.id)?.status).toBe("LIVE");
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+      await expect.poll(async () => (await readerArticle()).payload.rows.map((row: any) => row.body)).toEqual([revised]);
+      expect((await store.call({ method: "rows" })).find((row: any) => row.id === saved.id))
+        .toMatchObject({ status: "LIVE", body: revised });
+      expect((await revisions()).map((row: any) => row.status)).toEqual(["ARCHIVED"]);
       await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await page.reload();
+      await page.getByText("Additional linked season article", { exact: true }).click();
+      await workspace.getByLabel("Season year", { exact: true }).fill("2026");
+      await workspace.getByRole("button", { name: "Open Scorpio Season 2026 article", exact: true }).click();
+      await expect(editor.getByLabel("Article body", { exact: true })).toHaveValue(revised);
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await page.goto("/admin/content#calendar-writeups?view=season-writeups");
+      await page.reload();
+      await workspace.getByLabel("Article season", { exact: true }).selectOption("scorpio");
+      await workspace.getByLabel("Season year", { exact: true }).fill("2026");
+      await workspace.getByRole("button", { name: "Open Scorpio Season 2026 article", exact: true }).click();
+      await expect(editor.getByLabel("Article body", { exact: true })).toHaveValue(revised);
+      await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await page.goto("/admin/content#sky-writeups?planet=sun&sign=scorpio");
+      await page.reload();
+      await page.getByText("Additional linked season article", { exact: true }).click();
       await workspace.getByLabel("Season year", { exact: true }).fill("2027");
       await expect(workspace.getByRole("status")).toHaveText("No additional linked article saved for this season and year.");
       await expect(workspace.getByRole("button", { name: "Write Scorpio Season 2027 article", exact: true })).toBeEnabled();
@@ -171,12 +221,15 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         await link.click();
         await expect(page.locator(".learn-article-body")).toContainText("Synthetic complete season opening.");
         await expect(page.locator(".learn-article-body")).toContainText("Synthetic complete season ending.");
+        await expect(page.locator(".learn-article-body")).toContainText("Synthetic latest saved paragraph.");
         await expect(page.locator(".learn-article-body h2")).toHaveText("Synthetic lunar section");
         await page.reload();
         await expect(page.locator(".learn-article-body")).toContainText("Synthetic complete season ending.");
+        await expect(page.locator(".learn-article-body")).toContainText("Synthetic latest saved paragraph.");
         await page.screenshot({ path: `test-results/season-article-reader-${width}-${theme}.png`, fullPage: true });
       }
-      expect((await store.call({ method: "rows" })).filter((row: any) => row.content_key === key)).toHaveLength(1);
+      expect((await store.call({ method: "rows" })).filter((row: any) => row.content_key === key && row.status === "LIVE")).toHaveLength(1);
+      expect(await revisions()).toHaveLength(1);
       expect(errors).toEqual([]);
     } finally { await page.unrouteAll({ behavior: "ignoreErrors" }); store.close(); }
   });

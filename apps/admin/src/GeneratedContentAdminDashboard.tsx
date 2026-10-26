@@ -3121,11 +3121,12 @@ export function GeneratedContentAdminDashboard() {
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [variableCreateRequest, setVariableCreateRequest] = useState(0);
   const [secretInput, setSecretInput] = useState(secret);
-  const loadCalendarPreviewRows = useCallback(async (keys: string[]) => {
+  const loadCalendarPreviewRows = useCallback(async (keys: string[], excludeArchivedArticleRevisions = false) => {
     if (keys.length > 200) {
       throw new Error("Could not verify the full saved Calendar sources.");
     }
     const query = new URLSearchParams({ status: "all", visibility: "all", limit: String(Math.min(Math.max(keys.length, 1), 200)) });
+    if (excludeArchivedArticleRevisions) query.set("excludeArchivedArticleRevisions", "true");
     keys.forEach(key => query.append("contentKeys", key));
     const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
       `/api/admin/generated-content-inventory?${query}`, secret);
