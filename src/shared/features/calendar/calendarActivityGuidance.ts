@@ -61,7 +61,7 @@ export function calendarActivityBody(readings: CalendarActivityReading[], timeZo
   const hours = calendarActivities.map(activity => {
     const windows = activity.planets.map(planet => {
       const matches = planetaryDay?.hours.filter(hour => hour.ruler === planet) ?? [];
-      return `${planet} hours${matches.length ? `\n${matches.map(hour => `${time(hour.start)} – ${time(hour.end)}`).join('\n')}` : ' · unavailable'}`;
+      return `${planet} hours${matches.length ? `: ${matches.map(hour => `${time(hour.start)} – ${time(hour.end)}`).join('; ')}` : ' · unavailable'}`;
     });
     return `**${activity.label}**\n\n${windows.join('\n\n')}`;
   }).join('\n\n');
