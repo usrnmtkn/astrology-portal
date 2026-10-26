@@ -137,7 +137,7 @@ function storageOrder(row:any) {
  return ordered(row);
 }
 export function fixtureMonthlySynthesis(facts:any){return {thesis:'The synthetic monthly concern develops across the supplied facts.',stories:facts.planetaryArcs.filter((arc:any)=>arc.developmentIds.length>=2).slice(0,2).map((arc:any)=>({planet:arc.planet,humanConcern:'A connected synthetic concern.',development:arc.developmentIds.slice(0,2).map((factId:string,i:number)=>({factId,changes:`The synthetic concern changes at step ${i+1}.`}))})),readingMovement:'Follow each connected concern and its changes.',endingChange:'The reader understands the synthetic concern differently.'};}
-export const writerFixture={batchCalls:0,batchRequests:new Map<string,any>(),nextBatchResult:null as any,calls:0,reviewCalls:0,reviewRequests:new Map<string,any>(),polls:0,pendingPolls:0,rejectSeasonalVoice:false,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,nextReviewResult:null as any,startResult:null as any,requests:new Map<string,any>()};
+export const writerFixture={batchCalls:0,batchRequests:new Map<string,any>(),nextBatchResult:null as any,batchPendingPolls:0,batchUnknownNext:false,calls:0,reviewCalls:0,reviewRequests:new Map<string,any>(),polls:0,pendingPolls:0,rejectSeasonalVoice:false,terminalNext:false,failNext:false,unknownNext:false,nextResult:null as any,nextReviewResult:null as any,startResult:null as any,requests:new Map<string,any>()};
 export function fixtureMonthlyContext(facts:any){
  const plan=fixtureMonthlySynthesis(facts);
  const mars=plan.stories.find((s:any)=>s.planet==='mars');
@@ -184,7 +184,7 @@ export function installHoroscopeWriterFixture(){
      const request=JSON.parse(options.body);
      if(request.instructions.includes('WEEKLY BATCH PLANNING AUTHORITY')||request.instructions.includes('WEEKLY BATCH REVIEW AUTHORITY')){
        writerFixture.batchCalls++;
-       if(writerFixture.unknownNext){writerFixture.unknownNext=false;throw new Error('Fixture connection lost');}
+       if(writerFixture.batchUnknownNext){writerFixture.batchUnknownNext=false;throw new Error('Fixture connection lost');}
        const id=`resp_batch_fixture_${writerFixture.batchCalls}`;writerFixture.batchRequests.set(id,request);return Response.json({id,status:'queued'});
      }
      const review=request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW');
@@ -203,14 +203,15 @@ export function installHoroscopeWriterFixture(){
    const id=url.split('/').at(cancel?-2:-1)!,request=writerFixture.requests.get(id)??writerFixture.reviewRequests.get(id)??writerFixture.batchRequests.get(id);
    if(!request)throw new Error('Unrecognized fixture response');writerFixture.polls++;
    if(cancel)return Response.json({id,status:'cancelled'});
-   if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}
    if(writerFixture.batchRequests.has(id)){
+     if(writerFixture.batchPendingPolls>0){writerFixture.batchPendingPolls--;return Response.json({id,status:'in_progress'});}
      if(writerFixture.nextBatchResult){const result=writerFixture.nextBatchResult;writerFixture.nextBatchResult=null;return Response.json({id,...result});}
      const input=JSON.parse(request.input),planning=input.stage==='planning';
      const names=planning?['distinct_concerns','house_grounding','unsupported_history']:['interpretations','phrases','endings','house_grounding','unsupported_history','technical_filler'];
      const value={...(planning?{concerns:input.facts.map((f:any,i:number)=>({sign:f.sign,eventIds:[(f.developments.events[0]??f.developments.background[0]).id],coreConcern:`Synthetic distinct concern ${i+1}`,humanSituation:`Possible situation ${i+1}`,stakes:`Distinct choice ${i+1}`,distinctiveObservation:`Only this sign observation ${i+1}`}))}:{}),checks:Object.fromEntries(names.map(name=>[name,'pass'])),findings:[]};
      return Response.json({id,status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]});
    }
+   if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}
    if(writerFixture.nextResult){const result=writerFixture.nextResult;writerFixture.nextResult=null;return Response.json({id,...result});}
    if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
    if(request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW')){
@@ -282,7 +283,7 @@ if (process.send) process.on('message', async ({ id, method, body, url, headers 
     process.send!({id,result:await seedCompletedReviewHold(store,writerFixture)});return;
   }
   if (method === 'writer-state') {
-    for(const key of ['pendingPolls','terminalNext','unknownNext','nextResult','nextReviewResult','nextBatchResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
+    for(const key of ['pendingPolls','batchPendingPolls','terminalNext','unknownNext','batchUnknownNext','nextResult','nextReviewResult','nextBatchResult','startResult','rejectSeasonalVoice'] as const)if(body?.[key]!==undefined)(writerFixture as any)[key]=body[key];
     process.send!({id,result:{calls:writerFixture.calls,reviewCalls:writerFixture.reviewCalls,batchCalls:writerFixture.batchCalls,polls:writerFixture.polls,responseIds:[...writerFixture.requests.keys()]}});return;
   }
   if (method === 'interrupted-horoscope-start') {

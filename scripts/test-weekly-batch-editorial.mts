@@ -59,7 +59,12 @@ const findings=[{category:'interpretations',reason:'Three readings offer the sam
  {category:'endings',reason:'The endings give the same instruction.',evidence:passages.slice(0,2).map((p:any)=>({sign:p.sign,quote:'Your saved fixture ends here.'}))}];
 const before=structuredClone(row.sections);
 writerFixture.nextBatchResult=output(review(findings));
+writerFixture.batchPendingPolls=1;
 assert.equal((await action(id,'review-weekly',{approvedPlanHash:hash})).status,202);
+const sharedReviewCalls=writerFixture.batchCalls;
+assert.equal((await action(id,'poll-weekly')).status,202);
+assert.equal(writerFixture.batchCalls,sharedReviewCalls,'Retrieving an unfinished shared review never dispatches another request');
+assert.deepEqual(latest(id).sections,before);
 assert.equal((await action(id,'poll-weekly')).status,200);
 row=latest(id);assert.deepEqual(row.sections,before,'A failed review cannot rewrite prose');
 assert.equal(row.source_snapshot.horoscopeGeneration.weeklyEditorial.review.status,'failed');
@@ -94,7 +99,7 @@ assert.equal((await runHoroscopeWriting({action:'review-weekly',id,expectedUpdat
 // Malformed verdict preserves the drafts and cannot be treated as pass.
 writerFixture.nextBatchResult=output({checks:{},findings:[]});await action(id,'review-weekly',{approvedPlanHash:await prepare(id)});await action(id,'poll-weekly');assert.equal(latest(id).source_snapshot.horoscopeGeneration.weeklyEditorial.review.status,'unavailable');
 // Unknown send is durably held; progress is free; release is explicit and aged.
-const unknown=await create('2026-11-09'),unknownHash=await prepare(unknown);writerFixture.unknownNext=true;
+const unknown=await create('2026-11-09'),unknownHash=await prepare(unknown);writerFixture.batchUnknownNext=true;
 const unknownStart=await action(unknown,'plan-weekly',{approvedPlanHash:unknownHash});assert(unknownStart.status>=500);
 const unknownCalls=writerFixture.batchCalls;assert(latest(unknown).source_snapshot.horoscopeGeneration.weeklyEditorial.pending);
 assert.equal((await action(unknown,'poll-weekly')).status,202);assert.equal((await action(unknown,'plan-weekly',{approvedPlanHash:unknownHash})).status,409);

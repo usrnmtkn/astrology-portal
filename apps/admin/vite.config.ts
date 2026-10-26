@@ -139,6 +139,9 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
+            // Starter profiles are needed only by the deferred writing editor.
+            if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeWriterCatalog)\.mjs$/u.test(id)
+              || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "admin-deferred-review-tools";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
             if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-sources";

@@ -190,6 +190,13 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const imported=(await call({method:'rows'})).find((row:any)=>row.id===draft.id);
    expect(imported.source_snapshot.editorialImport.originalSource).toBe(originalSource);
    expect(imported.source_snapshot.editorialImport.sha256).toBe(createHash('sha256').update(originalSource).digest('hex'));
+   const batchReview=studio.getByRole('region',{name:'Weekly batch editorial gate'});
+   await expect(batchReview).toContainText('out of date');
+   const loadBatchPlan=batchReview.getByRole('button',{name:'Load batch review plan',exact:true});
+   if(await loadBatchPlan.isVisible())await loadBatchPlan.click();
+   await batchReview.getByRole('button',{name:'Review all twelve · 1 AI request',exact:true}).click();
+   await batchReview.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
+   await expect(batchReview).toContainText('current twelve-sign set passed its batch comparison');
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await expect(studio.getByRole('heading',{level:2})).toHaveText('Publish your horoscopes');
    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
