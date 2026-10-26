@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {store,invokeHoroscopeWriting} from '../tests/helpers/sky-article-save-api.mts';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,monthlyManualBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases,createWeeklyContextPublicationFixture,weeklyContextBodies} from '../tests/helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,monthlyManualBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyAspectParserCases,createWeeklyContextPublicationFixture,weeklyContextBodies,createWeeklyGrammarPublicationFixture} from '../tests/helpers/horoscope-publication-fixture.mts';
 import {horoscopeAspectFindings,horoscopeAspectPattern,horoscopeAspectClaim,supportsHoroscopeAspect} from '../src/astro-writing/horoscopeAspectClaims.mjs';
 import {horoscopeEventsInWindow,horoscopeHouse} from '../src/astro-writing/horoscopeDevelopments.mjs';
 import {validateHoroscopeReading} from '../src/astro-writing/horoscopeValidation.mjs';
@@ -314,3 +314,34 @@ console.log('PASS house-only ingresses: destinations require the same planet’s
  assert.equal(base.sections.horoscopeEdition.passages[0].body,monthlyAspectBody);
  console.log('PASS save recovery: local three-way comparison preserves text and nonoverlapping edits; facts, row identity, publication and active-generation changes cannot be rebased.');
 }
+
+// Preflight may recognize natural grammar; it must never rewrite or publish it.
+const grammar=await createWeeklyGrammarPublicationFixture(m=>store.invoke(m.method,m.body,m.url));
+assert.equal(grammar.status,200,JSON.stringify(grammar.payload));
+const grammarRow=grammar.payload.rows[0],grammarBrief=grammarRow.facts.horoscopeBrief.brief;
+const grammarBefore=structuredClone(store.rows.get(grammarRow.id));
+const grammarCheck=await invokeHoroscopeWriting({action:'validate-publication',id:grammarRow.id,expectedUpdatedAt:grammarRow.updated_at});
+assert.equal(grammarCheck.status,200);assert.equal(grammarCheck.payload.publication.ready,true,JSON.stringify(grammarCheck.payload.publication.issues));
+assert.deepEqual(grammarCheck.payload.publication.issues,[]);
+assert.deepEqual(store.rows.get(grammarRow.id),grammarBefore);assert.equal(store.rows.get(grammarRow.id).status,'DRAFT');
+for(const p of grammarRow.sections.horoscopeEdition.passages)assert.deepEqual(issues(p.sign,p.body,grammarBrief),[],p.sign);
+for(const bad of [
+ 'The Sun meets your ruling planet, retrograde Mars. You can review the fixture.',
+ 'The Sun meets your ruling planet, direct Mercury. You can review the fixture.',
+ 'The Sun meets your ruling planet, retrograde Mercury and Jupiter. You can review the fixture.',
+ 'Venus retrograde also sextiles a colleague. You can review the fixture.',
+ 'Venus retrograde also trines Jupiter. You can review the fixture.',
+ 'Venus direct also sextiles Jupiter. You can review the fixture.',
+ 'Venus retrograde in your eighth house also sextiles Jupiter in your fifth house. You can review the fixture.',
+ 'You were born with a preference for the fixture.',
+ 'Your natal placement explains the fixture.',
+ 'You have carried this fixture since childhood.'
+]){
+ assert(issues('aries',bad,grammarBrief).length,`False grammar claim accepted: ${bad}`);
+ const invalid=structuredClone(grammarBefore);invalid.sections.horoscopeEdition.passages[0].body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
+ const check=await invokeHoroscopeWriting({action:'validate-publication',id:invalid.id,expectedUpdatedAt:invalid.updated_at});
+ assert.equal(check.status,200);assert.equal(check.payload.publication.ready,false,bad);
+ const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
+ assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid);
+}
+console.log('PASS natural grammar: twelve exact drafts clear preflight without writes; missing/wrong planets, aspects, motion, houses and natal biography remain blocked.');

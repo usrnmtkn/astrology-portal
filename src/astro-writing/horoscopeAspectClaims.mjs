@@ -18,7 +18,8 @@ const planet=`\\b(?:(?:retrograde|direct)\\s+)?(?:${bodies})${motionLabel}${rule
 // "Meet" is an aspect verb only with a planetary subject. Ordinary prose
 // about meeting friends or deadlines must not require a calculated aspect.
 const aspectMention=new RegExp(`\\b(?:${explicitTerms})\\b|${planet}\\s+meets?\\b`,'iu');
-const direct=`${planet}\\s+(?:(?:is|in|an?|exact|forms?|makes?)\\s+)*(?:${terms})\\s+(?:(?:to|with|the)\\s+)*${planet}`;
+const leadingRuler=`your\\s+(?:ruling\\s+planet|(?:traditional\\s+)?ruler),\\s*${planet}(?!\\s+(?:and|or)\\s+(?:(?:retrograde|direct)\\s+)?(?:${bodies})\\b)`;
+const direct=`${planet}\\s+(?:(?:is|in|an?|exact|forms?|makes?|also)\\s+)*(?:${terms})\\s+(?:(?:to|with|the)\\s+)*(?:${leadingRuler}|${planet})`;
 const named=`(?:${terms})\\s+(?:between|of)\\s+(?:the\\s+)?${planet}\\s+(?:and|with)\\s+(?:the\\s+)?${planet}`;
 const paired=`${planet}(?:\\s*[-–—]\\s*|\\s+and\\s+)${planet}\\s+(?:${terms})`;
 export const horoscopeAspectPattern=`(?:${direct}|${named}|${paired})`;
