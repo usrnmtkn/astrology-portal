@@ -37,7 +37,6 @@ import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors }
 import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "../../web/src/content/skyDebilityInterpretation";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
-import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import type { SkyForecastPeriod } from "./skyForecastTemplates";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
@@ -377,6 +376,9 @@ type AdminDashboardPage =
   | "aspectDiagnostics"
   | "users"
   | "reportFulfillment";
+// Share the repeated hint class without duplicating its string in the startup bundle.
+const fieldHintClassName = "admin-field-hint";
+
 type AdminContentClass = "phrasebank" | "generated" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
 type AdminContentClassFilter = AdminContentClass | "all";
 type AdminContentRole = "authored-content" | "generated-content" | "fallback-output" | "fallback-helper" | "template-pattern" | "source-material" | "legacy-generated" | "unknown";
@@ -1164,7 +1166,7 @@ function draftIsVocabulary(draft: AdminDraft) {
 }
 
 function draftIsArticle(draft: AdminDraft) {
-  return draft.mode === "article"
+  return Boolean(standaloneArticleKind(draft.contentKey)) || draft.mode === "article"
     || draft.blockType === "sky_article"
     || draft.contentKey.startsWith("sky/article/")
     || draft.contentKey.startsWith("sky-article/");
@@ -2754,13 +2756,18 @@ function isCompositeRelationshipRow(row: AdminGeneratedContentRow | AdminReviewR
 }
 
 
-type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: "approve-package-revision" | "publish-sky-article-edition-revision" };
+const packageRevisionPublicationAction = "approve-package-revision";
+const skyRevisionPublicationAction = "publish-sky-article-edition-revision";
+const standaloneRevisionPublicationAction = "publish-standalone-article-revision";
+const skyEditionApprovalAction = "approve-sky-article-edition";
+const standaloneRevisionEvent = "standalone-article-revision";
+type PendingStudioPublication = { id: string; expectedUpdatedAt: string; ownerAction: typeof packageRevisionPublicationAction | typeof skyRevisionPublicationAction | typeof standaloneRevisionPublicationAction };
 const pendingPublicationStorageKey = "tldr-studio-pending-publication-v1";
 function restorePendingPublication(): PendingStudioPublication | null {
   try {
     const value = JSON.parse(sessionStorage.getItem(pendingPublicationStorageKey) ?? "null");
     if (value && typeof value.id === "string" && typeof value.expectedUpdatedAt === "string"
-      && ["approve-package-revision", "publish-sky-article-edition-revision"].includes(value.ownerAction)) return value;
+      && [packageRevisionPublicationAction, skyRevisionPublicationAction, standaloneRevisionPublicationAction].includes(value.ownerAction)) return value;
   } catch { /* Storage may be disabled; the database receipt remains durable. */ }
   return null;
 }
@@ -3114,11 +3121,12 @@ export function GeneratedContentAdminDashboard() {
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [variableCreateRequest, setVariableCreateRequest] = useState(0);
   const [secretInput, setSecretInput] = useState(secret);
-  const loadCalendarPreviewRows = useCallback(async (keys: string[]) => {
+  const loadCalendarPreviewRows = useCallback(async (keys: string[], excludeArchivedArticleRevisions = false) => {
     if (keys.length > 200) {
       throw new Error("Could not verify the full saved Calendar sources.");
     }
     const query = new URLSearchParams({ status: "all", visibility: "all", limit: String(Math.min(Math.max(keys.length, 1), 200)) });
+    if (excludeArchivedArticleRevisions) query.set("excludeArchivedArticleRevisions", "true");
     keys.forEach(key => query.append("contentKeys", key));
     const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(
       `/api/admin/generated-content-inventory?${query}`, secret);
@@ -4865,8 +4873,8 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function rememberSavedDraft(saved: AdminDraft) {
-    setDraft(saved);
+  function rememberSavedDraft(saved: AdminDraft, update?: (current: AdminDraft | null) => AdminDraft | null) {
+    setDraft(update ?? saved);
     const serialized = JSON.stringify(saved);
     editorBaselineRef.current = serialized;
     editorSavedInputRef.current = serialized;
@@ -4909,9 +4917,11 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function approveAndScheduleSkyRow(row: AdminGeneratedContentRow, ownerFinal = false, copy?: AdminDraft) {
+    const publicationSession = editorSessionRef.current;
     setEditorSaveError("");
     setIsLoading(true);
     try {
+      const { retainPendingPublicationCopy } = await import("./studioRevisionPublication");
       const write = () => adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: copy ? "save-and-publish-owner-content" : ownerFinal ? "publish-owner-content" : "approve-and-schedule",
@@ -4927,10 +4937,10 @@ export function GeneratedContentAdminDashboard() {
         throw new Error("Publication was not confirmed.");
       }
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-      if (selectedRowId === saved.id || draft?.contentKey === saved.content_key) {
+      if (publicationSession === editorSessionRef.current && (selectedRowId === saved.id || draft?.contentKey === saved.content_key)) {
         setEditorSourceRow(saved);
         const savedDraft = draftFromRow(saved);
-        rememberSavedDraft(savedDraft);
+        rememberSavedDraft(savedDraft, current => retainPendingPublicationCopy(copy ?? draftFromRow(row), current, savedDraft));
       }
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setSkyReviewHorizon((current) => current ? {
@@ -5192,7 +5202,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-sky-article-edition" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: skyEditionApprovalAction })
       });
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
@@ -5277,9 +5287,9 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       const ownerAction = revisionRow.event_type === "sky-article-edition-revision"
-        ? "publish-sky-article-edition-revision"
-        : "approve-sky-article-edition";
-      const payload = ownerAction === "publish-sky-article-edition-revision"
+        ? skyRevisionPublicationAction
+        : skyEditionApprovalAction;
+      const payload = ownerAction === skyRevisionPublicationAction
         ? await submitSavedPublication(revisionRow, ownerAction)
         : await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, {
           method: "PATCH", body: JSON.stringify({ id: revisionRow.id, expectedUpdatedAt: revisionRow.updated_at, ownerAction })
@@ -5360,6 +5370,8 @@ export function GeneratedContentAdminDashboard() {
     const expectedUpdatedAt = draftForSave.updatedAt ?? persistedRow?.updated_at ?? undefined;
 
     try {
+      const directCopy = isPackageDraft && writesPersonalTransitExactCopy(draftForSave)
+        ? await import("./studioRevisionPublication") : null;
       const body = isPackageDraft
         ? {
             ownerAuthoredWording: true,
@@ -5414,7 +5426,9 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       const savedDraft = saved ? draftFromRow(saved) : null;
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
-        (draftForSave.id && saved.id !== draftForSave.id)
+        (draftForSave.id && saved.id !== draftForSave.id && !(standaloneArticleKind(draftForSave.contentKey)
+          && status === "DRAFT" && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
+          && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
         || (["LIVE", "REVIEWED"].includes(status) && saved.review_state)
         || (["status", "headline", "summary", "body"] as const).some((field) => saved[field] !== draftForSave[field])
@@ -5434,22 +5448,7 @@ export function GeneratedContentAdminDashboard() {
         setDraft((current) => {
           // A response acknowledges the submitted version, not newer typing.
           if (current && current !== editorDraftAtSave && current.contentKey === activeDraft.contentKey) {
-            if (writesPersonalTransitExactCopy(current)) {
-              const { packageDraft: _discarded, ...savedSections } = objectRecord(savedDraft.sections) ?? {};
-              const proposal = draftPackageProposal(current);
-              return {
-                ...current,
-                id: savedDraft.id,
-                updatedAt: savedDraft.updatedAt,
-                sections: {
-                  ...savedSections,
-                  packageRecord: {
-                    ...draftPackageRecord(savedDraft),
-                    ...(proposal ?? {})
-                  }
-                }
-              };
-            }
+            if (directCopy) return directCopy.retainPendingPublicationCopy(editorDraftAtSave ?? activeDraft, current, savedDraft, true);
             const proposal = draftPackageProposal(current);
             const savedRecord = draftPackageRecord(savedDraft);
             return { ...current, id: savedDraft.id, updatedAt: savedDraft.updatedAt,
@@ -5482,6 +5481,7 @@ export function GeneratedContentAdminDashboard() {
           const baseline = JSON.parse(recoveryBaseline) as AdminDraft;
           if (baseline.id !== activeDraft.id || baseline.contentKey !== activeDraft.contentKey) throw error;
           if (latest.status === "ARCHIVED") throw new Error("This source was archived while you were editing. Your edits are still here; restore the saved source before applying them.");
+          const { recoverContentStudioCopy } = await import("./studioRevisionPublication");
           const latestDraft = draftFromRow(latest);
           const proposal = recoverContentStudioCopy(
             draftEditablePackageRecord(baseline), draftEditablePackageRecord(activeDraft), draftEditablePackageRecord(latestDraft));
@@ -5599,7 +5599,7 @@ export function GeneratedContentAdminDashboard() {
         const saved = await saveDraft("DRAFT", revised, undefined, false, false, true);
         if (!saved) throw new Error("The saved source was not returned. Your writing is still here.");
         return saved;
-      }, row => approvePackageRevision(row as AdminGeneratedContentRow, false, true));
+      }, row => publishSavedRevision(row as AdminGeneratedContentRow, false, true));
       setSelectedRowId(null);
       setDraft(null);
       setDailyGlancePairSelector(pair.selector);
@@ -5635,6 +5635,20 @@ export function GeneratedContentAdminDashboard() {
     if (saved) await approveAndScheduleSkyRow(saved, true, activeDraft.id ? activeDraft : undefined);
   }
 
+  async function publishStandaloneArticle(activeDraft: AdminDraft, saveBeforePublishing = false) {
+    if (pendingPublication) return;
+    const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
+    const saved = activeDraft.id && unchanged && !saveBeforePublishing
+      ? editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id)
+      : await saveDraft("DRAFT", activeDraft);
+    if (!saved) return;
+    if (saved.event_type !== standaloneRevisionEvent) {
+      await approveAndScheduleSkyRow(saved, true);
+      return;
+    }
+    await publishSavedRevision(saved, true, false, standaloneRevisionPublicationAction);
+  }
+
   async function publishPackageDraft(activeDraft: AdminDraft) {
     if (pendingPublication) { setEditorSaveError(pendingPublicationMessage); return; }
     const personalCopy = writesPersonalTransitExactCopy(activeDraft) || (!activeDraft.id && activeDraft.contentKey.startsWith("authored/transit-aspect/"));
@@ -5649,29 +5663,30 @@ export function GeneratedContentAdminDashboard() {
     const existing = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id);
     const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
     const saved = existing && unchanged && !personalCopy && draftHasPackageProposal(activeDraft) ? existing : await saveDraft(undefined, proposal);
-    if (saved && !personalCopy) await approvePackageRevision(saved);
+    if (saved && !personalCopy) await publishSavedRevision(saved);
   }
 
-  async function approvePackageRevision(row: AdminGeneratedContentRow, updateEditor = true, propagateError = false) {
+  async function publishSavedRevision(row: AdminGeneratedContentRow, updateEditor = true, propagateError = false,
+    ownerAction: typeof packageRevisionPublicationAction | typeof standaloneRevisionPublicationAction = packageRevisionPublicationAction) {
+    const publicationSession = editorSessionRef.current;
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const payload = await submitSavedPublication(row, "approve-package-revision");
+      const { assertPublishedRevision, retainPendingPublicationCopy } = await import("./studioRevisionPublication");
+      const payload = await submitSavedPublication(row, ownerAction);
       const published = payload.rows[0];
-      if (published.content_key !== row.content_key) throw new Error("The saved publication identity did not match this source. Reload its status.");
       const publishedDraft = draftFromRow(published);
-      if (draftHasPackageProposal(publishedDraft)) {
-        throw new Error("The API returned an unpublished revision. Your revision is saved; check publication status before publishing again.");
-      }
+      assertPublishedRevision(row, published, ownerAction, draftHasPackageProposal(publishedDraft));
       setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
-      if (updateEditor) {
+      if (updateEditor && publicationSession === editorSessionRef.current) {
         setEditorSourceRow(published);
         setSelectedRowId(published.id);
-        rememberSavedDraft(publishedDraft);
+        rememberSavedDraft(publishedDraft, current => retainPendingPublicationCopy(draftFromRow(row), current, publishedDraft));
       }
       announceContentUpdate({
         contentKey: published.content_key,
-        published: published.status === "LIVE",
+        published: ownerAction === standaloneRevisionPublicationAction
+          ? payload.publicationReceipt?.currentPublicationState === "live" : published.status === "LIVE",
         updatedAt: published.updated_at ?? new Date().toISOString()
       });
       setMessage(publicationStateMessage(payload));
@@ -5740,7 +5755,7 @@ export function GeneratedContentAdminDashboard() {
         const hasProposal = Boolean(objectRecord(objectRecord(row.sections)?.packageDraft));
         const requestBody = isPackageRow
           ? bulkStatus === "LIVE" && hasProposal
-            ? { id: row.id, ownerAction: "approve-package-revision" }
+            ? { id: row.id, ownerAction: packageRevisionPublicationAction }
             : { id: row.id, reviewStatus: bulkStatus === "LIVE" ? "approved" : "needs_review" }
           : {
               id: row.id,
@@ -5748,7 +5763,7 @@ export function GeneratedContentAdminDashboard() {
               reviewState: bulkStatus === "LIVE" || bulkStatus === "REVIEWED" ? null : row.review_state ?? null
             };
           const result = isPackageRow && bulkStatus === "LIVE" && hasProposal
-            ? await submitSavedPublication(row, "approve-package-revision")
+            ? await submitSavedPublication(row, packageRevisionPublicationAction)
             : await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, {
               method: "PATCH", body: JSON.stringify({ ...requestBody, expectedUpdatedAt: row.updated_at })
             });
@@ -7561,7 +7576,7 @@ export function GeneratedContentAdminDashboard() {
           <section className={`admin-template-page${!natalChartWorkspaceActive && !natalAspectWorkspaceActive && !calendarAspectWorkspaceActive ? " admin-library-workspace" : ""}`}>
             {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && (
               <section className="admin-content-toolbar admin-content-library-toolbar" aria-label="Content controls">
-                {calendarAspectWorkspaceActive ? <span className="admin-field-hint">{filteredRows.length} aspect cards</span> : <>
+                {calendarAspectWorkspaceActive ? <span className={fieldHintClassName}>{filteredRows.length} aspect cards</span> : <>
                 <details className="admin-library-guide">
                   <AdminDisclosureSummary>{filteredRows.length} content rows · About this library</AdminDisclosureSummary>
                   <p>Browse articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. The Status column shows whether readers can currently receive each copy.</p>
@@ -7886,7 +7901,7 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar admin-collection-toolbar">
               <div>
-                <span className="admin-field-hint">{filteredArticleRows.length} of {articleRows.length} articles</span>
+                <span className={fieldHintClassName}>{filteredArticleRows.length} of {articleRows.length} articles</span>
               </div>
               <div className="admin-surface-actions" aria-label="Article and guide tools">
                 <StudioButton type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
@@ -7912,7 +7927,7 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar admin-collection-toolbar">
               <div>
-                <span className="admin-field-hint">{filteredAstro101Rows.length} of {astro101Rows.length} Astro 101 pages</span>
+                <span className={fieldHintClassName}>{filteredAstro101Rows.length} of {astro101Rows.length} Astro 101 pages</span>
               </div>
               <div className="admin-new-actions" aria-label="Create Astro 101 pages">
                 <StudioButton type="button" onClick={() => {
@@ -7958,7 +7973,7 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar admin-collection-toolbar">
               <div>
-                <span className="admin-field-hint">{filteredCompatibilityRows.length} of {compatibilityRows.length} rows</span>
+                <span className={fieldHintClassName}>{filteredCompatibilityRows.length} of {compatibilityRows.length} rows</span>
               </div>
               <div className="admin-new-actions" aria-label="Compatibility shortcuts">
                 <StudioButton type="button" onClick={showCompatibilityAspectCreator} disabled={isLoading || hasAccessIssue || hasLoadFailure}>
@@ -8161,7 +8176,7 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "hooks" && (
           <section className="admin-template-page">
             <section className="studio-section studio-surface" aria-label="Surface directory filters">
-              <span className="admin-field-hint">{writingSurfaces.length} mapped surfaces</span>
+              <span className={fieldHintClassName}>{writingSurfaces.length} mapped surfaces</span>
               <label className="admin-field-wide">
                 <span>Find a reader surface or content source</span>
                 <StudioInput aria-label="Search reader surfaces" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sky aspect, weekly horoscope, calendar, synastry…" />
@@ -8307,7 +8322,7 @@ export function GeneratedContentAdminDashboard() {
                             </td>
                             <td data-label="Key"><code>{item.id}</code></td>
                             <td data-label="Status">
-                              <span className="admin-field-hint">{saved ? "Saved draft" : "Source only"}</span>
+                              <span className={fieldHintClassName}>{saved ? "Saved draft" : "Source only"}</span>
                               <span className="ui-pill admin-status status-draft">Not live</span>
                             </td>
                             <td data-label="Source"><small>{item.sourcePath}</small></td>
@@ -8621,7 +8636,7 @@ export function GeneratedContentAdminDashboard() {
     const saved = alreadySaved ? row : await saveDraft(undefined, revised, undefined, false);
     if (!saved) return false;
     if (row.id.startsWith("package:")) setRows((current) => current.filter((candidate) => candidate.id !== row.id));
-    return publish ? Boolean(await approvePackageRevision(saved, false)) : true;
+    return publish ? Boolean(await publishSavedRevision(saved, false)) : true;
   }
 
   function renderNatalPlacementSourceFinder() {
@@ -9055,7 +9070,7 @@ export function GeneratedContentAdminDashboard() {
             }}
             placeholder="Search by transiting planet, aspect, and natal point"
           />
-          <small className="admin-field-hint">Type the reader title, such as Mars conjunct Moon. This selects the three-part aspect. The live Friends card may use a published family write-up until an exact conjunction row is saved.</small>
+          <small className={fieldHintClassName}>Type the reader title, such as Mars conjunct Moon. This selects the three-part aspect. The live Friends card may use a published family write-up until an exact conjunction row is saved.</small>
         </label>
         )}
 
@@ -9189,7 +9204,7 @@ export function GeneratedContentAdminDashboard() {
 
         {!contactReady && <p className="admin-natal-placement-prompt">Choose transiting planet, aspect, and natal planet or chart point to open this transit's You and Friend write-up.</p>}
         {selection && contact && <Suspense fallback={<PageLoading message="Loading reader preview…" />}><TransitNatalReaderPreview secret={secret} selection={selection} voice={friendsTransitAudience ? "{{Name}}" : "you"} onOpenExact={() => void openExactTransitNatalSource(exactSelection ?? contact)} onOpenSource={(key, label, field) => void openContentKeyRow(key, label, key.startsWith("fallback-template/"), field)} onServingPreview={setTransitNatalLiveServing} onVariantCount={setTransitNatalVariantCount} /></Suspense>}
-        {contactReady && <p className="admin-field-hint">{exactKey && exactKey.split("/").length === 8
+        {contactReady && <p className={fieldHintClassName}>{exactKey && exactKey.split("/").length === 8
           ? "The reader preview uses eligible published writing, not saved drafts. After you save and publish this six-part situation, matching readings can use it. Shared source edits still affect every reading that uses them."
           : "The reader preview uses eligible published writing, not saved drafts. Aspect-specific passages keep separate contacts independent. Shared source edits affect every reading that uses them. Signs and houses stay in the preview until you fill all six finder fields, which switches the save destination to the six-part situation."}</p>}
 
@@ -9354,7 +9369,7 @@ export function GeneratedContentAdminDashboard() {
       return { published: saved.source.published };
     }
     if (!saved.row) throw new Error("Save this passage before publishing.");
-    const result = await submitSavedPublication(saved.row, "approve-package-revision");
+    const result = await submitSavedPublication(saved.row, packageRevisionPublicationAction);
     if (result.publicationReceipt?.currentPublicationState !== "live") throw new Error(publicationStateMessage(result));
     const published = result.rows[0];
     const source = acknowledgeHouseTransitPublication(published);
@@ -9544,7 +9559,7 @@ export function GeneratedContentAdminDashboard() {
         </div>
         <details className="admin-advanced" open={Boolean(calendarAspectFirstSign || calendarAspectSecondSign)}>
           <AdminDisclosureSummary>Advanced signs{calendarAspectFirstSign || calendarAspectSecondSign ? " · Filtered" : ""}</AdminDisclosureSummary>
-          <p className="admin-field-hint">Filter by either planet’s sign. Every dropdown is optional.</p>
+          <p className={fieldHintClassName}>Filter by either planet’s sign. Every dropdown is optional.</p>
           <div className="admin-filter-form" role="group" aria-label="Calendar aspect sign filters">
             {(["first", "second"] as const).map((side) => <label key={side}>
               <span>{calendarAspectSelection[side] ? titleFromKey(calendarAspectSelection[side]) : side === "first" ? "First planet or point" : "Other planet or point"} in sign</span>
@@ -9640,8 +9655,8 @@ export function GeneratedContentAdminDashboard() {
             </StudioButton>
           ))}
         </div>
-        {statusFiltersOpen && statusChecking && <p role="status" className="admin-field-hint">Checking reader status…</p>}
-        {Boolean(liveStatusResults?.failed) && <p role="status" className="admin-field-hint">Status unavailable for {liveStatusResults?.failed} entries. Refresh rows to retry.</p>}
+        {statusFiltersOpen && statusChecking && <p role="status" className={fieldHintClassName}>Checking reader status…</p>}
+        {Boolean(liveStatusResults?.failed) && <p role="status" className={fieldHintClassName}>Status unavailable for {liveStatusResults?.failed} entries. Refresh rows to retry.</p>}
         </details>
           {!calendarAspectWorkspaceActive && (
           <StudioButton type="button" aria-pressed={showReferenceRows} className={showReferenceRows ? "active" : ""} onClick={() => setShowReferenceRows((current) => !current)}>
@@ -9934,8 +9949,10 @@ export function GeneratedContentAdminDashboard() {
     if (row.block_type === 'sky_placement') throw new Error('This source requires its dedicated package review and release.');
     try {
       const isPackage = rowIsFallbackArchitectureV3(row);
-      const result = isPackage && objectRecord(objectRecord(row.sections)?.packageDraft)
-        ? await submitSavedPublication(row, 'approve-package-revision')
+      const result = row.event_type === standaloneRevisionEvent && standaloneArticleKind(row.content_key)
+        ? await submitSavedPublication(row, standaloneRevisionPublicationAction)
+        : isPackage && objectRecord(objectRecord(row.sections)?.packageDraft)
+        ? await submitSavedPublication(row, packageRevisionPublicationAction)
         : await adminJsonRequest<StudioPublicationResult>('/api/admin/generated-content', secret, {
           method: 'PATCH', body: JSON.stringify({ id: row.id, expectedUpdatedAt: row.updated_at,
             ...(isPackage ? { reviewStatus: 'approved' } : { ownerAction: 'publish-owner-content' }) })
@@ -10030,9 +10047,9 @@ export function GeneratedContentAdminDashboard() {
                 onOpen: () => contentLibraryBrowseActive ? openContentLibraryRow(row) : openRow(row),
                 openLabel: libraryDestination && libraryTools ? <libraryTools.ContentLibraryActionLabel row={row} destination={libraryDestination} loadStatus={loadLiveStatus} /> : undefined,
                 details: <>
-                  <p className="admin-field-hint">Editorial stage: {contentStatusLabel(row.status)}</p>
-                  <p className="admin-field-hint">{rowRole.label} · {contentClassLabel(rowClass)} · {tierForRow(row)}</p>
-                  {wiring && <p className="admin-field-hint">{wiring.detail}</p>}
+                  <p className={fieldHintClassName}>Editorial stage: {contentStatusLabel(row.status)}</p>
+                  <p className={fieldHintClassName}>{rowRole.label} · {contentClassLabel(rowClass)} · {tierForRow(row)}</p>
+                  {wiring && <p className={fieldHintClassName}>{wiring.detail}</p>}
                 </>
               };
           })}
@@ -11368,7 +11385,7 @@ export function GeneratedContentAdminDashboard() {
                   </AdminSelect>
                 </label>
               </fieldset>
-              <p className="admin-field-hint">{isTransitNatalSituationKey(currentDraft.contentKey)
+              <p className={fieldHintClassName}>{isTransitNatalSituationKey(currentDraft.contentKey)
                 ? <>This editor is the six-part situation. Changing any of the six fields opens that destination. Insert <code>{"{{aspectWord}}"}</code> and <code>{"{{untilDate}}"}</code> where the calculated aspect and window belong.</>
                 : <>This editor is the three-part aspect. Set current sign and both houses to open the six-part situation instead. Insert <code>{"{{aspectWord}}"}</code> and <code>{"{{untilDate}}"}</code> where the calculated aspect and window belong.</>}</p>
               <p>{isNewDraft && isExactPersonalTransitDraft && !currentDraft.sections?.packageOriginalRecord
@@ -11425,7 +11442,7 @@ export function GeneratedContentAdminDashboard() {
           {isNewDraft && isCompatibilityCardDraft && (
             <fieldset className="admin-metadata-fields admin-compatibility-identity-fields" aria-label="Compatibility card identity">
               <legend>Choose the exact card first</legend>
-              <p className="admin-field-hint">Choose the planet and direction. The reader sign comes first.</p>
+              <p className={fieldHintClassName}>Choose the planet and direction. The reader sign comes first.</p>
               {compatibilityDraftIdentityFields.map(({ field, label, value, options }) => (
                 <label className="admin-metadata-field" key={field}>
                   <span>{label}</span>
@@ -11604,7 +11621,7 @@ export function GeneratedContentAdminDashboard() {
                     <div><dt>Current approval</dt><dd>{String(packageRecord.review_status ?? packageReviewStatus)}</dd></div>
                     <div><dt>Proposal</dt><dd>{skyFallbackChanges.length ? `${skyFallbackChanges.length} changed field${skyFallbackChanges.length === 1 ? "" : "s"}` : "No changes"}</dd></div>
                   </dl>
-                  <p className="admin-field-hint" role="note"><strong>Safe editing boundary:</strong> Save draft keeps your changes Not live. Save &amp; publish approves and publishes the current revision; the original approved source remains in version history.</p>
+                  <p className={fieldHintClassName} role="note"><strong>Safe editing boundary:</strong> Save draft keeps your changes Not live. Save &amp; publish approves and publishes the current revision; the original approved source remains in version history.</p>
                 </details>
               </header>
 
@@ -11642,14 +11659,14 @@ export function GeneratedContentAdminDashboard() {
                 <p className="admin-eyebrow">Reader preview</p>
                 <h3>{skyFallbackContentIdentity?.title || currentDraft.headline || titleFromKey(currentDraft.contentKey)}</h3>
                 {skyFallbackEditor.fields.find((field) => field.key === "fact_line") ? (
-                  <p className="admin-field-hint">{renderWorkspacePreview(
+                  <p className={fieldHintClassName}>{renderWorkspacePreview(
                     [{ ...skyFallbackEditor.fields.find((field) => field.key === "fact_line")!, key: "date_line" }],
                     skyFallbackPreviewFacts
                   )[0] ?? skyFallbackEditor.fields.find((field) => field.key === "fact_line")?.value}</p>
                 ) : null}
                 {skyFallbackPreview.map((paragraph, index) => <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>)}
                 {skyFallbackEditor.variables.some((variable) => !skyFallbackPreviewFacts[variable]) && (
-                  <p className="admin-field-hint">Unfilled tokens remain visible until this workspace is opened from a calculated Sky occurrence.</p>
+                  <p className={fieldHintClassName}>Unfilled tokens remain visible until this workspace is opened from a calculated Sky occurrence.</p>
                 )}
               </section>}
 
@@ -11712,7 +11729,7 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <div>
                   <code>{selectedRow.content_key}</code>
-                  <p className="admin-field-hint" aria-live="polite">
+                  <p className={fieldHintClassName} aria-live="polite">
                     {skyArticleEditionForm.saveState === "saving" ? "Saving draft…"
                       : skyArticleEditionForm.saveState === "unsaved" ? "Unsaved changes"
                         : skyArticleEditionForm.saveState === "error" ? "Autosave failed"
@@ -11765,7 +11782,7 @@ export function GeneratedContentAdminDashboard() {
                     });
                     }}
                   />
-                  <small className="admin-field-hint">The ephemeris uses this date to identify the active sign and complete residency window.</small>
+                  <small className={fieldHintClassName}>The ephemeris uses this date to identify the active sign and complete residency window.</small>
                 </label>
                 <StudioButton type="button" onClick={() => void loadSkyArticleEditionFacts(selectedRow)} disabled={isLoading}>
                   <RefreshCw size={16} aria-hidden="true" />
@@ -11795,7 +11812,7 @@ export function GeneratedContentAdminDashboard() {
                         onChange={event => setSkyArticleEditionForm({ ...skyArticleEditionForm, includeRetrogradeHistory: event.target.checked, saveState: "unsaved" })} />
                       Include retrograde history in generation
                     </label>
-                    <p className="admin-field-hint">Saves these calculated dates with the draft. Historical world events require separate sources.</p>
+                    <p className={fieldHintClassName}>Saves these calculated dates with the draft. Historical world events require separate sources.</p>
                   </details>}
                   <section className="admin-hook-detail-section" aria-label="Article completion checklist">
                     <p className="admin-eyebrow">Publication checklist</p>
@@ -11819,7 +11836,7 @@ export function GeneratedContentAdminDashboard() {
                       })}
                       placeholder="Add the approved outline, selected transits and editorial direction for this edition."
                     />
-                    <small className="admin-field-hint">Saved with this draft and sent to the writer. These notes stay out of the compiled article.</small>
+                    <small className={fieldHintClassName}>Saved with this draft and sent to the writer. These notes stay out of the compiled article.</small>
                   </label>
                   <div className="admin-toolbar-actions">
                     <StudioButton
@@ -11830,7 +11847,7 @@ export function GeneratedContentAdminDashboard() {
                       <Sparkles size={16} aria-hidden="true" />
                       Generate unfinished fields
                     </StudioButton>
-                    <p className="admin-field-hint">
+                    <p className={fieldHintClassName}>
                       Use Ingress article for dated generation. Saved ingress layouts can be edited and compiled.
                     </p>
                   </div>
@@ -11840,20 +11857,20 @@ export function GeneratedContentAdminDashboard() {
                   {skyArticleEditionForm.rejectedGeneration && (
                     <details>
                       <summary>Returned draft needs correction</summary>
-                      <p className="admin-field-hint">Review this returned text. These fields are separate from the article fields below.</p>
-                      <p className="admin-field-hint">{String(skyArticleEditionForm.rejectedGeneration.provider ?? "")} / {String(skyArticleEditionForm.rejectedGeneration.model ?? "")}</p>
+                      <p className={fieldHintClassName}>Review this returned text. These fields are separate from the article fields below.</p>
+                      <p className={fieldHintClassName}>{String(skyArticleEditionForm.rejectedGeneration.provider ?? "")} / {String(skyArticleEditionForm.rejectedGeneration.model ?? "")}</p>
                       {Object.entries(objectRecord(skyArticleEditionForm.rejectedGeneration.slotValues) ?? {}).filter((entry): entry is [string, string] => typeof entry[1] === "string").map(([name, value]) => (
                         <label key={name}>{name}<textarea aria-label={`Returned draft ${name}`} readOnly value={value} /></label>
                       ))}
                     </details>
                   )}
                   {skyArticleEditionForm.slotGeneration && (
-                    <p className="admin-field-hint">
+                    <p className={fieldHintClassName}>
                       Drafted {skyArticleEditionForm.slotGeneration.requestedSlots.length} field{skyArticleEditionForm.slotGeneration.requestedSlots.length === 1 ? "" : "s"} with {skyArticleEditionForm.slotGeneration.provider} / {skyArticleEditionForm.slotGeneration.model}. Review every field before compilation.
                     </p>
                   )}
                   {skyArticleEditionForm.factBlockedSlots.length > 0 && (
-                    <p className="admin-field-hint">
+                    <p className={fieldHintClassName}>
                       Not sent to the model because they need additional verified facts or selected retrograde history: {skyArticleEditionForm.factBlockedSlots.map((slot) => slot.name).join(", ")}.
                     </p>
                   )}
@@ -11869,7 +11886,7 @@ export function GeneratedContentAdminDashboard() {
                       })}
                       placeholder="Write the short TL;DR shown in the Transits list and at the top of the full reading."
                     />
-                    <small className="admin-field-hint">
+                    <small className={fieldHintClassName}>
                       This is a separately written part of the same canonical article. The app will not derive it from the opening or generate another card at runtime.
                     </small>
                   </label>
@@ -11891,7 +11908,7 @@ export function GeneratedContentAdminDashboard() {
                             })}
                             placeholder={placeholder.description || `Write the ${placeholder.name} edition passage.`}
                           />
-                          {placeholder.description && <small className="admin-field-hint">{placeholder.description}</small>}
+                          {placeholder.description && <small className={fieldHintClassName}>{placeholder.description}</small>}
                           {!engineOwned && (skyArticleNeedsHouses || ["priorOccurrenceSection", "otherDatesSection"].includes(placeholder.name)) && skyArticleEditionForm.slotValues[placeholder.name] === undefined && (
                             <StudioButton type="button" onClick={() => setSkyArticleEditionForm({
                               ...skyArticleEditionForm,
@@ -12034,7 +12051,7 @@ export function GeneratedContentAdminDashboard() {
               <AdminSelect aria-label="Phrase section" value={vocabularySection} onChange={(event) => updateVocabularySection(event.target.value as AdminVocabularySection)} disabled={!isNewDraft}>
                 {vocabularySections.map((section) => <option key={section.key} value={section.key}>{section.label}</option>)}
               </AdminSelect>
-              <small className="admin-field-hint">{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
+              <small className={fieldHintClassName}>{vocabularySections.find((section) => section.key === vocabularySection)?.description}</small>
             </label>
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && (
@@ -12042,10 +12059,10 @@ export function GeneratedContentAdminDashboard() {
               <label className="admin-title-field">
                 <span>{headlineFieldLabel}</span>
                 <StudioInput aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
-                {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
-                {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
-                {isAstro101Draft && <small className="admin-field-hint">Title on the Learn hub card and at the top of the article.</small>}
-                {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isAuthoredPackageCard && <small className="admin-field-hint">{!isCompleteEffortDraft && (isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft) ? "Editor-facing name used to find this source in Content Studio." : "Title shown to readers."}</small>}
+                {fallbackEditorGuidance && <small className={fieldHintClassName}>{fallbackEditorGuidance.headlineHint}</small>}
+                {isVocabularyDraft && <small className={fieldHintClassName}>{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
+                {isAstro101Draft && <small className={fieldHintClassName}>Title on the Learn hub card and at the top of the article.</small>}
+                {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isAuthoredPackageCard && <small className={fieldHintClassName}>{!isCompleteEffortDraft && (isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft) ? "Editor-facing name used to find this source in Content Studio." : "Title shown to readers."}</small>}
               </label>
               {isAstro101Draft && (
                 <>
@@ -12060,7 +12077,7 @@ export function GeneratedContentAdminDashboard() {
                         <option key={kind} value={kind}>{ASTRO_101_KIND_LABELS[kind]}</option>
                       ))}
                     </AdminSelect>
-                    <small className="admin-field-hint">Choose where this card sits on Learn. Leave Resources as a draft until the article is written.</small>
+                    <small className={fieldHintClassName}>Choose where this card sits on Learn. Leave Resources as a draft until the article is written.</small>
                   </label>
                   <label className="admin-title-field">
                     <span>Reader path</span>
@@ -12069,7 +12086,7 @@ export function GeneratedContentAdminDashboard() {
                       value={astro101SlugTail(currentDraft.facts)}
                       onChange={(event) => setDraft(withAstro101Placement(currentDraft, { slugTail: event.target.value }))}
                     />
-                    <small className="admin-field-hint">{astro101SlugFromFacts(currentDraft.facts) || "Path is generated from this slug when you save."}</small>
+                    <small className={fieldHintClassName}>{astro101SlugFromFacts(currentDraft.facts) || "Path is generated from this slug when you save."}</small>
                   </label>
                   <label className="admin-title-field">
                     <span>Hub section title</span>
@@ -12078,7 +12095,7 @@ export function GeneratedContentAdminDashboard() {
                       value={astro101HubTitleFromSections(currentDraft.sections, astro101KindForDraft(currentDraft))}
                       onChange={(event) => setDraft(withAstro101Placement(currentDraft, { hubTitle: event.target.value }))}
                     />
-                    <small className="admin-field-hint">Heading above this group of cards. Blank groups, including Resources, do not appear on /learn.</small>
+                    <small className={fieldHintClassName}>Heading above this group of cards. Blank groups, including Resources, do not appear on /learn.</small>
                   </label>
                 </>
               )}
@@ -12087,10 +12104,10 @@ export function GeneratedContentAdminDashboard() {
                   <span>{summaryFieldLabel}</span>
                   <StudioTextarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => updateSummary(event.target.value)} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
                   <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
-                  {isAstro101Draft && <small className="admin-field-hint">Shown under the title on the Learn hub card. Leave blank if the card should have no subtitle.</small>}
-                  {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
-                  {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-                  {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Optional short takeaway."}</small>}
+                  {isAstro101Draft && <small className={fieldHintClassName}>Shown under the title on the Learn hub card. Leave blank if the card should have no subtitle.</small>}
+                  {fallbackEditorGuidance && <small className={fieldHintClassName}>{fallbackEditorGuidance.summaryHint}</small>}
+                  {isSkyArticleSourceDraft && <small className={fieldHintClassName}>Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
+                  {!fallbackEditorGuidance && !isVocabularyDraft && !isAstro101Draft && !isSkyArticleSourceDraft && <small className={fieldHintClassName}>{isSkySummaryDraft || lunarIdentity || isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Optional short takeaway."}</small>}
                 </label>
               )}
             </section>
@@ -12111,8 +12128,8 @@ export function GeneratedContentAdminDashboard() {
                     : setPackageSectionField(currentDraft, "body_you", value));
                 }}
               />
-              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyYouHint}</small>}
-              {!fallbackEditorGuidance && <small className="admin-field-hint">{isExactTransitReturnDraft
+              {fallbackEditorGuidance && <small className={fieldHintClassName}>{fallbackEditorGuidance.bodyYouHint}</small>}
+              {!fallbackEditorGuidance && <small className={fieldHintClassName}>{isExactTransitReturnDraft
                 ? "Used when someone reads this return in You."
                 : "Used when someone reads their own natal chart in You."}</small>}
             </label>
@@ -12136,12 +12153,12 @@ export function GeneratedContentAdminDashboard() {
             <label className="admin-review-copy-editor studio-surface" data-reader-audience="they">
               <span>{bodyTheyLabel}</span>
               {isExactNatalAspectDraft && (
-                <small className="admin-field-hint" id="natal-aspect-they-name-hint" role="note">
+                <small className={fieldHintClassName} id="natal-aspect-they-name-hint" role="note">
                   Name variable: <code>{natalAspectTheyNameVariable}</code>. Enter it exactly where the person&apos;s name should appear; the app replaces it with their name.
                 </small>
               )}
               {isAuthoredTransitAspectDraft && (
-                <small className="admin-field-hint" id="transit-aspect-they-name-hint" role="note">
+                <small className={fieldHintClassName} id="transit-aspect-they-name-hint" role="note">
                   Friends uses this complete third-person passage. The selected person is already established by the page: use they, them, and their. Only use <code>{"{{Name}}"}</code> when pronouns would make the sentence ambiguous. If this field is blank, the reader falls back to the legacy automatic conversion of the You passage.
                 </small>
               )}
@@ -12154,9 +12171,9 @@ export function GeneratedContentAdminDashboard() {
                 value={packageFieldString(currentDraft, "body_they")}
                 onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
               />
-              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyTheyHint}</small>}
-              {!fallbackEditorGuidance && !isAuthoredTransitAspectDraft && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}
-              {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
+              {fallbackEditorGuidance && <small className={fieldHintClassName}>{fallbackEditorGuidance.bodyTheyHint}</small>}
+              {!fallbackEditorGuidance && !isAuthoredTransitAspectDraft && <small className={fieldHintClassName}>Used when the app describes this person to a friend or another chart viewer.</small>}
+              {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className={fieldHintClassName}>This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
           {isAuthoredTransitAspectDraft && <Suspense fallback={null}><RetainedCopy
@@ -12191,17 +12208,17 @@ export function GeneratedContentAdminDashboard() {
                 placeholder={bodyFieldPlaceholder}
               />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
-              {isReferenceDraft ? <small className="admin-field-hint">Background for writing finished cards. This text is never published directly.</small> : fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
-              {!isReferenceDraft && !fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "Full write-up shown to readers."}</small>}
-              {isYouOnlyNatalExactDraft && <small className="admin-field-hint">This exact override is used only in You. The Friends version is composed from separate Friend source writing below.</small>}
-              {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
+              {isReferenceDraft ? <small className={fieldHintClassName}>Background for writing finished cards. This text is never published directly.</small> : fallbackEditorGuidance && <small className={fieldHintClassName}>{fallbackEditorGuidance.bodyHint}</small>}
+              {!isReferenceDraft && !fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className={fieldHintClassName}>{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "Full write-up shown to readers."}</small>}
+              {isYouOnlyNatalExactDraft && <small className={fieldHintClassName}>This exact override is used only in You. The Friends version is composed from separate Friend source writing below.</small>}
+              {isVocabularyDraft && isPackageDraft && <small className={fieldHintClassName}>{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
             </label>
           )}
           {aspectRetrogradeOptions.map(({ field, label, description }) => (
             <label className="admin-review-copy-editor studio-surface" key={field}>
-              <span>{label} <em className="admin-field-hint">Optional</em></span>
+              <span>{label} <em className={fieldHintClassName}>Optional</em></span>
               <StudioTextarea
                 aria-label={label}
                 value={String((isPackageDraft ? editablePackageRecord : currentDraft.sections)?.[field] ?? "")}
@@ -12209,7 +12226,7 @@ export function GeneratedContentAdminDashboard() {
                   ? setPackageRecordField(currentDraft, field, event.target.value)
                   : invalidateContentStudioReview({ ...currentDraft, sections: { ...currentDraft.sections, [field]: event.target.value } }))}
               />
-              <small className="admin-field-hint">{description} Write the complete passage. Leave blank to use the default version. Save and publish with the rest of this aspect.</small>
+              <small className={fieldHintClassName}>{description} Write the complete passage. Leave blank to use the default version. Save and publish with the rest of this aspect.</small>
             </label>
           ))}
           {showArticleStyleEditor && <Suspense fallback={<PageLoading compact message="Loading article section styles…" />}>
@@ -12269,7 +12286,7 @@ export function GeneratedContentAdminDashboard() {
                 onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
                 placeholder="Write the version used when the app describes another person."
               />
-              <small className="admin-field-hint">Used when the app describes someone else in Friends, Compatibility, or another person-focused view.</small>
+              <small className={fieldHintClassName}>Used when the app describes someone else in Friends, Compatibility, or another person-focused view.</small>
             </label>
           )}
           {isCmsSurfaceDraft && (
@@ -12433,7 +12450,7 @@ export function GeneratedContentAdminDashboard() {
                     </div>
                   ))}
                 </dl>
-                <p className="admin-field-hint">Stored field names remain <code>tagline</code>, <code>hook</code>, <code>lived</code>, and <code>turn</code> for runtime compatibility.</p>
+                <p className={fieldHintClassName}>Stored field names remain <code>tagline</code>, <code>hook</code>, <code>lived</code>, and <code>turn</code> for runtime compatibility.</p>
               </section>
             )}
             {fallbackDiagnostic && !isVocabularyDraft && (
@@ -12487,7 +12504,7 @@ export function GeneratedContentAdminDashboard() {
                       </option>
                     ))}
                   </AdminSelect>
-                  <small className="admin-field-hint">Approval allows the resolver to use this phrase as an ingredient. It does not turn it into a standalone article.</small>
+                  <small className={fieldHintClassName}>Approval allows the resolver to use this phrase as an ingredient. It does not turn it into a standalone article.</small>
                 </label>
                 <label className="admin-package-notes-field">
                   <span>Editor notes (optional)</span>
@@ -12514,12 +12531,12 @@ export function GeneratedContentAdminDashboard() {
                   <AdminSelect aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={packageHasProposal || isGuidedHeldReview || packageIsSkyV4Governed}>
                     {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{packageReviewStatusLabel(reviewStatus)}</option>)}
                   </AdminSelect>
-                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
-                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Source material cannot be published.</small>}
-                  {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Save &amp; publish makes your exact edits live in one step. Save draft keeps the revision Not live.</small>}
-                  {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
-                  {packageIsSkyV4Governed && <small className="admin-field-hint">Save & publish approves this exact revision and makes it live. The original approved source remains in version history.</small>}
-                  {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
+                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className={fieldHintClassName}>Approved copy becomes live when Save &amp; publish completes.</small>}
+                  {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className={fieldHintClassName}>Source material cannot be published.</small>}
+                  {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className={fieldHintClassName}>Save &amp; publish makes your exact edits live in one step. Save draft keeps the revision Not live.</small>}
+                  {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className={fieldHintClassName}>Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
+                  {packageIsSkyV4Governed && <small className={fieldHintClassName}>Save & publish approves this exact revision and makes it live. The original approved source remains in version history.</small>}
+                  {isGuidedHeldReview && <small className={fieldHintClassName}>Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
                 </label>
                 <label className="admin-package-notes-field">
                   <span>Editorial notes</span>
@@ -12556,7 +12573,7 @@ export function GeneratedContentAdminDashboard() {
                     <small>Shows the reviewed <code>sky-placement-lore/&#123;sign&#125;</code> section.</small>
                   </span>
                 </label>
-                <p className="admin-field-hint"><strong>Review rule:</strong> changing a switch creates a non-serving package proposal. It does not change reader pages until the proposal is approved, regenerated, and deployed.</p>
+                <p className={fieldHintClassName}><strong>Review rule:</strong> changing a switch creates a non-serving package proposal. It does not change reader pages until the proposal is approved, regenerated, and deployed.</p>
               </section>
             )}
             {isSkyV4OverlaySettings && (
@@ -12589,7 +12606,7 @@ export function GeneratedContentAdminDashboard() {
                     <small>Default OFF. Inserts at most one eligible overlay after Opening without modifying the saved fallback fields.</small>
                   </span>
                 </label>
-                <p className="admin-field-hint"><strong>Limits:</strong> two overlays on a full page; one in a fallback. Exact aspect and event suppression remains read-only.</p>
+                <p className={fieldHintClassName}><strong>Limits:</strong> two overlays on a full page; one in a fallback. Exact aspect and event suppression remains read-only.</p>
               </section>
             )}
             {!(isVocabularyDraft && isPackageDraft) && (
@@ -12618,7 +12635,7 @@ export function GeneratedContentAdminDashboard() {
                         {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
                       </AdminSelect>
                     )}
-                    <small className="admin-field-hint">
+                    <small className={fieldHintClassName}>
                       {isPackageDraft
                         ? packageHasProposal
                           ? packageRoleCanServeExactCopy
@@ -12679,12 +12696,12 @@ export function GeneratedContentAdminDashboard() {
               <label className="admin-title-field">
                 <span className="sr-only">{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
                 <StudioInput aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !lunarWorkspaceActive)} />
-                {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
+                {isVocabularyDraft && <small className={fieldHintClassName}>{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
               </label>
               <StudioButton type="button" className="admin-editor-key-copy" onClick={() => void copyContentKey(currentDraft.contentKey)} aria-label={`Copy key ${currentDraft.contentKey}`} title={currentDraft.contentKey}>
                 <Copy size={14} aria-hidden="true" />Copy key
               </StudioButton>
-              {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
+              {isVocabularyDraft && isPackageDraft && <p className={fieldHintClassName}>Package role: <code>{packageRole || "vocabulary"}</code></p>}
                           </div>
             </details>
             {standaloneArticleKind(currentDraft.contentKey) && <section className={surfaceSection} aria-label="Article reader destination">
@@ -12704,7 +12721,7 @@ export function GeneratedContentAdminDashboard() {
                     {contentSystemLabel(contentSystem)}
                   </strong>
                 </div>
-                <p className="admin-field-hint">
+                <p className={fieldHintClassName}>
                   Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.
                 </p>
               </section>
@@ -12780,7 +12797,9 @@ export function GeneratedContentAdminDashboard() {
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             type="button"
             onClick={() => void (async () => {
-              if (currentDraft.contentKey.startsWith("cms/lunation-article/")) {
+              if (isStandaloneArticleDraft) {
+                await publishStandaloneArticle(currentDraft);
+              } else if (currentDraft.contentKey.startsWith("cms/lunation-article/")) {
                 await publishOwnerDraft(currentDraft);
               } else if (packageOwnerCanPublish) {
                 await publishPackageDraft(currentDraft);
@@ -12872,13 +12891,13 @@ export function GeneratedContentAdminDashboard() {
                   builder?.querySelector<HTMLInputElement>("input")?.focus({ preventScroll: true });
                 }}>Complete edition</StudioButton>
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
-                <small className="admin-field-hint">Source material cannot be published.</small>
+                <small className={fieldHintClassName}>Source material cannot be published.</small>
               ) : isAstro101Draft && currentDraft.status === "LIVE" ? (
                 <StudioButton type="button" onClick={() => void saveDraft("DRAFT")} disabled={isLoading} title="Save your changes and hide this page from the app. You can publish it again later.">
                   Move to draft
                 </StudioButton>
               ) : (
-                <StudioButton className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                <StudioButton className="admin-publish-button" type="button" onClick={() => void (isStandaloneArticleDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
                   Publish to app
                 </StudioButton>

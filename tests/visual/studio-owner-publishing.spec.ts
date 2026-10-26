@@ -128,6 +128,107 @@ test('Owner authors an activation after a completed empty source lookup', async 
     await expect(map).toContainText('Complete new Friend activation after verified missing source.');
   } finally { store.close(); }
 });
+for (const key of [keys[5], keys[6]]) for (const width of [390,1440]) test(`Owner keeps transit edits typed before a save response ${key} ${width}`, async ({page}) => {
+  test.setTimeout(60000);
+  const exact = key.split('/').length === 8;
+  const record = structuredClone(exact
+    ? transitNatalExactSourceDraft({planet:'neptune',natalPoint:'chiron',aspect:'conjunction',sign:'aquarius',transitHouse:'12',natalHouse:'11'}).sections.packageRecord
+    : servingPackageRecords.get(key)!);
+  for (const field of ['body','body_you','body_they']) if (typeof record[field] === 'string') record[field] = `Synthetic saved ${field}. Complete saved final sentence.`;
+  if (exact) record.body = record.body_you;
+  record.headline = 'Synthetic saved headline';
+  record.summary = 'Synthetic saved summary';
+  record.review_status = 'needs_review';
+  const row = {id:'pending-transit-save',content_key:key,headline:'Pending transit fixture',body:record.body ?? record.body_you,summary:'',
+    surface:'sky',mode:'feed',status:'DRAFT',lane:'reference',review_state:'needs-review',target_date:null,
+    provider:'tldrastro-fallback-architecture-v3',block_type:'fallback_hook',event_type:'fallback-hook',
+    sections:{packageRecord:record},facts:{fallbackArchitectureV3:true},
+    source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',contentSystem:'fallback',review_status:'needs_review'},updated_at:'2026-10-15T12:00:00Z'};
+  const store = await studioApiStore([row]);
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  let committed = false;
+  let savedVersion: string | undefined;
+  const writes: any[] = [];
+  try {
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(theme => {localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);}, width === 390 ? 'dark' : 'light');
+    await routeStudioInventoryApi(page,{call:async message => {
+      if (message.method === 'PATCH') writes.push(message.body);
+      const result = await store.call(message);
+      if (!committed && message.method === 'PATCH' && (message.body as any)?.id === row.id) {
+        expect(result.status).toBe(200);
+        savedVersion = result.payload.rows[0].updated_at;
+        committed = true;
+        await held;
+      }
+      return result;
+    }});
+    await page.goto('/admin/content#exact-content');
+    const open = () => page.getByRole('row').filter({has:page.getByText(key,{exact:true})}).getByRole('button',{name:'Edit',exact:true}).click();
+    await open();
+    const editor = page.getByRole('dialog',{name:'Generated content editor'});
+    const savebar = editor.locator('.admin-editor-savebar');
+    const publish = savebar.getByRole('button',{name:'Approve & publish',exact:true});
+    await publish.click();
+    await expect.poll(() => committed).toBe(true);
+    await expect(savebar).toHaveAttribute('aria-busy','true');
+    const you = 'New You opening typed while the reply waits.\n\nComplete new You final sentence.';
+    const they = width === 1440 ? '' : 'New Friend opening typed while the reply waits.\n\nComplete new Friend final sentence.';
+    const title = 'New title typed while the reply waits';
+    const summary = 'New summary typed while the reply waits.';
+    await editor.locator('.admin-title-field input').first().fill(title);
+    await editor.locator('.admin-copy-field-summary').fill(summary);
+    await editor.locator('[data-sky-field="body_you"]').fill(you);
+    if (exact) await editor.locator('[data-sky-field="body_they"]').fill(they);
+    const firstReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
+    release();
+    const firstResponse = await firstReply;
+    expect(firstResponse.status()).toBe(200);
+    expect(await firstResponse.finished()).toBeNull();
+    await expect(savebar).toHaveAttribute('aria-busy','false');
+    await expect(editor.locator('.admin-title-field input').first()).toHaveValue(title);
+    await expect(editor.locator('.admin-copy-field-summary')).toHaveValue(summary);
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(you);
+    if (exact) await expect(editor.locator('[data-sky-field="body_they"]')).toHaveValue(they);
+    // The pending copy must remain unsaved, and cannot leak into the earlier publication.
+    const earlier = (await store.call({method:'rows'}))[0].sections.packageRecord;
+    expect(earlier.review_status).toBe('approved');
+    for (const field of ['body','body_you','body_they']) if (typeof record[field] === 'string') expect(earlier[field]).toBe(record[field]);
+    const draftReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
+    await savebar.getByRole('button',{name:'Save draft',exact:true}).click();
+    const draftResponse = await draftReply;
+    expect(draftResponse.status()).toBe(200);
+    expect(await draftResponse.finished()).toBeNull();
+    await expect(savebar).toHaveAttribute('aria-busy','false');
+    const saved = (await store.call({method:'rows'}))[0];
+    expect(writes[1].expectedUpdatedAt).toBe(savedVersion);
+    expect(writes[1].sections.packageRecord.review_status).toBe('approved');
+    expect(saved.status).toBe('DRAFT');
+    expect(saved.sections.packageRecord).toMatchObject({headline:title,summary});
+    expect(saved.sections.packageRecord.body_you).toBe(you);
+    if (exact) expect(saved.sections.packageRecord.body_they).toBe(they);
+    const publishedThey = they || 'Complete Friend copy restored after deliberately clearing the field.';
+    if (exact && !they) await editor.locator('[data-sky-field="body_they"]').fill(publishedThey);
+    const publishReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
+    await publish.click();
+    const publishResponse = await publishReply;
+    expect(publishResponse.status()).toBe(200);
+    expect(await publishResponse.finished()).toBeNull();
+    await expect(savebar).toHaveAttribute('aria-busy','false');
+    const reader = await store.call({method:'POST',url:'/api/content-reader',body:{keys:[key]}});
+    expect(reader.status).toBe(200);
+    expect(reader.payload.rows[0].sections.packageRecord.body_you).toBe(you);
+    if (exact) expect(reader.payload.rows[0].sections.packageRecord.body_they).toBe(publishedThey);
+    await page.reload();
+    await open();
+    await expect(editor.locator('.admin-title-field input').first()).toHaveValue(title);
+    await expect(editor.locator('.admin-copy-field-summary')).toHaveValue(summary);
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(you);
+    if (exact) await expect(editor.locator('[data-sky-field="body_they"]')).toHaveValue(publishedThey);
+  } finally {release();await page.unrouteAll({behavior:'wait'});store.close();}
+});
+
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owner publishes unchanged saved package drafts ${width} ${theme}`, async ({page}) => {
   test.setTimeout(120000);
   const rows = keys.map((key,index) => {
@@ -236,4 +337,121 @@ for(const width of [390,1440]) test(`Inline natal publishes an unchanged saved d
   const publish=page.getByRole('button',{name:'Save & publish',exact:true});await expect(publish).toBeEnabled();await publish.click();
   await expect(page.getByRole('status')).toHaveText('Published. The reader preview will refresh.');
   expect(await page.evaluate(()=>(window as any).saved)).toMatchObject({row:{id:'saved-natal',updated_at:'2026-10-15T12:00:00Z'},copy:{body_you:'Complete owner copy.',body_they:'Complete Friend copy.'},publish:true});
+});
+
+import {createHash as publicationAckCreateHash} from 'node:crypto';
+import {writeFileSync as writePublicationAckProof} from 'node:fs';
+
+test.describe('Publication response copy preservation',()=>{
+const submitted='A complete submitted opening.\n\nThe submitted final sentence remains complete.';
+const newer='A newer complete opening.\n\nThe newer final sentence remains complete.';
+const hash=(text:string)=>publicationAckCreateHash('sha256').update(text).digest('hex');
+
+for(const phase of ['publication','save-before-publication'] as const) for(const kind of ['article','guide','package','initial-article'] as const) test(`held ${phase} acknowledgement preserves newer ${kind} edits`,async({page},testInfo)=>{
+  test.setTimeout(60000);
+  await page.setViewportSize({width:phase==='publication'?1440:390,height:1000});
+  await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),phase==='publication'?'light':'dark');
+  const isArticle=kind!=='package';
+  const key=isArticle?`article/${kind==='guide'?'guide':'manual'}/acknowledgement-fixture-${kind}-${phase}`:'fallback-hook/bond-effect-soft/moon';
+  const initiallyLive=kind==='article'||kind==='guide';
+  const record=kind==='package'?{...structuredClone(servingPackageRecords.get(key)!),review_status:'needs_review',body_you:submitted,body_they:'A complete Friend opening.\n\nThe Friend final sentence remains complete.'}:undefined;
+  const source={id:'dddddddd-dddd-4ddd-addd-dddddddddddd',content_key:key,surface:'sky',mode:isArticle?'article':'feed',
+    status:initiallyLive?'LIVE':'DRAFT',lane:initiallyLive?'serving':'reference',review_state:initiallyLive?null:'needs-review',
+    headline:`Synthetic acknowledgement ${kind}`,summary:'',body:isArticle?'The initial complete opening.\n\nThe initial complete ending.':submitted,
+    sections:record?{packageRecord:record}:{},facts:record?{fallbackArchitectureV3:true}:{},target_date:null,
+    provider:record?'tldrastro-fallback-architecture-v3':'manual-admin',event_type:record?'fallback-hook':'essay',block_type:record?'fallback_hook':'essay',
+    source_snapshot:record?{sourcePackage:'tldrastro-fallback-architecture-v3',contentSystem:'fallback',review_status:'needs_review'}:{contentType:kind==='guide'?'guide':'article'},
+    updated_at:'2026-10-15T12:00:00Z'};
+  const store=await studioApiStore([source],{uuidIds:true});
+  const action=initiallyLive?'publish-standalone-article-revision':kind==='initial-article'?'publish-owner-content':'approve-package-revision';
+  let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve});
+  let held=false;
+  const reader=async()=>{
+    const result=await store.call({method:'POST',url:'/api/content-reader',body:{keys:[key]}});
+    expect(result.status).toBe(200);
+    const row=result.payload.rows.find((row:any)=>row.content_key===key);
+    return isArticle?row?.body:row?.sections?.packageRecord?.body_you;
+  };
+  try{
+    await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+    await routeStudioInventoryApi(page,{actualDocumentRoute:true,call:async request=>{
+      const result=await store.call(request);
+      const shouldHold=phase==='publication'?(request.body as any)?.ownerAction===action:!(request.body as any)?.ownerAction;
+      if(!held&&request.method==='PATCH'&&shouldHold){
+        expect(result.status).toBe(200);held=true;await gate;
+      }
+      return result;
+    },answer:async(route,url)=>{
+      if(url.pathname==='/api/admin/content-live-status'){
+        await route.fulfill({json:{ok:true,statuses:await store.call({method:'statuses',body:route.request().postDataJSON()})}});return true;
+      }
+      if(url.pathname==='/api/content-reader'){
+        const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;
+      }
+      return false;
+    }});
+    if(isArticle){
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({hasText:key}).getByRole('button',{name:'Edit',exact:true}).click();
+    }else await page.goto('/admin/content#exact-content?from=unresolved&q='+encodeURIComponent(key));
+    const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    const input=isArticle?editor.getByLabel('Article body',{exact:true}):editor.locator('[data-sky-field="body_you"]');
+    if(isArticle)await input.fill(submitted);
+    const beforePublication=await reader();
+    const response=page.waitForResponse(response=>response.request().method()==='PATCH'&&response.request().postDataJSON()?.ownerAction===action);
+    await editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save & publish',exact:true}).click();
+    await expect.poll(()=>held).toBe(true);
+    expect(await reader()).toBe(phase==='publication'?submitted:beforePublication);
+    const editable=await input.isEditable();expect(editable).toBe(true);
+    if(editable)await input.fill(newer);
+    release();const completedResponse=await response;expect(completedResponse.status()).toBe(200);expect(await completedResponse.finished()).toBeNull();
+    await expect(editor.getByRole('button',{name:'Close',exact:true})).toBeEnabled();
+    const displayed=await input.inputValue();const published=await reader();
+    const proof={kind,phase,publicationSucceeded:true,inputEditableWhilePending:editable,readerMatchesSubmitted:published===submitted,
+      newerEditorTextRetained:editable?displayed===newer:null,submittedSha256:hash(submitted),newerSha256:hash(newer),displayedSha256:hash(displayed),publishedSha256:hash(published??'')};
+    writePublicationAckProof(testInfo.outputPath('proof.json'),JSON.stringify(proof,null,2));
+    expect(published).toBe(submitted);
+    if(editable){
+      await expect(input).toHaveValue(newer);
+      const draftResponse=page.waitForResponse(response=>response.request().method()==='PATCH'&&!response.request().postDataJSON()?.ownerAction);
+      await editor.getByRole('button',{name:isArticle?'Save draft':'Save held draft',exact:true}).click();
+      const completedDraft=await draftResponse;expect(completedDraft.status()).toBe(200);expect(await completedDraft.finished()).toBeNull();
+      await expect(editor.getByRole('button',{name:'Close',exact:true})).toBeEnabled();
+      await expect(input).toHaveValue(newer);
+      // A guided held-package save withdraws eligibility until explicit review;
+      // standalone article revisions retain their separately published target.
+      expect(await reader()).toBe(isArticle?submitted:undefined);
+      if(isArticle){
+        const rows=await store.call({method:'rows'});
+        const target=rows.find((row:any)=>row.id===source.id);
+        const proposal=rows.find((row:any)=>row.content_key===key&&row.status==='DRAFT'&&row.event_type==='standalone-article-revision');
+        expect(target.status).toBe('LIVE');expect(target.body).toBe(submitted);
+        expect(proposal?.body).toBe(newer);
+        expect(proposal?.source_snapshot.targetRowId).toBe(target.id);
+        expect(proposal?.source_snapshot.targetRowUpdatedAt).toBe(target.updated_at);
+      }else{
+        const saved=(await store.call({method:'rows'})).find((row:any)=>row.id===source.id);
+        expect(saved.sections.packageRecord.body_you).toBe(submitted);
+        expect(saved.sections.packageDraft.body_you).toBe(newer);
+      }
+      await page.reload();
+      if(isArticle)await page.getByRole('row').filter({hasText:key}).filter({hasText:'Draft'}).getByRole('button',{name:'Edit',exact:true}).click();
+      await expect(editor).toBeVisible();
+      await expect(input).toHaveValue(newer);expect(await reader()).toBe(isArticle?submitted:undefined);
+      const publish=editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save & publish',exact:true});
+      await expect(publish).toBeEnabled();
+      const next=page.waitForResponse(response=>response.request().method()==='PATCH'&&['publish-standalone-article-revision','approve-package-revision','publish-owner-content'].includes(response.request().postDataJSON()?.ownerAction));
+      await publish.click();const completedPublish=await next;expect(completedPublish.status()).toBe(200);expect(await completedPublish.finished()).toBeNull();
+      await expect(editor.getByRole('button',{name:'Close',exact:true})).toBeEnabled();
+      expect(await reader()).toBe(newer);
+      await page.reload();
+      if(isArticle)await page.getByRole('row').filter({hasText:key}).filter({hasText:'Live'}).getByRole('button',{name:'Edit',exact:true}).click();
+      await expect(editor).toBeVisible();
+      await expect(input).toHaveValue(newer);
+      expect(await reader()).toBe(newer);
+      writePublicationAckProof(testInfo.outputPath('proof.json'),JSON.stringify({...proof,republicationSucceeded:true,reopenedNewerCopy:true},null,2));
+    }
+  }finally{release();await page.unrouteAll({behavior:'ignoreErrors'});store.close();}
+});
+
 });

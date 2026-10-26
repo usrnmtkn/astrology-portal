@@ -136,6 +136,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       review_state: null, headline: 'Synthetic Sky template', body: '# Synthetic template\n\n{{entryDate}}', summary: '', sections: {},
       updated_at: '2026-10-09T00:00:00Z', source_snapshot: { contentType: 'sky-article-template', review_status: 'approved' } }], { uuidIds: true });
     let readerFailure = false;
+    let raceVariable = false;
+    let variableForRace: any;
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     try {
@@ -146,7 +148,17 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
       }, theme);
       await bundledPublications(page);
-      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
+      await routeStudioInventoryApi(page, { call: async request => {
+        if (raceVariable && request.method === 'PATCH' && (request.body as any)?.ownerAction === 'publish-standalone-article-revision') {
+          raceVariable = false;
+          const changed = await store.call({ method: 'PATCH', url: '/api/admin/generated-content?variables=true', body: {
+            id: variableForRace.id, expectedUpdatedAt: variableForRace.updatedAt,
+            variable: { ...definition, value: 'Latest complete author opening.' }
+          } });
+          expect(changed.status).toBe(200); variableForRace = changed.payload.variable;
+        }
+        return store.call(request);
+      }, actualDocumentRoute: true, answer: async (route, url) => {
         if (url.pathname === '/api/content-reader') {
           if (readerFailure) { await route.fulfill({ status: 503, json: { error: 'Synthetic read failure' } }); return true; }
           const result = await store.call({ method: 'POST', body: route.request().postDataJSON(), url: '/api/content-reader' });
@@ -177,7 +189,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.getByRole('link', { name: 'Dated Sky article templates', exact: true }).click();
       await expect(page).toHaveURL(/#articles-guides\?q=/u);
       await expect(page.getByLabel('Search articles')).toHaveValue('sky/article-template/');
-      const variable = await store.call({method:'POST',url:'/api/admin/generated-content?variables=true',body:{variable:{name:'articleOpening',label:'Private fixture label',description:'Private fixture description',tags:[],value:'Synthetic complete opening.',overrides:[]}}});
+      const definition = {name:'articleOpening',label:'Private fixture label',description:'Private fixture description',tags:[],value:'Synthetic complete opening.',overrides:[]};
+      const variable = await store.call({method:'POST',url:'/api/admin/generated-content?variables=true',body:{variable:definition}});
       expect(variable.status).toBe(200);
       const guideTemplate = body.replace('Synthetic complete opening.','{{articleOpening}}');
       await page.getByRole('button', { name: 'New guide', exact: true }).click();
@@ -211,6 +224,78 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await headingStyle(library.locator('.learn-article-body h2'));
       await page.reload();
       await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.']);
+      const changedVariable = await store.call({ method: 'PATCH', url: '/api/admin/generated-content?variables=true', body: {
+        id: variable.payload.variable.id, expectedUpdatedAt: variable.payload.variable.updatedAt,
+        variable: { ...definition, value: 'Updated complete author opening.' }
+      } });
+      expect(changedVariable.status).toBe(200);
+      variableForRace = changedVariable.payload.variable;
+      await page.reload();
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Synthetic complete opening.', 'Synthetic complete final paragraph.']);
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+      if (width === 390 && theme === 'light') {
+        // A failed lazy publication control must retain the saved revision and
+        // leave the complete live edition intact until a fresh-page retry.
+        const publishedBefore = (await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id);
+        await page.route('**/studioRevisionPublication-*.js', route => route.abort('failed'));
+        await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
+        await expect(editor.getByRole('alert')).toBeVisible();
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+        expect((await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id)).toEqual(publishedBefore);
+        expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
+          .payload.rows[0]?.body).toBe(body);
+        await page.unroute('**/studioRevisionPublication-*.js');
+        await page.reload();
+        await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+          .getByRole('button', { name: 'Edit', exact: true }).click();
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
+      }
+      await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
+        .payload.rows[0]?.body).toBe(body.replace('Synthetic complete opening.', 'Updated complete author opening.'));
+      await page.goto(directURL); await page.reload();
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Updated complete author opening.', 'Synthetic complete final paragraph.']);
+      // Saving/reopening an edit must not withdraw the reader's approved edition.
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Live' }).getByRole('button', { name: 'Edit', exact: true }).click();
+      const revisedTemplate = `${guideTemplate}\n\nSynthetic complete revised ending.`;
+      await editor.getByLabel('Article body', { exact: true }).fill(revisedTemplate);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
+      await page.reload();
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(revisedTemplate);
+      const resavedTemplate = `${revisedTemplate}\n\nSynthetic complete second saved ending.`;
+      await editor.getByLabel('Article body', { exact: true }).fill(resavedTemplate);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
+      await page.reload();
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(resavedTemplate);
+      await page.goto(directURL);
+      await expect(library.locator('.learn-article-body p')).toHaveText(['Updated complete author opening.', 'Synthetic complete final paragraph.']);
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
+        .getByRole('button', { name: 'Edit', exact: true }).click();
+      if (width === 1440) {
+        raceVariable = true;
+        await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+        await expect(editor.getByRole('alert')).toContainText('changed or was deleted');
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(resavedTemplate);
+        const retained = (await store.call({ method: 'rows' })).find((row: any) => row.event_type === 'standalone-article-revision');
+        expect(retained.status).toBe('DRAFT'); expect(retained.body).toBe(resavedTemplate);
+        expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
+          .payload.rows[0]?.body).toBe(body.replace('Synthetic complete opening.', 'Updated complete author opening.'));
+      }
+      await editor.getByRole('button', { name: width === 390 ? 'Save & publish' : 'Publish to app', exact: true }).click();
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
+      await page.goto(directURL);
+      await page.reload();
+      await expect(library.locator('.learn-article-body p')).toHaveText([width === 1440 ? 'Latest complete author opening.' : 'Updated complete author opening.', 'Synthetic complete final paragraph.', 'Synthetic complete revised ending.', 'Synthetic complete second saved ending.']);
       await page.screenshot({ path: `test-results/articles-reading-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       readerFailure = true;

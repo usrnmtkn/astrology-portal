@@ -42,7 +42,20 @@ for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1
       localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
       localStorage.setItem('tldrastro:studio-theme', theme);
     }, theme);
-    await context.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+    await context.route('**/rest/v1/**', async route => {
+      const url = new URL(route.request().url());
+      if (url.pathname === '/rest/v1/content_publications') {
+        const publications = canonicalPublicationLedger(await store.call({ method: 'publications' }));
+        const filtered = publications.filter(row => url.searchParams.getAll('content_key').every(condition => {
+          const match = /^(gte|gt|lt|lte|eq)\.(.*)$/u.exec(condition);
+          if (!match) throw new Error('Unexpected publication fixture filter.');
+          const key = row.content_key, value = match[2];
+          return match[1] === 'gte' ? key >= value : match[1] === 'gt' ? key > value : match[1] === 'lt' ? key < value : match[1] === 'lte' ? key <= value : key === value;
+        }));
+        await route.fulfill({ json: filtered.slice(0, Number(url.searchParams.get('limit') ?? 1000)) }); return;
+      }
+      await route.fulfill({ json: [] });
+    });
     await context.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
     await routeStudioInventoryApi(context, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
       if (url.pathname === '/api/calendar') { await route.fulfill({ json: { ok: true, calendar } }); return true; }

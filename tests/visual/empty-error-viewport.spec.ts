@@ -74,7 +74,15 @@ async function prepare(page: Page, theme: string, scenario: Scenario) {
       || scenario.failure === 'friends' && url.includes('/rpc/list_social_friends')
       || scenario.failure === 'blocks' && url.includes('/rpc/list_social_blocks')
       || scenario.failure === 'journal' && url.includes('/calendar_check_ins');
-    if (failed) { failedRequests++; return route.fulfill({ status: 503, json: { message: `Synthetic service unavailable${scenario.longError ? ' (request: ' + 'abcdef0123456789'.repeat(8) + ')' : ''}` } }); }
+    if (failed) {
+      failedRequests++;
+      // Exercise SDK retries without backoff delays in these layout-only fixtures.
+      return route.fulfill({ status: 503, headers: {
+        'Retry-After': '0', 'Access-Control-Expose-Headers': 'Retry-After'
+      }, json: {
+        message: `Synthetic service unavailable${scenario.longError ? ' (request: ' + 'abcdef0123456789'.repeat(8) + ')' : ''}`
+      } });
+    }
     if (scenario.failure === 'transits' && url.includes('/content_publications')) return route.fulfill({ json: [{
       content_key: 'authored/transit-fixture', state: 'live', revision: 1, row_id: 'fixture-transit',
       row_updated_at: null, updated_at: '2026-10-15T00:00:00Z'
@@ -100,10 +108,14 @@ async function prepare(page: Page, theme: string, scenario: Scenario) {
 
 async function assertContained(page: Page, state: Locator) {
   await expect(state).toBeVisible();
-  const result = await state.evaluate(element => {
-    const viewport = document.documentElement.clientWidth;
-    const parent = element.parentElement!.getBoundingClientRect();
+  const measure = () => state.evaluateAll(elements => {
+    const element = elements[0];
+    const parentElement = element?.parentElement;
+    if (!element?.isConnected || !parentElement) return null;
     const state = element.getBoundingClientRect();
+    if (state.width <= 0 || state.height <= 0 || getComputedStyle(element).visibility === 'hidden') return null;
+    const viewport = document.documentElement.clientWidth;
+    const parent = parentElement.getBoundingClientRect();
     const violations = [element, ...element.querySelectorAll('*')].flatMap(node => {
       const box = node.getBoundingClientRect();
       const style = getComputedStyle(node);
@@ -119,6 +131,14 @@ async function assertContained(page: Page, state: Locator) {
     return { viewport, scroll: document.documentElement.scrollWidth, parent: { left: parent.left, right: parent.right },
       state: { left: box.left, right: box.right }, violations };
   });
+  let result!: NonNullable<Awaited<ReturnType<typeof measure>>>;
+  // A retry can replace the visible error panel before its geometry is read.
+  // Retry only missing/hidden snapshots; overflow assertions still fail directly.
+  await expect.poll(async () => {
+    const snapshot = await measure();
+    if (snapshot) result = snapshot;
+    return snapshot !== null;
+  }, { message: 'Error or empty state has connected, visible geometry' }).toBe(true);
   expect(result.violations).toEqual([]);
   expect(result.scroll).toBeLessThanOrEqual(result.viewport + 1);
   expect(result.state.left).toBeGreaterThanOrEqual(result.parent.left - 1);
