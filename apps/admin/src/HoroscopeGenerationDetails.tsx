@@ -73,14 +73,30 @@ function HoroscopeReviewHolds({holds,locked,active,canRecover,onRecover,onEdit,o
   </section>)}</>;
 }
 
+export type HoroscopeGenerationState='running'|'paused'|'checking'|'sync'|'saving'|'active'|'ready'|'attention'|'prepare'|'approval'|'generate';
+const generationNotices:Record<Exclude<HoroscopeGenerationState,'approval'>,string>={
+  running:'Generating the approved batch. You can leave this page.',
+  paused:'The batch is paused. Sent requests can still finish; resume with its saved approval.',
+  checking:'Retrieving your saved request. This does not start another generation.',
+  sync:'Paused. Check saved progress before continuing; completed readings are kept.',
+  saving:'Each completed reading is saved automatically.',
+  active:'Continue the saved request without starting it again.',
+  ready:'Your drafts are ready to review.',
+  attention:'The remaining readings need attention above. Edit or reject a saved draft, or resolve an interrupted request.',
+  prepare:'Prepare the current writing plan to continue.',
+  generate:'Ready to generate the missing readings.'
+};
+
 export {default as WeeklyBatchEditorial} from './WeeklyBatchEditorial';
 
 export default function HoroscopeGenerationDetails({view,...props}:{view:"evidence"|"seasonal"|"rejections"|"reviews"|"generation";[key:string]:any}) {
   if(view==='generation'){
-    const {period,available,retrySign,serverRunning,serverPaused,checking,needsSync,busy,active,empty,dirty,plan,planApproved}=props;
+    const {period,available,retrySign,showBudget}=props;
+    const state:HoroscopeGenerationState=props.state;
     return <>
-      <p>{serverRunning?'Generating the approved batch. You can leave this page.':serverPaused?'The batch is paused. Resume to continue its saved approval.':checking?'Retrieving your saved request. This does not start another generation.':needsSync?'Paused. Check saved progress before continuing; completed readings are kept.':busy?'Each completed reading is saved automatically.':active?'Continue the saved request without starting it again.':empty===0?'Your drafts are ready to review.':available===0?'The remaining readings need attention above. Edit or reject a saved draft, or resolve an interrupted request.':dirty||!plan?'Prepare the current writing plan to continue.':!planApproved?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:'Ready to generate the missing readings.'}</p>
-      {!serverRunning&&!serverPaused&&plan&&!active&&available>0&&<p>{period==='weekly'&&`This batch covers all ${available} remaining ${available===1?'reading':'readings'}. `}{period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.`:period==='weekly'?`Up to ${2*available+2} paid AI requests: one shared twelve-sign plan, one draft and one prose check per remaining reading, and one comparison of the complete set.`:period==='monthly'?'Up to 3 paid AI requests: one plan, one draft, and one prose check. Matching saved plans are reused.':`Up to ${2*(retrySign?1:available)} paid AI requests: one draft and one prose check per reading.`}{period!=='seasonal'&&' No automatic rewrites or paid retries. You approve the final wording.'}</p>}
+      <p aria-live="polite">{state==='approval'?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:generationNotices[state]}</p>
+      {showBudget&&<p>{period==='weekly'&&`This batch covers all ${available} remaining ${available===1?'reading':'readings'}. `}{period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.`:period==='weekly'?`Up to ${2*available+2} paid AI requests: one shared twelve-sign plan, drafts with prose checks, and a full-set review.`:period==='monthly'?'Up to 3 paid AI requests: one plan, one draft, and one prose check. Matching saved plans are reused.':`Up to ${2*(retrySign?1:available)} paid AI requests: one draft and one prose check per reading.`}{period!=='seasonal'&&' No automatic rewrites or paid retries. You approve the final wording.'}</p>}
+
     </>;
   }
   if(view==='reviews')return <HoroscopeReviewHolds holds={props.holds} locked={props.locked} active={props.active} canRecover={props.canRecover} onRecover={props.onRecover} onEdit={props.onEdit} onReject={props.onReject}/>;

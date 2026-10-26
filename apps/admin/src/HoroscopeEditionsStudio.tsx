@@ -1,4 +1,5 @@
 import { studioLazy as lazy } from "./studioLazy";
+import type {HoroscopeGenerationState} from './HoroscopeGenerationDetails';
 import {Suspense,useEffect,useRef,useState} from 'react';
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
@@ -16,7 +17,7 @@ import type {LocationInput} from '../../../src/shared/types';
 import {horoscopeVocabularyFindings} from '../../../src/astro-writing/horoscopeEditorialConstraints.mjs';
 import {horoscopePendingReadings,canRecoverHoroscopeReview} from '../../../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_WRITERS} from '../../../src/astro-writing/horoscopeWriterCatalog.mjs';
-const HoroscopeGenerationDetails=lazy(()=>import('./HoroscopeWritingStudio').then(module=>({default:module.HoroscopeGenerationDetails})));
+const HoroscopeGenerationDetails=lazy(()=>import('./HoroscopeGenerationDetails'));
 const WeeklyBatchEditorial=lazy(()=>import('./HoroscopeGenerationDetails').then(module=>({default:module.WeeklyBatchEditorial})));
 const HoroscopeSaveRecovery=lazy(()=>import('./HoroscopeSaveRecovery'));
 const HoroscopePublicationReview=lazy(()=>import('./HoroscopePublicationReview'));
@@ -410,11 +411,11 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     setBusy(true);setChecking(true);setProgress('');setError('');setMessage('Checking saved progress…');
     try{await recoverGeneration(saved,controller,heldSign||true);}catch(reason){recoveryUnavailable(reason,controller);}finally{endOperation(controller);}
   }
-  async function batchAction(action:string,fields:object={},message?:(data:any)=>string){
-    if(!saved)return;setBusy(true);setError('');
+  async function batchAction(action:string,fields:object={}){
+    if(!saved)return;setBusy(true);setError('');setMessage('');
     try{
       const data=await request(secret,'/api/admin/horoscope-writing',{action,...editionVersion(saved),...fields,...(action==='start-batch'?{approvedPlanHash:plan?.planHash}:{})});
-      retain(data.rows[0]);if(!message)setPlanApproved(false);setMessage(message?message(data):action==='pause-batch'?'Batch paused. A request already sent can still finish.':'The saved batch will continue through the remaining signs. You can leave this page.');
+      retain(data.rows[0]);if(!action.endsWith('-weekly'))setPlanApproved(false);
     }catch(reason){await recoverActionConflict(reason);}finally{setBusy(false);}
   }
   async function generate(singleSign?:string){
@@ -554,6 +555,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
   }
   const retrySign=!active&&!generation?.heldRequests?.[failedSign]&&!generation?.candidateHolds?.[failedSign]&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
   const locked=busy||Boolean(saveConflict)||Boolean(active)||Boolean(generation?.weeklyEditorial?.pending)||serverRunning||needsSync;
+  const generationState:HoroscopeGenerationState=serverRunning?'running':serverPaused?'paused':checking?'checking':needsSync?'sync':busy?'saving':active?'active':empty===0?'ready':available===0?'attention':dirty||!plan?'prepare':!planApproved?'approval':'generate';
   const stepIndex=steps.indexOf(step),signIndex=readingSigns.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
   const isPublished=saved?.status==='LIVE'&&!dirty;
   const rejectAllButton=saved?.status==='DRAFT'&&(empty<total||candidateHolds.length>0)?<StudioButton className="admin-danger-button" disabled={locked} onClick={()=>void reject('all')}>Reject all drafts</StudioButton>:null;
@@ -662,7 +664,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
         <footer className={`admin-writing-savebar admin-horoscope-actions${candidateHolds.length?' admin-horoscope-held-actions':''}`}>
           {!serverRunning&&!serverPaused&&plan&&(!active||weeklyResume)&&available>0&&!dirty&&<label><input type="checkbox" checked={planApproved} disabled={busy||needsSync} onChange={e=>setPlanApproved(e.target.checked)}/> I approve this writing plan for generation.</label>}
           {!configured&&plan&&<p role="alert">AI writing is unavailable. Configure the writer before generating, or write the readings yourself.</p>}
-          <Suspense fallback={<p role="status">Loading…</p>}><HoroscopeGenerationDetails view="generation" serverRunning={serverRunning} serverPaused={serverPaused} checking={checking} needsSync={needsSync} busy={busy} active={Boolean(active)} empty={empty} available={available} dirty={dirty} plan={Boolean(plan)} planApproved={planApproved} retrySign={retrySign} period={draft.window.period}/></Suspense>
+          <Suspense fallback={<p role="status">Loading…</p>}><HoroscopeGenerationDetails view="generation" state={generationState} showBudget={!serverRunning&&!serverPaused&&Boolean(plan)&&!active&&available>0} available={available} retrySign={retrySign} period={draft.window.period}/></Suspense>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy&&!running.current&&!checking} onClick={()=>void moveTo('setup')}>Back to editions</StudioButton><div className="admin-toolbar-actions admin-horoscope-decision-actions">{rejectAllButton}
             <StudioButton disabled={!saved||dirty||checking||busy&&!running.current} onClick={()=>void checkProgress()}>{checking?'Checking saved progress…':'Check saved progress'}</StudioButton>
             {isWeekly&&<StudioButton disabled={locked||dirty||serverPaused||isPublished||!planApproved||!configured||!pendingReadings(draft,generation).includes(passage)} onClick={()=>generate(sign)}>{"Generate "+horoscopeSignLabel(sign)}</StudioButton>}

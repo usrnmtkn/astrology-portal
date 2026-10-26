@@ -8,15 +8,15 @@ export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,runni
   const current=review?.status==='passed'&&review.current&&!dirty;
   function act(action:string){
     if(disabled||dirty)return;
-    if(action==='release-weekly'&&!window.confirm('This interrupted batch check may have been billed. Release it with an unknown outcome? Another request requires separate approval.'))return;
+    if(action==='release-weekly'&&!window.confirm('This check may be billed. Release its unknown outcome?'))return;
     void onAction(action,{
       ...(['plan-weekly','review-weekly'].includes(action)?{approvedPlanHash:planHash}:{}),
       ...(action==='release-weekly'?{acknowledgeUnknownOutcome:true}:{})
-    },(data:any)=>data.pending?'The shared batch check is saved. Check its progress without starting another request.':'Loaded the saved batch check.');
+    });
   }
   return <section className="admin-horoscope-plan" aria-label="Weekly batch editorial gate">
-    <p>{pending?pending.phase==='planning'?'Planning twelve distinct concerns…':'Checking the complete twelve-sign set…':current?'The current twelve-sign set passed its batch comparison. Your wording approval is still required.':review&&(!review.matchesCurrent||dirty)?'The saved batch comparison is out of date. Review the current readings again.':review?.status==='failed'?'The batch needs an editorial edit. All saved readings are kept.':plan?.status==='passed'?'The shared twelve-sign concern plan is saved.':'Weekly generation plans twelve distinct concerns before drafting.'}</p>
-    <p>The final check compares interpretations, phrases and endings across all twelve readings. Editing a reading invalidates its previous batch check. No automatic rewrites or paid retries.</p>
+    <p aria-live="polite">{pending?pending.phase==='planning'?'Planning twelve distinct concerns…':'Checking all twelve readings…':current?'The current twelve-sign set passed its batch comparison.':review&&(!review.matchesCurrent||dirty)?'Batch check out of date. Save and recheck.':review?.status==='failed'?'Edit flagged readings, then recheck.':plan?.status==='passed'?'Twelve concerns saved.':'Plan twelve distinct concerns before drafting.'}</p>
+    <p>Compare all twelve for repeated ideas, phrases and endings. No automatic rewrites or retries.</p>
     {plan?.error&&<p role="alert">{plan.error}</p>}
     {review?.error&&<p role="alert">{review.error}</p>}
     {findings.map((finding:any,index:number)=><div className="admin-inline-warning" role="note" key={index}>

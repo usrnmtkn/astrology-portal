@@ -169,7 +169,7 @@ test('Pause persists after reload and resume reuses the saved batch approval',as
   await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status).toBe('paused');
   const batchId=(await f.latest()).source_snapshot.horoscopeGeneration.batch.id;
   await page.reload();await f.open();
-  await expect(studio.getByText('The batch is paused. Resume to continue its saved approval.',{exact:true})).toBeVisible();
+  await expect(studio.getByText('The batch is paused. Sent requests can still finish; resume with its saved approval.',{exact:true})).toBeVisible();
   await f.call({method:'writer-state',body:{pendingPolls:0}});
   const resumed=page.waitForResponse(response=>response.url().includes('/api/admin/horoscope-writing')&&response.request().postDataJSON()?.action==='resume-batch');
   await studio.getByRole('button',{name:'Resume generation',exact:true}).click();

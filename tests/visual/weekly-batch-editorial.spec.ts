@@ -28,14 +28,14 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
  const f=await fixture(page);try{
  const studio=await f.open(),gate=studio.getByRole('region',{name:'Weekly batch editorial gate'});
- await expect(gate.getByText('Weekly generation plans twelve distinct concerns before drafting.')).toBeVisible();
+ await expect(gate.getByText('Plan twelve distinct concerns before drafting.')).toBeVisible();
  await gate.getByRole('button',{name:'Load batch review plan',exact:true}).click();
  const evidence=f.edition.passages.slice(0,3).map((p:any)=>({sign:p.sign,quote:'You should say what you want.'}));
  const findings=['interpretations','phrases','endings'].map(category=>({category,reason:`Synthetic ${category} repeat across three signs.`,evidence}));
  const value={checks:Object.fromEntries(['interpretations','phrases','endings','house_grounding','unsupported_history','technical_filler'].map(key=>[key,findings.some(f=>f.category===key)?'fail':'pass'])),findings};
  await f.call({method:'writer-state',body:{nextBatchResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]}}});
  await gate.getByRole('button',{name:'Review all twelve · 1 AI request',exact:true}).click();
- await expect(gate.getByText('Checking the complete twelve-sign set…',{exact:true})).toBeVisible();
+ await expect(gate.getByText('Checking all twelve readings…',{exact:true})).toBeVisible();
  await gate.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
  await expect(gate.getByRole('note')).toHaveCount(3);
  await expect(gate).toContainText('aries: “You should say what you want.”');
