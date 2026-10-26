@@ -870,6 +870,11 @@ const dashboardCacheKey = (key: string, scope: DashboardScope) => scope === "all
 export function clearCachedFallbackArchitectureV3Bundle(scope?: DashboardScope) {
   if (scope) pendingDashboardBundles.delete(scope);
   else for (const key of pendingDashboardBundles.keys()) if (!key.startsWith("placement:")) pendingDashboardBundles.delete(key);
+  evictCachedFallbackArchitectureV3Bundle(scope);
+}
+
+// Rejecting stored bytes must not cancel the fresh replacement already in flight.
+function evictCachedFallbackArchitectureV3Bundle(scope?: DashboardScope) {
   if (typeof window === "undefined") {
     return;
   }
@@ -999,13 +1004,13 @@ export function readCachedFallbackArchitectureV3Bundle(scope: DashboardScope = "
       || !bundle?.rowsFile
       || !bundle?.templatesFile
     ) {
-      clearCachedFallbackArchitectureV3Bundle(scope);
+      evictCachedFallbackArchitectureV3Bundle(scope);
       return null;
     }
 
     return { version, bundle };
   } catch {
-    clearCachedFallbackArchitectureV3Bundle(scope);
+    evictCachedFallbackArchitectureV3Bundle(scope);
     return null;
   }
 }
