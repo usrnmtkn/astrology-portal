@@ -11,7 +11,9 @@ export function natalSourceFields(row: NatalEditableRow): NatalSourceEdits {
   for (const field of ["body", "body_you", "body_they", "text"]) {
     if (typeof record[field] === "string") fields[field] = record[field];
   }
-  return Object.keys(fields).length ? fields : { body: row.body ?? "" };
+  if (!Object.keys(fields).length) fields.body = row.body ?? "";
+  if (row.content_key.startsWith("fallback-hook/natal-you-placement-complete-final/")) fields.body_they ??= "";
+  return fields;
 }
 
 export default function NatalPlacementSourceEditor({ row, label, disabled, onDirtyChange, onSave }: {
@@ -48,6 +50,8 @@ export default function NatalPlacementSourceEditor({ row, label, disabled, onDir
       {Object.entries(fields).map(([field, value]) => (
         <label key={field}>
           <span>{field === "body_they" ? "Friend view copy" : "You view copy"}</span>
+          {field === "body_they" && row.content_key.startsWith("fallback-hook/natal-you-placement-complete-final/")
+            && <span className="admin-field-hint">Use {"{{ownerName}}"} for names.</span>}
           <StudioTextarea aria-label={`${label}: ${field === "body_they" ? "Friend" : "You"} copy`} rows={row.content_key.includes("placement-sign-final/") ? 14 : 4} value={value} disabled={disabled || saving}
             onChange={(event) => {
               if (!edits) setBaseline(row);

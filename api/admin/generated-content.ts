@@ -507,6 +507,10 @@ function applyPersonalTransitPackageDraft(record: Record<string, unknown>, secti
 }
 
 function validateAndApproveNatalAspectCopy(record: Record<string, unknown>, contentKey: string) {
+  if (/^fallback-hook\/natal-you-placement-complete-final\//u.test(contentKey)) {
+    approveNatalAspectStudioCopy(record, contentKey);
+    return;
+  }
   if (contentKey.startsWith("fallback-hook/synastry-pair/")) {
     if (![record.body_you, record.body_they].every(value => typeof value === "string" && value.trim())) {
       throw new GeneratedContentRequestError("Write both directions of the synastry passage before publishing. You can save an unfinished draft for later.", 400);
@@ -758,6 +762,8 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
+      if (/^fallback-hook\/natal-you-placement-complete-final\//u.test(row.content_key)
+        && field.endsWith("body_they") && slot === "{{ownerName}}") continue;
       if (libs().isConnectionSourceKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
         && libs().connectionSourceSlots(row.content_key).includes(slot.slice(2, -2))) continue;
       if (skyVariableField || ingressVariableField || calendarTemplate && calendarPassageVariables.includes(slot.replace(/[{}#\/\s]/gu, ""))) continue;

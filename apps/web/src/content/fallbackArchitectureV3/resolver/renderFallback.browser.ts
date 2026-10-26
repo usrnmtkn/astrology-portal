@@ -1,3 +1,4 @@
+import { natalPlacementOwnerCopy } from "./natalPlacementVariables.mjs";
 import { bindStudioVariableRenderer } from "../../studioCustomVariables.mjs";
 import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
@@ -316,7 +317,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     ? getReaderLivedRow(exactCompleteKey, voice, opts)
     : null;
     if (exactCompleteLived) {
-      const body = exactCompleteLived.body ?? "";
+      const body = natalPlacementOwnerCopy(exactCompleteLived.body ?? "", facts.voice);
       return {
         headline: `${title(planet)} in ${title(sign)} in the ${ordinal(house)} house`,
         parts: [body],
