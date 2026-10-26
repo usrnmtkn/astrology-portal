@@ -37,6 +37,69 @@ async function openSheet(page: Page) {
   await page.getByRole("button", { name: /Add to your calendar|Calendar subscription link/ }).first().click();
   return page.getByRole("dialog", { name: "Add to your calendar" });
 }
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`complete monthly planning and subscription categories ${theme} ${width}`, async ({ page }) => {
+  test.setTimeout(120000);
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(value => localStorage.setItem('tldrastro:theme', value), theme);
+  const sheet = await openSheet(page);
+  for (const name of ['Quarter Moons', 'Void-of-course Moon', 'Daily planning guidance']) {
+    await expect(sheet.getByRole('switch', { name, exact: true })).toHaveAttribute('aria-checked', 'true');
+  }
+  await sheet.getByRole('button', { name: 'Close calendar subscription' }).click();
+  const planning = page.getByRole('region', { name: 'Daily planning', exact: true });
+  await expect(planning.getByRole('heading', { name: 'Daily planning · Sep 21', exact: true })).toBeVisible({ timeout: 45000 });
+  for (const activity of ['Love', 'Work', 'Creativity', 'Rest']) await expect(planning).toContainText(activity);
+  await expect(planning).toContainText('Planetary hours · New York · America/New_York');
+  await expect(planning).toContainText('Venus hours');
+  await expect(planning).toContainText('Moon hours');
+  const initialBody = await planning.innerText();
+  expect(initialBody).not.toContain('{{');
+  await page.reload();
+  await expect(planning).toHaveText(initialBody, { timeout: 45000, useInnerText: true });
+  expect(await planning.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+  await planning.screenshot({ path: `test-results/calendar-daily-planning-${theme}-${width}.png` });
+  await page.goto('/#calendar?date=2026-08-13&view=day');
+  await expect(page.getByRole('button', { name: 'Moon void of course', exact: true })).toHaveCount(2, { timeout: 45000 });
+  await expect(page.getByRole('region', { name: 'Daily planning', exact: true }).getByRole('heading', { level: 3 })).toBeVisible();
+  const headings = await page.locator('.calendar-day-panel.is-embedded .calendar-sky-card__title').evaluateAll(nodes => nodes.map(node => {
+    const style = getComputedStyle(node);
+    return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'margin', 'textTransform', 'textAlign'].map(key => [key, style[key as any]]));
+  }));
+  expect(headings).toHaveLength(2);
+  expect(headings[1]).toEqual(headings[0]);
+  const readingResponse = await fixture.invoke('/api/calendar-reading?id=daily-2026-09-21&date=2026-09-21&timeZone=Pacific%2FKiritimati&latitude=1.8721&longitude=-157.4278&locationLabel=Kiritimati');
+  expect(readingResponse.status).toBe(200);
+  const reading = readingResponse.json().reading;
+  const linked = new URL(reading.url);
+  await page.goto(linked.pathname + linked.search + linked.hash);
+  const dialog = page.getByRole('dialog', { name: 'Daily planning · Love, work, creativity & rest', exact: true });
+  await expect(dialog.locator('.calendar-reading__body')).toHaveText(reading.body.replace(/\*\*/gu, ''), { useInnerText: true });
+});
+test('daily planning shows loading, retries an outage and handles unavailable copy', async ({ page }) => {
+  let release: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  let state: 'held' | 'ready' | 'missing' = 'held';
+  await page.route('**/api/calendar-reading?*', async route => {
+    if (!new URL(route.request().url()).searchParams.get('id')?.startsWith('daily-')) return route.fallback();
+    if (state === 'held') { await held; return route.fulfill({ status: 503, json: { error: 'Unavailable' } }); }
+    if (state === 'missing') return route.fulfill({ status: 404, json: { error: 'Unavailable' } });
+    return route.fallback();
+  });
+  await page.goto('/#calendar?date=2026-09-21&view=month');
+  await expect(page.getByRole('status').filter({ hasText: 'Loading daily planning…' })).toBeVisible();
+  release!();
+  await expect(page.getByText('Daily planning couldn’t load.')).toBeVisible();
+  state = 'ready';
+  await page.getByRole('button', { name: 'Try again', exact: true }).click();
+  await expect(page.getByRole('region', { name: 'Daily planning', exact: true })).toBeVisible();
+  state = 'missing';
+  const missingResponse = page.waitForResponse(response => new URL(response.url()).searchParams.get('id') === 'daily-2026-09-21' && response.status() === 404);
+  await page.reload();
+  await missingResponse;
+  await expect(page.getByRole('status').filter({ hasText: 'Loading daily planning…' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'Daily planning', exact: true })).toHaveCount(0);
+  await expect(page.getByText('Daily planning couldn’t load.')).toHaveCount(0);
+});
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`free unique subscription, persistent preferences and real feed ${theme} ${width}`, async ({ page }, testInfo) => {
     test.setTimeout(90000);

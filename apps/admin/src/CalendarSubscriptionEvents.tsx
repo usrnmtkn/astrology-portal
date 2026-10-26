@@ -4,7 +4,7 @@ import { adminCredentialHeaders } from "./adminSecret";
 import { calendarFeedCategories, type CalendarFeedEvent, type CalendarFeedEventRecord } from "../../../src/shared/features/calendar/calendarSubscription";
 
 const emptyEvent = (): CalendarFeedEvent => ({ title: "", description: "", start: "", end: "", allDay: false, category: "key", url: "" });
-const categoryLabels: Record<CalendarFeedEvent["category"], string> = { lunations: "New & Full Moons", "moon-signs": "Moon sign changes", seasons: "Season changes", ingresses: "Planet ingresses", retrogrades: "Retrograde stations", key: "Key events", weekly: "Weekly forecasts", aspects: "All aspects" };
+const categoryLabels: Record<CalendarFeedEvent["category"], string> = { lunations: "New & Full Moons", "quarter-moons": "Quarter Moons", "void-moons": "Void-of-course Moon", "daily-guidance": "Daily planning guidance", "moon-signs": "Moon sign changes", seasons: "Season changes", ingresses: "Planet ingresses", retrogrades: "Retrograde stations", key: "Key events", weekly: "Weekly forecasts", aspects: "All aspects" };
 function localInput(value: string, allDay: boolean) {
   if (!value || allDay) return value;
   const date = new Date(value);

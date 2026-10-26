@@ -1,4 +1,6 @@
 import { CalendarPassageProse } from './CalendarPassageProse';
+import { CalendarActivityGuidance } from './CalendarActivityGuidance';
+import type { CalendarLocation } from './calendarSubscription';
 import { ReaderPassageEditLink } from '../../components/ReaderPassageEditLink';
 import { useId, useState } from "react";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
@@ -164,6 +166,8 @@ export function CalendarDayPanel({
   embedded = false,
   showSky = true,
   showCheckIn = true,
+  planningTimeZone,
+  planningLocation,
   contentState = "ready",
   onRetryContent = () => undefined,
   onClose,
@@ -190,6 +194,8 @@ export function CalendarDayPanel({
   embedded?: boolean;
   showSky?: boolean;
   showCheckIn?: boolean;
+  planningTimeZone?: string;
+  planningLocation?: CalendarLocation;
   contentState?: "loading" | "ready" | "error";
   onRetryContent?: () => void;
   onClose?: () => void;
@@ -254,6 +260,8 @@ export function CalendarDayPanel({
         {/* The reading's cold height is unknown. Reveal the following controls
             with it so loading prose cannot push a visible action down the page. */}
         {showCheckIn && (!showSky || !loading) ? <CheckInCard entry={checkInEntry} onCheckIn={onCheckIn} /> : null}
+        {!loading && contentState === 'ready' && planningTimeZone && planningLocation
+          ? <CalendarActivityGuidance date={dateKey} timeZone={planningTimeZone} location={planningLocation} nested /> : null}
 
         {(!showSky || !loading) && (loading || seasonFirst.length > 0) ? (
         <section className="calendar-day-events" aria-busy={loading} aria-label={loading ? undefined : `${seasonFirst.length} events`}>

@@ -1,7 +1,23 @@
-export const calendarFeedCategories = ["lunations", "moon-signs", "seasons", "ingresses", "retrogrades", "key", "weekly", "aspects"] as const;
+export const calendarFeedCategories = ["lunations", "quarter-moons", "void-moons", "daily-guidance", "moon-signs", "seasons", "ingresses", "retrogrades", "key", "weekly", "aspects"] as const;
 export type CalendarFeedCategory = typeof calendarFeedCategories[number];
 export const calendarReminders = ["None", "At the time", "Day before"] as const;
-export type CalendarSubscriptionOptions = { include: CalendarFeedCategory[]; reminder: typeof calendarReminders[number]; timeZone: string };
+export type CalendarLocation = { latitude: number; longitude: number; label: string };
+export type CalendarSubscriptionOptions = { include: CalendarFeedCategory[]; reminder: typeof calendarReminders[number]; timeZone: string; location?: CalendarLocation };
+export function validCalendarLocation(value: unknown): value is CalendarLocation {
+  if (!value || typeof value !== 'object') return false;
+  const item = value as CalendarLocation;
+  return typeof item.latitude === 'number' && Number.isFinite(item.latitude) && Math.abs(item.latitude) <= 90
+    && typeof item.longitude === 'number' && Number.isFinite(item.longitude) && Math.abs(item.longitude) <= 180
+    && typeof item.label === 'string' && item.label.trim().length > 0 && item.label.length <= 200 && !/[\x00-\x1f]/u.test(item.label);
+}
+export function calendarLocationParams(location?: CalendarLocation): Record<string, string> {
+  return location ? { latitude: String(location.latitude), longitude: String(location.longitude), locationLabel: location.label } : {};
+}
+export function calendarLocationFromParams(params: URLSearchParams): CalendarLocation | undefined {
+  if (!params.get('latitude')?.trim() || !params.get('longitude')?.trim()) return undefined;
+  const value = { latitude: Number(params.get('latitude')), longitude: Number(params.get('longitude')), label: params.get('locationLabel') ?? '' };
+  return validCalendarLocation(value) ? value : undefined;
+}
 export type CalendarSubscription = CalendarSubscriptionOptions & { token: string; manageToken: string; updatedAt: string };
 export type CalendarFeedEvent = {
   title: string; description: string; start: string; end: string; allDay: boolean;

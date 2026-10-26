@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { getCalendarSubscriptionEvents, type LunarCalendarEvent } from "../../apps/web/src/services/ephemeris.js";
+import { getCalendarSubscriptionEvents, getCalendarPlanningContexts, getLunarCalendarWeek, type LunarCalendarEvent } from "../../apps/web/src/services/ephemeris.js";
 import { calendarEventGeneratedContentKeys, calendarSkyV4LunationContentKey } from "../../apps/web/src/features/calendar/calendarContentKeys.js";
 import { isHandoffKeyEvent } from "../../apps/web/src/features/calendar/calendarHandoff.js";
 import { calendarLocalDateKey } from "../../apps/web/src/features/calendar/calendarPhaseLabel.js";
@@ -11,20 +11,22 @@ import { calendarFeedCopyReader, calendarWeekCopyKeys } from "./calendar-feed-co
 import { calendarFeedDescription, calendarReadingUrl } from "../../apps/web/src/features/calendar/calendarFeedPreview.js";
 import { allCalendarRows } from "./calendar-subscriptions.js";
 import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.js";
+import { calendarActivityGuidance, calendarActivityBody } from '../../src/shared/features/calendar/calendarActivityGuidance.js';
 
 export type FeedEntry = CalendarFeedEvent & { readingId: string; sourceUrl?: string; uid: string; modified: string; sequence: number; cancelled?: boolean };
 const factCache = new Map<number, Promise<LunarCalendarEvent[]>>();
 async function yearFacts(year: number) {
   let value = factCache.get(year);
   if (!value) {
-    value = getCalendarSubscriptionEvents(year); factCache.set(year, value);
+    value = getCalendarSubscriptionEvents(year, { includeLocalYearBoundaries: true }); factCache.set(year, value);
     void value.catch(() => factCache.delete(year));
     if (factCache.size > 3) factCache.delete(factCache.keys().next().value!);
   }
   return value;
 }
 export function eventFeedCategory(event: LunarCalendarEvent): CalendarFeedCategory {
-  if (event.type === "lunation") return "lunations";
+  if (event.type === "lunation") return event.primary ? "lunations" : "quarter-moons";
+  if (event.type === "void") return "void-moons";
   if (event.type === "station") return "retrogrades";
   if (event.type === "ingress") return event.planet === "Moon" ? "moon-signs" : event.planet === "Sun" ? "seasons" : "ingresses";
   return "aspects";
@@ -78,20 +80,26 @@ async function publishedCopy(events: LunarCalendarEvent[]) {
   }
   return { rows, publications };
 }
-const factsModified = "2026-09-22T00:00:00Z";
+const factsModified = "2026-10-26T00:00:00Z";
 export async function buildCalendarFeedEntries(options: CalendarSubscriptionOptions, origin: string, now = new Date(), onlyId?: string): Promise<FeedEntry[]> {
   const year = now.getUTCFullYear();
-  const years = onlyId?.startsWith("event-") ? [] : onlyId ? [year - 1, year, year + 1] : [year, year + 1];
-  const allFacts = (await Promise.all(years.map(yearFacts))).flat()
-    .map(event => ({ ...event, dateKey: calendarLocalDateKey(event.startsAt, options.timeZone) }));
+  const isDaily = onlyId?.startsWith('daily-');
+  const includeGuidance = options.include.includes('daily-guidance') && (!onlyId || isDaily);
+  const years = onlyId?.startsWith("event-") || isDaily ? [] : onlyId ? [year - 1, year, year + 1] : [year, year + 1];
+  const dailyFacts = isDaily ? (await getLunarCalendarWeek({ label: 'Geocentric calendar', latitude: 0, longitude: 0, timeZone: options.timeZone },
+    zonedDateTimeToUtc(onlyId!.slice(6), '12:00 PM', options.timeZone))).events : [];
+  const allFacts = [...new Map([...(await Promise.all(years.map(yearFacts))).flat(), ...dailyFacts].map(event => [event.id, event])).values()]
+    .map(event => ({ ...event, dateKey: calendarLocalDateKey(event.startsAt, options.timeZone) }))
+    .filter(event => onlyId || event.dateKey <= `${year + 1}-12-31` && (event.dateKey >= `${year}-01-01`
+      || event.type === 'void' && event.endsAt && calendarLocalDateKey(new Date(Date.parse(event.endsAt) - 1).toISOString(), options.timeZone) >= `${year}-01-01`));
   const facts = allFacts.filter(event => {
     if (onlyId && event.id !== onlyId) return false;
-    if (event.type === "lunation" && !event.primary) return false;
     const category = eventFeedCategory(event);
     return options.include.includes(category) || options.include.includes("key") && isHandoffKeyEvent(event, event.dateKey);
   });
+  const guidanceFacts = includeGuidance ? allFacts : facts;
   const [copy, custom] = await Promise.all([
-    publishedCopy(facts),
+    publishedCopy(guidanceFacts),
     allCalendarRows<CalendarFeedEventRecord>("calendar_feed_events", { select: "id,published,cancelled,revision,published_at", published: "not.is.null", order: "id.asc" })
   ]);
   const reader = calendarFeedCopyReader(copy.publications, copy.rows);
@@ -111,6 +119,25 @@ export async function buildCalendarFeedEntries(options: CalendarSubscriptionOpti
       allDay: false, category: eventFeedCategory(event), url: calendarReadingUrl(origin, event.dateKey, event.id, options.timeZone),
       ...version(text?.updatedAt) };
   });
+  if (includeGuidance) {
+    const firstDate = onlyId?.startsWith('daily-') ? onlyId.slice(6) : `${year}-01-01`;
+    const lastDate = onlyId?.startsWith('daily-') ? firstDate : `${year + 1}-12-31`;
+    const contexts = await getCalendarPlanningContexts(firstDate, lastDate, options.timeZone, options.location);
+    const readingBodies = new Map<string, string>();
+    for (const context of contexts) {
+      const date = context.dateKey, id = `daily-${date}`;
+      if (onlyId && onlyId !== id) continue;
+      const readings = calendarActivityGuidance(date, allFacts, event => {
+        const key = `${event.id}/${date}`;
+        if (!readingBodies.has(key)) readingBodies.set(key, selectCalendarFeedCopy(contentKeys(event), date, copy.rows, copy.publications)?.body ?? reader.eventBody(event, options.timeZone, allFacts));
+        return readingBodies.get(key)!;
+      }, options.timeZone, reader.moonContext(context));
+      const end = new Date(Date.parse(`${date}T12:00:00Z`) + 86400000).toISOString().slice(0, 10);
+      entries.push({ readingId: id, uid: `${id}@tldrastro`, title: 'Daily planning · Love, work, creativity & rest',
+        description: calendarActivityBody(readings, options.timeZone, context.planetaryHours), start: date, end, allDay: true, category: 'daily-guidance',
+        url: calendarReadingUrl(origin, date, id, options.timeZone, options.location), ...version() });
+    }
+  }
   // Weekly entries have a dated identity and the same full reading as their app link.
   if (options.include.includes("weekly")) {
     for (let day = new Date(Date.UTC(year, 0, 1)); day.getUTCFullYear() <= year + 1; day = new Date(day.getTime() + 86400000)) {
@@ -150,7 +177,8 @@ export function serializeCalendarFeed(entries: FeedEntry[], options: CalendarSub
     lines.push("BEGIN:VEVENT", `UID:${event.uid}`, `DTSTAMP:${calendarDateTime(event.modified)}`, `LAST-MODIFIED:${calendarDateTime(event.modified)}`, `SEQUENCE:${event.sequence + 1}`,
       event.allDay ? `DTSTART;VALUE=DATE:${event.start.replace(/-/gu, "")}` : `DTSTART:${calendarDateTime(event.start)}`,
       event.allDay ? `DTEND;VALUE=DATE:${event.end.replace(/-/gu, "")}` : `DTEND:${calendarDateTime(event.end)}`,
-      `SUMMARY:${escapeCalendarText(event.title)}`, `DESCRIPTION:${escapeCalendarText(calendarFeedDescription(event.description, event.url))}`, `CATEGORIES:${escapeCalendarText(event.category)}`, "TRANSP:TRANSPARENT", `STATUS:${event.cancelled ? "CANCELLED" : "CONFIRMED"}`);
+      `SUMMARY:${escapeCalendarText(event.title)}`, `DESCRIPTION:${escapeCalendarText(calendarFeedDescription(event.description, event.url,
+        event.category === 'daily-guidance' ? Infinity : 3))}`, `CATEGORIES:${escapeCalendarText(event.category)}`, "TRANSP:TRANSPARENT", `STATUS:${event.cancelled ? "CANCELLED" : "CONFIRMED"}`);
     if (event.url) lines.push(`URL:${event.url.replace(/[\r\n]/gu, "")}`);
     if (options.reminder !== "None" && !event.cancelled) lines.push("BEGIN:VALARM", "ACTION:DISPLAY", `TRIGGER:${options.reminder === "Day before" ? "-P1D" : "PT0S"}`, `DESCRIPTION:${escapeCalendarText(event.title)}`, "END:VALARM");
     lines.push("END:VEVENT");

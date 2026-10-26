@@ -19,6 +19,7 @@ import type { LunarCalendarEvent } from "../../apps/web/src/services/ephemeris.j
 import { skyPlacementSourceCorpus } from "./sky-placement-sources.js";
 import { createPublishedSkyReader } from "../../apps/web/src/content/skyPlacementPublishedSources.js";
 import { isReaderServableGeneratedContentRow } from "../../apps/web/src/content/generatedContentEligibility.js";
+import { calendarMoonPhaseSlug } from '../../src/shared/features/calendar/calendarMoonPhaseCopy.js';
 
 const registry = createDomainRegistry(knowledge as any);
 const slug = (value: string) => value.trim().toLowerCase().replace(/\s+/gu, "-");
@@ -49,6 +50,14 @@ export function calendarFeedCopyReader(publications: ReadonlyMap<string, Content
   const safe = (body: string | undefined) => body && isReaderFacingCopy(body) && !/\{\{[^]*?\}\}/u.test(body) ? body : "";
   function eventBody(event: LunarCalendarEvent, timeZone: string, events: LunarCalendarEvent[]) {
     const dateLine = `On ${new Intl.DateTimeFormat("en-US", { timeZone, weekday: "long", month: "long", day: "numeric" }).format(new Date(event.startsAt))}`;
+    if (event.type === "void") {
+      try { return safe(renderer.renderVoidOfCourse({ sign: slug(event.fromSign ?? event.sign ?? ''), nextSign: slug(event.toSign ?? '') }).parts.join('\n\n')); }
+      catch (error) { if (!(error instanceof SourceGapError)) throw error; return ''; }
+    }
+    if (event.type === "lunation" && !event.primary) {
+      try { return safe(renderer.renderCalendarPhase({ phase: /first/iu.test(event.title) ? 'first-quarter' : 'last-quarter', sign: slug(event.sign ?? '') }).parts.join('\n\n')); }
+      catch (error) { if (!(error instanceof SourceGapError)) throw error; return ''; }
+    }
     if (event.type === "ingress" && event.planet === "Moon") {
       const key = moonSignTransitionKey(event.fromSign ?? "", event.toSign ?? event.sign ?? "");
       return allowed(key) ? moonSignTransitionForPair(event.fromSign ?? "", event.toSign ?? event.sign ?? "") : "";
@@ -118,5 +127,11 @@ export function calendarFeedCopyReader(publications: ReadonlyMap<string, Content
     const body = (row?.weeklyOverview ?? row?.body ?? "").replaceAll("{{signTitle}}", lunation?.sign ?? "");
     return { key, body: safe(body), signTitle: lunation?.sign ?? "" };
   }
-  return { eventBody, weekSource };
+  function moonContext(day: { dateKey: string; moonSign: string; moonPhase: string }) {
+    const key = `fallback-hook/moon-phase/${calendarMoonPhaseSlug(day.moonPhase)}`;
+    const row = hook(key);
+    const body = safe((row?.body_you ?? row?.body ?? '').replaceAll('{{signTitle}}', day.moonSign));
+    return { id: `moon-context-${day.dateKey}`, title: `Lunar context · ${day.moonPhase} Moon · ${day.moonSign}`, body };
+  }
+  return { eventBody, weekSource, moonContext };
 }

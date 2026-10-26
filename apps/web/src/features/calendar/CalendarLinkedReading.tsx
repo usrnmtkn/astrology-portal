@@ -3,19 +3,21 @@ import { FormattedProse } from "../../components/FormattedProse";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { CalendarSlideout } from "./CalendarSlideout";
 import type { CalendarSubscriptionReading } from "./calendarFeedPreview";
+import { calendarLocationParams, type CalendarLocation } from './calendarSubscription';
 
-export function CalendarLinkedReading({ id, date, timeZone, onClose }: {
-  id: string; date: string; timeZone: string; onClose: () => void;
+export function CalendarLinkedReading({ id, date, timeZone, location, onClose }: {
+  id: string; date: string; timeZone: string; location?: CalendarLocation; onClose: () => void;
 }) {
   const [reading, setReading] = useState<CalendarSubscriptionReading | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retry, setRetry] = useState(0);
+  const locationQuery = new URLSearchParams(calendarLocationParams(location)).toString();
   useEffect(() => {
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 30000);
     let active = true;
     setReading(null); setError(null);
-    void fetch(`/api/calendar-reading?${new URLSearchParams({ id, date, timeZone })}`, { signal: controller.signal })
+    void fetch(`/api/calendar-reading?${new URLSearchParams({ id, date, timeZone })}${locationQuery ? `&${locationQuery}` : ''}`, { signal: controller.signal })
       .then(async response => {
         if (!response.ok) throw new Error(response.status === 404 ? "This calendar event is not available." : "This reading could not load. Please try again.");
         const data = await response.json();
@@ -25,7 +27,7 @@ export function CalendarLinkedReading({ id, date, timeZone, onClose }: {
       .catch(error => { if (active) setError(controller.signal.aborted ? "This reading took too long to load. Please try again." : error.message); })
       .finally(() => window.clearTimeout(timeout));
     return () => { active = false; controller.abort(); window.clearTimeout(timeout); };
-  }, [id, date, timeZone, retry]);
+  }, [id, date, timeZone, locationQuery, retry]);
 
   const dateLine = reading && new Intl.DateTimeFormat("en-US", {
     timeZone: reading.allDay ? "UTC" : timeZone, dateStyle: "full", ...(!reading.allDay ? { timeStyle: "short" as const } : {})

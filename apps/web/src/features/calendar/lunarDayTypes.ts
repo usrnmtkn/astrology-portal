@@ -2,7 +2,7 @@ import type { LunarCalendarActiveAspect, LunarCalendarEvent } from "../../servic
 import type { SeasonWindow } from "./seasonWindow";
 import type { LocationInput } from "../../types";
 
-export type LunarDayTransitType = "ingress" | "retrograde" | "station" | "aspect" | "eclipse";
+export type LunarDayTransitType = "ingress" | "retrograde" | "station" | "aspect" | "eclipse" | "void";
 export type LunarDayArcSpan = "twoWeek" | "sixMonth";
 export type LunarDayCheckpointRole =
   | "origin"

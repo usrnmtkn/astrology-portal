@@ -1,6 +1,8 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
 import { remainingSkyMinutes } from "./skyClock.js";
 import { SOLAR_HORIZON_VERSION } from "../../../../src/shared/solarHorizon.js";
+import { planetaryHourCycle, planetaryHoursInCivilDay } from '../../../../src/shared/features/calendar/calendarPlanetaryHours.js';
+import type { CalendarLocation } from '../../../../src/shared/features/calendar/calendarSubscription.js';
 import {
   calculateSkyAspects,
   canonicalizeNodeAxisAspects,
@@ -124,7 +126,7 @@ export type SkyCalculationOptions = {
   transitWindowPlanets?: readonly string[];
 };
 
-export type LunarCalendarEventType = "lunation" | "ingress" | "aspect" | "station";
+export type LunarCalendarEventType = "lunation" | "ingress" | "aspect" | "station" | "void";
 export type LunarCalendarEclipseType = "solar" | "lunar";
 export type RetrogradePhase = "pre-shadow" | "station-retrograde" | "retrograde-passage" | "cazimi" | "station-direct" | "post-shadow";
 export type PlanetDirection = "direct" | "retrograde";
@@ -141,6 +143,8 @@ export type LunarCalendarEvent = {
   planet?: string;
   planets?: [string, string];
   aspect?: string;
+  /** The opposite end of a single, True-Node-axis event; never a second event. */
+  nodeAxis?: { planet: "South Node"; aspect: string; sign: string };
   sign?: string;
   sunSign?: string;
   fromSign?: string;
@@ -188,7 +192,9 @@ export type LunarCalendarDay = {
     startsAt?: string;
     until?: string;
     nextSign?: string;
+    sign?: string;
   } | null;
+  voidOfCoursePeriods?: NonNullable<LunarCalendarDay['voidOfCourse']>[];
   activeAspects: LunarCalendarActiveAspect[];
   events: LunarCalendarEvent[];
 };
@@ -1135,7 +1141,7 @@ function hasMoonAspectBeforeIngress(swe: SwissEphInstance, date: Date, ingressDa
         const currentDate = new Date(time);
         const currentDistance = moonAspectDistance(swe, planetId, currentDate, target);
 
-        if (Math.abs(currentDistance) < 0.03 || previousDistance === 0 || previousDistance * currentDistance < 0) {
+        if ((previousDistance === 0 || previousDistance * currentDistance <= 0) && Math.abs(currentDistance - previousDistance) < 180) {
           return true;
         }
 
@@ -1165,7 +1171,7 @@ function lastMoonAspectBetween(swe: SwissEphInstance, startDate: Date, endDate: 
         const currentDate = new Date(time);
         const currentDistance = moonAspectDistance(swe, planetId, currentDate, target);
 
-        if (Math.abs(currentDistance) < 0.03 || previousDistance === 0 || previousDistance * currentDistance < 0) {
+        if ((previousDistance === 0 || previousDistance * currentDistance <= 0) && Math.abs(currentDistance - previousDistance) < 180) {
           const exactAspect = refineMoonAspectEvent(swe, planetId, target, previousDate, currentDate);
 
           if (exactAspect.getTime() <= endDate.getTime() && (!latestAspect || exactAspect.getTime() > latestAspect.getTime())) {
@@ -2871,7 +2877,7 @@ function findSkyAspects(
   start: Date,
   end: Date,
   timeZone: string,
-  signedCrossings = false
+  signedCrossings = true
 ): LunarCalendarEvent[] {
   const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
   const planetIds = [
@@ -2885,9 +2891,11 @@ function findSkyAspects(
     swe.SE_URANUS,
     swe.SE_NEPTUNE,
     swe.SE_PLUTO,
-    SE_TRUE_BLACK_MOON_LILITH
+    SE_TRUE_BLACK_MOON_LILITH,
+    SE_CHIRON,
+    swe.SE_TRUE_NODE
   ];
-  const calendarPlanets = [...planets.slice(0, 10), planets[11]];
+  const calendarPlanets = [...planets.slice(0, 10), planets[11], planets[10], planets[12]];
   const events: LunarCalendarEvent[] = [];
   const stepMs = 12 * 60 * 60_000;
 
@@ -2908,7 +2916,8 @@ function findSkyAspects(
           if (previousDistance === 0 || previousDistance * currentDistance < 0 && (!signedCrossings || Math.abs(currentDistance - previousDistance) < 180)) {
             const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate, signedCrossings);
             const dateKey = localDateKey(occursAt, timeZone);
-            const title = `${firstPlanet} ${aspect} ${secondPlanet}`;
+            const nodeComplement = ({ conjunction: 'opposition', opposition: 'conjunction', sextile: 'trine', trine: 'sextile', square: 'square' } as Record<string, string>)[aspect];
+            const title = `${firstPlanet} ${aspect} ${secondPlanet}${secondPlanet === 'North Node' ? ` / ${nodeComplement} South Node` : ''}`;
 
             if (!events.some((event) => event.title === title && Math.abs(new Date(event.startsAt).getTime() - occursAt.getTime()) < 3 * 60 * 60_000)) {
               events.push({
@@ -2921,6 +2930,11 @@ function findSkyAspects(
                 primary: !firstPlanet.includes("Moon") && !secondPlanet.includes("Moon"),
                 planets: [firstPlanet, secondPlanet],
                 aspect,
+                ...(secondPlanet === "North Node" ? { nodeAxis: {
+                  planet: "South Node" as const,
+                  aspect: nodeComplement,
+                  sign: signNameForLongitude(normalizeDegrees(exactPlanetLongitude(swe, swe.SE_TRUE_NODE, occursAt) + 180))
+                } } : {}),
                 // Each body's sign at exactness, so the collective write-up can read
                 // "Neptune in Aries is sextile Pluto in Aquarius" (aSign/bSign).
                 fromSign: exactPlanetSign(swe, firstPlanetId, occursAt),
@@ -3026,22 +3040,42 @@ function weekGridRange(anchor: Date, timeZone: string) {
   return { gridStart, gridEnd };
 }
 
-/** Shared event scan: preserve the same search boundaries and event ordering. */
+/** VOC uses the existing Sun-through-Pluto major-aspect definition. Chiron,
+ * Lilith and the nodes remain calendar events, not VOC-ending bodies. */
+function moonVoidEvents(ingresses: LunarCalendarEvent[], aspects: LunarCalendarEvent[], timeZone: string) {
+  const lunarIngresses = ingresses.filter(event => event.type === "ingress" && event.planet === "Moon")
+    .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+  const lunarAspects = aspects.filter(event => event.type === "aspect" && event.planets?.includes("Moon")
+    && event.planets.every(planet => planets.slice(0, 10).some(([name]) => name === planet)));
+  return lunarIngresses.slice(1).map((ingress, index): LunarCalendarEvent => {
+    const previous = lunarIngresses[index];
+    const last = lunarAspects.filter(event => event.startsAt >= previous.startsAt && event.startsAt < ingress.startsAt)
+      .sort((a, b) => b.startsAt.localeCompare(a.startsAt))[0];
+    const startsAt = last?.startsAt ?? previous.startsAt;
+    return { id: `void-${startsAt}`, type: "void", title: "Moon void of course", startsAt, endsAt: ingress.startsAt,
+      dateKey: localDateKey(new Date(startsAt), timeZone), glyph: "VOC", primary: false, planet: "Moon",
+      sign: previous.toSign ?? previous.sign, fromSign: previous.toSign ?? previous.sign, toSign: ingress.toSign ?? ingress.sign };
+  });
+}
+
+/** Shared event scan, including intervals crossing the visible range. */
 function lunarCalendarEvents(
   swe: SwissEphInstance, gridStart: Date, gridEnd: Date, displayStart: Date,
   timeZone: string, cycleEvents: LunarCalendarEvent[]
 ): LunarCalendarEvent[] {
-  const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
-  const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
+  const eventStart = new Date(gridStart.getTime() - 4 * 86_400_000);
+  const eventEnd = new Date(gridEnd.getTime() + 4 * 86_400_000);
+  const moonIngresses = cycleEvents.filter(event => event.type === "ingress" && event.planet === "Moon"
+    && event.startsAt >= eventStart.toISOString() && event.startsAt < eventEnd.toISOString());
+  const aspects = findSkyAspects(swe, eventStart, eventEnd, timeZone);
   return [
     ...findLunations(swe, eventStart, eventEnd, timeZone),
-    ...cycleEvents.filter((event) => event.type === "ingress" && event.planet === "Moon"
-      && Date.parse(event.startsAt) >= eventStart.getTime()
-      && Date.parse(event.startsAt) < eventEnd.getTime()),
+    ...moonIngresses,
     ...findIngresses(swe, eventStart, eventEnd, timeZone),
     ...findStations(swe, eventStart, eventEnd, timeZone),
     ...findActiveRetrogrades(swe, displayStart, gridEnd, timeZone),
-    ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
+    ...aspects,
+    ...moonVoidEvents(moonIngresses, aspects, timeZone)
   ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
 }
 
@@ -3112,7 +3146,6 @@ function buildLunarCalendarRange(
 
     return groupedEvents;
   }, new Map<string, LunarCalendarEvent[]>());
-  const voidAspectCache = detail === "full" ? new Map<string, Date | null>() : undefined;
   const days = Array.from({ length: dayCount }, (_, index) => {
     const dayStart = shiftLocalCalendarDay(gridStart, index, timeZone);
     const dateKey = localDateKey(dayStart, timeZone);
@@ -3121,7 +3154,14 @@ function buildLunarCalendarRange(
     const moonSign = signForLongitude(moonLongitude);
     const sunLongitude = exactPlanetLongitude(swe, swe.SE_SUN, noon);
     const phaseAngle = normalizeDegrees(moonLongitude - sunLongitude);
-    const moonStatus = detail === "full" ? moonStatusFor(swe, noon, voidAspectCache) : null;
+    const dayEnd = shiftLocalCalendarDay(dayStart, 1, timeZone);
+    const voidPeriods = events.filter(event => event.type === "void" && event.endsAt
+      && Date.parse(event.startsAt) < dayEnd.getTime() && Date.parse(event.endsAt) > dayStart.getTime());
+    const voidOfCoursePeriods = voidPeriods.map(event => ({
+      startsAt: event.startsAt, until: event.endsAt!, nextSign: event.toSign, sign: event.fromSign ?? event.sign,
+      durationLabel: compactCalendarVoidLabel(compactHoursRemaining(new Date(event.startsAt), new Date(event.endsAt!))),
+      remainingLabel: compactCalendarVoidLabel(compactHoursRemaining(new Date(Math.max(dayStart.getTime(), Date.parse(event.startsAt))), new Date(event.endsAt!)))
+    }));
     const localParts = localDateParts(dayStart, timeZone);
 
     return {
@@ -3132,13 +3172,8 @@ function buildLunarCalendarRange(
       moonSignGlyph: moonSign.signGlyph,
       moonPhase: moonPhaseName(sunLongitude, moonLongitude),
       illumination: illuminationFromPhaseAngle(phaseAngle),
-      voidOfCourse: moonStatus?.kind === "void" ? {
-        remainingLabel: compactCalendarVoidLabel(moonStatus.remainingLabel),
-        durationLabel: compactCalendarVoidLabel(moonStatus.durationLabel),
-        startsAt: moonStatus.startsAt,
-        until: moonStatus.until,
-        nextSign: moonStatus.nextSign
-      } : null,
+      voidOfCourse: voidOfCoursePeriods[0] ?? null,
+      voidOfCoursePeriods,
       activeAspects: detail === "full" ? activeSkyAspectsForDay(swe, noon) : [],
       events: eventsByDateKey.get(dateKey) ?? []
     };
@@ -3151,7 +3186,8 @@ function buildLunarCalendarRange(
     days,
     events: [
       ...events.filter((event) => event.planet !== "Sun" || event.type !== "ingress")
-        .filter((event) => days.some((day) => day.dateKey === event.dateKey)),
+        .filter((event) => days.some((day) => day.dateKey === event.dateKey)
+          || event.type === "void" && event.endsAt! > gridStart.toISOString() && event.startsAt < gridEnd.toISOString()),
       ...seasonIngresses
     ].sort((first, second) => first.startsAt.localeCompare(second.startsAt)),
     cycleEvents
@@ -3248,19 +3284,63 @@ export function getLunarCalendarWeek(
   return request;
 }
 
+/** Calculated local-noon lunar context for published daily guidance. */
+export async function getCalendarPlanningContexts(first: string, last: string, timeZone: string, location?: CalendarLocation) {
+  const swe = await getSwissEph();
+  const days = [];
+  const solar = new Map<string, { sunrise: string | null; sunset: string | null }>();
+  const shifted = (date: string, offset: number) => new Date(Date.parse(`${date}T12:00:00Z`) + offset * 86400000).toISOString().slice(0, 10);
+  const daylight = (date: string) => {
+    if (!solar.has(date)) {
+      const [year, month, day] = date.split('-').map(Number);
+      const noon = zonedDateTimeToUtc(timeZone, year, month, day, 12), bounds = localDayRange(noon, timeZone);
+      const place = { ...location!, timeZone };
+      solar.set(date, {
+        sunrise: solarAltitudeCrossingForDay(swe, place, bounds.start, bounds.end, -0.833, 'rise')?.toISOString() ?? null,
+        sunset: solarAltitudeCrossingForDay(swe, place, bounds.start, bounds.end, -0.833, 'set')?.toISOString() ?? null
+      });
+    }
+    return solar.get(date)!;
+  };
+  const cycle = (date: string) => {
+    const today = daylight(date), next = daylight(shifted(date, 1));
+    return planetaryHourCycle(date, today.sunrise, today.sunset, next.sunrise);
+  };
+  for (let day = new Date(`${first}T12:00:00Z`); day.toISOString().slice(0, 10) <= last; day.setUTCDate(day.getUTCDate() + 1)) {
+    const dateKey = day.toISOString().slice(0, 10);
+    const local = zonedDateTimeToUtc(timeZone, day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate(), 12);
+    const sun = exactPlanetLongitude(swe, swe.SE_SUN, local), moon = exactPlanetLongitude(swe, swe.SE_MOON, local);
+    const bounds = localDayRange(local, timeZone);
+    days.push({ dateKey, moonSign: signNameForLongitude(moon), moonPhase: moonPhaseName(sun, moon),
+      planetaryHours: { locationLabel: location?.label ?? '', hours: location
+        ? planetaryHoursInCivilDay([...cycle(shifted(dateKey, -1)), ...cycle(dateKey)], bounds.start, bounds.end) : [] } });
+  }
+  return days;
+}
+
 /** Shared event calculations for subscriptions; omits the visual day grid. */
-export async function getCalendarSubscriptionEvents(year: number): Promise<LunarCalendarEvent[]> {
+export async function getCalendarSubscriptionEvents(year: number, options: { includeLocalYearBoundaries?: boolean } = {}): Promise<LunarCalendarEvent[]> {
   if (!Number.isInteger(year) || year < 2020 || year > 2100) throw new Error("Unsupported calendar year.");
   const swe = await getSwissEph();
   const start = new Date(Date.UTC(year, 0, 1));
   const end = new Date(Date.UTC(year + 1, 0, 1));
+  const scanStart = new Date(start.getTime() - 4 * 86400000);
+  const scanEnd = new Date(end.getTime() + 4 * 86400000);
+  // UTC-year caches need adjacent facts when a subscriber's local Jan 1 or
+  // Dec 31 crosses UTC midnight. Consumers still select their local dates.
+  const lower = options.includeLocalYearBoundaries ? new Date(start.getTime() - 86400000) : start;
+  const upper = options.includeLocalYearBoundaries ? new Date(end.getTime() + 86400000) : end;
+  const ingresses = findMoonIngresses(swe, scanStart, scanEnd, "UTC");
+  const aspects = findSkyAspects(swe, scanStart, scanEnd, "UTC");
   return [
-    ...findLunations(swe, start, end, "UTC"),
-    ...findMoonIngresses(swe, start, end, "UTC"),
-    ...findIngresses(swe, start, end, "UTC"),
-    ...findStations(swe, start, end, "UTC"),
-    ...findSkyAspects(swe, start, end, "UTC")
-  ].filter(event => event.startsAt >= start.toISOString() && event.startsAt < end.toISOString())
+    ...findLunations(swe, scanStart, scanEnd, "UTC"),
+    ...ingresses,
+    ...findIngresses(swe, scanStart, scanEnd, "UTC"),
+    ...findStations(swe, scanStart, scanEnd, "UTC"),
+    ...aspects,
+    ...moonVoidEvents(ingresses, aspects, "UTC")
+  ].filter(event => event.startsAt < upper.toISOString() && (event.startsAt >= lower.toISOString()
+    || event.type === "void" && event.endsAt! > lower.toISOString()))
     .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
 }
 

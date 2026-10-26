@@ -1,6 +1,8 @@
 import { FloatingTooltipPortal } from "../../components/ui/FloatingTooltip";
 import { withCalendarAspectRetrograde } from "../../services/calendarAspectRetrogradeContent";
 import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
+import { CalendarActivityGuidance } from './CalendarActivityGuidance';
+import { calendarLocationFromParams } from './calendarSubscription';
 import { calendarWeeklyDayParagraphs } from './calendarWeeklyPresentation';
 import { CalendarPassageProse } from './CalendarPassageProse';
 import { calendarPassageRequestKeys, useCalendarPassages } from './useCalendarPassages';
@@ -229,7 +231,7 @@ function calendarRouteStateFromUrl(fallbackDate: string) {
     const eventId = params.get("event");
     let eventTimeZone = params.get("timeZone");
     try { if (eventTimeZone) new Intl.DateTimeFormat("en", { timeZone: eventTimeZone }); } catch { eventTimeZone = null; }
-    return { view, date, eventId, eventTimeZone };
+    return { view, date, eventId, eventTimeZone, eventLocation: calendarLocationFromParams(params) };
   } catch {
     return null;
   }
@@ -629,7 +631,9 @@ function calendarDayTooltipLines(
   ];
 }
 
-function formatVoidCourseGridWindow(day: LunarCalendarDay, timeZone: string) {
+function formatVoidCourseGridWindow(day: LunarCalendarDay, timeZone: string): string {
+  if ((day.voidOfCoursePeriods?.length ?? 0) > 1) return day.voidOfCoursePeriods!.map(period =>
+    formatVoidCourseGridWindow({ ...day, voidOfCourse: period, voidOfCoursePeriods: undefined }, timeZone)).join('; ');
   const voidPeriod = day.voidOfCourse;
 
   if (!voidPeriod?.startsAt || !voidPeriod.until) {
@@ -658,6 +662,7 @@ function formatVoidCourseGridWindow(day: LunarCalendarDay, timeZone: string) {
 }
 
 function formatVoidCourseMonthChip(day: LunarCalendarDay, timeZone: string) {
+  if ((day.voidOfCoursePeriods?.length ?? 0) > 1) return `${day.voidOfCoursePeriods!.length} windows`;
   const voidPeriod = day.voidOfCourse;
   if (!voidPeriod) return "";
 
@@ -686,7 +691,9 @@ function formatVoidCourseDetailWindow(day: LunarCalendarDay, timeZone: string) {
   return `${formatEventTime(voidPeriod.startsAt, timeZone)} - ${formatEventTime(voidPeriod.until, timeZone)}`;
 }
 
-function formatVoidCourseTooltip(day: LunarCalendarDay, timeZone: string) {
+function formatVoidCourseTooltip(day: LunarCalendarDay, timeZone: string): string {
+  if ((day.voidOfCoursePeriods?.length ?? 0) > 1) return day.voidOfCoursePeriods!.map(period =>
+    formatVoidCourseTooltip({ ...day, voidOfCourse: period, voidOfCoursePeriods: undefined }, timeZone)).join('; ');
   const detailWindow = formatVoidCourseDetailWindow(day, timeZone);
   const duration = day.voidOfCourse?.durationLabel;
 
@@ -700,7 +707,7 @@ function voidCourseDescription(day: LunarCalendarDay) {
 
   try {
     const rendered = calendarFallbackRendererV3.renderVoidOfCourse({
-      sign: slugContentPart(day.moonSign),
+      sign: slugContentPart(day.voidOfCourse?.sign ?? day.moonSign),
       nextSign: slugContentPart(nextSign)
     });
 
@@ -2586,24 +2593,29 @@ export function LunarCalendar({
       meta: formatCompactEventTime(event.startsAt, zone)
     };
   }).filter((card) => card.kind !== "moon" || Boolean(card.excerpt));
-  if (selectedDay?.voidOfCourse?.startsAt) {
+  for (const period of selectedDay?.voidOfCoursePeriods ?? (selectedDay?.voidOfCourse ? [selectedDay.voidOfCourse] : [])) {
+    if (!selectedDay || !period.startsAt) continue;
+    const voidDay = { ...selectedDay, voidOfCourse: period };
     selectedDayEventCards.push({
       event: {
-        id: `void-${selectedDay.dateKey}`,
-        type: "ingress",
+        id: `void-${period.startsAt}`,
+        type: "void",
         title: "Moon void of course",
-        startsAt: selectedDay.voidOfCourse.startsAt,
-        endsAt: selectedDay.voidOfCourse.until,
+        startsAt: period.startsAt,
+        endsAt: period.until,
         dateKey: selectedDay.dateKey,
         glyph: "VOC",
         primary: false,
-        planet: "Moon"
+        planet: "Moon",
+        sign: period.sign,
+        fromSign: period.sign,
+        toSign: period.nextSign
       },
       kind: "void" as const,
       isKey: false,
       title: "Moon void of course",
-      excerpt: voidCourseDescription(selectedDay) || "",
-      meta: formatVoidCourseDetailWindow(selectedDay, zone) || "All day"
+      excerpt: voidCourseDescription(voidDay) || "",
+      meta: formatVoidCourseDetailWindow(voidDay, zone) || "All day"
     });
   }
   const selectedSeasonTransits = selectedDay
@@ -2804,6 +2816,8 @@ export function LunarCalendar({
   const weeklyDayParagraphs = calendarWeeklyDayParagraphs(assembledPassages.weekly?.body, selectedWeekDays, zone);
   const selectedAssembledPassage = selectedDay ? assembledPassages.daily.get(selectedDay.dateKey) : undefined;
   const dayPanelProps = selectedDay ? {
+    planningTimeZone: zone,
+    planningLocation: location,
     editHref: studioPassageEditHref({ surface: 'calendar', date: selectedDay.dateKey, timeZone: zone,
       sourceKey: calendarPassageKey('daily', selectedDay.dateKey, zone) }),
     checkInEntry: checkInData.value,
@@ -3245,6 +3259,7 @@ export function LunarCalendar({
             </div>
             </section>
             <PublishedMonthlyOverview month={calendar.month} timeZone={calendar.timeZone}/>
+            {selectedDay && !daySlideoutOpen && <CalendarActivityGuidance date={selectedDay.dateKey} timeZone={zone} location={location} />}
             {seasonPill}
           </div>
           <section className="lunar-month-agenda" aria-label="Major events this month">
@@ -3310,8 +3325,9 @@ export function LunarCalendar({
         />
       )}
       {linkedReading?.eventId && <CalendarLinkedReading
-        key={`${linkedReading.eventId}:${linkedReading.date}:${linkedReading.eventTimeZone}`}
+        key={`${linkedReading.eventId}:${linkedReading.date}:${linkedReading.eventTimeZone}:${JSON.stringify(linkedReading.eventLocation)}`}
         id={linkedReading.eventId} date={linkedReading.date} timeZone={linkedReading.eventTimeZone ?? zone}
+        location={linkedReading.eventLocation}
         onClose={() => { setLinkedReading(null); updateCalendarRouteUrl(viewMode, selectedDateKey, "replace"); }}
       />}
       {readingEvent && !readingReady && (
@@ -3354,7 +3370,7 @@ export function LunarCalendar({
             readingJournal
               ? []
               : calendarKindFromEvent(readingEvent) === "void" && selectedDay
-                ? [voidCourseDescription(selectedDay)].filter(Boolean)
+                ? [voidCourseDescription({ ...selectedDay, voidOfCourse: selectedDay.voidOfCoursePeriods?.find(period => period.startsAt === readingEvent.startsAt) ?? selectedDay.voidOfCourse })].filter(Boolean)
                 : (readingEditorial?.eventCopy ?? "").split("\n").filter(Boolean)
           }
           showJournalPrompts={showJournalPrompts}
@@ -3424,7 +3440,7 @@ export function LunarCalendar({
           onLinkReady={() => {
             setSubscribed(true);
           }}
-          timeZone={location.timeZone ?? "UTC"}
+          location={location}
         />
       )}
     </section>
