@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import SwissEph from 'swisseph-wasm';
 import { getCalendarSubscriptionEvents, getLunarCalendarMonth, getCalendarPlanningContexts } from '../apps/web/src/services/ephemeris.js';
-import { calendarActivityGuidance } from '../src/shared/features/calendar/calendarActivityGuidance.js';
+import { calendarActivityGuidance, calendarActivityBody, calendarActivityHourRules } from '../src/shared/features/calendar/calendarActivityGuidance.js';
 import { calendarSubscriptionFixture } from '../tests/helpers/calendar-subscription-fixture.js';
 import { calendarFeedCategories, calendarLocationParams } from '../src/shared/features/calendar/calendarSubscription.js';
 import { planetaryHourCycle } from '../src/shared/features/calendar/calendarPlanetaryHours.js';
@@ -31,6 +31,39 @@ assert.deepEqual(monday.slice(0, 8).map(hour => hour.ruler), ['Moon', 'Saturn', 
 assert.equal(Date.parse(monday[0].end) - Date.parse(monday[0].start), 55 * 60000);
 assert.equal(Date.parse(monday[12].end) - Date.parse(monday[12].start), 65 * 60000);
 assert.equal(planetaryHourCycle('2026-10-26', null, null, null).length, 0, 'Polar dates cannot invent sunrise or hours');
+// Independent tables: Gadbury, Diary for 1694, PDF pp. 19, 22–24;
+// Simotta, Theater of the Planetary Houres, printed pp. 7–8, 12–14.
+// Dates below are synthetic modern weekdays, not historical ephemeris claims.
+const bookTable = [
+  ['2026-10-25', 'Sun', 'Jupiter'], ['2026-10-26', 'Moon', 'Venus'],
+  ['2026-10-27', 'Mars', 'Saturn'], ['2026-10-28', 'Mercury', 'Sun'],
+  ['2026-10-29', 'Jupiter', 'Moon'], ['2026-10-30', 'Venus', 'Mars'],
+  ['2026-10-31', 'Saturn', 'Mercury']
+];
+for (const [date, firstDay, firstNight] of bookTable) {
+  const next = new Date(Date.parse(`${date}T08:02:00Z`) + 86400000).toISOString();
+  const cycle = planetaryHourCycle(date, `${date}T08:02:00Z`, `${date}T16:02:00Z`, next);
+  assert.equal(cycle[0].ruler, firstDay);
+  assert.equal(cycle[12].ruler, firstNight, 'Night continues the same sequence at sunset');
+  assert.equal(Date.parse(cycle[0].end) - Date.parse(cycle[0].start), 40 * 60000);
+  assert.equal(Date.parse(cycle[12].end) - Date.parse(cycle[12].start), 80 * 60000);
+  if (firstDay === 'Moon') {
+    const proposed = `${date}T10:30:00.000Z`;
+    assert.equal(cycle.find(hour => hour.start <= proposed && hour.end > proposed)?.ruler, 'Mars');
+    assert.equal(cycle[15].ruler, 'Saturn', 'The fourth hour of Monday night is Saturn');
+  }
+}
+assert.deepEqual(calendarActivityHourRules.filter(rule => rule.activity === 'work').map(rule => rule.focus),
+  ['Writing and trade', 'Patrons and finance', 'Property and land'], 'Work affinities retain the tasks actually supported by the sources');
+assert.deepEqual(calendarActivityHourRules.filter(rule => rule.activity === 'rest').map(rule => [rule.ruler, rule.focus]),
+  [['Venus', 'Leisure']], 'Leisure is supported; sleep/recovery in every Moon hour is not established');
+assert(!calendarActivityHourRules.some(rule => ['Mars', 'Sun', 'Moon'].includes(rule.ruler)),
+  'Do not restore generic work/creativity/rest mappings from unsupported archetypal inference');
+const hoursWithoutContext = calendarActivityBody([], 'UTC', { locationLabel: 'Fixture', hours: monday });
+for (const scoped of ['Courtship · Venus hours:', 'Art and music · Venus hours:', 'Writing · Mercury hours:', 'Leisure · Venus hours:']) {
+  assert(hoursWithoutContext.includes(scoped));
+}
+assert(!/\b(?:best|lucky|favorable|sleep|recovery)\b/iu.test(hoursWithoutContext));
 for (const [date, duration] of [['2026-03-08', 23], ['2026-11-01', 25]] as const) {
   const [context] = await getCalendarPlanningContexts(date, date, 'America/New_York', locations['America/New_York']);
   const hours = context.planetaryHours.hours;
@@ -38,6 +71,16 @@ for (const [date, duration] of [['2026-03-08', 23], ['2026-11-01', 25]] as const
   assert.equal(hours[0].planetaryDate, new Date(Date.parse(`${date}T12:00:00Z`) - 86400000).toISOString().slice(0, 10), 'Predawn belongs to the previous planetary day');
   assert.equal(hours.find(hour => hour.period === 'day' && hour.planetaryDate === date)?.ruler, 'Sun', 'Sunday begins with the Sun at sunrise');
   assert(hours.every((hour, index) => index === 0 || hour.start === hours[index - 1].end), 'DST has no missing or duplicated instant');
+  // US Naval Observatory API 4.0.1, queried 2026-10-26 for 40.7128,-74.0060.
+  // Reported minute precision; the project's apparent-horizon model agrees
+  // within one minute on both sides of the DST boundary.
+  const reference = date === '2026-03-08'
+    ? { rise: '2026-03-08T11:19:00Z', set: '2026-03-08T22:55:00Z' }
+    : { rise: '2026-11-01T11:26:00Z', set: '2026-11-01T21:52:00Z' };
+  const sunrise = hours.find(hour => hour.period === 'day' && hour.planetaryDate === date)!.start;
+  const sunset = hours.find(hour => hour.period === 'night' && hour.planetaryDate === date)!.start;
+  assert(Math.abs(Date.parse(sunrise) - Date.parse(reference.rise)) <= 60000);
+  assert(Math.abs(Date.parse(sunset) - Date.parse(reference.set)) <= 60000);
 }
 const [polar] = await getCalendarPlanningContexts('2026-06-21', '2026-06-21', 'Arctic/Longyearbyen', { label: 'Longyearbyen', latitude: 78.2232, longitude: 15.6469 });
 assert.equal(polar.planetaryHours.hours.length, 0);
@@ -125,7 +168,8 @@ try {
     assert.equal(reading.start, date);
     for (const label of ['Love', 'Work', 'Creativity', 'Rest']) assert(reading.body.includes(label));
     assert(!reading.body.includes('{{'));
-    assert(reading.body.includes('Venus hours') && reading.body.includes('Moon hours') && !reading.body.includes('Neptune hours'));
+    assert(reading.body.includes('Courtship · Venus hours') && reading.body.includes('Leisure · Venus hours'));
+    assert(!/\b(?:Moon|Mars|Sun|Neptune) hours/u.test(reading.body));
     const link = new URLSearchParams(new URL(reading.url).hash.split('?')[1]);
     assert.equal(link.get('latitude'), String(locations[timeZone].latitude));
     if (timeZone === 'America/New_York') {

@@ -1,7 +1,9 @@
 import type { LunarCalendarEvent } from '../../../../apps/web/src/services/ephemeris.js';
 import { calendarLocalDateKey } from './calendarPhaseLabel.js';
-import type { CalendarPlanetaryDay } from './calendarPlanetaryHours.js';
+import type { CalendarPlanetaryDay, HourRuler } from './calendarPlanetaryHours.js';
 
+// These planets select complete Sky context, not favorable hours. Hour
+// associations have their own narrower, source-backed task scopes below.
 export const calendarActivities = [
   { id: 'love', label: 'Love', planets: ['Venus'] },
   { id: 'work', label: 'Work', planets: ['Mercury', 'Mars', 'Saturn', 'Jupiter'] },
@@ -9,6 +11,19 @@ export const calendarActivities = [
   { id: 'rest', label: 'Rest', planets: ['Moon'] }
 ] as const;
 export type CalendarActivity = typeof calendarActivities[number]['id'];
+/** Task affinities, not a full election or an all-purpose good-hour verdict.
+ * Evidence and exclusions: docs/qa/calendar-planetary-hours-source-audit.md.
+ * Rest here means leisure; the reviewed texts do not establish Moon hours
+ * as sleep/recovery windows. Keep that claim out of both the app and ICS. */
+export const calendarActivityHourRules = [
+  { activity: 'love', ruler: 'Venus', focus: 'Courtship', source: 'coley-venus' },
+  { activity: 'work', ruler: 'Mercury', focus: 'Writing and trade', source: 'coley-mercury' },
+  { activity: 'work', ruler: 'Jupiter', focus: 'Patrons and finance', source: 'coley-jupiter' },
+  { activity: 'work', ruler: 'Saturn', focus: 'Property and land', source: 'coley-saturn' },
+  { activity: 'creativity', ruler: 'Venus', focus: 'Art and music', source: 'venus-creative-affinity' },
+  { activity: 'creativity', ruler: 'Mercury', focus: 'Writing', source: 'mercury-creative-affinity' },
+  { activity: 'rest', ruler: 'Venus', focus: 'Leisure', source: 'coley-venus' }
+] as const satisfies ReadonlyArray<{ activity: CalendarActivity; ruler: HourRuler; focus: string; source: string }>;
 export type CalendarActivityReading = { activities: CalendarActivity[]; labels: string[];
   event: Pick<LunarCalendarEvent, 'id' | 'title'> & Partial<Pick<LunarCalendarEvent, 'startsAt' | 'endsAt'>>; body: string };
 
@@ -59,9 +74,9 @@ export function calendarActivityBody(readings: CalendarActivityReading[], timeZo
     month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
   const time = (at: string) => formatter.format(new Date(at));
   const hours = calendarActivities.map(activity => {
-    const windows = activity.planets.map(planet => {
-      const matches = planetaryDay?.hours.filter(hour => hour.ruler === planet) ?? [];
-      return `${planet} hours${matches.length ? `: ${matches.map(hour => `${time(hour.start)} – ${time(hour.end)}`).join('; ')}` : ' · unavailable'}`;
+    const windows = calendarActivityHourRules.filter(rule => rule.activity === activity.id).map(rule => {
+      const matches = planetaryDay?.hours.filter(hour => hour.ruler === rule.ruler) ?? [];
+      return `${rule.focus} · ${rule.ruler} hours${matches.length ? `: ${matches.map(hour => `${time(hour.start)} – ${time(hour.end)}`).join('; ')}` : ' · unavailable'}`;
     });
     return `**${activity.label}**\n\n${windows.join('\n\n')}`;
   }).join('\n\n');

@@ -27,15 +27,22 @@ the implementation and acceptance contract; it does not approve new wording.
 ## Daily planning and writing authority
 
 The month view and selected day show the same dated Daily planning reading as
-the ICS link. Activity windows use planetary hours: Venus for Love;
-Mercury/Mars/Saturn/Jupiter for Work; Venus/Sun/Mercury for Creativity; Moon for
-Rest. These are the seven classical rulers, with no outer-planet hours.
+the ICS link. Activity windows use scoped planetary-hour affinities verified in
+the [source audit](calendar-planetary-hours-source-audit.md): Venus for courtship;
+Mercury for writing/trade, Jupiter for patrons/finance and Saturn for
+property/land; Venus for art/music and Mercury for writing; Venus for leisure
+under Rest. Rest does not claim a best sleep/recovery hour. The seven classical
+rulers determine the hour sequence, with no outer-planet hours.
 The selected location's sunrise-to-sunset and sunset-to-next-sunrise intervals
 are each divided into twelve unequal hours. The weekday ruler begins at sunrise
 and continues in Chaldean order. Predawn hours retain the previous planetary
 day's ruler; local civil-date windows retain DST changes. Polar dates without
 the required solar crossings show unavailable hours rather than invented times.
-Calculation follows the [traditional planetary-hour definition](https://www.astro.com/astrowiki/en/Planetary_Hours).
+Calculation was checked against Gadbury's and Simotta's unequal-hour tables,
+including all seven daylight/night starting rulers and an eight-hour-day
+example. Sunrise/sunset also agree within one minute with two independent
+US Naval Observatory date/location fixtures. Source locators, qualifications
+and excluded inferences are recorded in the audit.
 
 Subscriptions save the selected calendar location and time zone. Existing rows
 receive no guessed coordinates; daily guidance requires a selected location.

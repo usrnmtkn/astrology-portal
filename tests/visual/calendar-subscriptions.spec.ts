@@ -51,7 +51,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`co
   for (const activity of ['Love', 'Work', 'Creativity', 'Rest']) await expect(planning).toContainText(activity);
   await expect(planning).toContainText('Planetary hours · New York · America/New_York');
   await expect(planning).toContainText('Venus hours');
-  await expect(planning).toContainText('Moon hours');
+  await expect(planning).toContainText('Property and land · Saturn hours');
+  await expect(planning).toContainText('Leisure · Venus hours');
+  await expect(planning).not.toContainText('Moon hours');
+  await expect(planning).not.toContainText('Mars hours');
   const initialBody = await planning.innerText();
   expect(initialBody).not.toContain('{{');
   await page.reload();
