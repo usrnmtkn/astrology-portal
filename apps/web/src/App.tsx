@@ -133,6 +133,7 @@ import {
   transitSynastryFallbackRendererV3,
   fallbackV3AspectFeel,
   fallbackV3HouseTopic,
+  fallbackV3HookBody,
   fallbackV3PlanetTopic,
   fallbackV3SignRuler,
   fallbackV3SignStyle,
@@ -141,6 +142,7 @@ import {
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderSections";
+import { skyPlacementAspectBridgeKey, skyPlacementAspectBridgeErrors } from './content/skyPlacementAspectBridge';
 import { preserveProtectedOwnerSkyPlacementPassage } from "./content/protectedOwnerSkyPlacementPassages";
 import {
   firstReaderFacingCopy,
@@ -5737,10 +5739,15 @@ export function personalizedSkyPlacementDetail(
         // Use the same complete aspect unit and selected-day anchor as You.
         // House context belongs to the placement horoscope, not prose selection.
         const packageSection = personalTransitPackageSection(transit, generatedAt.slice(0, 10));
+        const bridgeKey = skyPlacementAspectBridgeKey({ house, transiting: planet,
+          aspect: normalizeFallbackV3Aspect(transit.aspect) ?? '', natal: normalizeContentIdPart(transit.natalPoint) });
+        const bridge = bridgeKey ? fallbackV3HookBody(bridgeKey) : '';
         return {
           key: transit.id,
           heading: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
-          body: packageSection?.body ?? null
+          body: packageSection?.body ?? null,
+          bridge: bridgeKey && !skyPlacementAspectBridgeErrors(bridgeKey, bridge).length ? bridge : null,
+          timing: transit.reportWindowLabel ?? personalTransitPackageWindow(transit, generatedAt.slice(0, 10))
         };
       });
 

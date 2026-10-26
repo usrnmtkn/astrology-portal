@@ -269,6 +269,7 @@ const SkyPlacementWorkspace = lazy(() => import("./SkyPlacementWorkspace"));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
 const ConnectionTransitStudio = lazy(() => import("./ConnectionTransitStudio"));
+const SkyPlacementAspectBridgeStudio = lazy(() => import('./SkyPlacementAspectBridgeStudio'));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const StudioCsvTools = lazy(() => import('./StudioCsvTools'));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
@@ -413,7 +414,7 @@ type AdminWritingSurfaceMapPayload = {
 };
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
-type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits" | "ingress-preview";
+type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits" | "house-aspect-bridges" | "ingress-preview";
 type CalendarWriteupWorkspaceView = SkyForecastPeriod | "daily-writing" | "season-transitions" | "season-writeups" | "moon-transition-phrases" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
@@ -432,6 +433,7 @@ const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label
 const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }[] = [
   { value: "daily-summary", label: "Daily Sky Summary" },
   { value: "catalog", label: "Placements & lunations" },
+  { value: "house-aspect-bridges", label: "House × aspect bridges" },
   { value: "transits-to-natal", label: "Personal Transits" },
   { value: "house-transits", label: "House Transits" },
   { value: "ingress-preview", label: "Preview without saving" }
@@ -2385,7 +2387,7 @@ function aspectContextForFields({
   }
 
   if (
-    /personal[./_ -]transit[./_ -]aspect|transit[./_ -](?:to[./_ -])?natal|authored\/transit-aspect/u.test(marker)
+    /personal[./_ -]transit[./_ -]aspect|transit[./_ -](?:to[./_ -])?natal|authored\/transit-aspect|sky-house-aspect-bridge/u.test(marker)
     || (/(?:^|[./_ -])transit[./_ -]aspect/u.test(marker) && surface !== "sky")
   ) {
     return {
@@ -3292,6 +3294,7 @@ export function GeneratedContentAdminDashboard() {
   const compatibilityAspectFormRef = useRef<HTMLElement>(null);
   const compatibilityAspectRequestRef = useRef(0);
   const connectionSourceRequestRef = useRef(0);
+  const placementBridgeRequestRef = useRef(0);
   useEffect(() => {
     if (!compatibilityAspectSelection) return;
     compatibilityAspectFormRef.current?.scrollIntoView({ block: "center" });
@@ -6826,6 +6829,30 @@ export function GeneratedContentAdminDashboard() {
     setCompatibilityAspectSelection(compatibilityAspectFromSearch(compatibilityQuery));
   }
 
+  async function openPlacementAspectBridge(key: string) {
+    const requestId = ++placementBridgeRequestRef.current;
+    const originatingHash = window.location.hash;
+    setIsLoading(true);
+    try {
+      const result = await readStudioContentDocument(key, secret);
+      if (requestId !== placementBridgeRequestRef.current || originatingHash !== window.location.hash) return;
+      const existing = result.rows.find(row => row.status !== 'ARCHIVED') ?? result.rows[0];
+      if (existing) { await openRow(existing as unknown as AdminGeneratedContentRow); return; }
+      const { skyPlacementAspectBridgeDraft } = await import('./skyPlacementAspectBridgeDraft');
+      if (requestId !== placementBridgeRequestRef.current || originatingHash !== window.location.hash) return;
+      setSelectedRowId(null);
+      setEditorSourceRow(null);
+      setCompositionEditorContext(null);
+      setEditorSaveError('');
+      rememberSavedDraft(skyPlacementAspectBridgeDraft(key));
+      scrollEditorToTop();
+    } catch (error) {
+      if (requestId === placementBridgeRequestRef.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
+    } finally {
+      if (requestId === placementBridgeRequestRef.current) setIsLoading(false);
+    }
+  }
+
   async function openConnectionSource(key: string) {
     const requestId = ++connectionSourceRequestRef.current;
     const originatingHash = window.location.hash;
@@ -7736,6 +7763,13 @@ export function GeneratedContentAdminDashboard() {
                 </Suspense>
                 <Suspense fallback={<PageLoading message="Loading Without their tools editor…" />}>
                   <SkyDebilityStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
+                </Suspense>
+                {renderEditor()}
+              </>
+            ) : skyWriteupWorkspaceView === 'house-aspect-bridges' ? (
+              <>
+                <Suspense fallback={<PageLoading message="Loading house × aspect bridges…" />}>
+                  <SkyPlacementAspectBridgeStudio busy={isLoading} onEdit={key => void openPlacementAspectBridge(key)} />
                 </Suspense>
                 {renderEditor()}
               </>

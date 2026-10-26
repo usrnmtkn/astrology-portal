@@ -1,4 +1,5 @@
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { skyPlacementAspectParagraphs } from '../../content/skyPlacementAspectBridge';
 import { SeasonArticleLink } from "../../components/SeasonArticleLink";
 import { PreparedProse as FormattedProse } from "../../components/FormattedWritingContent";
 import { ReaderPassageEditLink } from '../../components/ReaderPassageEditLink';
@@ -83,6 +84,8 @@ export type SkyPersonalizedPlacement = {
     key: string;
     heading: string;
     body: string | null;
+    bridge?: string | null;
+    timing?: string | null;
   }>;
 };
 
@@ -870,7 +873,7 @@ export function SkyDetailArticle({
                         {skyActiveChartEvents(detail.personalizedPlacement.natalAspects).map((aspect) => (
                           <section className="sky-detail-personalized-aspect" key={aspect.key}>
                             <h4>{aspect.heading}</h4>
-                            {aspect.members.flatMap((member) => member.body ? fullDetailReaderFacingParagraphs([member.body]).map((paragraph, index) => (
+                            {aspect.members.flatMap((member) => member.body ? fullDetailReaderFacingParagraphs(skyPlacementAspectParagraphs(member.body, member.bridge, member.timing)).map((paragraph, index) => (
                               <FormattedProse key={`${member.key}-${index}`} text={paragraph} />
                             )) : [])}
                           </section>

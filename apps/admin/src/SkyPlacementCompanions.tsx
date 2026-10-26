@@ -24,6 +24,7 @@ export function SkyPlacementWritingLinks() {
     <a className="admin-source-action" href="#horoscopes">Daily, weekly, monthly &amp; seasonal horoscopes</a>
     <a className="admin-source-action" href="#calendar-aspects">Sky &amp; Calendar aspects</a>
     <a className="admin-source-action" href="#sky-writeups?view=transits-to-natal">Personal aspects</a>
+    <a className="admin-source-action" href="#sky-writeups?view=house-aspect-bridges">House × aspect bridges</a>
   </nav>;
 }
 

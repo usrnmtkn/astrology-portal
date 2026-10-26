@@ -5,6 +5,7 @@ import { isZodiacSeasonSourceKey } from "./resolver/zodiacSeasonVariables.mjs";
 import skyReaderRelease from "./authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 import skyReaderApproval from "./authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import { isDynamicTransitNatalExactKey, isDynamicTransitNatalLibraryKey } from "../transitNatalIdentity.js";
+import { SKY_PLACEMENT_ASPECT_BRIDGE_POLICY, skyPlacementAspectBridgeIdentity } from '../skyPlacementAspectBridge.js';
 export { isDynamicTransitNatalExactKey } from "../transitNatalIdentity.js";
 
 const canonicalKeys = new Set<string>(skyReaderRelease.serving_enabled ? skyReaderApproval.approved_keys : []);
@@ -133,6 +134,8 @@ export function isFallbackDashboardRecordAllowed(
   currentPackageKeys: ReadonlySet<string>
 ) {
   return (isZodiacSeasonSourceKey(record.contentKey) && record.content_role === "fallback_hook")
+    || (Boolean(skyPlacementAspectBridgeIdentity(record.contentKey)) && record.content_role === 'fallback_hook'
+      && record.render_policy === SKY_PLACEMENT_ASPECT_BRIDGE_POLICY)
     || currentPackageKeys.has(record.contentKey)
     || isDynamicNatalPlacementExactRecord(record)
     || isDynamicNatalAspectExactRecord(record)

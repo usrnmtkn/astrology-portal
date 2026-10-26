@@ -1,10 +1,12 @@
 import { contentPublicationRecords, publicationTimestamp } from "../content/contentPublicationState";
+import { skyPlacementAspectBridgeIdentity } from '../content/skyPlacementAspectBridge';
 
 // Source families, not candidate precedence: the shared renderer still selects
 // exact/situation/family/return copy and the correct audience. Include its house,
 // point, timing and template dependencies for every personal-transit surface.
 export function isPersonalTransitSource(key: string) {
-  return /^(?:authored\/(?:transit-|point-explainer\/)|fallback-hook\/(?:transit-|fog-note|natal-core)|fallback-template\/transit\.|fallback-vocab\/)/u.test(key);
+  return Boolean(skyPlacementAspectBridgeIdentity(key))
+    || /^(?:authored\/(?:transit-|point-explainer\/)|fallback-hook\/(?:transit-|fog-note|natal-core)|fallback-template\/transit\.|fallback-vocab\/)/u.test(key);
 }
 
 export function personalTransitPublicationIdentity() {
