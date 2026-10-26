@@ -89,3 +89,50 @@ Historical third-house meanings and later communication/learning applications
 retain separate provenance. Knowing Leo's ruler is the Sun does not establish
 the Sun's placement or condition. Aspects, degrees, time lords and personal
 circumstances are not invented for these editorial combinations.
+
+
+## Current-main preparation, October 26, 2026
+
+The pilot is rebased onto main `5eddffa5d38ac38b594781f576ba24387d439b6d`.
+The eight exact approved bodies remain private and unchanged. The owner
+subsequently authorized code release and publication of all eight in
+`call_cb9ceaa874444be69ea6d3abfe6c7995` with “Deploy and publish all eight.”
+Merge, deployment and production content writes remain queued behind the
+preceding release and the coordinator's explicit handoff. No new model call
+or reader wording change is part of this preparation.
+
+Current-main web, standalone Admin and server types, actual natal editorial and
+preview handlers, reader scope selection, writer governance, CSS and reader-copy
+boundaries pass. Both source-row and fallback-package directories remain
+byte-identical to main. All 167 current-main API commands are retained and the
+pilot writer contract is appended once, for 168 commands. The complete API gate
+and hosted checks on the final PR revision remain release requirements.
+
+The fresh browser run retained 23 passing cases and one mobile close/reopen
+failure. The failed Jupiter day/Friend case opened the next article while
+browser-back navigation was still asynchronous. The test now waits for its
+exact prior list URL and disappearance of the old article before clicking
+Saturn. All original copy assertions and timeouts are unchanged; the four
+affected Jupiter variants pass from a fresh build. The original failed receipt
+and traces are preserved privately. No application navigation change or
+assertion waiver is claimed. The earlier setup attempt stopped before tests
+because the private configuration lacked an explicit server working directory;
+that attempt is not acceptance evidence.
+
+Fresh matched standalone builds use the existing independent npm-ci installs,
+identical lockfile and visual-smoke URL/anonymous-key placeholders, with no
+publishable key. Native Node 22.23.3 arm64 with zlib 1.3.1-e00f703 measures:
+
+| Metric | Main | Pilot | Difference |
+| --- | ---: | ---: | ---: |
+| Entry raw bytes | 808624 | 808636 | +12 |
+| Entry gzip bytes | 234504 | 234504 | 0 |
+| Aggregate gzip bytes | 844039 | 846561 | +2522 |
+| JavaScript chunks | 92 | 93 | +1 |
+
+The existing 2550-byte feature allocation is added to main's independent Friend
+release allocation, giving an aggregate ceiling of 846650 and 89 measured bytes
+of headroom. Entry, largest-chunk, startup, runtime, private-payload and deferred
+comparison guards are unchanged. This records the requested interface cost,
+not a performance improvement. The historical measurements above remain tied
+to their earlier baseline.

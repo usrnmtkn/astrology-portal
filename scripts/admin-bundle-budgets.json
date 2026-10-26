@@ -110,10 +110,31 @@
     },
     "natalPlacementSectIntegration20261026": {
       "baseRevision": "5eddffa5d38ac38b594781f576ba24387d439b6d",
+      "node": "v22.23.3",
+      "architecture": "arm64",
+      "platform": "darwin",
+      "zlib": "1.3.1-e00f703",
+      "measurements": {
+        "baseline": {
+          "entryRaw": 808624,
+          "entryGzip": 234504,
+          "totalGzip": 844039,
+          "chunks": 92,
+          "lockSha256": "f0ae594b70d97fcf823c56ccae2b077a6779053326ae62bdae6a4a0190fe53e6"
+        },
+        "feature": {
+          "entryRaw": 808636,
+          "entryGzip": 234504,
+          "totalGzip": 846561,
+          "chunks": 93,
+          "lockSha256": "f0ae594b70d97fcf823c56ccae2b077a6779053326ae62bdae6a4a0190fe53e6"
+        }
+      },
+      "aggregateDeltaBytes": 2522,
       "previousTotalLimitBytes": 844100,
       "totalLimitBytes": 846650,
       "allocationBytes": 2550,
-      "status": "Provisional reconciliation of the existing measured 2550-byte feature allowance with the independent 250-byte Friend release allowance. Fresh matched baseline/feature measurement is required before readiness or push; other numeric limits remain unchanged."
+      "reason": "Fresh matched independent npm-ci builds on current main retain its separate Friend allocation and add the previously measured 2550-byte scoped-sect interface allowance. The integrated feature adds 2522 aggregate gzip bytes and leaves 89 bytes below the aggregate cap. Entry, largest-chunk, runtime, deferred-comparison and private-payload guards remain unchanged; this records feature cost, not a performance improvement."
     }
   },
   "memoryGraphJavaScriptGzipBytes": 64000

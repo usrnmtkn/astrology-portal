@@ -6480,6 +6480,7 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (con
   for (const audience of ["you", "they"]) {
     await expectClientRouteLoads(page, audience === "you" ? "/#you" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
     if (audience === "you") await selectYouNatalTab(page);
+    const natalListUrl = page.url();
     await page.locator("button.placement-table-row").filter({ hasText: new RegExp(pilot.planet) }).first().click();
     const article = page.locator(audience === "you" ? ".you-transit-article-page" : ".sky-detail-article");
     const sect = article.getByRole("region", { name: pilot.sect === "day" ? "Day chart" : "Night chart", exact: true });
@@ -6501,6 +6502,8 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (con
     expect(await aspects.allTextContents()).toEqual(aspectCopy);
     if (pilot.planet === "Jupiter") {
       await page.getByRole("button", { name: audience === "you" ? "Back to updates" : "Close detail", exact: true }).click();
+      await expect(page).toHaveURL(natalListUrl);
+      await expect(article).toHaveCount(0);
       await page.locator("button.placement-table-row").filter({ hasText: /Saturn/ }).first().click();
       await expect(sect).toContainText("Retained general Saturn ending.");
       await expect(article).not.toContainText("Retained complete Aries ending.");
