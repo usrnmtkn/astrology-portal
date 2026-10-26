@@ -156,7 +156,7 @@ export default defineConfig(({ command, mode }) => {
               return "admin-deferred-review-tools";
             }
             // Review panels and owner publication share one deferred workspace chunk.
-            if (/apps\/admin\/src\/(?:TransitNatalReaderPreview|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id) || /\/apps\/admin\/src\/(?:ownerPublication|aspectPatternSaveReceipt)\.ts$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:TransitNatalReaderPreview|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|HoroscopeGenerationDetails|HoroscopeWritingStudio|HoroscopeSaveRecovery|WeeklyBatchEditorial|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id) || /\/apps\/admin\/src\/(?:ownerPublication|aspectPatternSaveReceipt)\.ts$/u.test(id)) {
               return "admin-deferred-review-tools";
             }
             // Fallback editors share the owner-publication workspace; combining

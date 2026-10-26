@@ -1,11 +1,19 @@
 import {AdminDisclosureSummary} from './AdminNativeControls';
 import {StudioButton} from './StudioControls';
 
-export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,running,hasPlan,onPrepare,onAction}:any){
+export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,running,hasPlan,planHash,onPrepare,onAction}:any){
   const pending=gate?.pending;
   const plan=gate?.plan,review=gate?.review;
   const findings=[...(plan?.status==='failed'?plan.findings??[]:[]),...(review?.matchesCurrent===true?review.findings??[]:[])];
   const current=review?.status==='passed'&&review.current&&!dirty;
+  function act(action:string){
+    if(disabled||dirty)return;
+    if(action==='release-weekly'&&!window.confirm('This interrupted batch check may have been billed. Release it with an unknown outcome? Another request requires separate approval.'))return;
+    void onAction(action,{
+      ...(['plan-weekly','review-weekly'].includes(action)?{approvedPlanHash:planHash}:{}),
+      ...(action==='release-weekly'?{acknowledgeUnknownOutcome:true}:{})
+    },(data:any)=>data.pending?'The shared batch check is saved. Check its progress without starting another request.':'Loaded the saved batch check.');
+  }
   return <section className="admin-horoscope-plan" aria-label="Weekly batch editorial gate">
     <p>{pending?pending.phase==='planning'?'Planning twelve distinct concerns…':'Checking the complete twelve-sign set…':current?'The current twelve-sign set passed its batch comparison. Your wording approval is still required.':review&&(!review.matchesCurrent||dirty)?'The saved batch comparison is out of date. Review the current readings again.':review?.status==='failed'?'The batch needs an editorial edit. All saved readings are kept.':plan?.status==='passed'?'The shared twelve-sign concern plan is saved.':'Weekly generation plans twelve distinct concerns before drafting.'}</p>
     <p>The final check compares interpretations, phrases and endings across all twelve readings. Editing a reading invalidates its previous batch check. No automatic rewrites or paid retries.</p>
@@ -20,11 +28,11 @@ export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,runni
     </details>}
     {!running&&<div className="admin-toolbar-actions">
       {pending?<>
-        <StudioButton disabled={disabled||dirty} onClick={()=>onAction('poll-weekly')}>Check saved batch progress</StudioButton>
-        {Date.now()-Date.parse(pending.startedAt)>=310000&&<StudioButton disabled={disabled||dirty} onClick={()=>onAction('release-weekly')}>Release interrupted batch check</StudioButton>}
+        <StudioButton disabled={disabled||dirty} onClick={()=>act('poll-weekly')}>Check saved batch progress</StudioButton>
+        {Date.now()-Date.parse(pending.startedAt)>=310000&&<StudioButton disabled={disabled||dirty} onClick={()=>act('release-weekly')}>Release interrupted batch check</StudioButton>}
       </>:!hasPlan?<StudioButton disabled={disabled||dirty} onClick={onPrepare}>Load batch review plan</StudioButton>:<>
-        {complete&&!current&&<StudioButton disabled={disabled||dirty} onClick={()=>onAction('review-weekly')}>Review all twelve · 1 AI request</StudioButton>}
-        {plan&&plan.status!=='passed'&&<StudioButton disabled={disabled||dirty} onClick={()=>onAction('plan-weekly')}>Plan twelve concerns again · 1 AI request</StudioButton>}
+        {complete&&!current&&<StudioButton disabled={disabled||dirty} onClick={()=>act('review-weekly')}>Review all twelve · 1 AI request</StudioButton>}
+        {plan&&plan.status!=='passed'&&<StudioButton disabled={disabled||dirty} onClick={()=>act('plan-weekly')}>Plan twelve concerns again · 1 AI request</StudioButton>}
       </>}
     </div>}
   </section>;
