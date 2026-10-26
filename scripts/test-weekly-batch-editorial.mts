@@ -9,6 +9,7 @@ import {WEEKLY_REVIEW_CHECKS,validateWeeklyEditorialResult,weeklyEditorialConten
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {installAlternativeHoroscopeProviders} from '../tests/helpers/horoscope-provider-fixture.mts';
 import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
+import {HOROSCOPE_SIGNS} from '../apps/web/src/content/horoscopeEditions.mjs';
 installHoroscopeWriterFixture();
 const savedProfile=await store.invoke('POST',{profile:{...defaultHoroscopeProfile('weekly'),voiceGuidance:'Synthetic complete approved rules. Every sign needs its own concern.',sourceGuidance:'Complete synthetic example opening. A full synthetic example middle. Complete synthetic example final sentence.'},expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');assert.equal(savedProfile.status,200);
 const latest=(id:string)=>decodeWeeklyHistoryRow(structuredClone(store.rows.get(id)));
@@ -47,7 +48,12 @@ assert.deepEqual(JSON.parse(requests[1].input).profile,row.source_snapshot.studi
 for(const request of writerFixture.requests.values()){
  assert(request.input.includes(`SHARED WEEKLY CONCERNS\n${JSON.stringify(gate.plan.concerns)}`));
  assert(request.input.includes(`CURRENT SIGN CONCERN\n${JSON.stringify(gate.plan.concerns.find((c:any)=>c.sign===request.sign))}`));
+ const snapshot=row.source_snapshot.horoscopeGeneration.readings[request.sign].previousReadings;
+ assert.deepEqual(snapshot.readings.map((p:any)=>p.sign),HOROSCOPE_SIGNS.slice(0,HOROSCOPE_SIGNS.indexOf(request.sign)));
+ assert(request.input.includes(JSON.stringify({previousReadings:snapshot})),'The actual writer receives the saved exact snapshot');
+ assert.deepEqual(snapshot.readings.map(({sign,headline,body}:any)=>({sign,headline,body})),passagesBefore(request.sign));
 }
+function passagesBefore(sign:string){return row.sections.horoscopeEdition.passages.slice(0,HOROSCOPE_SIGNS.indexOf(sign));}
 const calls=writerFixture.calls+writerFixture.reviewCalls+writerFixture.batchCalls;
 await worker(id);await action(id,'poll-weekly');assert.equal(writerFixture.calls+writerFixture.reviewCalls+writerFixture.batchCalls,calls);
 // Semantic paraphrases and repeated endings are explicit judge findings. Transport
@@ -124,6 +130,7 @@ const native=await create('2026-11-30',true);row=latest(native);row.sections.hor
 const nativeExisting=structuredClone(row.sections.horoscopeEdition.passages.slice(0,11));
 const nativePlan=await action(native,'prepare',{writerChoice:'claude'});assert.equal(nativePlan.status,200);await action(native,'start-batch',{approvedPlanHash:nativePlan.payload.plan.planHash});assert.equal((await runWeeklyHoroscopeBatch(native,{maxSteps:100,wait:()=>new Promise(resolve=>setTimeout(resolve,5))})).state,'complete');
 assert.equal(nativeTransport.requests.length,1);assert(nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
+assert(nativeTransport.requests[0].request.messages[0].content.includes(JSON.stringify({previousReadings:latest(native).source_snapshot.horoscopeGeneration.readings.pisces.previousReadings})));
 assert.deepEqual(latest(native).sections.horoscopeEdition.passages.slice(0,11),nativeExisting);
 // Existing in-flight batches keep their pinned request and paid-stage budget.
 const legacy=await create('2026-12-07'),legacyHash=await prepare(legacy),beforeShared=writerFixture.batchCalls;
@@ -133,7 +140,8 @@ assert.equal(latest(legacy).source_snapshot.horoscopeGeneration.batch.editorialV
 assert.equal((await worker(legacy)).state,'complete');assert.equal(writerFixture.batchCalls,beforeShared,'Never add paid stages to a pinned legacy run');
 // A concurrent free retrieval may win the shared result checkpoint. The worker
 // reconciles that version change without pausing or repeating a paid request.
-const contended=await create('2026-12-14'),contendedHash=await prepare(contended);
+const contended=await create('2026-12-14');row=latest(contended);row.sections.horoscopeEdition.passages.reverse();store.rows.set(contended,row);
+const contendedHash=await prepare(contended),beforeOrderedWriters=writerFixture.requests.size;
 await action(contended,'start-batch',{approvedPlanHash:contendedHash});await worker(contended,1);
 const sharedId=latest(contended).source_snapshot.horoscopeGeneration.weeklyEditorial.pending.responseId;
 const beforeContention=writerFixture.batchCalls,normalFetch=globalThis.fetch;let raced=false;
@@ -148,5 +156,6 @@ try{assert.equal((await worker(contended,1)).state,'changed');}finally{globalThi
 assert(raced);assert.equal(latest(contended).source_snapshot.horoscopeGeneration.batch.status,'running');
 assert.equal(latest(contended).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'passed');assert.equal(writerFixture.batchCalls,beforeContention);
 assert.equal((await worker(contended)).state,'complete');
+assert.deepEqual([...writerFixture.requests.values()].slice(beforeOrderedWriters).map((request:any)=>request.sign),HOROSCOPE_SIGNS,'The batch drafts in zodiac order even when saved passages are reordered');
 console.log('PASS Weekly batch editorial gate: plan all twelve before prose, full profile/facts delivery, 26 bounded requests, exact quotes, failed/stale/malformed checks, manual edits, publication, free recovery and unknown-outcome release. Synthetic models only.');
 await store.close();

@@ -3,6 +3,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {waitUntil} from '@vercel/functions';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
 import {horoscopePendingReadings,canRecoverHoroscopeReview} from '../../src/astro-writing/horoscopeRecovery.mjs';
+import {weeklyPreviousReadings} from '../../src/astro-writing/weeklyPreviousReadings.mjs';
 import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
 import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
@@ -375,12 +376,14 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     }
     const config=writerConfig;
     if(!operation) {
+      const previousReadings=weeklyPreviousReadings(row,sign);
+      if(previousReadings)prepared={...prepared,previousReadings};
       const entry=prepared.entries.find((e:any)=>e.sign===sign);
       operation={id:randomUUID(),sign,planHash,startedAt:new Date().toISOString(),actor,config,responseId:null,state:'starting',
         reviewVersion:HOROSCOPE_RHETORICAL_REVIEW,
         outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,
         validationCorrections:entry.validationCorrections,
-        receipt:{version:horoscopeWritingVersionFor(prepared.edition.window.period),outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,ownerApproved:false,promotionAuthorized:false}};
+        receipt:{version:horoscopeWritingVersionFor(prepared.edition.window.period),outputFormat:prepared.edition.window.period==='monthly'?MONTHLY_HOROSCOPE_FORMAT:null,planHash,sign,sourceHash:prepared.sourceHash,sourceIds:entry.sourceIds,seasonalMeaning:entry.seasonalMeaning,profileHash:hash(prepared.writingProfile),argumentHash:entry.argumentOutline.outlineHash,feedback:prepared.feedbackReceipt,...(previousReadings?{previousReadings}:{}),ownerApproved:false,promotionAuthorized:false}};
     }
     let payload:any;
     const writerClient=Object.assign(async({role,instructions,input:prompt,schema,reviewEvidence,ownerEvidence}:any)=>{
@@ -419,7 +422,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     try {
       const result=await writeHoroscopeSign(prepared,sign,{approvedPlanHash:planHash,writerClient,approvalReference:`horoscope-generation/${row.id}/${operation.id}`});
       const edition={...prepared.edition,passages:prepared.edition.passages.map((p:any)=>p.sign===sign?{...p,headline:result.headline,body:result.body}:p)};
-      const receipt={...result.receipt,...(operation.receipt.ownerEvidence?{ownerEvidence:operation.receipt.ownerEvidence}:{}),outputFormat:operation.outputFormat,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
+      const receipt={...result.receipt,...(operation.receipt.previousReadings?{previousReadings:operation.receipt.previousReadings}:{}),...(operation.receipt.ownerEvidence?{ownerEvidence:operation.receipt.ownerEvidence}:{}),outputFormat:operation.outputFormat,operationId:operation.id,responseId:operation.responseId,requestHash:operation.requestHash,config:operation.config,usage:payload?.usage??null,completedAt:new Date().toISOString(),lint:result.lint,report:result.report};
       if(horoscopePunctuationFindings(result).length)return await holdForPunctuation({headline:result.headline,body:result.body},receipt);
       if(supportedHoroscopeReview(operation.reviewVersion)){
         const reviewed=await queueHoroscopeReview({row,persist,operation,candidate:{headline:result.headline,body:result.body},receipt});
@@ -453,6 +456,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
       throw error;
     }
   }catch(error) {
+    if((error as any)?.code==='WEEKLY_PREVIOUS_READINGS_TOO_LARGE')return reply(409,{ok:false,dispatchNotStarted:true,error:(error as Error).message});
     if((error as any)?.code==='SEASONAL_MEANING_UNAVAILABLE')return reply(409,{ok:false,error:(error as Error).message});
     const status=adminErrorStatus(error);
     return reply(status,{ok:false,...((error as any)?.dispatchNotStarted?{dispatchNotStarted:true}:{}),error:error instanceof AdminHttpError?error.message:'Generation could not complete. Reopen the edition to recover its saved progress; no reading was published.'});

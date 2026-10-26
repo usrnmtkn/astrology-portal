@@ -7,6 +7,7 @@ import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions
 import {AdminHttpError} from './admin-http.js';
 import {assertHoroscopeRow} from './horoscope-editions.js';
 import {horoscopeProviderDiagnostic} from './horoscope-provider-result.js';
+import {weeklyPreviousReadingsCurrent} from '../../src/astro-writing/weeklyPreviousReadings.mjs';
 
 export const isHoroscopeReview=(operation:any)=>supportedHoroscopeReview(operation?.workflow);
 
@@ -19,6 +20,7 @@ export async function queueHoroscopeReview({row,persist,operation,candidate,rece
     startedAt:new Date().toISOString(),actor:operation.actor,planHash:operation.planHash,candidate,receipt,candidateHash:horoscopeReviewHash(candidate),
     evidenceHash:horoscopeReviewHash(operation.reviewEvidence),config:provider.normalizeProviderConfig({maxOutputTokens:6000},'judge'),
     reviewRequest:{input,instructions,schema:HOROSCOPE_REVIEW_SCHEMA},responseId:null,writerOperation:operation};
+  if(!weeklyPreviousReadingsCurrent(row,receipt.previousReadings))return horoscopeRhetoricalOperation({action:'context-changed',row:{...row,source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:review}}},persist});
   const saved=await persist({source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,active:review,lastError:null}}});
   return {status:202,payload:{ok:true,rows:[saved],pending:true}};
 }
@@ -62,6 +64,8 @@ export async function horoscopeRhetoricalOperation({action,row:initialRow,persis
     assertHoroscopeRow({...row,...patch});row=await persist(patch);
     return {status:200,payload:{ok:true,rows:[row],pending:false}};
   };
+  if(!weeklyPreviousReadingsCurrent(row,operation.receipt?.previousReadings))
+    return hold('weekly_comparison_context_changed','Earlier Weekly readings or this sign changed while the request was running. The returned draft is saved for editing or rejection; newer wording was kept. No replacement request was sent.');
   if(recoverSign){
     const response=await responses.storedWritingResponse({apiKey,responseId:operation.responseId});
     if(!response.ok)throw new AdminHttpError(503,'The saved prose review could not be retrieved. Your draft is kept; no new request was made.');

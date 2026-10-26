@@ -13,6 +13,29 @@ saved Weekly profile, full examples and current owner corrections keep their
 authority. Shared concerns supply interpretation, not sentences to copy.
 Existing reader text stays intact.
 
+New Weekly sign requests also receive `previousReadings`, a server-owned
+`weekly-previous-readings/v1` packet appended after saved template expansion.
+It includes complete current saved earlier readings from this same edition in
+Aries-to-Pisces order: Aries has an empty set, Taurus can see Aries, and Pisces
+can see eleven earlier signs. Self, future, blank, active, held and exact rejected
+passages are excluded. An old rejection does not exclude a newly saved version.
+Each passage retains its full headline/body, exact hash and word count. The
+packet records edition/window, target hash, context hash and source row version;
+metadata-only saves do not invalidate it. The batch orders pending signs by the
+canonical zodiac order even if a stored passage array is reordered. Selected
+signs and resumed batches use the actual current eligible earlier readings.
+
+Earlier readings supply comparison only, never approved voice, instructions,
+biography or calculated facts. Literal template braces inside them remain data;
+there is no new editable profile variable. This writer may compare only supplied
+earlier readings; the separate final gate compares the complete twelve-sign set.
+The packet is saved in private receipts with the native provider request before
+dispatch. Complete context larger than 256 KiB fails before spend without
+truncation. If earlier or target text changes while a writer or prose check is
+running, the candidate is held for editing/rejection and newer text is preserved.
+No automatic rewrite, replacement or extra paid stage is introduced. Requests
+already dispatched without this contract retain their pinned behavior.
+
 Once all twelve readings are complete, a separate whole-set request compares
 interpretations, phrases, endings, house-specific stakes, unsupported history
 and technical filler. It receives every complete reading, the complete saved
@@ -49,6 +72,7 @@ protected reference fixtures required by the standard API runbook:
 
 ```sh
 node --import tsx scripts/test-weekly-batch-editorial.mts
+node --import tsx scripts/test-weekly-previous-readings.mts
 node --import tsx scripts/test-horoscope-durable-batch.mts
 npm run test:content-studio-api
 npm run typecheck

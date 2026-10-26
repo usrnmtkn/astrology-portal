@@ -1,5 +1,6 @@
 import {approvedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {WEEKLY_BATCH_EDITORIAL} from './weeklyBatchEditorial.mjs';
+import {weeklyPreviousReadingsInput} from './weeklyPreviousReadings.mjs';
 import {horoscopeEvidenceReceipt} from './horoscopeEvidenceReceipt.mjs';
 import {loadWeeklyOwnerEvidence,WEEKLY_EVIDENCE_VERSION} from './weeklyOwnerEvidence.mjs';
 import fs from 'node:fs';
@@ -214,12 +215,12 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
   const approved=approveArgumentOutline(entry.argumentOutline,{exactOwnerRuling:`Authenticated owner selected Generate drafts for plan ${approvedPlanHash}. Reference: ${approvalReference}`});
   const argumentSource={contentKey:`horoscope-plan/${approvedPlanHash}/${sign}`,sourcePath:approvalReference,ownerApproved:true,
     authority:'owner-approved-horoscope-plan',opening:approved.thesis,tension:approved.complication,development:approved.recognition,close:approved.response};
-  const currentWriter=prepared.explicitFeedbackMarker||prepared.weeklyBatchPlan?Object.assign(async request=>{
+  const currentWriter=prepared.explicitFeedbackMarker||prepared.weeklyBatchPlan||prepared.previousReadings?Object.assign(async request=>{
     const input=[request.input,...(prepared.weeklyBatchPlan?[
       `SHARED WEEKLY CONCERNS\n${JSON.stringify(prepared.weeklyBatchPlan.concerns)}`,
       `CURRENT SIGN CONCERN\n${JSON.stringify(prepared.weeklyBatchPlan.concerns.find(c=>c.sign===sign))}`,
-      'The shared plan supplies meaning and scope, not reader wording or a required paragraph script. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the actual finished readings.'
-    ]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
+      'The shared plan supplies meaning and scope, not reader wording or a required paragraph script. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
+    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
     return writerClient({...request,input,...(request.ownerEvidence?{ownerEvidence:{...request.ownerEvidence,inputSha256:createHash('sha256').update(input).digest('hex'),writingFeedback:prepared.feedbackReceipt}}:{})});
   },writerClient):writerClient;
   const result=await runWritingPipeline({...entry.contextOptions,meaningInput:entry.meaningInput,
