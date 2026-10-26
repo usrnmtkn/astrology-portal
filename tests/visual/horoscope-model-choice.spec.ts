@@ -35,9 +35,57 @@ async function fixture(page:Page,missing=1){
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
     const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved').getByRole('button',{name:/October 5, 2026/}).click();return studio;};
-    return {child,call,latest,state,open,original:edition,id};
+    const dispose = async () => {
+      try {
+        // Finish active handlers before changing network state or terminating their IPC fixture.
+        await page.unrouteAll({behavior: 'wait'});
+        await page.context().setOffline(true);
+      } finally {
+        child.kill();
+      }
+    };
+    return {child,call,latest,state,open,original:edition,id,dispose};
   }catch(error){child.kill();throw error;}
 }
+
+test('Weekly fixture cleanup drains simultaneous reader requests', async ({page}) => {
+  const f = await fixture(page);
+  let release!: () => void, entered!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const started = new Promise<void>(resolve => { entered = resolve; });
+  const urls = ['/api/qa-held-fixture-read/first', '/api/qa-held-fixture-read/second'];
+  let enteredCount = 0;
+  let closing: Promise<void> | undefined;
+  try {
+    await page.goto('/admin/content#templates');
+    await page.route('**/api/qa-held-fixture-read/*', async route => {
+      if (++enteredCount === urls.length) entered();
+      await held;
+      const rows = await f.call({method: 'rows'});
+      await route.fulfill({status: 200, json: {count: rows.length}});
+    });
+    const responses = urls.map(url => page.waitForResponse(value => value.url().endsWith(url)));
+    // Preserve the awaited result below without an unhandled secondary error if an earlier assertion fails.
+    for (const response of responses) void response.catch(() => {});
+    await page.evaluate(paths => { for (const url of paths) void fetch(url).catch(() => {}); }, urls);
+    await started;
+    closing = f.dispose();
+    expect(await Promise.race([closing.then(() => 'closed'), page.evaluate(() => 'responsive')])).toBe('responsive');
+    expect(f.child.killed).toBe(false);
+    release();
+    for (const response of responses) {
+      const completed = await response;
+      expect(completed.status()).toBe(200);
+      expect(await completed.finished()).toBeNull();
+    }
+    await closing;
+    expect(f.child.killed).toBe(true);
+  } finally {
+    release();
+    if (closing) await closing;
+    else await f.dispose();
+  }
+});
 
 // Faults now occur at the provider/storage boundary: the browser does not send
 // generate/continue for each sign. API regressions cover reservation, lease and
@@ -96,7 +144,7 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
     await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
     await page.reload();await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText(edited);
    }
-  }finally{f.child.kill();}
+  }finally{await f.dispose();}
  });
 }
 
@@ -127,7 +175,7 @@ test('Pause persists after reload and resume reuses the saved batch approval',as
   await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status,{timeout:45000}).toBe('complete');
   expect((await f.latest()).source_snapshot.horoscopeGeneration.batch.id).toBe(batchId);
   expect(await f.call({method:'writer-state'})).toMatchObject({calls:2,reviewCalls:2});
- }finally{f.child.kill();}
+ }finally{await f.dispose();}
 });
 
 for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
@@ -146,7 +194,7 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
    await studio.getByRole('button',{name:'Edit saved Aquarius draft',exact:true}).click();
    await expect(studio.getByLabel('Complete reading')).toHaveValue(saved.source_snapshot.horoscopeGeneration.candidateHolds.aquarius.candidate.body);
    expect(await f.call({method:'writer-state'})).toMatchObject({calls:2,reviewCalls:2});
-  }finally{f.child.kill();}
+  }finally{await f.dispose();}
  });
 }
 
@@ -157,7 +205,7 @@ test('Unavailable provider is visible but cannot be selected',async({page})=>{
     await expect(selector).toBeEnabled();await expect(selector.locator('option[value="gemini"]')).toHaveAttribute('disabled','');
     await expect(studio.getByText('Gemini 3.1 Pro (preview) needs its server API connection.')).toBeVisible();
     await expect(selector).toHaveValue('current');expect((await f.call({method:'writer-state'})).calls).toBe(0);
-  }finally{f.child.kill();}
+  }finally{await f.dispose();}
 });
 
 
@@ -178,7 +226,7 @@ test('A stale model choice reloads the current Weekly plan without overwriting a
   await selector.selectOption('gemini');await expect(studio.getByRole('status')).toContainText('Writing model saved');
   await expect(selector).toHaveValue('gemini');
   expect((await f.call({method:'provider-state'})).requests).toEqual([]);
- }finally{f.child.kill();}
+ }finally{await f.dispose();}
 });
 
 for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
@@ -210,6 +258,6 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
    await studio.getByRole('group',{name:'Writing plans by sign'}).getByRole('button',{name:'Aquarius',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Generate Aquarius',exact:true})).toBeDisabled();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-  }finally{f.child.kill();}
+  }finally{await f.dispose();}
  });
 }
