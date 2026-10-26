@@ -7954,6 +7954,32 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 900, 
         await expect(table.locator('tbody td').first()).toHaveCSS('border-bottom-width','0px');
         if(width===390) await expect(table).toHaveCSS('display','block');
       }
+      if (route === 'report-fulfillment') {
+        for (const name of ['Set cap', 'Preview and edit']) {
+          const lines = await page.getByRole('button', {name, exact:true}).evaluate(button => {
+            const range = document.createRange();
+            range.selectNodeContents(button);
+            return new Set([...range.getClientRects()].map(rect => Math.round(rect.top))).size;
+          });
+          expect(lines, `${name} remains readable without letter-by-letter wrapping`).toBeLessThanOrEqual(2);
+        }
+        const readableBudget = await page.getByLabel('Lifetime token cap for layout-report').evaluate(input => {
+          const field = input as HTMLInputElement;
+          const style = getComputedStyle(field);
+          const context = document.createElement('canvas').getContext('2d')!;
+          context.font = style.font;
+          return field.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) >= context.measureText(field.value).width;
+        });
+        expect(readableBudget, 'The complete token cap fits in its input').toBe(true);
+        const preview = page.getByRole('button', {name:'Preview and edit', exact:true});
+        await preview.scrollIntoViewIfNeeded();
+        const visibleAction = await preview.evaluate(button => {
+          const rect = button.getBoundingClientRect();
+          return rect.left >= 0 && rect.right <= innerWidth;
+        });
+        expect(visibleAction, 'Report actions remain reachable within the page').toBe(true);
+        await tables.first().locator('..').screenshot({path:`outputs/studio-style/shared-report-actions-${theme}-${width}.png`});
+      }
       await expectStudioTypography(page,route);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await tables.first().locator('..').screenshot({path:`outputs/studio-style/shared-${route.replaceAll('/','-')}-${theme}-${width}.png`});

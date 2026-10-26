@@ -258,6 +258,10 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-browse-filter-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-items: start; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-browse-filter-toggle { display: none; }
 #root .admin-dashboard table { width: 100%; border-collapse: collapse; table-layout: fixed; font-family: var(--font-label); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); }
+#root .admin-dashboard .admin-data-table--wide { table-layout: auto; min-width: var(--workspace-wide-table-min-width); }
+#root .admin-dashboard .admin-data-table--wide :is(th,button) { overflow-wrap: normal; }
+#root .admin-dashboard .admin-data-table--wide button { min-width: var(--studio-table-action-width); }
+#root .admin-dashboard .admin-data-table--wide input { min-width: var(--studio-table-details-width); }
 #root .admin-dashboard :is(th,td) { padding: var(--workspace-panel-inset); text-align: start; vertical-align: top; border: 0; overflow-wrap: anywhere; }
 #root .admin-dashboard :is(thead,.admin-data-table tbody tr,.admin-content-row-group) { border-bottom: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard th { color: var(--workspace-muted); background: var(--workspace-raised); }
@@ -812,6 +816,7 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard .admin-content-expanded-row:not([hidden]) { display: block; }
   #root .admin-dashboard .admin-content-expanded-row > td { display: block; }
   #root .admin-dashboard .admin-data-table { display: block; table-layout: auto; }
+  #root .admin-dashboard .admin-data-table--wide { min-width: 0; }
   #root .admin-dashboard .admin-data-table :is(thead,.admin-col-select) { display: none; }
   #root .admin-dashboard .admin-data-table :is(tbody,tr) { display: block; }
   #root .admin-dashboard .admin-data-table td { display: grid; grid-template-columns: minmax(0,1fr); gap: var(--workspace-field-gap); }
