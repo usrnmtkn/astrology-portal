@@ -9502,7 +9502,8 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await workspace.getByRole('heading', { name: 'Reader sources', exact: true }).evaluate(node => node.scrollIntoView({ block: 'center' }));
     await page.screenshot({ path: `test-results/sky-placement-workspace/visit-${theme}-${width}.png` });
 
-    await tabs.getByRole('tab', { name: 'Default reading', exact: true }).click();
+    await tabs.getByRole('tab', { name: 'Default reading', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'Default reading', exact: true })).toHaveAttribute('aria-selected', 'true');
     await expect(workspace.getByText('This reusable reading supplies content', { exact: false })).toBeVisible();
     await expect(workspace.getByText('Synthetic year-neutral default remains intact.', { exact: true })).toBeVisible();
     const establishedHeadingTypography = await workspace.getByRole('heading', { name: 'Sun in Scorpio', exact: true }).evaluate(node => {
@@ -9513,14 +9514,16 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     expect(typography).toEqual(establishedHeadingTypography);
     await expectNoHorizontalOverflow(page, 'Default reading');
     await page.screenshot({ path: `test-results/sky-placement-workspace/default-${theme}-${width}.png` });
-    await tabs.getByRole('tab', { name: 'Writing setup', exact: true }).click();
+    await tabs.getByRole('tab', { name: 'Writing setup', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'Writing setup', exact: true })).toHaveAttribute('aria-selected', 'true');
     await workspace.getByRole('button', { name: 'Edit reusable template', exact: true }).click();
     const editor = page.getByRole('dialog', { name: 'Generated content editor' });
     await expect(editor.getByRole('textbox', { name: 'Article body', exact: true })).toHaveValue(initial[2].body!);
     expect(writes).toHaveLength(0);
     await editor.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(editor).toHaveCount(0);
-    await tabs.getByRole('tab', { name: 'This visit', exact: true }).click();
+    await tabs.getByRole('tab', { name: 'This visit', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'This visit', exact: true })).toHaveAttribute('aria-selected', 'true');
     await expect(body).toHaveValue(initial[0].body!);
     await workspace.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Scorpio edited draft');
     page.once('dialog', dialog => dialog.dismiss());
