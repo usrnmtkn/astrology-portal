@@ -42,9 +42,9 @@ for(const [width,theme,exhausted] of [[390,'light',false],[1440,'dark',false],[3
    await studio.getByRole('button',{name:/^Taurus/}).click();
    await studio.getByText('Seasonal generation record',{exact:true}).click();
    await expect(studio.getByText(exhausted?'Private run: quality_exhausted. 12 model calls; 1 plans; 3 prose candidates.':'Private run: accepted. 6 model calls; 1 plans; 1 prose candidates.',{exact:true})).toBeVisible();
-   await expect(studio.getByText('These candidates have not been copied into the edition or approved for publication.',{exact:true})).toBeVisible();
+   await expect(studio.getByText('Candidates remain private and need your approval.',{exact:true})).toBeVisible();
    const original=exhausted?null:await studio.getByLabel('Private accepted Seasonal candidate').inputValue();
-   if(exhausted){await expect(studio.getByLabel('Private accepted Seasonal candidate')).toHaveCount(0);await expect(studio.getByText('No accepted candidate is available. Failed attempts remain inspection records.',{exact:true})).toBeVisible();}
+   if(exhausted){await expect(studio.getByLabel('Private accepted Seasonal candidate')).toHaveCount(0);await expect(studio.getByText('No accepted candidate. Failed attempts remain available.',{exact:true})).toBeVisible();}
    const storedBefore=(await call({method:'rows'})).find((r:any)=>r.id===id);
    expect(storedBefore.status).toBe('DRAFT');
    expect(storedBefore.sections.horoscopeEdition.passages.find((p:any)=>p.sign==='taurus').body).toBe('');
@@ -52,7 +52,7 @@ for(const [width,theme,exhausted] of [[390,'light',false],[1440,'dark',false],[3
    await studio.getByRole('button',{name:/^Taurus/}).click();await studio.getByText('Seasonal generation record',{exact:true}).click();
    if(exhausted)await expect(studio.getByLabel('Private accepted Seasonal candidate')).toHaveCount(0);
    else await expect(studio.getByLabel('Private accepted Seasonal candidate')).toHaveValue(original!);
-   await expect(studio.getByText('These candidates have not been copied into the edition or approved for publication.',{exact:true})).toBeVisible();
+   await expect(studio.getByText('Candidates remain private and need your approval.',{exact:true})).toBeVisible();
    expect((await call({method:'writer-state'})).calls).toBe(exhausted?12:6);
    expect((await call({method:'rows'})).find((r:any)=>r.id===id)).toEqual(storedBefore);
    expect(await page.locator('body').evaluate(e=>e.scrollWidth<=window.innerWidth)).toBe(true);

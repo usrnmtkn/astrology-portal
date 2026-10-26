@@ -193,7 +193,7 @@ for (const key of expectedDynamicEntries) {
 // Editor, fallback, and publication panels share the review workspace chunk.
 // Both it and source factories must still be absent from startup imports.
 const expectedDeferredGroups = [
-  "admin-deferred-review-tools",
+  "review",
   "admin-source-drafts"
 ];
 const entryImports = new Set(entry.imports ?? []);

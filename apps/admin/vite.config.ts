@@ -143,9 +143,8 @@ export default defineConfig(({ command, mode }) => {
             // generation details, while sharing their optional editing code.
             if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
             // Profile metadata and reconciliation load with their editing panels.
-            if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition)\.mjs$/u.test(id)
+            if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
               || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
-            if (/src\/astro-writing\/horoscopeWriterCatalog\.mjs$/u.test(id)) return "admin-deferred-review-tools";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
             if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-sources";
@@ -160,16 +159,16 @@ export default defineConfig(({ command, mode }) => {
             // Shared controls render immediately and remain outside this lazy group.
             // Editor and publication panels share a deferred workspace.
             if (/apps\/admin\/src\/(?:ArticleBlockStyleFields|ConnectionTransitStudio|FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
-              return "admin-deferred-review-tools";
+              return "review";
             }
             // Review panels and owner publication share one deferred workspace chunk.
             if (/apps\/admin\/src\/(?:TransitNatalReaderPreview|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|HoroscopeGenerationDetails|WeeklyBatchEditorial|StudioEditorReviewPanels|ReviewWorkflowPanel)\.tsx$/u.test(id) || /\/apps\/admin\/src\/(?:ownerPublication|aspectPatternSaveReceipt)\.ts$/u.test(id)) {
-              return "admin-deferred-review-tools";
+              return "review";
             }
             // Fallback editors share the owner-publication workspace; combining
             // their deferred code avoids repeating its controls and copy in gzip.
             if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {
-              return "admin-deferred-review-tools";
+              return "review";
             }
           }
         }

@@ -68,7 +68,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
  const f=await fixture(page,false);try{
  const studio=await f.open();
- await expect(studio.getByText(/Up to 26 paid AI requests: one shared twelve-sign plan/)).toBeVisible();
+ await expect(studio.getByText(/Up to 26 paid AI requests: one twelve-sign plan/)).toBeVisible();
  await studio.getByLabel('I approve this writing plan for generation.').check();
  await studio.getByRole('button',{name:'Generate 12 drafts',exact:true}).click();
  await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status,{timeout:120000,intervals:[1000]}).toBe('complete');

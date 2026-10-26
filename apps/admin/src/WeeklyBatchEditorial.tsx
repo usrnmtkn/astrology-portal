@@ -16,7 +16,6 @@ export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,runni
   }
   return <section className="admin-horoscope-plan" aria-label="Weekly batch editorial gate">
     <p aria-live="polite">{pending?pending.phase==='planning'?'Planning twelve distinct concerns…':'Checking all twelve readings…':current?'The current twelve-sign set passed its batch comparison.':review&&(!review.matchesCurrent||dirty)?'Batch check out of date. Save and recheck.':review?.status==='failed'?'Edit flagged readings, then recheck.':plan?.status==='passed'?'Twelve concerns saved.':'Plan twelve distinct concerns before drafting.'}</p>
-    <p>Compare all twelve for repeated ideas, phrases and endings. No automatic rewrites or retries.</p>
     {plan?.error&&<p role="alert">{plan.error}</p>}
     {review?.error&&<p role="alert">{review.error}</p>}
     {findings.map((finding:any,index:number)=><div className="admin-inline-warning" role="note" key={index}>

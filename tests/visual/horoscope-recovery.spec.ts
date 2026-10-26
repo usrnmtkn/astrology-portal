@@ -201,7 +201,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
       await expect(studio.getByLabel('Complete reading')).toHaveValue(f.original.passages[0].body);
       expect(await f.latest()).toEqual(row);
       await studio.getByRole('button',{name:'2 · Generate',exact:true}).click();
-      await expect(studio.getByText('Your drafts are ready to review.',{exact:true})).toBeVisible();
+      await expect(studio.getByText('Drafts are ready to review.',{exact:true})).toBeVisible();
       await studio.getByRole('button',{name:'Check saved progress',exact:true}).click();
       await expect(studio.getByLabel('Complete reading')).toBeVisible();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -321,7 +321,7 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
    expect((await f.call({method:'writer-state'})).calls).toBe(1);
    await studio.getByLabel('I approve this writing plan for generation.').check();
-   await expect(studio.getByText('Up to 30 paid AI requests, bounded at 3 plans and 3 prose candidates per reading, with independent evaluations. Accepted candidates remain private for inspection.',{exact:true})).toBeVisible();
+   await expect(studio.getByText('Up to 30 paid AI requests: at most 3 plans and 3 prose candidates per reading, independently evaluated. Candidates stay private.',{exact:true})).toBeVisible();
    await studio.getByRole('button',{name:'Retry Aries',exact:true}).click();
    await expect.poll(async()=> (await f.latest()).source_snapshot.horoscopeGeneration.editorialRuns?.aries?.status,{timeout:95000}).toBe('accepted');
    await expect(studio.getByRole('alert')).toHaveCount(0);
