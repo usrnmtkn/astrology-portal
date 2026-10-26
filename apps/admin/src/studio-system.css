@@ -747,6 +747,10 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-horoscope-decision-actions { margin-inline-start: auto; justify-content: flex-end; }
 #root .admin-dashboard .admin-horoscope-actions .admin-danger-button:not(:disabled) { background: var(--studio-error-container); color: var(--studio-on-error-container); border-color: var(--workspace-danger); }
 #root .admin-dashboard .admin-horoscope-wizard progress { width: 100%; accent-color: var(--workspace-primary); }
+@media (min-width: 721px) {
+  #root .admin-dashboard .admin-sky-writeups > .studio-tabs > [role="tablist"] { grid-auto-columns: minmax(0,1fr); }
+  #root .admin-dashboard .admin-sky-writeups > .studio-tabs > [role="tablist"] > [role="tab"] { align-self: stretch; white-space: normal; }
+}
 @media (max-width: 720px) {
   #root .admin-dashboard .studio-detail-list > div { grid-template-columns: minmax(0,1fr); gap: var(--space-1); }
   #root .admin-dashboard .studio-csv-diff { grid-template-columns: minmax(0,1fr); }

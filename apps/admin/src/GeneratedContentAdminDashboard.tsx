@@ -7742,7 +7742,7 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "skyWriteups" && (
-          <section className="admin-template-page">
+          <section className="admin-template-page admin-sky-writeups">
             <h2 className="sr-only">Sky writing workspaces</h2>
             <StudioTabs label="Sky Write-ups workspaces" value={skyWriteupWorkspaceView}
               tabs={skyWriteupWorkspaceTabs} onValueChange={view => {
