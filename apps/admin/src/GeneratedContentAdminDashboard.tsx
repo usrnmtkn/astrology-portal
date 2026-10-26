@@ -37,7 +37,6 @@ import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors }
 import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "../../web/src/content/skyDebilityInterpretation";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
-import { recoverContentStudioCopy } from "./contentStudioCopyRecovery";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import type { SkyForecastPeriod } from "./skyForecastTemplates";
 import ContentLiveStatusBadge, { ContentLiveStatusProvider, useContentLiveStatusLoader, useContentLiveStatusResults, type LiveStatus } from "./ContentLiveStatus";
@@ -5446,17 +5445,24 @@ export function GeneratedContentAdminDashboard() {
           if (current && current !== editorDraftAtSave && current.contentKey === activeDraft.contentKey) {
             if (writesPersonalTransitExactCopy(current)) {
               const { packageDraft: _discarded, ...savedSections } = objectRecord(savedDraft.sections) ?? {};
-              const proposal = draftPackageProposal(current);
+              const record = { ...draftPackageRecord(savedDraft) };
+              const submitted = draftEditablePackageRecord(editorDraftAtSave ?? activeDraft);
+              const edited = draftEditablePackageRecord(current);
+              // Direct-copy editors write packageRecord, not packageDraft. Keep
+              // only newer text here; the response owns publication metadata.
+              for (const field of ["body", "body_you", "body_they", "headline", "summary", "editorial_notes"]) {
+                if (typeof edited[field] === "string" && edited[field] !== submitted[field]) record[field] = edited[field];
+              }
               return {
                 ...current,
                 id: savedDraft.id,
                 updatedAt: savedDraft.updatedAt,
                 sections: {
                   ...savedSections,
-                  packageRecord: {
-                    ...draftPackageRecord(savedDraft),
-                    ...(proposal ?? {})
-                  }
+                  body_you: record.body_you ?? null,
+                  body_they: record.body_they ?? null,
+                  ...(current.sections?.contentStudioReview === null ? { contentStudioReview: null } : {}),
+                  packageRecord: record
                 }
               };
             }
@@ -5492,6 +5498,7 @@ export function GeneratedContentAdminDashboard() {
           const baseline = JSON.parse(recoveryBaseline) as AdminDraft;
           if (baseline.id !== activeDraft.id || baseline.contentKey !== activeDraft.contentKey) throw error;
           if (latest.status === "ARCHIVED") throw new Error("This source was archived while you were editing. Your edits are still here; restore the saved source before applying them.");
+          const { recoverContentStudioCopy } = await import("./contentStudioCopyRecovery");
           const latestDraft = draftFromRow(latest);
           const proposal = recoverContentStudioCopy(
             draftEditablePackageRecord(baseline), draftEditablePackageRecord(activeDraft), draftEditablePackageRecord(latestDraft));

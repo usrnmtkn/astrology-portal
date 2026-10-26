@@ -128,6 +128,107 @@ test('Owner authors an activation after a completed empty source lookup', async 
     await expect(map).toContainText('Complete new Friend activation after verified missing source.');
   } finally { store.close(); }
 });
+for (const key of [keys[5], keys[6]]) for (const width of [390,1440]) test(`Owner keeps transit edits typed before a save response ${key} ${width}`, async ({page}) => {
+  test.setTimeout(60000);
+  const exact = key.split('/').length === 8;
+  const record = structuredClone(exact
+    ? transitNatalExactSourceDraft({planet:'neptune',natalPoint:'chiron',aspect:'conjunction',sign:'aquarius',transitHouse:'12',natalHouse:'11'}).sections.packageRecord
+    : servingPackageRecords.get(key)!);
+  for (const field of ['body','body_you','body_they']) if (typeof record[field] === 'string') record[field] = `Synthetic saved ${field}. Complete saved final sentence.`;
+  if (exact) record.body = record.body_you;
+  record.headline = 'Synthetic saved headline';
+  record.summary = 'Synthetic saved summary';
+  record.review_status = 'needs_review';
+  const row = {id:'pending-transit-save',content_key:key,headline:'Pending transit fixture',body:record.body ?? record.body_you,summary:'',
+    surface:'sky',mode:'feed',status:'DRAFT',lane:'reference',review_state:'needs-review',target_date:null,
+    provider:'tldrastro-fallback-architecture-v3',block_type:'fallback_hook',event_type:'fallback-hook',
+    sections:{packageRecord:record},facts:{fallbackArchitectureV3:true},
+    source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',contentSystem:'fallback',review_status:'needs_review'},updated_at:'2026-10-15T12:00:00Z'};
+  const store = await studioApiStore([row]);
+  let release!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  let committed = false;
+  let savedVersion: string | undefined;
+  const writes: any[] = [];
+  try {
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(theme => {localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);}, width === 390 ? 'dark' : 'light');
+    await routeStudioInventoryApi(page,{call:async message => {
+      if (message.method === 'PATCH') writes.push(message.body);
+      const result = await store.call(message);
+      if (!committed && message.method === 'PATCH' && (message.body as any)?.id === row.id) {
+        expect(result.status).toBe(200);
+        savedVersion = result.payload.rows[0].updated_at;
+        committed = true;
+        await held;
+      }
+      return result;
+    }});
+    await page.goto('/admin/content#exact-content');
+    const open = () => page.getByRole('row').filter({has:page.getByText(key,{exact:true})}).getByRole('button',{name:'Edit',exact:true}).click();
+    await open();
+    const editor = page.getByRole('dialog',{name:'Generated content editor'});
+    const savebar = editor.locator('.admin-editor-savebar');
+    const publish = savebar.getByRole('button',{name:'Approve & publish',exact:true});
+    await publish.click();
+    await expect.poll(() => committed).toBe(true);
+    await expect(savebar).toHaveAttribute('aria-busy','true');
+    const you = 'New You opening typed while the reply waits.\n\nComplete new You final sentence.';
+    const they = width === 1440 ? '' : 'New Friend opening typed while the reply waits.\n\nComplete new Friend final sentence.';
+    const title = 'New title typed while the reply waits';
+    const summary = 'New summary typed while the reply waits.';
+    await editor.locator('.admin-title-field input').first().fill(title);
+    await editor.locator('.admin-copy-field-summary').fill(summary);
+    await editor.locator('[data-sky-field="body_you"]').fill(you);
+    if (exact) await editor.locator('[data-sky-field="body_they"]').fill(they);
+    const firstReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
+    release();
+    const firstResponse = await firstReply;
+    expect(firstResponse.status()).toBe(200);
+    expect(await firstResponse.finished()).toBeNull();
+    await expect(savebar).toHaveAttribute('aria-busy','false');
+    await expect(editor.locator('.admin-title-field input').first()).toHaveValue(title);
+    await expect(editor.locator('.admin-copy-field-summary')).toHaveValue(summary);
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(you);
+    if (exact) await expect(editor.locator('[data-sky-field="body_they"]')).toHaveValue(they);
+    // The pending copy must remain unsaved, and cannot leak into the earlier publication.
+    const earlier = (await store.call({method:'rows'}))[0].sections.packageRecord;
+    expect(earlier.review_status).toBe('approved');
+    for (const field of ['body','body_you','body_they']) if (typeof record[field] === 'string') expect(earlier[field]).toBe(record[field]);
+    const draftReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
+    await savebar.getByRole('button',{name:'Save draft',exact:true}).click();
+    const draftResponse = await draftReply;
+    expect(draftResponse.status()).toBe(200);
+    expect(await draftResponse.finished()).toBeNull();
+    await expect(savebar).toHaveAttribute('aria-busy','false');
+    const saved = (await store.call({method:'rows'}))[0];
+    expect(writes[1].expectedUpdatedAt).toBe(savedVersion);
+    expect(writes[1].sections.packageRecord.review_status).toBe('approved');
+    expect(saved.status).toBe('DRAFT');
+    expect(saved.sections.packageRecord).toMatchObject({headline:title,summary});
+    expect(saved.sections.packageRecord.body_you).toBe(you);
+    if (exact) expect(saved.sections.packageRecord.body_they).toBe(they);
+    const publishedThey = they || 'Complete Friend copy restored after deliberately clearing the field.';
+    if (exact && !they) await editor.locator('[data-sky-field="body_they"]').fill(publishedThey);
+    const publishReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
+    await publish.click();
+    const publishResponse = await publishReply;
+    expect(publishResponse.status()).toBe(200);
+    expect(await publishResponse.finished()).toBeNull();
+    await expect(savebar).toHaveAttribute('aria-busy','false');
+    const reader = await store.call({method:'POST',url:'/api/content-reader',body:{keys:[key]}});
+    expect(reader.status).toBe(200);
+    expect(reader.payload.rows[0].sections.packageRecord.body_you).toBe(you);
+    if (exact) expect(reader.payload.rows[0].sections.packageRecord.body_they).toBe(publishedThey);
+    await page.reload();
+    await open();
+    await expect(editor.locator('.admin-title-field input').first()).toHaveValue(title);
+    await expect(editor.locator('.admin-copy-field-summary')).toHaveValue(summary);
+    await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(you);
+    if (exact) await expect(editor.locator('[data-sky-field="body_they"]')).toHaveValue(publishedThey);
+  } finally {release();await page.unrouteAll({behavior:'wait'});store.close();}
+});
+
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Owner publishes unchanged saved package drafts ${width} ${theme}`, async ({page}) => {
   test.setTimeout(120000);
   const rows = keys.map((key,index) => {
