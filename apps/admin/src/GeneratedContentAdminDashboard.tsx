@@ -438,6 +438,11 @@ const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }
   { value: "house-transits", label: "House Transits" },
   { value: "ingress-preview", label: "Preview without saving" }
 ];
+const skyWriteupNavigationTabs = (["daily-summary", "transits-to-natal", "house-transits", "house-aspect-bridges", "ingress-preview"] as const)
+  .map(value => {
+    const tab = skyWriteupWorkspaceTabs.find(tab => tab.value === value)!;
+    return value === "transits-to-natal" ? { ...tab, label: "Transit to Natal Charts" } : tab;
+  });
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
@@ -7245,12 +7250,7 @@ export function GeneratedContentAdminDashboard() {
                 {(item.page === "calendarWriteups" || item.page === "skyWriteups") && (
                   <div className="admin-nav-workspace-group" hidden={activePage !== item.page}
                     aria-label={`${item.label} sections`}>
-                    {(item.page === "calendarWriteups" ? calendarWriteupWorkspaceTabs : [
-                      skyWriteupWorkspaceTabs[0],
-                      { value: "transits-to-natal", label: "Transit to Natal Charts" },
-                      skyWriteupWorkspaceTabs[3],
-                      skyWriteupWorkspaceTabs[4]
-                    ]).map(tab => <StudioButton key={tab.value} type="button"
+                    {(item.page === "calendarWriteups" ? calendarWriteupWorkspaceTabs : skyWriteupNavigationTabs).map(tab => <StudioButton key={tab.value} type="button"
                       onClick={() => navigateAdminPage(item.page, new URLSearchParams({ view: tab.value }))}
                       aria-current={activePage === item.page && (item.page === "calendarWriteups" ? calendarWriteupWorkspaceView : skyWriteupWorkspaceView) === tab.value ? "page" : undefined}>
                       <span>{tab.label}</span>

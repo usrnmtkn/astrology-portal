@@ -873,9 +873,9 @@ export function SkyDetailArticle({
                         {skyActiveChartEvents(detail.personalizedPlacement.natalAspects).map((aspect) => (
                           <section className="sky-detail-personalized-aspect" key={aspect.key}>
                             <h4>{aspect.heading}</h4>
-                            {aspect.members.flatMap((member) => member.body ? fullDetailReaderFacingParagraphs(skyPlacementAspectParagraphs(member.body, member.bridge, member.timing)).map((paragraph, index) => (
+                            {aspect.members.map((member) => fullDetailReaderFacingParagraphs(skyPlacementAspectParagraphs(member)).map((paragraph, index) => (
                               <FormattedProse key={`${member.key}-${index}`} text={paragraph} />
-                            )) : [])}
+                            )))}
                           </section>
                         ))}
                       </>

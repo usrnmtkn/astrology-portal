@@ -31,7 +31,8 @@ assert(skyPlacementAspectBridgeErrors(key, 'Through Nov. 15, 2026.').length);
 const bridge = 'Synthetic bridge opening. Synthetic bridge final sentence.';
 const passage = 'Synthetic source opening.\n\nSynthetic source final sentence.';
 const time = 'Until November 15, 2026';
-const joined = skyPlacementAspectParagraphs(passage, bridge, time).join('\n\n');
+const joined = skyPlacementAspectParagraphs({ body: passage, bridge, timing: time }).join('\n\n');
+assert.deepEqual(skyPlacementAspectParagraphs({ body: null, bridge, timing: time }), []);
 assert.equal(joined, `${time}. ${bridge} ${passage}`);
 assert.equal(joined.replace(`${time}. ${bridge} `, ''), passage, 'Every byte of the source passage remains.');
 for (const timed of [
@@ -39,16 +40,16 @@ for (const timed of [
   `${passage}\n\nThis contact continues until November 15, 2026.`,
   `Until November 15, 2026, the synthetic source opening stays complete.\n\nSynthetic source final sentence.`
 ]) {
-  const result = skyPlacementAspectParagraphs(timed, bridge, time).join('\n\n');
+  const result = skyPlacementAspectParagraphs({ body: timed, bridge, timing: time }).join('\n\n');
   assert.equal(result.match(/November 15, 2026/gu)?.length, 1);
   assert.equal(result.replace(`${bridge} `, '').replace(` ${bridge}`, ''), timed);
   if (timed.startsWith('Through') || timed.startsWith('Until')) assert(result.indexOf('November 15') < result.indexOf(bridge));
 }
-assert.equal(skyPlacementAspectParagraphs('This lasts a week or two. ' + passage, bridge, time).join('\n\n'), `${bridge} This lasts a week or two. ${passage}`);
+assert.equal(skyPlacementAspectParagraphs({ body: 'This lasts a week or two. ' + passage, bridge, timing: time }).join('\n\n'), `${bridge} This lasts a week or two. ${passage}`);
 const abbreviated = `Through Nov. 15, 2026. ${passage}`;
-assert.equal(skyPlacementAspectParagraphs(abbreviated, bridge, time).join('\n\n'), `Through Nov. 15, 2026. ${bridge} ${passage}`);
+assert.equal(skyPlacementAspectParagraphs({ body: abbreviated, bridge, timing: time }).join('\n\n'), `Through Nov. 15, 2026. ${bridge} ${passage}`);
 const embeddedAbbreviation = `${passage}\n\nThis contact continues until Nov 15, 2026.`;
-assert.equal(skyPlacementAspectParagraphs(embeddedAbbreviation, bridge, time).join('\n\n'), `${bridge} ${embeddedAbbreviation}`);
+assert.equal(skyPlacementAspectParagraphs({ body: embeddedAbbreviation, bridge, timing: time }).join('\n\n'), `${bridge} ${embeddedAbbreviation}`);
 const nodes = skyActiveChartEvents([
   { key: 'north', heading: 'Venus conjunction your North Node', body: passage, bridge, timing: time },
   { key: 'south', heading: 'Venus opposition your South Node', body: passage, bridge: 'Other bridge.', timing: time }

@@ -266,7 +266,7 @@ export default defineConfig(({ mode }) => {
             if (id.endsWith("/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs")) return "sky";
             // Eligibility helpers are already read at startup. Share their small
             // transport instead of adding a preload and gzip header per identity.
-            if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|generatedContentEligibility)\.ts$/u.test(id)
+            if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|skyPlacementAspectBridge|generatedContentEligibility)\.ts$/u.test(id)
               || id.endsWith("/services/templateInterpolation.ts")
               || id.endsWith("/shared/components/formattedWritingLoader.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";

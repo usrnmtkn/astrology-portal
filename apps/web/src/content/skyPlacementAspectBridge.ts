@@ -35,7 +35,12 @@ export function skyPlacementAspectBridgeErrors(key: string, body: string) {
  * Source-owned timing stays in place; an existing opening timing sentence
  * precedes the bridge. Untimed sources receive one calculated lead-in.
  */
-export function skyPlacementAspectParagraphs(body: string, bridge: string | null | undefined, timing: string | null | undefined) {
+export function skyPlacementAspectParagraphs({ body, bridge, timing }: {
+  body: string | null;
+  bridge?: string | null;
+  timing?: string | null;
+}) {
+  if (!body) return [];
   const paragraphs = body.split(/\n\s*\n/u);
   const first = paragraphs[0] ?? '';
   const dated = datedTiming.test(body);

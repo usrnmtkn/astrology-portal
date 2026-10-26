@@ -30,6 +30,10 @@ existing aspect sources. It is not a Sky-only package partition. A publication
 change invalidates the existing source identity; an unavailable published source
 uses the established load error and retry flow. There is no separate prose cache.
 
+The pure bridge contract uses the shared reader eligibility chunk, so visiting
+Sky does not download Studio editor tools. Sidebar entries select workspaces by
+their stable values rather than array positions.
+
 The reader retains the existing source `body` unchanged and stores bridge and
 timing separately. For an untimed source, it displays calculated timing, bridge,
 then the complete original passage. If the source already contains timing, it
@@ -48,8 +52,9 @@ Verification:
 - `npm run test:sky-placement-aspect-bridges` exercises the actual Studio and
   public reader handlers, draft privacy, conflict checks, publication, dynamic
   packaging and retirement, plus source integrity and timing composition.
-- `tests/visual/sky-house-aspect-bridge-studio.spec.ts` checks discovery,
-  new/open/save/reopen/publish/reload and house isolation in both themes at desktop/mobile widths.
+- `tests/visual/sky-house-aspect-bridge-studio.spec.ts` checks sidebar discovery,
+  heading order and typography, new/open/save/reopen/publish/reload, actual reader
+  Live status and house isolation in both themes at desktop/mobile widths.
 - `tests/visual/sky-placement-aspect-bridges.spec.ts` uses a calculated synthetic
   chart, checks draft/publication visibility, full source openings and endings,
   timing counts and persistence after reload through the built reader.

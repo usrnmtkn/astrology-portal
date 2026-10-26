@@ -15,12 +15,39 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
         localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
         localStorage.setItem('tldrastro:studio-theme', theme);
       }, theme);
-      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
+        if (url.pathname !== '/api/admin/content-live-status') return false;
+        const result = await store.call({ method: route.request().method(), url: url.pathname, body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload }); return true;
+      } });
       const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
-      await page.goto(`${entry}#sky-writeups?view=house-aspect-bridges`);
+      const openNavigation = async () => {
+        if (width !== 390) return;
+        const toggle = page.getByRole('button', { name: /^(?:Open|Hide) Content Studio navigation$/ });
+        await expect(toggle).toBeVisible();
+        if (await toggle.getAttribute('aria-expanded') === 'false') await toggle.click();
+      };
+      await page.goto(`${entry}#sky-writeups?view=daily-summary`);
+      await openNavigation();
+      await page.getByLabel('Sky Write-ups sections').getByRole('button', { name: 'House × aspect bridges', exact: true }).click();
       const region = page.getByRole('region', { name: 'House × aspect bridges', exact: true });
       await expect(region).toBeVisible();
-      await expect(region.getByRole('heading', { level: 2, name: 'House × aspect bridges', exact: true })).toBeVisible();
+      const heading = region.getByRole('heading', { level: 2, name: 'House × aspect bridges', exact: true });
+      await expect(heading).toBeVisible();
+      await expect(page.locator('.admin-main h1, .admin-main h2')).toHaveText(['Sky Write-ups', 'Sky writing workspaces', 'House × aspect bridges']);
+      const typeStyle = (element: HTMLElement) => {
+        const style = getComputedStyle(element);
+        return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as any]]));
+      };
+      const headingStyle = await heading.evaluate(typeStyle);
+      await openNavigation();
+      await page.getByRole('button', { name: 'Connection Transits', exact: true }).click();
+      await expect(page.getByRole('heading', { name: 'Connection Activations', level: 2, exact: true })).toBeVisible();
+      expect(headingStyle).toEqual(await page.getByRole('heading', { name: 'Connection Activations', level: 2, exact: true }).evaluate(typeStyle));
+      await openNavigation();
+      await page.getByRole('button', { name: 'Sky Write-ups', exact: true }).click();
+      await openNavigation();
+      await page.getByLabel('Sky Write-ups sections').getByRole('button', { name: 'House × aspect bridges', exact: true }).click();
       await expect(region.getByRole('combobox', { name: 'House', exact: true })).toHaveValue('8');
       await expect(region.getByRole('combobox', { name: 'Transiting planet', exact: true })).toHaveValue('venus');
       await expect(region.getByRole('combobox', { name: 'Aspect', exact: true })).toHaveValue('trine');
@@ -42,12 +69,14 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await page.reload();
       await region.getByRole('button', { name: 'Open bridge', exact: true }).click();
       await expect(field).toHaveValue(body);
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Draft');
       await expect(editor).toContainText('Transit aspect · natal contact');
       await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('LIVE');
       await page.reload();
       await region.getByRole('button', { name: 'Open bridge', exact: true }).click();
       await expect(field).toHaveValue(body);
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
       await editor.screenshot({ path: `test-results/house-aspect-bridge-studio-${width}-${theme}.png` });
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
       await region.getByRole('combobox', { name: 'House', exact: true }).selectOption('7');
