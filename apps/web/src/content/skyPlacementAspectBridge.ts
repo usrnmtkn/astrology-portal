@@ -42,6 +42,7 @@ export function skyPlacementAspectParagraphs({ body, bridge, timing }: {
 }) {
   if (!body) return [];
   const paragraphs = body.split(/\n\s*\n/u);
+  if (!bridge) return paragraphs;
   const first = paragraphs[0] ?? '';
   const dated = datedTiming.test(body);
   const duration = /\b(?:for (?:the next|another)|lasts? (?:about |a |an |one |two |three |several |\d)|over the next|this (?:week|month|year)|today|tonight)\b/iu.test(body);

@@ -21,8 +21,8 @@ The record uses `content_role: fallback_hook`, complete `body` prose and
 `render_policy: sky-placement-house-aspect-bridge-v1`. Publication validates the
 identity, role, policy, complete nonempty prose, and absence of variables or dated
 timing. Bridge dates come from calculated contact timing, not saved prose.
-Draft, missing, invalid and retired bridges stay absent. Their absence never
-replaces or hides the complete existing aspect source.
+Draft, missing, invalid and retired bridges stay absent. Their absence leaves
+the complete existing aspect passage and its timing unchanged.
 
 Personal Transit publication hydration loads the bridge through the same public
 reader projection, pagination, version checks and independent overlay as its

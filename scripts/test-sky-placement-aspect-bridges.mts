@@ -33,6 +33,8 @@ const passage = 'Synthetic source opening.\n\nSynthetic source final sentence.';
 const time = 'Until November 15, 2026';
 const joined = skyPlacementAspectParagraphs({ body: passage, bridge, timing: time }).join('\n\n');
 assert.deepEqual(skyPlacementAspectParagraphs({ body: null, bridge, timing: time }), []);
+assert.equal(skyPlacementAspectParagraphs({ body: passage, timing: time }).join('\n\n'), passage,
+  'An absent bridge preserves the existing reader passage without adding timing.');
 assert.equal(joined, `${time}. ${bridge} ${passage}`);
 assert.equal(joined.replace(`${time}. ${bridge} `, ''), passage, 'Every byte of the source passage remains.');
 for (const timed of [
