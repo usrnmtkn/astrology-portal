@@ -35,6 +35,7 @@ const rows = () => [row(mainKey, 0), row(vocabularyKey, 1)];
 const requests = [], unexpected = [];
 let offlineReads = 0;
 const originalFetch = globalThis.fetch;
+const originalTimeout = AbortSignal.timeout;
 const state = { client: { from(table) {
   assert.equal(table, 'content_publications');
   let lower, upper, after;
@@ -173,8 +174,54 @@ try {
   assert.ok((await loadDated(['you'], '2026-10-15')).has(vocabularyKey), 'Undated shared vocabulary remains eligible');
   assert.equal(body(await loadDated(['you'])), body(retried), 'An undated request retains dated offline rows');
   assert.equal(offlineReads, 2, 'Dated controls use a separate actual offline cache');
+
+  // A healthy paged inventory can exceed eight seconds in total. Exercise the
+  // actual surface entry point with a virtual clock instead of waiting in CI.
+  state.client = onlineClient; rowTargetDate = null; revision = 5;
+  const inventory = Array.from({ length: 14 }, (_, index) => ({ ...row(`${mainKey}/page-${index + 1}`, 0),
+    id: `00000000-0000-4000-9000-${String(index + 1).padStart(12, '0')}` }));
+  const inventoryPublications = inventory.map(item => ({ content_key: item.content_key, state: 'live', revision,
+    row_id: item.id, row_updated_at: item.updated_at, updated_at: item.updated_at }));
+  let clock = 0, slowPage = -1, completedPages = 0, pageRequests = 0, deadlines = [];
+  AbortSignal.timeout = milliseconds => {
+    const controller = new AbortController();
+    deadlines.push({ at: clock + milliseconds, controller });
+    return controller.signal;
+  };
+  globalThis.fetch = async (input, init) => {
+    if (String(input) === '/content-studio-last-known-good.json') {
+      return Response.json({ schema: 'content-studio-last-known-good-v2', rows: [], rowCount: 0, publications: [] });
+    }
+    assert.equal(String(input), '/api/content-reader');
+    const query = JSON.parse(String(init.body));
+    const index = query.afterId ? inventory.findIndex(item => item.id === query.afterId) + 1 : 0;
+    assert.equal(index, completedPages, 'The cursor must continue from the previous complete page');
+    pageRequests++;
+    clock += index === slowPage ? 21_000 : 1_000;
+    for (const deadline of deadlines) if (deadline.at <= clock) {
+      deadline.controller.abort(new DOMException('Synthetic page timeout', 'TimeoutError'));
+    }
+    init.signal.throwIfAborted();
+    completedPages++;
+    return Response.json({ schema: READER_ROW_SCHEMA, rows: [inventory[index]], publications: [inventoryPublications[index]],
+      nextCursor: index + 1 < inventory.length ? inventory[index].id : null });
+  };
+  const inventoryApi = await import(pathToFileURL(modulePath).href + '?inventory');
+  const completeInventory = await inventoryApi.loadLiveGeneratedContentForSurfaces(['natal', 'you']);
+  assert.equal(completedPages, 14, 'The full surface inventory must finish past the former whole-read deadline');
+  assert.equal(clock, 14_000);
+  for (const item of inventory) assert.equal(completeInventory.get(item.content_key)?.body, item.body,
+    'Every complete published passage, including the final page, must survive pagination');
+  for (const stalledPage of [0, 9]) {
+    clock = 0; deadlines = []; completedPages = 0; pageRequests = 0; slowPage = stalledPage;
+    const failedInventory = await inventoryApi.loadLiveGeneratedContentForSurfaces(['natal', 'you']);
+    assert.equal(pageRequests, stalledPage + 1, 'A stalled page must stop without fetching another page');
+    assert.equal(completedPages, stalledPage);
+    assert.equal(failedInventory.size, 0, 'A failed inventory must not expose its partial new pages');
+  }
   assert.deepEqual(unexpected, []);
-  console.log('PASS actual surface loader: post-ledger active sharing, separate query identities, settled eviction, generation isolation, retirement, no-client/offline recovery and explicit retry.');
+  console.log('PASS actual surface loader: sharing, identities, generation isolation, retirement, offline recovery, full paged inventory and stalled-page bounds.');
 } finally {
-  globalThis.fetch = originalFetch; delete globalThis[symbol]; rmSync(temporary, { recursive: true, force: true });
+  globalThis.fetch = originalFetch; AbortSignal.timeout = originalTimeout;
+  delete globalThis[symbol]; rmSync(temporary, { recursive: true, force: true });
 }
