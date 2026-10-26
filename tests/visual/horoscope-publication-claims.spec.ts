@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
-import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyRulerBodies,createWeeklyContextPublicationFixture} from '../helpers/horoscope-publication-fixture.mts';
+import {createSeasonalPublicationFixture,seasonalClaimBodies,createMonthlyAspectPublicationFixture,monthlyAspectBody,createWeeklyAspectPublicationFixture,weeklyAspectBodies,weeklyRulerBodies,createWeeklyContextPublicationFixture,createWeeklyGrammarPublicationFixture} from '../helpers/horoscope-publication-fixture.mts';
 import {horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
@@ -124,6 +124,14 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
     const exact=contextRow.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body;
     await expect(article).toContainText(exact);await page.reload();await expect(article).toContainText(exact);
    }
+   const grammar=await createWeeklyGrammarPublicationFixture(call);expect(grammar.status).toBe(200);const grammarRow=grammar.payload.rows[0];
+   await page.goto(`/admin/content#horoscopes?edition=${grammarRow.id}`);
+   await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+   await expect(studio).toContainText('12/12 readings ready');await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();
+   await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
+   for(const p of grammarRow.sections.horoscopeEdition.passages)await expect(studio.getByRole('region',{name:`${p.sign[0].toUpperCase()+p.sign.slice(1)} reading preview`})).toContainText(p.body);
+   await page.reload();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();await expect(checks).toHaveCount(0);await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();
+   const unchanged=(await call({method:'rows'})).find((r:any)=>r.id===grammarRow.id);expect(unchanged).toEqual(grammarRow);expect(unchanged.status).toBe('DRAFT');expect((await call({method:'writer-state'})).calls).toBe(0);
   }finally{
    // Reader refreshes may still be using the fixture after the final visible
    // assertion. Drain their handlers before terminating its IPC transport.
