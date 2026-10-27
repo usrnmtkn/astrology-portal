@@ -61,7 +61,9 @@ const horoscope = {...saved, content_key:'horoscope/weekly/fixture', mode:'artic
   source_snapshot:{history:'Complete synthetic evidence. '.repeat(700_000)}, studio_facts:null};
 globalThis.fetch = async input => {
   const query = new URL(String(input)).searchParams;
-  assert.equal(query.get('mode'),'eq.article');
+  assert.equal(query.get('mode'),null);
+  assert.equal(query.get('or'),'(mode.eq.article,and(mode.eq.studio-draft,event_type.eq.horoscope-edition-revision))','Horoscope storage reads include only editions and their private revisions');
+  assert.equal(query.get('and'),query.has('id')?null:'(or(event_type.neq.horoscope-edition-revision,event_type.is.null,status.neq.ARCHIVED))','Completed revisions do not obscure editions, but exact-ID recovery remains available');
   const columns=query.get('select');
   return Response.json([columns==='*'?horoscope:Object.fromEntries(columns.split(',').map(key=>[key,horoscope[key]]))]);
 };
