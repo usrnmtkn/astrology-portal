@@ -245,6 +245,12 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    const live=(await call({method:'rows'})).find((row:any)=>row.id===draft.id);
    const changed=await call({method:'PATCH',body:{id:live.id,expectedUpdatedAt:live.updated_at,status:'DRAFT'}});expect(changed.status).toBe(200);
+   expect(changed.payload.rows[0].event_type).toBe('horoscope-edition-revision');
+   expect(changed.payload.rows[0].id).not.toBe(live.id);
+   expect((await call({method:'rows'})).find((row:any)=>row.id===live.id)).toEqual(live);
+   await page.reload();await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
+   // Only an explicit archive withdraws the published edition; draft saves keep it live.
+   const archived=await call({method:'PATCH',body:{id:live.id,expectedUpdatedAt:live.updated_at,status:'ARCHIVED'}});expect(archived.status).toBe(200);
    await page.reload();await expect(page.getByRole('status')).toContainText('weekly horoscopes haven’t been published');
    await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','No weekly reading yet']);
    await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));

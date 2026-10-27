@@ -239,7 +239,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       let row=matching.rows?.[0]??rows.find(row=>isHoroscopeEditionKey(row.content_key,edition.window)&&sameEditionValue(row.sections?.horoscopeEdition?.window,edition.window));
       if(row?.inventory_only)row=await readSaved(row.id,controller.signal);
       if(!row){
-        const {editionDraft}=await import('./HoroscopeSaveRecovery');
+        const {editionDraft}=await import('./horoscopeEditionDraft');
         const result=await request(secret,endpoint,{
           ...editionDraft(edition,{brief:facts.brief,signature:facts.signature},{horoscopeOutlines:{},studioWritingProfile:profiles.profiles.find((p:any)=>p.profile.period===period)??null,editorialImport:null})
         },'POST',controller.signal);
@@ -280,7 +280,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
       const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
-      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:ownerTransport!.horoscopePublicationAction(saved),expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : (await import('./HoroscopeSaveRecovery')).editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
+      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:ownerTransport!.horoscopePublicationAction(saved),expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : (await import('./horoscopeEditionDraft')).editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
       const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
       const data=ownerTransport?await ownerTransport.publishSavedHoroscope(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved,ownerTransport.horoscopePublicationAction(saved),validationOverride))):await write();
       const row=data.rows?.[0];
