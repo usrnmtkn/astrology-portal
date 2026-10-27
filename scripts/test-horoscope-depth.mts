@@ -58,7 +58,7 @@ for(const [date,timeZone] of [['2026-10-01','America/New_York'],['2027-03-02','A
  assert(horoscopeAspectFindings(sampledClaim,{...brief,events:[]}).length,'A sampled aspect cannot establish an exact event');
  const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Depth fixture',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},sourceSnapshot:{}});
  assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
- const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);
+ const plan=await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at});assert.equal(plan.status,200);row=plan.payload.rows[0];
  for(const audience of ['aquarius','overview']){
   const act=async(action:string,extra:any={})=>{const r=await invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});if(r.payload.rows?.[0])row=r.payload.rows[0];return r;};
   const generated=await act('generate',{sign:audience,approvedPlanHash:plan.payload.plan.planHash});assert.equal(generated.status,202,JSON.stringify(generated.payload));
@@ -100,7 +100,7 @@ assert.equal(result.status,200,JSON.stringify(result.payload));let row=result.pa
 const action=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});
 const completed=(sign:string)=>({status:'completed',usage:{input_tokens:100,output_tokens:40},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({headline:`${sign} & ${sign} Rising`,body:'You can read this fixture\u2014and correct its punctuation.'})}]}]});
 for(const [sign,immediate] of [['aries',false],['taurus',true]] as const){
- const before=writerFixture.calls;const plan=await action('prepare');assert.equal(plan.status,200);
+ const before=writerFixture.calls;const plan=await action('prepare');assert.equal(plan.status,200);row=plan.payload.rows[0];
  if(immediate)writerFixture.startResult=completed('Taurus');
  result=await action('generate',{sign,approvedPlanHash:plan.payload.plan.planHash});
  if(!immediate){assert.equal(result.status,202);row=result.payload.rows[0];writerFixture.nextResult=completed('Aries');result=await action('poll');}

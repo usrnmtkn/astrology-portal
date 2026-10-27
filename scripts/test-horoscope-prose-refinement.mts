@@ -90,9 +90,14 @@ try{
       const data=JSON.parse(prose.input.split(header+'\n')[1].split('\n')[0]);assert(!('authority' in data));
     }
     if(period==='weekly'){
+      assert(prose.instructions.includes('An opening may need several connected sentences'));
+      assert(prose.instructions.includes('No compulsory hook'));
+      assert(prose.instructions.includes('abstract psychological verdict'));
+      assert(prose.input.includes('without requiring a psychological revelation'));
       const facts=JSON.parse(prose.input.split('CALCULATED FACTS\n')[1].split('\n')[0]);
       assert.equal(facts.signs.length,1);assert.equal(facts.signs[0].sign,'aries');assert.equal(packet.brief.signs.length,12);
     }
+    if(period!=='weekly')assert(!prose.instructions.includes('An opening may need several connected sentences'),'Weekly prose direction does not leak to Monthly or Seasonal');
     if(period==='monthly'){
       assert(!prose.input.includes('retain their primary voice role'));
       assert(prose.input.includes('Follow the current source-priority order in the saved Monthly profile'));

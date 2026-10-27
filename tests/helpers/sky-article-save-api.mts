@@ -1,3 +1,5 @@
+import {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
+export {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
 import horoscopeWriter from '../../api/admin/horoscope-writing';
 import {applyCheckpointFixture} from './horoscope-checkpoint-fixture.mts';
 import {decodeWeeklyHistoryRow} from '../../api/_lib/horoscope-history-storage';
@@ -103,6 +105,7 @@ globalThis.fetch = async (input: any, options: any = {}) => {
  if (url.pathname !== '/rest/v1/generated_interpretations') throw new Error(`Unexpected storage path ${url.pathname}`);
  const found = [...store.rows.values()].filter(row => matches(row, url.searchParams));
  if (!options.method || options.method === 'GET') {
+  if(url.searchParams.get('order')?.startsWith('sections->horoscopeEdition->window->>startsAt.desc'))found.sort((a:any,b:any)=>b.sections.horoscopeEdition.window.startsAt.localeCompare(a.sections.horoscopeEdition.window.startsAt)||b.updated_at.localeCompare(a.updated_at)||a.id.localeCompare(b.id));
   if (url.searchParams.get('order')?.startsWith('updated_at.desc')) found.sort((a: any, b: any) => b.updated_at.localeCompare(a.updated_at));
   const offset = Number(url.searchParams.get('offset') ?? 0);
   const selected=found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length));
@@ -207,8 +210,7 @@ export function installHoroscopeWriterFixture(){
      if(writerFixture.batchPendingPolls>0){writerFixture.batchPendingPolls--;return Response.json({id,status:'in_progress'});}
      if(writerFixture.nextBatchResult){const result=writerFixture.nextBatchResult;writerFixture.nextBatchResult=null;return Response.json({id,...result});}
      const input=JSON.parse(request.input),planning=input.stage==='planning';
-     const names=planning?['distinct_concerns','house_grounding','unsupported_history']:['interpretations','phrases','endings','house_grounding','unsupported_history','technical_filler'];
-     const value={...(planning?{concerns:input.facts.map((f:any,i:number)=>({sign:f.sign,eventIds:[(f.developments.events[0]??f.developments.background[0]).id],coreConcern:`Synthetic distinct concern ${i+1}`,humanSituation:`Possible situation ${i+1}`,stakes:`Distinct choice ${i+1}`,distinctiveObservation:`Only this sign observation ${i+1}`}))}:{}),checks:Object.fromEntries(names.map(name=>[name,'pass'])),findings:[]};
+     const value=weeklyBatchFixtureResult(input);
      return Response.json({id,status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]});
    }
    if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}

@@ -30,6 +30,8 @@ const action=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:row
 assert.equal((await invokeHoroscopeWriting({action:'prepare',id:row.id,expectedUpdatedAt:row.updated_at},'wrong')).status,401);
 assert.equal((await action('generate',{sign:'aries',approvedPlanHash:'wrong'})).status,409);assert.equal(writerFixture.calls,0);
 const plan=await action('prepare');assert.equal(plan.status,200,JSON.stringify(plan.payload));assert.equal(plan.payload.plan.readings.length,12);assert.equal(writerFixture.calls,0);
+row=plan.payload.rows[0];
+assert(row.source_snapshot.weeklyComparison?.contextHash,'Plan preparation returns its saved historical context and new version');
 const planHash=plan.payload.plan.planHash;
 assert.equal(brief.referenceDate,'2026-09-21','Weekly context is stable across selected days');
 for(const entry of plan.payload.plan.readings){

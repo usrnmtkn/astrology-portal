@@ -13,6 +13,7 @@ export function horoscopeEditorRow(row:any){
   if(row?.sections?.horoscopeEdition?.window?.period!=='weekly')return row;
   const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration;
   return {...row,source_snapshot:{...pick(snapshot,['horoscopeOutlines','studioWritingProfile','editorialImport','horoscopeWriterChoice','studioOwnerApproval']),
+    ...(snapshot.weeklyComparison?{weeklyComparison:{version:snapshot.weeklyComparison.version,contextHash:snapshot.weeklyComparison.contextHash,editionId:snapshot.weeklyComparison.editionId,editionCount:snapshot.weeklyComparison.editions?.length??snapshot.weeklyComparison.editionCount}}:{}),
     ...(generation?{horoscopeGeneration:{active:operation(generation.active),batch:generation.batch,
       ...(generation.weeklyEditorial?{weeklyEditorial:{version:generation.weeklyEditorial.version,
         plan:generation.weeklyEditorial.plan,review:generation.weeklyEditorial.review?{...generation.weeklyEditorial.review,current:weeklyReviewCurrent(row),matchesCurrent:generation.weeklyEditorial.review.contentHash===weeklyEditorialContent(row)}:null,

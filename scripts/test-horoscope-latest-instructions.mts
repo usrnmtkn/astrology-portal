@@ -21,8 +21,10 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Automatic instructions fixture',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:packet},sourceSnapshot:{studioWritingProfile:first,horoscopeOutlines:{},horoscopeGeneration:{readings:{historical:{profileHash:'original immutable receipt'}},rejections:[]}}});
  assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
  const action=(action:string,extra:any={})=>invokeHoroscopeWriting({action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});
- const original=structuredClone(row);
+ let original=structuredClone(row);
  const initial=await action('prepare');assert.equal(initial.status,200);
+ assert.deepEqual(initial.payload.rows[0].sections,original.sections);
+ row=initial.payload.rows[0];original=structuredClone(row); // Free Weekly preparation saves its comparison metadata once.
  const second=await saveProfile(first,`Latest ${period} guidance, complete and exact.`);
  assert.deepEqual(store.rows.get(row.id),original,'Saving a profile alone never mutates an edition');
  const calls=writerFixture.calls;
@@ -102,9 +104,9 @@ const weeklyFacts=await prepareHoroscopeBrief(new URL('http://localhost/?period=
 const weeklyEdition=emptyHoroscopeEdition(weeklyFacts.brief.window);
 const weeklyCreated=await store.invoke('POST',{contentKey:horoscopeEditionKey(weeklyEdition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Weekly isolation fixture',body:horoscopeEditionBody(weeklyEdition),sections:{horoscopeEdition:weeklyEdition},facts:{horoscopeBrief:weeklyFacts},sourceSnapshot:{studioWritingProfile:weeklyProfile,horoscopeOutlines:{},horoscopeGeneration:{readings:{},rejections:[]}}});
 assert.equal(weeklyCreated.status,200,JSON.stringify(weeklyCreated.payload));
-const weeklyRow=weeklyCreated.payload.rows[0];
+let weeklyRow=weeklyCreated.payload.rows[0];
 const prepareWeekly=()=>invokeHoroscopeWriting({action:'prepare',id:weeklyRow.id,expectedUpdatedAt:weeklyRow.updated_at});
-const planBefore=await prepareWeekly();assert.equal(planBefore.status,200);
+const planBefore=await prepareWeekly();assert.equal(planBefore.status,200);weeklyRow=planBefore.payload.rows[0];
 const captureRequest=async(row:any)=>{
  const prepared=prepareHoroscopeWriting(row);
  const stop=new Error('Stop at the unbilled provider boundary');let request:any;

@@ -557,12 +557,19 @@ async function seedAdminApi(
     generatedContentWriteReturnsEmpty?: boolean;
     loseFirstPublicationResponse?: boolean;
     useGeneratedContentHandler?: boolean;
+    warmPublicationFixture?: boolean;
     onGeneratedContentRead?: (url: URL) => void;
     reviewRows?: Record<string, unknown>[];
     compositionCatalog?: Array<{ content_key: string; headline: string | null; role: string }>;
   } = {}
 ) {
   const apiGeneratedContentRows = structuredClone(options.generatedRows ?? generatedContentRows) as Record<string, unknown>[];
+  const publicationStore = options.warmPublicationFixture ? await studioApiStore(apiGeneratedContentRows) : null;
+  if (publicationStore) {
+    try { await publicationStore.call({ method: "prepare-publication" }); }
+    catch (error) { publicationStore.close(); throw error; }
+    page.once("close", () => publicationStore.close());
+  }
   const publications = new Map<string, Record<string, unknown>>();
   const publicationResults = new Map<string, any>();
   let losePublicationResponse = options.loseFirstPublicationResponse ?? false;
@@ -904,8 +911,9 @@ async function seedAdminApi(
         if (["approve-package-revision", "publish-owner-content", "save-and-publish-owner-content"].includes(String(payload.ownerAction)) || options.useGeneratedContentHandler) {
           // Use the real handler and transactional SQL for the response/receipt;
           // a fabricated LIVE row cannot prove successful publication.
-          const store = await studioApiStore(apiGeneratedContentRows);
+          const store = publicationStore ?? await studioApiStore(apiGeneratedContentRows);
           try {
+            if (publicationStore) await store.call({ method: "prepare-publication", body: apiGeneratedContentRows });
             const result = await store.call({ method, body: payload });
             for (const saved of await store.call({ method: "rows" })) {
               const index = apiGeneratedContentRows.findIndex(row => row.id === saved.id);
@@ -922,7 +930,7 @@ async function seedAdminApi(
               }
             }
             await route.fulfill({ status: result.status, json: result.payload });
-          } finally { store.close(); }
+          } finally { if (!publicationStore) store.close(); }
           return;
         }
         const packageReviewStatus = typeof payload.reviewStatus === "string" ? payload.reviewStatus : null;
@@ -6649,7 +6657,9 @@ test("Chiron transit recovers stale save versions and keeps conflicting edits vi
     facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3" },
     sections: { packageRecord: original, body_you: original.body_you, body_they: original.body_they } };
   const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
-  await seedAdminApi(page, { generatedRows: [row], onGeneratedContentWrite: write => writes.push(write) });
+  // Bootstrap the isolated PostgreSQL fixture before timing UI saves. Reuse it
+  // for the two real publication transactions without relaxing the 5s assertion.
+  await seedAdminApi(page, { generatedRows: [row], warmPublicationFixture: true, onGeneratedContentWrite: write => writes.push(write) });
   await expectAdminRouteLoads(page, "/admin/content#exact-content");
   await page.locator(".admin-content-row").getByRole("button", { name: "Edit", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Generated content editor" });

@@ -642,7 +642,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
         {plan?.writerModels?.filter((writer:any)=>writer.available===false).map((writer:any)=><p key={writer.id} className="admin-field-hint">{writer.unavailableReason}</p>)}
         {heldSigns.map(heldSign=><div key={heldSign} role="note"><p>{horoscopeSignLabel(heldSign)} was interrupted before its response could be confirmed. This reading is held to prevent a duplicate charge. The other readings can continue; saved writing is kept.</p><StudioButton disabled={locked} onClick={()=>void release(heldSign)}>Allow retry for {horoscopeSignLabel(heldSign)}</StudioButton></div>)}
         <details className="admin-workspace-details"><AdminDisclosureSummary>Writing instructions · optional</AdminDisclosureSummary>
-          <p>Using {profile?.id?`your saved ${draft.window.period} instructions, revision ${profile.revision}`:`the ${draft.window.period} starter instructions`}. You can use these as they are.</p>
+          <p>Edition plan: {profile?.id?`${draft.window.period} profile, revision ${profile.revision}`:`${draft.window.period} starter instructions`}.</p>
           <StudioButton disabled={busy} onClick={()=>setInstructions(!instructions)}>{instructions?'Close writing instructions':'Edit writing instructions'}</StudioButton>
           {instructions&&<Suspense fallback={<PageLoading message="Loading writing instructions…"/>}><WritingProfiles key={draft.window.period} secret={secret} initialPeriod={draft.window.period}/></Suspense>}
           <p>Your latest saved instructions are applied automatically when the writing plan is prepared.</p>

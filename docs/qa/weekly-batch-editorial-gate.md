@@ -1,5 +1,9 @@
 # Weekly batch editorial gate
 
+The [cross-week extension](weekly-cross-week-editorial.md) adds the versioned
+`weekly-cross-week-editorial/v1` comparison contract to newly prepared plans.
+The existing reservation workflow and 26-request budget below remain intact.
+
 New Weekly batch approvals use `weekly-batch-editorial/v1`. Before a new sign
 is drafted, one shared request plans twelve concerns against each sign's actual
 calculated developments and house activations. Each concern names its event,
@@ -8,7 +12,9 @@ all twelve and must report distinct concerns, grounded houses and no invented
 biography. Unsupported event IDs, missing signs and identical normalized
 concerns fail validation before prose starts.
 
-Each sign writer receives the complete shared plan plus its own concern. The
+Each sign writer receives the shared current-meaning decisions plus its own concern.
+Historical citation fields stay with the planner and reviewer; comparison notes
+are explicitly separate from current facts and voice evidence. The
 saved Weekly profile, full examples and current owner corrections keep their
 authority. Shared concerns supply interpretation, not sentences to copy.
 Existing reader text stays intact.

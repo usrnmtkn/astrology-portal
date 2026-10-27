@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { createPublicationDb, seedPublicationRow, callPublicationRpc } from './studio-publication-db.mjs';
 export function publicationRpcFixture(getRows, saveRows) {
-  let db;
+  let db, initializing;
   const ids = new Map(), originals = new Map(), seeded = new Map();
   const uuid = id => {
     if (/^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/iu.test(id)) return id;
@@ -23,7 +23,7 @@ export function publicationRpcFixture(getRows, saveRows) {
     if (!['content_studio_publication_receipt','content_studio_publish_revision','content_studio_row_history','retire_content_everywhere'].includes(name)) return null;
     const args = JSON.parse(String(init.body));
     if (!db && name === 'content_studio_publication_receipt') return Response.json(null);
-    db ??= await createPublicationDb();
+    await fixture.prepare();
     try {
       if (name !== 'content_studio_publication_receipt') {
         const rows=getRows();
@@ -72,7 +72,8 @@ export function publicationRpcFixture(getRows, saveRows) {
       return Response.json(mapIds(receipt,true));
     } catch(error) { if (process.env.DEBUG_PUBLICATION_FIXTURE) console.error(error.code, error.message); return Response.json({code:error.code,message:error.message},{status:error.code==='40001'?409:400}); }
   };
+  fixture.prepare = () => initializing ??= createPublicationDb().then(database => { db = database; });
   fixture.publications = async () => db ? (await db.query('select to_jsonb(p) as row from content_publications p')).rows.map(item => mapIds(item.row,true)) : [];
-  fixture.close=async()=>{await db?.close();};
+  fixture.close=async()=>{await initializing;await db?.close();};
   return fixture;
 }
