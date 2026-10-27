@@ -9,7 +9,7 @@ import {lunarSavedWritingFixtures} from './lunar-saved-writing-fixture.mjs';
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { servingPackageRecords } from "../../api/_lib/content-live-status";
 // Actual handler, isolated storage, realistic latest-first/limit-one reads.
-import { createApiStore } from './calendar-review-api.mjs';
+import { createApiStore, matchesStoredInventory } from './calendar-review-api.mjs';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 const key = 'sky-placement/article/sun/virgo';
 const record = { ...structuredClone(skyPlacementSourceRecords.get(key)), placementArticle: 'During this transit, fixture existing article.',
@@ -33,6 +33,7 @@ if(process.env.LUNAR_WRITER_FIXTURE==='1')for(const row of lunarSavedWritingFixt
 let versionSequence = 0;
 const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();
 const matches = (row: any, params: URLSearchParams) => [...params].every(([field, value]) => {
+ if(field==='or'||field==='and')return matchesStoredInventory(row,new URLSearchParams([[field,value]]));
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
  if (field.startsWith('sections->horoscopeEdition->window->>')) {
   const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)!];

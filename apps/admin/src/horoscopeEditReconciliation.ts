@@ -8,7 +8,9 @@ const same=(a:any,b:any)=>horoscopeCanonicalJson(a??null)===horoscopeCanonicalJs
 /** Three-way reconciliation is local only. A subsequent explicit save still
  * submits the latest exact version and can be refused by another storage race. */
 export function reconcileHoroscopeEdits(base:any,latest:any,local:any){
-  if(base.id!==latest.id||base.content_key!==latest.content_key||base.status!==latest.status
+  const fork=base.status==='LIVE'&&latest.status==='DRAFT'&&latest.event_type==='horoscope-edition-revision'
+    &&latest.source_snapshot?.targetRowId===base.id&&latest.source_snapshot?.targetRowUpdatedAt===base.updated_at;
+  if(!fork&&(base.id!==latest.id||base.status!==latest.status)||base.content_key!==latest.content_key
     ||latest.source_snapshot?.horoscopeGeneration?.active||latest.source_snapshot?.horoscopeGeneration?.batch?.status==='running'
     ||!same(base.facts,latest.facts)||!same(base.sections.horoscopeEdition.window,latest.sections.horoscopeEdition.window))return null;
   const before=horoscopeEditableState(base),remote=horoscopeEditableState(latest);

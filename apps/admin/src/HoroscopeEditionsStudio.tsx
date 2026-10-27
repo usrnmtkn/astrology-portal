@@ -259,12 +259,18 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     setSaved(row);setDraft(state.draft);setOutlines(state.outlines);setProfile(state.profile);setEditorialImport(state.editorialImport);
     setPacket(row.facts?.horoscopeBrief);setSaveConflict(null);setApproved(false);setPublication(null);setValidationOverride(false);setPlan(null);setPlanApproved(false);setError('');
     setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);
+    syncEditionLink(row.id);
     setMessage(sameEditionValue(state,horoscopeEditableState(row))?'Your draft is saved. Loaded the confirmed saved version.':'Loaded the latest saved version and kept your selected edits. Review and save the draft to continue.');
   }
   async function reconcileSaveFailure(reason:any){
     if(!saved||!recoverable(reason))return false;
     try{
-      const latest=await readSaved(saved.id);
+      let latest=await readSaved(saved.id);
+      if(saved.status==='LIVE'&&latest.updated_at===saved.updated_at){
+        const result=await request(secret,endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',contentKey:saved.content_key}));
+        const revision=result.rows?.[0];
+        if(revision?.event_type==='horoscope-edition-revision'&&revision.source_snapshot?.targetRowId===saved.id&&revision.source_snapshot?.targetRowUpdatedAt===saved.updated_at)latest=revision;
+      }
       if(latest.updated_at===saved.updated_at)return false;
       const {reconcileHoroscopeEdits}=await import('./HoroscopeSaveRecovery');
       const result=reconcileHoroscopeEdits(saved,latest,{draft,outlines,profile,editorialImport});
@@ -280,14 +286,14 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     try {
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
-      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
-      const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
       const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
-      const data=ownerTransport?await ownerTransport.publishSavedOwnerContent(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved))):await write();
+      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:ownerTransport!.horoscopePublicationAction(saved),expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
+      const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
+      const data=ownerTransport?await ownerTransport.publishSavedHoroscope(saved,write,()=>request(secret,ownerTransport.horoscopePublicationStatusPath(saved))):await write();
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
         || row.status!==(lifecycle??(publish ? 'LIVE':'DRAFT'))||lifecycle&&(row.id!==saved.id||row.updated_at===saved.updated_at)) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');
-      setSaved(row);setDraft(edition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);
+      setSaved(row);setDraft(edition);setRows(current=>[row,...current.filter(r=>r.id!==row.id&&!(publish&&r.id===saved?.id))]);setApproved(false);syncEditionLink(row.id);
       if(lifecycle)setStep(lifecycle==='ARCHIVED'?'publish':'edit');
       announceContentUpdate({contentKey:row.content_key,published:publish,updatedAt:row.updated_at});
       setMessage(lifecycle==='ARCHIVED'?'':publish ? 'Published the complete edition.' : 'Saved edition draft.');
@@ -586,7 +592,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {saved&&step!=='setup'&&<div className="admin-horoscope-actions">
-      <StudioButton className={saved.status==='ARCHIVED'?undefined:'admin-danger-button'} disabled={locked||dirty} onClick={()=>void save(false,saved.status==='ARCHIVED'?'DRAFT':'ARCHIVED')}>{saved.status==='ARCHIVED'?'Restore as draft':'Archive edition'}</StudioButton>
+      <StudioButton className={saved.status==='ARCHIVED'?undefined:'admin-danger-button'} disabled={locked||dirty} onClick={()=>void save(false,saved.status==='ARCHIVED'?'DRAFT':'ARCHIVED')}>{saved.status==='ARCHIVED'?'Restore as draft':saved.event_type==='horoscope-edition-revision'?'Archive draft revision':'Archive edition'}</StudioButton>
+      {saved.event_type==='horoscope-edition-revision'&&<StudioButton disabled={locked||dirty} onClick={()=>void open({id:saved.source_snapshot?.targetRowId})}>Open published edition</StudioButton>}
       {needsSync&&<StudioButton disabled={busy} onClick={()=>void open(saved,true)}>Reload saved edition</StudioButton>}
     </div>}
     {isWeekly&&saved?.status!=='ARCHIVED'&&step!=='setup'&&<Suspense fallback={<p role="status">Loading…</p>}><WeeklyBatchEditorial
@@ -616,7 +623,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
             <tbody>{visibleEditions.map(row=>{
               const edition=row.sections.horoscopeEdition,dates=horoscopeWindowLabel(edition.window);
               const written=edition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length;
-              const status=row.status==='LIVE'?'Published':row.status==='ARCHIVED'?'Archived':row.status==='DRAFT'?`${written}/${edition.passages.length} drafted`:String(row.status??'Unknown status');
+              const status=row.status==='LIVE'?'Published':row.status==='ARCHIVED'?'Archived':row.status==='DRAFT'?`${row.event_type==='horoscope-edition-revision'?'Draft revision · ':''}${written}/${edition.passages.length} drafted`:String(row.status??'Unknown status');
               const action=row.status==='LIVE'||written===edition.passages.length?'Review / Edit':'Continue';
               return <tr key={row.id}>
                 <td>{dates}<small>{edition.window.timeZone.replaceAll('_',' ')}</small></td>
