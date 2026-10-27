@@ -10,6 +10,6 @@ type Props = ComponentProps<typeof SkyDebilityStudio> & {
 export default function SkySummaryWorkspace({ daily, focusSunSummaries, ...props }: Props) {
   return <>
     {daily && <SkyDailySummaryStudio rows={props.rows} onEdit={props.onEdit} busy={props.busy} focusSunSummaries={focusSunSummaries} />}
-    <SkyDebilityStudio {...props} />
+    {!daily && <SkyDebilityStudio {...props} />}
   </>;
 }

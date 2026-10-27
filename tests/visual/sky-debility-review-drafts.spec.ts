@@ -77,9 +77,17 @@ for (const width of [390, 1024, 1440]) for (const theme of ["light", "dark"]) {
     page.on("request", request => {
       if (["POST", "PATCH", "DELETE"].includes(request.method()) && request.url().includes("/api/admin/generated-content")) writes.push(request.postDataJSON());
     });
-    await page.goto("/#sky-writeups");
+    await page.goto("/#sky-writeups?view=daily-summary");
+    const dailySummary = page.getByRole("region", { name: "Daily Sky Summary editor", exact: true });
+    await expect(dailySummary).toBeVisible();
+    await expect(dailySummary.getByRole("heading", { name: "Full summary template", exact: true })).toBeVisible();
+    await expect(page.getByTestId("sky-debility-studio")).toHaveCount(0);
+    await page.reload();
+    await expect(dailySummary).toBeVisible();
+    await expect(page.getByTestId("sky-debility-studio")).toHaveCount(0);
     await page.getByRole("tab", { name: "Detriment and fall", exact: true }).click();
     await expect(page).toHaveURL(/view=detriment-fall/u);
+    await expect(dailySummary).toHaveCount(0);
     const studio = page.getByTestId("sky-debility-studio");
     const list = studio.getByTestId("sky-debility-review-drafts");
     await expect(list.locator("summary")).toHaveText("Saved review drafts · 7");
@@ -129,7 +137,7 @@ test("saved dignity draft list distinguishes loading, failed, empty and refreshe
     }
     return route.fulfill({ json: { ok: true, rows: attempt === 2 ? [] : stored, nextCursor: null } });
   });
-  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.goto("/#sky-writeups?view=detriment-fall");
   const list = page.getByTestId("sky-debility-review-drafts");
   await expect(list.getByRole("status")).toHaveText("Loading saved review drafts…");
   release();
