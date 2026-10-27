@@ -2220,7 +2220,8 @@ async function publicationRpc(name: string, body: Record<string, unknown>) {
 
 function identifyPublicationOperation(body: GeneratedContentWriteBody, context: PublicationContext) {
   const identity = JSON.stringify({ schema: "content-studio-publication-operation-v1", actor: context.actor,
-    action: body.ownerAction, proposalId: body.id, proposalVersion: body.expectedUpdatedAt });
+    action: body.ownerAction, proposalId: body.id, proposalVersion: body.expectedUpdatedAt,
+    ...(body.ownerAction==='publish-horoscope-edition-revision'?{horoscopeValidationOverride:body.horoscopeValidationOverride===true}:{}) });
   context.requestSha256 = createHash("sha256").update(identity).digest("hex");
   context.operationId = context.requestSha256;
 }
@@ -2530,7 +2531,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   requireCallerVersion(body.expectedUpdatedAt);
   if (atomicPublicationActions.has(body.ownerAction ?? "")) {
-    if (Object.entries(body).some(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)) {
+    const fields=["id", "ownerAction", "expectedUpdatedAt",...(body.ownerAction==='publish-horoscope-edition-revision'?["horoscopeValidationOverride"]:[])];
+    if (Object.entries(body).some(([key, value]) => !fields.includes(key) && value !== undefined)
+      || body.horoscopeValidationOverride !== undefined && typeof body.horoscopeValidationOverride !== 'boolean') {
       throw new GeneratedContentRequestError("Publish the saved revision separately from other edits.", 400);
     }
     const context = publicationContext.getStore()!;
@@ -3655,7 +3658,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         if (!atomicPublicationActions.has(action) || !id) throw new GeneratedContentRequestError("Select the saved publication to check.");
         requireCallerVersion(version);
         const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
-        identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version }, context);
+        identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version,
+          horoscopeValidationOverride:requestUrl.searchParams.get('horoscopeValidationOverride')==='true' }, context);
         const result = await publicationContext.run(context, async () => {
           const receipt = await readPublicationReceipt();
           return receipt ? { found: true, rows: await rowsFromPublicationReceipt(receipt), publicationReceipt: context.receipt } : { found: false, rows: [] };

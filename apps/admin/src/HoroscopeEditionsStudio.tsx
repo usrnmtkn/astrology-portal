@@ -9,7 +9,7 @@ import {studioSignInHref} from '../../../src/shared/services/studioAuthReturn';
 import {PageLoading} from '../../../src/shared/components/PageLoading';
 import {FormattedProse} from '../../../src/shared/components/FormattedProse';
 import {announceContentUpdate} from '../../web/src/services/contentUpdateSignal';
-import {HOROSCOPE_PERIODS,emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionKey,isHoroscopeEditionKey,horoscopeEditionBody,horoscopeWindowLabel,horoscopeSignLabel,horoscopeCanonicalJson,type HoroscopeEdition,type HoroscopePeriod} from '../../web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_PERIODS,emptyHoroscopeEdition,validateHoroscopeEdition,horoscopeEditionKey,isHoroscopeEditionKey,horoscopeWindowLabel,horoscopeSignLabel,horoscopeCanonicalJson,type HoroscopeEdition,type HoroscopePeriod} from '../../web/src/content/horoscopeEditions.mjs';
 
 import {HoroscopeLocation} from '../../../src/shared/features/horoscopes/HoroscopeLocation';
 import {browserTimeZone} from '../../web/src/services/timezones';
@@ -39,9 +39,6 @@ async function request(secret:string,url:string,body?:unknown,method='POST',sign
   return data;
 }
 const editionVersion=(row:any)=>({id:row.id,expectedUpdatedAt:row.updated_at});
-function editionDraft(edition:HoroscopeEdition,brief:unknown,sourceSnapshot:unknown,saved?:any,period=edition.window.period) {
-  return {...(saved ? {...editionVersion(saved)}:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',targetDate:null}),status:'DRAFT',lane:'serving',reviewState:null,headline:`${horoscopeSignLabel(period)} horoscopes`,body:horoscopeEditionBody(edition),summary:'',sections:{horoscopeEdition:edition},facts:{horoscopeBrief:brief},sourceSnapshot};
-}
 const recoverable=(reason:any)=>!reason?.status||[408,409,429].includes(reason.status)||reason.status>=500;
 function waitForPoll(signal:AbortSignal,delay=3000) {
   return new Promise<void>(resolve=>{
@@ -242,6 +239,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       let row=matching.rows?.[0]??rows.find(row=>isHoroscopeEditionKey(row.content_key,edition.window)&&sameEditionValue(row.sections?.horoscopeEdition?.window,edition.window));
       if(row?.inventory_only)row=await readSaved(row.id,controller.signal);
       if(!row){
+        const {editionDraft}=await import('./HoroscopeSaveRecovery');
         const result=await request(secret,endpoint,{
           ...editionDraft(edition,{brief:facts.brief,signature:facts.signature},{horoscopeOutlines:{},studioWritingProfile:profiles.profiles.find((p:any)=>p.profile.period===period)??null,editorialImport:null},undefined,period)
         },'POST',controller.signal);
@@ -265,14 +263,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
   async function reconcileSaveFailure(reason:any){
     if(!saved||!recoverable(reason))return false;
     try{
-      let latest=await readSaved(saved.id);
-      if(saved.status==='LIVE'&&latest.updated_at===saved.updated_at){
-        const result=await request(secret,endpoint+'?'+new URLSearchParams({horoscopeEditions:'true',contentKey:saved.content_key}));
-        const revision=result.rows?.[0];
-        if(revision?.event_type==='horoscope-edition-revision'&&revision.source_snapshot?.targetRowId===saved.id&&revision.source_snapshot?.targetRowUpdatedAt===saved.updated_at)latest=revision;
-      }
-      if(latest.updated_at===saved.updated_at)return false;
-      const {reconcileHoroscopeEdits}=await import('./HoroscopeSaveRecovery');
+      const {reconcileHoroscopeEdits,readHoroscopeDraftAfterFailure}=await import('./HoroscopeSaveRecovery');
+      const latest=await readHoroscopeDraftAfterFailure(saved,readSaved,url=>request(secret,url));
+      if(!latest)return false;
       const result=reconcileHoroscopeEdits(saved,latest,{draft,outlines,profile,editorialImport});
       if(!result)return false;
       if(!result.conflicts.length)await useReconciledDraft(latest,result.keepLocal);
@@ -287,9 +280,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
       const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
-      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:ownerTransport!.horoscopePublicationAction(saved),expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
+      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:ownerTransport!.horoscopePublicationAction(saved),expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : (await import('./HoroscopeSaveRecovery')).editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
       const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
-      const data=ownerTransport?await ownerTransport.publishSavedHoroscope(saved,write,()=>request(secret,ownerTransport.horoscopePublicationStatusPath(saved))):await write();
+      const data=ownerTransport?await ownerTransport.publishSavedHoroscope(saved,write,()=>request(secret,ownerTransport.horoscopePublicationStatusPath(saved,validationOverride))):await write();
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
         || row.status!==(lifecycle??(publish ? 'LIVE':'DRAFT'))||lifecycle&&(row.id!==saved.id||row.updated_at===saved.updated_at)) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');
