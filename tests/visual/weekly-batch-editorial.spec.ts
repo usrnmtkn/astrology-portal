@@ -1,3 +1,4 @@
+import {weeklyBatchFixtureResult} from '../helpers/weekly-editorial-result.mts';
 import {test,expect,type Page} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
@@ -12,6 +13,9 @@ async function fixture(page:Page,complete=true){
  const call=(message:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...message,id});});
  try{
  await ready;
+ const previous=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-10-26&timeZone=America%2FNew_York'});
+ const earlier=emptyHoroscopeEdition(previous.payload.brief.window);earlier.passages.forEach((p:any)=>{p.headline=`Earlier ${p.sign}`;p.body=`A complete former ${p.sign} reading. You should say what you want.`;});
+ await call({method:'POST',body:{contentKey:horoscopeEditionKey(earlier.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Earlier synthetic edition',body:horoscopeEditionBody(earlier),sections:{horoscopeEdition:earlier},facts:{horoscopeBrief:{brief:previous.payload.brief,signature:previous.payload.signature}},sourceSnapshot:{horoscopeOutlines:{}}}});
  const facts=await call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=weekly&date=2026-11-02&timeZone=America%2FNew_York'});expect(facts.status).toBe(200);
  const {brief,signature}=facts.payload,edition=emptyHoroscopeEdition(brief.window);
  if(complete)edition.passages.forEach((p:any)=>{p.headline=`Synthetic ${p.sign} reading`;p.body=`The ${p.sign} plan has its own subject. You should say what you want.`;});
@@ -31,19 +35,23 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
  await expect(gate.getByText('Plan twelve distinct concerns before drafting.')).toBeVisible();
  await gate.getByRole('button',{name:'Load batch review plan',exact:true}).click();
  const evidence=f.edition.passages.slice(0,3).map((p:any)=>({sign:p.sign,quote:'You should say what you want.'}));
- const findings=['interpretations','phrases','endings'].map(category=>({category,reason:`Synthetic ${category} repeat across three signs.`,evidence}));
- const value={checks:Object.fromEntries(['interpretations','phrases','endings','house_grounding','unsupported_history','technical_filler'].map(key=>[key,findings.some(f=>f.category===key)?'fail':'pass'])),findings};
+ const findings=['interpretations','phrases','endings'].map(category=>({category,reason:`Synthetic ${category} repeat across three signs.`,evidence,priorEvidence:[]}));
+ const ready=await f.latest();
+ const prepared=await f.call({method:'writing',body:{action:'prepare',id:ready.id,expectedUpdatedAt:ready.updated_at}});
+ findings.push({category:'cross_week_repetition',reason:'The same advice concludes a previous week.',evidence:evidence.slice(0,1),priorEvidence:[{editionId:ready.source_snapshot.weeklyComparison.editions[0].id,sign:'aries',quote:'You should say what you want.'}]});
+ const value={...weeklyBatchFixtureResult({stage:'batch-review',priorWeeks:ready.source_snapshot.weeklyComparison,facts:prepared.payload.plan.readings.map((r:any)=>({sign:r.sign,developments:r.developments})),existingReadings:ready.sections.horoscopeEdition.passages}),checks:Object.fromEntries(['interpretations','phrases','endings','house_grounding','unsupported_history','technical_filler','cross_week_repetition','astrology_drives_reading','rhetorical_scripts'].map(key=>[key,findings.some(f=>f.category===key)?'fail':'pass'])),findings};
  await f.call({method:'writer-state',body:{nextBatchResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]}}});
  await gate.getByRole('button',{name:'Review all twelve · 1 AI request',exact:true}).click();
  await expect(gate.getByText('Checking all twelve readings…',{exact:true})).toBeVisible();
  await gate.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
- await expect(gate.getByRole('note')).toHaveCount(3);
+ await expect(gate.getByRole('note')).toHaveCount(4);
  await expect(gate).toContainText('aries: “You should say what you want.”');
+ await expect(gate).toContainText('Prior week · aries: “You should say what you want.”');
  expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0,batchCalls:1});
  expect((await f.latest()).sections.horoscopeEdition).toEqual(f.edition);
  const warning=gate.getByRole('note').first();await expect(warning).not.toHaveCSS('background-color','rgba(0, 0, 0, 0)');
  await page.screenshot({path:`test-results/weekly-gate-findings-${width}-${theme}.png`,fullPage:true});
- await page.reload();await expect(gate.getByRole('note')).toHaveCount(3);
+ await page.reload();await expect(gate.getByRole('note')).toHaveCount(4);
  await gate.getByRole('button',{name:'Load batch review plan',exact:true}).click();
  await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/^Aries/}).click();
  const edited='The exact synthetic owner edit has a different consequence. This final sentence belongs to Aries.';

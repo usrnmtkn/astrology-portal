@@ -1,5 +1,5 @@
 import {approvedVoiceStyleReference} from './approvedVoiceStyle.mjs';
-import {WEEKLY_BATCH_EDITORIAL} from './weeklyBatchEditorial.mjs';
+import {WEEKLY_BATCH_EDITORIAL,WEEKLY_CROSS_WEEK_EDITORIAL} from './weeklyBatchEditorial.mjs';
 import {weeklyPreviousReadingsInput} from './weeklyPreviousReadings.mjs';
 import {horoscopeEvidenceReceipt} from './horoscopeEvidenceReceipt.mjs';
 import {loadWeeklyOwnerEvidence,WEEKLY_EVIDENCE_VERSION} from './weeklyOwnerEvidence.mjs';
@@ -109,7 +109,9 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const rejectedReadings=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.rejections??[]:[];
   const proseVersion=usesRefinedHoroscopeProse(edition.window.period)?{proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,
     ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL}:{})}:{};
-  const cacheKey=digest({...proseVersion,...(edition.window.period==='weekly'?{rejectedReadings}:{}),...(writerSelection?{writerSelection}:{}),brief,writingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},feedbackReceipt,studioCorrections,sourceHash});
+  const comparison=edition.window.period==='weekly'?row.source_snapshot?.weeklyComparison:null;
+  const comparisonBinding=comparison?{weeklyComparisonHash:comparison.contextHash,weeklyComparisonContract:WEEKLY_CROSS_WEEK_EDITORIAL}:{};
+  const cacheKey=digest({...proseVersion,...comparisonBinding,...(edition.window.period==='weekly'?{rejectedReadings}:{}),...(writerSelection?{writerSelection}:{}),brief,writingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},feedbackReceipt,studioCorrections,sourceHash});
   if(preparedPlans.has(cacheKey))return {...preparedPlans.get(cacheKey),edition};
   const planet=edition.window.period==='daily'?'moon':'sun';
   const anchor=brief.positions.find(p=>String(p.planet).toLowerCase()===planet);
@@ -190,9 +192,9 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       approvedStyleReference:approvedVoiceStyleReference({family:'horoscope',surface:'horoscopes'}).receipt,
       meaningSupport:buildHellenisticMeaningSupport({facts:{...brief,house,developments},plan,family:'horoscope',surface:'horoscopes'}).receipt};
   });
-  const planHash=digest({...proseVersion,ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
+  const planHash=digest({...proseVersion,...comparisonBinding,ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,...(edition.window.period==='weekly'?{rejectedReadings}:{}),brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
-  const prepared={edition,brief,writingProfile,entries,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt,
+  const prepared={edition,brief,writingProfile,entries,weeklyComparison:comparison,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt,
     explicitFeedbackMarker:explicitFeedback?.marker??'',explicitFeedbackRows:explicitFeedback?.rows??[]};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
 }
@@ -215,11 +217,12 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
   const approved=approveArgumentOutline(entry.argumentOutline,{exactOwnerRuling:`Authenticated owner selected Generate drafts for plan ${approvedPlanHash}. Reference: ${approvalReference}`});
   const argumentSource={contentKey:`horoscope-plan/${approvedPlanHash}/${sign}`,sourcePath:approvalReference,ownerApproved:true,
     authority:'owner-approved-horoscope-plan',opening:approved.thesis,tension:approved.complication,development:approved.recognition,close:approved.response};
+  const sharedConcerns=prepared.weeklyBatchPlan?.concerns.map(({priorQuote,priorEditionId,priorSign,...concern})=>concern);
   const currentWriter=prepared.explicitFeedbackMarker||prepared.weeklyBatchPlan||prepared.previousReadings?Object.assign(async request=>{
     const input=[request.input,...(prepared.weeklyBatchPlan?[
-      `SHARED WEEKLY CONCERNS\n${JSON.stringify(prepared.weeklyBatchPlan.concerns)}`,
-      `CURRENT SIGN CONCERN\n${JSON.stringify(prepared.weeklyBatchPlan.concerns.find(c=>c.sign===sign))}`,
-      'The shared plan supplies meaning and scope, not reader wording or a required paragraph script. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
+      `SHARED WEEKLY CONCERNS\n${JSON.stringify(sharedConcerns)}`,
+      `CURRENT SIGN CONCERN\n${JSON.stringify(sharedConcerns.find(c=>c.sign===sign))}`,
+      'The shared plan supplies current meaning decisions and scope, not reader wording or a required paragraph script. Use its current astrologicalReason and development. weekDifference is comparison-only analysis, never voice evidence, current facts or a story to copy. Historical citations are retained by the planner and reviewer rather than passed as writer evidence. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
     ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
     return writerClient({...request,input,...(request.ownerEvidence?{ownerEvidence:{...request.ownerEvidence,inputSha256:createHash('sha256').update(input).digest('hex'),writingFeedback:prepared.feedbackReceipt}}:{})});
   },writerClient):writerClient;

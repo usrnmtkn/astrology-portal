@@ -1,4 +1,5 @@
 export const WEEKLY_BATCH_EDITORIAL:string;
+export const WEEKLY_CROSS_WEEK_EDITORIAL:string;
 export const WEEKLY_PLAN_SCHEMA:any;
 export const WEEKLY_BATCH_REVIEW_SCHEMA:any;
 export const WEEKLY_PLAN_INSTRUCTIONS:string;

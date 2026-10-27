@@ -20,7 +20,7 @@ export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,runni
     {review?.error&&<p role="alert">{review.error}</p>}
     {findings.map((finding:any,index:number)=><div className="admin-inline-warning" role="note" key={index}>
       <p>{finding.category.replaceAll('_',' ')}: {finding.reason}</p>
-      {finding.evidence.map((e:any,i:number)=><p key={i}>{e.sign}: “{e.quote}”</p>)}
+      {[...finding.evidence,...(finding.priorEvidence??[])].map((e:any,i:number)=><p key={i}>{e.editionId&&'Prior week · '}{e.sign}: “{e.quote}”</p>)}
     </div>)}
     {plan?.concerns&&<details className="admin-workspace-details"><AdminDisclosureSummary>Shared concerns for all twelve signs</AdminDisclosureSummary>
       {plan.concerns.map((concern:any)=><div key={concern.sign}><p><strong>{concern.sign}: </strong>{concern.coreConcern}</p><p>{concern.stakes}</p><p>{concern.distinctiveObservation}</p></div>)}

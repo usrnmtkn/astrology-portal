@@ -3,6 +3,7 @@ import {createHash,randomUUID} from 'node:crypto';
 import {waitUntil} from '@vercel/functions';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
 import {horoscopePendingReadings,canRecoverHoroscopeReview} from '../../src/astro-writing/horoscopeRecovery.mjs';
+import {loadWeeklyPriorEditions,assertWeeklyPriorEditions} from '../_lib/weekly-prior-editions.js';
 import {weeklyPreviousReadings} from '../../src/astro-writing/weeklyPreviousReadings.mjs';
 import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
 import {loadLocalWebEnv} from '../_lib/local-env.js';
@@ -309,6 +310,16 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
       if(latest?.id&&horoscopeCanonicalJson(latest)!==horoscopeCanonicalJson(row.source_snapshot?.studioWritingProfile??null)){
         writingRow={...writingRow,source_snapshot:{...writingRow.source_snapshot,studioWritingProfile:latest}};
       }
+    }
+    if(row.sections.horoscopeEdition.window.period==='weekly'&&!operation){
+      // A running approval keeps its frozen comparison. Only a free new plan
+      // refreshes history; polling never replays a provider request.
+      if(batch?.status!=='running'&&(input.action==='prepare'||!writingRow.source_snapshot?.weeklyComparison)){
+        const weeklyComparison=await loadWeeklyPriorEditions(writingRow);
+        if(horoscopeCanonicalJson(weeklyComparison)!==horoscopeCanonicalJson(writingRow.source_snapshot?.weeklyComparison??null))
+          writingRow={...writingRow,source_snapshot:{...writingRow.source_snapshot,weeklyComparison}};
+      }
+      if(writingRow.source_snapshot?.weeklyComparison)assertWeeklyPriorEditions(writingRow.source_snapshot.weeklyComparison,writingRow);
     }
     const seasonalSourceRows=await loadHoroscopeSeasonalSources(row.facts?.horoscopeBrief?.brief);
     const writerChoice=writingRow.source_snapshot?.horoscopeWriterChoice??'current';
