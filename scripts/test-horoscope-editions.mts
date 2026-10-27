@@ -138,10 +138,14 @@ const change={...edition,passages:edition.passages.map(p=>({...p,body:p.body+'Fi
 const revised=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE',sections:{horoscopeEdition:change},body:horoscopeEditionBody(change)});
 assert.equal(revised.status,200,JSON.stringify(revised.payload));
 assert.equal(revised.payload.rows[0].status,'DRAFT','Editing cannot approve new wording in the same save');
-assert.equal((await read()).rows.length,0,'Editing removes the previous publication');
+assert.equal((await read()).rows.length,1,'Editing retains the previous publication');
+assert.deepEqual((await read()).rows[0].sections.horoscopeEdition,edition,'Readers keep the complete approved edition until explicit publication');
+assert.notEqual(revised.payload.rows[0].id,row.id,'Editing creates a separate private revision');
 row=revised.payload.rows[0];
-const republished=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'});
+assert.equal((await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'})).status,409,'A revision cannot bypass explicit publication');
+const republished=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-horoscope-edition-revision'});
 assert.equal(republished.status,200,JSON.stringify(republished.payload));row=republished.payload.rows[0];
+assert.deepEqual((await read()).rows[0].sections.horoscopeEdition,change,'Explicit publication replaces the complete edition');
 assert.equal((await store.invoke('DELETE',undefined,'/api/admin/generated-content?'+new URLSearchParams({id:row.id,expectedUpdatedAt:row.updated_at}))).status,409,'Live editions must be withdrawn before deletion');
 const archived=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'ARCHIVED'});
 assert.equal(archived.status,200,JSON.stringify(archived.payload));row=archived.payload.rows[0];
