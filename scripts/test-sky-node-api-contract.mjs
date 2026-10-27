@@ -73,7 +73,7 @@ try {
     "True South Node content must share the computed node-axis window."
   );
   assert.equal(sky.calculationProvenance.nodeType, "true", "Calculation provenance must disclose True Node.");
-  assert.equal(sky.calculationProvenance.calculationVersion, "tldrastro-calculation-v3");
+  assert.equal(sky.calculationProvenance.calculationVersion, "tldrastro-calculation-v4");
   assert.equal(sky.calculationProvenance.lilithType, "true", "Calculation provenance must disclose True Black Moon Lilith.");
 } finally {
   await vite.close();

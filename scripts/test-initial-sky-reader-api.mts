@@ -14,7 +14,7 @@ import { acceptInitialSkyReader, initialSkyReaderAvailable, initialSkyReaderKey,
 import { installContentPublications, publicationLedgerReady } from '../apps/web/src/content/contentPublicationState';
 import { skyNodeDisplayPositions } from '../apps/web/src/features/sky/skyHelpers';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../apps/web/src/services/publicationLedgerTransport';
-const query = new URLSearchParams({ at: '2026-10-23T16:00:00.000Z', lat: '40.7128', lon: '-74.006', timeZone: 'America/New_York', version: 'tldrastro-calculation-v3', detail: 'placements' });
+const query = new URLSearchParams({ at: '2026-10-23T16:00:00.000Z', lat: '40.7128', lon: '-74.006', timeZone: 'America/New_York', version: 'tldrastro-calculation-v4', detail: 'placements' });
 const envKeys = ['SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY','SUPABASE_ANON_KEY','VITE_SUPABASE_URL','VITE_SUPABASE_PUBLISHABLE_KEY','VITE_SUPABASE_ANON_KEY'];
 const saved = envKeys.map(key => process.env[key]);
 const originalFetch = globalThis.fetch;
@@ -86,7 +86,7 @@ try {
   try{
     let network=0;globalThis.fetch=async()=>{network++;return Response.json({sky});};
     const location={...sky.location,label:'Synthetic selection'},date=new Date(sky.generatedAt);
-    const key=new URLSearchParams({at:date.toISOString(),lat:String(location.latitude),lon:String(location.longitude),timeZone:location.timeZone,version:'tldrastro-calculation-v3',detail:'placements'}).toString();
+    const key=new URLSearchParams({at:date.toISOString(),lat:String(location.latitude),lon:String(location.longitude),timeZone:location.timeZone,version:'tldrastro-calculation-v4',detail:'placements'}).toString();
     const prime=(request:Promise<unknown>,startedAt=performance.now())=>(globalThis as any).window={__tldrInitialSkyTransport:{key,request,startedAt}};
     prime(Promise.resolve({sky}));
     assert.deepEqual((await getSkyFromApi(location,date,'placements')).positions,sky.positions);assert.equal(network,0,'The real client adopts the exact inline request without a duplicate fetch.');

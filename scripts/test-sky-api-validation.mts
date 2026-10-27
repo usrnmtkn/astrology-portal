@@ -16,7 +16,7 @@ try {
     plugins: [{ name: 'isolated-calculation', setup(builder) {
       builder.onResolve({ filter: /\/(ephemeris|astrologyFacts)\.js$/ }, args => ({ path: args.path.endsWith('/astrologyFacts.js') ? 'astrologyFacts' : 'ephemeris', namespace: 'fixture' }));
       builder.onLoad({ filter: /.*/, namespace: 'fixture' }, args => ({ contents: args.path.includes('astrologyFacts') ? `
-        export const ASTROLOGY_CALCULATION_CONTRACT = { calculationVersion: 'tldrastro-calculation-v3' };
+        export const ASTROLOGY_CALCULATION_CONTRACT = { calculationVersion: 'tldrastro-calculation-v4' };
         export const factsFromSkySnapshot = () => [];
       ` : `
         export const calls = [];
@@ -32,7 +32,7 @@ try {
     } }]
   });
   const { handler, calls, setFailure } = await import(pathToFileURL(outfile).href);
-  const base = { at: '2026-10-14T12:00:00Z', lat: '40.7128', lon: '-74.006', timeZone: 'America/New_York', version: 'tldrastro-calculation-v3', detail: 'core' };
+  const base = { at: '2026-10-14T12:00:00Z', lat: '40.7128', lon: '-74.006', timeZone: 'America/New_York', version: 'tldrastro-calculation-v4', detail: 'core' };
   async function invoke(overrides = {}, method = 'GET') {
     const response = { statusCode: 0, headers: {} as Record<string, string>, payload: {} as any,
       setHeader(name: string, value: string) { this.headers[name.toLowerCase()] = value; },
@@ -44,7 +44,7 @@ try {
     ...['', ' ', 'NaN', '91', '-91'].map(lat => ({ lat })),
     ...['', ' ', 'Infinity', '181', '-181'].map(lon => ({ lon })),
     ...['', 'invalid', '2026-02-30', '2025-02-29T12:00:00Z', '2026-02-30T01:00:00-05:00', '2026-10-14T24:00:00Z', '2026-10-14T12:00:00', '1799-01-01', '2400-01-01'].map(at => ({ at })),
-    { detail: 'other' }, { detail: '' }, { version: 'other' }, { timeZone: 'invalid/zone' }
+    { detail: 'other' }, { detail: '' }, { version: 'other' }, { version: 'tldrastro-calculation-v3' }, { timeZone: 'invalid/zone' }
   ];
   for (const input of invalid) {
     const before = calls.length, response = await invoke(input);

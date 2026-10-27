@@ -8,7 +8,7 @@ const articleHistoryFields=['priorTransitSign','priorTransitStart','priorTransit
 async function direct(url:string){let value:any;const response={statusCode:200,setHeader(){},end(body:string){value=JSON.parse(body);}};await handler({method:'GET',url} as any,response as any);return {status:response.statusCode,value};}
 try{
  for(const [at,lat,lon,zone]of [['2026-10-23T16:00:00.000Z',40.7128,-74.006,'America/New_York'],['2026-10-24T22:50:00.000Z',40.7128,-74.006,'America/New_York'],['2026-03-27T00:00:00.000Z',35.6762,139.6503,'Asia/Tokyo'],['2026-11-01T06:30:00.000Z',40.7128,-74.006,'America/New_York']] as const){
-  const query=new URLSearchParams({at,lat:String(lat),lon:String(lon),timeZone:zone,version:'tldrastro-calculation-v3',detail:'placements'});
+  const query=new URLSearchParams({at,lat:String(lat),lon:String(lon),timeZone:zone,version:'tldrastro-calculation-v4',detail:'placements'});
   const url='/api/sky-reader?'+query;
   let ticks=0;const start=performance.now(),interval=setInterval(()=>ticks++,10);
   let selection:any;let selectedAt=0;
@@ -37,12 +37,12 @@ try{
   }
   assert(elapsed<100||ticks>0,'The request event loop must remain available while Swiss work executes.');
  }
- const fullUrl='/api/sky?'+new URLSearchParams({at:'2026-10-23T16:00:00.000Z',lat:'40.7128',lon:'-74.006',timeZone:'America/New_York',version:'tldrastro-calculation-v3',detail:'full'});
+ const fullUrl='/api/sky?'+new URLSearchParams({at:'2026-10-23T16:00:00.000Z',lat:'40.7128',lon:'-74.006',timeZone:'America/New_York',version:'tldrastro-calculation-v4',detail:'full'});
  let guarded:any;await createSkyHandler({deferPlacementHistory:true})({method:'GET',url:fullUrl} as any,{setHeader(){},end(body:string){guarded=JSON.parse(body);}} as any);
  assert.deepEqual(guarded,(await direct(fullUrl)).value,'Even the list-configured handler must never defer history for a full request.');
  assert.equal((await calculateInitialSky('/api/sky-reader?at=invalid')).status,400);
  disposeInitialSkyWorker();
- const url='/api/sky-reader?'+new URLSearchParams({at:'2026-10-23T16:00:00.000Z',lat:'40.7128',lon:'-74.006',timeZone:'America/New_York',version:'tldrastro-calculation-v3',detail:'placements'});
+ const url='/api/sky-reader?'+new URLSearchParams({at:'2026-10-23T16:00:00.000Z',lat:'40.7128',lon:'-74.006',timeZone:'America/New_York',version:'tldrastro-calculation-v4',detail:'placements'});
  assert.equal((await calculateInitialSky(url)).status,200,'A disposed worker can be recreated for the next request.');
 }finally{disposeInitialSkyWorker();}
 console.log('PASS: complete 14-paragraph parity and every list fact across four instants/two zones/DST; only declared article history is deferred, full requests restore it at the exact instant, false full readiness is rejected, and worker I/O/recovery remains intact.');
