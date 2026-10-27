@@ -64,8 +64,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     const searchable=`${row.headline} ${horoscopeWindowLabel(window)} ${isoDate.format(new Date(window.startsAt))} ${isoDate.format(new Date(Date.parse(window.endsAt)-1))} ${window.period} ${window.timeZone.replaceAll('_',' ')}`.toLowerCase();
     return searchTerms.every(term=>searchable.includes(term));
   }).sort((a,b)=>{
-    const dateOrder=b.sections.horoscopeEdition.window.startsAt.localeCompare(a.sections.horoscopeEdition.window.startsAt);
-    return (editionSort==='updated'?String(b.updated_at).localeCompare(String(a.updated_at))||dateOrder:editionSort==='oldest'?-dateOrder:dateOrder)||a.id.localeCompare(b.id);
+    const dateOrder=Date.parse(b.sections.horoscopeEdition.window.startsAt)-Date.parse(a.sections.horoscopeEdition.window.startsAt);
+    return (editionSort==='updated'?Date.parse(b.updated_at)-Date.parse(a.updated_at)||dateOrder:editionSort==='oldest'?-dateOrder:dateOrder)||a.id.localeCompare(b.id);
   });
   const editionSortLabel=editionSort==='updated'?'Recently updated':editionSort==='oldest'?'Oldest first':'Newest first';
   const editionViewChanged=Boolean(editionSearch||editionType!=='all'||editionStatus!=='all'||editionSort!=='newest');
