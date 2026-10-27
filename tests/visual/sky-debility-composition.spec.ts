@@ -86,6 +86,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await mockStudio(page, stored);
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
+    await page.goto("/#sky-writeups?view=daily-summary");
+    const summaryHeadingStyle = await page.getByRole("heading", { name: "Sun and Moon together", exact: true }).evaluate(style);
     await page.goto("/#sky-writeups?view=detriment-fall");
     await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
     const studio = page.getByTestId("sky-debility-studio");
@@ -102,7 +104,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const original = await reading.locator('[data-testid^="effort-paragraph-"]').allTextContents();
     const bodyStyle = await reading.getByTestId("effort-paragraph-0").evaluate(style);
     expect(await studio.getByRole("heading", { name: "Full card and composition map" }).evaluate(style))
-      .toEqual(await page.getByRole("heading", { name: "Sun and Moon together", exact: true }).evaluate(style));
+      .toEqual(summaryHeadingStyle);
     await studio.screenshot({ path: `test-results/effort-reading-${width}-${theme}.png` });
     await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
     const mapped = studio.getByLabel("Mapped effort summary", { exact: true });
