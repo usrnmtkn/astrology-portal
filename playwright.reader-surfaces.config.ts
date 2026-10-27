@@ -14,6 +14,8 @@ export default defineConfig({
     'calendar-month-overview.spec.ts',
     'calendar-moon-ui.spec.ts',
     'calendar-lunation-preview.spec.ts',
+    'calendar-lunation-aspects.spec.ts',
+    'sky-aspect-timing-accuracy.spec.ts',
     'calendar-moon-editor.spec.ts',
     'calendar-lunar-ingresses.spec.ts',
     'calendar-ingress-reading.spec.ts',

@@ -122,21 +122,15 @@ function applyingForAspect(from, to, exactAngle) {
     return false;
   }
 
-  const currentDistance = Math.abs(shortestAngleDistance(
-    angularSeparation(from.longitude, to.longitude) - exactAngle
-  ));
-  const nextDistance = Math.abs(shortestAngleDistance(
-    angularSeparation(
-      normalizeDegrees(from.longitude + from.speed / 4),
-      normalizeDegrees(to.longitude + to.speed / 4)
-    ) - exactAngle
-  ));
-
-  if (currentDistance < 0.01) {
+  const directedSeparation = shortestAngleDistance(from.longitude - to.longitude);
+  const residual = Math.abs(directedSeparation) - exactAngle;
+  if (Math.abs(residual) < 0.01) {
     return false;
   }
 
-  return nextDistance < currentDistance;
+  // The instantaneous orb derivative cannot overshoot a fast exact contact.
+  const separationSpeed = Math.sign(directedSeparation) * (from.speed - to.speed);
+  return residual * separationSpeed < 0;
 }
 
 function calculateAspects(positions, definitions, pointOrder, options = {}) {

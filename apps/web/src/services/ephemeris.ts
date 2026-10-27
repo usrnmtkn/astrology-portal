@@ -2151,7 +2151,7 @@ function aspectDistanceAt(
 }
 
 // At conjunction/opposition, unsigned separation touches zero rather than crossing it.
-// The overview range adapter opts into the signed crossing, rejecting the wrap discontinuity.
+// Every exact-event feed uses signed crossings and rejects the wrap discontinuity.
 function aspectCrossingDistanceAt(swe: SwissEphInstance, first: number, second: number, date: Date, degrees: number) {
   if (degrees !== 0 && degrees !== 180) return aspectDistanceAt(swe, first, second, date, degrees);
   return ((planetLongitudeAt(swe, first, date) - planetLongitudeAt(swe, second, date) - degrees + 540) % 360) - 180;
@@ -2163,10 +2163,9 @@ function refineAspectEvent(
   secondPlanetId: number,
   targetDegrees: number,
   lowerDate: Date,
-  upperDate: Date,
-  signedCrossings = false
+  upperDate: Date
 ) {
-  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
+  const distanceAt = aspectCrossingDistanceAt;
   let lower = lowerDate;
   let upper = upperDate;
   let lowerDistance = distanceAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees);
@@ -2361,9 +2360,11 @@ function findResidualBoundary(
   stepDays: number,
   maxDays: number
 ) {
+  if (Math.min(...residualsAt(from).map(Math.abs)) > presentationDegrees) return null;
   let near = from;
-  for (let elapsed = stepDays; elapsed <= maxDays; elapsed += stepDays) {
-    const far = addDays(from, direction * elapsed);
+  for (let elapsed = stepDays; ; elapsed += stepDays) {
+    const searchDays = Math.min(elapsed, maxDays);
+    const far = addDays(from, direction * searchDays);
     if (Math.min(...residualsAt(far).map(Math.abs)) > presentationDegrees) {
       let inside = near;
       let outside = far;
@@ -2377,9 +2378,9 @@ function findResidualBoundary(
       }
       return new Date((inside.getTime() + outside.getTime()) / 2);
     }
+    if (searchDays === maxDays) return null;
     near = far;
   }
-  return addDays(from, direction * maxDays);
 }
 
 function stationFallsNearNatal(
@@ -2528,8 +2529,11 @@ export async function natalDailyTransitPeaksFor(
           ? findResidualBoundary(residualsAt, PERSONAL_DAILY_ORB, reference, -1, step, 400) : start;
         const contactEnd = orbDegrees <= PERSONAL_DAILY_ORB
           ? findResidualBoundary(residualsAt, PERSONAL_DAILY_ORB, reference, 1, step, 400) : end;
+        // Unobserved boundaries only limit this internal exact-root search;
+        // they must never become published contact dates.
         const passes = scanResidualPasses(residualsAt,
-          new Date(Math.max(contactStart.getTime(), recentStart.getTime())), contactEnd, step);
+          new Date(Math.max(contactStart?.getTime() ?? recentStart.getTime(), recentStart.getTime())),
+          contactEnd ?? addDays(reference, 400), step);
         const allPasses = [...passes, ...dailyPasses].sort((a, b) => a.getTime() - b.getTime());
         result.push({
           id: personalTransitId(planet, aspect.type, target.planet), referenceAt, dateKey, timeZone,
@@ -2681,15 +2685,18 @@ function aspectPassSeriesTiming({
   if (allowUnperfectedWindow && !(orbAt(reference) <= presentationDegrees)) return null;
   const estimatedDurationDays = (presentationDegrees * 2) / relativeSpeed;
   const boundaryStepDays = Math.max(0.125, Math.min(5, presentationDegrees / (fastestSpeed * 4)));
-  const maxBoundaryDays = Math.max(60, Math.min(maxBoundaryCapDays, estimatedDurationDays * 4));
+  // Instantaneous speed can change near a station. Continue to the bounded
+  // search limit instead of publishing the shorter speed estimate as an exit.
+  const maxBoundaryDays = maxBoundaryCapDays;
   const currentStart = findResidualBoundary(residualsAt, presentationDegrees, reference, -1, boundaryStepDays, maxBoundaryDays);
   const currentEnd = findResidualBoundary(residualsAt, presentationDegrees, reference, 1, boundaryStepDays, maxBoundaryDays);
+  if (!currentStart || !currentEnd) return null;
   // A search horizon is not an observed orb crossing. Never publish its cap as
-  // the calculated start/end of a natal report contact.
+  // the calculated start/end of a contact.
   const crossesBoundary = (date: Date, direction: number) =>
     orbAt(new Date(date.getTime() - direction * 1000)) <= presentationDegrees
     && orbAt(new Date(date.getTime() + direction * 1000)) >= presentationDegrees;
-  if (allowUnperfectedWindow && (!crossesBoundary(currentStart, -1) || !crossesBoundary(currentEnd, 1))) return null;
+  if (!crossesBoundary(currentStart, -1) || !crossesBoundary(currentEnd, 1)) return null;
   const passStepDays = Math.max(1 / 24, Math.min(2, presentationDegrees / (fastestSpeed * 8)));
   const currentPasses = scanResidualPasses(residualsAt, currentStart, currentEnd, passStepDays);
   if (!currentPasses.length) {
@@ -2713,6 +2720,7 @@ function aspectPassSeriesTiming({
   const engagementPasses = linkedPasses.length > 1 && !linkedPasses.some(motionIsRetrogradeAt) ? currentPasses : linkedPasses;
   const engagementStart = findResidualBoundary(residualsAt, presentationDegrees, engagementPasses[0], -1, boundaryStepDays, maxBoundaryDays);
   const engagementEnd = findResidualBoundary(residualsAt, presentationDegrees, engagementPasses.at(-1)!, 1, boundaryStepDays, maxBoundaryDays);
+  if (!engagementStart || !engagementEnd || !crossesBoundary(engagementStart, -1) || !crossesBoundary(engagementEnd, 1)) return null;
   const durationDays = Math.max(0, (engagementEnd.getTime() - engagementStart.getTime()) / 86_400_000);
   const group: SkyAspectTiming["group"] = durationDays <= 10 ? "this-week" : durationDays < 365 ? "this-season" : "undercurrent";
   const closestIndex = engagementPasses.reduce((best, pass, index) => Math.abs(pass.getTime() - reference.getTime()) < Math.abs(engagementPasses[best].getTime() - reference.getTime()) ? index : best, 0);
@@ -2870,10 +2878,9 @@ function findSkyAspects(
   swe: SwissEphInstance,
   start: Date,
   end: Date,
-  timeZone: string,
-  signedCrossings = false
+  timeZone: string
 ): LunarCalendarEvent[] {
-  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
+  const distanceAt = aspectCrossingDistanceAt;
   const planetIds = [
     swe.SE_SUN,
     swe.SE_MOON,
@@ -2905,8 +2912,8 @@ function findSkyAspects(
           const currentDate = new Date(time);
           const currentDistance = distanceAt(swe, firstPlanetId, secondPlanetId, currentDate, degrees);
 
-          if (previousDistance === 0 || previousDistance * currentDistance < 0 && (!signedCrossings || Math.abs(currentDistance - previousDistance) < 180)) {
-            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate, signedCrossings);
+          if (previousDistance === 0 || previousDistance * currentDistance < 0 && Math.abs(currentDistance - previousDistance) < 180) {
+            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate);
             const dateKey = localDateKey(occursAt, timeZone);
             const title = `${firstPlanet} ${aspect} ${secondPlanet}`;
 
@@ -3326,7 +3333,7 @@ export async function getHoroscopeCalendarRangeEvents(
   const searchEnd = new Date(end.getTime() + 2 * 86_400_000);
   return [...lunar, ...findIngresses(swe, searchStart, searchEnd, timeZone),
     ...findMoonIngresses(swe, searchStart, searchEnd, timeZone),
-    ...(options.includeAspects ? findSkyAspects(swe, searchStart, searchEnd, timeZone, true)
+    ...(options.includeAspects ? findSkyAspects(swe, searchStart, searchEnd, timeZone)
       .filter(event => event.planets?.every(planet => ["Sun","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].includes(planet))
         && ["conjunction", "sextile", "square", "trine", "opposition"].includes(event.aspect ?? "")) : [])]
     .sort((first, second) => first.startsAt.localeCompare(second.startsAt));

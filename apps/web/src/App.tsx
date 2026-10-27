@@ -5530,21 +5530,20 @@ function currentSkyV4LunationDetailArticle({
   }
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
-  const moonAspects = relatedSkyAspectSectionsForPlacement({
-    aspects: sky.aspects,
-    generatedAt,
-    generatedContent,
-    pointName: "Moon",
-    positions: sky.positions
-  });
-  const sunAspects = relatedSkyAspectSectionsForPlacement({
-    aspects: sky.aspects,
-    generatedAt,
-    generatedContent,
-    pointName: "Sun",
-    positions: sky.positions
-  });
-  const aspectSections = [...moonAspects, ...sunAspects]
+  const aspectOrb = (aspect: SkySnapshot["aspects"][number]) => typeof aspect.separation === "number" && typeof aspect.exactAngle === "number"
+    ? Math.abs(aspect.separation - aspect.exactAngle)
+    : aspect.orb;
+  const aspectSections = sky.aspects
+    .filter((aspect) => [aspect.from, aspect.to].some((planet) => planet === "Moon" || planet === "Sun"))
+    .sort((first, second) => aspectOrb(first) - aspectOrb(second)
+      || Number(second.from === "Moon" || second.to === "Moon") - Number(first.from === "Moon" || first.to === "Moon"))
+    .flatMap((aspect) => relatedSkyAspectSectionsForPlacement({
+      aspects: [aspect],
+      generatedAt,
+      generatedContent,
+      pointName: aspect.from,
+      positions: sky.positions
+    }))
     .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
     .slice(0, 2);
 
@@ -12006,8 +12005,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const requestedArticlePreparationKey = `${skyDetailRoutePath}:${skyDate}:${requestedArticleLocation.latitude}:${requestedArticleLocation.longitude}:${requestedArticleLocation.timeZone}:${requestedArticleInstant}:${skyDetailRetry}`;
   // Connection source reads belong to the mounted reader, including while its article is open.
   const connectionDetail = selectedSkyDetail?.routePath?.includes("detail=connection-transit-") ? selectedSkyDetail : null;
-  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath })
-    || Boolean(sky && connectionDetail && connectionPlacementRetry);
+  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath,
+    connectionRecovery: Boolean(connectionDetail && connectionPlacementRetry) });
   useEffect(() => {
     if (skyDetailRoutePath) {
       preloadSkyDetailArticle();
@@ -12340,7 +12339,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         const events=await getLunarCalendarRangeEventsOffMainThread(sky.location,date,new Date(+date+86400000));
         const event=events.find(item=>item.type==='lunation'&&item.primary&&item.startsAt.slice(0,10)===routePlanet&&skyRoutePartMatches(item.sign??'',routeSign));
         if(!event){if(!cancelled)commitResolvedSkyDetail(null);return;}
-        const eventSky=await getAstrodienstSky(sky.location,new Date(event.startsAt));
+        const eventSky=await getAstrodienstSky(sky.location,new Date(event.startsAt),{includeTransitWindows:true,transitWindowPlanets:[]});
         const content=await loadSkyDetailContent(eventSky,availableDetailContent,lunationReaderContentKeys(event),loadLiveGeneratedContentForKeys);
         if(cancelled||skyDetailRoutePath!==skyDetailRoutePathFromUrl())return;
         selectedSkyDetailContentRef.current=content;

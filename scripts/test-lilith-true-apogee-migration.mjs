@@ -171,8 +171,8 @@ try {
   assert.ok(provenance?.ephemerisFiles.includes("semo_18.se1"), "Provenance must name the lunar ephemeris inside the data pack.");
   assert.equal(
     provenance?.calculationVersion,
-    "tldrastro-calculation-v3",
-    "Calculation contract must be v3 so cached mean-Lilith (v2) placements are never reused."
+    "tldrastro-calculation-v4",
+    "The current calculation contract must reject cached older placements and timing."
   );
   assert.doesNotThrow(() => ephemeris.validateSwissEphemerisReturnFlag(
     swe.SEFLG_SWIEPH | swe.SEFLG_SPEED,

@@ -192,10 +192,9 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-// v13 includes exact Moon ingresses in each local day, replacing noon-sign inference.
-// Also requires calculated bounding Sun ingresses, including in basic/month
-// caches. Earlier seven-day caches cannot supply a reliable season range.
-const calendarStorageVersion = "v13";
+// v14 includes exact conjunctions and oppositions alongside the v13 ingress facts.
+// Earlier cached calendars omit these events and must be recalculated.
+const calendarStorageVersion = "v14";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD

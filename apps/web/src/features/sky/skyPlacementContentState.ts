@@ -8,18 +8,20 @@ export function skySnapshotHasTransitWindows(sky: SkySnapshot) {
 
 export function shouldLoadSkyPlacementContent({
   mode,
-  detailRoutePath
+  detailRoutePath,
+  connectionRecovery = false
 }: {
   mode: string;
   hasSky?: boolean;
   detailRoutePath: string | null;
+  connectionRecovery?: boolean;
 }) {
   const isSkyPlacementList = mode === "guest" || mode === "member";
   const isSkyPlacementDetail = Boolean(
     detailRoutePath && /^sky\/(?:placement|retrograde|lunation)\//u.test(detailRoutePath)
   );
 
-  return isSkyPlacementList || isSkyPlacementDetail;
+  return isSkyPlacementList || isSkyPlacementDetail || connectionRecovery;
 }
 
 export function skyPlacementDescriptionState(

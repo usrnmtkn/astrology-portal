@@ -57,7 +57,7 @@ try {
     planetHouseSystem: "whole_sign",
     nodeType: "true",
     lilithType: "true",
-    calculationVersion: "tldrastro-calculation-v3",
+    calculationVersion: "tldrastro-calculation-v4",
     actualEphemeris: "swiss",
     returnedEphemerisFlags: [258]
   };
@@ -104,6 +104,12 @@ try {
     "A fully validated current-sky snapshot should be cached."
   );
   assert.equal(cache.VERIFIED_SKY_CACHE_SCHEMA, "tldrastro-verified-sky-v2");
+
+  const staleTimingProvenance = { ...provenance, calculationVersion: "tldrastro-calculation-v3" };
+  assert.equal(cache.isVerifiedSkySnapshot({ ...snapshot,
+    calculationProvenance: staleTimingProvenance,
+    facts: [{ ...fact, provenance: staleTimingProvenance }]
+  }), false, "Cached facts from before the phase/boundary repair must not be reused");
 
   const staleMeanLilithKey = cache.skySnapshotCacheKey(location, "2026-07-29");
   const staleProvenance = {
