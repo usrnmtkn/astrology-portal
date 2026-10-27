@@ -111,7 +111,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       expect(await response.finished()).toBeNull();
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       await expect(page.getByRole('region', { name: 'Daily Sky Summary editor', exact: true })).toBeVisible();
-      await expect(page.getByRole('region', { name: 'Detriment and fall summary editor', exact: true })).toBeVisible();
+      await expect(page.getByRole('region', { name: 'Detriment and fall summary editor', exact: true })).toHaveCount(0);
       await expect(page.getByRole('dialog')).toHaveCount(0);
       await expect(region).toHaveCount(0);
       expect(errors).toEqual([]);
