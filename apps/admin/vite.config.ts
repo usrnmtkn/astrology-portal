@@ -181,12 +181,12 @@ export default defineConfig(({ command, mode }) => {
             if (deferredSource(id)) {
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:mjs|tsx|ts)$/u, '');
             }
-            // Instructions and save recovery stay independently loadable from
-            // generation details, while sharing their optional editing code.
-            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
+            // Horoscope editing and generation panels share their edition model
+            // without loading the general publication-review workspace.
+            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery|HoroscopeGenerationDetails|WeeklyBatchEditorial)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
             // Profile metadata and reconciliation load with their editing panels.
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
-              || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
+              || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$|apps\/web\/src\/content\/horoscopeEditions\.mjs$/u.test(id)) return "HoroscopeWritingStudio";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
             if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-workspace";

@@ -1,5 +1,5 @@
 import {publishSavedOwnerContent} from './ownerPublication';
-export {publishSavedOwnerContent,ownerPublicationStatusPath} from './ownerPublication';
+export {ownerPublicationStatusPath} from './ownerPublication';
 import {useEffect,useState,type ReactNode} from 'react';
 import {ownerCredentialIdentity} from './ownerSession';
 import {StudioButton} from './StudioControls';
@@ -8,7 +8,6 @@ import {FormattedProse} from '../../../src/shared/components/FormattedProse';
 import {horoscopeSignLabel,type HoroscopeEdition} from '../../web/src/content/horoscopeEditions.mjs';
 
 export const horoscopePublicationAction=(row:any)=>row.event_type==='horoscope-edition-revision'?'publish-horoscope-edition-revision':'publish-owner-content';
-export const horoscopePublicationStatusPath=(row:any,override=false)=>'/api/admin/generated-content?'+new URLSearchParams({id:row.id,expectedUpdatedAt:row.updated_at,publicationAction:horoscopePublicationAction(row),...(override?{horoscopeValidationOverride:'true'}:{})});
 export function publishSavedHoroscope(row:any,write:()=>Promise<any>,read:()=>Promise<any>){
   return publishSavedOwnerContent({...row,id:row.event_type==='horoscope-edition-revision'?row.source_snapshot?.targetRowId:row.id},write,read);
 }

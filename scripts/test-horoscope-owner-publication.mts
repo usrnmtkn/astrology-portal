@@ -4,6 +4,7 @@ import {createMonthlyAspectPublicationFixture} from '../tests/helpers/horoscope-
 import {horoscopeEditionBody, emptyHoroscopeEdition, horoscopeEditionKey} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {readerRouteResponse} from '../tests/helpers/content-reader-route.mjs';
 import {hasExactStudioOwnerApproval} from '../api/_lib/studio-owner-publication.js';
+import {ownerPublicationStatusPath} from '../apps/admin/src/ownerPublication.ts';
 
 const created=await createMonthlyAspectPublicationFixture(m=>store.invoke(m.method,m.body,m.url));
 assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
@@ -88,11 +89,9 @@ assert.equal(staleOverride.status,409);
 const overridden=await store.invoke('PATCH',{id:blocked.id,expectedUpdatedAt:blocked.updated_at,ownerAction:'publish-horoscope-edition-revision',horoscopeValidationOverride:true});
 assert.equal(overridden.status,200,JSON.stringify(overridden.payload));
 const finalRow=overridden.payload.rows[0];
-const receiptParams=new URLSearchParams({id:blocked.id,expectedUpdatedAt:blocked.updated_at,publicationAction:'publish-horoscope-edition-revision'});
-const differentDecision=await store.invoke('GET',undefined,'/api/admin/generated-content?'+receiptParams);
+const differentDecision=await store.invoke('GET',undefined,ownerPublicationStatusPath(blocked,'publish-horoscope-edition-revision'));
 assert.equal(differentDecision.payload.found,false,'Recovery must bind the explicit fact-check override decision');
-receiptParams.set('horoscopeValidationOverride','true');
-const recoveredOverride=await store.invoke('GET',undefined,'/api/admin/generated-content?'+receiptParams);
+const recoveredOverride=await store.invoke('GET',undefined,ownerPublicationStatusPath(blocked,'publish-horoscope-edition-revision',true));
 assert.equal(recoveredOverride.status,200);assert.equal(recoveredOverride.payload.rows[0].id,finalRow.id);
 assert.equal(recoveredOverride.payload.rows[0].updated_at,finalRow.updated_at);
 assert.deepEqual(finalRow.sections.horoscopeEdition,blockedEdition);

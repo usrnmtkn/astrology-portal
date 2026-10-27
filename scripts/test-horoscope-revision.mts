@@ -3,6 +3,7 @@ import {store} from '../tests/helpers/sky-article-save-api.mts';
 import {emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {createPublicationDb,seedPublicationRow,callPublicationRpc} from '../tests/helpers/studio-publication-db.mjs';
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage.ts';
+import {ownerPublicationStatusPath} from '../apps/admin/src/ownerPublication.ts';
 
 try {
  for(const period of ['daily','weekly','monthly','seasonal']) {
@@ -56,7 +57,7 @@ try {
   if(history){assert(store.rows.get(live.id).source_snapshot.horoscopeGeneration.historyArchive);assert.deepEqual(next.source_snapshot.horoscopeGeneration,history);}
   assert.equal((await read()).payload.rows[0]?.body,draftBody.body);
   assert.equal(store.rows.get(revision.id).status,'ARCHIVED');
-  const recovered=await store.invoke('GET',undefined,'/api/admin/generated-content?'+new URLSearchParams({id:submitted.id,expectedUpdatedAt:submitted.updated_at,publicationAction:'publish-horoscope-edition-revision'}));
+  const recovered=await store.invoke('GET',undefined,ownerPublicationStatusPath(submitted,'publish-horoscope-edition-revision'));
   assert.equal(recovered.status,200);assert.equal(recovered.payload.rows[0]?.id,live.id);
   assert.equal(recovered.payload.publicationReceipt.currentPublicationState,'live');
   assert.equal((await publish(submitted)).payload.rows[0]?.updated_at,next.updated_at,'Receipt replay must not write again');

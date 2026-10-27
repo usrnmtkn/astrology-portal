@@ -241,7 +241,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       if(!row){
         const {editionDraft}=await import('./HoroscopeSaveRecovery');
         const result=await request(secret,endpoint,{
-          ...editionDraft(edition,{brief:facts.brief,signature:facts.signature},{horoscopeOutlines:{},studioWritingProfile:profiles.profiles.find((p:any)=>p.profile.period===period)??null,editorialImport:null},undefined,period)
+          ...editionDraft(edition,{brief:facts.brief,signature:facts.signature},{horoscopeOutlines:{},studioWritingProfile:profiles.profiles.find((p:any)=>p.profile.period===period)??null,editorialImport:null})
         },'POST',controller.signal);
         row=result.rows?.[0];
         if(!row?.id||!row.updated_at||row.status!=='DRAFT'||!isHoroscopeEditionKey(row.content_key,edition.window)||!sameEditionValue(validateHoroscopeEdition(row.sections?.horoscopeEdition),edition))throw new Error('The edition could not be confirmed. Choose Continue to check for the saved edition before trying again.');
@@ -282,7 +282,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
       const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:ownerTransport!.horoscopePublicationAction(saved),expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : (await import('./HoroscopeSaveRecovery')).editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
       const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
-      const data=ownerTransport?await ownerTransport.publishSavedHoroscope(saved,write,()=>request(secret,ownerTransport.horoscopePublicationStatusPath(saved,validationOverride))):await write();
+      const data=ownerTransport?await ownerTransport.publishSavedHoroscope(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved,ownerTransport.horoscopePublicationAction(saved),validationOverride))):await write();
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
         || row.status!==(lifecycle??(publish ? 'LIVE':'DRAFT'))||lifecycle&&(row.id!==saved.id||row.updated_at===saved.updated_at)) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');

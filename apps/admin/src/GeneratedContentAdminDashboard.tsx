@@ -4935,7 +4935,7 @@ export function GeneratedContentAdminDashboard() {
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: copy ? "save-and-publish-owner-content" : ownerFinal ? "publish-owner-content" : "approve-and-schedule",
           ...(copy ? { headline: copy.headline, summary: copy.summary, body: copy.body, sections: copy.sections } : {}) })
       });
-      const ownerTransport = ownerFinal ? await import("./HoroscopePublicationReview") : null;
+      const ownerTransport = ownerFinal ? await import("./ownerPublication") : null;
       const payload = ownerTransport ? await ownerTransport.publishSavedOwnerContent(row, write,
         () => adminJsonRequest<{ok:boolean;rows:AdminGeneratedContentRow[]}>(ownerTransport.ownerPublicationStatusPath(row), secret)) : await write();
       const saved = payload.rows?.[0];

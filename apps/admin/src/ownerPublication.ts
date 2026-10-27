@@ -25,6 +25,6 @@ export async function publishSavedOwnerContent<T extends Row>(row:T, write:()=>P
   }
 }
 
-export function ownerPublicationStatusPath(row:Row) {
-  return '/api/admin/generated-content?'+new URLSearchParams({id:row.id,expectedUpdatedAt:row.updated_at??'',publicationAction:'publish-owner-content'});
+export function ownerPublicationStatusPath(row:Row,publicationAction='publish-owner-content',horoscopeValidationOverride=false) {
+  return '/api/admin/generated-content?'+new URLSearchParams({id:row.id,expectedUpdatedAt:row.updated_at??'',publicationAction,...(horoscopeValidationOverride?{horoscopeValidationOverride:'true'}:{})});
 }
