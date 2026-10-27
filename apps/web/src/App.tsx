@@ -12005,8 +12005,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const requestedArticlePreparationKey = `${skyDetailRoutePath}:${skyDate}:${requestedArticleLocation.latitude}:${requestedArticleLocation.longitude}:${requestedArticleLocation.timeZone}:${requestedArticleInstant}:${skyDetailRetry}`;
   // Connection source reads belong to the mounted reader, including while its article is open.
   const connectionDetail = selectedSkyDetail?.routePath?.includes("detail=connection-transit-") ? selectedSkyDetail : null;
-  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath })
-    || Boolean(sky && connectionDetail && connectionPlacementRetry);
+  const placementContentNeeded = shouldLoadSkyPlacementContent({ mode, hasSky: Boolean(sky), detailRoutePath: skyDetailRoutePath,
+    connectionRecovery: Boolean(connectionDetail && connectionPlacementRetry) });
   useEffect(() => {
     if (skyDetailRoutePath) {
       preloadSkyDetailArticle();

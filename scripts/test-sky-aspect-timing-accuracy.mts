@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createServer } from "vite";
 import SwissEph from "swisseph-wasm";
 import { calculateSkyAspects, calculateNatalAspects, SKY_ASPECT_DEFINITIONS } from "@tldr/astro-knowledge/sky-aspect-engine";
+import { shouldLoadSkyPlacementContent } from "../apps/web/src/features/sky/skyPlacementContentState.ts";
 
 // Exercise the production boundary search without adding a public test-only API.
 const vite = await createServer({
@@ -24,6 +25,12 @@ function positionAt(planet: string, id: number, at: number) {
   return { planet, longitude: values[0], speed: values[3] };
 }
 try {
+  for (const hasSky of [false, true]) {
+    assert.equal(shouldLoadSkyPlacementContent({ mode: "detail", hasSky, detailRoutePath: null, connectionRecovery: true }), true,
+      "A connection Retry must replay its saved source request while fresh astronomy is pending");
+    assert.equal(shouldLoadSkyPlacementContent({ mode: "detail", hasSky, detailRoutePath: null, connectionRecovery: false }), false,
+      "A connection without an explicit recovery must not start unrelated placement reads");
+  }
   const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
   const at = Date.parse("2026-01-03T06:00:00Z");
   const moonVenus = (time: number) => [positionAt("Moon", swe.SE_MOON, time), positionAt("Venus", swe.SE_VENUS, time)];
