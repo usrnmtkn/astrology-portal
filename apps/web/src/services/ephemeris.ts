@@ -2151,7 +2151,7 @@ function aspectDistanceAt(
 }
 
 // At conjunction/opposition, unsigned separation touches zero rather than crossing it.
-// The overview range adapter opts into the signed crossing, rejecting the wrap discontinuity.
+// Every exact-event feed uses signed crossings and rejects the wrap discontinuity.
 function aspectCrossingDistanceAt(swe: SwissEphInstance, first: number, second: number, date: Date, degrees: number) {
   if (degrees !== 0 && degrees !== 180) return aspectDistanceAt(swe, first, second, date, degrees);
   return ((planetLongitudeAt(swe, first, date) - planetLongitudeAt(swe, second, date) - degrees + 540) % 360) - 180;
@@ -2163,10 +2163,9 @@ function refineAspectEvent(
   secondPlanetId: number,
   targetDegrees: number,
   lowerDate: Date,
-  upperDate: Date,
-  signedCrossings = false
+  upperDate: Date
 ) {
-  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
+  const distanceAt = aspectCrossingDistanceAt;
   let lower = lowerDate;
   let upper = upperDate;
   let lowerDistance = distanceAt(swe, firstPlanetId, secondPlanetId, lower, targetDegrees);
@@ -2870,10 +2869,9 @@ function findSkyAspects(
   swe: SwissEphInstance,
   start: Date,
   end: Date,
-  timeZone: string,
-  signedCrossings = false
+  timeZone: string
 ): LunarCalendarEvent[] {
-  const distanceAt = signedCrossings ? aspectCrossingDistanceAt : aspectDistanceAt;
+  const distanceAt = aspectCrossingDistanceAt;
   const planetIds = [
     swe.SE_SUN,
     swe.SE_MOON,
@@ -2905,8 +2903,8 @@ function findSkyAspects(
           const currentDate = new Date(time);
           const currentDistance = distanceAt(swe, firstPlanetId, secondPlanetId, currentDate, degrees);
 
-          if (previousDistance === 0 || previousDistance * currentDistance < 0 && (!signedCrossings || Math.abs(currentDistance - previousDistance) < 180)) {
-            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate, signedCrossings);
+          if (previousDistance === 0 || previousDistance * currentDistance < 0 && Math.abs(currentDistance - previousDistance) < 180) {
+            const occursAt = refineAspectEvent(swe, firstPlanetId, secondPlanetId, degrees, previousDate, currentDate);
             const dateKey = localDateKey(occursAt, timeZone);
             const title = `${firstPlanet} ${aspect} ${secondPlanet}`;
 
@@ -3326,7 +3324,7 @@ export async function getHoroscopeCalendarRangeEvents(
   const searchEnd = new Date(end.getTime() + 2 * 86_400_000);
   return [...lunar, ...findIngresses(swe, searchStart, searchEnd, timeZone),
     ...findMoonIngresses(swe, searchStart, searchEnd, timeZone),
-    ...(options.includeAspects ? findSkyAspects(swe, searchStart, searchEnd, timeZone, true)
+    ...(options.includeAspects ? findSkyAspects(swe, searchStart, searchEnd, timeZone)
       .filter(event => event.planets?.every(planet => ["Sun","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"].includes(planet))
         && ["conjunction", "sextile", "square", "trine", "opposition"].includes(event.aspect ?? "")) : [])]
     .sort((first, second) => first.startsAt.localeCompare(second.startsAt));
