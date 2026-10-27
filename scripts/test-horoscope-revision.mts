@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
-import {store} from '../tests/helpers/sky-article-save-api.mts';
+import {store,writerFixture} from '../tests/helpers/sky-article-save-api.mts';
 import {emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../apps/web/src/content/horoscopeEditions.mjs';
 import {createPublicationDb,seedPublicationRow,callPublicationRpc} from '../tests/helpers/studio-publication-db.mjs';
 import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage.ts';
 import {ownerPublicationStatusPath} from '../apps/admin/src/ownerPublication.ts';
+import {loadWeeklyPriorEditions} from '../api/_lib/weekly-prior-editions.ts';
 
 try {
  for(const period of ['daily','weekly','monthly','seasonal']) {
@@ -14,8 +15,20 @@ try {
   const history=period==='weekly'?{readings:{aries:{privateSyntheticHistory:'SYNTHETIC_HISTORY '.repeat(10000)}}}:undefined;
   const created=await store.invoke('POST',{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:`Synthetic ${period}`,body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:packet.payload.brief,signature:packet.payload.signature}},sourceSnapshot:{privateNotes:'PRIVATE_REVISION_CANARY',...(history?{horoscopeGeneration:history}:{})}});
   assert.equal(created.status,200,JSON.stringify(created));
+  let initial=created.payload.rows[0],comparison:any;
+  if(period==='weekly'){
+   const priorEdition=structuredClone(edition),week=7*86400000;
+   priorEdition.window.startsAt=new Date(Date.parse(edition.window.startsAt)-week).toISOString();
+   priorEdition.window.endsAt=new Date(Date.parse(edition.window.endsAt)-week).toISOString();
+   priorEdition.passages.forEach(p=>{p.body='PRIVATE_PRIOR_WEEK_CANARY complete synthetic previous reading.';});
+   const priorId='d18d630c-a3b4-40ad-9b19-d0470af0c504';assert(!store.rows.has(priorId));
+   store.rows.set(priorId,{id:priorId,content_key:horoscopeEditionKey(priorEdition.window),mode:'article',status:'ARCHIVED',updated_at:priorEdition.window.endsAt,sections:{horoscopeEdition:priorEdition},body:horoscopeEditionBody(priorEdition)});
+   comparison=await loadWeeklyPriorEditions(initial);assert.equal(comparison.editions.length,1);
+   store.rows.get(initial.id).source_snapshot.weeklyComparison=comparison;
+   initial=decodeWeeklyHistoryRow(structuredClone(store.rows.get(initial.id)));
+  }
   const patch=(row:any,body:any)=>store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,...body});
-  const first=await patch(created.payload.rows[0],{ownerAction:'publish-owner-content'});
+  const first=await patch(initial,{ownerAction:'publish-owner-content'});
   assert.equal(first.status,200,JSON.stringify(first));
   const live=structuredClone(first.payload.rows[0]);
   const read=()=>store.invoke('POST',{ids:[live.id]},'/api/content-reader');
@@ -29,11 +42,17 @@ try {
   assert.notEqual(revision.id,live.id);assert.equal(revision.event_type,'horoscope-edition-revision');
   assert.equal(revision.lane,'reference');assert.equal(revision.source_snapshot.targetRowId,live.id);
   if(history){assert(store.rows.get(revision.id).source_snapshot.horoscopeGeneration.historyArchive);assert.deepEqual(revision.source_snapshot.horoscopeGeneration,history);}
+  if(comparison)assert.deepEqual(revision.source_snapshot.weeklyComparison,comparison,'A private draft retains its complete frozen comparison');
   assert.equal((await read()).payload.rows[0]?.body,live.body);
   assert(!JSON.stringify((await read()).payload).includes('PRIVATE_REVISION_CANARY'));
+  assert(!JSON.stringify((await read()).payload).includes('PRIVATE_PRIOR_WEEK_CANARY'));
   const reopened=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeEditions=true&horoscopeEditor=true&id=${revision.id}`);
   assert.equal(reopened.payload.rows[0]?.id,revision.id);
   assert.equal(reopened.payload.rows[0]?.source_snapshot.targetRowId,live.id,'Weekly transport retains revision identity');
+  if(comparison){
+   assert.deepEqual(reopened.payload.rows[0].source_snapshot.weeklyComparison,{version:comparison.version,contextHash:comparison.contextHash,editionId:comparison.editionId,editionCount:1});
+   assert(!JSON.stringify(reopened.payload).includes('PRIVATE_PRIOR_WEEK_CANARY'),'Editor transport retains comparison identity without prior private text');
+  }
   const inventory=await store.invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionInventory=true');
   assert(inventory.payload.rows.some((row:any)=>row.id===revision.id),'Saved drafts remain discoverable');
   assert.equal((await patch(live,draftBody)).status,409,'A second editor cannot overwrite a pending draft');
@@ -55,6 +74,7 @@ try {
   const published=await publish();assert.equal(published.status,200,JSON.stringify(published));
   const next=published.payload.rows[0];assert.equal(next.id,live.id);assert.equal(next.body,draftBody.body);
   if(history){assert(store.rows.get(live.id).source_snapshot.horoscopeGeneration.historyArchive);assert.deepEqual(next.source_snapshot.horoscopeGeneration,history);}
+  if(comparison)assert.deepEqual(next.source_snapshot.weeklyComparison,comparison,'Explicit publication preserves the frozen comparison');
   assert.equal((await read()).payload.rows[0]?.body,draftBody.body);
   assert.equal(store.rows.get(revision.id).status,'ARCHIVED');
   const recovered=await store.invoke('GET',undefined,ownerPublicationStatusPath(submitted,'publish-horoscope-edition-revision'));
@@ -65,6 +85,7 @@ try {
   const changed=await patch(next,{reviewerNotes:'Synthetic concurrent source update'});assert.equal(changed.status,200);
   assert.equal((await publish()).status,409,'Stale revisions cannot replace a changed live source');
   assert.equal(store.rows.get(revision.id).status,'DRAFT');
+  assert.deepEqual([writerFixture.calls,writerFixture.reviewCalls,writerFixture.batchCalls],[0,0,0],'Manual publication and revision never require AI requests');
  }
  console.log('Horoscope revision API and PostgreSQL publication checks passed for all four periods.');
 } finally {await store.publication.close();}
