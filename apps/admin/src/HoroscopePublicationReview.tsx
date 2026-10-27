@@ -34,7 +34,10 @@ export default function HoroscopePublicationReview({draft,saved,sign,dirty,locke
   const publicationCurrent=Boolean(publication&&saved&&publication.id===saved.id&&publication.updatedAt===saved.updated_at);
   const publicationReady=publicationCurrent&&(publication?.ready===true&&publication.issues.length===0||publication?.canOverride===true&&validationOverride);
   return <>
-    {isPublished?<div className="admin-horoscope-actions"><a className="admin-primary-button" href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a><StudioButton onClick={onSetup}>Create another edition</StudioButton></div>:<>
+    {isPublished?<div className="admin-horoscope-actions"><a className="admin-primary-button" href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a><StudioButton disabled={locked} onClick={onSetup}>Create another edition</StudioButton></div>:saved?.status==='ARCHIVED'&&!dirty?<>
+      <p>This edition is archived. Its saved readings are preserved.</p>
+      <div className="admin-horoscope-actions"><StudioButton disabled={locked} onClick={onBack}>Review archived readings</StudioButton></div>
+    </>:<>
           {!publicationCurrent&&<p role="status">Checking all saved readings before publication…</p>}
           {publicationCurrent&&publication.error&&<div role="alert"><p>{publication.error}</p><StudioButton disabled={locked} onClick={()=>publication.status===409?onReload():setAttempt(value=>value+1)}>{publication.status===409?'Reload saved edition':'Check publication again'}</StudioButton></div>}
           {publicationCurrent&&publication.issues.length>0&&<section aria-label="Publication checks">
