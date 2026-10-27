@@ -8,7 +8,14 @@ import {decodeWeeklyHistoryRow} from '../api/_lib/horoscope-history-storage';
 import {horoscopeEditorRow} from '../api/_lib/horoscope-editor-payload';
 import {validateWeeklyEditorialResult,weeklyReviewCurrent,WEEKLY_PLAN_INSTRUCTIONS,WEEKLY_BATCH_REVIEW_INSTRUCTIONS} from '../src/astro-writing/weeklyBatchEditorial.mjs';
 import {loadWeeklyPriorEditions} from '../api/_lib/weekly-prior-editions';
+import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProfiles.mjs';
 installHoroscopeWriterFixture();
+const profile={...defaultHoroscopeProfile('weekly'),
+ voiceGuidance:'Synthetic current Weekly correction: use ordinary words and explain the actual circumstance.',
+ structure:'Synthetic current Weekly structure: give openings room to establish a situation. No hook is compulsory.',
+ sourceGuidance:'Complete synthetic approved example opening.\n\nComplete synthetic approved example development.\n\nComplete synthetic approved example ending.'};
+const profileSave=await store.invoke('POST',{profile,expectedUpdatedAt:null},'/api/admin/generated-content?writingProfiles=true');
+assert.equal(profileSave.status,200);const savedProfileRow=structuredClone(store.rows.get(profileSave.payload.profile.id));
 const current=(id:string)=>decodeWeeklyHistoryRow(structuredClone(store.rows.get(id)));
 const action=(id:string,action:string,extra:any={})=>runHoroscopeWriting({action,id,expectedUpdatedAt:current(id).updated_at,...extra},'synthetic-owner');
 async function create(date:string,complete=true,period='weekly',timeZone='America/New_York'){
@@ -33,8 +40,11 @@ assert.equal((await action(id,'start-batch',{approvedPlanHash:prepare.payload.pl
 await runWeeklyHoroscopeBatch(id,{maxSteps:1,wait:async()=>{}});
 const planner=[...writerFixture.batchRequests.values()].at(-1)!;
 const planInput=JSON.parse(planner.input);assert.deepEqual(planInput.priorWeeks,JSON.parse(original));
+assert.deepEqual(planInput.profile,profile,'The shared planner receives the complete current saved Voice, Structure and Sources');
 assert(planner.instructions.includes('A date or a new planet name pasted into an evergreen lesson is insufficient'));
 assert(planner.instructions.includes('outward confidence versus private truth'));
+assert(planner.instructions.includes('Several connected sentences may be needed'));
+assert(planner.instructions.includes('abstract psychological verdict'));
 // Data injection stays inside a comparison-only packet, never the system instructions.
 assert(!planner.instructions.includes(oldRows[1].sections.horoscopeEdition.passages[0].body));
 const plan=weeklyBatchFixtureResult(planInput);
@@ -47,9 +57,21 @@ await runWeeklyHoroscopeBatch(id,{maxSteps:100,wait:async()=>{}});
 let row=current(id);assert.equal(row.source_snapshot.horoscopeGeneration.batch.status,'complete');
 const reviewer=[...writerFixture.batchRequests.values()].at(-1)!,reviewInput=JSON.parse(reviewer.input);
 assert.deepEqual(reviewInput.priorWeeks,JSON.parse(original),'Planner and final reviewer share the frozen complete snapshot');
-for(const request of writerFixture.requests.values()){assert(!request.input.includes('\"priorQuote\":'),'Historical citation fields are not writer voice or meaning inputs');assert(request.input.includes('weekDifference is comparison-only analysis'));}
+assert.deepEqual(reviewInput.profile,profile,'The complete current saved profile also reaches the full-set reviewer');
+for(const request of writerFixture.requests.values()){
+ assert(!request.input.includes('\"priorQuote\":'),'Historical citation fields are not writer voice or meaning inputs');
+ assert(request.input.includes('weekDifference is comparison-only analysis'));
+ for(const field of ['voiceGuidance','structure','sourceGuidance'] as const)assert(request.input.includes(profile[field]),`Complete ${field} reaches the actual writer`);
+ assert(request.instructions.includes('An opening may need several connected sentences'));
+ assert(request.input.includes('without requiring a psychological revelation'));
+ assert(!request.input.includes('Let the ending follow from the recognition developed in this reading'));
+}
 assert.equal(writerFixture.batchCalls,2);assert.equal(writerFixture.calls,12);assert.equal(writerFixture.reviewCalls,12,'No extra judge, retry or rewrite calls');
 assert(reviewer.instructions.includes('Do not return a bare all-pass checklist'));
+assert(reviewer.instructions.includes('A quiet or gradual opening is not a defect'));
+assert(reviewer.instructions.includes('what the reader cannot understand about the situation or consequence'));
+assert(reviewer.instructions.includes('something looks good but is not what the reader wants'));
+assert.deepEqual(store.rows.get(profileSave.payload.profile.id),savedProfileRow,'Planning, writing and reviewing never rewrite saved rules or examples');
 const result=weeklyBatchFixtureResult(reviewInput);assert.equal(validateWeeklyEditorialResult(result,{phase:'batch-review',input:reviewInput}).status,'passed');
 const legacyInput={...reviewInput};delete legacyInput.priorWeeks;
 const legacy={checks:Object.fromEntries(['interpretations','phrases','endings','house_grounding','unsupported_history','technical_filler'].map(key=>[key,'pass'])),findings:[]};

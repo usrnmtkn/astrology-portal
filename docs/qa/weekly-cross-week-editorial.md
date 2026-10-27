@@ -28,6 +28,17 @@ The sign writer receives current meaning decisions without historical citation
 fields; comparison notes are not voice evidence or current facts.
 The existing warning treatment displays the earlier quote alongside current text.
 
+The Weekly-only request also carries the saved clarity and opening direction
+through all three stages. The planner develops a recognizable situation rather
+than a psychological verdict. The sign writer's scope notes no longer prescribe
+recognition, a complication or an ending based on that recognition. Openings can
+take several connected sentences; no hook or immediate punchline is compulsory.
+The full-set reviewer must explain the actual reader consequence of an unclear
+opening or abstract conclusion, and checks the recurring attractive-but-unwanted
+conclusion by meaning. Ordinary life is not reduced to an inventory of bills,
+errands or responsibilities. These tests preserve useful imagery and meaningful
+contrast; they do not add vocabulary bans, length quotas or another model call.
+
 A legitimate continuing theme may recur. The current configuration must explain
 what develops differently; this is not an emotional quota or a ban on contrasts,
 planet names or ordinary grammar. Existing saved profiles, approved examples,
@@ -35,12 +46,19 @@ calculation rules, sign output schema and publication approval remain unchanged.
 The maximum batch budget remains one plan, twelve drafts, twelve prose checks and
 one full-set review. No automatic rewrite or paid retry is added.
 
+Studio labels the edition's stored plan revision separately from the writing
+profile editor's latest saved revision. Saving a profile does not change draft
+text or start generation. Preparing the next plan adopts the latest saved profile;
+an in-flight request retains its original instructions and budget.
+
 ## Verification
 
 - `scripts/test-weekly-cross-week-editorial.mts`: actual handler requests, date and
   timezone scope, complete text, four-edition bound, frozen and refreshed hashes,
   current fact references, exact prior citations, incomplete/malformed findings,
-  old-row preservation, unavailable storage and 26 synthetic provider requests.
+  old-row preservation, unavailable storage and 26 synthetic provider requests;
+  complete current Voice/Structure/Sources delivery to the planner, writer and
+  reviewer, with immutable saved examples.
 - `scripts/test-weekly-batch-editorial.mts`: existing reservations, stale checks,
   owner edits, publication boundaries, legacy approval and recovery behavior.
 - `tests/visual/weekly-batch-editorial.spec.ts`: rendered historical quote warnings,

@@ -133,6 +133,8 @@ const native=await create('2026-11-30',true);row=latest(native);row.sections.hor
 const nativeExisting=structuredClone(row.sections.horoscopeEdition.passages.slice(0,11));
 const nativePlan=await action(native,'prepare',{writerChoice:'claude'});assert.equal(nativePlan.status,200);await action(native,'start-batch',{approvedPlanHash:nativePlan.payload.plan.planHash});assert.equal((await runWeeklyHoroscopeBatch(native,{maxSteps:100,wait:()=>new Promise(resolve=>setTimeout(resolve,5))})).state,'complete');
 assert.equal(nativeTransport.requests.length,1);assert(nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
+assert(nativeTransport.requests[0].request.system.includes('An opening may need several connected sentences'),'The native Claude system retains the Weekly opening correction');
+assert(nativeTransport.requests[0].request.messages[0].content.includes('without requiring a psychological revelation'),'The native Claude plan retains the ordinary-language correction');
 assert(nativeTransport.requests[0].request.messages[0].content.includes(JSON.stringify({previousReadings:latest(native).source_snapshot.horoscopeGeneration.readings.pisces.previousReadings})));
 assert.deepEqual(latest(native).sections.horoscopeEdition.passages.slice(0,11),nativeExisting);
 // Existing in-flight batches keep their pinned request and paid-stage budget.
