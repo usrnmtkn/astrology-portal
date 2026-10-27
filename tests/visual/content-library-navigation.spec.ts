@@ -45,7 +45,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.getByRole('searchbox',{name:'Search content',exact:true}).fill(archived.headline);
    if(width===390)await page.getByRole('button',{name:'Filters',exact:true}).click();
    await page.getByRole('button',{name:'Show retired',exact:true}).click();
-   const result=page.locator('tr.admin-content-row').filter({hasText:archived.content_key});
+   const result=page.locator('tr.admin-content-row').filter({has:page.getByText(archived.headline,{exact:true})});
+   await expect(result).toContainText(archived.content_key);
    await expect(result).toContainText('Archived');
    const before=await store.call({method:'rows'}),ledger=await store.call({method:'publications'});
    await result.getByRole('button',{name:'Open article',exact:true}).click();
