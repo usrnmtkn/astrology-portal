@@ -106,7 +106,9 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
         return url.pathname === '/api/admin/package-source' && url.searchParams.get('contentKey') === pendingKey;
       });
       releaseLookup!();
-      await (await settled).finished();
+      const response = await settled;
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       await expect(page.getByRole('region', { name: 'Daily Sky Summary editor', exact: true })).toBeVisible();
       await expect(page.getByRole('region', { name: 'Detriment and fall summary editor', exact: true })).toBeVisible();
