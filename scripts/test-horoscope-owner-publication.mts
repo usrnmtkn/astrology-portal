@@ -38,12 +38,37 @@ for(const period of ['daily','weekly','monthly','seasonal']) {
   assert.equal(published.status,200,period+JSON.stringify(published.payload));
   assert.deepEqual(published.payload.rows[0].sections.horoscopeEdition,edition,period+' preserves all signs and complete exact author copy');
   assert(hasExactStudioOwnerApproval(published.payload.rows[0]),period);
-  const live=published.payload.rows[0],invalid=structuredClone(edition);
+  const publishedRow=published.payload.rows[0];
+  const readerBefore=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[publishedRow.id]})});
+  assert.equal((await readerBefore.json()).rows[0].body,publishedRow.body,period+' published edition is reader-visible');
+  const archiveBody={id:publishedRow.id,expectedUpdatedAt:publishedRow.updated_at,status:'ARCHIVED'};
+  const storedBeforeArchive=structuredClone(store.rows.get(publishedRow.id));
+  assert.equal((await store.invoke('PATCH',archiveBody,'/api/admin/generated-content?horoscopeEditor=true','wrong')).status,401);
+  assert.equal((await store.invoke('PATCH',{...archiveBody,expectedUpdatedAt:saved.updated_at},'/api/admin/generated-content?horoscopeEditor=true')).status,409);
+  assert.deepEqual(store.rows.get(publishedRow.id),storedBeforeArchive,period+' refused archive preserves the published row');
+  const archived=await store.invoke('PATCH',archiveBody,'/api/admin/generated-content?horoscopeEditor=true');
+  assert.equal(archived.status,200,period+JSON.stringify(archived.payload));
+  const live=archived.payload.rows[0],invalid=structuredClone(edition);
+  assert.equal(live.status,'ARCHIVED');
+  assert.deepEqual(live.sections.horoscopeEdition,edition,period+' archival preserves every reading');
+  assert.equal(live.body,publishedRow.body);
+  for(const query of [{ids:[live.id]},{keys:[live.content_key]}]) {
+    const readerAfter=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(query)});
+    assert.deepEqual((await readerAfter.json()).rows,[],period+' archived edition is excluded by ID and key');
+  }
+  const reopened=await store.invoke('GET',undefined,`/api/admin/generated-content?horoscopeEditions=true&horoscopeEditor=true&id=${live.id}`);
+  assert.equal(reopened.status,200);assert.deepEqual(reopened.payload.rows[0].sections.horoscopeEdition,edition,period+' archived readings remain recoverable');
   invalid.passages[0].body+=' The exact clock time is 25:99.';
   const draft=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,status:'DRAFT',body:horoscopeEditionBody(invalid),sections:{horoscopeEdition:invalid}});
   assert.equal(draft.status,200,period+JSON.stringify(draft.payload));
   const rejected=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:draft.payload.rows[0].updated_at,ownerAction:'publish-owner-content'});
   assert.equal(rejected.status,422,period+' explicit approval cannot bypass calculated timing boundaries');
+  const empty=emptyHoroscopeEdition(edition.window);
+  const emptySave=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:draft.payload.rows[0].updated_at,status:'DRAFT',body:horoscopeEditionBody(empty),sections:{horoscopeEdition:empty}});
+  assert.equal(emptySave.status,200,period+JSON.stringify(emptySave.payload));
+  const emptyArchive=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:emptySave.payload.rows[0].updated_at,status:'ARCHIVED'},'/api/admin/generated-content?horoscopeEditor=true');
+  assert.equal(emptyArchive.status,200,period+' incomplete draft must have recoverable cleanup: '+JSON.stringify(emptyArchive.payload));
+  assert.equal(emptyArchive.payload.rows[0].status,'ARCHIVED');assert.deepEqual(emptyArchive.payload.rows[0].sections.horoscopeEdition,empty);
 }
 console.log('PASS daily/weekly/monthly/seasonal horoscope owner publication: saved author punctuation, technical preflight, explicit exact approval, unchanged complete copy and signed window integrity. No paid calls.');
 // Explicit owner override preserves a parser warning and exact reader copy.

@@ -3425,7 +3425,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   // Weekly editors send only editable fields. A compact, versioned checkpoint
   // retains the complete server-owned history without returning it through PATCH.
-  if(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&existing.status==='DRAFT'&&patch.status!=='LIVE'){
+  if(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&existing.status==='DRAFT'&&(patch.status===undefined||patch.status==='DRAFT')){
     const changed=Object.fromEntries(Object.entries(patch).filter(([key,value])=>key!=='updated_at'&&!isDeepStrictEqual(value,existing[key])));
     if(Object.keys(changed).every(key=>['sections','source_snapshot','body','facts','review_state','reviewed_at','status'].includes(key))
       &&(changed.review_state===undefined||changed.review_state===null)&&(changed.reviewed_at===undefined||changed.reviewed_at===null)){

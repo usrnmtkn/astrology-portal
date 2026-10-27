@@ -9,6 +9,51 @@ import { readerResponse } from '../helpers/reader-response';
 
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
 
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Dated Sky article editor archives and restores complete saved readings ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const row = await syntheticLibrarySkyArticle();
+    const store = await studioApiStore([row], { uuidIds: true });
+    const writes: any[] = [];
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.clock.setFixedTime(new Date('2026-10-12T16:00:00Z'));
+      await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
+        if (url.pathname !== '/api/admin/content-live-status') return false;
+        const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload }); return true;
+      } });
+      await page.goto('/admin/content#exact-content');
+      const result = page.locator('tr.admin-content-row').filter({ hasText: row.content_key });
+      await result.getByRole('button', { name: 'Edit published article', exact: true }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      await expect(editor.getByRole('textbox', { name: 'Sky article general copy', exact: true })).toHaveValue(row.body);
+      const archive = editor.getByRole('button', { name: 'Archive article', exact: true });
+      await expect(archive).toBeVisible();
+      const concurrent = await store.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: row.updated_at, reviewerNotes: 'Synthetic second editor.' } });
+      expect(concurrent.status).toBe(200);
+      await archive.click(); await expect(editor.getByRole('alert')).toBeVisible();
+      expect((await store.call({ method: 'rows' })).find((r: any) => r.id === row.id)).toEqual(concurrent.payload.rows[0]);
+      await editor.getByRole('button', { name: 'Reload saved article', exact: true }).click();
+      await expect(editor.getByRole('alert')).toHaveCount(0);
+      await archive.click();
+      await expect(editor.getByRole('button', { name: 'Restore as draft', exact: true })).toBeVisible();
+      await expect(editor.getByRole('link', { name: 'Read published article', exact: true })).toHaveCount(0);
+      const archived = (await store.call({ method: 'rows' })).find((r: any) => r.id === row.id);
+      expect(archived.status).toBe('ARCHIVED'); expect(archived.sections).toEqual(row.sections); expect(archived.body).toBe(row.body);
+      for (const body of [{ ids: [row.id] }, { keys: [row.content_key] }]) expect((await store.call({ method: 'POST', url: '/api/content-reader', body })).payload.rows).toEqual([]);
+      await page.screenshot({ path: `test-results/dated-sky-archive-${width}-${theme}.png`, fullPage: true });
+      await editor.getByRole('button', { name: 'Restore as draft', exact: true }).click();
+      const restored = (await store.call({ method: 'rows' })).find((r: any) => r.id === row.id);
+      await expect(editor.getByRole('button', { name: 'Approve & publish complete edition', exact: true })).toBeVisible();
+      expect(restored.status).toBe('DRAFT'); expect(restored.sections).toEqual(row.sections); expect(restored.body).toBe(row.body);
+      expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } })).payload.rows).toEqual([]);
+      expect(writes.filter(write => write.result.status === 200)).toHaveLength(2);
+    } finally { try { await page.unrouteAll({ behavior: 'wait' }); } finally { store.close(); } }
+  });
+}
+
 for (const width of [390, 1440]) test(`open guide follows storage-only publication and retirement ${width}`, async ({ page, context }) => {
   test.setTimeout(90_000);
   await page.setViewportSize({ width, height: 1000 });

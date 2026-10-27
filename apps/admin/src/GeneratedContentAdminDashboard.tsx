@@ -10836,11 +10836,8 @@ export function GeneratedContentAdminDashboard() {
     const updateSourceLifecycle = async () => {
       if (!currentDraft.id) return;
       const lifecycleAction = sourceIsArchived ? "restore" : "archive";
-      if (isPackageDraft) {
-        await saveDraft(undefined, currentDraft, lifecycleAction);
-      } else {
-        await saveDraft(sourceIsArchived ? "DRAFT" : "ARCHIVED", currentDraft, lifecycleAction);
-      }
+      const saved = await saveDraft(isPackageDraft ? undefined : sourceIsArchived ? "DRAFT" : "ARCHIVED", currentDraft, lifecycleAction);
+      if (saved && compiledSkyArticleEdition) await openRow(saved);
     };
     const updatePackageEditorialNotes = (editorialNotes: string) => {
       setDraft(setPackageRecordField(currentDraft, "editorial_notes", editorialNotes));
@@ -12749,13 +12746,13 @@ export function GeneratedContentAdminDashboard() {
           </Suspense></section>}
         {compiledSkyArticleEdition && skyArticleEditor && <div className="admin-toolbar-actions admin-editor-savebar studio-surface" aria-label="Article publication actions" aria-busy={isLoading}>
           <span className={`admin-editor-save-state ${skyArticleEditor.saveState === "saved" ? "is-saved" : "is-unsaved"}`} role="status">
-            {isLoading ? "Publishing…" : skyArticleEditor.saveState === "error" ? "Draft save failed · Changes not published"
+            {isLoading ? "Saving…" : skyArticleEditor.saveState === "error" ? "Draft save failed · Changes not published"
               : skyArticleEditor.saveState !== "saved" ? "Saving draft · Changes not published"
                 : skyArticleChanges.length > 0 ? "Draft saved · Changes not published"
-                  : currentDraft.status === "LIVE" ? "Published copy is unchanged." : "Draft saved · Awaiting publication"}
+                  : sourceIsArchived ? "Archived · Saved article preserved" : currentDraft.status === "LIVE" ? "Published copy is unchanged." : "Draft saved · Awaiting publication"}
           </span>
           {skyArticleEditor.saveState === "error" && <StudioButton disabled={isLoading} onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>}
-          {skyArticleChanges.length > 0 && skyArticleEditor.reviewOpen ? <StudioButton className="admin-primary-button" type="button"
+          {sourceIsArchived ? null : skyArticleChanges.length > 0 && skyArticleEditor.reviewOpen ? <StudioButton className="admin-primary-button" type="button"
             disabled={isLoading || skyArticleEditor.saveState !== "saved"}
             onClick={() => void publishSkyArticleChanges()}
             title={skyArticleEditor.saveState !== "saved" ? "Wait for autosave to finish before publishing." : "Publish the complete validated article revision."}
@@ -12769,6 +12766,10 @@ export function GeneratedContentAdminDashboard() {
             });
           }}>Review &amp; publish</StudioButton> : selectedRow && currentDraft.status !== "LIVE" ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => void approveSkyArticleEdition(selectedRow)}>Approve &amp; publish complete edition</StudioButton>
             : <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)} target="_blank" rel="noreferrer">Read published article</a>}
+          <StudioButton type="button" className={sourceIsArchived ? undefined : "admin-danger-button"}
+            disabled={isLoading || skyArticleEditor.saveState !== "saved" || skyArticleChanges.length > 0 || Boolean(editorSaveError)}
+            onClick={() => void updateSourceLifecycle()}>{sourceIsArchived ? "Restore as draft" : "Archive article"}</StudioButton>
+          {editorSaveError && selectedRow && <StudioButton type="button" disabled={isLoading} onClick={() => void openRow(selectedRow)}>Reload saved article</StudioButton>}
           <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
         </div>}
         {renderNotification()}

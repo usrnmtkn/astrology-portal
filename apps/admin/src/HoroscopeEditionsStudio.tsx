@@ -274,23 +274,25 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       return true;
     }catch{return false;}
   }
-  async function save(publish=false) {
-    if(!draft||saveConflict)return;setBusy(true);setError('');setMessage('');
+  async function save(publish=false,lifecycle?:'ARCHIVED'|'DRAFT') {
+    if(!draft||saveConflict||lifecycle&&(!saved||dirty||locked||(lifecycle==='ARCHIVED'?saved.status==='ARCHIVED':saved.status!=='ARCHIVED')))return;
+    setBusy(true);setError('');setMessage('');
     try {
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
-      const body=publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
+      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:'publish-owner-content',expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
       const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
       const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
       const data=ownerTransport?await ownerTransport.publishSavedOwnerContent(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved))):await write();
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
-        || row.status!==(publish ? 'LIVE':'DRAFT')) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');
+        || row.status!==(lifecycle??(publish ? 'LIVE':'DRAFT'))||lifecycle&&(row.id!==saved.id||row.updated_at===saved.updated_at)) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');
       setSaved(row);setDraft(edition);setRows(current=>[row,...current.filter(r=>r.id!==row.id)]);setApproved(false);
+      if(lifecycle)setStep(lifecycle==='ARCHIVED'?'publish':'edit');
       announceContentUpdate({contentKey:row.content_key,published:publish,updatedAt:row.updated_at});
-      setMessage(publish ? 'Published the complete edition.' : 'Saved edition draft.');
+      setMessage(lifecycle==='ARCHIVED'?'':publish ? 'Published the complete edition.' : 'Saved edition draft.');
       return row;
-    }catch(reason){if(publish||!await reconcileSaveFailure(reason))setError((reason as Error).message);}finally{setBusy(false);}
+    }catch(reason){if(lifecycle){setNeedsSync(true);setError(`${(reason as Error).message} Reload the saved edition before retrying.`);}else if(publish||!await reconcileSaveFailure(reason))setError((reason as Error).message);}finally{setBusy(false);}
   }
   async function importDraft(file:File|undefined) {
     if(!file || !draft)return;setError('');
@@ -337,7 +339,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     const edition=row.sections.horoscopeEdition,active=row.source_snapshot?.horoscopeGeneration?.active;
     if(row.source_snapshot?.horoscopeGeneration?.batch?.status==='running'){setStep('generate');setMessage('The saved batch is running. You can leave this page.');return;}
     const count=edition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length;
-    if(row.status==='LIVE'){setStep('publish');setMessage('Loaded the published edition.');return;}
+    if(row.status==='LIVE'||row.status==='ARCHIVED'){setStep('publish');setMessage(row.status==='LIVE'?'Loaded the published edition.':'Loaded the archived edition.');return;}
     if(active){
       setStep('generate');setSign(active.sign);
       setMessage(savedStageMessage(active)?'':(active.responseId?`${count}/${edition.passages.length} readings are saved. ${horoscopeSignLabel(active.sign)} is still processing. Studio checks automatically; you can also check now or return to your editions.`:'Waiting for request confirmation. Studio checks automatically without sending another request.'));
@@ -583,7 +585,11 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     </header>
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
-    {isWeekly&&step!=='setup'&&<Suspense fallback={<p role="status">Loading…</p>}><WeeklyBatchEditorial
+    {saved&&step!=='setup'&&<div className="admin-horoscope-actions">
+      {saved.status!=='ARCHIVED'&&<StudioButton className="admin-danger-button" disabled={locked||dirty} onClick={()=>void save(false,'ARCHIVED')}>Archive edition</StudioButton>}
+      {needsSync&&<StudioButton disabled={busy} onClick={()=>void open(saved,true)}>Reload saved edition</StudioButton>}
+    </div>}
+    {isWeekly&&saved?.status!=='ARCHIVED'&&step!=='setup'&&<Suspense fallback={<p role="status">Loading…</p>}><WeeklyBatchEditorial
       gate={generation?.weeklyEditorial} complete={complete===12} dirty={dirty} disabled={busy||needsSync||Boolean(active)||saved?.status==='LIVE'}
       running={serverRunning} hasPlan={Boolean(plan)} planHash={plan?.planHash} onPrepare={()=>void reviewPlan()} onAction={batchAction}/></Suspense>}
     {saveConflict&&<Suspense fallback={<p role="status">Loading saved changes…</p>}><HoroscopeSaveRecovery conflict={saveConflict} busy={busy}
@@ -694,6 +700,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
         <Suspense fallback={<p role="status">Loading publication review…</p>}><HoroscopePublicationReview
           draft={draft} saved={saved} sign={sign} dirty={dirty} locked={locked} approved={approved} publication={publication} validationOverride={validationOverride} onOverride={value=>{setValidationOverride(value);setApproved(false);}}
           secret={secret} request={request} onCheck={setPublication} onApprove={setApproved} onReload={()=>void open(saved,true)}
+          onRestore={()=>void save(false,'DRAFT')}
           onEdit={affectedSign=>{setSign(affectedSign);setError('');setStep('edit');}}
           onBack={()=>void moveTo('edit')} onPublish={()=>void save(true)} onSetup={()=>void moveTo('setup')} rejectAllButton={rejectAllButton}
         /></Suspense>

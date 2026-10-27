@@ -7,6 +7,32 @@ import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mj
 import { skyArticleVariableDraftForFields, resolveSkyArticleVariableFields, skyArticleVariableDraftRecord } from '../src/shared/skyArticleVariableDraft';
 import { skyDatedArticleChanges } from '../apps/admin/src/skyDatedArticleDraft';
 
+test('dated article archive and draft restoration preserve complete copy and reject stale versions', async () => {
+  const { active } = await skyPlacementSourceFixture('sun', 'libra');
+  const store = await createApiStore([active], { uuidIds: true });
+  try {
+    const before = structuredClone(store.rows.get(active.id));
+    const request = { id: active.id, expectedUpdatedAt: active.updated_at, status: 'ARCHIVED' };
+    assert.equal((await store.invoke('PATCH', request, undefined, 'wrong')).status, 401);
+    assert.equal((await store.invoke('PATCH', { ...request, expectedUpdatedAt: '2026-09-01T00:00:00Z' })).status, 409);
+    assert.deepEqual(store.rows.get(active.id), before);
+    const result = await store.invoke('PATCH', request);
+    assert.equal(result.status, 200, JSON.stringify(result.payload));
+    const archived = result.payload.rows[0];
+    assert.equal(archived.status, 'ARCHIVED');
+    assert.deepEqual(archived.sections, before.sections); assert.equal(archived.body, before.body);
+    for (const body of [{ ids: [active.id] }, { keys: [active.content_key] }]) {
+      const read = await store.invoke('POST', body, '/api/content-reader');
+      assert.equal(read.status, 200); assert.deepEqual(read.payload.rows, []);
+    }
+    const restored = await store.invoke('PATCH', { id: active.id, expectedUpdatedAt: archived.updated_at, status: 'DRAFT' });
+    assert.equal(restored.status, 200, JSON.stringify(restored.payload));
+    assert.equal(restored.payload.rows[0].status, 'DRAFT');
+    assert.deepEqual(restored.payload.rows[0].sections, before.sections);
+    assert.deepEqual((await store.invoke('POST', { keys: [active.content_key] }, '/api/content-reader')).payload.rows, []);
+  } finally { await store.close(); }
+});
+
 test('dated variables preserve complete source text and companion passages while compiling reader strings', async () => {
   const { edition } = await skyPlacementSourceFixture('sun', 'libra');
   const original = structuredClone(edition);
