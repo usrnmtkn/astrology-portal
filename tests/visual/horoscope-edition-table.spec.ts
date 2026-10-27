@@ -165,6 +165,8 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    // Library deep link A -> setup -> saved B must reload B, with no content mutation.
    const monthly=initialRows.find((row:any)=>row.sections?.horoscopeEdition?.window.period==='monthly');
    await page.goto(`/admin/content#horoscopes?edition=${daily.id}`);
+   await expect(studio.getByText('This edition is archived. Its saved readings are preserved.',{exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'Review archived readings',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(daily.sections.horoscopeEdition.passages[0].body);
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await expect(page).toHaveURL(/#horoscopes$/);

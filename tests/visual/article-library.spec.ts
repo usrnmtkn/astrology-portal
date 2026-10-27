@@ -6,6 +6,7 @@ import { bundledPublications } from '../helpers/bundled-publications';
 import { syntheticLibrarySkyArticle } from '../helpers/article-library-fixture';
 import { publicationStorageEmitter } from '../helpers/publication-storage-emitter';
 import { readerResponse } from '../helpers/reader-response';
+import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
 
@@ -19,7 +20,22 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.setViewportSize({ width, height: 1000 });
       await page.clock.setFixedTime(new Date('2026-10-12T16:00:00Z'));
       await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
+      await bundledPublications(page);
+      await page.route('**/rest/v1/content_publications*', async route => {
+        const publications = await store.call({ method: 'publications' });
+        const filters = new URL(route.request().url()).searchParams.getAll('content_key');
+        await route.fulfill({ json: publications.filter((record: any) => filters.every(filter => {
+          const [operator, ...parts] = filter.split('.'), key = parts.join('.');
+          if (operator === 'eq') return record.content_key === key;
+          if (operator === 'gte') return record.content_key >= key;
+          if (operator === 'lt') return record.content_key < key;
+          if (operator === 'gt') return record.content_key > key;
+          throw new Error(`Unsupported publication fixture filter: ${operator}`);
+        })) });
+      });
       await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
+        if (await routeStudioPublicReader(route, url, message => store.call(message.method === 'reader'
+          ? { method: 'POST', url: '/api/content-reader', body: message.body } : message))) return true;
         if (url.pathname !== '/api/admin/content-live-status') return false;
         const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
         await route.fulfill({ status: result.status, json: result.payload }); return true;
@@ -29,14 +45,23 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await result.getByRole('button', { name: 'Edit published article', exact: true }).click();
       const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
       await expect(editor.getByRole('textbox', { name: 'Sky article general copy', exact: true })).toHaveValue(row.body);
+      await editor.getByLabel('Sky reader date', { exact: true }).fill('2026-10-12');
+      const preview = editor.getByRole('region', { name: 'Sky reader preview', exact: true });
+      const reading = preview.frameLocator('iframe').locator('.sky-detail-body').first();
+      await expect(reading).toContainText('Synthetic complete dated opening.', { timeout: 60_000 });
+      await expect(reading).toContainText('Synthetic complete dated ending.');
+      await expect(preview.getByRole('alert')).toHaveCount(0);
       const archive = editor.getByRole('button', { name: 'Archive article', exact: true });
       await expect(archive).toBeVisible();
       const concurrent = await store.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: row.updated_at, reviewerNotes: 'Synthetic second editor.' } });
       expect(concurrent.status).toBe(200);
-      await archive.click(); await expect(editor.getByRole('alert')).toBeVisible();
+      const conflict = editor.getByRole('alert').filter({ hasText: 'This content changed after the editor was opened.' });
+      await archive.click(); await expect(conflict).toBeVisible();
+      await expect(archive).toBeDisabled();
       expect((await store.call({ method: 'rows' })).find((r: any) => r.id === row.id)).toEqual(concurrent.payload.rows[0]);
       await editor.getByRole('button', { name: 'Reload saved article', exact: true }).click();
-      await expect(editor.getByRole('alert')).toHaveCount(0);
+      await expect(conflict).toHaveCount(0);
+      await expect(archive).toBeEnabled();
       await archive.click();
       await expect(editor.getByRole('button', { name: 'Restore as draft', exact: true })).toBeVisible();
       await expect(editor.getByRole('link', { name: 'Read published article', exact: true })).toHaveCount(0);
