@@ -7954,6 +7954,32 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 900, 
         await expect(table.locator('tbody td').first()).toHaveCSS('border-bottom-width','0px');
         if(width===390) await expect(table).toHaveCSS('display','block');
       }
+      if (route === 'report-fulfillment') {
+        for (const name of ['Set cap', 'Preview and edit']) {
+          const lines = await page.getByRole('button', {name, exact:true}).evaluate(button => {
+            const range = document.createRange();
+            range.selectNodeContents(button);
+            return new Set([...range.getClientRects()].map(rect => Math.round(rect.top))).size;
+          });
+          expect(lines, `${name} remains readable without letter-by-letter wrapping`).toBeLessThanOrEqual(2);
+        }
+        const readableBudget = await page.getByLabel('Lifetime token cap for layout-report').evaluate(input => {
+          const field = input as HTMLInputElement;
+          const style = getComputedStyle(field);
+          const context = document.createElement('canvas').getContext('2d')!;
+          context.font = style.font;
+          return field.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) >= context.measureText(field.value).width;
+        });
+        expect(readableBudget, 'The complete token cap fits in its input').toBe(true);
+        const preview = page.getByRole('button', {name:'Preview and edit', exact:true});
+        await preview.scrollIntoViewIfNeeded();
+        const visibleAction = await preview.evaluate(button => {
+          const rect = button.getBoundingClientRect();
+          return rect.left >= 0 && rect.right <= innerWidth;
+        });
+        expect(visibleAction, 'Report actions remain reachable within the page').toBe(true);
+        await tables.first().locator('..').screenshot({path:`outputs/studio-style/shared-report-actions-${theme}-${width}.png`});
+      }
       await expectStudioTypography(page,route);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await tables.first().locator('..').screenshot({path:`outputs/studio-style/shared-${route.replaceAll('/','-')}-${theme}-${width}.png`});
@@ -9487,8 +9513,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expect(workspace.getByRole('region', { name: 'Article for this visit', exact: true }).locator('p').first()).toContainText('2026-11-22');
     await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
     await expectNoHorizontalOverflow(page, 'Planet and sign dated editor');
-    const headings = await page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })));
-    expect(headings.slice(0, 4)).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Reader sources' }, { level: 3, text: 'Saved visits' }]);
+    await expect.poll(() => page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.slice(0, 4).map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })))).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Reader sources' }, { level: 3, text: 'Saved visits' }]);
     await expect(workspace.getByRole('region', { name: 'Currently live', exact: true })).toHaveCount(0);
     const typography = await workspace.getByRole('heading', { name: 'Reader sources' }).evaluate(node => {
       const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
