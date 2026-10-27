@@ -285,6 +285,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
         || row.status!==(lifecycle??(publish ? 'LIVE':'DRAFT'))||lifecycle&&(row.id!==saved.id||row.updated_at===saved.updated_at)) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');
+      if(row.id!==saved?.id){setPlan(null);setPlanApproved(false);}
       setSaved(row);setDraft(edition);setRows(current=>[row,...current.filter(r=>r.id!==row.id&&!(publish&&r.id===saved?.id))]);setApproved(false);syncEditionLink(row.id);
       if(lifecycle)setStep(lifecycle==='ARCHIVED'?'publish':'edit');
       announceContentUpdate({contentKey:row.content_key,published:publish,updatedAt:row.updated_at});

@@ -269,3 +269,45 @@ for(const [width,theme] of [[1440,'light'],[390,'dark']] as const){
   }finally{await f.dispose();}
  });
 }
+
+for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
+ test(`Manually completed Weekly revision prepares its own plan ${width} ${theme}`,async({page})=>{
+  test.setTimeout(90000);await page.setViewportSize({width,height:1000});
+  await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page);
+  const preparedIds:string[]=[];
+  page.on('requestfinished',async request=>{if(request.url().includes('/api/admin/horoscope-writing')){const body=request.postDataJSON();if(body?.action==='prepare'&&(await request.response())?.status()===200)preparedIds.push(body.id);}});
+  try {
+   const studio=await f.open();
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).toBeVisible();
+   await expect.poll(()=>preparedIds).toContain(f.id);
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Pisces/}).click();
+   await studio.getByLabel('Reading headline',{exact:true}).fill('Manual Pisces fixture');
+   await studio.getByLabel('Complete reading',{exact:true}).fill('You can read the complete manual fixture. Your manual fixture ends here.');
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+   await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
+   await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
+   await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
+   await expect(studio.getByRole('link',{name:'Read published edition',exact:true})).toBeVisible();
+   const published=structuredClone(await f.latest());
+   expect(published.status).toBe('LIVE');
+   await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
+   await studio.getByRole('group',{name:'Readings by sign'}).getByRole('button',{name:/Pisces/}).click();
+   await studio.getByLabel('Reading headline',{exact:true}).fill('');
+   await studio.getByLabel('Complete reading',{exact:true}).fill('');
+   await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
+   await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+   const revision=(await f.call({method:'rows'})).find((row:any)=>row.event_type==='horoscope-edition-revision');
+   expect(revision.id).not.toBe(f.id);
+   expect(await f.latest()).toEqual(published);
+   await studio.getByRole('button',{name:'2 · Generate',exact:true}).click();
+   await expect.poll(()=>preparedIds).toContain(revision.id);
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0,batchCalls:0});
+   expect(await f.latest()).toEqual(published);
+  } finally {await f.dispose();}
+ });
+}
