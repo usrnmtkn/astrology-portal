@@ -8775,6 +8775,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     const tabs = page.getByRole('tablist', { name: 'Sky Write-ups workspaces' });
     await expectConnectedTabSurfaces();
     const daily = tabs.getByRole('tab', { name: 'Daily Sky Summary' });
+    const dignity = tabs.getByRole('tab', { name: 'Detriment and fall', exact: true });
     const catalog = tabs.getByRole('tab', { name: 'Placements & lunations' });
     await expect(daily).toHaveAttribute('aria-selected', 'true');
     await expect(daily).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
@@ -8793,8 +8794,13 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     if (width > 720) expect(Math.max(...bounds.map(rect => rect.width)) - Math.min(...bounds.map(rect => rect.width))).toBeLessThan(1);
     await daily.focus();
     await daily.press('ArrowRight');
-    await expect(catalog).toBeFocused();
+    await expect(dignity).toBeFocused();
     await expect(daily).toHaveAttribute('aria-selected', 'true');
+    await dignity.press('Enter');
+    await expect(dignity).toHaveAttribute('aria-selected', 'true');
+    await expect(page.getByRole('tabpanel', { name: 'Detriment and fall', exact: true })).toBeVisible();
+    await dignity.press('ArrowRight');
+    await expect(catalog).toBeFocused();
     await catalog.press('Enter');
     await expect(catalog).toHaveAttribute('aria-selected', 'true');
     const panel = page.getByRole('tabpanel', { name: 'Placements & lunations', exact: true });
@@ -9545,6 +9551,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expect(tabs.getByRole('tab', { name: 'Writing setup', exact: true })).toHaveAttribute('aria-selected', 'true');
     await workspace.getByRole('button', { name: 'Edit reusable template', exact: true }).click();
     const editor = page.getByRole('dialog', { name: 'Generated content editor' });
+    await expect(editor).toBeVisible({ timeout: routeReadyTimeoutMs });
     await expect(editor.getByRole('textbox', { name: 'Article body', exact: true })).toHaveValue(initial[2].body!);
     expect(writes).toHaveLength(0);
     await editor.getByRole('button', { name: 'Close', exact: true }).click();
