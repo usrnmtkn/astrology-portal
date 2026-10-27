@@ -314,7 +314,7 @@ export function resolveCalendarMoonFallback(
     const changed = signChangeSentence(facts, transition, options.transitionPhrase);
     if (changed) {
       moonKind = "moonChangesLaterToday";
-      moonBody = changed;
+      moonBody = joinParts(options.unusedAuthored?.body || continuation, changed);
       allowContext = false;
     }
   } else if (facts.isLastFullDayInMoonSign && facts.nextMoonSign) {
