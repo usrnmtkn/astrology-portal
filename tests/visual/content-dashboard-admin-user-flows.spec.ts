@@ -1,4 +1,5 @@
 import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
+import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { natalEditorialDraftForKey, natalEditorialIdentity, natalSectPlanets, type NatalEditorialSelection } from "../../apps/admin/src/natalEditorialLibrary";
 import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
 import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
@@ -9741,4 +9742,90 @@ test('report correction cannot publish stale staged text while the editor has ne
   await expect(f.input).toHaveValue(newer);
 });
 
+});
+
+for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["dark", 1440]] as const) for (const sect of ["day", "night"] as const) for (const planet of ["jupiter", "saturn"] as const) test(`Natal placement sect drafts compare and reopen independently ${planet} ${sect} ${theme} ${width}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  const sign = planet === "jupiter" ? "leo" : "aries";
+  const house = planet === "jupiter" ? "3" : "";
+  const suffix = `${sign}${house ? `/house-${house}` : ""}/${sect}`;
+  const writes: Record<string, unknown>[] = [];
+  const fixtures = (["you", "they"] as const).map(audience => {
+    const draft = natalEditorialDraftForKey(`cms/natal-planet-sect/${audience}/${planet}/${sect}`)!;
+    return { id: `general-sect-${audience}`, content_key: draft.contentKey, surface: "natal", mode: "in_depth", status: "LIVE", lane: "serving", review_state: null,
+      body: `${audience === "you" ? "You" : "{{ownerName}}"} general sect opening.\n\nGeneral sect final sentence.`, summary: "", headline: draft.headline, sections: {}, facts: draft.facts,
+      source_snapshot: { ...draft.sourceSnapshot, review_status: "approved", ownerApproved: true }, updated_at: now, created_at: now };
+  });
+  const originals = structuredClone(fixtures);
+  await seedAdminApi(page, { generatedRows: fixtures, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write.payload); } });
+  let failComparison = false;
+  await page.route("**/api/content-reader", route => failComparison ? route.fulfill({ status: 503, json: { error: "Isolated outage" } }) : route.fulfill({ json: readerResponse(originals) }));
+  const previewInputs: Record<string, unknown>[] = [];
+  await page.route("**/api/admin/natal-placement-preview", route => {
+    const input = route.request().postDataJSON();
+    previewInputs.push(input);
+    const name = input.audience === "you" ? "You" : input.ownerName;
+    return route.fulfill({ json: { rendered: { body: `${name} existing sign opening.\n\nComplete house ${input.house} ending.`, parts: [], headline: "Jupiter in Leo" } } });
+  });
+  await page.setViewportSize({ width, height: 1000 });
+  await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+  await expectAdminRouteLoads(page, `/admin/content#exact-content?category=Natal+Chart&natalView=day-night&natalPassage=${planet}&natalSect=${sect}&natalSign=${sign}${house ? `&natalHouse=${house}` : ""}`);
+  const workspace = page.getByRole("region", { name: "Day and night charts", exact: true });
+  const headingStyles = (element: Element) => { const style = getComputedStyle(element); return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.marginTop, style.marginBottom]; };
+  const cardStyle = await workspace.getByRole("heading", { level: 4 }).first().evaluate(headingStyles);
+  await expect(workspace.getByLabel("Natal sect passage scope")).toHaveValue("placement");
+  for (const audience of ["you", "they"] as const) {
+    await workspace.getByLabel("Natal reading audience", { exact: true }).selectOption(audience);
+    if (audience === "they") await workspace.getByLabel("Friend’s name in preview").fill("Robin");
+    const key = `cms/natal-planet-sect/${audience}/${planet}/${suffix}`;
+    await expect(workspace.locator("code")).toHaveText(key);
+    await expect(workspace).toContainText("No passage has been saved for this selection.");
+    await workspace.getByRole("button", { name: "Create passage draft", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue(key);
+    const body = approvedNatalPilotBody(key, `${audience === "you" ? "You" : "{{ownerName}}"} placement draft opening.\n\nComplete placement draft final sentence.`);
+    await fillAdminEditorField(editor, "Full passage / body", body);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(audience === "you" ? 1 : 2);
+    await closeGeneratedEditor(page);
+    await page.reload();
+    await expect(workspace.getByLabel("Natal reading audience", { exact: true })).toHaveValue(audience);
+    await expect(workspace.getByLabel("Natal sect placement sign")).toHaveValue(sign);
+    await expect(workspace.getByLabel("Natal sect placement house")).toHaveValue(house);
+    const rendered = body.replaceAll("{{ownerName}}", audience === "you" ? "You" : "Maya");
+    for (const paragraph of rendered.split(/\n\s*\n/u)) await expect(workspace).toContainText(paragraph);
+    if (audience === "they") await workspace.getByLabel("Friend’s name in preview").fill("Robin");
+    await workspace.getByRole("button", { name: "Compare complete reading", exact: true }).click();
+    const comparison = workspace.getByLabel("Natal sect reading comparison", { exact: true });
+    await expect(comparison.getByRole("article", { name: "Existing placement reading", exact: true })).toContainText(`${audience === "you" ? "You" : "Robin"} existing sign opening.`);
+    await expect(comparison.getByRole("article", { name: "Published general sect passage", exact: true })).toContainText("General sect final sentence.");
+    await expect(comparison.getByRole("article", { name: "Proposed placement sect passage", exact: true }).locator("p")).toHaveText(body.replaceAll("{{ownerName}}", "Robin").split(/\n\s*\n/u));
+    for (const heading of await comparison.getByRole("heading", { level: 4 }).all()) expect(await heading.evaluate(headingStyles)).toEqual(cardStyle);
+    await expect(comparison.locator("h4")).toHaveText(["Existing placement reading", "Published general sect passage", "Proposed placement sect passage"]);
+    await workspace.getByRole("button", { name: "Edit saved passage", exact: true }).click();
+    await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(body);
+    await closeGeneratedEditor(page);
+    await workspace.getByLabel("Natal sect placement house").selectOption("4");
+    await expect(workspace).toContainText("No passage has been saved for this selection.");
+    await expect(comparison).not.toContainText("Complete placement draft final sentence.");
+    await expect(comparison).toContainText("Complete house 4 ending.");
+    await workspace.getByLabel("Natal sect placement house").selectOption(house);
+    if (audience === "you") await workspace.getByRole("button", { name: "Hide reading comparison", exact: true }).click();
+  }
+  failComparison = true;
+  await workspace.getByLabel("Friend’s name in preview").fill("Avery");
+  await expect(workspace.getByRole("alert")).toContainText("The published sect passage could not be loaded.");
+  await expect(workspace.getByLabel("Natal sect reading comparison")).not.toContainText("Robin existing sign opening.");
+  failComparison = false;
+  await workspace.getByRole("button", { name: "Retry comparison", exact: true }).click();
+  await expect(workspace.getByLabel("Natal sect reading comparison")).toContainText("Avery existing sign opening.");
+  expect(writes.every(write => write.status === "DRAFT" && String(write.contentKey ?? "").endsWith(`/${suffix}`))).toBe(true);
+  expect(previewInputs.every(input => input.motion === "direct" && [house, "4"].includes(String(input.house)))).toBe(true);
+  if (!house) {
+    expect(new URL(page.url()).hash).not.toContain("natalHouse=");
+    await expect(workspace).toContainText("all houses");
+    await expect(workspace.getByLabel("Natal sect placement house")).toHaveValue("");
+  }
+  await expectNoHorizontalOverflow(page, `Natal sect comparison ${theme} ${width}`);
+  await page.screenshot({ path: `test-results/natal-sect-comparison-${planet}-${sect}-${theme}-${width}.png`, fullPage: true });
 });

@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { studioLazy as lazy } from "./studioLazy";
 import { AdminSelect } from "./AdminNativeControls";
 import { StudioButton, StudioInput } from "./StudioControls";
 import { Stack, Text } from "./studio-ds/primitives";
 import { readStudioContentDocument } from "./generatedContentClient";
 import { natalEditorialIdentity, natalEditorialSelection, natalSectPlanets, type NatalEditorialArea, type NatalEditorialSelection } from "./natalEditorialLibrary";
+import { natalSectSigns } from "../../../src/shared/natalSectPlacement";
+
+const NatalSectPlacementComparison = lazy(() => import("./NatalSectPlacementComparison"));
 
 export default function NatalEditorialSources({ area, secret, disabled, revision, onOpen }: {
   area: NatalEditorialArea; secret: string; disabled: boolean; revision: string;
@@ -12,6 +16,7 @@ export default function NatalEditorialSources({ area, secret, disabled, revision
   const [selection, setSelection] = useState(() => natalEditorialSelection(area, window.location.hash));
   const [friendName, setFriendName] = useState("Maya");
   const [retry, setRetry] = useState(0);
+  const [compare, setCompare] = useState(false);
   const { contentKey, title } = natalEditorialIdentity(selection);
   const [document, setDocument] = useState<{ key: string; body: string; status: string; error: string } | null>(null);
   const current = document?.key === contentKey ? document : null;
@@ -29,9 +34,15 @@ export default function NatalEditorialSources({ area, secret, disabled, revision
   }, [contentKey, secret, revision, retry]);
   function change(next: Partial<NatalEditorialSelection>) {
     const value = { ...selection, ...next };
+    if (value.passage === "overview") delete value.placement;
     setSelection(value);
     const params = new URLSearchParams(window.location.hash.split("?")[1] ?? "");
     params.set("natalView", area); params.set("natalAudience", value.audience); params.set("natalPassage", value.passage); params.set("natalSect", value.sect);
+    if (value.placement) {
+      params.set("natalSign", value.placement.sign);
+      if (value.placement.house === undefined) params.delete("natalHouse"); else params.set("natalHouse", String(value.placement.house));
+    }
+    else { params.delete("natalSign"); params.delete("natalHouse"); }
     window.history.replaceState(null, "", `#exact-content?${params}`);
   }
   const heading = area === "rulership" ? "Twelfth-house rulership" : "Day and night charts";
@@ -51,8 +62,23 @@ export default function NatalEditorialSources({ area, secret, disabled, revision
       {area === "day-night" && <label><span>Day or night chart</span><AdminSelect disabled={disabled} aria-label="Natal reading sect" value={selection.sect} onChange={event => change({ sect: event.target.value as "day" | "night" })}>
         <option value="day">Day chart</option><option value="night">Night chart</option>
       </AdminSelect></label>}
+      {area === "day-night" && selection.passage !== "overview" && <>
+        <label><span>Passage scope</span><AdminSelect disabled={disabled} aria-label="Natal sect passage scope" value={selection.placement ? "placement" : "general"} onChange={event => change({ placement: event.target.value === "placement" ? { sign: "leo", house: 3 } : undefined })}>
+          <option value="general">General planet passage</option><option value="placement">Specific sign</option>
+        </AdminSelect></label>
+        {selection.placement && <>
+          <label><span>Zodiac sign</span><AdminSelect disabled={disabled} aria-label="Natal sect placement sign" value={selection.placement.sign} onChange={event => change({ placement: { ...selection.placement!, sign: event.target.value } })}>
+            {natalSectSigns.map(sign => <option key={sign} value={sign}>{sign.charAt(0).toUpperCase() + sign.slice(1)}</option>)}
+          </AdminSelect></label>
+          <label><span>House (optional)</span><AdminSelect disabled={disabled} aria-label="Natal sect placement house" value={selection.placement.house ?? ""} onChange={event => change({ placement: { ...selection.placement!, house: event.target.value ? Number(event.target.value) : undefined } })}>
+            <option value="">All houses</option>
+            {Array.from({ length: 12 }, (_, i) => i + 1).map(house => <option key={house} value={house}>House {house}</option>)}
+          </AdminSelect></label>
+        </>}
+      </>}
       {selection.audience === "they" && <label><span>Friend’s name in preview</span><StudioInput aria-label="Friend’s name in preview" value={friendName} onChange={event => setFriendName(event.target.value)} /></label>}
     </div>
+    {selection.placement && <Text size="body" tone="secondary">This passage applies to the selected planet, sign, {selection.placement.house === undefined ? "all houses" : `whole-sign house ${selection.placement.house}`}, sect and audience. Once approved and published, the reader uses the most specific matching passage.</Text>}
     <article className="admin-natal-source-card">
       <div className="admin-natal-source-card-copy">
         <div className="admin-natal-source-card-heading"><h4>{title}</h4></div>
@@ -62,5 +88,11 @@ export default function NatalEditorialSources({ area, secret, disabled, revision
       </div>
       <StudioButton type="button" disabled={disabled || !current || Boolean(current.error)} onClick={() => onOpen(contentKey, title)}>{current?.status ? "Edit saved passage" : "Create passage draft"}</StudioButton>
     </article>
+    {selection.placement && <>
+      <StudioButton type="button" aria-expanded={compare} onClick={() => setCompare(value => !value)}>{compare ? "Hide reading comparison" : "Compare complete reading"}</StudioButton>
+      {compare && <Suspense fallback={<p role="status">Loading reading comparison…</p>}>
+        <NatalSectPlacementComparison key={contentKey} selection={selection} secret={secret} friendName={friendName} body={current?.body ?? ""} status={current?.status ?? ""} revision={revision} />
+      </Suspense>}
+    </>}
   </section>;
 }

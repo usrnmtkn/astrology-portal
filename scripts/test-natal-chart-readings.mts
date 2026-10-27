@@ -7,13 +7,14 @@ import { natalSnapshotWithBirthTimeReliability } from "../apps/web/src/services/
 import { friendSafeNatalChart } from "../apps/web/src/services/friendSafeNatalChart.ts";
 import { build } from "esbuild";
 const bundled = await build({ stdin: { resolveDir: process.cwd(), contents: `
-  export { natalChartReadings, natalReadingBody } from "./apps/web/src/content/natalChartReadings.ts";
+  export { natalChartReadings, natalReadingBody, natalReadingKeys, selectedNatalReadingBody } from "./apps/web/src/content/natalChartReadings.ts";
+  export { installContentPublications } from "./apps/web/src/content/contentPublicationState.ts";
   export { manualChartNeedsNatalRepair } from "./apps/web/src/services/manualCharts.ts";
 ` }, bundle: true, platform: "node", format: "esm", write: false,
   define: { "import.meta.env": "{}" }, logLevel: "silent", plugins: [{ name: "no-auth-fixture", setup(builder) {
     builder.onLoad({ filter: /[/\\]services[/\\]auth\.ts$/ }, () => ({ contents: "export async function getSupabaseClient(){return null} export async function getVerifiedAuthUser(){return null}", loader: "js" }));
   } }] });
-const { natalChartReadings, natalReadingBody, manualChartNeedsNatalRepair } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString("base64")}`);
+const { natalChartReadings, natalReadingBody, natalReadingKeys, selectedNatalReadingBody, installContentPublications, manualChartNeedsNatalRepair } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString("base64")}`);
 import { natalSectForSnapshot, natalSectFromAltitude } from "../src/shared/solarHorizon.ts";
 import type { LiveGeneratedContent } from "../apps/web/src/services/generatedContent.ts";
 
@@ -101,6 +102,71 @@ assert.equal(natalReadingBody(row, "they"), null);
 assert.equal(natalReadingBody({ ...row, status: "DRAFT" }, "they", "Robin"), null);
 assert.equal(natalReadingBody({ ...row, reviewState: "EDITORIAL_REVIEW_REQUIRED" }, "they", "Robin"), null);
 assert.equal(natalReadingBody({ ...row, lane: "reference" }, "they", "Robin"), null);
+const placementSnapshot = { ...day!, ascendant: "Gemini", positions: day!.positions.map(position => position.planet === "Jupiter" ? { ...position, sign: "Leo", house: 11 } : position), solarHorizon: { ...day!.solarHorizon!, altitude: 20 } };
+for (const audience of ["you", "they"] as const) {
+  const [reading] = natalChartReadings(placementSnapshot, audience, "Jupiter");
+  const genericKey = `cms/natal-planet-sect/${audience}/jupiter/day`;
+  const exactKey = `cms/natal-planet-sect/${audience}/jupiter/leo/house-3/day`;
+  assert.deepEqual(natalReadingKeys([reading]), [exactKey, `cms/natal-planet-sect/${audience}/jupiter/leo/day`, genericKey], "House comes from whole signs, not an incompatible cached house field");
+  const generic = { ...row, contentKey: genericKey, body: "Complete general passage." };
+  const exact = { ...row, contentKey: exactKey, body: audience === "you" ? "Complete placement passage.\n\nFinal placement sentence." : "{{ownerName}} complete placement passage.\n\nFinal placement sentence." };
+  const rows = new Map([[genericKey, generic], [exactKey, exact]]) as Map<string, LiveGeneratedContent>;
+  assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), exact.body.replaceAll("{{ownerName}}", "Robin"));
+  assert.equal(selectedNatalReadingBody(reading, new Map([[genericKey, generic], [exactKey, { ...exact, status: "DRAFT" }]]), audience, "Robin"), generic.body);
+  assert.equal(selectedNatalReadingBody(reading, new Map([[genericKey, generic], [exactKey, { ...exact, reviewState: "EDITORIAL_REVIEW_REQUIRED" }]]), audience, "Robin"), generic.body);
+  assert.equal(selectedNatalReadingBody(reading, new Map([[genericKey, generic]]), audience, "Robin"), generic.body);
+  for (const alternate of [
+    { ...placementSnapshot, ascendant: "Taurus" },
+    { ...placementSnapshot, solarHorizon: { ...placementSnapshot.solarHorizon, altitude: -20 } },
+    { ...placementSnapshot, positions: placementSnapshot.positions.map(position => position.planet === "Jupiter" ? { ...position, sign: "Virgo" } : position) }
+  ]) assert.notEqual(natalChartReadings(alternate, audience, "Jupiter")[0].preferredContentKey, exactKey);
+  assert.equal(natalChartReadings({ ...placementSnapshot, ascendant: "Unknown" }, audience, "Jupiter")[0].preferredContentKey, undefined);
+  assert.deepEqual(natalChartReadings({ ...placementSnapshot, birthTimeKnown: false }, audience, "Jupiter"), []);
+}
+// Scope precedence is exact house, then sign in any house, then the generic planet.
+// A retirement suppresses broader copy until an explicit later restore.
+for (const audience of ["you", "they"] as const) for (const sect of ["day", "night"] as const) {
+  const signKey = `cms/natal-planet-sect/${audience}/saturn/aries/${sect}`;
+  const genericKey = `cms/natal-planet-sect/${audience}/saturn/${sect}`;
+  const signRow = { ...row, contentKey: signKey, body: `${audience === "you" ? "You" : "{{ownerName}}"} sign opening.
+
+Complete sign ending.` };
+  const generic = { ...row, contentKey: genericKey, body: "Complete general Saturn passage." };
+  for (const ascendant of signs) {
+    const snapshot = { ...placementSnapshot, ascendant, solarHorizon: { ...placementSnapshot.solarHorizon, altitude: sect === "day" ? 20 : -20 },
+      positions: placementSnapshot.positions.map(position => position.planet === "Saturn" ? { ...position, sign: "Aries" } : position) };
+    const [reading] = natalChartReadings(snapshot, audience, "Saturn");
+    assert.equal(reading.signContentKey, signKey);
+    const rows = new Map([[signKey, signRow], [genericKey, generic]]) as Map<string, LiveGeneratedContent>;
+    const rendered = signRow.body.replaceAll("{{ownerName}}", "Robin");
+    assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), rendered);
+    for (const held of [{ status: "DRAFT" }, { reviewState: "EDITORIAL_REVIEW_REQUIRED" }, { lane: "reference" }]) {
+      assert.equal(selectedNatalReadingBody(reading, new Map([...rows, [signKey, { ...signRow, ...held }]]), audience, "Robin"), generic.body);
+    }
+    const exactKey = reading.preferredContentKey!;
+    const exact = { ...row, contentKey: exactKey, body: "Complete exact-house passage.\n\nIts complete final sentence." };
+    rows.set(exactKey, exact);
+    assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), exact.body);
+    const publication = { content_key: exactKey, state: "retired", revision: 1, row_id: null, row_updated_at: null, updated_at: "2026-10-26T12:00:00Z" };
+    installContentPublications([publication]);
+    assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), null, "A retired exact scope never resurfaces sign or generic copy");
+    installContentPublications([{ ...publication, state: "live", revision: 2 }]);
+    assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), exact.body);
+    rows.delete(exactKey);
+    assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), rendered);
+    const other = { ...snapshot, positions: snapshot.positions.map(position => position.planet === "Saturn" ? { ...position, sign: "Taurus" } : position) };
+    assert.equal(selectedNatalReadingBody(natalChartReadings(other, audience, "Saturn")[0], rows, audience, "Robin"), generic.body);
+    assert.deepEqual(natalChartReadings({ ...snapshot, birthTimeKnown: false }, audience, "Saturn"), []);
+  }
+  const [reading] = natalChartReadings({ ...placementSnapshot, positions: placementSnapshot.positions.map(position => position.planet === "Saturn" ? { ...position, sign: "Aries" } : position), solarHorizon: { ...placementSnapshot.solarHorizon, altitude: sect === "day" ? 20 : -20 } }, audience, "Saturn");
+  const rows = new Map([[signKey, signRow], [genericKey, generic]]) as Map<string, LiveGeneratedContent>;
+  const publication = { content_key: signKey, state: "retired", revision: 1, row_id: null, row_updated_at: null, updated_at: "2026-10-26T12:00:00Z" };
+  installContentPublications([publication]);
+  assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), null, "A retired sign scope never resurfaces generic copy");
+  installContentPublications([{ ...publication, state: "live", revision: 2 }]);
+  assert.equal(selectedNatalReadingBody(reading, rows, audience, "Robin"), signRow.body.replaceAll("{{ownerName}}", "Robin"));
+}
+console.log("PASS scope precedence across all twelve houses, both audiences/sects, held drafts, unrelated signs, retirement and explicit restore.");
 console.log("PASS direct Swiss altitude at four dates, reliable/unknown/shared sect, all 46 exact identities, occupied twelfth, Hellenistic rulers, complete bodies and name isolation.");
 
 for (const [sign, traditional, modern] of [["Scorpio", "Mars", "Pluto"], ["Aquarius", "Saturn", "Uranus"], ["Pisces", "Jupiter", "Neptune"]]) {
