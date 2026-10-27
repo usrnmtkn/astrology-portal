@@ -10837,7 +10837,7 @@ export function GeneratedContentAdminDashboard() {
       if (!currentDraft.id) return;
       const lifecycleAction = sourceIsArchived ? "restore" : "archive";
       const saved = await saveDraft(isPackageDraft ? undefined : sourceIsArchived ? "DRAFT" : "ARCHIVED", currentDraft, lifecycleAction);
-      if (saved && compiledSkyArticleEdition) await openRow(saved);
+      if (saved && compiledSkyArticleEdition) await openFromEditor(saved.content_key, () => openRow(saved));
     };
     const updatePackageEditorialNotes = (editorialNotes: string) => {
       setDraft(setPackageRecordField(currentDraft, "editorial_notes", editorialNotes));
@@ -12769,7 +12769,7 @@ export function GeneratedContentAdminDashboard() {
           <StudioButton type="button" className={sourceIsArchived ? undefined : "admin-danger-button"}
             disabled={isLoading || skyArticleEditor.saveState !== "saved" || skyArticleChanges.length > 0 || Boolean(editorSaveError)}
             onClick={() => void updateSourceLifecycle()}>{sourceIsArchived ? "Restore as draft" : "Archive article"}</StudioButton>
-          {editorSaveError && selectedRow && <StudioButton type="button" disabled={isLoading} onClick={() => void openRow(selectedRow)}>Reload saved article</StudioButton>}
+          {editorSaveError && selectedRow && <StudioButton type="button" disabled={isLoading} onClick={() => void openFromEditor(selectedRow.content_key, () => openRow(selectedRow))}>Reload saved article</StudioButton>}
           <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
         </div>}
         {renderNotification()}
