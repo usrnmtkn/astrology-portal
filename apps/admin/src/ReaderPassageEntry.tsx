@@ -24,7 +24,9 @@ export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrar
       if (!Array.isArray(rows) || rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) throw new Error('The complete editing source could not be verified.');
       const ordered = [...rows].sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''));
       let row = ordered.find(row => row.status === 'DRAFT' && !/^(package|builtin):/u.test(row.id))
-        ?? ordered.find(row => row.content_key === key && row.status === 'LIVE');
+        ?? ordered.find(row => row.content_key === key && row.status === 'LIVE')
+        ?? (fromLibrary && key.startsWith('sky-article/')
+          ? ordered.find(row => row.content_key === key && row.status === 'ARCHIVED' && !/^(package|builtin):/u.test(row.id)) : undefined);
       if (!row) {
         const packaged = await requestStudioJson(`/api/admin/package-source?${new URLSearchParams({ contentKey: key })}`, secret);
         if (!active) return;
@@ -35,10 +37,10 @@ export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrar
       }
       if (!row) throw new Error('This source is no longer available. Refresh the reader to check its current writing.');
       if (!active || !await open.current(row)) throw new Error('The passage editor could not open.');
-      if (active) setStatus(row.status === 'DRAFT' && !row.id.startsWith('package:') ? 'Opened your saved draft. Readers still see the published wording.' : 'Opened the reader source. Editing keeps a draft until you publish.');
+      if (active) setStatus(row.status === 'ARCHIVED' ? 'Opened the archived article. Restore it as a draft to continue editing.' : row.status === 'DRAFT' && !row.id.startsWith('package:') ? 'Opened your saved draft. Readers still see the published wording.' : 'Opened the reader source. Editing keeps a draft until you publish.');
     })().catch(reason => { if (active) { setStatus(''); setError(reason instanceof Error ? reason.message : 'The passage could not open.'); } });
     return () => { active = false; };
-  }, [context.sourceKey, context.date, context.timeZone, secret, attempt]);
+  }, [context.sourceKey, context.date, context.timeZone, secret, attempt, fromLibrary]);
   return <div className="studio-variable-description studio-context-panel" aria-label={fromLibrary ? 'Passage opened from Content Library' : 'Passage opened from reader'}>
     <p>{fromLibrary ? 'Opened from Content Library' : 'Opened from reader'} · {context.date} · {context.timeZone}</p>
     <p>Reader source: <code>{context.sourceKey}</code></p>
