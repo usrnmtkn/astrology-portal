@@ -283,8 +283,7 @@ const FriendsBetweenYouTwoComposition = lazy(() => import("./FriendsBetweenYouTw
 
 const ImportedArticleHoroscopesEditor = lazy(() => import("./ImportedArticleHoroscopesEditor"));
 const StudioEditorReviewPanels = lazy(() => import('./StudioEditorReviewPanels'));
-const SkyDailySummaryStudio = lazy(() => import("./SkyDailySummaryStudio").then(module => ({ default: module.SkyDailySummaryStudio })));
-const SkyDebilityStudio = lazy(() => import("./SkyDebilityStudio").then(module => ({ default: module.SkyDebilityStudio })));
+const SkySummaryWorkspace = lazy(() => import("./SkySummaryWorkspace"));
 const CalendarSubscriptionEvents = lazy(() => import("./CalendarSubscriptionEvents"));
 const LunarCalendarWorkspace = lazy(() => import("./LunarCalendarWorkspace"));
 const CalendarDailyWritingStudio = lazy(() => import("./CalendarDailyWritingStudio"));
@@ -3260,6 +3259,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
   const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
+  const isSkySummaryWorkspace = ["daily-summary", "detriment-fall"].includes(skyWriteupWorkspaceView);
   const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
   const dailyWritingDirtyRef = useRef(false);
@@ -5905,12 +5905,12 @@ export function GeneratedContentAdminDashboard() {
   // clauses, the assembly template, the ingress TLDRs, and the debility copy. Without the documents
   // a saved field reads as empty, so the workspace looks like nothing was ever written there.
   useEffect(() => {
-    if (activePage !== "skyWriteups" || !["daily-summary", "detriment-fall"].includes(skyWriteupWorkspaceView)) return;
+    if (activePage !== "skyWriteups" || !isSkySummaryWorkspace) return;
     loadSourceDocuments(rows
       .filter((row) => row.content_key.startsWith("cms/sky-daily-summary/") || row.content_key.startsWith(SKY_DEBILITY_KEY_PREFIX))
       .slice(0, skySummaryWorkspaceHydrationLimit)
       .map((row) => row.id));
-  }, [activePage, skyWriteupWorkspaceView, rows, loadSourceDocuments]);
+  }, [activePage, isSkySummaryWorkspace, rows, loadSourceDocuments]);
 
   // The Daily At-a-Glance list previews each headline and passage and searches their wording, so the
   // pairs it lists need their documents before the search can match anything.
@@ -7732,13 +7732,10 @@ export function GeneratedContentAdminDashboard() {
             {readerEntry?.surface === 'sky' && <Suspense fallback={<PageLoading message="Opening the reader passage…" />}><ReaderPassageEntry context={readerEntry} fromLibrary={parseAdminHash().params.get('from') === 'library'} secret={loadState === 'loaded' ? secret : ''} onOpen={row => openRow(row as AdminGeneratedContentRow)} /></Suspense>}
             {skyWriteupWorkspaceView === "ingress-preview" ? (
               <Suspense fallback={<PageLoading message="Loading unsaved preview…" />}><UnsavedIngressPreview /></Suspense>
-            ) : skyWriteupWorkspaceView === "daily-summary" || skyWriteupWorkspaceView === "detriment-fall" ? (
+            ) : isSkySummaryWorkspace ? (
               <>
-                {skyWriteupWorkspaceView === "daily-summary" && <Suspense fallback={<PageLoading message="Loading Daily Sky Summary editor…" />}>
-                  <SkyDailySummaryStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} focusSunSummaries={focusSunSummaries} />
-                </Suspense>}
-                <Suspense fallback={<PageLoading message="Loading Without their tools editor…" />}>
-                  <SkyDebilityStudio rows={rows} secret={secret} onOpenDraft={row => void openRow(row as AdminGeneratedContentRow)} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
+                <Suspense fallback={<PageLoading message="Loading Sky Write-ups…" />}>
+                  <SkySummaryWorkspace daily={skyWriteupWorkspaceView === "daily-summary"} rows={rows} secret={secret} onOpenDraft={row => void openRow(row as AdminGeneratedContentRow)} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} focusSunSummaries={focusSunSummaries} />
                 </Suspense>
                 {renderEditor()}
               </>

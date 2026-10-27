@@ -40,7 +40,6 @@ export function SkyDebilityReviewDrafts({ secret, rows, onOpen, busy }: {
 
   return <details open className="admin-workspace-details" data-testid="sky-debility-review-drafts">
     <AdminDisclosureSummary>Saved review drafts{!loading && !error ? ` · ${drafts.length}` : ""}</AdminDisclosureSummary>
-    <p>Open a saved reading to review its full wording and save draft changes.</p>
     {loading && <p role="status">Loading saved review drafts…</p>}
     {error && <p role="alert">{error}</p>}
     {!loading && !error && drafts.length === 0 && <p>No saved dignity review drafts yet.</p>}
