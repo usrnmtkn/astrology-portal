@@ -58,7 +58,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     await page.goto("/admin/content#sky-writeups?view=daily-summary");
     const skyTabs = page.getByRole("tablist", { name: "Sky Write-ups workspaces" });
-    await expect(skyTabs.getByRole("tab")).toHaveText(["Daily Sky Summary", "Placements & lunations", "House × aspect bridges", "Personal Transits", "House Transits", "Preview without saving"]);
+    await expect(skyTabs.getByRole("tab")).toHaveText(["Daily Sky Summary", "Detriment and fall", "Placements & lunations", "House × aspect bridges", "Personal Transits", "House Transits", "Preview without saving"]);
     await expect(skyTabs.getByRole("tab", { name: "Daily Sky Summary", exact: true })).toHaveAttribute("aria-selected", "true");
     const summaryStyle = await page.getByRole("heading", { name: "Daily Sky Summary", exact: true }).evaluate(headingStyle);
     const nav = page.getByRole("navigation", { name: "Content operations" });

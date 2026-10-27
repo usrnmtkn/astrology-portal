@@ -6,6 +6,7 @@ import type { SkySummaryField } from "../../web/src/content/skyDailySummaryCatal
 import { skyDebilityField, skyDebilityLegacyNames, skyDebilityTemplateErrors, skyDebilityTemplateSlots } from "../../web/src/content/skyDebilityCatalog";
 import { skyDebilityInterpretationKey } from "../../web/src/content/skyDebilityInterpretation";
 import { SkyDebilityCompositionMap } from "./SkyDebilityCompositionMap";
+import { SkyDebilityReviewDrafts } from "./SkyDebilityReviewDrafts";
 import { buildSkyDebilityComposition } from "./skyDebilityComposition";
 import {
   skyDebilityConditionLabel, skyDebilityPhraseGuidance, skyDebilityPhraseKey,
@@ -28,9 +29,11 @@ const templateGuidance: Record<string, string> = {
 };
 const rowSignature = (row?: SummaryCompositionRow) => JSON.stringify([row?.id, row?.updated_at, row?.status, row?.body]);
 
-export function SkyDebilityStudio({ rows, onEdit, busy }: {
+export function SkyDebilityStudio({ rows, onEdit, onOpenDraft, secret, busy }: {
   rows: SummaryCompositionRow[];
   onEdit: (field: SkySummaryField, initialBody?: string) => void;
+  onOpenDraft: (row: SummaryCompositionRow & { id: string }) => void;
+  secret: string;
   busy: boolean;
 }) {
   const [selection, setSelection] = useState<Record<string, string>>({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" });
@@ -130,6 +133,8 @@ export function SkyDebilityStudio({ rows, onEdit, busy }: {
         <p>Changes here update the working preview. Review and save wording opens the existing Save draft and Save &amp; publish controls; changing the preview alone does not publish anything.</p>
       </div>
     </header>
+
+    <SkyDebilityReviewDrafts rows={rows} secret={secret} onOpen={onOpenDraft} busy={busy} />
 
     <SkyDebilityCompositionMap composition={composition} read={read} onSelectSource={selectSource} busy={busy} hasUnsaved={hasUnsaved} positions={previewPositions} />
 

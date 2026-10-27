@@ -191,7 +191,7 @@ export default defineConfig(({ command, mode }) => {
             // Share their transport without moving the complete JSON artifacts.
             if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-workspace";
             // These two panels render together in the deferred Sky summary workspace.
-            if (/apps\/admin\/src\/(?:SkyDailySummaryStudio|SkyDebilityStudio|SkySummaryAssemblyStudio|SkyDebilityCompositionMap|SkyInlineTemplate|skyDebilityComposition|skyIngressTldrSources)\.(?:ts|tsx)$/u.test(id)) return "admin-sky-summary-workspace";
+            if (/apps\/admin\/src\/(?:SkySummaryWorkspace|SkyDailySummaryStudio|SkyDebilityStudio|SkySummaryAssemblyStudio|SkyDebilityCompositionMap|SkyInlineTemplate|skyDebilityComposition|skyIngressTldrSources)\.(?:ts|tsx)$/u.test(id)) return "admin-sky-summary-workspace";
             // Calendar editing, preview and their exclusive models share one lazy workspace.
             if (/apps\/admin\/src\/(?:SkyForecastTemplateStudio|CalendarPassageEditor|CalendarPassageTemplateEditor|CalendarTemplatePreview|CalendarOverviewEditor|CalendarVariableText)\.tsx$/u.test(id)
               || /apps\/admin\/src\/(?:calendarPreviewModel|calendarOverviewTemplate)\.ts$/u.test(id)
