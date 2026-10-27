@@ -750,6 +750,52 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-horoscope-decision-actions { margin-inline-start: auto; justify-content: flex-end; }
 #root .admin-dashboard .admin-horoscope-actions .admin-danger-button:not(:disabled) { background: var(--studio-error-container); color: var(--studio-on-error-container); border-color: var(--workspace-danger); }
 #root .admin-dashboard .admin-horoscope-wizard progress { width: 100%; accent-color: var(--workspace-primary); }
+
+/* Daily summary: one selected wording source beside its reader preview. */
+#root .admin-dashboard .admin-summary-editing-workspace {
+  display: grid;
+  gap: var(--workspace-block-gap);
+}
+
+#root .admin-dashboard :is(.admin-summary-section-nav, .admin-summary-save-actions, .admin-summary-preview-views) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--workspace-field-gap);
+}
+
+#root .admin-dashboard .admin-summary-editing-columns {
+  align-items: start;
+  display: grid;
+  gap: var(--workspace-block-gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#root .admin-dashboard :is(.admin-summary-wording, .admin-summary-reader, .admin-summary-publication-review) {
+  display: grid;
+  gap: var(--workspace-field-gap);
+  min-width: 0;
+}
+
+#root .admin-dashboard .admin-summary-editing-workspace :is(label, .admin-summary-example-fields) {
+  display: grid;
+  gap: var(--workspace-field-gap);
+  min-width: 0;
+}
+
+#root .admin-dashboard .admin-summary-example-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#root .admin-dashboard .admin-summary-publication-review {
+  border-top: var(--border-width-thin) solid var(--workspace-line);
+  padding-top: var(--workspace-card-padding);
+}
+
+#root .admin-dashboard .admin-summary-editing-workspace code {
+  overflow-wrap: anywhere;
+}
+
+
 @media (min-width: 721px) {
   #root .admin-dashboard .admin-sky-writeups > .studio-tabs > [role="tablist"] { grid-auto-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-sky-writeups > .studio-tabs > [role="tablist"] > [role="tab"] { align-self: stretch; white-space: normal; }
@@ -909,6 +955,7 @@ body:has(.admin-dashboard) { margin: 0; }
 
 #root .admin-dashboard .admin-mobile-nav-toggle { display: none; }
 @media (max-width: 1000px) {
+  #root .admin-dashboard :is(.admin-summary-editing-columns, .admin-summary-example-fields) { grid-template-columns: minmax(0, 1fr); }
   #root .admin-dashboard { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-sidebar { position: relative; height: auto; display: flex; flex-direction: column; align-items: stretch; grid-template-columns: none; padding: var(--workspace-panel-inset); }
   #root .admin-dashboard .admin-sidebar-chrome { display: flex; width: 100%; min-width: 0; align-items: center; justify-content: space-between; gap: var(--workspace-field-gap); }

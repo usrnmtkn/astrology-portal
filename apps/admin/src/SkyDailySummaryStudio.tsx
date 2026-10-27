@@ -1,29 +1,26 @@
 import { sunSeasonHasRetrograde } from "../../web/src/content/skySunSeason";
 import { StudioButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
-import { MetricCard } from "./studio-ds/patterns";
-import { Grid, Stack, Text } from "./studio-ds/primitives";
-import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
-import { skySummaryOpeningKey } from "../../web/src/content/skyDailySummary";
+import { Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure } from "./studio-ds/recipes";
 import { suppliedSkySummaryCandidate, loadSkySummarySourceBank, type SkySummarySourceBank } from "./skySummarySourceBank";
-import { pairedSummarySign } from "../../web/src/content/skySummaryGeometry";
 import { loadSkyMoonSummarySources, type SkyMoonSummarySources } from "./skyMoonSummarySources";
 import { moonEventNames, type MoonSummaryKind } from "../../web/src/content/skyMoonSummary";
-import { SkyInlineTemplate } from "./SkyInlineTemplate";
-import { SkySummaryAssemblyStudio } from "./SkySummaryAssemblyStudio";
 import SkyWritingSystemDetails from "./SkyWritingSystemDetails";
 import { importedSkySummary } from "./skySummaryImportedCopy";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { currentSkySummaryWording, skyDailySummaryFields, skyIngressBodies, skyIngressSummaryFields, skySummarySigns, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { publishedIngressTldr } from "./skyIngressTldrSources";
 
-import { publishedSkySummaryContent, buildSkySummaryComposition, type SummaryCompositionRow } from "./skySummaryComposition";
-export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = false }: {
+import type { SummaryCompositionRow } from "./skySummaryComposition";
+import SkySummaryEditingWorkspace, { type SummaryEditingActions } from './SkySummaryEditingWorkspace';
+export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = false, editingActions }: {
   rows: SummaryCompositionRow[];
   onEdit: (field: SkySummaryField, initialBody?: string) => void;
   busy: boolean;
   focusSunSummaries?: boolean;
+  editingActions?: SummaryEditingActions;
 }) {
   const [moonSources, setMoonSources] = useState<SkyMoonSummarySources>();
   const [sourceBank, setSourceBank] = useState<SkySummarySourceBank>();
@@ -38,24 +35,9 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
       .catch(() => { if (active) setBankError("Supplied summary wording could not load."); });
     return () => { active = false; };
   }, [bankAttempt]);
-  const [sunSign, setSunSign] = useState("Virgo");
   const [sunVersion, setSunVersion] = useState("standard");
   const [sunFilter, setSunFilter] = useState("all");
-  const [moonSign, setMoonSign] = useState("Cancer");
   const [moonKind, setMoonKind] = useState<MoonSummaryKind>("regular");
-  const composition = useMemo(() => buildSkySummaryComposition(sunSign, moonSign, rows, false, null, moonKind, sunVersion === "retrograde"), [sunSign, moonSign, rows, moonKind, sunVersion]);
-  const openingKey = skySummaryOpeningKey(sunSign, moonSign, publishedSkySummaryContent(rows));
-  const openingField = skyDailySummaryFields.find(field => field.key.endsWith(`/assembly/${openingKey}`))!;
-  const openingBody = publishedSkySummaryContent(rows).get(openingField.key)?.body ?? openingField.body;
-  const slots = Object.fromEntries(composition.sources.map(source => [`${source.body}Summary`,
-    <a href={`#exact-content?q=${encodeURIComponent(source.field.key)}`} aria-disabled={busy} className="admin-composition-variable admin-template-reader-variable variable-copy"
-      aria-label={`Edit ${source.field.label} summary`} onClick={event => { event.preventDefault(); if (!busy) onEdit(source.field); }}>{composition.parts.filter(part => part.sourceKey === source.field.key).map(part => part.text).join("")}</a>
-  ]));
-  for (const [body, name, sign] of [["sun", "Sun", sunSign], ["moon", moonEventNames[moonKind], moonSign]]) {
-    slots[`${body}Name`] = <span className="admin-composition-variable variable-fact" title="Calculated planet">{name}</span>;
-    slots[`${body}Sign`] = <span className="admin-composition-variable variable-fact" title="Calculated sign">{sign}</span>;
-    slots[`${body}Degree`] = <span className="admin-summary-omitted-variable" aria-label={`${name} degree, omitted in this example`} />;
-  }
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState(focusSunSummaries ? "Sun summaries" : "all");
   const summarySection = useRef<HTMLSelectElement>(null);
@@ -84,63 +66,13 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
       <Stack gap="sm">
         <Text size="meta" tone="secondary">Sky Write-ups</Text>
         <h3>Daily Sky Summary</h3>
-        <Text size="body">Edit the Sky overview and Calendar Sun summary. Signs, degrees, planet names, and timing come from the calculated sky.</Text>
-        <Text size="body">Sun templates use {"{sunPlacement}"}; existing clauses keep their opening. Moon clauses use a verb without a final period.</Text>
+        <Text size="body">Edit shared wording and compare it with the reader preview.</Text>
       </Stack>
     </header>
+    {editingActions && <SkySummaryEditingWorkspace key={focusSunSummaries ? 'sun' : 'summary'} rows={rows} busy={busy} focusSunSummaries={focusSunSummaries} actions={editingActions} />}
+    <details className="admin-workspace-details" open={editingActions ? undefined : true}>
+    <AdminDisclosureSummary>Sources and writing system</AdminDisclosureSummary>
     <SkyWritingSystemDetails system="summary" />
-    <SkySummaryAssemblyStudio rows={rows} onEdit={onEdit} busy={busy} sunSign={sunSign} moonSign={moonSign} openingSlots={slots} moonKind={moonKind} />
-    <section className="admin-template-reader-drilldown admin-sky-summary-composition" aria-label="Sun and Moon composition map">
-      <header className="admin-section-heading-row">
-        <Stack gap="sm">
-          <h4>Sun and Moon together</h4>
-          <Text size="body">Choose example signs to read the app’s published summaries together. This previews the opening paragraph, with degrees omitted.</Text>
-        </Stack>
-      </header>
-      <Grid className={metricGrid} aria-label="Example Sun and Moon signs">
-        <MetricCard label="Sun sign" value={sunSign} />
-        <MetricCard label="Moon sign" value={moonSign} />
-        <MetricCard label="Moon event" value={moonEventNames[moonKind]} />
-      </Grid>
-      <div className="admin-daily-glance-context-form">
-        <label><span>Sun sign</span><AdminSelect aria-label="Composition Sun sign" value={sunSign} onChange={event => { setSunSign(event.target.value); if (moonKind !== "regular") setMoonSign(pairedSummarySign(event.target.value, moonKind)); }}>
-          {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
-        </AdminSelect></label>
-        <label><span>Moon sign</span><AdminSelect aria-label="Composition Moon sign" value={moonSign} onChange={event => { setMoonSign(event.target.value); if (moonKind !== "regular") setSunSign(pairedSummarySign(event.target.value, moonKind)); }}>
-          {skySummarySigns.map(sign => <option key={sign}>{sign}</option>)}
-        </AdminSelect></label>
-        <label><span>Moon event</span><AdminSelect aria-label="Composition Moon event" value={moonKind} onChange={event => { const kind = event.target.value as MoonSummaryKind; setMoonKind(kind); if (kind !== "regular") setMoonSign(pairedSummarySign(sunSign, kind)); }}>
-          {Object.entries(moonEventNames).map(([kind, name]) => <option key={kind} value={kind}>{name}</option>)}
-        </AdminSelect></label>
-        <label><span>Sun ruler preview</span><AdminSelect aria-label="Sun ruler preview" value={sunSeasonHasRetrograde(sunSign) ? sunVersion : "standard"} onChange={event => setSunVersion(event.target.value)}>
-          <option value="standard">Standard example</option>
-          {sunSeasonHasRetrograde(sunSign) && <option value="retrograde">Ruler retrograde example</option>}
-        </AdminSelect></label>
-      </div>
-      {moonKind !== "regular" && <p role="status">{moonKind === "newMoon" || moonKind === "solarEclipse" ? "The Sun and Moon share a sign at this event." : "The Sun and Moon occupy opposite signs at this event."} Changing either sign updates the other.</p>}
-      <div className="admin-composition-variable-legend" aria-label="Composition color key">
-        <span className="variable-fact">Example placement</span><span className="variable-copy">Editable summary</span><span>White words: click to edit</span>
-      </div>
-      {composition.errors.length ? <div role="alert">{composition.errors.map(error => <p key={error}>{error}</p>)}</div> : (
-        <div className="admin-template-reader-surface">
-          <div className="admin-composition-preview-chrome"><span>Sun + Moon</span><span>Reader preview</span></div>
-          <div className="admin-template-reader-copy">
-            <section className="admin-composition-preview-field field-body">
-              {composition.sources.some(source => !source.copy || source.copy.includes("{sunPlacement}")) ? <p aria-label="Combined Sun and Moon preview">{composition.parts.map((part, index) => <span key={index} className={part.action ? "admin-composition-variable variable-fact" : undefined}>{part.text}</span>)}</p>
-                : <SkyInlineTemplate key={openingBody} field={openingField} body={openingBody} slots={slots} onEdit={onEdit} busy={busy} label="Combined Sun and Moon preview" />}
-            </section>
-          </div>
-        </div>
-      )}
-      <div className="admin-editor-guidance" aria-label="Composition sources">
-        {composition.sources.map(source => <div key={source.body}>
-          <strong>{source.field.label}</strong>{moonSources?.rows.filter(row => row.key === source.field.key).map(row => <p key={row.key}>Source status: {source.copy !== row.body ? "Owner edit" : row.status}{row.sources.map(url => <span key={url}> · <a href={url} target="_blank" rel="noreferrer">Source URL</a></span>)}</p>)}<p><ContentLiveStatusBadge row={source.statusRow} unsaved={source.unsaved} />{source.emptyWorkingCopy ? " · Empty working copy; the preview uses the app fallback." : ""}</p>
-          <StudioButton type="button" disabled={busy} onClick={() => onEdit(source.field)}>Edit {source.body === "sun" ? "Sun" : "Moon"} source</StudioButton>
-        </div>)}
-        <p>The opening uses the published assembly template and the summaries selected above.</p>
-        <p>Click the white words or punctuation to edit the template. Click a green summary to edit its source. Changes reach the app only after Save & publish.</p>
-      </div>
-    </section>
     <div className="admin-content-filters admin-filter-form">
       <label><span>Summary section</span><AdminSelect ref={summarySection} aria-label="Summary section" value={group} onChange={event => setGroup(event.target.value)}>
         <option value="all">Sun, Moon, and timing</option>
@@ -155,6 +87,7 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
           {(sunFilter === "all" || sunSeasonHasRetrograde(sunFilter)) && <option value="retrograde">Ruler retrograde</option>}
         </AdminSelect></label>
       </>}
+      {(group === 'all' || group === 'Moon summaries') && <label><span>Moon event</span><AdminSelect aria-label="Source Moon event" value={moonKind} onChange={event => setMoonKind(event.target.value as MoonSummaryKind)}>{Object.entries(moonEventNames).map(([kind, label]) => <option key={kind} value={kind}>{label}</option>)}</AdminSelect></label>}
       {isIngress && <>
         <label><span>Ingress planet or point</span><AdminSelect aria-label="Ingress planet or point" value={ingressPlanet} onChange={event => setIngressPlanet(event.target.value)}>
           {skyIngressBodies.map(planet => <option key={planet}>{planet}</option>)}
@@ -191,5 +124,6 @@ export function SkyDailySummaryStudio({ rows, onEdit, busy, focusSunSummaries = 
       })}
       {visible.length === 0 && <p className="admin-empty">No summary fields match this search.</p>}
     </div>
+    </details>
   </section>;
 }
