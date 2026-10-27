@@ -121,12 +121,22 @@ function visitInitial(key) {
   for (const dependency of manifest[key].imports ?? []) visitInitial(dependency);
 }
 visitInitial(Object.entries(manifest).find(([, item]) => item === entry)?.[0]);
+// Splitting startup code into shared files must not hide it from the entry ceilings.
+const initialFiles = new Set([...initialChunks].map(key => manifest[key].file));
+const initialJavaScript = javaScriptFiles.filter(item => initialFiles.has(item.file));
+const initialRawBytes = initialJavaScript.reduce((sum, item) => sum + item.rawBytes, 0);
+const initialGzipBytes = initialJavaScript.reduce((sum, item) => sum + item.gzipBytes, 0);
+if (initialRawBytes > budgets.entryJavaScriptRawBytes) failures.push(`Complete Studio startup exceeds the existing raw entry ceiling: ${initialRawBytes} bytes`);
+if (initialGzipBytes > budgets.entryJavaScriptGzipBytes) failures.push(`Complete Studio startup exceeds the existing gzip entry ceiling: ${initialGzipBytes} bytes`);
 if (initialChunks.has('src/contentLibraryNavigation.ts')) failures.push('Content Library navigation and status actions must remain deferred from Studio startup.');
 if (initialChunks.has('src/studioRevisionPublication.ts')) failures.push('Revision publication validation must remain deferred from Studio startup.');
 if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
   const file = manifest[key].file;
+  if (['skyArticleHoroscopes', 'skyPlacementAspectBridge', 'studioMemoryIdentity', 'calendarPreviewCalculation', 'SkyPlacementAspectBridgeStudio'].includes(manifest[key].name)) {
+    failures.push(`Deferred Studio source/editor code entered startup: ${file}`);
+  }
   if (file?.endsWith('.js') && fs.readFileSync(path.join(distRoot, file), 'utf8').includes('The saved copy also changed in')) {
     failures.push(`Copy conflict recovery must remain deferred from Studio startup: ${file}`);
   }
@@ -159,6 +169,7 @@ for (const key of initialChunks) {
 }
 
 const expectedDynamicEntries = [
+  "src/SkyPlacementAspectBridgeStudio.tsx",
   "src/studioRevisionPublication.ts",
   "src/contentLibraryNavigation.ts",
   "src/LunationWritingStudio.tsx",
@@ -212,6 +223,7 @@ for (const name of expectedDeferredGroups) {
 
 console.log("# Admin bundle budget");
 console.log(`Entry JavaScript: ${formatBytes(measurements.entryJavaScriptGzipBytes)} gzip (${formatBytes(measurements.entryJavaScriptRawBytes)} raw)`);
+console.log(`Complete startup graph: ${initialRawBytes} bytes raw / ${initialGzipBytes} bytes gzip across ${initialJavaScript.length} files`);
 console.log(`Largest JavaScript: ${largestItem?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptRawBytes)} raw)`);
 console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip (${measurements.totalJavaScriptGzipBytes} bytes) across ${javaScriptFiles.length} files; limit ${budgets.totalJavaScriptGzipBytes} bytes`);
 console.log(`Aggregate headroom: ${budgets.totalJavaScriptGzipBytes - measurements.totalJavaScriptGzipBytes} bytes`);

@@ -26,6 +26,8 @@ The short version:
   by Sky and Calendar, with normal article editing and publication controls.
 - [Placement composition](./SKY_PLACEMENT_V5.md): editable sentence sources,
   named variables, ordered sections, calculated previews, and publication checks.
+- [Personalized placement aspect bridges](./SKY_PLACEMENT_ASPECT_BRIDGES.md):
+  editable house/contact bridges, intact aspect sources, and a single timing layer.
 - [Governed approvals](./GOVERNED-APPROVALS.md): atomic owner decisions,
   unresolved queues, and the generated approved-only serving projection.
 - [Sky aspect surface contract](./SKY-ASPECT-SURFACE-CONTRACT.md): required

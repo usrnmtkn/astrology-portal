@@ -6,6 +6,7 @@ import skyManifest from "../../apps/web/src/content/fallbackArchitectureV3/bundl
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 import lunarJournalIndex from "../../apps/web/src/features/calendar/data/lunar-journal.index.json" with { type: "json" };
 import { isConnectionSourceKey, connectionSourceErrors, CONNECTION_ACTIVATION_PREFIX } from "../../apps/web/src/content/connectionTransit.js";
+import { SKY_PLACEMENT_ASPECT_BRIDGE_PREFIX, SKY_PLACEMENT_ASPECT_BRIDGE_POLICY, skyPlacementAspectBridgeErrors } from '../../apps/web/src/content/skyPlacementAspectBridge.js';
 
 const keys = (manifest: { keys: string[] }) => new Set(manifest.keys.map(key => key.slice(key.indexOf(":") + 1)));
 const coreKeys = keys(coreManifest);
@@ -26,6 +27,10 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   if (!isPackage) return null;
   const key = String(row.content_key ?? "");
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
+  if (key.startsWith(SKY_PLACEMENT_ASPECT_BRIDGE_PREFIX)) {
+    if (record.content_role !== 'fallback_hook' || record.render_policy !== SKY_PLACEMENT_ASPECT_BRIDGE_POLICY) return 'Reopen this house × aspect bridge before publishing.';
+    return skyPlacementAspectBridgeErrors(key, typeof record.body === 'string' ? record.body : '').join(' ') || null;
+  }
   if (isConnectionSourceKey(key)) {
     const body = key.startsWith(CONNECTION_ACTIVATION_PREFIX) ? record.body_you : record.body;
     return connectionSourceErrors(key, typeof body === "string" ? body : "").join(" ") || null;

@@ -614,7 +614,7 @@ test('Studio saves and reopens separate activation and editable bridge drafts th
   await ready;
   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},testInfo.project.name.endsWith('dark')?'dark':'light');
   const activationSource='authored/connection-activation/ascendant/square/saturn';
-  const draftModule=/\/(?:admin-source-drafts|connectionTransitSources)-[^/]+\.js$/;
+  const draftModule=/\/(?:admin-source-drafts|connectionTransitSources|studioSourceDraft)-[^/]+\.js$/;
   const moduleReads:Request[]=[];
   const outcomes=new Map<Request,{outcome:'pending'|'finished'|'failed';status:number|null;failure:string|null}>();
   let holdSource=false,sourceStarted=false,releaseSource=()=>{},heldSource:Request|null=null;

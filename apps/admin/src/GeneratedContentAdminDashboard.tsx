@@ -269,6 +269,7 @@ const SkyPlacementWorkspace = lazy(() => import("./SkyPlacementWorkspace"));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
 const ConnectionTransitStudio = lazy(() => import("./ConnectionTransitStudio"));
+const SkyPlacementAspectBridgeStudio = lazy(() => import('./SkyPlacementAspectBridgeStudio'));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
 const StudioCsvTools = lazy(() => import('./StudioCsvTools'));
 const TransitNatalReaderPreview = lazy(() => import("./TransitNatalReaderPreview"));
@@ -413,7 +414,7 @@ type AdminWritingSurfaceMapPayload = {
 };
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
-type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits" | "ingress-preview";
+type SkyWriteupWorkspaceView = "daily-summary" | "catalog" | "transits-to-natal" | "house-transits" | "house-aspect-bridges" | "ingress-preview";
 type CalendarWriteupWorkspaceView = SkyForecastPeriod | "daily-writing" | "season-transitions" | "season-writeups" | "moon-transition-phrases" | "subscription-events" | "lunar-ingresses" | "lunation-writing" | "planetary-ingresses" | "planetary-stations";
 const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label: string }[] = [
   { value: "daily-sky", label: "Daily Sky" },
@@ -432,10 +433,16 @@ const calendarWriteupWorkspaceTabs: { value: CalendarWriteupWorkspaceView; label
 const skyWriteupWorkspaceTabs: { value: SkyWriteupWorkspaceView; label: string }[] = [
   { value: "daily-summary", label: "Daily Sky Summary" },
   { value: "catalog", label: "Placements & lunations" },
+  { value: "house-aspect-bridges", label: "House × aspect bridges" },
   { value: "transits-to-natal", label: "Personal Transits" },
   { value: "house-transits", label: "House Transits" },
   { value: "ingress-preview", label: "Preview without saving" }
 ];
+const skyWriteupNavigationTabs = (["daily-summary", "transits-to-natal", "house-transits", "house-aspect-bridges", "ingress-preview"] as const)
+  .map(value => {
+    const tab = skyWriteupWorkspaceTabs.find(tab => tab.value === value)!;
+    return value === "transits-to-natal" ? { ...tab, label: "Transit to Natal Charts" } : tab;
+  });
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
@@ -2385,7 +2392,7 @@ function aspectContextForFields({
   }
 
   if (
-    /personal[./_ -]transit[./_ -]aspect|transit[./_ -](?:to[./_ -])?natal|authored\/transit-aspect/u.test(marker)
+    /personal[./_ -]transit[./_ -]aspect|transit[./_ -](?:to[./_ -])?natal|authored\/transit-aspect|sky-house-aspect-bridge/u.test(marker)
     || (/(?:^|[./_ -])transit[./_ -]aspect/u.test(marker) && surface !== "sky")
   ) {
     return {
@@ -6835,13 +6842,13 @@ export function GeneratedContentAdminDashboard() {
       if (requestId !== connectionSourceRequestRef.current || originatingHash !== window.location.hash) return;
       const existing = result.rows.find(row => row.status !== "ARCHIVED") ?? result.rows[0];
       if (existing) { await openRow(existing as unknown as AdminGeneratedContentRow); return; }
-      const { connectionSourceDraft } = await import("./connectionTransitSources");
+      const { studioSourceDraft } = await import('./studioSourceDraft');
       if (requestId !== connectionSourceRequestRef.current || originatingHash !== window.location.hash) return;
       setSelectedRowId(null);
       setEditorSourceRow(null);
       setCompositionEditorContext(null);
       setEditorSaveError("");
-      rememberSavedDraft(connectionSourceDraft(key));
+      rememberSavedDraft(studioSourceDraft(key));
       scrollEditorToTop();
     } catch (error) {
       if (requestId === connectionSourceRequestRef.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
@@ -7218,12 +7225,7 @@ export function GeneratedContentAdminDashboard() {
                 {(item.page === "calendarWriteups" || item.page === "skyWriteups") && (
                   <div className="admin-nav-workspace-group" hidden={activePage !== item.page}
                     aria-label={`${item.label} sections`}>
-                    {(item.page === "calendarWriteups" ? calendarWriteupWorkspaceTabs : [
-                      skyWriteupWorkspaceTabs[0],
-                      { value: "transits-to-natal", label: "Transit to Natal Charts" },
-                      skyWriteupWorkspaceTabs[3],
-                      skyWriteupWorkspaceTabs[4]
-                    ]).map(tab => <StudioButton key={tab.value} type="button"
+                    {(item.page === "calendarWriteups" ? calendarWriteupWorkspaceTabs : skyWriteupNavigationTabs).map(tab => <StudioButton key={tab.value} type="button"
                       onClick={() => navigateAdminPage(item.page, new URLSearchParams({ view: tab.value }))}
                       aria-current={activePage === item.page && (item.page === "calendarWriteups" ? calendarWriteupWorkspaceView : skyWriteupWorkspaceView) === tab.value ? "page" : undefined}>
                       <span>{tab.label}</span>
@@ -7715,7 +7717,7 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "skyWriteups" && (
-          <section className="admin-template-page">
+          <section className="admin-template-page admin-sky-writeups">
             <h2 className="sr-only">Sky writing workspaces</h2>
             <StudioTabs label="Sky Write-ups workspaces" value={skyWriteupWorkspaceView}
               tabs={skyWriteupWorkspaceTabs} onValueChange={view => {
@@ -7736,6 +7738,13 @@ export function GeneratedContentAdminDashboard() {
                 </Suspense>
                 <Suspense fallback={<PageLoading message="Loading Without their tools editor…" />}>
                   <SkyDebilityStudio rows={rows} onEdit={(field, initialBody) => void openSkySummaryField(field, initialBody)} busy={isLoading} />
+                </Suspense>
+                {renderEditor()}
+              </>
+            ) : skyWriteupWorkspaceView === 'house-aspect-bridges' ? (
+              <>
+                <Suspense fallback={<PageLoading message="Loading house × aspect bridges…" />}>
+                  <SkyPlacementAspectBridgeStudio busy={isLoading} onEdit={key => void openConnectionSource(key)} />
                 </Suspense>
                 {renderEditor()}
               </>

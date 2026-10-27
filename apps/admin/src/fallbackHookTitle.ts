@@ -122,6 +122,7 @@ function fallbackHookDisplayTitleUncached(contentKey: string) {
 
   const family = parts[1];
   const args = parts.slice(2);
+  if (family === 'sky-house-aspect-bridge' && args.length === 4) return `House ${args[0]} bridge · ${words(args[1])} ${args[2]} your ${words(args[3])}`;
   if (family === "pair-daily") return pairDailyTitle(args);
   const pair = pairTitle(family, args);
   if (pair) return pair;

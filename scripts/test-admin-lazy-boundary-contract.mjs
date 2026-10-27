@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {tmpdir} from 'node:os';
-import {build} from 'vite';
+import {build, loadConfigFromFile} from 'vite';
+import {fileURLToPath} from 'node:url';
 import {adminLazyBoundaryManifestPlugin} from './admin-lazy-boundary-manifest-plugin.mjs';
 import {calendarLazyEntries, calendarLazyBoundaryFailures} from './admin-lazy-boundary-contract.mjs';
 
@@ -49,4 +50,25 @@ try {
   rejects(x=>{x.chunkBytes=()=>{throw new Error('Missing emitted chunk');};});
   assert(!JSON.stringify(proof).includes(root),'Metadata contains no absolute fixture paths');
   console.log(`PASS actual Rollup lazy membership plus ${negatives} fail-closed boundary checks`);
+  const config = await loadConfigFromFile({ command: 'build', mode: 'production' },
+    fileURLToPath(new URL('../apps/admin/vite.config.ts', import.meta.url)), undefined, 'silent');
+  const startupGuard = config.config.plugins.flat(Infinity).find(plugin => plugin.name === 'studio-startup-partition');
+  assert(startupGuard, 'The real Studio build must enforce deferred source membership.');
+  const guardEntry = path.join(src, 'guard-entry.ts');
+  const guarded = path.join(src, 'skyPlacementAspectBridge.ts');
+  fs.writeFileSync(guarded, `export const label='Synthetic bridge source';`);
+  const guardBuild = (source, manualChunks) => {
+    fs.writeFileSync(guardEntry, source);
+    return build({ configFile: false, envFile: false, root: admin, logLevel: 'silent', plugins: [startupGuard],
+      build: { write: false, minify: false, rollupOptions: { input: guardEntry, output: { manualChunks, onlyExplicitManualChunks: true } } } });
+  };
+  await guardBuild(`globalThis.openBridge=async()=>(await import('./skyPlacementAspectBridge')).label;`,
+    id => id === guarded ? 'bridge' : undefined);
+  await assert.rejects(() => guardBuild(`import {label} from './skyPlacementAspectBridge';globalThis.label=label;`,
+    () => 'index'), /Deferred Studio module entered startup/u);
+  fs.writeFileSync(path.join(src, 'guard-middle.ts'), `import {label} from './skyPlacementAspectBridge';export function wrapper(){return label;}`);
+  await assert.rejects(() => guardBuild(`import {wrapper} from './guard-middle';globalThis.readBridge=wrapper;`,
+    id => id === guarded ? 'bridge' : id.endsWith('/guard-middle.ts') ? 'middle' : undefined),
+  /Deferred Studio module entered startup/u);
+  console.log('PASS real Studio startup guard: deferred source allowed; direct and transitive eager source rejected.');
 } finally {fs.rmSync(root,{recursive:true,force:true});}
