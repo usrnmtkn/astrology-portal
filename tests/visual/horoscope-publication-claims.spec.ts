@@ -69,6 +69,11 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(studio.getByRole('button',{name:'4 · Publish',exact:true})).toBeDisabled();await expect(archive).toBeEnabled();await archive.click();
    await expect(studio.getByText('This edition is archived. Its saved readings are preserved.',{exact:true})).toBeVisible();
    const emptyArchived=(await call({method:'rows'})).find((row:any)=>row.id===original.id);expect(emptyArchived.status).toBe('ARCHIVED');expect(emptyArchived.sections.horoscopeEdition).toEqual(emptyEdition);
+   await page.reload();await expect(studio.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
+   await studio.getByRole('button',{name:'Review archived readings',exact:true}).click();await expect(studio.getByLabel('Complete reading')).toHaveValue('');
+   await studio.getByRole('button',{name:'Restore as draft',exact:true}).click();await expect(studio.getByRole('status').filter({hasText:'Saved edition draft.'})).toBeVisible();
+   expect((await call({method:'rows'})).find((row:any)=>row.id===original.id).status).toBe('DRAFT');
+   expect((await call({method:'reader',body:{ids:[original.id]}})).payload.rows).toEqual([]);
    expect(archiveRequests).toBe(4);expect((await call({method:'writer-state'})).calls).toBe(0);
   }finally{try{await page.unrouteAll({behavior:'wait'});}finally{child.kill();}}
  });

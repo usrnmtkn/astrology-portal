@@ -12,10 +12,9 @@ type Props={
   secret:string;request:(secret:string,url:string,body?:unknown,method?:string,signal?:AbortSignal)=>Promise<any>;
   onCheck:(value:any)=>void;onApprove:(value:boolean)=>void;onReload:()=>void;onEdit:(sign:string)=>void;
   onBack:()=>void;onPublish:()=>void;onSetup:()=>void;rejectAllButton:ReactNode;
-  onRestore:()=>void;
 };
 /** Loaded only for the final review step; generation stays in the editor chunk. */
-export default function HoroscopePublicationReview({draft,saved,sign,dirty,locked,approved,publication,validationOverride,onOverride,secret,request,onCheck,onApprove,onReload,onEdit,onBack,onPublish,onSetup,rejectAllButton,onRestore}:Props){
+export default function HoroscopePublicationReview({draft,saved,sign,dirty,locked,approved,publication,validationOverride,onOverride,secret,request,onCheck,onApprove,onReload,onEdit,onBack,onPublish,onSetup,rejectAllButton}:Props){
   const [attempt,setAttempt]=useState(0);
   const credentialIdentity=ownerCredentialIdentity(secret);
   useEffect(()=>{
@@ -37,7 +36,7 @@ export default function HoroscopePublicationReview({draft,saved,sign,dirty,locke
   return <>
     {isPublished?<div className="admin-horoscope-actions"><a className="admin-primary-button" href={horoscopeEditionReaderHref(saved.id,draft.window.period,sign)} target="_blank" rel="noreferrer">Read published edition</a><StudioButton disabled={locked} onClick={onSetup}>Create another edition</StudioButton></div>:saved?.status==='ARCHIVED'&&!dirty?<>
       <p>This edition is archived. Its saved readings are preserved.</p>
-      <div className="admin-horoscope-actions"><StudioButton disabled={locked} onClick={onBack}>Review archived readings</StudioButton><StudioButton disabled={locked} onClick={onRestore}>Restore as draft</StudioButton></div>
+      <div className="admin-horoscope-actions"><StudioButton disabled={locked} onClick={onBack}>Review archived readings</StudioButton></div>
     </>:<>
           {!publicationCurrent&&<p role="status">Checking all saved readings before publication…</p>}
           {publicationCurrent&&publication.error&&<div role="alert"><p>{publication.error}</p><StudioButton disabled={locked} onClick={()=>publication.status===409?onReload():setAttempt(value=>value+1)}>{publication.status===409?'Reload saved edition':'Check publication again'}</StudioButton></div>}

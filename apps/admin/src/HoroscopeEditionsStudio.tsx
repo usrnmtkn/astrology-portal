@@ -140,7 +140,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     setPeriod(edition.window.period);setZone(edition.window.timeZone);
     setDate(row.facts?.horoscopeBrief?.brief?.referenceDate??new Intl.DateTimeFormat('en-CA',{timeZone:edition.window.timeZone}).format(new Date(edition.window.startsAt)));
     setError('');
-    const next:Step=row.status==='LIVE'?'publish':row.source_snapshot?.horoscopeGeneration?.active||(edition.window.period==='seasonal'?pendingReadings(edition,row.source_snapshot?.horoscopeGeneration).length:edition.passages.some(p=>!p.headline.trim()&&!p.body.trim()))?'generate':'edit';
+    const next:Step=row.status==='LIVE'||row.status==='ARCHIVED'?'publish':row.source_snapshot?.horoscopeGeneration?.active||(edition.window.period==='seasonal'?pendingReadings(edition,row.source_snapshot?.horoscopeGeneration).length:edition.passages.some(p=>!p.headline.trim()&&!p.body.trim()))?'generate':'edit';
     setStep(next);return next;
   }
   async function loadPlan(row:any,controller?:AbortController,writerChoice?:string,admit?:()=>boolean) {
@@ -586,7 +586,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     {step!=='setup'&&draft&&<div className="admin-horoscope-summary"><span>{horoscopeSignLabel(draft.window.period)} · {horoscopeWindowLabel(draft.window)}</span><span>{draft.window.timeZone.replaceAll('_',' ')} · {complete}/{total} readings ready{dirty?' · Unsaved changes':''}</span></div>}
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {saved&&step!=='setup'&&<div className="admin-horoscope-actions">
-      {saved.status!=='ARCHIVED'&&<StudioButton className="admin-danger-button" disabled={locked||dirty} onClick={()=>void save(false,'ARCHIVED')}>Archive edition</StudioButton>}
+      <StudioButton className={saved.status==='ARCHIVED'?undefined:'admin-danger-button'} disabled={locked||dirty} onClick={()=>void save(false,saved.status==='ARCHIVED'?'DRAFT':'ARCHIVED')}>{saved.status==='ARCHIVED'?'Restore as draft':'Archive edition'}</StudioButton>
       {needsSync&&<StudioButton disabled={busy} onClick={()=>void open(saved,true)}>Reload saved edition</StudioButton>}
     </div>}
     {isWeekly&&saved?.status!=='ARCHIVED'&&step!=='setup'&&<Suspense fallback={<p role="status">Loading…</p>}><WeeklyBatchEditorial
@@ -700,7 +700,6 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
         <Suspense fallback={<p role="status">Loading publication review…</p>}><HoroscopePublicationReview
           draft={draft} saved={saved} sign={sign} dirty={dirty} locked={locked} approved={approved} publication={publication} validationOverride={validationOverride} onOverride={value=>{setValidationOverride(value);setApproved(false);}}
           secret={secret} request={request} onCheck={setPublication} onApprove={setApproved} onReload={()=>void open(saved,true)}
-          onRestore={()=>void save(false,'DRAFT')}
           onEdit={affectedSign=>{setSign(affectedSign);setError('');setStep('edit');}}
           onBack={()=>void moveTo('edit')} onPublish={()=>void save(true)} onSetup={()=>void moveTo('setup')} rejectAllButton={rejectAllButton}
         /></Suspense>
