@@ -1,5 +1,4 @@
-import {publishSavedOwnerContent} from './ownerPublication';
-export {ownerPublicationStatusPath} from './ownerPublication';
+import {publishSavedOwnerContent,ownerPublicationStatusPath} from './ownerPublication';
 import {useEffect,useState,type ReactNode} from 'react';
 import {ownerCredentialIdentity} from './ownerSession';
 import {StudioButton} from './StudioControls';
@@ -7,9 +6,12 @@ import {horoscopeEditionReaderHref} from './adminReaderDestinations';
 import {FormattedProse} from '../../../src/shared/components/FormattedProse';
 import {horoscopeSignLabel,type HoroscopeEdition} from '../../web/src/content/horoscopeEditions.mjs';
 
-export const horoscopePublicationAction=(row:any)=>row.event_type==='horoscope-edition-revision'?'publish-horoscope-edition-revision':'publish-owner-content';
-export function publishSavedHoroscope(row:any,write:()=>Promise<any>,read:()=>Promise<any>){
-  return publishSavedOwnerContent({...row,id:row.event_type==='horoscope-edition-revision'?row.source_snapshot?.targetRowId:row.id},write,read);
+export function publishSavedHoroscope(row:any,request:(url:string,body?:unknown)=>Promise<any>,validationOverride:boolean){
+  const revision=row.event_type==='horoscope-edition-revision';
+  const ownerAction=revision?'publish-horoscope-edition-revision':'publish-owner-content';
+  return publishSavedOwnerContent({...row,id:revision?row.source_snapshot?.targetRowId:row.id},
+    ()=>request('/api/admin/generated-content',{id:row.id,ownerAction,expectedUpdatedAt:row.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})}),
+    ()=>request(ownerPublicationStatusPath(row,ownerAction,validationOverride)));
 }
 
 type Props={

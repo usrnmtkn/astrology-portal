@@ -279,10 +279,9 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     try {
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
-      const ownerTransport=publish?await import("./HoroscopePublicationReview"):null;
-      const body=lifecycle?{...editionVersion(saved),status:lifecycle}:publish ? {id:saved.id,ownerAction:ownerTransport!.horoscopePublicationAction(saved),expectedUpdatedAt:saved.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})} : (await import('./horoscopeEditionDraft')).editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved);
-      const write=()=>request(secret,endpoint,body,saved ? 'PATCH':'POST');
-      const data=ownerTransport?await ownerTransport.publishSavedHoroscope(saved,write,()=>request(secret,ownerTransport.ownerPublicationStatusPath(saved,ownerTransport.horoscopePublicationAction(saved),validationOverride))):await write();
+      const data=publish
+        ? await (await import('./HoroscopePublicationReview')).publishSavedHoroscope(saved,(url,body)=>request(secret,url,body,'PATCH'),validationOverride)
+        : await request(secret,endpoint,lifecycle?{...editionVersion(saved),status:lifecycle}:(await import('./horoscopeEditionDraft')).editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved),saved?'PATCH':'POST');
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
         || row.status!==(lifecycle??(publish ? 'LIVE':'DRAFT'))||lifecycle&&(row.id!==saved.id||row.updated_at===saved.updated_at)) throw new Error('The exact save could not be confirmed. Your edits are preserved; reload the saved edition before retrying.');
