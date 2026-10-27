@@ -3299,7 +3299,6 @@ export function GeneratedContentAdminDashboard() {
   const compatibilityAspectFormRef = useRef<HTMLElement>(null);
   const compatibilityAspectRequestRef = useRef(0);
   const connectionSourceRequestRef = useRef(0);
-  const placementBridgeRequestRef = useRef(0);
   useEffect(() => {
     if (!compatibilityAspectSelection) return;
     compatibilityAspectFormRef.current?.scrollIntoView({ block: "center" });
@@ -6834,30 +6833,6 @@ export function GeneratedContentAdminDashboard() {
     setCompatibilityAspectSelection(compatibilityAspectFromSearch(compatibilityQuery));
   }
 
-  async function openPlacementAspectBridge(key: string) {
-    const requestId = ++placementBridgeRequestRef.current;
-    const originatingHash = window.location.hash;
-    setIsLoading(true);
-    try {
-      const result = await readStudioContentDocument(key, secret);
-      if (requestId !== placementBridgeRequestRef.current || originatingHash !== window.location.hash) return;
-      const existing = result.rows.find(row => row.status !== 'ARCHIVED') ?? result.rows[0];
-      if (existing) { await openRow(existing as unknown as AdminGeneratedContentRow); return; }
-      const { skyPlacementAspectBridgeDraft } = await import('./skyPlacementAspectBridgeDraft');
-      if (requestId !== placementBridgeRequestRef.current || originatingHash !== window.location.hash) return;
-      setSelectedRowId(null);
-      setEditorSourceRow(null);
-      setCompositionEditorContext(null);
-      setEditorSaveError('');
-      rememberSavedDraft(skyPlacementAspectBridgeDraft(key));
-      scrollEditorToTop();
-    } catch (error) {
-      if (requestId === placementBridgeRequestRef.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
-    } finally {
-      if (requestId === placementBridgeRequestRef.current) setIsLoading(false);
-    }
-  }
-
   async function openConnectionSource(key: string) {
     const requestId = ++connectionSourceRequestRef.current;
     const originatingHash = window.location.hash;
@@ -6867,13 +6842,13 @@ export function GeneratedContentAdminDashboard() {
       if (requestId !== connectionSourceRequestRef.current || originatingHash !== window.location.hash) return;
       const existing = result.rows.find(row => row.status !== "ARCHIVED") ?? result.rows[0];
       if (existing) { await openRow(existing as unknown as AdminGeneratedContentRow); return; }
-      const { connectionSourceDraft } = await import("./connectionTransitSources");
+      const { studioSourceDraft } = await import('./studioSourceDraft');
       if (requestId !== connectionSourceRequestRef.current || originatingHash !== window.location.hash) return;
       setSelectedRowId(null);
       setEditorSourceRow(null);
       setCompositionEditorContext(null);
       setEditorSaveError("");
-      rememberSavedDraft(connectionSourceDraft(key));
+      rememberSavedDraft(studioSourceDraft(key));
       scrollEditorToTop();
     } catch (error) {
       if (requestId === connectionSourceRequestRef.current && originatingHash === window.location.hash) setMessage(dashboardErrorMessage(error));
@@ -7769,7 +7744,7 @@ export function GeneratedContentAdminDashboard() {
             ) : skyWriteupWorkspaceView === 'house-aspect-bridges' ? (
               <>
                 <Suspense fallback={<PageLoading message="Loading house × aspect bridges…" />}>
-                  <SkyPlacementAspectBridgeStudio busy={isLoading} onEdit={key => void openPlacementAspectBridge(key)} />
+                  <SkyPlacementAspectBridgeStudio busy={isLoading} onEdit={key => void openConnectionSource(key)} />
                 </Suspense>
                 {renderEditor()}
               </>

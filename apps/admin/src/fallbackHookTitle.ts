@@ -1,5 +1,4 @@
 import { memoByString } from "./derivedCache";
-import { skyPlacementAspectBridgeIdentity } from '../../web/src/content/skyPlacementAspectBridge';
 const ordinalSuffix = (value: number) => {
   const mod100 = value % 100;
   if (mod100 >= 11 && mod100 <= 13) return "th";
@@ -118,13 +117,12 @@ function pairDailyTitle(args: string[]) {
 
 /** Builds a stable editorial title from the hook's canonical identity. */
 function fallbackHookDisplayTitleUncached(contentKey: string) {
-  const bridge = skyPlacementAspectBridgeIdentity(contentKey);
-  if (bridge) return `House ${bridge.house} bridge · ${words(bridge.transiting)} ${bridge.aspect} your ${words(bridge.natal)}`;
   const parts = contentKey.split("/").filter(Boolean);
   if (parts[0] !== "fallback-hook" || !parts[1]) return null;
 
   const family = parts[1];
   const args = parts.slice(2);
+  if (family === 'sky-house-aspect-bridge' && args.length === 4) return `House ${args[0]} bridge · ${words(args[1])} ${args[2]} your ${words(args[3])}`;
   if (family === "pair-daily") return pairDailyTitle(args);
   const pair = pairTitle(family, args);
   if (pair) return pair;

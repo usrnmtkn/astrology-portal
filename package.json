@@ -118,7 +118,7 @@
     "test:auth-access": "node --import tsx scripts/test-passive-auth-observer.mts && node scripts/test-auth-account-isolation.mjs && node scripts/test-report-auth-identity.mjs && node --import tsx scripts/test-admin-auth.mjs",
     "qa:bundle": "node scripts/check-web-bundle-budgets.mjs",
     "qa:form-typography": "node scripts/run-form-typography-audit.mjs",
-    "qa:admin-boundary": "node scripts/test-admin-web-boundaries.mjs && node scripts/audit-admin-web-boundaries.mjs && npm run guard:dev-ports",
+    "qa:admin-boundary": "node scripts/test-admin-web-boundaries.mjs && node scripts/test-admin-lazy-boundary-contract.mjs && node scripts/audit-admin-web-boundaries.mjs && npm run guard:dev-ports",
     "qa:ephemeris:horizons": "TLDR_ASTRO_VERIFY_PROVIDER_COMMAND='node scripts/providers/nasa-horizons-provider.mjs' node scripts/verify-astrology-integrity.mjs --allow-reference-gaps --summary",
     "qa:ephemeris:release-gate": "node scripts/check-ephemeris-release-gate.mjs",
     "qa:2026-engine-facts": "node scripts/verify-2026-engine-facts.mjs",

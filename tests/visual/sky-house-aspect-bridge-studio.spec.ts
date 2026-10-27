@@ -7,6 +7,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
   test(`House × aspect bridge draft saves and reopens ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     const store = await studioApiStore([]);
+    let releaseLookup: (() => void) | undefined;
     try {
       const errors: string[] = [];
       page.on('pageerror', error => errors.push(error.message));
@@ -83,8 +84,36 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await region.getByRole('button', { name: 'Open bridge', exact: true }).click();
       await expect(field).toHaveValue('');
       expect((await store.call({ method: 'rows' })).length).toBe(1);
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      await region.getByRole('combobox', { name: 'House', exact: true }).selectOption('6');
+      const pendingKey = skyPlacementAspectBridgeKey({ house: 6, transiting: 'venus', aspect: 'trine', natal: 'mars' });
+      let requested!: () => void;
+      const held = new Promise<void>(resolve => { releaseLookup = resolve; });
+      const started = new Promise<void>(resolve => { requested = resolve; });
+      await page.route(url => url.pathname === '/api/admin/generated-content-inventory' && url.searchParams.get('contentKey') === pendingKey, async route => {
+        requested();
+        await held;
+        const url = new URL(route.request().url());
+        const result = await store.call({ method: 'GET', url: url.pathname + url.search });
+        await route.fulfill({ status: result.status, json: result.payload });
+      });
+      await region.getByRole('button', { name: 'Open bridge', exact: true }).click();
+      await started;
+      await openNavigation();
+      await page.getByLabel('Sky Write-ups sections').getByRole('button', { name: 'Daily Sky Summary', exact: true }).click();
+      const settled = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return url.pathname === '/api/admin/package-source' && url.searchParams.get('contentKey') === pendingKey;
+      });
+      releaseLookup!();
+      await (await settled).finished();
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      await expect(page.getByRole('region', { name: 'Daily Sky Summary editor', exact: true })).toBeVisible();
+      await expect(page.getByRole('region', { name: 'Detriment and fall summary editor', exact: true })).toBeVisible();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+      await expect(region).toHaveCount(0);
       expect(errors).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    } finally { store.close(); }
+    } finally { releaseLookup?.(); store.close(); }
   });
 }

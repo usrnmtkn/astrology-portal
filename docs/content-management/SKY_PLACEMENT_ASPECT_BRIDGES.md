@@ -34,6 +34,13 @@ The pure bridge contract uses the shared reader eligibility chunk, so visiting
 Sky does not download Studio editor tools. Sidebar entries select workspaces by
 their stable values rather than array positions.
 
+Studio reuses the guarded source opener for bridges and Connection Transits;
+the source factories load only when an unsaved source is opened. Standalone
+Studio coalesces small deferred dependencies while fencing source models,
+editor icons and the bridge workspace out of startup. Its bundle check applies
+the existing entry ceilings to the complete static startup graph and retains
+the existing aggregate and deferred-editor limits.
+
 The reader retains the existing source `body` unchanged and stores bridge and
 timing separately. For an untimed source, it displays calculated timing, bridge,
 then the complete original passage. If the source already contains timing, it

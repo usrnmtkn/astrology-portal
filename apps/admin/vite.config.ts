@@ -1,7 +1,7 @@
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
 import { adminLazyBoundaryManifestPlugin } from "../../scripts/admin-lazy-boundary-manifest-plugin.mjs";
 import { browserOnlySwissEphemerisPlugin, trimSwissEphemerisWebDataPlugin, serveFullSwissEphemerisDataInDevPlugin, versionedSwissAssetsPlugin } from "../web/vite.config";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { appStartupHtmlPlugin } from "../../scripts/app-startup-html-plugin.mjs";
 import { existsSync, readFileSync } from "node:fs";
@@ -103,9 +103,35 @@ export default defineConfig(({ command, mode }) => {
   const localContentSecret = command === "serve"
     ? process.env.CONTENT_GENERATION_SECRET ?? webEnv.CONTENT_GENERATION_SECRET ?? ""
     : "";
+  let startupModules: Set<string> | undefined;
+  const sourceDraftModule = (id: string) => /apps\/admin\/src\/(?:transitNatalExactDraft|calendarPlanetaryDraft|compatibilityAspectDraft|connectionTransitSources|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData|skyPlacementAspectBridgeDraft|studioSourceDraft)\.ts$/u.test(id);
+  const deferredIcon = (id: string) => /\/lucide-react\/dist\/esm\/icons\/(?:bold|circle-check|circle-help|columns-2|italic|list-ordered|list|log-in|redo-2|undo-2)\.js$/u.test(id);
+  const deferredSource = (id: string) => /\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)
+    || /apps\/admin\/src\/(?:calendarPreviewCalculation\.ts|SkyPlacementAspectBridgeStudio\.tsx)$/u.test(id);
+  const startupPartition: Plugin = {
+    name: 'studio-startup-partition',
+    buildStart() { startupModules = undefined; },
+    generateBundle(_options, bundle) {
+      const visited = new Set<string>();
+      const visit = (file: string) => {
+        const chunk = bundle[file];
+        if (!chunk || chunk.type !== 'chunk' || visited.has(file)) return;
+        visited.add(file);
+        for (const dependency of chunk.imports) visit(dependency);
+        for (const [id, metadata] of Object.entries(chunk.modules)) {
+          if (metadata.renderedLength > 0 && (deferredSource(id) || sourceDraftModule(id) || deferredIcon(id))) {
+            this.error(`Deferred Studio module entered startup: ${id.slice(id.lastIndexOf('/') + 1)}`);
+          }
+        }
+      };
+      for (const chunk of Object.values(bundle)) {
+        if (chunk.type === 'chunk' && chunk.isEntry) visit(chunk.fileName);
+      }
+    }
+  };
 
   return {
-    plugins: [adminLazyBoundaryManifestPlugin(repoRoot), memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
+    plugins: [startupPartition, adminLazyBoundaryManifestPlugin(repoRoot), memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
       name: "studio-swiss-ephemeris-assets",
       generateBundle() {
         for (const name of ["swisseph.wasm", "swisseph.data"]) this.emitFile({ type: "asset", fileName: `wasm/${name}`, source: readFileSync(resolve(repoRoot, "apps/web/public/wasm", name)) });
@@ -138,7 +164,23 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         output: {
           onlyExplicitManualChunks: true,
-          manualChunks(id) {
+          experimentalMinChunkSize: 2048,
+          manualChunks(id, { getModuleInfo }) {
+            // Keep source-only helpers deferred even when their unused exports are imported statically.
+            if (!startupModules) {
+              startupModules = new Set<string>();
+              const visit = (moduleId: string) => {
+                if (startupModules!.has(moduleId) || deferredSource(moduleId) || sourceDraftModule(moduleId) || deferredIcon(moduleId)) return;
+                startupModules!.add(moduleId);
+                for (const dependency of getModuleInfo(moduleId)?.importedIds ?? []) visit(dependency);
+              };
+              visit(resolve(repoRoot, 'apps/admin/index.html'));
+            }
+            if (startupModules.has(id)) return "index";
+            // Coalesce small shared chunks without pulling deferred source models into startup.
+            if (deferredSource(id)) {
+              return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:mjs|tsx|ts)$/u, '');
+            }
             // Instructions and save recovery stay independently loadable from
             // generation details, while sharing their optional editing code.
             if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
@@ -147,13 +189,15 @@ export default defineConfig(({ command, mode }) => {
               || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
-            if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-sources";
+            if (/apps\/admin\/src\/(?:skySummarySourceBank|skyMoonSummarySources)\.ts$/u.test(id)) return "admin-sky-summary-workspace";
+            // These two panels render together in the deferred Sky summary workspace.
+            if (/apps\/admin\/src\/(?:SkyDailySummaryStudio|SkyDebilityStudio|SkySummaryAssemblyStudio|SkyDebilityCompositionMap|SkyInlineTemplate|skyDebilityComposition|skyIngressTldrSources)\.(?:ts|tsx)$/u.test(id)) return "admin-sky-summary-workspace";
             // Calendar editing, preview and their exclusive models share one lazy workspace.
             if (/apps\/admin\/src\/(?:SkyForecastTemplateStudio|CalendarPassageEditor|CalendarPassageTemplateEditor|CalendarTemplatePreview|CalendarOverviewEditor|CalendarVariableText)\.tsx$/u.test(id)
               || /apps\/admin\/src\/(?:calendarPreviewModel|calendarOverviewTemplate)\.ts$/u.test(id)
               || /src\/shared\/features\/calendar\/calendarPassageAssembly\.ts$/u.test(id)) return "admin-calendar-workspace";
             // Draft factories load together when a source editor is opened.
-            if (/apps\/admin\/src\/(?:transitNatalExactDraft|calendarPlanetaryDraft|compatibilityAspectDraft|connectionTransitSources|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData)\.ts$/u.test(id)) {
+            if (sourceDraftModule(id)) {
               return "admin-source-drafts";
             }
             // Shared controls render immediately and remain outside this lazy group.
