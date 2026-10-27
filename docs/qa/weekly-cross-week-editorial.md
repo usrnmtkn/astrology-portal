@@ -48,7 +48,9 @@ one full-set review. No automatic rewrite or paid retry is added.
 
 Studio labels the edition's stored plan revision separately from the writing
 profile editor's latest saved revision. Saving a profile does not change draft
-text or start generation. Preparing the next plan adopts the latest saved profile;
+text or start generation. A direct link or reload remains read-only; selecting
+Review writing plan adopts the latest saved profile without a paid request.
+Preparing the next plan adopts the latest saved profile;
 an in-flight request retains its original instructions and budget.
 
 ## Verification

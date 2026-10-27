@@ -92,6 +92,11 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
  expect((await f.latest()).sections.horoscopeEdition).toEqual(f.edition);
  await page.reload();
  await studio.getByText('Writing instructions · optional',{exact:true}).click();
+ await expect(studio.getByText('Edition plan: weekly profile, revision 1.',{exact:true})).toBeVisible();
+ expect((await f.latest()).source_snapshot.studioWritingProfile.revision).toBe(1);
+ expect((await f.latest()).sections.horoscopeEdition).toEqual(f.edition);
+ expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0,batchCalls:0});
+ await studio.getByRole('button',{name:'Review writing plan',exact:true}).click();
  await expect(studio.getByText('Edition plan: weekly profile, revision 2.',{exact:true})).toBeVisible();
  expect((await f.latest()).source_snapshot.studioWritingProfile.profile.voiceGuidance).toBe(revisedVoice);
  expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0,batchCalls:0});
