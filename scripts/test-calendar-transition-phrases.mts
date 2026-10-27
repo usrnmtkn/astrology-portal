@@ -128,7 +128,8 @@ for (const hour of [0, 5, 6, 10, 11, 14, 15, 19, 20, 23]) {
   const options = { pairTransition: passage, transitionPhrase: (key: string) =>
     key === calendarMoonContextKey('lateIngress') ? late : key.startsWith('authored/calendar-timing/') ? timing : undefined };
   const result = resolveCalendarMoonFallback(context, options)!;
-  assert.equal(result.body, hour < 20 ? passage : late, `Complete selected ingress copy at hour ${hour}`);
+  assert.equal(result.body, `Use the second pass to make the system easier, not stricter. ${hour < 20 ? passage : late}`,
+    `Moon-sign details precede the complete selected ingress copy at hour ${hour}`);
   assert.deepEqual(calendarMoonWritingParagraphs([{ ...result, role: 'leftover' }], 1), result.body.split('\n\n'));
   const rows = [
     { content_key: 'authored/calendar-moon-transition/virgo/libra', body: passage },

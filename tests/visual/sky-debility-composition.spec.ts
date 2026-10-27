@@ -43,7 +43,7 @@ const style = (element: HTMLElement) => {
 test("complete interpretation has its own heading, exact identity, draft save, and reload", async ({ page }) => {
   const stored: any[] = [];
   await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.goto("/#sky-writeups?view=detriment-fall");
   const studio = page.getByTestId("sky-debility-studio");
   await studio.getByText("Complete interpretation for these placements", { exact: true }).click();
   await studio.getByRole("button", { name: "Write complete interpretation", exact: true }).click();
@@ -60,7 +60,7 @@ test("complete interpretation has its own heading, exact identity, draft save, a
   // Existing saved cards may predate the category slots. Reopening must refresh
   // the allowed facts after loading the full saved document, not before it.
   stored[0].source_snapshot.allowedSlots = ["planetList"];
-  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.goto("/#sky-writeups?view=detriment-fall");
   await page.reload();
   const reading = studio.getByLabel("Complete effort summary", { exact: true });
   await expect(reading).toContainText("Complete fixture opening.");
@@ -87,6 +87,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     await page.goto("/#sky-writeups?view=daily-summary");
+    const summaryHeadingStyle = await page.getByRole("heading", { name: "Sun and Moon together", exact: true }).evaluate(style);
+    await page.goto("/#sky-writeups?view=detriment-fall");
     await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
     const studio = page.getByTestId("sky-debility-studio");
     await expect(studio.getByRole("heading", { name: "Things may take more effort right now", level: 3 })).toBeVisible();
@@ -102,7 +104,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const original = await reading.locator('[data-testid^="effort-paragraph-"]').allTextContents();
     const bodyStyle = await reading.getByTestId("effort-paragraph-0").evaluate(style);
     expect(await studio.getByRole("heading", { name: "Full card and composition map" }).evaluate(style))
-      .toEqual(await page.getByRole("heading", { name: "Sun and Moon together", exact: true }).evaluate(style));
+      .toEqual(summaryHeadingStyle);
     await studio.screenshot({ path: `test-results/effort-reading-${width}-${theme}.png` });
     await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
     const mapped = studio.getByLabel("Mapped effort summary", { exact: true });
@@ -158,7 +160,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
 
 test("one, four, and zero-planet branches use the same source map", async ({ page }) => {
   await mockStudio(page, []);
-  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.goto("/#sky-writeups?view=detriment-fall");
   const studio = page.getByTestId("sky-debility-studio");
   await studio.getByText("Change preview placements", { exact: true }).click();
   await studio.getByLabel("Preview Venus placement").selectOption("");
@@ -193,7 +195,7 @@ test("one, four, and zero-planet branches use the same source map", async ({ pag
 test("preview motion and sign changes update the same inline links without saving", async ({ page }) => {
   const stored: any[] = [];
   await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.goto("/#sky-writeups?view=detriment-fall");
   const studio = page.getByTestId("sky-debility-studio");
   await studio.getByText("Change preview placements", { exact: true }).click();
   const placements = { Sun: "Aquarius", Moon: "Scorpio", Mercury: "Pisces", Venus: "Scorpio", Mars: "Cancer", Jupiter: "Capricorn", Saturn: "Aries" };
@@ -218,7 +220,7 @@ test("preview motion and sign changes update the same inline links without savin
 test("mapped source edits reach the existing draft, publish, and reload controls", async ({ page }) => {
   const stored: any[] = [];
   await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.goto("/#sky-writeups?view=detriment-fall");
   const studio = page.getByTestId("sky-debility-studio");
   await studio.getByRole("tab", { name: "Composition map", exact: true }).click();
   await studio.getByLabel("Mapped effort summary", { exact: true }).getByRole("link", { name: "Edit Venus in Scorpio: Lived experience", exact: true }).click();
@@ -246,7 +248,7 @@ test("mapped source edits reach the existing draft, publish, and reload controls
 test("new explanation field saves and reopens without changing older connector overrides", async ({ page }) => {
   const stored: any[] = [{ id: "legacy-connector", content_key: "cms/sky-debility/signConditionMany", body: "are now in signs that complicate", status: "LIVE", lane: "serving", review_state: null }];
   await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
+  await page.goto("/#sky-writeups?view=detriment-fall");
   const studio = page.getByTestId("sky-debility-studio");
   await expect(studio.getByTestId("effort-paragraph-1")).toHaveText(approvedThreePlanetContext);
   await studio.getByRole("tab", { name: "Composition map", exact: true }).click();

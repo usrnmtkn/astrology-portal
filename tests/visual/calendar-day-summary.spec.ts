@@ -151,7 +151,8 @@ for (const scenario of [
     await expect(card).toBeVisible({ timeout: 90_000 });
     await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(expected);
     const guidance = page.getByRole('region', { name: 'Moon guidance', exact: true });
-    await expect(guidance).toHaveText(expected);
+    await expect(guidance).toContainText(expected);
+    expect((await guidance.innerText()).trim().length).toBeGreaterThan(expected.length);
     await expect(guidance).not.toContainText('before it enters Aquarius tomorrow');
     expect(await card.locator('.calendar-stoic-card__excerpt').evaluate(el => ({
       clipped: el.scrollHeight > el.clientHeight + 1, clamp: getComputedStyle(el).webkitLineClamp
@@ -187,5 +188,50 @@ for (const scenario of [
     await expect(detail.locator('.calendar-reading__body')).toHaveText(expected);
     await expect(detail.locator('.calendar-reading__meta')).toHaveText(scenario.meta);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Calendar keeps Moon-sign details before a late sign change ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const dateKey = '2026-10-27';
+    const record = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8'))
+      .authoredCards.find((row: any) => row.contentKey === 'authored/calendar-weekly-moon/taurus');
+    const transitionKey = 'authored/calendar-moon-context/lateIngress';
+    const transitionBody = 'The emotional tone shifts overnight as the Moon changes signs, so you will likely feel the difference by tomorrow.';
+    const event = { id: 'qa-late-moon-ingress', type: 'ingress', planet: 'Moon', fromSign: 'Taurus', toSign: 'Gemini', sign: 'Gemini',
+      title: 'Moon enters Gemini', startsAt: '2026-10-28T01:10:00Z', dateKey, glyph: '', primary: false };
+    const day = { date: `${dateKey}T16:00:00Z`, dateKey, inMonth: true, moonSign: 'Taurus', moonSignGlyph: '♉',
+      moonPhase: 'Waning Gibbous', illumination: 97, activeAspects: [], events: [event] };
+    const nextDay = { ...day, date: '2026-10-28T16:00:00Z', dateKey: '2026-10-28', moonSign: 'Gemini', moonSignGlyph: '♊', illumination: 94, events: [] };
+    await page.clock.setFixedTime(new Date(`${dateKey}T13:44:00Z`));
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(({ location, theme }) => {
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+      localStorage.setItem('tldrastro:theme', theme);
+    }, { location, theme });
+    await bundledPublications(page);
+    await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true,
+      calendar: { month: '2026-10', timeZone: location.timeZone, location, days: [day, nextDay], events: [event] } } }));
+    const rows = [record, { contentKey: transitionKey, content_role: 'full_copy', review_status: 'approved_reuse', body: transitionBody }]
+      .map((source: any, index: number) => ({ id: `qa-moon-detail-${index}`, content_key: source.contentKey, updated_at: '2026-10-27T12:00:00Z', status: 'LIVE', lane: 'serving', review_state: null,
+        surface: 'sky', mode: 'in_depth', event_type: 'fallback-hook', provider: 'tldrastro-fallback-architecture-v3', body: source.body,
+        sections: { packageRecord: source }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'full_copy', review_status: 'approved_reuse' } }));
+    await page.route('**/api/content-reader', route => {
+      const keys = new Set(route.request().postDataJSON().keys ?? []);
+      return route.fulfill({ json: readerResponse(rows.filter(row => keys.has(row.content_key))) });
+    });
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto(`/?date=${dateKey}#calendar?view=day&date=${dateKey}`);
+    const guidance = page.getByRole('region', { name: 'Moon guidance', exact: true });
+    for (let load = 0; load < 2; load++) {
+      await expect(guidance).toHaveText(`${record.body} ${transitionBody}`, { timeout: 60_000 });
+      await expect(page.getByRole('heading', { name: 'Waning Gibbous Moon in Taurus', exact: true })).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      if (load === 0) await page.reload();
+    }
+    expect(errors).toEqual([]);
+    await page.getByLabel('Selected lunar day', { exact: true }).screenshot({ path: `test-results/calendar-moon-sign-before-transition-${width}-${theme}.png` });
   });
 }

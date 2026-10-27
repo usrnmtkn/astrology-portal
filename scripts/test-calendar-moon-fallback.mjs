@@ -198,7 +198,7 @@ const laterToday = resolveCalendarMoonFallback({
 }, {});
 assert.equal(
   laterToday?.body,
-  "Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next."
+  "If the same issue keeps returning, there may be something underneath it that has not been said plainly yet. Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next."
 );
 assert.doesNotMatch(laterToday?.body ?? "", /mood may shift|from trust, privacy/);
 
@@ -211,6 +211,27 @@ const lateIngress = resolveCalendarMoonFallback({
 }, {});
 assert.match(lateIngress?.body ?? "", /You may notice the change more tomorrow than tonight/);
 assert.doesNotMatch(lateIngress?.body ?? "", /After sitting with something long enough/);
+
+const moonSignBody = "Complete synthetic Moon-sign opening.\n\nComplete synthetic Moon-sign ending.";
+const lateIngressBody = "Complete published late-ingress sentence.";
+const lateIngressWithReading = resolveCalendarMoonFallback({
+  ...wednesday,
+  moonChangesSignToday: true,
+  nextMoonSign: "Sagittarius",
+  nextMoonSignEntryTime: "9:10 PM EDT",
+  moonSignExitHour: 21
+}, {
+  unusedAuthored: { contentKey: "authored/calendar-weekly-moon/scorpio", body: moonSignBody },
+  transitionPhrase: key => key === "authored/calendar-moon-context/lateIngress" ? lateIngressBody : null
+});
+assert.equal(lateIngressWithReading?.body, `${moonSignBody} ${lateIngressBody}`,
+  "A sign-change day keeps the complete Moon-sign reading before the saved transition sentence");
+assert.equal(resolveCalendarMoonFallback({
+  ...wednesday, moonChangesSignToday: true, nextMoonSign: "Sagittarius",
+  nextMoonSignEntryTime: "12:41 PM EDT", moonSignExitHour: 12
+}, { unusedAuthored: { contentKey: "authored/calendar-weekly-moon/scorpio", body: moonSignBody } })?.body,
+`${moonSignBody} Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next.`,
+"Earlier sign changes also retain the complete Moon-sign reading before their transition");
 
 assert.equal(calendarSeasonTransitionWhen(1, "September 22"), "in 1 day");
 assert.equal(calendarSeasonTransitionWhen(2, "September 22"), "in 2 days");

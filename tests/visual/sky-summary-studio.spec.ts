@@ -69,7 +69,7 @@ for (const width of [390, 1440]) {
       await expect(analogousHeading).toBeVisible();
       expect(summaryHeadingStyle).toEqual(await analogousHeading.evaluate(typeStyle));
       await page.goto("/#sky-writeups?view=daily-summary");
-      await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Sky Write-ups", "Sky writing workspaces", "Daily Sky Summary", "Things may take more effort right now"]);
+      await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Sky Write-ups", "Sky writing workspaces", "Daily Sky Summary"]);
       const nav = page.getByLabel("Sky Write-ups sections");
       await expect(nav.locator("button")).toHaveText(["Daily Sky Summary", "Transit to Natal Charts", "House Transits", "House × aspect bridges", "Preview without saving"]);
       await expect(nav.getByRole("button", { name: "Daily Sky Summary", includeHidden: true })).toHaveAttribute("aria-current", "page");
