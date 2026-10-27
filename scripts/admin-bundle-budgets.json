@@ -135,7 +135,8 @@
       "totalLimitBytes": 846650,
       "allocationBytes": 2550,
       "reason": "Fresh matched independent npm-ci builds on current main retain its separate Friend allocation and add the previously measured 2550-byte scoped-sect interface allowance. The integrated feature adds 2522 aggregate gzip bytes and leaves 89 bytes below the aggregate cap. Entry, largest-chunk, runtime, deferred-comparison and private-payload guards remain unchanged; this records feature cost, not a performance improvement."
-    }
+    },
+    "natalPlacementSectFinalIntegration20261027": "Matched independent npm-ci-installed builds compare main 154b69ed82d6aef7e7e8f75a79cde05215ef24d4 with the natal feature after the native lifecycle and bridge releases. Native Node22.23.3 arm64/zlib1.3.1-e00f703, identical visual-smoke Supabase URL/legacy-key placeholders, and unset publishable key/natal-aspect flag measure main entry raw/gzip/aggregate 809399/234621/843715 bytes across84 JavaScript chunks and feature809411/234629/846260 across85 (+12/+8/+2545). Preserve main aggregate ceiling844600, including its independent500-byte lifecycle allocation, and retain the existing2550-byte natal allocation: combined847150 leaves890 aggregate bytes and21 entry-gzip bytes. All other numeric limits and initial/lazy/deferred-editor, payload, privacy and runtime boundaries remain unchanged. One additional deferred natal comparison module is retained. This is a measured feature cost, not a performance improvement; no owner prose or private profiles are bundled."
   },
   "memoryGraphJavaScriptGzipBytes": 64000
 }

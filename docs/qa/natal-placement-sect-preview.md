@@ -136,3 +136,24 @@ of headroom. Entry, largest-chunk, startup, runtime, private-payload and deferre
 comparison guards are unchanged. This records the requested interface cost,
 not a performance improvement. The historical measurements above remain tied
 to their earlier baseline.
+
+
+## Final integration on main154 (2026-10-27)
+
+The code-only rebase retains the native lifecycle and house/aspect bridge changes
+from main `154b69ed82d6aef7e7e8f75a79cde05215ef24d4`. All168 main API
+commands remain in order; the natal writer contract is the169th command. No
+knowledge or fallback source row changes are part of this feature.
+
+Matched native Node22.23.3 arm64 builds in independently npm-ci-installed
+checkouts use the same unchanged lockfile and visual-smoke Supabase placeholders.
+Main entry raw/gzip/aggregate is809399/234621/843715 bytes with84 JavaScript
+chunks; feature is809411/234629/846260 with85. The measured natal cost is
++12 raw/+8 entry gzip/+2545 aggregate gzip bytes. Preserve main ceiling844600
+and the existing2550-byte natal allocation, yielding847150 with890 aggregate
+and21 entry-gzip bytes of headroom. All other ceilings and loading boundaries
+remain unchanged. This records feature cost, not a performance improvement.
+
+Exact-copy fixtures remain private historical approval evidence only. The two
+writing batches have independent approval/publication records and remain outside
+this code release. A final generic-code handoff does not publish either batch.
