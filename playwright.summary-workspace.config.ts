@@ -1,0 +1,10 @@
+import { defineConfig } from '@playwright/test';
+const port = Number(process.env.SUMMARY_WORKSPACE_TEST_PORT ?? 4393);
+if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid summary workspace preview port');
+export default defineConfig({
+  testDir: './tests/visual', testMatch: ['sky-summary-studio.spec.ts', 'calendar-summary-studio.spec.ts'], grep: /summary workspace|Calendar links|missing ingress|ingress lookup|Sun ruler|summary preview/,
+  timeout: 90_000, workers: 1, reporter: 'list',
+  use: { baseURL: `http://127.0.0.1:${port}`, screenshot: 'only-on-failure', trace: 'retain-on-failure' },
+  webServer: { command: `npm run build:admin && npm run preview -w @tldr/admin -- --port ${port} --strictPort`,
+    url: `http://127.0.0.1:${port}`, reuseExistingServer: false, timeout: 240_000 }
+});

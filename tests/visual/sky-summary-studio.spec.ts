@@ -1,8 +1,10 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { builtinContentRecords, contentLiveStatuses } from "../../api/_lib/content-live-status";
 import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-listing-facts";
+import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 
 const readerBaseURL = `http://127.0.0.1:${process.env.SKY_READER_TEST_PORT ?? "4294"}`;
 
@@ -37,111 +39,184 @@ async function mockStudio(page: Page, stored: any[]) {
     await route.fulfill({ status: 200, json: data });
   });
 }
-for (const width of [390, 1440]) {
-  for (const theme of ["light", "dark"]) {
-    test(`summary studio navigation, populated summary fields ${width} ${theme}`, async ({ page }) => {
-      await mockStudio(page, []);
-      await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), theme);
-      await page.setViewportSize({ width, height: 1000 });
-      await page.goto("/#sky-writeups?view=daily-summary");
-      await expect(page.locator("[data-studio-theme]")).toHaveAttribute("data-studio-theme", theme);
-      const studio = page.getByRole("region", { name: "Daily Sky Summary editor" });
-      const heading = studio.getByRole("heading", { name: "Daily Sky Summary", level: 3 });
-      await expect(heading).toBeVisible();
-      const typeStyle = (element: HTMLElement) => {
-        const style = getComputedStyle(element);
-        return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "marginTop", "marginBottom", "textTransform", "textAlign"].map(key => [key, style[key as any]]));
-      };
-      const summaryHeadingStyle = await heading.evaluate(typeStyle);
-      const systemDetails = studio.getByLabel("Daily Sky summary system details", { exact: true });
-      await systemDetails.getByText("Writing system & versions", { exact: true }).click();
-      await expect(systemDetails).toContainText("Daily summary assembly");
-      await expect(systemDetails).toContainText("Moon source variants · V6");
-      await expect(systemDetails).toContainText("35 supplied passages and 25 empty entries");
-      await expect(systemDetails).toContainText("empty entries do not reuse the older V5 copy");
-      await expect(systemDetails.locator("strong")).toHaveText(["Daily summary assembly", "Summary templates and wording", "Moon source variants · V6", "Moon writing proposal · V5"]);
-      expect(await systemDetails.locator("p").first().evaluate(typeStyle)).toEqual(await studio.locator(".admin-template-reader-copy p").first().evaluate(typeStyle));
-      expect(await systemDetails.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
-      await systemDetails.scrollIntoViewIfNeeded();
-      await page.screenshot({ path: `test-results/sky-summary-system-${width}-${theme}.png` });
-      await page.goto("/#fallback-hooks?section=daily");
-      const analogousHeading = page.getByRole("heading", { name: "Edit the complete write-up", exact: true });
-      await expect(analogousHeading).toBeVisible();
-      expect(summaryHeadingStyle).toEqual(await analogousHeading.evaluate(typeStyle));
-      await page.goto("/#sky-writeups?view=daily-summary");
-      await expect(page.locator(".admin-main h1, .admin-main h2, .admin-main h3")).toHaveText(["Sky Write-ups", "Sky writing workspaces", "Daily Sky Summary", "Things may take more effort right now"]);
-      const nav = page.getByLabel("Sky Write-ups sections");
-      await expect(nav.locator("button")).toHaveText(["Daily Sky Summary", "Transit to Natal Charts", "House Transits", "House × aspect bridges", "Preview without saving"]);
-      await expect(nav.getByRole("button", { name: "Daily Sky Summary", includeHidden: true })).toHaveAttribute("aria-current", "page");
-      await expect(studio.getByRole("article", { name: "Sun in Virgo", exact: true })).toContainText("turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing");
-      await expect(studio.getByRole("article", { name: "Sun in Aries", exact: true })).toContainText("puts more emphasis on starting");
-      const map = studio.getByRole("region", { name: "Sun and Moon composition map" });
-      const preview = map.getByLabel("Combined Sun and Moon preview");
-      await expect(map.getByRole("heading", { name: "Sun and Moon together", level: 4 })).toBeVisible();
-      expect(await map.getByRole("heading", { name: "Sun and Moon together" }).evaluate(typeStyle)).toEqual(summaryHeadingStyle);
-      const assemblyHeading = studio.getByRole("heading", { name: "Full summary template", level: 4 });
-      expect(await assemblyHeading.evaluate(typeStyle)).toEqual(summaryHeadingStyle);
-      await expect(studio.locator("h4")).toHaveText(["Full summary template", "Sun and Moon together"]);
-      await studio.getByRole("region", { name: "Full summary assembly", exact: true }).screenshot({ path: `test-results/assembly-${width}-${theme}.png` });
-      const assembly = studio.getByRole("region", { name: "Full summary assembly", exact: true });
-      await assembly.getByRole('list', { name: 'Sky summary paragraph order' }).scrollIntoViewIfNeeded();
-      await page.screenshot({ path: `test-results/assembly-viewport-${width}-${theme}.png` });
-      await assembly.getByRole('button', { name: 'Edit paragraph 2 wording', exact: true }).click();
-      await expect(assembly.getByLabel('Sentence template', { exact: true })).toBeFocused();
-      await assembly.getByRole('button', { name: 'Show all assembly templates', exact: true }).click();
 
-      const sourceLink = map.getByRole("link", { name: "Edit Sun in Virgo summary", exact: true });
-      expect(await sourceLink.evaluate(el => getComputedStyle(el).display)).toBe("inline");
-      await page.evaluate(() => document.fonts.ready);
-      const previewWidth = await preview.evaluate(el => ({ scroll: el.scrollWidth, client: el.clientWidth }));
-      // Chromium can round the ink extent of cloned inline highlights one pixel beyond clientWidth.
-      expect(previewWidth.scroll, JSON.stringify(previewWidth)).toBeLessThanOrEqual(previewWidth.client + 1);
+for (const width of [390, 1280, 1440]) for (const theme of ['light', 'dark']) {
+  test(`summary workspace saves, reopens, and reviews without publishing ${width} ${theme}`, async ({ page }) => {
+    const store = await studioApiStore([], { uuidIds: true });
+    const writes: any[] = [];
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, onWrite: write => writes.push(write) });
+      await page.goto('/#sky-writeups?view=daily-summary');
+      const workspace = page.getByRole('region', { name: 'Summary editing workspace', exact: true });
+      const wording = workspace.getByRole('textbox', { name: 'Summary wording text', exact: true });
+      await expect(wording).toBeEnabled();
+      if (width === 1280) {
+        const region = page.getByLabel('Daily Sky Summary editor', {exact:true});
+        const rect = await region.boundingBox();
+        const regions = {
+          sections: await workspace.getByRole('navigation', {name:'Summary sections'}).boundingBox(),
+          wording: await workspace.getByLabel('Selected summary wording', {exact:true}).boundingBox(),
+          preview: await workspace.getByLabel('Summary reader preview', {exact:true}).boundingBox(),
+          actions: await workspace.locator('.admin-summary-save-actions').first().boundingBox()
+        };
+        writeFileSync(`test-results/summary-workspace-regions-${width}-${theme}.json`, JSON.stringify({frame:rect,regions},null,2));
+        await page.screenshot({path:`test-results/summary-workspace-initial-${width}-${theme}.png`,fullPage:true,clip:{x:rect!.x,y:rect!.y,width:rect!.width,height:Math.min(850,rect!.height)}});
+      }
+      const baseline = await wording.inputValue();
+      await expect(workspace.getByRole('navigation', { name: 'Summary sections' }).getByRole('button')).toHaveCount(8);
+      await expect(page.getByLabel('Full summary assembly', { exact: true })).not.toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Things may take more effort right now', exact: true })).toHaveCount(0);
+      const draft = `${baseline} Complete synthetic ending.`;
+      await wording.fill(draft);
+      const preview = workspace.getByLabel('Summary preview passage', { exact: true });
+      await expect(preview).toContainText('Complete synthetic ending.');
+      await expect(workspace.getByRole('button', { name: 'Review & publish', exact: true })).toBeDisabled();
+      await workspace.getByRole('button', { name: 'Published', exact: true }).click();
+      await expect(preview).not.toContainText('Complete synthetic ending.');
+      await expect(wording).toHaveValue(draft);
+      await workspace.getByRole('button', { name: 'Draft', exact: true }).click();
+      await expect(preview).toContainText('Complete synthetic ending.');
+      await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(workspace.getByText('Draft saved · not published', { exact: true })).toBeVisible();
+      const saved = await store.call({ method: 'rows' });
+      expect(saved).toHaveLength(1);
+      expect(saved[0]).toMatchObject({ content_key: 'cms/sky-daily-summary/assembly/opening', body: draft, status: 'DRAFT', mode: 'feed' });
+      await workspace.getByRole('button', { name: 'Review & publish', exact: true }).click();
+      await expect(workspace.getByLabel('Review summary publication', { exact: true })).toBeVisible();
+      await expect(workspace.getByRole('button', { name: 'Publish shared wording', exact: true })).toBeEnabled();
+      expect(writes).toHaveLength(1);
+      expect((await store.call({ method: 'rows' }))[0].status).toBe('DRAFT');
+      await workspace.getByRole('button', { name: 'Back to editing', exact: true }).click();
+      await page.reload();
+      await expect(wording).toHaveValue(draft);
+      await expect(workspace.getByText('Draft saved · not published', { exact: true })).toBeVisible();
+      const editorBounds = await workspace.getByLabel('Selected summary wording', { exact: true }).boundingBox();
+      const previewBounds = await workspace.getByLabel('Summary reader preview', { exact: true }).boundingBox();
+      if (width > 1000) expect(previewBounds!.x).toBeGreaterThan(editorBounds!.x + editorBounds!.width);
+      else expect(previewBounds!.y).toBeGreaterThan(editorBounds!.y);
       expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
-      await expect(preview).toHaveText("The Sun in Virgo turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing. The Moon in Cancer pulls us home to the places, people, and memories that nurture us.");
-      await map.getByLabel("Composition Moon sign").selectOption("Leo");
-      await expect(preview).toContainText("punishing. The Moon in Leo helps us access that inner fire more easily.");
-      await map.getByLabel("Composition Sun sign").selectOption("Aries");
-      await expect(preview).toContainText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it. The Moon in Leo helps us access that inner fire more easily.");
-      await expect(map.getByLabel("Composition copy view")).toHaveCount(0);
-      await expect(preview).toHaveText("The Sun in Aries puts more emphasis on starting, acting, and finding out what works by doing it. The Moon in Leo helps us access that inner fire more easily.");
-      await page.screenshot({ path: `test-results/sky-composition-empty-${width}-${theme}.png`, fullPage: true });
-      await map.getByLabel("Composition Sun sign").selectOption("Virgo");
-      await map.getByLabel("Composition Moon sign").selectOption("Cancer");
-      await studio.getByLabel("Search summary wording").fill("Virgo");
-      const fields = studio.getByLabel("Daily Sky Summary fields");
-      await expect(fields.getByRole("article")).toHaveCount(2);
-      await page.screenshot({ path: `test-results/sky-studio-${width}-${theme}.png`, fullPage: true });
-      await studio.getByLabel("Search summary wording").fill("unmatched-search");
-      await expect(studio.getByText("No summary fields match this search.")).toBeVisible();
-      await studio.getByLabel("Search summary wording").fill("");
-      await studio.getByLabel("Summary section").selectOption("Timing and retrogrades");
-      await expect(fields.getByRole("article")).toHaveCount(6);
-      await expect(studio.getByRole("article", { name: "Full Moon explanation", exact: true })).toHaveCount(0);
-      await expect(studio.getByRole("article", { name: "No retrograde planets", exact: true })).toHaveCount(0);
-      await studio.getByLabel("Summary section").selectOption("Ingress TLDRs");
-      await expect(fields.getByRole("article")).toHaveCount(1);
-      await expect(fields.getByRole("article")).toContainText("No ingress TLDR added here.");
-      await studio.getByLabel("Ingress planet or point").selectOption("North Node");
-      await expect(fields.getByRole("article")).toHaveAttribute("aria-label", "North Node enters Libra");
-      expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
-    });
-  }
+      await page.screenshot({ path: `test-results/summary-workspace-${width}-${theme}.png`, fullPage: true });
+      await workspace.getByRole('button', { name: 'Sun wording', exact: true }).click();
+      await expect(workspace.getByLabel('Summary wording', { exact: true })).toHaveValue('cms/sky-daily-summary/sun/aries');
+      await expect(workspace.getByText('Example facts · Sun in Aries · Moon in Cancer', { exact: true })).toBeVisible();
+      await workspace.getByRole('button', { name: 'Opening', exact: true }).click();
+      await expect(wording).toHaveValue(draft);
+      await wording.fill(`${draft} {unknownVariable}`);
+      await expect(workspace.getByRole('alert')).toContainText('unsupported calculated slot');
+      await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
+      expect(writes).toHaveLength(1);
+    } finally {
+      await page.unrouteAll({ behavior: 'wait' });
+      await page.context().setOffline(true);
+      store.close();
+    }
+  });
+}
+test('Sun ruler-retrograde wording selects matching example facts', async ({page}) => {
+  await mockStudio(page, []);
+  await page.goto('/#sky-writeups?view=daily-summary');
+  const workspace = page.getByLabel('Summary editing workspace', {exact:true});
+  await expect(workspace.getByRole('textbox', {name:'Summary wording text',exact:true})).toBeEnabled();
+  await workspace.getByRole('button', {name:'Sun wording',exact:true}).click();
+  await workspace.getByLabel('Summary wording', {exact:true}).selectOption('cms/sky-daily-summary/sun/gemini/ruler-retrograde');
+  await workspace.getByRole('textbox', {name:'Summary wording text',exact:true}).fill('{sunPlacement} uses the complete synthetic retrograde passage.');
+  await expect(workspace.getByLabel('Summary preview passage', {exact:true})).toContainText('uses the complete synthetic retrograde passage.');
+  await workspace.getByText('Change example facts', {exact:true}).click();
+  await expect(workspace.getByRole('textbox', {name:'Preview retrograde examples',exact:true})).toHaveValue('mercury');
+  page.on('dialog', dialog => dialog.accept());
+  await workspace.getByLabel('Summary wording', {exact:true}).selectOption('cms/sky-daily-summary/sun/gemini');
+  await expect(workspace.getByRole('textbox', {name:'Preview retrograde examples',exact:true})).toHaveValue('');
+  await expect(workspace.getByLabel('Summary preview passage', {exact:true})).not.toContainText('uses the complete synthetic retrograde passage.');
+});
+
+test('summary preview preserves other sources retirement while editing one source', async ({page}) => {
+  await mockStudio(page, []);
+  await page.addInitScript(() => localStorage.setItem('tldrastro:content-publications:v1', JSON.stringify([{
+    content_key:'cms/sky-daily-summary/sun/virgo',state:'retired',revision:1,row_id:null,row_updated_at:null,updated_at:'2026-10-27T12:00:00Z'
+  }])));
+  await page.goto('/#sky-writeups?view=daily-summary');
+  const workspace=page.getByLabel('Summary editing workspace',{exact:true});
+  const wording=workspace.getByRole('textbox',{name:'Summary wording text',exact:true});
+  const preview=workspace.getByLabel('Summary preview passage',{exact:true});
+  await expect(wording).toBeEnabled();
+  await expect(preview).not.toContainText('turns our attention to the daily rituals');
+  await workspace.getByRole('button',{name:'Published',exact:true}).click();
+  await expect(preview).not.toContainText('turns our attention to the daily rituals');
+  await workspace.getByRole('button',{name:'Sun wording',exact:true}).click();
+  await workspace.getByLabel('Summary wording',{exact:true}).selectOption('cms/sky-daily-summary/sun/virgo');
+  await wording.fill('{sunPlacement} uses this complete synthetic replacement.');
+  await expect(preview).toContainText('uses this complete synthetic replacement.');
+  await workspace.getByRole('button',{name:'Published',exact:true}).click();
+  await expect(preview).not.toContainText('uses this complete synthetic replacement.');
+  await expect(preview).not.toContainText('turns our attention to the daily rituals');
+});
+
+async function openAdvancedSummary(page: Page) {
+  if (!page.url().includes('#sky-writeups?view=daily-summary')) return;
+  const summary = page.getByText('Sources and writing system', { exact: true });
+  const details = summary.locator('..');
+  if (await details.getAttribute('open') === null) await summary.click();
+}
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`summary source library and system details ${width} ${theme}`, async ({ page }) => {
+    await mockStudio(page, []);
+    await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), theme);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/#sky-writeups?view=daily-summary');
+    const studio = page.getByRole('region', { name: 'Daily Sky Summary editor' });
+    const workspace = studio.getByLabel('Summary editing workspace', { exact: true });
+    await expect(workspace.getByLabel('Summary wording text', { exact: true })).toBeEnabled();
+    const typeStyle = (el: HTMLElement) => {
+      const style = getComputedStyle(el);
+      return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as any]]));
+    };
+    expect(await workspace.getByRole('heading', {name:'Reader preview',exact:true}).evaluate(typeStyle)).toEqual(await studio.getByRole('heading',{name:'Daily Sky Summary',exact:true}).evaluate(typeStyle));
+    await expect(workspace.getByLabel('Summary preview passage', {exact:true})).toHaveText('The Sun in Virgo turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing. The Moon in Cancer pulls us home to the places, people, and memories that nurture us.');
+    await openAdvancedSummary(page);
+    const details = studio.getByLabel('Daily Sky summary system details', {exact:true});
+    await details.getByText('Writing system & versions', {exact:true}).click();
+    await expect(details.locator('strong')).toHaveText(['Daily summary assembly', 'Summary templates and wording', 'Moon source variants · V6', 'Moon writing proposal · V5']);
+    await expect(details).toContainText('35 supplied passages and 25 empty entries');
+    await expect(details).toContainText('empty entries do not reuse the older V5 copy');
+    expect(await details.locator('p').first().evaluate(typeStyle)).toEqual(await workspace.getByLabel('Summary preview passage',{exact:true}).locator('p').first().evaluate(typeStyle));
+    await expect(studio.getByRole('article',{name:'Sun in Virgo',exact:true})).toContainText('punishing');
+    await expect(studio.getByRole('article',{name:'Sun in Aries',exact:true})).toContainText('puts more emphasis on starting');
+    await studio.getByLabel('Search summary wording',{exact:true}).fill('Virgo');
+    const fields = studio.getByLabel('Daily Sky Summary fields',{exact:true});
+    await expect(fields.getByRole('article')).toHaveCount(2);
+    await studio.getByLabel('Search summary wording',{exact:true}).fill('unmatched-search');
+    await expect(studio.getByText('No summary fields match this search.')).toBeVisible();
+    await studio.getByLabel('Search summary wording',{exact:true}).fill('');
+    await studio.getByLabel('Summary section',{exact:true}).selectOption('Timing and retrogrades');
+    await expect(fields.getByRole('article')).toHaveCount(6);
+    await studio.getByLabel('Summary section',{exact:true}).selectOption('Ingress TLDRs');
+    await studio.getByLabel('Ingress planet or point',{exact:true}).selectOption('North Node');
+    await expect(fields.getByRole('article')).toHaveAttribute('aria-label','North Node enters Libra');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  });
 }
 
 test("missing ingress TLDR saves and reloads as a separate draft", async ({ page }) => {
   const stored: any[] = [];
   await mockStudio(page, stored);
   await page.goto("/#sky-writeups?view=daily-summary");
-  await page.getByLabel("Summary section").selectOption("Ingress TLDRs");
+  await openAdvancedSummary(page);
+  await page.getByLabel("Summary section", {exact:true}).selectOption("Ingress TLDRs");
   await page.getByRole("article", { name: "Mercury enters Libra", exact: true }).getByRole("button", { name: "Edit wording" }).click();
   const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
   await expect(body).toHaveValue("");
   await body.fill("Separate short wording for browser verification.");
-  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   expect(stored[0].content_key).toBe("cms/sky-daily-summary/ingress/mercury/libra");
   await page.reload();
-  await page.getByLabel("Summary section").selectOption("Ingress TLDRs");
+  await openAdvancedSummary(page);
+  await page.getByLabel("Summary section", {exact:true}).selectOption("Ingress TLDRs");
   await expect(page.getByRole("article", { name: "Mercury enters Libra", exact: true })).toContainText("Separate short wording for browser verification.");
 });
 
@@ -157,7 +232,8 @@ test("ingress lookup finds a published TLDR outside the loaded inventory and pre
     } else await route.fallback();
   });
   await page.goto("/#sky-writeups?view=daily-summary");
-  await page.getByLabel("Summary section").selectOption("Ingress TLDRs");
+  await openAdvancedSummary(page);
+  await page.getByLabel("Summary section", {exact:true}).selectOption("Ingress TLDRs");
   await page.getByRole("article", { name: "Mercury enters Libra", exact: true }).getByRole("button", { name: "Edit wording" }).click();
   await expect(page.getByRole("textbox", { name: "TL;DR / summary", exact: true })).toHaveValue(source.summary);
   expect(await page.locator("textarea").evaluateAll(elements => elements.map(element => element.value))).toContain(source.body);
@@ -168,15 +244,17 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   const stored: any[] = [];
   await mockStudio(page, stored);
   await page.goto("/#sky-writeups?view=daily-summary");
+  await openAdvancedSummary(page);
   const field = page.getByRole("article", { name: "Next New Moon, Full Moon, or eclipse", exact: true });
   await field.getByRole("button", { name: "Edit wording" }).click();
   const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
   await expect(body).toHaveValue("The next {name} in {sign} is {countdown}.");
   const edited = "The next {name} in {sign} happens {countdown}.";
   await body.fill(edited);
-  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   await page.reload();
+  await openAdvancedSummary(page);
   await field.getByRole("button", { name: "Edit wording" }).click();
   await expect(body).toHaveValue(edited);
   await body.fill("The next {name} arrives.");
@@ -209,10 +287,11 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
   await expect(summary.locator("mark.content-highlight").filter({ hasText: "void of course" })).toContainText("void of course");
   await expect(summary).toContainText("Saturn Rx in Aries at 13°");
   await page.reload();
+  await openAdvancedSummary(page);
   await field.getByRole("button", { name: "Edit wording" }).click();
   await expect(body).toHaveValue(edited);
   await body.fill("The next {name} in {sign} is {countdown}.");
-  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   await reader.reload();
   await expect(summary).toBeVisible({ timeout: 60_000 });
@@ -221,38 +300,36 @@ test("edit, save, reload, publish, and hydrate the summary reader", async ({ pag
 
 
 test("composition shows only published copy while editing drafts", async ({ page }) => {
-  const sun = { key: "cms/sky-daily-summary/sun/virgo", label: "Sun in Virgo" };
-  const stored = [{ id: "sun-draft", content_key: sun.key, body: "Browser-only draft wording", headline: sun.label, surface: "sky", mode: "card", status: "DRAFT", lane: "serving", review_state: "EDITORIAL_REVIEW_REQUIRED", block_type: "essay", source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override", allowedSlots: [] }, sections: {}, facts: {} }];
-  await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
-  const map = page.getByRole("region", { name: "Sun and Moon composition map" });
-  const preview = map.getByLabel("Combined Sun and Moon preview");
-  await expect(map.getByLabel("Composition copy view")).toHaveCount(0);
-  await expect(preview).toContainText("turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing");
-  await expect(preview).not.toContainText("Browser-only draft wording");
-  await map.getByRole("link", { name: "Edit Sun in Virgo summary", exact: true }).click();
-  const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
-  await expect(body).toHaveValue("Browser-only draft wording");
-  await body.fill("Updated browser-only draft wording");
-  await expect(map.getByLabel("Composition copy view")).toHaveCount(0);
-  await expect(preview).not.toContainText("Updated browser-only draft wording");
-  expect(stored[0].body).toBe("Browser-only draft wording");
+  const stored = [{id:'sun-draft',content_key:'cms/sky-daily-summary/sun/virgo',body:'Browser-only draft wording',headline:'Sun in Virgo',surface:'sky',mode:'card',status:'DRAFT',lane:'serving',review_state:'EDITORIAL_REVIEW_REQUIRED',block_type:'essay',source_snapshot:{contentType:'mustache-template',contentSystem:'cms-surface-override',allowedSlots:[]},sections:{},facts:{}}];
+  await mockStudio(page,stored);
+  await page.goto('/#sky-writeups?view=daily-summary&section=sun');
+  const workspace=page.getByLabel('Summary editing workspace',{exact:true});
+  const body=workspace.getByLabel('Summary wording text',{exact:true});
+  await expect(body).toHaveValue('Browser-only draft wording');
+  await expect(workspace.getByLabel('Summary preview passage',{exact:true})).toContainText('Browser-only draft wording');
+  await workspace.getByRole('button',{name:'Published',exact:true}).click();
+  await expect(workspace.getByLabel('Summary preview passage',{exact:true})).toContainText('punishing');
+  await expect(workspace.getByLabel('Summary preview passage',{exact:true})).not.toContainText('Browser-only draft wording');
+  await body.fill('Updated browser-only draft wording');
+  await expect(workspace.getByLabel('Summary preview passage',{exact:true})).toContainText('Updated browser-only draft wording');
+  expect(stored[0].body).toBe('Browser-only draft wording');
 });
-
 
 test("supplied wording opens intact as an editable unsaved draft", async ({ page }) => {
   const stored: any[] = [];
   await mockStudio(page, stored);
   await page.goto("/#sky-writeups?view=daily-summary");
+  await openAdvancedSummary(page);
   const field = page.getByRole("article", { name: "Moon in Leo", exact: true });
   await expect(field).toContainText("helps us access that inner fire more easily");
   await field.getByRole("button", { name: "Edit wording" }).click();
   await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("helps us access that inner fire more easily");
   expect(stored).toHaveLength(0);
-  await page.getByRole("button", { name: "Save draft", exact: true }).click();
+  await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Save draft", exact: true }).click();
   await expect.poll(() => stored[0]?.status).toBe("DRAFT");
   expect(stored[0].source_snapshot.moonSource.body).toBe("helps us access that inner fire more easily");
   await page.reload();
+  await openAdvancedSummary(page);
   await expect(field).toContainText("helps us access that inner fire more easily");
 });
 
@@ -260,17 +337,18 @@ test('live bundled summary stays Live when opened, then publishes twice without 
   const stored: any[] = [];
   await mockStudio(page, stored);
   await page.goto('/#sky-writeups?view=daily-summary');
+  await openAdvancedSummary(page);
   const field = page.getByRole('article', { name: 'Sun in Virgo', exact: true });
   await expect(field.getByText('Live', { exact: true })).toBeVisible();
-  const map = page.getByRole('region', { name: 'Sun and Moon composition map' });
-  await map.getByRole('button', { name: 'Edit Sun source', exact: true }).click();
+  const map = page.getByLabel('Summary editing workspace', {exact:true});
+  await field.getByRole('button', { name: 'Edit wording', exact: true }).click();
   const editor = page.getByRole('dialog', { name: 'Generated content editor' });
   await expect(editor.getByRole('heading', { name: 'Edit Sun in Virgo', exact: true })).toBeVisible();
   const status = editor.getByLabel('Reader status', { exact: true });
   await expect(status).toHaveText('Live');
   const body = editor.getByRole('textbox', { name: 'Summary wording', exact: true });
   const baseline = await body.inputValue();
-  await expect(map.getByLabel('Combined Sun and Moon preview')).toContainText(baseline);
+  await expect(map.getByLabel('Summary preview passage',{exact:true})).toContainText(baseline);
   await body.fill('QA first published summary');
   await expect(status).toHaveText('Draft');
   await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
@@ -282,6 +360,7 @@ test('live bundled summary stays Live when opened, then publishes twice without 
   await expect(status).toHaveText('Live');
   expect(stored).toHaveLength(1);
   await page.reload();
+  await openAdvancedSummary(page);
   await field.getByRole('button', { name: 'Edit wording', exact: true }).click();
   await expect(body).toHaveValue('QA second published summary');
   await expect(status).toHaveText('Live');
@@ -307,6 +386,7 @@ test('Daily Sky retirement and an unavailable publication never reveal older bun
   await expect(summary).not.toContainText('turns our attention to the daily rituals');
   publication.state = 'live'; publication.revision = 2;
   await page.reload();
+  await openAdvancedSummary(page);
   await expect(summary).toContainText('The daily summary could not load.');
   await expect(summary.getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
   await expect(summary).not.toContainText('turns our attention to the daily rituals');
@@ -334,49 +414,36 @@ test("reader composes selected-day events with a dedicated ingress TLDR", async 
 
 
 test("full template controls preview order, publish, and reload", async ({ page, context }) => {
-  const stored: any[] = [];
-  await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
-  const assembly = page.getByRole("region", { name: "Full summary assembly", exact: true });
-  const sections = assembly.getByRole("list", { name: "Sky summary paragraph order" });
-  await expect(sections.locator("li")).toHaveCount(5);
-  await expect(sections.locator("li").nth(1)).toContainText("Ingresses · Stations");
-  await assembly.getByRole("button", { name: "Edit paragraph 2 wording", exact: true }).click();
-  const variants = await assembly.getByLabel("Sentence template", { exact: true }).locator("option").evaluateAll(options => options.map(option => (option as HTMLOptionElement).value));
-  expect(variants.every(value => /assembly\/(ingresses|stations?)/.test(value))).toBe(true);
-  await assembly.getByLabel("Sentence template", { exact: true }).selectOption("cms/sky-daily-summary/assembly/stationDirectFirst");
-  await expect(assembly.getByLabel("Sentence wording editor")).toContainText("station List");
-  await expect(assembly.getByText(/Editing shared wording:/)).toContainText("cms/sky-daily-summary/assembly/stationDirectFirst");
-  await assembly.getByRole("button", { name: "Show all assembly templates", exact: true }).click();
-  expect(stored).toEqual([]);
-  await assembly.getByText("Preview event examples", { exact: true }).click();
-  await assembly.getByLabel("Exact aspect examples").fill("Saturn squares Lilith");
-  await assembly.getByLabel("Station examples", { exact: true }).fill("Mercury stations retrograde in Scorpio");
-  await assembly.getByLabel("Ingress examples", { exact: true }).fill("Venus enters Scorpio");
-  await assembly.getByLabel("Lunation example", { exact: true }).selectOption("today");
-  const preview = assembly.getByLabel("Full summary preview", { exact: true });
-  await expect(preview.locator("p")).toHaveCount(3);
-  await expect(preview).toContainText("Venus enters Scorpio today. Mercury stations retrograde in Scorpio today.");
-  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter");
-  await assembly.getByText("Paragraphs and event order", { exact: true }).click();
-  await assembly.getByRole("button", { name: "Move Stations earlier", exact: true }).click();
-  await expect(preview).toContainText("Mercury stations retrograde in Scorpio today. Venus enters Scorpio today.");
-  const layout = "{openingSentence}\n\n{stationsSentence}\n\n{lunationSentence}";
-  await assembly.getByLabel("Assembly layout", { exact: true }).fill(layout);
-  await expect(preview).not.toContainText("Saturn squares");
-  await assembly.getByRole("button", { name: "Edit and publish full template", exact: true }).click();
-  const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
-  await expect(body).toHaveValue(layout);
-  await page.getByRole("button", { name: "Save & publish", exact: true }).click();
-  await expect.poll(() => stored[0]?.status).toBe("LIVE");
+  const stored: any[]=[];
+  await mockStudio(page,stored);
+  await page.goto('/#sky-writeups?view=daily-summary');
+  const workspace=page.getByLabel('Summary editing workspace',{exact:true});
+  await workspace.getByRole('button',{name:'Structure',exact:true}).click();
+  const body=workspace.getByLabel('Summary wording text',{exact:true});
+  await expect(body).toHaveValue(/openingSentence/);
+  await workspace.getByText('Change example facts',{exact:true}).click();
+  await workspace.getByLabel('Preview aspect examples').fill('Saturn squares Lilith');
+  await workspace.getByLabel('Preview station examples').fill('Mercury stations retrograde in Scorpio');
+  await workspace.getByLabel('Preview ingress examples').fill('Venus enters Scorpio');
+  await workspace.getByLabel('Preview Moon event').selectOption('newMoon');
+  const preview=workspace.getByLabel('Summary preview passage',{exact:true});
+  await expect(preview).toContainText('Venus enters Scorpio today. Mercury stations retrograde in Scorpio today.');
+  await workspace.getByText('Paragraphs and event order',{exact:true}).click();
+  await workspace.getByRole('button',{name:'Move stationsSentence earlier',exact:true}).click();
+  await expect(preview).toContainText('Mercury stations retrograde in Scorpio today. Venus enters Scorpio today.');
+  const layout='{openingSentence}\n\n{stationsSentence}\n\n{lunationSentence}';
+  await body.fill(layout);
+  await expect(preview).not.toContainText('Saturn squares');
+  await workspace.getByRole('button',{name:'Save draft',exact:true}).click();
+  await workspace.getByRole('button',{name:'Review & publish',exact:true}).click();
+  await workspace.getByRole('button',{name:'Publish shared wording',exact:true}).click();
+  await expect.poll(()=>stored[0]?.status).toBe('LIVE');
   expect(stored[0].body).toBe(layout);
   await page.reload();
-  await assembly.getByText("Paragraphs and event order", { exact: true }).click();
-  await expect(assembly.getByLabel("Assembly layout", { exact: true })).toHaveValue(layout);
-  // Reopening an existing row with a local edit must not replace it with the saved body.
-  const revised = "{openingSentence}\n\n{lunationSentence}";
-  await assembly.getByLabel("Assembly layout", { exact: true }).fill(revised);
-  await assembly.getByRole("button", { name: "Edit and publish full template", exact: true }).click();
+  await workspace.getByRole('button',{name:'Structure',exact:true}).click();
+  await expect(body).toHaveValue(layout);
+  const revised='{openingSentence}\n\n{lunationSentence}';
+  await body.fill(revised);
   await expect(body).toHaveValue(revised);
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
@@ -397,25 +464,23 @@ test("full template controls preview order, publish, and reload", async ({ page,
   await expect(summary.getByRole("link", { name: "Mercury stations retrograde in Scorpio" })).toHaveAttribute("href", "#sky/placement/mercury/scorpio");
 });
 
-test("inline connecting words preserve variables, publish and reach the reader", async ({ page, context }) => {
-  const stored: any[] = [];
-  await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
-  const map = page.getByRole("region", { name: "Sun and Moon composition map" });
-  const preview = map.getByLabel("Combined Sun and Moon preview");
-  await map.getByRole("textbox", { name: "Opening connecting words 1", exact: true }).fill("Today, the ");
-  await map.getByRole("textbox", { name: "Opening connecting words 2", exact: true }).fill(" moving through ");
-  await expect(preview).toContainText("Today, the Sun moving through Virgo turns our attention");
-  await expect(preview.locator('[contenteditable="plaintext-only"]')).toHaveCount(9);
-  await expect(preview.getByRole("link", { name: "Edit Sun in Virgo summary" })).toHaveAttribute("href", /sun%2Fvirgo/);
-  await expect(preview.getByRole("link").locator('[contenteditable]')).toHaveCount(0);
-  await map.getByRole("button", { name: "Review and save wording" }).click();
-  const body = page.getByRole("textbox", { name: "Summary wording", exact: true });
-  await expect(body).toHaveValue(/^Today, the \{sunName\} moving through \{sunSign\}\{sunDegree\}/);
-  await page.getByRole("button", { name: "Save & publish", exact: true }).click();
-  await expect.poll(() => stored[0]?.status).toBe("LIVE");
+test("summary wording preserves variables, publishes, and reaches the reader", async ({ page, context }) => {
+  const stored: any[]=[];
+  await mockStudio(page,stored);
+  await page.goto('/#sky-writeups?view=daily-summary');
+  const workspace=page.getByLabel('Summary editing workspace',{exact:true});
+  const body=workspace.getByLabel('Summary wording text',{exact:true});
+  await expect(body).toBeEnabled();
+  const initial=await body.inputValue();
+  await body.fill(initial.replace('The {sunName} in ','Today, the {sunName} moving through '));
+  const preview=workspace.getByLabel('Summary preview passage',{exact:true});
+  await expect(preview).toContainText('Today, the Sun moving through Virgo turns our attention');
+  await workspace.getByRole('button',{name:'Save draft',exact:true}).click();
+  await workspace.getByRole('button',{name:'Review & publish',exact:true}).click();
+  await workspace.getByRole('button',{name:'Publish shared wording',exact:true}).click();
+  await expect.poll(()=>stored[0]?.status).toBe('LIVE');
   await page.reload();
-  await expect(preview).toContainText("Today, the Sun moving through Virgo turns our attention");
+  await expect(preview).toContainText('Today, the Sun moving through Virgo turns our attention');
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-07T16:00:00Z"));
   await reader.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: { days: [{ dateKey: "2026-09-07", events: [] }] } } }));
@@ -428,20 +493,20 @@ test("inline connecting words preserve variables, publish and reach the reader",
 });
 
 test("V6 Moon event sources stay separate and missing copy stays blank", async ({ page, context }) => {
-  const stored: any[] = [];
-  await mockStudio(page, stored);
-  await page.goto("/#sky-writeups?view=daily-summary");
-  const map = page.getByRole("region", { name: "Sun and Moon composition map" });
-  await map.getByLabel("Composition Moon sign").selectOption("Virgo");
-  await map.getByLabel("Composition Moon event").selectOption("newMoon");
-  const preview = map.getByLabel("Combined Sun and Moon preview");
-  await expect(preview).toContainText("New Moon in Virgo calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being");
-  await expect(preview.getByRole("link", { name: "Edit New Moon in Virgo summary" })).toHaveAttribute("href", /moon%2Fvirgo%2FnewMoon/);
-  await map.getByLabel("Composition Moon event").selectOption("fullMoon");
-  await expect(map.getByLabel("Composition sources")).toContainText("NEEDS OWNER COPY");
-  await expect(preview).toContainText("The Full Moon is in Pisces.");
-  await map.getByRole("button", { name: "Edit Moon source" }).click();
-  await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("");
+  const stored: any[]=[];
+  await mockStudio(page,stored);
+  await page.goto('/#sky-writeups?view=daily-summary');
+  const workspace=page.getByLabel('Summary editing workspace',{exact:true});
+  await expect(workspace.getByLabel('Summary wording text',{exact:true})).toBeEnabled();
+  await workspace.getByText('Change example facts',{exact:true}).click();
+  await workspace.getByLabel('Preview Moon event').selectOption('newMoon');
+  const preview=workspace.getByLabel('Summary preview passage',{exact:true});
+  await expect(preview).toContainText('New Moon in Virgo calls us to clear the clutter, refine our routines, and prioritize the details that nourish our well-being');
+  await workspace.getByLabel('Preview Moon event').selectOption('fullMoon');
+  await expect(preview).toContainText('The Full Moon is in Pisces.');
+  await workspace.getByRole('button',{name:'Moon wording',exact:true}).click();
+  await workspace.getByLabel('Summary wording',{exact:true}).selectOption('cms/sky-daily-summary/moon/pisces/fullMoon');
+  await expect(workspace.getByLabel('Summary wording text',{exact:true})).toHaveValue('');
   expect(stored).toHaveLength(0);
   const reader = await context.newPage();
   await reader.clock.setFixedTime(new Date("2026-09-11T02:00:00Z"));
@@ -467,20 +532,22 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await mockStudio(page, stored);
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/#sky-writeups?view=daily-summary");
+  await openAdvancedSummary(page);
     await page.evaluate(theme => document.documentElement.setAttribute("data-theme", theme), theme);
     const studio = page.getByRole("region", { name: "Daily Sky Summary editor" });
-    const map = studio.getByRole("region", { name: "Sun and Moon composition map" });
-    await map.getByLabel("Composition Moon event").selectOption("newMoon");
-    await expect(map.getByLabel("Composition Moon sign")).toHaveValue("Virgo");
-    await map.getByLabel("Composition Moon sign").selectOption("Aries");
-    await expect(map.getByLabel("Composition Sun sign")).toHaveValue("Aries");
-    await map.getByLabel("Composition Moon event").selectOption("lunarEclipse");
-    await expect(map.getByLabel("Composition Moon sign")).toHaveValue("Libra");
-    await map.getByLabel("Composition Sun sign").selectOption("Gemini");
-    await expect(map.getByLabel("Composition Moon sign")).toHaveValue("Sagittarius");
-    await map.getByLabel("Composition Moon event").selectOption("regular");
-    await map.getByLabel("Composition Moon sign").selectOption("Cancer");
-    await expect(map.getByLabel("Composition Sun sign")).toHaveValue("Gemini");
+    const map = studio.getByLabel("Summary editing workspace", {exact:true});
+    await map.getByText("Change example facts",{exact:true}).click();
+    await map.getByLabel("Preview Moon event").selectOption("newMoon");
+    await expect(map.getByLabel("Preview Moon sign")).toHaveValue("Virgo");
+    await map.getByLabel("Preview Moon sign").selectOption("Aries");
+    await expect(map.getByLabel("Preview Sun sign")).toHaveValue("Aries");
+    await map.getByLabel("Preview Moon event").selectOption("lunarEclipse");
+    await expect(map.getByLabel("Preview Moon sign")).toHaveValue("Libra");
+    await map.getByLabel("Preview Sun sign").selectOption("Gemini");
+    await expect(map.getByLabel("Preview Moon sign")).toHaveValue("Sagittarius");
+    await map.getByLabel("Preview Moon event").selectOption("regular");
+    await map.getByLabel("Preview Moon sign").selectOption("Cancer");
+    await expect(map.getByLabel("Preview Sun sign")).toHaveValue("Gemini");
     const virgo = studio.getByRole("article", { name: "Sun in Virgo", exact: true });
     await expect(virgo.getByText("Review supplied wording", { exact: true })).toHaveCount(0);
     const aries = studio.getByRole("article", { name: "Sun in Aries", exact: true });
@@ -493,12 +560,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await aries.getByRole("button", { name: "Open supplied wording", exact: true }).click();
     await expect(page.getByRole("textbox", { name: "Summary wording", exact: true })).toHaveValue("acts as a cosmic reset button that ignites our personal and collective fire");
     expect(stored).toHaveLength(0);
-    await page.getByRole("button", { name: "Save draft", exact: true }).click();
+    await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => stored[0]?.status).toBe("DRAFT");
     expect(stored[0].content_key).toBe("cms/sky-daily-summary/sun/aries");
     expect(stored[0].source_snapshot.suppliedBank.sourceKey).toBe("ms/sky-summary/sun/aries");
     expect(stored[0].source_snapshot.suppliedBank.promotionAuthorized).toBe(false);
     await page.reload();
+  await openAdvancedSummary(page);
     await expect(aries).toContainText("acts as a cosmic reset button");
   });
 }
@@ -513,6 +581,7 @@ test(`${asset} loading can retry without blocking current summary editing`, asyn
     else await route.continue();
   });
   await page.goto("/#sky-writeups?view=daily-summary");
+  await openAdvancedSummary(page);
   await expect(page.getByRole("alert").filter({ hasText: "Supplied summary wording could not load" })).toBeVisible();
   const aries = page.getByRole("article", { name: "Sun in Aries", exact: true });
   await expect(aries).toContainText("puts more emphasis on starting");
@@ -546,24 +615,25 @@ test("reader omits an impossible calendar lunation without losing the current sk
 });
 
 test("event grammar preview links an occurred station to its Rx count", async ({ page }) => {
-  await mockStudio(page, []);
-  await page.goto("/#sky-writeups?view=daily-summary");
-  const assembly = page.getByLabel("Full summary assembly", { exact: true });
-  await assembly.getByText("Preview event examples", { exact: true }).click();
-  await assembly.getByLabel("Retrograde planet examples").fill("Saturn; Uranus; Neptune; Pluto; Chiron; Lilith");
-  await assembly.getByLabel("Station examples", { exact: true }).fill("Uranus stations retrograde in Gemini");
-  await assembly.getByLabel("Ingress examples", { exact: true }).fill("Venus enters Scorpio; Mercury enters Libra");
-  await assembly.getByLabel("Exact aspect examples").fill("Moon squares Uranus; Sun trines Lilith Rx; Moon trines Lilith Rx");
-  const preview = assembly.getByLabel("Full summary preview", { exact: true });
-  await expect(preview.locator("p")).toHaveCount(3);
-  await expect(preview.locator("p").nth(1)).toHaveText("Two planets change signs today: Venus enters Scorpio and Mercury enters Libra. Uranus stations retrograde in Gemini today, bringing the number of retrograde planets to six: Saturn Rx, Uranus Rx, Neptune Rx, Pluto Rx, Chiron Rx, and Lilith Rx.");
-  await expect(preview.locator("p").nth(2)).toHaveText("Three aspects are exact today: Moon squares Uranus, Sun trines Lilith Rx, and Moon trines Lilith Rx.");
-  await assembly.getByLabel("Station has occurred in this example").uncheck();
-  await expect(preview.locator("p")).toHaveCount(4);
-  await expect(preview).not.toContainText("bringing the number");
-  await expect(preview.locator("p").last()).toContainText("Six planets are retrograde right now:");
-  await assembly.getByLabel("Exact aspect examples").fill("Moon squares Uranus; Sun trines Lilith Rx");
-  await expect(preview).toContainText("Moon squares Uranus and Sun trines Lilith Rx are exact today.");
+  await mockStudio(page,[]);
+  await page.goto('/#sky-writeups?view=daily-summary');
+  const workspace=page.getByLabel('Summary editing workspace',{exact:true});
+  await expect(workspace.getByLabel('Summary wording text',{exact:true})).toBeEnabled();
+  await workspace.getByText('Change example facts',{exact:true}).click();
+  await workspace.getByLabel('Preview retrograde examples').fill('Saturn; Uranus; Neptune; Pluto; Chiron; Lilith');
+  await workspace.getByLabel('Preview station examples').fill('Uranus stations retrograde in Gemini');
+  await workspace.getByLabel('Preview ingress examples').fill('Venus enters Scorpio; Mercury enters Libra');
+  await workspace.getByLabel('Preview aspect examples').fill('Moon squares Uranus; Sun trines Lilith Rx; Moon trines Lilith Rx');
+  const preview=workspace.getByLabel('Summary preview passage',{exact:true});
+  await expect(preview.locator('p')).toHaveCount(3);
+  await expect(preview.locator('p').nth(1)).toHaveText('Two planets change signs today: Venus enters Scorpio and Mercury enters Libra. Uranus stations retrograde in Gemini today, bringing the number of retrograde planets to six: Saturn Rx, Uranus Rx, Neptune Rx, Pluto Rx, Chiron Rx, and Lilith Rx.');
+  await expect(preview.locator('p').nth(2)).toHaveText('Three aspects are exact today: Moon squares Uranus, Sun trines Lilith Rx, and Moon trines Lilith Rx.');
+  await workspace.getByLabel('Preview station has occurred').uncheck();
+  await expect(preview.locator('p')).toHaveCount(4);
+  await expect(preview).not.toContainText('bringing the number');
+  await expect(preview.locator('p').last()).toContainText('Six planets are retrograde right now:');
+  await workspace.getByLabel('Preview aspect examples').fill('Moon squares Uranus; Sun trines Lilith Rx');
+  await expect(preview).toContainText('Moon squares Uranus and Sun trines Lilith Rx are exact today.');
 });
 
 for (const width of [390, 1440]) test(`owner event-first summary reaches reader ${width}`, async ({ context }) => {

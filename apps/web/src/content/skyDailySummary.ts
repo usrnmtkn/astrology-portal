@@ -158,12 +158,15 @@ export function skySummaryOpeningKey(sun?: string, moon?: string, content?: CmsG
 
 export type SkyDailySummaryOptions = {
   editorialPreview?: boolean;
+  /** Preview only these edited sources; retain publication rules for every other source. */
+  editorialPreviewKeys?: readonly string[];
   openingOnly?: boolean;
   sunSummaryLength?: "full" | "short";
 };
 
-export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false, openingOnly = false, sunSummaryLength = "full" }: SkyDailySummaryOptions = {}): SummaryPart[] {
-  const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, editorialPreview);
+export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsGeneratedContentMap, { editorialPreview = false, editorialPreviewKeys = [], openingOnly = false, sunSummaryLength = "full" }: SkyDailySummaryOptions = {}): SummaryPart[] {
+  const isEditorialPreview = (key: string) => editorialPreview || editorialPreviewKeys.includes(key);
+  const copy = (key: string, fallback: string) => savedCopy(content, `cms/sky-daily-summary/${key}`, fallback, isEditorialPreview(`cms/sky-daily-summary/${key}`));
   const timing = { ...defaultTiming };
   for (const field of skyDailySummaryFields.filter(field => field.group === "Timing and retrogrades")) {
     timing[field.key.split("/").at(-1) as Exclude<keyof typeof timing, "provenance">] = copy(field.key.replace("cms/sky-daily-summary/", ""), field.body);
@@ -184,11 +187,11 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
     const placement = body === "moon" ? moonPlacement : sunPlacement;
     if (!placement?.sign) continue;
     let sourceKey = body === "moon" ? moonSummaryKey(placement.sign, moonKind) : `cms/sky-daily-summary/sun/${placement.sign.toLowerCase()}`;
-    let fullClause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), editorialPreview) : fullerClause(body, placement.sign, content, editorialPreview);
+    let fullClause = body === "moon" ? savedCopy(content, sourceKey, moonSummaryBody(placement.sign, moonKind), isEditorialPreview(sourceKey)) : fullerClause(body, placement.sign, content, isEditorialPreview(sourceKey));
     if (body === "sun" && sunSeasonRetrograde(placement.sign, facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets)) {
       const variantKey = sunSeasonKey(placement.sign, true);
-      const variant = savedCopy(content, variantKey, "", editorialPreview);
-      if (variant || (!editorialPreview && contentPublication(variantKey)?.state === "live" && !publicationRestoresBaseline(contentPublication(variantKey)!))) {
+      const variant = savedCopy(content, variantKey, "", isEditorialPreview(variantKey));
+      if (variant || (!isEditorialPreview(variantKey) && contentPublication(variantKey)?.state === "live" && !publicationRestoresBaseline(contentPublication(variantKey)!))) {
         sourceKey = variantKey;
         fullClause = variant;
       }

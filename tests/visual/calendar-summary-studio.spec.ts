@@ -14,14 +14,13 @@ for (const width of [390, 1440]) {
     await expect(studio).toHaveCount(1);
     await expect(studio.getByLabel('Reader layout', { exact: true })).toHaveCount(0);
     await expect(page).toHaveURL(/#sky-writeups\?view=daily-summary&section=sun$/);
-    await expect(studio.getByLabel('Summary section', { exact: true })).toHaveValue('Sun summaries');
-    await expect(studio.getByLabel('Summary section', { exact: true })).toBeInViewport();
-    await expect(studio.getByLabel('Daily Sky Summary fields').getByRole('article')).toHaveCount(12);
-    await studio.getByLabel('Search summary wording', { exact: true }).fill('Virgo');
-    const field = studio.getByRole('article', { name: 'Sun in Virgo', exact: true });
-    await field.getByRole('button', { name: 'Edit wording', exact: true }).click();
-    await expect(page.getByRole('button', { name: 'Save draft', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Save & publish', exact: true })).toBeVisible();
+    const workspace = studio.getByLabel('Summary editing workspace', { exact: true });
+    await expect(workspace.getByLabel('Summary wording', { exact: true })).toHaveValue('cms/sky-daily-summary/sun/virgo');
+    await expect(workspace.getByLabel('Summary wording', { exact: true })).toBeInViewport();
+    await expect(workspace.getByLabel('Summary wording text', { exact: true })).toBeEnabled();
+    await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeVisible();
+    await expect(workspace.getByRole('button', { name: 'Review & publish', exact: true })).toBeVisible();
+    await expect(workspace.getByLabel('Summary preview passage', { exact: true })).toContainText('Sun in Virgo');
     await studio.screenshot({ path: `test-results/calendar-summary-studio-${width}.png` });
   });
 }
