@@ -26,9 +26,11 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
  test(`Content Library reopens an archived dated Sky article for explicit restore ${width} ${theme}`,async({page,context})=>{
   test.setTimeout(90000);
   const fixture=await skyPlacementSourceFixture('sun','libra');
-  const archived={...fixture.active,status:'ARCHIVED',headline:'Synthetic archived Libra article'};
+  const archived={...fixture.active,status:'ARCHIVED',headline:'Synthetic archived Libra article',updated_at:'2026-10-01T01:00:00-07:00'};
+  // The newest saved source has an earlier-looking local hour than the UTC row.
+  const olderArchive={...fixture.active,id:'dddddddd-dddd-4ddd-dddd-dddddddddddd',status:'ARCHIVED',headline:'Synthetic older archived Libra article',updated_at:'2026-10-01T06:00:00Z'};
   const oldRevision={...fixture.pending,status:'ARCHIVED'};
-  const store=await studioApiStore([archived,oldRevision],{uuidIds:true});
+  const store=await studioApiStore([archived,olderArchive,oldRevision],{uuidIds:true});
   const writes:any[]=[];
   await context.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
   await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
@@ -63,6 +65,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id)?.status).toBe('DRAFT');
    const restored=(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id);
    expect(restored.body).toBe(archived.body);expect(restored.sections).toEqual(archived.sections);
+   expect((await store.call({method:'rows'})).find((row:any)=>row.id===olderArchive.id)).toEqual(olderArchive);
    const reader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id]}});expect(reader.payload.rows).toEqual([]);
    await editor.getByRole('button',{name:'Close',exact:true}).click();await page.reload();
    await expect(copy).toHaveValue(/Synthetic published final sentence/u);

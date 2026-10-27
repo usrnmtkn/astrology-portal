@@ -22,7 +22,7 @@ export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrar
       if (!active) return;
       const rows = result.rows as PlacementSourceRow[];
       if (!Array.isArray(rows) || rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) throw new Error('The complete editing source could not be verified.');
-      const ordered = [...rows].sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''));
+      const ordered = [...rows].sort((a, b) => (Date.parse(b.updated_at ?? '') || 0) - (Date.parse(a.updated_at ?? '') || 0));
       let row = ordered.find(row => row.status === 'DRAFT' && !/^(package|builtin):/u.test(row.id))
         ?? ordered.find(row => row.content_key === key && row.status === 'LIVE')
         ?? (fromLibrary && key.startsWith('sky-article/')
