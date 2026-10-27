@@ -136,6 +136,15 @@ if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.m
   const { contentLiveStatuses } = await import("../../api/_lib/content-live-status.ts");
   process.on("message", async ({ id, method, body, url, key }) => {
     try {
+      if (method === "prepare-publication") {
+        if (Array.isArray(body)) {
+          store.rows.clear();
+          for (const row of body) store.rows.set(row.id, structuredClone(row));
+        }
+        await store.publication.prepare();
+        process.send({ id, result: true });
+        return;
+      }
       const result = method === "fixture" ? fixtures.find(row => row.content_key === key)
         : method === "publications" ? [...new Map([...fixturePublications([...store.rows.values()]), ...await store.publication.publications()].map(row => [row.content_key,row])).values()] : method === "rows" ? [...store.rows.values()]
         : method === "statuses" ? contentLiveStatuses([...store.rows.values()].filter(row => body.ids.includes(row.id)), [...store.rows.values()]) : await store.invoke(method, body, url);
