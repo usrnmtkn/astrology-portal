@@ -1,3 +1,4 @@
+import { readerSession } from "../helpers/reader-session";
 import { expect, test, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -8,6 +9,7 @@ async function preparePage(page: Page, theme: "light" | "dark" = "light", seedFr
   await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
   await page.addInitScript(({ selectedTheme, shouldSeedFriends }) => {
     window.localStorage.setItem("tldrastro:theme", selectedTheme);
+    localStorage.setItem("tldrastro:pageAnimations", "off");
     window.localStorage.setItem("tldrastro:sunriseOrb", "true");
     window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
 
@@ -127,12 +129,14 @@ async function preparePage(page: Page, theme: "light" | "dark" = "light", seedFr
     }
   }, { selectedTheme: theme, shouldSeedFriends: seedFriends });
 
+  if(seedFriends) await readerSession(page, "visual-smoke-user");
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
 
 async function setTheme(page: Page, theme: "light" | "dark") {
   await page.evaluate((selectedTheme) => {
     window.localStorage.setItem("tldrastro:theme", selectedTheme);
+    localStorage.setItem("tldrastro:pageAnimations", "off");
   }, theme);
 }
 
@@ -150,7 +154,7 @@ test.describe("visual smoke screens", () => {
   test("captures sky", async ({ page }) => {
     await preparePage(page);
     await page.goto("/#sky");
-    await expect(page.getByText("The sky today.")).toBeVisible();
+    await expect(page.getByRole("heading", {name:"Sky",exact:true})).toBeVisible();
     await capture(page, "sky-light");
   });
 
@@ -163,7 +167,7 @@ test.describe("visual smoke screens", () => {
   test("captures friends list", async ({ page }) => {
     await preparePage(page, "light", true);
     await page.goto("/#friends?tab=charts");
-    await expect(page.getByText("friends.")).toBeVisible();
+    await expect(page.getByRole("heading",{name:"Friends",exact:true})).toBeVisible();
     await expect(page.getByText("Nikki")).toBeVisible();
     await capture(page, "friends-list-light");
   });
@@ -172,22 +176,19 @@ test.describe("visual smoke screens", () => {
     await preparePage(page, "light", true);
     await page.goto("/#friends?tab=charts");
 
-    const firstChart = page.locator(".manual-chart-select").first();
+    const firstChart = page.getByRole("button",{name:"Open Nikki",exact:true});
     await firstChart.waitFor({ state: "visible", timeout: 10_000 });
 
     await firstChart.click();
-    await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
+    await page.getByRole("tab", { name: "Natal", exact:true }).click();
+    await expect(page.getByRole("heading",{name:"Big three",exact:true})).toBeVisible();
     await capture(page, "friends-natal-light");
 
-    await page.getByRole("button", { name: /More, \d+ sections/ }).click();
-    const synastryTab = page.getByRole("menuitemradio", { name: /^Synastry/ });
-    await synastryTab.click();
+    await page.getByRole("tab", {name:"Synastry",exact:true}).click();
     await expect(page.getByText("What synastry shows")).toBeVisible();
     await capture(page, "friends-synastry-light");
 
-    await page.getByRole("button", { name: /More, \d+ sections/ }).click();
-    const compositeTab = page.getByRole("menuitemradio", { name: /^Composite/ });
-    await compositeTab.click();
+    await page.getByRole("tab", {name:"Composite",exact:true}).click();
     await expect(page.getByText("What a composite chart is")).toBeVisible();
     await capture(page, "friends-composite-light");
   });
@@ -195,12 +196,12 @@ test.describe("visual smoke screens", () => {
   test("captures settings in light and dark", async ({ page }) => {
     await preparePage(page, "light");
     await page.goto("/#settings");
-    await expect(page.getByText("settings.")).toBeVisible();
+    await expect(page.getByRole("heading",{name:"Settings",exact:true})).toBeVisible();
     await capture(page, "settings-light");
 
     await setTheme(page, "dark");
     await page.goto("/#settings");
-    await expect(page.getByText("settings.")).toBeVisible();
+    await expect(page.getByRole("heading",{name:"Settings",exact:true})).toBeVisible();
     await capture(page, "settings-dark");
   });
 });

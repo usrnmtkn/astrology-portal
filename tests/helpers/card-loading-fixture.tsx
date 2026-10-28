@@ -12,10 +12,10 @@ const noop = () => {};
 function Fixture({ loading, long, empty, failed, later, showSky, missingCopy, formatted }: { loading: boolean; long: boolean; empty: boolean; failed: boolean; later: boolean; showSky: boolean; missingCopy: boolean; formatted: boolean }) {
   const holding = useMinimumLoading(loading);
   return <>
-    <SkyPlacementList loading={holding}>
+    <section className="sky-page"><section className="sky-placement-group"><SkyPlacementList loading={holding}>
       {Array.from({ length: later ? 4 : 3 }, (_, index) => <PlanetPlacementRow key={index} variant="sky" title="Sun in Virgo" pointName="Sun" glyph="☉" sign="Virgo" degree="12°" rangeLabel="Sep 1–30" onClick={noop} descriptionLoading={holding}
         description={holding ? undefined : long ? "A full owner-authored passage can contain several sentences, preserving its meaning across narrow mobile and wider desktop layouts. ".repeat(4) : "A short description."} />)}
-    </SkyPlacementList>
+    </SkyPlacementList></section></section>
     <AspectListSkeleton />
     <CalendarDayPanel dateKey="2026-09-01" title="Moon in Virgo" dateLine="September 1" metaLine="Waxing Moon" paragraphs={[]} embedded showSky={showSky} showCheckIn={false}
       contentState={failed ? "error" : loading ? "loading" : "ready"} onOpenEvent={noop} onCheckIn={noop}

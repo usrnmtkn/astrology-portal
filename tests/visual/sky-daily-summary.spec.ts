@@ -30,9 +30,7 @@ test("debility card counts traditional detriment and fall under the sky today ca
   const debility = page.getByRole("region", { name: "Things may take more effort right now", exact: true });
   await expect(skyToday).toBeVisible({ timeout: 60_000 });
   await expect(debility).toBeVisible();
-  const summaryCards = page.locator(".today-summary-cards > section");
-  await expect(summaryCards.first()).toHaveAttribute("aria-label", "The sky today");
-  await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Things may take more effort right now");
+  expect(await skyToday.evaluate(element => Boolean(element.compareDocumentPosition(document.querySelector('.sky-debility-ledger')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
   const heading = debility.getByRole("heading", { level: 3, name: "Things may take more effort right now" });
   await expect(heading).toBeVisible();
   await expect(debility.locator(".sky-today-ledger__head p")).toHaveCount(0);
@@ -42,7 +40,7 @@ test("debility card counts traditional detriment and fall under the sky today ca
   const headingType = await heading.evaluate(el => {
     const style = getComputedStyle(el);
     const probe = document.createElement("h3");
-    probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-ui);font-size:21px;font-weight:600;letter-spacing:-0.01em;line-height:1.25" : "font-family:var(--font-display);font-size:40px;font-weight:400;letter-spacing:-0.015em;line-height:1.08";
+    probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-display);font-size:var(--type-mobile-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-placement-title)" : "font-family:var(--font-display);font-size:var(--type-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-compact-title)";
     el.after(probe);
     const expected = getComputedStyle(probe);
     const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
@@ -130,9 +128,7 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator(".retrograde-section")).toHaveCount(0);
       await expect(page.getByRole("region", { name: "Placements", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: /^Sky$/i })).toBeVisible();
-      const summaryCards = page.locator(".today-summary-cards > section");
-      await expect(summaryCards.first()).toHaveAttribute("aria-label", "The sky today");
-      await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Things may take more effort right now");
+      expect(await summary.evaluate(element => Boolean(element.compareDocumentPosition(document.querySelector('.sky-debility-ledger')!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
       const debility = page.getByRole("region", { name: "Things may take more effort right now" });
       await expect(debility).toBeVisible();
       const debilityHeading = debility.getByRole("heading", { level: 3, name: "Things may take more effort right now" });
@@ -154,7 +150,7 @@ for (const theme of ["light", "dark"] as const) {
       const debilityType = await debilityHeading.evaluate(el => {
         const style = getComputedStyle(el);
         const probe = document.createElement("h3");
-        probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-ui);font-size:21px;font-weight:600;letter-spacing:-0.01em;line-height:1.25" : "font-family:var(--font-display);font-size:40px;font-weight:400;letter-spacing:-0.015em;line-height:1.08";
+        probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-display);font-size:var(--type-mobile-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-placement-title)" : "font-family:var(--font-display);font-size:var(--type-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-compact-title)";
         el.after(probe);
         const expected = getComputedStyle(probe);
         const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;

@@ -1,3 +1,4 @@
+import { readerSession } from "../helpers/reader-session";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { expect, test, type Page } from "@playwright/test";
 import {
@@ -106,8 +107,8 @@ async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
   // visual fixture selects the bundled corpus without creating an outage alert.
 
   await page.addInitScript(({ fixtureLocation, fixtureUserId, fixedNow, theme, friendNatalChart }) => {
-    window.localStorage.clear();
     window.localStorage.setItem("tldrastro:theme", theme);
+    localStorage.setItem("tldrastro:pageAnimations", "off");
     window.localStorage.setItem("tldrastro:sunriseOrb", "true");
     window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
     window.localStorage.setItem("tldrastro:portalMode", "friends");
@@ -154,6 +155,7 @@ async function seedClientState(page: Page, theme: "light" | "dark" = "light") {
     ]));
   }, { fixtureLocation, fixtureUserId, fixedNow, theme, friendNatalChart });
 
+  await readerSession(page, fixtureUserId);
   await page.evaluate(() => undefined);
 }
 
@@ -248,7 +250,7 @@ test.describe("visual regression baseline", () => {
 
     await page.setViewportSize({ width: 1440, height: 1000 });
     await expectRouteLoadsWithin(page, "/#sky", "client sky desktop light", async () => {
-      await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({
+      await expect(page.getByRole("heading", { name: "Sky", exact:true })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
       await expect(page.getByText("Houses: Whole Sign", { exact: true })).toBeVisible({
@@ -280,7 +282,7 @@ test.describe("visual regression baseline", () => {
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expectRouteLoadsWithin(page, "/#friends?tab=charts", "client friends mobile light", async () => {
-      await expect(page.getByRole("heading", { name: "friends." })).toBeVisible({
+      await expect(page.getByRole("heading", { name: "Friends" })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
       await expect(page.getByLabel("Friend charts")).toBeVisible({ timeout: routeReadyTimeoutMs });
@@ -299,7 +301,7 @@ test.describe("visual regression baseline", () => {
     await page.setViewportSize({ width: 1440, height: 1000 });
 
     await expectRouteLoadsWithin(page, "/#sky", "client sky desktop dark", async () => {
-      await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible({
+      await expect(page.getByRole("heading", { name: "Sky", exact:true })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
     });

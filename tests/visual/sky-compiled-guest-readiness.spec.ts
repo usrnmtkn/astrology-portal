@@ -204,7 +204,7 @@ for (const { width, hasEdition, account, flow } of cases) {
     const articleFrames = () => page.evaluate(() => new Promise<string[]>(resolve => {
       const frames: string[] = [];
       const sample = () => {
-        frames.push(document.querySelector('.sky-detail-article')?.outerHTML ?? '');
+        frames.push(document.querySelector('.sky-detail-article .sky-detail-card')?.outerHTML ?? '');
         if (frames.length === 30) resolve(frames); else requestAnimationFrame(sample);
       };
       requestAnimationFrame(() => requestAnimationFrame(sample));
@@ -231,11 +231,11 @@ for (const { width, hasEdition, account, flow } of cases) {
       const article = page.locator('.sky-detail-article');
       if (flow === 'registry-error') {
         await expect.poll(() => registryHeld).toBe(true);
-        await expect(page.getByText('This page could not load. Try another page or reload to try again.', { exact: true })).toBeVisible();
+        await expect(page.getByText('This page could not load.', { exact: true })).toBeVisible();
         expect([...new Set(await articleFrames())]).toEqual(['']); expect(selectedFinished).toBe(false);
         failRegistry = false;
         const abandoned = selectedRequests.splice(0); selectedFailures = 0; editionRequests.splice(0); selectedStarted = false;
-        await page.getByRole('button', { name: 'Reload page', exact: true }).click();
+        await page.getByRole('button', { name: 'Try again', exact: true }).click();
         await expect.poll(() => selectedStarted).toBe(true);
         await expect.poll(() => abandoned.every(request => request.failure() !== null)).toBe(true);
       }
@@ -272,13 +272,13 @@ for (const { width, hasEdition, account, flow } of cases) {
       }
       if (flow === 'aspect-error') {
         await expect.poll(() => aspectRequests).toBeGreaterThan(0);
-        await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible();
+        await expect(page.getByText('This placement could not load.', { exact: true })).toBeVisible();
         expect([...new Set(await articleFrames())]).toEqual(['']); expect(selectedFinished).toBe(false);
         failAspect = false;
         await page.getByRole('button', { name: /Retry|Try again/i }).click();
       }
       if (flow === 'edition-error') {
-        await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible();
+        await expect(page.getByText('This placement could not load.', { exact: true })).toBeVisible();
         expect(selectedFinished).toBe(false); await expect(article).toHaveCount(0);
         failEdition = false;
         await page.getByRole('button', { name: /Retry|Try again/i }).click();
@@ -304,7 +304,7 @@ for (const { width, hasEdition, account, flow } of cases) {
         await expect(article.locator('#sky-rising-horoscopes')).toHaveCount(0);
         if (heldBroadFlow) {
           // Actual required content and Retry finish while the broad read is held.
-          const complete = await article.evaluate(node => node.outerHTML);
+          const complete = await article.locator(".sky-detail-card").evaluate(node => node.outerHTML);
           releaseBroad();
           for (const request of broadRequests) {
             const response = await request.response();
@@ -315,7 +315,7 @@ for (const { width, hasEdition, account, flow } of cases) {
           expect([...new Set(await articleFrames())]).toEqual([complete]);
           releaseNewSky();
         }
-        const before = await article.evaluate(node => node.outerHTML);
+        const before = await article.locator(".sky-detail-card").evaluate(node => node.outerHTML);
         if (flow === 'navigate') {
           await page.evaluate(() => { window.location.hash = 'sky'; });
           await expect(article).toHaveCount(0);
@@ -328,7 +328,7 @@ for (const { width, hasEdition, account, flow } of cases) {
           })));
           await expect.poll(() => ledgerHeld).toBe(true);
           await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-          await page.getByRole('button', { name: 'Close menu', exact: true }).click();
+          await page.getByRole('dialog',{name:'Navigation',exact:true}).getByRole('button', { name: 'Close menu', exact: true }).click();
           await expect(article).toContainText('Synthetic complete dated ending.');
           expect([...new Set(await articleFrames())]).toEqual([before]);
           holdLedger = false; releaseLedger(); release(); await selectedResponseComplete();
@@ -357,8 +357,8 @@ for (const { width, hasEdition, account, flow } of cases) {
               window.dispatchEvent(new StorageEvent('storage', { key: storageKey }));
             }, { profile, user, storageKey });
             await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-            await expect(page.getByRole('menuitem', { name: 'Sign out', exact: true })).toBeVisible();
-            await page.getByRole('button', { name: 'Close menu', exact: true }).click();
+            await expect(page.locator('.site-menu-profile strong')).toHaveText('Synthetic Reader');
+            await page.getByRole('dialog',{name:'Navigation',exact:true}).getByRole('button', { name: 'Close menu', exact: true }).click();
           }
           await expect(article).toContainText('Synthetic complete dated ending.', { timeout: 60_000 });
           await expect(article.locator('#sky-personalized-placement')).toContainText('Synthetic complete house');
@@ -368,10 +368,11 @@ for (const { width, hasEdition, account, flow } of cases) {
           await expect(article).toHaveCount(0);
           holdNewSky = true;
           if (flow === 'location') {
-          await page.getByRole('button', { name: /Today, Synthetic New York/ }).click();
-          await page.getByRole('dialog', { name: 'Sky controls' }).getByRole('button', { name: 'Synthetic New York', exact: true }).click();
+          await page.locator('#header-date-trigger').click();
+          await page.getByRole('dialog',{name:'Date and location',exact:true}).locator('.mobile-sky-controls__location').click();
           await page.getByRole('textbox', { name: 'City', exact: true }).fill('Synthetic Retained Point, California');
-          await page.getByRole('button', { name: 'Update', exact: true }).click();
+          await page.getByRole('textbox', { name: 'City', exact: true }).press('Enter');
+          await page.keyboard.press('Escape');
           } else await page.evaluate(() => {
             const url = new URL(window.location.href); url.searchParams.set('date', '2026-10-13');
             history.pushState({}, '', url); window.dispatchEvent(new PopStateEvent('popstate'));
@@ -405,7 +406,7 @@ for (const { width, hasEdition, account, flow } of cases) {
               const snapshot = JSON.parse(localStorage.getItem(key)!).snapshot;
               return snapshot.location.latitude === latitude && snapshot.location.longitude === longitude && snapshot.location.timeZone === timeZone && snapshot.generatedAt === at;
             }), flow === 'location' ? { latitude: -5.5, longitude: -105.5, timeZone: 'America/Los_Angeles', at: requested.searchParams.get('at') } : { latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York', at: requested.searchParams.get('at') })).toBe(true);
-          const relocated = await article.evaluate(node => node.outerHTML);
+          const relocated = await article.locator(".sky-detail-card").evaluate(node => node.outerHTML);
           release(); await selectedResponseComplete();
           expect([...new Set(await articleFrames())]).toEqual([relocated]);
         } else if (flow === 'aspect-revision') {
@@ -424,7 +425,7 @@ for (const { width, hasEdition, account, flow } of cases) {
           await expect(article).toContainText('Synthetic updated required aspect ending.');
           await expect(article).not.toContainText('Synthetic required aspect exact opening.');
           expect(selectedFinished).toBe(false);
-          const revised = await article.evaluate(node => node.outerHTML);
+          const revised = await article.locator(".sky-detail-card").evaluate(node => node.outerHTML);
           release(); await selectedResponseComplete();
           expect([...new Set(await articleFrames())]).toEqual([revised]);
         } else if (flow === 'revision') {
@@ -441,7 +442,7 @@ for (const { width, hasEdition, account, flow } of cases) {
           holdEdition = false; releaseEdition();
           await expect(article).toContainText('Synthetic complete dated ending.', { timeout: 60_000 });
           expect(selectedFinished).toBe(false);
-          const revised = await article.evaluate(node => node.outerHTML);
+          const revised = await article.locator(".sky-detail-card").evaluate(node => node.outerHTML);
           release(); await selectedResponseComplete();
           expect([...new Set(await articleFrames())]).toEqual([revised]);
         } else if (flow === 'retire') {
@@ -478,8 +479,9 @@ for (const { width, hasEdition, account, flow } of cases) {
         await editionResponseComplete();
           await expect.poll(() => page.evaluate(() => (window as any).__qaSkyWorkerCompleted.some((job: any) => job.kind === 'placement-sky' && job.ok))).toBe(true);
           await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-          await expect(page.getByRole('menuitem', { name: account === 'restoring' ? 'Sign out' : 'Account', exact: true })).toBeVisible();
-          await page.getByRole('button', { name: 'Close menu', exact: true }).click();
+          if(account === 'restoring') await expect(page.locator('.site-menu-profile strong')).toHaveText('Synthetic Reader');
+          else await expect(page.getByRole('menuitem', {name:'Account',exact:true})).toBeVisible();
+          await page.getByRole('dialog',{name:'Navigation',exact:true}).getByRole('button', { name: 'Close menu', exact: true }).click();
           expect(selectedFinished).toBe(false);
           expect([...new Set(await articleFrames())]).toEqual(['']);
         }
@@ -494,7 +496,7 @@ for (const { width, hasEdition, account, flow } of cases) {
         }
       }
       if (flow === 'registry-error') {
-        const recovered = await article.evaluate(node => node.outerHTML);
+        const recovered = await article.locator(".sky-detail-card").evaluate(node => node.outerHTML);
         await page.reload();
         await expect(article).toContainText('Synthetic complete dated ending.', { timeout: 60_000 });
         expect([...new Set(await articleFrames())]).toEqual([recovered]);
@@ -574,7 +576,7 @@ for (const { width, hasEdition, account, flow } of cases) {
           const retrogradeDates = await article.locator('.article-duration').allTextContents();
           expect(retrogradeDates).toHaveLength(2);
           expect(retrogradeDates[0].trim()).toBeTruthy();
-          expect(retrogradeDates[1]).toContain('Full residency in Scorpio:');
+          expect(retrogradeDates[1]).toContain('Venus in Scorpio September 10, 2026 to January 7, 2027');
           await page.reload();
           await expect(article.locator('#sky-detail-title')).toHaveText(/Venus.*Scorpio/i);
           await expect(body).toHaveJSProperty('innerHTML', retrogradeBody);

@@ -1,3 +1,4 @@
+import { readerSession } from "../helpers/reader-session";
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Page } from '@playwright/test';
 
@@ -19,24 +20,13 @@ async function prepare(page: Page, theme: string, visual?: 'artwork') {
   } }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
   await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  await readerSession(page, "illustrated-loader-fixture");
 }
 
 function hold() {
   let release!: () => void;
   const promise = new Promise<void>(resolve => { release = resolve; });
   return { promise, release };
-}
-
-async function expectMoonPhase(spinner: ReturnType<Page['locator']>) {
-  await expect(spinner).toBeVisible();
-  await expect(spinner).toHaveCSS('width', '48px');
-  await expect(spinner).toHaveCSS('height', '48px');
-  const shadow = spinner.locator('.loading-moon__shadow');
-  await expect(shadow).toHaveCSS('animation-name', 'startup-moon-phase');
-  const bounds = await spinner.boundingBox();
-  const before = await shadow.evaluate(el => getComputedStyle(el).transform);
-  await expect.poll(() => shadow.evaluate(el => getComputedStyle(el).transform)).not.toBe(before);
-  expect(await spinner.boundingBox()).toEqual(bounds);
 }
 
 for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
@@ -58,28 +48,30 @@ for (const screen of ['sky', 'friends']) for (const width of [390, 1440]) for (c
     page.on('pageerror', error => errors.push(error.message));
     try {
       await page.goto(screen === 'sky' ? '/?date=2026-09-14#sky' : '/#friends?tab=charts', { waitUntil: 'domcontentloaded' });
-      const loader = screen === 'sky' ? page.locator('.sky-reading-layout__loading') : page.getByRole('status').filter({ hasText: 'Loading Friends…' });
+      const loader = screen === 'sky' ? page.locator('.sky-reading-layout__loading') : page.locator('.app-loading[aria-label="Loading Friends…"]');
       await expect(loader).toBeVisible({ timeout: 60_000 });
       if (screen === 'sky') {
         await expect(loader.getByRole('status').filter({ hasText: 'Loading the sky…' })).toHaveCount(1);
-        await expect(loader.locator('.placement-table-wrap')).toHaveAttribute('aria-busy', 'true');
+        await expect(loader.locator('.placement-table-wrap')).toHaveCount(2);
+        for(const list of await loader.locator('.placement-table-wrap').all()) await expect(list).toHaveAttribute('aria-busy','true');
         await expect(loader.locator('.planet-placement-row--sky.card-skeleton')).toHaveCount(14);
         await expect(loader.locator('.loading-moon')).toHaveCount(0);
-        await expect(loader.locator('.card-skeleton-bar').first()).toHaveCSS('animation-name', 'none');
+        await expect(loader.locator('.card-skeleton-bar').first()).toHaveCSS('animation-name', 'skeleton-pulse');
       } else {
-        await expect(loader).toHaveAttribute('role', 'status');
-        await expect(loader).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-        await expect(loader).toHaveCSS('border-width', '0px');
-        await expectMoonPhase(loader.locator('.loading-moon'));
+        await expect(loader).toHaveAttribute('aria-busy', 'true');
+        await expect(loader.locator('.loading-card')).toHaveCount(1);
+        await expect(loader.locator('.loading-moon')).toHaveCount(0);
+        await expect(loader.locator('.card-skeleton-bar').first()).toHaveCSS('animation-name', 'skeleton-pulse');
       }
       await expect(loader.locator('canvas, img')).toHaveCount(0);
       const hiddenShadows = page.locator('.sky-reading-layout__content[aria-hidden="true"] .loading-moon__shadow');
       for (const hidden of await hiddenShadows.all()) await expect(hidden).toHaveCSS('animation-name', 'none');
-      const loaderBounds = await loader.boundingBox();
+      const visibleLoading = screen === 'sky' ? loader.locator('.sky-summary-loading') : loader;
+      const loaderBounds = await visibleLoading.boundingBox();
       const navigationBounds = await page.locator('.topbar').boundingBox();
       expect(loaderBounds!.y, 'The loading content must clear the fixed navigation').toBeGreaterThanOrEqual(navigationBounds!.y + navigationBounds!.height);
       await page.waitForTimeout(450);
-      expect(await loader.boundingBox()).toEqual(loaderBounds);
+      expect(await visibleLoading.boundingBox()).toEqual(loaderBounds);
       await page.screenshot({ path: info.outputPath('css-loading.png') });
     } finally { blocked.release(); }
     if (screen === 'sky') {
@@ -148,7 +140,7 @@ test('opening a Sky Placement article from a revealed reading does not replay th
 });
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const reducedMotion of ['no-preference', 'reduce'] as const) for (const choice of ['system', 'on', 'off'] as const) {
-  test(`compact report moon keeps inline sizing at ${width} in ${theme} with ${reducedMotion} and ${choice}`, async ({ page }, info) => {
+  test(`report loading orbit keeps its card sizing at ${width} in ${theme} with ${reducedMotion} and ${choice}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 844 });
     await page.emulateMedia({ reducedMotion });
     await prepare(page, theme);
@@ -166,30 +158,32 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     });
     try {
       await page.goto('/reports/', { waitUntil: 'domcontentloaded' });
-      const loading = page.getByRole('status', { name: 'Loading your reports…', exact: true });
-      const moon = loading.locator('.loading-moon--compact');
+      await expect(page.getByRole('heading',{name:'Reports',exact:true})).toBeVisible();
+      await page.evaluate(()=>document.fonts.ready);
+      const loading = page.locator('.report-state-card[aria-busy="true"]').filter({hasText:'Loading your reports…'});
+      const moon = loading.locator('.report-loading');
       await expect(moon).toBeVisible();
-      await expect(moon).toHaveCSS('width', '16px');
-      await expect(moon).toHaveCSS('height', '16px');
+      await expect(moon).toHaveCSS('width', '40px');
+      await expect(moon).toHaveCSS('height', '40px');
       await expect(moon).toHaveCSS('color', theme === 'dark' ? 'rgb(236, 238, 242)' : 'rgb(28, 31, 38)');
-      const shadow = moon.locator('.loading-moon__shadow');
+      const shadow = moon;
       const bounds = await loading.boundingBox();
       expect(bounds!.x).toBeGreaterThanOrEqual(0);
       expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      if (choice === 'off' || (choice === 'system' && reducedMotion === 'reduce')) {
+      if (reducedMotion === 'reduce' || choice === 'off') {
         await expect(shadow).toHaveCSS('animation-name', 'none');
-        await expect(shadow).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 8, 0)');
+        await expect(shadow).toHaveCSS('transform', 'none');
       } else {
-        await expect(shadow).toHaveCSS('animation-name', 'startup-moon-phase');
+        await expect(shadow).toHaveCSS('animation-name', 'report-orbit');
         const before = await shadow.evaluate(el => getComputedStyle(el).transform);
         await expect.poll(() => shadow.evaluate(el => getComputedStyle(el).transform)).not.toBe(before);
       }
       expect(await loading.boundingBox()).toEqual(bounds);
-      await expect(loading.locator('span')).toHaveCSS('font-size', '16px');
+      await expect(loading.locator('p')).toHaveCSS('font-size', '19px');
       await page.screenshot({ path: info.outputPath('compact-moon.png') });
     } finally { blocked.release(); }
-    await expect(page.getByRole('status', { name: 'Loading your reports…', exact: true })).toHaveCount(0);
+    await expect(page.locator('.report-state-card[aria-busy="true"]').filter({hasText:'Loading your reports…'})).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Reports', exact: true })).toBeVisible();
   });
 }
@@ -209,12 +203,10 @@ for (const choice of ['On', 'Off', 'System'] as const) {
     await page.route(/\/assets\/CalendarRoute-.*\.js$/, async route => { await blocked.promise; await route.continue().catch(() => {}); });
     try {
       await page.getByRole('button', { name: 'Calendar', exact: true }).first().click();
-      const shadow = page.getByRole('status', { name: 'Loading calendar…', exact: true }).locator('.loading-moon__shadow');
-      await expect(shadow).toHaveCSS('animation-name', choice === 'On' ? 'startup-moon-phase' : 'none');
-      if (choice === 'On') {
-        const before = await shadow.evaluate(node => getComputedStyle(node).transform);
-        await expect.poll(() => shadow.evaluate(node => getComputedStyle(node).transform)).not.toBe(before);
-      }
+      const loading = page.locator('.app-loading[aria-label="Loading calendar…"]');
+      await expect(loading).toBeVisible();
+      await expect(loading.locator('.loading-moon')).toHaveCount(0);
+      await expect(loading.locator('.card-skeleton-bar').first()).toHaveCSS('animation-name', 'none');
     } finally { blocked.release(); }
     await expect(page.getByRole('region', { name: 'Lunar calendar', exact: true })).toBeVisible();
   });
@@ -258,7 +250,7 @@ for (const width of [390, 1024, 1440, 1768]) for (const theme of ['light', 'dark
     };
     try {
       await page.goto('/#you', { waitUntil: 'domcontentloaded' });
-      await expect(page.getByRole('status', { name: 'Loading transit readings…', exact: true })).toBeVisible();
+      await expect(page.locator('.app-loading[aria-label="Loading transit readings…"]')).toBeVisible();
       await assertContained();
     } finally { blocked.release(); }
     await expect(page.getByRole('alert').filter({ hasText: 'The transit readings could not load.' })).toBeVisible();

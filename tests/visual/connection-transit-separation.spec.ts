@@ -44,6 +44,7 @@ async function seed(page: Page, theme: string, multipleContacts = false, mixedCo
     window.localStorage.clear();
     window.localStorage.setItem("tldrastro:friendsPerformanceSeeded", "true");
     window.localStorage.setItem("tldrastro:theme", theme);
+    window.localStorage.setItem("tldrastro:pageAnimations", "off");
     window.localStorage.setItem("tldrastro:sunriseOrb", "true");
     window.localStorage.setItem("tldrastro:dyslexiaFont", "false");
     window.localStorage.setItem("tldrastro:friendsTab", "charts");

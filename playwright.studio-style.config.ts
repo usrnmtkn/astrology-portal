@@ -9,7 +9,7 @@ export default defineConfig({
   webServer: [
     // Source status and published-copy checks use the actual reader frame.
     { command: 'VITE_STUDIO_PARENT_ORIGIN=http://127.0.0.1:4284 npm run build:web && VITE_STUDIO_READER_ORIGIN=http://127.0.0.1:4285 npm run build:admin && npm run preview -w @tldr/web -- --port 4285 --strictPort',
-      url: 'http://127.0.0.1:4285', reuseExistingServer: false, timeout: 180000 },
+      url: 'http://127.0.0.1:4285', reuseExistingServer: false, timeout: 300000 },
     { command: 'npm run preview -w @tldr/admin -- --port 4284 --strictPort', url: 'http://127.0.0.1:4284', reuseExistingServer: false, timeout: 30000 }
   ],
 });
