@@ -3,6 +3,18 @@ import {AdminDisclosureSummary} from './AdminNativeControls';
 import {StudioButton,StudioTextarea} from './StudioControls';
 export {reconcileHoroscopeEdits,horoscopeEditableState} from './horoscopeEditReconciliation';
 
+/** A lost first revision reply leaves the live source unchanged. Check its
+ * private revision before offering a retry; never replay the draft write. */
+export async function readHoroscopeDraftAfterFailure(saved:any,readSaved:(id:string)=>Promise<any>,read:(url:string)=>Promise<any>){
+  let latest=await readSaved(saved.id);
+  if(saved.status==='LIVE'&&latest.updated_at===saved.updated_at){
+    const result=await read('/api/admin/generated-content?'+new URLSearchParams({horoscopeEditions:'true',contentKey:saved.content_key}));
+    const revision=result.rows?.[0];
+    if(revision?.event_type==='horoscope-edition-revision'&&revision.source_snapshot?.targetRowId===saved.id&&revision.source_snapshot?.targetRowUpdatedAt===saved.updated_at)latest=revision;
+  }
+  return latest.updated_at===saved.updated_at?null:latest;
+}
+
 export default function HoroscopeSaveRecovery({conflict,busy,onChoose,onDownload}:{conflict:any;busy:boolean;onChoose:(state:any)=>void;onDownload:()=>void}){
   return <div role="group" aria-label="Compare saved changes">
     <p>Only the fields changed in both versions need a choice. Other edits will be kept. Choosing a version does not save or publish it.</p>

@@ -124,12 +124,18 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByLabel('Complete reading',{exact:true}).fill(edited);
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
+   const revision=(await call({method:'rows'})).find((row:any)=>row.event_type==='horoscope-edition-revision');
+   expect(revision.id).not.toBe(published.id);expect(revision.status).toBe('DRAFT');
+   expect((await call({method:'rows'})).find((row:any)=>row.id===published.id)).toEqual(published);
+   expect((await call({method:'reader',body:{ids:[published.id]}})).payload.rows[0].sections.horoscopeEdition).toEqual(published.sections.horoscopeEdition);
+   await expect(page).toHaveURL(new RegExp(`edition=${revision.id}$`));
    await page.reload();
    await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toBeVisible();
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();
-   await table.getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
+   await expect(table.getByRole('row').filter({hasText:'October 5, 2026'})).toHaveCount(2);
+   await table.getByRole('row').filter({hasText:'Draft revision'}).getByRole('button',{name:/October 5, 2026.*Review \/ Edit/}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(edited);
    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
@@ -138,6 +144,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    const saved=(await call({method:'rows'})).find((row:any)=>row.id===published.id);
    expect(saved.status).toBe('LIVE');expect(saved.sections.horoscopeEdition.passages[0].body).toBe(edited);
    expect(saved.sections.horoscopeEdition.passages.slice(1)).toEqual(published.sections.horoscopeEdition.passages.slice(1));
+   expect((await call({method:'rows'})).find((row:any)=>row.id===revision.id).status).toBe('ARCHIVED');
    const reader=await call({method:'reader',body:{ids:[published.id]}});
    expect(reader.status).toBe(200);expect(reader.payload.rows[0].sections.horoscopeEdition).toEqual(saved.sections.horoscopeEdition);
    expect((await call({method:'writer-state'})).calls).toBe(0);

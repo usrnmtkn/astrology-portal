@@ -124,6 +124,7 @@ type GeneratedContentWriteBody = {
     | "import-csv-draft"
     | "approve-package-revision"
     | "publish-standalone-article-revision"
+    | "publish-horoscope-edition-revision"
     | "approve-sky-article-edition"
     | "save-sky-article-edition-revision"
     | "publish-sky-article-edition-revision";
@@ -1333,7 +1334,7 @@ async function readJsonBody(req: IncomingMessage) {
 
 const generatedContentOwnerActions = new Set([
   "import-csv-draft", "publish-owner-content", "save-and-publish-owner-content",
-  "approve-and-schedule", "approve-package-revision", "publish-standalone-article-revision", "approve-sky-article-edition",
+  "approve-and-schedule", "approve-package-revision", "publish-standalone-article-revision", "publish-horoscope-edition-revision", "approve-sky-article-edition",
   "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
 ]);
 
@@ -1868,6 +1869,7 @@ async function generatedContentStats(req: IncomingMessage) {
 }
 
 async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
+  if (body.eventType === 'horoscope-edition-revision') throw new GeneratedContentRequestError('Save a revision from its published horoscope edition.', 409);
   await prepareStudioVariables(body);
   if (!body.contentKey?.trim()) {
     throw new GeneratedContentRequestError("contentKey is required.");
@@ -2191,7 +2193,7 @@ type PublicationContext = {
   dependencies: Map<string, PublicationDependency>; targetPublication?: unknown; receipt?: Record<string, unknown>;
 };
 const publicationContext = new AsyncLocalStorage<PublicationContext>();
-const atomicPublicationActions = new Set(["approve-package-revision", "publish-sky-article-edition-revision", "publish-standalone-article-revision"]);
+const atomicPublicationActions = new Set(["approve-package-revision", "publish-sky-article-edition-revision", "publish-standalone-article-revision", "publish-horoscope-edition-revision"]);
 
 function recordPublicationDependency(row: { id: string; updated_at: string }, publicationRevision?: string | number) {
   const context = publicationContext.getStore();
@@ -2218,7 +2220,8 @@ async function publicationRpc(name: string, body: Record<string, unknown>) {
 
 function identifyPublicationOperation(body: GeneratedContentWriteBody, context: PublicationContext) {
   const identity = JSON.stringify({ schema: "content-studio-publication-operation-v1", actor: context.actor,
-    action: body.ownerAction, proposalId: body.id, proposalVersion: body.expectedUpdatedAt });
+    action: body.ownerAction, proposalId: body.id, proposalVersion: body.expectedUpdatedAt,
+    ...(body.ownerAction==='publish-horoscope-edition-revision'?{horoscopeValidationOverride:body.horoscopeValidationOverride===true}:{}) });
   context.requestSha256 = createHash("sha256").update(identity).digest("hex");
   context.operationId = context.requestSha256;
 }
@@ -2314,7 +2317,8 @@ async function upsertGeneratedContentRow(row: Record<string, unknown>) {
       ...(row.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "resolution=ignore-duplicates,return=representation"
     },
-    body: JSON.stringify(row)
+    body: JSON.stringify((row.sections as any)?.horoscopeEdition?.window?.period==='weekly'
+      ?{...row,source_snapshot:encodeWeeklyHistory(row.source_snapshot)}:row)
   });
   const payload = response.payload;
   if (!response.ok) {
@@ -2527,7 +2531,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   requireCallerVersion(body.expectedUpdatedAt);
   if (atomicPublicationActions.has(body.ownerAction ?? "")) {
-    if (Object.entries(body).some(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)) {
+    const fields=["id", "ownerAction", "expectedUpdatedAt",...(body.ownerAction==='publish-horoscope-edition-revision'?["horoscopeValidationOverride"]:[])];
+    if (Object.entries(body).some(([key, value]) => !fields.includes(key) && value !== undefined)
+      || body.horoscopeValidationOverride !== undefined && typeof body.horoscopeValidationOverride !== 'boolean') {
       throw new GeneratedContentRequestError("Publish the saved revision separately from other edits.", 400);
     }
     const context = publicationContext.getStore()!;
@@ -2608,6 +2614,39 @@ async function updateGeneratedContent(req: IncomingMessage) {
   };
 
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
+  const horoscopeRevision = existing.event_type === 'horoscope-edition-revision';
+  if (horoscopeRevision && (ownerPublication || body.status === 'LIVE')) {
+    throw new GeneratedContentRequestError('Save this horoscope revision, then publish its saved changes.', 409);
+  }
+  if (horoscopeRevision && !body.ownerAction) { body.lane = 'reference'; body.reviewState = 'owner-review-required'; }
+  if (body.ownerAction === 'publish-horoscope-edition-revision') {
+    if (Object.keys(body).some(key => !['id','expectedUpdatedAt','ownerAction','horoscopeValidationOverride'].includes(key))
+      || body.horoscopeValidationOverride !== undefined && typeof body.horoscopeValidationOverride !== 'boolean') {
+      throw new GeneratedContentRequestError('Publish the saved revision; save other changes first.', 409);
+    }
+    const target = horoscopeRevision && existing.mode === 'studio-draft' && existing.status === 'DRAFT'
+      ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
+    if (!target || !target.content_key.startsWith('horoscope/') || target.content_key !== existing.content_key
+      || target.mode !== 'article' || target.status !== 'LIVE' || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
+      throw new GeneratedContentRequestError('The published horoscope edition changed. Reopen it before publishing this revision.', 409);
+    }
+    const now = nextGeneratedContentVersion(target.updated_at);
+    const approved = {...target, headline:existing.headline, summary:existing.summary, body:existing.body,
+      sections:existing.sections, facts:existing.facts, updated_at:existing.updated_at, source_snapshot:existing.source_snapshot};
+    const snapshot:Record<string,any> = {...existing.source_snapshot, review_status:'approved', studioOwnerApproval:studioOwnerApproval(approved, now)};
+    delete snapshot.targetRowId; delete snapshot.targetRowUpdatedAt; delete snapshot.targetContentKey;
+    if (body.horoscopeValidationOverride === true) snapshot.studioOwnerApproval.horoscopeValidationOverride = {
+      approved:true, savedVersion:existing.updated_at, approvedAt:now,
+      issues:horoscopePublicationIssues(approved,true).filter(issue => issue.category === 'horoscope_fact_boundary')
+    };
+    const editionPatch = {headline:existing.headline, summary:existing.summary, body:existing.body, sections:existing.sections,
+      facts:existing.facts, source_snapshot:snapshot, status:'LIVE', lane:'serving', review_state:null,
+      updated_at:now, reviewed_at:now, published_at:now};
+    assertReaderEligiblePublication({...target,...editionPatch});
+    if(existing.sections?.horoscopeEdition?.window?.period==='weekly')editionPatch.source_snapshot=encodeWeeklyHistory(snapshot);
+    publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
+    return publishRevisionAtomically(body,existing,target,editionPatch);
+  }
   if (existing.event_type === "standalone-article-revision" && (ownerPublication || body.status === "LIVE")) {
     throw new GeneratedContentRequestError("Save this article revision, then publish its saved changes.", 409);
   }
@@ -3212,8 +3251,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.sourceSnapshot !== undefined) {
     patch.source_snapshot = body.sourceSnapshot;
-    if (existing.content_key.startsWith('horoscope/') && existing.source_snapshot?.horoscopeGeneration) {
-      patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}), horoscopeGeneration: existing.source_snapshot.horoscopeGeneration };
+    if (existing.content_key.startsWith('horoscope/')) {
+      patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}),
+        ...(existing.source_snapshot?.horoscopeGeneration ? {horoscopeGeneration: existing.source_snapshot.horoscopeGeneration} : {}) };
     }
   }
 
@@ -3346,6 +3386,25 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
+  if (horoscopeRevision) {
+    if (['contentKey','surface','mode','eventType','targetDate'].some(key => body[key] !== undefined)) {
+      throw new GeneratedContentRequestError('A horoscope revision must keep its published edition identity.', 409);
+    }
+    patch.lane = 'reference';
+    patch.review_state = 'owner-review-required';
+    patch.source_snapshot = {...existing.source_snapshot, ...(patch.source_snapshot as object ?? {}),
+      targetRowId:existing.source_snapshot?.targetRowId, targetRowUpdatedAt:existing.source_snapshot?.targetRowUpdatedAt,
+      targetContentKey:existing.source_snapshot?.targetContentKey};
+  }
+  if (existing.content_key.startsWith('horoscope/') && existing.mode === 'article' && existing.status === 'LIVE'
+    && patch.status === 'DRAFT' && !body.ownerAction && !body.sourceLifecycleAction) {
+    const revision = {...existing,...patch,id:undefined,mode:'studio-draft',event_type:'horoscope-edition-revision',
+      source_snapshot:{...existing.source_snapshot,...(patch.source_snapshot as object ?? {}),
+        targetRowId:existing.id,targetRowUpdatedAt:existing.updated_at,targetContentKey:existing.content_key},
+      status:'DRAFT',lane:'reference',review_state:'owner-review-required',published_at:null};
+    assertHoroscopeRow(revision,{previous:existing});
+    return upsertGeneratedContentRow(revision);
+  }
   if (standaloneArticleKind(existing.content_key) && existing.mode === "article" && existing.status === "LIVE"
     && body.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction) {
     return upsertGeneratedContentRow({
@@ -3557,8 +3616,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       // Browsing needs no provider history, prompt snapshots or duplicate body.
       // Opt in so already-open clients still receive complete documents.
       // Project in storage, before transferring and parsing the result.
-      const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",mode:"eq.article",
-        select:versionOnly?'id,updated_at':inventoryOnly?'id,content_key,headline,status,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
+      const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",
+        or:'(mode.eq.article,and(mode.eq.studio-draft,event_type.eq.horoscope-edition-revision))',
+        select:versionOnly?'id,updated_at':inventoryOnly?'id,content_key,headline,status,event_type,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
+      // Completed private revisions stay in history, but must not obscure the
+      // current published edition when opening its dates or browsing the list.
+      if(!id)params.set('and','(or(event_type.neq.horoscope-edition-revision,event_type.is.null,status.neq.ARCHIVED))');
       if(id)params.set('id',`eq.${id}`);
       // Full saved documents retain the writer's bounded read budget. They can
       // contain many complete historical requests; opening must not truncate them.
@@ -3595,7 +3658,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         if (!atomicPublicationActions.has(action) || !id) throw new GeneratedContentRequestError("Select the saved publication to check.");
         requireCallerVersion(version);
         const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
-        identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version }, context);
+        identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version,
+          horoscopeValidationOverride:requestUrl.searchParams.get('horoscopeValidationOverride')==='true' }, context);
         const result = await publicationContext.run(context, async () => {
           const receipt = await readPublicationReceipt();
           return receipt ? { found: true, rows: await rowsFromPublicationReceipt(receipt), publicationReceipt: context.receipt } : { found: false, rows: [] };

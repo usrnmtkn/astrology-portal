@@ -179,6 +179,7 @@ export default defineConfig(({ command, mode }) => {
             if (startupModules.has(id)) return "index";
             // Coalesce small shared chunks without pulling deferred source models into startup.
             if (deferredSource(id)) {
+              if (/\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:mjs|tsx|ts)$/u, '');
             }
             // Instructions and save recovery stay independently loadable from
@@ -223,6 +224,7 @@ export default defineConfig(({ command, mode }) => {
         compress: {
           passes: 5,
           // Retaining shared functions compresses better across the Studio chunks.
+          inline: 1,
           reduce_funcs: false
         },
         format: {

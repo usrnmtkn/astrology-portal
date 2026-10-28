@@ -32,7 +32,7 @@ assert.equal((await action('generate',{sign:'aries',approvedPlanHash:'wrong'})).
 const plan=await action('prepare');assert.equal(plan.status,200,JSON.stringify(plan.payload));assert.equal(plan.payload.plan.readings.length,12);assert.equal(writerFixture.calls,0);
 row=plan.payload.rows[0];
 assert(row.source_snapshot.weeklyComparison?.contextHash,'Plan preparation returns its saved historical context and new version');
-const planHash=plan.payload.plan.planHash;
+let planHash=plan.payload.plan.planHash;
 assert.equal(brief.referenceDate,'2026-09-21','Weekly context is stable across selected days');
 for(const entry of plan.payload.plan.readings){
  const sunIngress=entry.developments.events.find((d:any)=>d.type==='ingress'&&d.planet==='sun');
@@ -154,10 +154,19 @@ assert.deepEqual(row.source_snapshot.horoscopeGeneration.readings.aries.lint.vio
 assert(horoscopeEditionAt([row],'weekly','2026-09-24T16:00:00Z','Asia/Tokyo'));
 assert.equal(horoscopeEditionAt([row],'weekly','2026-09-24T16:00:00Z','America/New_York'),null);
 // Lost provider confirmation is isolated to one sign, never automatically replayed.
+const publishedBeforeRevision=structuredClone(row);
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,status:'DRAFT'});assert.equal(result.status,200);row=result.payload.rows[0];
+assert.notEqual(row.id,publishedBeforeRevision.id,'Editing a published edition creates a separate private draft');
 edition=structuredClone(row.sections.horoscopeEdition);
 edition.passages[0]={sign:'aries',headline:'',body:''};edition.passages[1]={sign:'taurus',headline:'',body:''};
 result=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sections:{horoscopeEdition:edition},body:horoscopeEditionBody(edition)});assert.equal(result.status,200);row=result.payload.rows[0];
+const requestsBeforeNewPlan=[writerFixture.calls,writerFixture.reviewCalls,writerFixture.batchCalls],publishedPlanHash=planHash;
+assert.equal((await action('generate',{sign:'aries',approvedPlanHash:publishedPlanHash})).status,409,'A new private draft cannot reuse the published edition comparison identity');
+result=await action('prepare');assert.equal(result.status,200,JSON.stringify(result.payload));row=result.payload.rows[0];planHash=result.payload.plan.planHash;
+assert.notEqual(planHash,publishedPlanHash,'The new draft needs its own explicit plan approval');
+assert.equal(row.source_snapshot.weeklyComparison.editionId,row.id);
+assert.deepEqual([writerFixture.calls,writerFixture.reviewCalls,writerFixture.batchCalls],requestsBeforeNewPlan,'Preparing the new comparison never sends an AI request');
+assert.deepEqual(decodeWeeklyHistoryRow(store.rows.get(publishedBeforeRevision.id)),publishedBeforeRevision,'Plan preparation leaves the published source unchanged');
 const beforeReservation=structuredClone(row),fixtureFetch=globalThis.fetch;
 let reservations=0;
 globalThis.fetch=async(input:any,options:any={})=>{

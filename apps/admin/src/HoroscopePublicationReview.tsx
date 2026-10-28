@@ -1,10 +1,18 @@
-export {publishSavedOwnerContent, ownerPublicationStatusPath} from './ownerPublication';
+import {publishSavedOwnerContent,ownerPublicationStatusPath} from './ownerPublication';
 import {useEffect,useState,type ReactNode} from 'react';
 import {ownerCredentialIdentity} from './ownerSession';
 import {StudioButton} from './StudioControls';
 import {horoscopeEditionReaderHref} from './adminReaderDestinations';
 import {FormattedProse} from '../../../src/shared/components/FormattedProse';
 import {horoscopeSignLabel,type HoroscopeEdition} from '../../web/src/content/horoscopeEditions.mjs';
+
+export function publishSavedHoroscope(row:any,request:(url:string,body?:unknown)=>Promise<any>,validationOverride:boolean){
+  const revision=row.event_type==='horoscope-edition-revision';
+  const ownerAction=revision?'publish-horoscope-edition-revision':'publish-owner-content';
+  return publishSavedOwnerContent({...row,id:revision?row.source_snapshot?.targetRowId:row.id},
+    ()=>request('/api/admin/generated-content',{id:row.id,ownerAction,expectedUpdatedAt:row.updated_at,...(validationOverride?{horoscopeValidationOverride:true}:{})}),
+    ()=>request(ownerPublicationStatusPath(row,ownerAction,validationOverride)));
+}
 
 type Props={
   draft:HoroscopeEdition;saved:any;sign:string;dirty:boolean;locked:boolean;approved:boolean;publication:any;
@@ -38,6 +46,7 @@ export default function HoroscopePublicationReview({draft,saved,sign,dirty,locke
       <p>This edition is archived. Its saved readings are preserved.</p>
       <div className="admin-horoscope-actions"><StudioButton disabled={locked} onClick={onBack}>Review archived readings</StudioButton></div>
     </>:<>
+          {saved?.event_type==='horoscope-edition-revision'&&<p>The published edition stays available while you review this draft. Publishing replaces it with these saved readings.</p>}
           {!publicationCurrent&&<p role="status">Checking all saved readings before publication…</p>}
           {publicationCurrent&&publication.error&&<div role="alert"><p>{publication.error}</p><StudioButton disabled={locked} onClick={()=>publication.status===409?onReload():setAttempt(value=>value+1)}>{publication.status===409?'Reload saved edition':'Check publication again'}</StudioButton></div>}
           {publicationCurrent&&publication.issues.length>0&&<section aria-label="Publication checks">

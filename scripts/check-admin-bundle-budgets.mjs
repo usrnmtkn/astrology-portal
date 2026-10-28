@@ -203,6 +203,17 @@ if (groupedCalendar) {
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry && !(groupedCalendar && calendarLazyEntries.includes(key))) failures.push(`Expected lazy Admin entry is missing: ${key}`);
 }
+// Optional writing/recovery downloads must not block opening a saved edition.
+const editionImports = new Set();
+function visitEdition(key) {
+  if (editionImports.has(key) || !manifest[key]) return;
+  editionImports.add(key);
+  for (const dependency of manifest[key].imports ?? []) visitEdition(dependency);
+}
+visitEdition('src/HoroscopeEditionsStudio.tsx');
+if ([...editionImports].some(key => /\/Horoscope(?:WritingStudio|SaveRecovery)-/.test(manifest[key].file))) {
+  failures.push('Optional horoscope writing/recovery panels entered the saved-edition import graph.');
+}
 // Editor, fallback, and publication panels share the review workspace chunk.
 // Both it and source factories must still be absent from startup imports.
 const expectedDeferredGroups = [

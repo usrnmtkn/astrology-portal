@@ -111,7 +111,8 @@ export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=
     if (typeof packet?.signature !== 'string' || !/^[a-f0-9]{64}$/u.test(packet.signature)
       || !timingSafeEqual(Buffer.from(expected),Buffer.from(packet.signature))) throw new Error('Prepare calculated dates and facts before saving this edition.');
     if (JSON.stringify(edition.window) !== JSON.stringify(validateHoroscopeWindow(packet.brief.window))
-      || !isHoroscopeEditionKey(row.content_key,edition.window) || row.surface !== 'sky' || row.mode !== 'article'
+      || !isHoroscopeEditionKey(row.content_key,edition.window) || row.surface !== 'sky'
+      || !(row.mode === 'article' || row.mode === 'studio-draft' && row.event_type === 'horoscope-edition-revision' && row.lane === 'reference' && row.status !== 'LIVE')
       || row.body !== horoscopeEditionBody(edition)) throw new Error('The edition must preserve its calculated dates, identity and complete passages.');
     if(row.status==='LIVE') {
       const issue=horoscopePublicationIssues(row).find(issue=>!hasHoroscopeValidationOverride(row)||issue.category!=='horoscope_fact_boundary');
