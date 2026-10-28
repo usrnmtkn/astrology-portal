@@ -276,6 +276,10 @@ export default defineConfig(({ mode }) => {
             // UI-only shared primitives travel with their existing React
             // dependency; pure eligibility/bootstrap code must not await it.
             if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)) return "react";
+            // Calendar and Studio share these keys and timing templates. Keep
+            // their reader dependency outside Studio's deferred editor workspace.
+            if (/\/shared\/features\/calendar\/(?:calendarTransitionPhraseIdentity|calendarTimingTemplates)\.ts$/u.test(id)
+              || /\/shared\/(?:seasonArticle|articleLibrary)\.ts$/u.test(id)) return "sky";
             if (/\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader)\.mjs$/u.test(id)
               || /\/(?:content\/transitNatalIdentity|services\/transitReturns)\.ts$/u.test(id)) return "reader-eligibility";
             // Studio's reader-copy editors share one lazy workspace.

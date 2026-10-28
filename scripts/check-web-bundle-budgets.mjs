@@ -117,6 +117,11 @@ if ([...skyListReaderFiles].some(file => /fallback-content-sky-placement-(?!mani
 if ([...skyReaderFiles, ...skyListReaderFiles].some(file => file.includes("studio-editor-tools-"))) {
   throw new Error("The Sky reader downloads Studio editor tools through a shared dependency.");
 }
+const calendarReaderKey = "src/features/calendar/LunarCalendar.tsx";
+if (!manifest[calendarReaderKey]) throw new Error("The Calendar reader is missing from the build manifest.");
+if ([...collectStaticManifestGraph(manifest, [calendarReaderKey])].some(file => file.includes("studio-editor-tools-"))) {
+  throw new Error("The Calendar reader downloads Studio editor tools through a shared dependency.");
+}
 const appItem = filesByName.get(manifest[appKey].file);
 const deferredTransitFallbackItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-transit-"));
 const deferredRelationshipFallbackItems = javaScriptFiles.filter((item) => item.file.includes("fallback-content-relationships-"));

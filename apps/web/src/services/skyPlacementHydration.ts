@@ -32,7 +32,7 @@ async function completeSources(selection: string | undefined, entry: SourcePrepa
   await entry.setup;
   for (let attempt = 0; attempt < 2; attempt++) {
     if (entry.superseded) throw new Error("Sky publications changed during loading.");
-    const identity = skyPlacementPublicationIdentity();
+    const identity = skyPlacementPublicationIdentity(selection);
     if (entry.initialList && entry.initialReaderKey && !isFallbackOnlySkyPlacementPreview()
       && skyListPublicationsAvailableOnline() && initialSkyReaderAvailable(entry.initialReaderKey)) {
       return { coreBundle: null, placementBundle: null, identity, scope: "initial-reader" };
@@ -51,7 +51,7 @@ async function completeSources(selection: string | undefined, entry: SourcePrepa
     const subset = completedSelected === undefined && contentPublicationsAvailableOnline();
     const placementBundle = subset ? null : completedSelected === undefined ? await selected : completedSelected;
     if (entry.superseded) throw new Error("Sky publications changed during loading.");
-    if (identity !== skyPlacementPublicationIdentity()) continue;
+    if (identity !== skyPlacementPublicationIdentity(selection)) continue;
     const missing = missingSkyPlacementPublications(subset ? [coreBundle] : [coreBundle, placementBundle]);
     if (missing.length) throw new Error(`Current Sky publications did not load: ${missing.join(", ")}`);
     return { coreBundle, placementBundle, identity, scope: subset ? "compiled-guest" : "full" };
@@ -87,7 +87,7 @@ function requiredCompletion(key: string, selection: string | undefined, entry: S
 export function prepareSkyPlacementSources(selection?: string, options?: { compiledGuest?: Promise<string | null>; initialList?: boolean; initialReaderKey?: string }) {
   // The list may use a smaller local source package. A full reader must never
   // inherit that readiness, even when both callers select the same placements.
-  const key = `${options?.initialList ? `initial-list:${options.initialReaderKey ?? "fallback"}:` : ""}${selection ?? "all"}`, identity = skyPlacementPublicationIdentity();
+  const key = `${options?.initialList ? `initial-list:${options.initialReaderKey ?? "fallback"}:` : ""}${selection ?? "all"}`, identity = skyPlacementPublicationIdentity(selection);
   let entry = pending.get(key);
   if (entry?.epoch && entry.epoch !== identity) {
     entry.superseded = true; entry = undefined;
@@ -113,7 +113,7 @@ export function prepareSkyPlacementSources(selection?: string, options?: { compi
         if (current.superseded) return;
       }
       if (!(initialList && skyListPublicationsAvailableOnline()) && !contentPublicationsResolved()) throw new Error("Sky publication state is unavailable.");
-      current.epoch = skyPlacementPublicationIdentity();
+      current.epoch = skyPlacementPublicationIdentity(selection);
     });
     pending.set(key, current);
 

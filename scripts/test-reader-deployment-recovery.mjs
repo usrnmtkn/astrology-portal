@@ -2,6 +2,8 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { runInNewContext } from "node:vm";
+import { build } from "esbuild";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,3 +40,32 @@ for (const route of ["/", "/index.html", "/admin/(.*)", "/reports/(.*)", "/learn
 }
 
 console.log("Reader deployment recovery contract passed.");
+
+// Exercise both shipped recovery owners against real routes. Auth navigation
+// must not be replaced by a retry of the document it is leaving.
+const recovery = await build({entryPoints: [path.join(repoRoot, "src/shared/components/PageLoading.tsx")],
+  bundle: true, write: false, platform: "node", format: "cjs", loader: {".css": "empty"},
+  define: {"process.env.NODE_ENV": '"production"'}});
+for (const [owner, source] of [["startup", startup + "\nglobalThis.recover = reloadReaderRouteOnce;"],
+  ["mounted", recovery.outputFiles[0].text + "\nglobalThis.recover = module.exports.reloadReaderRouteOnce;"]]) {
+  for (const [route, allowed] of [["/?auth=login", false], ["/?auth=signup#friends", false],
+    ["/?code=synthetic-code", false], ["/#access_token=synthetic-token", false],
+    ["/admin/content", false], ["/reports/example", false], ["/#calendar?view=day", true],
+    ["/?date=2030-01-01#sky", true], ["/learn", true], ["/friends", true]]) {
+    let reloads = 0;
+    const location = Object.assign(new URL(route, "https://fixture.example.test"), {reload: () => reloads++});
+    const history = {state: {}, replaceState(value) {this.state = value;}};
+    const window = {location, history, localStorage: {getItem: () => null}, addEventListener() {}, setTimeout: () => 1};
+    const context = {window, location, history, URLSearchParams, module: {exports: {}}, exports: {},
+      document: {getElementById: () => null, querySelector: () => null,
+        documentElement: {dataset: {}, toggleAttribute() {}}},
+      matchMedia: () => ({matches: false, addEventListener() {}}),
+      MutationObserver: class {observe() {}}, clearTimeout() {}};
+    runInNewContext(source, context);
+    assert.equal(context.recover(), allowed, `${owner}: ${route}`);
+    assert.equal(reloads, allowed ? 1 : 0, `${owner}: ${route} reload count`);
+    if (allowed) {assert.equal(context.recover(), false); assert.equal(reloads, 1, 'The reader still gets exactly one automatic retry');}
+    else assert.deepEqual(history.state, {}, 'Auth/editor history remains untouched');
+  }
+}
+console.log("PASS startup and mounted auth-route exclusion, editor protection and one-shot reader recovery.");

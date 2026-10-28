@@ -32,7 +32,7 @@ export function planetaryHoroscopeWindow(position:PlanetPosition,generatedAt:str
 export function usePlanetaryHoroscopeSources(selection?:string) {
   const [revision,setRevision]=useState(0);
   const [loaded,setLoaded]=useState<{selection?:string;identity:string;revision:number;error:boolean}|null>(null);
-  const identity=skyPlacementPublicationIdentity();
+  const identity=skyPlacementPublicationIdentity(selection);
   const refresh=()=>setRevision(value=>value+1);
   useEffect(()=>subscribeToContentUpdates(refresh),[]);
   useEffect(()=>subscribeToContentRevalidation(refresh),[]);
@@ -41,11 +41,11 @@ export function usePlanetaryHoroscopeSources(selection?:string) {
     let cancelled=false;
     void prepareSkyPlacementSources(selection).then(sources=>{
       if(cancelled)return;
-      if(sources.identity!==skyPlacementPublicationIdentity())throw new Error('Publication changed.');
+      if(sources.identity!==skyPlacementPublicationIdentity(selection))throw new Error('Publication changed.');
       installSkyCoreFallbackArchitectureV3Bundle(sources.coreBundle);
       installSkyPlacementFallbackArchitectureV3Bundle(sources.placementBundle);
       setLoaded({selection,identity:sources.identity,revision,error:false});
-    }).catch(()=>{if(!cancelled)setLoaded({selection,identity:skyPlacementPublicationIdentity(),revision,error:true});});
+    }).catch(()=>{if(!cancelled)setLoaded({selection,identity:skyPlacementPublicationIdentity(selection),revision,error:true});});
     return()=>{cancelled=true;};
   },[selection,identity,revision]);
   const current=loaded&&loaded.selection===selection&&loaded.identity===identity&&loaded.revision===revision?loaded:null;

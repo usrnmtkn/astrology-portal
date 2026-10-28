@@ -11240,7 +11240,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   // A ledger change invalidates prose during render, before asynchronous effects
   // can install the new source set. A clock tick does not change this identity.
   const skyPlacementFallbackStatus: SkyPlacementContentStatus = hasPreparedInitialReader ? "ready" : skyPlacementLoadStatus === "ready"
-    && (skyListEditionMissing || skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity() || resolvedPlacementSelection !== placementRequirementSelection) ? "loading" : skyPlacementLoadStatus;
+    && (skyListEditionMissing || skyPlacementResolvedIdentity !== skyPlacementPublicationIdentity(placementSelection || undefined) || resolvedPlacementSelection !== placementRequirementSelection) ? "loading" : skyPlacementLoadStatus;
   const [personalTransitLoadStatus, setPersonalTransitLoadStatus] = useState<SkyPlacementContentStatus>("idle");
   const [personalTransitResolvedIdentity, setPersonalTransitResolvedIdentity] = useState<string | null>(null);
   const [personalTransitRetry, setPersonalTransitRetry] = useState(0);
@@ -12328,7 +12328,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     // personalization retains the existing full-Sky readiness boundary.
     if (!sky && !isSettledGuestReader()) return;
     const commitResolvedSkyDetail = (detail: SkyDetail | null) => {
-      setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity());
+      setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity(placementSelection || undefined));
       setSelectedSkyDetail(detail);
     };
     setSkyDetailReadError(null);
@@ -12514,7 +12514,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         const [, , planet, sign] = decodeSkyRouteParts(skyDetailRoutePath!);
         return skyIngressEssayReaderSection(eligibleSkyDetailContent(content).values(), {
           activeInstant: placementSky.generatedAt, planet: normalizeContentIdPart(planet), sign: normalizeContentIdPart(sign)
-        }, contentPublication) ? skyPlacementPublicationIdentity() : null;
+        }, contentPublication) ? skyPlacementPublicationIdentity(selection || undefined) : null;
       }) : undefined;
     const sourceRequest = prepareSkyPlacementSources(selection || undefined, {
       compiledGuest, initialList: isTodayMode && !skyDetailRoutePath, initialReaderKey: preparedInitialReaderKey
@@ -12532,7 +12532,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     void Promise.all([sourceRequest, editionsRequest]).then(([{ coreBundle, placementBundle, identity, scope }, { editionKeys, publishedEditions }]) => {
       if (!recoveryIsCurrent()) return;
       if (scope === "compiled-guest" && (!contentPublicationsAvailableOnline() || !isSettledGuestReader())) throw new Error("Sky publication state is unavailable.");
-      if (identity !== skyPlacementPublicationIdentity()) throw new Error("Sky sources changed during loading. Please retry.");
+      if (identity !== skyPlacementPublicationIdentity(selection || undefined)) throw new Error("Sky sources changed during loading. Please retry.");
       if (editionKeys.some(key => !publishedEditions.has(key))) throw new Error("The current article publication could not load.");
       // Commit both overlays in the same task; never announce the bundled
       // passage as ready and replace it later with the Studio passage.
@@ -12553,7 +12553,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       setConnectionPlacementRetry(null);
       console.warn("Sky placement sources failed to load.", error);
       setSkyPlacementFallbackStatus(previous => previous === "ready"
-        && !skyListEditionMissing && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity() && resolvedPlacementSelection === placementRequirementSelection ? previous : "error");
+        && !skyListEditionMissing && skyPlacementResolvedIdentity === skyPlacementPublicationIdentity(selection || undefined) && resolvedPlacementSelection === placementRequirementSelection ? previous : "error");
     });
 
     return () => {

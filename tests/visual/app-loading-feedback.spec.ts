@@ -220,9 +220,11 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
       try {
         const page = await context.newPage();
         const calculationDownloads: string[] = [];
+        const studioEditorDownloads: string[] = [];
         context.on("request", request => {
           const path = new URL(request.url()).pathname;
           if (/^\/wasm\/(?:[a-f0-9]{16}\/)?swisseph\.(?:wasm|data)$/.test(path)) calculationDownloads.push(path);
+          if (/\/assets\/studio-editor-tools-[^/]+\.js$/u.test(path)) studioEditorDownloads.push(path);
         });
         // Freeze calendar dates only. Playwright's clock also replaces the
         // Performance API, which would suppress the real User Timing measures.
@@ -272,6 +274,7 @@ test("Calendar cold mobile and desktop deliver controls and complete reading wit
           }))),
           contentType: 'application/json'
         });
+        expect(studioEditorDownloads).toEqual([]);
         expect(calculationDownloads.sort()).toEqual([
           expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.data$/),
           expect.stringMatching(/^\/wasm\/[a-f0-9]{16}\/swisseph\.wasm$/)
