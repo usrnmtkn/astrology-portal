@@ -1685,7 +1685,12 @@ export function ManualChartsPanel({
     }
 
     return (["short", "long"] as const).flatMap((durationClass) => {
-      const transits = selectedFriendEligibleTransits.filter((transit) => transit.term === durationClass);
+      // Report sources, previews, and the opened article must use the same
+      // searched window; the initial estimate can cross a civil-date boundary.
+      const transits = selectedFriendEligibleTransits.flatMap((transit) => {
+        const timing = selectedFriendTransitTiming.timings?.get(transit.id);
+        return transit.term === durationClass && timing ? [{ ...transit, timing }] : [];
+      });
 
       if (transits.length === 0 || !selectedChart) {
         return [];
@@ -1741,7 +1746,7 @@ export function ManualChartsPanel({
         })
       }];
     });
-  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendEligibleTransits]);
+  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendEligibleTransits, selectedFriendTransitTiming.timings]);
   const selectedFriendPlacementRows = useMemo(() => {
     if (!friendProfileWork.natal || !selectedChart || !selectedFriendReadyNatalChart) {
       return [];
