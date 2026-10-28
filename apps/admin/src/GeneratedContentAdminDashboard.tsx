@@ -4556,7 +4556,7 @@ export function GeneratedContentAdminDashboard() {
       || draft.body.trim()
     ));
     const hasUnsavedChanges = Boolean(draft && !matchesSavedDraft && hasDraftContent);
-    if ((hasUnsavedChanges || hasPendingArticleChanges()) && !window.confirm("Discard the unsaved changes in this editor?")) {
+    if ((hasUnsavedChanges || hasPendingArticleChanges()) && !confirmDiscardEditorChanges()) {
       return false;
     }
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
@@ -5995,7 +5995,7 @@ export function GeneratedContentAdminDashboard() {
       hasChangedSavedDraft()
       || hasPendingArticleChanges()
     );
-    if (replacingUnsavedEditor && !preservingParentDraft && !window.confirm("Discard the unsaved changes in this editor?")) return false;
+    if (replacingUnsavedEditor && !preservingParentDraft && !confirmDiscardEditorChanges()) return false;
     // Capture focus and the owner's decision before loading disables controls.
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
@@ -6352,7 +6352,7 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (draft && (hasChangedSavedDraft() || hasPendingArticleChanges())
-        && !window.confirm("Discard the unsaved changes in this editor?")) return;
+        && !confirmDiscardEditorChanges()) return;
       if (document.activeElement instanceof HTMLElement) editorReturnFocusRef.current = document.activeElement;
       setSelectedRowId(null);
       setEditorSourceRow(null);
@@ -6456,9 +6456,13 @@ export function GeneratedContentAdminDashboard() {
     });
   }
 
+  function confirmDiscardEditorChanges() {
+    return window.confirm("Discard the unsaved changes in this editor?");
+  }
+
   function confirmSkyEditorNavigation() {
     const unsaved = hasChangedSavedDraft();
-    return !(unsaved || hasPendingArticleChanges()) || window.confirm("Discard the unsaved changes in this editor?");
+    return !(unsaved || hasPendingArticleChanges()) || confirmDiscardEditorChanges();
   }
 
   function openRelatedSkyRow(parentId: string, row: AdminGeneratedContentRow) {
@@ -6729,7 +6733,7 @@ export function GeneratedContentAdminDashboard() {
 
   async function openSkySummaryField(field: SkySummaryField, initialBody?: string) {
     if (hasChangedSavedDraft()
-      && !window.confirm("Discard the unsaved changes in this editor?")) return;
+      && !confirmDiscardEditorChanges()) return;
     setIsLoading(true);
     try {
       const { skySummaryCandidateReceipt, loadSkySummarySourceBank } = await import("./skySummarySourceBank");
@@ -6836,7 +6840,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function openConnectionSource(key: string) {
-    if (hasChangedSavedDraft() && !window.confirm("Discard the unsaved changes in this editor?")) return;
+    if (hasChangedSavedDraft() && !confirmDiscardEditorChanges()) return;
     const requestId = ++connectionSourceRequestRef.current;
     const originatingHash = window.location.hash;
     setIsLoading(true);
