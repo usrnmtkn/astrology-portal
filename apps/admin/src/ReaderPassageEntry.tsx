@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
-import { requestStudioJson } from './generatedContentClient';
+import { requestStudioJson, studioPackageSourcePath } from './generatedContentClient';
 import { StudioButton } from './StudioControls';
 import type { PlacementSourceRow } from './skyPlacementSourceSelection';
 
@@ -28,7 +28,7 @@ export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrar
         ?? (fromLibrary && key.startsWith('sky-article/')
           ? ordered.find(row => row.content_key === key && row.status === 'ARCHIVED' && !/^(package|builtin):/u.test(row.id)) : undefined);
       if (!row) {
-        const packaged = await requestStudioJson(`/api/admin/package-source?${new URLSearchParams({ contentKey: key })}`, secret);
+        const packaged = await requestStudioJson(studioPackageSourcePath(key), secret);
         if (!active) return;
         const source = packaged.packageSource as Record<string, unknown> | null;
         if (source?.contentKey === key) row = { id: `package:${key}`, content_key: key,
