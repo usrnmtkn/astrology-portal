@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { studioLazy } from "./studioLazy";
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
@@ -28,6 +29,7 @@ const templateGuidance: Record<string, string> = {
   exampleOrder: "List all seven planets once, separated by commas. This selects examples only."
 };
 const rowSignature = (row?: SummaryCompositionRow) => JSON.stringify([row?.id, row?.updated_at, row?.status, row?.body]);
+const SkyDebilityDatePreview = studioLazy(() => import("./SkyDebilityDatePreview").then(module => ({ default: module.SkyDebilityDatePreview })));
 
 export function SkyDebilityStudio({ rows, onEdit, onOpenDraft, secret, busy }: {
   rows: SummaryCompositionRow[];
@@ -134,6 +136,9 @@ export function SkyDebilityStudio({ rows, onEdit, onOpenDraft, secret, busy }: {
       </div>
     </header>
 
+    <Suspense fallback={<p role="status">Loading date preview…</p>}>
+      <SkyDebilityDatePreview rows={rows} secret={secret} onOpen={onOpenDraft} busy={busy} />
+    </Suspense>
     <SkyDebilityReviewDrafts rows={rows} secret={secret} onOpen={onOpenDraft} busy={busy} />
 
     <SkyDebilityCompositionMap composition={composition} read={read} onSelectSource={selectSource} busy={busy} hasUnsaved={hasUnsaved} positions={previewPositions} />

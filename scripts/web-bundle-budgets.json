@@ -14,7 +14,7 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 144000,
-  "totalJavaScriptGzipBytes": 3688400,
+  "totalJavaScriptGzipBytes": 3692650,
   "_rationale": {
     "mobileReadingFinalIntegration20261030": "Matched independent main e75656392 and integrated PR #1372 builds use their own locked dependencies, local knowledge builds, native ARM Node 22.20.0 and identical synthetic Supabase settings with natal aspect patterns enabled. Aggregate JavaScript measures 3686964 and 3688189 gzip bytes (+1225); this exceeds the inherited 3687650 ceiling by 539. Allocate only 750 aggregate bytes to 3688400, leaving 211 measured bytes. App boot is 396868/396900, App chunk 88973/89000, reader boot 455024/455250, Sky detail 6829/6850 and horoscope reader 5603/5650; all existing individual limits remain unchanged. Reader initial CSS falls 196 bytes and aggregate CSS 256; shared deferred Studio CSS is unchanged. Preserve publicationStatusRefresh20261030 verbatim and all graph isolation, source-payload and runtime gates. This records the requested mobile feature cost, including visible compact Sky countdowns, not a performance improvement. See docs/qa/mobile-card-detail-parity-2026-10-29.md.",
     "friendsTransitReaderLayout20261029": "The same independent main a8e89c62 comparison measures the deferred Sky detail reader at 6812 gzip bytes on main and 6827 after PR #1372's supplied lunar glyph and personal transit presentation repairs (+15). The verified missed Friends handle variant adds 5 bytes over the earlier candidate, recognizing existing calculated transit context without relying only on compactHeader. Allocate only 25 bytes above the prior 6825 ceiling to 6850, leaving 23 bytes above the measured candidate. This records the requested reader layout and icon feature cost, not a loading improvement. Ordinary full Sky articles retain their layout; all other graph, payload, source and runtime guards remain unchanged.",
@@ -273,7 +273,8 @@
         "readerBootFiles": 0
       },
       "reason": "Fresh matched independent npm-ci builds after the verified Daily release; Web uses identical synthetic Playwright flags and standalone Admin uses its matched configuration. Feature and Calendar fixture bytes remain identical to149a. Preserve every earlier allocation/rationale and all numeric limits; no new allowance. The final comparison supersedes the prior pre-rebase measurements for this release, without a performance improvement claim."
-    }
+    },
+    "skyDignityDatePreview20261027": "Matched integrated web builds of main b2babfec34847ff7207db111e9cd81cdece40577 and the owner-requested Studio dignity date preview use the same independently npm-ci-installed checkout, native Node22.20.0 arm64, lockfile and environment. Main measures3654773 aggregate gzip bytes across252 JavaScript files; the feature measures3658917 across253 (+4144). Allocate4250 aggregate bytes for the separately lazy Studio panel, exact draft binding, verified date/time calculation and full saved-copy rendering. Reader startup, App, CSS, individual chunks, private payload and runtime guards remain unchanged. The51 private draft bodies load through the owner API and are not bundled. This is the requested interface cost, not a performance improvement. See docs/qa/sky-dignity-date-preview.md."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
   "memoryGraphCssGzipBytes": 31800,
