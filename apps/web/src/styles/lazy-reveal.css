@@ -121,7 +121,7 @@
 
 .app-loading.app-loading--skeleton { display: grid; width: 100%; max-width: 100%; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
 /* Full-route skeletons share the same fixed-header clearance as page content. */
-.app-shell > .app-loading.app-loading--skeleton { max-width: var(--page-content-width); margin: var(--page-top) auto 0; }
+.app-shell > .app-loading--skeleton { max-width: var(--page-content-width); margin: var(--page-top) auto 0; }
 .loading-pattern__items, .loading-card, .loading-lines, .loading-cover { display: grid; min-width: 0; gap: var(--space-4); }
 .loading-card { padding: var(--modal-panel-padding); border-radius: var(--card-radius-sm); background: var(--surface); box-shadow: var(--card-shadow); }
 .loading-card__heading { display: flex; align-items: center; gap: var(--space-4); min-width: 0; }
