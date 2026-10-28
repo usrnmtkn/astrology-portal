@@ -37,8 +37,14 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
   const oldRevision={...fixture.pending,status:'ARCHIVED'};
   const store=await studioApiStore([archived,olderArchive,oldRevision],{uuidIds:true});
   const writes:any[]=[];
+  let rejectPublishedRead=false,publishedReads=0;
   await context.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
-  await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
+  await routeStudioInventoryApi(context,{call:async request=>{
+   if(rejectPublishedRead&&request.method==='GET'&&new URL(request.url!,'https://fixture.invalid').searchParams.get('id')===archived.id){
+    publishedReads++;return {status:503,payload:{error:'Synthetic post-publication read unavailable.'}};
+   }
+   return store.call(request);
+  },actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
    if(url.pathname==='/api/admin/content-live-status'||url.pathname==='/api/content-reader'){
     const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;
    }
@@ -75,6 +81,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const reader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id]}});expect(reader.payload.rows).toEqual([]);
    await editor.getByRole('button',{name:'Close',exact:true}).click();await page.reload();
    await expect(copy).toHaveValue(/Synthetic published final sentence/u);
+   rejectPublishedRead=width===1440&&theme==='dark';
    await editor.getByRole('button',{name:'Approve & publish complete edition',exact:true}).click();
    await expect(editor.getByText('Published copy is unchanged.',{exact:true})).toBeVisible();
    const published=(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id);
@@ -90,6 +97,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    expect(await store.call({method:'publications'})).toEqual(publishedLedger);
    const unchangedReader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id]}});
    expect(unchangedReader.payload.rows[0].body).toBe(published.body);
+   expect(publishedReads).toBe(0);rejectPublishedRead=false;
    await page.reload();await expect(copy).toHaveValue(revised);
    await editor.getByRole('button',{name:'Review & publish',exact:true}).click();
    await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
