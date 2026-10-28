@@ -34,7 +34,7 @@ async function signupFixture(page: any, mode: string, theme: string, phoneEnable
 }
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const mode of ['create', 'login']) {
-  test(`New auth design preserves phone ${mode} ${width} ${theme}`, async ({ page }) => {
+  test(`auth access: New auth design preserves phone ${mode} ${width} ${theme}`, async ({ page }) => {
     await page.setViewportSize({ width, height: 1000 });
     await signupFixture(page, mode, theme);
     await page.getByRole('button', { name: 'Continue with phone', exact: true }).click();
@@ -63,7 +63,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   });
 }
 
-for (const mode of ['create', 'login']) test(`Email confirmation retains invitation without a session ${mode}`, async ({ page }) => {
+for (const mode of ['create', 'login']) test(`auth access: Email confirmation retains invitation without a session ${mode}`, async ({ page }) => {
   await signupFixture(page, mode, 'light', false);
   await expect(page.getByRole('button', { name: 'Continue with phone', exact: true })).toHaveCount(0);
   await page.getByRole('textbox', { name: 'Email', exact: true }).fill('synthetic@example.test');
