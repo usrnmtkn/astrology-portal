@@ -24,7 +24,7 @@ const calendarWriting = (status: 'LIVE' | 'DRAFT') => {
 };
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
- test(`Content Library reopens an archived dated Sky article for explicit restore and later published edits ${width} ${theme}`,async({page,context})=>{
+ test(`Content Library reopens an archived dated Sky article for explicit restore and later published edits ${width} ${theme}`,async({page,context},testInfo)=>{
   test.setTimeout(90000);
   const fixture=await skyPlacementSourceFixture('sun','libra');
   const archivedEdition=await reviseSkyArticleEdition(fixture.active.sections.skyArticleEdition,{
@@ -52,7 +52,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    return false;
   }});
   try{
-   await page.setViewportSize({width,height:1000});await page.goto('/admin/content#exact-content');
+   await page.setViewportSize({width,height:753});await page.goto('/admin/content#exact-content');
    await page.getByRole('searchbox',{name:'Search content',exact:true}).fill(archived.headline);
    if(width===390)await page.getByRole('button',{name:'Filters',exact:true}).click();
    await page.getByRole('button',{name:'Show retired',exact:true}).click();
@@ -64,6 +64,27 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const editor=page.getByRole('dialog',{name:'Generated content editor'}),copy=editor.getByRole('textbox',{name:'Sky article general copy',exact:true});
    await expect(copy).toHaveValue(/Synthetic published opening[\s\S]*Synthetic published final sentence/u);
    await expect(editor.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
+   const expectAnchoredEditor=async()=>{
+    const geometry=await editor.evaluate(panel=>{
+     const header=panel.querySelector('.admin-editor-header')!.getBoundingClientRect();
+     const footer=panel.querySelector('.admin-editor-savebar')!.getBoundingClientRect();
+     return {scrollTop:panel.scrollTop,headerTop:header.top,footerBottom:footer.bottom,viewportHeight:innerHeight};
+    });
+    expect(geometry.scrollTop).toBe(0);
+    expect(geometry.headerTop).toBeGreaterThanOrEqual(0);
+    expect(geometry.footerBottom).toBeLessThanOrEqual(geometry.viewportHeight);
+    expect(geometry.viewportHeight-geometry.footerBottom).toBeLessThan(64);
+   };
+   await copy.evaluate(field=>field.scrollIntoView({block:'center',behavior:'instant'}));
+   await expectAnchoredEditor();
+   await editor.getByRole('button',{name:'Close',exact:true}).focus();
+   const controls=editor.locator('button:enabled,input:enabled,select:enabled,textarea:enabled,summary,[href],[tabindex]:not([tabindex="-1"])');
+   const visibleControls=(await Promise.all((await controls.all()).map(control=>control.isVisible()))).filter(Boolean).length;
+   for(let index=0;index<=visibleControls;index++){
+    await page.keyboard.press('Tab');
+    await expectAnchoredEditor();
+   }
+   await page.screenshot({path:testInfo.outputPath('anchored-editor.png')});
    expect(writes).toEqual([]);expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(ledger);
    const libraryUrl=page.url(),readerUrl=new URL(libraryUrl);
    const [readerRoute,readerQuery]=readerUrl.hash.split('?'),readerParams=new URLSearchParams(readerQuery);
@@ -73,6 +94,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(editor).toHaveCount(0);expect(writes).toEqual([]);
    await page.goto(libraryUrl);await expect(copy).toHaveValue(/Synthetic published final sentence/u);
    await page.reload();await expect(copy).toHaveValue(/Synthetic published final sentence/u);
+   await expectAnchoredEditor();
    await editor.getByRole('button',{name:'Restore as draft',exact:true}).click();
    await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id)?.status).toBe('DRAFT');
    const restored=(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id);
