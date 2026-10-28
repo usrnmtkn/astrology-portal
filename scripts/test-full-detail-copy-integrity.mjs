@@ -98,6 +98,9 @@ const allowedLineClampSelectors = new Set([
   ".transit-card-preview",
   ".natal-insight-card__preview",
   ".friends-timing-card__body",
+  // The day sheet previews a complete, separately linked personal article.
+  // friends-pair-forecast.spec.ts verifies the full approved source survives.
+  ".pair-forecast-transit-preview",
   ":is(.natal-placement-sections, .natal-big-three) .placement-table-row__description",
   ".sky-page .planet-placement-row__description",
   ".horoscope-planet-grid .planet-placement-row__description",

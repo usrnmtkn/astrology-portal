@@ -83,7 +83,7 @@ assert.match(globalLayer, /window\.addEventListener\(reportReadyEvent/u);
 assert.match(globalLayer, /reports-nav-badge/u);
 assert.doesNotMatch(globalLayer, /styles\/report-library\.css/u);
 
-assert.match(libraryView, /id="report-library-title">Reports<\/h1>/u);
+assert.match(libraryView, /<h1\b[^>]*id="report-library-title"[^>]*>Reports<\/h1>/u);
 assert.match(libraryView, /SegmentedControl/u);
 assert.match(libraryView, /Archived/u);
 assert.match(libraryView, /Share2/u, "Ready reports must offer Share in the overflow menu.");
