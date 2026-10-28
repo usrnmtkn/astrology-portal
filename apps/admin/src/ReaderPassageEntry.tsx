@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
-import { requestStudioJson, studioPackageSourcePath } from './generatedContentClient';
+import { requestStudioJson, studioInventoryDocumentsPath, studioPackageSourcePath } from './generatedContentClient';
 import { StudioButton } from './StudioControls';
 import type { PlacementSourceRow } from './skyPlacementSourceSelection';
 
@@ -16,9 +16,7 @@ export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrar
     void (async () => {
       const key = context.sourceKey;
       const keys = [key, ...(key.startsWith('sky-article/') ? [key.replace('sky-article/', 'sky-article-revision/')] : [])];
-      const params = new URLSearchParams({ status: 'all', visibility: 'all', limit: '20' });
-      keys.forEach(value => params.append('contentKeys', value));
-      const result = await requestStudioJson(`/api/admin/generated-content-inventory?${params}`, secret);
+      const result = await requestStudioJson(studioInventoryDocumentsPath(keys, 20), secret);
       if (!active) return;
       const rows = result.rows as PlacementSourceRow[];
       if (!Array.isArray(rows) || rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) throw new Error('The complete editing source could not be verified.');
