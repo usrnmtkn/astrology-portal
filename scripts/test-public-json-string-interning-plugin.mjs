@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { resolveConfig } from 'vite';
 import { parseAst } from 'rollup/parseAst';
 import { rollup } from 'rollup';
-import { internJsonStringLiterals, internPublicJsonStringsPlugin } from './public-json-string-interning-plugin.mjs';
+import { internApplicationStringsPlugin, internJsonStringLiterals, internPublicJsonStringsPlugin } from './public-json-string-interning-plugin.mjs';
 
 // Use the installed Vite JSON transform; no server, fixture serializer or copy rewrite.
 const config = await resolveConfig({ configFile: false, envFile: false, json: { stringify: false }, plugins: [internPublicJsonStringsPlugin()] }, 'build');
@@ -81,3 +81,18 @@ for (const file of ['bundled-sky-core-rows-v3.json', 'bundled-sky-placement-rows
   assert.equal(createHash('sha256').update(await readFile(path)).digest('hex'), digest);
 }
 console.log('PASS actual Vite exports, values, own-key order, identities, Unicode, collisions, tree shaking and governed input digests');
+
+const applicationPlugin = internApplicationStringsPlugin();
+const moduleUrl = `data:text/javascript,export const imported=${encodeURIComponent(JSON.stringify(long))}`;
+const applicationCode = `import { imported } from ${JSON.stringify(moduleUrl)}; export { imported }; export const sourceA=${JSON.stringify(moduleUrl)}; export const sourceB=${JSON.stringify(moduleUrl)}; export default {first:${JSON.stringify(long)},second:${JSON.stringify(long)}};`;
+const appChunk = { name: 'App', modules: { '/repo/apps/web/src/App.tsx': {} } };
+const applicationResult = applicationPlugin.renderChunk.call({ parse: parseAst }, applicationCode, appChunk, { format: 'es' });
+assert(applicationResult);
+compare(await evaluate(applicationCode), await evaluate(applicationResult.code));
+for (const chunk of [{ name: 'memory-graph-renderer', modules: appChunk.modules },
+  { name: 'vendor', modules: { '/repo/node_modules/vendor/index.js': {} } },
+  { name: 'mixed', modules: { ...appChunk.modules, '/repo/node_modules/ogl/index.js': {} } }]) {
+  assert.equal(applicationPlugin.renderChunk.call({ parse: parseAst }, applicationCode, chunk, { format: 'es' }), null);
+}
+assert.equal(applicationPlugin.renderChunk.call({ parse: parseAst }, applicationCode, appChunk, { format: 'cjs' }), null);
+console.log('PASS application chunk imports, complete string values, ES-module boundary and pinned renderer exclusions');

@@ -97,7 +97,7 @@
 
 .floating-back-button {
   position: fixed;
-  top: var(--top-control-top);
+  top: var(--article-back-top);
   left: 36px;
   z-index: var(--z-floating);
   display: inline-flex;
@@ -189,6 +189,7 @@ body.modal-open {
 }
 
 .modal-panel {
+  position: relative;
   width: min(var(--modal-width), 100%);
   max-height: min(780px, calc(100svh - 80px));
   overflow-x: hidden;

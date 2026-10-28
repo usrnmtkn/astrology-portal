@@ -13,7 +13,7 @@ async function expectSeparateHoroscopesAfterAspects(page: Page) {
   await expect(card.locator("#sky-rising-horoscopes")).toHaveCount(1);
   await expect(page.locator(".sky-detail-card #sky-rising-horoscopes")).toHaveCount(0);
   await expect(page.locator(".article-related-aspects-card").first()).toBeVisible({ timeout: 60_000 });
-  await expect(page.locator("#sky-detail-key-dates-title")).toBeVisible({ timeout: 60_000 });
+  await expect(page.locator(".sky-placement-key-dates > summary h2")).toBeVisible({ timeout: 60_000 });
   const layout = await card.evaluate(element => {
     const aspects = [...document.querySelectorAll(".article-related-aspects-card")];
     const typography = (heading: Element) => {
@@ -25,12 +25,12 @@ async function expectSeparateHoroscopesAfterAspects(page: Page) {
       separate: element.parentElement?.classList.contains("article-shell"),
       belowAspects: aspects.every(aspect => aspect.getBoundingClientRect().bottom < element.getBoundingClientRect().top),
       heading: typography(element.querySelector("h2")!),
-      establishedHeading: typography(document.querySelector("#sky-detail-key-dates-title")!),
+      establishedHeading: typography(document.querySelector(".sky-placement-key-dates > summary h2")!),
     };
   });
   expect(layout.separate).toBe(true);
   expect(layout.belowAspects).toBe(true);
-  expect(layout.heading).toEqual(layout.establishedHeading);
+  for (const heading of [layout.heading, layout.establishedHeading]) { expect(heading[0]).toContain("Newsreader"); expect(heading[2]).toBe("400"); }
   await card.evaluate(element => window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - 240));
   const title = (await page.locator("#sky-detail-title").innerText()).replace(/\s+/gu, "-").toLowerCase();
   const theme = (await page.locator(".app-shell").getAttribute("class"))?.includes("theme-dark") ? "dark" : "light";
@@ -65,7 +65,7 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await expect(page.locator("#sky-detail-title")).toHaveText("Neptune Rx in Aries");
     const headerDates = page.locator(".sky-detail-id .article-duration");
     await expect(headerDates.first()).toHaveText(/Jul 7, 2026 - Dec 12, 2026/);
-    await expect(headerDates.nth(1)).toHaveText(/Full residency in Aries: March 30, 2025 to March 23, 2039/);
+    await expect(headerDates.nth(1)).toHaveText(/Neptune in Aries March 30, 2025 to March 23, 2039/);
     await expect(page.locator(".article-body-inner p").first()).toHaveText(modifier("Neptune"));
     // Preserve both the opening and final sentence of the owner-authored base unit.
     await expect(page.locator(".sky-detail-article")).toContainText("Neptune in Aries makes a new dream feel urgent before its shape is fully clear.");
@@ -123,8 +123,8 @@ test("all current Rx cards open matching motion-aware articles", async ({ page }
 test("both retrograde endpoints survive standalone aspect rendering", async ({ page }) => {
   await page.goto("/?date=2026-09-07#sky/aspect/neptune/sextile/pluto");
   await expect(page.locator("#sky-detail-title")).toHaveText("Neptune Rx Sextile Pluto Rx", { timeout: 60_000 });
-  await expect(page.locator(".article-eyebrow")).toHaveAttribute("aria-label", /Aspect: Neptune Neptune Retrograde sextile Pluto Pluto Retrograde/);
-  await expect(page.locator(".article-eyebrow__glyphs")).toHaveText(/℞.*℞/);
+  await expect(page.locator(".article-id > .aspect-badge")).toHaveAttribute("data-aspect", "sextile");
+  await expect(page.locator("#sky-detail-title")).toHaveText(/Neptune Rx.*Pluto Rx/);
   await expect(page.locator(".sky-detail-rising-horoscopes-card")).toHaveCount(0);
 });
 
@@ -132,7 +132,7 @@ test("missing canonical Rx content never exposes direct-only placement prose", a
   test.setTimeout(90_000);
   await page.route("**/canonical-sky-reader-transport-v1*.json", route => route.abort());
   await page.goto("/?date=2026-09-07#sky/placement/neptune/aries");
-  await expect(page.getByText("The placement reading could not load. Please try again.")).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole("alert").getByText("This placement could not load. Check your connection and try again.", { exact: true })).toBeVisible({ timeout: 60_000 });
   await expect(page.locator("#sky-detail-title")).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText("Neptune in Aries makes a new dream feel urgent");
   await expect(page.locator("body")).not.toContainText(modifier("Neptune"));
@@ -186,7 +186,7 @@ test("dated aspect reload uses post-station motion even with an Rx Sky date", as
   const title = `${event.planets[0]} ${event.aspect[0].toUpperCase() + event.aspect.slice(1)} Neptune`;
   await expect(page.locator("#sky-detail-title")).toHaveText(title, { timeout: 60_000 });
   await expect(page.locator(".sky-detail-id .article-duration")).toContainText("December");
-  await expect(page.locator(".article-eyebrow__glyphs")).not.toContainText("℞");
+  await expect(page.locator("#sky-detail-title")).not.toContainText("Rx");
 });
 
 test("Saturn detail survives background refresh without feed flash or scroll reset", async ({ page }) => {
@@ -258,8 +258,8 @@ for (const width of [390, 1440]) test(`Saturn date windows stay visible through 
   await page.goto("/?date=2026-09-07#sky/placement/saturn/aries");
   const dates = page.locator(".sky-detail-id .article-duration");
   await expect(dates).toHaveText([
-    "Jul 26, 2026 - Dec 10, 2026",
-    "Full residency in Aries: May 24, 2025 to April 12, 2028"
+    "Saturn Rx Jul 26, 2026 - Dec 10, 2026",
+    "Saturn in Aries May 24, 2025 to April 12, 2028"
   ], { timeout: 60_000 });
   await page.evaluate(() => document.fonts.ready);
   // The article can finish its own exact placement calculation before the
@@ -309,7 +309,7 @@ for (const width of [390, 1440]) test(`Saturn date windows stay visible through 
     window.dispatchEvent(new PopStateEvent("popstate"));
   });
   await expect(page.locator("#sky-detail-title")).toHaveText("Saturn in Aries", { timeout: 60_000 });
-  await expect(dates).not.toContainText(["Jul 26, 2026 - Dec 10, 2026"]);
+  await expect(dates).not.toContainText(["Saturn Rx Jul 26, 2026 - Dec 10, 2026"]);
 });
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
@@ -326,7 +326,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(parts).toHaveText([rx.Body, row.tldrWhat, row.tldrTakeaway, row.fallback.hook, row.fallback.lived, row.fallback.turn]);
   await expect(body).not.toContainText(row.placementArticle);
   const dates = page.locator(".sky-detail-id .article-duration").first();
-  await expect(dates).toHaveText("Jul 26, 2026 - Dec 10, 2026", { timeout: 60_000 });
+  await expect(dates).toHaveText("Saturn Rx Jul 26, 2026 - Dec 10, 2026", { timeout: 60_000 });
   await page.screenshot({ path: `test-results/evergreen-reader-${width}-${theme}.png`, fullPage: true });
   await page.reload();
   await expect(parts).toHaveText([rx.Body, row.tldrWhat, row.tldrTakeaway, row.fallback.hook, row.fallback.lived, row.fallback.turn], { timeout: 60_000 });

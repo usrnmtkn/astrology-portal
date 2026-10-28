@@ -3,11 +3,12 @@ import { Fragment, type ReactNode } from "react";
 import type { SkyDebilityDisplayPart } from "./skyDebilityPresentation";
 
 /** Shared semantic inline presentation, without HTML injection. */
-export function SkyDebilityInline({ parts, renderText, linkPrefix = "", linkTarget }: {
+export function SkyDebilityInline({ parts, renderText, linkPrefix = "", linkTarget, highlightCount = true }: {
   parts: readonly SkyDebilityDisplayPart[];
   renderText?: (part: SkyDebilityDisplayPart) => ReactNode;
   linkPrefix?: string;
   linkTarget?: "_blank";
+  highlightCount?: boolean;
 }) {
   const node = (part: SkyDebilityDisplayPart, index: number) => <Fragment key={index}>{part.href
     ? <a className="sky-daily-summary__link" href={`${linkPrefix}${part.href}`} target={linkTarget}
@@ -20,6 +21,7 @@ export function SkyDebilityInline({ parts, renderText, linkPrefix = "", linkTarg
     else groups.push({ emphasized, parts: [part] });
   }
   return <>{groups.map((group, index) => group.emphasized
-    ? <mark key={index} className="content-highlight" data-testid="effort-count-statement">{group.parts.map(node)}</mark>
+    ? highlightCount ? <mark key={index} className="content-highlight" data-testid="effort-count-statement">{group.parts.map(node)}</mark>
+      : <span key={index} data-testid="effort-count-statement">{group.parts.map(node)}</span>
     : <Fragment key={index}>{group.parts.map(node)}</Fragment>)}</>;
 }

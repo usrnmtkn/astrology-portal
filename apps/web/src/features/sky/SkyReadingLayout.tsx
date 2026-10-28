@@ -1,4 +1,5 @@
 import { createContext, useContext, useLayoutEffect, useState, type ReactNode } from "react";
+import { PageLoading } from "../../components/PageLoading";
 import { LoadingStatus } from "../../components/CardSkeleton";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { useSkeletonGeometry } from "../../hooks/useSkeletonGeometry";
@@ -51,7 +52,7 @@ export function SkyReadingLayout({ persistKey, pending, failed, placementCount =
   return <SummarySettled.Provider value={setSummarySettled}>
     <CardsSettled.Provider value={setCardsSettled}>
       <div ref={geometry} className="sky-reading-layout" aria-busy={loading}>
-        {loading && <div className="sky-reading-layout__loading"><LoadingStatus>Loading the sky…</LoadingStatus><SkyPlacementSection><SkyPlacementListSkeleton count={placementCount} /></SkyPlacementSection></div>}
+        {loading && <div className="sky-reading-layout__loading"><LoadingStatus>Loading the sky…</LoadingStatus><div className="sky-summary-loading"><PageLoading layout="prose" announce={false}/></div><SkyPlacementSection><SkyPlacementListSkeleton count={placementCount} grouped announce={false} /></SkyPlacementSection></div>}
         <div className="sky-reading-layout__content" aria-hidden={loading || undefined}>{children}</div>
       </div>
     </CardsSettled.Provider>

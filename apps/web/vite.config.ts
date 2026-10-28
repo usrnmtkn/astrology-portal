@@ -1,4 +1,4 @@
-import { internPublicJsonStringsPlugin } from "../../scripts/public-json-string-interning-plugin.mjs";
+import { internApplicationStringsPlugin, internPublicJsonStringsPlugin } from "../../scripts/public-json-string-interning-plugin.mjs";
 import { sharedReaderAuthoredRowsPlugin } from "../../scripts/reader-authored-sharing-plugin.mjs";
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
 import { defineConfig, loadEnv } from "vite";
@@ -225,7 +225,8 @@ export default defineConfig(({ mode }) => {
       browserOnlySwissEphemerisPlugin(),
       trimSwissEphemerisWebDataPlugin(),
       react(),
-      internPublicJsonStringsPlugin()
+      internPublicJsonStringsPlugin(),
+      internApplicationStringsPlugin()
     ],
     assetsInclude: ["**/*.wasm"],
     // Emit imported JSON as literals so the minifier can compact property keys
@@ -244,7 +245,7 @@ export default defineConfig(({ mode }) => {
     build: {
       // Match the standalone Studio's compression without changing lazy boundaries.
       minify: "terser",
-      terserOptions: { ecma: 2020, compress: { passes: 5 }, format: { comments: false, ascii_only: true, wrap_func_args: false } },
+      terserOptions: { ecma: 2020, compress: { passes: 5, inline: false }, format: { comments: false, ascii_only: true, wrap_func_args: false } },
       manifest: true,
       // Large data registries are route-split and governed by gzip budgets.
       // Use a raw-size advisory that reflects the largest intentional registry.
@@ -287,11 +288,11 @@ export default defineConfig(({ mode }) => {
             // Shared civil-date/location helpers are used together by Sky and
             // its articles; one chunk avoids repeated tiny preload dependencies.
             if (/\/services\/(?:timezones|skySelection|skyClock)\.ts$/u.test(id)
-              || id.endsWith("/services/initialSkyRoute.mjs")) return "sky-time";
+              || id.endsWith("/services/initialSkyRoute.mjs")) return "reader-eligibility";
             // Reader publication state, transport and update notices share one
             // startup boundary; avoid three separate imports and gzip headers.
             if (id.endsWith("/content/contentPublicationState.ts")
-              || /\/services\/(?:contentPublications|contentUpdateSignal|readerContentClient|anonymousReaderTransport|publicationLedgerTransport)\.ts$/u.test(id)) return "content-publications";
+              || /\/services\/(?:contentPublications|contentUpdateSignal|readerContentClient|anonymousReaderTransport|publicationLedgerTransport)\.ts$/u.test(id)) return "reader-eligibility";
             // Keep the shared reader/Studio return paths with their authentication callers.
             // A separate shared chunk adds a preload import to every auth consumer.
             if (/\/services\/(?:auth|studioAuthReturn|readerAuthReturn)\.ts$/u.test(id)) {

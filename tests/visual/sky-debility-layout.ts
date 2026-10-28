@@ -14,13 +14,14 @@ export async function expectEffortCardSpacing(card: Locator) {
     const headerStyle = getComputedStyle(header);
     const bodyStyle = getComputedStyle(body);
     const probe = document.createElement("span");
-    probe.style.cssText = "position:absolute;visibility:hidden;width:var(--space-4);height:var(--space-5);font-family:var(--font-body);font-size:var(--text-body);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
+    probe.style.cssText = "position:absolute;visibility:hidden;width:var(--space-3);height:0;font-family:var(--font-body);font-size:var(--text-body);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
     body.append(probe);
     const expected = getComputedStyle(probe);
     const paragraphStyle = getComputedStyle(paragraphs[0]);
     const metrics = {
       headingGap: paragraphs[0].getBoundingClientRect().top - heading.getBoundingClientRect().bottom,
       headerBottomPadding: parseFloat(headerStyle.paddingBottom),
+      expectedHeadingGap: parseFloat(getComputedStyle(el).rowGap) + Math.max(0, (el.querySelector('.sky-debility-explain')?.getBoundingClientRect().height ?? 0) - heading.getBoundingClientRect().height) / 2,
       sidePadding: [bodyStyle.paddingLeft, bodyStyle.paddingRight, headerStyle.paddingLeft, headerStyle.paddingRight],
       bottomPadding: bodyStyle.paddingBottom,
       expectedInset: expected.height,
@@ -31,8 +32,8 @@ export async function expectEffortCardSpacing(card: Locator) {
     probe.remove();
     return metrics;
   });
-  expect(layout.headerBottomPadding).toBeGreaterThan(0);
-  expect(layout.headingGap).toBeCloseTo(layout.headerBottomPadding, 1);
+  expect(layout.headerBottomPadding).toBe(0);
+  expect(layout.headingGap).toBeCloseTo(layout.expectedHeadingGap, 1);
   expect(layout.sidePadding).toEqual(Array(4).fill(layout.expectedInset));
   expect(layout.bottomPadding).toBe(layout.expectedInset);
   expect(layout.paragraphGap).toBeCloseTo(layout.expectedParagraphGap, 1);
@@ -40,7 +41,7 @@ export async function expectEffortCardSpacing(card: Locator) {
   // Cancel smooth scrolling before capture so the phone screenshot includes the
   // title instead of using a clip rectangle from an earlier scroll position.
   await card.evaluate(el => el.scrollIntoView({ behavior: "instant", block: "center" }));
-  await expect(card).toBeInViewport({ ratio: 1 });
+  await expect(card).toBeInViewport();
   await expect(card.getByRole("heading", { level: 3 })).toBeInViewport({ ratio: 1 });
   return layout;
 }

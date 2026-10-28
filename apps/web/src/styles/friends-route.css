@@ -37,8 +37,9 @@
 
 .app-shell.mode-friends .friends-page:has(.friend-profile-view) {
   gap: var(--space-6);
-  margin-top: var(--friend-detail-top-clearance);
-  max-width: var(--friends-page-rail);
+  margin-top: var(--sky-overview-top);
+  max-width: var(--container-content);
+  width: var(--page-content-width);
 }
 
 .app-shell.mode-friends .friends-chart-toolbar {
@@ -78,70 +79,6 @@
   gap: var(--space-6);
   grid-template-columns: 82px minmax(0, 1fr);
   padding: calc(var(--space-7) - var(--space-1)) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
-}
-
-.app-shell.mode-friends .friend-profile-panel {
-  gap: calc(var(--space-6) + var(--space-1) / 2);
-  max-width: var(--friends-page-rail);
-  width: 100%;
-}
-
-.app-shell.mode-friends .friend-profile-card,
-.app-shell.mode-friends .friend-view-tabs {
-  max-width: none;
-  width: 100%;
-}
-
-.app-shell.mode-friends .friend-view-tabs {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 0;
-  gap: var(--space-2);
-  padding: 0;
-  overflow: visible;
-}
-
-.app-shell.mode-friends .friend-view-tab {
-  box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  min-height: var(--button-height);
-  padding: 0 var(--space-4);
-  border: var(--border-width-thin) solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--ink);
-  font-family: var(--font-ui);
-  font-size: var(--text-meta-size);
-  font-weight: var(--weight-medium);
-  letter-spacing: 0;
-  line-height: var(--leading-label);
-  white-space: nowrap;
-  cursor: pointer;
-  transition:
-    background-color 160ms ease,
-    border-color 160ms ease,
-    color 160ms ease,
-    transform 160ms ease;
-}
-
-.app-shell.mode-friends .friend-view-tab:hover {
-  border-color: var(--ink);
-}
-
-.app-shell.mode-friends .friend-view-tab:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
-
-.app-shell.mode-friends .friend-view-tab.friend-view-tab--active {
-  border-color: var(--pill-bg);
-  background: var(--pill-bg);
-  color: var(--pill-fg);
-  font-weight: var(--weight-medium);
 }
 
 .app-shell.mode-friends .friend-view-more {
@@ -230,17 +167,6 @@
 }
 
 @media (max-width: 520px) {
-  .app-shell.mode-friends .friend-view-tabs {
-    flex-wrap: wrap;
-    gap: var(--space-1);
-  }
-
-  .app-shell.mode-friends .friend-view-tab {
-    min-height: var(--segmented-item-height);
-    padding-inline: var(--space-3);
-    font-size: var(--text-compact-meta);
-  }
-
   .app-shell.mode-friends .friend-view-more-trigger {
     gap: var(--space-1);
   }
@@ -250,49 +176,6 @@
     left: 0;
     width: min(360px, calc(100vw - var(--mobile-page-gutter) * 2));
     max-width: calc(100vw - var(--mobile-page-gutter) * 2);
-  }
-}
-
-@media (min-width: 1040px) {
-  .app-shell.mode-friends .friend-profile-panel.relationship-detail-layout {
-    align-items: start;
-    column-gap: var(--friends-route-column-gap);
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    justify-content: stretch;
-  }
-
-  .app-shell.mode-friends .relationship-detail-layout > .friend-detail-content-column,
-  .app-shell.mode-friends .friend-detail-main {
-    grid-column: 2;
-    justify-self: stretch;
-    max-width: none;
-  }
-
-  .app-shell.mode-friends .relationship-detail-layout > .friend-detail-chart-column,
-  .app-shell.mode-friends .friend-detail-chart-rail {
-    grid-column: 1;
-    justify-self: center;
-    max-width: var(--shared-chart-size);
-    position: sticky;
-    top: var(--friend-detail-top-clearance);
-  }
-
-  .app-shell.mode-friends .friend-detail-chart-rail .friend-synastry-wheel-shell,
-  .app-shell.mode-friends .friend-detail-chart-rail .friend-wheel,
-  .app-shell.mode-friends .friend-detail-chart-rail .sky-wheel-shell,
-  .app-shell.mode-friends .friend-detail-chart-rail :is(.sky-wheel, svg) {
-    max-width: var(--shared-chart-size);
-    width: 100%;
-  }
-
-  .app-shell.mode-friends .friend-profile-card {
-    min-height: 110px;
-    padding: calc(var(--space-5) + var(--space-1) / 2) var(--space-6);
-  }
-
-  .app-shell.mode-friends .friend-profile-card .friend-profile-avatar {
-    height: 60px;
-    width: 60px;
   }
 }
 
@@ -404,6 +287,7 @@
   width: 1em;
   height: 1em;
   object-fit: contain;
+  filter: var(--filter-glyph-neutral);
 }
 
 .compatibility-glance__list,
@@ -466,20 +350,6 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-2);
-}
-
-.compatibility-card__source {
-  display: inline-flex;
-  align-items: center;
-  min-height: 22px;
-  border: var(--border-width-thin) solid var(--control-border);
-  border-radius: var(--radius-pill);
-  padding: calc(var(--space-1) / 2) var(--space-2);
-  color: var(--muted);
-  background: var(--control-bg);
-  font-size: var(--text-meta-size);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-label);
 }
 
 .compatibility-card__function,
@@ -683,10 +553,10 @@
     padding: var(--page-top) 0 var(--page-bottom);
   }
 
-  .app-shell.mode-friends .friends-page:has(.friend-profile-view),
-  .app-shell.mode-friends .friend-profile-panel {
-    margin-top: calc(var(--space-4) + var(--space-1) / 2);
-    max-width: var(--friends-page-rail);
+  .app-shell.mode-friends .friends-page:has(.friend-profile-view) {
+    margin-top: var(--sky-overview-top);
+    max-width: var(--container-content);
+    padding-top: 0;
   }
 
   .app-shell.mode-friends .manual-chart-row {

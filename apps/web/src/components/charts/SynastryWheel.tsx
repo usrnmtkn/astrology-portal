@@ -10,17 +10,19 @@ import {
 } from "./chartAssets";
 import { aspectLineClass, aspectLineStyle, type AspectColorMode } from "./chartAspectLines";
 import {
-  angleAxisOuterPadding,
-  angleLabelOuterPadding,
   chartAngularLabelGeometry,
   chartHouseLabelGeometry,
   chartSignLabelGeometry,
-  inwardMarkerOffset,
+  avoidWheelLabelCollisions,
+  wheelAngleBadgeBounds,
+  wheelAngleBadgeWidth,
+  wheelDegreeOffset,
+  wheelPlacementBounds,
+  wheelTickGeometry,
   longitudeToChartAngle,
-  polarToCartesian,
-  fittedWheelMarkerLayouts,
-  wheelViewBox
+  polarToCartesian
 } from "./wheelGeometry";
+import { fittedWheelMarkerLayouts } from "./fittedWheelGeometry";
 import {
   WheelPlanetGlyph,
   aspectLegendLabel,
@@ -109,13 +111,13 @@ export const SynastryWheel = memo(function SynastryWheel({
   const radius = {
     outer: 284,
     signInner: 240,
-    outerPlanet: 220,
-    houseBandOuter: 184,
-    houseBandMiddle: 162,
-    houseBandInner: 140,
-    innerPlanet: 123,
-    innerPlanetBandInner: 84,
-    aspect: 78
+    outerPlanet: 210,
+    houseBandOuter: 132,
+    houseBandMiddle: 96,
+    houseBandInner: 96,
+    innerPlanet: 162,
+    innerPlanetBandInner: 132,
+    aspect: 96
   };
   const isNatalWheel = typeof ascendantLongitude === "number";
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
@@ -125,41 +127,40 @@ export const SynastryWheel = memo(function SynastryWheel({
     return polarToCartesian(center, center, distance, angle);
   }
 
-  function annularSectorPath(startAngle: number, endAngle: number, outerRadius: number, innerRadius: number) {
-    const delta = ((endAngle - startAngle + 540) % 360) - 180;
-    const resolvedEndAngle = startAngle + delta;
-    const largeArc = Math.abs(delta) > 180 ? 1 : 0;
-    const sweep = delta >= 0 ? 0 : 1;
-    const outerStart = point(startAngle, outerRadius);
-    const outerEnd = point(resolvedEndAngle, outerRadius);
-    const innerEnd = point(resolvedEndAngle, innerRadius);
-    const innerStart = point(startAngle, innerRadius);
-
-    return [
-      `M ${outerStart.x.toFixed(2)} ${outerStart.y.toFixed(2)}`,
-      `A ${outerRadius} ${outerRadius} 0 ${largeArc} ${sweep} ${outerEnd.x.toFixed(2)} ${outerEnd.y.toFixed(2)}`,
-      `L ${innerEnd.x.toFixed(2)} ${innerEnd.y.toFixed(2)}`,
-      `A ${innerRadius} ${innerRadius} 0 ${largeArc} ${sweep ? 0 : 1} ${innerStart.x.toFixed(2)} ${innerStart.y.toFixed(2)}`,
-      "Z"
-    ].join(" ");
-  }
-
   function angleForLongitude(longitude: number) {
     return longitudeToChartAngle(longitude, ascendantLongitude, isNatalWheel);
   }
 
   // Use the natal canvas size. Crowded labels spread within the fixed rings;
   // exact longitude ticks and aspect anchors remain unchanged.
-  const innerPlanetLayouts = useMemo(() => fittedWheelMarkerLayouts(
+  const angularLabels = useMemo(() => chartAngularLabelGeometry({
+    ascendantLongitude,
+    midheavenLongitude,
+    angleForLongitude,
+    center,
+    radius: radius.signInner
+  }), [ascendantLongitude, midheavenLongitude, isNatalWheel, radius.outer]);
+  const outerTicks = useMemo(() => new Map(outerPositions.map(position => [position.planet,
+    wheelTickGeometry(center, angleForLongitude(zodiacLongitude(position)), radius.signInner - 6, radius.signInner)
+  ])), [outerPositions, ascendantLongitude, isNatalWheel]);
+  const innerTicks = useMemo(() => new Map(innerPositions.map(position => [position.planet,
+    wheelTickGeometry(center, angleForLongitude(zodiacLongitude(position)), 184, 190)
+  ])), [innerPositions, ascendantLongitude, isNatalWheel]);
+  const tickBounds = useMemo(() => [...outerTicks.values()].map(tick => tick.bounds), [outerTicks]);
+  const innerPlanetLayouts = useMemo(() => avoidWheelLabelCollisions(fittedWheelMarkerLayouts(
     innerPositions, position => position.planet, position => zodiacLongitude(position),
-    { radius: 123, center, minimumSpacing: 33, rowSpacing: 54, glyphSize: 22,
+    { radius: 162, minimumRadius: 148, center, minimumSpacing: 33, rowSpacing: 40, glyphSize: 22,
       annotationOffset: synastryPlanetDegreeOffset, angleForLongitude }
-  ), [innerPositions, ascendantLongitude, isNatalWheel]);
-  const outerPlanetLayouts = useMemo(() => fittedWheelMarkerLayouts(
+  ), center, 22, synastryPlanetDegreeOffset, tickBounds), [innerPositions, ascendantLongitude, isNatalWheel, tickBounds]);
+  const outerPlanetLayouts = useMemo(() => avoidWheelLabelCollisions(fittedWheelMarkerLayouts(
     outerPositions, position => position.planet, position => zodiacLongitude(position),
-    { radius: 220, center, minimumSpacing: 37.5, rowSpacing: 54,
+    { radius: radius.outerPlanet, minimumRadius: 202, center, minimumSpacing: 37.5, rowSpacing: 40,
       glyphSize: 26, annotationOffset: synastryPlanetDegreeOffset, angleForLongitude }
-  ), [outerPositions, ascendantLongitude, isNatalWheel]);
+  ), center, 26, synastryPlanetDegreeOffset, [
+    ...wheelAngleBadgeBounds(angularLabels, center),
+    ...tickBounds,
+    ...[...innerPlanetLayouts.values()].flatMap(layout => wheelPlacementBounds(center, layout.marker, 22, synastryPlanetDegreeOffset))
+  ]), [outerPositions, ascendantLongitude, isNatalWheel, innerPlanetLayouts, angularLabels, tickBounds]);
   const houseLabelRadius = {
     outer: (radius.houseBandOuter + radius.houseBandMiddle) / 2,
     inner: (radius.houseBandMiddle + radius.houseBandInner) / 2
@@ -167,6 +168,12 @@ export const SynastryWheel = memo(function SynastryWheel({
 
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
+  const tickMaskId = `${wheelClipId}-ticks`;
+  const tickClearance = useMemo(() => [
+    ...wheelAngleBadgeBounds(angularLabels, center),
+    ...[...innerPlanetLayouts.values()].flatMap(layout => wheelPlacementBounds(center, layout.marker, 22, synastryPlanetDegreeOffset)),
+    ...[...outerPlanetLayouts.values()].flatMap(layout => wheelPlacementBounds(center, layout.marker, 26, synastryPlanetDegreeOffset))
+  ], [angularLabels, innerPlanetLayouts, outerPlanetLayouts]);
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
   const outerHouseLabels = useMemo(() => chartHouseLabelGeometry({
     ascendant,
@@ -176,21 +183,6 @@ export const SynastryWheel = memo(function SynastryWheel({
     radius: houseLabelRadius.outer,
     signs
   }), [ascendant, ascendantLongitude, isNatalWheel, houseLabelRadius.outer]);
-  const innerHouseLabels = useMemo(() => chartHouseLabelGeometry({
-    ascendant: innerAscendant,
-    ascendantLongitude: innerAscendantLongitude,
-    angleForLongitude,
-    center,
-    radius: houseLabelRadius.inner,
-    signs
-  }), [innerAscendant, innerAscendantLongitude, ascendantLongitude, isNatalWheel, houseLabelRadius.inner]);
-  const angularLabels = useMemo(() => chartAngularLabelGeometry({
-    ascendantLongitude,
-    midheavenLongitude,
-    angleForLongitude,
-    center,
-    radius: radius.outer + angleLabelOuterPadding
-  }), [ascendantLongitude, midheavenLongitude, isNatalWheel, radius.outer]);
   const signLabels = useMemo(() => chartSignLabelGeometry({
     angleForLongitude,
     center,
@@ -373,10 +365,13 @@ export const SynastryWheel = memo(function SynastryWheel({
       setFocusedInspectorPointId(null);
     }
 
+    const clearInspectorOnEscape = (event: globalThis.KeyboardEvent) => { if (event.key === "Escape") setFocusedInspectorPointId(null); };
     document.addEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+    document.addEventListener("keydown", clearInspectorOnEscape);
 
     return () => {
       document.removeEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+      document.removeEventListener("keydown", clearInspectorOnEscape);
     };
   }, [inspectorEnabled, focusedInspectorPointId]);
 
@@ -407,13 +402,8 @@ export const SynastryWheel = memo(function SynastryWheel({
     const baseRadius = ring === "outer" ? radius.outerPlanet : radius.innerPlanet;
     const truePoint = point(angle, baseRadius);
     const marker = layout?.marker ?? point(angle, baseRadius);
-    const tickInner = ring === "outer"
-      ? point(angle, radius.signInner - 6)
-      : point(angle, radius.houseBandInner - 6);
-    const tickOuter = ring === "outer"
-      ? point(angle, radius.signInner)
-      : point(angle, radius.houseBandInner);
-    const degreeOffset = inwardMarkerOffset(center, marker, synastryPlanetDegreeOffset);
+    const { inner: tickInner, outer: tickOuter } = (ring === "outer" ? outerTicks : innerTicks).get(position.planet)!;
+    const degreeOffset = wheelDegreeOffset(center, marker, ring === "outer" ? 26 : 22, synastryPlanetDegreeOffset);
     const markerDelta = Math.hypot(marker.x - truePoint.x, marker.y - truePoint.y);
     const hasDisplacement = markerDelta > 0.5;
     const inspectorPointId = synastryInspectorPointId(ring, position.planet);
@@ -456,6 +446,7 @@ export const SynastryWheel = memo(function SynastryWheel({
           x2={tickOuter.x}
           y2={tickOuter.y}
           className={`planet-tick wheel-placement__tick synastry-planet-tick synastry-planet-tick--${ring}`}
+          mask={`url(#${tickMaskId})`}
           data-ring={ring}
           data-planet={position.planet}
         />
@@ -476,13 +467,19 @@ export const SynastryWheel = memo(function SynastryWheel({
       className={`sky-wheel-shell sky-wheel-shell-synastry${inspectorEnabled ? " sky-wheel-shell--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
     >
     <svg
-      className={`sky-wheel synastry-wheel sky-wheel-synastry${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
-      viewBox={wheelViewBox}
+      className={`sky-wheel sky-wheel--handoff synastry-wheel sky-wheel-synastry${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
+      viewBox="-4 -4 608 648"
       role="img"
       aria-label="Synastry chart with two rings"
       onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
     >
       <defs>
+        <mask id={tickMaskId} maskUnits="userSpaceOnUse" x={0} y={0} width={600} height={600}>
+          <rect x={0} y={0} width={600} height={600} fill="white" />
+          {tickClearance.map((box, index) => <rect key={index} data-wheel-label-cutout
+            x={box.x - box.halfWidth - 3} y={box.y - box.halfHeight - 3}
+            width={(box.halfWidth + 3) * 2} height={(box.halfHeight + 3) * 2} fill="black" />)}
+        </mask>
         <clipPath id={wheelClipId}>
           <circle cx={center} cy={center} r={radius.outer} />
         </clipPath>
@@ -490,10 +487,12 @@ export const SynastryWheel = memo(function SynastryWheel({
           <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
         ))}
       </defs>
-      <g className="synastry-inner-glyph-band" aria-hidden="true">
-        {signs.map((sign, index) => (
-          <path key={sign} d={annularSectorPath(angleForLongitude(index * 30), angleForLongitude(index * 30 + 30), radius.houseBandInner, radius.innerPlanetBandInner)} />
-        ))}
+      <g className="wheel-surfaces" aria-hidden="true">
+        <circle className="wheel-surface--signs" cx={center} cy={center} r={radius.outer} />
+        <circle className="wheel-surface--planets" cx={center} cy={center} r={radius.signInner} />
+        <circle className="wheel-surface--inner-planets" cx={center} cy={center} r={190} />
+        <circle className="wheel-surface--houses" cx={center} cy={center} r={132} />
+        <circle className="wheel-surface--aspects" cx={center} cy={center} r={radius.aspect} />
       </g>
       <circle className="sign-band" cx={center} cy={center} r={(radius.outer + radius.signInner) / 2} />
       <g className="wheel-rings synastry-base-rings">
@@ -505,7 +504,7 @@ export const SynastryWheel = memo(function SynastryWheel({
         {signs.map((sign, index) => {
           const a = angleForLongitude((isNatalWheel ? wholeHouseStartLongitude : 0) + index * 30);
           const outer = point(a, radius.signInner);
-          const inner = point(a, radius.innerPlanetBandInner);
+          const inner = point(a, radius.aspect);
           return <line key={sign} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} />;
         })}
       </g>
@@ -544,8 +543,8 @@ export const SynastryWheel = memo(function SynastryWheel({
                   <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                 ) : null}
                 <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-                <circle className="aspect-endpoint" cx={a.x} cy={a.y} r={1.6} />
-                <circle className="aspect-endpoint" cx={b.x} cy={b.y} r={1.6} />
+                <circle className="aspect-endpoint" cx={a.x} cy={a.y} r={2.5} />
+                <circle className="aspect-endpoint" cx={b.x} cy={b.y} r={2.5} />
               </g>
             );
           })}
@@ -553,43 +552,13 @@ export const SynastryWheel = memo(function SynastryWheel({
       )}
       {isNatalWheel && (
         <g className="natal-angle-lines" aria-label="Chart angle axes">
-          {(() => {
-            const asc = point(angleForLongitude(ascendantLongitude), radius.outer + angleAxisOuterPadding);
-            const dsc = point(angleForLongitude(ascendantLongitude + 180), radius.outer + angleAxisOuterPadding);
-            const midheavenAxis = typeof midheavenLongitude === "number"
-              ? (() => {
-                  const mc = point(angleForLongitude(midheavenLongitude), radius.outer + angleAxisOuterPadding);
-                  const ic = point(angleForLongitude(midheavenLongitude + 180), radius.outer + angleAxisOuterPadding);
+          {[{longitude:ascendantLongitude,className:"ascendant-axis"},{longitude:midheavenLongitude,className:"midheaven-axis"}].flatMap(axis => typeof axis.longitude === "number" ? [axis.longitude,axis.longitude+180].map(longitude => {
+            const inner=point(angleForLongitude(longitude),radius.aspect),outer=point(angleForLongitude(longitude),225);
+            return <line key={`${axis.className}-${longitude}`} className={axis.className} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y}/>;
+          }) : [])}
 
-                  return <line className="midheaven-axis" x1={mc.x} y1={mc.y} x2={ic.x} y2={ic.y} />;
-                })()
-              : null;
-
-            return (
-              <>
-                <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />
-                {midheavenAxis}
-              </>
-            );
-          })()}
         </g>
       )}
-      <g className="synastry-house-bands" aria-hidden="true">
-        {(["outer", "inner"] as const).map(ring => (
-          <g key={ring} className={`synastry-house-band synastry-house-band--${ring}`}>
-            {signs.map((sign, index) => (
-              <path
-                key={sign}
-                d={annularSectorPath(
-                  angleForLongitude(index * 30), angleForLongitude(index * 30 + 30),
-                  ring === "outer" ? radius.houseBandOuter : radius.houseBandMiddle,
-                  ring === "outer" ? radius.houseBandMiddle : radius.houseBandInner
-                )}
-              />
-            ))}
-          </g>
-        ))}
-      </g>
       <g className="house-labels synastry-house-labels synastry-outer-house-labels" aria-label={ascendant ? "Outer chart whole sign houses" : "Outer chart natural house labels"}>
         {outerHouseLabels.map(({ house, x, y, ariaLabel }) => (
           <text
@@ -597,86 +566,13 @@ export const SynastryWheel = memo(function SynastryWheel({
             x={x}
             y={y}
             className="zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--outer"
+            transform={(() => { let rotation=90-Math.atan2(center-y,x-center)*180/Math.PI; while(rotation>90)rotation-=180;while(rotation< -90)rotation+=180;return `rotate(${rotation} ${x} ${y})`; })()}
             aria-label={`Outer chart ${ariaLabel}`}
           >
             {house}
           </text>
         ))}
       </g>
-      <g className="house-labels synastry-house-labels synastry-inner-house-labels" aria-label={innerAscendant ? "Inner chart whole sign houses" : "Inner chart natural house labels"}>
-        {innerHouseLabels.map(({ house, x, y, ariaLabel }) => (
-          <text
-            key={house}
-            x={x}
-            y={y}
-            className="zodiac-house-number zodiac-wheel__house-label synastry-house-number synastry-house-number--inner"
-            aria-label={`Inner chart ${ariaLabel}`}
-          >
-            {house}
-          </text>
-        ))}
-      </g>
-      {isNatalWheel && (
-        <g className="angular-labels" aria-label="Chart angles">
-          {angularLabels.map(({ label, x, y }) => {
-            const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
-            const iconSize = angleIconSize;
-            const pointName = label === "ASC"
-              ? "Ascendant"
-              : label === "DSC"
-                ? "Descendant"
-                : label === "MC"
-                  ? "Midheaven"
-                  : "Imum Coeli";
-            const inspectorPointId = synastryInspectorPointId("outer", pointName);
-            const inspectorState = inspectorPointState(inspectorPointId);
-            const angleClassName = `zodiac-wheel__angle-icon aspect-inspector-point aspect-inspector-point--${inspectorState}`;
-            const angleProps = inspectorEnabled ? {
-              role: "button",
-              tabIndex: 0,
-              "data-inspector-point-id": inspectorPointId,
-              onClick: (event: MouseEvent<SVGImageElement | SVGTextElement>) => {
-                event.stopPropagation();
-                event.currentTarget.blur();
-                setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
-              },
-              onKeyDown: (event: KeyboardEvent<SVGImageElement | SVGTextElement>) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
-                }
-              }
-            } : {};
-
-            return iconHref ? (
-              <image
-                key={label}
-                href={iconHref}
-                x={x - iconSize / 2}
-                y={y - iconSize / 2}
-                width={iconSize}
-                height={iconSize}
-                className={angleClassName}
-                aria-label={`${outerLabel} ${pointName}`}
-                preserveAspectRatio="xMidYMid meet"
-                {...angleProps}
-              />
-            ) : (
-              <text
-                key={label}
-                x={x}
-                y={y}
-                className={`aspect-inspector-point aspect-inspector-point--${inspectorState}`}
-                aria-label={`${outerLabel} ${pointName}`}
-                {...angleProps}
-              >
-                {label}
-              </text>
-            );
-          })}
-        </g>
-      )}
       <g className="sign-labels">
         {signLabels.map(({ sign, isLong, x, y }) => {
           const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
@@ -704,6 +600,50 @@ export const SynastryWheel = memo(function SynastryWheel({
       <g className="planet-labels inner-planet-labels" aria-label="Inner chart planets">
         {innerPositions.map((position) => renderPlanet(position, "inner"))}
       </g>
+      {isNatalWheel && (
+        <g className="angular-labels" aria-label="Chart angles">
+          {angularLabels.map(({ label, x, y }) => {
+            const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
+            const iconSize = angleIconSize;
+            const pointName = label === "ASC"
+              ? "Ascendant"
+              : label === "DSC"
+                ? "Descendant"
+                : label === "MC"
+                  ? "Midheaven"
+                  : "Imum Coeli";
+            const inspectorPointId = synastryInspectorPointId("outer", pointName);
+            const inspectorState = inspectorPointState(inspectorPointId);
+            const angleClassName = `zodiac-wheel__angle-icon aspect-inspector-point aspect-inspector-point--${inspectorState}`;
+            const angleProps = inspectorEnabled ? {
+              role: "button",
+              tabIndex: 0,
+              "data-inspector-point-id": inspectorPointId,
+              onClick: (event: MouseEvent<SVGElement>) => {
+                event.stopPropagation();
+                event.currentTarget.blur();
+                setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
+              },
+              onKeyDown: (event: KeyboardEvent<SVGElement>) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setFocusedInspectorPointId((current) => current === inspectorPointId ? null : inspectorPointId);
+                }
+              }
+            } : {};
+
+            const angle=Math.atan2(center-y,x-center)*180/Math.PI;
+            let rotation=90-angle;
+            while(rotation>90)rotation-=180;
+            while(rotation< -90)rotation+=180;
+            const width=wheelAngleBadgeWidth(label);
+            return <g key={label} className={`zodiac-wheel__angle-badge aspect-inspector-point aspect-inspector-point--${inspectorState}`} transform={`translate(${x} ${y}) rotate(${rotation})`} aria-label={`${outerLabel} ${pointName}`} {...angleProps}>
+              <rect x={-width/2} y={-12} width={width} height={24} rx={12}/><text x={0} y={0}>{label}</text>
+            </g>;
+          })}
+        </g>
+      )}
       <text x={center} y={626} className="chart-house-system-label">
         Whole-sign houses · angles exact
       </text>

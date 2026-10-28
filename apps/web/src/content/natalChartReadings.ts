@@ -16,6 +16,12 @@ export type NatalPlanetReadingContext = {
   planet: string;
 };
 
+/** The established traditional ruler also supplies the insight card's glyph. */
+export function natalTwelfthRuler(snapshot: SkySnapshot | null | undefined) {
+  const ascendant = signs.indexOf(snapshot?.ascendant.toLowerCase() ?? "");
+  return ascendant < 0 ? undefined : emptyHouseRulersBySystem.traditional[signs[(ascendant + 11) % 12]];
+}
+
 /** Fixed natal facts select complete published units; current transits never enter. */
 export function natalChartReadings(snapshot: SkySnapshot | null | undefined, audience: NatalReadingAudience, planet?: string): NatalReading[] {
   if (!snapshot || snapshot.birthTimeKnown !== true) return [];
@@ -38,8 +44,7 @@ export function natalChartReadings(snapshot: SkySnapshot | null | undefined, aud
     ? [{ contentKey: `cms/natal-chart-context/${audience}/sect/${sect}`, label: chartLabel }] : [];
   const ascendant = signs.indexOf(snapshot.ascendant.toLowerCase());
   if (ascendant < 0) return readings;
-  const twelfthSign = signs[(ascendant + 11) % 12];
-  const ruler = emptyHouseRulersBySystem.traditional[twelfthSign];
+  const ruler = natalTwelfthRuler(snapshot);
   const rulerPosition = snapshot.positions.find(position => position.planet.toLowerCase() === ruler);
   const rulerSign = signs.indexOf(rulerPosition?.sign.toLowerCase() ?? "");
   if (rulerSign < 0) return readings;

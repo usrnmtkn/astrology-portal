@@ -1,6 +1,5 @@
-import { FormattedProse, FormattedText } from "../../components/FormattedProse";
-import { CardReadMore } from "../../components/CardReadMore";
-import { ChevronRight } from "lucide-react";
+import { FormattedText } from "../../components/FormattedProse";
+import { NatalInsightCard } from "../../components/NatalInsightCard";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 
@@ -33,12 +32,14 @@ export function NatalAspectPatternsSection({
   items,
   onOpenDetail,
   status,
-  title = "Patterns in your chart"
+  title = "Patterns in your chart",
+  cardsOnly = false
 }: {
   items: NatalAspectPatternReaderItem[];
   onOpenDetail?: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
   status: NatalAspectPatternsSectionStatus;
   title?: string;
+  cardsOnly?: boolean;
 }) {
   if (status === "unavailable") {
     return null;
@@ -56,13 +57,14 @@ export function NatalAspectPatternsSection({
     return null;
   }
 
+  if (cardsOnly) return <>{topLevel.map(item => <PatternPreviewCard item={item} key={item.patternId} nestedItems={childItems(item, items)} onOpenDetail={onOpenDetail}/>)}</>;
+
   return (
     <section className="natal-patterns-section" aria-label={title}>
       <span className="eyebrow section-label">{title}</span>
       <div className="natal-patterns-stack">
         <PatternPreviewCard
           item={primary}
-          variant="primary"
           nestedItems={childItems(primary, items)}
           onOpenDetail={onOpenDetail}
         />
@@ -70,7 +72,6 @@ export function NatalAspectPatternsSection({
           <PatternPreviewCard
             item={item}
             key={item.patternId}
-            variant="additional"
             nestedItems={childItems(item, items)}
             onOpenDetail={onOpenDetail}
           />
@@ -83,35 +84,18 @@ export function NatalAspectPatternsSection({
 function PatternPreviewCard({
   item,
   nestedItems,
-  onOpenDetail,
-  variant
+  onOpenDetail
 }: {
   item: NatalAspectPatternReaderItem;
   nestedItems: NatalAspectPatternReaderItem[];
   onOpenDetail?: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
-  variant: "primary" | "additional";
 }) {
   const copy = item.copy.content;
 
-  return (
-    <article className={`natal-pattern-card natal-pattern-card--${variant}`}>
-      <header className="natal-pattern-card__header">
-        {copy.eyebrow ? <span>{copy.eyebrow}</span> : null}
-        <h3>{copy.headline}</h3>
-        <FormattedProse text={copy.overview} />
-      </header>
-      <div className="natal-pattern-card__actions">
-        <button
-          type="button"
-          className="natal-pattern-card__details-button"
-          onClick={() => onOpenDetail?.(item, nestedItems)}
-        >
-          <CardReadMore />
-          <ChevronRight size={17} aria-hidden="true" />
-        </button>
-      </div>
-    </article>
-  );
+  const glyphs: Record<string, string> = { yod: "⚻", grand_trine: "△", t_square: "□", grand_square: "□", kite: "◇", mystic_rectangle: "▱" };
+  const members = item.memberNames?.filter(name => name.trim()).map(name => name.toLowerCase() === "moon" ? "the Moon" : name[0].toUpperCase() + name.slice(1));
+  const label = members?.length ? `${copy.eyebrow ?? item.patternType}: ${new Intl.ListFormat("en", { type: "conjunction" }).format(members)}` : copy.eyebrow;
+  return <NatalInsightCard glyph={glyphs[item.patternType] ?? "✦"} meta={label} title={copy.headline} body={copy.overview} onOpen={onOpenDetail ? () => onOpenDetail(item, nestedItems) : undefined}/>;
 }
 
 export function NatalAspectPatternActivationsSection({

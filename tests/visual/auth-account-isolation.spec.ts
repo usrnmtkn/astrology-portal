@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page } from "../helpers/polish-test";
 
 const owner = { id: "11111111-1111-4111-8111-111111111111", aud: "authenticated", role: "authenticated", email: "owner-a@example.test", app_metadata: { provider: "google" }, user_metadata: { name: "Fixture A" } };
 const key = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
@@ -81,6 +81,63 @@ for (const path of ["/#account?view=journal", "/#friends?tab=circle", "/reports/
     await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeHidden();
   });
 }
+
+async function seedSavedRequests(page: Page) {
+  await page.addInitScript(owner => {
+    if (sessionStorage.getItem("request-route-seeded")) return;
+    sessionStorage.setItem("request-route-seeded", "true");
+    localStorage.setItem("tldrastro:portalMode", "friends");
+    localStorage.setItem("tldrastro:friendsTab", "requests");
+    localStorage.setItem("tldrastro:userProfile", JSON.stringify({
+      id: owner.id, name: "Fixture A", email: owner.email, provider: "google",
+      sun: "Capricorn", moon: "Pisces", rising: "Aries", charts: []
+    }));
+  }, owner);
+}
+
+test("restored login does not reopen a saved Requests tab", async ({ page }) => {
+  await seed(page);
+  await seedSavedRequests(page);
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page).not.toHaveURL(/friends.*requests/);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page).not.toHaveURL(/friends.*requests/);
+});
+
+test("OAuth login replaces an old Requests return with You", async ({ page }) => {
+  await seed(page, false);
+  await seedSavedRequests(page);
+  await page.goto("/?readerReturn=%2F%23friends%3Ftab%3Drequests#access_token=synthetic-callback&refresh_token=synthetic-refresh&expires_in=3600&token_type=bearer");
+  await expect(page).toHaveURL(/\/#you$/);
+  await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await page.screenshot({ path: "test-results/login-returns-to-you.png" });
+});
+
+test("email login ignores a stale Requests return", async ({ page }) => {
+  await seed(page, false);
+  await seedSavedRequests(page);
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("email-return-seeded")) return;
+    sessionStorage.setItem("email-return-seeded", "true");
+    sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({ path: "/#friends?tab=requests", at: Date.now() }));
+  });
+  await page.route("**/auth/v1/token?grant_type=password", route => route.fulfill({ json: {
+    user: owner, access_token: "synthetic-password", refresh_token: "synthetic-refresh",
+    token_type: "bearer", expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600
+  } }));
+  await page.goto("/?auth=login");
+  await page.getByRole("textbox", { name: "Email", exact: true }).fill(owner.email);
+  await page.getByLabel("Password", { exact: true }).fill("synthetic-test-password");
+  await page.getByRole("button", { name: "Log in", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page).not.toHaveURL(/friends.*requests/);
+});
 
 test("auth callback cancellation can restart sign-in without replaying the callback", async ({ page }) => {
   await seed(page, false);

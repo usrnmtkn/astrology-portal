@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ViewportMenu } from "../../components/ViewportMenu";
 import type { ManualChart } from "../../services/manualCharts";
 import { ChartPatternPill } from "./ChartPatternPill";
-import { PageLoading } from "../../components/PageLoading";
+import { ContentLoading as PageLoading } from "../../components/LoadingPatterns";
 import type { FriendChartListItem } from "./friendChartModel";
 
 export type FriendChartsListProps = {
@@ -46,6 +46,7 @@ export function FriendChartsList({
           : "manual-chart-workspace manual-chart-workspace-list-only friends-charts-view"}
         aria-label="Friend charts"
       >
+        <h2 className="friends-directory-title">Saved charts <span>{charts.length}</span></h2>
         {!embedded && <div className="friends-chart-toolbar">
           <span className="friends-chart-toolbar-copy">
             <span className="eyebrow section-label">Private charts</span>
@@ -59,7 +60,7 @@ export function FriendChartsList({
 
         <section className={embedded ? "friends-unified-chart-list" : "manual-chart-list"} aria-label="Saved charts">
           {showMessage && message ? <p className="manual-chart-message">{message}</p> : null}
-          {isLoading && charts.length === 0 && <PageLoading message="Loading saved charts…" />}
+          {isLoading && charts.length === 0 && <PageLoading layout="people" message="Loading saved charts…" />}
           {!isLoading && charts.length === 0 && (
             <section className={embedded ? "friends-unified-empty" : "you-empty-card manual-chart-empty"} aria-label="No charts">
               <h3>{embedded ? "No charts yet." : "No private charts yet."}</h3>
@@ -99,7 +100,7 @@ export function FriendChartsList({
                       <span className="manual-chart-signatures">
                         <span>☉ {sun}</span>
                         <span>☽ {moon}</span>
-                        <span>↑ {rising}</span>
+                        {!needsBirthTime && <span>↑ {rising}</span>}
                         {patternSummary ? <ChartPatternPill summary={patternSummary} /> : null}
                       </span>
                     </span>

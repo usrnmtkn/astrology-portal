@@ -34,6 +34,7 @@ import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNata
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
+import { frictionFlowDraftErrors } from "../../web/src/content/frictionFlowTemplateValidation";
 import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "../../web/src/content/skyDebilityInterpretation";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
@@ -6835,6 +6836,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function openConnectionSource(key: string) {
+    if (hasChangedSavedDraft() && !window.confirm("Discard the unsaved changes in this editor?")) return;
     const requestId = ++connectionSourceRequestRef.current;
     const originatingHash = window.location.hash;
     setIsLoading(true);
@@ -10673,6 +10675,7 @@ export function GeneratedContentAdminDashboard() {
     });
     cmsTemplateValidation.errors.push(...skySummaryTemplateErrors(currentDraft.contentKey, currentDraft.body));
     cmsTemplateValidation.errors.push(...skyDebilityTemplateErrors(currentDraft.contentKey, currentDraft.body, currentDraft.headline));
+    cmsTemplateValidation.errors.push(...frictionFlowDraftErrors(currentDraft.contentKey, currentDraft.body, cmsAllowedSlots));
     const cmsCanSignOff = !isCmsSurfaceDraft || cmsTemplateValidation.errors.length === 0;
     const cmsReaderEligible = isCmsSurfaceDraft
       && currentDraft.status === "LIVE"

@@ -10,6 +10,7 @@ export type FriendBondTransitView = {
   effectBody: string;
   activationBody: string;
   transitPlanet?: string;
+  aspect?: string;
 };
 
 export type FriendHouseTransitView = {

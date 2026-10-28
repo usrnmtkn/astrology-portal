@@ -1,25 +1,20 @@
-:root {
-  --lazy-fade-duration: 120ms;
-  --lazy-min-skeleton: 280ms;
-}
-
 .card-skeleton-bar {
   display: inline-block;
   vertical-align: middle;
-  width: calc(var(--size-8) * 2);
+  width: 100%;
   max-width: 100%;
-  height: 11px;
+  height: var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--surface-2);
 }
 
 .card-skeleton-bar--title {
-  width: calc(var(--size-8) * 3);
-  height: 16px;
+  width: 72%;
+  height: var(--space-5);
 }
 
 .card-skeleton-bar--short {
-  width: var(--size-8);
+  width: 32%;
 }
 
 .card-skeleton-disc {
@@ -36,7 +31,7 @@
 }
 
 .card-skeleton .calendar-kind-label .card-skeleton-bar {
-  height: 9px;
+  height: var(--skeleton-meta-height);
 }
 
 .card-skeleton-tag {
@@ -98,7 +93,7 @@
   width: 100%;
 }
 
-.card-skeleton :is(.planet-placement-row__description, .aspect-row-copy p, .calendar-stoic-card__excerpt) .card-skeleton-bar {
+.card-skeleton :is(.aspect-row-copy p, .calendar-stoic-card__excerpt) .card-skeleton-bar {
   width: 80%;
 }
 
@@ -114,3 +109,42 @@
 @keyframes lazy-fade {
   from { opacity: 0; }
 }
+
+/* Each placeholder stays in the loaded grid track and contains its own bars. */
+.card-skeleton { min-width: 0; max-width: 100%; overflow: hidden; }
+.card-skeleton :is(.card-skeleton-bar, .card-skeleton-disc, .card-skeleton-tag, .loading-cover__art, .card-skeleton-text__bars, .card-skeleton-prose, .loading-person-action) { animation: skeleton-pulse var(--loading-pulse-duration) ease-in-out infinite; }
+@keyframes skeleton-pulse { 50% { opacity: var(--skeleton-pulse-opacity); } }
+.planet-placement-row.card-skeleton { justify-self: stretch; width: 100%; min-width: 0; box-sizing: border-box; overflow: hidden; }
+.card-skeleton :is(.planet-placement-row__body, .planet-placement-row__topline, .planet-placement-row__meta, .planet-placement-row__description, .card-read-more) { min-width: 0; max-width: 100%; }
+.card-skeleton .planet-placement-row__title > span, .card-skeleton .planet-placement-row__meta > span { display: block; }
+.card-skeleton .planet-placement-row__glyph .card-skeleton-disc + .card-skeleton-disc { display: none; }
+
+.app-loading.app-loading--skeleton { display: grid; width: 100%; max-width: 100%; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; background: transparent; }
+.loading-pattern__items, .loading-card, .loading-lines, .loading-cover { display: grid; min-width: 0; gap: var(--space-4); }
+.loading-card { padding: var(--modal-panel-padding); border-radius: var(--card-radius-sm); background: var(--surface); box-shadow: var(--card-shadow); }
+.loading-card__heading { display: flex; align-items: center; gap: var(--space-4); min-width: 0; }
+.loading-card__heading > span:not(.card-skeleton-disc):not(.loading-person-action) { display: grid; flex: 1; min-width: 0; gap: var(--skeleton-meta-height); }
+.loading-card__heading .card-skeleton-disc { flex: none; width: var(--glyph-tile-compact-size); height: var(--glyph-tile-compact-size); }
+.loading-card__heading .card-skeleton-bar--short { height: var(--skeleton-meta-height); }
+.loading-lines .card-skeleton-bar:nth-child(2) { width: 92%; }
+.loading-lines .card-skeleton-bar--short { width: 58%; }
+.loading-pattern--prose .card-skeleton-bar, .loading-cover > .card-skeleton-bar { background: var(--skeleton-page-bar); }
+:is(.learn-sheet, .modal-panel, .sky-detail-card, .settings-card) .loading-card { background: transparent; padding: 0; border-radius: 0; box-shadow: none; }
+:is(.learn-sheet, .modal-panel, .sky-detail-card, .settings-card) .loading-pattern--prose .card-skeleton-bar { background: var(--surface-2); }
+.loading-placement-arc { display: grid; justify-items: center; gap: var(--space-2); }
+.loading-placement-arc svg { width: 100%; aspect-ratio: var(--skeleton-arc-ratio); stroke: var(--surface-2); stroke-width: var(--border-width-medium); }
+.loading-pattern--wheel { position: relative; aspect-ratio: var(--chart-view-ratio); align-items: center; justify-items: stretch; }
+.loading-pattern--wheel .loading-pattern__items { width: 100%; height: 100%; overflow: visible; }
+.loading-wheel-ring { display: block; width: 100%; height: 100%; border-radius: var(--radius-circle); box-shadow: inset 0 0 0 var(--skeleton-wheel-band) var(--skeleton-wheel-color); }
+.loading-wheel-label { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-ui); font-size: var(--type-meta-size); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .card-skeleton :is(.card-skeleton-bar, .card-skeleton-disc, .card-skeleton-tag, .loading-cover__art, .card-skeleton-text__bars, .card-skeleton-prose, .loading-person-action), .is-revealing { animation: none; } }
+:root[data-reduce-motion] .card-skeleton *, :root[data-reduce-motion] .is-revealing { animation: none; }
+
+.loading-lines { gap: var(--space-3); }
+.loading-pattern--reading .card-skeleton-bar--title { width: 60%; }
+.loading-pattern--prose .loading-lines { gap: var(--lunar-space-14); }
+.loading-pattern--prose .card-skeleton-bar { height: var(--lunar-space-14); }
+
+.card-skeleton .planet-placement-row__description.loading-lines { display: grid; }
+
+.card-skeleton .planet-placement-row__glyph > .card-skeleton-disc { width: 100%; height: 100%; }

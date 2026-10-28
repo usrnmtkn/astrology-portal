@@ -3,14 +3,8 @@ import { CardReadMore } from "../../components/CardReadMore";
 import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
 import type { SkySnapshot } from "../../types";
 import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
-import {
-  aspectGlyph,
-  aspectIconFiles,
-  normalizeAspectType,
-  pointIconFiles,
-  zodiacAssetHref
-} from "../../components/charts/chartAssets";
-import { InlineGlyphIcon } from "../../components/charts/PlacementRows";
+import { zodiacAssetHref } from "../../components/charts/chartAssets";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { SynastryPlacementsComparison } from "./FriendPlacementTables";
 
@@ -51,7 +45,7 @@ export function FriendSynastryTab({
   const contactCount = contactGroups.reduce((count, group) => count + group.contacts.length, 0);
 
   return (
-    <div className="friend-tab-pane friend-compat-stage" aria-label="Synastry">
+    <div className="friend-tab-pane friend-compat-stage friend-synastry-stage" aria-label="Synastry">
       <div className="friend-profile-copy-column">
         <article className="relationship-explainer-card relationship-explainer-card--synastry" aria-label="What synastry shows">
           <span className="relationship-explainer-card__glyph" aria-hidden="true">
@@ -62,38 +56,27 @@ export function FriendSynastryTab({
             <FormattedProse text={explainer} />
           </span>
         </article>
-        <SynastryPlacementsComparison
-          outerName={friendName}
-          outerSky={outerSky}
-          innerName={innerName}
-          innerSky={innerSky}
-          innerIsSelf={innerIsSelf}
-        />
         {contactGroups.map((group) => (
           <AspectGiftLessonGroup
             ariaLabel={`${friendName} synastry ${group.label}`}
             key={group.key}
             label={group.label}
             listAriaLabel={`${friendName} compatibility ${group.label.toLowerCase()}`}
-            listClassName="friend-aspect-list"
+            listClassName="friend-aspect-list reading-story-grid"
           >
             {group.contacts.map((contact) => (
               <button
                 type="button"
-                className="aspect-row aspect-row-button friend-aspect-row is-revealing"
+                className="aspect-row aspect-row-button friend-aspect-row reading-story-card is-revealing"
                 key={contact.id}
                 aria-label={`Open full entry for ${contact.title}`}
                 onClick={() => onOpenContact(contact.id)}
               >
-                <span className="aspect-row-glyphs" aria-hidden="true">
-                  <InlineGlyphIcon fallback={contact.yourPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.yourPoint.name])} label={contact.yourPoint.name} preferTextGlyph />
-                  <InlineGlyphIcon fallback={aspectGlyph(contact.aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(contact.aspect)])} label={contact.aspect} preferTextGlyph />
-                  <InlineGlyphIcon fallback={contact.friendPoint.glyph} href={zodiacAssetHref(pointIconFiles[contact.friendPoint.name])} label={contact.friendPoint.name} preferTextGlyph />
-                </span>
+                <AspectBadge aspect={contact.aspect} className="aspect-row-glyphs" />
                 <span className="aspect-row-copy">
                   <h3>{contact.title}</h3>
-                  {contact.description ? <FormattedProse className="synastry-contact-description" text={contact.description} /> : null}
-                  <CardReadMore />
+                  {contact.description ? <FormattedProse className="synastry-contact-description reading-story-card__preview" text={contact.description} /> : null}
+                  <CardReadMore appearance="icon" />
                 </span>
                 <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(contact.orb)} orb`}>
                   <span className="aspect-row-dot" aria-hidden="true" />
@@ -103,6 +86,13 @@ export function FriendSynastryTab({
             ))}
           </AspectGiftLessonGroup>
         ))}
+        <SynastryPlacementsComparison
+          outerName={friendName}
+          outerSky={outerSky}
+          innerName={innerName}
+          innerSky={innerSky}
+          innerIsSelf={innerIsSelf}
+        />
         {contactCount === 0 && (
           <article className="friends-logic-card">
             <span>Interaspects</span>

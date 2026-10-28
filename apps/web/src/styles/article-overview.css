@@ -1,0 +1,31 @@
+/* One reading sheet for placements, natal readings, and transit articles. */
+.article-page .article-shell { width: min(var(--layout-reading-width), 100%); margin-inline: auto; }
+.article-page .article-card { padding: var(--layout-reading-block-space) var(--layout-reading-padding); border: 0; border-radius: var(--card-radius); background: var(--surface); box-shadow: var(--card-shadow); }
+.article-page .article-title { font-size: var(--type-feature-title-size); font-weight: var(--weight-regular); line-height: var(--leading-feature-title); letter-spacing: var(--tracking-display); }
+.article-page .article-body-inner { --text-body: var(--type-reading-size); --leading-body: var(--leading-reading); }
+.article-page .article-related-aspects { --text-body: var(--type-reading-size); --leading-body: var(--leading-reading); }
+.article-page .article-section :is(h2, h3), .article-page .sky-detail-section :is(h2, h3) { font-family: var(--font-display); font-size: var(--type-dialog-title-size); font-weight: var(--weight-regular); line-height: var(--leading-title); }
+.article-page .article-related-aspects__copy-heading :is(h3, h4) { font-family: var(--font-display); font-size: var(--type-dialog-title-size); font-weight: var(--weight-regular); line-height: var(--leading-title); }
+.article-page .article-rule { border-color: transparent; }
+.article-page .article-related-aspects-card .article-section { border: 0; background: transparent; box-shadow: none; }
+.article-page .sky-detail-drilldown-body :is(dt, dd),
+.article-page .sky-placement-key-dates :is(dt, dd) { font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-meta); }
+.article-page .article-eyebrow { font-family: var(--font-label); font-size: var(--type-degree-size); font-weight: var(--weight-regular); }
+.article-page .article-duration { font-family: var(--font-ui); }
+/* Related readings use card spacing rather than the long article inset. */
+.article-page .article-related-aspects-card { padding: var(--space-8) var(--space-7) var(--space-7); }
+.article-page .article-related-aspects__label--outside { margin: var(--space-4) 0 0; padding-inline: 0; color: var(--ink); font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); letter-spacing: var(--tracking-normal); text-transform: none; }
+.article-page .article-related-aspects__copy-list { gap: var(--space-7); }
+.article-page .article-related-aspects__copy-list > .article-related-aspects__copy { margin: 0; padding: 0; border: 0; }
+.article-page .article-related-aspects__copy-heading { margin-bottom: var(--space-3); }
+.article-page .article-related-aspects__date { margin: 0 0 var(--space-4); color: var(--muted); font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); letter-spacing: var(--tracking-normal); }
+@media (max-width: 800px) {
+ .article-page .article-card { padding: var(--space-7) var(--space-5); }
+ .article-page .article-related-aspects-card { padding: var(--space-7) var(--space-6) var(--lunar-space-28); }
+ .article-page .article-related-aspects__copy-list { gap: var(--lunar-space-28); }
+ .article-page .article-related-aspects__label--outside { font-size: var(--type-small-display-size); }
+ .article-page .article-title { font-size: var(--type-compact-title-size); line-height: var(--leading-compact-title); letter-spacing: var(--tracking-dialog-title); }
+ .article-page .article-body-inner { --text-body: var(--type-reading-compact-size); --leading-body: var(--leading-reading); }
+ .article-page .article-section :is(h2, h3) { font-size: var(--type-large-title-size); }
+ .article-page .article-related-aspects__copy-heading :is(h3, h4) { font-family: var(--font-ui); font-size: var(--type-compact-row-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); }
+}

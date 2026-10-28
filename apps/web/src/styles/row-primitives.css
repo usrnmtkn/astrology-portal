@@ -1,7 +1,6 @@
 :where(
   .placement-table-row,
   .planet-placement-row,
-  .sky-pl,
   .aspect-row,
   .aspect-row-button,
   .aspect-row-static,
@@ -22,7 +21,6 @@
 :where(
   .placement-table-row,
   .planet-placement-row,
-  .sky-pl,
   .aspect-row,
   .aspect-row-button,
   .aspect-row-static,
@@ -46,7 +44,6 @@
 :where(
   .placement-table-row,
   .planet-placement-row,
-  .sky-pl,
   .aspect-row,
   .aspect-row-button,
   .aspect-row-static,

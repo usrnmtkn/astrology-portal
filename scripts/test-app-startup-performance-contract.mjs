@@ -474,9 +474,13 @@ assert.match(
 );
 assert.doesNotMatch(
   appSource,
-  /(?:AppearanceToggle|HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup)/u,
+  /(?:HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup)/u,
   "Settings-only controls must not remain static application-shell dependencies."
 );
+assert.doesNotMatch(appSource, /import\s+(?!type\b)[^;]+from\s+["']\.\/components\/SettingsControls["']/u, "Global theme controls must not import Settings form controls into startup.");
+const themeControlsSource=fs.readFileSync(path.join(repoRoot,"apps/web/src/components/ThemeControls.tsx"),"utf8");
+assert.match(themeControlsSource,/export function ThemeToggleButton[\s\S]*export function AppearanceToggle/u,"The header and menu must retain the shared accessible theme controls.");
+assert.doesNotMatch(themeControlsSource,/(?:HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup|from ["']\.\/SettingsControls)/u,"Shared theme chrome must stay independent of Settings-only controls.");
 assert.doesNotMatch(
   appSource,
   /function (?:GuestSettingsView|SettingsView|MemberSettingsView)/u,
@@ -673,8 +677,8 @@ assert.match(
 );
 assert.match(
   friendNatalTabSource,
-  /import \{ FriendPlacementTable \}/u,
-  "The deferred Natal tab must own its placement table."
+  /import \{ NatalPlacementSections \}[\s\S]*<NatalPlacementSections[\s\S]*<PlacementTableRow/u,
+  "The deferred Natal tab must own the shared placement sections and their interactive rows."
 );
 assert.match(
   manualChartsPanelSource,
@@ -837,10 +841,11 @@ assert.match(
   "The lazy FriendDetail stylesheet must own relationship explainer CSS."
 );
 assert.match(
-  friendDetailStylesSource,
-  /@media \(max-width: 800px\)[\s\S]*\.app-shell\.mode-friends \.friend-profile-panel\.friend-chart-page[\s\S]*grid-template-columns: minmax\(0, 1fr\)/u,
-  "The lazy FriendDetail stylesheet must preserve the mobile one-column layout after its CSS chunk loads."
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/profile-overview.css"), "utf8"),
+  /@media \(max-width: 800px\)[\s\S]*\.friend-chart-page\.relationship-detail-layout[\s\S]*grid-template-columns: minmax\(0, 1fr\)/u,
+  "The shared lazy profile stylesheet must preserve the mobile one-column layout after FriendDetail loads."
 );
+assert.match(fs.readFileSync(path.join(repoRoot,"apps/web/src/features/friends/FriendDetail.tsx"),"utf8"),/import ["']\.\.\/\.\.\/styles\/profile-overview\.css["']/u,"FriendDetail must load the shared responsive profile layout.");
 assert.doesNotMatch(
   friendsStylesSource,
   /(?:^|\n)\.friend-chart-legend\s*\{/u,

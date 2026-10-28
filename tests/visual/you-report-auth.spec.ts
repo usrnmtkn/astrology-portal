@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { build } from 'esbuild';
+import { readFileSync } from 'node:fs';
 let script = '';
 test.beforeAll(async () => {
   const output = await build({stdin:{contents:`
     import React from 'react'; import {createRoot} from 'react-dom/client';
     import {YouReportActions} from './apps/web/src/features/you/YouReportActions';
+    import {ProfileAvatar} from './apps/web/src/components/ProfileAvatar';
     const h = window.reportHarness = {userId:window.existingReportAccount, items:[], reads:0, creates:0, read:async()=>h.items, create:async()=>({status:'queued'}), emit:null};
     // Keep the real request's session check. Count POSTs only after that check,
     // including when sign-out and source completion occur in the same tick.
@@ -21,7 +23,7 @@ test.beforeAll(async () => {
     const assembly={specialSections:[],derivation:{targetDate:'2026-09-11',qualifyingTransits:[{}]},prepareReportSources:()=>h.prepareSources()};
     const reading={body:'Synthetic weekly fixture.',dayLabel:'Test',sourceUnits:[]};
     const weekly={status:'ready',weekStart:'2026-09-07',weekEnd:'2026-09-13',horoscope:reading,aspects:[]};
-    h.render=(ready=h.ready ?? true,date='September 11')=>{h.ready=ready;root.render(<YouReportActions accountId={h.userId} accountRecovery={h.recovery} transitDateLabel={date} dailyUpdateSummary={ready?summary:{...summary,status:'loading'}} dailyHoroscopeAssembly={assembly} weeklyHoroscopeAssembly={ready?weekly:{...weekly,status:'loading'}}/>);};
+    h.render=(ready=h.ready ?? true,date='September 11')=>{h.ready=ready;root.render(<YouReportActions avatar={<ProfileAvatar name="Report Fixture" email="" size="large"/>} accountId={h.userId} accountRecovery={h.recovery} transitDateLabel={date} dailyUpdateSummary={ready?summary:{...summary,status:'loading'}} dailyHoroscopeAssembly={assembly} weeklyHoroscopeAssembly={ready?weekly:{...weekly,status:'loading'}}/>);};
     h.emit=(id)=>{h.userId=id;h.render();};
     h.render();`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,format:'iife',platform:'browser',jsx:'automatic',plugins:[{name:'isolated-session',setup(b){
       b.onResolve({filter:/services\/auth$/},()=>({path:'auth',namespace:'fixture'}));
@@ -32,7 +34,9 @@ test.beforeAll(async () => {
   script=output.outputFiles[0].text;
 });
 test.beforeEach(async ({page})=>{
-  await page.route('**/__report-auth-harness',route=>route.fulfill({contentType:'text/html',body:`<html><body><div id="root"></div><script>${script}</script></body></html>`}));
+  const manifest=JSON.parse(readFileSync(`${process.env.PLAYWRIGHT_DIST_ROOT??'apps/web/dist'}/.vite/manifest.json`,'utf8'));
+  const css=[...(manifest['index.html'].css??[]),manifest['src/styles.css'].file,...(manifest['src/features/you/YouPage.tsx'].css??[])];
+  await page.route('**/__report-auth-harness',route=>route.fulfill({contentType:'text/html',body:`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">${css.map(path=>`<link rel="stylesheet" href="/${path}">`).join('')}</head><body><main class="app-shell mode-profile"><div class="page-shell you-chart-page" id="root"></div></main><script>${script}</script></body></html>`}));
   await page.goto('/__report-auth-harness');
 });
 
@@ -136,4 +140,30 @@ test('failed account recovery offers retry without requesting another sign-in', 
     const h = (window as any).reportHarness;
     return {retries:h.retries, signIns:h.signIns};
   })).toEqual({retries:1, signIns:0});
+});
+
+
+for(const width of [320,390,691,960,1440]) for(const theme of ['light','dark'])test(`Report banner handoff ${width} ${theme}`,async({page},info)=>{
+  await page.setViewportSize({width,height:1000});
+  await page.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+  await page.evaluate(()=>{const h=(window as any).reportHarness;h.recovery={error:null,onSignIn:()=>h.signInRequested=true,onRetry:()=>{}};h.emit(null);});
+  const card=page.getByRole('region',{name:'In-depth transit reports',exact:true});
+  const heading=card.getByRole('heading',{name:'Get today or this week report',exact:true});
+  await expect(heading).toHaveCSS('font-family',/Newsreader/);await expect(heading).toHaveCSS('font-size','26px');await expect(heading).toHaveCSS('font-weight','400');
+  await expect(card.locator('.you-report-actions__description')).toHaveCSS('font-family',/system-ui/);await expect(card.locator('.you-report-actions__description')).toHaveCSS('font-size','15px');
+  await expect(card.locator('.you-report-actions__avatar-mark')).toHaveText('☉');
+  await expect(card.locator('.profile-avatar')).toHaveCSS('width','64px');
+  await expect(card.getByRole('button',{name:'Create day report',exact:true})).toBeDisabled();
+  await expect(card.getByRole('button',{name:'Sign in',exact:true})).toHaveCSS('font-size','15px');
+  const buttons=card.locator('.you-report-actions__button');
+  for(const button of await buttons.all()){await expect(button).toHaveCSS('font-size','15px');await expect(button).toHaveCSS('min-height','52px');}
+  const boxes=await buttons.evaluateAll(nodes=>nodes.map(node=>{const r=node.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};}));
+  if(width<=800){expect(boxes[1].y).toBeGreaterThanOrEqual(boxes[0].y+boxes[0].height);expect(boxes[0].width).toBe(boxes[1].width);await expect(card).toHaveCSS('border-radius','36px');}
+  else{expect(boxes[0].y).toBe(boxes[1].y);expect(boxes[1].x).toBeGreaterThanOrEqual(boxes[0].x+boxes[0].width);await expect(card).toHaveCSS('border-radius','999px');}
+  expect(await card.evaluate(node=>node.scrollWidth<=node.clientWidth+1)).toBe(true);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await card.screenshot({path:info.outputPath(`report-signed-out-${width}-${theme}.png`)});
+  await card.getByRole('button',{name:'Sign in',exact:true}).click();expect(await page.evaluate(()=>(window as any).reportHarness.signInRequested)).toBe(true);
+  await page.evaluate(()=>(window as any).reportHarness.emit('report-owner'));
+  await expect(card.getByRole('button',{name:'Create day report',exact:true})).toBeEnabled();await expect(card.getByText('Sign in to create or read your reports.')).toHaveCount(0);
+  await card.screenshot({path:info.outputPath(`report-signed-in-${width}-${theme}.png`)});
 });

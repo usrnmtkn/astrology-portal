@@ -22,9 +22,12 @@ import {
   chartHouseLabelGeometry,
   chartHouseLabelRadiusFactor,
   chartSignLabelGeometry,
-  fittedWheelMarkerLayouts,
   wheelMarkerLayouts,
-  inwardMarkerOffset,
+  avoidWheelLabelCollisions,
+  wheelAngleBadgeBounds,
+  wheelAngleBadgeWidth,
+  wheelDegreeOffset,
+  wheelTickGeometry,
   longitudeToChartAngle,
   polarToCartesian,
   wheelViewBox
@@ -67,7 +70,6 @@ const longSignIconSize = 29;
 const wheelPlanetIconSize = 26;
 const relationshipClusterTangentSpacing = 23;
 const relationshipClusterTangentLimit = 40;
-const planetMarkerSpacing = 37.5;
 
 type WholeSignInspectorAspectType = "conjunction" | "sextile" | "square" | "trine" | "opposition";
 
@@ -336,9 +338,10 @@ export function WheelPlanetGlyph({ position, yOffset = -4, size }: { position: P
   );
 }
 
-type SkyWheelProps = {
+export type SkyWheelProps = {
   positions: PlanetPosition[];
   aspects: SkySnapshot["aspects"];
+  markerLayouts?: Map<string, { marker: { x: number; y: number }; angle: number; visualAngle: number }>;
   transitPositions?: PlanetPosition[];
   transitAspects?: InterChartAspectLine[];
   ascendant?: string;
@@ -357,6 +360,7 @@ type SkyWheelProps = {
 export const SkyWheel = memo(function SkyWheel({
   positions,
   aspects,
+  markerLayouts: markerLayoutOverride,
   transitPositions = [],
   transitAspects = [],
   ascendant,
@@ -372,11 +376,12 @@ export const SkyWheel = memo(function SkyWheel({
   aspectColorMode: colorModeOverride
 }: SkyWheelProps) {
   const refinedLayout = variant === "composite";
+  const handoffLayout = true;
   const display = useRelationshipWheelDisplay();
   const appearance = appearanceOverride ?? (refinedLayout ? display.appearance : "standard");
   const showGlyphRing = glyphRingOverride ?? (refinedLayout && display.glyphRing === "on");
   const aspectColorMode = colorModeOverride ?? (refinedLayout ? display.aspectColorMode : "default");
-  const planetDegreeOffset = refinedLayout ? 22 : 28;
+  const planetDegreeOffset = refinedLayout || handoffLayout ? 22 : 28;
   const isAscendantAnchored = typeof ascendantLongitude === "number";
   const isNatalWheel = showHouses && isAscendantAnchored;
   const hasAscendantAxis = typeof ascendantLongitude === "number";
@@ -386,14 +391,13 @@ export const SkyWheel = memo(function SkyWheel({
   const radius = {
     outer: 284,
     signInner: 240,
-    planet: refinedLayout ? 218 : 200,
-    transitPlanet: 304,
+    planet: refinedLayout || handoffLayout ? 212 : 200,
+    transitPlanet: 314,
     transitBand: 314,
     transitBandOuter: 344,
-    transitDegree: 330,
-    aspect: refinedLayout ? 160 : 132,
+    aspect: handoffLayout ? 96 : refinedLayout ? 160 : 132,
     house: 240 * chartHouseLabelRadiusFactor,
-    inner: refinedLayout ? 0 : 44
+    inner: handoffLayout ? 96 : refinedLayout ? 0 : 44
   };
 
   function point(angle: number, distance: number) {
@@ -469,35 +473,41 @@ export const SkyWheel = memo(function SkyWheel({
       })
     );
   }, [aspects, positions]);
-  const planetLayouts = useMemo(() => refinedLayout ? fittedWheelMarkerLayouts(
-    positions,
-    (position) => position.planet,
-    (position) => zodiacLongitude(position),
-    {
-      radius: radius.planet,
-      minimumRadius: 142,
-      center,
-      minimumSpacing: planetMarkerSpacing,
-      rowSpacing: 54,
-      glyphSize: wheelPlanetIconSize,
-      annotationOffset: planetDegreeOffset,
-      angleForLongitude
-    }
-  ) : wheelMarkerLayouts(
-    positions,
-    (position) => position.planet,
-    (position) => angleForLongitude(zodiacLongitude(position)),
-    {
-      baseRadius: radius.planet,
-      center,
-      clusterThreshold: 6,
-      maxClusterSpan: 24,
-      clusterTangentSpacing: relationshipClusterTangentSpacing,
-      maxClusterTangentOffset: relationshipClusterTangentLimit,
-      useClusterLane: true,
-    }
-  ), [positions, ascendantLongitude, isAscendantAnchored, refinedLayout]);
-  const transitLayouts = useMemo(() => wheelMarkerLayouts(
+  const angularLabelRadius = handoffLayout ? radius.signInner : transitPositions.length ? radius.transitBandOuter + 26 : radius.outer + angleLabelOuterPadding;
+  const angularLabels = useMemo(() => chartAngularLabelGeometry({
+    ascendantLongitude,
+    midheavenLongitude,
+    angleForLongitude,
+    center,
+    radius: angularLabelRadius
+  }), [ascendantLongitude, midheavenLongitude, isAscendantAnchored, angularLabelRadius]);
+  const planetTicks = useMemo(() => new Map(positions.map(position => [position.planet,
+    wheelTickGeometry(center, planetAngle(position), radius.signInner - 6, radius.signInner)
+  ])), [positions, ascendantLongitude, isAscendantAnchored]);
+  const transitTicks = useMemo(() => new Map(transitPositions.map(position => [position.planet,
+    wheelTickGeometry(center, planetAngle(position), radius.outer, radius.outer + 6)
+  ])), [transitPositions, ascendantLongitude, isAscendantAnchored]);
+  const planetLayouts = useMemo(() => {
+    const layouts = markerLayoutOverride ?? wheelMarkerLayouts(
+      positions,
+      (position) => position.planet,
+      (position) => angleForLongitude(zodiacLongitude(position)),
+      {
+        baseRadius: radius.planet,
+        center,
+        clusterThreshold: 6,
+        maxClusterSpan: 24,
+        clusterTangentSpacing: relationshipClusterTangentSpacing,
+        maxClusterTangentOffset: relationshipClusterTangentLimit,
+        useClusterLane: true,
+      }
+    );
+    return avoidWheelLabelCollisions<{ marker: { x: number; y: number }; angle: number; visualAngle: number }>(
+      layouts, center, 24, planetDegreeOffset, [
+        ...wheelAngleBadgeBounds(angularLabels, center), ...[...planetTicks.values()].map(tick => tick.bounds)
+      ]);
+  }, [positions, ascendantLongitude, isAscendantAnchored, angularLabels, planetTicks, markerLayoutOverride]);
+  const transitLayouts = useMemo(() => avoidWheelLabelCollisions(wheelMarkerLayouts(
     transitPositions,
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
@@ -510,20 +520,19 @@ export const SkyWheel = memo(function SkyWheel({
       maxClusterTangentOffset: relationshipClusterTangentLimit,
       useClusterLane: true,
       radialOffsets: [0],
-      minMarkerRadius: radius.outer + 11,
-      maxMarkerRadius: radius.outer + 30
+      minMarkerRadius: radius.transitPlanet,
+      maxMarkerRadius: radius.transitPlanet
     }
-  ), [transitPositions, ascendantLongitude, isAscendantAnchored]);
+  ), center, sunIconSize, 26, [...transitTicks.values()].map(tick => tick.bounds), true), [transitPositions, ascendantLongitude, isAscendantAnchored, transitTicks]);
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
   const hasTransitOverlay = transitPositions.length > 0;
-  const angleAxisRadius = hasTransitOverlay ? radius.transitBandOuter + 16 : radius.outer + angleAxisOuterPadding;
-  const angularLabelRadius = hasTransitOverlay ? radius.transitBandOuter + 26 : radius.outer + angleLabelOuterPadding;
+  const angleAxisRadius = handoffLayout ? 225 : hasTransitOverlay ? radius.transitBandOuter + 16 : radius.outer + angleAxisOuterPadding;
   const aspectRadius = refinedLayout ? Math.min(radius.aspect, ...[...planetLayouts.values()].map(layout => Math.hypot(layout.marker.x - center, layout.marker.y - center) - (planetDegreeOffset + 18))) : radius.aspect;
-  const houseLabelRadius = refinedLayout ? Math.min(radius.house, aspectRadius * 0.57) : radius.house;
+  const houseLabelRadius = handoffLayout ? 114 : refinedLayout ? Math.min(radius.house, aspectRadius * 0.57) : radius.house;
   const houseLabels = useMemo(() => chartHouseLabelGeometry({
     ascendant,
     ascendantLongitude,
@@ -532,13 +541,6 @@ export const SkyWheel = memo(function SkyWheel({
     radius: houseLabelRadius,
     signs
   }), [ascendant, ascendantLongitude, isAscendantAnchored, houseLabelRadius]);
-  const angularLabels = useMemo(() => chartAngularLabelGeometry({
-    ascendantLongitude,
-    midheavenLongitude,
-    angleForLongitude,
-    center,
-    radius: angularLabelRadius
-  }), [ascendantLongitude, midheavenLongitude, isAscendantAnchored, angularLabelRadius]);
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const [focusedInspectorPointId, setFocusedInspectorPointId] = useState<string | null>(null);
   const planetMarkerRefs = useRef(new Map<string, SVGGElement>());
@@ -762,10 +764,18 @@ export const SkyWheel = memo(function SkyWheel({
       setFocusedInspectorPointId(null);
     }
 
+    function clearInspectorOnEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        setFocusedInspectorPointId(null);
+      }
+    }
+
     document.addEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+    document.addEventListener("keydown", clearInspectorOnEscape);
 
     return () => {
       document.removeEventListener("pointerdown", clearInspectorOnOutsidePointerDown);
+      document.removeEventListener("keydown", clearInspectorOnEscape);
     };
   }, [inspectorEnabled, focusedInspectorPointId]);
   function inspectorPointState(pointId: string) {
@@ -787,7 +797,7 @@ export const SkyWheel = memo(function SkyWheel({
 
     return "idle";
   }
-  const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : wheelViewBox;
+  const activeWheelViewBox = hasTransitOverlay ? "-76 -76 752 752" : handoffLayout ? "-4 -4 608 648" : wheelViewBox;
 
   return (
     <>
@@ -796,7 +806,7 @@ export const SkyWheel = memo(function SkyWheel({
         className={`sky-wheel-shell sky-wheel-shell-${variant}${inspectorEnabled ? " sky-wheel-shell--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
       >
         <svg
-          className={`sky-wheel sky-wheel-${variant}${appearance === "monochrome" ? " sky-wheel--monochrome" : ""}${aspectColorMode === "bright" ? " sky-wheel--bright-aspects" : ""}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
+          className={`sky-wheel sky-wheel-${variant}${handoffLayout ? " sky-wheel--handoff" : ""}${appearance === "monochrome" ? " sky-wheel--monochrome" : ""}${aspectColorMode === "bright" ? " sky-wheel--bright-aspects" : ""}${hasTransitOverlay ? " sky-wheel-transit-overlay" : ""}${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
           viewBox={activeWheelViewBox}
           role="img"
           aria-label="Planet positions"
@@ -813,6 +823,12 @@ export const SkyWheel = memo(function SkyWheel({
             <path key={`${sign}-label-path`} id={`${signLabelPathPrefix}-${sign}`} d={path} />
           ))}
         </defs>
+        {handoffLayout && <g className="wheel-surfaces" aria-hidden="true">
+          <circle className="wheel-surface--signs" cx={center} cy={center} r={radius.outer} />
+          <circle className="wheel-surface--planets" cx={center} cy={center} r={radius.signInner} />
+          <circle className="wheel-surface--houses" cx={center} cy={center} r={132} />
+          <circle className="wheel-surface--aspects" cx={center} cy={center} r={radius.aspect} />
+        </g>}
         {appearance === "monochrome" ? (
           <circle className="wheel-paper" cx={center} cy={center} r={radius.outer} aria-hidden="true" />
         ) : null}
@@ -842,8 +858,8 @@ export const SkyWheel = memo(function SkyWheel({
           <circle cx={center} cy={center} r={radius.outer} />
           <circle cx={center} cy={center} r={radius.signInner} />
           {!refinedLayout ? <>
-            <circle cx={center} cy={center} r={radius.aspect} className="faint" />
-            <circle cx={center} cy={center} r={radius.inner} />
+            <circle cx={center} cy={center} r={handoffLayout ? 132 : radius.aspect} className="faint" />
+            <circle cx={center} cy={center} r={handoffLayout ? radius.aspect : radius.inner} />
           </> : null}
         </g>
         <g className="wheel-sectors">
@@ -863,7 +879,7 @@ export const SkyWheel = memo(function SkyWheel({
           })}
         </g>
         <g className="aspect-lines">
-          {inspectorEnabled && (!refinedLayout || focusedInspectorPoint) ? (
+          {inspectorEnabled && (handoffLayout ? Boolean(focusedInspectorPoint) : !refinedLayout || focusedInspectorPoint) ? (
             focusedInspectorPoint ? inspectorAspects.map(({ point: targetPoint, type, orb }) => {
               if (!type || typeof orb !== "number") {
                 return null;
@@ -882,8 +898,8 @@ export const SkyWheel = memo(function SkyWheel({
                 >
                   <line className="aspect-inspector-line-backdrop" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-                  {refinedLayout ? <circle className="aspect-endpoint" cx={a.x} cy={a.y} r={1.6} /> : null}
-                  {refinedLayout ? <circle className="aspect-endpoint" cx={b.x} cy={b.y} r={1.6} /> : null}
+                  {refinedLayout || handoffLayout ? <circle className="aspect-endpoint" cx={a.x} cy={a.y} r={handoffLayout ? 2.5 : 1.6} /> : null}
+                  {refinedLayout || handoffLayout ? <circle className="aspect-endpoint" cx={b.x} cy={b.y} r={handoffLayout ? 2.5 : 1.6} /> : null}
                 </g>
               );
             }) : null
@@ -901,8 +917,8 @@ export const SkyWheel = memo(function SkyWheel({
                   data-to-point-id={to.planet}
                 >
                   <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
-                  {refinedLayout ? <circle className="aspect-endpoint" cx={a.x} cy={a.y} r={1.6} /> : null}
-                  {refinedLayout ? <circle className="aspect-endpoint" cx={b.x} cy={b.y} r={1.6} /> : null}
+                  {refinedLayout || handoffLayout ? <circle className="aspect-endpoint" cx={a.x} cy={a.y} r={handoffLayout ? 2.5 : 1.6} /> : null}
+                  {refinedLayout || handoffLayout ? <circle className="aspect-endpoint" cx={b.x} cy={b.y} r={handoffLayout ? 2.5 : 1.6} /> : null}
                 </g>
               );
             })
@@ -948,13 +964,24 @@ export const SkyWheel = memo(function SkyWheel({
                     const mc = point(mcAngle, angleAxisRadius);
                     const ic = point(icAngle, angleAxisRadius);
 
+                    if (handoffLayout) {
+                      const innerMc = point(mcAngle, radius.aspect);
+                      const innerIc = point(icAngle, radius.aspect);
+                      return <>
+                        <line className="midheaven-axis" x1={mc.x} y1={mc.y} x2={innerMc.x} y2={innerMc.y} />
+                        <line className="midheaven-axis" x1={innerIc.x} y1={innerIc.y} x2={ic.x} y2={ic.y} />
+                      </>;
+                    }
                     return <line className="midheaven-axis" x1={mc.x} y1={mc.y} x2={ic.x} y2={ic.y} />;
                   })()
                 : null;
 
               return (
                 <>
-                  <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />
+                  {handoffLayout ? <>
+                    <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={point(ascAngle, radius.aspect).x} y2={point(ascAngle, radius.aspect).y} />
+                    <line className="ascendant-axis" x1={point(dscAngle, radius.aspect).x} y1={point(dscAngle, radius.aspect).y} x2={dsc.x} y2={dsc.y} />
+                  </> : <line className="ascendant-axis" x1={asc.x} y1={asc.y} x2={dsc.x} y2={dsc.y} />}
                   {midheavenAxis}
                 </>
               );
@@ -963,83 +990,25 @@ export const SkyWheel = memo(function SkyWheel({
         )}
         <g className="house-labels" aria-label={ascendant ? "Whole sign houses" : "House labels"}>
           {houseLabels.map(({ house, x, y, ariaLabel }) => (
-            <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}>
+            <text key={house} x={x} y={y} className="zodiac-house-number zodiac-wheel__house-label" aria-label={ariaLabel}
+              transform={handoffLayout ? `rotate(${(() => {
+                const angle = Math.atan2(center - y, x - center) * 180 / Math.PI;
+                let rotation = 90 - angle;
+                while (rotation > 90) rotation -= 180;
+                while (rotation < -90) rotation += 180;
+                return rotation;
+              })()} ${x} ${y})` : undefined}>
               {house}
             </text>
           ))}
         </g>
-        {hasAscendantAxis && (
-          <g className="angular-labels" aria-label="Chart angles">
-            {angularLabels.map(({ label, x, y }) => {
-              const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
-              const iconSize = angleIconSize;
-              const anglePointId = label === "ASC"
-                ? "Ascendant"
-                : label === "DSC"
-                  ? "Descendant"
-                  : label === "MC"
-                    ? "Midheaven"
-                    : label === "IC"
-                      ? "Imum Coeli"
-                      : label;
-              const angleInspectorState = inspectorPointState(anglePointId);
-              const angleClassName = `zodiac-wheel__angle-icon aspect-inspector-point aspect-inspector-point--${angleInspectorState}`;
-              const angleProps = inspectorEnabled ? {
-                role: "button",
-                tabIndex: 0,
-                onClick: (event: MouseEvent<SVGImageElement | SVGTextElement>) => {
-                  event.stopPropagation();
-                  event.currentTarget.blur();
-                  setActiveTooltipPlanet(null);
-                  setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
-                },
-                onKeyDown: (event: KeyboardEvent<SVGImageElement | SVGTextElement>) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    setActiveTooltipPlanet(null);
-                    setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
-                  }
-                }
-              } : {};
-
-              return iconHref ? (
-                <image
-                  key={label}
-                  href={iconHref}
-                  x={x - iconSize / 2}
-                  y={y - iconSize / 2}
-                  width={iconSize}
-                  height={iconSize}
-                  className={angleClassName}
-                  aria-label={label}
-                  data-inspector-point-id={anglePointId}
-                  preserveAspectRatio="xMidYMid meet"
-                  {...angleProps}
-                />
-              ) : (
-                <text
-                  key={label}
-                  x={x}
-                  y={y}
-                  className={`aspect-inspector-point aspect-inspector-point--${angleInspectorState}`}
-                  data-inspector-point-id={anglePointId}
-                  {...angleProps}
-                >
-                  {label}
-                </text>
-              );
-            })}
-          </g>
-        )}
         <g className="planet-labels">
           {positions.map((position) => {
             const layout = planetLayouts.get(position.planet);
             const marker = layout?.marker ?? point(planetAngle(position), radius.planet);
             const tickAngle = planetAngle(position);
-            const tickOuter = point(tickAngle, radius.signInner - (refinedLayout ? 0 : 5));
-            const tickInner = point(tickAngle, radius.signInner - (refinedLayout ? 8 : 17));
-            const degreeOffset = inwardMarkerOffset(center, marker, planetDegreeOffset);
+            const { inner: tickInner, outer: tickOuter } = planetTicks.get(position.planet)!;
+            const degreeOffset = wheelDegreeOffset(center, marker, 24, planetDegreeOffset);
             const tooltipLines = tooltipDetailsByPlanet.get(position.planet)?.lines ?? [];
             const inspectorState = inspectorPointState(position.planet);
             const inspectorActiveLines = focusedInspectorPoint && inspectorState === "averse"
@@ -1096,7 +1065,7 @@ export const SkyWheel = memo(function SkyWheel({
                 <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick" />
                 <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                   <circle cx={0} cy={0} r={refinedLayout ? 17 : planetHitAreaRadius} className="planet-hit-area" />
-                  <WheelPlanetGlyph position={position} yOffset={refinedLayout ? 0 : -4} size={refinedLayout ? wheelPlanetIconSize : undefined} />
+                  <WheelPlanetGlyph position={position} yOffset={refinedLayout || handoffLayout ? 0 : -4} size={handoffLayout ? 24 : refinedLayout ? wheelPlanetIconSize : undefined} />
                   <text x={degreeOffset.x.toFixed(2)} y={degreeOffset.y.toFixed(2)} className="planet-degree wheel-placement__degree">
                     {formatWheelDegree(position)}
                   </text>
@@ -1114,10 +1083,10 @@ export const SkyWheel = memo(function SkyWheel({
               const markerAngle = layoutMarker
                 ? (Math.atan2(center - layoutMarker.y, layoutMarker.x - center) * 180) / Math.PI
                 : tickAngle;
-              const marker = point(markerAngle, radius.transitPlanet);
-              const tickOuter = point(tickAngle, radius.outer + 7);
-              const tickInner = point(tickAngle, radius.outer + 5);
-              const degreeMarker = point(markerAngle, radius.transitDegree);
+              const marker = layoutMarker ?? point(markerAngle, radius.transitPlanet);
+              const { inner: tickInner, outer: tickOuter } = transitTicks.get(position.planet)!;
+              const degreeOffset = wheelDegreeOffset(center, marker, sunIconSize, 26);
+              const degreeMarker = { x: marker.x - degreeOffset.x, y: marker.y - degreeOffset.y };
               const transitPointId = transitInspectorPointId(position.planet);
               const inspectorState = inspectorPointState(transitPointId);
               const inspectorActiveLines = focusedInspectorPoint && inspectorState === "averse"
@@ -1159,12 +1128,90 @@ export const SkyWheel = memo(function SkyWheel({
                   <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick transit-planet-tick" />
                   <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                     <circle cx={0} cy={0} r={planetHitAreaRadius} className="planet-hit-area" />
-                    <WheelPlanetGlyph position={position} yOffset={-4} />
+                    <WheelPlanetGlyph position={position} yOffset={0} />
                   </g>
                   <text x={degreeMarker.x.toFixed(2)} y={degreeMarker.y.toFixed(2)} className="planet-degree wheel-placement__degree transit-planet-degree">
                     {formatWheelDegree(position)}
                   </text>
                 </g>
+              );
+            })}
+          </g>
+        )}
+        {hasAscendantAxis && (
+          <g className="angular-labels" aria-label="Chart angles">
+            {angularLabels.map(({ label, x, y }) => {
+              const iconHref = zodiacAssetHref(wheelAngleIconFiles[label]);
+              const iconSize = angleIconSize;
+              const anglePointId = label === "ASC"
+                ? "Ascendant"
+                : label === "DSC"
+                  ? "Descendant"
+                  : label === "MC"
+                    ? "Midheaven"
+                    : label === "IC"
+                      ? "Imum Coeli"
+                      : label;
+              const angleInspectorState = inspectorPointState(anglePointId);
+              const angleClassName = `zodiac-wheel__angle-icon aspect-inspector-point aspect-inspector-point--${angleInspectorState}`;
+              const angleProps = inspectorEnabled ? {
+                role: "button",
+                tabIndex: 0,
+                onClick: (event: MouseEvent<SVGElement>) => {
+                  event.stopPropagation();
+                  event.currentTarget.blur();
+                  setActiveTooltipPlanet(null);
+                  setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
+                },
+                onKeyDown: (event: KeyboardEvent<SVGElement>) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setActiveTooltipPlanet(null);
+                    setFocusedInspectorPointId((current) => current === anglePointId ? null : anglePointId);
+                  }
+                }
+              } : {};
+
+              if (handoffLayout) {
+                const angle = Math.atan2(center - y, x - center) * 180 / Math.PI;
+                let rotation = 90 - angle;
+                while (rotation > 90) rotation -= 180;
+                while (rotation < -90) rotation += 180;
+                const width = wheelAngleBadgeWidth(label);
+                return <g key={label} className={`zodiac-wheel__angle-badge aspect-inspector-point aspect-inspector-point--${angleInspectorState}`}
+                  transform={`translate(${x} ${y}) rotate(${rotation})`} aria-label={label}
+                  data-inspector-point-id={anglePointId} {...angleProps}>
+                  <rect x={-width / 2} y={-12} width={width} height={24} rx={12} />
+                  <text x={0} y={0}>{label}</text>
+                </g>;
+              }
+
+              return iconHref ? (
+                <image
+                  key={label}
+                  href={iconHref}
+                  x={x - iconSize / 2}
+                  y={y - iconSize / 2}
+                  width={iconSize}
+                  height={iconSize}
+                  className={angleClassName}
+                  aria-label={label}
+                  data-inspector-point-id={anglePointId}
+                  preserveAspectRatio="xMidYMid meet"
+                  {...angleProps}
+                />
+              ) : (
+                <text
+                  key={label}
+                  x={x}
+                  y={y}
+                  className={`aspect-inspector-point aspect-inspector-point--${angleInspectorState}`}
+                  data-inspector-point-id={anglePointId}
+                  {...angleProps}
+                >
+                  {label}
+                </text>
               );
             })}
           </g>

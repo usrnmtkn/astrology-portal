@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '../helpers/polish-test';
 import { readerResponse } from '../helpers/reader-response';
 
 test.describe.configure({ mode: 'parallel' });
@@ -25,7 +25,7 @@ async function prepare(page: Page, theme: string, member: boolean, chart = false
     if (member) localStorage.setItem('tldrastro:userProfile', JSON.stringify({
       ...user, name: 'Test Reader', provider: 'email', sun: 'Aquarius', moon: 'Scorpio', rising: 'Gemini',
       phone: '+12025550101', currentLocation: location.label, currentLocationData: location,
-      charts: chart ? [{ id: 'viewport-chart', name: 'Test Reader', type: 'Birth chart', birthDate: '1990-01-01',
+      charts: chart ? [{ id: 'viewport-chart', name: 'Test Reader', type: 'Birth chart', birthDate: '1990-10-01',
         birthTime: '12:00 PM', birthCity: location.label, birthLocation: location }] : []
     }));
     if (member) localStorage.setItem(`tldrastro:manualCharts:${user.id}`, JSON.stringify([{
@@ -85,21 +85,48 @@ async function contained(page: Page, surface: Locator) {
     })));
     throw error;
   }
-  expect(await surface.evaluate(el=>{
-    const prior=(el as HTMLElement).style.pointerEvents;
-    (el as HTMLElement).style.pointerEvents='auto';
-    const b=el.getBoundingClientRect();
-    const hit=document.elementFromPoint(b.left+b.width/2,b.top+b.height/2);
-    (el as HTMLElement).style.pointerEvents=prior;
-    return hit===el || Boolean(hit && el.contains(hit));
-  }), 'surface not covered or clipped').toBe(true);
+  await expect(async () => {
+    expect(await surface.evaluate(el=>{
+      const prior=(el as HTMLElement).style.pointerEvents;
+      (el as HTMLElement).style.pointerEvents='auto';
+      const b=el.getBoundingClientRect();
+      const hit=document.elementFromPoint(b.left+b.width/2,b.top+b.height/2);
+      (el as HTMLElement).style.pointerEvents=prior;
+      return hit===el || Boolean(hit && el.contains(hit));
+    }), 'surface not covered or clipped').toBe(true);
+  }).toPass({ timeout: 3000 }).catch(async error => {
+    console.log('Floating surface hit target', await page.evaluate(() => {
+      const el = document.querySelector<HTMLElement>('.floating-tooltip, [role="tooltip"]');
+      if (!el) return { tooltip: 'removed', activeClass: document.activeElement?.className };
+      const prior = (el as HTMLElement).style.pointerEvents;
+      (el as HTMLElement).style.pointerEvents = 'auto';
+      const box = el.getBoundingClientRect();
+      const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+      (el as HTMLElement).style.pointerEvents = prior;
+      return { box: box.toJSON(), hit: hit?.outerHTML.slice(0, 400),
+        parents: [el, el.parentElement, el.parentElement?.parentElement].filter(Boolean).map(node => {
+          const style = getComputedStyle(node!);
+          return { name: node!.className, display: style.display, visibility: style.visibility, opacity: style.opacity, zIndex: style.zIndex };
+        }) };
+    }));
+    throw error;
+  });
   for (const action of await surface.locator('button:visible').all()) {
     await action.scrollIntoViewIfNeeded();
-    expect(await action.evaluate(el => {
+    expect(await action.evaluate((el, bounds) => {
       const b = el.getBoundingClientRect();
-      const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+      // Long report titles can make the opening button taller than the scrollport.
+      // Its visible portion must receive clicks; dismiss controls must fit in full.
+      const left = Math.max(b.left, bounds.x, 0);
+      const right = Math.min(b.right, bounds.x + bounds.width, innerWidth);
+      const top = Math.max(b.top, bounds.y, 0);
+      const bottom = Math.min(b.bottom, bounds.y + bounds.height, innerHeight);
+      if (right <= left || bottom <= top) return false;
+      if (el.matches('.report-ready-toast__dismiss') && (b.top < bounds.y || b.bottom > bounds.y + bounds.height)) return false;
+      const hit = document.elementFromPoint((left + right) / 2, (top + bottom) / 2);
       return hit === el || Boolean(hit && el.contains(hit));
-    }), 'toast action reachable').toBe(true);
+    }, (await surface.boundingBox())!), 'toast action reachable').toBe(true);
+    await action.click({ trial: true });
   }
 }
 
@@ -110,7 +137,7 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
   test(`${name} stays inside ${viewport.width}x${viewport.height} ${theme}`, async ({page}) => {
     test.setTimeout(45000);
     await page.setViewportSize(viewport);
-    await prepare(page,theme,true,false,name.startsWith('Report'));
+    await prepare(page,theme,true,name === 'Dignity tooltip',name.startsWith('Report'));
     if (name === 'Report ready toast') await page.route('**/rest/v1/user_generated_interpretations?**', route => route.fulfill({json:[{
       id:'22222222-2222-4222-8222-222222222222',subject_type:'you_day_reading',status:'DRAFT',body:'Synthetic reading.',
       headline:longTitle,target_date:'2026-10-15',created_at:'2026-10-15T12:00:00Z',updated_at:'2026-10-15T12:00:00Z'
@@ -132,7 +159,7 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       },theme);
       await page.route('**/api/admin/**',route=>route.fulfill({json:{ok:true,rows:[],statuses:[],nextCursor:null}}));
     }
-    const path = name === 'Dignity tooltip' ? '/?date=2026-10-16#sky/placement/sun/libra' : name === 'Studio toast' ? '/admin/content#content/aspect-patterns' : name.startsWith('Calendar') ? `/#calendar?view=${name.includes('month')?'month':'week'}`
+    const path = name === 'Dignity tooltip' ? '/#you/placement/sun-libra-11h' : name === 'Studio toast' ? '/admin/content#content/aspect-patterns' : name.startsWith('Calendar') ? `/#calendar?view=${name.includes('month')?'month':'week'}`
       : name.startsWith('Friend') ? '/#friends?tab=circle' : name === 'Report notice toast' ? '/reports/'
       : name === 'Report ready toast' ? '/#account' : '/#sky';
     await page.goto(path,{waitUntil:'domcontentloaded'});
@@ -145,19 +172,21 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       await surface.locator('span').first().evaluate((el,text)=>{el.textContent=text},longTitle + longName);
     } else if (name === 'Planet tooltip') {
       if (viewport.width <= 820) await page.getByRole('button',{name:'Open full current sky chart',exact:true}).click();
-      anchor=page.locator('.planet-marker:visible').first();
+      anchor=(viewport.width <= 820 ? page.getByRole('dialog') : page.getByRole('region', {name:'Current sky',exact:true})).locator('.planet-marker:visible').first();
       await anchor.focus();surface=page.locator('.floating-tooltip--planet');
     } else if (name === 'Dignity tooltip') {
+      // Dignity badges belong to natal readers, not the updated Sky articles.
+      await expect(page.locator('.you-transit-article-page h1')).toHaveText('Sun in Libra in the 11th house');
       anchor=page.locator('.spl-dig[tabindex="0"]:visible').first();
       await anchor.focus();surface=page.locator('.floating-tooltip');
     } else if (name.startsWith('Calendar')) {
-      anchor=page.locator(name.includes('month')?'.lunar-calendar-day:not(.is-selected)':'.lunar-week-day:not(.is-selected)').last();
+      anchor=page.locator(name.includes('month')?'button.lunar-calendar-day:not(.is-selected)':'button.lunar-week-day:not(.is-selected)').last();
       await anchor.focus();surface=page.locator('[role="tooltip"]:visible');
     } else if (name === 'Report ready toast') surface=page.locator('.report-ready-toast');
     else if (name === 'Report notice toast') {
-      page.on('dialog',dialog=>dialog.accept());
       await page.getByRole('button',{name:'More options for Viewport report'}).click();
       await page.getByRole('menuitem',{name:'Delete',exact:true}).click();
+      await page.getByRole('alertdialog').getByRole('button',{name:'Delete',exact:true}).click();
       surface=page.locator('.report-library-share-toast');
     } else if (name === 'Friend acceptance toast') surface=page.locator('.friends-acceptance-toast');
     else {
@@ -177,6 +206,7 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       await contained(page,surface);
     }
     if (anchor) {
+      await expect(anchor, 'the tooltip trigger retains keyboard focus through hydration and resizing').toBeFocused();
       await anchor.evaluate(el => (el as HTMLElement).blur());
       await expect(surface).toBeHidden();
       await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));

@@ -37,12 +37,12 @@ test("debility card counts traditional detriment and fall under the sky today ca
   await expect(heading).toBeVisible();
   await expect(debility.locator(".sky-today-ledger__head p")).toHaveCount(0);
   await expect(debility.getByTestId("effort-count-statement")).toHaveText("Two of the seven classical planets are currently in detriment or fall");
-  await expect(debility.getByRole("link")).toHaveText(["Mars in Cancer", "Saturn retrograde in Aries"]);
+  await expect(debility.locator(".sky-today-ledger__copy").getByRole("link")).toHaveText(["Mars in Cancer", "Saturn retrograde in Aries"]);
   await expect(debility).toContainText("in detriment or fall");
   const headingType = await heading.evaluate(el => {
     const style = getComputedStyle(el);
     const probe = document.createElement("h3");
-    probe.style.cssText = "font-family:var(--font-display);font-size:var(--sky-ledger-title-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-tight);line-height:var(--leading-h1)";
+    probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-ui);font-size:21px;font-weight:600;letter-spacing:-0.01em;line-height:1.25" : "font-family:var(--font-display);font-size:40px;font-weight:400;letter-spacing:-0.015em;line-height:1.08";
     el.after(probe);
     const expected = getComputedStyle(probe);
     const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
@@ -72,6 +72,21 @@ for (const theme of ["light", "dark"] as const) {
       const summary = page.getByLabel("Daily sky summary");
       await expect(summary).toBeVisible({ timeout: 60_000 });
       await expect(summary).toContainText("The Sun in Virgo");
+      const pageHeading = page.getByRole("heading", { name: "Sky", level: 1, exact: true });
+      const wheel = page.getByRole("region", { name: "Current sky", exact: true });
+      await expect(pageHeading).toBeVisible();
+      await expect(wheel).toBeVisible();
+      await expect(summary).toHaveCSS("font-family", /Newsreader/u);
+      await expect(page.locator(".sky-daily-summary")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      const headingBox = (await pageHeading.boundingBox())!;
+      const wheelBox = (await wheel.boundingBox())!;
+      const summaryBox = (await summary.boundingBox())!;
+      if (width <= 800) {
+        expect(wheelBox.y).toBeGreaterThan(headingBox.y + headingBox.height);
+        expect(summaryBox.y).toBeGreaterThanOrEqual(wheelBox.y + wheelBox.height);
+      } else {
+        expect(wheelBox.x + wheelBox.width).toBeLessThan(summaryBox.x);
+      }
       await expect(summary).toContainText("The Sun in Virgo at 15° turns our attention to the daily rituals and systems we rely on, helping us see which support us and which have become too rigid, demanding, or punishing. The Moon in Cancer at 29° pulls us home to the places, people, and memories that nurture us.");
       await expect(summary).not.toContainText("Fix what matters");
       await expect(summary).not.toContainText("Tend what feels like home");
@@ -93,11 +108,15 @@ for (const theme of ["light", "dark"] as const) {
         const expected = getComputedStyle(probe);
         const matches = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"].every(key => style[key] === expected[key]);
         probe.remove();
-        return { matches, background: style.backgroundImage, font: style.fontFamily, wrapping: style.boxDecorationBreak };
+        return { matches, background: style.backgroundImage, tint: style.backgroundColor, radius: style.borderRadius, shadow: style.boxShadow, color: style.color, font: style.fontFamily, wrapping: style.boxDecorationBreak };
       });
       expect(highlightStyle.matches).toBe(true);
-      expect(highlightStyle.font).toContain("Mono");
-      expect(highlightStyle.background).toContain("linear-gradient");
+      expect(highlightStyle.font).toContain("Newsreader");
+      expect(highlightStyle.background).toBe("none");
+      expect(highlightStyle.tint).toBe("rgb(167, 242, 215)");
+      expect(highlightStyle.radius).toBe("4px");
+      expect(highlightStyle.shadow).toBe("none");
+      expect(highlightStyle.color).toBe("rgb(28, 31, 38)");
       expect(highlightStyle.wrapping).toBe("clone");
       for (const name of ["Sun in Virgo", "Moon in Cancer"]) {
         const link = summary.getByRole("link", { name: `Read about ${name}` });
@@ -109,8 +128,8 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator(".sky-lunar-pills, .next-lun, .sky-today-ledger__row")).toHaveCount(0);
       await expect(page.getByRole("region", { name: "Retrograde planets", exact: true })).toHaveCount(0);
       await expect(page.locator(".retrograde-section")).toHaveCount(0);
-      await expect(page.getByRole("region", { name: "Transits", exact: true })).toBeVisible();
-      await expect(page.getByRole("heading", { name: /The sky today|Today, simple/i })).toBeVisible();
+      await expect(page.getByRole("region", { name: "Placements", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: /^Sky$/i })).toBeVisible();
       const summaryCards = page.locator(".today-summary-cards > section");
       await expect(summaryCards.first()).toHaveAttribute("aria-label", "The sky today");
       await expect(summaryCards.nth(1)).toHaveAttribute("aria-label", "Things may take more effort right now");
@@ -122,7 +141,7 @@ for (const theme of ["light", "dark"] as const) {
       const countStatement = debility.getByTestId("effort-count-statement");
       await expect(countStatement).toHaveText(/^(One|Two|Three|Four|Five|Six|Seven) of the seven classical planets (is|are) currently in detriment or fall$/);
       const debilitatedCount = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven"].indexOf((await countStatement.innerText()).split(" ")[0]);
-      await expect(debility.getByRole("link")).toHaveCount(debilitatedCount);
+      await expect(debility.locator(".sky-today-ledger__copy").getByRole("link")).toHaveCount(debilitatedCount);
       await expect(debility.getByRole("link", { name: "Read about Saturn retrograde in Aries" })).toBeVisible();
       await expect(debility).toContainText("in detriment or fall");
       const headingOrder = await page.evaluate(() => Array.from(document.querySelectorAll("h1, h2, h3, h4, h5, h6"), node => ({
@@ -131,11 +150,11 @@ for (const theme of ["light", "dark"] as const) {
         visible: (node as HTMLElement).offsetParent !== null || getComputedStyle(node).position === "fixed"
       })));
       const visibleHeadings = headingOrder.filter(node => node.visible).map(node => node.text);
-      expect(visibleHeadings.indexOf("Things may take more effort right now")).toBeGreaterThan(visibleHeadings.findIndex(text => /The sky today|Today, simple/i.test(text)));
+      expect(visibleHeadings.indexOf("Things may take more effort right now")).toBeGreaterThan(visibleHeadings.findIndex(text => /^Sky$/i.test(text)));
       const debilityType = await debilityHeading.evaluate(el => {
         const style = getComputedStyle(el);
         const probe = document.createElement("h3");
-        probe.style.cssText = "font-family:var(--font-display);font-size:var(--sky-ledger-title-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-tight);line-height:var(--leading-h1)";
+        probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-ui);font-size:21px;font-weight:600;letter-spacing:-0.01em;line-height:1.25" : "font-family:var(--font-display);font-size:40px;font-weight:400;letter-spacing:-0.015em;line-height:1.08";
         el.after(probe);
         const expected = getComputedStyle(probe);
         const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
@@ -165,9 +184,9 @@ for (const theme of ["light", "dark"] as const) {
         const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;
         const values = Object.fromEntries(keys.map(key => [key, { actual: style[key], expected: expected[key] }]));
         probe.remove();
-        return { values, fits: el.scrollWidth <= el.clientWidth };
+        return { values, fits: el.scrollWidth <= el.clientWidth, widths: [el.scrollWidth,el.clientWidth], overflow: Array.from(el.querySelectorAll('*')).filter(node=>node.getBoundingClientRect().right>el.getBoundingClientRect().right+1).map(node=>({tag:node.tagName,classes:node.className,text:node.textContent?.slice(0,80)})) };
       });
-      expect(typography.fits).toBe(true);
+      expect(typography.fits, JSON.stringify(typography)).toBe(true);
       for (const value of Object.values(typography.values)) expect(value.actual).toBe(value.expected);
       await page.screenshot({ path: `test-results/sky-summary-${theme}-${width}.png`, fullPage: false });
       for (const name of ["Sun in Virgo", "Moon in Cancer"]) {
@@ -194,13 +213,8 @@ for (const theme of ["light", "dark"] as const) {
       await page.goto("/#sky");
       await expect(page.getByLabel("Daily sky summary")).toBeVisible();
       const chartButton = page.getByRole("button", { name: "Open full current sky chart" });
-      if (width <= 720) {
-        await chartButton.click();
-        await expect(page.getByRole("dialog", { name: "Full sky chart" })).toBeVisible();
-      } else {
-        await expect(chartButton).toBeHidden();
-        await expect(page.getByRole("region", { name: "Current sky", exact: true })).toBeVisible();
-      }
+      await chartButton.click();
+      await expect(page.getByRole("dialog", { name: "Full sky chart" })).toBeVisible();
       expect(errors).toEqual([]);
     });
   }

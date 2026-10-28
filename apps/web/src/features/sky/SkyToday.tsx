@@ -1,6 +1,6 @@
 import { PlacementRowSkeleton } from "../../components/charts/PlacementRows";
 import { AspectListSkeleton } from "../../components/charts/AspectRowSkeleton";
-import { LoadingStatus } from "../../components/CardSkeleton";
+import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
 import { MINIMUM_SKELETON_MS } from "../../hooks/useMinimumLoading";
 import type { ReactNode } from "react";
 import { DeferredRender } from "../../components/DeferredRender";
@@ -8,9 +8,9 @@ import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
 
 export function SkyPlacementSection({ children }: { children: ReactNode }) {
   return (
-    <section className="placement-section chart-section" aria-label="Transits">
+    <section className="placement-section chart-section" aria-label="Placements">
       <div className="placements-heading">
-        <span className="eyebrow section-label chart-section-title">Transits</span>
+        <h2 className="chart-section-title">Placements</h2>
       </div>
 
       {children}
@@ -28,13 +28,14 @@ export function SkyPlacementList({ children, loading = false }: { children: Reac
   );
 }
 
-export function SkyPlacementListSkeleton({ count = 3 }: { count?: number }) {
-  return <SkyPlacementList loading>
-    <LoadingStatus>Loading description</LoadingStatus>
-    {Array.from({ length: count }, (_, index) => <SkyPlacementListItem key={index} id={`loading-${index}`}>
-      <PlacementRowSkeleton />
-    </SkyPlacementListItem>)}
+export function SkyPlacementListSkeleton({ count = 3, grouped = false, announce = true }: { count?: number; grouped?: boolean; announce?: boolean }) {
+  const rows = (size: number) => <SkyPlacementList loading>
+    {Array.from({ length: size }, (_, index) => <SkyPlacementListItem key={index} id={`loading-${index}`}><PlacementRowSkeleton /></SkyPlacementListItem>)}
   </SkyPlacementList>;
+  return <>{announce ? <LoadingStatus>Loading description</LoadingStatus> : null}{grouped ? <>
+    {[{label:"Planets",size:Math.max(0,count-4)},{label:"Points",size:Math.min(4,count)}].filter(group=>group.size).map(group=><section className="sky-placement-group" aria-label={group.label} key={group.label}><h3>{group.label}</h3>{rows(group.size)}</section>)}
+    <section className="sky-placement-group sky-angle-group" aria-label="Angles"><h3>Angles</h3><div className="placement-table" aria-hidden="true">{[0,1].map(index=><button type="button" disabled tabIndex={-1} className="placement-table-row card-skeleton" key={index}><span className="placement-table-row__glyph card-skeleton-disc"/><span className="placement-table-row__body loading-lines"><SkeletonBar title/><SkeletonBar short/></span></button>)}</div></section>
+  </> : rows(count)}</>;
 }
 
 export function SkyPlacementListItem({ children, id }: { children: ReactNode; id: string }) {

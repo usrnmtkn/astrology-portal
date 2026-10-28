@@ -215,9 +215,9 @@ function assertValidCmsTemplate({
 }) {
   const snapshot = isRecord(sourceSnapshot) ? sourceSnapshot : {};
   if (!contentKey?.startsWith("cms/") && snapshot.contentSystem !== "cms-surface-override") return;
-  const allowedSlots = Array.isArray(snapshot.allowedSlots)
+  const allowedSlots = libs().frictionFlowField(contentKey ?? "")?.allowedSlots ?? (Array.isArray(snapshot.allowedSlots)
     ? snapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
-    : [];
+    : []);
   const validation = libs().validateCmsTemplate({
     allowedSlots,
     headline: headline ?? "",
@@ -226,6 +226,7 @@ function assertValidCmsTemplate({
   });
   validation.errors.push(...libs().skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
   validation.errors.push(...libs().skyDebilityTemplateErrors(contentKey ?? "", body ?? "", headline ?? ""));
+  validation.errors.push(...libs().frictionFlowTemplateErrors(contentKey ?? "", body ?? ""));
   if (validation.errors.length > 0) {
     throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
   }
@@ -282,7 +283,9 @@ function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string,
     && isRecord(metadata?.facts) && metadata.facts.scope === "editorial_library"
     && metadata.facts.audience === contentKey?.split("/")[2]
     && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "editorial-library";
-  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal;
+  const reusableFrictionFlow = surface === "relationship" && Boolean(contentKey && libs().frictionFlowField(contentKey))
+    && isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.contentSystem === "cms-surface-override";
+  return Boolean(surface && personalizedSampleSurfaces.has(surface)) && !reusableComposite && !reusableNatal && !reusableFrictionFlow;
 }
 
 function normalizedGeneratedContentBlockType(blockType: unknown, surface?: GeneratedContentSurface, mode?: GeneratedContentWriteBody["mode"]) {

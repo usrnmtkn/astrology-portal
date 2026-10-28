@@ -11,14 +11,13 @@ export function AttributionLine({
   ...props
 }: HTMLAttributes<HTMLParagraphElement> & { facts: AttributionFacts }) {
   const glyphs = attributionGlyphs(facts);
+  const badge = facts.kind === "transit_to_natal" ? glyphs[1] : glyphs[0];
   const text = formatAttribution(facts);
 
   return (
     <p className={`report-attribution${className ? ` ${className}` : ""}`} {...props}>
       <span className="report-attribution__glyphs" aria-hidden="true">
-        {glyphs.map((glyph, index) => (
-          <span className="report-attribution__glyph" key={`${glyph.label}-${index}`}>{glyph.value}</span>
-        ))}
+        <span className="report-attribution__glyph">{badge.value}</span>
       </span>
       <span>{text}</span>
     </p>

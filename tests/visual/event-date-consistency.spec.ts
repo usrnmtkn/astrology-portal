@@ -23,10 +23,10 @@ for (const scenario of [
   page.on("pageerror", error => errors.push(error.message));
   await page.goto("/?date=2026-09-14#sky");
   const card = page.getByRole("button", { name: "Read more about Sun in Virgo", exact: true });
-  await expect(card.locator(".planet-placement-row__meta--timing")).toHaveText(`${scenario.start} - ${scenario.end}`, { timeout: 60_000 });
+  await expect(card.locator(".planet-placement-row__timing > span:first-child")).toHaveText(`${scenario.start} - ${scenario.end}`, { timeout: 60_000 });
   await card.click();
   await expect(page.locator(".sky-detail-id .article-duration")).toHaveText(scenario.article, { timeout: 60_000 });
-  await expect(page.getByLabel("Article details")).toContainText(scenario.timeZone === "America/New_York" ? "8D" : "9D");
+  await expect(page.getByLabel("Article details")).toHaveCount(0); // Placement dates use the current plain-date header.
   // Preserve the complete owner passage while changing only calculated metadata.
   await expect(page.locator(".article-body-inner").first()).toContainText("The Sun in Virgo makes the systems that keep life functioning easier to see");
   await expect(page.locator(".article-body-inner").first()).toContainText("The system that works is the one that makes your life easier to live.");

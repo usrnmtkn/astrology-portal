@@ -1,5 +1,7 @@
+import { CompositeWheel } from "../../components/charts/CompositeWheel";
 import type { NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { NatalChartDataTable } from "../../components/charts/NatalChartDataTable";
+import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
 import { SynastryWheel } from "../../components/charts/SynastryWheel";
 import {
   SkyWheel,
@@ -78,11 +80,11 @@ export function FriendProfileChartRail({
       ) : null}
       {activeTab === "natal" && natalSky ? (
         <div className="friend-synastry-wheel-shell">
-          <FriendNatalViewControl
+          <div className="natal-chart-controls"><FriendNatalViewControl
             value={natalViewMode}
             onChange={onNatalViewModeChange}
             ariaLabel={`${chartName} natal chart display`}
-          />
+          />{natalViewMode === "circle" && <ChartFullscreenButton title="Natal chart"><SkyWheel positions={natalSky.positions} aspects={canonicalNatalAspectsForSnapshot(natalSky)} ascendant={natalSky.ascendant} ascendantLongitude={natalSky.ascendantLongitude} midheavenLongitude={natalSky.midheavenLongitude} showHouses houseSignLabelStyle={houseSignLabelStyle} variant="natal" aspectInspector /></ChartFullscreenButton>}</div>
           {natalViewMode === "table" ? (
             <NatalChartDataTable
               rows={natalTableRows}
@@ -194,7 +196,7 @@ export function FriendProfileChartRail({
               className="wheel natal-wheel friend-wheel chart-frame"
               aria-label={`${chartName} and ${comparisonIsSelf ? "you" : comparisonName} composite chart wheel`}
             >
-              <SkyWheel
+              <CompositeWheel
                 positions={compositeSky.positions}
                 aspects={compositeSky.aspects}
                 ascendant={compositeSky.ascendant}
@@ -202,7 +204,6 @@ export function FriendProfileChartRail({
                 midheavenLongitude={compositeSky.midheavenLongitude}
                 showHouses
                 houseSignLabelStyle={houseSignLabelStyle}
-                variant="composite"
                 aspectInspector
                 aspectInspectorControls={(
                   <RelationshipComparePicker

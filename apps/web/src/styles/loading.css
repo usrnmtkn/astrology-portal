@@ -31,7 +31,8 @@
 }
 
 /* Route-level fallbacks sit below the same fixed navigation as page shells. */
-.app-shell > .app-loading--centered {
+.app-shell > .app-loading--centered,
+.app-shell:is(.mode-friends, .mode-learn, .mode-articles, .mode-detail) > .app-loading[role="alert"] {
   margin-top: var(--page-top);
 }
 

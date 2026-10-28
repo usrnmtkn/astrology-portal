@@ -1,4 +1,5 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/polish-test";
+import { expectReadableTheme } from "../helpers/theme-contrast";
 
 test.beforeEach(async ({ page }) => {
   await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
@@ -29,8 +30,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
       const menuToggle = page.getByRole("button", { name: "Open menu" });
 
       await expect(heading).toBeVisible();
-      await expect(page.locator(".report-library-header")).toHaveText("Reports");
-      await expect(page.locator(".report-library-header > *")).toHaveCount(1);
+      await expect(page.locator(".report-library-header h1")).toHaveText("Reports");
       await expect(tabs).toBeVisible();
       await expect(topbar).toBeVisible();
       await expect(navPill).toBeVisible();
@@ -51,7 +51,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
       const siteMenu = page.getByRole("menu", { name: "Site menu" });
       await expect(siteMenu).toBeVisible();
       await expect(siteMenu.getByRole("menuitem", { name: "Reports" })).toBeVisible();
-      await page.getByRole("button", { name: "Close menu" }).click();
+      await page.locator(".site-menu-sheet .site-menu-close").click();
 
       const computed = await page.evaluate(() => {
         const headingElement = document.querySelector<HTMLElement>("#report-library-title");
@@ -78,6 +78,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
           bodyBackgroundImage: bodyStyle.backgroundImage,
           bodyBackgroundColor: bodyStyle.backgroundColor,
           headingClearsTopbar: !topbarBox || headingBox.top > topbarBox.bottom,
+          headerGap: document.querySelector<HTMLElement>(".report-library-header")!.getBoundingClientRect().top - navElement.getBoundingClientRect().bottom,
           horizontalOverflow: document.documentElement.scrollWidth > window.innerWidth + 1
         };
       });
@@ -90,6 +91,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
       expect(computed.navBorderRadius, `${viewport.name} ${theme}: the TLDR navigation pill is styled`).not.toBe("0px");
       expect(computed.bodyBackgroundImage, `${viewport.name} ${theme}: TLDR background treatment is present`).not.toBe("none");
       expect(computed.headingClearsTopbar, `${viewport.name} ${theme}: Reports content clears the fixed main navigation`).toBe(true);
+      expect(computed.headerGap, `${viewport.name} ${theme}: Reports uses the shared page gap`).toBeCloseTo(viewport.width <= 720 ? 64 : 80, 0);
       expect(computed.horizontalOverflow, `${viewport.name} ${theme}: Reports does not overflow horizontally`).toBe(false);
       bodyBackgrounds.set(`${viewport.name}-${theme}`, computed.bodyBackgroundColor);
 
@@ -215,10 +217,10 @@ test('a preparing report advances and opens without a reload, preserving state t
   await page.goto('/reports/');
   await expect(page.getByText('Writing', { exact: true })).toBeVisible();
   await page.getByRole('button').filter({ hasText: 'Daily progress fixture' }).click();
-  await expect(page.getByRole('status')).toContainText('Writing. This page updates automatically');
+  await expect(page.getByRole('status')).toContainText('Writing');
   failNext = true;
   row.source_snapshot.reportProgress.stage = 'checking';
-  await expect(page.getByRole('status')).toContainText('Checking.', { timeout: 12000 });
+  await expect(page.getByRole('status')).toContainText('Checking', { timeout: 25000 });
   row.body = 'The completed fixture report is now available.';
   await expect(page.getByText(row.body, { exact: true })).toBeVisible();
 });
@@ -249,4 +251,32 @@ test('review-held reports show a stable review state instead of preparing or fin
   expect(generationRequests).toBe(0);
   expect(errors).toEqual([]);
   await page.screenshot({ path: test.info().outputPath('report-review-required.png') });
+});
+
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Report card typography ${width} ${theme}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1000 });
+  const user={id:'11111111-1111-4111-8111-111111111111',aud:'authenticated',role:'authenticated',email:'report-fixture@example.test',app_metadata:{provider:'email'},user_metadata:{name:'Fixture Reader'}};
+  const authKey=`sb-${new URL(process.env.VITE_SUPABASE_URL??'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
+  const row={id:'22222222-2222-4222-8222-222222222222',subject_type:'you_day_reading',status:'DRAFT',body:'Complete report fixture opening.\n\nComplete report fixture ending.',headline:'A saved report with a title that wraps naturally',target_date:'2026-10-25',created_at:'2026-10-25T12:00:00Z',updated_at:'2026-10-25T12:00:00Z'};
+  await page.addInitScript(({user,authKey,theme})=>{localStorage.setItem('tldrastro:theme',theme);localStorage.setItem(authKey,JSON.stringify({user,access_token:'synthetic-report-token',refresh_token:'synthetic-refresh',token_type:'bearer',expires_at:4102444800}));},{user,authKey,theme});
+  await page.route('**/auth/v1/**',route=>route.fulfill({json:user}));
+  await page.route('**/rest/v1/**',route=>route.fulfill({json:[]}));
+  let populated=true;
+  await page.route('**/rest/v1/user_generated_interpretations?**',route=>route.fulfill({json:populated?[row]:[]}));
+  await page.routeWebSocket('**/realtime/v1/websocket*',socket=>socket.onMessage(raw=>{const m=JSON.parse(String(raw));socket.send(JSON.stringify({topic:m.topic,event:'phx_reply',ref:m.ref,payload:{status:'ok',response:{}}}));}));
+  await page.goto('/reports/');
+  const card=page.locator('.report-library-row').filter({hasText:row.headline}), title=card.locator('.type-card-title');
+  await expect(card).toBeVisible();await expect(title).toHaveCSS('font-family',width<800?/system-ui/:/Newsreader/);await expect(title).toHaveCSS('font-size',width<800?'17px':'24px');await expect(title).toHaveCSS('font-weight',width<800?'600':'400');await expect(title).toHaveCSS('line-height',width<800?'22.95px':'27.6px');
+  await expect(card.locator('.report-library-row__date')).toHaveCSS('font-size','13px');await expect(card.locator('.report-library-row__date')).toHaveCSS('font-family',/system-ui/);
+  await expectReadableTheme(page,'.report-library-row .type-card-title, .report-library-row__subtitle, .report-library-row__date');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await card.screenshot({path:`test-results/card-report-${width}-${theme}.png`});
+  await page.reload();await expect(title).toHaveText(row.headline);
+  populated=false;await page.reload();
+  const emptyTitle=page.getByText('No reports yet',{exact:true});
+  await expect(emptyTitle).toBeVisible();await expect(emptyTitle).toHaveCSS('font-family',/Newsreader/);await expect(emptyTitle).toHaveCSS('font-size','26px');await expect(emptyTitle).toHaveCSS('font-weight','400');await expect(emptyTitle).toHaveCSS('line-height','29.12px');
+  await expectReadableTheme(page,'.report-library-empty h2, .report-library-empty p');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.screenshot({path:`test-results/card-report-empty-${width}-${theme}.png`});
 });

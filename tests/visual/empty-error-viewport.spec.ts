@@ -1,12 +1,12 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
-import { readerResponse } from '../helpers/reader-response';
+import { auditReaderScreen, expect, test, type Locator, type Page } from '../helpers/polish-test';
+import { prepareErrorPage as prepare } from '../helpers/error-page-fixture';
 
 type Scenario = {
   name: string;
   path: string;
   state: string;
   text: string;
-  failure?: 'reader' | 'reports' | 'friends' | 'blocks' | 'calendar' | 'transits' | 'astronomy' | 'chunk' | 'journal';
+  failure?: 'reader' | 'reports' | 'friends' | 'blocks' | 'calendar' | 'transits' | 'astronomy' | 'chunk' | 'journal' | 'signed-out';
   chart?: boolean;
   action?: 'archive' | 'search' | 'details';
   retry?: string;
@@ -14,26 +14,27 @@ type Scenario = {
 };
 
 const scenarios: Scenario[] = [
-  { name: 'Sky calculation error', path: '/#sky', state: '.app-loading[role="alert"]', text: 'The current sky could not load.', failure: 'astronomy', retry: 'Retry' },
-  { name: 'Page asset error details', path: '/#calendar', state: '.app-loading[role="alert"]', text: 'This page could not load.', failure: 'chunk', action: 'details', retry: 'Reload page' },
+  { name: 'Sky calculation error', path: '/#sky', state: '.load-error--page', text: 'The current sky could not load.', failure: 'astronomy', retry: 'Try again' },
+  { name: 'Page asset error details', path: '/#calendar', state: '.load-error--page', text: 'This page could not load.', failure: 'chunk', retry: 'Try again' },
   { name: 'Horoscopes empty', path: '/#horoscopes', state: '.horoscope-empty', text: 'No daily reading yet' },
-  { name: 'Horoscopes error', path: '/#horoscopes', state: '.horoscope-reading', text: 'Your horoscope could not load.', failure: 'reader', retry: 'Try again' },
+  { name: 'Horoscopes error', path: '/#horoscopes', state: '.load-error--page', text: "Today's horoscope could not load.", failure: 'reader', retry: 'Try again' },
   { name: 'Learn unavailable lesson', path: '/learn/astro-101/synthetic-missing-lesson', state: '.learn-sheet', text: 'That lesson is not live yet.' },
-  { name: 'Learn error', path: '/learn', state: '.learn-sheet', text: 'Astro 101 could not load.', failure: 'reader' },
+  { name: 'Learn error', path: '/learn', state: '.load-error--page', text: 'Astro 101 could not load.', failure: 'reader', retry: 'Try again' },
   { name: 'Articles empty', path: '/#articles', state: '.learn-hub', text: 'No articles or guides are published yet.' },
-  { name: 'Articles unavailable', path: '/#articles/article%2Fguide%2Fsynthetic-missing', state: '.articles-library-state', text: 'Article unavailable' },
-  { name: 'Articles error', path: '/#articles', state: '.articles-library-state', text: 'Articles and guides could not load.', failure: 'reader', retry: 'Try again' },
+  { name: 'Articles unavailable', path: '/#articles/article%2Fguide%2Fsynthetic-missing', state: '.reader-unavailable__card', text: 'Article unavailable' },
+  { name: 'Articles error', path: '/#articles', state: '.load-error--page', text: 'Articles and guides could not load.', failure: 'reader', retry: 'Try again' },
   { name: 'Reports empty', path: '/reports/', state: '.report-library-empty', text: 'No reports yet' },
   { name: 'Reports archived empty', path: '/reports/', state: '.report-library-empty', text: 'Nothing archived', action: 'archive' },
   { name: 'Reports error', path: '/reports/', state: '.report-library-list', text: 'Your reports could not be loaded right now.', failure: 'reports' },
-  { name: 'Report unavailable', path: '/reports/generated/22222222-2222-4222-8222-222222222222', state: '.saved-generated-report__state-card, .report-delivery-state', text: 'This report is unavailable.' },
+  { name: 'Report unavailable', path: '/reports/generated/22222222-2222-4222-8222-222222222222', state: '.reader-unavailable__card', text: 'Report not found' },
   { name: 'Friends charts empty', path: '/#friends?tab=charts', state: '[aria-label="No charts"]', text: 'No charts yet.' },
   { name: 'Friends circle empty', path: '/#friends?tab=circle', state: '.friends-unified-empty', text: 'Nobody here yet.' },
   { name: 'Friends search empty long query', path: '/#friends?tab=circle', state: '.friends-unified-empty', text: 'No one found for', action: 'search' },
-  { name: 'Friends error', path: '/#friends?tab=circle', state: '.friends-unified-empty', text: 'Friends could not load.', failure: 'friends', retry: 'Try again' },
+  { name: 'Friends signed out', path: '/#friends?tab=feed', state: '.friends-signin-card', text: 'Sign in to see your friends', failure: 'signed-out' },
+  { name: 'Friends error', path: '/#friends?tab=circle', state: '.load-error--page', text: 'Your friends could not load.', failure: 'friends', retry: 'Try again' },
   { name: 'You empty chart', path: '/#you', state: '.you-empty-state', text: 'Create your chart' },
-  { name: 'You transits error', path: '/#you', state: '.app-loading[role="alert"]', text: 'The transit readings could not load.', chart: true, failure: 'transits', retry: 'Retry' },
-  { name: 'Calendar error', path: '/#calendar', state: '.lunar-calendar-empty', text: 'Calendar data could not load.', failure: 'calendar', retry: 'Retry' },
+  { name: 'You transits error', path: '/#you', state: '.load-error--section', text: 'The transit readings could not load.', chart: true, failure: 'transits', retry: 'Try again' },
+  { name: 'Calendar error', path: '/#calendar', state: '.load-error--page', text: 'This day could not load.', failure: 'calendar', retry: 'Try again' },
   { name: 'Calendar empty check-in', path: '/#calendar?view=day', state: '.calendar-checkin-card.is-empty', text: 'Check in' },
   { name: 'Account journal empty', path: '/#account?view=journal', state: '.settings-card', text: 'No check-ins yet' },
   { name: 'Account journal error', path: '/#account?view=journal', state: '[aria-label="Journal history"]', text: 'Your check-ins could not load.', failure: 'journal', retry: 'Retry' },
@@ -42,76 +43,15 @@ const scenarios: Scenario[] = [
   { name: 'Settings long error', path: '/#settings?view=blocked-accounts', state: '.settings-blocked-error', text: 'Synthetic service unavailable', failure: 'blocks', longError: true, retry: 'Retry' }
 ];
 
-async function prepare(page: Page, theme: string, scenario: Scenario) {
-  const user = { id: '11111111-1111-4111-8111-111111111111', aud: 'authenticated', role: 'authenticated',
-    email: 'viewport@example.test', app_metadata: { provider: 'email' }, user_metadata: { name: 'Test Reader' } };
-  const authHost = new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0];
-  await page.addInitScript(({ theme, user, authHost, chart }) => {
-    localStorage.setItem('tldrastro:theme', theme);
-    const location = { label: 'Synthetic New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
-    localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
-    localStorage.setItem('tldrastro:userProfile', JSON.stringify({
-      ...user, name: 'Test Reader', provider: 'email', sun: 'Aquarius', moon: 'Scorpio', rising: 'Gemini',
-      currentLocation: location.label, currentLocationData: location,
-      charts: chart ? [{ id: 'viewport-chart', name: 'Test Reader', type: 'Birth chart', birthDate: '1990-01-01',
-        birthTime: '12:00 PM', birthCity: location.label, birthLocation: location }] : []
-    }));
-    const session = JSON.stringify({ user, access_token: 'synthetic-token', refresh_token: 'synthetic-refresh', token_type: 'bearer', expires_at: 4102444800 });
-    for (const host of new Set([authHost, 'hdmdufozrgrajkfhydit'])) localStorage.setItem(`sb-${host}-auth-token`, session);
-  }, { theme, user, authHost, chart: scenario.chart });
-  await page.route('**/auth/v1/**', route => route.fulfill({ json: user }));
-  let failedRequests = 0;
-  if (scenario.failure === 'astronomy' || scenario.failure === 'calendar') {
-    await page.route(/\/assets\/skyCalculation\.worker-.*\.js$/u, route => { failedRequests++; return route.abort('failed'); });
-    await page.route('**/api/sky?**', route => { failedRequests++; return route.fulfill({ status: 503, json: { ok: false, error: 'Synthetic calculation unavailable' } }); });
-  }
-  if (scenario.failure === 'chunk') {
-    await page.route(/\/assets\/CalendarRoute-.*\.js$/u, route => { failedRequests++; return route.abort('failed'); });
-  }
-  await page.route('**/rest/v1/**', route => {
-    const url = route.request().url();
-    const failed = scenario.failure === 'reports' && /user_generated_interpretations|report_entitlements|report_library/u.test(url)
-      || scenario.failure === 'friends' && url.includes('/rpc/list_social_friends')
-      || scenario.failure === 'blocks' && url.includes('/rpc/list_social_blocks')
-      || scenario.failure === 'journal' && url.includes('/calendar_check_ins');
-    if (failed) {
-      failedRequests++;
-      // Exercise SDK retries without backoff delays in these layout-only fixtures.
-      return route.fulfill({ status: 503, headers: {
-        'Retry-After': '0', 'Access-Control-Expose-Headers': 'Retry-After'
-      }, json: {
-        message: `Synthetic service unavailable${scenario.longError ? ' (request: ' + 'abcdef0123456789'.repeat(8) + ')' : ''}`
-      } });
-    }
-    if (scenario.failure === 'transits' && url.includes('/content_publications')) return route.fulfill({ json: [{
-      content_key: 'authored/transit-fixture', state: 'live', revision: 1, row_id: 'fixture-transit',
-      row_updated_at: null, updated_at: '2026-10-15T00:00:00Z'
-    }] });
-    return route.fulfill({ json: [] });
-  });
-  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
-    schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
-  } }));
-  await page.route('**/api/content-reader', route => {
-    if (scenario.failure === 'reader' || scenario.failure === 'transits') {
-      failedRequests++;
-      return route.fulfill({ status: 503, json: { error: 'Synthetic service unavailable' } });
-    }
-    return route.fulfill({ json: readerResponse([]) });
-  });
-  await page.route('**/api/calendar?**', route => {
-    if (scenario.failure === 'calendar') failedRequests++;
-    return route.fulfill({ status: 503, json: { ok: false, error: 'Synthetic service unavailable' } });
-  });
-  return { failedRequests: () => failedRequests };
-}
-
 async function assertContained(page: Page, state: Locator) {
   await expect(state).toBeVisible();
   const measure = () => state.evaluateAll(elements => {
     const element = elements[0];
-    const parentElement = element?.parentElement;
+    let parentElement = element?.parentElement;
     if (!element?.isConnected || !parentElement) return null;
+    while (parentElement.parentElement && (getComputedStyle(parentElement).display === 'contents' || parentElement.getBoundingClientRect().width === 0)) {
+      parentElement = parentElement.parentElement;
+    }
     const state = element.getBoundingClientRect();
     if (state.width <= 0 || state.height <= 0 || getComputedStyle(element).visibility === 'hidden') return null;
     const viewport = document.documentElement.clientWidth;
@@ -146,7 +86,7 @@ async function assertContained(page: Page, state: Locator) {
 }
 
 for (const width of [360, 768, 1440]) for (const theme of ['light', 'dark']) for (const scenario of scenarios) {
-  test(`${scenario.name} stays contained at ${width} ${theme}`, async ({ page }) => {
+  test(`${scenario.name} stays contained at ${width} ${theme}`, async ({ page },info) => {
     test.setTimeout(45_000);
     await page.setViewportSize({ width, height: 1000 });
     const fixture = await prepare(page, theme, scenario);
@@ -157,6 +97,28 @@ for (const width of [360, 768, 1440]) for (const theme of ['light', 'dark']) for
     await expect(state).toBeVisible();
     if (scenario.action === 'details') await state.getByText('Error details', { exact: true }).click();
     await assertContained(page, state);
+    await auditReaderScreen(page,info,'initial-state');
+    if(scenario.name==='Horoscopes empty') {
+      await page.locator('.horoscope-location > summary').click();
+      for(const control of await page.locator('.horoscope-location-fields input, .horoscope-location-fields select').all()) {
+        await expect(control).toHaveCSS('font-family',/system-ui/);await expect(control).toHaveCSS('font-size','15px');
+        await expect(control).toHaveCSS('border-top-style','none');
+        expect((await control.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+      }
+      await auditReaderScreen(page,info,'expanded-horoscope-location');
+      await page.getByRole('button',{name:'Reset to device time zone',exact:true}).click();
+      await page.locator('.horoscope-location > summary').click();
+    }
+    if(scenario.failure==='signed-out') {
+      for(const action of ['Log in','Create an account']) {
+        const button=state.getByRole('button',{name:action,exact:true});
+        await expect(button).toHaveCSS('font-size','15px');await expect(button).toHaveCSS('border-top-style','none');
+        const bounds=await button.boundingBox();expect(bounds!.height).toBeGreaterThanOrEqual(44);
+        await button.click();const dialog=page.getByRole('dialog');await expect(dialog).toBeVisible();
+        await auditReaderScreen(page,info,action==='Log in'?'login-dialog':'signup-dialog');
+        await dialog.getByRole('button',{name:'Close',exact:true}).click();await expect(state).toBeVisible();
+      }
+    }
     if (scenario.retry) {
       const requests = fixture.failedRequests();
       await state.getByRole('button', { name: scenario.retry, exact: true }).click();

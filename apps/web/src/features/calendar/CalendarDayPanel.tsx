@@ -15,7 +15,6 @@ import {
   calendarMoodOf,
   checkInSubtitle,
   checkInTitle,
-  moodToneVar,
   socialWordOf,
   type CalendarCheckInEntry
 } from "./CalendarCheckIn";
@@ -117,7 +116,7 @@ function CheckInCard({
           <span>
             <span>Mood</span>
             <span className="calendar-checkin-card__meter">
-              <span style={{ width: `${((entry.mood + 1) / 5) * 100}%`, background: moodToneVar(entry.mood) }} />
+              <span style={{ width: `${((entry.mood + 1) / 5) * 100}%`, background: "var(--calendar-mood-meter)" }} />
             </span>
             <span>{mood?.label}</span>
           </span>

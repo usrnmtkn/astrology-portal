@@ -15,7 +15,8 @@ export function internJsonStringLiterals(code, parse) {
     if (!node || typeof node !== "object") return;
     if (node.type === "Identifier") names.add(node.name);
     if (node.type === "Literal" && typeof node.value === "string" && node.value.length >= 80
-      && !(parent?.type === "Property" && key === "key")
+      && key !== "key"
+      && !(key === "source" && ["ImportDeclaration", "ExportNamedDeclaration", "ExportAllDeclaration"].includes(parent?.type))
       && !(parent?.type === "ExpressionStatement" && parent.directive)) {
       const occurrences = strings.get(node.value) ?? [];
       occurrences.push(node);
@@ -58,6 +59,21 @@ export function internPublicJsonStringsPlugin() {
     transform(code, id) {
       if (!sourceFiles.some(file => id.replaceAll("\\", "/").endsWith(file))) return;
       return internJsonStringLiterals(code, code => this.parse(code));
+    }
+  };
+}
+
+export function internApplicationStringsPlugin() {
+  return {
+    name: "tldr-intern-application-strings",
+    apply: "build",
+    enforce: "pre",
+    renderChunk(code, chunk, options) {
+      const modules = Object.keys(chunk.modules);
+      if (options.format !== "es" || /memory/i.test(chunk.name)
+        || !modules.some(id => /\/(?:apps|src)\//u.test(id) && !id.includes("node_modules"))
+        || modules.some(id => /node_modules\/(?:@supermemory|ogl)\//u.test(id))) return null;
+      return internJsonStringLiterals(code, value => this.parse(value));
     }
   };
 }

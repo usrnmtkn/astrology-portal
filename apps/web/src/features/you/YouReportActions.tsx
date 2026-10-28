@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { listReportLibrary, type ReportLibraryItem } from "../../services/reportLibrary";
 import { ReportGenerationBeam } from "../../components/reports/ReportGenerationBeam";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
@@ -62,6 +62,7 @@ function reconcileAction(current: ReportAction, item: ReportLibraryItem | null):
 }
 
 export function YouReportActions({
+  avatar,
   accountId,
   accountRecovery,
   dailyAspectsReady = true,
@@ -70,6 +71,7 @@ export function YouReportActions({
   weeklyHoroscopeAssembly,
   transitDateLabel
 }: {
+  avatar?: ReactNode;
   accountId: string | null | undefined;
   accountRecovery?: YouAccountRecovery;
   dailyAspectsReady?: boolean;
@@ -211,25 +213,29 @@ export function YouReportActions({
 
   return (
     <section className="you-empty-card you-report-actions" aria-label="In-depth transit reports" data-report-generating={generating || undefined}>
-      <span>Reports</span>
-      <h3>Day and week reports</h3>
-      <p>Your day and week readings stay in Reports while they are being prepared and after they are ready.</p>
+      {avatar ? <div className="you-report-actions__avatar">{avatar}<span className="you-report-actions__avatar-mark" aria-hidden="true">☉</span></div> : null}
+      <div className="you-report-actions__copy">
+      <h2>Get today or this week report</h2>
+      <span className="you-report-actions__description">Your day and week readings stay in Reports while they are being prepared and after they are ready.</span>
+      </div>
       <div className="you-report-actions__buttons">
         {reportButton("day", dayAction, Boolean(dayBrief) && dailyAspectsReady)}
         {reportButton("week", weekAction, Boolean(weekBrief))}
       </div>
+      <div className="you-report-actions__status">
       {session.status === "error" ? (
         <>
-          <p role="status">{accountRecovery?.error}</p>
+          <span role="status">{accountRecovery?.error}</span>
           <button type="button" onClick={accountRecovery?.onRetry}>Try again</button>
         </>
       ) : session.status === "signed_out" ? (
         <>
-          <p role="status">Sign in to create or read your reports.</p>
+          <span role="status">Sign in to create or read your reports.</span>
           {accountRecovery ? <button type="button" onClick={accountRecovery.onSignIn}>Sign in</button> : null}
         </>
       )
-        : message ? <p role="status">{message}</p> : null}
+        : message ? <span role="status">{message}</span> : null}
+      </div>
       {generating ? <ReportGenerationBeam /> : null}
     </section>
   );

@@ -144,3 +144,17 @@ body:has(#app-startup.app-startup) {
   0%, 100% { opacity: 1; }
   25%, 75% { opacity: var(--loading-pulse-opacity); }
 }
+
+/* The loading-card handoff uses the small orbit only before the app mounts. */
+.startup-orbit { display: none; }
+body:has(#app-startup[data-loader="orbit"]) { background: var(--startup-paper); }
+.app-startup[data-loader="orbit"] { gap: var(--space-4); font-family: var(--font-ui); }
+.app-startup[data-loader="orbit"] :is(.startup-artwork, .startup-moon) { display: none; }
+.app-startup[data-loader="orbit"] .startup-orbit { display: block; width: var(--size-6); height: var(--size-6); color: var(--ink); stroke: currentColor; stroke-width: var(--border-width-medium); stroke-linecap: round; animation: startup-orbit var(--loading-pulse-duration) linear infinite; }
+.startup-orbit__track { stroke: var(--line); }
+.startup-orbit__dot { fill: currentColor; stroke: none; }
+.app-startup[data-loader="orbit"] [data-startup-message] { color: var(--ink-2); font-size: var(--type-ui-copy-size); }
+@keyframes startup-orbit { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: reduce) { .app-startup[data-loader="orbit"] .startup-orbit { animation: none; } }
+:root[data-reduce-motion] .app-startup[data-loader="orbit"] .startup-orbit { animation: none; }
+.app-startup[data-loader="orbit"]:not([aria-busy="true"]) .startup-orbit { animation: none; }

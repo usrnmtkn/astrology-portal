@@ -1,4 +1,5 @@
 import { FormattedText } from "../FormattedProse";
+import { AspectBadge } from "./AspectBadge";
 import { planetSignDignity, type EssentialDignity } from "../../services/planetSignDignity.mjs";
 import { CardReadMore } from "../CardReadMore";
 import { LoadingStatus, SkeletonBar } from "../CardSkeleton";
@@ -19,9 +20,6 @@ import {
   type CmsGeneratedContentMap
 } from "../../content/cmsSurfaceOverrides";
 import {
-  aspectGlyph,
-  aspectIconFiles,
-  normalizeAspectType,
   pointGlyph,
   pointIconFiles,
   pointRetrogradeIconFiles,
@@ -236,18 +234,8 @@ export function InlineGlyphIcon({
   );
 }
 
-export function AspectGlyphs({ from, aspect, to }: { from: string; aspect: string; to: string }) {
-  const fromPoint = from.replace(/\s+Rx$/iu, "");
-  const toPoint = to.replace(/\s+Rx$/iu, "");
-  return (
-    <span className="aspect-row-glyphs" aria-hidden="true">
-      <InlineGlyphIcon fallback={pointGlyph(fromPoint)} href={zodiacAssetHref(pointIconFiles[fromPoint])} label={from} preferTextGlyph />
-      {fromPoint !== from ? <span>℞</span> : null}
-      <InlineGlyphIcon fallback={aspectGlyph(aspect)} href={zodiacAssetHref(aspectIconFiles[normalizeAspectType(aspect)])} label={aspect} preferTextGlyph />
-      <InlineGlyphIcon fallback={pointGlyph(toPoint)} href={zodiacAssetHref(pointIconFiles[toPoint])} label={to} preferTextGlyph />
-      {toPoint !== to ? <span>℞</span> : null}
-    </span>
-  );
+export function AspectGlyphs({ aspect }: { from: string; aspect: string; to: string }) {
+  return <AspectBadge aspect={aspect} className="aspect-row-glyphs" />;
 }
 
 export function DurationLabelText({ label }: { label: string }) {
@@ -413,11 +401,13 @@ export function PlacementGlyphIcon({
 export function PlacementTableRow({
   ariaLabel,
   asButton = false,
+  disabled = false,
   degree,
   description,
   dignity,
   glyph,
   house,
+  metadata,
   onClick,
   pointName,
   retrograde = false,
@@ -427,11 +417,13 @@ export function PlacementTableRow({
 }: {
   ariaLabel?: string;
   asButton?: boolean;
+  disabled?: boolean;
   degree?: string | null;
   description?: string | null;
   dignity?: PlacementDignity | PlacementDignity[] | null;
   glyph: string;
   house?: number | null;
+  metadata?: string;
   onClick?: () => void;
   pointName?: string;
   retrograde?: boolean;
@@ -439,7 +431,7 @@ export function PlacementTableRow({
   title: string;
   variant?: "natal" | "friend" | "composite";
 }) {
-  const meta = placementTableMeta(house, degree, pointName);
+  const meta = metadata ?? placementTableMeta(house, degree, pointName);
   const className = [
     "placement-table-row",
     `placement-table-row--${variant}`,
@@ -471,7 +463,7 @@ export function PlacementTableRow({
 
   if (onClick && asButton) {
     return (
-      <button className={className} type="button" aria-label={ariaLabel ?? title} onClick={onClick}>
+      <button className={className} type="button" aria-label={ariaLabel ?? title} disabled={disabled} onClick={onClick}>
         {content}
       </button>
     );
@@ -499,7 +491,7 @@ export function PlacementTableRow({
 
   if (asButton) {
     return (
-      <button className={className} type="button" aria-label={ariaLabel ?? title}>
+      <button className={className} type="button" aria-label={ariaLabel ?? title} disabled={disabled}>
         {content}
       </button>
     );
@@ -514,18 +506,16 @@ export function PlacementTableRow({
 
 export function PlacementRowSkeleton({ interactive = true }: { interactive?: boolean }) {
   const content = <>
-    <span className="planet-placement-row__glyph">
-      <span className="card-skeleton-disc" /><span className="card-skeleton-disc" />
-    </span>
+    <span className="planet-placement-row__timing"><SkeletonBar short /></span>
+    <span className="planet-placement-row__glyph"><span className="card-skeleton-disc" /></span>
     <span className="planet-placement-row__body">
       <span className="planet-placement-row__topline">
-        <span className="planet-placement-row__title"><span><SkeletonBar title /></span></span>
+        <span className="planet-placement-row__title"><SkeletonBar title /></span>
         <span className="planet-placement-row__degree placement-row__degree"><SkeletonBar short /></span>
       </span>
-      <span className="planet-placement-row__meta planet-placement-row__meta--timing"><span><SkeletonBar /></span></span>
-      <span className="planet-placement-row__description"><SkeletonBar /></span>
-      {interactive ? <span className="card-read-more"><SkeletonBar short /></span> : null}
+      <span className="planet-placement-row__description loading-lines"><SkeletonBar /><SkeletonBar /><SkeletonBar short /></span>
     </span>
+    <span className="placement-progress loading-placement-arc"><svg viewBox="0 0 300 64" fill="none"><path d="M4 48 Q150 -20 296 48" /></svg><SkeletonBar short /></span>
   </>;
   const className = "sky-card planet-placement-row planet-placement-row--sky card-skeleton";
   return interactive
@@ -542,8 +532,10 @@ export function PlanetPlacementRow({
   durationLabel,
   glyph,
   house,
+  href,
   onClick,
   pointName,
+  progress,
   rangeLabel,
   retrograde = false,
   retrogradeDurationLabel,
@@ -560,8 +552,10 @@ export function PlanetPlacementRow({
   durationLabel?: string | null;
   glyph: string;
   house?: number | null;
+  href?: string;
   onClick?: () => void;
   pointName?: string;
+  progress?: number;
   rangeLabel?: string | null;
   retrograde?: boolean;
   retrogradeDurationLabel?: string | null;
@@ -590,21 +584,23 @@ export function PlanetPlacementRow({
     );
   }
 
-  if (descriptionLoading) return <><LoadingStatus>Loading description</LoadingStatus><PlacementRowSkeleton interactive={Boolean(onClick)} /></>;
+  if (descriptionLoading) return <><LoadingStatus>Loading description</LoadingStatus><PlacementRowSkeleton interactive={Boolean(onClick || href)} /></>;
 
-  const hasTiming = Boolean(rangeLabel);
-  const displayHouse = displayHouseForPoint(house, pointName);
-  const houseLabel = displayHouse ? `${ordinalHouse(displayHouse)} House` : "House pending";
+  const progressValue = Number.isFinite(progress) ? Math.max(0, Math.min(1, progress!)) : null;
   const rowClassName = [
     "sky-card",
     "is-revealing",
     "planet-placement-row",
     `planet-placement-row--${variant}`,
-    onClick ? "planet-placement-row--clickable" : "",
+    onClick || href ? "planet-placement-row--clickable" : "",
     retrograde ? "is-retrograde" : ""
   ].filter(Boolean).join(" ");
   const content = (
     <>
+      <span className="planet-placement-row__timing">
+        <span>{rangeLabel}</span>
+        {retrograde ? <span className="planet-placement-row__status">℞ Retrograde</span> : null}
+      </span>
       <PlacementGlyphIcon
         className="planet-placement-row__glyph"
         fallback={glyph}
@@ -618,22 +614,24 @@ export function PlanetPlacementRow({
           <span className="planet-placement-row__title">{title}</span>
           <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
         </span>
-        {hasTiming ? (
-          <span className="planet-placement-row__meta planet-placement-row__meta--timing">
-            {rangeLabel ? <span>{rangeLabel}</span> : null}
-          </span>
-        ) : (
-          <span className="planet-placement-row__meta placement-row__house">
-            <span>{houseLabel}</span>
-          </span>
-        )}
         {description ? (
           <span className="planet-placement-row__description"><FormattedText text={description} /></span>
         ) : null}
-        {onClick && !descriptionLoading ? <CardReadMore /> : null}
       </span>
+      {progressValue !== null ? <span className="placement-progress" aria-hidden="true">
+        <svg viewBox="0 0 300 64" fill="none">
+          <path className="placement-progress__remaining" d="M4 48 Q150 -20 296 48" pathLength="1" />
+          <path className="placement-progress__elapsed" d="M4 48 Q150 -20 296 48" pathLength="1" strokeDasharray={`${progressValue} 1`} />
+          <circle cx={4 + 292 * progressValue} cy={48 - 136 * progressValue * (1 - progressValue)} r="11" />
+          <text x={4 + 292 * progressValue} y={48 - 136 * progressValue * (1 - progressValue)}>{glyph}</text>
+        </svg>
+        <span>{durationLabel}</span>
+      </span> : durationLabel ? <span className="placement-progress__label">{durationLabel}</span> : null}
+      <span className="planet-placement-row__arrow" aria-hidden="true">›</span>
     </>
   );
+
+  if (href) return <a className={rowClassName} href={href} aria-label={ariaLabel ?? title}>{content}</a>;
 
   if (onClick) {
     return (

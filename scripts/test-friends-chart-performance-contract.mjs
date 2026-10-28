@@ -370,8 +370,8 @@ assert.doesNotMatch(
 );
 assert.match(
   manualChartsPanelSource,
-  /function openFriendProfile\(chart: ManualChart\) \{[\s\S]*requestFriendProfileTab\(chart\.chartType === "event" \? "natal" : "compatibility"\);[\s\S]*setSelectedChartId\(chart\.id\);/,
-  "Selecting a chart must start its Compatibility content prefetch before publishing the selection."
+  /function openFriendProfile\(chart: ManualChart, view: FriendProfileTab = "compatibility", detail\?: string\) \{[\s\S]*requestFriendProfileTab\(chart\.chartType === "event" \? "natal" : view\);[\s\S]*setSelectedChartId\(chart\.id\);/,
+  "Selecting a chart must prefetch its requested tab before publishing the selection, defaulting to Compatibility."
 );
 assert.doesNotMatch(
   manualChartsPanelSource,

@@ -15,15 +15,57 @@
   */
 
   /* 1. PRIMITIVE TOKENS */
-  --color-bg-warm: #cdd2d5;
+  --color-bg-warm: #eef1f5;
+  /* Shared categorical forecast surfaces from the relationship-card handoff. */
+  --forecast-flow-bg: #e1f0eb;
+  --forecast-flow-ink: #18594c;
+  --forecast-friction-bg: #f8e6dc;
+  --forecast-friction-ink: #7e3d2a;
+  --forecast-mixed-bg: #e8eaf2;
+  --forecast-mixed-ink: #41485f;
+  --forecast-neutral-bg: #f2f3f5;
+  --forecast-neutral-ink: #4e5360;
+  /* Editorial cover roles from the supplied blog handoff. */
+  --cover-fire: linear-gradient(165deg, #b9c3e6 0%, #e7c3b4 45%, #f2c88e 80%, #f5d9a0 100%);
+  --cover-water: radial-gradient(90% 80% at 80% 10%, #6f8fb0 0%, #1d3150 40%, #0b1528 75%, #070d1a 100%);
+  --cover-air: linear-gradient(150deg, #f4f6f9 0%, #e3e8f0 55%, #cfd7e3 100%);
+  --cover-earth: radial-gradient(110% 90% at 30% 0%, #8a9a6a 0%, #3f5a48 40%, #1a2c24 75%, #0f1a15 100%);
+  --cover-graphite: radial-gradient(100% 80% at 90% 0%, #4a5160 0%, #22262f 50%, #14161c 100%);
+  --cover-light-ink: #f5f1e8;
+  /* Keep small cover labels readable over the lightest radial highlights. */
+  --cover-contrast-shade: linear-gradient(180deg, rgba(7, 13, 26, 0.4), transparent 30%);
+  --cover-grain: url("../assets/editorial-grain.svg?no-inline");
+  --cover-grain-opacity: 0.35;
+  --cover-lead-height: 460px;
+  /* Shared sheet and teal action roles from the date/location handoff. */
+  --sheet-handle-height: 5px;
+  --sheet-content-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
+  --sheet-radius: 36px;
+  --type-sheet-title-size: 30px;
+  --control-primary-height: 52px;
+  --cover-grid-min: 340px;
+  --container-editorial: 1200px;
+  --type-editorial-tile-size: 48px;
+  --leading-cover: 1.05;
+  --glyph-role-size: 36px;
+  --sect-page-padding: calc(var(--space-7) + var(--size-7) * 2) var(--page-gutter) var(--space-10);
+  --sect-intro-mobile-padding: calc(var(--control-navigation-size) + var(--space-6) + var(--lunar-space-18)) var(--space-6) var(--lunar-space-28);
+  --type-editorial-tile-italic-size: 42px;
+  --type-editorial-display-size: clamp(44px, 6vw, 80px);
+  --type-editorial-italic-size: clamp(40px, 5.4vw, 72px);
+  --leading-editorial-display: 1.02;
+  --color-page-bottom: #d5dbe3;
+  --color-brand: #004b45;
+  --color-mint: #d6f0eb;
+  --color-sheet: #f6f7f9;
   --color-paper: var(--color-bg-warm);
   --color-white: #ffffff;
   --color-surface: var(--color-white);
-  --color-surface-2: #e4e6ed;
-  --color-black: #1c1e28;
+  --color-surface-2: #e8ebef;
+  --color-black: #1c1f26;
   --color-ink: var(--color-black);
-  --color-ink-2: #4e5360;
-  --color-gray-500: #6c7280;
+  --color-ink-2: #3f4553;
+  --color-gray-500: #5b6270;
   --color-muted: var(--color-gray-500);
   --color-faint: #717785;
   --color-soft: #d7dae3;
@@ -31,10 +73,10 @@
   --color-line-2: rgba(28, 32, 52, 0.055);
   --color-line-strong: rgba(28, 32, 52, 0.22);
   --color-nav-bg: #ffffff;
-  --color-pill-bg: #1a1a1a;
-  --color-pill-fg: #f1f2f6;
-  --color-accent: #4e5360;
-  --color-accent-bg: rgba(28, 32, 52, 0.06);
+  --color-pill-bg: var(--color-ink);
+  --color-pill-fg: var(--color-white);
+  --color-accent: var(--color-brand);
+  --color-accent-bg: var(--color-mint);
   --color-wheel-line: rgba(28, 32, 52, 0.16);
   --color-wheel-tick: rgba(28, 32, 52, 0.42);
   --color-wheel-soft: rgba(28, 32, 52, 0.07);
@@ -45,35 +87,72 @@
   --color-wheel-band-line: rgba(28, 32, 52, 0.12);
   --color-status-alert: #a8772f;
   --color-danger: #a53b36;
+  /* Shared feedback surfaces for report progress and terminal states. */
+  --feedback-info-bg: #e3ecf8;
+  --feedback-info-ink: #24508a;
+  --feedback-warning-bg: #fbecc8;
+  --feedback-warning-ink: #7a4f00;
+  --feedback-error-bg: #f9e1e4;
+  --feedback-error-ink: #a1293c;
+  --status-dot-size: 7px;
+  --unread-pip-size: 14px;
+  --unread-pip-size-compact: 13px;
+  --container-toast: 420px;
+  --container-menu: 200px;
+  --container-callout: 460px;
+  --empty-state-min-height: 260px;
+  --state-card-padding: calc(var(--space-10) + var(--space-2)) var(--space-9);
+  --control-navigation-top: calc(var(--article-back-top) + (var(--top-control-height) - var(--control-navigation-size)) / 2);
+  --type-page-title-mobile-size: 34px;
+
   --color-retrograde-accent: #7652e8;
   --color-retrograde-bg: rgba(118, 82, 232, 0.16);
   --color-moon-phase-light: #f0cf6a;
   --color-moon-phase-shadow: #d8d7cf;
   --filter-glyph-current: none;
+  --filter-glyph-accent: brightness(0) saturate(100%) invert(23%) sepia(22%) saturate(1933%) hue-rotate(129deg) brightness(92%) contrast(105%);
+  --glyph-badge-offset: -8px;
+  --glyph-badge-compact-offset: -3px;
+  --glyph-tile-compact-size: 52px;
+  --glyph-badge-size: 26px;
+  --avatar-initial-size: var(--type-small-display-size);
+  --avatar-owner-bg: var(--color-brand);
+  --avatar-owner-fg: var(--color-white);
+  --glyph-badge-surface: oklch(0.55 0.034 255);
+  --filter-glyph-white: brightness(0) invert(1);
+  --radius-card-compact: 24px;
+  --card-hover-shadow: inset 0 0 0 1px var(--line-strong), 0 12px 24px -16px var(--line-strong);
+  --type-mobile-section-display-size: var(--type-display-size);
+  --surface-symbol: #eef4f3;
   --filter-glyph-neutral: brightness(0) saturate(100%);
+  --filter-glyph-ink: brightness(0);
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: none;
-  --filter-retrograde-glyph: brightness(0) saturate(100%) invert(40%) sepia(74%) saturate(2504%) hue-rotate(230deg) brightness(95%) contrast(91%);
   --filter-synastry-inner-glyph: brightness(0) saturate(100%) opacity(0.52);
   --synastry-inner-glyph: var(--color-muted);
   --color-dig-good: #3f7a3a;
   --color-dig-good-bg: rgba(63, 122, 58, 0.13);
-  --color-aspect-hard: rgba(176, 112, 63, 0.62);
-  --color-aspect-flow: rgba(132, 116, 166, 0.5);
+  --color-aspect-hard: #d75c73;
+  --color-aspect-flow: #2f8f80;
   --color-aspect-adjust: #8fa873;
   --color-aspect-union: #8d8982;
   --color-aspect-muted: rgba(20, 20, 20, 0.22);
   --color-synastry-accent: var(--color-muted);
-  --color-interactive: #5448be;
+  --color-interactive: var(--color-brand);
   --color-positive: #3f7550;
   --color-positive-bg: #e5efe8;
   --color-highlight: #f1d58a;
   --color-control-thumb-active: var(--color-surface);
-  --color-aspect-conjunction: #252833;
-  --color-aspect-sextile: #1d71a8;
-  --color-aspect-square: #b3318e;
-  --color-aspect-trine: #117e5a;
-  --color-aspect-opposition: #a51b27;
+  --color-aspect-conjunction: #8a5a0b;
+  --color-aspect-sextile: #0b6b5f;
+  --color-aspect-square: #b23a48;
+  --color-aspect-trine: #0b6b5f;
+  --color-aspect-opposition: #1d4f86;
+  --aspect-conjunction-bg: #fbe9c6;
+  --aspect-sextile-bg: var(--color-mint);
+  --aspect-square-bg: #f8dfe2;
+  --aspect-opposition-bg: #dbe7f6;
+  --radius-tab: 16px;
 
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -102,6 +181,15 @@
   /* 2. SEMANTIC TOKENS */
   /* Shared progress placeholders, including the pre-JavaScript document shell. */
   --loading-pulse-duration: 1.4s;
+  /* Shared loading-state handoff: card bars, on-page prose, and aligned wheels. */
+  --lazy-fade-duration: 120ms;
+  --lazy-min-skeleton: 280ms;
+  --skeleton-pulse-opacity: 0.55;
+  --skeleton-meta-height: 10px;
+  --skeleton-page-bar: rgba(255, 255, 255, 0.75);
+  --skeleton-wheel-band: 30px;
+  --skeleton-wheel-color: rgba(255, 255, 255, 0.6);
+  --skeleton-arc-ratio: 5 / 1;
   --loading-pulse-opacity: 0.45;
   --loading-line-short-width: 72%;
   --startup-artwork-size: calc(var(--size-5) * 2);
@@ -116,7 +204,7 @@
   /* Monochrome symbols; retain the earlier teal palette for local comparison. */
   --startup-ink: #1c1f26;
   --startup-brand-ink: #004b45;
-  --startup-paper: #eef0f3;
+  --startup-paper: #e4e8ee;
   /* Owner-specified compact moon alternative; label is a loading UI caption. */
   --startup-moon-size: var(--size-6);
   --startup-moon-stroke-width: 1.25px;
@@ -133,8 +221,6 @@
   --bg: var(--color-bg-warm);
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);
-  --article-bg: var(--color-bg-warm);
-  --nav-bg: var(--color-nav-bg);
   --ink: var(--color-ink);
   --ink-2: var(--color-ink-2);
   --muted: var(--color-muted);
@@ -152,9 +238,7 @@
   --wheel-line: var(--color-wheel-line);
   --wheel-tick: var(--color-wheel-tick);
   --wheel-soft: var(--color-wheel-soft);
-  --wheel-line-soft: var(--color-wheel-soft);
   --wheel-label: var(--color-wheel-label);
-  --wheel-muted: var(--color-wheel-label);
   --wheel-sign-label: var(--ink);
   --wheel-glyph: var(--color-wheel-glyph);
   --chart-line: var(--wheel-line);
@@ -191,18 +275,30 @@
   --aspect-bright-minor: #a19889;
   --chart-inverse-glyph-filter: brightness(0) invert(1);
   --chart-monochrome-paper: #f5f5f3;
-  --chart-house-label-radius-factor: 0.48;
-  --chart-house-label-size: 13px;
+  --chart-house-label-size: 16px;
   --chart-sign-label-size: 14px;
   --chart-planet-glyph-size: 28px;
-  --chart-degree-size: 12px;
+  --chart-degree-size: 11px;
+  --chart-view-ratio: 608 / 648;
+  --chart-surface-planets: #dfe4eb;
+  --chart-surface-houses: #eef1f5;
+  --chart-surface-aspects: var(--surface);
+  --chart-ring-line: #c3cad5;
+  --chart-sector-line: #b7bfcb;
+  --chart-angle-badge-bg: var(--ink);
+  --chart-angle-badge-fg: var(--surface);
+  --chart-angle-badge-ring: var(--surface);
+  --chart-angle-label-size: 12px;
+  --chart-angle-label-tracking: 0.4px;
+  --chart-aspect-stroke-width: 1.5;
+  --chart-aspect-stroke-opacity: 0.9;
+  --chart-aspect-sextile-dash: 4 4;
   --aspect-line-width: 1.6;
   --aspect-line-width-strong: 1.9;
   --aspect-line-opacity: 0.55;
   --aspect-line-opacity-strong: 0.68;
   --transit-aspect-line-width: 1.45;
   --transit-aspect-line-opacity-min: 0.58;
-  --synastry-aspect-line-width: 1.45;
   --synastry-aspect-line-opacity-min: 0.56;
   --aspect-line-backdrop-width: 4;
   --status-alert: var(--color-status-alert);
@@ -212,7 +308,6 @@
   --dig-good-bg: var(--color-dig-good-bg);
   --aspect-hard: var(--color-aspect-hard);
   --aspect-flow: var(--color-aspect-flow);
-  --aspect-soft: var(--aspect-flow);
   --aspect-adjust: var(--color-aspect-adjust);
   --aspect-union: var(--color-aspect-union);
   --aspect-muted: var(--color-aspect-muted);
@@ -231,12 +326,11 @@
   --elev-pill:
     0 1px 1px rgba(28, 32, 52, 0.05),
     0 2px 6px -3px rgba(28, 32, 52, 0.1);
-  --elev-card: 0 1px 2px rgba(46, 52, 62, 0.05);
+  --elev-card: inset 0 0 0 1px rgba(28, 31, 38, 0.06), 0 1px 0 rgba(28, 31, 38, 0.05);
   --elev-hero:
     0 1px 1px rgba(28, 32, 52, 0.04),
     0 8px 18px -8px rgba(28, 32, 52, 0.13),
     0 28px 52px -24px rgba(28, 32, 52, 0.22);
-  --elev-line: rgba(28, 32, 52, 0.06);
   --elev-topbar-scrolled: 0 14px 30px -26px rgba(28, 32, 52, 0.45);
   --elev-mobile-panel:
     0 1px 1px rgba(28, 32, 52, 0.04),
@@ -254,7 +348,6 @@
     inset -9px -7px 16px rgba(63, 50, 18, 0.28),
     inset 8px 6px 12px rgba(255, 255, 255, 0.26),
     0 2px 8px rgba(28, 32, 52, 0.12);
-  --shadow-lunar-phase-ring: 0 0 10px rgba(12, 14, 22, 0.42);
   --shadow-lunar-phase-dark:
     inset -7px -6px 14px rgba(0, 0, 0, 0.22),
     inset 5px 4px 11px rgba(255, 255, 255, 0.035),
@@ -265,62 +358,40 @@
     radial-gradient(circle at 39% 68%, rgba(77, 59, 24, 0.14), transparent 13%),
     radial-gradient(circle at 66% 36%, rgba(89, 69, 28, 0.12), transparent 10%),
     radial-gradient(circle at 48% 54%, var(--color-moon-phase-light), #b79c57 74%);
-  --lunar-moon-shadow-bg:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04), transparent 44%),
-    color-mix(in srgb, var(--lunar-moon-dark) 78%, var(--lunar-moon-dark-edge));
-  --lunar-moon-overlay-bg:
-    radial-gradient(circle at 36% 38%, rgba(72, 57, 26, 0.16), transparent 8%),
-    radial-gradient(circle at 58% 58%, rgba(72, 57, 26, 0.12), transparent 10%),
-    radial-gradient(circle at 48% 72%, rgba(255, 255, 255, 0.12), transparent 10%);
   --lunar-new-moon-bg:
     radial-gradient(circle at 42% 34%, rgba(255, 255, 255, 0.05), transparent 17%),
     radial-gradient(circle at 58% 58%, rgba(255, 255, 255, 0.035), transparent 18%),
     var(--lunar-moon-dark);
   --shadow-flat: none;
   --shadow: var(--shadow-card);
-  --bg-grad:
-    radial-gradient(135% 105% at 14% -2%,
-      rgba(243, 245, 246, 0.95) 0%, rgba(243, 245, 246, 0) 56%),
-    radial-gradient(120% 110% at 98% 104%,
-      rgba(150, 164, 176, 0.5) 0%, rgba(150, 164, 176, 0) 62%),
-    linear-gradient(146deg,
-      rgba(228, 231, 233, 0.62) 0%,
-      rgba(193, 201, 208, 0.3) 48%,
-      rgba(160, 173, 184, 0.55) 100%);
-  --orb-grad:
-    radial-gradient(130% 52% at 50% -6%, oklch(0.92 0.045 55 / 0.78), transparent 56%),
-    radial-gradient(85% 44% at 92% -2%, oklch(0.89 0.04 12 / 0.42), transparent 55%),
-    radial-gradient(78% 46% at 4% 5%, oklch(0.9 0.035 315 / 0.4), transparent 60%);
-  --glass-bg: rgba(255, 255, 255, 0.42);
-  --glass-edge:
-    0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-  --glass-shadow: 0 22px 46px -30px rgba(46, 52, 62, 0.4);
+  --bg-grad: linear-gradient(180deg, var(--bg), var(--color-page-bottom));
+  --orb-grad: linear-gradient(transparent, transparent);
 
+  --native-control-color-scheme: light;
   --font-display: var(--font-serif);
-  --font-body: var(--font-sans);
+  --font-body: var(--font-serif);
   --font-label: var(--font-mono);
-  --font-ui: var(--font-label);
+  --font-ui: var(--font-sans);
   --font-glyph: var(--font-symbol);
-  --font-brand: var(--font-label);
+  --font-brand: var(--font-sans);
 
   /* Reusable content highlight: an inline marker for noteworthy passages.
      Use with .content-highlight on mark or span, never as a heading or pill.
-     Monospaced, lightly tracked text follows the shared body size and leading. */
-  --font-highlight: var(--font-mono);
+     Inline emphasis inherits the surrounding body typography. */
+  --font-highlight: var(--font-body);
   --text-highlight: var(--text-body);
   --weight-highlight: var(--weight-regular);
   --leading-highlight: var(--leading-body);
-  --tracking-highlight: var(--tracking-pill);
+  --tracking-highlight: var(--tracking-body);
   --content-highlight-color: var(--ink);
-  --content-highlight-tint: rgba(231, 240, 176, 0.55);
+  --content-highlight-tint: var(--color-mint);
   --content-highlight-background: linear-gradient(180deg, transparent 0%, var(--content-highlight-tint) 28%, var(--content-highlight-tint) 82%, transparent 100%);
   --content-highlight-shadow: 0 0 var(--space-1) var(--content-highlight-tint);
 
 
   --tracking-body: normal;
   --tracking-normal: normal;
-  --tracking-display: -0.012em;
+  --tracking-display: -0.02em;
   --tracking-title: normal;
   --tracking-tight: -0.01em;
   --tracking-nav: 0;
@@ -330,13 +401,12 @@
   --tracking-compact-pill: 0.02em;
   --tracking-verification-code: 0.24em;
   --tracking-number: 0;
-  --tracking-tiny: var(--tracking-label);
 
-  --leading-display: 1.08;
+  --leading-display: 1.12;
   --leading-h1: 1.12;
   --leading-h2: 1.16;
-  --leading-title: 1.18;
-  --leading-body: 1.6;
+  --leading-title: 1.15;
+  --leading-body: 1.5;
   --leading-description: 1.5;
   --leading-meta: 1.35;
   --leading-label: 1;
@@ -345,12 +415,13 @@
   --leading-auth-title: 1.02;
   --leading-sky-quote: 1.2;
 
-  /* Owner-requested detail-panel roles (2026-10-10): 28 / 22 / 17px.
-     Reusable for event dialogs; the standard article scale stays unchanged. */
-  --type-dialog-title-size: 28px;
+  /* October 25 handoff: one page/panel title and one narrative body scale.
+     Disclosures, dates, metadata and UI labels retain their semantic roles. */
+  --type-dialog-title-size: var(--type-display-size);
+  --type-modal-title-size: 36px;
   --type-disclosure-size: 22px;
   --type-date-size: 17px;
-  --leading-dialog-title: 1.15;
+  --leading-dialog-title: var(--leading-display);
   --tracking-dialog-title: -0.015em;
   --tracking-eyebrow-compact: 0.06em;
   --detail-card-padding: calc(var(--space-5) + var(--lunar-space-2));
@@ -362,29 +433,133 @@
   --detail-table-band: #f5f7f9;
   --detail-table-border: #edf0f4;
   --detail-table-rule: #dde2e8;
-  --type-display-size: clamp(34px, 8vw, 42px);
-  --type-h1-size: clamp(30px, 4vw, 46px);
-  --type-h2-size: clamp(20px, 2.4vw, 24px);
-  --type-title-size: 18px;
-  --type-body-size: 1rem;
+  --type-display-size: 36px;
+  --type-h1-size: var(--type-display-size);
+  --type-h2-size: 26px;
+  --type-title-size: 26px;
+  --type-body-size: 19px;
   --type-description-size: var(--type-body-size);
-  --type-meta-size: 13px;
+  --type-meta-size: 14px;
   --type-degree-size: 13px;
-  --type-label-size: 11px;
+  --type-label-size: 12px;
   --type-pill-size: 11px;
   --type-hint-size: 12px;
   --type-wordmark-size: 15px;
-  --type-nav-size: 16px;
+  --type-nav-size: 15px;
   --type-glyph-size: 22px;
-  --type-section-heading-size: 18px;
+  /* Aspect-only reading badges from the personalized-placement handoff. */
+  --glyph-aspect-size: 23px;
+  --glyph-aspect-compact-size: 19px;
+  /* Shared missing-reader illustration and centered recovery card. */
+  --unavailable-card-inset: 96px 48px 104px;
+  --unavailable-art-size: 160px;
+  --unavailable-art-compact-size: 128px;
+  --unavailable-ball-shine: #4a4d54;
+  --unavailable-ball: #1d1f24;
+  --unavailable-ball-edge: #090b10;
+  --unavailable-window: #344f8b;
+  --unavailable-shadow: rgba(0, 0, 0, .12);
+  --unavailable-motion-duration: 900ms;
+  /* Shared load-error / missing-link illustration and recovery roles, handoff 10. */
+  --eightball-edge: #050506;
+  --eightball-rim: transparent;
+  --eightball-bezel: #0a0a0c;
+  --eightball-bezel-rim: #2b2d33;
+  --eightball-window-light: #0b1030;
+  --eightball-window-dark: #020205;
+  --eightball-triangle-light: #4d5cff;
+  --eightball-triangle-dark: #1f2ad6;
+  --eightball-triangle-rim: #6f7bff;
+  --eightball-glow: #3b48ff;
+  --eightball-glyph: #e6e9ff;
+  --eightball-glyph-size: 17px;
+  --eightball-shine-opacity: .55;
+  --eightball-shadow-opacity: .28;
+  --eightball-glow-opacity: .7;
+  --eightball-reveal-duration: 1100ms;
+  --eightball-motion-delay: 150ms;
+  --eightball-motion-ease: cubic-bezier(.36,.07,.19,.97);
+  --feedback-card-inset: var(--space-10) var(--space-9);
+  --feedback-art-size: 140px;
+  --feedback-art-compact-size: 112px;
+  --feedback-copy-measure: 420px;
+  --feedback-action-padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--lunar-space-18);
+  --feedback-action-bg: var(--color-brand);
+  --feedback-action-fg: var(--color-white);
+  --feedback-action-hover: #003a35;
+  --feedback-sheet-min-height: calc(100svh - var(--top-control-top) - var(--top-control-height) - var(--page-nav-gap) - var(--space-10));
+  --feedback-spinner-track: rgba(255,255,255,.35);
+  --type-section-heading-size: 22px;
+  --type-row-title-size: 18px;
+  --type-reading-size: var(--type-body-size);
+  /* Exact handoff roles: Sky hero, article display, compact reading and UI copy. */
+  --type-hero-size: var(--type-display-size);
+  --type-section-display-size: var(--type-display-size);
+  --type-compact-section-size: 21px;
+  --type-feature-title-size: var(--type-display-size);
+  --type-compact-title-size: var(--type-display-size);
+  /* Updated planetary placement handoff, October 24. */
+  --type-placement-title-size: var(--type-display-size);
+  --leading-placement-title: var(--leading-display);
+  --leading-placement-ui: 1.55;
+  --tracking-placement-reading: -0.005em;
+  --placement-compare-column: 120px;
+  --cycle-comparison-columns: 96px repeat(3, minmax(0, 1fr)) 168px;
+  --cycle-mobile-label-width: 96px;
+  --type-table-value-size: 16px;
+  --placement-control-size: 44px;
+  --placement-row-compact-size: 16px;
+  --article-body-size: var(--text-body);
+  --sky-highlight-tint: #a7f2d7;
+  --type-reading-compact-size: var(--type-reading-size);
+  --type-compact-row-size: 17px;
+  --type-ui-copy-size: 15px;
+  --leading-feature-title: var(--leading-display);
+  --leading-compact-title: var(--leading-display);
+  --leading-reading-lead: var(--leading-body);
+  --leading-reading: 1.5;
+  --leading-section-heading: 1.25;
+  --leading-row-title: 1.3;
+  --surface-recessed: #dfe3e9;
+  --surface-sheet: var(--color-sheet);
+  --surface-raised: var(--surface);
+  --surface-track: rgba(255, 255, 255, 0.35);
+  --surface-hover: var(--surface-sheet);
+  --layout-profile-columns: minmax(0, 7fr) minmax(0, 5fr);
+  --layout-natal-columns: minmax(0, 2fr) minmax(0, 1fr);
+  --layout-card-columns: repeat(3, minmax(0, 1fr));
+  --layout-reading-width: 880px;
+  --layout-reading-padding: calc(var(--size-8) + var(--size-2));
+  --layout-reading-block-space: 72px;
+  /* Adjacent-reading navigation: separate circular target and destination label. */
+  --control-navigation-size: 44px;
+  --dialog-max-height: calc(100svh - var(--size-6));
+  /* Shared modal handoff: bounded reader/settings/confirm surfaces. */
+  --dialog-frame-padding: var(--space-9) var(--space-6);
+  --dialog-frame-max-height: calc(100dvh - var(--space-9) * 2);
+  --dialog-sheet-max-height: calc(100dvh - var(--space-10));
+  --dialog-header-padding: var(--modal-panel-padding) var(--modal-panel-padding) var(--space-5) var(--space-8);
+  --dialog-compact-header-padding: var(--lunar-space-18) var(--modal-panel-padding) var(--space-4) var(--space-8);
+  --dialog-mobile-header-padding: calc(var(--lunar-space-10) + var(--sheet-handle-height) + var(--space-4)) var(--space-5) var(--space-4) var(--space-6);
+  --dialog-mobile-compact-padding: var(--space-7) var(--space-5) var(--space-4) var(--space-6);
+  --dialog-surface: var(--surface);
+  --dialog-bottom-fade: linear-gradient(transparent, var(--dialog-surface));
+  --prose-measure: 68ch;
+  --dialog-motion-duration: 160ms;
+  --control-danger-bg: #a1293c;
+  --control-danger-fg: var(--color-white);
+  --opacity-muted: 0.45;
+  --layout-action-slot: 168px;
+  --menu-panel-width: 340px;
+  --sheet-panel-width: 440px;
+  --sheet-height: 100svh;
+  --card-preview-fade: linear-gradient(180deg, #000 55%, transparent 100%);
+  --card-preview-lines: 4;
+  --card-preview-lines-compact: 3;
+  --chart-progress-height: 56px;
   --type-small-display-size: 20px;
   --type-large-title-size: 24px;
-  --sign-degree-title-size: var(--text-card-title);
-  --sign-degree-size: var(--text-placement-degree);
   --sign-degree-gap: var(--sp-1);
-  --sign-degree-offset-y: 0.02em;
-  --lunar-card-copy-gap: var(--sp-1);
-  --lunar-card-title-gap: var(--sp-1);
   --lunar-type-micro: var(--type-label-size);
   --lunar-type-micro-plus: var(--type-label-size);
   --lunar-type-tiny: var(--type-label-size);
@@ -392,19 +567,15 @@
   --lunar-type-label-plus: var(--type-label-size);
   --lunar-type-eyebrow: var(--type-label-size);
   --lunar-type-caption: var(--type-meta-size);
-  --lunar-type-fine: var(--type-meta-size);
   --lunar-type-meta: var(--type-meta-size);
   --lunar-type-body: var(--type-body-size);
   --lunar-type-action: 15px;
   --lunar-type-title: var(--type-nav-size);
-  --lunar-type-card-title: var(--type-title-size);
   --lunar-type-phase-title: var(--type-title-size);
   --lunar-type-section-title: var(--type-title-size);
   --lunar-type-large: var(--type-small-display-size);
   --lunar-type-moon-title: var(--type-small-display-size);
-  --lunar-type-display: var(--type-glyph-size);
   --lunar-type-display-lg: var(--type-large-title-size);
-  --lunar-type-display-xl: var(--type-large-title-size);
   --lunar-type-glyph-emphasis: 1.08em;
   --lunar-selected-title-size: clamp(26px, 2.4vw, 34px);
   --lunar-selected-subtitle-size: var(--lunar-type-body);
@@ -421,12 +592,10 @@
   --lunar-selected-title-weight: var(--weight-medium);
   --lunar-selected-body-weight: var(--weight-regular);
   --lunar-selected-label-weight: var(--weight-medium);
-  --lunar-glyph-emphasis-weight: 900;
   --lunar-selected-title-leading: var(--leading-label);
   --lunar-selected-title-leading-mobile: 1.05;
   --lunar-selected-section-title-leading: var(--leading-title);
   --lunar-selected-body-leading: var(--leading-description);
-  --lunar-selected-label-leading: var(--label-eyebrow-line-height);
   --lunar-selected-meta-leading: var(--leading-meta);
   --lunar-selected-row-leading: var(--leading-label);
   --lunar-selected-row-title-leading-mobile: var(--leading-h1);
@@ -440,33 +609,33 @@
   --lunar-accent: var(--accent);
   --lunar-moon-dark: #171923;
   --lunar-moon-dark-edge: #0e1118;
-  --lunar-moon-dark-soft: #242735;
-  --calendar-canvas: #f2f2f4;
-  --calendar-card: var(--color-white);
-  --calendar-hairline: #ececef;
-  --calendar-chip: #f3f4f7;
-  --calendar-selected-fill: #f6f7f9;
-  --calendar-chip-on-canvas: #e6e6ea;
+  --calendar-canvas: var(--bg);
+  --calendar-card: var(--surface);
+  --calendar-hairline: var(--line);
+  --calendar-chip: var(--surface-2);
+  --calendar-selected-fill: var(--color-mint);
+  --calendar-chip-on-canvas: var(--surface-2);
   --calendar-outside-opacity: 0.3;
-  --calendar-ink: #1c1f26;
-  --calendar-copy: #3a3f4a;
-  --calendar-secondary: #5b6270;
+  --calendar-ink: var(--ink);
+  --calendar-copy: var(--ink-2);
+  --calendar-secondary: var(--muted);
   --calendar-tertiary: #6b7280;
   --calendar-disabled: #b3b8c2;
   --calendar-kind-lunation-bg: #dfe6f7;
   --calendar-kind-lunation-fg: #2f3f6b;
-  --calendar-kind-station-bg: #ece6f7;
-  --calendar-kind-station-fg: #4a3d86;
-  --calendar-kind-station-list: #5b4b9e;
-  --calendar-kind-season-bg: #dff0ee;
-  --calendar-kind-season-fg: #1f5f5a;
+  --calendar-kind-station-bg: #ece6f6;
+  --calendar-kind-station-fg: #5b3f91;
+  --calendar-kind-station-list: var(--calendar-kind-station-fg);
+  --calendar-kind-season-bg: var(--accent-bg);
+  --calendar-kind-season-fg: var(--accent);
+  --calendar-kind-season-inverse: var(--color-white);
   --calendar-kind-key-bg: #e6efe2;
   --calendar-kind-key-fg: #2f5a2a;
   --calendar-kind-neutral-bg: var(--calendar-chip);
   --calendar-kind-neutral-fg: var(--calendar-copy);
   --calendar-kind-return-bg: var(--calendar-ink);
   --calendar-kind-return-fg: var(--color-white);
-  --calendar-disc-today: #dfe8f7;
+  --calendar-disc-today: var(--color-mint);
   --calendar-disc-full: #f7d96b;
   --calendar-element-fire-bg: #fbe9e0;
   --calendar-element-fire-fg: #8a3b1c;
@@ -477,34 +646,31 @@
   --calendar-element-water-bg: #e2eef7;
   --calendar-element-water-fg: #1f4a70;
   --calendar-checkin-saved: #2f8a4a;
-  --calendar-mood-fill: var(--calendar-disc-full);
+  --calendar-mood-fill: #f1c84b;
+  --calendar-mood-ink: var(--color-black);
+  --calendar-mood-meter: #e0b23e;
   --calendar-mood-1: #b5455f;
   --calendar-mood-2: #c9646a;
   --calendar-mood-3: #a89152;
   --calendar-mood-4: #5f8a7a;
   --calendar-mood-5: #2f8a6a;
-  --calendar-rest-fill: var(--calendar-kind-season-fg);
-  --calendar-social-fill: var(--calendar-element-fire-fg);
+  --calendar-rest-fill: #1f7a6e;
+  --calendar-social-fill: #7d6fc4;
   --calendar-meter-track: var(--calendar-chip);
   --calendar-meter-height: var(--lunar-space-8);
-  --calendar-slider-thumb: var(--calendar-control-size);
-  --calendar-slider-height: calc(var(--calendar-slider-thumb) + var(--lunar-space-8));
+  --calendar-slider-thumb: var(--calendar-month-disc);
+  --calendar-slider-height: var(--calendar-control-size-compact);
   --calendar-slider-shadow: var(--control-shadow);
   --calendar-quote-rule: var(--lunar-space-2);
-  --calendar-checkin-heading: var(--type-h1-size);
-  --calendar-checkin-echo: var(--type-h1-size);
   --calendar-mood-gap: var(--space-3);
   --calendar-slideout-title: var(--type-display-size);
   --calendar-slideout-leading: var(--leading-display);
   --calendar-slideout-control: var(--space-8);
   --calendar-checkin-star: var(--type-large-title-size);
-  --calendar-reading-copy: var(--text-card-title);
+  --calendar-reading-copy: var(--text-body);
   --calendar-reading-heading: var(--type-h2-size);
-  --calendar-day-title: var(--type-h1-size);
+  --calendar-day-title: var(--text-card-title);
   --calendar-meta-size: 14px;
-  --calendar-stoic-title: var(--text-card-title);
-  --calendar-stoic-title-weight: var(--weight-semibold);
-  --calendar-stoic-title-leading: var(--leading-title);
   --calendar-row-title: 15px;
   --calendar-row-meta: var(--calendar-meta-size);
   --calendar-checkin-title: 15px;
@@ -517,23 +683,32 @@
   --calendar-scrim: rgba(28, 31, 38, 0.28);
   --calendar-panel-shadow: -12px 0 40px rgba(20, 24, 32, 0.12);
   --calendar-panel-width: 440px;
+  /* The journal uses a wider panel than event details in the latest handoff. */
+  --calendar-checkin-width: 530px;
+  --calendar-checkin-canvas: #f2f3f6;
+  --calendar-checkin-control: 44px;
+  --calendar-checkin-star-size: var(--size-5);
   --calendar-tag-width: 56px;
   --calendar-tag-height: 28px;
   --calendar-tag-radius: 8px;
-  --calendar-card-radius: 24px;
-  --calendar-reading-card-radius: 20px;
-  --calendar-sheet-radius: 24px;
+  --calendar-card-radius: var(--card-radius);
+  --calendar-reading-card-radius: var(--radius);
+  --calendar-sheet-radius: var(--card-radius);
   --calendar-control-size: 40px;
-  --calendar-segmented-gap: 0px;
-  --calendar-segmented-item-height: calc(var(--calendar-control-size) - (var(--lunar-space-4) * 2));
-  --calendar-segmented-touch-height: var(--size-6);
+  --calendar-segmented-gap: var(--lunar-space-2);
+  /* Compact handoff: 34px tabs with 4px insets; desktop v2 uses 36px tabs. */
+  --calendar-segmented-item-height: calc(var(--calendar-control-size-compact) - var(--lunar-space-2));
+  --calendar-segmented-height: calc(var(--calendar-segmented-item-height) + (var(--lunar-space-4) * 2));
+  --calendar-segmented-bg: var(--surface-track);
+  --calendar-tab-bg: var(--surface);
+  --calendar-tab-fg: var(--ink);
+  --calendar-tab-shadow: var(--segmented-active-shadow);
   --calendar-title-size: var(--type-h1-size);
   --calendar-title-size-month: var(--type-display-size);
   --calendar-title-size-day: var(--type-h1-size);
   --calendar-title-leading: var(--leading-h1);
   --calendar-legend-control: 30px;
   --calendar-glyph-chip: 14px;
-  --calendar-glyph-rx: 11px;
   --calendar-glyph-rx-size: 0.7em;
   --calendar-glyph-emoji-size: 1.1em;
   --calendar-glyph-line: 1;
@@ -541,7 +716,6 @@
   --calendar-glyph-internal-gap: 0.2em;
   --calendar-glyph-rx-nudge: 0.05em;
   --calendar-note-min-height: 8rem;
-  --calendar-gutter: var(--space-4);
   --calendar-slideout-gutter: var(--space-5);
   --calendar-slideout-gutter-wide: var(--space-7);
   --calendar-stack-gap: var(--space-3);
@@ -575,7 +749,7 @@
   --calendar-week-dow-tracking: 0.08em;
   --calendar-kind-weekly-bg: #f5e3e6;
   --calendar-kind-weekly-fg: #7a3b4a;
-  --calendar-card-tag-bg: #ece7fa;
+  --calendar-card-tag-bg: var(--calendar-kind-station-bg);
   --calendar-card-tag-fg: var(--calendar-kind-station-fg);
   --calendar-card-tag-on: var(--calendar-kind-station-list);
   --calendar-switch-off: #e3e6ec;
@@ -586,10 +760,6 @@
   --calendar-subscribe-max-height: 88vh;
   --calendar-subscribe-title: 20px;
   --calendar-subscribe-title-tracking: -0.02em;
-  --calendar-subscribe-intro: 14px;
-  --calendar-subscribe-intro-compact: 13px;
-  --calendar-subscribe-intro-leading: 1.5;
-  --calendar-subscribe-intro-leading-compact: 1.45;
   --calendar-subscribe-item-title: 15px;
   --calendar-subscribe-item-leading: 1.3;
   --calendar-subscribe-gap: 18px;
@@ -631,7 +801,6 @@
   --lunar-space-8: 8px;
   --lunar-space-9: 9px;
   --lunar-space-10: 10px;
-  --lunar-space-11: 11px;
   --lunar-space-12: 12px;
   --lunar-space-14: 14px;
   --lunar-space-16: 16px;
@@ -641,24 +810,11 @@
   --lunar-space-26: 26px;
   --lunar-space-28: 28px;
   --lunar-space-32: 32px;
-  --lunar-card-subline-size: var(--text-placement-meta);
-  --lunar-card-padding: calc(var(--space-2) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
-  --lunar-card-min-height: 84px;
-  --lunar-card-grid-gap: 14px;
   --lunar-card-glyph-box-size: 64px;
   --lunar-card-glyph-column-size: var(--lunar-card-glyph-box-size);
-  --lunar-card-glyph-size: var(--text-glyph);
-  --lunar-card-glyph-optical-y: 0.02em;
   --lunar-card-phase-size: calc(var(--text-glyph) + var(--space-3));
-  --lunar-card-mobile-padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-3);
-  --lunar-card-mobile-min-height: 80px;
-  --lunar-card-mobile-grid-gap: 12px;
   --lunar-card-mobile-glyph-box-size: calc(var(--lunar-card-glyph-box-size) - var(--sp-2));
   --lunar-card-mobile-glyph-column-size: var(--lunar-card-mobile-glyph-box-size);
-  --lunar-card-mobile-phase-size: calc(var(--lunar-card-phase-size) - var(--sp-1));
-  --lunar-event-more-leading: 10px;
-  --lunar-card-min-inline-size: 340px;
-  --lunar-card-stack-breakpoint: 720px;
   --snap-card-padding: calc(var(--space-3) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
   --snap-card-radius: var(--radius-sm);
   --snap-card-gap: 14px;
@@ -666,54 +822,34 @@
   --snap-next-padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2) var(--space-4) var(--space-4);
   --snap-next-gap: 14px;
   --snap-icon-size: 36px;
-  --snap-glyph-size: 18px;
   --snap-moon-disc-size: 22px;
-  --snap-eyebrow-size: 10px;
-  --snap-eyebrow-tracking: 0.08em;
-  --snap-upcoming-tracking: 0.14em;
-  --snap-sign-size: 15px;
-  --snap-degree-size: 12px;
-  --snap-phase-size: 11px;
-  --snap-next-title-size: 14px;
-  --snap-next-subtitle-size: 13px;
   --sky-card-padding: var(--space-6) var(--space-5);
   --sky-card-min-height: var(--card-row-min-height);
-  --sky-card-grid-gap: var(--card-row-gap);
   --sky-card-glyph-column-size: var(--lunar-card-glyph-column-size);
   --sky-card-mobile-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-4);
   --sky-card-mobile-min-height: var(--card-row-min-height);
   --sky-card-mobile-grid-gap: var(--card-row-gap);
   --sky-card-mobile-glyph-column-size: var(--lunar-card-mobile-glyph-column-size);
-  --sky-placement-card-padding: var(--space-6) calc(var(--space-7) - var(--space-1)) var(--space-6) calc(var(--space-5) + var(--space-1) / 2);
   --sky-placement-card-gap: 26px;
-  --sky-placement-glyph-column-size: 42px;
-  --sky-placement-mobile-padding: var(--space-5) calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-4);
   --sky-placement-mobile-gap: 18px;
-  --sky-placement-mobile-glyph-column-size: 34px;
   --sky-aspect-glyph-size: var(--type-section-heading-size);
-  --retrograde-card-copy-size: var(--type-meta-size);
-  --retrograde-card-copy-line: var(--leading-body);
 
   --text-display: var(--type-display-size);
   --text-title: var(--type-display-size);
-  --sky-title-size: clamp(27px, 6vw, 34px);
+  --sky-title-size: var(--type-display-size);
   --text-card-title: var(--type-title-size);
   --text-wordmark: var(--type-wordmark-size);
   --text-nav: var(--type-nav-size);
-  --friend-card-title-size: var(--text-card-title);
   --friend-card-title-line: 1.2;
   --friend-row-title-size: var(--text-card-title);
   --friend-row-description-size: var(--text-body);
-  --friend-row-meta-size: var(--type-meta-size);
   --friend-feed-chevron-size: 34px;
   --friend-feed-chevron-size-compact: 28px;
   --compatibility-card-glyph-size: 23px;
   --compatibility-card-glyph-size-compact: 20px;
   --text-placement-degree: var(--type-degree-size);
   --text-placement-meta: var(--type-meta-size);
-  --article-title-size: var(--article-h2-size);
-  --article-h2-size: clamp(20px, 2.4vw, 24px);
-  --article-body-size: var(--text-body);
+  --article-h2-size: var(--type-h2-size);
   --article-meta-size: var(--type-meta-size);
   --article-label-size: var(--type-label-size);
   --text-body: var(--type-body-size);
@@ -721,7 +857,6 @@
   --text-row-value: 15px;
   --text-description: var(--text-body);
   --text-eyebrow: var(--type-label-size);
-  --text-tiny: var(--type-label-size);
   --text-label: var(--text-eyebrow);
   --text-label-size: var(--text-eyebrow);
   --text-glyph: var(--type-glyph-size);
@@ -729,21 +864,16 @@
   --text-section-label-size: var(--text-eyebrow);
   --text-section-heading-size: var(--type-section-heading-size);
   --text-card-title-size: var(--text-card-title);
-  --text-row-title-size: var(--text-card-title);
+  --text-row-title-size: var(--type-row-title-size);
   --text-row-body-size: var(--text-body);
   --text-meta-size: var(--type-meta-size);
-  --retrograde-row-glyph-size: var(--text-glyph);
   --retrograde-row-title-size: var(--text-row-title-size);
   --retrograde-row-degree-size: var(--text-placement-degree);
-  --retrograde-row-body-size: var(--text-row-body-size);
   --text-button-size: var(--text-row-value);
   --text-table-title-size: var(--text-card-title);
   --text-table-body-size: 15px;
   --text-table-meta-size: var(--text-placement-meta);
-  --text-compact-title: 15px;
   --text-compact-meta: var(--type-hint-size);
-  --text-compact-label: var(--type-label-size);
-  --text-compact-caption: var(--type-label-size);
   --text-verification-code-size: 1.25rem;
   --text-auth-code-slot-size: 1.35rem;
   --text-nav-badge-size: 0.65rem;
@@ -779,17 +909,14 @@
   --pill-radius: var(--badge-radius);
   --pill-line-height: var(--badge-line-height);
   --pill-tracking: var(--badge-tracking);
-  --duration-badge-radius: var(--badge-radius);
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 600;
 
   /*
-   * Type scale: 11, 12, 13, 15, 16, 18, 20, 22, 24,
-   * plus display clamp() values. Newsreader is for titles, the system sans
-   * stack is for narrative body copy, and Geist Mono is for UI, data, labels,
-   * and the wordmark.
+   * Newsreader carries display titles and reading prose. System sans carries
+   * controls and profile summaries; Geist Mono carries technical metadata.
    */
   --type-ui-size: var(--text-button-size);
   --type-caption-size: var(--type-hint-size);
@@ -805,10 +932,8 @@
   --sp-8: var(--size-8);
   --row-py: var(--sp-2);
   --row-px: var(--sp-3);
-  --sec-gap: var(--sp-4);
   --section-gap: var(--sp-3);
   --stack-gap: var(--sp-4);
-  --space-0: 0;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -869,11 +994,16 @@
 
   --container-chart-mobile: 520px;
   --container-dialog: 560px;
+  /* Standard day-detail dialog in the Friction/Flow handoff. */
+  --container-dialog-medium: 520px;
+  --dialog-pair-avatar-overlap: -12px;
+  --container-auth-dialog: 480px;
+  --empty-reading-art-size: 160px;
   --container-dialog-wide: 640px;
   --container-prose: 720px;
   --container-form: 760px;
   --container-reading: 820px;
-  --container-content: 1040px;
+  --container-content: 1052px;
   --container-calendar-content: 1080px;
   --container-narrow: 1120px;
   --container-article: 1140px;
@@ -888,7 +1018,7 @@
   --learn-index-card-min: 220px;
   --learn-index-card-min-height: 240px;
   --learn-index-house-card-min-height: 280px;
-  --learn-section-title-size: 34px;
+  --learn-section-title-size: var(--type-page-title-mobile-size);
   --learn-section-title-leading: 1;
   --learn-index-mark-size: 36px;
   --learn-house-name-size: 24px;
@@ -911,8 +1041,8 @@
   --learn-house-card-shadow-hover:
     0 1px 3px rgb(20 24 32 / 5%),
     0 10px 26px rgb(20 24 32 / 11%);
-  --learn-article-title-size: 60px;
-  --learn-article-title-leading: 1.02;
+  --learn-article-title-size: var(--type-display-size);
+  --learn-article-title-leading: var(--leading-display);
   --learn-article-title-tracking: -0.015em;
   --learn-lede-size: 26px;
   --learn-lede-leading: 1.4;
@@ -933,12 +1063,9 @@
   --container-chart-layout: 1520px;
   --container-app-wide: 1700px;
   --report-date-label-min-width: 120px;
-  --report-image-min-height: clamp(240px, 36vw, 420px);
-  --report-image-min-height-mobile: 200px;
 
   --inline-gap: var(--space-2);
   --card-list-gap: var(--space-2);
-  --card-stack-gap: var(--space-2);
   --card-row-gap: var(--sp-2);
   --card-row-min-height: 0px;
   --card-row-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) var(--space-5);
@@ -947,18 +1074,13 @@
   --form-field-padding: calc(var(--space-4) + var(--space-1) / 2);
   --modal-panel-padding: calc(var(--space-7) - var(--space-1));
   --mobile-overlay-padding: calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-5) + var(--space-1) / 2);
-  --snapshot-card-gap: 12px;
-  --snapshot-card-padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
-  --snapshot-card-radius: var(--card-radius);
   --snapshot-icon-size: 44px;
   --page-stack-gap: clamp(var(--sp-3), 3vw, var(--sp-5));
   --layout-gap: clamp(var(--sp-5), 6vw, 112px);
   --content-stack-gap: var(--stack-gap);
   --mobile-layout-gap: calc(var(--space-8) - var(--space-1));
-  --gut: clamp(16px, 5vw, 24px);
-  --col: 560px;
-  --radius: 20px;
-  --radius-sm: 14px;
+  --radius: 28px;
+  --radius-sm: 20px;
   --radius-circle: 50%;
   --radius-pill: 999px;
   /* Half-disc geometry: percentage radii preserve an elliptical lunar
@@ -969,25 +1091,23 @@
   /* 3. COMPONENT TOKENS */
   --card-bg: var(--surface);
   --card-border: var(--line-2);
-  --card-radius: 10px;
-  --card-radius-sm: 10px;
+  --card-radius: 32px;
+  --card-radius-sm: 28px;
   --card-shadow: var(--shadow-card);
-  --card-shadow-flat: var(--shadow-flat);
   --card-shadow-raised: var(--card-shadow);
   --card-title-color: var(--ink);
   --card-body-color: var(--ink-2);
   --card-meta-color: var(--muted);
   --card-glyph-color: var(--wheel-glyph);
-  --card-ring-shadow: 0 0 0 2px var(--card-bg);
   --avatar-ring-shadow: 0 0 0 4px var(--surface), 0 0 0 5px var(--line);
-  --feature-card-shadow: var(--shadow-hero);
-  --shadow-soft: var(--card-shadow);
+  --avatar-aspect-size: 22px;
+  --avatar-aspect-offset: -6px;
+  --avatar-aspect-ring: 0 0 0 var(--border-width-medium) var(--surface);
   --control-shadow: var(--shadow-floating);
   --control-thumb-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
   --card-padding: var(--sp-3);
   --card-padding-sm: var(--sp-2);
   --card-padding-lg: var(--sp-4);
-  --card-section-padding: var(--sp-3);
   --card-header-gap: var(--sp-1);
   --aspect-inline-icon-size: 20px;
   --aspect-row-glyph-size: var(--aspect-inline-icon-size);
@@ -1011,27 +1131,19 @@
   --updates-aspect-meta-width: var(--aspect-row-meta-width);
   --updates-aspect-row-gap: var(--space-4);
   --updates-aspect-row-glyph-size: calc(var(--aspect-row-glyph-size) + 2px);
-  --table-bg: var(--card-bg);
-  --table-border: var(--card-border);
-  --table-radius: var(--card-radius);
-  --table-shadow: var(--card-shadow);
-  --table-row-bg: var(--card-bg);
   --table-row-border: var(--card-border);
-  --table-row-gap: var(--sp-2);
   /* Bounded table browsing, leaving surrounding page controls reachable. */
   --table-scroll-max-height: min(60dvh, calc(var(--size-8) * 8));
   --chart-transit-degree-size: var(--chart-degree-size);
   --chart-synastry-house-label-size: var(--type-label-size);
   --chart-sun-glyph-size: calc(var(--chart-planet-glyph-size) * 1.02);
   --sky-ledger-title-size: var(--type-small-display-size);
-  --sky-ledger-glyph-size: var(--type-title-size);
-  --sky-ledger-meta-size: var(--type-hint-size);
   --sky-placement-hook-quote-size: var(--type-large-title-size);
   --retrograde-badge-size: var(--type-h1-size);
   --social-sharing-title-size: var(--type-h2-size);
-  --friend-invite-title-size: clamp(26px, 4vw, 34px);
+  --friend-invite-title-size: var(--type-display-size);
   --lunar-weekly-day-title-size: clamp(24px, 2.5vw, 30px);
-  --settings-dialog-title-size: clamp(24px, 4vw, 34px);
+  --settings-dialog-title-size: var(--type-display-size);
   --phone-auth-title-size: var(--type-display-size);
   --overlay-bg: var(--card-bg);
   --overlay-border: var(--card-border);
@@ -1050,27 +1162,28 @@
   --control-thumb-active-bg: var(--color-control-thumb-active);
   --row-padding-y: var(--row-py);
   --row-padding-x: var(--row-px);
-  --row-gap: var(--sp-2);
-  --row-min-height: var(--sp-8);
   --nav-surface: var(--surface);
-  --nav-height: var(--sp-8);
+  --nav-height: var(--size-7);
   --nav-radius: var(--radius-pill);
-  --nav-padding: var(--sp-half);
   --nav-link-size: 15px;
   --nav-scrolled-bg: color-mix(in srgb, var(--bg) 74%, transparent);
   --nav-border: transparent;
   --nav-border-hover: color-mix(in srgb, var(--ink) 10%, transparent);
-  --nav-link-hover-bg: #f5f3fa;
-  --nav-link-active-bg: #f1f0f7;
+  --nav-link-hover-bg: var(--color-sheet);
+  --nav-link-active-bg: var(--color-mint);
+  --nav-link-active-fg: var(--color-brand);
+  --nav-link-height: var(--size-5);
+  --nav-pill-padding: 0 var(--space-2);
+  --nav-link-padding: 0 var(--space-4);
+  --header-padding: var(--top-control-top) var(--space-7) 0;
+  --header-popover-top: calc(var(--top-control-height) + var(--space-3));
+  --header-available-width: calc(100vw - var(--space-7) * 2);
   /* Diffuse navigation elevation, shared by pills and their open panels. */
-  --nav-rest-shadow:
-    0 12px 32px -8px rgba(28, 32, 52, 0.1),
-    0 4px 12px -4px rgba(28, 32, 52, 0.04);
-  --nav-scrolled-shadow: var(--nav-rest-shadow);
+  --nav-rest-shadow: 0 12px 32px -12px rgba(28, 31, 38, 0.18);
   --nav-blur: 22px;
   --nav-saturate: 1.5;
   --modal-backdrop-strong-bg: rgba(15, 15, 15, 0.45);
-  --modal-overlay-bg: rgba(20, 20, 20, 0.18);
+  --modal-overlay-bg: rgba(28, 31, 38, 0.32);
   --modal-overlay-dark-bg: rgba(0, 0, 0, 0.48);
   --friend-compare-overlay-bg: rgba(229, 232, 238, 0.64);
   --friend-compare-overlay-dark-bg: rgba(12, 13, 18, 0.62);
@@ -1097,7 +1210,6 @@
   --friend-detail-chart-max: var(--shared-chart-size);
   --friend-wheel-stack-gap: var(--space-1);
   --friend-detail-no-chart-max: 760px;
-  --friend-section-label-margin: var(--sp-1) 0 calc(var(--sp-1) * -1);
   --friend-composite-row-template: 56px minmax(0, 1fr) auto;
   --friend-composite-row-gap: 20px;
   --friend-composite-row-padding: var(--space-6) calc(var(--space-7) - var(--space-1) / 2);
@@ -1139,7 +1251,6 @@
   --friend-directory-accept-title-size: var(--type-large-title-size);
   --friend-directory-toast-avatar-size: var(--type-label-size);
   --friend-directory-row-title-leading: 1.15;
-  --friend-directory-dialog-copy-leading: 1.55;
   --friend-directory-heading-leading: 1.1;
   --friend-directory-link-leading: 1.45;
   --friend-directory-chart-cta-inset: 69px;
@@ -1150,7 +1261,7 @@
   --moon-phase-light: var(--color-moon-phase-light);
   --moon-phase-shadow: var(--color-moon-phase-shadow);
   --floating-button-bg: var(--surface);
-  --floating-button-bg-hover: #e6e8ef;
+  --floating-button-bg-hover: var(--color-sheet);
   --floating-button-border: var(--nav-border);
   --floating-button-border-hover: var(--nav-border-hover);
   --button-height: var(--sp-6);
@@ -1158,19 +1269,18 @@
   --button-padding-x: var(--sp-3);
   --button-bg: var(--pill-bg);
   --button-fg: var(--pill-fg);
-  --segmented-bg: color-mix(in srgb, var(--surface-2) 78%, var(--surface));
+  --segmented-bg: var(--surface-track);
   --segmented-border: color-mix(in srgb, var(--line-strong) 58%, transparent);
-  --segmented-radius: 12px;
-  --segmented-item-radius: 9px;
-  --segmented-padding: calc(var(--space-1) * 0.75);
-  --segmented-gap: calc(var(--space-1) * 0.75);
-  --segmented-item-height: 28px;
-  --segmented-item-px: 14px;
+  --segmented-radius: var(--radius-pill);
+  --segmented-item-radius: var(--radius-pill);
+  --segmented-padding: var(--space-1);
+  --segmented-gap: var(--space-1);
+  --segmented-item-height: var(--size-5);
+  --segmented-item-px: var(--space-4);
   --segmented-active-bg: var(--surface);
   --segmented-active-border: color-mix(in srgb, var(--line-strong) 58%, transparent);
   --segmented-active-fg: var(--ink);
   --segmented-inactive-fg: var(--muted);
-  --segmented-hover-bg: color-mix(in srgb, var(--surface-2) 88%, var(--ink) 12%);
   --segmented-hover-fg: var(--ink);
   --segmented-active-hover-bg: color-mix(in srgb, var(--surface) 94%, var(--ink) 6%);
   --segmented-shadow: none;
@@ -1184,7 +1294,6 @@
   --id-name-size: var(--text-card-title);
   --id-name-weight: var(--weight-medium);
   --id-signature-size: 13px;
-  --id-signature-glyph-size: 14px;
   --id-tabs-overlap-y: 14px;
   --id-tabs-margin: calc(var(--id-tabs-overlap-y) * -1) 0 0;
   --input-height: var(--sp-7);
@@ -1199,8 +1308,6 @@
   --modal-width: var(--container-dialog);
   --chart-size: clamp(560px, 42vw, 700px);
   --relationship-picker-width: var(--container-picker);
-  --deferred-placeholder-height: 180px;
-  --z-nav: 100;
   --z-topbar: 1000;
   --z-floating: 120;
   --z-popover: 100;
@@ -1211,20 +1318,14 @@
   /* 4. COMPATIBILITY ALIASES */
   --text: var(--ink);
   --text-muted: var(--ink-2);
-  --ink-3: var(--card-meta-color);
-  --teal: var(--accent);
-  --terra: #d58a61;
   --earth: #97aa82;
   --air: #7fb8da;
   --water: #6476bd;
-  --lavender: #f7e8fb;
   --type-xs: var(--text-eyebrow);
   --type-sm: var(--text-description);
   --type-md: var(--text-body);
   --type-lg: var(--text-body);
   --type-xl: var(--text-card-title);
-  --type-2xl: var(--text-title);
-  --type-display: var(--text-display);
   --app-bg: var(--bg);
   --app-text: var(--ink);
   --app-muted: var(--muted);
@@ -1233,36 +1334,37 @@
   --page-max: var(--container-page);
   --page-narrow: var(--container-narrow);
   --page-gutter: clamp(var(--sp-3), 5vw, 80px);
-  --page-top: calc(var(--nav-height) + clamp(48px, 6vw, 72px));
+  /* Every route begins below the floating header with the same clear space. */
+  --page-nav-gap: calc(var(--space-10) + var(--space-4));
+  --page-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + var(--page-nav-gap));
   --page-bottom: clamp(64px, 8vw, 96px);
   --page-content-width: min(var(--page-max), calc(100vw - var(--page-gutter) * 2));
   --page-narrow-width: min(var(--page-narrow), calc(100vw - var(--page-gutter) * 2));
-  --mobile-page-gutter: 18px;
+  --mobile-page-gutter: var(--space-4);
   --mobile-page-bottom: var(--sp-6);
-  --mobile-page-padding: 128px var(--mobile-page-gutter) var(--mobile-page-bottom);
+  --mobile-page-padding: var(--page-top) var(--mobile-page-gutter) var(--mobile-page-bottom);
   --mobile-card-padding: var(--space-5);
   --mobile-row-padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-4);
   --mobile-row-gap: var(--sp-1);
   --mobile-chart-max: var(--container-chart-mobile);
   --mobile-control-inset: 20px;
-  --mobile-edge-inset: 14px;
   --tablet-nav-reserved-width: 112px;
-  --mobile-nav-reserved-width: 88px;
   --mobile-menu-width: 260px;
   /* Header popovers leave room for the controls, safe area, and bottom gutter. */
   --header-popover-max-height: max(0px, calc(100dvh - var(--top-control-top) - var(--top-control-height) - var(--space-8) - env(safe-area-inset-top, 0px)));
-  --mobile-settings-control-reserved-width: 84px;
   --tablet-chart-max: 680px;
   --tablet-chart-edge: 48px;
   --tablet-friend-page-max: var(--container-form);
   --friends-content-width: var(--container-content);
-  --top-control-top: 24px;
-  --top-control-height: 52px;
-  --top-icon-button-size: 52px;
+  --top-control-top: var(--size-7);
+  --top-control-height: var(--size-7);
+  --top-icon-button-size: var(--size-7);
   --top-brand-size: 32px;
   --top-nav-icon-size: 15px;
   --top-action-icon-size: 19px;
   --top-control-gap: 8px;
+  /* Keep the centered header group clear of child-page Back controls. */
+  --header-back-gutter: 176px;
 
   /* Responsive layout compositions. Components consume these as whole values. */
   --auth-page-padding: clamp(72px, 8vh, 120px) clamp(var(--space-6), 5vw, 72px);
@@ -1284,7 +1386,7 @@
   --glyph-gap-lg: 0.45em;
   --glyph-gap-xl: 0.58em;
   --glyph-gap-2xl: 0.6em;
-  --friends-route-page-margin: clamp(46px, 5vw, 78px) auto 0;
+  --friends-route-page-margin: var(--page-top) auto 0;
   --friends-route-column-gap: 55px;
   --friends-route-profile-padding: clamp(var(--space-4), 2.5vw, calc(var(--space-5) + var(--space-1) / 2));
   --friends-route-pane-padding: 0 clamp(calc(var(--space-4) + var(--space-1) / 2), 2.6vw, calc(var(--space-7) - var(--space-1)));
@@ -1303,25 +1405,19 @@
   --lunar-grid-gap: var(--lunar-space-10) clamp(var(--space-6), 3vw, 40px);
   --lunar-grid-padding: clamp(var(--space-5), 2.5vw, calc(var(--space-7) - var(--space-1)));
   --lunar-grid-aside-padding: clamp(var(--space-6), 3vw, 40px);
-  --lunar-card-inner-radius: calc(var(--lunar-card-radius) - 4px);
-  --report-page-padding: clamp(var(--space-9), 8vw, var(--space-10)) var(--page-gutter) var(--space-10);
-  --report-hero-padding: clamp(var(--space-8), 8vw, var(--space-10));
-  --report-section-padding: clamp(var(--space-7), 6vw, var(--space-10));
-  --report-callout-padding: var(--space-8);
-  --mobile-action-panel-shadow: 0 18px 38px color-mix(in srgb, var(--ink) 14%, transparent), 0 2px 8px color-mix(in srgb, var(--ink) 8%, transparent);
   --mobile-top-safe-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
   /* Article navigation shares the top row; reserve one Back button beside the brand. */
   --mobile-article-back-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top));
   --mobile-article-brand-offset: calc(var(--top-icon-button-size) + var(--top-control-gap));
-  --mobile-chart-top-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + 85px);
-  --mobile-route-padding: 104px var(--mobile-page-gutter) calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
+  --mobile-chart-top-padding: var(--page-top);
+  --mobile-route-padding: var(--page-top) var(--mobile-page-gutter) calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
   --settings-panel-padding: clamp(var(--space-6), 5vw, 36px);
   --settings-dialog-padding: clamp(calc(var(--space-6) + var(--space-1) / 2), 5vw, 40px);
   /* Article sheets use a 95vw outer rail, independent of chart/page gutters. */
   --article-page-gutter: 2.5vw;
-  --article-back-top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + var(--space-3));
-  --article-page-padding: calc(var(--top-control-top) + var(--top-control-height) + var(--space-7)) var(--article-page-gutter) 120px;
-  --sky-page-padding: clamp(116px, 15vh, 168px) clamp(calc(var(--space-4) + var(--space-1) / 2), 5vw, 48px) 120px;
+  --article-back-top: var(--mobile-article-back-top);
+  --article-page-padding: var(--page-top) var(--article-page-gutter) 120px;
+  --sky-page-padding: var(--page-top) clamp(calc(var(--space-4) + var(--space-1) / 2), 5vw, 48px) 120px;
   --sky-hero-padding: clamp(40px, 5.4vw, 80px) clamp(calc(var(--space-6) + var(--space-1) / 2), 6vw, 92px) clamp(52px, 6vw, 84px);
   --article-sheet-padding: calc(var(--space-10) * 2 + var(--space-7)) clamp(var(--space-5), 10vw, calc(var(--space-10) * 2 + var(--space-4))) clamp(52px, 6vw, 84px);
   --sky-header-margin: clamp(var(--space-3), 1.5vw, var(--space-4)) 0 0;
@@ -1333,11 +1429,14 @@
   --sky-hero-top-padding: clamp(40px, 5.4vw, 80px);
   --sky-content-padding: calc(var(--space-7) + var(--space-1) / 2) clamp(var(--space-6), 5vw, var(--space-8));
   --sky-content-inline-padding: clamp(var(--space-4), 4vw, var(--space-8));
-  --sky-mobile-page-padding: 104px var(--mobile-page-gutter) var(--mobile-page-gutter);
   --sky-card-grid-gap: clamp(calc(var(--space-4) + var(--space-1) / 2), 2.4vw, calc(var(--space-6) + var(--space-1) / 2));
   --sky-card-grid-padding: clamp(var(--space-6), 3vw, 34px) clamp(var(--space-6), 3.4vw, 38px);
-  --sky-ledger-gap: clamp(var(--space-4), 2vw, var(--space-6));
-  --sky-ledger-padding: clamp(calc(var(--space-5) + var(--space-1) / 2), 2.8vw, 34px);
+  /* Sky overview uses the shared reading role on an open page. */
+  --sky-overview-width: min(var(--container-content), 100%);
+  --sky-overview-columns: var(--layout-profile-columns);
+  --sky-overview-top: var(--page-top);
+  --sky-effort-surface: var(--surface-2);
+  --sky-wheel-width: min(100%, var(--container-chart-mobile));
   --radius-card: var(--card-radius);
   --chart-layout-max: var(--container-chart-layout);
   --chart-column-width: minmax(560px, 720px);
@@ -1345,7 +1444,7 @@
   --chart-layout-gap: clamp(48px, 4.5vw, 80px);
   --shared-chart-size: var(--chart-size);
   --nav-safe-offset: calc(var(--nav-height) + 72px);
-  --chart-wheel-top-offset: calc(var(--nav-height) + clamp(88px, 11vh, 148px));
+  --chart-wheel-top-offset: var(--page-top);
   --chart-page-top: var(--chart-wheel-top-offset);
   --chart-content-width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
   --chart-sticky-top: 0px;
@@ -1376,7 +1475,7 @@
   --ds-friends-detail-aspect-row-meta-width: 30px;
   --ds-friends-route-friends-page-rail: min(1640px, calc(100vw - 96px));
   --ds-friends-route-friend-detail-copy-width: minmax(480px, 532px);
-  --ds-friends-route-friend-detail-top-clearance: calc(var(--top-control-top) + var(--top-control-height) + clamp(58px, 5.5vw, 86px));
+  --ds-friends-route-friend-detail-top-clearance: var(--page-top);
   --ds-friends-route-aspect-row-glyph-gap: 4px;
   --ds-friends-route-aspect-row-glyph-width: 68px;
   --ds-friends-route-friends-page-rail-variant-2: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
@@ -1384,9 +1483,7 @@
   --ds-layout-deferred-placeholder-height: 320px;
   --ds-layout-deferred-placeholder-height-variant-2: 220px;
   --ds-lunar-calendar-lunar-selected-content-width: 62ch;
-  --ds-lunar-calendar-lunar-calendar-title-size: clamp(32px, 8vw, 38px);
   --ds-lunar-calendar-lunar-selected-title-size: clamp(26px, 8.5vw, 34px);
-  --ds-navigation-nav-icon-optical-offset-y: -0.5px;
   --ds-navigation-hamburger-width: 23px;
   --ds-navigation-hamburger-height: 18px;
   --ds-navigation-hamburger-stroke: 2.5px;
@@ -1405,7 +1502,6 @@
   --ds-sky-aspect-row-template: 82px minmax(0, 1fr) 42px;
   --ds-sky-aspect-row-glyph-width-variant-2: 58px;
   --ds-sky-aspect-row-template-variant-2: 58px minmax(0, 1fr) 30px;
-  --ds-sky-retrograde-cluster-overlap: -10px;
   --ds-sky-retrograde-badge-rx-offset: -4px;
 }
 
@@ -1430,24 +1526,48 @@
 
 @media (max-width: 800px) {
   :root {
-    --chart-wheel-top-offset: calc(var(--top-control-height) + 72px);
+    --dialog-surface: var(--surface-sheet);
+    --top-control-top: var(--space-4);
+    --article-back-top: var(--space-4);
   }
 }
 
 @media (max-width: 720px) {
   :root {
-    --article-page-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) / 2) var(--article-page-gutter) calc(var(--mobile-page-bottom) + env(safe-area-inset-bottom, 0px));
+    --article-back-top: var(--mobile-article-back-top);
+    --sky-overview-width: calc(100% - var(--space-7));
+    --article-page-padding: var(--page-top) var(--article-page-gutter) calc(var(--mobile-page-bottom) + env(safe-area-inset-bottom, 0px));
     --article-sheet-padding: calc(var(--space-7) * 3 + var(--space-5)) var(--space-5) var(--space-9);
     --top-control-top: 24px;
-    --top-control-height: 52px;
-    --top-icon-button-size: 52px;
+    --top-control-height: var(--size-6);
+    --top-icon-button-size: var(--size-6);
     --top-brand-size: 32px;
     --top-nav-icon-size: 15px;
     --top-action-icon-size: 19px;
     --page-gutter: var(--mobile-page-gutter);
-    --page-top: calc(var(--top-control-height) + 76px);
+    --page-nav-gap: var(--space-10);
     --row-padding-y: var(--sp-2);
     --row-padding-x: var(--sp-2);
+  }
+}
+
+/* Resolve live slider geometry where its numeric React input is defined. */
+.calendar-checkin__slider-track {
+  --calendar-slider-position: calc((100% - var(--calendar-slider-thumb) - var(--lunar-space-6)) * var(--checkin-progress, 0.5) + var(--lunar-space-3));
+  --calendar-slider-fill: calc((100% - var(--calendar-slider-thumb)) * var(--checkin-progress, 0.5) + var(--calendar-slider-thumb));
+}
+
+@media (min-width: 761px) {
+  :root {
+    --calendar-segmented-item-height: var(--calendar-control-size-compact);
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --calendar-segmented-bg: var(--surface);
+    --calendar-tab-bg: var(--color-brand);
+    --calendar-tab-fg: var(--color-white);
   }
 }
 
@@ -1461,8 +1581,6 @@
 
 /* Friends layout shell. Component rules live with their canonical blocks below. */
 .app-shell.mode-friends {
-  --friends-detail-width: min(var(--container-friends-detail), calc(100vw - clamp(112px, 10vw, 176px)));
-  --friends-wheel-size: var(--shared-chart-size);
   padding: 0;
   overflow-x: clip;
 }
@@ -1480,11 +1598,33 @@
 
 .theme-dark,
 [data-theme="dark"] {
+  --skeleton-page-bar: var(--surface-2);
+  --skeleton-wheel-color: var(--surface-2);
+  --calendar-tab-bg: var(--ink);
+  --calendar-tab-fg: var(--bg);
+  --calendar-tab-shadow: none;
+  --calendar-kind-season-inverse: var(--bg);
+  --calendar-checkin-canvas: var(--surface);
+  --calendar-segmented-bg: var(--surface);
+  --native-control-color-scheme: dark;
+  --filter-glyph-ink: brightness(0) invert(1);
+  --forecast-flow-bg: #213c36;
+  --forecast-flow-ink: #b5e1d3;
+  --forecast-friction-bg: #442f29;
+  --forecast-friction-ink: #efc0aa;
+  --forecast-mixed-bg: #303341;
+  --forecast-mixed-ink: #d0d4e7;
+  --forecast-neutral-bg: #2a2e39;
+  --forecast-neutral-ink: #aeb2bd;
+  --chart-surface-planets: var(--surface-2);
+  --chart-surface-houses: var(--bg);
+  --chart-ring-line: var(--line-strong);
+  --chart-sector-line: var(--line-strong);
   --startup-ink: #eceef2;
   --startup-brand-ink: #d6f0eb;
   --startup-paper: var(--bg);
   --startup-moon-ink: #eceef2;
-  --startup-label: #8d93a0;
+  --startup-label: var(--muted);
   --detail-card-border: var(--color-line);
   --detail-divider: var(--color-line);
   --detail-meta: var(--color-muted);
@@ -1493,69 +1633,72 @@
   --detail-table-border: var(--color-line);
   --detail-table-rule: var(--color-line-strong);
 
-  --color-bg-warm: #16181b;
-  --content-highlight-tint: rgba(205, 217, 116, 0.18);
-  --color-paper: #16181b;
-  --color-surface: #1f222b;
-  --color-surface-2: #2a2e39;
-  --color-surface-3: #333844;
+  --color-bg-warm: #121418;
+  --content-highlight-tint: color-mix(in srgb, var(--color-mint) 18%, transparent);
+  --color-paper: var(--color-bg-warm);
+  --color-surface: #1c1f26;
+  --color-surface-2: #272b34;
+  --color-surface-3: var(--color-surface-2);
+  --surface-recessed: var(--surface-2);
+  --surface-sheet: var(--surface);
+  --surface-raised: var(--surface-2);
+  --surface-symbol: var(--surface-2);
+  --surface-track: var(--surface);
   --color-ink: #eceef2;
-  --color-ink-2: #aeb2bd;
-  --color-muted: #a2a7b2;
-  --color-faint: #9298a4;
+  --color-ink-2: #c3c8d2;
+  --color-muted: #9aa1ad;
+  --color-faint: var(--color-muted);
+  --color-danger: #f0a4ae;
+  --feedback-info-bg: #23334b;
+  --feedback-info-ink: #bdd4f7;
+  --feedback-warning-bg: #3b311e;
+  --feedback-warning-ink: #f5d78f;
+  --feedback-error-bg: #40272e;
+  --feedback-error-ink: #f6b8c3;
+  --eightball-rim: rgba(255,255,255,.14);
+  --eightball-shadow-opacity: .6;
   --color-soft: #363b47;
-  --color-line: rgba(255, 255, 255, 0.08);
-  --color-line-2: rgba(255, 255, 255, 0.05);
+  --color-line: transparent;
+  --color-line-2: transparent;
   --color-line-strong: rgba(255, 255, 255, 0.26);
-  --color-nav-bg: #1f222b;
+  --color-nav-bg: var(--color-surface);
   --color-pill-bg: #eceef2;
-  --color-pill-fg: #16181f;
-  --color-accent: #c9ccd6;
-  --color-accent-bg: rgba(255, 255, 255, 0.07);
+  --color-pill-fg: var(--color-paper);
+  --color-accent: #8ff5d6;
+  --color-accent-bg: rgba(143, 245, 214, 0.14);
   --color-wheel-line: rgba(255, 255, 255, 0.3);
   --color-wheel-tick: rgba(255, 255, 255, 0.68);
   --color-wheel-soft: rgba(255, 255, 255, 0.2);
   --color-wheel-label: rgba(255, 255, 255, 0.68);
   --color-wheel-degree-label: rgba(255, 255, 255, 0.84);
   --color-wheel-glyph: #f2f2f1;
-  --color-wheel-band: #1f222b;
+  --color-wheel-band: var(--color-surface);
   --color-wheel-band-line: rgba(255, 255, 255, 0.2);
   --color-interactive: #b8b0ff;
   --color-positive: #9fd1aa;
   --color-positive-bg: #24372b;
   --color-highlight: #8a743d;
   --color-control-thumb-active: #888d99;
-  --color-aspect-conjunction: #eceef2;
-  --color-aspect-sextile: #69bceb;
-  --color-aspect-square: #f083cf;
-  --color-aspect-trine: #67d9aa;
-  --color-aspect-opposition: #ff7d86;
-  --bg-grad:
-    radial-gradient(135% 105% at 14% -2%,
-      rgba(58, 66, 74, 0.6) 0%, rgba(58, 66, 74, 0) 56%),
-    radial-gradient(120% 110% at 98% 104%,
-      rgba(30, 40, 48, 0.65) 0%, rgba(30, 40, 48, 0) 62%),
-    linear-gradient(146deg,
-      rgba(42, 47, 54, 0.7) 0%,
-      rgba(27, 31, 37, 0.4) 48%,
-      rgba(18, 22, 28, 0.7) 100%);
-  --orb-grad:
-    radial-gradient(130% 52% at 50% -6%, oklch(0.92 0.045 55 / 0.34), transparent 56%),
-    radial-gradient(85% 44% at 92% -2%, oklch(0.89 0.04 12 / 0.2), transparent 55%),
-    radial-gradient(78% 46% at 4% 5%, oklch(0.9 0.035 315 / 0.18), transparent 60%);
-  --glass-bg: rgba(31, 34, 43, 0.48);
-  --glass-edge:
-    0 1px 0 rgba(255, 255, 255, 0.08) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-  --glass-shadow: 0 22px 46px -30px rgba(0, 0, 0, 0.6);
+  --color-aspect-conjunction: #f4c970;
+  --color-aspect-sextile: #8acbbd;
+  --color-aspect-square: #f0a4ae;
+  --color-aspect-trine: #8acbbd;
+  --color-aspect-opposition: #9cbceb;
+  --aspect-conjunction-bg: color-mix(in srgb, var(--surface) 85%, var(--color-aspect-conjunction));
+  --aspect-sextile-bg: color-mix(in srgb, var(--surface) 85%, var(--color-aspect-sextile));
+  --aspect-square-bg: color-mix(in srgb, var(--surface) 85%, var(--color-aspect-square));
+  --aspect-opposition-bg: color-mix(in srgb, var(--surface) 85%, var(--color-aspect-opposition));
+  --bg-grad: none;
+  --orb-grad: none;
   --color-status-alert: #d6a24b;
-  --color-retrograde-accent: #9b7cff;
-  --color-retrograde-bg: rgba(155, 124, 255, 0.18);
+  --color-retrograde-accent: #b9a6ff;
+  --color-retrograde-bg: rgba(185, 166, 255, 0.14);
   --filter-glyph-current: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
+  --filter-glyph-accent: var(--filter-glyph-current);
   --filter-glyph-neutral: var(--filter-glyph-current);
+  --filter-glyph-ink: var(--filter-glyph-current);
   --filter-relationship-tool-glyph: var(--filter-glyph-current);
   --filter-synastry-outer-glyph: brightness(0) saturate(100%) invert(95%) sepia(6%) saturate(91%) hue-rotate(18deg) brightness(104%) contrast(90%);
-  --filter-retrograde-glyph: brightness(0) saturate(100%) invert(67%) sepia(44%) saturate(1361%) hue-rotate(209deg) brightness(101%) contrast(101%);
   --filter-synastry-inner-glyph: brightness(0) saturate(100%) invert(1) opacity(0.48);
   --chart-inverse-glyph-filter: brightness(0);
   --chart-monochrome-paper: #181818;
@@ -1575,12 +1718,9 @@
   --friend-request-active-fg: #d8f0dc;
   --friend-request-count-bg: #7fb98b;
   --friend-request-count-fg: #102818;
-  --shadow-card:
-    0 12px 32px rgba(4, 6, 12, 0.34),
-    0 1px 0 rgba(255, 255, 255, 0.04) inset;
-  --shadow-floating:
-    0 1px 2px rgba(4, 6, 12, 0.18),
-    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --shadow-card: none;
+  --shadow-article: var(--shadow-card);
+  --shadow-floating: none;
   --shadow-hero: var(--shadow-card);
   --shadow-overlay:
     0 30px 90px rgba(4, 6, 12, 0.58),
@@ -1590,8 +1730,6 @@
   --surface: var(--color-surface);
   --surface-2: var(--color-surface-2);
   --surface-3: var(--color-surface-3);
-  --article-bg: #000000;
-  --nav-bg: var(--color-nav-bg);
   --ink: var(--color-ink);
   --ink-2: var(--color-ink-2);
   --muted: var(--color-muted);
@@ -1604,13 +1742,11 @@
   --pill-fg: var(--color-pill-fg);
   --accent: var(--color-accent);
   --accent-bg: var(--color-accent-bg);
-  --article-link: #8fb0ff;
+  --article-link: var(--ink);
   --wheel-line: var(--color-wheel-line);
   --wheel-tick: var(--color-wheel-tick);
   --wheel-soft: var(--color-wheel-soft);
-  --wheel-line-soft: var(--color-wheel-soft);
   --wheel-label: var(--color-wheel-label);
-  --wheel-muted: var(--color-wheel-label);
   --wheel-sign-label: var(--ink);
   --wheel-glyph: var(--color-wheel-glyph);
   --wheel-band: var(--color-wheel-band);
@@ -1634,34 +1770,28 @@
   --dig-good-bg: var(--color-dig-good-bg);
   --aspect-hard: var(--color-aspect-hard);
   --aspect-flow: var(--color-aspect-flow);
-  --aspect-soft: var(--aspect-flow);
   --aspect-adjust: var(--color-aspect-adjust);
   --aspect-union: var(--color-aspect-union);
   --aspect-muted: var(--color-aspect-muted);
   --card-bg: var(--surface);
   --card-border: var(--line-2);
+  --card-hover-shadow: none;
   --card-shadow: var(--shadow-card);
-  --card-shadow-flat: var(--shadow-flat);
   --card-shadow-raised: var(--card-shadow);
-  --feature-card-shadow: var(--shadow-hero);
   --control-shadow: var(--nav-rest-shadow);
-  --table-shadow: var(--card-shadow);
   --table-row-border: var(--card-border);
   --overlay-shadow: var(--shadow-overlay);
   --modal-shadow: var(--overlay-shadow);
-  --segmented-bg: color-mix(in srgb, var(--surface) 86%, var(--surface-2));
+  --segmented-bg: var(--surface);
   --segmented-border: var(--line);
-  --segmented-active-bg: var(--surface-2);
+  --segmented-active-bg: var(--accent-bg);
   --segmented-active-border: var(--line);
-  --segmented-active-fg: var(--ink);
+  --segmented-active-fg: var(--accent);
   --segmented-inactive-fg: var(--muted);
-  --segmented-hover-bg: color-mix(in srgb, var(--surface-2) 82%, white 10%);
   --segmented-hover-fg: var(--ink);
   --segmented-active-hover-bg: color-mix(in srgb, var(--surface-2) 74%, white 14%);
   --segmented-shadow: none;
-  --segmented-active-shadow:
-    0 1px 2px rgba(4, 6, 12, 0.36),
-    0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  --segmented-active-shadow: none;
   --input-bg: var(--surface-2);
   --input-border: var(--line);
   --modal-bg: var(--surface);
@@ -1672,14 +1802,14 @@
   --control-thumb-active-bg: var(--color-control-thumb-active);
   --nav-surface: var(--surface);
   --nav-scrolled-bg: color-mix(in srgb, var(--bg) 76%, transparent);
-  --nav-border: rgba(255, 255, 255, 0.04);
+  --nav-border: transparent;
   --nav-border-hover: rgba(255, 255, 255, 0.14);
   --nav-link-hover-bg: rgba(255, 255, 255, 0.07);
-  --nav-link-active-bg: #30333d;
+  --nav-link-active-bg: var(--accent-bg);
+  --nav-link-active-fg: var(--accent);
   --nav-rest-shadow:
     0 12px 32px -8px rgba(4, 6, 12, 0.42),
     0 4px 12px -4px rgba(4, 6, 12, 0.18);
-  --nav-scrolled-shadow: var(--nav-rest-shadow);
   --nav-blur: 22px;
   --nav-saturate: 1.5;
   --floating-button-bg: var(--surface);
@@ -1703,7 +1833,8 @@
   --calendar-hairline: var(--color-line);
   --calendar-chip: var(--color-surface-2);
   --calendar-selected-fill: var(--calendar-chip);
-  --calendar-chip-on-canvas: var(--color-surface-3);
+  --calendar-disc-today: var(--color-accent-bg);
+  --calendar-chip-on-canvas: var(--color-surface-2);
   --calendar-ink: var(--color-ink);
   --calendar-kind-return-fg: var(--color-paper);
   --calendar-copy: var(--color-ink-2);

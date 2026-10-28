@@ -12,7 +12,8 @@
   padding-top: var(--chart-page-top);
 }
 
-.app-shell.mode-learn {
+.app-shell.mode-learn,
+.app-shell.mode-articles {
   /* Contain loading-card margins while the lesson module and content arrive. */
   display: flow-root;
   overflow-x: clip;
@@ -34,12 +35,12 @@
   left: 0;
   right: 0;
   z-index: var(--z-topbar);
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: center;
   min-height: var(--top-control-height);
   align-items: center;
   gap: var(--top-control-gap);
-  padding: var(--space-4) var(--space-7) 0;
+  padding: var(--header-padding);
   pointer-events: none;
   border-bottom: var(--border-width-thin) solid transparent;
   background: transparent;
@@ -53,24 +54,27 @@
     backdrop-filter 320ms cubic-bezier(.4, 0, .2, 1);
 }
 
+.app-shell:has(.floating-back-button) .topbar {
+  padding-inline: var(--header-back-gutter);
+}
+
 html[data-scrolled] .topbar {
   border-bottom-color: transparent;
   background: transparent;
   box-shadow: var(--shadow-flat);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding-top: var(--space-4);
+  padding-top: var(--top-control-top);
 }
 
 .nav-pill {
-  grid-column: 2;
   pointer-events: auto;
   display: flex;
   align-items: center;
   gap: var(--space-2);
   height: var(--top-control-height);
   min-height: var(--top-control-height);
-  max-width: calc(100vw - 210px);
+  max-width: var(--header-available-width);
   overflow: clip;
   border: var(--border-width-thin) solid var(--nav-border);
   border-radius: var(--nav-radius);
@@ -78,7 +82,7 @@ html[data-scrolled] .topbar {
   box-shadow: var(--nav-rest-shadow);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  padding: 0 calc(var(--space-6) + var(--space-1) / 2) 0 calc(var(--space-2) + var(--space-1) / 4);
+  padding: var(--nav-pill-padding);
   transition:
     background-color 320ms cubic-bezier(.4, 0, .2, 1),
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
@@ -117,6 +121,7 @@ html[data-scrolled] .topbar {
   background: transparent;
   color: var(--ink);
   padding: 0;
+  font-weight: var(--weight-semibold);
   font-size: var(--text-wordmark);
   line-height: var(--leading-label);
   white-space: nowrap;
@@ -137,8 +142,8 @@ html[data-scrolled] .topbar {
   border-radius: var(--button-radius);
   background: transparent;
   color: var(--ink-2);
-  min-height: 34px;
-  padding: calc(var(--space-2) - var(--space-1) / 4) calc(var(--space-3) + var(--space-1) / 2);
+  min-height: var(--nav-link-height);
+  padding: var(--nav-link-padding);
   font-size: var(--nav-link-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-nav);
@@ -151,7 +156,8 @@ html[data-scrolled] .topbar {
 
 .site-nav button.active {
   background: var(--nav-link-active-bg);
-  color: var(--ink);
+  color: var(--nav-link-active-fg);
+  font-weight: var(--weight-semibold);
 }
 
 html[data-scrolled] .nav-pill {
@@ -169,7 +175,7 @@ html[data-scrolled] .nav-pill {
 
 .site-nav button.active:hover {
   background: var(--nav-link-active-bg);
-  color: var(--ink);
+  color: var(--nav-link-active-fg);
 }
 
 .friends-nav-badge {
@@ -194,19 +200,11 @@ html[data-scrolled] .nav-pill {
 }
 
 .site-nav svg {
-  --nav-icon-optical-offset-y: var(--ds-navigation-nav-icon-optical-offset-y);
-
-  width: var(--top-nav-icon-size);
-  height: var(--top-nav-icon-size);
-  flex: 0 0 auto;
-  stroke-width: 2;
-  transform: translateY(var(--nav-icon-optical-offset-y));
+  display: none;
 }
 
 .topbar-actions {
   position: relative;
-  grid-column: 3;
-  justify-self: end;
   pointer-events: auto;
   display: flex;
   gap: var(--top-control-gap);
@@ -216,6 +214,7 @@ html[data-scrolled] .nav-pill {
 
 .theme-toggle,
 .menu-toggle {
+  flex: none;
   display: grid;
   place-items: center;
   width: var(--top-icon-button-size);
@@ -283,7 +282,7 @@ html[data-scrolled] .menu-toggle {
 
 :is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button.active {
   background: var(--nav-link-active-bg);
-  color: var(--ink);
+  color: var(--nav-link-active-fg);
 }
 
 html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill {
@@ -301,7 +300,7 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill :where(.bran
 
 html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill .site-nav button.active {
   background: var(--nav-link-active-bg);
-  color: var(--ink);
+  color: var(--nav-link-active-fg);
 }
 
 html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill .brand-word {
@@ -386,7 +385,6 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-.site-menu,
 .mobile-sky-controls,
 .date-picker,
 .hero-city-picker {
@@ -396,42 +394,24 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
 }
 
 .site-menu {
-  position: absolute;
-  top: 84px;
-  right: 32px;
   display: grid;
-  gap: var(--sp-half);
-  width: var(--mobile-menu-width);
-  padding: var(--sp-1);
-  border: var(--border-width-thin) solid var(--nav-border);
-  border-radius: var(--card-radius-sm);
-  background: var(--nav-surface);
-  box-shadow: var(--nav-rest-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
+
 
 .site-menu button {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
   gap: var(--space-3);
-  width: 100%;
-  min-height: 52px;
   border: 0;
-  border-radius: var(--radius-sm);
   background: transparent;
-  padding: var(--space-3) var(--sp-2);
   color: var(--ink);
   text-align: left;
   font-weight: var(--weight-regular);
   cursor: pointer;
 }
 
-.site-menu button.active {
-  background: var(--surface-2);
-  color: var(--ink);
-}
+
 
 .site-menu-auth {
   display: grid;

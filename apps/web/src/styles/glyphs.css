@@ -6,12 +6,12 @@
   object-fit: contain;
 }
 
-.placement-table-row__glyph.placement-glyph-pair,
-.planet-placement-row__glyph.placement-glyph-pair {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: var(--space-2);
+.placement-glyph-pair {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  gap: 0;
 }
 
 .placement-glyph-pair__planet,
@@ -19,12 +19,20 @@
   display: grid;
   place-items: center;
   flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
 }
 
+.placement-glyph-pair__planet { width: 100%; height: 100%; }
+
 .placement-glyph-pair__sign {
-  color: var(--card-title-color);
+  position: absolute;
+  right: var(--glyph-badge-offset);
+  bottom: var(--glyph-badge-offset);
+  width: var(--size-4);
+  height: var(--size-4);
+  border: var(--border-width-medium) solid var(--surface);
+  border-radius: var(--radius-circle);
+  background: var(--surface);
+  color: var(--muted);
   font-family: var(--font-glyph);
   font-size: var(--text-glyph);
   font-weight: var(--weight-regular);
@@ -33,8 +41,8 @@
 
 .placement-sign-glyph-svg {
   display: block;
-  width: 22px;
-  height: 22px;
+  width: var(--size-2);
+  height: var(--size-2);
   filter: var(--filter-glyph-current);
   object-fit: contain;
 }
@@ -52,7 +60,6 @@
   font-synthesis: none;
 }
 
-.ro-screen .sky-pl-glyph.placement-glyph--text,
 .placement-section .planet-placement-row__glyph.placement-glyph--text {
   color: var(--card-title-color);
   font-family: var(--font-glyph);
@@ -60,8 +67,6 @@
   font-weight: var(--weight-regular);
   filter: none;
 }
-
-.sky-pl-glyph .placement-glyph-svg,
 .planet-placement-row__glyph .placement-glyph-svg {
   width: 24px;
   height: 24px;
@@ -72,31 +77,13 @@
   height: 23px;
 }
 
-.ro-screen .sky-pl-glyph .placement-glyph-svg,
-.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
-.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg {
-  width: 24px;
-  height: 24px;
-}
 
-.ro-cluster-badge .placement-glyph-svg,
-.ro-more-badge .placement-glyph-svg {
-  width: 17px;
-  height: 17px;
-}
 
-.ro-screen .sky-pl-glyph .placement-glyph-svg,
-.ro-cluster-badge .placement-glyph-svg,
-.ro-more-badge .placement-glyph-svg {
-  filter: var(--filter-retrograde-glyph);
-}
-
-.ro-screen .sky-pl-glyph .placement-glyph-svg,
-.ro-cluster-badge .placement-glyph-svg,
-.ro-more-badge .placement-glyph-svg,
-.placement-table-row.is-retrograde .placement-table-row__glyph .placement-glyph-svg,
-.planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg,
-.synastry-placement-row.is-retrograde .synastry-placement-glyph .placement-glyph-svg,
-.placement-section .planet-placement-row.is-retrograde .planet-placement-row__glyph .placement-glyph-svg {
+.synastry-placement-row.is-retrograde .synastry-placement-glyph .placement-glyph-svg {
   filter: var(--filter-glyph-neutral);
 }
+
+/* Tile geometry is independent of direct or retrograde motion. */
+:is(.placement-table-row__glyph, .planet-placement-row__glyph).placement-glyph-pair { display: grid; place-items: center; }
+:is(.natal-placement-sections, .natal-big-three, .sky-page) .placement-glyph-pair__planet > .placement-glyph-svg { filter: var(--filter-glyph-accent); }
+.natal-empty-houses .placement-table-row__glyph { font-family: var(--font-ui); font-weight: var(--weight-semibold); }

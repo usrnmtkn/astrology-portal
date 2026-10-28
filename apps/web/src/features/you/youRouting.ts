@@ -1,4 +1,5 @@
 import { friendsHashParts } from "../friends/friendsRouting";
+import { natalReadingRoute } from "../../services/natalReadingPath";
 
 export type YouTab = "transits" | "chart";
 
@@ -9,6 +10,7 @@ export function parseYouTab(value: string | null): YouTab {
 export function youTabFromHref(href: string): YouTab {
   try {
     const url = new URL(href);
+    if (natalReadingRoute(url.pathname)?.audience === "you") return "chart";
     const { path, params } = friendsHashParts(url.hash);
 
     return path === "you" ? parseYouTab(params.get("tab")) : "transits";

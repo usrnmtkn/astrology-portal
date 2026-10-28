@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { auditReaderScreen, expect, test, type Locator, type Page } from '../helpers/polish-test';
 import { readerResponse } from '../helpers/reader-response';
 
 test.describe.configure({ mode: 'parallel' });
@@ -90,6 +90,13 @@ async function contained(page: Page, overlay: Locator) {
   }
   await expectBounds();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  await auditReaderScreen(page,test.info(),`overlay-${page.viewportSize()!.width}x${page.viewportSize()!.height}`);
+  if(await overlay.getAttribute('role')==='dialog'&&await overlay.getAttribute('tabindex')==='-1') {
+    await overlay.focus(); await page.keyboard.press('Shift+Tab');
+    expect(await overlay.evaluate(node=>node.contains(document.activeElement)),'Reverse Tab stays inside a newly opened dialog').toBe(true);
+    await page.keyboard.press('Tab');
+    expect(await overlay.evaluate(node=>node.contains(document.activeElement)),'Forward Tab wraps inside the dialog').toBe(true);
+  }
 }
 
 const cases = ['Guest site menu', 'Member site menu', 'Reports site menu', 'Report row menu',
@@ -113,27 +120,29 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }
     let overlay: Locator;
     if (name.endsWith('site menu')) {
       await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-      overlay = page.getByRole('menu', { name: 'Site menu' });
+      overlay = page.locator('.site-menu-sheet');
     } else if (name === 'Report row menu') {
       await page.getByRole('button', { name: 'More options for Viewport report' }).click();
       overlay = page.getByRole('menu', { name: 'Options for Viewport report' });
     } else if (name === 'Sky controls' || name === 'Date picker' || name === 'Location picker') {
       await page.locator('.sky-header-date-button').click();
-      overlay = page.getByRole('dialog', { name: 'Sky controls' });
+      overlay = page.getByRole('dialog', { name: 'Date and location' });
       if (name === 'Date picker') {
-        await overlay.getByRole('button', { name: 'Date', exact: true }).click();
-        overlay = page.locator('.date-picker');
+        await overlay.getByRole('tab', { name: 'Date', exact: true }).click();
+        overlay = page.getByRole('dialog', { name: 'Date and location' });
+        await expect(overlay.getByRole('grid')).toBeVisible();
       } else if (name === 'Location picker') {
         await overlay.locator('.mobile-sky-controls__location').click();
-        overlay = page.getByRole('dialog', { name: 'Sky controls' });
+        overlay = page.getByRole('dialog', { name: 'Date and location' });
         await overlay.getByRole('textbox', { name: 'City', exact: true }).fill('Synthetic city');
-        await expect(overlay.getByRole('option')).toHaveCount(5);
+        await expect(overlay.getByRole('option')).toHaveCount(3);
       }
     } else if (name === 'Create chart') {
       await page.getByRole('button', { name: /Create your chart/ }).click();
       overlay = page.getByRole('dialog');
     } else if (name === 'Add friend chart') {
-      await page.getByRole('button', { name: /Add (?:a )?chart/ }).click();
+      await page.getByRole('button', { name: 'Add',exact:true }).click();
+      await page.getByRole('menuitem', { name: /Add (?:a )?chart/ }).click();
       overlay = page.getByRole('dialog', { name: 'Add chart' });
     } else if (name === 'Friend chart menu' || name === 'Edit friend chart') {
       await page.getByRole('button', { name: 'More actions for Fixture Friend' }).click();
@@ -144,8 +153,12 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }
       }
     } else if (name === 'Compare chart picker' || name === 'Full-screen chart') {
       await page.getByRole('button', { name: 'Open Fixture Friend' }).click();
-      await page.getByRole('button', { name: /More, \d+ sections/ }).click();
-      await page.getByRole('menuitemradio', { name: /^Synastry/ }).click();
+      const synastry=page.getByRole('tab', { name: 'Synastry', exact: true });
+      if(await synastry.isVisible())await synastry.click();
+      else {
+        await page.getByRole('button', { name: /More, \d+ sections/ }).click();
+        await page.getByRole('menuitemradio', { name: /^Synastry/ }).click();
+      }
       if (name === 'Full-screen chart') {
         await page.getByRole('button', { name: 'Full-screen chart', exact: true }).click();
         overlay = page.locator('.chart-fullscreen-panel');
@@ -155,13 +168,20 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }
       }
     } else if (name === 'Friend chart sections') {
       await page.getByRole('button', { name: 'Open Fixture Friend' }).click();
-      await page.getByRole('button', { name: /More, \d+ sections/ }).click();
+      const more=page.getByRole('button', { name: /More, \d+ sections/ });
+      if(!await more.isVisible()) {
+        await expect(page.getByRole('tab',{name:'Synastry',exact:true})).toBeVisible();
+        await expect(page.getByRole('tab',{name:'Composite',exact:true})).toBeVisible();
+        return;
+      }
+      await more.click();
       overlay = page.getByRole('menu', { name: 'More chart profile sections' });
     } else if (name === 'Circle friend menu') {
       await page.getByRole('button', { name: 'More options for Circle Friend' }).click();
       overlay = page.getByRole('menu', { name: 'Circle Friend actions' });
     } else if (name === 'Invite friend') {
-      await page.getByRole('button', { name: 'Invite someone', exact: true }).click();
+      await page.getByRole('button', { name: 'Add', exact: true }).click();
+      await page.getByRole('menuitem', { name: /^Invite friend/ }).click();
       overlay = page.getByRole('dialog');
     } else if (name === 'Profile menu') {
       await page.getByRole('button', { name: 'Profile options', exact: true }).click();

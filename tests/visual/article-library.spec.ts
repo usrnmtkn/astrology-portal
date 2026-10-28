@@ -164,15 +164,17 @@ for (const width of [390, 1440]) test(`scoped reader marker discovers omitted re
   expect(errors).toEqual([]);
   await emitter.close();
 });
-async function headingStyle(heading: Locator) {
-  const values = await heading.evaluate(element => {
+async function headingStyle(heading: Locator, role: 'section' | 'caption' = 'section') {
+  const values = await heading.evaluate((element, role) => {
     const probe = document.createElement('h2');
-    probe.style.cssText = 'margin:0;font-family:var(--font-display);font-size:var(--type-h2-size);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-body)';
+    probe.style.cssText = role === 'caption'
+      ? 'margin:0;font-family:var(--font-ui);font-size:var(--type-ui-copy-size);font-weight:var(--weight-medium);line-height:var(--leading-placement-ui);letter-spacing:var(--tracking-normal)'
+      : 'margin:0;font-family:var(--font-display);font-size:var(--type-h2-size);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-body)';
     element.append(probe);
     const actual = getComputedStyle(element), expected = getComputedStyle(probe);
     const values = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing'].map(key => [key, actual[key as any], expected[key as any]]);
     probe.remove(); return values;
-  });
+  }, role);
   for (const [property, actual, expected] of values) expect(actual, property).toBe(expected);
 }
 
@@ -187,8 +189,8 @@ test('dated Sky articles remain discoverable with their complete saved history',
     });
     await page.goto('/#articles');
     const library = page.getByRole('region', { name: 'Articles & Guides', exact: true });
-    await library.getByRole('combobox', { name: 'Type', exact: true }).selectOption('sky');
-    await expect(library).toContainText(row.summary);
+    await library.getByRole('tab', { name: 'Articles', exact: true }).click();
+    await expect(library.getByRole('link', { name: /Synthetic dated Sky article/u })).toBeVisible();
     await library.getByRole('link', { name: /Synthetic dated Sky article/u }).click();
     await expect(page).toHaveURL(new RegExp(encodeURIComponent(row.content_key)));
     await expect(library).toContainText('Synthetic complete dated opening.');
@@ -280,11 +282,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.goto('/#articles');
       const library = page.getByRole('region', { name: 'Articles & Guides', exact: true });
       await expect(library.getByRole('heading', { name: 'Articles & Guides', level: 1 })).toBeVisible();
-      await headingStyle(library.locator('.articles-library-card h2'));
+      await headingStyle(library.locator('.article-cover__caption h2'), 'caption');
       await expect(library.locator('h1,h2')).toHaveText(['Articles & Guides', 'Synthetic saved guide']);
-      await library.getByRole('combobox', { name: 'Type', exact: true }).selectOption('guide');
+      await library.getByRole('tab', { name: 'Guides', exact: true }).click();
       await library.getByLabel('Search articles and guides').fill('no-match');
-      await expect(library.getByRole('status')).toHaveText('No articles match these filters.');
+      await expect(library.getByRole('status')).toHaveText('No articles or guides match “no-match”.');
       await library.getByLabel('Search articles and guides').fill('');
       await page.screenshot({ path: `test-results/articles-library-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       await library.getByRole('link', { name: /Synthetic saved guide/u }).click();
@@ -380,7 +382,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.goto(directURL);
       await page.reload();
       await expect(library.getByRole('heading', { name: 'Article unavailable' })).toBeVisible();
-      await library.getByRole('link', { name: 'Back to Articles & Guides' }).click();
+      await library.getByRole('link', { name: 'Go to the Guide', exact: true }).click();
       await expect(library.getByRole('status')).toHaveText('No articles or guides are published yet.');
       await expect.poll(() => library.evaluate(element => {
         for (let node: Element | null = element; node; node = node.parentElement) {

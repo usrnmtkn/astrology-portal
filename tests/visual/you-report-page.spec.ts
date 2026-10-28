@@ -112,7 +112,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         await page.getByRole("menuitem", { name: "Account", exact: true }).click();
         const account = page.locator(".account-page");
         const assertAccount = async () => {
-          await expect(account.getByRole("heading", { name: "account.", exact: true })).toBeVisible();
+          await expect(account.getByRole("heading", { name: "Account", exact: true })).toBeVisible();
           if (signedIn) {
             await expect(account.getByLabel("Birth date", { exact: true })).toHaveValue("1990-01-01");
             await expect(account.getByRole("button", { name: "Sign out", exact: true })).toBeVisible();
@@ -151,7 +151,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await page.getByRole("button", { name: "Open menu", exact: true }).click();
       await expect(page.getByRole("menuitem", { name: "Sign out", exact: true })).toBeHidden();
       await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeVisible();
-      await page.getByRole("button", { name: "Close menu", exact: true }).click();
+      await page.getByRole("banner").getByRole("button", { name: "Close menu", exact: true }).click();
       await expect(page.getByRole("menu", { name: "Site menu" })).toBeHidden();
       await expect(page.getByRole("region", { name: "Daily horoscope summary" }).getByRole("heading")).toBeVisible();
       expect(await reports.getByRole("button").evaluateAll(buttons => buttons.every(button => button.scrollWidth <= button.clientWidth + 1))).toBe(true);
@@ -161,13 +161,15 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await reports.getByRole("button", { name: "Sign in", exact: true }).click();
       const login = page.getByRole("region", { name: "Log in", exact: true });
       await expect(login.getByRole("button", { name: "Continue with Google", exact: true })).toBeVisible();
-      await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
+      // Sign-in now opens over You; the current page and its desktop header remain behind the dialog.
+      await expect(page.getByRole("dialog")).toContainText("Continue with Google");
+      await expect(page).toHaveURL(/#you$/);
       expect(await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!).id)).toBe(user.id);
       await login.getByRole("button", { name: "Close", exact: true }).click();
       await expect(reports).toBeVisible();
     });
 
-    test(`signed-in You report card precedes the daily reading on ${viewport.name} ${theme}`, async ({ page }) => {
+    test(`signed-in You report strip follows the overview on ${viewport.name} ${theme}`, async ({ page }) => {
       test.setTimeout(60_000);
       await page.setViewportSize(viewport);
       await prepare(page, theme);
@@ -180,10 +182,10 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await expect(summary).toBeVisible();
       await expect(reports.getByRole("button", { name: "Read day report", exact: true })).toBeEnabled();
       await expect(reports.getByText("Sign in to create or read your reports.")).toBeHidden();
-      expect(await reports.evaluate(element => element.nextElementSibling?.getAttribute("aria-label"))).toBe("Daily horoscope summary");
       const reportBox = await reports.boundingBox();
       const summaryBox = await summary.boundingBox();
-      expect(reportBox!.y + reportBox!.height).toBeLessThanOrEqual(summaryBox!.y);
+      const wheelBox = await page.locator('.you-chart-page > .chart-layout > .chart-layout__visual').boundingBox();
+      expect(reportBox!.y).toBeGreaterThanOrEqual(Math.max(summaryBox!.y + summaryBox!.height, wheelBox!.y + wheelBox!.height));
       expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
       expect(errors).toEqual([]);
       await reports.scrollIntoViewIfNeeded();
@@ -229,7 +231,16 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
         expect(reading.sourceUnits.length).toBeGreaterThan(0);
         const aspect = ({ conjunction: "conjunct", opposition: "opposite" } as Record<string, string>)[fact.aspect] ?? fact.aspect;
         const title = `${fact.transitPlanet} in ${fact.transitSign} ${aspect} your natal ${fact.natalPoint}`;
-        await cards.filter({ hasText: title }).first().click();
+        const matchingCard = cards.filter({ hasText: title }).first();
+        // The handled report response may finish while the transit group hydrates.
+        await expect(async () => {
+          if (!await matchingCard.isVisible()) {
+            const expand=page.getByRole('region',{name:'Short-term transits',exact:true}).getByRole('button',{name:/See all/});
+            if(await expand.count() && await expand.getAttribute('aria-expanded')==='false')await expand.click();
+          }
+          await expect(matchingCard).toBeVisible({timeout: 500});
+        }).toPass({timeout: 10000});
+        await matchingCard.click();
         const article = page.locator(".you-transit-article-page");
         await expect(article).toBeVisible();
         // Full-day highlights can peak outside the noon orb. Keep the selected
@@ -367,3 +378,69 @@ test("You rechecks the session when returning to the page", async ({ page }) => 
   }, storageKey);
   await expect(reports.getByText("Sign in to create or read your reports.")).toBeVisible();
 });
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`one sign-in opens You and Reports after navigation and reload ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1000 });
+    await prepare(page, theme, false);
+    let signIns = 0;
+    let reportReads = 0;
+    let refreshes = 0;
+    let activeToken = session.access_token;
+    await page.route("**/auth/v1/token?grant_type=password", route => {
+      signIns++;
+      return route.fulfill({ json: { ...session, expires_in: 86400 } });
+    });
+    await page.route("**/auth/v1/token?grant_type=refresh_token", route => {
+      refreshes++;
+      activeToken = "synthetic-renewed-token";
+      return route.fulfill({ json: { ...session, access_token: activeToken, expires_in: 86400 } });
+    });
+    await page.route("**/rest/v1/user_generated_interpretations**", async route => {
+      expect(route.request().headers().authorization).toBe(`Bearer ${activeToken}`);
+      reportReads++;
+      await route.fallback();
+    });
+    await page.goto("/#you");
+    const reports = page.getByRole("region", { name: "In-depth transit reports" });
+    await expect(reports.getByRole("button", { name: "Sign in", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Open menu", exact: true }).click();
+    // A cached chart must not impersonate a signed-in account in the menu.
+    await expect(page.locator(".site-menu-profile")).not.toContainText(profile.name);
+    await page.getByRole("dialog", { name: "Navigation" }).getByRole("button", { name: "Close menu", exact: true }).click();
+    await reports.getByRole("button", { name: "Sign in", exact: true }).click();
+    const login = page.getByRole("region", { name: "Log in", exact: true });
+    await login.getByLabel("Email", { exact: true }).fill(user.email);
+    await login.getByLabel("Password", { exact: true }).fill("synthetic-password");
+    await login.getByRole("button", { name: "Log in", exact: true }).click();
+    await expect(reports.getByRole("button", { name: "Read day report", exact: true })).toBeEnabled();
+    await expect(reports.getByText("Sign in to create or read your reports.")).toBeHidden();
+    await page.reload();
+    await expect(reports.getByRole("button", { name: "Read day report", exact: true })).toBeEnabled();
+    await page.getByRole("button", { name: "Open menu", exact: true }).click();
+    await expect(page.locator(".site-menu-profile")).toContainText(profile.name);
+    await expect(page.getByRole("menuitem", { name: "Login", exact: true })).toBeHidden();
+    await page.getByRole("menuitem", { name: /^Reports/ }).click();
+    await expect(page).toHaveURL(/\/reports\/$/);
+    await expect(page.locator(".report-library-row")).toHaveCount(1);
+    await expect(page.getByRole("link", { name: "Sign in", exact: true })).toBeHidden();
+    // An expired access token must renew the existing session, not ask for login.
+    await page.evaluate(storageKey => {
+      const stored = JSON.parse(localStorage.getItem(storageKey)!);
+      stored.expires_at = Math.floor(Date.now() / 1000) - 60;
+      localStorage.setItem(storageKey, JSON.stringify(stored));
+    }, storageKey);
+    await page.reload();
+    await expect(page.locator(".report-library-row")).toHaveCount(1);
+    await page.goto("/#you");
+    await expect(reports.getByRole("button", { name: "Read day report", exact: true })).toBeEnabled();
+    expect(signIns).toBe(1);
+    expect(refreshes).toBe(1);
+    expect(reportReads).toBeGreaterThan(0);
+    const dismiss = page.getByRole("button", { name: "Dismiss report notification", exact: true });
+    if (await dismiss.isVisible()) await dismiss.click();
+    await reports.scrollIntoViewIfNeeded();
+    await reports.screenshot({ path: test.info().outputPath(`single-sign-in-${width}-${theme}.png`) });
+  });
+}

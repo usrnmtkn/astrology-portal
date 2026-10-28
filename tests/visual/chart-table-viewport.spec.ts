@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '../helpers/polish-test';
 import { readerResponse } from '../helpers/reader-response';
 import { calendarRxFixture } from '../helpers/calendar-rx-fixture';
 import { studioListingFacts, studioListingRow } from '../../api/_lib/studio-listing-facts';
@@ -88,6 +88,13 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await page.goto('/?date=2026-10-03#calendar?view=day&date=2026-10-03');
      await page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:'Venus stations retrograde'}).click({timeout:30000});
      const panel=page.getByRole('dialog',{name:'Event detail'});
+     const cycleCopy=panel.locator('.retrograde-cycles p:visible').first();
+     await expect(cycleCopy).toBeVisible();
+     await expect(cycleCopy).toHaveCSS('font-family',/Newsreader/);
+     await expect(cycleCopy).toHaveCSS('font-size','19px');
+     await expect(cycleCopy).toHaveCSS('font-weight','400');
+     await expect(cycleCopy).toHaveCSS('line-height','28.5px');
+     await expect(cycleCopy).toHaveCSS('letter-spacing','normal');
      await panel.locator('.retrograde-cycles__compare summary').click({timeout:30000});
      const scroller=panel.getByRole('region',{name:'Cycle comparison'});
      await expect(scroller).toBeVisible();
@@ -97,9 +104,10 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      expect(bounds!.x).toBeGreaterThanOrEqual(-1);
      expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(viewport.width+1);
      await scroller.evaluate(el=>{el.scrollLeft=el.scrollWidth});
-     const lastColumn=scroller.getByRole('columnheader',{name:/Next/});
-     await expect(lastColumn).toBeVisible();
-     const lastBounds=await lastColumn.boundingBox();
+     await expect(scroller.locator('thead th')).toHaveText(['Year','Stations retrograde','Sign change','Stations direct','Length']);
+     const nextCycle=scroller.getByRole('row').filter({has:page.getByRole('rowheader',{name:/Next/})});
+     await expect(nextCycle).toBeVisible();
+     const lastBounds=await nextCycle.boundingBox();
      expect(lastBounds!.x).toBeGreaterThanOrEqual(bounds!.x-1);
      expect(lastBounds!.x+lastBounds!.width).toBeLessThanOrEqual(bounds!.x+bounds!.width+1);
      const panelWidth=await panel.evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
@@ -170,8 +178,13 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
       await expect(page.locator('.friend-tab-pane[aria-label="Natal"]')).toBeVisible();
      }
      if(!friendNatal) {
-      await page.getByRole('button',{name:/More, \d+ sections/}).click();
-      await page.getByRole('menuitemradio',{name:new RegExp('^'+family)}).click();
+      const tab=page.getByRole('tab',{name:family,exact:true});
+      if(await tab.isVisible()) await tab.click();
+      else {
+       await page.getByRole('button',{name:/More, \d+ sections/}).click();
+       await page.getByRole('menuitemradio',{name:new RegExp('^'+family)}).click();
+      }
+      await expect(page.getByRole('tab',{name:family,exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
      }
     }
     await chartFits(page,page.locator('.sky-wheel:visible').first());

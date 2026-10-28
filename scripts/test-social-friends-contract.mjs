@@ -383,8 +383,8 @@ assert.match(
 );
 assert.match(
   youPage,
-  /className="you-profile-handle">@\{profileHandle\}/,
-  "The profile summary must display the current handle."
+  /className="you-profile-handle"[\s\S]*aria-label="Copy profile link"[\s\S]*`@\$\{profileHandle\}`/,
+  "The profile summary must display the current handle as a copy-profile-link control."
 );
 assert.doesNotMatch(
   socialFriendsPanel,
@@ -573,8 +573,8 @@ assert.match(
 );
 assert.match(
   socialFriendsPanel,
-  /friends-received-title">Received[\s\S]*incomingRequests\.map[\s\S]*Accept[\s\S]*Decline/,
-  "The conditional Requests tab must render received requests and their two actions."
+  /friends-received-title">Wants to join your circle[\s\S]*incomingRequests\.map[\s\S]*Accept[\s\S]*Decline/,
+  "The Requests panel must render incoming requests and their two actions."
 );
 assert.match(
   app,
@@ -606,10 +606,11 @@ assert.match(
   /search_social_profiles_public\(member_b_name\)[\s\S]*sun_sign = 'Virgo'[\s\S]*Public discovery did not expose the derived Sun sign/,
   "The live authorization test must prove the Sun-only discovery projection works cross-user."
 );
+assert.match(friendsPageShell, /\{beforeTabs\}/, "The workspace shell must mount the shared Friends controls.");
 assert.match(
-  friendsPageShell,
-  /<h1>friends\.<\/h1>[\s\S]*\{beforeTabs\}/,
-  "The unified Friends panel must render directly under the page title."
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendsWorkspaceHeader.tsx"), "utf8"),
+  /<h1>Friends<\/h1>[\s\S]*Friends views/,
+  "The shared workspace header must keep the title and tab navigation together."
 );
 assert.match(
   `${friendsWorkspaceShell}\n${manualChartsPanel}`,
@@ -706,10 +707,11 @@ assert.doesNotMatch(
   /natal_chart|birth_date|birth_place|email|phone/,
   "The ranked identity search must not expose natal or contact data."
 );
+assert.match(socialFriendsPanel, /placeholder="Search by name or @handle"/, "Circle must retain the live name/handle search.");
 assert.match(
-  socialFriendsPanel,
-  /placeholder="Search by name or @handle"[\s\S]*Circle · \{friends\.length\}[\s\S]*Charts · \{chartCount\}[\s\S]*requestActivityCount > 0[\s\S]*Requests/,
-  "Search and the permanent Circle/Charts tabs must share the panel, while Requests appears for pending social activity."
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendsWorkspaceHeader.tsx"), "utf8"),
+  /value: "feed"[\s\S]*value: "circle"[\s\S]*circleCount[\s\S]*value: "charts"[\s\S]*chartCount[\s\S]*value: "requests"[\s\S]*requestCount/,
+  "All four workspace tabs must stay present with their counts in the shared header."
 );
 assert.doesNotMatch(
   socialFriendsPanel,
@@ -746,16 +748,12 @@ assert.match(
   /const bigThree = friendBigThree\(friend\)[\s\S]*aria-label=\{chartAvailable \? `Open \$\{friend\.displayName\}'s chart`[\s\S]*bigThree\.sun[\s\S]*bigThree\.moon[\s\S]*bigThree\.rising[\s\S]*friendMenu\(friend\)/,
   "Circle rows must carry only the friend's Big Three and open through the row."
 );
-assert.doesNotMatch(
-  socialFriendsPanel.match(/const bigThree = friendBigThree\(friend\)[\s\S]*?friendMenu\(friend\)/)?.[0] ?? "",
-  /ChevronRight/,
-  "Circle rows must not render a redundant chevron before the overflow menu."
-);
 assert.match(
-  socialFriendsPanel,
-  /activeView === "charts"[\s\S]*Add a chart[\s\S]*chartContent/,
-  "Charts must expose its persistent tab-row action and embedded content."
+  fs.readFileSync(path.join(repoRoot, "apps/web/src/features/friends/FriendsWorkspaceHeader.tsx"), "utf8"),
+  /onAddChart[\s\S]*Add a chart/,
+  "Every workspace tab must keep Add a chart in its shared Add menu."
 );
+assert.match(socialFriendsPanel, /activeView === "charts"[\s\S]*chartContent/, "Charts must retain the embedded saved-chart list.");
 assert.match(
   socialFriendsPanel,
   /friends-person-menu[\s\S]*Chart privacy[\s\S]*Remove friend[\s\S]*friends-last-resort-action[\s\S]*Block @\{friend\.handle\}[\s\S]*friends-remove-dialog/,

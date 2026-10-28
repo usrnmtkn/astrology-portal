@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
-import { skyPlacementAspectBridgeDraft } from '../apps/admin/src/skyPlacementAspectBridgeDraft';
+import { studioSourceDraft } from '../apps/admin/src/studioSourceDraft';
 import { skyPlacementAspectBridgeKey, skyPlacementAspectBridgeIdentity, skyPlacementAspectBridgeErrors,
   skyPlacementAspectParagraphs } from '../apps/web/src/content/skyPlacementAspectBridge';
 import { isPersonalTransitSource } from '../apps/web/src/services/personalTransitPublication';
@@ -62,7 +62,7 @@ assert.equal(nodes[0].members[1].bridge, 'Other bridge.');
 
 const store = await createApiStore([]);
 try {
-  const { id: _id, ...draft } = skyPlacementAspectBridgeDraft(key);
+  const { id: _id, ...draft } = studioSourceDraft(key);
   const created = await store.invoke('POST', { ...draft, eventType: 'sky-placement-house-aspect-bridge', reviewStatus: 'needs_review' });
   assert.equal(created.status, 200, JSON.stringify(created.payload));
   let row = created.payload.rows[0];

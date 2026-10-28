@@ -12,6 +12,7 @@ import type {
   FriendTransitsBrief
 } from "./friendTransitsBrief";
 import { PageLoading } from "../../components/PageLoading";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 
 const queuedReadingPollMs = 5_000;
 
@@ -25,17 +26,18 @@ function FriendPersonalTransitCard({
   return (
     <button
       aria-label={`Open full entry for ${transit.title}`}
-      className="updates-aspect-row friend-transit-row"
+      className="updates-aspect-row friend-transit-row reading-story-card"
       onClick={() => onOpen(transit.id)}
       type="button"
     >
+      <AspectBadge aspect={transit.evidence.aspect} />
       <span className="updates-aspect-row__content">
         <h3 className="updates-aspect-row__title">{transit.title}</h3>
         <span className="updates-aspect-row__meta-line" aria-label={transit.timingLabel}>
           <span>{transit.rangeLabel}</span>
         </span>
-        <FormattedProse className="updates-aspect-row__description transit-card-preview" text={transit.summary} />
-        <CardReadMore />
+        <FormattedProse className="updates-aspect-row__description transit-card-preview reading-story-card__preview" text={transit.summary} />
+        <CardReadMore appearance="icon" />
       </span>
       <span className="updates-aspect-row__meta" aria-label={`${transit.timingLabel}, ${transit.orb} orb`}>
         <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -258,21 +260,24 @@ export function FriendTransitsTab({
               {relationshipActivations.map((card) => (
                 <button
                   aria-label={card.detailAvailable ? `Open full entry for ${card.headline}` : card.headline}
-                  className="updates-aspect-row friend-transit-row"
+                  className="updates-aspect-row friend-transit-row reading-story-card"
                   key={card.id}
                   disabled={!card.detailAvailable}
                   onClick={() => onOpenBondTransit(card.id)}
                   type="button"
                 >
+                  {card.aspect ? <AspectBadge aspect={card.aspect} /> : null}
                   <span className="updates-aspect-row__content">
                     <h3 className="updates-aspect-row__title">{card.headline}</h3>
+                    <div className={card.detailAvailable ? "reading-story-card__preview" : undefined}>
                     <p className="updates-aspect-row__description">{card.effectBody}</p>
                     {card.activationBody.split("\n\n").filter(Boolean).map((paragraph) => (
                       <p className="updates-aspect-row__description friend-bond-transit-activation" key={paragraph}>
                         {paragraph}
                       </p>
                     ))}
-                    {card.detailAvailable ? <CardReadMore /> : null}
+                    </div>
+                    {card.detailAvailable ? <CardReadMore appearance="icon" /> : null}
                   </span>
                 </button>
               ))}
@@ -300,7 +305,7 @@ export function FriendTransitsTab({
               {houseContext.map((card) => (
                 <button
                   aria-label={`Open full entry for ${card.title}`}
-                  className="updates-aspect-row updates-aspect-row--house"
+                  className="updates-aspect-row updates-aspect-row--house reading-story-card"
                   key={card.id}
                   onClick={() => onOpenHouseTransit(card.id)}
                   type="button"
@@ -314,9 +319,9 @@ export function FriendTransitsTab({
                       {card.timingRange ? <span>{card.timingRange}</span> : null}
                     </span>
                     {card.rowSummary ? (
-                      <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
+                      <span className="updates-aspect-row__description transit-card-preview reading-story-card__preview">{card.rowSummary}</span>
                     ) : null}
-                    <CardReadMore />
+                    <CardReadMore appearance="icon" />
                   </span>
                   <span className="updates-aspect-row__meta" aria-label={card.houseLabel}>
                     <span className="updates-aspect-row__dot" aria-hidden="true" />

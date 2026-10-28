@@ -601,16 +601,18 @@ assert.match(
   /\.calendar-day-group \{[\s\S]*?scroll-margin-top: calc\(var\(--top-control-top\) \+ var\(--top-control-height\) \+ 88px\);/u,
   "Jump-to-day scrolling must clear both the global navigation and sticky week selector."
 );
-assert.match(
-  themeCss,
-  /--lunar-moon-shadow-bg:[\s\S]*?color-mix\(in srgb, var\(--lunar-moon-dark\) 78%, var\(--lunar-moon-dark-edge\)\);/u,
-  "The Moon phase shadow token must resolve independently so waxing and waning masks remain visible."
-);
-assert.doesNotMatch(
-  themeCss,
-  /--lunar-moon-shadow-bg:[\s\S]*?var\(--moon-shadow-edge\)/u,
-  "A root Moon token must not depend on a component-local custom property."
-);
+assert.match(themeCss, /--lunar-moon-dark:\s*#[0-9a-f]{6};/iu,
+  "Moon phase masks must resolve to an independent canonical dark color.");
+assert.doesNotMatch(calendarCss, /var\(--lunar-moon-shadow-bg\)/u,
+  "Moon phase masks must not reference the retired shadow token.");
+for (const direction of ["waxing", "waning"]) {
+  assert.match(calendarCss,
+    new RegExp(`\\.lunar-moon-disc\\.is-${direction}\\.is-crescent::after\\s*\\{[^}]*background: var\\(--lunar-moon-dark\\)`, "u"),
+    `${direction} crescent masks use the canonical dark color.`);
+  assert.match(calendarCss,
+    new RegExp(`\\.lunar-moon-disc\\.is-${direction}\\.is-gibbous::after\\s*\\{[^}]*background: var\\(--lunar-moon-disc-bg\\)`, "u"),
+    `${direction} gibbous masks preserve the illuminated Moon surface.`);
+}
 assert.match(
   calendarCss,
   /\.app-shell\.mode-calendar \{[\s\S]*?overflow-x: clip;/u,

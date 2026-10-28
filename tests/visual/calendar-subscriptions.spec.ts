@@ -35,7 +35,7 @@ test.afterEach(async () => fixture.close());
 async function openSheet(page: Page) {
   await page.goto("/#calendar?date=2026-09-21&view=month");
   await page.getByRole("button", { name: /Add to your calendar|Calendar subscription link/ }).first().click();
-  return page.getByRole("dialog", { name: "Add to your calendar" });
+  return page.getByRole("dialog", { name: /Add to your calendar|Your calendar link is ready/ });
 }
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`free unique subscription, persistent preferences and real feed ${theme} ${width}`, async ({ page }, testInfo) => {
@@ -52,11 +52,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await sheet.getByRole("button", { name: "Create my calendar link" }).click();
     await expect(sheet.getByText("Your calendar link is ready", { exact: true })).toBeVisible();
     await expect(sheet).not.toContainText("You're subscribed");
-    const typography = await sheet.locator(".calendar-subscribe__title").evaluateAll(nodes => nodes.map(node => {
-      const style = getComputedStyle(node); return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "margin", "textTransform", "textAlign"].map(key => [key, style[key as any]]));
-    }));
-    expect(typography[1]).toEqual(typography[0]);
-    await testInfo.attach("subscription-heading-typography", { body: JSON.stringify(typography), contentType: "application/json" });
+    await expect(sheet.getByRole("heading", { level: 2 })).toHaveCount(1);
+    await expect(sheet.getByRole("heading", { level: 2 })).toHaveCSS("font-family", /Newsreader/);
+    await expect(sheet.getByRole("heading", { level: 2 })).toHaveCSS("font-size", width <= 800 ? "30px" : "36px");
+    await expect(sheet.getByRole("heading", { level: 2 })).toBeFocused();
     const url = await sheet.getByRole("textbox", { name: "Calendar subscription URL" }).inputValue();
     expect(url).toMatch(/\/feed\/[A-Za-z0-9_-]{43}\.ics$/);
     await expect(sheet.getByRole("link", { name: "Open Apple Calendar" })).toHaveAttribute("href", url.replace(/^https?:/, "webcal:"));
@@ -146,11 +145,11 @@ test("event links show loading, recover after an outage, and handle missing even
   const link = new URL(calendarReadingUrl("https://example.com", "2026-09-21", "week-2026-09-21", "UTC"));
   fixture.setStorageFailure(true);
   await page.goto(link.pathname + link.search + link.hash);
-  await expect(page.getByRole("status", { name: "Loading event reading…" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "Loading event reading…" })).toBeVisible();
   release!();
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText("This reading could not load");
   fixture.setStorageFailure(false);
-  await page.getByRole("dialog").getByRole("button", { name: "Retry", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Try again", exact: true }).click();
   await expect(page.getByRole("dialog", { name: "Weekly emotional forecast" })).toBeVisible();
   await page.goto(link.pathname + link.search + link.hash.replace("event=week-2026-09-21", "event=event-00000000-0000-4000-8000-000000000000"));
   await expect(page.getByRole("dialog").getByRole("alert")).toContainText("This calendar event is not available.");

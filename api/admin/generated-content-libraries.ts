@@ -21,6 +21,7 @@ export { fillAstro101EphemerisSlots } from "../../apps/web/src/content/astro101E
 export { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 export { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 export { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
+export { frictionFlowField, frictionFlowTemplateErrors } from "../../apps/web/src/content/frictionFlowCatalog.js";
 export { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 export {
   isSkyPlacementArticleField,

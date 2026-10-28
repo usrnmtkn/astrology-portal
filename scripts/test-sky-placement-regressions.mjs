@@ -30,6 +30,7 @@ function read(relativePath) {
 }
 
 const app = read("apps/web/src/App.tsx");
+const diagnostics = read("apps/web/src/features/sky/CalculationDiagnosticsPanel.tsx");
 const skyDetailArticle = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
 const adminDashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 const debugRuntime = read("apps/web/src/content/fallbackArchitectureV3Runtime.ts");
@@ -461,7 +462,8 @@ assert.ok(fallbackSourceRows.hookRows.length > 0, "The imported package must exp
 assert.ok(fallbackSourceRows.vocabularyRows.length > 0, "The imported package must expose vocabulary rows.");
 assert.ok(fallbackTemplates.templates.length > 0, "The imported package must expose templates.");
 assert.match(debugRuntime, /fallbackArchitectureV3PackageVersion/, "Runtime must export the package version for app/admin debug surfaces.");
-assert.match(app, /Fallback package/, "App calculation diagnostics must show the fallback package version.");
+assert.match(diagnostics, /<dt>Fallback package<\/dt>[\s\S]*?fallbackArchitectureV3PackageVersion/u, "Calculation diagnostics must show the fallback package version.");
+assert.match(app, /<CalculationDiagnosticsPanel/u, "App must render the deferred calculation diagnostics.");
 assert.match(adminDashboard, /Fallback package/, "Admin dashboard must show the fallback package version.");
 assert.match(canonicalFallbackTemplate, /^# Canonical Planet-in-Sign Fallback Template/u);
 assert.match(canonicalFallbackTemplate, /Target length:\n350 to 550 words when an aspect insert is active\.\n220 to 350 words without an aspect insert\./u);

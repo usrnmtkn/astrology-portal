@@ -69,6 +69,7 @@ export function shouldRunCurrentSkyCalculation(
     || mode === "member"
     || mode === "profile"
     || mode === "calendar"
+    || mode === "horoscopes"
     || (mode === "friends" && friendReadiness.currentSky);
 }
 

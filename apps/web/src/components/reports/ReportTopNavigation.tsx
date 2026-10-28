@@ -1,19 +1,20 @@
 import {
   Asterisk,
   CalendarDays,
-  FileText,
-  LogOut,
+  BookOpen,
   Moon,
+  FileText,
   Settings,
   Smile,
-  Sun,
   User
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { getAuthAccount, signOutAuth } from "../../services/auth";
+import { useEffect, useState } from "react";
+import { getAuthAccount, type AuthAccount } from "../../services/auth";
 import { NavigationPill } from "../NavigationPill";
+import { SiteMenuSheet } from "../SiteMenuSheet";
+import { ThemeToggleButton, type UiThemeOption } from "../ThemeControls";
 
-export type ReportTheme = "light" | "dark";
+export type ReportTheme = UiThemeOption;
 
 function ReportSkyNavIcon({ size = 18 }: { size?: number }) {
   return (
@@ -47,7 +48,7 @@ function HamburgerIcon() {
   );
 }
 
-function goToAppRoute(hash: "sky" | "calendar" | "you" | "friends" | "account" | "settings") {
+function goToAppRoute(hash: "sky" | "calendar" | "horoscopes" | "articles" | "you" | "friends" | "account" | "settings" | "learn") {
   window.location.assign(`/#${hash}`);
 }
 
@@ -59,50 +60,25 @@ export function ReportTopNavigation({
   onThemeChange: (theme: ReportTheme) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [signedIn, setSignedIn] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const [account, setAccount] = useState<AuthAccount | null>(null);
+  const signedIn = Boolean(account);
 
   useEffect(() => {
     let cancelled = false;
     void getAuthAccount().then((account) => {
-      if (!cancelled) setSignedIn(Boolean(account));
+      if (!cancelled) setAccount(account);
     }).catch(() => {
-      if (!cancelled) setSignedIn(false);
+      if (!cancelled) setAccount(null);
     });
     return () => { cancelled = true; };
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return undefined;
-
-    const onPointerDown = (event: PointerEvent) => {
-      if (!(event.target instanceof Node)) return;
-      if (menuRef.current?.contains(event.target) || menuTriggerRef.current?.contains(event.target)) return;
-      setMenuOpen(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-        menuTriggerRef.current?.focus();
-      }
-    };
-
-    document.addEventListener("pointerdown", onPointerDown);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [menuOpen]);
-
-  const toggleTheme = () => {
-    const nextTheme: ReportTheme = theme === "dark" ? "light" : "dark";
+  const changeTheme = (nextTheme: ReportTheme) => {
     window.localStorage.setItem("tldrastro:theme", nextTheme);
     onThemeChange(nextTheme);
   };
 
-  const navigate = (hash: "sky" | "calendar" | "you" | "friends" | "account" | "settings") => {
+  const navigate = (hash: "sky" | "calendar" | "horoscopes" | "articles" | "you" | "friends" | "account" | "settings" | "learn") => {
     setMenuOpen(false);
     goToAppRoute(hash);
   };
@@ -125,6 +101,14 @@ export function ReportTopNavigation({
             <CalendarDays size={18} aria-hidden="true" />
             <span>Calendar</span>
           </button>
+          <button type="button" onClick={() => goToAppRoute("horoscopes")}>
+            <Moon size={18} aria-hidden="true" />
+            <span>Horoscopes</span>
+          </button>
+          <button type="button" onClick={() => goToAppRoute("articles")}>
+            <BookOpen size={18} aria-hidden="true" />
+            <span>Guide</span>
+          </button>
           <button type="button" onClick={() => goToAppRoute("you")}>
             <Smile size={18} aria-hidden="true" />
             <span>You</span>
@@ -137,17 +121,10 @@ export function ReportTopNavigation({
       </NavigationPill>
 
       <div className="topbar-actions">
-        <button
-          className="theme-toggle"
-          type="button"
-          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          onClick={toggleTheme}
-        >
-          {theme === "dark" ? <Moon size={22} aria-hidden="true" /> : <Sun size={22} aria-hidden="true" />}
-        </button>
+        <ThemeToggleButton theme={theme} onThemeChange={changeTheme} />
         <button
           className="menu-toggle"
-          ref={menuTriggerRef}
+          id="report-menu-toggle"
           type="button"
           aria-expanded={menuOpen}
           aria-haspopup="menu"
@@ -158,7 +135,8 @@ export function ReportTopNavigation({
           <HamburgerIcon />
         </button>
         {menuOpen ? (
-          <div className="site-menu" id="report-site-overflow-menu" ref={menuRef} role="menu" aria-label="Site menu">
+          <SiteMenuSheet onClose={() => setMenuOpen(false)} restoreFocusId="report-menu-toggle" theme={theme} onThemeChange={changeTheme} profile={account}>
+          <div className="site-menu" id="report-site-overflow-menu" role="menu" aria-label="Site menu">
             <button type="button" role="menuitem" onClick={() => navigate("sky")}>
               <ReportSkyNavIcon size={20} />
               <span>Sky</span>
@@ -166,6 +144,14 @@ export function ReportTopNavigation({
             <button type="button" role="menuitem" onClick={() => navigate("calendar")}>
               <CalendarDays size={20} aria-hidden="true" />
               <span>Calendar</span>
+            </button>
+            <button type="button" role="menuitem" onClick={() => navigate("horoscopes")}>
+              <Moon size={20} aria-hidden="true" />
+              <span>Horoscopes</span>
+            </button>
+            <button type="button" role="menuitem" onClick={() => navigate("articles")}>
+              <BookOpen size={20} aria-hidden="true" />
+              <span>Guide</span>
             </button>
             <button type="button" role="menuitem" onClick={() => navigate("you")}>
               <Smile size={20} aria-hidden="true" />
@@ -175,34 +161,28 @@ export function ReportTopNavigation({
               <FriendsNavIcon size={20} />
               <span>Friends</span>
             </button>
+            <button type="button" role="menuitem" onClick={() => navigate("learn")}><BookOpen size={20} aria-hidden="true"/><span>Learn</span></button>
             <button className="active" type="button" role="menuitem" onClick={() => { setMenuOpen(false); window.location.assign("/reports/"); }}>
               <FileText size={20} aria-hidden="true" />
               <span>Reports</span>
             </button>
             {signedIn ? (
-              <>
-                <button type="button" role="menuitem" onClick={() => navigate("account")}>
-                  <User size={20} aria-hidden="true" />
-                  <span>Account</span>
-                </button>
-                <button type="button" role="menuitem" onClick={() => navigate("settings")}>
-                  <Settings size={20} aria-hidden="true" />
-                  <span>Settings</span>
-                </button>
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    void signOutAuth().finally(() => goToAppRoute("sky"));
-                  }}
-                >
-                  <LogOut size={20} aria-hidden="true" />
-                  <span>Sign out</span>
-                </button>
-              </>
+              <button type="button" role="menuitem" onClick={() => navigate("account")}>
+                <User size={20} aria-hidden="true" />
+                <span>Account</span>
+              </button>
+            ) : null}
+            <button type="button" role="menuitem" onClick={() => navigate("settings")}>
+              <Settings size={20} aria-hidden="true" />
+              <span>Settings</span>
+            </button>
+            {!signedIn ? (
+              <div className="site-menu-auth" aria-label="Account actions">
+                <button type="button" role="menuitem" onClick={() => window.location.assign("/?auth=login")}>Login</button>
+              </div>
             ) : null}
           </div>
+          </SiteMenuSheet>
         ) : null}
       </div>
     </header>

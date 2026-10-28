@@ -1,8 +1,9 @@
+import { CompositeWheel } from "../../components/charts/CompositeWheel";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { ModalPortal } from "../../components/ModalPortal";
 import { SynastryWheel } from "../../components/charts/SynastryWheel";
-import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
+import { type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
 import type { SkySnapshot } from "../../types";
 import { RelationshipComparePicker, type RelationshipComparisonOption } from "./RelationshipComparePicker";
 
@@ -171,7 +172,7 @@ export function FriendProfileChartFullscreen({
         onComparisonSelect={onComparisonSelect}
         onComparisonToggle={onComparisonToggle}
       >
-        <SkyWheel
+        <CompositeWheel
           positions={compositeSky.positions}
           aspects={compositeSky.aspects}
           ascendant={compositeSky.ascendant}
@@ -179,7 +180,6 @@ export function FriendProfileChartFullscreen({
           midheavenLongitude={compositeSky.midheavenLongitude}
           showHouses
           houseSignLabelStyle={houseSignLabelStyle}
-          variant="composite"
           aspectInspector
         />
       </RelationshipChartFullscreen>

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "../helpers/polish-test";
 import { bundledPublications } from "../helpers/bundled-publications";
 
 test.beforeEach(async ({ page }) => {
@@ -19,11 +19,14 @@ test("Chiron Rx Key dates and Gifts follow the retrograde window", async ({ page
   });
   await page.goto("/?date=2026-09-19#sky/placement/chiron/aries");
   await expect(page.locator("#sky-detail-title")).toHaveText(/Chiron Rx in Aries/u, { timeout: 60_000 });
-  const dates = page.locator(".sky-placement-key-dates dl > div");
+  const panel = page.locator('.sky-placement-key-dates');
+  await expect(panel).not.toHaveAttribute('open');
+  await panel.locator(':scope > summary').click();
+  const dates = panel.locator('ol > li');
   await expect(dates.first()).toBeVisible({ timeout: 60_000 });
   const rows = await dates.evaluateAll((nodes) => nodes.map((row) => ({
-    date: row.querySelector("dt")?.textContent ?? "",
-    label: row.querySelector("dd")?.textContent ?? ""
+    date: row.querySelector("time")?.getAttribute("aria-label") ?? "",
+    label: row.querySelector(".sky-placement-key-dates__title strong")?.textContent ?? ""
   })));
   expect(rows.length).toBeGreaterThan(0);
   expect(rows.length).toBeLessThan(40);
@@ -51,8 +54,11 @@ test("Sun in Virgo still shows the complete short-visit Key dates", async ({ pag
   });
   await page.goto("/?date=2026-09-12#sky/placement/sun/virgo");
   await expect(page.locator("#sky-detail-title")).toHaveText("Sun in Virgo", { timeout: 60_000 });
-  const dates = page.locator(".sky-placement-key-dates dl > div");
+  const panel = page.locator('.sky-placement-key-dates');
+  await expect(panel).not.toHaveAttribute('open');
+  await panel.locator(':scope > summary').click();
+  const dates = panel.locator('ol > li');
   await expect(dates).toHaveCount(8, { timeout: 60_000 });
-  await expect(dates.first()).toContainText("August 22, 2026");
-  await expect(dates.last()).toContainText("September 22, 2026");
+  await expect(dates.first().locator("time")).toHaveAttribute("aria-label", "August 22, 2026");
+  await expect(dates.last().locator("time")).toHaveAttribute("aria-label", "September 22, 2026");
 });

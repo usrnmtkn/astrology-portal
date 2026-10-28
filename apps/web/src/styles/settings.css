@@ -76,9 +76,9 @@
 
 .settings-profile-row > div:last-child > span {
   color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
+  font-family: var(--font-ui);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-description);
 }
 
 .settings-row-control {
@@ -122,7 +122,7 @@ button.settings-signout-row {
   border-bottom: 0;
 }
 
-/* Row titles use the body face; monospace labels belong above the cards. */
+/* Account and settings row titles use the shared interface type. */
 .settings-row strong,
 .settings-row label,
 .settings-profile-row strong,
@@ -155,11 +155,11 @@ button.settings-signout-row {
 
 .settings-row__value {
   color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
   font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
-  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-description);
   text-align: right;
   text-transform: none;
   font-variant-numeric: tabular-nums;
@@ -188,11 +188,11 @@ button.settings-signout-row {
 
 .settings-row__action {
   color: var(--ink);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
   font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
-  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-description);
   text-transform: none;
 }
 
@@ -373,7 +373,7 @@ button.settings-signout-row {
 .account-delete-confirm-button {
   border: var(--border-width-thin) solid var(--danger);
   background: var(--danger);
-  color: var(--color-white);
+  color: var(--pill-fg);
 }
 
 .account-delete-confirm-button:disabled {
@@ -514,7 +514,7 @@ button.settings-signout-row {
   width: min(var(--container-picker), 48vw);
 }
 
-.account-row-input {
+.account-page .account-row-input {
   width: 100%;
   min-width: 0;
   border: 0;
@@ -523,11 +523,11 @@ button.settings-signout-row {
   padding: 0;
   color: var(--ink);
   box-shadow: var(--shadow-flat);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
   font-weight: var(--weight-regular);
-  letter-spacing: var(--tracking-body);
-  line-height: var(--leading-body);
+  letter-spacing: var(--tracking-normal);
+  line-height: var(--leading-description);
   text-align: right;
   text-transform: none;
   font-variant-numeric: tabular-nums;

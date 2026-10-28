@@ -1,12 +1,12 @@
 import { PreparedProse as FormattedProse } from "../FormattedWritingContent";
-import { ChevronLeft, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
   fullDetailReaderFacingParagraphs,
   isReaderFacingCopy
 } from "../../content/readerSafety";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
-import { ModalPortal } from "../ModalPortal";
+import { ModalDialog } from "../ModalDialog";
+import { ReportBack } from "./ReportStateCard";
 import { AttributionLine } from "./AttributionLine";
 import type { AttributionFacts } from "./attributionFormat";
 
@@ -70,35 +70,31 @@ function ReportImageSlot({ chapter }: { chapter: ReportChapter }) {
 
 function ReportKeyDateSheet({
   keyDate,
-  onClose
+  onClose,
+  position
 }: {
   keyDate: ReportKeyDate;
+  position: string;
   onClose: () => void;
 }) {
   const titleId = `report-key-date-${keyDate.id}`;
 
   return (
-    <ModalPortal
-      className="report-key-date-modal"
-      closeOnBackdrop
+    <ModalDialog
+      rootClassName="report-key-date-modal"
       onClose={onClose}
-      panelClassName="report-key-date-sheet"
+      className="report-key-date-sheet"
       titleId={titleId}
-      width="var(--container-dialog)"
+      title={keyDate.title}
+      closeLabel="Close key date"
     >
-      <button className="modal-close" type="button" aria-label="Close key date" onClick={onClose}>
-        <X size={18} aria-hidden="true" />
-      </button>
-      <div className="report-key-date-sheet__body">
-        <p className="report-label">Key date</p>
-        <p className="report-key-date-sheet__date">{keyDate.date}</p>
-        <h2 id={titleId}>{keyDate.title}</h2>
+        <p className="modal-dialog__meta">Key date · {position}</p>
+        <p className="modal-dialog__meta">{keyDate.date}</p>
         {fullDetailReaderFacingParagraphs(keyDate.paragraphs).map((paragraph, index) => (
           <FormattedProse key={`${keyDate.id}-paragraph-${index}`} text={paragraph} />
         ))}
         {keyDate.attribution ? <AttributionLine facts={keyDate.attribution} /> : null}
-      </div>
-    </ModalPortal>
+    </ModalDialog>
   );
 }
 
@@ -114,19 +110,11 @@ export function ReportArticle({ report, backHref = "/reports/" }: { report: Repo
     { label: "Facts engine", value: report.colophon.factsEngine },
     ...(report.colophon.generatedAt ? [{ label: "Generated", value: report.colophon.generatedAt }] : []),
     ...(report.colophon.entries ?? [])
-  ].filter((entry) => readable(entry.label) && readable(entry.value));
+  ].filter((entry) => entry.label.toLowerCase() !== "facts hash" && readable(entry.label) && readable(entry.value));
 
   return (
     <main className="report-article-page" data-report-id={report.id} data-report-type={report.reportType}>
-      <button
-        className="report-article-back floating-back-button"
-        type="button"
-        aria-label="Back"
-        onClick={() => window.location.assign(backHref)}
-      >
-        <ChevronLeft size={18} aria-hidden="true" />
-        <span>Back</span>
-      </button>
+      <ReportBack href={backHref}/>
 
       <article className="report-article" aria-labelledby="report-cover-title">
         <header className="report-cover" data-report-block="cover">
@@ -153,7 +141,7 @@ export function ReportArticle({ report, backHref = "/reports/" }: { report: Repo
                 aria-label={chapter.heading ? undefined : chapter.kicker}
                 aria-labelledby={chapter.heading ? headingId : undefined}
               >
-                <ReportImageSlot chapter={chapter} />
+                {chapter.image?.src && <ReportImageSlot chapter={chapter} />}
                 <div className="report-chapter__copy">
                   <p className="report-label">{chapter.kicker}</p>
                   {chapter.heading ? <h2 id={headingId}>{chapter.heading}</h2> : null}
@@ -203,7 +191,7 @@ export function ReportArticle({ report, backHref = "/reports/" }: { report: Repo
       </article>
 
       {activeKeyDate ? (
-        <ReportKeyDateSheet keyDate={activeKeyDate} onClose={() => setActiveKeyDateId(null)} />
+        <ReportKeyDateSheet keyDate={activeKeyDate} position={`${(report.keyDates?.findIndex(date => date.id === activeKeyDate.id) ?? 0) + 1} of ${report.keyDates?.length}`} onClose={() => setActiveKeyDateId(null)} />
       ) : null}
     </main>
   );
