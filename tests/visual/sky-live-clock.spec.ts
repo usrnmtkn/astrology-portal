@@ -41,9 +41,9 @@ test('countdowns advance together and focus catches up after inactivity', async 
   await expect(summary).toContainText('another 50 minutes', { timeout: 60_000 });
   const moon=page.getByRole('button', { name: 'Read more about Moon in Cancer', exact: true });
   const countdown = moon.locator('.placement-progress > span, .placement-progress__label');
-  await expect(countdown).toHaveText('0H 50MIN left', { timeout: 60_000 });
+  await expect(countdown).toHaveText('Ends today', { timeout: 60_000 });
   await page.clock.fastForward(60_000);
-  await expect(countdown).toHaveText('0H 49MIN left');
+  await expect(countdown).toHaveText('Ends today');
   await moon.click();
   await expect(page.locator('#sky-detail-title')).toHaveText(/^(The )?Moon in Cancer$/);
   await page.getByRole('button', { name: 'Close detail', exact: true }).click();

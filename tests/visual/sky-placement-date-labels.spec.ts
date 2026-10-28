@@ -53,3 +53,48 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Sky plac
   await expect(dates.first()).toHaveText('September 22 to October 23, 2026',{timeout:60_000});
   await expect(dates.first()).not.toContainText('Rx');
 });
+
+test.describe('Sky card countdowns',()=>{
+  // The selected location, rather than the browser zone, owns both countdowns.
+  test.use({timezoneId:'Asia/Tokyo'});
+  for(const width of [390,1440])for(const theme of ['light','dark'])test(`retrograde and sign countdowns ${width} ${theme}`,async({page})=>{
+    test.setTimeout(120_000);await page.setViewportSize({width,height:1000});
+    await page.clock.setFixedTime(new Date('2026-10-13T16:00:00Z'));await bundledPublications(page);
+    await page.addInitScript(theme=>{
+      localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:pageAnimations','off');
+      localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'}));
+    },theme);
+    await page.route('**/api/sky?**',async route=>{
+      const response={statusCode:200,setHeader(){},end(body:string){void route.fulfill({status:this.statusCode,contentType:'application/json',body});}};
+      await skyHandler({method:'GET',url:route.request().url()} as IncomingMessage,response as unknown as ServerResponse);
+    });
+    await page.goto('/?date=2026-10-13#sky');
+    const uranus=page.getByRole('button',{name:'Read more about Uranus Rx in Gemini',exact:true});
+    const labels=uranus.locator('.placement-progress > span');
+    await expect(labels).toHaveText(['Rx 4 months left','6 years left'],{timeout:60_000});
+    const neptune=page.getByRole('button',{name:'Read more about Neptune Rx in Aries',exact:true});
+    await expect(neptune.locator('.placement-progress > span')).toHaveText(['Rx 2 months left','12 years left']);
+    await expect(page.getByRole('button',{name:'Read more about Sun in Libra',exact:true}).locator('.placement-progress > span')).toHaveText('10 days left');
+    await expect(page.getByRole('button',{name:'Read more about Moon in Scorpio',exact:true}).locator('.placement-progress > span')).toHaveText('Ends today');
+    const mercury=page.getByRole('button',{name:'Read more about Mercury in Scorpio',exact:true});
+    await expect(mercury.locator('.placement-progress > span')).toHaveText('8 weeks left');
+    await expect(mercury.locator('.placement-progress__retrograde')).toHaveCount(0);
+    const typography=(element:Element)=>{
+      const style=getComputedStyle(element);return [style.fontFamily,style.fontSize,style.fontWeight,style.lineHeight,style.letterSpacing,style.textAlign,style.textTransform];
+    };
+    expect(await labels.first().evaluate(typography)).toEqual(await labels.last().evaluate(typography));
+    await expect(labels.first()).toHaveCSS('font-family',/system-ui/);
+    await expect(labels.first()).toHaveCSS('text-transform','uppercase');
+    const top=(await labels.first().boundingBox())!,bottom=(await labels.last().boundingBox())!;
+    expect(top.y+top.height).toBeLessThanOrEqual(bottom.y);
+    expect(top.x+top.width/2).toBeCloseTo(bottom.x+bottom.width/2,0);
+    await expectReadableTheme(page,'.placement-progress > span');
+    await uranus.screenshot({path:`test-results/sky-countdown-uranus-${width}-${theme}.png`});
+    await neptune.screenshot({path:`test-results/sky-countdown-neptune-${width}-${theme}.png`});
+    await uranus.click();await expect(page.locator('#sky-detail-title')).toHaveText(/Uranus Rx in Gemini/);
+    await page.getByRole('button',{name:'Close detail',exact:true}).click();
+    await expect(labels).toHaveText(['Rx 4 months left','6 years left']);
+    await page.reload();await expect(labels).toHaveText(['Rx 4 months left','6 years left'],{timeout:60_000});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  });
+});

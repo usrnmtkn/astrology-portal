@@ -587,6 +587,10 @@ export function PlanetPlacementRow({
   if (descriptionLoading) return <><LoadingStatus>Loading description</LoadingStatus><PlacementRowSkeleton interactive={Boolean(onClick || href)} /></>;
 
   const progressValue = Number.isFinite(progress) ? Math.max(0, Math.min(1, progress!)) : null;
+  const countdowns = <>
+    {retrograde && retrogradeDurationLabel ? <span className="placement-progress__retrograde">Rx {retrogradeDurationLabel}</span> : null}
+    {durationLabel ? <span>{durationLabel}</span> : null}
+  </>;
   const rowClassName = [
     "sky-card",
     "is-revealing",
@@ -618,15 +622,15 @@ export function PlanetPlacementRow({
           <span className="planet-placement-row__description"><FormattedText text={description} /></span>
         ) : null}
       </span>
-      {progressValue !== null ? <span className="placement-progress" aria-hidden="true">
-        <svg viewBox="0 0 300 64" fill="none">
+      {progressValue !== null ? <span className="placement-progress">
+        <svg viewBox="0 0 300 64" fill="none" aria-hidden="true">
           <path className="placement-progress__remaining" d="M4 48 Q150 -20 296 48" pathLength="1" />
           <path className="placement-progress__elapsed" d="M4 48 Q150 -20 296 48" pathLength="1" strokeDasharray={`${progressValue} 1`} />
           <circle cx={4 + 292 * progressValue} cy={48 - 136 * progressValue * (1 - progressValue)} r="11" />
           <text x={4 + 292 * progressValue} y={48 - 136 * progressValue * (1 - progressValue)}>{glyph}</text>
         </svg>
-        <span>{durationLabel}</span>
-      </span> : durationLabel ? <span className="placement-progress__label">{durationLabel}</span> : null}
+        {countdowns}
+      </span> : durationLabel || (retrograde && retrogradeDurationLabel) ? <span className="placement-progress">{countdowns}</span> : null}
       <span className="planet-placement-row__arrow" aria-hidden="true">›</span>
     </>
   );
