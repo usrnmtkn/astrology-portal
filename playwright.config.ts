@@ -1,4 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
+import { fileURLToPath } from "node:url";
+
+// Component harnesses read the same manifest as the fresh preview. Custom
+// isolated builds may supply their own directory before loading this config.
+process.env.PLAYWRIGHT_DIST_ROOT ??= fileURLToPath(new URL("./apps/web/dist", import.meta.url));
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4173";
 
