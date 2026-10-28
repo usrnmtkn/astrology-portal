@@ -66,7 +66,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(before[".calendar-season-transits ul"]).toEqual(after[".calendar-season-transits ul"]);
     for (const card of await page.locator(".is-revealing").all()) {
       await expect(card).toHaveCSS("animation-name", theme === "dark" ? "none" : "lazy-fade");
-      await expect(card).toHaveCSS("animation-duration", "0.12s");
+      await expect(card).toHaveCSS("animation-duration", theme === "dark" ? "0s" : "0.12s");
       await expect(card).toHaveCSS("animation-delay", "0s");
       await expect(card).toHaveCSS("transform", "none");
       await expect(card).toHaveCSS("opacity", "1");

@@ -173,7 +173,7 @@ for (const [width,theme] of [[390,'dark'],[1440,'light']] as const) {
     await bundledPublications(page);
     await page.goto('/?date=2026-10-11');
     const parent=page.url();
-    const sun=page.locator('.planet-placement-row:has(.card-read-more)').filter({hasText:'Sun in Libra'}).first();
+    const sun=page.locator('button.planet-placement-row').filter({hasText:'Sun in Libra'}).first();
     await expect(sun).toBeVisible({timeout:45000});
     await sun.click();
     const article=page.locator('.sky-detail-page');

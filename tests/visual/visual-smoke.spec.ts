@@ -1,3 +1,4 @@
+import { bundledPublications } from "../helpers/bundled-publications";
 import { readerSession } from "../helpers/reader-session";
 import { expect, test, type Page } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
@@ -6,7 +7,7 @@ import path from "node:path";
 const screenshotDir = path.join("test-results", "visual-smoke");
 
 async function preparePage(page: Page, theme: "light" | "dark" = "light", seedFriends = false) {
-  await page.route("**/rest/v1/content_publications*", route => route.fulfill({ json: [] }));
+  await bundledPublications(page);
   await page.addInitScript(({ selectedTheme, shouldSeedFriends }) => {
     window.localStorage.setItem("tldrastro:theme", selectedTheme);
     localStorage.setItem("tldrastro:pageAnimations", "off");
@@ -181,7 +182,7 @@ test.describe("visual smoke screens", () => {
 
     await firstChart.click();
     await page.getByRole("tab", { name: "Natal", exact:true }).click();
-    await expect(page.getByRole("heading",{name:"Big three",exact:true})).toBeVisible();
+    await expect(page.getByRole("heading",{name:"Big Three",exact:true})).toBeVisible();
     await capture(page, "friends-natal-light");
 
     await page.getByRole("tab", {name:"Synastry",exact:true}).click();

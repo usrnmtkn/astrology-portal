@@ -23,15 +23,7 @@
   background: var(--surface);
 }
 
-.app-loading--centered {
-  align-content: center;
-  justify-items: center;
-  min-height: var(--ds-layout-deferred-placeholder-height);
-  text-align: center;
-}
-
 /* Route-level fallbacks sit below the same fixed navigation as page shells. */
-.app-shell > .app-loading--centered,
 .app-shell:is(.mode-friends, .mode-learn, .mode-articles, .mode-detail) > .app-loading[role="alert"] {
   margin-top: var(--page-top);
 }
@@ -46,12 +38,6 @@
   grid-auto-flow: column;
   align-items: center;
   width: auto;
-}
-
-.app-loading--centered:not(.app-loading--compact) {
-  gap: var(--startup-label-gap);
-  font-size: var(--startup-label-size);
-  color: var(--startup-label);
 }
 
 .loading-moon {

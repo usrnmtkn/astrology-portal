@@ -1,3 +1,4 @@
+import { expectReadableTheme } from "../helpers/theme-contrast";
 import { readerSession } from "../helpers/reader-session";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { expect, test, type Page } from "@playwright/test";
@@ -318,17 +319,7 @@ test.describe("visual regression baseline", () => {
     await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop dark", async () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
     });
-    for (const selector of [".segmented-control__item--active", ".calendar-sky-card__today", ".lunar-week-day__date.is-new-disc"]) {
-      const contrast = await page.locator(selector).first().evaluate(element => {
-        const style = getComputedStyle(element);
-        const luminance = (color: string) => color.match(/[\d.]+/g)!.slice(0, 3).map(Number)
-          .map(value => value / 255).reduce((sum, value, index) => sum +
-            (value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4) * [.2126, .7152, .0722][index], 0);
-        const [low, high] = [luminance(style.color), luminance(style.backgroundColor)].sort((a, b) => a - b);
-        return (high + .05) / (low + .05);
-      });
-      expect(contrast, `${selector} must remain readable in dark mode`).toBeGreaterThanOrEqual(4.5);
-    }
+    await expectReadableTheme(page, ".segmented-control__item--active, .calendar-sky-card__today, .lunar-week-day__date.is-new-disc", 4.5);
     await expect.soft(page).toHaveScreenshot("client-calendar-desktop-dark.png", screenshotOptions);
     assertNoBrowserErrors();
   });

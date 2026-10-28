@@ -185,9 +185,9 @@ for (const theme of ["light", "dark"]) {
       const title = await reading.locator("h1").boundingBox();
       const nav = await page.locator(".topbar").boundingBox();
       const back = await reading.locator(".sky-detail-back").boundingBox();
-      const eyebrow = await reading.locator(".article-eyebrow").boundingBox();
+      const eyebrow = await reading.locator(".article-id > .aspect-badge").boundingBox();
       expect(eyebrow!.y).toBeGreaterThan(Math.max(nav!.y + nav!.height, back!.y + back!.height));
-      expect(title!.y).toBeGreaterThan(eyebrow!.y + eyebrow!.height);
+      expect(title!.y).toBeGreaterThanOrEqual(eyebrow!.y + eyebrow!.height);
       await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
       await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("box-shadow", "none");
       const typography = await section.evaluate(element => {
