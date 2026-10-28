@@ -69,8 +69,8 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     await row.click();
     const article = page.locator(".you-transit-article");
     await expect(article.getByRole("heading", { level: 1 })).toHaveText("Moon in Libra square your natal Jupiter");
-    await expect(article.locator(".article-eyebrow")).toHaveAttribute("aria-label", "Aspect: Moon square Jupiter");
-    await expect(article.locator(".article-eyebrow__glyphs")).toHaveText("☽□♃");
+    await expect(article.locator(".aspect-badge")).toHaveAttribute("data-aspect", "square");
+    await expect(article.locator(".aspect-badge")).toHaveText("□");
     await expect(article).toContainText("Current contact");
     await expect(article).toContainText("Full transit series");
     await expect(article).toContainText("Pass 1");

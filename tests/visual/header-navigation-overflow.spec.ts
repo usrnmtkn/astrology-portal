@@ -61,8 +61,8 @@ for (const profile of [false, true]) for (const theme of ['light', 'dark']) {
     }
     // Larger labels exercise overflow even when the compact design fits every destination.
     if (profile) {
-      const enlargedLabels = await page.addStyleTag({ content: '.site-nav button { min-width: 180px; }' });
       await primary.getByRole('button', { name: 'Friends', exact: true }).focus();
+      const enlargedLabels = await page.addStyleTag({ content: '.site-nav button { min-width: 180px; }' });
       await page.setViewportSize({ width: 1081, height: 1000 });
       await expectFittingHeader(page);
       await expect(primary.getByRole('button', { name: 'Friends', exact: true })).toBeHidden();

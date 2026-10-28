@@ -12,8 +12,8 @@ export function readerRouteIssue(url: URL, bodies: readonly string[], signs: rea
   const [area, kind, planet, sign] = route.split("/");
   const params = new URLSearchParams(query);
   const matches = (value: string, candidates: readonly string[]) => candidates.some(candidate => candidate.toLowerCase().replaceAll(" ", "-") === value);
-  if (area === "sky" && ["placement", "retrograde"].includes(kind) && (!matches(planet, bodies) || !matches(sign, signs))) return "placement";
-  if (area === "horoscopes" && (params.has("sign") && !matches(params.get("sign")!, signs)
+  if (area === "sky" && ["placement", "retrograde"].includes(kind) && (!matches(planet, bodies) || Boolean(sign) && !matches(sign, signs))) return "placement";
+  if (area === "horoscopes" && (params.has("sign") && !matches(params.get("sign")!, signs) && !(params.get("period") === "monthly" && params.get("sign") === "overview")
     || params.has("period") && !["daily", "weekly", "monthly", "seasonal"].includes(params.get("period")!)
     || params.has("at") && !Number.isFinite(Date.parse(params.get("at")!)))) return "horoscope";
   if (area === "calendar") {

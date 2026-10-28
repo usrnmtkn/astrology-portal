@@ -4,6 +4,9 @@ import { expectEffortCardSpacing } from "./sky-debility-layout";
 import { readerResponse } from "../helpers/reader-response";
 import { bundledPublications } from "../helpers/bundled-publications";
 
+// The paired configuration serves Studio at 4297 and the reader at 4298.
+test.use({ baseURL: "http://127.0.0.1:4298" });
+
 // The actual ephemeris supplies sign and motion at the regression instant.
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`inline effort paragraph ${width} ${theme}`, async ({ page }) => {
   await page.setViewportSize({ width, height: 1000 });

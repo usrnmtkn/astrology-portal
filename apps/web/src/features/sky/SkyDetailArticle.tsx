@@ -405,6 +405,7 @@ export function SkyDetailArticle({
 }) {
   const placementPage = /^sky\/placement\//u.test(detail.routePath ?? "");
   const articleRef = useRef<HTMLElement>(null);
+  const [csvExportRoute] = useState(() => new URL(window.location.href).searchParams.get("studioExport") === "sky-article-csv" ? detail.routePath : null);
   const editSource = detail.readerExport && skyPassageEditSource(detail.readerExport.keys);
   const editHref = editSource && detail.readerExport && !detail.placementFactsPending && !detail.previewLabel
     ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
@@ -603,8 +604,8 @@ export function SkyDetailArticle({
       </button>
       <article ref={articleRef} aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
-          {detail.readerExport && new URL(window.location.href).searchParams.get('studioExport') === 'sky-article-csv' && <Suspense fallback={null}>
-            <SkyReaderExportStatus articleRef={articleRef} detail={detail} residencyAspectsPending={residencyAspectsPending} residencyAspectsFailed={residencyAspectsFailed} />
+          {detail.readerExport && csvExportRoute === detail.routePath && <Suspense fallback={null}>
+            <SkyReaderExportStatus key={detail.routePath} articleRef={articleRef} detail={detail} residencyAspectsPending={residencyAspectsPending} residencyAspectsFailed={residencyAspectsFailed} />
           </Suspense>}
           <header className="article-id sky-detail-id">
             {detail.previewLabel && <p className="article-sub" role="status">{detail.previewLabel}</p>}

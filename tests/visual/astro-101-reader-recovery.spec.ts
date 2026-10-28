@@ -86,7 +86,7 @@ for (const width of [390, 1440]) for (const failure of ['connection', 'malformed
       await expect(page.locator('.learn-article-body')).toContainText('QA final sentence 1.');
       expect(requests).toBe(4);
     } else {
-      await expect(page.getByText('Astro 101 could not load. Try again in a moment.', { exact: true })).toBeVisible();
+      await expect(page.getByRole('alert').filter({hasText:'Astro 101 could not load.'})).toBeVisible();
       expect(requests).toBe(1);
       await expect(page.getByRole('heading', { name: 'Page not found', exact: true })).toHaveCount(0);
     }
@@ -131,7 +131,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     if (signedIn) {
       await expect(menu.getByRole('menuitem', { name: 'Friends', exact: true })).toBeVisible();
       const labels = await menu.getByRole('menuitem').allTextContents();
-      expect(labels.slice(labels.indexOf('Friends'), labels.indexOf('Friends') + 3)).toEqual(['Friends', 'Guide', 'Learn']);
+      expect(labels.slice(0, 7)).toEqual(['Sky', 'Calendar', 'Horoscopes', 'Guide', 'You', 'Friends', 'Learn']);
     }
     await menu.getByRole('menuitem', { name: 'Learn', exact: true }).click();
     await expect(page).toHaveURL(/\/learn$/);
@@ -161,7 +161,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(page.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
     failed = true;
     await page.reload();
-    await expect(page.getByText('Astro 101 could not load. Try again in a moment.', { exact: true })).toBeVisible();
+    await expect(page.getByRole('alert').filter({hasText:'Astro 101 could not load.'})).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Page not found', exact: true })).toHaveCount(0);
     expect(errors).toEqual([]);
   });

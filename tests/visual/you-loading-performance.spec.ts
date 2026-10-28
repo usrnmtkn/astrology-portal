@@ -88,7 +88,7 @@ async function seedYouPerformanceState(page: Page) {
         readiness.profile = performance.timeOrigin + performance.now();
       }
       if (!readiness.milestone && region) {
-        const message = region.querySelector('[role="status"][aria-label="Adding today’s transits."]');
+        const message = region.querySelector('[aria-busy="true"][aria-label="Adding today’s transits."]');
         if (visible(message)) readiness.milestone = performance.timeOrigin + performance.now();
       }
       if (!readiness.profile || !readiness.milestone) requestAnimationFrame(observe);
