@@ -22,6 +22,62 @@ const calendarWriting = (status: 'LIVE' | 'DRAFT') => {
     created_at: '2026-10-01T00:00:00Z', updated_at: '2026-10-20T12:00:00Z' };
 };
 
+for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
+ test(`Content Library reopens an archived dated Sky article for explicit restore ${width} ${theme}`,async({page,context})=>{
+  test.setTimeout(90000);
+  const fixture=await skyPlacementSourceFixture('sun','libra');
+  const archived={...fixture.active,status:'ARCHIVED',headline:'Synthetic archived Libra article',updated_at:'2026-10-01T01:00:00-07:00'};
+  // The newest saved source has an earlier-looking local hour than the UTC row.
+  const olderArchive={...fixture.active,id:'dddddddd-dddd-4ddd-dddd-dddddddddddd',status:'ARCHIVED',headline:'Synthetic older archived Libra article',updated_at:'2026-10-01T06:00:00Z'};
+  const oldRevision={...fixture.pending,status:'ARCHIVED'};
+  const store=await studioApiStore([archived,olderArchive,oldRevision],{uuidIds:true});
+  const writes:any[]=[];
+  await context.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
+  await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
+   if(url.pathname==='/api/admin/content-live-status'||url.pathname==='/api/content-reader'){
+    const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;
+   }
+   if(!url.pathname.startsWith('/api/admin/')){await route.fulfill({status:503,json:{error:'Optional API unavailable in isolated fixture.'}});return true;}
+   return false;
+  }});
+  try{
+   await page.setViewportSize({width,height:1000});await page.goto('/admin/content#exact-content');
+   await page.getByRole('searchbox',{name:'Search content',exact:true}).fill(archived.headline);
+   if(width===390)await page.getByRole('button',{name:'Filters',exact:true}).click();
+   await page.getByRole('button',{name:'Show retired',exact:true}).click();
+   const result=page.locator('tr.admin-content-row').filter({has:page.getByText(archived.headline,{exact:true})});
+   await expect(result).toContainText(archived.content_key);
+   await expect(result).toContainText('Archived');
+   const before=await store.call({method:'rows'}),ledger=await store.call({method:'publications'});
+   await result.getByRole('button',{name:'Open article',exact:true}).click();
+   const editor=page.getByRole('dialog',{name:'Generated content editor'}),copy=editor.getByRole('textbox',{name:'Sky article general copy',exact:true});
+   await expect(copy).toHaveValue(/Synthetic published opening[\s\S]*Synthetic published final sentence/u);
+   await expect(editor.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
+   expect(writes).toEqual([]);expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(ledger);
+   const libraryUrl=page.url(),readerUrl=new URL(libraryUrl);
+   const [readerRoute,readerQuery]=readerUrl.hash.split('?'),readerParams=new URLSearchParams(readerQuery);
+   readerParams.delete('from');readerUrl.hash=`${readerRoute}?${readerParams}`;
+   await page.goto(readerUrl.toString());
+   await expect(page.getByLabel('Passage opened from reader',{exact:true}).getByRole('alert')).toContainText('This source is no longer available');
+   await expect(editor).toHaveCount(0);expect(writes).toEqual([]);
+   await page.goto(libraryUrl);await expect(copy).toHaveValue(/Synthetic published final sentence/u);
+   await page.reload();await expect(copy).toHaveValue(/Synthetic published final sentence/u);
+   await editor.getByRole('button',{name:'Restore as draft',exact:true}).click();
+   await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id)?.status).toBe('DRAFT');
+   const restored=(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id);
+   expect(restored.body).toBe(archived.body);expect(restored.sections).toEqual(archived.sections);
+   expect((await store.call({method:'rows'})).find((row:any)=>row.id===olderArchive.id)).toEqual(olderArchive);
+   const reader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id]}});expect(reader.payload.rows).toEqual([]);
+   await editor.getByRole('button',{name:'Close',exact:true}).click();await page.reload();
+   await expect(copy).toHaveValue(/Synthetic published final sentence/u);
+   await editor.getByRole('button',{name:'Archive article',exact:true}).click();
+   await expect(editor.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
+   expect((await store.call({method:'rows'})).find((row:any)=>row.id===archived.id).status).toBe('ARCHIVED');
+   expect(writes).toHaveLength(2);
+  }finally{await context.unrouteAll({behavior:'ignoreErrors'});store.close();}
+ });
+}
+
 for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1440, 'dark'], [900, 'light'], [900, 'dark']] as const) {
   test(`Content Library finds and opens Sky and Calendar writing ${width} ${theme}`, async ({ page, context }) => {
     test.setTimeout(180_000);
