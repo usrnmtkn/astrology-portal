@@ -28,71 +28,7 @@
   margin-top: var(--page-top);
 }
 
-.app-loading--compact {
-  min-height: 0;
-  margin: 0;
-  padding: 0;
-  align-content: start;
-  justify-items: start;
-  text-align: start;
-  grid-auto-flow: column;
-  align-items: center;
-  width: auto;
-}
-
-.loading-moon {
-  display: block;
-  flex-shrink: 0;
-  width: var(--startup-moon-size);
-  height: var(--startup-moon-size);
-  color: var(--startup-moon-ink);
-  fill: currentColor;
-}
-
-.loading-moon--compact {
-  width: var(--size-2);
-  height: var(--size-2);
-}
-
-.loading-moon > :last-child {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: var(--startup-moon-stroke-width);
-}
-
-.loading-moon__shadow {
-  transform: translateX(var(--startup-moon-shadow-static));
-  animation: startup-moon-phase var(--startup-moon-duration) var(--startup-moon-ease)
-    var(--startup-moon-start-delay) infinite alternate;
-}
-
-@keyframes startup-moon-phase {
-  from { transform: translateX(var(--startup-moon-shadow-from)); }
-  to { transform: translateX(var(--startup-moon-shadow-to)); }
-}
-
-/* Hidden readers may keep fetching content, but their decoration need not run. */
-[aria-hidden="true"]:not(svg) .loading-moon__shadow,
-.app-loading[role="alert"] .loading-moon__shadow,
-[hidden] .loading-moon__shadow {
-  animation: none;
-}
-
-.app-loading__action {
-  justify-self: start;
-  border: var(--border-width-thin) solid var(--line-strong);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--ink);
-  padding: var(--space-3) var(--space-5);
-  font: inherit;
-  cursor: pointer;
-}
-
 .app-loading [hidden] {
   display: none;
 }
 
-:root[data-reduce-motion] {
-  .loading-moon__shadow { animation: none; }
-}
