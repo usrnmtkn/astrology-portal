@@ -6,6 +6,7 @@ import { calendarPassageRecord } from '../../src/shared/features/calendar/calend
 import { getLunarCalendarMonth } from '../../apps/web/src/services/ephemeris';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { parseStudioPassageEdit } from '../../src/shared/studioPassageEdit';
+import { reviseSkyArticleEdition, skyArticleEditableFields } from '../../apps/web/src/content/skyArticleTemplateCompiler';
 
 const date = '2026-10-21', timeZone = 'America/New_York';
 const calendarKey = `calendar-passage/daily/${date}/${encodeURIComponent(timeZone)}`;
@@ -23,17 +24,27 @@ const calendarWriting = (status: 'LIVE' | 'DRAFT') => {
 };
 
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
- test(`Content Library reopens an archived dated Sky article for explicit restore ${width} ${theme}`,async({page,context})=>{
+ test(`Content Library reopens an archived dated Sky article for explicit restore and later published edits ${width} ${theme}`,async({page,context})=>{
   test.setTimeout(90000);
   const fixture=await skyPlacementSourceFixture('sun','libra');
-  const archived={...fixture.active,status:'ARCHIVED',headline:'Synthetic archived Libra article',updated_at:'2026-10-01T01:00:00-07:00'};
+  const archivedEdition=await reviseSkyArticleEdition(fixture.active.sections.skyArticleEdition,{
+   ...skyArticleEditableFields(fixture.active.sections.skyArticleEdition),headline:'Synthetic archived Libra article'
+  });
+  const archived={...fixture.active,status:'ARCHIVED',headline:archivedEdition.headline,
+   sections:{...fixture.active.sections,skyArticleEdition:archivedEdition},updated_at:'2026-10-01T01:00:00-07:00'};
   // The newest saved source has an earlier-looking local hour than the UTC row.
   const olderArchive={...fixture.active,id:'dddddddd-dddd-4ddd-dddd-dddddddddddd',status:'ARCHIVED',headline:'Synthetic older archived Libra article',updated_at:'2026-10-01T06:00:00Z'};
   const oldRevision={...fixture.pending,status:'ARCHIVED'};
   const store=await studioApiStore([archived,olderArchive,oldRevision],{uuidIds:true});
   const writes:any[]=[];
+  let rejectPublishedRead=false,publishedReads=0;
   await context.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
-  await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
+  await routeStudioInventoryApi(context,{call:async request=>{
+   if(rejectPublishedRead&&request.method==='GET'&&new URL(request.url!,'https://fixture.invalid').searchParams.get('id')===archived.id){
+    publishedReads++;return {status:503,payload:{error:'Synthetic post-publication read unavailable.'}};
+   }
+   return store.call(request);
+  },actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
    if(url.pathname==='/api/admin/content-live-status'||url.pathname==='/api/content-reader'){
     const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;
    }
@@ -70,10 +81,35 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const reader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id]}});expect(reader.payload.rows).toEqual([]);
    await editor.getByRole('button',{name:'Close',exact:true}).click();await page.reload();
    await expect(copy).toHaveValue(/Synthetic published final sentence/u);
+   rejectPublishedRead=width===1440&&theme==='dark';
+   await editor.getByRole('button',{name:'Approve & publish complete edition',exact:true}).click();
+   await expect(editor.getByText('Published copy is unchanged.',{exact:true})).toBeVisible();
+   const published=(await store.call({method:'rows'})).find((row:any)=>row.id===archived.id);
+   const publishedLedger=await store.call({method:'publications'});
+   const revised='Synthetic restored article revision opening.\n\nSynthetic restored article revision final sentence.';
+   await copy.fill(revised);
+   await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+   await expect(editor.getByText('Draft saved · Changes not published',{exact:true})).toBeVisible();
+   const afterSave=await store.call({method:'rows'});
+   const proposal=afterSave.find((row:any)=>row.event_type==='sky-article-edition-revision'&&row.status==='DRAFT');
+   expect(proposal.id).not.toBe(archived.id);expect(proposal.body).toBe(revised);
+   expect(afterSave.find((row:any)=>row.id===archived.id)).toEqual(published);
+   expect(await store.call({method:'publications'})).toEqual(publishedLedger);
+   const unchangedReader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id]}});
+   expect(unchangedReader.payload.rows[0].body).toBe(published.body);
+   expect(publishedReads).toBe(0);rejectPublishedRead=false;
+   await page.reload();await expect(copy).toHaveValue(revised);
+   await editor.getByRole('button',{name:'Review & publish',exact:true}).click();
+   await editor.getByRole('button',{name:'Publish changes',exact:true}).click();
+   await expect(editor.getByText('Published copy is unchanged.',{exact:true})).toBeVisible();
+   const revisedReader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id]}});
+   expect(revisedReader.payload.rows[0].body).toBe(revised);
    await editor.getByRole('button',{name:'Archive article',exact:true}).click();
    await expect(editor.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
    expect((await store.call({method:'rows'})).find((row:any)=>row.id===archived.id).status).toBe('ARCHIVED');
-   expect(writes).toHaveLength(2);
+   const archivedReader=await store.call({method:'POST',url:'/api/content-reader',body:{ids:[archived.id,proposal.id]}});
+   expect(archivedReader.payload.rows).toEqual([]);
+   expect(writes).toHaveLength(5);
   }finally{await context.unrouteAll({behavior:'ignoreErrors'});store.close();}
  });
 }
