@@ -3683,11 +3683,14 @@ test.describe("client-facing user flow case studies", () => {
       await seedClientState(page, { profile: true, friends: true, theme });
       await expectClientRouteLoads(page, "/#friends?tab=charts");
       await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
+      await expect(page.getByRole("button", { name: "Open Nikki", exact: true })).toBeVisible();
       await mkdir(responsiveScreenshotDir, { recursive: true });
       for (const width of [1440, 390]) {
         await page.setViewportSize({ width, height: 1000 });
         const heading = page.locator(".friends-workspace-heading");
         const panel = page.locator(".friends-unified-content");
+        await expect(heading).toBeVisible();
+        await expect(panel).toBeVisible();
         const headingBox = await heading.boundingBox();
         const panelBox = await panel.boundingBox();
         expect(Math.abs(headingBox!.x - panelBox!.x), "Friends title shares the directory rail").toBeLessThan(1);
