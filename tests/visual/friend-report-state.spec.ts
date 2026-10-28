@@ -12,7 +12,7 @@ test.beforeAll(async () => {
     const root=createRoot(document.getElementById('root'));
     const brief={friendName:'Fixture friend',primaryThemes:[],relationshipActivations:[],houseContext:[],daily:null,longerCycles:[],activePatterns:[],hasAnyTransit:true};
     h.render=(id='social:fixture',date='2026-09-11',reading=null)=>root.render(<FriendTransitsTab brief={brief} reading={reading} readingStatus={reading?'ready':'idle'} readingAvailable readingSubjectId={id} readingTargetDate={date} patternTimingOverrides={{}} onGenerateReading={()=>{throw Error('must reuse saved report')}} onOpenBondTransit={()=>{}} onOpenHouseTransit={()=>{}} onOpenPersonalTransit={()=>{}}/>);
-    h.render();`, resolveDir: process.cwd(), loader: 'tsx' }, bundle: true, write: false, outdir: 'out', format: 'iife', platform: 'browser', define: { 'import.meta.env': '{}' }, jsx: 'automatic', plugins: [{ name: 'report-transport', setup(b) {
+    h.render();`, resolveDir: process.cwd(), loader: 'tsx' }, bundle: true, write: false, outdir: 'out', format: 'iife', platform: 'browser', define: { 'import.meta.env': '{}' }, loader: { '.svg': 'dataurl' }, jsx: 'automatic', plugins: [{ name: 'report-transport', setup(b) {
       b.onResolve({filter:/services\/userGeneratedContent$/},()=>({path:'transport',namespace:'fixture'}));
       b.onLoad({filter:/.*/,namespace:'fixture'},()=>({contents:'export async function loadUserGeneratedInterpretation(input){const h=window.friendReportHarness;h.calls.push(input);return h.load(input);}'}));
     } }] });

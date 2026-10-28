@@ -796,8 +796,8 @@ assert.doesNotMatch(
 );
 assert.match(
   socialFriendsPanel,
-  /Friends could not load\.[\s\S]*Your connections are still saved\.[\s\S]*Try again/,
-  "A failed Circle load must explain that connections remain saved and expose an explicit retry."
+  /<PageLoadState scope="page" what="Your friends" failed=\{available === false\}[\s\S]*onRetry=\{\(\) => \{ setAvailable\(null\); return refreshSocialData\(\)/,
+  "A failed Circle load must use the shared error design and retry the existing connections without replacing the selected view."
 );
 assert.match(
   socialFriendsPanel,
@@ -886,7 +886,7 @@ assert.doesNotMatch(
 );
 assert.match(
   `${signupView}\n${app}`,
-  /onSavePendingForm\(submittedForm\);[\s\S]*verifyPhoneSignInCode[\s\S]*onAuthenticated\(\{[\s\S]*provider: "phone"[\s\S]*createUserProfile\(form, provider, account\)/,
+  /onSavePendingForm\(submittedForm\);[\s\S]*verifyPhoneSignInCode[\s\S]*finish\(next, form, false, "phone"\)[\s\S]*setAccount\(next\); setPhase\("chart"\)[\s\S]*createUserProfile\(form, provider, account\)/,
   "Phone signup must defer profile details until code verification and preserve the phone provider."
 );
 assert.match(
@@ -896,8 +896,8 @@ assert.match(
 );
 assert.match(
   signupView,
-  /signupResult\.account && signupResult\.sessionEstablished[\s\S]*onAuthenticated\([\s\S]*onEmailConfirmationRequired\(\)[\s\S]*setEmailConfirmationPending[\s\S]*aria-label="Confirm your email"/,
-  "Unconfirmed email signup must stay on a confirmation screen instead of exposing the profile as authenticated."
+  /result\.account && result\.sessionEstablished[\s\S]*setAccount\(result\.account\); setPhase\("chart"\)[\s\S]*onEmailConfirmationRequired\(\)[\s\S]*setConfirmationEmail[\s\S]*aria-label="Confirm your email"/,
+  "Only an established email session can advance to chart setup; unconfirmed email signup must remain on the confirmation screen."
 );
 assert.match(
   signupView,
@@ -911,7 +911,7 @@ assert.match(
 );
 assert.match(
   signupView,
-  /email_not_confirmed[\s\S]*setEmailConfirmationPending\(form\.email\.trim\(\)\)[\s\S]*resendEmailSignupConfirmation\(emailConfirmationPending\)[\s\S]*Resend confirmation email/,
+  /email_not_confirmed[\s\S]*onEmailConfirmationRequired\(\); setConfirmationEmail\(form\.email\.trim\(\)\)[\s\S]*resendEmailSignupConfirmation\(confirmationEmail\)[\s\S]*Resend email/,
   "An unconfirmed login must recover into a self-service confirmation resend flow."
 );
 assert.match(
@@ -946,7 +946,7 @@ assert.match(
 );
 assert.match(
   signupView,
-  /shouldCreateUser: !isLogin[\s\S]*setPhoneResendSeconds\(30\)[\s\S]*verificationCode\.length !== 6[\s\S]*maskPhoneNumber\(phoneOtpDestination\)[\s\S]*Send a new code in 0:/,
+  /verificationCode[\s\S]*\^\\d\{6\}\$[\s\S]*shouldCreateUser: mode !== "login"[\s\S]*setPhoneResendSeconds\(30\)[\s\S]*maskPhoneNumber\(phoneOtpDestination\)[\s\S]*Send a new code in 0:/,
   "Phone OTP must distinguish signup from login, show the destination, require six digits, and enforce the resend window."
 );
 assert.doesNotMatch(
@@ -961,7 +961,7 @@ assert.match(
 );
 assert.match(
   signupView,
-  /\{isPhoneAuthEnabled && \([\s\S]*Continue with phone[\s\S]*\{isPhoneAuthEnabled && phoneAuthOpen && \(/,
+  /phase === "phone" && isPhoneAuthEnabled[\s\S]*aria-label="Phone sign in"[\s\S]*\{isPhoneAuthEnabled && <button[\s\S]*Continue with phone/,
   "The phone entry point and OTP form must stay hidden until the provider is enabled."
 );
 

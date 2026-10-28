@@ -198,6 +198,8 @@ test("a shared Friends reading opens from a compact vanity URL without an owner 
 });
 
 test('a preparing report advances and opens without a reload, preserving state through a transient error', async ({ page }) => {
+  // Writing, one failed poll, Checking, and Ready span three real 10s polls.
+  test.setTimeout(60_000);
   const user = { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated', app_metadata: { provider: "email" }, user_metadata: {}, email: 'progress@example.test' };
   const storageKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
   await page.addInitScript(({ user, storageKey }) => {

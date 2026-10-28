@@ -1,7 +1,8 @@
 import { Eye, EyeOff, X } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { CitySearchField } from "../../components/CitySearchField";
-import { isAuthConfigured, resendEmailSignupConfirmation, signInWithEmail, signInWithProvider, signUpWithEmail, requestPasswordReset, updateRecoveredPassword, type AuthAccount } from "../../services/auth";
+import { isAuthConfigured, isPhoneAuthEnabled, sendPhoneSignInCode, verifyPhoneSignInCode, resendEmailSignupConfirmation, signInWithEmail, signInWithProvider, signUpWithEmail, requestPasswordReset, updateRecoveredPassword, type AuthAccount } from "../../services/auth";
+import { formatUsPhoneInput, maskPhoneNumber } from "../../services/phoneAuth";
 import { normalizePronounChoice, pronounChoices, pronounChoiceLabels } from "../../services/personReferences";
 import { normalizeBirthTime } from "../../services/chartTime";
 import { splitSignupBirthTime, formatSignupBirthTime, type AuthMode, type SignupForm, type SignupProvider } from "./signupModel";
@@ -32,15 +33,24 @@ function GoogleIcon() {
   );
 }
 
-export function SignupView({ initialForm, initialMode = "create", initialAccount, recovery, presentation, loginHeadline, onAuthenticated, onClearPendingForm, onClose, onEmailConfirmationRequired, onSavePendingForm }: SignupViewProps) {
+export function SignupView({ hasPendingInvitation, initialForm, initialMode = "create", initialAccount, recovery, presentation, loginHeadline, onAuthenticated, onClearPendingForm, onClose, onEmailConfirmationRequired, onSavePendingForm }: SignupViewProps) {
   const [form, setForm] = useState({ ...initialForm, pronouns: normalizePronounChoice(initialForm.pronouns) });
   const [mode, setMode] = useState(initialMode);
-  const [phase, setPhase] = useState<"credentials" | "check-email" | "chart" | "forgot" | "reset">(recovery ? "reset" : initialAccount ? "chart" : "credentials");
+  const [phase, setPhase] = useState<"credentials" | "check-email" | "chart" | "forgot" | "reset" | "phone">(recovery ? "reset" : initialAccount ? "chart" : "credentials");
   const [account, setAccount] = useState(initialAccount ?? null);
   const [visible, setVisible] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [confirmationEmail, setConfirmationEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneCode, setPhoneCode] = useState("");
+  const [phoneOtpDestination, setPhoneOtpDestination] = useState("");
+  const [phoneResendSeconds, setPhoneResendSeconds] = useState(0);
+  useEffect(() => {
+    if (phoneResendSeconds <= 0) return;
+    const timer = window.setTimeout(() => setPhoneResendSeconds(seconds => Math.max(0, seconds - 1)), 1000);
+    return () => window.clearTimeout(timer);
+  }, [phoneResendSeconds]);
   useEffect(() => { if (initialAccount && !recovery) { setAccount(initialAccount); setForm(current => ({ ...current, fullName: current.fullName || initialAccount.name || "" })); setPhase("chart"); } }, [initialAccount, recovery]);
   const update = <K extends keyof SignupForm>(key: K, value: SignupForm[K]) => setForm(current => ({ ...current, [key]: value }));
   const title = phase === "chart" ? "Your chart" : phase === "check-email" ? "Check your email" : phase === "forgot" ? "Reset your password" : phase === "reset" ? "Choose a new password" : mode === "login" ? "Log in" : "Create an account";
@@ -60,7 +70,7 @@ export function SignupView({ initialForm, initialMode = "create", initialAccount
       }
       try {
         const next = { ...form, birthTime: form.unknownBirthTime ? "12:00 PM" : normalizeBirthTime(form.birthTime), onboarding: false };
-        finish(account, next, true, account.provider === "google" ? "google" : "email");
+        finish(account, next, true, account.provider === "google" ? "google" : account.provider === "phone" ? "phone" : "email");
       } catch { setMessage("Add a complete birth time, or choose “I don’t know my birth time”."); }
       return;
     }
@@ -79,7 +89,7 @@ export function SignupView({ initialForm, initialMode = "create", initialAccount
       }
     } catch (error) {
       if (mode === "login" && error && typeof error === "object" && "code" in error && error.code === "email_not_confirmed") {
-        setConfirmationEmail(form.email.trim()); setPhase("check-email");
+        onEmailConfirmationRequired(); setConfirmationEmail(form.email.trim()); setPhase("check-email");
       } else setMessage(error instanceof Error ? error.message : "Sign-in could not finish. Please try again.");
     } finally { setBusy(false); }
   }
@@ -94,6 +104,38 @@ export function SignupView({ initialForm, initialMode = "create", initialAccount
     catch (error) { setMessage(error instanceof Error ? error.message : "The email could not be resent."); }
     finally { setBusy(false); }
   }
+  async function submitPhone(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (busy || !isPhoneAuthEnabled || !isAuthConfigured) return;
+    setMessage("");
+    const verificationCode = phoneCode.trim();
+    if (phoneOtpDestination && !/^\d{6}$/.test(verificationCode)) { setMessage("Enter the six-digit code."); return; }
+    setBusy(true);
+    try {
+      if (!phoneOtpDestination) {
+        const destination = await sendPhoneSignInCode(phoneNumber, { shouldCreateUser: mode !== "login" });
+        setPhoneOtpDestination(destination); setPhoneResendSeconds(30);
+      } else {
+        const submittedForm = { ...form, password: "", onboarding: true };
+        if (mode === "create") onSavePendingForm(submittedForm);
+        const next = await verifyPhoneSignInCode({ phone: phoneOtpDestination, code: verificationCode });
+        if (next) {
+          if (mode === "login") finish(next, form, false, "phone");
+          else { setAccount(next); setPhase("chart"); }
+        }
+      }
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Phone sign-in could not finish. Please try again."); }
+    finally { setBusy(false); }
+  }
+  async function resendPhoneCode() {
+    if (busy || phoneResendSeconds > 0 || !isPhoneAuthEnabled) return;
+    setBusy(true); setMessage("");
+    try {
+      const destination = await sendPhoneSignInCode(phoneOtpDestination, { shouldCreateUser: mode !== "login" });
+      setPhoneOtpDestination(destination); setPhoneCode(""); setPhoneResendSeconds(30); setMessage("A new code is on its way.");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not send the phone code."); }
+    finally { setBusy(false); }
+  }
   function switchMode() { setMode(mode === "login" ? "create" : "login"); setMessage(""); }
   const parts = splitSignupBirthTime(form.birthTime);
   const password = <label className="auth-field"><span>Password</span><span className="password-control"><input className="auth-input" aria-label="Password" type={visible ? "text" : "password"} autoComplete={mode === "login" && phase !== "reset" ? "current-password" : "new-password"} value={form.password} required minLength={mode === "login" && phase !== "reset" ? 1 : 8} onChange={event => update("password", event.target.value)} /><button type="button" aria-label={visible ? "Hide password" : "Show password"} onClick={() => setVisible(value => !value)}>{visible ? <EyeOff size={20} /> : <Eye size={20} />}</button></span>{(mode === "create" || phase === "reset") && <small>At least 8 characters</small>}</label>;
@@ -101,8 +143,11 @@ export function SignupView({ initialForm, initialMode = "create", initialAccount
     <button type="button" className="auth-flow-close" aria-label="Close" onClick={onClose}><X size={20} aria-hidden="true" /></button>
     <div className="auth-flow-content">
       <header className="auth-flow-heading"><h1 id="auth-flow-title">{title}</h1>{phase === "chart" ? <p>Step 3 of 3 · Your own chart</p> : phase === "credentials" && <p>{mode === "login" ? loginHeadline ?? "Welcome back to your sky." : "Save your chart and connect with your circle."}</p>}</header>
-      {phase === "check-email" ? <div className="auth-flow-confirmation"><p>Tap the link we sent to <strong>{confirmationEmail}</strong>.</p><button type="button" className="auth-primary-button" disabled={busy} onClick={() => void resend()}>{busy ? "Sending…" : "Resend email"}</button><button type="button" className="auth-flow-text-button" onClick={() => { setPhase("credentials"); setMessage(""); }}>Use a different email</button></div> : <form onSubmit={submit} className="auth-flow-form">
-        {phase === "credentials" && <><button className="google-auth-button" type="button" disabled={busy} onClick={() => void google()}><GoogleIcon />Continue with Google</button><div className="email-divider auth-divider"><span>or with email</span></div></>}
+      {phase === "check-email" ? <div className="auth-flow-confirmation" aria-label="Confirm your email"><p>Tap the link we sent to <strong>{confirmationEmail}</strong> to finish your account{hasPendingInvitation ? " and friend invitation" : ""}.</p><p className="auth-flow-note">You will not have a public handle or appear in Friends until your email is confirmed.</p><button type="button" className="auth-primary-button" disabled={busy} onClick={() => void resend()}>{busy ? "Sending…" : "Resend email"}</button><button type="button" className="auth-flow-text-button" onClick={() => { setPhase("credentials"); setMessage(""); }}>Use a different email</button></div> : phase === "phone" && isPhoneAuthEnabled ? <form className="auth-flow-form" onSubmit={submitPhone} aria-label="Phone sign in">
+        {phoneOtpDestination ? <><p>We sent a code to <strong>{maskPhoneNumber(phoneOtpDestination)}</strong>.</p><label className="auth-field"><span>Six-digit code</span><input className="auth-input" aria-label="Six-digit verification code" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={phoneCode} onChange={event => setPhoneCode(event.target.value.replace(/\D/g, ""))} /></label><button type="button" className="auth-flow-text-button" disabled={busy || phoneResendSeconds > 0} onClick={() => void resendPhoneCode()}>{phoneResendSeconds > 0 ? `Send a new code in 0:${String(phoneResendSeconds).padStart(2, "0")}` : "Send a new code"}</button><button type="button" className="auth-flow-text-button" disabled={busy} onClick={() => { setPhoneOtpDestination(""); setPhoneCode(""); setMessage(""); }}>Edit number</button></> : <label className="auth-field"><span>US mobile number</span><input className="auth-input" type="tel" autoComplete="tel-national" required value={phoneNumber} onChange={event => setPhoneNumber(formatUsPhoneInput(event.target.value))} /></label>}
+        <button type="submit" className="auth-primary-button" disabled={busy}>{busy ? "Please wait…" : phoneOtpDestination ? "Verify code" : "Send code"}</button><button type="button" className="auth-flow-text-button" disabled={busy} onClick={() => { setPhase("credentials"); setMessage(""); }}>Use Google or email</button>
+      </form> : <form onSubmit={submit} className="auth-flow-form">
+        {phase === "credentials" && <><button className="google-auth-button" type="button" disabled={busy} onClick={() => void google()}><GoogleIcon />Continue with Google</button>{isPhoneAuthEnabled && <button className="google-auth-button" type="button" disabled={busy} onClick={() => { setPhase("phone"); setMessage(""); }}>Continue with phone</button>}<div className="email-divider auth-divider"><span>or with email</span></div></>}
         {phase === "chart" ? <>
           <label className="auth-field"><span>Name</span><input className="auth-input" autoComplete="name" value={form.fullName} required onChange={event => update("fullName", event.target.value)} /></label>
           <fieldset className="auth-flow-pronouns"><legend>Pronouns</legend><div className="segmented-control">{pronounChoices.map(value => <button type="button" key={value} className={`segmented-control__item${form.pronouns === value ? " segmented-control__item--active" : ""}`} aria-pressed={form.pronouns === value} onClick={() => update("pronouns", value)}>{pronounChoiceLabels[value]}</button>)}</div></fieldset>
