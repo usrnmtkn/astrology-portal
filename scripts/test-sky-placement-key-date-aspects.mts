@@ -38,12 +38,12 @@ try {
     const timelineOptions = { generatedAt: sky.generatedAt, articleMode: "current" as const };
     const timelineWindow = app.skyPlacementArticleTimelineWindow(position, sky.generatedAt, "current");
     const timelineExpected = expected.filter((_, index) => timestampInInclusiveWindow(events[index].occursAt, timelineWindow));
-    const dates = app.skyPlacementKeyDates(position, facts, undefined, timelineOptions);
+    const dates = app.skyPlacementKeyDates(position, facts, undefined, timelineOptions).map(({ date, label }: any) => ({ date, label }));
     assert.deepEqual(dates.filter((entry: any) => timelineExpected.some(event => event.label === entry.label)), timelineExpected, `${item.planet}: every article-window hit appears in order`);
-    assert.deepEqual(app.skyPlacementKeyDates(position, { ...facts, inSign: [...facts.inSign, ...facts.inSign] }, undefined, timelineOptions), dates, "Repeated input rows deduplicate, distinct exact passes survive");
+    assert.deepEqual(app.skyPlacementKeyDates(position, { ...facts, inSign: [...facts.inSign, ...facts.inSign] }, undefined, timelineOptions).map(({ date, label }: any) => ({ date, label })), dates, "Repeated input rows deduplicate, distinct exact passes survive");
     assert.deepEqual(app.skyPlacementKeyDates(position, { ...facts, sign: "wrong" }, undefined, timelineOptions), app.skyPlacementKeyDates(position, undefined, undefined, timelineOptions), "Facts from another sign cannot leak");
     const detail = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects, aspectFacts: facts, generatedAt: sky.generatedAt, generatedContent: new Map() });
-    assert.deepEqual(detail.keyDates.filter((entry: any) => timelineExpected.some(event => event.label === entry.label)), timelineExpected,
+    assert.deepEqual(detail.keyDates.filter((entry: any) => timelineExpected.some(event => event.label === entry.label)).map(({ date, label }: any) => ({ date, label })), timelineExpected,
       `${item.planet}: real app article receives every exact aspect in the article window`);
     if (item.planet === "Chiron") {
       assert.ok(events.length > timelineExpected.length, "Chiron must have exact hits outside the current article window");

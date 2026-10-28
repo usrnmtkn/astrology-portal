@@ -21,10 +21,10 @@ export function HoroscopeLocation({value,onChange,onReset,description,disabled=f
     <div className="horoscope-location-fields">
       <label htmlFor={id}>City<input id={id} type="search" placeholder="Search for a city" value={query} disabled={disabled} autoComplete="off" onChange={e=>setQuery(e.target.value)}/></label>
       {searching&&<p role="status">Looking up cities…</p>}
-      {cities.length>0&&<ul aria-label="Matching cities">{cities.map(city=><li key={`${city.label}/${city.latitude}/${city.longitude}`}><button type="button" disabled={disabled} onClick={()=>choose(city)}>{city.label}</button></li>)}</ul>}
+      {cities.length>0&&<ul aria-label="Matching cities">{cities.map(city=><li key={`${city.label}/${city.latitude}/${city.longitude}`}><button className="secondary-button" type="button" disabled={disabled} onClick={()=>choose(city)}>{city.label}</button></li>)}</ul>}
       {error&&<p role="status">{error}</p>}
       <label>Time zone<select aria-label="Horoscope time zone" value={zone} disabled={disabled} onChange={e=>{setQuery('');onChange({label:'Selected time zone',latitude:0,longitude:0,timeZone:e.target.value});}}>{zones.map(z=><option key={z} value={z}>{z.replaceAll('_',' ')}</option>)}</select></label>
-      {onReset&&<button type="button" disabled={disabled} onClick={()=>{setQuery('');setCities([]);setError('');onReset();}}>Reset to device time zone</button>}
+      {onReset&&<button className="secondary-button" type="button" disabled={disabled} onClick={()=>{setQuery('');setCities([]);setError('');onReset();}}>Reset to device time zone</button>}
       <p>{description??'Local dates follow this time zone, including daylight saving time. Readings use your rising sign.'}</p>
     </div>
   </details>;

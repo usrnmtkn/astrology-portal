@@ -1,0 +1,46 @@
+/* Shared account, settings and menu surfaces keep the existing data controls. */
+.settings-page, .account-page { gap: var(--space-7); }
+.settings-group { gap: var(--space-4); }
+.settings-group-label { font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); letter-spacing: var(--tracking-normal); text-transform: none; color: var(--ink); }
+.settings-card, .settings-account-card { border: 0; border-radius: var(--card-radius-sm); padding: var(--space-2); box-shadow: var(--card-shadow); background: var(--surface); }
+:is(.settings-card, .settings-account-card) :is(.settings-row, .settings-profile-row, .settings-signout-row, .account-editable-row) { border: 0; border-radius: var(--radius-sm); padding: var(--space-5) var(--space-6); }
+.settings-row-title, .settings-row__label, .account-editable-row > span:first-child { font-family: var(--font-ui); font-size: var(--text-button-size); font-weight: var(--weight-medium); color: var(--ink); }
+.settings-row-copy { font-family: var(--font-ui); }
+.settings-row-description { color: var(--muted); }
+.settings-profile-row .profile-avatar { background: var(--avatar-owner-bg); color: var(--avatar-owner-fg); }
+.site-menu { border: 0; border-radius: var(--card-radius); background: var(--surface); }
+.site-menu button:hover { background: var(--surface-2); color: var(--ink); }
+.site-menu-auth { gap: var(--space-2); padding: var(--space-3) 0 0; border: 0; }
+.auth-card { border: 0; border-radius: var(--card-radius); box-shadow: var(--card-shadow); background: var(--surface); }
+.auth-card :is(.auth-input, .phone-auth-country-select, .phone-auth-code-control) { background: var(--surface-2); border-color: transparent; border-radius: var(--radius-sm); }
+.auth-card :is(.auth-submit, .phone-auth-submit) { background: var(--accent); color: var(--pill-fg); border-radius: var(--radius-pill); }
+@media (max-width: 800px) {
+ :is(.settings-card, .settings-account-card) :is(.settings-row, .settings-profile-row, .settings-signout-row, .account-editable-row) { padding: var(--space-4); }
+}
+
+.site-menu-modal .modal-positioner { place-items: stretch end; padding: 0; }
+.site-menu-modal .modal-overlay { backdrop-filter: none; }
+.modal-panel.site-menu-sheet { width: min(var(--sheet-panel-width), 100%); max-width: 100%; max-height: none; height: var(--sheet-height); padding: var(--space-6); border: 0; border-radius: var(--card-radius) 0 0 var(--card-radius); background: var(--surface-recessed); overflow-y: auto; }
+.site-menu-profile { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-2) var(--space-2) var(--space-7); }
+.site-menu-profile .profile-avatar { width: var(--size-7); height: var(--size-7); background: var(--avatar-owner-bg); color: var(--avatar-owner-fg); }
+.site-menu-profile > span { display: grid; gap: var(--space-2); min-width: 0; }
+.site-menu-profile strong { font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); }
+.site-menu-profile small { font-family: var(--font-label); font-size: var(--type-meta-size); color: var(--accent); }
+.site-menu-close { display: grid; place-items: center; margin-left: auto; flex: none; width: var(--size-6); height: var(--size-6); border: 0; border-radius: var(--radius-circle); background: var(--surface); color: var(--ink); cursor: pointer; }
+.site-menu-sheet .site-menu-theme { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-6); border-radius: var(--radius-card-compact); background: var(--surface); margin-bottom: var(--space-6); font-family: var(--font-ui); font-size: var(--text-button-size); font-weight: var(--weight-semibold); }
+.site-menu-theme .settings-theme-control { margin-left: auto; text-transform: capitalize; }
+.site-menu-sheet .site-menu { position: static; width: 100%; max-height: none; padding: var(--space-2); box-shadow: var(--card-shadow); }
+.site-menu-sheet .site-menu [role="menuitem"] { width: 100%; min-height: var(--size-6); padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); font-family: var(--font-ui); font-size: var(--type-ui-copy-size); }
+.site-menu-sheet .site-menu { gap: 0; }
+.site-menu-sheet .site-menu button.active { background: var(--surface-2); color: var(--ink); }
+.site-menu-theme .settings-theme-control { border: 0; background: var(--surface-2); }
+.site-menu-theme .settings-theme-control button { min-height: var(--size-4); padding: 0 var(--space-4); color: var(--muted); text-transform: capitalize; }
+.site-menu-theme .settings-theme-control button.active { background: var(--surface); color: var(--ink); box-shadow: var(--segmented-active-shadow); }
+@media (max-width: 800px) {
+ .modal-panel.site-menu-sheet { border-radius: var(--card-radius) var(--card-radius) 0 0; height: var(--sheet-height); }
+ .site-menu-profile { padding-bottom: var(--space-6); }
+}
+
+.settings-page, .account-page { font-family: var(--font-ui); }
+button.settings-signout-row { font-family: var(--font-ui); font-size: var(--type-ui-copy-size); line-height: var(--leading-description); }
+.auth-card { --font-body: var(--font-ui); }

@@ -40,19 +40,20 @@ for (const [width, theme, dated, planet, sign] of [
       await page.route('**/api/admin/**', route => { writes.push(route.request().url()); return route.abort(); });
       await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
       const download = page.waitForEvent('download', { timeout: 90_000 });
+      const announced = page.getByRole('status').filter({ hasText: 'Sky article CSV downloaded.' }).waitFor({state:'visible',timeout:90000});
       await page.goto(`/?date=2026-10-21&studioExport=sky-article-csv#sky/placement/${planet}/${sign}`);
       if (failRead) {
-        await expect(page.getByText('The placement reading could not load. Please try again.', { exact: true })).toBeVisible({ timeout: 60_000 });
+        await expect(page.getByRole('alert').filter({hasText:'This placement could not load.'})).toBeVisible({ timeout: 60_000 });
         expect(downloads).toHaveLength(0);
         failRead = false;
-        await page.getByRole('button', { name: 'Retry', exact: true }).click();
+        await page.getByRole('button', { name: 'Try again', exact: true }).click();
       }
       const downloaded = await download;
       expect(downloaded.suggestedFilename()).toBe(`content-studio-reader-sky-placement-${planet}-${sign}-2026-10-21.csv`);
       const text = await readFile((await downloaded.path())!, 'utf8');
       const exported = cells(text);
       const article = page.locator('.sky-detail-article');
-      await expect(page.getByRole('status').filter({ hasText: 'Sky article CSV downloaded.' })).toBeVisible();
+      await announced;
       expect(exported.title).toBe(await article.locator('h1').innerText());
       const summary = article.locator('.article-tldr__copy');
       expect(exported.summary).toBe(await summary.count() ? await summary.innerText() : '');

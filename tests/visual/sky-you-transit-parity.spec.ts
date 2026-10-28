@@ -1,8 +1,9 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "../helpers/polish-test";
 import { getAstrodienstSky, natalDailyTransitPeaksFor } from "../../apps/web/src/services/ephemeris";
 import { zonedDateTimeToUtc } from "../../apps/web/src/services/timezones";
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { expectPersonalizedPlacementPresentation } from "../helpers/sky-personalized-presentation";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 // Synthetic chart selected for a calculated Virgo North Node near September's Sun.
@@ -58,6 +59,8 @@ for (const [day, hour, width, theme] of [
   const skyParagraphs = await aspect.locator("p").allTextContents();
   expect(skyParagraphs.length).toBeGreaterThan(1);
   await expect(aspect).not.toContainText("the window is clean");
+  await expectPersonalizedPlacementPresentation(page, width);
+  await expect(aspect.locator(".sky-detail-personalized-aspect__glyph")).toHaveText("☌ ☍");
   await page.locator("#sky-personalized-placement").screenshot({ path: `test-results/sky-you-parity-${day}-${width}-${theme}.png` });
   await page.reload();
   await expect(aspect.locator("p")).toHaveText(skyParagraphs, { timeout: 60_000 });

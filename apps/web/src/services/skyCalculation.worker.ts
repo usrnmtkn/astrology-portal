@@ -11,6 +11,7 @@ import {
   getMatchingNewMoonForFullMoon,
   natalTransitTimingFor,
   natalDailyTransitPeaksFor,
+  relationshipForecastDayFor,
   preloadSwissEphemeris
 } from "./ephemeris.js";
 
@@ -28,6 +29,7 @@ type SkyCalculationRequest =
   | { id: number; kind: "matching-new-moon"; args: Parameters<typeof getMatchingNewMoonForFullMoon> }
   | { id: number; kind: "natal-transit-timing"; args: Parameters<typeof natalTransitTimingFor> }
   | { id: number; kind: "natal-daily-peaks"; args: Parameters<typeof natalDailyTransitPeaksFor> }
+  | { id: number; kind: "relationship-forecast-day"; args: Parameters<typeof relationshipForecastDayFor> }
   | { id: number; kind: "placement-sky"; includeAspectLists?: boolean; timingScope?: "all" | "placement"; location: LocationInput; planet: string; sign: string; date: string }
   | { id: number; kind: "placement-transit-facts"; planet: string; sign: string; date: string; timeZone: string }
   | { id: number; kind: "retrograde-history"; planet: string; sign: string; date: string }
@@ -64,6 +66,8 @@ async function calculate(request: SkyCalculationRequest) {
       return natalTransitTimingFor(...request.args);
     case "natal-daily-peaks":
       return natalDailyTransitPeaksFor(...request.args);
+    case "relationship-forecast-day":
+      return relationshipForecastDayFor(...request.args);
     case "preload":
       await preloadSwissEphemeris();
       return null;
@@ -97,7 +101,7 @@ async function drainCalculations() {
 
 self.addEventListener("message", (event: MessageEvent<SkyCalculationRequest>) => {
   const request = event.data;
-  const queue = request.kind === "natal-transit-timing" || request.kind === "retrograde-history" ? backgroundQueue
+  const queue = request.kind === "natal-transit-timing" || request.kind === "retrograde-history" || request.kind === "relationship-forecast-day" ? backgroundQueue
     : request.kind === "sky" && request.options?.includeTransitWindows ? detailQueue
     : foregroundQueue;
   queue.push(request);

@@ -60,6 +60,32 @@ async function assertFacts(panel: Locator) {
   for (const [property, actual, expected] of labelStyles) expect(actual, property).toBe(expected);
 }
 
+async function assertCycleCards(panel: Locator) {
+  await expect(panel.locator('.retrograde-cycles')).toBeVisible({ timeout: 60_000 });
+  for (const section of await panel.locator('.retrograde-cycles--article .retrograde-cycles__section').all()) {
+    if (await section.getAttribute('open') === null) await section.locator(':scope > summary').click();
+  }
+  await expect(panel.locator('.retrograde-cycles__section[open]')).toHaveCount(2);
+  await expect(panel.locator('.retrograde-cycles__section > summary')).toHaveText(['Previous retrograde', 'Next retrograde']);
+  await expect(panel).toContainText('Tuesday, Oct 16, 2018 · 8 years ago');
+  await expect(panel).toContainText('Saturday, Sep 30, 2034 · in 8 years');
+  await expect(panel.locator('.retrograde-history-facts')).toHaveCount(0);
+  await expect(panel.locator('.retrograde-cycles').locator('h1,h2,h3,h4,h5,h6')).toHaveCount(0);
+  await expect(panel.getByRole('link', { name: 'Open Oct 16, 2018 →' })).toHaveAttribute('href', '/?date=2018-10-16#calendar?view=day&date=2018-10-16');
+  await expect(panel.getByRole('link', { name: 'Open Sep 30, 2034 →' })).toHaveAttribute('href', '/?date=2034-09-30#calendar?view=day&date=2034-09-30');
+}
+
+async function cyclePresentation(panel: Locator) {
+  return panel.locator('.retrograde-cycles').evaluate(element => {
+    const selectors = ['.retrograde-cycles__section > summary', '.retrograde-cycles__date', '.retrograde-cycles__meta', '.retrograde-cycles__compare > summary', '.retrograde-cycles__open', '.retrograde-cycles__card p'];
+    const properties = ['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'color', 'borderRadius', 'padding'] as const;
+    return selectors.map(selector => {
+      const style = getComputedStyle(element.querySelector(selector)!);
+      return Object.fromEntries(properties.map(property => [property, style[property]]));
+    });
+  });
+}
+
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`retrograde receipt saves and reaches Sky and Calendar ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(150_000);
@@ -169,7 +195,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
           postMessage(message: any, transfer?: any) {
             if (message.kind === "retrograde-history" && !sessionStorage.getItem("history-failure-tested")) {
               sessionStorage.setItem("history-failure-tested", "true");
-              setTimeout(() => this.dispatchEvent(new MessageEvent("message", { data: { id: message.id, ok: false, error: "Synthetic history calculation failure" } })), 250);
+              setTimeout(() => this.dispatchEvent(new MessageEvent("message", { data: { id: message.id, ok: false, error: "Synthetic history calculation failure" } })), 3000);
               return;
             }
             super.postMessage(message, transfer);
@@ -177,25 +203,57 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         };
       });
       await page.goto("/?date=2026-10-10#sky/placement/venus/scorpio");
-      const skyPanel = page.locator(".sky-detail-article .retrograde-history");
-      await skyPanel.locator("summary").click({ timeout: 60_000 });
-      await expect(skyPanel.getByRole("status")).toBeVisible();
+      const skyPanel = page.locator(".sky-placement-article__sections");
+      await expect(skyPanel.getByRole("status").filter({ hasText: "Calculating retrograde cycles…" })).toBeVisible();
       await expect(skyPanel.getByRole("alert")).toContainText("could not load");
       await skyPanel.getByRole("button", { name: "Try again" }).click();
-      await assertFacts(skyPanel);
-      const skyText = await skyPanel.locator("dl").innerText();
+      await expect(skyPanel.locator('.retrograde-cycles__section')).toHaveCount(2);
+      await expect(skyPanel.locator('.retrograde-cycles__section[open]')).toHaveCount(0);
+      await assertCycleCards(skyPanel);
+      const skyPresentation = await cyclePresentation(skyPanel);
+      const skyText = await skyPanel.locator('.retrograde-cycles').innerText();
+      const skyPrevious = skyPanel.locator('.retrograde-cycles__section').first();
+      await skyPrevious.locator(':scope > summary').focus();
+      await page.keyboard.press('Enter');
+      await expect(skyPrevious).not.toHaveAttribute('open');
+      await page.keyboard.press('Enter');
+      await expect(skyPrevious).toHaveAttribute('open');
+      const skyComparison = skyPanel.locator('.retrograde-cycles__compare');
+      await skyComparison.locator('summary').click();
+      await expect(skyComparison.getByRole('table')).toBeVisible();
+      await expect(skyComparison.getByRole('row').filter({ hasText: /^2026Current/ })).toContainText('41 days');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await skyComparison.locator('summary').click();
       await skyPanel.screenshot({ path: `test-results/retrograde-history-sky-${width}-${theme}.png` });
       await page.reload();
-      await skyPanel.locator("summary").click({ timeout: 60_000 });
-      await assertFacts(skyPanel);
-      await expect(skyPanel.locator("dl")).toHaveText(skyText, { useInnerText: true });
+      await expect(skyPanel.locator('.retrograde-cycles__section')).toHaveCount(2);
+      await expect(skyPanel.locator('.retrograde-cycles__section[open]')).toHaveCount(0);
+      await assertCycleCards(skyPanel);
+      await expect(skyPanel.locator('.retrograde-cycles')).toHaveText(skyText, { useInnerText: true });
+      await skyPanel.getByRole('link', { name: 'Open Oct 16, 2018 →' }).click();
+      await expect(page).toHaveURL(/date=2018-10-16/);
+      await expect(page.locator('.calendar-day-events')).toBeVisible({ timeout: 60_000 });
+      await page.goBack();
+      await assertCycleCards(skyPanel);
+      await skyPanel.getByRole('link', { name: 'Open Sep 30, 2034 →' }).click();
+      await expect(page).toHaveURL(/date=2034-09-30/);
+      await expect(page.locator('.calendar-day-events')).toBeVisible({ timeout: 60_000 });
       await page.goto("/?date=2026-10-03#calendar?view=day&date=2026-10-03");
       const event = page.locator(".calendar-day-events .calendar-stoic-card").filter({ hasText: "Venus stations retrograde" });
       await page.evaluate(() => sessionStorage.removeItem("history-failure-tested"));
+      await expect(event).toBeVisible({timeout:60_000});
+      await expect(event.locator('strong').first()).toHaveCSS('font-family',/system-ui/);await expect(event.locator('strong').first()).toHaveCSS('font-size','18px');await expect(event.locator('strong').first()).toHaveCSS('font-weight','600');
+      await expect(event.locator('.calendar-stoic-card__excerpt').first()).toHaveCSS('font-size','19px');await expect(event.locator('.calendar-stoic-card__excerpt').first()).toHaveCSS('line-height','28.5px');
+      await event.screenshot({path:`test-results/card-calendar-${width}-${theme}.png`});
       await event.click({ timeout: 60_000 });
       const calendarPanel = page.getByRole("dialog", { name: "Event detail" });
       await expect(calendarPanel.getByRole("alert")).toContainText("could not load");
       await calendarPanel.getByRole("button", { name: "Try again" }).click();
+      await assertCycleCards(calendarPanel);
+      const calendarPresentation = await cyclePresentation(calendarPanel);
+      expect(calendarPresentation).not.toEqual(skyPresentation); // Article cards have their own updated UI roles.
+      await expect(calendarPanel.locator('.retrograde-cycles__section > summary').first()).toHaveCSS('font-size', '22px');
+      await expect(calendarPanel.locator('.retrograde-cycles__date').first()).toHaveCSS('font-size', '17px');
       await expect(calendarPanel.locator(".retrograde-cycles__section[open]")).toHaveCount(2);
       await expect(calendarPanel).toContainText("Tuesday, Oct 16, 2018 · 8 years ago");
       await expect(calendarPanel).toContainText("Saturday, Sep 30, 2034 · in 8 years");
@@ -206,9 +264,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await comparison.locator("summary").click();
       await expect(comparison).toContainText("6°07′");
       await expect(comparison).toContainText("20°27′");
-      await expect(comparison.getByRole("row").filter({ hasText: /^Retrograde42 days/ })).toContainText("41 days");
-      await expect(comparison).toContainText("18 days");
-      await expect(comparison.locator(".astro-glyph__mask")).toHaveCount(9);
+      await expect(comparison.getByRole("row").filter({ hasText: /^2026Current/ })).toContainText("41 days");
+      await expect(comparison.getByRole("row").filter({ hasText: /^2034Next/ })).toContainText("42 days");
+      await expect(comparison.getByRole("row").filter({ hasText: /^2034Next/ })).toContainText("18 in Scorpio");
+      await expect(comparison.getByRole("columnheader")).toHaveCount(5);
+      await expect(comparison.locator(".retrograde-cycles__bar")).toHaveCount(3);
       expect(await comparison.locator(".retrograde-cycles__table-scroll").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
       await comparison.screenshot({ path: `test-results/retrograde-comparison-${width}-${theme}.png` });
       await comparison.locator("summary").click();
@@ -218,7 +278,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
           titleSize: h2.fontSize, titleWeight: h2.fontWeight, titleLeading: h2.lineHeight, titleFont: h2.fontFamily,
           overflow: el.scrollWidth > el.clientWidth };
       });
-      expect(metrics).toMatchObject({ width: Math.min(width, 440), padding: "28px", gap: "28px", titleSize: "28px", titleWeight: "400", titleLeading: "32.2px", overflow: false });
+      expect(metrics).toMatchObject({ width: Math.min(width, 440), padding: "28px", gap: "28px", titleSize: "36px", titleWeight: "400", titleLeading: "40.32px", overflow: false });
       expect(metrics.titleFont).toContain("Newsreader");
       const typography = await calendarPanel.evaluate(el => {
         const selectors = ["h2", ".retrograde-station-label", ".retrograde-station-date", ".retrograde-station-copy p", ".retrograde-cycles__section > summary", ".retrograde-cycles__date", ".retrograde-cycles__meta", ".retrograde-cycles__card p"];
@@ -227,15 +287,17 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
           return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.fontFamily];
         });
       });
-      expect(typography.map(style => style[0])).toEqual(["28px", "12px", "14px", "16px", "22px", "17px", "14px", "15px"]);
-      expect(typography[0].slice(1, 4)).toEqual(["400", "32.2px", "-0.42px"]);
+      expect(typography.map(style => style[0])).toEqual(["36px", "12px", "14px", "19px", "22px", "17px", "14px", "19px"]);
+      expect(typography[0].slice(1, 4)).toEqual(["400", "40.32px", "-0.54px"]);
       expect(typography[1][3]).toBe("0.72px");
       expect(typography[1][4]).toContain("Geist Mono");
-      expect(typography[3][2]).toBe("24px");
+      expect(typography[3][2]).toBe("28.5px");
       expect(typography[5][1]).toBe("500");
-      expect(typography[7][2]).toBe("22.5px");
+      expect(typography[7][2]).toBe("28.5px");
       const previousCard = calendarPanel.locator(".retrograde-cycles__section").first().locator(".retrograde-cycles__card").first();
-      expect(await previousCard.evaluate(el => { const s = getComputedStyle(el); return [s.padding, s.borderRadius, s.borderTopWidth, s.gap]; })).toEqual(["22px", "24px", "1px", "12px"]);
+      // Calendar retains its event structure and uses the handoff's shared
+      // 32px raised-card radius and 19px narrative role.
+      expect(await previousCard.evaluate(el => { const s = getComputedStyle(el); return [s.padding, s.borderRadius, s.borderTopWidth, s.gap]; })).toEqual(["22px", "32px", "1px", "12px"]);
       await expect(previousCard.locator("p")).toHaveText("Venus retrogrades in nearly the same place every eight years. This is the last day it stood where it stations today. Reflect back to that time: what you valued, who you were close to, and what felt unresolved may be worth revisiting now.");
       await calendarPanel.screenshot({ path: `test-results/retrograde-history-calendar-${width}-${theme}.png` });
       await calendarPanel.getByRole("link", { name: "Open Oct 16, 2018 →" }).click();

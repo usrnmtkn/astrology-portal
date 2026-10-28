@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import { forecastDayLinks } from '../apps/web/src/features/friends/forecastDayLinks';
+import { rateRelationshipContacts, type ForecastContact, type RelationshipForecastDay } from '../apps/web/src/services/relationshipForecast';
+
+const make = (id:string,owner:'reader'|'friend',target:string):ForecastContact => ({id,owner,target,planet:'Venus',aspect:'trine',orb:0.2,units:100,channel:'flow',exactAt:[],continuesFromPreviousDay:true,continuesIntoNextDay:true,targetLongitude:0,transitLongitude:120,peakAt:'2026-10-25T16:00:00Z',activeIntervals:[],timeLord:false,retrograde:false,connections:[]});
+const reader=make('reader','reader','Sun'), friend=make('friend','friend','Moon'), other=make('other','friend','Mars');
+const a={id:'a',readerPoint:'Sun',friendPoint:'Moon',aspect:'trine',orb:0.4};
+const b={id:'b',readerPoint:'Sun',friendPoint:'Mars',aspect:'sextile',orb:0.6};
+reader.connections=[{...a,directContactId:friend.id},{...b,directContactId:other.id}];
+friend.connections=[{...a,directContactId:reader.id}];other.connections=[{...b,directContactId:reader.id}];
+reader.timeLord=true;
+const contacts=[reader,friend,other], rating=rateRelationshipContacts(contacts);
+const day:RelationshipForecastDay={date:'2026-10-25',start:'2026-10-25T04:00:00Z',end:'2026-10-26T04:00:00Z',contacts,...rating,drivers:['personal-alias'],mainThemes:[],annualTiming:[]};
+const before=JSON.stringify(day),groups=forecastDayLinks(day);
+assert.deepEqual(groups.map(group=>[group.link.id,group.contacts.map(contact=>contact.id)]),[['a',['reader','friend']],['b',['reader','other']]],'Group true shared links in rating order and deduplicate their contacts.');
+assert.equal(JSON.stringify(day),before,'Grouping never changes calculation facts, ratings, drivers or sources.');
+assert.deepEqual(forecastDayLinks({...day,contacts:contacts.map(contact=>({...contact,connections:contact.connections.map(({directContactId,...link})=>link)}))}),[],'Indirect personal contacts do not become shared influences.');
+assert.deepEqual(forecastDayLinks({...day,contacts:[reader]}),[],'A missing counterpart cannot create a link.');
+assert.deepEqual(forecastDayLinks({...day,contacts:[reader,{...friend,owner:'reader'},{...other,owner:'reader'}]}),[],'Both endpoints must belong to different people.');
+assert.deepEqual(forecastDayLinks({...day,contacts:[]}),[]);
+console.log('Forecast day links: shared endpoints, ordering, deduplication, empty states and immutable calculation facts passed.');

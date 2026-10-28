@@ -1,9 +1,10 @@
+import "../../styles/learn.css";
 import { FormattedProse, FormattedText } from "../../components/FormattedProse";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { pointGlyph } from "../../components/charts/chartAssets";
 import { ArticlePills } from "../../components/ArticlePills";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoading, PageLoadState } from "../../components/PageLoading";
 import {
   inferArticleBlockStyle,
   noteTextFromBody,
@@ -551,6 +552,9 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
 export function LearnExperience({ pathname, onOpenPath }: LearnExperienceProps) {
   const [pages, setPages] = useState<Astro101Page[] | null>(null);
   const [failed, setFailed] = useState(false);
+  const [pending, setPending] = useState(true);
+  const [failure, setFailure] = useState<unknown>();
+  const [attempt, setAttempt] = useState(0);
   const location = astro101LocationState(pathname);
 
   useEffect(() => {
@@ -558,10 +562,11 @@ export function LearnExperience({ pathname, onOpenPath }: LearnExperienceProps) 
     let revision = 0;
     const reload = () => {
       const requested = ++revision;
+      setPending(true);
       loadLiveAstro101Pages().then(loaded => {
-        if (!cancelled && requested === revision) { setPages(loaded); setFailed(false); }
-      }).catch(() => {
-        if (!cancelled && requested === revision) { setPages([]); setFailed(true); }
+        if (!cancelled && requested === revision) { setPages(loaded); setFailed(false); setPending(false); }
+      }).catch(error => {
+        if (!cancelled && requested === revision) { setPages([]); setFailure(error); setFailed(true); setPending(false); }
       });
     };
     const unsubscribe = subscribeToContentUpdates(notice => {
@@ -573,17 +578,13 @@ export function LearnExperience({ pathname, onOpenPath }: LearnExperienceProps) 
     const stopRevalidation = subscribeToContentRevalidation(reload);
     reload();
     return () => { cancelled = true; unsubscribe(); stopRevalidation(); };
-  }, []);
-
-  if (!pages) {
-    return <PageLoading message="Loading Astro 101…" />;
-  }
+  }, [attempt]);
 
   const page = location && !location.hub
-    ? pages.find((item) => item.slug === location.slug) ?? null
+    ? pages?.find((item) => item.slug === location.slug) ?? null
     : null;
   const showBack = Boolean(location && !location.hub);
-  const labelledBy = failed || !location || location.hub ? "learn-hub-title" : "learn-article-title";
+  const labelledBy = failed || !pages || !location || location.hub ? "learn-hub-title" : "learn-article-title";
 
   return (
     <section
@@ -592,15 +593,9 @@ export function LearnExperience({ pathname, onOpenPath }: LearnExperienceProps) 
       aria-labelledby={labelledBy}
     >
       {showBack ? <LearnBackButton onOpenPath={onOpenPath} /> : null}
-      {failed ? (
-        <article className="learn-sheet">
-          <header className="learn-article-header">
-            <p className="learn-kicker">Learn</p>
-            <h1 className="article-title" id="learn-hub-title">Astro 101</h1>
-            <p>Astro 101 could not load. Try again in a moment.</p>
-          </header>
-        </article>
-      ) : location && !location.hub && !page ? (
+      {(failed || !pages) && <header className="learn-article-header"><p className="learn-kicker">Learn</p><h1 className="article-title" id="learn-hub-title">Astro 101</h1></header>}
+      <PageLoadState scope="page" what="Astro 101" cause={failure} failed={failed} pending={pending} onRetry={() => setAttempt(value => value + 1)}>
+      {!pages ? <PageLoading message="Loading Astro 101…" /> : location && !location.hub && !page ? (
         <article className="learn-sheet">
           <header className="learn-article-header">
             <p className="learn-kicker">Learn</p>
@@ -613,6 +608,7 @@ export function LearnExperience({ pathname, onOpenPath }: LearnExperienceProps) 
       ) : (
         <LearnHub pages={pages} onOpenPath={onOpenPath} />
       )}
+      </PageLoadState>
     </section>
   );
 }

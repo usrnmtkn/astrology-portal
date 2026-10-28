@@ -4,6 +4,7 @@ import { Check, ChevronDown, MoreVertical } from "lucide-react";
 import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import "../../styles/friends-detail.css";
+import "../../styles/profile-overview.css";
 
 export type FriendDetailTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
 export type FriendDetailTabOption = {
@@ -69,9 +70,6 @@ export function FriendDetail({
   const portalsVisible = useContext(PortalVisibility);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
-  const primaryTabs = tabs.filter(({ value }) => (
-    value === "compatibility" || value === "transits" || value === "natal"
-  ));
   const overflowTabs = tabs.filter(({ value }) => (
     value === "synastry" || value === "composite"
   ));
@@ -110,7 +108,7 @@ export function FriendDetail({
 
   return (
     <section className={className} aria-label={ariaLabel}>
-      <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">
+      <header className="profile-heading friend-profile-heading">
         <div className="friend-hero-card friend-profile-card">
           <ProfileAvatar
             avatarUrl={avatarUrl}
@@ -120,28 +118,23 @@ export function FriendDetail({
             size="large"
           />
           <div className="friend-hero-copy">
-            <h2>{name}</h2>
+            <h1>{name}</h1>
             {subtitle ? <span className="friend-profile-handle">{subtitle}</span> : null}
-            <span className="manual-chart-signatures">
+            <span className="manual-chart-signatures sr-only">
               <span>☉ {sun}</span>
               <span>☽ {moon}</span>
               <span>↑ {rising}</span>
             </span>
           </div>
-          {onEdit ? (
-            <button id={editButtonId} className="friend-kebab" type="button" aria-label={`Edit ${name}`} onClick={onEdit}>
-              <MoreVertical size={24} aria-hidden="true" />
-            </button>
-          ) : null}
         </div>
-
+        <div className="friend-profile-controls">
         {!isEventChart ? (
           <div
             className="profile-tabs friend-tabs friend-view-tabs friend-chart-tabs"
             role="tablist"
             aria-label="Chart profile sections"
           >
-            {primaryTabs.map((tab) => {
+            {tabs.map((tab) => {
               const isActive = tab.value === activeTab;
 
               return (
@@ -149,7 +142,7 @@ export function FriendDetail({
                   type="button"
                   role="tab"
                   aria-selected={isActive}
-                  className={`friend-view-tab${isActive ? " friend-view-tab--active" : ""}`}
+                  className={`friend-view-tab${overflowTabs.some(item => item.value === tab.value) ? " friend-view-tab--extended" : ""}${isActive ? " friend-view-tab--active" : ""}`}
                   key={tab.value}
                   onFocus={() => onTabIntent?.(tab.value)}
                   onClick={() => selectTab(tab.value)}
@@ -216,7 +209,14 @@ export function FriendDetail({
             ) : null}
           </div>
         ) : null}
-
+        {onEdit ? (
+          <button id={editButtonId} className="friend-kebab" type="button" aria-label={`Edit ${name}`} onClick={onEdit}>
+            <MoreVertical size={24} aria-hidden="true" />
+          </button>
+        ) : null}
+        </div>
+      </header>
+      <div className="relationship-detail-right friend-detail-content-column friend-detail-main chart-layout__content">
         {children}
       </div>
 

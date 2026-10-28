@@ -175,9 +175,15 @@ assert.match(
 );
 assert.equal(
   (manualChartsPanelSource.match(/acceptedOwnerApprovedTransitSections\(/gu) ?? []).length,
-  8,
-  "pre-cap eligibility plus personal/house reader sections, availability, and open handlers must use the permanent gate"
+  10,
+  "pre-cap eligibility, personal/house readers and handlers, plus both feed selection and timed feed cards must use the permanent gate"
 );
+assert.match(manualChartsPanelSource,
+  /acceptedOwnerApprovedTransitSections\(\s*normalizePersonalTransitSurface\(transit,/u,
+  "Feed candidates must gate source-attributed prose before selection.");
+assert.match(manualChartsPanelSource,
+  /acceptedOwnerApprovedTransitSections\(\s*normalizePersonalTransitSurface\(\{\.\.\.card\.transit,timing\}/u,
+  "Timed feed cards must gate their final source-attributed prose.");
 assert.deepEqual(
   nodeRenderedSaturn.partSourceKeys?.at(-1),
   ["fallback-hook/transit-house-retro-overlay/saturn"],

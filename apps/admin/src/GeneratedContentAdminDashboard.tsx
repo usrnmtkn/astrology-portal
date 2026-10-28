@@ -34,6 +34,7 @@ import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNata
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
+import { frictionFlowDraftErrors } from "../../web/src/content/frictionFlowTemplateValidation";
 import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "../../web/src/content/skyDebilityInterpretation";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
@@ -4555,7 +4556,7 @@ export function GeneratedContentAdminDashboard() {
       || draft.body.trim()
     ));
     const hasUnsavedChanges = Boolean(draft && !matchesSavedDraft && hasDraftContent);
-    if ((hasUnsavedChanges || hasPendingArticleChanges()) && !window.confirm("Discard the unsaved changes in this editor?")) {
+    if ((hasUnsavedChanges || hasPendingArticleChanges()) && !confirmDiscardEditorChanges()) {
       return false;
     }
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
@@ -5994,7 +5995,7 @@ export function GeneratedContentAdminDashboard() {
       hasChangedSavedDraft()
       || hasPendingArticleChanges()
     );
-    if (replacingUnsavedEditor && !preservingParentDraft && !window.confirm("Discard the unsaved changes in this editor?")) return false;
+    if (replacingUnsavedEditor && !preservingParentDraft && !confirmDiscardEditorChanges()) return false;
     // Capture focus and the owner's decision before loading disables controls.
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
@@ -6351,7 +6352,7 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (draft && (hasChangedSavedDraft() || hasPendingArticleChanges())
-        && !window.confirm("Discard the unsaved changes in this editor?")) return;
+        && !confirmDiscardEditorChanges()) return;
       if (document.activeElement instanceof HTMLElement) editorReturnFocusRef.current = document.activeElement;
       setSelectedRowId(null);
       setEditorSourceRow(null);
@@ -6455,9 +6456,13 @@ export function GeneratedContentAdminDashboard() {
     });
   }
 
+  function confirmDiscardEditorChanges() {
+    return window.confirm("Discard the unsaved changes in this editor?");
+  }
+
   function confirmSkyEditorNavigation() {
     const unsaved = hasChangedSavedDraft();
-    return !(unsaved || hasPendingArticleChanges()) || window.confirm("Discard the unsaved changes in this editor?");
+    return !(unsaved || hasPendingArticleChanges()) || confirmDiscardEditorChanges();
   }
 
   function openRelatedSkyRow(parentId: string, row: AdminGeneratedContentRow) {
@@ -6728,7 +6733,7 @@ export function GeneratedContentAdminDashboard() {
 
   async function openSkySummaryField(field: SkySummaryField, initialBody?: string) {
     if (hasChangedSavedDraft()
-      && !window.confirm("Discard the unsaved changes in this editor?")) return;
+      && !confirmDiscardEditorChanges()) return;
     setIsLoading(true);
     try {
       const { skySummaryCandidateReceipt, loadSkySummarySourceBank } = await import("./skySummarySourceBank");
@@ -6835,6 +6840,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function openConnectionSource(key: string) {
+    if (hasChangedSavedDraft() && !confirmDiscardEditorChanges()) return;
     const requestId = ++connectionSourceRequestRef.current;
     const originatingHash = window.location.hash;
     setIsLoading(true);
@@ -10673,6 +10679,7 @@ export function GeneratedContentAdminDashboard() {
     });
     cmsTemplateValidation.errors.push(...skySummaryTemplateErrors(currentDraft.contentKey, currentDraft.body));
     cmsTemplateValidation.errors.push(...skyDebilityTemplateErrors(currentDraft.contentKey, currentDraft.body, currentDraft.headline));
+    cmsTemplateValidation.errors.push(...frictionFlowDraftErrors(currentDraft.contentKey, currentDraft.body, cmsAllowedSlots));
     const cmsCanSignOff = !isCmsSurfaceDraft || cmsTemplateValidation.errors.length === 0;
     const cmsReaderEligible = isCmsSurfaceDraft
       && currentDraft.status === "LIVE"

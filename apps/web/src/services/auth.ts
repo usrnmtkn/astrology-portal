@@ -336,6 +336,29 @@ export async function resendEmailSignupConfirmation(email: string) {
   }
 }
 
+export async function requestPasswordReset(email: string) {
+  const supabase = await getSupabaseClient();
+  if (!supabase) throw new Error("Sign-in is not configured.");
+  const target = new URL(await redirectTo());
+  target.searchParams.delete("readerReturn");
+  target.searchParams.set("auth", "recovery");
+  const { clearReaderReturnPath } = await import("./readerAuthReturn");
+  clearReaderReturnPath();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: target.href });
+  if (error) throw error;
+}
+
+export async function updateRecoveredPassword(password: string) {
+  const supabase = await getSupabaseClient();
+  if (!supabase) throw new Error("Sign-in is not configured.");
+  const verified = await getVerifiedAuthUser(supabase);
+  if (!verified) throw new Error("Open the password-reset link from your email before choosing a new password.");
+  const { data, error } = await supabase.auth.updateUser({ password });
+  if (error) throw error;
+  if (!data.user) throw new Error("Your password could not be updated.");
+  return authAccountFromUser(data.user);
+}
+
 export async function signInWithEmail({
   email,
   password

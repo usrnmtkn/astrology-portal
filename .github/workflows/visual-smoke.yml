@@ -477,8 +477,40 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  design-handoff:
+    needs: scope
+    if: needs.scope.outputs.reader == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+      VITE_MAPBOX_ACCESS_TOKEN: viewport-synthetic-token
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: bash scripts/ci-install-playwright.sh
+      - name: Verify all updated reader designs
+        run: npx playwright test -c playwright.design-handoff.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/6
+      - name: Upload handoff screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: design-handoff-results-${{ matrix.shard }}
+          path: test-results/
+          if-no-files-found: ignore
+
   browser-release-gate:
-    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites]
+    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, design-handoff]
     # Still inspect failed dependencies, but let a superseded workflow cancel.
     # An always() gate can remain queued and block the next revision's run.
     if: ${{ !cancelled() }}

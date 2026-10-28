@@ -191,6 +191,13 @@ export function natalDailyTransitPeaksForOffMainThread(
   return requestCalculation({ kind: "natal-daily-peaks", args });
 }
 
+export function relationshipForecastDayOffMainThread(
+  ...args: Parameters<typeof import("./ephemeris.js").relationshipForecastDayFor>
+): ReturnType<typeof import("./ephemeris.js").relationshipForecastDayFor> {
+  if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(({ relationshipForecastDayFor }) => relationshipForecastDayFor(...args));
+  return requestCalculation({ kind: "relationship-forecast-day", args });
+}
+
 export function preloadSwissEphemerisOffMainThread(): Promise<void> {
   if (typeof Worker === "undefined") {
     return loadEphemerisForNonBrowserRuntime().then(({ preloadSwissEphemeris }) => (

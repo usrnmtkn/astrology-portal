@@ -31,6 +31,7 @@ export default defineConfig({
     'header-navigation-overflow.spec.ts',
     'reader-viewport-containment.spec.ts',
     'empty-error-viewport.spec.ts',
+    'load-error-handoff10.spec.ts',
     'tooltip-toast-viewport.spec.ts',
     'chart-table-viewport.spec.ts',
   ]

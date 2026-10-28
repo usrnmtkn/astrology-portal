@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { buildSync } from "esbuild";
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 
+const dist = process.env.PLAYWRIGHT_DIST_ROOT ?? "apps/web/dist";
 const fixture = buildSync({ entryPoints: ["tests/helpers/card-loading-fixture.tsx"], bundle: true, write: false, loader: { ".css": "empty" }, format: "esm", jsx: "automatic", define: { "process.env.NODE_ENV": '"production"', "import.meta.env": "{}" } }).outputFiles[0].text;
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
@@ -11,9 +12,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     // Use the built entry's actual shared theme/font CSS. Entry chunk names
     // change when startup is split; an "index-*" guess can leave this fixture
     // entirely unstyled while its isolated card styles still load successfully.
-    const entryStyles = [...readFileSync("apps/web/dist/index.html", "utf8").matchAll(/<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="\/assets\/([^"]+\.css)"/gu)].map(match => match[1]);
+    const entryStyles = [...readFileSync(`${dist}/index.html`, "utf8").matchAll(/<link\b(?=[^>]*\brel="stylesheet")[^>]*\bhref="\/assets\/([^"]+\.css)"/gu)].map(match => match[1]);
     expect(entryStyles.length).toBeGreaterThan(0);
-    const css = readdirSync("apps/web/dist/assets").filter(file => file.endsWith(".css") && (entryStyles.includes(file) || /\.card-skeleton-bar|\.calendar-stoic-card/.test(readFileSync(`apps/web/dist/assets/${file}`, "utf8"))));
+    const css = readdirSync(`${dist}/assets`).filter(file => file.endsWith(".css") && (entryStyles.includes(file) || /\.card-skeleton-bar|\.calendar-stoic-card/.test(readFileSync(`${dist}/assets/${file}`, "utf8"))));
     css.sort((a, b) => (entryStyles.includes(a) ? 0 : a.startsWith("styles-") ? 1 : 2) - (entryStyles.includes(b) ? 0 : b.startsWith("styles-") ? 1 : 2));
     await page.route("**/__card-fixture", route => route.fulfill({ contentType: "text/html", body: `<!doctype html><html data-theme="${theme}"><head>${css.map(file => `<link rel="stylesheet" href="/assets/${file}">`).join("")}</head><body><main class="app-shell theme-${theme}"><div id="fixture"></div></main></body></html>` }));
     await page.goto("/__card-fixture");
@@ -30,7 +31,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect(card).toHaveCSS("transform", "none");
     }
     for (const bar of await bars.all()) {
-      await expect(bar).toHaveCSS("animation-name", "none");
+      await expect(bar).toHaveCSS("animation-name", theme === "dark" || !await bar.evaluate(node => Boolean(node.closest(".card-skeleton"))) ? "none" : "skeleton-pulse");
       const colors = await bar.evaluate(el => { const s = getComputedStyle(el); const probe = document.createElement("i"); probe.style.background = "var(--surface-2)"; el.append(probe); const expected = getComputedStyle(probe).backgroundColor; probe.remove(); return [s.backgroundColor, expected]; });
       expect(colors[0]).toBe(colors[1]);
     }
@@ -55,28 +56,29 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const after = await sizes();
     writeFileSync(info.outputPath("card-heights.json"), JSON.stringify({ before, after, beforeAnatomy, afterAnatomy: await anatomy(), beforeCalendarAnatomy, afterCalendarAnatomy: await calendarAnatomy() }, null, 2));
     await info.attach("card-heights", { path: info.outputPath("card-heights.json"), contentType: "application/json" });
-    expect(before[".planet-placement-row"]).toEqual(after[".planet-placement-row"]);
-    expect(before[".placement-table"]).toEqual(after[".placement-table"]);
+    // Unknown copy can change a card's height. Each phase still uses equal
+    // grid tracks; full prose is never shortened to match a placeholder.
+    for (const phase of [before, after]) expect(new Set(phase[".planet-placement-row"]).size).toBe(1);
     for (const selector of [".calendar-stoic-card", ".calendar-day-events__grid"]) {
       before[selector].forEach((height, index) => expect(Math.abs(height - after[selector][index])).toBeLessThanOrEqual(4));
     }
     for (const height of before[".calendar-season-transits li"]) expect(Math.abs(height - after[".calendar-season-transits li"][0])).toBeLessThanOrEqual(4);
     expect(before[".calendar-season-transits ul"]).toEqual(after[".calendar-season-transits ul"]);
     for (const card of await page.locator(".is-revealing").all()) {
-      await expect(card).toHaveCSS("animation-name", "lazy-fade");
-      await expect(card).toHaveCSS("animation-duration", "0.12s");
+      await expect(card).toHaveCSS("animation-name", theme === "dark" ? "none" : "lazy-fade");
+      await expect(card).toHaveCSS("animation-duration", theme === "dark" ? "0s" : "0.12s");
       await expect(card).toHaveCSS("animation-delay", "0s");
       await expect(card).toHaveCSS("transform", "none");
       await expect(card).toHaveCSS("opacity", "1");
     }
     const firstAnimations = await page.evaluate(() => (window as any).animations.length);
-    expect(firstAnimations).toBe(9); // Three placements, three stoic cards, three transit rows.
+    expect(firstAnimations).toBe(theme === "dark" ? 0 : 9); // Three placements, three stoic cards, three transit rows.
     await page.evaluate(() => (window as any).renderFixture({}));
     await page.waitForTimeout(150);
     expect(await page.evaluate(() => (window as any).animations.length)).toBe(firstAnimations);
     await page.evaluate(() => (window as any).renderFixture({ later: true }));
     await expect(page.locator(".planet-placement-row")).toHaveCount(4);
-    await expect.poll(() => page.evaluate(() => (window as any).animations.length)).toBe(firstAnimations + 1);
+    await expect.poll(() => page.evaluate(() => (window as any).animations.length)).toBe(firstAnimations + (theme === "dark" ? 0 : 1));
     await page.screenshot({ path: info.outputPath("resolved.png"), fullPage: true });
 
     // Full prose is deliberately preserved: capture its actual growth rather

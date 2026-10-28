@@ -1,5 +1,5 @@
 import { FormattedProse } from "../../components/FormattedProse";
-import { PageLoading } from "../../components/PageLoading";
+import { ContentLoading as PageLoading } from "../../components/LoadingPatterns";
 
 export type FriendCircleFeedCard = {
   label: string;
@@ -34,7 +34,7 @@ export function FriendCircleFeed({
     <section className="friends-feed-preview friends-feed-view" aria-label="Circle feed">
       <div className="friends-circle-strip" aria-label={isLoading ? "Loading circle feed" : "Circle feed"}>
         {isLoading ? (
-          <PageLoading compact message="Loading circle feed" />
+          <PageLoading layout="feed" message="Loading circle feed" />
         ) : (
           cards.map((card, index) => {
             const feedMeta = index === 0

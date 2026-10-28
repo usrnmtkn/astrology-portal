@@ -308,7 +308,7 @@ test('Daily Sky retirement and an unavailable publication never reveal older bun
   publication.state = 'live'; publication.revision = 2;
   await page.reload();
   await expect(summary).toContainText('The daily summary could not load.');
-  await expect(summary.getByRole('button', { name: 'Retry', exact: true })).toBeVisible();
+  await expect(summary.getByRole('button', { name: 'Try again', exact: true })).toBeVisible();
   await expect(summary).not.toContainText('turns our attention to the daily rituals');
 });
 

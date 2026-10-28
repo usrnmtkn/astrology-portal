@@ -294,7 +294,7 @@
 
 .learn-house-card__meta {
   color: var(--learn-ink-secondary);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-meta);
@@ -363,7 +363,7 @@
 
 .learn-index-card__detail {
   color: var(--muted);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-meta);
@@ -376,7 +376,7 @@
   width: fit-content;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-pill);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-label);
@@ -689,15 +689,6 @@
 /* Articles share the same reading surface and typography as Learn. */
 .articles-page { background: transparent; }
 .articles-page .article-title { font-weight: var(--weight-regular); }
-.articles-library-header { display: grid; gap: var(--space-3); }
-.articles-library-header p,
-.articles-library-card h2,
-.articles-library-card p { margin: 0; }
-.articles-library-filters { display: flex; gap: var(--space-4); }
-.articles-library-filters label { display: grid; flex: 1; gap: var(--space-2); min-width: 0; font-family: var(--font-label); }
-.articles-library-filters input,
-.articles-library-filters select { width: 100%; min-width: 0; padding: var(--space-3); border: var(--border-width-thin) solid var(--line); border-radius: var(--radius-sm); background: var(--card-bg); color: var(--ink); font: inherit; }
-.articles-library-card { display: grid; gap: var(--space-3); padding: var(--space-6); color: var(--ink); text-decoration: none; }
-.articles-library-card:hover { border-color: var(--ink); }
-.articles-library-state { padding: var(--space-6); }
 .articles-page .learn-article-body p { white-space: pre-wrap; }
+
+.articles-page .learn-kicker { font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-regular); letter-spacing: var(--tracking-body); text-transform: none; }

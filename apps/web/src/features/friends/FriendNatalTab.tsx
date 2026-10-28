@@ -1,3 +1,4 @@
+import { NatalPlacementSections } from "../../components/NatalPlacementSections";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
 import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
@@ -8,8 +9,7 @@ import {
   friendPlacementDescription,
   placementTitleFromParts
 } from "../../components/charts/PlacementRows";
-import { NatalAspectPatternsSection } from "../you/NatalAspectPatternsSection";
-import { FriendPlacementTable } from "./FriendPlacementTables";
+import { NatalPatternsInsights } from "../you/NatalPatternsInsights";
 import { PageLoading } from "../../components/PageLoading";
 
 export type FriendNatalEmptyHouseRow = {
@@ -22,6 +22,7 @@ export type FriendNatalEmptyHouseRow = {
 };
 
 export function FriendNatalTab({
+  chartId,
   bigThreeRows,
   birthTimeUnknown,
   emptyHouseRows,
@@ -38,6 +39,7 @@ export function FriendNatalTab({
   placementRows,
   natalSky
 }: {
+  chartId: string;
   natalSky?: import("../../types").SkySnapshot | null;
   bigThreeRows: SocialPlacementRow[];
   birthTimeUnknown: boolean;
@@ -54,7 +56,6 @@ export function FriendNatalTab({
   patternTitle: string;
   placementRows: SocialPlacementRow[];
 }) {
-  const placementTitle = isEventChart ? "Event placements" : `${friendName}'s natal placements`;
   const unreliableAngleLabels = new Set(["Ascendant", "Descendant", "Midheaven", "MC", "Imum Coeli", "IC"]);
   const visibleBigThreeRows = birthTimeUnknown
     ? bigThreeRows.filter((row) => !unreliableAngleLabels.has(row.label))
@@ -81,19 +82,13 @@ export function FriendNatalTab({
   return (
     <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
       <div className="friend-profile-copy-column">
-        <NatalChartReadings snapshot={natalSky} audience="they" ownerName={friendName} disabled={isEventChart || birthTimeUnknown} />
-        {patternStatus && (
-          <NatalAspectPatternsSection
-            items={patternItems}
-            onOpenDetail={onOpenPattern}
-            status={patternStatus}
-            title={patternTitle}
-          />
-        )}
-        <span className="eyebrow section-label friend-section-label">Big three</span>
+
+        <section className="natal-big-three" aria-label="Big Three">
+        <h2 className="eyebrow section-label friend-section-label">Big Three</h2>
         <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${friendName} big three`}>
           {visibleBigThreeRows.map((row) => {
-            const title = row.label === "Ascendant"
+            const pending = row.sign.toLowerCase().includes("pending");
+            const title = pending ? row.label : row.label === "Ascendant"
               ? `Ascendant in ${row.sign}`
               : placementTitleFromParts(row.label, row.sign, row.retrograde);
             const body = birthTimeUnknown && row.label === "Ascendant"
@@ -101,10 +96,9 @@ export function FriendNatalTab({
               : row.description ?? friendPlacementDescription(row.label, row.sign);
             const canOpenDetail = hasNatalChart
               && row.detailAvailable !== false
-              && !row.sign.toLowerCase().includes("pending");
+              && !pending;
 
-            return (
-              <PlacementTableRow
+            const placement = <PlacementTableRow
                 asButton={canOpenDetail}
                 description={body}
                 dignity={dignitiesFor(row.label, row.sign, "they")}
@@ -113,47 +107,25 @@ export function FriendNatalTab({
                 onClick={canOpenDetail ? () => onOpenPlacement(row) : undefined}
                 pointName={row.label}
                 retrograde={row.retrograde}
-                sign={row.sign}
+                sign={pending ? undefined : row.sign}
+                metadata={pending ? "Pending" : undefined}
                 title={title}
                 variant="friend"
-              />
-            );
+              />;
+            return row.label === "Sun" ? <div className="natal-sun-card" key={row.id}>{placement}<NatalChartReadings snapshot={natalSky} audience="they" ownerName={friendName} chartId={chartId} disabled={isEventChart || birthTimeUnknown} presentation="sect" /></div> : placement;
           })}
         </div>
-        {hasNatalChart && (
-          <>
-            <span className="eyebrow section-label friend-section-label">{placementTitle}</span>
-            <FriendPlacementTable
-              title={placementTitle}
-              rows={visiblePlacementRows}
-              descriptionContext={isEventChart ? "chart" : "person"}
-              generatedContext="natal"
-              onPlacementClick={onOpenPlacement}
-              ownerName={friendName}
-              showTitle={false}
-            />
-            {visibleEmptyHouseRows.length > 0 && (
-              <>
-                <span className="eyebrow section-label friend-section-label">Empty houses</span>
-                <div className="list you-list-card planet-placement-list" aria-label={`${friendName} empty houses`}>
-                  {visibleEmptyHouseRows.map((row) => (
-                    <PlacementTableRow
-                      ariaLabel={row.detailAvailable !== false ? row.ariaLabel : `${row.title} interpretation unavailable`}
-                      asButton={row.detailAvailable !== false}
-                      description={row.description}
-                      glyph={row.glyph}
-                      house={row.house}
-                      key={`friend-empty-house-${row.house}`}
-                      onClick={row.detailAvailable !== false ? () => onOpenEmptyHouse(row.house) : undefined}
-                      title={row.title}
-                      variant="friend"
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-          </>
-        )}
+        </section>
+        {hasNatalChart && <>
+          <NatalPlacementSections snapshot={birthTimeUnknown || isEventChart ? undefined : natalSky} items={visiblePlacementRows.map(row => ({ id: row.id, pointName: row.label, node: <PlacementTableRow
+            asButton={row.detailAvailable !== false} degree={`${Math.floor(row.degree)}°`} description={row.description ?? friendPlacementDescription(row.label, row.sign)}
+            dignity={dignitiesFor(row.label, row.sign, "they")} glyph={row.glyph} house={row.house} onClick={row.detailAvailable !== false ? () => onOpenPlacement(row) : undefined}
+            pointName={row.label} retrograde={row.retrograde} sign={row.sign} title={placementTitleFromParts(row.label, row.sign, row.retrograde)} variant="friend" />
+          }))} emptyHouses={visibleEmptyHouseRows.map(row => <PlacementTableRow key={`friend-empty-house-${row.house}`} ariaLabel={row.ariaLabel}
+            asButton={row.detailAvailable !== false} description={row.description} glyph={row.glyph} house={row.house}
+            onClick={row.detailAvailable !== false ? () => onOpenEmptyHouse(row.house) : undefined} title={row.title} variant="friend" />)} />
+          <NatalPatternsInsights snapshot={natalSky} audience="they" ownerName={friendName} chartId={chartId} disabled={isEventChart || birthTimeUnknown} items={patternItems} status={patternStatus} onOpenPattern={onOpenPattern}/>
+        </>}
       </div>
     </div>
   );

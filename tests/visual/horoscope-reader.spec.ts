@@ -217,28 +217,29 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.goto(publishedHref!);
    await expect(page.getByRole('article',{name:'Pisces horoscope'})).toContainText('Your fixture pisces complete ending.');
    await page.clock.setFixedTime(new Date('2026-10-05T16:00:00Z'));
-   await page.reload();await expect(page.getByRole('article')).toContainText('Published edition');
-   await expect(page.getByRole('article')).toContainText('September 21, 2026');
+   await page.reload();await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
+   await expect(page.locator('.horoscope-reading-date')).toContainText('September 21');
    await page.clock.setFixedTime(new Date('2026-09-24T16:00:00Z'));
    await page.goto('/#horoscopes?period=weekly&sign=aries');
    await expect(page.getByRole('heading',{name:'Horoscopes',exact:true})).toBeVisible();
    await expect(page.getByRole('article',{name:'Aries horoscope'})).toContainText('Your fixture aries complete ending.');
    await expect(page.getByText('PRIVATE OUTLINE fixture')).toHaveCount(0);
    await expect(page.getByRole('heading',{name:'Fixture aries weekly headline'})).toBeVisible();
-   await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','Fixture aries weekly headline']);
-   expect(await page.locator('.horoscope-page h1').evaluate(el=>{const probe=document.createElement('h1');probe.className='learn-hero__title';el.parentElement!.append(probe);const actual=getComputedStyle(el),expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','margin','textTransform','textAlign'].every(key=>(actual as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
-   expect(await page.locator('.horoscope-page h2').evaluate(el=>{const probe=document.createElement('h2');probe.style.cssText='font-family:var(--font-display);font-size:var(--type-h2-size);font-weight:var(--weight-regular);line-height:var(--leading-h2);letter-spacing:var(--tracking-title);margin:var(--space-4) 0';el.parentElement!.append(probe);const actual=getComputedStyle(el),expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','margin','textTransform','textAlign'].every(key=>(actual as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
+   await expect(page.locator('.horoscope-reading-date')).toContainText('September 21');
+   await expect(page.locator('.horoscope-passage-title')).toHaveText('Fixture aries weekly headline');
+   await expect(page.locator('.horoscope-reading-header')).toHaveCSS('text-align','center');
+   await expect(page.locator('.horoscope-reading-date')).toHaveCSS('font-family',/Newsreader/);
    for(const sign of HOROSCOPE_SIGNS){await page.getByRole('group',{name:'Zodiac signs',exact:true}).getByRole('button').nth(HOROSCOPE_SIGNS.indexOf(sign)).click();await expect(page.getByRole('article')).toContainText(`You can read the ${sign} fixture opening.`);await expect(page.getByRole('article')).toContainText(`Your fixture ${sign} complete ending.`);}
    await page.reload();await expect(page.getByRole('button',{name:'Pisces & Pisces Rising',exact:true})).toHaveAttribute('aria-pressed','true');
-   await page.getByRole('button',{name:'Today',exact:true}).click();
+   await page.getByRole('button',{name:'Daily',exact:true}).click();
    await expect(page.getByRole('status')).toContainText('daily horoscopes haven’t been published');
-   await page.goBack();await expect(page.getByRole('button',{name:'This week',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
+   await page.goBack();await expect(page.getByRole('button',{name:'Weekly',exact:true})).toHaveAttribute('aria-pressed','true');await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    await expect(page.getByText('Loading your horoscope…')).toHaveCount(0);
    await page.mouse.move(0,0);
    expect(await page.locator('.horoscope-prose').evaluate(el=>getComputedStyle(el).whiteSpace)).toBe('pre-wrap');
    expect(await page.locator('.horoscope-prose p').evaluate(el=>{const style=getComputedStyle(el),probe=document.createElement('p');probe.style.cssText='font-family:var(--font-body);font-size:var(--text-body);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)';el.parentElement!.append(probe);const expected=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing'].every(key=>(style as any)[key]===(expected as any)[key]);probe.remove();return same;})).toBe(true);
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-   const bounds=await page.locator('.horoscope-header').boundingBox();expect(bounds!.x).toBeGreaterThanOrEqual(0);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width);
+   const bounds=await page.locator('.horoscope-reading-header').boundingBox();expect(bounds!.x).toBeGreaterThanOrEqual(0);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width);
    await expect(page.getByRole('article')).toContainText('Your fixture pisces complete ending.');
    await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
    await page.screenshot({path:`test-results/horoscope-reader-${width}-${theme}.png`,fullPage:false,animations:'disabled'});
@@ -255,7 +256,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(page.locator('.horoscope-page :is(h1,h2,h3,h4,h5,h6)')).toHaveText(['Horoscopes','No weekly reading yet']);
    await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));
    await page.screenshot({path:`test-results/horoscope-empty-${width}-${theme}.png`,animations:'disabled'});
-   await page.getByRole('button',{name:'Seasons',exact:true}).click();await expect(page.getByRole('status')).toContainText('seasonal horoscopes haven’t been published');
+   await page.getByRole('button',{name:'Seasonal',exact:true}).click();await expect(page.getByRole('status')).toContainText('seasonal horoscopes haven’t been published');
    for(const period of ['daily','seasonal'] as const){
     // The fixed UTC instant is already September 25 in Tokyo.
     const facts=await call({method:'GET',url:`/api/admin/generated-content?horoscopeBrief=true&period=${period}&date=2026-09-25&timeZone=Asia/Tokyo`});
@@ -265,7 +266,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     const created=await call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',model:'manual',status:'DRAFT',lane:'serving',headline:`Fixture ${period}`,body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:facts.payload.brief,signature:facts.payload.signature}}}});
     expect(created.status).toBe(200);
     const row=created.payload.rows[0];expect((await call({method:'PATCH',body:{id:row.id,expectedUpdatedAt:row.updated_at,status:'LIVE'}})).status).toBe(200);
-    await page.getByRole('button',{name:period==='daily'?'Today':'Seasons',exact:true}).click();
+    await page.getByRole('button',{name:period==='daily'?'Daily':'Seasonal',exact:true}).click();
     await expect(page.getByRole('article')).toContainText(`Fixture ${period} opening.`);
     await expect(page.getByRole('article')).toContainText(`Fixture ${period} complete ending.`);
    }

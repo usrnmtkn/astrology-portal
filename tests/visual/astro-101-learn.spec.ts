@@ -104,7 +104,7 @@ test("Learn article uses the full desktop navigation", async ({ page }) => {
   await expect(primaryNav.getByRole("button", { name: "Learn" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toContainText("Back");
-  await expect(page.getByRole("button", { name: "Toggle theme" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Switch to (light|dark) mode$/ })).toBeVisible();
   await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
   await page.getByRole("button", { name: "Open menu" }).click();
   await expect(page.getByRole("menuitem", { name: "Learn", exact: true })).toHaveClass("active");
@@ -121,7 +121,7 @@ test("Learn article uses compact navigation on mobile", async ({ page }) => {
   await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Toggle theme" })).toBeHidden();
+  await expect(page.getByRole("button", { name: /^Switch to (light|dark) mode$/ })).toBeVisible();
   await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
 });
 

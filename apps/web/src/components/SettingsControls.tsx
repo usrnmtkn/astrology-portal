@@ -1,31 +1,7 @@
 import type { AnimationPreference } from "../hooks/usePageTransition";
 
-export type UiThemeOption = "light" | "dark";
+export { AppearanceToggle, ThemeToggleButton, type UiThemeOption } from "./ThemeControls";
 export type HouseSignLabelOption = "text" | "glyph";
-
-export function AppearanceToggle({
-  theme,
-  onThemeChange
-}: {
-  theme: UiThemeOption;
-  onThemeChange: (theme: UiThemeOption) => void;
-}) {
-  return (
-    <div className="settings-theme-control" aria-label="Theme">
-      {(["light", "dark"] as const).map((themeOption) => (
-        <button
-          key={themeOption}
-          type="button"
-          className={theme === themeOption ? "active" : ""}
-          aria-pressed={theme === themeOption}
-          onClick={() => onThemeChange(themeOption)}
-        >
-          {themeOption}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 export function HouseSignLabelToggle({
   value,

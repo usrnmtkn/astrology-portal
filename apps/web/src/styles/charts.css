@@ -8,6 +8,75 @@
   max-width: 100%;
 }
 
+.sky-wheel--handoff .wheel-surface--signs,
+.sky-wheel--handoff .wheel-surface--aspects {
+  fill: var(--chart-surface-aspects);
+}
+
+.sky-wheel--handoff .wheel-surface--planets {
+  fill: var(--chart-surface-planets);
+}
+
+.sky-wheel--handoff .wheel-surface--houses {
+  fill: var(--chart-surface-houses);
+}
+
+.chart-shell:has(.sky-wheel--handoff),
+.chart-frame:has(.sky-wheel--handoff) {
+  height: auto;
+  aspect-ratio: auto;
+}
+
+.sky-wheel--handoff .wheel-rings circle,
+.sky-wheel--handoff .sign-band-dividers line {
+  stroke: var(--chart-ring-line);
+  opacity: 1;
+}
+
+.sky-wheel--handoff .wheel-sectors line {
+  stroke: var(--chart-sector-line);
+  opacity: 1;
+}
+
+.sky-wheel--handoff :is(.sign-labels text, .zodiac-house-number, .planet-degree, .chart-house-system-label) {
+  font-family: var(--font-ui);
+}
+
+.sky-wheel--handoff .zodiac-house-number {
+  fill: var(--ink-2);
+  opacity: 1;
+}
+
+.sky-wheel--handoff:not(.is-inspecting-aspects) .aspect-lines line {
+  stroke-width: var(--chart-aspect-stroke-width);
+  opacity: var(--chart-aspect-stroke-opacity);
+  stroke-dasharray: none;
+}
+
+.sky-wheel--handoff:not(.is-inspecting-aspects) .aspect-lines .sextile line {
+  stroke-dasharray: var(--chart-aspect-sextile-dash);
+}
+
+.sky-wheel--handoff .aspect-endpoint {
+  fill: var(--muted);
+}
+
+.sky-wheel--handoff .zodiac-wheel__angle-badge rect {
+  fill: var(--chart-angle-badge-bg);
+  stroke: var(--chart-angle-badge-ring);
+  stroke-width: var(--border-width-thick);
+}
+
+.sky-wheel--handoff .zodiac-wheel__angle-badge text {
+  fill: var(--chart-angle-badge-fg);
+  font-family: var(--font-mono);
+  font-size: var(--chart-angle-label-size);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--chart-angle-label-tracking);
+  dominant-baseline: central;
+  text-anchor: middle;
+}
+
 .sky-wheel-shell {
   display: grid;
   justify-items: center;
@@ -426,7 +495,7 @@
   opacity: 0.82;
 }
 
-:is(.theme-dark, [data-theme="dark"]) .angular-labels text {
+:is(.theme-dark, [data-theme="dark"]) .angular-labels > text {
   fill: var(--chart-glyph);
   opacity: 0.96;
 }
@@ -479,7 +548,7 @@
   mix-blend-mode: multiply;
 }
 
-:is(.theme-dark, [data-theme="dark"]) :where(
+:is(.theme-dark, [data-theme="dark"]) :is(
   .aspect-lines .aspect-line-hard line,
   .aspect-lines .aspect-line-hard path,
   .interchart-aspect-lines .aspect-line-hard line,
@@ -1143,3 +1212,6 @@
   --synastry-inner-glyph: var(--chart-glyph);
   --filter-synastry-inner-glyph: var(--chart-glyph-filter);
 }
+
+.sky-wheel--handoff .wheel-surface--inner-planets { fill: var(--surface-2); stroke: var(--chart-ring-line); }
+.sky-wheel--handoff .synastry-outer-house-labels text { font-family: var(--font-ui); font-size: var(--chart-house-label-size); font-weight: var(--weight-semibold); fill: var(--ink-2); }

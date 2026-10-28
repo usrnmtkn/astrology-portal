@@ -1,0 +1,165 @@
+/* Shared web and web-mobile profile hierarchy from the supplied handoff. */
+.you-chart-page.page-shell { width: min(var(--container-content), var(--page-content-width)); padding-top: 0; }
+.you-chart-page > .chart-layout { width: 100%; grid-template-columns: var(--layout-profile-columns); gap: var(--space-6); }
+.profile-heading { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: var(--space-6); padding-bottom: var(--space-4); }
+.profile-heading .you-profile-card { display: flex; flex: 1; gap: var(--space-4); padding: 0; border: 0; background: transparent; box-shadow: none; }
+.profile-heading .profile-avatar { width: var(--size-8); height: var(--size-8); background: var(--avatar-owner-bg); color: var(--avatar-owner-fg); box-shadow: none; }
+.profile-heading .you-profile-name-row { display: grid; gap: var(--space-2); }
+.profile-heading .you-profile-copy h1 { font-family: var(--font-display); font-size: var(--text-title); font-weight: var(--weight-regular); line-height: var(--leading-display); letter-spacing: var(--tracking-display); margin: 0; }
+.profile-heading .you-profile-handle { display: inline-flex; align-items: center; justify-self: start; gap: var(--space-2); min-height: var(--size-4); padding: 0 var(--space-4); border: 0; border-radius: var(--radius-pill); font-family: var(--font-label); font-size: var(--type-meta-size); background: var(--accent-bg); color: var(--accent); cursor: pointer; }
+.you-profile-controls { display: flex; flex: none; align-items: center; gap: var(--space-4); }
+.profile-heading .you-profile-actions { position: relative; top: auto; right: auto; }
+.profile-heading .you-profile-menu-trigger { width: var(--size-6); height: var(--size-6); border-radius: var(--radius-circle); background: var(--surface); color: var(--ink); }
+.profile-heading .you-profile-tabs { flex: none; width: auto; align-self: center; margin: 0; }
+.you-chart-page > .chart-layout > .chart-layout__visual { position: static; grid-column: 1; grid-row: 2; }
+.you-chart-page[data-profile-view="chart"] .chart-layout__content,
+.you-chart-page[data-profile-view="chart"] #sub-chart { display: contents; }
+.natal-big-three { grid-column: 2; grid-row: 2; align-self: center; min-width: 0; }
+.natal-big-three > h2 { margin: 0 0 var(--space-4); }
+.natal-big-three .planet-placement-list { display: grid; gap: var(--space-4); background: transparent; border: 0; box-shadow: none; padding: 0; }
+.natal-big-three .placement-table-row { padding: var(--space-6); background: var(--surface); }
+.natal-placement-sections { display: grid; grid-column: 1 / -1; grid-template-columns: var(--layout-natal-columns); align-items: start; gap: var(--space-7) var(--space-6); }
+.natal-placement-section { min-width: 0; }
+.natal-placement-section > h2,
+.natal-readings--insights > h2 { font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); margin: 0 0 var(--space-4); }
+.natal-traditional { grid-column: 1; grid-row: 1; }
+.natal-generational { grid-column: 1; grid-row: 2; }
+.natal-empty-houses { grid-column: 1; grid-row: 3; }
+.natal-angles { grid-column: 2; grid-row: 1; }
+.natal-points { grid-column: 2; grid-row: 2 / span 2; }
+.natal-placement-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.natal-angles .natal-placement-grid,
+.natal-points .natal-placement-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding: var(--space-6); border-radius: var(--card-radius); background: var(--surface-recessed); }
+.natal-placement-grid .placement-table-row { height: 100%; padding: var(--space-6); background: var(--surface-recessed); }
+.natal-angles .placement-table-row,
+.natal-points .placement-table-row { padding: 0; border: 0; box-shadow: none; background: transparent; }
+.natal-placement-item { min-width: 0; }
+:is(.natal-placement-sections, .natal-big-three) .placement-table-row { display: grid; grid-template-columns: var(--size-7) minmax(0, 1fr); align-items: start; gap: var(--space-4); width: 100%; border: 0; border-radius: var(--card-radius-sm); text-align: left; }
+:is(.natal-placement-sections, .natal-big-three) .placement-table-row__title { font-family: var(--font-ui); font-size: var(--text-row-title-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); color: var(--ink); }
+:is(.natal-placement-sections, .natal-big-three) .placement-table-row__description { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--card-preview-lines); overflow: hidden; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+:is(.natal-placement-sections, .natal-big-three) .placement-table-row__glyph { width: var(--size-7); height: var(--size-7); border-radius: var(--radius-sm); background: var(--surface); color: var(--accent); }
+.natal-big-three .placement-table-row__glyph { background: var(--surface-2); }
+:is(.natal-placement-sections, .natal-big-three) .card-read-more { display: none; }
+.natal-readings { grid-column: 1 / -1; min-width: 0; }
+.natal-readings--insights .natal-readings__items { display: grid; grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
+.natal-reading-card { display: grid; justify-items: center; gap: var(--space-3); width: 100%; border: 0; border-radius: var(--card-radius-sm); padding: var(--space-8) var(--space-7) var(--space-7); background: var(--surface); color: var(--ink); box-shadow: var(--card-shadow); cursor: pointer; }
+.natal-reading-card__glyph { display: grid; place-items: center; width: var(--size-8); height: var(--size-8); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); font-family: var(--font-glyph); font-size: var(--text-card-title); }
+.natal-reading-card strong { font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); }
+.natal-reading-card__preview { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.natal-sun-card:has(.natal-readings--sect) > .placement-table-row { border-radius: var(--card-radius-sm) var(--card-radius-sm) 0 0; box-shadow: none; }
+.natal-readings--sect .natal-reading-card { grid-template-columns: var(--size-7) minmax(0, 1fr); justify-items: start; align-items: center; gap: var(--space-1) var(--space-4); padding: var(--space-3) var(--space-6); border-radius: 0 0 var(--card-radius-sm) var(--card-radius-sm); box-shadow: none; text-align: left; }
+.natal-readings--sect .natal-reading-card:focus-visible { outline: none; }
+.natal-readings--sect .natal-reading-card:focus-visible .natal-reading-card__glyph { background: var(--ink); color: var(--surface); }
+.natal-readings--sect .natal-reading-card__glyph { grid-row: 1 / span 2; width: var(--size-7); height: var(--size-7); background: transparent; }
+.natal-readings--sect strong { font-family: var(--font-ui); font-size: var(--text-button-size); font-weight: var(--weight-semibold); }
+.natal-readings--sect .natal-reading-card__preview { width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-family: var(--font-ui); font-size: var(--type-meta-size); color: var(--muted); }
+.you-chart-page[data-profile-view="chart"] :is(.you-signatures-card, #sub-chart > .section-label, .natal-aspect-patterns) { grid-column: 1 / -1; }
+@media (max-width: 800px) {
+  .you-chart-page > .chart-layout { grid-template-columns: minmax(0, 1fr); }
+  .profile-heading { flex-wrap: wrap; gap: var(--space-6); }
+  .you-profile-controls { width: 100%; }
+  .profile-heading .you-profile-tabs { flex: 1; min-width: 0; }
+  .profile-heading .you-profile-copy h1 { font-size: var(--text-title); }
+  .you-chart-page > .chart-layout > .chart-layout__visual { grid-column: 1; grid-row: 2; }
+  .natal-big-three { grid-column: 1; grid-row: 3; }
+  .natal-placement-sections { grid-template-columns: minmax(0, 1fr); }
+  .natal-placement-section { grid-column: 1; grid-row: auto; }
+  .natal-placement-grid { grid-template-columns: minmax(0, 1fr); }
+  .natal-angles { order: 3; }
+  .natal-points { order: 4; }
+  .natal-empty-houses { order: 5; }
+  .natal-readings--insights .natal-readings__items { grid-template-columns: minmax(0, 1fr); }
+}
+
+
+.friend-chart-page.relationship-detail-layout { grid-template-columns: var(--layout-profile-columns); width: min(var(--container-content), 100%); max-width: 100%; gap: var(--space-6); }
+.friend-profile-heading { grid-column: 1 / -1; flex-wrap: wrap; min-width: 0; }
+.friend-profile-controls { display: flex; flex: none; align-items: center; gap: var(--space-4); max-width: 100%; margin-left: auto; }
+.friend-profile-heading .friend-profile-card { display: flex; flex: 1 1 auto; width: auto; min-width: 0; padding: 0; background: transparent; border: 0; box-shadow: none; }
+.friend-profile-heading .friend-profile-avatar { flex: none; width: var(--size-8); height: var(--size-8); background: var(--surface-2); color: var(--ink); box-shadow: none; }
+.friend-profile-heading .friend-hero-copy h1 { font-family: var(--font-display); font-size: var(--text-title); font-weight: var(--weight-regular); line-height: var(--leading-display); letter-spacing: var(--tracking-display); margin: 0; overflow-wrap: anywhere; }
+.friend-profile-heading .friend-profile-handle { font-family: var(--font-label); font-size: var(--type-meta-size); color: var(--muted); }
+.friend-profile-heading .friend-kebab { flex: none; position: static; margin: 0; background: var(--surface); color: var(--ink); border-radius: var(--radius-circle); width: var(--size-6); height: var(--size-6); }
+.friend-profile-heading .friend-chart-tabs { display: flex; flex: none; align-items: center; align-self: center; width: auto; max-width: 100%; padding: var(--segmented-padding); margin: 0; border: 0; border-radius: var(--radius-pill); background: var(--segmented-bg); box-shadow: var(--segmented-shadow); gap: var(--segmented-gap); }
+.friend-profile-heading .friend-view-tab { display: inline-flex; align-items: center; justify-content: center; min-width: 0; min-height: var(--segmented-item-height); height: var(--segmented-item-height); padding: 0 var(--space-4); border: 0; border-radius: var(--radius-pill); background: transparent; font-family: var(--font-ui); font-size: var(--text-button-size); font-weight: var(--weight-regular); line-height: var(--leading-label); color: var(--muted); white-space: nowrap; cursor: pointer; }
+.friend-profile-heading .friend-view-tab--active { background: var(--accent-bg); color: var(--accent); font-weight: var(--weight-medium); box-shadow: var(--segmented-active-shadow); }
+.friend-profile-heading .friend-view-more { display: none; }
+.friend-chart-page > .friend-detail-chart-rail { position: static; grid-column: 1; grid-row: 2; }
+.friend-chart-page > .friend-detail-main { grid-column: 2; grid-row: 2; }
+.friend-chart-page:has(.friend-natal-stage) > .friend-detail-main,
+.friend-natal-stage,
+.friend-natal-stage > .friend-profile-copy-column { display: contents; }
+.friend-natal-stage .natal-big-three { grid-column: 2; grid-row: 2; }
+.friend-chart-page .compatibility-card__glyph { width: var(--size-7); height: var(--size-7); border: 0; border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); }
+.friend-chart-page .compatibility-card h3 { font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); letter-spacing: var(--tracking-title); margin: 0; }
+.friend-chart-page .compatibility-card__signs { flex-wrap: wrap; gap: var(--space-2) var(--space-4); font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-meta); }
+.friend-chart-page .compatibility-card p { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.profile-avatar { background: var(--surface-2); color: var(--ink); }
+.you-profile-monogram, .settings-profile-row .profile-avatar, .account-profile-row .profile-avatar { background: var(--avatar-owner-bg); color: var(--avatar-owner-fg); }
+@media (max-width: 800px) {
+ .friend-detail-page .friends-back-button { top: var(--mobile-article-back-top); }
+ .friend-chart-page.relationship-detail-layout { grid-template-columns: minmax(0, 1fr); }
+ .friend-profile-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+ .friend-profile-controls { display: contents; }
+ .friend-profile-heading .friend-profile-card { grid-column: 1; grid-row: 1; }
+ .friend-profile-heading .friend-kebab { grid-column: 2; grid-row: 1; }
+ .friend-profile-heading .friend-chart-tabs { grid-column: 1 / -1; grid-row: 2; justify-self: start; width: fit-content; flex-wrap: wrap; }
+ .friend-profile-heading .friend-view-tab { padding-inline: var(--space-2); }
+ .friend-profile-heading .friend-view-tab--extended { display: none; }
+ .friend-profile-heading .friend-view-more { display: block; }
+ .friend-chart-page > .friend-detail-chart-rail { grid-column: 1; grid-row: 2; }
+ .friend-chart-page > .friend-detail-main, .friend-natal-stage .natal-big-three { grid-column: 1; grid-row: 3; }
+}
+
+/* Explicit rows keep the identity bar above every lazy-loaded chart variant. */
+.friend-chart-page.relationship-detail-layout > .friend-profile-heading { grid-column: 1 / -1; grid-row: 1; }
+.friend-chart-page.relationship-detail-layout > .friend-detail-main { grid-column: 2; grid-row: 2; }
+.friend-chart-page.relationship-detail-layout > .friend-detail-chart-rail { grid-column: 1; grid-row: 2; }
+.friend-chart-page.relationship-detail-no-chart { grid-template-columns: minmax(0, 1fr); width: 100%; }
+.friend-chart-page.relationship-detail-no-chart > .friend-detail-main { grid-column: 1; grid-row: 2; max-width: none; }
+.friend-chart-page.relationship-detail-no-chart .natal-big-three { grid-column: 1 / -1; grid-row: 2; }
+.friend-chart-page:has(.friend-natal-stage) > .friend-detail-main,
+.friend-chart-page:has(.friend-natal-stage) :is(.friend-natal-stage, .friend-natal-stage > .friend-profile-copy-column) { display: contents; }
+.you-chart-page .chart-layout__visual > .natal-chart-view-toggle,
+.friend-chart-page .friend-synastry-wheel-shell > .natal-chart-view-toggle { order: 2; }
+.natal-chart-controls { display: flex; align-items: center; justify-content: center; gap: var(--space-2); order: 2; margin-top: var(--space-2); }
+.natal-chart-controls > .natal-chart-view-toggle { margin: 0; }
+.natal-chart-expand { display: grid; place-items: center; width: var(--size-5); height: var(--size-5); padding: 0; border: 0; border-radius: var(--radius-circle); background: var(--surface); color: var(--ink); box-shadow: var(--card-shadow); }
+@media (max-width: 800px) {
+ .friend-chart-page.relationship-detail-layout > .friend-detail-main { grid-column: 1; grid-row: 3; }
+ .friend-chart-page.relationship-detail-layout > .friend-detail-chart-rail { grid-column: 1; grid-row: 2; }
+}
+
+/* Dark natal cards sit at L1; their glyph controls stay one level above. */
+:is(.theme-dark, [data-theme="dark"]) .natal-placement-sections { --surface-recessed: var(--surface); }
+:is(.theme-dark, [data-theme="dark"]) .natal-placement-sections .placement-table-row__glyph { background: var(--surface-2); }
+
+/* Combined natal Patterns & Insights: desktop cards and mobile sheet rows. */
+.natal-patterns-insights { grid-column: 1 / -1; display: grid; gap: var(--space-4); min-width: 0; margin-top: var(--space-6); }
+.natal-patterns-insights:not(:has(.natal-insight-card, .app-loading, .load-error)) { display: none; }
+.natal-patterns-insights__grid > .load-error { grid-column: 1 / -1; }
+.natal-patterns-insights > h2 { margin: 0; font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); }
+.natal-patterns-insights__grid { display: grid; grid-template-columns: var(--layout-card-columns); gap: var(--space-6); align-items: stretch; min-width: 0; }
+.natal-patterns-insights .natal-readings, .natal-patterns-insights .natal-readings__items { display: contents; }
+.natal-insight-card { display: grid; grid-template-rows: auto 1fr auto; justify-items: center; align-items: start; gap: var(--space-4); min-width: 0; width: 100%; height: 100%; padding: var(--space-8) var(--space-7) var(--space-7); border: 0; border-radius: var(--card-radius-sm); background: var(--surface); color: var(--ink); box-shadow: var(--card-shadow); text-align: center; text-decoration: none; cursor: pointer; }
+.natal-insight-card__glyph { display: grid; place-items: center; width: var(--size-8); height: var(--size-8); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); font-family: var(--font-glyph); font-size: var(--chart-planet-glyph-size); line-height: var(--leading-label); }
+.natal-insight-card__copy { display: grid; gap: var(--space-3); min-width: 0; width: 100%; }
+.natal-insight-card__meta { font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-medium); line-height: var(--leading-meta); color: var(--ink-2); }
+.natal-insight-card__title { display: block; font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); letter-spacing: var(--tracking-title); text-wrap: balance; }
+.natal-insight-card__preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--card-preview-lines-compact); overflow: hidden; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--ink-2); }
+.natal-insight-card:focus-visible { outline: var(--border-width-medium) solid var(--focus-ring); outline-offset: var(--space-1); }
+.natal-insight-card:hover { background: var(--surface-hover); }
+.natal-insight-card .card-read-more--icon { justify-self: center; }
+@media (max-width: 800px) {
+  .natal-patterns-insights { gap: var(--space-6); padding: var(--modal-panel-padding) var(--space-6); border-radius: var(--sheet-radius); background: var(--surface-2); }
+  .natal-patterns-insights__grid { grid-template-columns: minmax(0, 1fr); gap: var(--modal-panel-padding); }
+  .natal-insight-card { grid-template-columns: var(--glyph-tile-compact-size) minmax(0, 1fr) var(--size-4); grid-template-rows: auto; gap: var(--lunar-space-14); padding: 0; border-radius: 0; background: transparent; box-shadow: none; text-align: left; }
+  .natal-insight-card__glyph { width: var(--glyph-tile-compact-size); height: var(--glyph-tile-compact-size); background: var(--surface); font-size: var(--type-large-title-size); }
+  .natal-insight-card__copy { gap: var(--space-2); }
+  .natal-insight-card__title { display: block; overflow: visible; overflow-wrap: anywhere; font-size: var(--type-large-title-size); text-wrap: pretty; }
+  .natal-insight-card .card-read-more--icon { align-self: center; width: var(--size-4); height: var(--size-4); background: var(--surface); }
+  .natal-insight-card:hover { background: transparent; }
+}
+@media (max-width: 360px) {
+  .natal-patterns-insights { padding-inline: var(--space-4); }
+}

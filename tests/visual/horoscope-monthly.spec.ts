@@ -21,7 +21,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const calendar=await getLunarCalendarMonth(location,new Date('2026-10-10T16:00:00Z'));
    await ready;await page.setViewportSize({width,height:1000});
    await page.clock.setFixedTime(new Date('2026-10-10T12:00:00Z'));
-   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'}));localStorage.setItem('tldrastro:horoscopeLocation',JSON.stringify({label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'}));},theme);
+   await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'}));if(!localStorage.getItem('tldrastro:horoscopeLocation'))localStorage.setItem('tldrastro:horoscopeLocation',JSON.stringify({label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'}));},theme);
    let readerMode='normal';let release:()=>void=()=>{};let hold=false;
    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
     if(url.pathname==='/api/calendar'){await route.fulfill({json:{ok:true,calendar}});return true;}
@@ -161,44 +161,39 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    expect([labels[0][0],labels[0][1],labels[0][3],labels[0][4]]).toEqual(bodyStyle);
    await expect(overview).toContainText('You can read the exact monthly fixture opening.');await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await expect(page.getByRole('group',{name:'Zodiac signs',exact:true})).toHaveCount(0);
-   await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
-   await expect(page.getByRole('heading')).toHaveText(['Horoscopes','October 2026 Overview']);
-   const headingStyle=await overview.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
+   await expect(page.getByRole('button',{name:'Monthly',exact:true})).toHaveAttribute('aria-pressed','true');
+   await expect(overview.locator('.horoscope-reading-date')).toHaveText('October');
+   await expect(overview.locator('.horoscope-year')).toHaveText('2026');
    await page.reload();await expect(overview.locator('strong')).toHaveText(['TLDR','The month ahead']);await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.screenshot({path:`test-results/monthly-overview-${width}-${theme}.png`,fullPage:true});
-   await expect(page.getByRole('group',{name:'Horoscope period',exact:true}).getByRole('button')).toHaveText(['Today','This week','October Horoscopes','Libra Season']);
-   await page.getByRole('button',{name:'Libra Season',exact:true}).click();
+   await expect(page.getByRole('group',{name:'Horoscope period',exact:true}).getByRole('button')).toHaveText(['Daily','Weekly','Monthly','Seasonal','Planets']);
+   await page.getByRole('button',{name:'Seasonal',exact:true}).click();
    await expect(page.getByRole('article',{name:'Season introduction'})).toContainText('Your fixture reading ends here.');
    await page.getByRole('button',{name:'Gemini & Gemini Rising',exact:true}).click();
    const gemini=page.getByRole('article',{name:'Gemini horoscope'});await expect(gemini).toContainText('You can read your gemini fixture opening.');
-   expect(await gemini.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];})).toEqual(headingStyle);
-   expect(await page.getByRole('article',{name:'Season introduction'}).locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];})).toEqual(headingStyle);
-   await expect(page.getByRole('heading')).toHaveText(['Horoscopes','overview fixture','gemini fixture']);
+   await expect(gemini.locator('.horoscope-reading-date')).toHaveCSS('font-family',/Newsreader/);
+   await expect(gemini.getByRole('heading',{name:'gemini fixture',exact:true})).toBeVisible();
+   await expect(page.getByRole('article',{name:'Season introduction'}).getByRole('heading',{name:'overview fixture',exact:true})).toBeVisible();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    await page.screenshot({path:`test-results/season-introduction-${width}-${theme}.png`,fullPage:true});
-   readerMode='error';await page.getByRole('button',{name:'October Horoscopes',exact:true}).click();await expect(page.getByRole('alert')).toContainText('could not load');
+   readerMode='error';await page.getByRole('button',{name:'Monthly',exact:true}).click();await expect(page.getByRole('alert')).toContainText('could not load');
    readerMode='normal';await page.getByRole('button',{name:'Try again',exact:true}).click();await expect(overview).toContainText('Your complete monthly fixture ends here.');
-   await page.getByRole('button',{name:'Today',exact:true}).click();await expect(page.getByRole('heading',{name:'No daily reading yet'})).toBeVisible();
-   await expect(page.getByRole('button',{name:'Read Libra Season horoscope',exact:true})).toBeVisible();
-   await expect(page.getByRole('button',{name:'Read this month’s overview',exact:true})).toBeVisible();
-   hold=true;await page.getByRole('button',{name:'Read this month’s overview',exact:true}).click();
+   await page.getByRole('button',{name:'Daily',exact:true}).click();await expect(page.getByRole('heading',{name:'No daily reading yet'})).toBeVisible();
+   await expect(page.getByRole('button',{name:'Seasonal',exact:true})).toBeVisible();
+   await expect(page.getByRole('button',{name:'Monthly',exact:true})).toBeVisible();
+   hold=true;await page.getByRole('button',{name:'Monthly',exact:true}).click();
    await expect(page.getByText('Loading your horoscope…',{exact:true})).toBeVisible();release();
    await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.goto('/?date=2026-10-10#calendar?view=month&date=2026-10-10');
    const calendarOverview=page.getByRole('region',{name:'October 2026 Overview',exact:true});
-   await expect(calendarOverview.locator('strong')).toHaveText(['TLDR']);
-   await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
+   await expect(calendarOverview.locator('.lunar-month-overview__label')).toHaveText('TLDR');
+   await expect(calendarOverview.locator('p')).toHaveText(summary.split('\n\n'));
    await expect(page.getByText('You can read the exact monthly fixture opening.',{exact:true})).toHaveCount(0);
    await expect(page.getByText('Your complete monthly fixture ends here.',{exact:true})).toHaveCount(0);
    const grid=page.locator('.lunar-calendar-grid-panel');
-   expect(await grid.evaluate((el)=>el.nextElementSibling?.classList.contains('lunar-month-overview--monthly'))).toBe(true);
    const gridBox=await grid.boundingBox(),cardBox=await calendarOverview.boundingBox();
    expect(cardBox!.y).toBeGreaterThanOrEqual(gridBox!.y+gridBox!.height);
    expect(await calendarOverview.locator('p').nth(1).evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.lineHeight,s.letterSpacing];})).toEqual(bodyStyle);
-   const cardHeadingStyle=await calendarOverview.locator('h2').evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
-   // Use the existing Calendar card title role at both widths and themes.
-   const analogousHeading=page.locator('.calendar-sky-card__title').filter({hasNotText:'October 2026 Overview'}).first();
-   if(await analogousHeading.count())expect(await analogousHeading.evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];})).toEqual(cardHeadingStyle);
    await expect(calendarOverview.getByRole('heading')).toHaveText(['October 2026 Overview']);
    const readMore=calendarOverview.getByRole('link',{name:'Read more: October 2026 Overview',exact:true});
    await expect(readMore).toHaveAttribute('href',`/#horoscopes?period=monthly&edition=${saved.id}`);
@@ -209,13 +204,13 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await expect(overview).toContainText('You can read the exact monthly fixture opening.');
    await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.reload();await expect(overview).toContainText('Your complete monthly fixture ends here.');
-   await page.goBack();await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
+   await page.goBack();await expect(calendarOverview.locator('p')).toHaveText(summary.split('\n\n'));
    await page.goForward();await expect(overview).toContainText('Your complete monthly fixture ends here.');
-   await page.goBack();await page.reload();await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
-   readerMode='error';await page.reload();await expect(page.getByText('The monthly overview couldn’t load.',{exact:false})).toBeVisible();
+   await page.goBack();await page.reload();await expect(calendarOverview.locator('p')).toHaveText(summary.split('\n\n'));
+   readerMode='error';await page.reload();await expect(page.getByRole('alert').filter({hasText:'The monthly overview could not load.'})).toBeVisible();
    await expect(calendarOverview).toHaveCount(0);await expect(grid).toBeVisible();
    readerMode='normal';await page.getByRole('button',{name:'Try again',exact:true}).click();
-   await expect(calendarOverview.locator('p')).toHaveText(['TLDR',...summary.split('\n\n')]);
+   await expect(calendarOverview.locator('p')).toHaveText(summary.split('\n\n'));
    readerMode='empty';await page.reload();
    await expect(grid).toBeVisible();await expect(page.getByText('Loading the monthly overview…',{exact:true})).toHaveCount(0);
    await expect(calendarOverview).toHaveCount(0);await expect(page.getByRole('link',{name:/^Read more: October/})).toHaveCount(0);
@@ -225,10 +220,10 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    // keeps its own month after the calendar rolls forward.
    await page.clock.setFixedTime(new Date('2026-11-01T03:30:00Z'));
    await page.goto('/#horoscopes?period=monthly');
-   await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
+   await expect(page.getByRole('button',{name:'Monthly',exact:true})).toHaveAttribute('aria-pressed','true');
    await page.clock.setFixedTime(new Date('2026-11-01T05:00:00Z'));
    await page.reload();
-   await expect(page.getByRole('button',{name:'November Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
+   await expect(page.getByRole('button',{name:'Monthly',exact:true})).toHaveAttribute('aria-pressed','true');
    await expect(page.getByRole('heading',{name:'No monthly reading yet'})).toBeVisible();
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
    // A historical calendar month must link to its own edition even when the
@@ -236,14 +231,15 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.goto('/?date=2026-10-10#calendar?view=month&date=2026-10-10');
    await expect(readMore).toHaveAttribute('href',`/#horoscopes?period=monthly&edition=${saved.id}`);
    await page.evaluate(()=>localStorage.setItem('tldrastro:horoscopeLocation',JSON.stringify({label:'Tokyo',latitude:35.68,longitude:139.76,timeZone:'Asia/Tokyo'})));
+   await page.reload();
    await readMore.click();
    await expect(overview).toContainText('You can read the exact monthly fixture opening.');
    await expect(overview).toContainText('Your complete monthly fixture ends here.');
-   await expect(overview).toContainText('America/New_York');
+   await expect(overview.locator('.horoscope-timing-note')).toContainText('America/New York');
    await page.reload();await expect(overview).toContainText('Your complete monthly fixture ends here.');
    await page.goto(href!);
    await expect(overview).toContainText('Your complete monthly fixture ends here.');
-   await expect(page.getByRole('button',{name:'October Horoscopes',exact:true})).toHaveAttribute('aria-pressed','true');
+   await expect(page.getByRole('button',{name:'Monthly',exact:true})).toHaveAttribute('aria-pressed','true');
   }finally{child.kill();}
  });
 }

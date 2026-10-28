@@ -5,13 +5,16 @@ import { PreparedProse as FormattedProse } from "../../components/FormattedWriti
 import { ReaderPassageEditLink } from '../../components/ReaderPassageEditLink';
 import { skyPassageEditSource, studioPassageEditHref } from '../../../../../src/shared/studioPassageEdit';
 import { skyPreviewReferenceDate } from '../../../../../src/shared/skyReaderPreview';
-import { RetrogradeHistoryDisclosure, type RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
+import type { RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
+import { RetrogradeCycles } from "../calendar/RetrogradeCycles";
+import "../../styles/sky-placement-article.css";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
-import { ChevronLeft } from "lucide-react";
-import { Fragment, isValidElement, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Fragment, Suspense, isValidElement, lazy, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { ContentBundle } from "../../content/types";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 import {
   pointGlyph,
   aspectGlyph,
@@ -43,6 +46,8 @@ import {
 } from "../../utils/articleText";
 
 export type AspectToneBucket = "gifts" | "lessons";
+const SkyReaderExportStatus = lazy(() => import("./SkyReaderExportStatus"));
+const SkyPlacementKeyDates = lazy(() => import("./SkyPlacementKeyDates").then(module => ({ default: module.SkyPlacementKeyDates })));
 export type RelatedAspectGroup = AspectToneBucket | "planets" | "points";
 
 export type SkyDetailRelatedAspectRow = {
@@ -68,6 +73,8 @@ export type SkyDetailSection = {
 export type SkyDetailKeyDate = {
   date: string;
   label: string;
+  occursAt?: string;
+  endsAt?: string;
 };
 
 export type SkyHistoricalLookback = {
@@ -90,11 +97,13 @@ export type SkyPersonalizedPlacement = {
 };
 
 export type SkyDetail = {
+  aspectType?: string;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   previewLabel?: string;
   readerExport?: { keys: string[]; instant: string; timeZone: string; rows: Array<{ id?: string; contentKey: string; updatedAt?: string; status?: string; sections?: unknown }> };
   retrogradeHistoryContext?: RetrogradeHistoryContext;
   placementFactsPending?: boolean;
+  placementContext?: { planet: string; sign: string; referenceDate: string; timeZone: string };
   pills?: ArticlePillData;
   transitDescription?: string;
   routePath?: string;
@@ -387,17 +396,20 @@ function skyArticleDateLine(value: ReactNode, pattern: RegExp) {
 
 export function SkyDetailArticle({
   detail,
-  onClose
+  onClose,
+  placementNavigation
 }: {
   detail: SkyDetail;
   onClose: () => void;
+  placementNavigation?: { previous?: { title: string; href: string }; next?: { title: string; href: string } };
 }) {
+  const placementPage = /^sky\/placement\//u.test(detail.routePath ?? "");
   const articleRef = useRef<HTMLElement>(null);
+  const [csvExportRoute] = useState(() => new URL(window.location.href).searchParams.get("studioExport") === "sky-article-csv" ? detail.routePath : null);
   const editSource = detail.readerExport && skyPassageEditSource(detail.readerExport.keys);
   const editHref = editSource && detail.readerExport && !detail.placementFactsPending && !detail.previewLabel
     ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
       date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone) }) : null;
-  const [csvExportStatus, setCsvExportStatus] = useState('');
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [detail.routePath ?? detail.title]);
@@ -430,14 +442,6 @@ export function SkyDetailArticle({
     : null;
   const residencyAspectsPending = needsResidencyAspects && !residencyAspectsCurrent;
   const residencyAspectsFailed = needsResidencyAspects && residencyAspectsCurrent && residencyAspectState?.[1] === null;
-  useEffect(() => {
-    if (!detail.readerExport || detail.placementFactsPending || residencyAspectsPending || new URL(window.location.href).searchParams.get('studioExport') !== 'sky-article-csv') return;
-    let cancelled = false;
-    void import('./skyReaderCsvExport').then(({ exportStatus }) => {
-      if (!cancelled) setCsvExportStatus(exportStatus(articleRef.current, detail, residencyAspectsFailed));
-    }).catch(() => { if (!cancelled) setCsvExportStatus('The article CSV could not be downloaded. Reload this page to try again.'); });
-    return () => { cancelled = true; };
-  }, [detail, residencyAspectsPending, residencyAspectsFailed]);
   const detailSections = residencyAspectSections
   ? [
       ...residencyAspectSections,
@@ -522,8 +526,10 @@ export function SkyDetailArticle({
   // A surface's calculated interval must win over a date line embedded in an
   // article template (which may describe the full residency across visits).
   const headerDate = detail.retrograde ? detail.duration : detail.duration ?? leadingSectionDate ?? leadingPlacementDate;
+  const retrogradeDateLabel = placementPage ? detail.title.match(/^(.+?\sRx)\b/u)?.[1] : undefined;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
+  const headerAspect = detail.aspectType ?? articleAspectGlyphPartsFromHeading(detail.title.split(" · ")[0])?.aspect;
   const eyebrowGlyphs = articleEyebrowGlyphs({
     glyph: detail.glyph,
     meta: metaRows.map((row) => row.value).join(" "),
@@ -555,6 +561,7 @@ export function SkyDetailArticle({
   })).filter((group) => group.sections.length > 0 || group.rows.length > 0);
   const hasAspectCard = aspectGroups.length > 0;
   const hasReadableBody = Boolean(
+    (placementPage && articleSub) ||
     detail.lensHint ||
       (detail.plainBody && fallbackParagraphs.length > 0) ||
       displaySections.length > 0 ||
@@ -587,7 +594,7 @@ export function SkyDetailArticle({
 
   return (
     <section
-      className={`article-page sky-detail-page${detail.compactHeader ? " you-transit-article-page" : ""}`}
+      className={`article-page sky-detail-page${placementPage ? " sky-placement-article-page" : ""}${detail.compactHeader ? " you-transit-article-page" : ""}`}
       aria-label={`${detail.title} field guide`}
       aria-labelledby="sky-detail-title"
     >
@@ -597,10 +604,12 @@ export function SkyDetailArticle({
       </button>
       <article ref={articleRef} aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
-          {csvExportStatus && <p role="status" className="article-sub">{csvExportStatus}</p>}
+          {detail.readerExport && csvExportRoute === detail.routePath && <Suspense fallback={null}>
+            <SkyReaderExportStatus key={detail.routePath} articleRef={articleRef} detail={detail} residencyAspectsPending={residencyAspectsPending} residencyAspectsFailed={residencyAspectsFailed} />
+          </Suspense>}
           <header className="article-id sky-detail-id">
             {detail.previewLabel && <p className="article-sub" role="status">{detail.previewLabel}</p>}
-            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>
+            {placementPage ? <span className="sky-placement-article__glyph" aria-hidden="true">{pointGlyph(detail.placementContext?.planet ?? detail.routePath?.split("/")[2] ?? "")}</span> : headerAspect ? <AspectBadge aspect={headerAspect} /> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>
@@ -614,18 +623,18 @@ export function SkyDetailArticle({
                   </span>
                 </>
               ) : null}
-            </div>
+            </div>}
             <h1 className="article-title" id="sky-detail-title">{detail.title}</h1>
             {detail.tagline ? (
               <FormattedProse className="article-sub sky-detail-tagline" text={detail.tagline} />
             ) : null}
             {headerDate ? (
-              <p className="article-duration">{headerDate}</p>
+              <p className="article-duration">{retrogradeDateLabel ? `${retrogradeDateLabel} ` : ""}{headerDate}</p>
             ) : null}
             {detail.residencyDuration ? <p className="article-duration">{detail.residencyDuration}</p> : null}
             <ReaderPassageEditLink href={editHref} />
-            <ArticlePills pills={detail.pills} />
-            {articleSub ? (
+            {placementPage ? detail.retrograde && <span className="sky-placement-article__retrograde">℞ Retrograde</span> : <ArticlePills pills={detail.pills} />}
+            {articleSub && !placementPage ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
                 <FormattedProse className="article-sub article-tldr__copy" text={articleSub} />
@@ -634,11 +643,12 @@ export function SkyDetailArticle({
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
           </header>
 
-          {hasReadableBody ? <hr className="article-rule" /> : null}
+          {hasReadableBody && !placementPage ? <hr className="article-rule" /> : null}
 
           {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
+              {placementPage && articleSub ? <FormattedProse text={articleSub} /> : null}
               {detail.lensHint ? (
                 <aside className="article-lens-hint" aria-label="Placement lens">
                   {typeof detail.lensHint === "string" ? <FormattedProse text={detail.lensHint} /> : detail.lensHint}
@@ -698,7 +708,7 @@ export function SkyDetailArticle({
                 </>
               )}
               {detail.natalPlanetReading ? <NatalChartReadings {...detail.natalPlanetReading} /> : null}
-              {detail.keyDates?.length ? (
+              {!placementPage && detail.keyDates?.length ? (
                 <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="sky-detail-key-dates-title">
                   <h2 id="sky-detail-key-dates-title">Key dates</h2>
                   {detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null}
@@ -723,7 +733,6 @@ export function SkyDetailArticle({
                 </aside>
               ) : null}
               <SkyMechanics caption={detail.mechanicsCaption} />
-              {detail.retrogradeHistoryContext && <RetrogradeHistoryDisclosure context={detail.retrogradeHistoryContext} />}
               {drilldown ? (
                 <details className="sky-detail-drilldown">
                   <summary>{drilldown.title || "Why this?"}</summary>
@@ -757,11 +766,16 @@ export function SkyDetailArticle({
                 </section>
               ) : null}
               <TransitFacts description={detail.transitDescription} />
-              <div className="sky-detail-end" aria-hidden="true">✦</div>
+              {!placementPage && <div className="sky-detail-end" aria-hidden="true">✦</div>}
             </div>
           </div>
           ) : null}
         </div>
+
+        {placementPage && <div className="sky-placement-article__sections" key={detail.routePath}>
+          <Suspense fallback={<p className="sky-placement-article__status" role="status">Loading key dates…</p>}><SkyPlacementKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro} context={detail.placementContext} pending={detail.placementFactsPending} /></Suspense>
+          {detail.retrogradeHistoryContext && <RetrogradeCycles key={`${detail.retrogradeHistoryContext.planet}:${detail.retrogradeHistoryContext.sign}`} context={detail.retrogradeHistoryContext} presentation="article" />}
+        </div>}
 
         {hasAspectCard ? (
           <>
@@ -851,9 +865,9 @@ export function SkyDetailArticle({
         ) : null}
 
         {detail.personalizedPlacement ? (
-          <>
+          <div className="sky-detail-personalized">
             <h2
-              className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
+              className="sky-detail-personalized__label"
               id="sky-detail-personalized-placement-title"
             >
               {detail.personalizedPlacement.heading}
@@ -863,28 +877,32 @@ export function SkyDetailArticle({
               id="sky-personalized-placement"
               aria-labelledby="sky-detail-personalized-placement-title"
             >
-              <div className="article-body-card sky-detail-body">
-                <div className="article-body-inner">
-                  <section className="article-section sky-detail-section">
-                    <FormattedProse text={detail.personalizedPlacement.body} />
-                    {detail.personalizedPlacement.natalAspects.length > 0 ? (
-                      <>
-                        <h3>Aspects to the natal chart</h3>
-                        {skyActiveChartEvents(detail.personalizedPlacement.natalAspects).map((aspect) => (
-                          <section className="sky-detail-personalized-aspect" key={aspect.key}>
-                            <h4>{aspect.heading}</h4>
-                            {aspect.members.map((member) => fullDetailReaderFacingParagraphs(skyPlacementAspectParagraphs(member)).map((paragraph, index) => (
-                              <FormattedProse key={`${member.key}-${index}`} text={paragraph} />
-                            )))}
-                          </section>
-                        ))}
-                      </>
-                    ) : null}
-                  </section>
-                </div>
+              <div className="sky-detail-personalized__copy">
+                <FormattedProse text={detail.personalizedPlacement.body} />
               </div>
+              {detail.personalizedPlacement.natalAspects.length > 0 ? (
+                <div className="sky-detail-personalized__aspects">
+                  {skyActiveChartEvents(detail.personalizedPlacement.natalAspects).map((aspect) => {
+                    const types = [...new Set(aspect.members.flatMap(member => {
+                      const parts = articleAspectGlyphPartsFromHeading(member.heading);
+                      return parts ? [parts.aspect] : [];
+                    }))];
+                    return <section className="sky-detail-personalized-aspect" key={aspect.key}>
+                      <div className="sky-detail-personalized-aspect__heading">
+                        {types.length > 0 ? <span className={`sky-detail-personalized-aspect__glyph sky-detail-personalized-aspect__glyph--${types[0]}`} aria-hidden="true">
+                          {types.map(type => aspectGlyph(type)).join(" ")}
+                        </span> : null}
+                        <h3>{aspect.heading}</h3>
+                      </div>
+                      {aspect.members.flatMap((member) => fullDetailReaderFacingParagraphs(skyPlacementAspectParagraphs(member)).map((paragraph, index) => (
+                        <FormattedProse key={`${member.key}-${index}`} text={paragraph} />
+                      )))}
+                    </section>;
+                  })}
+                </div>
+              ) : null}
             </section>
-          </>
+          </div>
         ) : null}
 
         {risingHoroscopesSection ? (
@@ -896,6 +914,16 @@ export function SkyDetailArticle({
             </div>
           </div>
         ) : null}
+        {placementPage && placementNavigation && <nav className="sky-placement-article__navigation" aria-label="Planetary placements">
+          {(["previous", "next"] as const).map(direction => {
+            const entry = placementNavigation[direction];
+            const Icon = direction === "previous" ? ChevronLeft : ChevronRight;
+            return entry ? <a key={direction} href={entry.href} className={`sky-placement-article__${direction}`}>
+              <span className="sky-placement-article__nav-icon"><Icon aria-hidden="true" /></span>
+              <span><span>{direction === "previous" ? "Previous" : "Next"}</span><strong>{entry.title}</strong></span>
+            </a> : <span key={direction} />;
+          })}
+        </nav>}
       </article>
     </section>
   );

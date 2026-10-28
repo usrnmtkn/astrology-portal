@@ -295,7 +295,7 @@ test("Calendar failed reading asset stays local and explicit retry reloads the r
   await expect(page.locator(".calendar-sky-card").getByRole("alert")).toContainText("reading could not load");
   expect(navigations).toBe(1);
   fail = false;
-  await page.locator(".calendar-sky-card").getByRole("button", { name: "Retry", exact: true }).click();
+  await page.locator(".calendar-sky-card").getByRole("button", { name: "Try again", exact: true }).click();
   await expect(dayGuidance(page)).toBeVisible();
   expect(navigations).toBe(2);
 });
@@ -325,9 +325,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(loading).toHaveAttribute("role", "status");
     await expect(loading).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(loading).toHaveCSS("border-width", "0px");
-    const poster = loading.locator('.startup-artwork__poster');
-    await expect(poster).toBeVisible();
-    await expect(poster).toHaveAttribute("viewBox", "0 0 128 128");
+    const orbit = loading.locator(".startup-orbit");
+    await expect(orbit).toBeVisible();
+    await expect(orbit).toHaveAttribute("viewBox", "0 0 48 48");
+    await expect(orbit).toHaveCSS("animation-name", "none");
+    await expect(loading.locator(".startup-artwork__poster")).toBeHidden();
     await expect(loading.locator('.startup-artwork__animation')).toBeHidden();
     expect(await loading.evaluate(el => el.getBoundingClientRect().height)).toBe(900);
     const typography = await loading.evaluate(el => { const s = getComputedStyle(el); return { font: s.fontFamily, size: s.fontSize, weight: s.fontWeight, line: s.lineHeight, tracking: s.letterSpacing }; });
@@ -394,22 +396,22 @@ test("a failed lazy route keeps navigation usable", async ({ page }) => {
   // The reader retries a missing chunk once. Start on its route so intent
   // preloading cannot reload the previous Sky page before selection.
   await page.goto("/#calendar", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("alert")).toContainText("This page could not load");
+  await expect(page.getByRole("heading", { name: "Reply hazy, try again.", exact: true })).toBeVisible();
   await expect(page.locator(".topbar")).toBeVisible();
   await page.getByRole("button", { name: "Sky", exact: true }).first().click();
   await expect(page.getByLabel("Daily sky summary")).toBeVisible();
   await expect(page.getByRole("alert")).toHaveCount(0);
 });
 
-test("failed astronomy shows Retry and recovers on the same route", async ({ page }) => {
+test("failed astronomy shows Try again and recovers on the same route", async ({ page }) => {
   const workerAssets = /\/assets\/skyCalculation\.worker-.*\.js$/;
   await page.route(workerAssets, async route => {
     const retryClicked = await page.evaluate(() => document.documentElement.dataset.testSkyRetryClicked === "true");
     await (retryClicked ? route.continue() : route.abort("failed"));
   });
   await page.goto("/#sky");
-  await expect(page.getByRole("alert")).toContainText("The current sky could not load");
-  const retry = page.getByRole("button", { name: "Retry", exact: true });
+  await expect(page.getByRole("heading", {name:"Reply hazy, try again.", exact:true})).toBeVisible();
+  const retry = page.getByRole("button", { name: "Try again", exact: true });
   // Keep the worker unavailable until the real click. Unrouting beforehand
   // lets a concurrent calculation recover and remove Retry before it is clicked.
   await retry.evaluate(button => button.addEventListener("click", () => {
@@ -423,8 +425,8 @@ test("failed astronomy shows Retry and recovers on the same route", async ({ pag
 
 test("a signed-out Friends link explains what is needed instead of staying blank", async ({ page }) => {
   await page.goto("/#friends");
-  await expect(page.getByText("Sign in to view your Friends.", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Sign in to see your friends", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page.getByRole("textbox", { name: "Email", exact: true })).toBeVisible();
   await expect(page.locator('input[type="password"]')).toBeVisible();
 });

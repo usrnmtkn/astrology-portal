@@ -17,16 +17,19 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('/?date=2026-09-14#sky');
     const card = page.getByRole('button', { name: 'Read more about Venus in Scorpio', exact: true });
-    await expect(card.locator('.planet-placement-row__meta--timing')).toHaveText('Sep 10 - Oct 25', { timeout: 60_000 });
+    await expect(card.locator('.planet-placement-row__timing > span:first-child')).toHaveText('Sep 10 - Oct 25', { timeout: 60_000 });
     await card.click();
     const dates = page.locator('.sky-detail-id .article-duration');
-    await expect(dates).toHaveText(['September 10 to October 25, 2026', 'Full residency in Scorpio: September 10, 2026 to January 7, 2027'], { timeout: 60_000 });
-    await expect(page.getByLabel('Article details')).toContainText('41D');
+    await expect(dates).toHaveText(['September 10 to October 25, 2026', 'Venus in Scorpio September 10, 2026 to January 7, 2027'], { timeout: 60_000 });
     const typography = await dates.evaluateAll(elements => elements.map(element => {
       const s = getComputedStyle(element);
       return { font: s.fontFamily, size: s.fontSize, weight: s.fontWeight, lineHeight: s.lineHeight, spacing: s.letterSpacing, margin: s.margin, casing: s.textTransform, alignment: s.textAlign };
     }));
-    expect(typography[1]).toEqual(typography[0]);
+    expect(typography[0].font).toMatch(width < 800 ? /system-ui/ : /Newsreader/);
+    expect(typography[0].size).toBe(width < 800 ? '14px' : '18px');
+    expect(typography[1].font).toMatch(/system-ui/);
+    expect(typography[1].size).toBe('14px');
+    for(const style of typography)expect(style.weight).toBe('400');
     await expect(page.locator('.sky-detail-article h1')).toHaveText(['Venus in Scorpio']);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     // Assert the complete source body remains identical through hydration/reopen.
@@ -36,13 +39,12 @@ for (const theme of ['light', 'dark']) for (const width of [390, 1440]) {
     expect(body.join('\n\n')).toContain('Trust gets stronger when the terms can be named without turning vulnerability into leverage.');
     await page.locator('.sky-detail-id').screenshot({ path: `test-results/venus-visit-${theme}-${width}.png` });
     await page.reload();
-    await expect(dates).toHaveText(['September 10 to October 25, 2026', 'Full residency in Scorpio: September 10, 2026 to January 7, 2027'], { timeout: 60_000 });
+    await expect(dates).toHaveText(['September 10 to October 25, 2026', 'Venus in Scorpio September 10, 2026 to January 7, 2027'], { timeout: 60_000 });
     await expect(prose).toHaveText(body);
     await page.getByRole('button', { name: 'Close detail', exact: true }).click();
-    await expect(card.locator('.planet-placement-row__meta--timing')).toHaveText('Sep 10 - Oct 25');
+    await expect(card.locator('.planet-placement-row__timing > span:first-child')).toHaveText('Sep 10 - Oct 25');
     await page.goto('/?date=2026-12-10#sky/placement/venus/scorpio');
-    await expect(dates).toHaveText(['December 4, 2026 to January 7, 2027', 'Full residency in Scorpio: September 10, 2026 to January 7, 2027'], { timeout: 60_000 });
-    await expect(page.getByLabel('Article details')).toContainText('28D');
+    await expect(dates).toHaveText(['December 4, 2026 to January 7, 2027', 'Venus in Scorpio September 10, 2026 to January 7, 2027'], { timeout: 60_000 });
     expect(errors).toEqual([]);
   });
 }

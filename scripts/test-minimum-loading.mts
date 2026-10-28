@@ -45,7 +45,7 @@ const fixture = buildSync({
       };
     `,
     resolveDir: process.cwd(), loader: "tsx"
-  }, bundle: true, write: false, jsx: "automatic", format: "iife", define: {"import.meta.env":"{}"}
+  }, bundle: true, write: false, jsx: "automatic", format: "iife", loader: { ".css": "empty" }, define: {"import.meta.env":"{}"}
 }).outputFiles[0].text;
 
 let browser: Browser;

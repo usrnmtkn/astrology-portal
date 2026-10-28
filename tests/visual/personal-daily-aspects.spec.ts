@@ -13,11 +13,11 @@ function sectionPresentation(node: Element) {
 }
 
 async function verifySectionLabels(page: Page) {
-  expect(await page.locator(".section-label").filter({ hasText: /^(Areas of Your Life|Long-term transits|House transits)$/ }).allTextContents())
-    .toEqual(["Areas of Your Life", "Long-term transits", "House transits"]);
-  const longTerm = await page.getByText("Long-term transits", { exact: true }).evaluate(sectionPresentation);
-  expect(longTerm).toEqual(await page.getByText("House transits", { exact: true }).evaluate(sectionPresentation));
-  expect(longTerm.slice(0, 2)).toEqual(["SPAN", null]);
+  const labels=await page.locator('.you-transit-group__header h2').allTextContents();
+  expect(labels).toEqual(labels.includes('Short-term transits') ? ['Short-term transits','Long-term transits','Planets moving through your houses'] : ['Long-term transits','Planets moving through your houses']);
+  const longTerm=await page.getByRole('heading',{name:'Long-term transits',exact:true}).evaluate(sectionPresentation);
+  expect(longTerm).toEqual(await page.getByRole('heading',{name:'Planets moving through your houses',exact:true}).evaluate(sectionPresentation));
+  expect(longTerm.slice(0,2)).toEqual(['H2',null]);
 }
 
 async function seed(page: Page, theme: string) {
@@ -60,15 +60,17 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     for (const title of await daily.locator(".updates-aspect-row__title").allTextContents()) expect(title).toMatch(titlePattern);
     for (const title of await ongoing.locator(".updates-aspect-row__title").allTextContents()) expect(title).toMatch(titlePattern);
     const row = daily.locator("button.updates-aspect-row").filter({ hasText: "Moon in Libra square your natal Jupiter" });
-    await expect(row).toBeVisible({ timeout: 60_000 });
+    await expect(row).toBeAttached({ timeout: 60_000 });
+    const expand=page.getByRole('region',{name:'Short-term transits',exact:true}).getByRole('button',{name:/See all/});
+    if(await expand.count())await expand.click();
     await row.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/daily-peaks-${width}-${theme}.png`, fullPage: false });
     const description = await row.locator(".transit-card-preview").innerText();
     await row.click();
     const article = page.locator(".you-transit-article");
     await expect(article.getByRole("heading", { level: 1 })).toHaveText("Moon in Libra square your natal Jupiter");
-    await expect(article.locator(".article-eyebrow")).toHaveAttribute("aria-label", "Aspect: Moon square Jupiter");
-    await expect(article.locator(".article-eyebrow__glyphs")).toHaveText("☽□♃");
+    await expect(article.locator(".aspect-badge")).toHaveAttribute("data-aspect", "square");
+    await expect(article.locator(".aspect-badge")).toHaveText("□");
     await expect(article).toContainText("Current contact");
     await expect(article).toContainText("Full transit series");
     await expect(article).toContainText("Pass 1");

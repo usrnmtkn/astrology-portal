@@ -83,15 +83,34 @@ try {
   for (const value of ["https://evil.test/", "//evil.test/", "/\\evil.test/", "/admin/content", "/?code=secret#account", "/#access_token=secret", "/reports/a#s=secret", "/reports/../admin"]) {
     assert.equal(api.validReaderReturnPath(value), null, value);
   }
-  for (const path of ["/#account?view=journal", "/#friends?tab=circle", "/#you", "/reports/fixture-reading"]) {
+  for (const path of ["/#account?view=journal", "/#friends?tab=circle", "/#calendar", "/#you", "/reports/fixture-reading"]) {
     window.location.href = `https://app.example.test/?readerReturn=${encodeURIComponent(path)}`;
     assert.equal(api.rememberReaderReturnPath(), path);
     window.location.href = "https://app.example.test/#access_token=fixture";
-    assert.equal(api.returnToReaderAfterSignIn(), true);
+    assert.equal(api.returnToReaderAfterSignIn(), path.startsWith("/reports/"), "Hash navigation continues account loading; a different document restarts it");
     assert.equal(window.location.href, path);
     window.location.href = "https://app.example.test/";
     assert.equal(api.rememberReaderReturnPath(), null, "Return is consumed once");
   }
+  for (const path of ["/#friends?tab=requests", "/#friends?chart=fixture&tab=requests"]) {
+    window.location.href = `https://app.example.test/?readerReturn=${encodeURIComponent(path)}`;
+    assert.equal(api.rememberReaderReturnPath(), "/#you");
+    window.location.href = "https://app.example.test/";
+    assert.equal(api.returnToReaderAfterSignIn(), false);
+    assert.equal(window.location.href, "/#you", "Sign-in never resumes the Requests tab");
+  }
+  window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#friends?tab=requests", at: Date.now()}));
+  window.location.href = "https://app.example.test/";
+  assert.equal(api.returnToReaderAfterSignIn(), false);
+  assert.equal(window.location.href, "/#you", "Previously stored Requests returns are normalized too");
+  window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#friends?tab=circle", at: Date.now()}));
+  window.location.href = "https://app.example.test/#sky";
+  assert.equal(api.rememberReaderReturnPath(true), null);
+  assert.equal(window.sessionStorage.getItem("tldrastro:readerAuthReturn"), null, "A new login clears stale return state");
+  window.location.href = "https://app.example.test/#you";
+  window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#you", at: Date.now()}));
+  assert.equal(api.returnToReaderAfterSignIn(), false, "An already-reached return page cannot interrupt account loading");
+  assert.equal(window.location.href, "https://app.example.test/#you");
   window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#account", at: Date.now() - 25*3600*1000}));
   assert.equal(api.rememberReaderReturnPath(), null);
 

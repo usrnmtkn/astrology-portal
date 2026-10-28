@@ -509,7 +509,7 @@ export function AccountView({
     return (
       <section className="account-page page-shell--narrow" aria-label="Account">
         <div className="account-page-heading">
-          <h1>account.</h1>
+          <h1>Account</h1>
         </div>
         <section className="settings-card settings-account-card" aria-label="Account access">
           <div className="settings-list">
@@ -534,7 +534,7 @@ export function AccountView({
   return (
     <section className="account-page page-shell--narrow" aria-label="Account">
       <div className="account-page-heading">
-        <h1>account.</h1>
+        <h1>Account</h1>
       </div>
 
       <section className="settings-card settings-account-card" aria-label="Account details">

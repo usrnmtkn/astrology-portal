@@ -56,7 +56,7 @@ try {
     innerLabel: "Jordan"
   }));
 
-  assert.match(html, /class="sky-wheel synastry-wheel/);
+  assert.match(html, /class="(?=[^"]*\bsky-wheel\b)(?=[^"]*\bsynastry-wheel\b)[^"]*"/);
   assert.match(html, /aria-label="Outer chart planets"/);
   assert.match(html, /aria-label="Inner chart planets"/);
   assert.match(html, /aria-label="Inter-chart aspects"/);

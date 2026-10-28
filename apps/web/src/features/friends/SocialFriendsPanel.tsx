@@ -1,6 +1,10 @@
+import { useMinimumLoading } from "../../hooks/useMinimumLoading";
+import "../../styles/friends-overview.css";
+import { FriendsWorkspaceHeader } from "./FriendsWorkspaceHeader";
 import { ViewportMenu } from "../../components/ViewportMenu";
 import { withFriendsLoadingTimeout } from "./socialFriendsLoading";
-import { PageLoading } from "../../components/PageLoading";
+import { PageLoadState } from "../../components/PageLoading";
+import { ContentLoading as PageLoading } from "../../components/LoadingPatterns";
 import { Check, ChevronRight, Copy, Link2, MoreHorizontal, Search, X } from "lucide-react";
 import {
   useCallback,
@@ -47,13 +51,16 @@ import {
 export type SocialFriendsPanelProps = {
   activeView: FriendsTopLevelView;
   chartContent: ReactNode;
+  feedContent: ReactNode;
+  feedFilter: import("./friendsFeedSources").FriendsFeedFilter;
+  onFeedFilterChange: (filter: import("./friendsFeedSources").FriendsFeedFilter) => void;
   chartCount: number;
   onAddChart: () => void;
   onFriendsChange: (friends: ConnectedSocialFriend[]) => void;
   onOpenFriend: (friend: ConnectedSocialFriend) => void;
   onPendingRequestCountChange?: (count: number) => void;
   onSelectView: (view: FriendsTopLevelView, historyMode?: "push" | "replace") => void;
-  onSignIn: () => void;
+  onSignIn: (intent?: "login" | "create") => void;
   showPatternPills: boolean;
 };
 
@@ -222,6 +229,9 @@ function publicSunLine(sunSign?: string) {
 export function SocialFriendsPanel({
   activeView,
   chartContent,
+  feedContent,
+  feedFilter,
+  onFeedFilterChange,
   chartCount,
   onAddChart,
   onFriendsChange,
@@ -244,6 +254,7 @@ export function SocialFriendsPanel({
   const [removedToastFriend, setRemovedToastFriend] = useState<ConnectedSocialFriend | null>(null);
   const [openFriendMenuId, setOpenFriendMenuId] = useState<string | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
+  const holdingFriends = useMinimumLoading(available === null && activeView !== "charts");
   const [loadError, setLoadError] = useState<"sign-in" | "unavailable" | null>(null);
   const [actionPending, setActionPending] = useState(false);
   const [sharingPending, setSharingPending] = useState(false);
@@ -1058,115 +1069,35 @@ export function SocialFriendsPanel({
     );
   }
 
-  if (available === null && activeView !== "charts") {
-    return (
-      <section className="friends-unified-panel" aria-label="Social friends">
-        <div className="friends-unified-search-row">
-          <Search size={16} aria-hidden="true" />
-          <span>Loading friends…</span>
-        </div>
-        <div className="friends-unified-tab-row" aria-label="Friends views">
-          <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
-            <button className={activeView === "circle" ? "active" : ""} type="button"
-              role="tab" aria-selected={activeView === "circle"}
-              aria-controls="friends-circle-panel" id="friends-circle-tab"
-              onClick={() => onSelectView("circle")}>
-              Circle · 0
-            </button>
-            <button type="button" role="tab" aria-selected={false}
-              aria-controls="friends-charts-panel" id="friends-charts-tab"
-              onClick={() => onSelectView("charts")}>
-              Charts · {chartCount}
-            </button>
-          </span>
-        </div>
-        <div
-          className="friends-unified-content"
-          id={queryIsActive ? "friends-search-results" : `friends-${activeView}-panel`}
-          role={queryIsActive ? "region" : "tabpanel"}
-          aria-labelledby={queryIsActive ? undefined : `friends-${activeView}-tab`}
-        >
-          <PageLoading message="Loading friends…" />
-        </div>
-      </section>
-    );
+  const workspaceHeader = <FriendsWorkspaceHeader activeView={activeView} circleCount={friends.length} chartCount={chartCount} requestCount={requestActivityCount}
+    filter={feedFilter} onFilterChange={onFeedFilterChange} onSelectView={view => { setSearchQuery(""); onSelectView(view); }}
+    onAddChart={onAddChart} onInvite={() => { if (available === false) { onSignIn(); return; } resetInvitationComposer(); setInviteModalOpen(true); }} />;
+
+  if (available === false && loadError !== "sign-in" || activeView !== "charts" && (available === null || available === true && holdingFriends)) {
+    return <section className="friends-unified-panel" aria-label="Social friends">{workspaceHeader}
+      <PageLoadState scope="page" what="Your friends" failed={available === false} pending={available === null || holdingFriends}
+        onRetry={() => { setAvailable(null); return refreshSocialData().then(() => setAvailable(true)).catch(error => { setAvailable(false); setLoadError(isSocialSignInRequired(error) ? "sign-in" : "unavailable"); }); }}>
+        <div className="friends-unified-content" id={queryIsActive ? "friends-search-results" : `friends-${activeView}-panel`} role={queryIsActive ? "region" : "tabpanel"}
+          aria-labelledby={queryIsActive ? undefined : `friends-${activeView}-tab`}><PageLoading layout={activeView === "feed" ? "feed" : "people"} message="Loading friends…"/></div>
+      </PageLoadState>
+    </section>;
   }
 
-  if (available === false) {
-    return (
-      <section className="friends-unified-panel" aria-label="Social friends">
-        <div className="friends-unified-tab-row">
-          <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
-            <button
-              className={activeView === "circle" ? "active" : ""}
-              type="button"
-              role="tab"
-              aria-selected={activeView === "circle"}
-              aria-controls="friends-circle-panel"
-              id="friends-circle-tab"
-              onClick={() => onSelectView("circle")}
-            >
-              Circle · 0
-            </button>
-            <button
-              className={activeView === "charts" ? "active" : ""}
-              type="button"
-              role="tab"
-              aria-selected={activeView === "charts"}
-              aria-controls="friends-charts-panel"
-              id="friends-charts-tab"
-              onClick={() => onSelectView("charts")}
-            >
-              Charts · {chartCount}
-            </button>
-          </span>
-          {chartContent && (
-            <button className="friends-add-chart-action" type="button" onClick={onAddChart}>
-              Add a chart
-            </button>
-          )}
-        </div>
-        <div
-          className="friends-unified-content"
-          id={`friends-${activeView}-panel`}
-          role="tabpanel"
-          aria-labelledby={`friends-${activeView}-tab`}
-        >
-          {activeView === "charts" && chartContent ? chartContent : (
-            <div className="friends-unified-empty" role="alert">
-              <h2>{loadError === "sign-in" ? "Sign in to see your friends" : "Friends could not load."}</h2>
-              <p>{loadError === "sign-in"
-                ? "Your connections are still saved. Sign in to load them."
-                : "Your connections are still saved. Try loading them again."}</p>
-              <button
-                className="social-secondary-button"
-                type="button"
-                onClick={() => {
-                  if (loadError === "sign-in") {
-                    onSignIn();
-                    return;
-                  }
-                  setAvailable(null);
-                  void refreshSocialData()
-                    .then(() => setAvailable(true))
-                    .catch((error) => {
-                      setAvailable(false);
-                      setLoadError(isSocialSignInRequired(error) ? "sign-in" : "unavailable");
-                    });
-                }}
-              >
-                {loadError === "sign-in" ? "Sign in" : "Try again"}
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
-    );
+  if (available === false && loadError === "sign-in") {
+    return <section className="friends-unified-panel" aria-label="Social friends">
+      <header className="friends-workspace-heading"><h1>Friends</h1></header>
+      <div className="friends-signin-card"><h2>Sign in to see your friends</h2><p>Your connections are still saved. Sign in to load them.</p>
+        <div><button className="primary-button" type="button" onClick={() => onSignIn("login")}>Log in</button><button className="secondary-button" type="button" onClick={() => onSignIn("create")}>Create an account</button></div>
+      </div>
+    </section>;
   }
+
 
   return (
     <>
       <section className="friends-unified-panel" aria-label="Social friends">
+        {workspaceHeader}
+        {activeView === "circle" && (
         <label className="friends-unified-search-row">
           <Search size={16} aria-hidden="true" />
           <input
@@ -1191,80 +1122,9 @@ export function SocialFriendsPanel({
             </button>
           )}
         </label>
+        )}
 
-        <div className={`friends-unified-tab-row${queryIsActive ? " is-searching" : ""}`}>
-          <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
-            <button
-              className={activeView === "circle" && !queryIsActive ? "active" : ""}
-              type="button"
-              role="tab"
-              aria-selected={activeView === "circle" && !queryIsActive}
-              aria-controls="friends-circle-panel"
-              id="friends-circle-tab"
-              onClick={() => {
-                setSearchQuery("");
-                onSelectView("circle");
-              }}
-            >
-              Circle · {friends.length}
-            </button>
-            <button
-              className={activeView === "charts" && !queryIsActive ? "active" : ""}
-              type="button"
-              role="tab"
-              aria-selected={activeView === "charts" && !queryIsActive}
-              aria-controls="friends-charts-panel"
-              id="friends-charts-tab"
-              onClick={() => {
-                setSearchQuery("");
-                onSelectView("charts");
-              }}
-            >
-              Charts · {chartCount}
-            </button>
-            {requestActivityCount > 0 && (
-              <button
-                className={`friends-requests-tab${activeView === "requests" && !queryIsActive ? " active" : ""}`}
-                type="button"
-                role="tab"
-                aria-selected={activeView === "requests" && !queryIsActive}
-                aria-controls="friends-requests-panel"
-                id="friends-requests-tab"
-                onClick={() => {
-                  setSearchQuery("");
-                  onSelectView("requests");
-                }}
-              >
-                Requests
-                <span className="friends-tab-count" aria-label={`${requestActivityCount} pending`}>
-                  {requestActivityCount}
-                </span>
-              </button>
-            )}
-          </span>
-          {activeView === "charts" && !queryIsActive && (
-            <button className="friends-add-chart-action" type="button" onClick={onAddChart}>
-              Add a chart
-            </button>
-          )}
-          {activeView === "circle" && !queryIsActive && friends.length > 0 && (
-            <button
-              className="friends-add-chart-action"
-              type="button"
-              onClick={() => {
-                resetInvitationComposer();
-                setInviteModalOpen(true);
-              }}
-            >
-              Invite someone
-            </button>
-          )}
-          {searchState === "loading" && queryIsSearchable && (
-            <span className="friends-searching-label">Searching…</span>
-          )}
-        </div>
-
-        <div className="friends-unified-content">
+        <div className="friends-unified-content" id={`friends-${activeView}-panel`} role="tabpanel" aria-labelledby={`friends-${activeView}-tab`}>
           {queryIsActive ? (
             <>
               {!queryIsSearchable && (
@@ -1274,7 +1134,7 @@ export function SocialFriendsPanel({
                 </div>
               )}
               {queryIsSearchable && showSearchSkeleton && lookupResults.length === 0 && (
-                <PageLoading compact message="Searching for people" />
+                <PageLoading layout="people" message="Searching for people" />
               )}
               {queryIsSearchable && searchError && searchState === "idle" && (
                 <div className="friends-unified-empty" role="status">
@@ -1298,8 +1158,10 @@ export function SocialFriendsPanel({
                   </div>
                 )}
             </>
-          ) : activeView === "circle" ? (
+          ) : activeView === "feed" ? feedContent : activeView === "circle" ? (
             friends.length > 0 ? (
+              <section className="friends-directory-section" aria-label="Your circle">
+                <h2>Your circle <span>{friends.length}</span></h2>
               <div className="friends-person-list" aria-label="Circle">
                 {friends.map((friend) => {
                   const bigThree = friendBigThree(friend);
@@ -1353,12 +1215,14 @@ export function SocialFriendsPanel({
                             {friend.friendSharesChart ? "Chart pending" : "Chart paused"}
                           </span>
                         )}
+                        {chartAvailable && <span className="friends-row-arrow" aria-hidden="true"><ChevronRight size={18}/></span>}
                         {friendMenu(friend)}
                       </span>
                     </div>
                   );
                 })}
               </div>
+              </section>
             ) : (
               <div className="friends-unified-empty">
                 <h2>Nobody here yet.</h2>
@@ -1384,7 +1248,7 @@ export function SocialFriendsPanel({
               )}
               {incomingRequests.length > 0 && (
                 <section className="friends-request-group" aria-labelledby="friends-received-title">
-                  <h2 id="friends-received-title">Received</h2>
+                  <h2 id="friends-received-title">Wants to join your circle</h2>
                   <div className="friends-person-list" aria-label="Received friend requests">
                     {incomingRequests.map((request) => (
                       <div className="friends-person-row" key={request.requestId}>

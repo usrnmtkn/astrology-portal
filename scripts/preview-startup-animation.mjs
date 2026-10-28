@@ -1,9 +1,10 @@
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { resolve } from "node:path";
 
 // Run after the web build. This comparison page is only generated locally;
 // a normal production build clears it from dist.
-const dist = new URL("../apps/web/dist/", import.meta.url);
+const dist = process.env.PLAYWRIGHT_DIST_ROOT ? pathToFileURL(`${resolve(process.env.PLAYWRIGHT_DIST_ROOT)}/`) : new URL("../apps/web/dist/", import.meta.url);
 const player = readdirSync(new URL("assets/", dist)).find(name => /^lottie_light\.min-.*\.js$/u.test(name));
 if (!player) throw new Error("Build @tldr/web before creating the startup preview.");
 // Keep the playground's player in the document: an old open preview must not
@@ -14,7 +15,7 @@ const html = readFileSync(new URL("index.html", dist), "utf8")
   .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gu, "")
   .replace(/<link\b[^>]*rel="modulepreload"[^>]*>/gu, "")
   .replace("<title>tldrastro</title>", "<title>TLDR Astro · startup animation preview</title>")
-  .replace('id="app-startup"', 'id="app-startup" data-loader="celestial"')
+  .replace('data-loader="orbit"', 'data-loader="celestial"')
   .replace("</head>", `<style>
     :root[data-preview-palette="teal"] { --startup-ink: var(--startup-brand-ink); }
     .preview-controls {

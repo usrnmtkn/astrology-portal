@@ -1,3 +1,4 @@
+import {readerSession} from "../helpers/reader-session";
 import {readerResponse} from '../helpers/reader-response';
 import { expect, test, type Page, type Locator } from "@playwright/test";
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
@@ -33,6 +34,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
   ];
   await page.addInitScript(({ theme, location, records, friendNatal, schema, unknownFriendBirthTime }) => {
     localStorage.setItem("tldrastro:theme", theme);
+    localStorage.setItem("tldrastro:pageAnimations", "off");
     localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     localStorage.setItem("tldrastro:userProfile", JSON.stringify({
       id: "article-facts-qa", name: "Reader QA", email: "reader@example.test", provider: "email",
@@ -47,6 +49,7 @@ async function prepare(page: Page, theme: string, unknownFriendBirthTime = false
       createdAt: "2026-09-01T12:00:00Z", updatedAt: "2026-09-01T12:00:00Z", syncStatus: "local"
     }]));
   }, { theme, location, records, friendNatal: selectedFriendNatal, schema: VERIFIED_SKY_CACHE_SCHEMA, unknownFriendBirthTime });
+  await readerSession(page,"article-facts-qa","https://reader-qa.supabase.test");
   await page.emulateMedia({ reducedMotion: "reduce" });
 }
 
@@ -57,10 +60,15 @@ function expectedIdentity(title: string, sky: SkySnapshot, natalChart: SkySnapsh
   expect(match, `Unrecognized calculated title: ${title}`).toBeTruthy();
   const transit = sky.positions.find(position => position.planet === match[1])!;
   if (match[2]) expect(match[2]).toBe(transit.sign);
-  const target = natalChart.positions.find(position => position.planet === match[4])!;
+  const angleLongitude = ({ Ascendant: natalChart.ascendantLongitude, Descendant: (natalChart.ascendantLongitude! + 180) % 360,
+    Midheaven: natalChart.midheavenLongitude, "Imum Coeli": (natalChart.midheavenLongitude! + 180) % 360 } as Record<string, number | undefined>)[match[4]];
+  const target = natalChart.positions.find(position => position.planet === match[4]) ?? (Number.isFinite(angleLongitude)
+    ? { planet: match[4], sign: signs[Math.floor(angleLongitude! / 30)], house: undefined } : null);
+  expect(target, `Calculated natal endpoint ${match[4]}`).toBeTruthy();
   const aspect = ({ conjunction: "conjunct", opposition: "opposite" } as Record<string, string>)[match[3]] ?? match[3];
   const house = (signs.indexOf(transit.sign) - signs.indexOf(natalChart.ascendant) + 12) % 12 + 1;
-  return `${transit.planet} in ${transit.sign} in ${owner} ${ordinal(house)} house is ${aspect} ${owner} natal ${target.planet} in ${target.sign} in ${owner} ${ordinal(target.house)} house.`;
+  const targetHouse = target!.house == null ? "" : ` in ${owner} ${ordinal(target!.house)} house`;
+  return `${transit.planet} in ${transit.sign} in ${owner} ${ordinal(house)} house is ${aspect} ${owner} natal ${target!.planet} in ${target!.sign}${targetHouse}.`;
 }
 
 async function verifyFooter(page: Page, footer: Locator, theme: string, surface: string) {
@@ -162,9 +170,7 @@ for (const theme of ["light", "dark"]) {
     await expect(section.locator("h2")).toHaveText("Your Pluto trine Example Friend's Midheaven");
     await expect(section.locator("p").first()).toHaveText('The complete synthetic connection reading names Example Friend. Its synthetic final sentence stays intact.');
     await expect(section.locator("p").first()).not.toHaveText(await section.locator("h2").innerText());
-    const glyphLabel = await reading.locator(".article-eyebrow").getAttribute("aria-label");
-    expect(glyphLabel).toBe("Aspect: Jupiter sextile Pluto");
-    await expect(reading.locator(".article-eyebrow__glyphs")).toHaveText("♃✶♇");
+    await expect(reading.locator(".aspect-badge").first()).toHaveAttribute("data-aspect","sextile");
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: 1000 });
       await page.evaluate(() => window.scrollTo(0, 0));
@@ -179,9 +185,9 @@ for (const theme of ["light", "dark"]) {
       const title = await reading.locator("h1").boundingBox();
       const nav = await page.locator(".topbar").boundingBox();
       const back = await reading.locator(".sky-detail-back").boundingBox();
-      const eyebrow = await reading.locator(".article-eyebrow").boundingBox();
+      const eyebrow = await reading.locator(".article-id > .aspect-badge").boundingBox();
       expect(eyebrow!.y).toBeGreaterThan(Math.max(nav!.y + nav!.height, back!.y + back!.height));
-      expect(title!.y).toBeGreaterThan(eyebrow!.y + eyebrow!.height);
+      expect(title!.y).toBeGreaterThanOrEqual(eyebrow!.y + eyebrow!.height);
       await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
       await expect(reading.locator(".sky-detail-intro-section")).toHaveCSS("box-shadow", "none");
       const typography = await section.evaluate(element => {

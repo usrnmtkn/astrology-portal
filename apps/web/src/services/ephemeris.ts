@@ -18,6 +18,7 @@ import { memoizeSwissCalculation } from "./swissCalculationCache.js";
 import { traditionalSignRulers } from "../content/skySunSeason.js";
 import { SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from "../astrologyConfig.js";
 import { PERSONAL_DAILY_ORB, personalDayBounds, personalTransitId, type PersonalDailyPeak } from "./personalDailyTransits.js";
+import { calculateRelationshipForecastDay, type NatalForecastInput } from "./relationshipForecast.js";
 import { calculateRetrogradeHistory, retrogradeHistoryPlanets, type RetrogradeHistory } from "./retrogradeHistory.js";
 
 const retrogradeHistoryCache: RetrogradeHistory[] = [];
@@ -334,6 +335,15 @@ async function getSwissEph() {
 
 export async function preloadSwissEphemeris() {
   await getSwissEph();
+}
+
+export async function relationshipForecastDayFor(pairs: NatalForecastInput[], date: string, timeZone: string) {
+  const swe = await getSwissEph();
+  return calculateRelationshipForecastDay(pairs,date,timeZone,(planet,time) => {
+    const id = skyPointPlanetId(swe,planet);
+    if (id === null) throw new Error("Unsupported relationship forecast planet.");
+    return exactPlanetLongitude(swe,id,new Date(time));
+  });
 }
 
 function utcHour(date: Date) {
@@ -2502,7 +2512,8 @@ export async function natalDailyTransitPeaksFor(
       if (!longitudes.has(time)) longitudes.set(time, exactPlanetLongitude(swe, planetId, date));
       return longitudes.get(time)!;
     };
-    const speed = Math.abs(exactPlanetSpeed(swe, planetId, reference));
+    const signedSpeed = exactPlanetSpeed(swe, planetId, reference);
+    const speed = Math.abs(signedSpeed);
     for (const target of natalTargets) {
       if (!Number.isFinite(target.longitude)) continue;
       const natalLongitude = normalizeDegrees(target.longitude + (planet === "South Node" ? 180 : 0));
@@ -2519,8 +2530,9 @@ export async function natalDailyTransitPeaksFor(
         const dailyPasses = scanResidualPasses(residualsAt, start, end, 1 / 8)
           .filter(date => date >= start && date < end);
         if (!dailyPasses.length && orbDegrees > PERSONAL_DAILY_ORB) continue;
-        const change = orbAt(addDays(reference, 1 / 24)) - orbDegrees;
-        const direction = Math.abs(change) < 1e-8 ? "stationary" : change < 0 ? "applying" : "separating";
+        const closestResidual = residualsAt(reference).sort((a, b) => Math.abs(a) - Math.abs(b))[0];
+        const change = closestResidual * signedSpeed;
+        const direction = Math.abs(signedSpeed) < 1e-8 ? "stationary" : change < 0 ? "applying" : "separating";
         // Only search the current tight contact for the nearest pass. A future
         // retrograde return after leaving orb cannot make a separating contact
         // appear to be applying or keep it in the daily list for months.
@@ -2538,6 +2550,10 @@ export async function natalDailyTransitPeaksFor(
         result.push({
           id: personalTransitId(planet, aspect.type, target.planet), referenceAt, dateKey, timeZone,
           orbDegrees, direction, exactToday: dailyPasses.map(date => date.toISOString()),
+          ...(dailyPasses.length ? { exactPosition: {
+            sign: signForLongitude(longitudeAt(dailyPasses[0]) + (planet === "South Node" ? 180 : 0)).sign,
+            motion: exactPlanetSpeed(swe, planetId, dailyPasses[0]) < 0 ? "retrograde" as const : "direct" as const
+          } } : {}),
           previousExactAt: allPasses.filter(date => date <= reference).at(-1)?.toISOString() ?? null,
           nextExactAt: allPasses.find(date => date > reference)?.toISOString() ?? null
         });

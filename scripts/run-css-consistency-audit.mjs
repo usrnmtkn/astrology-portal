@@ -37,13 +37,14 @@ const canonicalBodySelectors = [
   ".updates-aspect-row__detail",
   ".article-section p",
   ".sky-detail-section p",
+  ".retrograde-cycles p",
+  ".settings-row-description",
   ".aspect-row-copy p",
   ".placement-table-row__description",
   ".planet-placement-row__description",
   ".sky-pl-copy",
   ".tx-body",
-  ".natal-pattern-card__header p",
-  ".natal-pattern-card__section p"
+  ".natal-insight-card__preview"
 ];
 
 const validBodyFontSizes = new Set([
@@ -54,18 +55,21 @@ const validBodyFontSizes = new Set([
 ]);
 
 const requiredTypographyTokenValues = new Map([
-  ["--font-highlight", "var(--font-mono)"],
+  ["--type-display-size", "36px"],
+  ["--type-body-size", "19px"],
+  ["--type-reading-size", "var(--type-body-size)"],
+  ["--type-reading-compact-size", "var(--type-reading-size)"],
+  ["--font-highlight", "var(--font-body)"],
   ["--text-highlight", "var(--text-body)"],
   ["--weight-highlight", "var(--weight-regular)"],
   ["--leading-highlight", "var(--leading-body)"],
-  ["--tracking-highlight", "var(--tracking-pill)"],
+  ["--tracking-highlight", "var(--tracking-body)"],
   ["--type-description-size", "var(--type-body-size)"],
   ["--text-body", "var(--type-body-size)"],
   ["--text-body-sm", "var(--text-body)"],
   ["--text-description", "var(--text-body)"],
   ["--text-row-body-size", "var(--text-body)"],
-  // Table cells stay at the previous 15px body size. Reading paragraphs use --text-body at 1rem.
-  // Table cells stay at the previous 15px body size. Reading paragraphs use --text-body at 1rem.
+  // Tabular data is a UI role; narrative copy uses the shared reading scale.
   ["--text-table-body-size", "15px"],
   ["--article-body-size", "var(--text-body)"],
   ["--label-eyebrow-font-family", "var(--font-label)"]

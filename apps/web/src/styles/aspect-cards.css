@@ -1,0 +1,72 @@
+/* Shared aspect-only cues across stories, related readings and Calendar. */
+.aspect-badge,
+.aspect-row-glyphs.aspect-badge {
+  display: grid; place-items: center; place-content: center; flex: none; align-self: start;
+  width: var(--size-6); height: var(--size-6); margin: 0;
+  border: 0; border-radius: var(--radius-circle);
+  background: var(--surface-2); color: var(--ink);
+  font-family: var(--font-glyph); font-size: var(--type-glyph-size);
+  font-weight: var(--weight-regular); line-height: var(--leading-label);
+  white-space: nowrap;
+}
+.aspect-badge[data-aspect="trine"], .aspect-badge[data-aspect="sextile"] { background: var(--aspect-sextile-bg); color: var(--color-aspect-sextile); }
+.aspect-badge[data-aspect="square"] { background: var(--aspect-square-bg); color: var(--color-aspect-square); }
+.aspect-badge[data-aspect="conjunction"] { background: var(--aspect-conjunction-bg); color: var(--color-aspect-conjunction); }
+.aspect-badge[data-aspect="opposition"] { background: var(--aspect-opposition-bg); color: var(--color-aspect-opposition); }
+.aspect-row:has(> .aspect-badge) {
+  grid-template-columns: var(--size-6) minmax(0, 1fr) auto;
+  grid-template-areas: "glyphs copy meta"; gap: var(--space-4);
+  padding: var(--space-4) var(--space-3); border: 0;
+  border-radius: var(--radius-sm); background: transparent; box-shadow: none;
+}
+.aspect-row:has(> .aspect-badge) .aspect-row-meta { grid-area: meta; }
+.aspect-row:has(> .aspect-badge) .aspect-row-copy { min-width: 0; }
+.aspect-row:has(> .aspect-badge) .aspect-row-copy :is(h3, h4, strong) {
+  display: block; margin: 0; font-family: var(--font-ui);
+  font-size: var(--type-row-title-size); font-weight: var(--weight-semibold);
+  line-height: var(--leading-row-title); letter-spacing: var(--tracking-normal);
+}
+.aspect-row:has(> .aspect-badge) .aspect-row-copy p {
+  font-family: var(--font-body); font-size: var(--text-body);
+  font-weight: var(--weight-regular); line-height: var(--leading-body);
+  letter-spacing: var(--tracking-body); color: var(--ink-2);
+}
+.article-related-aspects__copy-heading:has(.aspect-badge) { display: flex; align-items: center; gap: var(--space-4); }
+.article-page .article-related-aspects__copy-heading:has(.aspect-badge) :is(h3, h4) {
+  margin: 0; font-family: var(--font-ui); font-size: var(--type-row-title-size);
+  font-weight: var(--weight-semibold); line-height: var(--leading-row-title);
+  letter-spacing: var(--tracking-normal);
+}
+.article-id > .aspect-badge { width: var(--size-8); height: var(--size-8); font-size: var(--chart-planet-glyph-size); }
+.reading-story-grid { display: grid; grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
+.reading-story-card.aspect-row,
+.reading-story-card.updates-aspect-row {
+  display: flex; flex-direction: column; align-items: center; gap: var(--space-4);
+  height: 100%; padding: var(--space-8) var(--space-7) var(--space-7);
+  border: 0; border-radius: var(--card-radius); background: var(--surface);
+  color: var(--ink); box-shadow: var(--card-shadow); text-align: center; opacity: 1;
+}
+.reading-story-card.aspect-row > .aspect-row-copy,
+.reading-story-card.updates-aspect-row > .updates-aspect-row__content { display: contents; text-align: center; }
+.reading-story-card .aspect-badge,
+.you-transit-grid .updates-aspect-row .aspect-badge { width: var(--size-8); height: var(--size-8); align-self: center; font-size: var(--chart-planet-glyph-size); }
+.reading-story-card.aspect-row:has(> .aspect-badge) .aspect-row-copy :is(h3, h4),
+.reading-story-card.updates-aspect-row .updates-aspect-row__title { margin: 0; font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); letter-spacing: var(--tracking-title); color: var(--ink); }
+.reading-story-card :is(.aspect-row-meta, .updates-aspect-row__meta, .updates-aspect-row__meta-line) { display: flex; justify-content: center; align-items: center; width: auto; gap: var(--space-2); padding: 0; font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-meta); color: var(--muted); }
+.reading-story-card .aspect-row-copy p,
+.reading-story-card .updates-aspect-row__description { margin: 0; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--ink-2); }
+.reading-story-card__preview { display: block; max-height: calc(var(--text-body) * var(--leading-body) * 6); overflow: hidden; mask-image: var(--card-preview-fade); }
+.reading-story-card .aspect-row-meta { align-self: center; }
+.reading-story-card .card-read-more--icon { margin-top: auto; align-self: center; }
+.reading-story-card :is(.updates-aspect-row__glyphs:not(.aspect-badge)) { display: grid; place-items: center; width: var(--size-8); height: var(--size-8); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); }
+.reading-story-card .friend-bond-transit-activation { padding: 0; border: 0; }
+.calendar-stoic-card .calendar-kind.aspect-badge { width: var(--size-8); height: var(--size-8); padding: 0; border-radius: var(--radius-circle); font-size: var(--chart-planet-glyph-size); }
+@media (max-width: 800px) {
+  .aspect-row:has(> .aspect-badge) { grid-template-columns: var(--size-6) minmax(0, 1fr); grid-template-areas: "glyphs copy" "glyphs meta"; gap: var(--space-2) var(--space-3); padding-inline: 0; }
+  .aspect-row:has(> .aspect-badge) .aspect-row-meta { justify-self: start; }
+  .aspect-row:has(> .aspect-badge) .aspect-row-copy :is(h3, h4, strong),
+  .article-page .article-related-aspects__copy-heading:has(.aspect-badge) :is(h3, h4) { font-size: var(--type-compact-row-size); }
+  .reading-story-grid { grid-template-columns: minmax(0, 1fr); }
+  .reading-story-card.aspect-row,
+  .reading-story-card.updates-aspect-row { padding: var(--lunar-space-28) var(--space-6) var(--space-6); }
+}

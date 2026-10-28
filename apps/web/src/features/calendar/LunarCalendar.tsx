@@ -1,4 +1,5 @@
 import { FloatingTooltipPortal } from "../../components/ui/FloatingTooltip";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 import { withCalendarAspectRetrograde } from "../../services/calendarAspectRetrogradeContent";
 import {PublishedMonthlyOverview} from './PublishedMonthlyOverview';
 import { calendarWeeklyDayParagraphs } from './calendarWeeklyPresentation';
@@ -9,7 +10,7 @@ import { studioPassageEditHref } from '../../../../../src/shared/studioPassageEd
 import { calendarMoonResolvedByDate, packagedWeeklyMoon, moonWritingForDay, calendarMoonCycleFallbackPiece } from './calendarMoonSources';
 import { LoadingStatus, SkeletonBar } from "../../components/CardSkeleton";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
-import { CalendarDaySkeleton } from "./CalendarDaySkeleton";
+import { CalendarDaySkeleton, CalendarLoading } from "./CalendarDaySkeleton";
 import { FormattedProse } from "../../components/FormattedProse";
 import { useCalendarCheckIns } from "./useCalendarCheckIns";
 import { startReaderMeasurement } from "../../services/readerPerformance";
@@ -24,7 +25,7 @@ import { skyDateTimeFromInput } from "../../services/skySelection";
 import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
 import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
-import { PageLoadError, PageLoading } from "../../components/PageLoading";
+import { PageLoadError, PageLoading, PageLoadState } from "../../components/PageLoading";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { CalendarCheck, CalendarDays, CalendarPlus, ChevronDown, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
@@ -2929,15 +2930,10 @@ export function LunarCalendar({
         </div>
       </header>
 
-      {calendarLoading && <div className="lunar-calendar-body"><CalendarDaySkeleton /></div>}
-
-      {status === "error" && (
-        <div className="lunar-calendar-empty" role="alert">
-          <CalendarDays size={18} aria-hidden="true" />
-          <span>Calendar data could not load.</span>
-          <button type="button" onClick={() => setRetryNonce((value) => value + 1)}>Retry</button>
-        </div>
-      )}
+      <PageLoadState scope="page" what={viewMode === "month" ? "This month" : viewMode === "weekly" ? "This week" : "This day"}
+        failed={status === "error"} pending={calendarLoading} onRetry={() => setRetryNonce(value => value + 1)}>
+        {calendarLoading && <CalendarLoading month={visibleMonth} dateKey={viewMode === "month" ? selectedDateKey : visibleWeekDateKey} view={viewMode} />}
+      </PageLoadState>
 
       {calendar && status === "ready" && !calendarLoading && (
         <div
@@ -3569,11 +3565,11 @@ function TransitCard({
   if (isContentLoading) return <><LoadingStatus>Loading interpretation</LoadingStatus><TransitCardSkeleton interactive={Boolean(onOpenTransit)} eventType={event.type} /></>;
   const cardContent = (
     <>
-      <span className="tx-glyphs" aria-hidden="true">
+      {event.type === "aspect" && event.aspect ? <AspectBadge aspect={event.aspect} /> : <span className="tx-glyphs" aria-hidden="true">
         {glyphParts.map((part, index) => (
           <span className={part.className} key={`${part.value}-${index}`}>{part.value}</span>
         ))}
-      </span>
+      </span>}
       <h3 className="tx-title">{title}</h3>
       <div className="tx-foot">
         <span className="tx-tag">{transitCardStatusTag(event)}</span>

@@ -787,7 +787,7 @@ assert.match(connectionDetail, /selectedBondTransitSections\.get\(card\.id\)[\s\
 assert.match(connectionDetail, /connectionActivationKey[\s\S]*?publishedConnectionCopy\(connectionSources, key, variables\)[\s\S]*?connectionBridgeCopy\(connectionSources, bridgeKey, variables\)[\s\S]*?sourceKeys: \[bridgeKey\][\s\S]*?About these connections[\s\S]*?sourceKeys: \[key\]/u);
 assert.match(connectionDetail, /body: transitSections\.map\(section => section\.body\)[\s\S]*?sections: \[connectionFacts, \.\.\.activatedConnectionSections\]/u);
 assert.doesNotMatch(connectionDetail, /card\.effectBody|card\.effectContentKey|connection\.headline|renderReaderDirectedSynastryContact/u);
-assert.match(friendTransitsTabSource, /disabled=\{!card\.detailAvailable\}[\s\S]*?card\.detailAvailable \? <CardReadMore \/> : null/u);
+assert.match(friendTransitsTabSource, /disabled=\{!card\.detailAvailable\}[\s\S]*?card\.detailAvailable \? <CardReadMore(?: appearance="icon")? \/> : null/u);
 assert.ok(
   /function FriendPersonalTransitCard[\s\S]*?onClick=\{\(\) => onOpen\(transit\.id\)\}/u.test(friendTransitsTabSource)
     || /onClick=\{\(\) => onOpenPersonalTransit\(transit\.id\)\}/u.test(friendTransitsTabSource),

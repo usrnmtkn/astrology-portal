@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { observeVerifiedAccount, type VerifiedAccountState } from "../services/verifiedAccountObserver";
 import { reportShareKeyFromHash } from "../services/reportLinks";
-import { PageLoading } from "../components/PageLoading";
+import { ReportStateCard } from "../components/reports/ReportStateCard";
 import type { ReportTheme } from "../components/reports/ReportTopNavigation";
 import "../styles/report-article.css";
 import "../styles/report-library.css";
@@ -32,7 +32,9 @@ const ReportCheckoutResultView = lazy(() =>
 );
 
 function LibraryFallback() {
-  return <PageLoading message="Loading report…" />;
+  return /^\/reports\/?$/u.test(window.location.pathname)
+    ? <main className="report-state-page"><ReportStateCard library loading message="Loading your reports…"/></main>
+    : <ReportStateCard loading title="Preparing your report"/>;
 }
 
 function deferred(node: ReactNode) {
@@ -74,14 +76,11 @@ function PrivateReportBoundary({ children }: { children: ReactNode }) {
   const [retry, setRetry] = useState(0);
   useEffect(() => observeVerifiedAccount(setAccount), [retry]);
   if (!account.checked) return <LibraryFallback />;
-  const accessFallback = <div className="report-library-loading type-body-muted" role="status">
-    <p>{account.error ? "Your account could not be checked." : "Sign in to view your reports."}</p>
-    {account.error ? <button type="button" onClick={() => setRetry((value) => value + 1)}>Try again</button>
-      : <a href={`/?auth=login&readerReturn=${encodeURIComponent(window.location.pathname)}`}>Sign in</a>}
-  </div>;
-  if (!account.id) return /^\/reports\/?$/u.test(window.location.pathname)
-    ? deferred(<ReportLibraryView accessFallback={accessFallback} />)
-    : <main className="report-delivery-state">{accessFallback}</main>;
+  const library = /^\/reports\/?$/u.test(window.location.pathname);
+  const accessFallback = <ReportStateCard library={library} title={!library && account.error ? "Your account could not be checked." : undefined}
+    message={library || !account.error ? account.error ? "Your account could not be checked." : "Sign in to view your reports." : undefined}
+    action={account.error ? {label:"Try again",onClick:()=>setRetry(value=>value+1)} : {label:"Sign in",href:`/?auth=login&readerReturn=${encodeURIComponent(window.location.pathname)}`}}/>;
+  if (!account.id) return library ? deferred(<ReportLibraryView accessFallback={accessFallback}/>) : accessFallback;
   return <div key={account.id}>{children}</div>;
 }
 

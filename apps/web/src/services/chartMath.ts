@@ -67,6 +67,10 @@ const signElementMap: Record<string, "Fire" | "Earth" | "Air" | "Water"> = {
   Pisces: "Water"
 };
 
+export function zodiacElementForSign(sign: string) {
+  return signElementMap[sign] ?? null;
+}
+
 const comparisonPointRoles: Record<string, string> = {
   Ascendant: "presence, attraction, and first impression",
   Midheaven: "public direction and life trajectory",
@@ -741,7 +745,8 @@ function synastryPairEnabled(first: string, second: string) {
 
 export function calculatedSynastryContacts(
   profileNatalSky: SkySnapshot | null,
-  chart: Pick<ManualChart, "id" | "natalChart">
+  chart: Pick<ManualChart, "id" | "natalChart">,
+  limit = 16
 ): CalculatedSynastryContact[] {
   const friendPoints = comparisonPointsFromSky(chart.natalChart ?? null);
   const yourPoints = comparisonPointsFromSky(profileNatalSky);
@@ -772,7 +777,7 @@ export function calculatedSynastryContacts(
   const secondaryContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "secondary");
   const backgroundContacts = orderedContacts.filter((contact) => synastryContactSignalTier(contact.friendPoint.name, contact.yourPoint.name) === "background");
 
-  return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, 16);
+  return [...primaryContacts, ...secondaryContacts, ...backgroundContacts].slice(0, limit);
 }
 
 export function compatibilityHighlightContact(

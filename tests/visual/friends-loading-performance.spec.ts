@@ -47,6 +47,18 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
   let dashboardMirrorRequests = 0;
   let emptyHouseFallbackRequests = 0;
   let timezoneResolutionRequests = 0;
+  const user = { id: fixtureUserId, email: "qa-friends-performance@example.com", aud: "authenticated", role: "authenticated", app_metadata: { provider: "email" }, user_metadata: { name: "Project Author" } };
+  const authKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? "https://visual-smoke.supabase.test").hostname.split(".")[0]}-auth-token`;
+  await page.route("**/auth/v1/**", route => route.fulfill({ json: user }));
+  await page.route("**/rest/v1/**", async route => {
+    const table = new URL(route.request().url()).pathname.split("/").pop();
+    if (table === "user_profiles") {
+      const profile = await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:userProfile")!));
+      return route.fulfill({ json: { data: { version: 1, profile } } });
+    }
+    if (table === "manual_charts") return route.fulfill({ status: 400, json: { message: "Synthetic unavailable chart sync" } });
+    return route.fulfill({ json: [] });
+  });
 
   page.on("request", (request) => {
     const requestUrl = decodeURIComponent(request.url());
@@ -99,7 +111,7 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     });
   }
 
-  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart }) => {
+  await page.addInitScript(({ fixtureUserId, fixtureFriendName, incompleteChart, user, authKey }) => {
     if (window.localStorage.getItem("tldrastro:friendsPerformanceSeeded")) {
       return;
     }
@@ -205,6 +217,7 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
 
     window.localStorage.setItem("tldrastro:selectedLocation", JSON.stringify(location));
     window.localStorage.setItem("tldrastro:userProfile", JSON.stringify(profile));
+    window.localStorage.setItem(authKey, JSON.stringify({ access_token: "synthetic-performance-token", refresh_token: "synthetic-performance-refresh", expires_at: Math.floor(Date.now() / 1000) + 3600, token_type: "bearer", user }));
     window.localStorage.setItem(
       `tldrastro:manualCharts:${fixtureUserId}`,
       JSON.stringify([friendChart])
@@ -212,7 +225,9 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
   }, {
     fixtureUserId,
     fixtureFriendName,
-    incompleteChart: options.incompleteChart ?? false
+    incompleteChart: options.incompleteChart ?? false,
+    user,
+    authKey
   });
 
   return {
@@ -438,9 +453,9 @@ test.describe("Friends loading performance matrix", () => {
             return rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse";
           };
           const observe = () => {
-            const heading = document.querySelector('.friends-page-heading h1');
+            const heading = document.querySelector('.friends-workspace-heading h1');
             const chart = document.querySelector(`[aria-label="Open ${friendName}"]`);
-            if (timing.clickedAt && heading?.textContent === "friends." && visible(heading) && visible(chart)) {
+            if (timing.clickedAt && heading?.textContent === "Friends" && visible(heading) && visible(chart)) {
               timing.readyAt = performance.timeOrigin + performance.now();
             } else requestAnimationFrame(observe);
           };
@@ -449,7 +464,7 @@ test.describe("Friends loading performance matrix", () => {
         const startedAt = Date.now();
         await friendsMenuItem.click();
         await page.waitForFunction(() => (window as any).__mobileFriendsTiming.readyAt > 0);
-        await expect(page.getByRole("heading", { name: "friends.", exact: true })).toBeVisible();
+        await expect(page.getByRole("heading", { name: "Friends", exact: true })).toBeVisible();
         await expect(page.getByRole("button", { name: `Open ${fixtureFriendName}` })).toBeVisible();
         const { clickedAt, readyAt } = await page.evaluate(() => (window as any).__mobileFriendsTiming);
         expect(clickedAt).toBeGreaterThanOrEqual(startedAt);

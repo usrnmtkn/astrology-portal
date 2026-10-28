@@ -10,6 +10,7 @@ export type PersonalDailyPeak = {
   orbDegrees: number;
   direction: "applying" | "separating" | "stationary";
   exactToday: string[];
+  exactPosition?: { sign: string; motion: "direct" | "retrograde" };
   previousExactAt: string | null;
   nextExactAt: string | null;
 };

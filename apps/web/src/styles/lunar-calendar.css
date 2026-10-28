@@ -2,14 +2,14 @@
   overflow-x: clip;
   padding-top: var(--chart-page-top);
   scroll-padding-top: calc(var(--top-control-top) + var(--top-control-height) + 36px);
-  background: var(--calendar-canvas);
+  background: var(--bg-grad);
 }
 
 html:has(.app-shell.mode-calendar),
 body:has(.app-shell.mode-calendar),
 #root:has(.app-shell.mode-calendar) {
   overflow-x: clip;
-  background: var(--calendar-canvas);
+  background: var(--bg);
 }
 
 .mode-calendar .portal-grid.full-page-layout.calendar-layout {
@@ -160,13 +160,13 @@ body:has(.app-shell.mode-calendar),
   gap: var(--calendar-segmented-gap);
   box-sizing: border-box;
   width: fit-content;
-  height: var(--calendar-control-size);
-  min-height: var(--calendar-control-size);
+  height: var(--calendar-segmented-height);
+  min-height: var(--calendar-segmented-height);
   padding: var(--lunar-space-4);
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--calendar-card);
-  box-shadow: none;
+  background: var(--calendar-segmented-bg);
+  box-shadow: var(--segmented-shadow);
 }
 
 .lunar-calendar-segmented .segmented-control__item {
@@ -184,15 +184,15 @@ body:has(.app-shell.mode-calendar),
 
 .lunar-calendar-segmented .segmented-control__item.segmented-control__item--active {
   border-color: transparent;
-  background: var(--calendar-ink);
-  color: var(--calendar-kind-return-fg);
-  font-weight: var(--weight-medium);
-  box-shadow: none;
+  background: var(--calendar-tab-bg);
+  color: var(--calendar-tab-fg);
+  font-weight: var(--weight-semibold);
+  box-shadow: var(--calendar-tab-shadow);
 }
 
 .lunar-calendar-segmented .segmented-control__item.segmented-control__item--active:hover {
-  background: var(--calendar-ink);
-  color: var(--calendar-kind-return-fg);
+  background: var(--calendar-tab-bg);
+  color: var(--calendar-tab-fg);
 }
 
 .lunar-calendar-layout {
@@ -487,7 +487,7 @@ body:has(.app-shell.mode-calendar),
 .lunar-calendar-day__number.is-today-disc,
 .lunar-week-day__date.is-today-disc {
   background: var(--calendar-disc-today);
-  color: var(--color-black);
+  color: var(--accent);
   font-weight: var(--weight-semibold);
 }
 
@@ -2418,12 +2418,6 @@ a.tx-card.has-article:hover .tx-more {
     width: 100%;
   }
 
-  .lunar-calendar-segmented .segmented-control__item {
-    min-width: 0;
-    height: var(--calendar-segmented-item-height);
-    min-height: var(--calendar-segmented-touch-height);
-  }
-
   .lunar-week-strip {
     padding: var(--lunar-space-12);
   }
@@ -2766,14 +2760,31 @@ a.tx-card.has-article:hover .tx-more {
   min-width: 0;
   padding: var(--space-6);
   border: var(--border-width-thin) solid var(--card-border);
-  border-radius: var(--lunar-card-radius);
+  border-radius: var(--radius-card-compact);
   background: var(--card-bg);
   box-shadow: var(--shadow-card);
   overflow-wrap: anywhere;
 }
 
+.lunar-month-overview__label {
+  color: var(--calendar-copy);
+  font-family: var(--font-ui);
+  font-size: var(--text-button-size);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-label);
+}
+
 .lunar-month-overview--monthly .learn-jump__link {
   justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--calendar-control-size);
+  padding: 0 var(--space-4);
+  border: var(--border-width-thin) solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-size: var(--text-meta-size);
+  text-decoration: none;
 }
 
 .lunar-calendar-month-primary {
@@ -3114,6 +3125,13 @@ a.tx-card.has-article:hover .tx-more {
   align-content: stretch;
   overflow: hidden;
   grid-template-rows: auto minmax(0, 1fr);
+  width: min(var(--calendar-checkin-width), 100%);
+  background: var(--calendar-checkin-canvas);
+}
+
+.calendar-slideout--checkin .calendar-slideout__close {
+  width: var(--calendar-checkin-control);
+  height: var(--calendar-checkin-control);
 }
 
 .calendar-slideout__toolbar {
@@ -3126,7 +3144,7 @@ a.tx-card.has-article:hover .tx-more {
 .calendar-slideout__date {
   margin-right: auto;
   color: var(--calendar-secondary);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
 }
 
@@ -3208,20 +3226,20 @@ a.tx-card.has-article:hover .tx-more {
   text-wrap: balance;
 }
 
-.calendar-day-panel.is-embedded .calendar-sky-card__title {
+.calendar-sky-card__title {
   font-size: var(--calendar-day-title);
-  line-height: var(--calendar-slideout-leading);
+  line-height: var(--leading-title);
 }
 
 .calendar-checkin h2,
 .calendar-checkin-picker__sheet header span {
   margin: 0;
   color: var(--calendar-ink);
-  font-family: var(--font-body);
-  font-size: var(--calendar-checkin-heading);
-  font-weight: var(--weight-medium);
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-tight);
-  line-height: var(--leading-h2);
+  line-height: var(--leading-display);
   text-wrap: balance;
 }
 
@@ -3393,21 +3411,23 @@ button.calendar-reading__toggle {
 }
 
 .calendar-stoic-card {
+  --text-body: var(--type-reading-size);
+  --leading-body: var(--leading-reading);
   grid-template-rows: auto auto 1fr auto;
   justify-items: center;
   min-height: var(--calendar-stoic-min-height);
-  padding: var(--lunar-space-24) var(--lunar-space-18) var(--lunar-space-16);
+  padding: var(--space-7);
   border-radius: var(--calendar-card-radius);
   text-align: center;
 }
 
 .calendar-stoic-card strong {
   color: var(--calendar-ink);
-  font-family: var(--font-body);
-  font-size: var(--calendar-stoic-title);
-  font-weight: var(--calendar-stoic-title-weight);
+  font-family: var(--font-ui);
+  font-size: var(--type-row-title-size);
+  font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-tight);
-  line-height: var(--calendar-stoic-title-leading);
+  line-height: var(--leading-label);
   text-wrap: balance;
 }
 
@@ -3458,7 +3478,7 @@ button.calendar-reading__toggle {
 .calendar-stoic-card__meta,
 .calendar-stoic-card__cta {
   color: var(--calendar-tertiary);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--calendar-row-meta);
   font-weight: var(--weight-regular);
 }
@@ -3609,21 +3629,19 @@ button.calendar-reading__toggle {
   width: var(--calendar-checkin-star);
   height: var(--calendar-checkin-star);
   border-radius: var(--radius-pill);
-  background: var(--calendar-chip);
-  color: var(--calendar-kind-return-fg);
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-family: var(--font-ui);
   font-size: var(--type-hint-size);
   font-weight: var(--weight-semibold);
 }
 
 .calendar-checkin-card__sleep-fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: var(--calendar-ink);
+  display: none;
 }
 
 .calendar-checkin-card__sleep span:last-child {
   position: relative;
-  mix-blend-mode: difference;
 }
 
 .calendar-checkin-card__copy {
@@ -3635,7 +3653,7 @@ button.calendar-reading__toggle {
 
 .calendar-checkin-card strong {
   color: var(--calendar-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--calendar-checkin-title);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-h2);
@@ -3645,7 +3663,7 @@ button.calendar-reading__toggle {
 .calendar-checkin-card__subtitle {
   overflow: hidden;
   color: var(--calendar-tertiary);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -3666,6 +3684,7 @@ button.calendar-reading__toggle {
   gap: var(--lunar-space-10);
   min-width: 0;
   color: var(--calendar-tertiary);
+  font-family: var(--font-ui);
   font-size: var(--calendar-row-meta);
 }
 
@@ -3724,8 +3743,8 @@ button.calendar-reading__toggle {
 .calendar-sky-card__today {
   padding: var(--space-1) var(--space-2);
   border-radius: var(--lunar-space-4);
-  background: var(--calendar-ink);
-  color: var(--calendar-kind-return-fg);
+  background: var(--accent-bg);
+  color: var(--accent);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-semibold);
 }
@@ -3839,9 +3858,14 @@ button.calendar-reading__toggle {
   stroke: var(--calendar-ink);
 }
 
+.is-filled .calendar-month-mood__face,
+.is-filled .calendar-month-mood__star {
+  stroke: var(--calendar-mood-ink);
+}
+
 .calendar-kind--season.is-inverted {
   background: var(--calendar-kind-season-fg);
-  color: var(--color-white);
+  color: var(--calendar-kind-season-inverse);
 }
 
 .lunar-week-day__season {
@@ -3852,7 +3876,7 @@ button.calendar-reading__toggle {
   padding: 0 var(--space-1);
   border-radius: var(--lunar-space-4);
   background: var(--calendar-kind-season-fg);
-  color: var(--color-white);
+  color: var(--calendar-kind-season-inverse);
 }
 
 .lunar-week-day__date {
@@ -3875,6 +3899,10 @@ button.calendar-reading__toggle {
   height: 100%;
 }
 
+.calendar-checkin:has(.calendar-checkin__status) {
+  grid-template-rows: minmax(0, 1fr) auto auto;
+}
+
 .calendar-checkin__stage {
   display: grid;
   align-content: center;
@@ -3889,11 +3917,12 @@ button.calendar-reading__toggle {
   align-content: start;
   justify-items: stretch;
   text-align: left;
+  padding-top: var(--space-4);
 }
 
 .calendar-checkin__block {
   display: grid;
-  gap: var(--lunar-space-28);
+  gap: var(--space-6);
   justify-items: start;
   width: 100%;
   max-width: 32rem;
@@ -3901,7 +3930,14 @@ button.calendar-reading__toggle {
 }
 
 .calendar-checkin__block.is-entry {
-  gap: var(--lunar-space-16);
+  gap: var(--space-6);
+}
+
+@media (max-width: 760px) {
+  .calendar-slideout--checkin .calendar-slideout__panel {
+    width: 100%;
+    padding: var(--space-5) var(--space-6);
+  }
 }
 
 .calendar-checkin__moods {
@@ -3914,16 +3950,18 @@ button.calendar-reading__toggle {
 
 .calendar-checkin__moods button {
   flex: 0 0 auto;
-  width: var(--type-h1-size);
-  height: var(--type-h1-size);
+  display: grid;
+  place-items: center;
+  width: var(--calendar-checkin-control);
+  height: var(--calendar-checkin-control);
   padding: 0;
   border: 0;
   background: transparent;
 }
 
 .calendar-checkin__moods button svg {
-  width: 100%;
-  height: 100%;
+  width: var(--calendar-checkin-star-size);
+  height: var(--calendar-checkin-star-size);
   transition: transform 0.15s ease;
 }
 
@@ -3935,23 +3973,24 @@ button.calendar-reading__toggle {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  color: var(--calendar-disabled);
-  font-family: var(--font-body);
+  color: var(--calendar-secondary);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
 }
 
 .calendar-checkin__echo {
   margin: 0;
-  color: var(--calendar-ink);
-  font-family: var(--font-body);
-  font-size: var(--calendar-checkin-echo);
+  color: var(--calendar-secondary);
+  font-family: var(--font-display);
+  font-size: var(--text-title);
   letter-spacing: var(--tracking-tight);
-  line-height: var(--leading-h2);
+  line-height: var(--leading-display);
   text-wrap: balance;
 }
 
 .calendar-checkin__echo strong {
-  font-weight: var(--weight-bold);
+  color: var(--calendar-ink);
+  font-weight: var(--weight-medium);
 }
 
 .calendar-checkin__slider {
@@ -3969,16 +4008,23 @@ button.calendar-reading__toggle {
   cursor: pointer;
 }
 
+.calendar-checkin__slider-track:focus-within {
+  outline: var(--border-width-medium) solid var(--calendar-ink);
+  outline-offset: var(--lunar-space-3);
+}
+
 .calendar-checkin__slider-fill {
   position: absolute;
   inset: 0 auto 0 0;
+  width: var(--calendar-slider-fill);
   border-radius: var(--radius-pill);
   background: var(--calendar-ink);
 }
 
 .calendar-checkin__slider-thumb {
   position: absolute;
-  top: var(--lunar-space-4);
+  top: var(--lunar-space-3);
+  left: var(--calendar-slider-position);
   width: var(--calendar-slider-thumb);
   height: var(--calendar-slider-thumb);
   border-radius: var(--radius-pill);
@@ -4043,7 +4089,7 @@ button.calendar-reading__toggle {
   border-radius: var(--radius-pill);
   background: var(--calendar-card);
   color: var(--calendar-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
 }
@@ -4137,6 +4183,12 @@ button.calendar-reading__toggle {
   outline: none;
 }
 
+.calendar-checkin textarea::placeholder,
+.calendar-checkin__add-row input::placeholder {
+  color: var(--calendar-secondary);
+  opacity: 1;
+}
+
 .calendar-checkin__add-row {
   display: flex;
   align-items: center;
@@ -4152,8 +4204,8 @@ button.calendar-reading__toggle {
   border-radius: var(--calendar-month-cell-radius);
   background: transparent;
   color: var(--calendar-ink);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
+  font-family: var(--font-ui);
+  font-size: var(--text-button-size);
   outline: none;
 }
 
@@ -4184,14 +4236,14 @@ button.calendar-reading__toggle {
   border: 0;
   background: var(--calendar-card);
   color: var(--calendar-ink);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
 }
 
 .calendar-checkin__round {
-  width: var(--calendar-slideout-control);
-  height: var(--calendar-slideout-control);
+  width: var(--calendar-checkin-control);
+  height: var(--calendar-checkin-control);
   border-radius: var(--radius-pill);
 }
 
@@ -4207,7 +4259,7 @@ button.calendar-reading__toggle {
 }
 
 .calendar-checkin__skip {
-  height: var(--calendar-slideout-control);
+  height: var(--calendar-checkin-control);
   padding: 0 var(--lunar-space-18);
   border-radius: var(--radius-pill);
   color: var(--calendar-secondary);
@@ -4216,7 +4268,7 @@ button.calendar-reading__toggle {
 .calendar-checkin__status {
   margin: 0;
   color: var(--calendar-secondary);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-meta);
@@ -4447,8 +4499,8 @@ button.calendar-reading__toggle {
   flex: 1;
   overflow: hidden;
   color: var(--calendar-ink);
-  font-family: var(--font-body);
-  font-size: var(--calendar-row-title);
+  font-family: var(--font-ui);
+  font-size: var(--type-row-title-size);
   font-weight: var(--weight-semibold);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -4480,7 +4532,7 @@ button.calendar-reading__toggle {
   align-items: center;
   min-width: 0;
   padding: var(--lunar-space-4) 0;
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--calendar-row-title);
   font-weight: var(--weight-medium);
   line-height: var(--leading-meta);
@@ -4674,13 +4726,6 @@ button.calendar-reading__toggle {
     flex: 1 1 auto;
     width: 100%;
     min-width: 0;
-    height: auto;
-    min-height: 0;
-  }
-
-  .lunar-calendar-segmented .segmented-control__item {
-    height: var(--calendar-segmented-touch-height);
-    min-height: var(--calendar-segmented-touch-height);
   }
 
   .lunar-calendar-legend__panel {
@@ -4751,6 +4796,7 @@ button.calendar-reading__toggle {
 
   .calendar-stoic-card,
   .calendar-stoic-card.is-wide {
+    padding: var(--space-6);
     min-height: 0;
   }
 }
@@ -4960,3 +5006,24 @@ button.calendar-reading__toggle {
     display: inline;
   }
 }
+
+/* Loading keeps the same calendar dates and grid tracks. */
+.calendar-loading .lunar-week-day { display: grid; justify-items: center; gap: var(--space-2); }
+.calendar-loading .lunar-calendar-day { display: grid; align-content: start; gap: var(--space-3); }
+.calendar-loading .lunar-calendar-day .card-skeleton-bar { background: var(--line-2); }
+.calendar-loading-week { display: grid; gap: var(--space-4); }
+.calendar-loading .calendar-day-group { padding: var(--space-6); border-radius: var(--card-radius-sm); background: var(--surface); }
+.calendar-loading .calendar-day-group__header { display: flex; align-items: baseline; gap: var(--space-3); margin-bottom: var(--space-4); font-family: var(--font-ui); font-size: var(--type-ui-copy-size); color: var(--ink); }
+.loading-calendar-event { display: grid; grid-template-columns: var(--size-7) minmax(0, 1fr) var(--size-5); align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+.calendar-loading .calendar-sky-card { display: grid; gap: var(--space-6); }
+.calendar-loading-checkin { display: block; width: 100%; height: var(--size-6); margin-block: var(--space-4); }
+
+.calendar-loading .lunar-week-day .card-skeleton-disc { width: var(--calendar-phase-emoji-compact); height: var(--calendar-phase-emoji-compact); }
+.calendar-loading .lunar-week-day .card-skeleton-bar { display: block; width: var(--calendar-glyph-chip); height: var(--calendar-dot-size); }
+.calendar-loading .lunar-calendar-day { background: var(--surface-sheet); }
+.calendar-loading .lunar-calendar-day .card-skeleton-bar { display: block; width: 70%; height: var(--space-2); }
+.calendar-loading .calendar-sky-card .card-skeleton-disc { width: var(--size-7); height: var(--size-7); }
+.calendar-loading .calendar-sky-card .card-skeleton-bar--title { width: 78%; }
+.calendar-loading .calendar-sky-card .loading-card__heading .card-skeleton-bar--short { width: 40%; }
+
+.calendar-loading .lunar-calendar-day > span[aria-hidden] { display: block; width: 100%; }

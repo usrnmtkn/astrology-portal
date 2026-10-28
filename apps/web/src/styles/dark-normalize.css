@@ -49,7 +49,6 @@
   .placement-table-row__title,
   .planet-placement-row__title,
   .sky-pl-title,
-  .retro-title,
   .settings-row__action,
   .settings-row__value
 ) {
@@ -59,7 +58,6 @@
 :is(.theme-dark, [data-theme="dark"]) :where(
   p,
   .type-body,
-  .retro-copy,
   .sky-intro__copy,
   .row-description,
   .placement-table-row__description,
@@ -73,8 +71,6 @@
   .eyebrow,
   .section-label,
   .row-meta,
-  .retro-until,
-  .retro-chapter,
   .sky-pl-meta,
   .sky-pl-degree,
   .placement-table-row__meta,

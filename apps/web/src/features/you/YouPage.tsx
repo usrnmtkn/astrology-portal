@@ -1,15 +1,24 @@
+import { NatalPatternsInsights } from "./NatalPatternsInsights";
+import "../../styles/profile-overview.css";
+import "../../styles/you-transits.css";
+import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
+import { NatalPlacementSections } from "../../components/NatalPlacementSections";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { NatalInsightPage } from "../../components/NatalInsightPage";
+import { NatalSectPage } from "../../components/NatalSectPage";
+import { useNatalReadingRoute } from "../../hooks/useNatalReadingRoute";
 import { ViewportMenu } from "../../components/ViewportMenu";
 import { FormattedProse } from "../../components/FormattedProse";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { TransitFacts } from "../../components/ArticleFacts";
 import { Fragment, isValidElement, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
-import { PageLoading, PageLoadError } from "../../components/PageLoading";
+import { PageLoading, PageLoadError, PageLoadState } from "../../components/PageLoading";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
+import { AspectBadge } from "../../components/charts/AspectBadge";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
 import type { SkySnapshot } from "../../types";
@@ -19,7 +28,6 @@ import { generatedContentParagraphs, generatedContentSections, type LiveGenerate
 import { aspectGiftOrLesson } from "../../services/aspectGiftLesson";
 import {
   NatalAspectPatternActivationsSection,
-  NatalAspectPatternsSection,
   type NatalAspectPatternsSectionStatus
 } from "./NatalAspectPatternsSection";
 import { resolvedNatalAspectPatternSectionLabel } from "./natalAspectPatternLabels";
@@ -257,27 +265,7 @@ function YouEmptyState({
   );
 }
 
-function YouProfileSummary({
-  displayMoon,
-  displayRising,
-  displaySun,
-  onEditProfile,
-  profileAvatarUrl,
-  profileEmail,
-  profileHandle,
-  profileName,
-  signaturesReady
-}: {
-  displayMoon: string;
-  displayRising: string;
-  displaySun: string;
-  onEditProfile: () => void;
-  profileAvatarUrl?: string;
-  profileEmail: string;
-  profileHandle?: string | null;
-  profileName: string;
-  signaturesReady: boolean;
-}) {
+function YouProfileOptions({ onEditProfile }: { onEditProfile: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -312,6 +300,57 @@ function YouProfileSummary({
   }, [menuOpen]);
 
   return (
+    <div className="you-profile-actions" ref={menuRef}>
+      <button
+        className="manual-chart-menu-trigger you-profile-menu-trigger"
+        type="button"
+        aria-label="Profile options"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((current) => !current)}
+      >
+        <MoreVertical size={22} aria-hidden="true" />
+      </button>
+      {menuOpen ? (
+        <ViewportMenu className="manual-chart-overflow-menu you-profile-overflow-menu" aria-label="Profile options">
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setMenuOpen(false);
+              onEditProfile();
+            }}
+          >
+            <Pencil size={17} aria-hidden="true" />
+            <span>Edit details</span>
+          </button>
+        </ViewportMenu>
+      ) : null}
+    </div>
+  );
+}
+
+function YouProfileSummary({
+  displayMoon,
+  displayRising,
+  displaySun,
+  profileAvatarUrl,
+  profileEmail,
+  profileHandle,
+  profileName,
+  signaturesReady
+}: {
+  displayMoon: string;
+  displayRising: string;
+  displaySun: string;
+  profileAvatarUrl?: string;
+  profileEmail: string;
+  profileHandle?: string | null;
+  profileName: string;
+  signaturesReady: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  return (
     <div className="you-profile-card" aria-label="Profile summary">
       <ProfileAvatar
         avatarUrl={profileAvatarUrl}
@@ -323,10 +362,12 @@ function YouProfileSummary({
       <div className="you-profile-copy">
         <div className="you-profile-name-row">
           <h1>{profileName}</h1>
-          {profileHandle ? <span className="you-profile-handle">@{profileHandle}</span> : null}
+          {profileHandle ? <button type="button" className="you-profile-handle" aria-label="Copy profile link" onClick={() => {
+            void navigator.clipboard.writeText(new URL(`/${profileHandle}`, window.location.origin).href).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }).catch(() => setCopied(false));
+          }}>{copied ? "Copied" : `@${profileHandle}`} <span aria-hidden="true">⧉</span></button> : null}
         </div>
         {signaturesReady ? (
-          <div className="you-signature-row" aria-label="Big three">
+          <div className="you-signature-row sr-only" aria-label="Big three">
             <span><span aria-hidden="true">☉</span>{displaySun}</span>
             <span><span aria-hidden="true">☽</span>{displayMoon}</span>
             <span><span aria-hidden="true">↑</span>{displayRising}</span>
@@ -334,32 +375,6 @@ function YouProfileSummary({
         ) : (
           <PageLoading compact message="Calculating chart signatures" />
         )}
-      </div>
-      <div className="you-profile-actions" ref={menuRef}>
-        <button
-          className="manual-chart-menu-trigger you-profile-menu-trigger"
-          type="button"
-          aria-label="Profile options"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((current) => !current)}
-        >
-          <MoreVertical size={22} aria-hidden="true" />
-        </button>
-        {menuOpen ? (
-          <ViewportMenu className="manual-chart-overflow-menu you-profile-overflow-menu" aria-label="Profile options">
-            <button
-              type="button"
-              role="menuitem"
-              onClick={() => {
-                setMenuOpen(false);
-                onEditProfile();
-              }}
-            >
-              <Pencil size={17} aria-hidden="true" />
-              <span>Edit details</span>
-            </button>
-          </ViewportMenu>
-        ) : null}
       </div>
     </div>
   );
@@ -391,6 +406,7 @@ function YouNatalChartPanel({
       data-chart-calculation-status={natalChartStatus}
     >
       {showViewToggle && viewMode ? (
+        <div className="natal-chart-controls">
         <SegmentedControl
           value={viewMode}
           options={[
@@ -402,8 +418,11 @@ function YouNatalChartPanel({
           className="natal-chart-view-toggle"
           compact
         />
+        {natalChart && viewMode === "circle" && <ChartFullscreenButton title="Natal chart">{natalChart}</ChartFullscreenButton>}
+        </div>
       ) : null}
       {viewMode === "table" && tableContent ? tableContent : natalChart}
+      {!showViewToggle && natalChart && <div className="natal-chart-controls"><div className="you-transit-legend" aria-label="Chart rings"><span>Sky · outer</span><span>You · inner</span></div><ChartFullscreenButton title="Transit chart">{natalChart}</ChartFullscreenButton></div>}
       {(natalChartStatus === "idle" || natalChartStatus === "loading") && (
         <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
           <span>Chart</span>
@@ -427,6 +446,7 @@ function YouNatalChartPanel({
 }
 
 function YouNatalTab({
+  natalSky,
   bigThreeRows,
   elementalSummaryLabel,
   elementalSummarySentence,
@@ -439,6 +459,7 @@ function YouNatalTab({
   signatureBody,
   signatureTitle
 }: {
+  natalSky?: SkySnapshot | null;
   bigThreeRows: ReactNode[];
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
@@ -453,6 +474,17 @@ function YouNatalTab({
 }) {
   return (
     <div className="subpane" id="sub-chart">
+      <section className="natal-big-three" aria-label="Big Three">
+        <h2 className="eyebrow section-label">Big Three</h2>
+        <div className="list you-list-card planet-placement-list" aria-label="Natal placements">
+          {bigThreeRows.map((row, index) => index === 0 ? <div className="natal-sun-card" key="sun">{row}<NatalChartReadings snapshot={natalSky} audience="you" presentation="sect" /></div> : row)}
+        </div>
+      </section>
+      <NatalPlacementSections snapshot={natalSky} items={planetRows.map((node, index) => ({
+        id: String(isValidElement(node) ? node.key ?? index : index),
+        pointName: isValidElement<{ pointName?: string }>(node) ? node.props.pointName ?? "" : "",
+        node
+      }))} emptyHouses={emptyHouseRows} />
       {showNatalSignatures && (
         <>
           <span className="eyebrow section-label">Your signatures</span>
@@ -472,36 +504,8 @@ function YouNatalTab({
         </>
       )}
 
-      {natalAspectPatternStatus && (
-        <NatalAspectPatternsSection
-          items={natalAspectPatternItems ?? []}
-          onOpenDetail={onOpenNatalAspectPatternDetail}
-          status={natalAspectPatternStatus}
-        />
-      )}
+      <NatalPatternsInsights snapshot={natalSky} audience="you" items={natalAspectPatternItems} status={natalAspectPatternStatus} onOpenPattern={onOpenNatalAspectPatternDetail}/>
 
-      <span className="eyebrow section-label">Big Three</span>
-      <div className="list you-list-card planet-placement-list" aria-label="Natal placements">
-        {bigThreeRows}
-      </div>
-
-      {planetRows.length > 0 && (
-        <>
-          <span className="eyebrow section-label">Planets</span>
-          <div className="list you-list-card planet-placement-list" aria-label="Bodies in signs and houses">
-            {planetRows}
-          </div>
-        </>
-      )}
-
-      {emptyHouseRows.length > 0 && (
-        <>
-          <span className="eyebrow section-label">Empty houses</span>
-          <div className="list you-list-card planet-placement-list" aria-label="Empty houses">
-            {emptyHouseRows}
-          </div>
-        </>
-      )}
 
     </div>
   );
@@ -540,6 +544,24 @@ function YouMacroView({ headline, body }: { headline: string; body: string }) {
   );
 }
 
+function YouTransitGroup({ title, label, rows }: { title: string; label: string; rows: ReactNode[] }) {
+  const [expanded, setExpanded] = useState(false);
+  const listId = useId();
+  return (
+    <section className="you-transit-group" aria-label={title}>
+      <div className="you-transit-group__header">
+        <h2>{title}</h2>
+        {rows.length > 3 ? <button type="button" className="you-transit-group__toggle" aria-expanded={expanded} aria-controls={listId} onClick={() => setExpanded(current => !current)}>
+          {expanded ? "Show less" : `See all ${rows.length}`}<ChevronRight size={16} aria-hidden="true" />
+        </button> : null}
+      </div>
+      <div className="updates-aspect-list you-transit-grid" id={listId} aria-label={label}>
+        {rows.map((row, index) => <div className="you-transit-group__item" key={isValidElement(row) ? row.key ?? index : index} hidden={!expanded && index >= 3}>{row}</div>)}
+      </div>
+    </section>
+  );
+}
+
 function YouUpdatesTab({
   accountId,
   accountRecovery,
@@ -561,7 +583,8 @@ function YouUpdatesTab({
   transitLoadingMessage = "Adding today’s transits.",
   transitsLoading = false,
   transitSourceFeedback,
-  weeklyTransitRows = []
+  weeklyTransitRows = [],
+  reportAvatar
 }: {
   accountId: string | null | undefined;
   accountRecovery?: YouAccountRecovery;
@@ -585,6 +608,7 @@ function YouUpdatesTab({
   transitsLoading?: boolean;
   transitSourceFeedback?: ReactNode;
   weeklyTransitRows?: ReactNode[];
+  reportAvatar: ReactNode;
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
@@ -617,7 +641,7 @@ function YouUpdatesTab({
         />
       ) : null}
       {weeklyTransitRows.length > 0 ? (
-        <div className="updates-aspect-list weekly-horoscope__transits" aria-label="Weekly transit cards">
+        <div className="updates-aspect-list you-transit-grid weekly-horoscope__transits" aria-label="Weekly transit cards">
           {weeklyTransitRows}
         </div>
       ) : null}
@@ -626,24 +650,15 @@ function YouUpdatesTab({
 
   return (
     <div className="subpane updates-section" id="sub-transits">
+      <div className="you-transit-overview">
       {hasSavedCurrentCity && transitsLoading && !transitSourceFeedback && (
         <PageLoading compact message={transitLoadingMessage} />
       )}
-      {hasSavedCurrentCity ? (
-        <YouReportActions
-          accountId={accountId}
-          accountRecovery={accountRecovery}
-          dailyAspectsReady={dailyAspectsReady}
-          dailyHoroscopeAssembly={dailyHoroscopeAssembly}
-          dailyUpdateSummary={dailyUpdateSummary}
-          weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
-          transitDateLabel={transitDateLabel}
-        />
-      ) : null}
       {transitSourceFeedback ?? <>
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary you-horoscope-card${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
-          {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
+          <span className="eyebrow section-label">Today for you · {transitDateLabel}</span>
+          {showDailyHeadline ? <h2>{dailyHeadline}</h2> : null}
           <FormattedProse text={dailyUpdateSummary.summary} />
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
           {dailyUpdateSummary.status === "loading" ? (
@@ -680,18 +695,7 @@ function YouUpdatesTab({
             </div>
           </section>
         ) : null}
-      {visibleDailySpecialSections.map((section) => (
-        <section className="daily-special-section you-horoscope-card" key={section.headline}>
-          <span className="eyebrow section-label">{transitDateLabel} sky</span>
-          <h3>{section.headline}</h3>
-          {section.body.split(/\n{2,}/).map((paragraph) => <FormattedProse key={paragraph} text={paragraph} />)}
-        </section>
-      ))}
-      {weeklyTransitSection}
-      {hasSavedCurrentCity && natalAspectPatternItems && (
-        <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
-      )}
-      <span className="eyebrow section-label">Areas of Your Life</span>
+      </>}
       {!hasSavedCurrentCity && (
         <section className="you-empty-card" aria-label="Current city needed">
           <span>Updates</span>
@@ -700,6 +704,28 @@ function YouUpdatesTab({
           <button type="button" onClick={onCreateChart}>Add current city →</button>
         </section>
       )}
+      </div>
+      {hasSavedCurrentCity ? (
+        <YouReportActions
+          avatar={reportAvatar}
+          accountId={accountId}
+          accountRecovery={accountRecovery}
+          dailyAspectsReady={dailyAspectsReady}
+          dailyHoroscopeAssembly={dailyHoroscopeAssembly}
+          dailyUpdateSummary={dailyUpdateSummary}
+          weeklyHoroscopeAssembly={weeklyHoroscopeAssembly}
+          transitDateLabel={transitDateLabel}
+        />
+      ) : null}
+      <div className="you-transit-details">
+      {!transitSourceFeedback && <>
+      {visibleDailySpecialSections.map((section) => (
+        <section className="daily-special-section you-horoscope-card" key={section.headline}>
+          <span className="eyebrow section-label">{transitDateLabel} sky</span>
+          <h3>{section.headline}</h3>
+          {section.body.split(/\n{2,}/).map((paragraph) => <FormattedProse key={paragraph} text={paragraph} />)}
+        </section>
+      ))}
       {hasSavedCurrentCity && dailyAspectsLoading ? <PageLoading compact message="Calculating daily aspect peaks…" /> : null}
       {hasSavedCurrentCity && dailyAspectsError ? (
         <section className="you-empty-card" aria-label="Daily aspects unavailable">
@@ -711,25 +737,17 @@ function YouUpdatesTab({
         <p className="daily-horoscope-summary__secondary">No daily aspect highlights for {transitDateLabel}.</p>
       ) : null}
       {hasSavedCurrentCity && aspectRows.length > 0 && (
-        <div className="updates-aspect-list" aria-label="Areas of your life">
-          {aspectRows}
-        </div>
+        <YouTransitGroup title="Short-term transits" label="Areas of your life" rows={aspectRows} />
       )}
       {hasSavedCurrentCity && backgroundAspectRows.length > 0 ? (
-        <>
-          <span className="eyebrow section-label">Long-term transits</span>
-          <div className="updates-aspect-list" aria-label="Long-term transits">
-            {backgroundAspectRows}
-          </div>
-        </>
+        <YouTransitGroup title="Long-term transits" label="Long-term transit cards" rows={backgroundAspectRows} />
       ) : null}
       {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
-        <>
-          <span className="eyebrow section-label">House transits</span>
-          <div className="updates-aspect-list" aria-label="House transits">
-            {standaloneTransitRows}
-          </div>
-        </>
+        <YouTransitGroup title="Planets moving through your houses" label="House transits" rows={standaloneTransitRows} />
+      )}
+      {weeklyTransitSection}
+      {hasSavedCurrentCity && natalAspectPatternItems && (
+        <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
       )}
       {hasSavedCurrentCity && !transitsLoading && !dailyAspectsLoading && dailyAspectsReady && !dailyAspectsError && aspectRows.length === 0 && backgroundAspectRows.length === 0 && standaloneTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
@@ -762,6 +780,7 @@ function YouUpdatesTab({
         </>
       ) : null}
       </>}
+      </div>
     </div>
   );
 }
@@ -1070,7 +1089,7 @@ function YouTransitArticlePage({
       <article className="article-shell sky-detail-article you-transit-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
-            <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
+            {eyebrowAspect ? <AspectBadge aspect={eyebrowAspect.aspect} /> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>
@@ -1082,7 +1101,7 @@ function YouTransitArticlePage({
                   </span>
                 </>
               ) : null}
-            </div>
+            </div>}
             <h1 className="article-title" id="you-transit-article-title">{displayArticle.title}</h1>
             {headerDateRange ? <p className="article-duration">{headerDateRange}</p> : null}
             <ArticlePills pills={displayArticle.pills} />
@@ -1273,6 +1292,7 @@ export function YouPage({
   onRetryTransitCopy
 }: YouPageProps) {
   const [profileTab, setProfileTab] = useState<YouTab>(youTabFromUrl);
+  const sectRoute = useNatalReadingRoute();
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const [natalAspectPatternDetail, setNatalAspectPatternDetail] = useState<NatalAspectPatternDetailSelection | null>(null);
 
@@ -1350,6 +1370,11 @@ export function YouPage({
     );
   }
 
+  if (sectRoute?.audience === "you") {
+    const ReadingPage = sectRoute.kind === "sect" ? NatalSectPage : NatalInsightPage;
+    return <ReadingPage snapshot={natalSky} audience="you" loading={natalChartStatus === "loading" || natalChartStatus === "idle"} />;
+  }
+
   const transitSourceFeedback = transitCopyError && onRetryTransitCopy
     ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
     : transitCopyLoading ? <PageLoading message="Loading transit readings…" /> : null;
@@ -1359,8 +1384,38 @@ export function YouPage({
   }
 
   return (
-    <section className="you-page you-chart-page page-shell" aria-label="You">
+    <section className="you-page you-chart-page page-shell" aria-label="You" data-profile-view={profileTab}>
       <div className="chart-layout">
+        <header className="profile-heading">
+          <YouProfileSummary
+            displayMoon={displayMoon}
+            displayRising={displayRising}
+            displaySun={displaySun}
+            profileAvatarUrl={profileAvatarUrl}
+            profileEmail={profileEmail}
+            profileHandle={profileHandle}
+            profileName={profileName}
+            signaturesReady={signaturesReady}
+          />
+
+          <div className="you-profile-controls">
+            <SegmentedControl
+              id="you-subtabs"
+              value={profileTab}
+              options={[
+                { value: "transits", label: "Transits" },
+                { value: "chart", label: "Natal Chart" }
+              ]}
+              onChange={selectProfileTab}
+              ariaLabel="Profile sections"
+              className="app-tabs profile-tabs you-profile-tabs you-chart-tabs"
+            />
+            <YouProfileOptions onEditProfile={onCreateChart} />
+          </div>
+
+        </header>
+        <PageLoadState scope="page" what="Your chart" cause={natalChartError} failed={natalChartStatus === "error"}
+          pending={natalChartStatus === "idle" || natalChartStatus === "loading"} onRetry={() => window.location.reload()}>
         <YouNatalChartPanel
           ariaLabel={activeChartLabel}
           natalChart={activeChart}
@@ -1372,34 +1427,12 @@ export function YouPage({
         />
 
         <main className="chart-layout__content">
-          <YouProfileSummary
-            displayMoon={displayMoon}
-            displayRising={displayRising}
-            displaySun={displaySun}
-            onEditProfile={onCreateChart}
-            profileAvatarUrl={profileAvatarUrl}
-            profileEmail={profileEmail}
-            profileHandle={profileHandle}
-            profileName={profileName}
-            signaturesReady={signaturesReady}
-          />
-
-          <SegmentedControl
-            id="you-subtabs"
-            value={profileTab}
-            options={[
-              { value: "transits", label: "Transits" },
-              { value: "chart", label: "Natal Chart" }
-            ]}
-            onChange={selectProfileTab}
-            ariaLabel="Profile sections"
-            className="app-tabs profile-tabs you-profile-tabs you-chart-tabs"
-          />
 
           {profileTab === "chart" && (
             <>
-            <NatalChartReadings snapshot={natalSky} audience="you" />
+
             <YouNatalTab
+              natalSky={natalSky}
               bigThreeRows={bigThreeRows}
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
@@ -1419,6 +1452,7 @@ export function YouPage({
 
           {profileTab === "transits" && (
             <YouUpdatesTab
+              reportAvatar={<ProfileAvatar avatarUrl={profileAvatarUrl} className="you-report-avatar" email={profileEmail} name={profileName} size="large" />}
               transitSourceFeedback={transitSourceFeedback}
               accountId={accountId}
               accountRecovery={accountRecovery}
@@ -1444,6 +1478,7 @@ export function YouPage({
             />
           )}
         </main>
+        </PageLoadState>
       </div>
     </section>
   );

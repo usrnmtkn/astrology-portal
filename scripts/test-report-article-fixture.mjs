@@ -32,7 +32,7 @@ await build({
 });
 const { markup } = createRequire(import.meta.url)(outputFile);
 
-for (const block of ["cover", "chapters", "image-slot", "key-dates", "colophon"]) {
+for (const block of ["cover", "chapters", "key-dates", "colophon"]) {
   assert.match(markup, new RegExp(`data-report-block="${block}"`, "u"));
 }
 assert.match(markup, /FIXTURE_ONLY_REPORT_TITLE/u);
@@ -42,10 +42,18 @@ assert.match(markup, /Your Solar Return Sun falls in your natal 4th house\./u);
 assert.match(markup, /aria-haspopup="dialog"/u);
 assert.match(markup, /FIXTURE_ONLY_FACTS_ENGINE/u);
 assert.doesNotMatch(markup, /—/u);
+assert.doesNotMatch(markup, /report-chapter__image-placeholder/u, "Delivered chapters must not gain invented image placeholders.");
+assert.doesNotMatch(markup, /Facts hash/u, "Internal facts hashes stay out of the reader colophon.");
 
 const reportCss = await readFile(path.join(repoRoot, "apps/web/src/styles/report-article.css"), "utf8");
-assert.match(reportCss, /@media \(max-width: 700px\)/u);
-assert.match(reportCss, /\.report-key-date-modal \.modal-positioner/u);
+assert.match(reportCss, /@media \(max-width: 800px\)/u);
+const modalCss = await readFile(path.join(repoRoot, "apps/web/src/styles/modals.css"), "utf8");
+const reportArticleSource = await readFile(path.join(repoRoot, "apps/web/src/components/reports/ReportArticle.tsx"), "utf8");
+const modalDialogSource = await readFile(path.join(repoRoot, "apps/web/src/components/ModalDialog.tsx"), "utf8");
+assert.match(reportArticleSource, /<ModalDialog[\s\S]*?rootClassName="report-key-date-modal"/u);
+assert.match(modalDialogSource, /className=\{`content-modal/u);
+assert.match(modalCss, /@media \(max-width: 800px\)[\s\S]*?\.content-modal \.modal-positioner\s*\{\s*place-items: end stretch/u,
+  "Report key dates inherit the shared mobile sheet alignment.");
 
 await rm(tempDir, { recursive: true });
 

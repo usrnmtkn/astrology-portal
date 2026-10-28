@@ -1,0 +1,22 @@
+.eight-ball { display: inline-block; width: var(--unavailable-art-size); }
+.eight-ball svg { display: block; width: 100%; height: auto; overflow: visible; }
+.eight-ball__shine-color { stop-color: var(--unavailable-ball-shine); }
+.eight-ball__ball-color { stop-color: var(--unavailable-ball); }
+.eight-ball__edge-color { stop-color: var(--eightball-edge); }
+.eight-ball__window-light { stop-color: var(--eightball-window-light); }
+.eight-ball__window-dark { stop-color: var(--eightball-window-dark); }
+.eight-ball__triangle-light { stop-color: var(--eightball-triangle-light); }
+.eight-ball__triangle-dark { stop-color: var(--eightball-triangle-dark); }
+.eight-ball__shine { stop-color: var(--color-white); stop-opacity: var(--eightball-shine-opacity); }
+.eight-ball__clear { stop-opacity: 0; }
+.eight-ball__shadow { stop-color: var(--color-black); stop-opacity: var(--eightball-shadow-opacity); }
+.eight-ball__rim { stroke: var(--eightball-rim); stroke-width: var(--border-width-thin); }
+.eight-ball__bezel { fill: var(--eightball-bezel); stroke: var(--eightball-bezel-rim); stroke-width: var(--border-width-medium); }
+.eight-ball__glow { fill: var(--eightball-glow); opacity: var(--eightball-glow-opacity); }
+.eight-ball__triangle { stroke: var(--eightball-triangle-rim); stroke-width: var(--border-width-thin); stroke-linejoin: round; }
+.eight-ball__glyph { fill: var(--eightball-glyph); font-family: var(--font-ui); font-size: var(--eightball-glyph-size); font-weight: var(--weight-semibold); }
+.eight-ball__shake { transform-origin: 50% 80%; animation: eightball-shake var(--unavailable-motion-duration) var(--eightball-motion-ease) var(--eightball-motion-delay) both; }
+.eight-ball__reveal { transform-origin: 50% 48%; animation: eightball-reveal var(--eightball-reveal-duration) ease-out var(--eightball-motion-delay) both; }
+@keyframes eightball-shake { 0%,100% { transform: translate(0,0) rotate(0); } 12% { transform: translate(-5px,1px) rotate(-7deg); } 26% { transform: translate(5px,-1px) rotate(6deg); } 40% { transform: translate(-4px,0) rotate(-4deg); } 54% { transform: translate(3px,0) rotate(3deg); } 70% { transform: translate(-1px,0) rotate(-1deg); } }
+@keyframes eightball-reveal { 0%,55% { opacity: 0; transform: scale(.82); } 100% { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .eight-ball__shake, .eight-ball__reveal { animation: none; } }

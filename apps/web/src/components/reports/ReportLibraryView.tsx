@@ -1,7 +1,7 @@
 import { ViewportMenu } from "../ViewportMenu";
 import { getVerifiedAuthUser } from "../../services/auth";
 import { FormattedProse } from "../FormattedProse";
-import { Archive, ChevronLeft, FileText, Link2Off, MoreHorizontal, RotateCcw, Share2, Trash2 } from "lucide-react";
+import { Archive, Link2Off, MoreHorizontal, RotateCcw, Share2, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { SegmentedControl } from "../SegmentedControl";
 import {
@@ -15,7 +15,10 @@ import {
 } from "../../services/reportLibrary";
 import { createReportShareLink, stopReportSharing } from "../../services/reportSharing";
 import { ReportGenerationBeam } from "./ReportGenerationBeam";
-import { PageLoading } from "../PageLoading";
+import { PageLoadState } from "../PageLoading";
+import { ReaderUnavailable } from "../ReaderUnavailable";
+import { ModalDialog } from "../ModalDialog";
+import { ReportBack, ReportStateCard } from "./ReportStateCard";
 import { isFriendRelationshipHeading } from "../../../../../src/reporting/friendReportStructure";
 
 const reportMonthNames = [
@@ -99,17 +102,16 @@ function formatCreatedDate(value: string | null) {
 }
 
 function reportSubtitle(item: ReportLibraryItem) {
-  const readingWindow = formatReadingWindow(item);
-  if (item.reportKind === "friend_transit_reading") {
-    return ["Friends", readingWindow].filter(Boolean).join(" · ");
-  }
-  if (item.reportKind === "you_day_reading") {
-    return ["You", "Day", readingWindow].filter(Boolean).join(" · ");
-  }
-  if (item.reportKind === "you_week_reading") {
-    return ["You", "Week", readingWindow].filter(Boolean).join(" · ");
-  }
-  return readingWindow;
+  if (item.reportKind === "friend_transit_reading") return ["Friends", item.subjectLabel].filter(Boolean).join(" · ");
+  if (item.reportKind === "you_day_reading") return "You · Day report";
+  if (item.reportKind === "you_week_reading") return "You · Week report";
+  return "You · Paid reading";
+}
+function reportGlyph(item: ReportLibraryItem) {
+  return item.reportKind === "you_day_reading" ? "☉" : item.reportKind === "you_week_reading" ? "☽" : item.reportKind === "friend_transit_reading" ? "♀" : "✶";
+}
+function statusTone(label: string) {
+  return label === "New" ? "success" : label === "Needs review" || label === "Needs attention" ? "warning" : label === "Could not finish" ? "error" : "info";
 }
 
 function statusLabel(item: ReportLibraryItem) {
@@ -168,7 +170,7 @@ function ReportLibraryRow({
   item: ReportLibraryItem;
   onArchiveChange: (item: ReportLibraryItem, archived: boolean) => Promise<void>;
   deleting: boolean;
-  onDelete: (item: ReportLibraryItem) => Promise<void>;
+  onDelete: (item: ReportLibraryItem) => void;
   onShare: (item: ReportLibraryItem) => Promise<void>;
   onStopSharing: (item: ReportLibraryItem) => Promise<void>;
 }) {
@@ -199,16 +201,14 @@ function ReportLibraryRow({
   return (
     <article className="report-library-row" data-report-status={item.status} data-report-generating={item.status === "generating" || undefined}>
       <button className="report-library-row__open" type="button" onClick={() => openItem(item)}>
-        <span className="report-library-row__icon" aria-hidden="true"><FileText size={20} /></span>
+        <span className="report-library-row__icon" aria-hidden="true">{reportGlyph(item)}{item.status === "ready" && !item.seenAt && <span className="report-library-row__unread"/>}</span>
         <span className="report-library-row__copy">
-          <span className="report-library-row__title-line">
-            <strong className="type-card-title">{item.title}</strong>
-            {status ? (
-              <span className={`report-library-status ui-pill ui-pill--neutral report-library-status--${item.status}`}>{status}</span>
-            ) : null}
-          </span>
-          <span className="report-library-row__subtitle type-meta">{reportSubtitle(item)}</span>
-          <span className="report-library-row__date type-meta">Created {formatCreatedDate(item.createdAt)}</span>
+          <strong className="report-library-row__title type-card-title">{item.title}</strong>
+          <span className="report-library-row__subtitle type-meta">{reportSubtitle(item)}<span className="report-library-row__mobile-date"> · {formatCreatedDate(item.createdAt)}</span></span>
+        </span>
+        <span className="report-library-row__trailing">
+          {status && <span className={`report-library-status report-library-status--${statusTone(status)}`}>{status}</span>}
+          <span className="report-library-row__date type-meta">{formatCreatedDate(item.createdAt)}</span>
         </span>
       </button>
 
@@ -216,6 +216,7 @@ function ReportLibraryRow({
       <div className="report-library-row__actions" ref={actionRef}>
         <button
           className="report-library-row__menu-trigger"
+          id={`report-options-${item.id}`}
           type="button"
           aria-label={`More options for ${item.title}`}
           disabled={deleting}
@@ -268,7 +269,7 @@ function ReportLibraryRow({
               <span>{archived ? "Restore" : "Archive"}</span>
             </button>
             <button
-              className="report-library-row__menu-item"
+              className="report-library-row__menu-item report-library-row__menu-item--danger"
               type="button"
               role="menuitem"
               onClick={() => {
@@ -296,17 +297,9 @@ function ReportTabLabel({ label, count }: { label: string; count: number }) {
 }
 
 function ReportLibraryEmpty({ view }: { view: "active" | "archived" }) {
-  return (
-    <div className="report-library-empty">
-      <span className="report-library-empty__icon" aria-hidden="true"><FileText size={20} /></span>
-      <strong className="type-card-title">{view === "archived" ? "Nothing archived" : "No reports yet"}</strong>
-      <p className="type-body-muted">
-        {view === "archived"
-          ? "Reports you archive will stay available here."
-          : "New readings will appear here as soon as they are ready."}
-      </p>
-    </div>
-  );
+  return <div className="report-library-empty"><ReportStateCard library title={view === "archived" ? "Nothing archived" : "No reports yet"}
+    message={view === "archived" ? "Reports you archive will stay available here." : "New readings will appear here as soon as they are ready."}/></div>;
+
 }
 
 export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNode } = {}) {
@@ -315,6 +308,8 @@ export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNo
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [shareNotice, setShareNotice] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteCandidate, setDeleteCandidate] = useState<ReportLibraryItem | null>(null);
+  const [deleteError, setDeleteError] = useState("");
   const refreshVersion = useRef(0);
 
   async function refresh() {
@@ -354,15 +349,17 @@ export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNo
   }
 
   async function removeReport(item: ReportLibraryItem) {
-    if (deletingId || !window.confirm(`Delete “${item.title}”?\n\nThis removes it from your reports and archive. Shared links will stop working. You cannot restore it from the library.`)) return;
+    if (deletingId) return;
+    setDeleteError("");
     setDeletingId(item.id);
     try {
       await deleteReport(item);
       ++refreshVersion.current;
       setItems((current) => current.filter((report) => report.id !== item.id));
+      setDeleteCandidate(null);
       setShareNotice("Report deleted.");
     } catch {
-      setShareNotice("This report could not be deleted. Please try again.");
+      setDeleteError("This report could not be deleted. Please try again.");
     } finally {
       setDeletingId(null);
     }
@@ -397,8 +394,8 @@ export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNo
     <main className="report-library-page">
       <section className="report-library-shell" aria-labelledby="report-library-title">
         <header className="report-library-header">
-          <h1 className="type-page-title" id="report-library-title">Reports</h1>
-        </header>
+          <ReportBack href="/#you" className="report-library-back"/>
+          <h1 className="type-page-title" id="report-library-title" tabIndex={-1}>Reports</h1>
 
         <SegmentedControl
           id="report-library-tabs"
@@ -412,6 +409,7 @@ export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNo
             { value: "archived", label: <ReportTabLabel label="Archived" count={archivedCount} /> }
           ]}
         />
+        </header>
 
         <section
           className="report-library-list"
@@ -421,15 +419,16 @@ export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNo
           aria-live="polite"
         >
           {accessFallback}
-          {!accessFallback && status === "loading" ? <PageLoading compact message="Loading your reports…" /> : null}
-          {!accessFallback && status === "error" ? <p className="report-library-loading type-body-muted">Your reports could not be loaded right now.</p> : null}
+          {!accessFallback && <PageLoadState scope="page" message="Your reports could not be loaded right now." failed={status === "error"} pending={status === "loading"} onRetry={() => { setStatus("loading"); return refresh(); }}>
+            {status === "loading" ? <ReportStateCard library loading message="Loading your reports…"/> : null}
+          </PageLoadState>}
           {!accessFallback && status === "ready" && visible.length === 0 ? <ReportLibraryEmpty view={view} /> : null}
           {!accessFallback && status === "ready" ? visible.map((item) => (
             <ReportLibraryRow
               key={item.id}
               item={item}
               onArchiveChange={changeArchive}
-              onDelete={removeReport}
+              onDelete={item => { setDeleteError(""); setDeleteCandidate(item); }}
               deleting={deletingId !== null}
               onShare={shareReport}
               onStopSharing={stopSharingReport}
@@ -437,30 +436,24 @@ export function ReportLibraryView({ accessFallback }: { accessFallback?: ReactNo
           )) : null}
         </section>
       </section>
+      {deleteCandidate && <ModalDialog variant="confirm" title={`Delete “${deleteCandidate.title}”?`}
+        onClose={() => { if (!deletingId) setDeleteCandidate(null); }}
+        restoreFocusId={deletingId ? "report-library-title" : `report-options-${deleteCandidate.id}`}
+        actions={<>
+          <button className="modal-action" type="button" disabled={Boolean(deletingId)} onClick={() => setDeleteCandidate(null)}>Cancel</button>
+          <button className="modal-action modal-action--danger" type="button" disabled={Boolean(deletingId)} onClick={() => void removeReport(deleteCandidate)}>{deletingId ? "Deleting…" : "Delete"}</button>
+        </>}>
+        <p>This removes it from your reports and archive. Shared links will stop working. You cannot restore it from the library.</p>
+        {deleteError && <p role="alert">{deleteError}</p>}
+      </ModalDialog>}
       {shareNotice ? <div className="report-library-share-toast" role="status" aria-live="polite">{shareNotice}</div> : null}
     </main>
   );
 }
 
 function GeneratedReportState({ message, backHref = "/reports/" }: { message: string; backHref?: string }) {
-  return (
-    <section className="article-page sky-detail-page saved-generated-report saved-generated-report--state">
-      <button
-        className="sky-detail-back floating-back-button"
-        type="button"
-        aria-label="Back"
-        onClick={() => window.location.assign(backHref)}
-      >
-        <ChevronLeft size={18} aria-hidden="true" />
-        <span>Back</span>
-      </button>
-      <article className="article-shell sky-detail-article">
-        <div className="article-card sky-detail-card saved-generated-report__state-card">
-          <p className="report-library-loading type-body-muted">{message}</p>
-        </div>
-      </article>
-    </section>
-  );
+  return <ReportStateCard title={message === "Loading report…" ? "Preparing your report" : message} loading={message === "Loading report…"} backHref={backHref}
+    action={message === "Loading report…" ? undefined : {label:"Back to Reports",href:backHref}}/>;
 }
 
 export function GeneratedReportArticle({
@@ -482,30 +475,21 @@ export function GeneratedReportArticle({
       aria-label={`${report.headline ?? "Saved reading"} article`}
       aria-labelledby="saved-generated-report-title"
     >
-      <button
-        className="sky-detail-back floating-back-button"
-        type="button"
-        aria-label="Back"
-        onClick={() => window.location.assign(backHref)}
-      >
-        <ChevronLeft size={18} aria-hidden="true" />
-        <span>Back</span>
-      </button>
+      <ReportBack href={backHref}/>
 
       <article className="article-shell sky-detail-article saved-generated-report__article">
         <div className="article-card sky-detail-card saved-generated-report__card">
-          <header className="article-id sky-detail-id saved-generated-report__header">
-            <div className="article-eyebrow" aria-label={`${surfaceLabel} ${reportLabel}`}>
+          <header className="article-id sky-detail-id saved-generated-report__header report-cover">
+            <div className="report-label" aria-label={`${surfaceLabel} ${reportLabel}`}>
               <span>{surfaceLabel}</span>
               <span className="article-eyebrow__slash" aria-hidden="true">/</span>
               <span>{reportLabel}</span>
             </div>
             <h1 className="article-title" id="saved-generated-report-title">{report.headline ?? "Saved reading"}</h1>
-            {readingWindow ? <p className="article-duration">{readingWindow}</p> : null}
+            {readingWindow ? <p className="report-cover__meta">{readingWindow}</p> : null}
             {report.summary ? (
               <div className="article-tldr">
-                <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
-                <FormattedProse className="article-sub article-tldr__copy" text={report.summary} />
+                <FormattedProse className="report-cover__subtitle article-tldr__copy" text={report.summary} />
               </div>
             ) : null}
           </header>
@@ -513,8 +497,8 @@ export function GeneratedReportArticle({
           {paragraphs.length > 0 ? <hr className="article-rule" /> : null}
 
           {paragraphs.length > 0 ? (
-            <div className="article-body-card sky-detail-body saved-generated-report__body">
-              <div className="article-body-inner">
+            <div className="report-chapter saved-generated-report__body">
+              <div className="article-body-inner report-chapter__copy">
                 <section className="article-section sky-detail-section">
                   {paragraphs.map((paragraph, index) => (
                     isFriendsReading && isFriendRelationshipHeading(paragraph, report.subjectLabel)
@@ -537,18 +521,21 @@ export function GeneratedReportDeliveryView({ reportId: reportIdProp }: { report
   const pathReportId = useMemo(generatedReportIdFromPath, []);
   const reportId = reportIdProp ?? pathReportId;
   const [report, setReport] = useState<GeneratedReportRecord | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error" | "missing">("loading");
+  const [attempt, setAttempt] = useState(0);
+  const [failure, setFailure] = useState<unknown>();
 
   useEffect(() => {
     let cancelled = false;
+    setStatus("loading");
     if (!reportId) {
-      setStatus("error");
+      setStatus("missing");
       return () => { cancelled = true; };
     }
     void loadGeneratedReportById(reportId).then(async (value) => {
       if (cancelled) return;
       if (!value) {
-        setStatus("error");
+        setStatus("missing");
         return;
       }
       setReport(value);
@@ -558,13 +545,13 @@ export function GeneratedReportDeliveryView({ reportId: reportIdProp }: { report
       } catch {
         // The saved reading remains readable even if its notification state cannot update.
       }
-    }).catch(() => {
-      if (!cancelled) setStatus("error");
+    }).catch(error => {
+      if (!cancelled) { setFailure(error); setStatus("error"); }
     });
     return () => { cancelled = true; };
-  }, [reportId]);
+  }, [reportId, attempt]);
 
-  if (status === "loading") return <GeneratedReportState message="Loading report…" />;
-  if (status === "error" || !report) return <GeneratedReportState message="This report is unavailable." />;
+  if (status === "loading" || status === "error") return <PageLoadState scope="page" what="This report" cause={failure} failed={status === "error"} pending={status === "loading"} onRetry={() => setAttempt(value => value + 1)}><GeneratedReportState message="Loading report…" /></PageLoadState>;
+  if (status === "missing" || !report) return <ReaderUnavailable kind="report"/>;
   return <GeneratedReportArticle report={report} />;
 }

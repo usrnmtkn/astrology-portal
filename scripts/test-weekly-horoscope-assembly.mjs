@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 
@@ -22,7 +23,10 @@ const pendingReviewCandidatePath = path.join(
   "packages/astro-knowledge/review/calendar-weekly-overview-2026-08-10-owner-review-candidate.json"
 );
 const pendingReviewCandidate = JSON.parse(fs.readFileSync(pendingReviewCandidatePath, "utf8"));
+const fixtureEnvDir = fs.mkdtempSync(path.join(os.tmpdir(), "tldr-weekly-fixture-env-"));
 const vite = await createServer({
+  mode: "test",
+  envDir: fixtureEnvDir,
   configFile: false,
   root: path.join(repoRoot, "apps/web"),
   appType: "custom",
@@ -679,7 +683,7 @@ try {
   assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
   assert.match(youPage, /weekly-horoscope__macro daily-horoscope-summary/u);
   assert.match(youPage, />The macro view</u);
-  assert.match(youPage, /updates-aspect-list weekly-horoscope__transits/u);
+  assert.match(youPage, /updates-aspect-list you-transit-grid weekly-horoscope__transits/u);
   assert.match(youPage, /\{weeklyTransitRows\}/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
@@ -863,8 +867,18 @@ try {
     /^[A-Z][a-z]+ \d{1,2}, \d{4} – [A-Z][a-z]+ \d{1,2}, \d{4}$/u,
     "Station-event rendering must retain the required enriched transit window."
   );
+  const macroKey = "cms/lunation-article/2026-07-29/full-moon/aquarius";
+  const macroFixture = {
+    id: "weekly-macro-fixture", contentKey: macroKey, surface: "sky", mode: "article",
+    status: "LIVE", lane: "serving", reviewState: null, eventType: "lunation", targetDate: "2026-07-29",
+    headline: "Published Aquarius Full Moon", summary: null,
+    body: "Published macro opening.\n\nThe complete published macro ending.",
+    sections: [], model: null, updatedAt: "2026-07-28T12:00:00.000Z"
+  };
+  const macroContent = new Map([[macroKey, macroFixture]]);
   const realWeek = await weekly.buildWeeklyHoroscope({
     userId: "weekly-acceptance-fixture",
+    generatedContent: macroContent,
     natalSky,
     risingSign: "gemini",
     location,
@@ -873,8 +887,8 @@ try {
   assert.equal(realWeek.weekStart, "2026-07-27");
   assert.equal(realWeek.weekEnd, "2026-08-02");
   assert.equal(realWeek.weekType, "lunation");
-  assert.equal(realWeek.macro?.headline, "The Macro View: What the Aquarius Full Moon Represents");
-  assert.match(realWeek.macro?.body ?? "", /^Full Moons bring what has been building/u);
+  assert.deepEqual(realWeek.macro, { headline: macroFixture.headline, body: macroFixture.body },
+    "Weekly macro must preserve the complete date-specific published lunation article.");
   assert.ok(realWeek.horoscope.headline.trim().length > 0);
   assert.notEqual(realWeek.horoscope.headline, "Full Moon week");
   assert.match(realWeek.horoscope.driverLabel, /Full Moon in Aquarius/u);
@@ -1112,4 +1126,5 @@ try {
   console.log("weekly horoscope assembly checks passed: daily-contact byte identity, station windows, event-time ruler condition, stale-sky guard, Neptune return exclusion, macro, and standalone aspect cards");
 } finally {
   await vite.close();
+  fs.rmSync(fixtureEnvDir, { recursive: true, force: true });
 }

@@ -46,8 +46,8 @@ assert.match(
 );
 assert.match(
   panel,
-  /const transits = selectedFriendEligibleTransits\.filter\(\(transit\) => transit\.term === durationClass\);/u,
-  "Friends personal-transit groups must render from the eligible capped set."
+  /const transits = selectedFriendEligibleTransits\.flatMap\(\(transit\) => \{\s*const timing = selectedFriendTransitTiming\.timings\?\.get\(transit\.id\);\s*return transit\.term === durationClass && timing \? \[\{ \.\.\.transit, timing \}\] : \[\];/u,
+  "Friends personal-transit groups must retain the eligible capped set and use the same searched timing as the opened article."
 );
 assert.match(
   panel,

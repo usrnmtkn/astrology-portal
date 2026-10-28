@@ -54,13 +54,32 @@
   }
 
   .topbar {
+    justify-content: space-between;
     grid-template-columns: 1fr auto;
-    padding: var(--space-4) var(--space-4) 0;
+    padding: var(--top-control-top) var(--space-4) 0;
   }
 
   html[data-scrolled] .topbar {
-    padding-top: var(--space-4);
+    padding-top: var(--top-control-top);
   }
+
+  .app-shell:has(.floating-back-button) .topbar {
+    padding-inline: var(--mobile-control-inset);
+  }
+
+  .app-shell:has(.floating-back-button) .nav-pill {
+    margin-left: var(--mobile-article-brand-offset);
+  }
+
+  .floating-back-button {
+    top: var(--article-back-top);
+    left: var(--mobile-control-inset);
+    width: var(--top-icon-button-size);
+    height: var(--top-icon-button-size);
+    padding: 0;
+  }
+
+  .floating-back-button span { display: none; }
 
   .nav-pill {
     grid-column: 1;
@@ -78,8 +97,8 @@
   }
 
   .brand-dot {
-    min-width: 36px;
-    min-height: 36px;
+    min-width: var(--top-brand-size);
+    min-height: var(--top-brand-size);
   }
 
   .site-nav button {
@@ -133,11 +152,6 @@
 }
 
 @media (min-width: 721px) and (max-width: 800px) {
-  .settings-back-button {
-    top: var(--article-back-top);
-    left: var(--mobile-page-gutter);
-  }
-
   .settings-back-row {
     display: block;
     min-height: var(--top-control-height);
@@ -241,9 +255,8 @@
 
 /* Responsive: compact sky/update rows */
 @media (max-width: 760px) {
-  .ro-screen .sky-card,
   .placement-section .sky-card,
-  .aspect-section .sky-card {
+.aspect-section .sky-card {
     min-height: var(--sky-card-mobile-min-height);
     padding: var(--sky-card-mobile-padding);
   }
@@ -294,7 +307,6 @@
     border-radius: var(--snap-card-radius);
   }
 
-  .ro-screen .sky-pl,
   .placement-section .planet-placement-row {
     align-items: start;
     gap: var(--sky-placement-mobile-gap);
@@ -307,7 +319,6 @@
     gap: var(--sky-card-mobile-grid-gap);
   }
 
-  .ro-screen .sky-pl-glyph,
   .placement-section .planet-placement-row__glyph {
     align-self: start;
     width: auto;
@@ -408,132 +419,6 @@
     order: 1;
   }
 
-  .mode-guest .mobile-full-chart-card,
-  .mode-member .mobile-full-chart-card {
-    order: 3;
-    position: sticky;
-    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
-    z-index: calc(var(--z-topbar) - 1);
-    display: grid;
-    grid-template-columns: 58px minmax(0, 1fr) 48px;
-    align-items: center;
-    column-gap: var(--space-4);
-    width: 100%;
-    border: var(--border-width-thin) solid var(--card-border);
-    border-radius: var(--radius);
-    background: var(--card-bg);
-    color: var(--card-title-color);
-    box-shadow: var(--card-shadow);
-    cursor: pointer;
-    margin-top: 0;
-    padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
-    text-align: left;
-    transform: none;
-  }
-
-  html[data-scrolled] .mode-guest .mobile-full-chart-card,
-  html[data-scrolled] .mode-member .mobile-full-chart-card {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
-    right: var(--mobile-page-gutter);
-    left: var(--mobile-page-gutter);
-    width: auto;
-    max-width: none;
-    margin-top: 0;
-    box-shadow:
-      var(--mobile-action-panel-shadow);
-    transform: none;
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card {
-    border: var(--border-width-thin) solid var(--card-border);
-    background: var(--card-bg);
-    color: var(--card-title-color);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__copy strong {
-    color: var(--ink);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__copy span {
-    color: var(--ink-2);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__icon {
-    background: var(--surface-2);
-    color: var(--ink);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__arrow {
-    background: color-mix(in srgb, var(--surface-2) 86%, var(--ink) 14%);
-    color: var(--ink);
-  }
-
-  .mobile-full-chart-card__icon,
-  .mobile-full-chart-card__arrow {
-    display: grid;
-    place-items: center;
-    border-radius: var(--radius-circle);
-  }
-
-  .mobile-full-chart-card__icon {
-    width: 58px;
-    height: 58px;
-    border: var(--border-width-thin) solid var(--card-border);
-    background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
-    color: var(--ink);
-  }
-
-  .mobile-full-chart-card__arrow {
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    border: var(--border-width-thin) solid var(--card-border);
-    background: color-mix(in srgb, var(--app-card) 78%, var(--app-text) 10%);
-    color: var(--ink);
-  }
-
-  .mobile-full-chart-card__arrow svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: 2.25;
-  }
-
-  .mobile-full-chart-card__wheel {
-    display: block;
-    width: 36px;
-    height: 36px;
-    filter: var(--filter-glyph-current);
-    object-fit: contain;
-  }
-
-  .mobile-full-chart-card__copy {
-    display: grid;
-    min-width: 0;
-    align-content: center;
-    gap: var(--space-1);
-  }
-
-  .mobile-full-chart-card__copy strong {
-    color: var(--card-title-color);
-    font-family: var(--font-ui);
-    font-size: var(--sky-mobile-feature-title);
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-title);
-    line-height: var(--leading-title);
-  }
-
-  .mobile-full-chart-card__copy span {
-    display: block;
-    overflow: hidden;
-    color: var(--card-meta-color);
-    font-family: var(--font-body);
-    font-size: var(--text-meta-size);
-    line-height: var(--leading-meta);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   .mode-guest .sky-lunar-brief,
   .mode-member .sky-lunar-brief,
   .mode-guest .retrograde-section,
@@ -562,6 +447,7 @@
     max-width: 100%;
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
+    justify-content: space-between;
     min-height: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
     border-bottom: var(--border-width-thin) solid transparent;
     background: transparent;
@@ -606,24 +492,6 @@
     height: 46px;
   }
 
-  .floating-back-button {
-    top: calc(var(--top-control-top) + var(--top-control-height) + 12px);
-    left: var(--mobile-page-gutter);
-    max-width: calc(100vw - var(--mobile-page-gutter) * 2);
-    padding: 0 var(--space-5);
-    font-size: var(--type-body-size);
-  }
-
-  .friend-detail-page .friend-detail-back-row {
-    display: block;
-    width: 100%;
-    margin-bottom: var(--space-5);
-  }
-
-  .friend-detail-page .friends-back-button {
-    position: static;
-  }
-
   .app-shell {
     padding: var(--mobile-page-padding);
   }
@@ -636,7 +504,10 @@
   }
 
   .brand-word {
-    display: none;
+    display: inline-flex;
+    color: var(--ink);
+    font-size: var(--text-wordmark);
+    letter-spacing: var(--tracking-tight);
   }
 
   .nav-pill {
@@ -648,12 +519,12 @@
     border-color: var(--nav-border);
     background: var(--nav-surface);
     box-shadow: var(--nav-rest-shadow);
-    padding: 0 var(--space-4) 0 var(--space-2);
+    padding: var(--nav-pill-padding);
   }
 
   .brand-dot {
-    width: 36px;
-    height: 36px;
+    width: var(--top-brand-size);
+    height: var(--top-brand-size);
     border-radius: var(--radius-circle);
   }
 
@@ -668,46 +539,7 @@
     color: var(--bg);
   }
 
-  :is(.mode-guest, .mode-member, .mode-profile, .mode-friends, .mode-settings, .mode-account, .mode-calendar, .mode-horoscopes, .mode-learn, .mode-detail) .brand-word {
-    display: inline-flex;
-    color: var(--ink);
-    font-size: var(--text-wordmark);
-    letter-spacing: var(--tracking-tight);
-  }
-
-  :is(.mode-guest, .mode-member, .mode-profile, .mode-friends, .mode-settings, .mode-account, .mode-calendar, .mode-horoscopes, .mode-learn, .mode-detail) .nav-pill {
-    align-items: center;
-    gap: calc(var(--space-2) + var(--space-1) / 2);
-    padding: 0 calc(var(--space-5) + var(--space-1) / 2) 0 var(--space-2);
-  }
-
-  .theme-toggle {
-    display: none;
-  }
-
-  .app-shell:has(.sky-detail-page) .nav-pill,
-  .app-shell:has(.learn-article-page) .nav-pill,
-  .app-shell:has(.settings-back-button) .nav-pill {
-    margin-left: var(--mobile-article-brand-offset);
-  }
-
   .app-shell:has(.sky-detail-page) :is(.sky-header-date-button, .mobile-sky-controls, .date-picker) {
-    display: none;
-  }
-
-  .app-shell .sky-detail-page .sky-detail-back,
-  .app-shell:has(.learn-article-page) .sky-detail-back,
-  .app-shell .settings-back-button {
-    top: var(--mobile-article-back-top);
-    left: var(--mobile-control-inset);
-    width: var(--top-icon-button-size);
-    height: var(--top-icon-button-size);
-    padding: 0;
-  }
-
-  .app-shell .sky-detail-page .sky-detail-back span,
-  .app-shell:has(.learn-article-page) .sky-detail-back span,
-  .app-shell .settings-back-button span {
     display: none;
   }
 
@@ -756,129 +588,11 @@
     transform: rotate(180deg);
   }
 
-  .mode-guest .mobile-sky-controls,
-  .mode-member .mobile-sky-controls,
-  .mode-profile .mobile-sky-controls,
-  .mode-friends .mobile-sky-controls {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height) + 6px);
-    right: var(--mobile-page-gutter);
-    left: var(--mobile-page-gutter);
-    z-index: calc(var(--z-topbar) - 1);
-    display: grid;
-    gap: var(--space-4);
-    border: var(--border-width-thin) solid var(--nav-border);
-    border-radius: var(--radius);
-    background: var(--surface);
-    box-shadow: var(--nav-rest-shadow);
-    padding: var(--space-4);
-  }
-
-  .date-picker {
-    gap: calc(var(--space-3) + var(--space-1) / 2);
-    width: min(330px, calc(100vw - var(--mobile-page-gutter) * 2));
-    padding: calc(var(--space-3) + var(--space-1) / 2);
-  }
-
-  .date-picker-header {
-    grid-template-columns: 42px minmax(0, 1fr) auto;
-    gap: var(--space-2);
-  }
-
-  .date-picker-header strong {
-    font-size: var(--text-card-title);
-  }
-
-  .date-picker-header-actions {
-    gap: calc(var(--space-1) + var(--space-1) / 2);
-  }
-
-  .date-picker-nav,
-  .picker-close {
-    width: 38px;
-    height: 38px;
-  }
-
-  .date-picker-weekdays,
-  .date-picker-grid {
-    gap: calc(var(--space-1) + var(--space-1) / 4);
-  }
-
-  .date-picker-weekdays span {
-    font-size: var(--text-eyebrow);
-  }
-
-  .date-picker-grid button {
-    min-height: 38px;
-    aspect-ratio: auto;
-    border-radius: var(--radius-sm);
-    font-size: var(--text-body);
-    line-height: var(--leading-label);
-  }
-
-  .date-picker-actions {
-    gap: calc(var(--space-2) + var(--space-1) / 2);
-    justify-content: flex-end;
-    margin-top: calc(var(--space-1) / 2);
-  }
-
-  .date-picker-today,
-  .date-picker-cancel {
-    min-height: 44px;
-    padding: 0 calc(var(--space-4) + var(--space-1) / 2);
-    font-size: var(--text-button-size);
-  }
-
-  .mobile-sky-controls__label {
-    margin: calc(var(--space-1) / 2) 0 calc(calc(var(--space-1) + var(--space-1) / 2) * -1);
-    color: var(--muted);
-    font-family: var(--font-ui);
-    font-size: var(--text-section-label-size);
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-label);
-    line-height: var(--leading-meta);
-    text-transform: uppercase;
-  }
-
-  .mobile-sky-controls__location {
-    display: flex;
-    align-items: center;
-    gap: calc(var(--space-3) + var(--space-1) / 2);
-    width: 100%;
-    min-height: 54px;
-    border: var(--border-width-thin) solid var(--input-border);
-    border-radius: var(--radius-sm);
-    background: var(--surface-2);
-    color: var(--ink);
-    padding: 0 var(--space-4);
-    text-align: left;
-  }
-
-  .mobile-sky-controls__location svg {
-    flex: 0 0 auto;
-    color: var(--muted);
-  }
-
-  .mobile-sky-controls__location span {
-    min-width: 0;
-    overflow: hidden;
-    font-family: var(--font-ui);
-    font-size: var(--text-body);
-    font-weight: var(--weight-medium);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
   :is(.mode-guest, .mode-member, .mode-profile, .mode-friends) .topbar-actions {
     gap: calc(var(--space-2) + var(--space-1) / 2);
   }
 
-  .site-menu {
-    top: calc(var(--top-control-top) + var(--top-control-height) + 10px);
-    right: var(--mobile-control-inset);
-    width: min(var(--mobile-menu-width), calc(100vw - var(--mobile-control-inset) * 2));
-    max-width: calc(100vw - var(--mobile-control-inset) * 2);
-  }
+
 
   .date-picker,
   .hero-city-picker {
@@ -928,31 +642,24 @@
   }
 
   .mode-guest .today-hero,
-  .mode-member .today-hero,
-  .mode-guest .today-summary-cards,
-  .mode-member .today-summary-cards,
-  .mode-guest .mobile-full-chart-card,
-  .mode-member .mobile-full-chart-card,
-  .mode-guest .detail-panel,
-  .mode-member .detail-panel,
-  .mode-guest .sky-lunar-brief,
-  .mode-member .sky-lunar-brief,
-  .mode-guest .retrograde-section,
-  .mode-member .retrograde-section,
-  .mode-guest .placement-section,
-  .mode-member .placement-section,
-  .mode-guest .aspect-section,
-  .mode-member .aspect-section {
+.mode-member .today-hero,
+.mode-guest .today-summary-cards,
+.mode-member .today-summary-cards,
+.mode-guest .detail-panel,
+.mode-member .detail-panel,
+.mode-guest .sky-lunar-brief,
+.mode-member .sky-lunar-brief,
+.mode-guest .retrograde-section,
+.mode-member .retrograde-section,
+.mode-guest .placement-section,
+.mode-member .placement-section,
+.mode-guest .aspect-section,
+.mode-member .aspect-section {
     box-sizing: border-box;
     width: var(--sky-mobile-rail);
     max-width: var(--sky-mobile-rail);
     min-width: 0;
     margin-inline: auto;
-  }
-
-  .mode-guest :where(.today-hero, .today-summary-cards, .mobile-full-chart-card, .detail-panel),
-  .mode-member :where(.today-hero, .today-summary-cards, .mobile-full-chart-card, .detail-panel) {
-    grid-column: 1;
   }
 
   .mode-guest .sky-panel,
@@ -998,141 +705,11 @@
     display: none;
   }
 
-  .mode-guest .mobile-full-chart-card,
-  .mode-member .mobile-full-chart-card {
-    order: 3;
-    position: sticky;
-    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
-    z-index: calc(var(--z-topbar) - 1);
-    display: grid;
-    grid-template-columns: 58px minmax(0, 1fr) 48px;
-    align-items: center;
-    column-gap: var(--space-4);
-    width: 100%;
-    border: var(--border-width-thin) solid var(--card-border);
-    border-radius: var(--radius);
-    background: var(--card-bg);
-    color: var(--card-title-color);
-    box-shadow: var(--card-shadow);
-    cursor: pointer;
-    margin-top: 0;
-    padding: calc(var(--space-4) + var(--space-1) / 2) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-4) + var(--space-1) / 2);
-    text-align: left;
-    transform: none;
-  }
-
-  html[data-scrolled] .mode-guest .mobile-full-chart-card,
-  html[data-scrolled] .mode-member .mobile-full-chart-card {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + var(--top-control-height));
-    right: var(--mobile-page-gutter);
-    left: var(--mobile-page-gutter);
-    width: auto;
-    max-width: none;
-    margin-top: 0;
-    box-shadow:
-      var(--mobile-action-panel-shadow);
-    transform: none;
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card {
-    border: var(--border-width-thin) solid var(--card-border);
-    background: var(--card-bg);
-    color: var(--card-title-color);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__copy strong {
-    color: var(--ink);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__copy span {
-    color: var(--ink-2);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__icon {
-    background: var(--surface-2);
-    color: var(--ink);
-  }
-
-  :is(.theme-dark, [data-theme="dark"]) .mobile-full-chart-card__arrow {
-    background: color-mix(in srgb, var(--surface-2) 86%, var(--ink) 14%);
-    color: var(--ink);
-  }
-
-  .mobile-full-chart-card__icon,
-  .mobile-full-chart-card__arrow {
-    display: grid;
-    place-items: center;
-    border-radius: var(--radius-circle);
-  }
-
-  .mobile-full-chart-card__icon {
-    width: 58px;
-    height: 58px;
-    border: var(--border-width-thin) solid var(--card-border);
-    background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
-    color: var(--ink);
-  }
-
-  .mobile-full-chart-card__arrow {
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    border: var(--border-width-thin) solid var(--card-border);
-    background: color-mix(in srgb, var(--app-card) 78%, var(--app-text) 10%);
-    color: var(--ink);
-  }
-
-  .mobile-full-chart-card__arrow svg {
-    width: 22px;
-    height: 22px;
-    stroke-width: 2.25;
-  }
-
-  .mobile-full-chart-card__wheel {
-    display: block;
-    width: 36px;
-    height: 36px;
-    filter: var(--filter-glyph-current);
-    object-fit: contain;
-  }
-
-  .mobile-full-chart-card__copy {
-    display: grid;
-    min-width: 0;
-    align-content: center;
-    gap: var(--space-1);
-  }
-
-  .mobile-full-chart-card__copy strong {
-    color: var(--card-title-color);
-    font-family: var(--font-ui);
-    font-size: var(--sky-mobile-feature-title);
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-title);
-    line-height: var(--leading-title);
-  }
-
-  .mobile-full-chart-card__copy span {
-    display: block;
-    overflow: hidden;
-    color: var(--card-meta-color);
-    font-family: var(--font-body);
-    font-size: var(--text-meta-size);
-    line-height: var(--leading-meta);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mode-guest :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static),
-  .mode-member :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
+  .mode-guest :where(.placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static),
+  .mode-member :where(.placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
     box-shadow: var(--row-card-shadow, var(--card-shadow));
   }
 
-  .mode-guest .today-summary-cards .sky-today-ledger,
-  .mode-member .today-summary-cards .sky-today-ledger {
-    display: block;
-  }
 
   .mode-guest .sky-today-ledger__row,
   .mode-member .sky-today-ledger__row {
@@ -1190,7 +767,7 @@
     display: none;
   }
 
-  :is(.theme-dark, [data-theme="dark"]) :where(.mode-guest, .mode-member) :where(.sky-lunar-pill, .next-lun, .ro-screen .sky-pl, .placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
+  :is(.theme-dark, [data-theme="dark"]) :where(.mode-guest, .mode-member) :where(.placement-section .planet-placement-row, .aspect-section .aspect-row, .aspect-section .aspect-row-button, .aspect-section .aspect-row-static) {
     border-color: transparent;
     background: var(--surface);
     box-shadow: var(--row-card-shadow, var(--card-shadow));
@@ -1214,26 +791,22 @@
     gap: var(--space-5);
   }
 
-  .mode-guest :where(.section-label, .aspect-section-label, .placements-heading .eyebrow, .ro-group-label),
-  .mode-member :where(.section-label, .aspect-section-label, .placements-heading .eyebrow, .ro-group-label) {
+  .mode-guest :where(.section-label, .aspect-section-label, .placements-heading .eyebrow),
+  .mode-member :where(.section-label, .aspect-section-label, .placements-heading .eyebrow) {
     font-size: var(--sky-mobile-label);
   }
 
   .mode-guest .sky-lunar-pill-copy em,
   .mode-member .sky-lunar-pill-copy em,
-  .mode-guest .ro-sum-label,
-  .mode-member .ro-sum-label {
-    font-size: var(--label-eyebrow-font-size);
-  }
 
-  .mode-guest :where(.sky-pl-title, .ro-screen .sky-pl-title, .planet-placement-row__title, .retro-top strong),
-  .mode-member :where(.sky-pl-title, .ro-screen .sky-pl-title, .planet-placement-row__title, .retro-top strong) {
+  .mode-guest :where(.ro-screen .planet-placement-row__title),
+  .mode-member :where(.ro-screen .planet-placement-row__title) {
     font-size: var(--sky-mobile-row-title);
     line-height: var(--leading-title);
   }
 
-  .mode-guest :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retrograde-detail-line),
-  .mode-member :where(.sky-pl-degree, .sky-pl-range, .sky-pl-status, .planet-placement-row__degree, .planet-placement-row__meta, .retro-until, .retro-sub, .retrograde-detail-line) {
+  .mode-guest :where(.planet-placement-row__degree, .planet-placement-row__meta),
+  .mode-member :where(.planet-placement-row__degree, .planet-placement-row__meta) {
     font-size: var(--sky-mobile-meta);
     line-height: var(--leading-meta);
   }
@@ -1371,21 +944,8 @@
     justify-self: end;
   }
 
-  .retro {
-    grid-template-columns: 1fr;
-    gap: var(--card-padding-sm);
-    padding: var(--card-padding-lg) var(--card-padding);
-  }
 
-  .retro-top {
-    display: grid;
-    gap: calc(var(--space-2) + var(--space-1) / 2);
-  }
 
-  .retro-until {
-    text-align: left;
-    white-space: normal;
-  }
 
   .placements-heading {
     align-items: flex-start;
@@ -1742,6 +1302,8 @@
 }
 
 @media (max-width: 520px) {
+  .topbar:has(.sky-header-date-button) .brand-word { display: none; }
+
   :is(.mode-guest, .mode-member, .mode-profile, .mode-friends) .sky-header-date-button {
     max-width: 132px;
     min-width: 132px;
@@ -1761,7 +1323,22 @@
 }
 
 @media (max-width: 380px) {
-  :is(.mode-guest, .mode-member, .mode-profile, .mode-friends) .brand-word {
+  .app-shell:has(.floating-back-button):has(.sky-header-date-button) {
+    --mobile-control-inset: var(--space-2);
+  }
+
+  .app-shell:has(.floating-back-button):has(.sky-header-date-button) .nav-pill {
+    flex-shrink: 0;
+    padding-inline: var(--space-1);
+  }
+
+  .app-shell:has(.floating-back-button):has(.sky-header-date-button) .sky-header-date-button {
+    min-width: var(--top-icon-button-size);
+    max-width: none;
+    padding-inline: var(--space-2);
+  }
+
+  .brand-word {
     display: none;
   }
 

@@ -157,7 +157,7 @@ export function MemberSettingsView({
   return (
     <section className="settings-page page-shell--narrow" aria-label="Settings">
       <div className="settings-header">
-        <h1>settings.</h1>
+        <h1>Settings</h1>
       </div>
 
       <div className="settings-panel">

@@ -1,17 +1,27 @@
 import assert from "node:assert/strict";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { buildSync } from "esbuild";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
 import { assembleSkyDebilityCopy } from "../apps/web/src/content/skyDebilityAssembly.ts";
 import { skyDebilityField } from "../apps/web/src/content/skyDebilityCatalog.ts";
 import { skyDebilityPhraseSets } from "../apps/web/src/content/skyDebilityPhrases.ts";
 import { buildSkyDebilityComposition } from "../apps/admin/src/skyDebilityComposition.ts";
-import { SkyDebilityCard } from "../apps/web/src/features/sky/SkyDebilityCard.tsx";
 import { presentSkyDebilityParts, skyDebilityPlacementLinks, skyDebilityTemplateParts, type SkyDebilityDisplayPart } from "../apps/web/src/content/skyDebilityPresentation.ts";
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities, traditionalSkyDebilities } from "../apps/web/src/services/planetSignDignity.mjs";
 import { linkedThreePlanetContext, highlightedCountStatement } from "../tests/fixtures/sky-effort-short.ts";
 
-// Use the web app's automatic JSX transform for the actual React card below:
-// npx tsx --tsconfig apps/web/tsconfig.json scripts/test-sky-debility-presentation.mts
+// Compile the real web component with Vite's env boundary; use the same React
+// instance as the server renderer while keeping this test independent of Vite.
+const component = buildSync({
+  entryPoints: [fileURLToPath(new URL('../apps/web/src/features/sky/SkyDebilityCard.tsx', import.meta.url))],
+  bundle: true, write: false, platform: 'node', format: 'cjs', packages: 'external', jsx: 'automatic',
+  define: { 'import.meta.env': '{}' }, logLevel: 'error'
+}).outputFiles[0].text;
+const compiled = { exports: {} as { SkyDebilityCard: typeof import('../apps/web/src/features/sky/SkyDebilityCard.tsx').SkyDebilityCard } };
+new Function('require', 'module', 'exports', component)(createRequire(import.meta.url), compiled, compiled.exports);
+const { SkyDebilityCard } = compiled.exports;
 const textOf = (parts: readonly SkyDebilityDisplayPart[]) => parts.map(part => part.text).join("");
 const positions = (selected: Record<string, string>, motion: "direct" | "retrograde" = "direct") => TRADITIONAL_DIGNITY_PLANETS.map(planet => ({
   planet, sign: selected[planet] ?? DIGNITY_SIGNS.find(sign => !planetSignDebilities(planet, sign).length)!, motion
@@ -110,13 +120,13 @@ for (const template of [countSentence.replace("{totalWord}", "seven"), countSent
   assert.equal(presented.some(part => part.emphasized), false);
 }
 
-// Actual React card markup: heading only, two body paragraphs and one inline list.
+// Reader retains the exact governed paragraphs and adds one calculated card per placement.
 const html = renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original }));
-assert.equal((html.match(/href="#sky\/placement\//gu) ?? []).length, 3);
+assert.equal((html.match(/href="#sky\/placement\//gu) ?? []).length, 6);
 assert.equal((html.match(/<p>/gu) ?? []).length, 2);
-assert(html.includes(`${highlightedCountStatement}</mark>: `));
-assert(html.includes('<mark class="content-highlight"'));
+assert(html.includes(`${highlightedCountStatement}</span>: `));
+assert(!html.includes('<mark class="content-highlight"'));
 assert(html.includes("Saturn retrograde in Aries</a>"));
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: positions({}) })), "");
 assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: original.slice(1) })), "");
-console.log(JSON.stringify({ result: "passed", combinations, directAndRetrogradePresentations: presentations, countCoverage: [...countCoverage].sort(), headingOnlyCoverage: [...headingOnlyCoverage].sort(), exactOwnerDisplay: true, inlineLinksOnly: true, sourceMapParity: true }, null, 2));
+console.log(JSON.stringify({ result: "passed", combinations, directAndRetrogradePresentations: presentations, countCoverage: [...countCoverage].sort(), headingOnlyCoverage: [...headingOnlyCoverage].sort(), exactOwnerDisplay: true, inlineLinksAndCalculatedCards: true, sourceMapParity: true }, null, 2));

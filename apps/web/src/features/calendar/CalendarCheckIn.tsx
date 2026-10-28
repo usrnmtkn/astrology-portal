@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { CSSProperties } from "react";
 import { withRequestDeadline } from "../../services/requestDeadline";
 import { Check, ChevronLeft, ChevronRight, Tag, Users, X } from "lucide-react";
 import { onAuthAccountChange } from "../../services/auth";
@@ -135,12 +136,9 @@ function CheckInSlider({
 }) {
   return (
     <label className="calendar-checkin__slider">
-      <span className="calendar-checkin__slider-track">
-        <span className="calendar-checkin__slider-fill" style={{ width: `calc(${value}% + var(--lunar-space-24))` }} />
-        <span
-          className="calendar-checkin__slider-thumb"
-          style={{ left: `calc(${value}% - ${value * 0.44}px + var(--lunar-space-2))` }}
-        />
+      <span className="calendar-checkin__slider-track" style={{ "--checkin-progress": value / 100 } as CSSProperties}>
+        <span className="calendar-checkin__slider-fill" />
+        <span className="calendar-checkin__slider-thumb" />
         <input
           aria-label={ariaLabel}
           max={100}
@@ -466,6 +464,7 @@ export function CalendarCheckIn({
                 </div>
               )}
               <textarea
+                aria-label="What's on your mind?"
                 maxLength={CALENDAR_CHECK_IN_MOOD_NOTE_MAX}
                 onChange={(event) => setMoodNote(event.target.value)}
                 placeholder="Start writing…"
@@ -511,6 +510,7 @@ export function CalendarCheckIn({
                 </div>
               )}
               <textarea
+                aria-label={prompt || "Anything else?"}
                 maxLength={CALENDAR_CHECK_IN_NOTE_MAX}
                 onChange={(event) => setNote(event.target.value)}
                 placeholder="Start writing…"

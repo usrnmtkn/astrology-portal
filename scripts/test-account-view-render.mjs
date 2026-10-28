@@ -51,7 +51,7 @@ try {
   assert.match(html, /Export account/);
   assert.match(html, /Erase check-ins/);
   assert.match(html, /Delete account/);
-  assert.match(html, /<h1>account\.<\/h1>/);
+  assert.match(html, /<h1>Account<\/h1>/);
   assert.equal((html.match(/<h1[\s>]/g) || []).length, 1);
   assert.doesNotMatch(html, /Delete your TLDR Astro account/);
   assert.doesNotMatch(html, /Erase your mood and journal entries/);

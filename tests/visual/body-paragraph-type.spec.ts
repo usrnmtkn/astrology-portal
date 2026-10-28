@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "../helpers/polish-test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { readerResponse } from "../helpers/reader-response";
 import { lessonRows } from "../helpers/astro101-reader-fixture";
@@ -82,7 +82,7 @@ test.describe("body paragraph type", () => {
   });
 
   for (const mode of modes) {
-    test(`${mode.name}: every reading paragraph shares one family and 16px`, async ({ page }) => {
+    test(`${mode.name}: every reading paragraph shares one family and 19px`, async ({ page }) => {
       test.setTimeout(180_000);
       const samples: string[] = [];
 
@@ -92,6 +92,14 @@ test.describe("body paragraph type", () => {
         await page.locator("body").waitFor({ state: "visible" });
         await waitForRoute(page, route.name);
         await applyMode(page, mode.theme, mode.dyslexia);
+        // A sign-in gate contains UI guidance rather than a reading. Verify
+        // that role separately; it must not masquerade as narrative coverage.
+        if (route.name === "friends" && await page.locator(".friends-signin-card").isVisible()) {
+          const guidance = page.locator(".friends-signin-card p");
+          await expect(guidance).toHaveCSS("font-size", "15px");
+          await expect(guidance).toHaveCSS("font-family", mode.dyslexia ? /Atkinson/ : /system-ui/);
+          continue;
+        }
         await expect.poll(async () => (await collectBodyParagraphs(page)).length, {
           message: `${route.name} rendered no reading paragraph`,
           timeout: 20_000
@@ -102,7 +110,7 @@ test.describe("body paragraph type", () => {
 
       const pairs = [...new Set(samples.map((sample) => sample.split(" | ")[0]))];
       expect(pairs, samples.join("\n")).toHaveLength(1);
-      expect(pairs[0]).toContain("16px");
+      expect(pairs[0]).toContain("19px");
       if (mode.dyslexia) {
         expect(pairs[0].toLowerCase()).toContain("atkinson");
       } else {
@@ -209,7 +217,7 @@ async function waitForRoute(page: Page, name: string) {
   } else if (name === "you") {
     await expect(page.getByRole("region", { name: "In-depth transit reports" })).toBeVisible({ timeout: 60_000 });
   } else if (name === "friends") {
-    await expect(page.locator(".friends-unified-empty p").first()).toBeVisible({ timeout: 60_000 });
+    await expect(page.locator(".friends-unified-empty p, .friends-signin-card p").first()).toBeVisible({ timeout: 60_000 });
   } else if (name === "settings") {
     await expect(page.locator(".settings-row-description").first()).toBeVisible({ timeout: 60_000 });
   } else if (name === "report") {

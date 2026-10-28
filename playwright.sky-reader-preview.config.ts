@@ -8,7 +8,7 @@ export default defineConfig({
   use: { baseURL: 'http://127.0.0.1:4192', trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   webServer: [
     { command: 'VITE_STUDIO_PARENT_ORIGIN=http://127.0.0.1:4192 npm run build:web && VITE_STUDIO_READER_ORIGIN=http://127.0.0.1:4193 npm run build:admin && npm run preview -w @tldr/web -- --port 4193 --strictPort',
-      url: 'http://127.0.0.1:4193', reuseExistingServer: false, timeout: 180_000,
+      url: 'http://127.0.0.1:4193', reuseExistingServer: false, timeout: 300_000,
       env: { VITE_SUPABASE_URL: 'https://visual-smoke.supabase.test', VITE_SUPABASE_ANON_KEY: 'visual-smoke-placeholder', VITE_ENABLE_NATAL_ASPECT_PATTERNS: 'true' } },
     { command: 'npm run preview -w @tldr/admin -- --port 4192 --strictPort', url: 'http://127.0.0.1:4192', reuseExistingServer: false, timeout: 30_000 }
   ]

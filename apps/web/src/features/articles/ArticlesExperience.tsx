@@ -1,12 +1,19 @@
+import { ContentLoading } from "../../components/LoadingPatterns";
+import "../../styles/learn.css";
+import "../../styles/articles-blog.css";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
+import { SegmentedControl } from "../../components/SegmentedControl";
+import { ArticleCover } from "./ArticleCover";
 import { FormattedProse, FormattedText } from "../../components/FormattedProse";
-import { PageLoading } from "../../components/PageLoading";
+import { useMinimumLoading } from "../../hooks/useMinimumLoading";
+import { PageLoading, PageLoadState } from "../../components/PageLoading";
+import { ReaderUnavailable } from "../../components/ReaderUnavailable";
 import { loadReaderRows } from "../../services/readerContentClient";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
 import { subscribeToContentPublications } from "../../content/contentPublicationState";
 import type { GeneratedContentRow } from "../../services/generatedContent";
-import { articleKeyFromHash, articleLibraryKind, articleLibraryPrefixes, articleReaderHref, type ArticleLibraryKind } from "../../../../../src/shared/articleLibrary";
+import { articleKeyFromHash, articleLibraryKind, articleLibraryPrefixes } from "../../../../../src/shared/articleLibrary";
 
 const labels = { article: "Article", guide: "Guide", sky: "Sky article" };
 function readable(row: GeneratedContentRow) {
@@ -34,7 +41,7 @@ export default function ArticlesExperience() {
   const [key, setKey] = useState(() => articleKeyFromHash(window.location.hash));
   const [resolvedKey, setResolvedKey] = useState(key);
   const [query, setQuery] = useState("");
-  const [kind, setKind] = useState<ArticleLibraryKind | "all">("all");
+  const [kind, setKind] = useState<"all" | "article" | "guide">("all");
   useEffect(() => {
     const navigate = () => { setKey(articleKeyFromHash(window.location.hash)); window.scrollTo(0, 0); };
     window.addEventListener("hashchange", navigate);
@@ -68,29 +75,27 @@ export default function ArticlesExperience() {
     return () => controller.abort();
   }, [revision, key]);
   const selected = rows.find(row => row.content_key === key);
-  const filtered = useMemo(() => rows.filter(row => (kind === "all" || articleLibraryKind(row) === kind)
+  const filtered = useMemo(() => rows.filter(row => (kind === "all" || (kind === "guide" ? articleLibraryKind(row) === "guide" : articleLibraryKind(row) !== "guide"))
     && [row.headline, row.summary].some(text => text?.toLowerCase().includes(query.trim().toLowerCase()))), [rows, kind, query]);
 
+  const waiting = useMinimumLoading((state === "loading" || resolvedKey !== key) && (key ? !selected : rows.length === 0));
+  const filters = <div className="articles-library-filters">
+    <label className="articles-library-search"><Search size={18} aria-hidden="true" /><input type="search" aria-label="Search articles and guides" placeholder="Search articles and guides" value={query} onChange={event => setQuery(event.target.value)} /></label>
+    <SegmentedControl ariaLabel="Article type" value={kind} onChange={setKind} options={[{value:"all",label:"All"},{value:"article",label:"Articles"},{value:"guide",label:"Guides"}]} />
+  </div>;
+
   return <section className="learn-page articles-page" aria-label="Articles & Guides">
-    {key && <a className="sky-detail-back floating-back-button" href="#articles" aria-label="Back to Articles & Guides"><ChevronLeft size={18} aria-hidden="true" />Back</a>}
-    {state === "loading" || resolvedKey !== key ? <PageLoading message="Loading articles and guides…" /> : state === "error" ? <div className="learn-sheet articles-library-state">
-      <h1 className="article-title">Articles &amp; Guides</h1><p role="alert">Articles and guides could not load.</p>
-      <button className="learn-jump__link" onClick={() => setRevision(value => value + 1)}>Try again</button>
-    </div> : key ? selected ? <article className="learn-sheet learn-sheet--article">
+    {key && (state !== "ready" || selected) && <a className="sky-detail-back floating-back-button" href="#articles" aria-label="Back to Articles & Guides"><ChevronLeft size={18} aria-hidden="true" /><span>Back</span></a>}
+    {key && (waiting || state === "error") && <header className="articles-library-header"><h1 className="article-title">Articles &amp; Guides</h1></header>}
+    {key ? <PageLoadState key={key} scope="page" what="This article" failed={state === "error"} pending={waiting} onRetry={() => setRevision(value => value + 1)}>{waiting ? <PageLoading layout="reading" message="Loading articles and guides…" /> : selected ? <article className="learn-sheet learn-sheet--article">
       <header className="learn-article-header"><p className="learn-kicker">{labels[articleLibraryKind(selected)!]}</p><h1 className="article-title">{selected.headline}</h1></header>
       <div className="learn-article-body"><ArticleBody body={selected.body!} /></div>
-    </article> : <div className="learn-sheet articles-library-state"><h1 className="article-title">Article unavailable</h1><p>This article is not currently published.</p></div> : <div className="learn-hub">
+    </article> : <ReaderUnavailable kind="article" />}</PageLoadState> : <div className="learn-hub">
       <header className="articles-library-header"><h1 className="article-title">Articles &amp; Guides</h1><p>Explore dated Sky articles and guides you can return to anytime.</p></header>
-      <div className="articles-library-filters">
-        <label>Search articles and guides<input type="search" value={query} onChange={event => setQuery(event.target.value)} /></label>
-        <label>Type<select value={kind} onChange={event => setKind(event.target.value as typeof kind)}>
-          <option value="all">All</option><option value="sky">Sky articles</option><option value="guide">Guides</option><option value="article">Articles</option>
-        </select></label>
-      </div>
-      {filtered.length ? <ul className="articles-library-list">{filtered.map(row => <li key={row.content_key}><a className="learn-sheet articles-library-card" href={articleReaderHref(row.content_key)}>
-        <span className="learn-kicker">{labels[articleLibraryKind(row)!]}</span><h2 className="learn-chapter__title">{row.headline}</h2>
-        {row.summary && <FormattedProse text={row.summary} />}<ChevronRight aria-hidden="true" size={20} />
-      </a></li>)}</ul> : <p role="status">{rows.length ? "No articles match these filters." : "No articles or guides are published yet."}</p>}
+      {filters}
+      <PageLoadState scope="page" what="Articles and guides" failed={state === "error"} pending={waiting} onRetry={() => setRevision(value => value + 1)}>{waiting ? <ContentLoading layout="articles" count={4} message="Loading articles and guides…" /> : filtered.length ? <><ArticleCover row={filtered[0]} index={0} featured />
+        {filtered.length > 1 && <ul className="articles-library-list">{filtered.slice(1).map((row,index) => <li key={row.content_key}><ArticleCover row={row} index={index + 1} /></li>)}</ul>}
+      </> : <p className="articles-library-empty" role="status">{rows.length ? (query.trim() ? `No articles or guides match “${query.trim()}”.` : "No articles or guides match these filters.") : "No articles or guides are published yet."}</p>}</PageLoadState>
     </div>}
   </section>;
 }

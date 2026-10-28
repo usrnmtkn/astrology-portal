@@ -7,7 +7,7 @@ import { build } from "esbuild";
 const names = ["getAstrodienstSky", "getSkyPlacementSnapshot", "getSkyPlacementTransitFacts",
   "getRetrogradeHistory",
   "getLunarCalendarMonth", "getLunarCalendarRangeEvents", "getLunarCalendarWeek",
-  "getMatchingNewMoonForFullMoon", "natalTransitTimingFor", "natalDailyTransitPeaksFor", "preloadSwissEphemeris"];
+  "getMatchingNewMoonForFullMoon", "natalTransitTimingFor", "natalDailyTransitPeaksFor", "relationshipForecastDayFor", "preloadSwissEphemeris"];
 const output = await build({
   entryPoints: ["apps/web/src/services/skyCalculation.worker.ts"], bundle: true,
   write: false, platform: "node", format: "cjs",
@@ -71,4 +71,10 @@ receive!({ data: { id: 11, kind: "lunar-calendar-week", args: ["2026-10-03", "Am
 while (scheduled.length) await scheduled.shift()!();
 assert.deepEqual(replies.slice(-2).map(reply => reply.id), [11, 10], "Visible Calendar facts precede optional retrograde history.");
 assert.equal(replies.at(-1)?.value, JSON.stringify({ name: "getRetrogradeHistory", args: [{ planet: "venus", sign: "scorpio", referenceDate: "2026-10-03T12:00:00.000Z" }] }));
+const forecastArgs = ["synthetic-relationship-day", "2026-10-15", "America/New_York"];
+receive!({ data: { id: 12, kind: "relationship-forecast-day", args: forecastArgs } });
+receive!({ data: { id: 13, kind: "lunar-calendar-week", args: ["2026-10-15", "America/New_York"] } });
+while (scheduled.length) await scheduled.shift()!();
+assert.deepEqual(replies.slice(-2).map(reply => reply.id), [13, 12], "Visible Calendar facts precede optional relationship forecast work.");
+assert.equal(replies.at(-1)?.value, JSON.stringify({ name: "relationshipForecastDayFor", args: forecastArgs }));
 console.log("PASS: Calendar facts precede full Sky details, optional natal timing and retrograde history; request identity, inputs, serial execution and recovery are preserved.");
