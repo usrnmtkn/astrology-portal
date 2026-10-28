@@ -12,6 +12,8 @@ function readerPathname(pathname: string) {
 
 function readerRecoveryRoute() {
   if (typeof window === "undefined") return false;
+  const query = new URLSearchParams(window.location.search);
+  if (query.has("auth") || query.has("code")) return false;
   const path = readerPathname(window.location.pathname);
   if (path === "/learn" || path.startsWith("/learn/") || path === "/friends") return true;
   if (path !== "/") return false;

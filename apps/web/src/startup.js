@@ -27,6 +27,8 @@ new MutationObserver(syncLoaderMotion).observe(motionRoot, { attributes: true, a
 
 const readerPathname = (pathname) => pathname.replace(/\/+$/u, "") || "/";
 const readerRecoveryRoute = () => {
+  const query = new URLSearchParams(location.search);
+  if (query.has("auth") || query.has("code")) return false;
   const path = readerPathname(location.pathname);
   if (path === "/learn" || path.startsWith("/learn/") || path === "/friends") return true;
   if (path !== "/") return false;
