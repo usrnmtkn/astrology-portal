@@ -5216,8 +5216,7 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-      const savedDraft = draftFromRow(saved);
-      rememberSavedDraft(savedDraft);
+      await openRow(saved);
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(`${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
     } catch (error) {
