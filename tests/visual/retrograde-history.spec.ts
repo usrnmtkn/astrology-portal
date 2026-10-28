@@ -242,8 +242,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       const event = page.locator(".calendar-day-events .calendar-stoic-card").filter({ hasText: "Venus stations retrograde" });
       await page.evaluate(() => sessionStorage.removeItem("history-failure-tested"));
       await expect(event).toBeVisible({timeout:60_000});
-      await expect(event.locator('strong').first()).toHaveCSS('font-family',/Newsreader/);await expect(event.locator('strong').first()).toHaveCSS('font-size','26px');await expect(event.locator('strong').first()).toHaveCSS('font-weight','400');
-      await expect(event.locator('.calendar-stoic-card__excerpt').first()).toHaveCSS('font-size','20px');await expect(event.locator('.calendar-stoic-card__excerpt').first()).toHaveCSS('line-height','30px');
+      await expect(event.locator('strong').first()).toHaveCSS('font-family',/system-ui/);await expect(event.locator('strong').first()).toHaveCSS('font-size','18px');await expect(event.locator('strong').first()).toHaveCSS('font-weight','600');
+      await expect(event.locator('.calendar-stoic-card__excerpt').first()).toHaveCSS('font-size','19px');await expect(event.locator('.calendar-stoic-card__excerpt').first()).toHaveCSS('line-height','28.5px');
       await event.screenshot({path:`test-results/card-calendar-${width}-${theme}.png`});
       await event.click({ timeout: 60_000 });
       const calendarPanel = page.getByRole("dialog", { name: "Event detail" });
@@ -278,7 +278,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
           titleSize: h2.fontSize, titleWeight: h2.fontWeight, titleLeading: h2.lineHeight, titleFont: h2.fontFamily,
           overflow: el.scrollWidth > el.clientWidth };
       });
-      expect(metrics).toMatchObject({ width: Math.min(width, 440), padding: "28px", gap: "28px", titleSize: "28px", titleWeight: "400", titleLeading: "32.2px", overflow: false });
+      expect(metrics).toMatchObject({ width: Math.min(width, 440), padding: "28px", gap: "28px", titleSize: "36px", titleWeight: "400", titleLeading: "40.32px", overflow: false });
       expect(metrics.titleFont).toContain("Newsreader");
       const typography = await calendarPanel.evaluate(el => {
         const selectors = ["h2", ".retrograde-station-label", ".retrograde-station-date", ".retrograde-station-copy p", ".retrograde-cycles__section > summary", ".retrograde-cycles__date", ".retrograde-cycles__meta", ".retrograde-cycles__card p"];
@@ -287,16 +287,16 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
           return [style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.fontFamily];
         });
       });
-      expect(typography.map(style => style[0])).toEqual(["28px", "12px", "14px", "17px", "22px", "17px", "14px", "15px"]);
-      expect(typography[0].slice(1, 4)).toEqual(["400", "32.2px", "-0.42px"]);
+      expect(typography.map(style => style[0])).toEqual(["36px", "12px", "14px", "19px", "22px", "17px", "14px", "19px"]);
+      expect(typography[0].slice(1, 4)).toEqual(["400", "40.32px", "-0.54px"]);
       expect(typography[1][3]).toBe("0.72px");
       expect(typography[1][4]).toContain("Geist Mono");
-      expect(typography[3][2]).toBe("25.5px");
+      expect(typography[3][2]).toBe("28.5px");
       expect(typography[5][1]).toBe("500");
-      expect(typography[7][2]).toBe("22.5px");
+      expect(typography[7][2]).toBe("28.5px");
       const previousCard = calendarPanel.locator(".retrograde-cycles__section").first().locator(".retrograde-cycles__card").first();
       // Calendar retains its event structure and uses the handoff's shared
-      // 32px raised-card radius and 17px narrative role.
+      // 32px raised-card radius and 19px narrative role.
       expect(await previousCard.evaluate(el => { const s = getComputedStyle(el); return [s.padding, s.borderRadius, s.borderTopWidth, s.gap]; })).toEqual(["22px", "32px", "1px", "12px"]);
       await expect(previousCard.locator("p")).toHaveText("Venus retrogrades in nearly the same place every eight years. This is the last day it stood where it stations today. Reflect back to that time: what you valued, who you were close to, and what felt unresolved may be worth revisiting now.");
       await calendarPanel.screenshot({ path: `test-results/retrograde-history-calendar-${width}-${theme}.png` });

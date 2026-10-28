@@ -101,7 +101,7 @@ test('article navigation retains loading until the requested publication resolve
     await expect(page.locator('.learn-article-body')).toContainText('Final complete item');
     await page.evaluate(href => { location.hash = href; }, `articles/${encodeURIComponent(next.content_key)}`);
     await request;
-    await expect(page.getByRole('status', { name: 'Loading articles and guides…' })).toBeVisible();
+    await expect(page.locator('.app-loading[aria-label="Loading articles and guides…"][aria-busy="true"]')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Article unavailable' })).toHaveCount(0);
     await expect(page.locator('.learn-article-body')).toHaveCount(0);
     release();
@@ -120,7 +120,7 @@ test('failed formatter keeps navigation and explicit reload recovery', async ({ 
   await expect(page.getByRole('alert')).toContainText('This page could not load.');
   await expect(page.getByRole('button', { name: 'Open menu', exact: true })).toBeVisible();
   fail = false;
-  await page.getByRole('button', { name: 'Reload page', exact: true }).click();
+  await page.locator('.load-error').getByRole('button', { name: 'Try again', exact: true }).click();
   await expect(page.locator('.learn-article-body')).toContainText('Final complete item');
   await expect(page.locator('.learn-article-body strong')).toHaveText('Synthetic complete opening.');
 });
