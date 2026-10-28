@@ -16,9 +16,15 @@ const isSkySource = (key: string) => /^sky-(?:placement|context|lunation|nodes|l
   || key.startsWith("sky.aspect.") || /^sky-(?:article|season-fallback)\//u.test(key)
   || /^fallback-hook\/sky-/u.test(key) || key.startsWith("house-horoscope-core/");
 
-/** Astronomy ticks and unrelated editorial saves do not change prose identity. */
-export function skyPlacementPublicationIdentity() {
-  return JSON.stringify(contentPublicationRecords().filter(row => isSkySource(row.content_key))
+/** Shared sources remain guarded; dated editions belong to their article's placement. */
+export function skyPlacementPublicationIdentity(selection?: string) {
+  const pairs = selection?.startsWith("article:") ? selection.slice(8).split(",") : [];
+  const selected = pairs.length && pairs.every(pair => /^[a-z-]+\/[a-z-]+$/u.test(pair)) ? new Set(pairs) : null;
+  return JSON.stringify(contentPublicationRecords().filter(row => {
+    if (!isSkySource(row.content_key)) return false;
+    const dated = /^sky-article\/([^/]+\/[^/]+)\/\d{4}\/\d{4}-\d{2}-\d{2}$/u.exec(row.content_key);
+    return !selected || !dated || selected.has(dated[1]);
+  })
     .map(row => [row.content_key, row.state, row.revision, row.row_id,
       row.row_updated_at ? publicationTimestamp(row.row_updated_at) : null])
     .sort((a, b) => String(a[0]).localeCompare(String(b[0]))));
