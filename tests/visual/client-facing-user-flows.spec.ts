@@ -3957,7 +3957,16 @@ test.describe("client-facing user flow case studies", () => {
     await page.goto("/#access_token=fixture-callback-token&refresh_token=fixture-callback-refresh&expires_in=3600&token_type=bearer", { waitUntil: "domcontentloaded" });
     await expect(page.locator("#app-startup")).toBeVisible();
     await expect(page.getByRole("button", { name: "Open menu", exact: true })).toBeHidden();
+    // The failed callback can paint login controls before its document redirect
+    // completes. Settle that navigation before starting the next callback.
+    const loginNavigation = page.waitForURL(/auth=login/, { waitUntil: "load" });
+    const loginDocument = page.waitForResponse(response => response.request().isNavigationRequest()
+      && new URL(response.url()).searchParams.get("auth") === "login");
     finishVerification();
+    const loginResponse = await loginDocument;
+    expect(loginResponse.status()).toBe(200);
+    expect(await loginResponse.finished()).toBeNull();
+    await loginNavigation;
     await expect(page).toHaveURL(/auth=login/);
     await expect(page.getByRole("button", { name: /Google/ })).toBeVisible();
     expect(await page.evaluate(key => Boolean(localStorage.getItem(key)), supabaseAuthStorageKey())).toBe(false);
