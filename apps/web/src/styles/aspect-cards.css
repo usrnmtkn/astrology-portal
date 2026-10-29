@@ -58,7 +58,7 @@
 .reading-story-card__preview { display: block; max-height: calc(var(--text-body) * var(--leading-body) * 6); overflow: hidden; mask-image: var(--card-preview-fade); }
 .reading-story-card .aspect-row-meta { align-self: center; }
 .reading-story-card .card-read-more--icon { margin-top: auto; align-self: center; }
-.reading-story-card :is(.updates-aspect-row__glyphs:not(.aspect-badge)) { display: grid; place-items: center; width: var(--size-8); height: var(--size-8); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); }
+.reading-story-card :is(.updates-aspect-row__glyphs:not(.aspect-badge)) { display: grid; place-items: center; justify-content: center; align-self: center; margin: 0; width: var(--size-8); height: var(--size-8); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); }
 .reading-story-card .friend-bond-transit-activation { padding: 0; border: 0; }
 .calendar-stoic-card .calendar-kind.aspect-badge { width: var(--size-8); height: var(--size-8); padding: 0; border-radius: var(--radius-circle); font-size: var(--chart-planet-glyph-size); }
 @media (max-width: 800px) {

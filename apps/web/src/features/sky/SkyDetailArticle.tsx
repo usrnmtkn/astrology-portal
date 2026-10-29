@@ -236,10 +236,11 @@ function articleHouseToken(house: string | number) {
   return Number.isFinite(parsedHouse) && parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
 }
 
-function articlePlacementGlyphs(title: string, meta = "", glyph = "") {
+function articlePlacementGlyphs(title: string, meta = "") {
   const source = `${title} ${meta}`;
+  // Phase names use the supplied lunar icon through the fallback below.
   const match = source.match(
-    /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
+    /^(?!(?:Full|New)\s+Moon\s+in\b)(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
   );
 
   if (!match) {
@@ -247,9 +248,8 @@ function articlePlacementGlyphs(title: string, meta = "", glyph = "") {
   }
 
   const [, body, retrograde, sign, house] = match;
-  const lunarGlyph = /^(?:Full|New) Moon$/iu.test(body.trim()) ? glyph.trim() : "";
   return uniqueArticleGlyphs([
-    textArticleGlyph(lunarGlyph || pointGlyph(body.trim()), body.trim()),
+    textArticleGlyph(pointGlyph(body.trim()), body.trim()),
     retrograde ? textArticleGlyph("℞", "Retrograde") : null,
     signArticleGlyph(sign.trim()),
     house ? { key: `house-${house}`, label: `${house} house`, text: articleHouseToken(house), house: true } : null
@@ -280,7 +280,7 @@ function articleEyebrowGlyphs({
   title: string;
 }) {
   const aspect = articleAspectGlyphPartsFromHeading(title);
-  const placementGlyphs = articlePlacementGlyphs(title, meta, glyph);
+  const placementGlyphs = articlePlacementGlyphs(title, meta);
 
   if (placementGlyphs.length > 0 && !(aspect && /\bnatal\b/i.test(title))) {
     return placementGlyphs;

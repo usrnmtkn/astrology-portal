@@ -260,10 +260,8 @@ html[data-scrolled] .menu-toggle {
 }
 
 .theme-toggle svg {
-  display: block;
   width: var(--top-theme-icon-size);
   height: var(--top-theme-icon-size);
-  stroke-width: 2;
 }
 
 .theme-toggle {

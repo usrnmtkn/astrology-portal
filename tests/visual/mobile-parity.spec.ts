@@ -25,7 +25,7 @@ test.beforeAll(async()=>{
  const [own,setOwn]=useState({name:'Sample Reader',birthMonth:'01',birthDay:'01',birthYear:'1990',birthHour:'12',birthMinute:'00',birthMeridiem:'PM',unknownBirthTime:false,birthPlace:'Test City',birthLocation:null,currentLocation:'Test City',currentLocationData:null});
  const facts={summary:'This is the complete calculated relationship context.',caution:'These are connections through one endpoint.',groups:[{key:'primary',heading:'The primary transit',rows:[{key:'contact',title:'Saturn square the natal Midheaven',aspect:'square',orb:'0° 16′'}]},{key:'related',heading:'Related contacts',rows:Array.from({length:8},(_,i)=>({key:'related-'+i,title:'Complete related contact '+i,aspect:'trine',orb:'1° 27′'}))}]};
  const articleCase=new URLSearchParams(location.search).get('article');
- const iconArticle={full:{title:'Full Moon in Libra',glyph:'○'},new:{title:'New Moon in Libra',glyph:'●'},planet:{title:'Sun in Libra',glyph:'○'},unknown:{title:'Quasar in Libra',glyph:'○'},aspect:{title:'Sun sextile Mercury',glyph:'☉'}}[articleCase];
+ const iconArticle={full:{title:'Full Moon in Libra',glyph:'○'},new:{title:'New Moon in Libra',glyph:'●'},spaced:{title:'Full   Moon in Libra',glyph:'○'},padded:{title:'  New Moon in Libra  ',glyph:'●'},planet:{title:'Sun in Libra',glyph:'○'},retrograde:{title:'Mercury Rx in Libra',glyph:'○'},unknown:{title:'Quasar in Libra',glyph:'○'},phaseLike:{title:'New Moonstone in Libra',glyph:'○'},phasePrefix:{title:'Full Moon Watcher in Libra',glyph:'○'},empty:{title:'',glyph:''},aspect:{title:'Sun sextile Mercury',glyph:'☉'}}[articleCase];
  if(iconArticle)return <SkyDetailArticle detail={{...iconArticle,kicker:'Sky',meta:'October 29, 2026',body:['Synthetic complete opening paragraph.','Synthetic complete ending paragraph.']}} onClose={()=>{}}/>;
  return <><ThemeToggleButton theme={theme} onThemeChange={next=>{setTheme(next);document.documentElement.dataset.theme=next}}/><button id='edit-sample' onClick={()=>setOpen('friend')}>Edit sample chart</button><button onClick={()=>setOpen('own')}>Edit own chart</button><button className='social-secondary-button' onClick={()=>setOpen('wheel')}>Full-screen chart</button><button id='delete-sample' onClick={()=>setOpen('delete')}>Delete sample chart</button>
  {open==='delete'&&<FriendChartDeleteDialog name='Sample Chart' pending={deleting} restoreFocusId='delete-sample' onClose={()=>setOpen('')} onDelete={()=>{window.__mobileDeletes=(window.__mobileDeletes||0)+1;setDeleting(true)}}/>}
@@ -37,7 +37,7 @@ test.beforeAll(async()=>{
  {open==='own'&&<CreateChartDialog onClose={()=>setOpen('')} form={own} setForm={setOwn} profile={null} step='birth' setStep={()=>{}} saving={false} message='' onSave={()=>{window.__mobileOwnSaves=(window.__mobileOwnSaves||0)+1}}/>}
  </>}
  createRoot(document.getElementById('root')).render(<App/>);
- `},bundle:true,write:false,format:'iife',platform:'browser',jsx:'automatic',outfile:'harness.js',define:{'process.env.NODE_ENV':'"production"','import.meta.env':'{}'}});
+ `},bundle:true,write:false,format:'iife',platform:'browser',external:['module'],jsx:'automatic',outfile:'harness.js',define:{'process.env.NODE_ENV':'"production"','import.meta.env':'{}'}});
  script=result.outputFiles.find(file=>file.path.endsWith('.js'))!.text;
  styles=result.outputFiles.find(file=>file.path.endsWith('.css'))?.text??'';
 });
@@ -70,6 +70,11 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
   const centered=await page.locator(selector).evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const text=range.getBoundingClientRect(),box=el.getBoundingClientRect();return Math.abs(text.x+text.width/2-box.x-box.width/2)<2;});
   expect(centered).toBe(true);
  }
+ const cardBox=(await page.locator('.reading-story-card').boundingBox())!,tile=page.locator('.updates-aspect-row__glyphs');
+ const tileBox=(await tile.boundingBox())!,glyphBox=(await tile.locator('.planet-glyph').boundingBox())!;
+ expect(Math.abs(tileBox.x+tileBox.width/2-cardBox.x-cardBox.width/2)).toBeLessThan(1);
+ expect(Math.abs(glyphBox.x+glyphBox.width/2-tileBox.x-tileBox.width/2)).toBeLessThan(1);
+ await expect(tile).toHaveCSS('justify-content','center');
  await expect(page.locator('.aspect-badge[data-aspect="sextile"]')).toHaveText('⚹');
  expect(await page.locator('.aspect-badge').evaluate(el=>getComputedStyle(el).fontFamily)).toContain('Noto Sans Symbols');
  await page.locator('.reading-story-card').screenshot({path:info.outputPath('approved-sextile-icon.png')});
@@ -167,7 +172,10 @@ test('Mobile parity: article aspect and lunar icons preserve supplied glyphs',as
  await routeMobileHarness(page,theme);
  for(const [key,title,glyph] of [
   ['full','Full Moon in Libra','○'],['new','New Moon in Libra','●'],
+  ['spaced','Full Moon in Libra','○'],['padded','New Moon in Libra','●'],
   ['planet','Sun in Libra','☉'],['unknown','Quasar in Libra','Q'],
+  ['retrograde','Mercury Rx in Libra','☿'],
+  ['phaseLike','New Moonstone in Libra','N'],['phasePrefix','Full Moon Watcher in Libra','F'],['empty','',''],
   ['aspect','Sun sextile Mercury','⚹']
  ]){
   await page.goto(`/__mobile-parity?article=${key}`);
@@ -176,8 +184,10 @@ test('Mobile parity: article aspect and lunar icons preserve supplied glyphs',as
   await expect(article).toContainText('Synthetic complete opening paragraph.');
   await expect(article).toContainText('Synthetic complete ending paragraph.');
   const cue=key==='aspect'?header.locator('.aspect-badge'):header.locator('.article-eyebrow__glyphs > span').first();
-  await expect(cue).toHaveText(glyph);
-  if(key!=='aspect')await expect(header.locator('.article-eyebrow__glyphs img')).toHaveAttribute('src',/\/zodiac\/libra\.svg/);
+  if(glyph)await expect(cue).toHaveText(glyph);
+  else await expect(header.locator('.article-eyebrow__glyphs')).toHaveCount(0);
+  if(key!=='aspect'&&key!=='empty')await expect(header.locator('.article-eyebrow__glyphs img')).toHaveAttribute('src',/\/zodiac\/libra\.svg/);
+  if(key==='retrograde')await expect(header.locator('.article-eyebrow__glyphs')).toContainText('℞');
   await page.evaluate(()=>document.fonts.ready);
   await header.screenshot({path:info.outputPath(`article-${key}-icon.png`)});
   if(key==='full'||key==='new'){

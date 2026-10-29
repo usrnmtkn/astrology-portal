@@ -36,13 +36,14 @@ It is not a full-site or production release signoff.
   and hide the section. Unknown birth times still omit house context.
 - The shared sextile cue uses the handoff's six-stroke `⚹` aspect symbol instead
   of the filled `✶` star, including card badges and article headers. Browser
-  assertions and visual verification of this follow-up remain pending the
-  release runtime handoff.
+  assertions and focused mobile screenshots confirm both rendered variants.
 - Full Moon and New Moon article eyebrows retain their supplied lunar glyph
   instead of parsing the phase name as an unknown planet and displaying its
   first letter. Ordinary planet and unknown-body parsing remain unchanged.
-  Focused rendered coverage is prepared for both phases, the sextile header,
-  ordinary planets and unknown bodies; execution remains pending the same slot.
+  Exact phase names bypass the planet parser and use the existing supplied-icon
+  fallback. Rendered coverage includes both phases, whitespace variants, the
+  sextile header, ordinary planets and retrogrades, empty fields, and unknown
+  names including Moonstone and Full Moon Watcher.
 
 ## Validation and scope
 
@@ -92,6 +93,17 @@ cases across all eight viewport/theme/browser configurations.
 Workflow syntax, affected-surface selection, suite coverage and aggregate gate
 regressions pass locally. The complete connection source suite also remains in
 its existing required job.
+
+The focused mobile follow-up passes both the icon-header case and the combined
+theme/forms case after a fresh build. Visual inspection found an inherited
+alignment rule that left a planetary glyph tile at the card edge; its scoped
+story-card layout now centers the tile and its grid track. The regression checks
+both tile-to-card and glyph-to-tile alignment. The complete eight-configuration
+rerun remains pending final integration. One earlier harness build failed before
+rendering because of a Node-only Swiss Ephemeris import; the browser harness now
+externalizes that built-in module, matching the existing browser fixtures.
+Current-main integration and bundle-budget verification remain outstanding;
+no size limit has been raised.
 
 Complete API/content release gates, final-main integration and deployed-main
 verification remain required before this candidate may be called live. Existing
