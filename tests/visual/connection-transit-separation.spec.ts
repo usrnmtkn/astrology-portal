@@ -754,8 +754,16 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**', route => route.fulfill({ status: 503, body: 'Isolated calculation fallback.' }));
   await isolatedRest(page);
   await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications: phase === 'initial' ? [] : publications } }));
-  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
   let phase: 'initial' | 'fail' | 'retry' | 'changed' | 'released' | 'returning-sky' | 'returned' = 'initial';
+  const failedSnapshotReleases: (() => Promise<void>)[] = [];
+  await page.route('**/content-studio-last-known-good.json', async route => {
+    const send = () => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } });
+    if (heldStage === 'edition-fetch' && phase === 'fail') {
+      await new Promise<void>((resolve, reject) => failedSnapshotReleases.push(() => send().then(resolve, reject)));
+      return;
+    }
+    await send();
+  });
   await page.route('**/rest/v1/content_publications?**', route => {
     const filters = new URL(route.request().url()).searchParams.getAll('content_key');
     const rows = phase === 'initial' ? [] : publications.filter(row => filters.every(filter =>
@@ -881,6 +889,9 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   } else {
     // The ordinary list is the actual owner of its required edition await.
     const listError = page.locator('.load-error').filter({ hasText: 'The placement readings could not load. Please try again.' });
+    // Keep the older edition's failed-read recovery pending while the user
+    // retries. Otherwise a fast snapshot hides the same-generation join race.
+    await expect.poll(() => failedSnapshotReleases.length, { timeout: 30000 }).toBeGreaterThan(0);
     phase = 'retry';
     await listError.getByRole('button', { name: 'Try again', exact: true }).click();
   }
@@ -890,6 +901,10 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     // Fail if the intended stage never starts; a test that merely navigates away
     // before preparation or edition fetching cannot cover its continuation guard.
     await expect.poll(() => releases.length, { timeout: 30000 }).toBeGreaterThan(0);
+    if (heldStage === 'edition-fetch') {
+      await Promise.all(failedSnapshotReleases.splice(0).map(release => release()));
+      await expect(page.locator('.load-error').filter({ hasText: 'The placement readings could not load. Please try again.' })).toBeHidden();
+    }
     if (heldStage === 'prepare') {
       const originalQueries = new Set(log.filter(read => read.phase === 'fail' && read.skyRead && !read.exactEdition && new URL(read.url).hash.startsWith('#sky')).map(read => normalized(read.query)));
       const expectedSet = [...originalQueries].sort();
@@ -939,6 +954,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     currentCaseyCopy = await caseyProfile.innerText();
   } finally {
     phase = 'released';
+    await Promise.all(failedSnapshotReleases.splice(0).map(release => release()));
     await Promise.all(releases.map(release => release()));
   }
   await requireSuccessfulCompletion(heldRequests, 'released-recovery-transport-proof');

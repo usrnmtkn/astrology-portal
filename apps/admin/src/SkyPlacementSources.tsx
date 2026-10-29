@@ -1,8 +1,8 @@
-import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { studioLazy } from './studioLazy';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { skyArticleVariableDraftRecord } from "../../../src/shared/skyArticleVariableDraft";
 import { skyArticleEditableFields, skyArticleEditionRecord } from '../../web/src/content/skyArticleTemplateCompiler';
-import type { SkyPreviewDraft, SkyReaderState } from './SkyReaderPreview';
+// Source status always needs the reader preview; load them in one deferred chunk.
+import SkyReaderPreview, { type SkyPreviewDraft, type SkyReaderState } from './SkyReaderPreview';
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import ContentLiveStatusBadge, { type LiveStatus } from "./ContentLiveStatus";
 import { placementSourceRows, selectPlacementSources, type PlacementSourceRow } from "./skyPlacementSourceSelection";
@@ -13,8 +13,6 @@ import { isSkyReaderPreviewDate, skyPreviewReferenceDate, skyReaderDateHref } fr
 import { Stack, Text } from "./studio-ds/primitives";
 import { surfaceSection } from "./studio-ds/recipes";
 export { default as ReaderPassageEntry } from './ReaderPassageEntry';
-
-const SkyReaderPreview = studioLazy(() => import('./SkyReaderPreview'));
 
 type Props = {
   planet: string;
@@ -51,6 +49,49 @@ export default function SkyPlacementSources(props: Props) {
   const [showPreview, setShowPreview] = useState(false);
   const previewPanel = useRef<HTMLDivElement>(null);
   const previewButton = useRef<HTMLButtonElement>(null);
+  const sourcePanel = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const panel = sourcePanel.current;
+    if (!panel) return;
+    let pointer: number | null = null;
+    let timer: number | undefined;
+    let previous: string | null = null;
+    const controller = new AbortController();
+    const options = { capture: true, signal: controller.signal };
+    const release = () => {
+      window.clearTimeout(timer);
+      if (previous !== null) panel.style.cssText = previous;
+      previous = null; pointer = null;
+    };
+    const hold = (event: PointerEvent) => {
+      if (!event.isPrimary || event.button !== 0 || pointer !== null || !(event.target instanceof Node)
+        || panel.contains(event.target) || !panel.parentElement?.contains(event.target)) return;
+      const bounds = panel.getBoundingClientRect();
+      if (!bounds.height || event.clientY < bounds.bottom) return;
+      // A reader result can expand this panel between mouse-down and mouse-up,
+      // moving an editor button away before its native click is dispatched.
+      pointer = event.pointerId;
+      previous = panel.style.cssText;
+      panel.style.cssText += `;height:${bounds.height}px;overflow:hidden;box-sizing:border-box`;
+    };
+    const finish = (event: PointerEvent) => {
+      if (event.pointerId !== pointer) return;
+      // Touch compatibility clicks can arrive in a later task. The click
+      // listener releases immediately; this bounds gestures with no click.
+      if (event.type === 'pointerup') timer = window.setTimeout(release, 500);
+      else release();
+    };
+    window.addEventListener('pointerdown', hold, options);
+    window.addEventListener('pointerup', finish, options);
+    window.addEventListener('pointercancel', finish, options);
+    window.addEventListener('click', release, options);
+    // Element focus changes must not release an active pointer gesture.
+    window.addEventListener('blur', release, { signal: controller.signal });
+    return () => {
+      release();
+      controller.abort();
+    };
+  }, []);
   useEffect(() => {
     if (showPreview && !embedded) previewPanel.current?.querySelector<HTMLButtonElement>('button[aria-pressed]')?.focus();
   }, [showPreview, embedded]);
@@ -137,12 +178,12 @@ export default function SkyPlacementSources(props: Props) {
           <Text size="meta" tone="secondary">Reusable placement writing is selected when an eligible dated article is unavailable.</Text>
         </div>
       </Stack>;
-  const preview = inventoryState === 'ready' && <div ref={previewPanel} hidden={!showPreview && !props.editorContent}><Suspense fallback={<PageLoading compact message="Opening reader preview…" />}>
+  const preview = inventoryState === 'ready' && <div ref={previewPanel} hidden={!showPreview && !props.editorContent}>
     <SkyReaderPreview key={`${planet}/${sign}/${attempt}`} planet={planet} sign={sign} date={date} timeZone={props.timeZone} drafts={previewDrafts} compact={Boolean(props.editorContent)}
       onClose={props.editorContent ? undefined : () => { setShowPreview(false); previewButton.current?.focus(); }}
       onReaderState={state => setReaderState({ ...state, identity: readerIdentity })} />
-  </Suspense></div>;
-  return <><section className={surfaceSection} aria-label="Sky placement reader sources">
+  </div>;
+  return <><section ref={sourcePanel} className={surfaceSection} aria-label="Sky placement reader sources">
     <div className="admin-fallback-diagnostic-heading">
       <h3>Reader sources</h3>
       <div className="admin-surface-actions">
