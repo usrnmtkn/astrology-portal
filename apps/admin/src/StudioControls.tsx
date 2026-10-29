@@ -71,8 +71,8 @@ export const StudioInput = forwardRef<HTMLInputElement, ComponentPropsWithoutRef
     return <input {...props} ref={ref} data-studio-component="input" />;
   }
 );
-const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"), ({ onDone }) =>
-  <StudioPanelLoadError><StudioButton onClick={onDone}>Back to plain text</StudioButton></StudioPanelLoadError>
+const StudioFormattingEditor = lazy(() => import("./StudioFormattingEditor"), ({ onDone, error }) =>
+  <StudioPanelLoadError error={error}><StudioButton onClick={onDone}>Back to plain text</StudioButton></StudioPanelLoadError>
 );
 export const StudioTextarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef<"textarea"> & { formatting?: boolean; highlight?: ReactNode }>(
   function StudioTextarea({ formatting = true, highlight, ...props }, ref) {

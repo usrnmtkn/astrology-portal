@@ -77,6 +77,72 @@ async function selectSaturnPlacement(page: Page) {
   await openSkyPlacementDefaultReading(page);
 }
 
+for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
+  test(`aspect editing survives a missing article editor ${width} ${theme}`, async ({ page, context }, testInfo) => {
+    const studioOrigin = new URL(testInfo.project.use.baseURL as string).origin;
+    const row = structuredClone(inventory.find(row => row.content_key === "sky.aspect.moon.trine.pluto")!);
+    // Mirror the live record's declared fields; the last-known-good transport
+    // does not contain this editor metadata.
+    Object.assign((row.sections as any).packageRecord, {
+      studio_content_type: "aspect",
+      studio_editable_fields: [{ path: "Summary", label: "Summary" }, { path: "Body", label: "Body" }]
+    });
+    const store = await studioApiStore([row]);
+    let editorDownloads = 0, writes = 0;
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(value => {
+        localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture");
+        localStorage.setItem("tldrastro:studio-theme", value);
+      }, theme);
+      await context.route("**/*", route => {
+        const url = new URL(route.request().url());
+        // Only frontend assets may reach the target. Every API response belongs
+        // to the isolated handler fixture, including during production checks.
+        return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
+          ? route.continue() : route.abort("blockedbyclient");
+      });
+      await page.route("**/SkyFallbackFieldsEditor-*.js", route => {
+        editorDownloads++;
+        return route.fulfill({ status: 404, contentType: "text/javascript", body: "/* Old deployment chunk is gone. */" });
+      });
+      await routeStudioInventoryApi(page, { call: message => {
+        if (["POST", "PATCH", "DELETE"].includes(message.method)) writes++;
+        return store.call(message);
+      } });
+      const destination = `${studioPath}#exact-content?category=Calendar+Aspects&first=moon&aspect=trine&second=pluto`;
+      await page.goto(destination);
+      const open = () => page.getByRole("row").filter({ hasText: row.content_key }).getByRole("button", { name: "Edit", exact: true }).click();
+      await open();
+      const editor = page.getByRole("dialog", { name: "Generated content editor", exact: true });
+      const body = editor.getByRole("textbox", { name: "Fallback field Body", exact: true });
+      const original = (row.sections as any).packageRecord;
+      await expect(body).toHaveValue(original.Body);
+      await expect(editor.getByRole("textbox", { name: "Fallback field Summary", exact: true })).toHaveValue(original.Summary);
+      expect(editorDownloads).toBe(0);
+      expect(writes).toBe(0);
+      const complete = "Synthetic complete aspect opening.\n\nThe complete final sentence survives a missing optional module.";
+      await body.fill(complete);
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: "rows" })).some((saved: any) => saved.sections.packageDraft?.Body === complete)).toBe(true);
+      expect(writes).toBe(1);
+      const saved = (await store.call({ method: "rows" })).find((saved: any) => saved.sections.packageDraft?.Body === complete);
+      expect(saved.status).toBe("DRAFT");
+      await page.reload();
+      // The fixture lists the original first and its new private revision last.
+      await page.getByRole("row").filter({ hasText: row.content_key }).last().getByRole("button", { name: "Edit", exact: true }).click();
+      await expect(body).toHaveValue(complete);
+      expect((await store.call({ method: "rows" })).find((saved: any) => saved.id === row.id)).toEqual(row);
+      expect(editorDownloads).toBe(0);
+      await expect(editor.getByRole("alert").filter({ hasText: "This section could not load." })).toHaveCount(0);
+      await page.screenshot({ path: testInfo.outputPath("aspect-editor-with-missing-article-chunk.png") });
+    } finally {
+      await page.unrouteAll({ behavior: "wait" });
+      store.close();
+    }
+  });
+}
+
 for (const { status, width, theme, late, action } of [
   { status: 200, width: 1440, theme: "light" },
   ...[390, 1440].flatMap(width => ["light", "dark"].map(theme => ({ status: 503, width, theme }))),
@@ -478,6 +544,7 @@ for (const action of ['Retry page', 'Open Review Queue']) {
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`new unsaved guide survives a formatting asset failure ${width} ${theme}`, async ({ page, context }, testInfo) => {
+    const studioOrigin = new URL(testInfo.project.use.baseURL as string).origin;
     const store = await studioApiStore([]);
     try {
       let missing = true, writes = 0;
@@ -488,8 +555,13 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         localStorage.setItem("tldrastro:contentAdminSecret", "calendar-api-fixture");
         localStorage.setItem("tldrastro:studio-theme", value);
       }, theme);
-      await context.route("**/*", route => new URL(route.request().url()).hostname === "127.0.0.1"
-        ? route.continue() : route.abort("blockedbyclient"));
+      await context.route("**/*", route => {
+        const url = new URL(route.request().url());
+        // Only frontend assets may reach the target. Every API response belongs
+        // to the isolated handler fixture, including during production checks.
+        return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
+          ? route.continue() : route.abort("blockedbyclient");
+      });
       await page.route("**/StudioFormattingEditor-*.js", route => missing
         ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Optional formatting unavailable. */" })
         : route.continue());
@@ -512,6 +584,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await body.locator("..").getByRole("button", { name: "Format text", exact: true }).click();
       const recovery = editor.getByRole("alert").filter({ hasText: "This section could not load." });
       await expect(recovery).toBeVisible();
+      await recovery.getByText("Error details", { exact: true }).click();
+      await expect(recovery).toContainText(/StudioFormattingEditor-/);
       expect(statuses).toEqual([503]);
       expect(await mountedEditor!.evaluate(element => element.isConnected)).toBe(true);
       await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);

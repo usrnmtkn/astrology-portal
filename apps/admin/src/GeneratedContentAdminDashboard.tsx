@@ -1,4 +1,5 @@
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
+import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
 import { parseStudioPassageEdit, skyPassageEditPlacement } from '../../../src/shared/studioPassageEdit';
 import { calendarPassageReviewParams } from './calendarPassageReviewRoute';
 import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
@@ -11654,7 +11655,8 @@ export function GeneratedContentAdminDashboard() {
                 </details>
               </header>
 
-              <Suspense fallback={<PageLoading message="Loading writing editor…" />}>
+              {!isSkyPlacementSource ? <SkyFallbackPlainFields key={currentDraft.contentKey} fields={skyFallbackEditor.fields} kind={skyFallbackEditor.kind}
+                initialField={skyWritingContext.fieldPath} disabled={isLoading} onChange={updateSkyFallbackField} /> : <Suspense fallback={<PageLoading message="Loading writing editor…" />}>
                 <SkyFallbackFieldsEditor key={currentDraft.contentKey} contentKey={currentDraft.contentKey}
                   kind={skyFallbackEditor.kind} fields={skyFallbackEditor.fields} initialField={skyWritingContext.fieldPath} selection={skyWritingContext.selection}
                   source={effectiveSkyFallback}
@@ -11670,7 +11672,7 @@ export function GeneratedContentAdminDashboard() {
                     rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,
                     null, path, skyWritingContext.selection
                   ), { parentDraft: currentDraft })} />
-              </Suspense>
+              </Suspense>}
 
               {isSkyV4StudioRecord && (
                 <SkyChangesContainer className="admin-workspace-details">
