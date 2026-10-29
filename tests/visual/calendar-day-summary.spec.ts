@@ -191,19 +191,22 @@ for (const scenario of [
   });
 }
 
-for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
-  test(`Calendar keeps Moon-sign details before a late sign change ${width} ${theme}`, async ({ page }) => {
+for (const scenario of [
+  { date: '2026-10-27', nextDate: '2026-10-28', sign: 'Taurus', glyph: '♉', nextSign: 'Gemini', nextGlyph: '♊' },
+  { date: '2026-10-29', nextDate: '2026-10-30', sign: 'Gemini', glyph: '♊', nextSign: 'Cancer', nextGlyph: '♋' }
+]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Calendar keeps Moon-sign details before a late sign change ${scenario.sign} ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(120_000);
-    const dateKey = '2026-10-27';
+    const dateKey = scenario.date;
     const record = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8'))
-      .authoredCards.find((row: any) => row.contentKey === 'authored/calendar-weekly-moon/taurus');
+      .authoredCards.find((row: any) => row.contentKey === `authored/calendar-weekly-moon/${scenario.sign.toLowerCase()}`);
     const transitionKey = 'authored/calendar-moon-context/lateIngress';
     const transitionBody = 'The emotional tone shifts overnight as the Moon changes signs, so you will likely feel the difference by tomorrow.';
-    const event = { id: 'qa-late-moon-ingress', type: 'ingress', planet: 'Moon', fromSign: 'Taurus', toSign: 'Gemini', sign: 'Gemini',
-      title: 'Moon enters Gemini', startsAt: '2026-10-28T01:10:00Z', dateKey, glyph: '', primary: false };
-    const day = { date: `${dateKey}T16:00:00Z`, dateKey, inMonth: true, moonSign: 'Taurus', moonSignGlyph: '♉',
+    const event = { id: 'qa-late-moon-ingress', type: 'ingress', planet: 'Moon', fromSign: scenario.sign, toSign: scenario.nextSign, sign: scenario.nextSign,
+      title: `Moon enters ${scenario.nextSign}`, startsAt: `${scenario.nextDate}T01:10:00Z`, dateKey, glyph: '', primary: false };
+    const day = { date: `${dateKey}T16:00:00Z`, dateKey, inMonth: true, moonSign: scenario.sign, moonSignGlyph: scenario.glyph,
       moonPhase: 'Waning Gibbous', illumination: 97, activeAspects: [], events: [event] };
-    const nextDay = { ...day, date: '2026-10-28T16:00:00Z', dateKey: '2026-10-28', moonSign: 'Gemini', moonSignGlyph: '♊', illumination: 94, events: [] };
+    const nextDay = { ...day, date: `${scenario.nextDate}T16:00:00Z`, dateKey: scenario.nextDate, moonSign: scenario.nextSign, moonSignGlyph: scenario.nextGlyph, illumination: 94, events: [] };
     await page.clock.setFixedTime(new Date(`${dateKey}T13:44:00Z`));
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(({ location, theme }) => {
@@ -226,12 +229,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     await page.goto(`/?date=${dateKey}#calendar?view=day&date=${dateKey}`);
     const guidance = page.getByRole('region', { name: 'Moon guidance', exact: true });
     for (let load = 0; load < 2; load++) {
-      await expect(guidance).toHaveText(`${record.body} ${transitionBody}`, { timeout: 60_000 });
-      await expect(page.getByRole('heading', { name: 'Waning Gibbous Moon in Taurus', exact: true })).toBeVisible();
+      await expect(guidance).toHaveText(`The Moon stays in ${scenario.sign} for most of today and enters ${scenario.nextSign} at 9:10 PM EDT. ${record.body} ${transitionBody}`, { timeout: 60_000 });
+      await expect(page.getByRole('heading', { name: `Waning Gibbous Moon in ${scenario.sign}`, exact: true })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
       if (load === 0) await page.reload();
     }
     expect(errors).toEqual([]);
-    await page.getByLabel('Selected lunar day', { exact: true }).screenshot({ path: `test-results/calendar-moon-sign-before-transition-${width}-${theme}.png` });
+    await page.getByLabel('Selected lunar day', { exact: true }).screenshot({ path: `test-results/calendar-moon-sign-before-transition-${scenario.sign}-${width}-${theme}.png` });
   });
 }
