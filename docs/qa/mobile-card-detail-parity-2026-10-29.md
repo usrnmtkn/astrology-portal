@@ -130,7 +130,9 @@ payload, source and runtime limits remain unchanged.
 Birth inputs retain 16px text and theme icons retain 24px through existing tokens.
 After the Friends handle variant repair, source build 55 measures the deferred
 Sky detail at 6,827 bytes, two bytes over its unchanged 6,825 ceiling. That small
-measured cost remains under review; other bundle limits pass.
+measured cost has a reviewed 25-byte allocation to a 6,850 ceiling, leaving
+23 bytes above the measurement. Its total increase from main is 15 bytes;
+other bundle limits and isolation guards remain unchanged.
 
 Complete API/content release gates, final-main integration and deployed-main
 verification remain required before this candidate may be called live. Existing
