@@ -37,6 +37,7 @@ const matches = (row: any, params: URLSearchParams) => [...params].every(([field
  if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(field)) return true;
  if (field.startsWith('sections->horoscopeEdition->window->>')) {
   const actual = row.sections?.horoscopeEdition?.window?.[field.split('->>').at(-1)!];
+  if (value.startsWith('in.(')) return value.slice(4, -1).split(',').includes(String(actual));
   return typeof actual === 'string' && (value.startsWith('lte.') ? actual <= value.slice(4) : value.startsWith('gt.') ? actual > value.slice(3) : value.startsWith('eq.') ? actual === value.slice(3) : false);
  }
  if(field==='source_snapshot->horoscopeGeneration->batch->>status')return row.source_snapshot?.horoscopeGeneration?.batch?.status===value.slice(3);

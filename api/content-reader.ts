@@ -14,7 +14,7 @@ import { publicationAllowsContent, publicationLedgerKey, validContentPublication
 import type { ContentPublication } from '../apps/web/src/content/contentPublicationState.js';
 import type { GeneratedContentRow } from '../apps/web/src/services/generatedContent.js';
 import { astro101IsLiveOnLearn, isAstro101ContentKey } from '../apps/web/src/content/astro101.js';
-import { HOROSCOPE_PERIODS, horoscopeEditionFromRow, validHoroscopeTimeZone, canonicalHoroscopeTimeZone } from '../apps/web/src/content/horoscopeEditions.mjs';
+import { HOROSCOPE_PERIODS, horoscopeEditionFromRow, validHoroscopeTimeZone, horoscopeReaderTimeZones, type HoroscopePeriod } from '../apps/web/src/content/horoscopeEditions.mjs';
 
 loadLocalWebEnv();
 const pageSize = 250;
@@ -112,7 +112,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (query.provider) params.set('provider', `eq.${query.provider}`);
     if (query.horoscope) {
       params.set('content_key', `like.horoscope/${query.horoscope.period}/*`);
-      if (query.horoscope.timeZone) params.set('sections->horoscopeEdition->window->>timeZone', `eq.${canonicalHoroscopeTimeZone(query.horoscope.timeZone)}`);
+      if (query.horoscope.timeZone) {
+        const zones = horoscopeReaderTimeZones(query.horoscope.period as HoroscopePeriod, query.horoscope.timeZone);
+        params.set('sections->horoscopeEdition->window->>timeZone', zones.length === 1 ? `eq.${zones[0]}` : `in.(${zones.join(',')})`);
+      }
       params.set('sections->horoscopeEdition->window->>startsAt', `lte.${query.horoscope.at}`);
       params.set('sections->horoscopeEdition->window->>endsAt', `gt.${query.horoscope.at}`);
     }

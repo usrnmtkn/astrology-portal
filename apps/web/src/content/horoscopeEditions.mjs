@@ -24,6 +24,11 @@ export function canonicalHoroscopeTimeZone(value) {
   if (!validHoroscopeTimeZone(value)) throw new Error('Choose a valid time zone.');
   return new Intl.DateTimeFormat('en', {timeZone:value}).resolvedOptions().timeZone;
 }
+/** Monthly readers may use the published New York overview when their zone has none. */
+export function horoscopeReaderTimeZones(period, timeZone) {
+  const local = canonicalHoroscopeTimeZone(timeZone);
+  return [...new Set([local, ...(period === 'monthly' ? ['America/New_York'] : [])])];
+}
 export function validateHoroscopeWindow(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)
     || Object.keys(value).some(key => !['period','audience','timeZone','startsAt','endsAt','seasonSign'].includes(key))
@@ -83,12 +88,15 @@ export function horoscopeEditionFromRow(row) {
 }
 export function horoscopeEditionAt(rows, period, at, timeZone) {
   const time = Date.parse(at);
+  const zones = timeZone ? horoscopeReaderTimeZones(period, timeZone) : null;
   const values = rows.map(row => ({row, edition:horoscopeEditionFromRow(row)})).filter(({edition}) => edition
-    && edition.window.period === period && (!timeZone || canonicalHoroscopeTimeZone(edition.window.timeZone) === canonicalHoroscopeTimeZone(timeZone))
+    && edition.window.period === period && (!zones || zones.includes(canonicalHoroscopeTimeZone(edition.window.timeZone)))
     && Date.parse(edition.window.startsAt) <= time && time < Date.parse(edition.window.endsAt));
+  const preferredZone = zones?.find(zone => values.some(({edition}) => canonicalHoroscopeTimeZone(edition.window.timeZone) === zone));
+  const preferred = preferredZone ? values.filter(({edition}) => canonicalHoroscopeTimeZone(edition.window.timeZone) === preferredZone) : values;
   // Overlapping editions need editorial resolution, never an arbitrary winner.
-  if (values.length > 1) throw new Error('More than one horoscope edition covers this period. Please try again later.');
-  return values[0]?.edition ?? null;
+  if (preferred.length > 1) throw new Error('More than one horoscope edition covers this period. Please try again later.');
+  return preferred[0]?.edition ?? null;
 }
 export function horoscopeWindowLabel(window) {
   const format = new Intl.DateTimeFormat('en-US', {month:'long',day:'numeric',year:'numeric',timeZone:window.timeZone});
