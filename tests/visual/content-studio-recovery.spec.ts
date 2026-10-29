@@ -14,7 +14,6 @@ const inventory = JSON.parse(readFileSync(new URL("../../apps/web/public/content
 // Keep it within the existing 15-second reader/Studio readiness budget.
 const recoveryReadiness = { timeout: 15_000 };
 const studioPath = process.env.STUDIO_PRODUCTION_ENTRY === "1" ? "/admin/content" : "/";
-const studioOrigin = new URL(process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:4298").origin;
 
 async function within<T>(promise: Promise<T>, milliseconds: number, label: string): Promise<T> {
   let timer: ReturnType<typeof setTimeout>;
@@ -80,6 +79,7 @@ async function selectSaturnPlacement(page: Page) {
 
 for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
   test(`aspect editing survives a missing article editor ${width} ${theme}`, async ({ page, context }, testInfo) => {
+    const studioOrigin = new URL(testInfo.project.use.baseURL as string).origin;
     const row = structuredClone(inventory.find(row => row.content_key === "sky.aspect.moon.trine.pluto")!);
     // Mirror the live record's declared fields; the last-known-good transport
     // does not contain this editor metadata.
@@ -544,6 +544,7 @@ for (const action of ['Retry page', 'Open Review Queue']) {
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   test(`new unsaved guide survives a formatting asset failure ${width} ${theme}`, async ({ page, context }, testInfo) => {
+    const studioOrigin = new URL(testInfo.project.use.baseURL as string).origin;
     const store = await studioApiStore([]);
     try {
       let missing = true, writes = 0;
