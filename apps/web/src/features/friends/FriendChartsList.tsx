@@ -116,6 +116,7 @@ export function FriendChartsList({
                   <span className="manual-chart-actions">
                     <button
                       className="manual-chart-menu-trigger"
+                      id={`friend-menu-${chart.id}`}
                       type="button"
                       aria-label={`More actions for ${chart.displayName}`}
                       aria-expanded={openChartMenuId === chart.id}

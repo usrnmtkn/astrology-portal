@@ -20,7 +20,6 @@ import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeC
 import { connectionTransitReading } from "./connectionTransitReading";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
-import { X } from "lucide-react";
 import {
   Suspense,
   lazy,
@@ -42,7 +41,7 @@ import type {
   YouTransitArticle,
   friendsViewModelDependencies
 } from "../../App";
-import { ModalPortal } from "../../components/ModalPortal";
+import { FriendChartDeleteDialog } from "./FriendChartDeleteDialog";
 import { profileInitials } from "../../components/ProfileAvatar";
 import { CitySearchField } from "../../components/CitySearchField";
 import {
@@ -2911,51 +2910,17 @@ export function ManualChartsPanel({
         />
       )}
       {deleteCandidateChart && (
-        <ModalPortal
-          className="friend-chart-delete-modal-root"
-          panelClassName="chart-modal friend-chart-delete-modal add-chart-modal"
-          titleId="friend-chart-delete-title"
-          width="440px"
+        <FriendChartDeleteDialog
+          name={deleteCandidateChart.displayName}
+          restoreFocusId={`friend-menu-${deleteCandidateChart.id}`}
+          pending={status === "deleting"}
           onClose={() => {
             if (status !== "deleting") {
               setDeleteCandidateChart(null);
             }
           }}
-        >
-          <section className="manual-chart-form friend-chart-delete-form add-chart-form">
-            <button
-              className="chart-modal-close modal-close add-chart-modal__close"
-              type="button"
-              aria-label="Close"
-              disabled={status === "deleting"}
-              onClick={() => setDeleteCandidateChart(null)}
-            >
-              <X size={20} aria-hidden="true" />
-            </button>
-            <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
-              <h2 id="friend-chart-delete-title">Delete {deleteCandidateChart.displayName}?</h2>
-              <p className="add-chart-modal__subtitle">This removes the saved chart and cannot be undone.</p>
-            </div>
-            <div className="modal-actions friend-chart-delete-actions">
-              <button
-                className="secondary-button"
-                type="button"
-                disabled={status === "deleting"}
-                onClick={() => setDeleteCandidateChart(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="manual-chart-save manual-chart-delete-confirm"
-                type="button"
-                disabled={status === "deleting"}
-                onClick={() => void removeChart(deleteCandidateChart)}
-              >
-                {status === "deleting" ? "Deleting..." : "Delete chart"}
-              </button>
-            </div>
-          </section>
-        </ModalPortal>
+          onDelete={() => void removeChart(deleteCandidateChart)}
+        />
       )}
       {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
         <FriendProfileChartFullscreen

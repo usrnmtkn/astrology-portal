@@ -18,6 +18,10 @@ It is not a full-site or production release signoff.
   scrollable bodies and fixed submit actions. Native date/time fields fit their
   columns; labels and controls use UI typography. Connection explanations use
   the same shell and retain their complete facts.
+- Saved-chart deletion uses the shared confirmation shell, retains its existing
+  removal callback and pending guards, and returns Cancel focus to the chart's
+  menu trigger explicitly, including in WebKit. Legacy dialog-only styles and
+  hidden form titles were removed; the shared shell owns the visible title.
 - Aspect and house glyphs are centered. House metadata names the house, and
   friend/synastry orb metadata keeps degree/minute precision. Friends controls
   and chart legends use UI typography. Explore signs defines its own stacked
@@ -39,6 +43,10 @@ card/detail opening parity, source replacement/retirement, navigation/reload,
 countdown agreement, close/focus behavior, form submission, scrolling, contrast,
 centered glyphs and sign-grid layout. Rendered screenshots are reviewed locally;
 original owner screenshots and their personal data are not published.
+The 23 existing modal handoff cases also pass, including short viewports,
+scrolling, focus trapping, backdrop behavior, swipe behavior and reduced motion.
+Existing compact timing formatters moved unchanged into the shared timing module;
+event-date consistency checks retain their midnight and DST assertions.
 
 The required browser release gate includes a mobile-parity job running the
 countdown boundary regression and all eight viewport/theme/browser configurations.

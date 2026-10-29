@@ -8,6 +8,7 @@ test.beforeAll(async()=>{
  const result=await build({stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`
  import React,{useState} from 'react';import {createRoot} from 'react-dom/client';
  import {FriendChartModal} from './apps/web/src/features/friends/FriendChartModal';
+ import {FriendChartDeleteDialog} from './apps/web/src/features/friends/FriendChartDeleteDialog';
  import {ConnectionTransitDisclosure} from './apps/web/src/features/friends/ConnectionTransitDisclosure';
  import {AspectBadge} from './apps/web/src/components/charts/AspectBadge';
  import CreateChartDialog from './apps/web/src/features/you/CreateChartDialog';
@@ -16,11 +17,12 @@ test.beforeAll(async()=>{
  import './apps/web/src/styles/friends-detail.css';
  import './apps/web/src/styles/friends-compare-picker.css';
  import {RelationshipChartFullscreen} from './apps/web/src/features/friends/RelationshipChartFullscreen';
- function App(){const [open,setOpen]=useState('');
+ function App(){const [open,setOpen]=useState('');const [deleting,setDeleting]=useState(false);
  const [form,setForm]=useState({chartType:'person',displayName:'Sample Chart',pronouns:'they',relationshipType:'friend',birthDate:'1990-01-01',birthTime:'12:00',birthTimeUnknown:false,birthPlace:'Test City',birthLocation:null});
  const [own,setOwn]=useState({name:'Sample Reader',birthMonth:'01',birthDay:'01',birthYear:'1990',birthHour:'12',birthMinute:'00',birthMeridiem:'PM',unknownBirthTime:false,birthPlace:'Test City',birthLocation:null,currentLocation:'Test City',currentLocationData:null});
  const facts={summary:'This is the complete calculated relationship context.',caution:'These are connections through one endpoint.',groups:[{key:'primary',heading:'The primary transit',rows:[{key:'contact',title:'Saturn square the natal Midheaven',aspect:'square',orb:'0° 16′'}]},{key:'related',heading:'Related contacts',rows:Array.from({length:8},(_,i)=>({key:'related-'+i,title:'Complete related contact '+i,aspect:'trine',orb:'1° 27′'}))}]};
- return <><button id='edit-sample' onClick={()=>setOpen('friend')}>Edit sample chart</button><button onClick={()=>setOpen('own')}>Edit own chart</button><button className='social-secondary-button' onClick={()=>setOpen('wheel')}>Full-screen chart</button>
+ return <><button id='edit-sample' onClick={()=>setOpen('friend')}>Edit sample chart</button><button onClick={()=>setOpen('own')}>Edit own chart</button><button className='social-secondary-button' onClick={()=>setOpen('wheel')}>Full-screen chart</button><button id='delete-sample' onClick={()=>setOpen('delete')}>Delete sample chart</button>
+ {open==='delete'&&<FriendChartDeleteDialog name='Sample Chart' pending={deleting} restoreFocusId='delete-sample' onClose={()=>setOpen('')} onDelete={()=>{window.__mobileDeletes=(window.__mobileDeletes||0)+1;setDeleting(true)}}/>}
  <ConnectionTransitDisclosure heading='Why this involves Sample' facts={facts} description='Complete calculated final description.'/>
  <div className='reading-story-card updates-aspect-row'><AspectBadge aspect='trine'/><span className='updates-aspect-row__glyphs'><span className='planet-glyph'>♀</span></span></div>
  {open==='wheel'&&<RelationshipChartFullscreen mode='synastry' title='Sample comparison' outerName='Sample' outerInitials='SC' comparisonOptions={[{id:'self',displayName:'You',initials:'SR',subtitle:'Your chart',natalChart:null,isSelf:true}]} comparisonPickerOpen={false} comparisonSelectedId='self' onClose={()=>setOpen('')} onComparisonSelect={()=>{}} onComparisonToggle={()=>{}}><svg viewBox='0 0 100 100' aria-label='Synthetic chart shell fixture'><circle cx='50' cy='50' r='40'/></svg></RelationshipChartFullscreen>}
@@ -90,6 +92,22 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
  expect(await page.evaluate(()=>(window as any).__mobileOwnSaves)).toBe(1);
  await page.screenshot({path:info.outputPath('own-chart-form.png')});
  await page.keyboard.press('Escape');
+ await page.getByRole('button',{name:'Delete sample chart',exact:true}).click();
+ const confirmation=page.getByRole('alertdialog',{name:'Delete Sample Chart?',exact:true});
+ await expect(confirmation.getByRole('button',{name:'Cancel',exact:true})).toBeInViewport();
+ await expect(confirmation.getByRole('button',{name:'Delete chart',exact:true})).toBeInViewport();
+ await confirmation.getByRole('button',{name:'Cancel',exact:true}).click();
+ await expect(confirmation).not.toBeVisible();await expect(page.locator('#delete-sample')).toBeFocused();
+ expect(await page.evaluate(()=>(window as any).__mobileDeletes||0)).toBe(0);
+ await page.locator('#delete-sample').click();
+ await confirmation.getByRole('button',{name:'Delete chart',exact:true}).click();
+ expect(await page.evaluate(()=>(window as any).__mobileDeletes)).toBe(1);
+ await expect(confirmation.getByRole('button',{name:'Deleting...',exact:true})).toBeDisabled();
+ await expect(confirmation.getByRole('button',{name:'Cancel',exact:true})).toBeDisabled();
+ await page.keyboard.press('Escape');await expect(confirmation).toBeVisible();
+ await expectReadableTheme(page,'.modal-dialog__header h2, .modal-dialog__content p, .modal-dialog__actions button');
+ await page.screenshot({path:info.outputPath('delete-chart-confirmation.png')});
+ await page.goto('/__mobile-parity');await page.evaluate(()=>document.fonts.ready);
  await expect(page.getByRole('button',{name:'Why this involves Sample',exact:true})).toHaveCSS('font-family',/system-ui/);
  await page.getByRole('button',{name:'Why this involves Sample',exact:true}).click();
  dialog=page.getByRole('dialog',{name:'Why this involves Sample',exact:true});

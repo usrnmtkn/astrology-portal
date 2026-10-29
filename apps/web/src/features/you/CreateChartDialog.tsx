@@ -3,7 +3,7 @@ import { ModalDialog } from "../../components/ModalDialog";
 import CreateChartFlow from "./CreateChartFlow";
 
 /** Keeps birth and current-city forms inside the shared scrollable dialog shell. */
-export default function CreateChartDialog({ onClose, ...flow }: Omit<ComponentProps<typeof CreateChartFlow>, "showHeading" | "showSubmit" | "formId"> & {
+export default function CreateChartDialog({ onClose, ...flow }: Omit<ComponentProps<typeof CreateChartFlow>, "showSubmit" | "formId"> & {
   onClose: () => void;
 }) {
   const title = flow.step === "birth" ? "Your birth information"
@@ -14,6 +14,6 @@ export default function CreateChartDialog({ onClose, ...flow }: Omit<ComponentPr
     actions={flow.step !== "overview" ? <button form={formId} type="submit" className="signup-submit create-chart-save" disabled={flow.saving}>
       {flow.saving ? "Saving…" : flow.step === "birth" ? "Save birth details" : "Save location"}
     </button> : undefined}>
-    <CreateChartFlow {...flow} formId={formId} showHeading={false} showSubmit={false} />
+    <CreateChartFlow {...flow} formId={formId} showSubmit={false} />
   </ModalDialog>;
 }

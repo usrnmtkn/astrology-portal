@@ -63,23 +63,6 @@
   opacity: 0.72;
 }
 
-:is(.theme-dark, [data-theme="dark"]) .add-chart-modal {
-  border-color: var(--friend-add-chart-modal-dark-border);
-  background: var(--friend-add-chart-modal-dark-bg);
-  color-scheme: dark;
-}
-
-:is(.theme-dark, [data-theme="dark"]) .add-chart-modal :where(svg, .lucide) {
-  color: var(--ink);
-  stroke: currentColor;
-}
-
-:is(.theme-dark, [data-theme="dark"]) .add-chart-modal__close {
-  border-color: var(--friend-add-chart-close-dark-border);
-  background: var(--friend-add-chart-close-dark-bg);
-  color: var(--ink);
-}
-
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"],
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="time"],
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field select {

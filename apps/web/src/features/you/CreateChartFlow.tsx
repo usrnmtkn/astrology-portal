@@ -13,11 +13,9 @@ export default function CreateChartFlow({
   saving,
   message,
   onSave,
-  showHeading = true,
   showSubmit = true,
   formId
 }: {
-  showHeading?: boolean;
   showSubmit?: boolean;
   formId?: string;
   form: TransitForm;
@@ -73,10 +71,7 @@ export default function CreateChartFlow({
   if (step === "overview") {
     return (
       <div className="create-chart-flow create-chart-overview">
-        <div className="chart-modal-heading">
-          {showHeading && <h3 id="chart-modal-title">Create your chart</h3>}
-          <p>Three quick steps to unlock your personalized sky.</p>
-        </div>
+        <p>Three quick steps to unlock your personalized sky.</p>
 
         {message && <p className="create-chart-message" role="status">{message}</p>}
 
@@ -110,10 +105,7 @@ export default function CreateChartFlow({
   if (step === "city") {
     return (
       <form id={formId} className="create-chart-flow create-chart-detail" onSubmit={submitCityForm}>
-        <div className="chart-modal-heading">
-          {showHeading && <h3 id="chart-modal-title">Where are you now?</h3>}
-          <p>Your current city sets the sky for today's readings.</p>
-        </div>
+        <p>Your current city sets the sky for today's readings.</p>
 
         <CitySearchField
           label="Current city"
@@ -138,10 +130,7 @@ export default function CreateChartFlow({
 
   return (
     <form id={formId} className="create-chart-flow create-chart-detail" onSubmit={submitBirthForm}>
-      <div className="chart-modal-heading">
-        {showHeading && <h3 id="chart-modal-title">Your birth information</h3>}
-        <p>This pinpoints the exact sky at your first breath.</p>
-      </div>
+      <p>This pinpoints the exact sky at your first breath.</p>
 
       <div className="signup-fields create-chart-fields">
         <label className="signup-field">

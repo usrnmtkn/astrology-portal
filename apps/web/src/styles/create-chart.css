@@ -181,15 +181,6 @@
 }
 
 /* Birth-detail controls use the shared UI scale; their explanatory copy stays narrative. */
-.chart-modal .chart-modal-heading h3 {
-  margin: 0;
-  padding-right: var(--size-6);
-  font-family: var(--font-display);
-  font-size: var(--type-modal-title-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-dialog-title);
-  letter-spacing: var(--tracking-dialog-title);
-}
 .chart-modal .signup-field,
 .chart-modal .create-chart-city-search label,
 .chart-modal .unknown-time {
@@ -208,5 +199,4 @@
   line-height: var(--leading-meta);
   letter-spacing: var(--tracking-normal);
 }
-.chart-modal .chart-modal-heading { margin-bottom: 0; }
 .chart-modal .modal-dialog__actions .create-chart-save { justify-self: stretch; width: 100%; }

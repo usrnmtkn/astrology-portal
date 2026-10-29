@@ -39,7 +39,7 @@
 .modal-dialog__header[data-scrolled] h2 { font-size: var(--type-section-heading-size); }
 .modal-dialog__header[data-scrolled] .modal-dialog__glyph { display: none; }
 .modal-dialog__glyph { display: grid; place-items: center; flex: none; width: var(--size-7); height: var(--size-7); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); font-family: var(--font-glyph); font-size: var(--text-card-title); line-height: var(--leading-label); }
-.modal-dialog__close.modal-close { position: static; flex: none; align-self: flex-start; display: grid; place-items: center; width: var(--size-5); height: var(--size-5); padding: 0; border: 0; }
+.modal-dialog__close.modal-close { position: static; flex: none; align-self: flex-start; border: 0; }
 .modal-dialog__handle { display: none; }
 .modal-dialog__viewport { position: relative; display: flex; min-height: 0; }
 .modal-dialog__viewport::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--space-7); z-index: var(--z-picker); pointer-events: none; background: var(--dialog-bottom-fade); opacity: 0; }

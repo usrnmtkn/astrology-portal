@@ -1,4 +1,4 @@
-import {dateFromDurationInput,dateOnly,differenceInCalendarDays,differenceInCalendarParts,placementCardCountdowns} from "./services/placementCardTiming";
+import {dateFromDurationInput,dateOnly,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
@@ -43,7 +43,7 @@ import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { initialSkyReaderKey, initialSkyReaderAvailable, initialSkyReaderPreview, pendingInitialSkyReaderRequest } from "./services/initialSkyReader";
 import { calendarDayDistance } from "./services/calendarDayDistance";
-import { liveSkyReference, remainingSkyMinutes, skyCivilDate } from "./services/skyClock";
+import { liveSkyReference, skyCivilDate } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitionFacts";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
@@ -3578,65 +3578,6 @@ function formatApproximateDurationCompact(startInput: string | Date, endInput: s
   return remainingMonths > 0
     ? `${years}Y ${remainingMonths}M`
     : `${years}Y`;
-}
-
-function exactDateFromInput(value: string | Date, timeZone = "UTC") {
-  const date = typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
-    ? zonedDateTimeToUtc(value, "12:00 PM", timeZone)
-    : new Date(value);
-
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function formatRemainingClockCompact(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
-  const start = exactDateFromInput(startInput, timeZone);
-  const end = exactDateFromInput(endInput, timeZone);
-
-  if (!start || !end) {
-    return null;
-  }
-
-  const remainingMs = end.getTime() - start.getTime();
-
-  if (remainingMs < 0) {
-    return null;
-  }
-
-  if (remainingMs >= 86_400_000) {
-    return formatCountdown(startInput, endInput, timeZone);
-  }
-
-  const remainingMinutes = remainingSkyMinutes(start, end);
-  const hours = Math.floor(remainingMinutes / 60);
-  const minutes = remainingMinutes % 60;
-
-  return `${hours}H ${minutes}MIN left`;
-}
-
-function formatCountdown(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
-  const parts = differenceInCalendarParts(startInput, endInput, timeZone);
-
-  if (!parts) {
-    return null;
-  }
-
-  if (parts.totalDays < 1) {
-    return "TODAY";
-  }
-
-  if (parts.totalDays < 60) {
-    return parts.years === 0 && parts.months === 1 && parts.days === 0
-      ? "1M left"
-      : `${parts.totalDays}D left`;
-  }
-
-  const segments = [
-    parts.years > 0 ? `${parts.years}Y` : null,
-    parts.months > 0 ? `${parts.months}M` : null,
-    parts.days > 0 ? `${parts.days}D` : null
-  ].filter(Boolean);
-
-  return `${segments.length > 0 ? segments.join(" ") : `${parts.totalDays}D`} left`;
 }
 
 function formatDurationLong(startInput: string | Date, endInput: string | Date, label?: string) {
@@ -16623,11 +16564,9 @@ function PlacementTable({
         {group.positions.map((position) => {
           const activeAspects = aspectsByPlacement.get(position.planet) ?? [];
           const title = placementDetailTitle(position, activeAspects);
-          const dignity = placementDignity(position, "sky");
           const solarPhase = solarPhaseStatusFor(position, positions);
           const statuses = placementStatuses(position);
           const isRetrograde = isDisplayRetrograde(position);
-          const { durationLabel, retrogradeDurationLabel } = placementCardCountdowns(position, generatedAt);
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
@@ -16655,8 +16594,8 @@ function PlacementTable({
                 degree={formatPlanetDegree(position)}
                 description={rowSummary}
                 descriptionLoading={descriptionState === "loading"}
-                dignity={dignity}
-                durationLabel={durationLabel}
+                dignity={placementDignity(position, "sky")}
+                {...placementCardCountdowns(position, generatedAt)}
                 glyph={position.glyph}
                 onClick={openDetail}
                 pointName={position.planet}
@@ -16665,7 +16604,6 @@ function PlacementTable({
                   : undefined}
                 rangeLabel={transitRangeLabel}
                 retrograde={isRetrograde}
-                retrogradeDurationLabel={retrogradeDurationLabel}
                 sign={position.sign}
                 statuses={solarPhase ? [...statuses, solarPhase] : statuses}
                 title={title}
