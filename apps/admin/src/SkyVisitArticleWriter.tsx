@@ -55,7 +55,9 @@ export default function SkyVisitArticleWriter(props: Props) {
       if (!mounted.current) return;
       const rejected = (reason as { payload?: { rejectedGeneration?: { slotValues?: Record<string, string> } } })?.payload?.rejectedGeneration?.slotValues;
       if (rejected) setRaw(rejected);
-      setError(reason instanceof Error ? reason.message : 'Generation failed. Your article has not changed.');
+      const failure = reason as { status?: number; details?: unknown } | null;
+      setError(failure?.status !== 401 && typeof failure?.details === 'string' && failure.details.trim()
+        ? failure.details : reason instanceof Error ? reason.message : 'Generation failed. Your article has not changed.');
     } finally {
       if (inFlight.current === controller) inFlight.current = null;
       if (mounted.current) setBusy(false);
