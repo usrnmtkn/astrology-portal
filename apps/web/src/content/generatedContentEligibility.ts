@@ -92,6 +92,25 @@ export function generatedRowPackageRole(row: Pick<GeneratedContentRow, "facts" |
   };
 }
 
+function readerSourceMetadata(row: Pick<GeneratedContentRow, "content_key" | "source_snapshot"> & {
+  status?: string | null; lane?: string | null; review_state?: string | null;
+}) {
+  const snapshot = row.source_snapshot ?? {};
+  if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state) return snapshot;
+  if (!/^cms\/lunation-article\/\d{4}-\d{2}-\d{2}\/(?:new-moon|full-moon)\/[a-z]+$/u.test(row.content_key)) return snapshot;
+  const metadata = { ...snapshot };
+  for (const field of ['lunationPublicationCheck', 'lunationWorkspace']) {
+    const check = isRecord(snapshot[field]) ? snapshot[field] : null;
+    const lint = check && isRecord(check.lint) ? check.lint : null;
+    // The current validator calls its default profile "legacy". That label
+    // describes the validator, not the article's source or publication state.
+    if (lint?.validationProfile === 'legacy') {
+      metadata[field] = { ...check, lint: { ...lint, validationProfile: undefined } };
+    }
+  }
+  return metadata;
+}
+
 export function isReaderServableGeneratedContentRow(
   row: Pick<GeneratedContentRow, "content_key" | "facts" | "flags" | "provider" | "source_snapshot"> & {
     status?: string | null;
@@ -122,7 +141,7 @@ export function isReaderServableGeneratedContentRow(
   const metadataText = [
     row.content_key,
     row.provider,
-    JSON.stringify(row.source_snapshot ?? {}),
+    JSON.stringify(readerSourceMetadata(row)),
     JSON.stringify(facts ?? {}),
     ...(Array.isArray(row.flags) ? row.flags : [])
   ].join(" ").toLowerCase();

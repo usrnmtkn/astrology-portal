@@ -2,6 +2,11 @@ import { expect, test } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { readerResponse } from "../helpers/reader-response";
 import { watchBrowserErrors } from "./qaRuntimeGuards";
+import { studioApiStore } from '../helpers/studio-api-store';
+import { lunarOwnerDraft } from '../helpers/lunar-owner-publication.mjs';
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import skyHandler from '../../api/sky';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
 // Owner-supplied Calendar preview; the remainder is synthetic test-only copy.
 const opening = "The Full Moon in Aries shines a sharp light on the cost of keeping the peace. We may begin to recognize how much quiet frustration has accumulated beneath our instinct to be accommodating. When you are the one who always rearranges your schedule or swallows an objection, being easy to get along with becomes an expensive habit. Something you agreed to do as a one-time favor has become an expectation, and you are tired of being the default compromise.";
@@ -40,8 +45,46 @@ for (const scenario of scenarios) {
       headline: "Sun fixture", body: sunSummary,
       source_snapshot: { contentType: "mustache-template", contentSystem: "cms-surface-override", allowedSlots: [] }
     }];
+    const store = 'dated' in scenario ? await studioApiStore([
+      {...lunarOwnerDraft(), body: row.body}, rows[1]
+    ]) : null;
+    try {
     await bundledPublications(page);
-    await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse(rows) }));
+    if (store) {
+      await page.context().route('**/*', route => {
+        const request = route.request();
+        return new URL(request.url()).pathname.startsWith('/api/') || !['GET', 'HEAD'].includes(request.method())
+          ? route.abort() : route.continue();
+      });
+      await page.route('**/rest/v1/**', route => route.fulfill({json: []}));
+      await page.route('**/api/sky?**', async route => {
+        const response = {statusCode: 200, setHeader() {}, end(body: string) {
+          void route.fulfill({status: this.statusCode, contentType: 'application/json', body});
+        }};
+        await skyHandler({method: 'GET', url: route.request().url()} as IncomingMessage, response as unknown as ServerResponse);
+      });
+      await page.route('**/api/calendar?**', route => route.fulfill({json: {ok: true, calendar: {days: []}}}));
+      await page.route('**/content-studio-last-known-good.json', route => route.fulfill({json: {
+        schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
+      }}));
+      const draft = lunarOwnerDraft();
+      const published = await store.call({method: 'PATCH', body: {id: draft.id,
+        expectedUpdatedAt: draft.updated_at, ownerAction: 'publish-owner-content'}});
+      expect(published.status).toBe(200);
+      expect(published.payload.rows[0].source_snapshot.lunationPublicationCheck.lint.validationProfile).toBe('legacy');
+      await page.route('**/api/content-publications', async route => {
+        const publications = canonicalPublicationLedger(await store.call({method: 'publications'}));
+        await route.fulfill({headers: {etag: await publicationLedgerTag(publications)}, json: {
+          schema: 'tldr-publications/v1', publications
+        }});
+      });
+      await page.route('**/api/content-reader', async route => {
+        const result = await store.call({method: 'POST', url: '/api/content-reader', body: route.request().postDataJSON()});
+        await route.fulfill({status: result.status, json: result.payload});
+      });
+    } else {
+      await page.route("**/api/content-reader", route => route.fulfill({ json: readerResponse(rows) }));
+    }
     await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
     const card = page.getByLabel("Selected lunar day", { exact: true });
     const moon = card.locator(`[data-guidance-key="${key}"]`);
@@ -77,10 +120,40 @@ for (const scenario of scenarios) {
     expect(await card.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await card.locator(".calendar-sky-card").screenshot({ path: `test-results/lunation-preview-${scenario.kind}-${scenario.theme}-${scenario.width}-${scenario.remainder.length}.png` });
     if('dated' in scenario){
-      await page.goto(`/?date=${scenario.date}#sky/lunation/${scenario.date}/${scenario.sign}`);
+      const eventCard = page.getByRole('button', {name: 'Full Moon in Aries', exact: true});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);
+      await eventCard.click();
+      const detail = page.getByRole('dialog', {name: 'Event detail', exact: true});
+      await expect(detail).toContainText(scenario.opening);
+      await expect(detail.getByRole('heading', {name: 'Full Moon in Aries', exact: true})).toBeVisible();
+      await detail.getByRole('button', {name: 'Read article', exact: true}).click();
+      await expect(page).toHaveURL(new RegExp(`#sky/lunation/${scenario.date}/${scenario.sign}$`));
       await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
+      await page.reload();
+      await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
+      await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
+      const live = (await store!.call({method: 'rows'})).find((item: any) => item.content_key === key);
+      const retired = await store!.call({method: 'POST', url: '/api/admin/content-publication', body: {
+        action: 'retire', id: live.id, contentKey: key, expectedUpdatedAt: live.updated_at
+      }});
+      expect(retired.status).toBe(200);
+      const retirementRead = page.waitForResponse(async response => {
+        if (response.status() !== 200 || !['/api/content-reader', '/api/content-publications'].includes(new URL(response.url()).pathname)) return false;
+        return (await response.json()).publications?.some((item: any) => item.content_key === key && item.state === 'retired') === true;
+      });
+      await page.reload();
+      expect(await (await retirementRead).finished()).toBeNull();
+      await expect(page.locator('#sky-detail-title')).toHaveText('Full Moon in Aries');
+      await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+      await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
+      await expect(page.getByText(remainder.at(-1)!,{exact:true})).toHaveCount(0);
+      await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
+      await expect(eventCard).toBeVisible({timeout:60000});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveCount(0);
+      await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
     }
     assertNoErrors();
+    } finally {store?.close();}
   });
 }

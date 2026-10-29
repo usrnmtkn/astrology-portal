@@ -5,6 +5,8 @@ import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { baseline, source } from '../tests/helpers/sky-review-workflow-api.mjs';
 import { hasExactStudioOwnerApproval } from '../api/_lib/studio-owner-publication.js';
 import { resolveSkyAspectGeneratedContent } from '../apps/web/src/services/skyAspectContent.js';
+import { isReaderServableGeneratedContentRow } from '../apps/web/src/content/generatedContentEligibility.js';
+import { lunarOwnerDraft, lunarOwnerKey, lunarOwnerBody } from '../tests/helpers/lunar-owner-publication.mjs';
 
 const body = 'You always remember the request you left unanswered.\n\nA synthetic complete ending keeps the owner’s exact wording.';
 const ownerId = "a0000000-0000-4000-8000-000000000001";
@@ -60,3 +62,66 @@ try {
   const mixed=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content',body:'Concurrent replacement.'});assert.equal(mixed.status,409);
   console.log('PASS owner publication: real handler, exact server approval, actual reader selection, unchanged prose, no fabricated judge result, stale/forged/mixed requests, re-publication and reader/source boundaries. No model calls.');
 } finally {await store.close();}
+
+const lunar = await createApiStore([lunarOwnerDraft()]);
+try {
+  const draft = lunar.rows.get(lunarOwnerDraft().id)!;
+  const read = () => lunar.invoke('POST', {keys: [lunarOwnerKey]}, '/api/content-reader');
+  assert.equal((await read()).payload.rows.length, 0, 'Unpublished lunar drafts stay private.');
+  const published = await lunar.invoke('PATCH', {id: draft.id, expectedUpdatedAt: draft.updated_at,
+    ownerAction: 'publish-owner-content'});
+  assert.equal(published.status, 200, JSON.stringify(published.payload));
+  const live = published.payload.rows[0];
+  assert.equal(live.source_snapshot.lunationPublicationCheck.lint.validationProfile, 'legacy');
+  assert.equal(live.source_snapshot.lunationWorkspace.lint.validationProfile, 'legacy');
+  assert(hasExactStudioOwnerApproval(live));
+  const metadataBefore = JSON.stringify(live.source_snapshot);
+  const served = await read();
+  assert.equal(served.status, 200);
+  assert.equal(served.payload.rows.length, 1, 'Current lunar validation metadata must not hide published owner copy.');
+  assert.equal(served.payload.rows[0].body, lunarOwnerBody);
+  assert.equal(contentLiveStatuses([live])[0].live, true);
+  assert.equal(JSON.stringify(live.source_snapshot), metadataBefore, 'Eligibility cannot mutate saved validation evidence.');
+
+  for (const path of ['lunationPublicationCheck', 'lunationWorkspace']) {
+    for (const marker of ['legacy', 'unsafe', 'directional', 'editorial-only', 'superseded', 'reference-only', 'raw_quarantine']) {
+      const changed = structuredClone(live);
+      changed.source_snapshot[path].lint.note = marker;
+      assert.equal(isReaderServableGeneratedContentRow(changed), false, `Preserve ${path} ${marker} rejection.`);
+    }
+    for (const value of ['legacy-unsafe', 'unsafe', {label: 'legacy'}]) {
+      const changed = structuredClone(live);
+      changed.source_snapshot[path].lint.validationProfile = value;
+      assert.equal(isReaderServableGeneratedContentRow(changed), false, 'Only the exact known profile label is exempt.');
+    }
+  }
+  for (const patch of [
+    {flags: ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM']},
+    {provider: 'local-normalized-dashboard-source'},
+    {source_snapshot: {...live.source_snapshot, content_role: 'source_material'}},
+    {source_snapshot: {...live.source_snapshot, review_status: 'needs_review'}},
+    {source_snapshot: {...live.source_snapshot, origin: 'legacy'}},
+    {facts: {source: 'legacy'}}
+  ]) {
+    lunar.rows.set(live.id, {...live, ...patch});
+    assert.equal((await read()).payload.rows.length, 0, 'Unsafe or unapproved rows remain absent from the actual reader API.');
+  }
+  for (const content_key of ['cms/lunation-article/invalid', 'sky.aspect.sun.sextile.moon.aries.gemini', 'studio-lunation/2026-09-26/full-moon/aries']) {
+    assert.equal(isReaderServableGeneratedContentRow({...live, content_key}), false, 'Other content families gain no profile exception.');
+  }
+  for (const patch of [{status: 'DRAFT'}, {status: 'ARCHIVED'}, {lane: 'reference'}, {review_state: 'needs-review'}]) {
+    assert.equal(isReaderServableGeneratedContentRow({...live, ...patch}), false, 'The label exception only applies to published serving rows.');
+  }
+  lunar.rows.set(live.id, {...live, body: live.body + ' Unsigned edit.'});
+  assert.equal((await read()).payload.rows.length, 0, 'The exact owner approval still protects reader bytes.');
+  lunar.rows.set(live.id, live);
+  const retired = await lunar.invoke('POST', {action: 'retire', id: live.id, contentKey: lunarOwnerKey,
+    expectedUpdatedAt: live.updated_at}, '/api/admin/content-publication');
+  assert.equal(retired.status, 200, JSON.stringify(retired.payload));
+  const afterRetirement = await read();
+  assert.equal(afterRetirement.payload.rows.length, 0, 'Retirement remains authoritative.');
+  assert(afterRetirement.payload.publications.find((item: any) => item.content_key === lunarOwnerKey).revision
+    > served.payload.publications.find((item: any) => item.content_key === lunarOwnerKey).revision,
+  'The SQL retirement must advance the already-observed fixture ledger revision.');
+  console.log('PASS lunar owner publication: actual publish/read/retire handlers, exact copy, technical lint labels, unsafe metadata and approval boundaries.');
+} finally {await lunar.close();}

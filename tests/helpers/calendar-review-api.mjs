@@ -76,7 +76,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
   const { default: handler } = await import(process.env.CALENDAR_TEST_HANDLER ?? "../../api/admin/generated-content.ts");
   Object.assign(process.env, env);
   const rows = new Map(initial.map(row => [row.id, structuredClone(row)]));
-  const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); });
+  const publication = publicationRpcFixture(() => [...rows.values()], saved => { for (const row of saved) rows.set(row.id, row); }, () => fixturePublications([...rows.values()]));
   let sequence = 0;
   let versionSequence = 0;
   const nextVersion = () => new Date(Date.now() + ++versionSequence).toISOString();

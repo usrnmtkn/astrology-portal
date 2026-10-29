@@ -13,6 +13,7 @@ ready for review. Editorial approval of generated prose remains the owner's.
 | Opening an entry preserves the complete saved writing. | Compare the editor's full body with storage, including opening and final text, and confirm browsing makes no content mutation. |
 | Saved writing reaches New Moon and Full Moon requests. | The complete matching lunar passage and Sun-season writing appear before supporting examples in the plan and actual provider input. Test a Full Moon with opposing Sun/Moon signs, newer draft precedence, changed-source plan invalidation, complete text/hash preservation, empty/archived sources, storage failure before billing and immutable polling receipts. |
 | Editing an existing entry survives save and reload. | Actual-handler browser regression uses isolated storage and exact saved draft bytes. Opening a generation workspace does not replace a reader source. |
+| A published dated article reaches its reader. | Publish through the actual handler with the current validation metadata, then verify the Calendar event card and detail select its title and opening before Calendar → Read article and a direct reader reload preserve the complete saved passage. Retirement must remove it without revealing an older event excerpt. The validator's exact `legacy` profile label at the two known lunar lint paths is technical metadata, not a retired-source flag; other unsafe metadata and publication checks still apply. |
 | Generation has a clear start and stable progress. | Calculated event → Create new draft → saved plan → explicit Create draft; one enabled primary action, no unrelated header Create menu, and no separate approval checkbox. Multiple pending polls leave Back to drafts available, and completion opens persisted text. |
 | Reloads and errors preserve the same request. | Test reload, transient retrieval failure, terminal failure and completion in another tab, with provider-call counts. |
 | Rejection preserves the draft and leads to an explicit replacement. | Reject & regenerate requires a reason and saved edits. Review replacement plan archives the exact title, body, facts, plan and request receipt in one conditional write. Regenerate draft explicitly approves the updated plan and starts one request. Test cancel, stale writes, failed refresh, history after reload, and no old text or saved-list controls while writing. Existing reader entries remain separate. |
@@ -24,6 +25,12 @@ reusable writer; `tests/visual/lunation-writing-studio.spec.ts` covers the dated
 writer. Both run through `playwright.lunation-studio.config.ts`. Write tests use
 isolated storage, including when verifying production assets. Do not rewrite,
 publish or generate real owner content merely to obtain acceptance evidence.
+
+`scripts/test-studio-owner-publication.mts` also checks dated lunar publication
+through the actual publish, reader and retirement handlers, including preserved
+validation evidence, rejected unsafe metadata and exact owner-copy approval.
+The dated cases in `tests/visual/calendar-lunation-preview.spec.ts` use those
+handlers with isolated storage for Calendar and Sky delivery, reload and retirement.
 
 The September 27 recheck identified a navigation gap: all 24 reusable readings
 were saved and reachable through Daily Sky, but the consolidated lunar section
