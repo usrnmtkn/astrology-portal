@@ -2661,7 +2661,16 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect(editor.getByLabel("Full lunar passage", { exact: true })).toHaveValue(body);
     }
     expect(writes.filter((write) => !write.payload.ownerAction)).toHaveLength(2);
+    const publicationResponse = page.waitForResponse(response =>
+      new URL(response.url()).pathname === "/api/admin/generated-content"
+      && response.request().method() === "PATCH"
+      && response.request().postDataJSON()?.ownerAction === "approve-package-revision"
+    );
     await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+    const published = await publicationResponse;
+    expect(published.status()).toBe(200);
+    expect(await published.finished()).toBeNull();
+    expect((await published.json()).publicationReceipt).toBeTruthy();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await row.getByRole("button", { name: "Edit", exact: true }).click();
@@ -6384,7 +6393,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     await action.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(2);
     expect((writes[1].payload.sections as { packageDraft: { body: string } }).packageDraft.body).toBe("second test revision");
+    const publicationResponse = page.waitForResponse(response =>
+      new URL(response.url()).pathname === "/api/admin/generated-content"
+      && response.request().method() === "PATCH"
+      && response.request().postDataJSON()?.ownerAction === "approve-package-revision"
+    );
     await action.getByRole("button", { name: "Save & publish", exact: true }).click();
+    const published = await publicationResponse;
+    expect(published.status()).toBe(200);
+    expect(await published.finished()).toBeNull();
+    expect((await published.json()).publicationReceipt).toBeTruthy();
     await expect(action).toContainText("Published. The reader preview will refresh.");
     await field.fill("third test revision");
     await action.getByRole("button", { name: "Save draft", exact: true }).click();
