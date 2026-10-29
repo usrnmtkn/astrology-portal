@@ -40,6 +40,12 @@ countdown agreement, close/focus behavior, form submission, scrolling, contrast,
 centered glyphs and sign-grid layout. Rendered screenshots are reviewed locally;
 original owner screenshots and their personal data are not published.
 
+The required browser release gate includes a mobile-parity job running the
+countdown boundary regression and all eight viewport/theme/browser configurations.
+Workflow syntax, affected-surface selection, suite coverage and aggregate gate
+regressions pass locally. The complete connection source suite also remains in
+its existing required job.
+
 Complete API/content release gates, final-main integration and deployed-main
 verification remain required before this candidate may be called live. Existing
 held Calendar, outer transit ring and personal Key dates candidates are separate
