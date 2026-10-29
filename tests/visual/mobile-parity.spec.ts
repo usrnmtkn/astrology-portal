@@ -25,7 +25,7 @@ test.beforeAll(async()=>{
  return <><ThemeToggleButton theme={theme} onThemeChange={next=>{setTheme(next);document.documentElement.dataset.theme=next}}/><button id='edit-sample' onClick={()=>setOpen('friend')}>Edit sample chart</button><button onClick={()=>setOpen('own')}>Edit own chart</button><button className='social-secondary-button' onClick={()=>setOpen('wheel')}>Full-screen chart</button><button id='delete-sample' onClick={()=>setOpen('delete')}>Delete sample chart</button>
  {open==='delete'&&<FriendChartDeleteDialog name='Sample Chart' pending={deleting} restoreFocusId='delete-sample' onClose={()=>setOpen('')} onDelete={()=>{window.__mobileDeletes=(window.__mobileDeletes||0)+1;setDeleting(true)}}/>}
  <ConnectionTransitDisclosure heading='Why this involves Sample' facts={facts} description='Complete calculated final description.'/>
- <div className='reading-story-card updates-aspect-row'><AspectBadge aspect='trine'/><span className='updates-aspect-row__glyphs'><span className='planet-glyph'>♀</span></span></div>
+ <div className='reading-story-card updates-aspect-row'><AspectBadge aspect='sextile'/><span className='updates-aspect-row__glyphs'><span className='planet-glyph'>♀</span></span></div>
  {open==='wheel'&&<RelationshipChartFullscreen mode='synastry' title='Sample comparison' outerName='Sample' outerInitials='SC' comparisonOptions={[{id:'self',displayName:'You',initials:'SR',subtitle:'Your chart',natalChart:null,isSelf:true}]} comparisonPickerOpen={false} comparisonSelectedId='self' onClose={()=>setOpen('')} onComparisonSelect={()=>{}} onComparisonToggle={()=>{}}><svg viewBox='0 0 100 100' aria-label='Synthetic chart shell fixture'><circle cx='50' cy='50' r='40'/></svg></RelationshipChartFullscreen>}
  <HoroscopeSigns sign='aries' rising={null} sun={null} onSelect={()=>{}}/>
  {open==='friend'&&<FriendChartModal restoreFocusId='edit-sample' form={form} formCopy={{title:'Add chart',editTitle:'Edit chart',subtitle:'Add a saved chart.',editSubtitle:'Update birth details for this saved chart.',nameLabel:'Name',dateLabel:'Birth date',timeLabel:'Birth time',placeLabel:'Birth place',unknownTime:"I don't know their birth time.",saveSubmit:'Save chart',submit:'Create chart'}} isEditing isEventForm={false} isSubmitting={false} message='' onClose={()=>setOpen('')} onChartTypeChange={chartType=>setForm({...form,chartType})} onFieldChange={(key,value)=>setForm({...form,[key]:value})} onSubmit={e=>{e.preventDefault();window.__mobileFriendSaves=(window.__mobileFriendSaves||0)+1}} citySearchField={<label className='add-chart-field'><span>Birth place</span><input value={form.birthPlace} onChange={e=>setForm({...form,birthPlace:e.target.value})}/></label>}/>}
@@ -61,6 +61,9 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
   const centered=await page.locator(selector).evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const text=range.getBoundingClientRect(),box=el.getBoundingClientRect();return Math.abs(text.x+text.width/2-box.x-box.width/2)<2;});
   expect(centered).toBe(true);
  }
+ await expect(page.locator('.aspect-badge[data-aspect="sextile"]')).toHaveText('⚹');
+ expect(await page.locator('.aspect-badge').evaluate(el=>getComputedStyle(el).fontFamily)).toContain('Noto Sans Symbols');
+ await page.locator('.reading-story-card').screenshot({path:info.outputPath('approved-sextile-icon.png')});
  const signs=page.getByRole('group',{name:'Zodiac signs',exact:true});
  await expect(signs.getByRole('button')).toHaveCount(12);
  for(const sign of await signs.getByRole('button').all()){

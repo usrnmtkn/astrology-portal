@@ -3901,7 +3901,7 @@ const sampleTransits: TransitItem[] = [
   {
     id: "mars-sextile-mercury",
     term: "short",
-    glyph: "✶",
+    glyph: aspectGlyph("sextile"),
     transitPlanet: "Mars",
     aspect: "sextile",
     natalPoint: "Mercury",
@@ -3953,7 +3953,7 @@ const sampleTransits: TransitItem[] = [
   {
     id: "saturn-sextile-ascendant",
     term: "long",
-    glyph: "✶",
+    glyph: aspectGlyph("sextile"),
     transitPlanet: "Saturn",
     aspect: "sextile",
     natalPoint: "Ascendant",

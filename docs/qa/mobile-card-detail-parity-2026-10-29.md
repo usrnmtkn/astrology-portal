@@ -34,6 +34,10 @@ It is not a full-site or production release signoff.
 - Friends chooses its four house cards after validating available reader detail
   and house numbers. Earlier unavailable placements cannot consume all slots
   and hide the section. Unknown birth times still omit house context.
+- The shared sextile cue uses the handoff's six-stroke `⚹` aspect symbol instead
+  of the filled `✶` star, including card badges and article headers. Browser
+  assertions and visual verification of this follow-up remain pending the
+  release runtime handoff.
 
 ## Validation and scope
 
