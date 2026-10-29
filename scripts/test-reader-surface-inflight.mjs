@@ -33,7 +33,7 @@ const row = (content_key, index) => ({ id: id(revision, index), content_key, upd
   sections: {}, source_snapshot: { contentType: 'manual' } });
 const rows = () => [row(mainKey, 0), row(vocabularyKey, 1)];
 const requests = [], unexpected = [];
-let offlineReads = 0;
+let offlineReads = 0, offlineHold = null;
 const originalFetch = globalThis.fetch;
 const originalTimeout = AbortSignal.timeout;
 const state = { client: { from(table) {
@@ -56,6 +56,12 @@ try {
   globalThis.fetch = async (input, init) => {
     if (String(input) === '/content-studio-last-known-good.json') {
       offlineReads++;
+      const gate = offlineHold;
+      if (gate) {
+        gate.started.resolve();
+        await gate.promise;
+        return Response.json({ schema: 'content-studio-last-known-good-v2', rows: [], rowCount: 0, publications: [] });
+      }
       return Response.json({ schema: 'content-studio-last-known-good-v2', rows: rows(), rowCount: 2, publications: publications() });
     }
     if (String(input) !== '/api/content-reader') { unexpected.push(String(input)); throw Error('Unexpected fixture destination'); }
@@ -162,6 +168,37 @@ try {
   const retried = await load();
   assert.equal(requests.length, beforeFailure + 4, 'A later explicit same-generation call must get a new transport');
   assert.equal(body(retried), 'Synthetic complete approved opening revision 4. Synthetic final sentence revision 4.');
+  // A user can retry after one source plane fails while the older targeted
+  // read is still recovering its offline snapshot. Retry must start new live
+  // work rather than inherit that pending failure; peers of the same attempt
+  // should still share it, even after the older fallback finishes.
+  const retryApi = await import(pathToFileURL(modulePath).href + '?retry-during-offline-recovery');
+  offlineHold = { ...deferred(), started: deferred() };
+  failures = 3;
+  const beforeRetry = requests.length;
+  const olderRead = retryApi.loadLiveGeneratedContentForKeys([mainKey]);
+  let retryGate;
+  try {
+    await offlineHold.started.promise;
+    assert.equal(requests.length, beforeRetry + 3);
+    holdNext = deferred(); retryGate = holdNext;
+    const renewed = retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    await waitForRequests(beforeRetry + 4);
+    const sameAttempt = retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    offlineHold.resolve();
+    assert.equal((await olderRead).size, 0, 'The older failed read keeps its own empty recovery result');
+    const afterOlderCompletion = retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    await new Promise(resolve => setTimeout(resolve, 0));
+    assert.equal(requests.length, beforeRetry + 4, 'Older fallback completion cannot evict the newer retry attempt');
+    retryGate.resolve();
+    for (const result of await Promise.all([renewed, sameAttempt, afterOlderCompletion])) assert.equal(body(result), body(retried));
+    await retryApi.loadLiveGeneratedContentForKeys([mainKey], { retryKey: 1 });
+    assert.equal(requests.length, beforeRetry + 5, 'A settled retry does not become a response cache');
+  } finally {
+    offlineHold.resolve(); retryGate?.resolve();
+    await olderRead;
+    offlineHold = null;
+  }
   // Use a fresh actual module instance so dated offline fixtures cannot alter
   // the preceding undated publication-version/retirement controls.
   const datedApi = await import(pathToFileURL(modulePath).href + '?dated-offline');
@@ -173,7 +210,7 @@ try {
   assert.equal(body(await loadDated(['you'], '2026-10-16')), body(retried), 'Other surfaces retain matching dated offline rows');
   assert.ok((await loadDated(['you'], '2026-10-15')).has(vocabularyKey), 'Undated shared vocabulary remains eligible');
   assert.equal(body(await loadDated(['you'])), body(retried), 'An undated request retains dated offline rows');
-  assert.equal(offlineReads, 2, 'Dated controls use a separate actual offline cache');
+  assert.equal(offlineReads, 3, 'Dated controls use a separate actual offline cache');
 
   // A healthy paged inventory can exceed eight seconds in total. Exercise the
   // actual surface entry point with a virtual clock instead of waiting in CI.

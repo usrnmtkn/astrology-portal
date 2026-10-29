@@ -1568,7 +1568,7 @@ async function readLiveGeneratedContentForSurfaces(
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows), previewMode);
 }
 
-export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean } = {}) {
+export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean; retryKey?: number } = {}) {
   await (skyListPublicationReadStarted() && contentKeys.every(isSkyListPublicationKey)
     ? refreshSkyListPublications() : refreshContentPublications());
   const keys = [...new Set(contentKeys.map((key) => key.trim()).filter(Boolean))].sort();
@@ -1578,9 +1578,10 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[], opt
   }
 
   // Several mounted readers can request the same keys during publication
-  // hydration. Share only in-flight work for the same revision/freshness policy;
+  // hydration. An explicit retry must not join an older failed read while its
+  // offline fallback is pending. Peers in the same attempt still share work;
   // settled requests and later revisions always revalidate.
-  return sharePendingReaderContent(["keys", contentPublicationGeneration, options.requireFresh === true, keys],
+  return sharePendingReaderContent(["keys", contentPublicationGeneration, options.requireFresh === true, options.retryKey ?? 0, keys],
     () => readLiveGeneratedContentForKeys(keys, options));
 }
 

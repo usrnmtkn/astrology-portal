@@ -12526,7 +12526,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         skyIngressEssayPublicationKeys(contentPublicationRecords(), {
           planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
         })) : [];
-      const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys) : new Map());
+      const publishedEditions = eligibleSkyDetailContent(editionKeys.length ? await loadLiveGeneratedContentForKeys(editionKeys, { retryKey: skyPlacementFallbackRetryKey }) : new Map());
       return { editionKeys, publishedEditions };
     });
     void Promise.all([sourceRequest, editionsRequest]).then(([{ coreBundle, placementBundle, identity, scope }, { editionKeys, publishedEditions }]) => {
