@@ -6,6 +6,7 @@ import {build, loadConfigFromFile} from 'vite';
 import {fileURLToPath} from 'node:url';
 import {adminLazyBoundaryManifestPlugin} from './admin-lazy-boundary-manifest-plugin.mjs';
 import {calendarLazyEntries, calendarLazyBoundaryFailures} from './admin-lazy-boundary-contract.mjs';
+import {studioCoreEditorBoundaryPlugin} from './studio-core-editor-boundary-plugin.mjs';
 
 const root = fs.realpathSync(fs.mkdtempSync(path.join(tmpdir(), 'admin-lazy-boundary-')));
 try {
@@ -71,4 +72,54 @@ try {
     id => id === guarded ? 'bridge' : id.endsWith('/guard-middle.ts') ? 'middle' : undefined),
   /Deferred Studio module entered startup/u);
   console.log('PASS real Studio startup guard: deferred source allowed; direct and transitive eager source rejected.');
+
+  const dashboard = path.join(src, 'GeneratedContentAdminDashboard.tsx');
+  const webEntry = path.join(src, 'web-entry.ts');
+  fs.writeFileSync(webEntry, `globalThis.openStudio=async()=>(await import('./GeneratedContentAdminDashboard')).default();`);
+  fs.writeFileSync(path.join(src, 'SkyFallbackPlainFields.tsx'), `export default function fields(){return 'Synthetic Summary and complete Body';}`);
+  for (const name of ['SkyFallbackFieldsEditor', 'StudioFormattingEditor']) {
+    fs.writeFileSync(path.join(src, name + '.tsx'), `export default function optional(){return 'Synthetic optional tool';}`);
+  }
+  const coreBuild = (source, input = dashboard, manualChunks) => {
+    fs.writeFileSync(dashboard, `${source};globalThis.openCore=studio;`);
+    return build({ configFile: false, envFile: false, root: admin, logLevel: 'silent', plugins: [studioCoreEditorBoundaryPlugin()],
+      build: { write: false, minify: false, rollupOptions: { input, output: { manualChunks, onlyExplicitManualChunks: true } } } });
+  };
+  const eagerFields = `import fields from './SkyFallbackPlainFields';`;
+  const healthy = `${eagerFields}export default function studio(){return fields();}globalThis.optional=async()=>[(await import('./SkyFallbackFieldsEditor')).default(),(await import('./StudioFormattingEditor')).default()];`;
+  await coreBuild(healthy);
+  await coreBuild(healthy, webEntry);
+  const readerEntry = path.join(src, 'reader-entry.ts');
+  fs.writeFileSync(readerEntry, `globalThis.reader='Synthetic reader-only transport';`);
+  await coreBuild(healthy, readerEntry);
+  const appEntry = path.join(admin, 'index.html');
+  fs.writeFileSync(appEntry, `<script type="module" src="/src/reader-entry.ts"></script>`);
+  await assert.rejects(() => coreBuild(healthy, appEntry), /dashboard is missing from the application build/u);
+  fs.writeFileSync(appEntry, `<script type="module" src="/src/web-entry.ts"></script>`);
+  await coreBuild(healthy, appEntry);
+  fs.writeFileSync(path.join(src, 'core-middle.ts'), `export {default as fields} from './SkyFallbackPlainFields';`);
+  const splitCore = id => id.endsWith('/SkyFallbackPlainFields.tsx') ? 'native-fields' : id.endsWith('/core-middle.ts') ? 'shared-fields' : undefined;
+  await coreBuild(`import {fields} from './core-middle';export default function studio(){return fields();}`, webEntry, splitCore);
+  await assert.rejects(() => coreBuild(`export default async function studio(){return (await import('./SkyFallbackPlainFields')).default();}`),
+    /Basic aspect fields must load with the Studio dashboard/u);
+  fs.writeFileSync(path.join(src, 'core-middle.ts'), `export async function fields(){return (await import('./SkyFallbackPlainFields')).default();}`);
+  await assert.rejects(() => coreBuild(`import {fields} from './core-middle';export default function studio(){return fields();}`, webEntry),
+    /Basic aspect fields must load with the Studio dashboard/u);
+  await assert.rejects(() => coreBuild(`export default function studio(){return 'Missing native fields';}`),
+    /Basic aspect fields must load with the Studio dashboard/u);
+  for (const name of ['SkyFallbackFieldsEditor', 'StudioFormattingEditor']) {
+    await assert.rejects(() => coreBuild(`${eagerFields}import optional from './${name}';export default function studio(){return fields()+optional();}`),
+      /Optional Studio editor entered the basic editing import graph/u);
+    fs.writeFileSync(path.join(src, 'core-middle.ts'), `import optional from './${name}';export default function middle(){return optional();}`);
+    await assert.rejects(() => coreBuild(`${eagerFields}import middle from './core-middle';export default function studio(){return fields()+middle();}`, webEntry,
+      id => id.endsWith(`/${name}.tsx`) ? 'optional-editor' : id.endsWith('/core-middle.ts') ? 'shared-fields' : undefined),
+      /Optional Studio editor entered the basic editing import graph/u);
+  }
+  for (const name of ['admin', 'web']) {
+    const appConfig = await loadConfigFromFile({ command: 'build', mode: 'production' },
+      fileURLToPath(new URL(`../apps/${name}/vite.config.ts`, import.meta.url)), undefined, 'silent');
+    assert(appConfig.config.plugins.flat(Infinity).some(plugin => plugin.name === 'studio-core-editor-boundary'),
+      `The ${name} production build must enforce basic editing availability.`);
+  }
+  console.log('PASS real Rollup core editor guard: standalone/web/static-chain paths pass, reader-only transports remain valid, and eight broken Studio builds are rejected.');
 } finally {fs.rmSync(root,{recursive:true,force:true});}

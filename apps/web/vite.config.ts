@@ -1,5 +1,6 @@
 import { internApplicationStringsPlugin, internPublicJsonStringsPlugin } from "../../scripts/public-json-string-interning-plugin.mjs";
 import { sharedReaderAuthoredRowsPlugin } from "../../scripts/reader-authored-sharing-plugin.mjs";
+import { studioCoreEditorBoundaryPlugin } from "../../scripts/studio-core-editor-boundary-plugin.mjs";
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
@@ -212,6 +213,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      studioCoreEditorBoundaryPlugin(),
       sharedReaderAuthoredRowsPlugin(),
       memoryGraphReferencePlugin(),
       appStartupHtmlPlugin(),
