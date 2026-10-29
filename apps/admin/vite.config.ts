@@ -183,13 +183,14 @@ export default defineConfig(({ command, mode }) => {
               if (/\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:mjs|tsx|ts)$/u, '');
             }
-            // Saved editions, instructions and recovery share their deferred
-            // management code; generation details remain independently loadable.
-            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery|HoroscopeSavedEditions)\.tsx$/u.test(id)
-              || /apps\/admin\/src\/(?:horoscopeEditionDraft|horoscopeEditionDeletion)\.ts$/u.test(id)) return "HoroscopeWritingStudio";
-            // Edition/profile metadata and reconciliation load with their panels.
+            // The edition and its required list/model/operations share one
+            // deferred workspace; optional instructions/recovery stay separate.
+            if (/apps\/admin\/src\/(?:HoroscopeEditionsStudio|HoroscopeSavedEditions)\.tsx$/u.test(id)
+              || /apps\/admin\/src\/(?:horoscopeEditionDraft|horoscopeEditionDeletion)\.ts$/u.test(id)
+              || /apps\/web\/src\/content\/horoscopeEditions\.mjs$/u.test(id)) return "HoroscopeEditionsStudio";
+            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
+            // Profile metadata and reconciliation load with their editing panels.
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
-              || /apps\/web\/src\/content\/horoscopeEditions\.mjs$/u.test(id)
               || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
