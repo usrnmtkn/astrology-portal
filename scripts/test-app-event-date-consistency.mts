@@ -77,6 +77,23 @@ try {
   assert.equal(app.formatCountdown("2026-09-14T12:00:00Z", "2026-09-23T00:05:13.999Z", "America/New_York"), "8D left");
   assert.equal(app.formatCountdown("2026-09-14T12:00:00Z", "2026-09-23T00:05:13.999Z", "UTC"), "9D left");
   assert.equal(app.formatCountdown("2026-09-14", "2026-09-23T00:05:13.999Z", "America/New_York"), "8D left");
+  for (const [end, expected] of [
+    ["2026-10-13T23:00:00Z", "Ends today"],
+    ["2026-10-14T16:00:00Z", "1 day left"],
+    ["2026-10-23T16:00:00Z", "10 days left"],
+    ["2026-10-27T16:00:00Z", "2 weeks left"],
+    ["2026-12-07T16:00:00Z", "8 weeks left"],
+    ["2026-12-13T16:00:00Z", "2 months left"],
+    ["2027-02-08T16:00:00Z", "4 months left"],
+    ["2032-08-03T16:00:00Z", "6 years left"]
+  ]) {
+    assert.equal(app.placementCardCountdownLabel("2026-10-13T16:00:00Z", end, "America/New_York"), expected);
+  }
+  assert.equal(app.placementCardCountdownLabel("2026-12-31T23:00:00Z", "2027-01-01T01:00:00Z", "America/New_York"), "Ends today");
+  assert.equal(app.placementCardCountdownLabel("2026-12-31T23:00:00Z", "2027-01-01T01:00:00Z", "UTC"), "1 day left");
+  assert.equal(app.placementCardCountdownLabel("2026-11-01T03:30:00Z", "2026-11-02T04:30:00Z", "America/New_York"), "1 day left");
+  assert.equal(app.placementCardCountdownLabel("2026-10-13", "2026-10-12", "UTC"), null);
+  assert.equal(app.placementCardCountdownLabel("2026-10-13", "invalid", "UTC"), null);
   assert.equal(sunIngressSeasonWindow("2026-09-14", []), null, "Missing calculated facts must never produce a date-table fallback.");
   assert.equal(sunIngressSeasonSign("2026-09-14", []), null);
   // An ingress date is not an all-day placement. Check both sides of two

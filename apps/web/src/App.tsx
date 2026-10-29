@@ -3692,6 +3692,19 @@ function formatCountdown(startInput: string | Date, endInput: string | Date, tim
   return `${segments.length > 0 ? segments.join(" ") : `${parts.totalDays}D`} left`;
 }
 
+export function placementCardCountdownLabel(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
+  const parts = differenceInCalendarParts(startInput, endInput, timeZone);
+  if (!parts) return null;
+  if (parts.totalDays < 1) return "Ends today";
+
+  // Count partial units as time still remaining, using the selected civil day.
+  const [count, unit] = parts.totalDays < 14 ? [parts.totalDays, "day"]
+    : parts.totalDays < 60 ? [Math.ceil(parts.totalDays / 7), "week"]
+    : parts.totalDays < 365 ? [parts.months + (parts.days > 0 ? 1 : 0), "month"]
+    : [parts.years + (parts.months > 0 || parts.days > 0 ? 1 : 0), "year"];
+  return `${count} ${unit}${count === 1 ? "" : "s"} left`;
+}
+
 function formatDurationLong(startInput: string | Date, endInput: string | Date, label?: string) {
   const duration = getDurationParts(startInput, endInput);
 
@@ -16690,8 +16703,13 @@ function PlacementTable({
           const solarPhase = solarPhaseStatusFor(position, positions);
           const statuses = placementStatuses(position);
           const isRetrograde = isDisplayRetrograde(position);
-          const durationLabel = primaryPlacementDurationLabel(position, generatedAt);
-          const retrogradeDurationLabel = null;
+          const timeZone = position.transitTimeZone || "UTC";
+          const durationLabel = position.transitEnd
+            ? placementCardCountdownLabel(generatedAt, placementTransitEndpoints(position, generatedAt).end, timeZone)
+            : null;
+          const retrogradeDurationLabel = isRetrograde && position.retrogradeEnd
+            ? placementCardCountdownLabel(generatedAt, position.retrogradeEnd, timeZone)
+            : null;
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
