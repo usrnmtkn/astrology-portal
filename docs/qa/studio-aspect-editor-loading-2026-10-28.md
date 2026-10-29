@@ -1,6 +1,6 @@
 # Aspect editor loading repair — October 28, 2026
 
-Base: `da913a5243da265a48d4ee194ca7f5d8c0d34f28`, refreshed `origin/main`.
+Base: `c0a7c91c9816003445a32249f7e959ff69f1a1b9`, refreshed `origin/main`.
 Branch: `fix/studio-aspect-editor-loading`.
 
 ## Cause and scope
@@ -52,12 +52,23 @@ or paid generation was changed. These are local checks, not deployment evidence.
 
 ## Bundle accounting
 
-Matched independently installed main/repair builds use native ARM Node 22.20.0
-and identical synthetic Supabase settings. Entry raw/gzip and aggregate gzip
-change from `810310 / 234777 / 853580` to `811832 / 235265 / 853972` bytes.
-The eager editing controls cost 1,522 raw entry bytes and 488 gzip bytes; aggregate
-gzip grows by 392 bytes. The recorded narrow allocation leaves 168 raw entry,
-135 entry gzip and 178 aggregate gzip bytes of headroom. Other boundary,
-reader-startup, memory-graph, privacy and runtime gates remain enforced.
+Matched independently installed builds of current main `c0a7c91c9` and the
+combined repair use native ARM Node 22.20.0 and identical synthetic Supabase
+settings. Entry raw/gzip and aggregate gzip change from
+`813339 / 235895 / 855998` to `814861 / 236421 / 856374` bytes.
+The eager editing controls cost 1,522 raw entry bytes and 526 gzip bytes;
+aggregate gzip grows by 376 bytes. Preserve main's full-visit article allocation
+and add only the scoped 1,600 raw / 500 gzip startup allowance. This leaves 239
+raw and 229 entry gzip bytes. The aggregate cap stays at 857,000 bytes, leaving
+626 bytes. Other boundary, reader-startup, memory-graph, privacy and runtime
+gates remain enforced.
+
+The first CI matrix exposed the independently repaired mobile pointer race in
+PR #1367. The combined candidate passed its four deterministic pointer-race
+cases and six recovery cases. All 55 applicable hosted checks subsequently
+passed on `f79aec806`. Main then advanced through PR #1366; the final integration
+preserves its full-visit article props, callbacks, writer/workspace packaging,
+controls and API behavior. Only the bundle-accounting conflict needed manual
+resolution. Fresh API and browser gates are rerun on that final base.
 
 Commit, CI, merge and deployed verification are recorded on the release PR.
