@@ -187,8 +187,9 @@ export default defineConfig(({ command, mode }) => {
             // management code; generation details remain independently loadable.
             if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery|HoroscopeSavedEditions)\.tsx$/u.test(id)
               || /apps\/admin\/src\/(?:horoscopeEditionDraft|horoscopeEditionDeletion)\.ts$/u.test(id)) return "HoroscopeWritingStudio";
-            // Profile metadata and reconciliation load with their editing panels.
+            // Edition/profile metadata and reconciliation load with their panels.
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
+              || /apps\/web\/src\/content\/horoscopeEditions\.mjs$/u.test(id)
               || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
             // The same summary workspaces use these two small source loaders.
             // Share their transport without moving the complete JSON artifacts.
