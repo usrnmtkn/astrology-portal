@@ -310,7 +310,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        phase: [reader, studio, recovery]
+        phase: [reader, reader-summary, studio, recovery]
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -324,36 +324,39 @@ jobs:
       - run: bash scripts/ci-install-playwright.sh
       - run: npm run build:knowledge
       - name: Verify daily Sky summary composition
-        if: matrix.phase == 'reader'
+        if: matrix.phase == 'reader-summary'
         run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs && node --import tsx scripts/test-calendar-template-preview.mts
-      - name: Verify daily Sky summary reader
+      - name: Verify Sky reader loading and recovery
         if: matrix.phase == 'reader'
-        run: npx playwright test -c playwright.config.ts --workers=1 tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
+        run: npx playwright test -c playwright.config.ts --workers=1 --output=test-results/sky-summary/reader tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts
+      - name: Verify daily Sky summary reader
+        if: matrix.phase == 'reader-summary'
+        run: npx playwright test -c playwright.config.ts --workers=1 --output=test-results/sky-summary/summary tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
       - name: Verify public Sky does not wait for the login SDK
         if: matrix.phase == 'reader'
         env:
           TLDR_NATIVE_PUBLIC_READER: "1"
           VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_visual_fixture"
-        run: npx playwright test -c playwright.config.ts --project=chromium-desktop --workers=1 tests/visual/sky-anonymous-startup.spec.ts
+        run: npx playwright test -c playwright.config.ts --project=chromium-desktop --workers=1 --output=test-results/sky-summary/native tests/visual/sky-anonymous-startup.spec.ts
       - name: Verify daily Sky summary Studio
         if: matrix.phase == 'studio'
         run: |
-          npx playwright test -c playwright.sky-studio.config.ts
-          npx playwright test -c playwright.sky-forecast.config.ts tests/visual/calendar-template-preview.spec.ts tests/visual/calendar-season-transitions.spec.ts tests/visual/sky-forecast-studio.spec.ts
-          npx playwright test -c playwright.config.ts --workers=1 tests/visual/calendar-passage-editor.spec.ts tests/visual/retrograde-history.spec.ts tests/visual/article-library.spec.ts tests/visual/season-article.spec.ts tests/visual/app-cold-formatting.spec.ts
+          npx playwright test -c playwright.sky-studio.config.ts --output=test-results/sky-summary/studio
+          npx playwright test -c playwright.sky-forecast.config.ts --output=test-results/sky-summary/forecast tests/visual/calendar-template-preview.spec.ts tests/visual/calendar-season-transitions.spec.ts tests/visual/sky-forecast-studio.spec.ts
+          npx playwright test -c playwright.config.ts --workers=1 --output=test-results/sky-summary/editor tests/visual/calendar-passage-editor.spec.ts tests/visual/retrograde-history.spec.ts tests/visual/article-library.spec.ts tests/visual/season-article.spec.ts tests/visual/app-cold-formatting.spec.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
         if: matrix.phase == 'studio'
         run: node scripts/check-admin-bundle-budgets.mjs
       - name: Verify owner sign-in return and storage-timeout recovery
         if: matrix.phase == 'recovery'
-        run: npx playwright test -c playwright.studio-auth.config.ts
+        run: npx playwright test -c playwright.studio-auth.config.ts --output=test-results/sky-summary/auth
       - name: Verify Friends recovery, transit visibility, and Calendar dates
         if: matrix.phase == 'recovery'
         run: |
           node --experimental-strip-types scripts/test-sky-aspect-date-range.mjs
           node scripts/test-you-transit-live-content-wiring.mjs
           node --import tsx scripts/test-transit-article-description.mts
-          npx playwright test -c playwright.reader-recovery.config.ts
+          npx playwright test -c playwright.reader-recovery.config.ts --output=test-results/sky-summary/recovery
       - name: Upload Sky summary artifacts
         if: always()
         uses: actions/upload-artifact@v6
