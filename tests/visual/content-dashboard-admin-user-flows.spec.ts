@@ -5,6 +5,7 @@ import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
 import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
 import { studioApiStore } from "../helpers/studio-api-store";
 import { workspaceFixtureRows, workspaceVisitFacts } from "../helpers/sky-placement-workspace-fixtures";
+import { holdSkySourcesUntilTemplatePointer } from '../helpers/sky-source-pointer-race';
 import { readerResponse } from '../helpers/reader-response';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
@@ -9502,12 +9503,14 @@ test("Natal editorial library owner draft preview", async ({ page }) => {
 });
 
 for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
-  test(`Sky planet and sign workspace preserves separate writing ${theme} ${width}`, async ({ page }) => {
+  test(`Sky planet and sign workspace preserves separate writing ${theme} ${width}`, async ({ page }, testInfo) => {
     test.setTimeout(90_000);
     const initial = await workspaceFixtureRows();
     const writes: Array<{ method: string; payload: Record<string, any> }> = [];
     const generated: string[] = [];
     await seedAdminApi(page, { generatedRows: initial, useGeneratedContentHandler: true, onGeneratedContentWrite: write => { writes.push(write); } });
+    const pointerRace = await holdSkySourcesUntilTemplatePointer(page);
+    await page.route('**/rest/v1/rpc/content_runtime_revision', route => route.fulfill({ json: now }));
     await page.route('**/api/admin/sky-article-template-slots**', async route => { generated.push(route.request().url()); await route.abort(); });
     await page.route('**/api/admin/sky-article-facts?**', route => {
       const url = new URL(route.request().url());
@@ -9559,13 +9562,17 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await page.screenshot({ path: `test-results/sky-placement-workspace/default-${theme}-${width}.png` });
     await tabs.getByRole('tab', { name: 'Writing setup', exact: true }).press('Enter');
     await expect(tabs.getByRole('tab', { name: 'Writing setup', exact: true })).toHaveAttribute('aria-selected', 'true');
-    await workspace.getByRole('button', { name: 'Edit reusable template', exact: true }).click();
+    await pointerRace.ready();
+    await pointerRace.activate(Boolean(testInfo.project.use.hasTouch));
+    await pointerRace.verify();
     const editor = page.getByRole('dialog', { name: 'Generated content editor' });
     await expect(editor).toBeVisible({ timeout: routeReadyTimeoutMs });
     await expect(editor.getByRole('textbox', { name: 'Article body', exact: true })).toHaveValue(initial[2].body!);
     expect(writes).toHaveLength(0);
     await editor.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(editor).toHaveCount(0);
+    await expect(workspace.getByRole('region', { name: 'Sky placement reader sources' })).not.toHaveAttribute('style', /height:/u);
+    await pointerRace.verifyCleanup();
     await tabs.getByRole('tab', { name: 'This visit', exact: true }).press('Enter');
     await expect(tabs.getByRole('tab', { name: 'This visit', exact: true })).toHaveAttribute('aria-selected', 'true');
     await expect(body).toHaveValue(initial[0].body!);

@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Page, type Request } from "@playwright/test";
 import "./qaUnresolvedContentFixtures";
 
 export const routeReadyTimeoutMs = 15_000;
@@ -6,6 +6,7 @@ export const routeLoadBudgetMs = 15_000;
 
 export function watchBrowserErrors(page: Page) {
   const errors: string[] = [];
+  const cancelledAssets: Array<{ request: Request; message: string }> = [];
   const ignoredConsolePatterns = [
     /Failed to load resource/i,
     /net::ERR_/i,
@@ -21,7 +22,13 @@ export function watchBrowserErrors(page: Page) {
   page.on("requestfailed", request => {
     const pathname = new URL(request.url()).pathname;
     const failure = request.failure()?.errorText ?? "unknown failure";
-    if (/\.(?:js|css)$/u.test(pathname) && !/ERR_ABORTED/u.test(failure)) errors.push(`asset: ${pathname}: ${failure}`);
+    if (/\.(?:js|css)$/u.test(pathname) && !/ERR_ABORTED/u.test(failure)) {
+      const message = `asset: ${pathname}: ${failure}`;
+      // WebKit reports removed reader-frame downloads as "cancelled". A
+      // cancellation in a frame that remains attached is still a test failure.
+      if (failure === 'cancelled') cancelledAssets.push({ request, message });
+      else errors.push(message);
+    }
   });
   page.on("response", response => {
     const pathname = new URL(response.url()).pathname;
@@ -38,6 +45,7 @@ export function watchBrowserErrors(page: Page) {
   });
 
   return () => {
+    for (const { request, message } of cancelledAssets) if (!request.frame().isDetached()) errors.push(message);
     expect(errors, `Unexpected browser errors:\n${errors.join("\n")}`).toEqual([]);
   };
 }
