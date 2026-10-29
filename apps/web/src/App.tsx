@@ -13585,6 +13585,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       return;
     }
 
+    if (personalTransitSourceStatus !== "ready") {
+      setPersonalTimingGenerated(null);
+      setPersonalTimingGeneratedStatus(personalTransitSourceStatus === "error" ? "error" : "loading");
+      return;
+    }
+
     const rendered = dailyGlanceGeneratedContent(
       userProfile,
       selectedDateSky,
@@ -13600,6 +13606,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     selectedDateSky,
     skyDate,
     profileNatalSky,
+    personalTransitSourceStatus,
+    fallbackArchitectureV3Version,
     userProfile?.id,
     userProfile?.charts[0]?.id,
     userProfile?.charts[0]?.birthTime
@@ -17891,6 +17899,7 @@ function ProfileView({
       })
     : [];
   const dailyDoDont = (() => {
+    if (transitCopyLoading) return null;
     const seeded = new Set(["moon", "venus", "mars", "mercury", "saturn"]);
     const transitCandidate = qualifyingDailyTransits
       .filter((candidate) => seeded.has(normalizeContentIdPart(candidate.natalPoint)))

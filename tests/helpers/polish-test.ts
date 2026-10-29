@@ -1,3 +1,4 @@
+import { installSyntheticNetworkGuard } from './synthetic-network-guard';
 import { writeFile } from "node:fs/promises";
 import { test as base, expect, type Page, type TestInfo } from '@playwright/test';
 export * from '@playwright/test';
@@ -24,9 +25,8 @@ export async function auditReaderScreen(page: Page, info: TestInfo, label='scree
   expect(history,'Controls must remain styled during the journey').toEqual([]);
 }
 
-export const test=base.extend({
-  page: async({page},use,info)=>{
-    await page.addInitScript(()=>{
+export async function installReaderPolishObserver(page: Page) {
+  await page.addInitScript(()=>{
       const records:unknown[]=[];const firstSeen=new WeakMap<Element,number>();const recorded=new Set<string>();
       Object.assign(window,{__readerPolishIssues:records});
       const sample=()=>{
@@ -43,6 +43,14 @@ export const test=base.extend({
       };
       document.addEventListener('DOMContentLoaded',()=>{sample();window.setInterval(sample,250);},{once:true});
     });
+}
+
+export const test=base.extend({
+  page: async({page},use,info)=>{
+    const { unhandledExternal, staticFontRequests, syntheticRealtimeRequests } = process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1'
+      ? await installSyntheticNetworkGuard(page.context(), new URL(info.project.use.baseURL!).origin)
+      : { unhandledExternal: [] as string[], staticFontRequests: [] as string[], syntheticRealtimeRequests: [] as string[] };
+    await installReaderPolishObserver(page);
     const screenshot=page.screenshot.bind(page);let checkpoint=0;
     page.screenshot=async options=>{
       if(!page.isClosed()&&page.url()!=='about:blank') {
@@ -57,6 +65,27 @@ export const test=base.extend({
       return bytes;
     };
     await use(page);
+    if (process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1') {
+      await info.attach('isolated-network-guard', {
+        body: JSON.stringify({ unhandledExternal, staticFontRequests, syntheticRealtimeRequests }, null, 2), contentType: 'application/json'
+      });
+      expect(unhandledExternal, 'Synthetic UI checks must not dispatch unhandled external requests').toEqual([]);
+    }
     if(info.status==='passed')await auditReaderScreen(page,info);
+  }
+});
+
+// Source-contract cases always install containment, including normal CI shards.
+export const syntheticMemberTest = test.extend({
+  page: async ({ page }, use, info) => {
+    if (!['localhost', '127.0.0.1', '[::1]', '::1'].includes(new URL(info.project.use.baseURL!).hostname)) {
+      throw new Error('Synthetic member sources require an isolated loopback preview.');
+    }
+    const network = await installSyntheticNetworkGuard(page.context(), new URL(info.project.use.baseURL!).origin);
+    try { await use(page); }
+    finally {
+      await info.attach('member-source-network-guard', { body: JSON.stringify(network, null, 2), contentType: 'application/json' });
+      expect(network.unhandledExternal).toEqual([]);
+    }
   }
 });

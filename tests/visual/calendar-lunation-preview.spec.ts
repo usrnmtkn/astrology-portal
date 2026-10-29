@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Request } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { readerResponse } from "../helpers/reader-response";
 import { watchBrowserErrors } from "./qaRuntimeGuards";
@@ -22,9 +22,28 @@ const scenarios = [
 ];
 
 for (const scenario of scenarios) {
-  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs ${"dated" in scenario ? "dated" : "reusable"}`, async ({ page }) => {
+  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs ${"dated" in scenario ? "dated" : "reusable"}`, async ({ page, browserName }, testInfo) => {
     test.setTimeout(120_000);
-    const assertNoErrors = watchBrowserErrors(page);
+    const assertNoErrors = watchBrowserErrors(page, { webkitReaderReload: browserName === 'webkit' });
+    const assetRequests: Request[] = [];
+    page.on('request', request => {
+      if (/^\/assets\/.*\.(?:js|css)$/u.test(new URL(request.url()).pathname)) assetRequests.push(request);
+    });
+    let checkedAssets = 0;
+    const finishAssetReads = async () => {
+      do {
+        const batch = assetRequests.slice(checkedAssets);
+        await Promise.all(batch.map(async request => {
+          const response = await request.response();
+          expect(response, 'An executable asset must finish before deliberate document replacement').not.toBeNull();
+          expect(response!.status()).toBe(200);
+          expect(await response!.finished()).toBeNull();
+          expect(request.failure()).toBeNull();
+        }));
+        checkedAssets += batch.length;
+        await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+      } while (checkedAssets < assetRequests.length);
+    };
     await page.setViewportSize({ width: scenario.width, height: 1000 });
     await page.clock.setFixedTime(new Date(`${scenario.date}T22:00:00Z`));
     await page.emulateMedia({ reducedMotion: "reduce" });
@@ -130,7 +149,8 @@ for (const scenario of scenarios) {
       await expect(page).toHaveURL(new RegExp(`#sky/lunation/${scenario.date}/${scenario.sign}$`));
       await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
-      await page.reload();
+      await finishAssetReads();
+      await assertNoErrors.reload();
       await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
       const live = (await store!.call({method: 'rows'})).find((item: any) => item.content_key === key);
@@ -138,22 +158,31 @@ for (const scenario of scenarios) {
         action: 'retire', id: live.id, contentKey: key, expectedUpdatedAt: live.updated_at
       }});
       expect(retired.status).toBe(200);
+      await finishAssetReads();
       const retirementRead = page.waitForResponse(async response => {
         if (response.status() !== 200 || !['/api/content-reader', '/api/content-publications'].includes(new URL(response.url()).pathname)) return false;
         return (await response.json()).publications?.some((item: any) => item.content_key === key && item.state === 'retired') === true;
       });
-      await page.reload();
+      await assertNoErrors.reload();
       expect(await (await retirementRead).finished()).toBeNull();
       await expect(page.locator('#sky-detail-title')).toHaveText('Full Moon in Aries');
       await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
       await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toHaveCount(0);
+      await finishAssetReads();
       await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
       await expect(eventCard).toBeVisible({timeout:60000});
       await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveCount(0);
       await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
     }
+    await finishAssetReads();
     assertNoErrors();
-    } finally {store?.close();}
+    } finally {
+      store?.close();
+      await testInfo.attach('intentional-reload-cancellations', {
+        body: JSON.stringify({ count: assertNoErrors.reloadCancellations.length, events: assertNoErrors.reloadCancellations }),
+        contentType: 'application/json'
+      });
+    }
   });
 }
