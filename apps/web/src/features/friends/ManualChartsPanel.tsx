@@ -1419,7 +1419,6 @@ export function ManualChartsPanel({
     }
 
     return currentSkyHouseActivations(currentSky, selectedFriendReadyNatalChart)
-      .slice(0, 4)
       .map((activation) => {
         const transit = {
           id: activation.id,

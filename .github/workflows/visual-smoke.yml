@@ -534,12 +534,15 @@ jobs:
       - run: npx playwright install --with-deps webkit
       - name: Verify calculated placement countdown boundaries
         run: node --import tsx scripts/test-placement-card-countdowns.mts
-      - name: Verify forecast return URL boundaries
-        run: npm run test:friends-routing
+      - name: Verify forecast return and house selection boundaries
+        run: |
+          npm run test:friends-routing
+          node --import tsx scripts/test-friend-transits-brief.mts
+          node --import tsx scripts/test-friend-transits-brief-render.mjs
       - name: Verify mobile dialogs, glyphs, signs and placement countdowns
         run: >-
           npx playwright test -c playwright.mobile-parity.config.ts
-          --grep 'Mobile parity:|Planetary and Sky cards share remaining countdowns|Day sheet social transit returns'
+          --grep 'Mobile parity:|Planetary and Sky cards share remaining countdowns|Day sheet social transit returns|House transit profiles'
       - name: Upload mobile parity screenshots and traces
         if: always()
         uses: actions/upload-artifact@v6

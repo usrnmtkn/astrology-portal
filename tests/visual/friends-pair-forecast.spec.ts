@@ -22,15 +22,16 @@ const contact = (planet: string, aspect: string, units: number, owner: 'reader'|
 });
 const authoredRows = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json','utf8')).authoredCards;
 
-async function forecastFixture(page: Page, width: number, theme: string, realCalculations: boolean | "personal" = false, multipleLinks = false) {
-  const at = '2026-10-25T16:00:00.000Z';
+async function forecastFixture(page: Page, width: number, theme: string, realCalculations: boolean | "personal" = false, multipleLinks = false, birthHour = 12, date = '2026-10-25') {
+  const at = `${date}T16:00:00.000Z`;
   const location = { label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
-  const birth = new Date('1990-01-01T17:00:00Z');
+  const birth = new Date(Date.parse('1990-01-01T05:00:00Z') + birthHour * 3_600_000);
+  const birthTime = birthHour === 12 ? '12:00 PM' : `${String(birthHour).padStart(2,'0')}:00`;
   const natal = { ...await getAstrodienstSky(location, birth), birthTimeKnown: true };
   const key = natalSkySnapshotCacheKey(location, birth);
   const user = { id: 'forecast-reader', email: 'reader@example.test', aud: 'authenticated', role: 'authenticated', app_metadata: { provider: 'email' }, user_metadata: { name: 'Fixture Reader' } };
   const profile = { id: user.id, name: 'Fixture Reader', email: user.email, provider: 'email', currentLocation: location.label, currentLocationData: location,
-    charts: [{ id: 'forecast-natal', name: 'Fixture Reader', type: 'Birth chart', birthDate: '1990-01-01', birthTime: '12:00 PM', birthCity: location.label, birthLocation: location }] };
+    charts: [{ id: 'forecast-natal', name: 'Fixture Reader', type: 'Birth chart', birthDate: '1990-01-01', birthTime, birthCity: location.label, birthLocation: location }] };
   const authKey = `sb-${new URL(process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
   await page.setViewportSize({ width, height: 1000 });
   await page.clock.setFixedTime(new Date(at));
@@ -74,7 +75,7 @@ async function forecastFixture(page: Page, width: number, theme: string, realCal
       localStorage.setItem('tldrastro:userProfile', JSON.stringify(profile));
       localStorage.setItem(authKey, JSON.stringify({ access_token: 'synthetic-forecast-session', refresh_token: 'synthetic-refresh', expires_at: Date.parse(at) / 1000 + 3600, token_type: 'bearer', user }));
       localStorage.setItem(key, JSON.stringify({ schema, cacheKey: key, snapshot: natal, verifiedAt: at }));
-      localStorage.setItem('tldrastro:manualCharts:forecast-reader', JSON.stringify([{ id: 'forecast-saved', ownerUserId: user.id, chartType: 'person', displayName: 'Fixture Friend', firstName: 'Fixture', relationshipType: 'friend', birthDate: '1990-01-01', birthTime: '12:00 PM', birthTimeUnknown: false, birthPlace: location.label, birthLocation: location, natalChart: natal, createdAt: at, updatedAt: at }]));
+      localStorage.setItem('tldrastro:manualCharts:forecast-reader', JSON.stringify([{ id: 'forecast-saved', ownerUserId: user.id, chartType: 'person', displayName: 'Fixture Friend', firstName: 'Fixture', relationshipType: 'friend', birthDate: '1990-01-01', birthTime: profile.charts[0].birthTime, birthTimeUnknown: false, birthPlace: location.label, birthLocation: location, natalChart: natal, createdAt: at, updatedAt: at }]));
     }
     const rateFixtureContacts=(contacts:any[])=>({rating:contacts.length?'tense':'quiet',flow:0,friction:contacts.length?35:0,drivers:contacts.map(c=>c.id)});
     const OriginalWorker = window.Worker;
@@ -362,6 +363,39 @@ for(const owner of ['reader','friend'] as const) test(`Day sheet real personal a
   await link.click();await expect(article).toBeVisible({timeout:60_000});
   await page.getByRole('button',{name:owner==='reader'?'Back to updates':'Close detail',exact:true}).click();await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');await expect(tile).toBeFocused();
+});
+
+test('House transit profiles keep available readings after unavailable placements',async({page,baseURL},info)=>{
+  test.setTimeout(180_000);
+  const guard=await installSyntheticNetworkGuard(page.context(),new URL(baseURL!).origin);
+  const width=page.viewportSize()!.width,theme=info.project.use.colorScheme==='dark'?'dark':'light';
+  const {natal}=await forecastFixture(page,width,theme,true,false,5,'2026-10-29');
+  expect(natal.ascendant).toBe('Sagittarius');
+  await page.goto('/?date=2026-10-29#friends?tab=charts&chart=forecast-saved&view=transits');
+  const houses=page.getByRole('region',{name:'House transits',exact:true});
+  await expect(houses).toBeVisible({timeout:60_000});
+  await expect(houses.locator('.reading-story-card')).toHaveCount(4);
+  await page.evaluate(()=>document.fonts.ready);
+  await houses.screenshot({path:info.outputPath('house-transit-cards.png')});
+  const card=houses.locator('.reading-story-card').first(),title=await card.locator('.updates-aspect-row__title').innerText();
+  await card.click();
+  await expect(page.locator('.sky-detail-article')).toBeVisible({timeout:60_000});
+  await expect(page.locator('.sky-detail-article h1')).toHaveText(title);
+  await page.getByRole('button',{name:'Close detail',exact:true}).click();await expect(houses).toBeVisible();
+  await page.reload();await expect(houses.locator('.reading-story-card')).toHaveCount(4,{timeout:60_000});
+  await page.goto('/?date=2026-10-29#you');
+  await expect(page.getByRole('region',{name:'Planets moving through your houses',exact:true})).toBeVisible({timeout:60_000});
+  await page.evaluate(()=>{
+    const key='tldrastro:manualCharts:forecast-reader',charts=JSON.parse(localStorage.getItem(key)!);
+    charts[0].birthTimeUnknown=true;charts[0].birthTime=null;charts[0].natalChart.birthTimeKnown=false;
+    localStorage.setItem(key,JSON.stringify(charts));
+  });
+  await page.goto('/?date=2026-10-29#friends?tab=charts&chart=forecast-saved&view=transits');
+  await expect(page.getByRole('region',{name:'Fixture Friend chart profile',exact:true})).toBeVisible({timeout:60_000});
+  await expect(page.locator('.friend-transits-stage .friend-transit-row').first()).toBeVisible({timeout:60_000});
+  await expect(houses).toHaveCount(0);
+  await page.evaluate(()=>document.fonts.ready);
+  expect(guard.unhandledExternal).toEqual([]);
 });
 
 for(const start of ['/friends?tab=feed','/#friends?tab=feed']) test(`Day sheet social transit returns to selected dialog ${start}`,async({page,baseURL},info)=>{

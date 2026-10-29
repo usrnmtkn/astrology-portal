@@ -31,6 +31,9 @@ It is not a full-site or production release signoff.
   their selected friend/day dialog as a same-origin return URL. Normal Back
   keeps using browser history; reopened articles without entry state restore
   that exact dialog. Invalid or external return URLs are ignored.
+- Friends chooses its four house cards after validating available reader detail
+  and house numbers. Earlier unavailable placements cannot consume all slots
+  and hide the section. Unknown birth times still omit house context.
 
 ## Validation and scope
 
@@ -63,9 +66,20 @@ both themes. One earlier icon test asserted raw floating-point bounds as an
 integer and was corrected to verify exact CSS dimensions and subpixel tolerance;
 the failed run is retained locally. Routing validation and CSS/token audits pass.
 
+House-selection checks reproduce the missing Friends section with calculated
+Sagittarius-rising fixtures, where the first four placements have no admitted
+detail. All eight browser configurations now show four available house readings,
+open their matching article, retain the section after Back/reload, and omit it
+after the same synthetic chart changes to an unknown birth time. The You house
+section remains visible for the known-time profile. A source/calculation audit
+also covers all twelve rising signs. Unit, render and provenance checks pass.
+An earlier matrix completed its assertions but reported a pending font request
+during teardown; the test now waits for font readiness, and the fresh rerun exits
+cleanly. Mobile light/dark house-card screenshots were inspected locally.
+
 The required browser release gate includes a mobile-parity job running the
-countdown and return-URL boundary regressions and 32 browser cases across all
-eight viewport/theme/browser configurations.
+countdown, return-URL and house-selection boundary regressions and 40 browser
+cases across all eight viewport/theme/browser configurations.
 Workflow syntax, affected-surface selection, suite coverage and aggregate gate
 regressions pass locally. The complete connection source suite also remains in
 its existing required job.

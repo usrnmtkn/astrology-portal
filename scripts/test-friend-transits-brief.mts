@@ -130,4 +130,22 @@ const incompleteGuidance = buildFriendTransitsBrief({
 assert.equal(incompleteGuidance.daily, null, "Partial Do/Don't sets must not create a daily brief lane.");
 assert.equal(incompleteGuidance.hasAnyTransit, false);
 
+const rankedHouseTransits = [
+  ...Array.from({ length: 4 }, (_, index) => ({ ...brief.houseContext[0]!, id: `unavailable-${index}`, detailAvailable: false })),
+  ...Array.from({ length: 6 }, (_, index) => ({ ...brief.houseContext[0]!, id: `available-${index}` }))
+];
+const houseOnly = {
+  friendName: "Sample Friend", dateLabel: "October 29, 2026", personalTransitGroups: [], bondTransits: [],
+  houseTransits: rankedHouseTransits, dailyForecast: null, dailyDoItems: [], dailyDontItems: [], patternItems: []
+};
+const availableHouses = buildFriendTransitsBrief({ ...houseOnly, birthTimeKnown: true });
+assert.deepEqual(availableHouses.houseContext.map(row => row.id), ["available-0", "available-1", "available-2", "available-3"],
+  "Unavailable placements must not consume the four house-reading slots.");
+assert.equal(availableHouses.counts.houseContext, 4);
+assert.equal(availableHouses.hasAnyTransit, true);
+assert.equal(buildFriendTransitsBrief({ ...houseOnly, birthTimeKnown: false }).houseContext.length, 0,
+  "Unknown birth times must not acquire inferred houses from available copy.");
+assert.equal(buildFriendTransitsBrief({ ...houseOnly, houseTransits: rankedHouseTransits.slice(0, 4) }).houseContext.length, 0,
+  "Unavailable sources must remain hidden.");
+
 console.log("Friends transits brief fixtures passed.");
