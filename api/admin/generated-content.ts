@@ -6,6 +6,7 @@ import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApprova
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
+import {persistDailyHoroscope} from '../_lib/daily-horoscope-storage.js';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
 import {decodeWeeklyHistoryRow,encodeWeeklyHistory} from '../_lib/horoscope-history-storage.js';
 import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScope.js";
@@ -181,6 +182,7 @@ type ExistingGeneratedContentRow = {
   prompt_version?: string | null;
   source_snapshot?: Record<string, unknown> & {
     horoscopeGeneration?: {
+      dailyEditorial?: {version: string};
       active?: unknown; batch?: { status?: string };
       candidateHolds?: Record<string, { candidate: { headline: string; body: string }; operation: { id: string } }>;
       candidateResolutions?: unknown[];
@@ -2320,7 +2322,7 @@ async function upsertGeneratedContentRow(row: Record<string, unknown>) {
       ...(row.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "resolution=ignore-duplicates,return=representation"
     },
-    body: JSON.stringify((row.sections as any)?.horoscopeEdition?.window?.period==='weekly'
+    body: JSON.stringify(['daily','weekly'].includes((row.sections as any)?.horoscopeEdition?.window?.period)
       ?{...row,source_snapshot:encodeWeeklyHistory(row.source_snapshot)}:row)
   });
   const payload = response.payload;
@@ -2647,7 +2649,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       facts:existing.facts, source_snapshot:snapshot, status:'LIVE', lane:'serving', review_state:null,
       updated_at:now, reviewed_at:now, published_at:now};
     assertReaderEligiblePublication({...target,...editionPatch});
-    if(existing.sections?.horoscopeEdition?.window?.period==='weekly')editionPatch.source_snapshot=encodeWeeklyHistory(snapshot);
+    if(['daily','weekly'].includes(existing.sections?.horoscopeEdition?.window?.period))editionPatch.source_snapshot=encodeWeeklyHistory(snapshot);
     publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
     return publishRevisionAtomically(body,existing,target,editionPatch);
   }
@@ -3493,11 +3495,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   // Weekly editors send only editable fields. A compact, versioned checkpoint
   // retains the complete server-owned history without returning it through PATCH.
-  if(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&existing.status==='DRAFT'&&(patch.status===undefined||patch.status==='DRAFT')){
+  if((existing.sections?.horoscopeEdition?.window?.period==='weekly'
+    ||existing.sections?.horoscopeEdition?.window?.period==='daily'&&existing.source_snapshot?.horoscopeGeneration?.dailyEditorial)
+    &&existing.status==='DRAFT'&&(patch.status===undefined||patch.status==='DRAFT')){
     const changed=Object.fromEntries(Object.entries(patch).filter(([key,value])=>key!=='updated_at'&&!isDeepStrictEqual(value,existing[key])));
     if(Object.keys(changed).every(key=>['sections','source_snapshot','body','facts','review_state','reviewed_at','status'].includes(key))
       &&(changed.review_state===undefined||changed.review_state===null)&&(changed.reviewed_at===undefined||changed.reviewed_at===null)){
-      const saved=await persistWeeklyHoroscope({url:`${supabaseUrl()}/rest/v1/generated_interpretations`,headers:adminHeaders(),row:existing,patch:changed});
+      const persist=existing.sections?.horoscopeEdition?.window?.period==='daily'?persistDailyHoroscope:persistWeeklyHoroscope;
+      const saved=await persist({url:`${supabaseUrl()}/rest/v1/generated_interpretations`,headers:adminHeaders(),row:existing,patch:changed});
       return [saved];
     }
   }
@@ -3515,7 +3520,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       ...(patch.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
-    body: JSON.stringify(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&patch.source_snapshot
+    body: JSON.stringify(['daily','weekly'].includes(existing.sections?.horoscopeEdition?.window?.period)&&patch.source_snapshot
       ?{...patch,source_snapshot:encodeWeeklyHistory(patch.source_snapshot)}:patch)
   });
   const payload = response.payload;
@@ -3541,7 +3546,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
   }
 
-  return updatedRows;
+  return updatedRows.map(decodeWeeklyHistoryRow);
 }
 
 async function deleteGeneratedContent(req: IncomingMessage) {

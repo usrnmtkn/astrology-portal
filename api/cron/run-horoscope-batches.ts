@@ -9,7 +9,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse){
   if(!requireInternalRunner(req))return sendAdminJson(res,401,{ok:false,error:'Unauthorized.'});
   try{
     const {url,headers}=studioStorage();
-    const query=new URLSearchParams({select:'id',status:'eq.DRAFT',content_key:'like.horoscope/weekly/*',
+    const query=new URLSearchParams({select:'id',status:'eq.DRAFT',or:'(content_key.like.horoscope/weekly/*,content_key.like.horoscope/daily/*)',
       'source_snapshot->horoscopeGeneration->batch->>status':'eq.running',order:'updated_at.asc',limit:'1'});
     const result=await adminFetchJson(`${url}?${query}`,{headers},30000);
     if(!result.ok)throw new Error('batch_inventory_unavailable');

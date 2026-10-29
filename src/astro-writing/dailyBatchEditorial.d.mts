@@ -1,0 +1,14 @@
+export const DAILY_BATCH_EDITORIAL:string;
+export const DAILY_BATCH_REVIEW_CHECKS:string[];
+export const DAILY_BATCH_INPUT_LIMIT:number;
+export const DAILY_BATCH_REVIEW_SCHEMA:any;
+export const DAILY_BATCH_REVIEW_INSTRUCTIONS:string;
+export function dailyEditorialHash(value:any):string;
+export function dailyEditorialBinding(row:any):string;
+export function dailyEditorialContent(row:any):string;
+export function dailyEditorialComplete(row:any):boolean;
+export function dailyReviewCurrent(row:any):boolean;
+export function dailyEditorialIssue(row:any):string|null;
+export function dailyEditorialInput(prepared:any,row:any):any;
+export function validateDailyEditorialResult(value:any,input:any):any;
+export function dailyLexicalSignals(passages:any[]):any;

@@ -6,6 +6,8 @@ import {runHoroscopeWriting} from '../admin/horoscope-writing.js';
 import {horoscopePendingReadings} from '../../src/astro-writing/horoscopeRecovery.mjs';
 import {HOROSCOPE_SIGNS} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {WEEKLY_BATCH_EDITORIAL,weeklyPlanCurrent,weeklyReviewCurrent,weeklyEditorialComplete} from '../../src/astro-writing/weeklyBatchEditorial.mjs';
+import {DAILY_BATCH_EDITORIAL,dailyEditorialComplete,dailyReviewCurrent} from '../../src/astro-writing/dailyBatchEditorial.mjs';
+import {persistDailyHoroscope} from './daily-horoscope-storage.js';
 
 /** Durable authorization lives in the edition, never in an open browser tab.
  * A version-checked lease fences overlapping cron invocations. Each paid stage
@@ -18,11 +20,13 @@ export async function runWeeklyHoroscopeBatch(id:string,{maxSteps=100,wait=()=>n
     return adminStorageRows(result.payload)[0] as any;
   };
   let row=await read(),batch=row?.source_snapshot?.horoscopeGeneration?.batch;
-  if(row?.status!=='DRAFT'||row.sections?.horoscopeEdition?.window?.period!=='weekly'||batch?.status!=='running')return {state:'idle'};
+  const daily=row?.sections?.horoscopeEdition?.window?.period==='daily'&&batch?.editorialVersion===DAILY_BATCH_EDITORIAL;
+  if(row?.status!=='DRAFT'||!(daily||row.sections?.horoscopeEdition?.window?.period==='weekly')||batch?.status!=='running')return {state:'idle'};
   if(Date.parse(batch.lease?.until)>Date.now())return {state:'leased'};
   const lease={id:randomUUID(),until:new Date(Date.now()+310000).toISOString()};
   const invocationDeadline=Date.now()+285000,deadline=Date.now()+180000;
-  const saveBatch=async(next:any)=>persistWeeklyHoroscope({url,headers,row,deadline:invocationDeadline,patch:{source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,batch:next}}}});
+  const persist=daily?persistDailyHoroscope:persistWeeklyHoroscope;
+  const saveBatch=async(next:any)=>persist({url,headers,row,deadline:invocationDeadline,patch:{source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...row.source_snapshot.horoscopeGeneration,batch:next}}}});
   try{row=await saveBatch({...batch,lease});}catch(error){if(error instanceof AdminHttpError&&error.statusCode===409)return {state:'contended'};throw error;}
   batch=row.source_snapshot.horoscopeGeneration.batch;
   try{
@@ -30,6 +34,24 @@ export async function runWeeklyHoroscopeBatch(id:string,{maxSteps=100,wait=()=>n
       row=await read();batch=row?.source_snapshot?.horoscopeGeneration?.batch;
       if(batch?.status!=='running'||batch.lease?.id!==lease.id||row.status!=='DRAFT')return {state:'stopped'};
       const generation=row.source_snapshot.horoscopeGeneration,active=generation.active;
+      if(daily){
+        const gate=generation.dailyEditorial;
+        if(gate?.pending||dailyEditorialComplete(row)&&!dailyReviewCurrent(row)){
+          if(!gate?.pending&&gate?.review){
+            await saveBatch({...batch,lease:null,status:'needs_attention',error:gate.review.error??'The Daily batch has repeated interpretations, openings or endings. Review the saved findings.'});
+            return {state:'needs_attention'};
+          }
+          const result=await runHoroscopeWriting({action:gate?.pending?'poll-daily':'review-daily',id,
+            expectedUpdatedAt:row.updated_at,approvedPlanHash:batch.planHash},batch.actor,batch.id,invocationDeadline);
+          if(result.status>=400){
+            const version=row.updated_at;row=await read();batch=row?.source_snapshot?.horoscopeGeneration?.batch;
+            if(batch?.status!=='running'||batch.lease?.id!==lease.id||result.status===409&&row.updated_at!==version)return {state:'changed'};
+            await saveBatch({...batch,lease:null,status:'paused',error:result.payload.error});return {state:'paused'};
+          }
+          if(result.payload.pending)await wait();
+          continue;
+        }
+      }
       if(batch.editorialVersion===WEEKLY_BATCH_EDITORIAL){
         const gate=generation.weeklyEditorial;
         const complete=weeklyEditorialComplete(row);
@@ -100,7 +122,7 @@ export async function runWeeklyHoroscopeBatch(id:string,{maxSteps=100,wait=()=>n
           const generation=row.source_snapshot.horoscopeGeneration;
           const held={...current,interruptedAt:new Date().toISOString(),outcome:'unknown'};
           const failure={code:'rhetorical_review_interrupted',message:'The saved prose check has not completed after 20 minutes. Its draft and request are kept for review; the other readings can continue.',operation:held,candidate:current.candidate,receipt:current.receipt,failedAt:new Date().toISOString()};
-          await persistWeeklyHoroscope({url,headers,row,deadline:invocationDeadline,patch:{source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,
+          await persist({url,headers,row,deadline:invocationDeadline,patch:{source_snapshot:{...row.source_snapshot,horoscopeGeneration:{...generation,active:null,
             ...(current.phase==='review'?{candidateHolds:{...generation.candidateHolds,[current.sign]:failure},lastError:failure}:{heldRequests:{...generation.heldRequests,[current.sign]:held}})}}}});
         }else if(current?.state!=='ready')await wait();
       }
