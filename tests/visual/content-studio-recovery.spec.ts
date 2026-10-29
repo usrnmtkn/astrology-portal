@@ -501,7 +501,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         return store.call(message);
       } });
       await page.goto(`${studioPath}#articles`);
-      await page.getByRole("button", { name: "New guide", exact: true }).click();
+      await page.getByRole("button", { name: "Create", exact: true }).click();
+      await page.getByRole("menuitem", { name: /New guide/u }).click();
       const editor = page.getByRole("dialog", { name: "Generated content editor", exact: true });
       const body = editor.getByLabel("Article body", { exact: true });
       await editor.getByLabel("Article title", { exact: true }).fill("Synthetic unsaved recovery guide");
@@ -584,7 +585,8 @@ for (const [width, theme] of [[390, "dark"], [1440, "light"]] as const) {
         window.dispatchEvent(new StorageEvent("storage", { key: storageKey }));
       }, { storageKey, token: token(signature) });
       await page.goto(`${studioPath}#articles`);
-      await page.getByRole("button", { name: "New guide", exact: true }).click();
+      await page.getByRole("button", { name: "Create", exact: true }).click();
+      await page.getByRole("menuitem", { name: /New guide/u }).click();
       const editor = page.getByRole("dialog", { name: "Generated content editor", exact: true });
       const body = editor.getByLabel("Article body", { exact: true });
       await editor.getByLabel("Article title", { exact: true }).fill("Synthetic retained access recovery");

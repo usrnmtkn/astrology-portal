@@ -2342,6 +2342,7 @@ function assertSkyArticleRevisionIdentity(
 ) {
   const immutableFields = [
     "contentKey",
+    "scope",
     "templateKey",
     "templateHash",
     "fixedProseHash",

@@ -22,7 +22,7 @@ export function skyPlacementPublicationIdentity(selection?: string) {
   const selected = pairs.length && pairs.every(pair => /^[a-z-]+\/[a-z-]+$/u.test(pair)) ? new Set(pairs) : null;
   return JSON.stringify(contentPublicationRecords().filter(row => {
     if (!isSkySource(row.content_key)) return false;
-    const dated = /^sky-article\/([^/]+\/[^/]+)\/\d{4}\/\d{4}-\d{2}-\d{2}$/u.exec(row.content_key);
+    const dated = /^sky-article\/([^/]+\/[^/]+)\/\d{4}\/(?:day\/)?\d{4}-\d{2}-\d{2}$/u.exec(row.content_key);
     return !selected || !dated || selected.has(dated[1]);
   })
     .map(row => [row.content_key, row.state, row.revision, row.row_id,

@@ -3539,6 +3539,7 @@ function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
   const key = requestedPlanet.trim().toLowerCase();
   const supported = [
     ["sun", "Sun", swe.SE_SUN],
+    ["moon", "Moon", swe.SE_MOON],
     ["mercury", "Mercury", swe.SE_MERCURY],
     ["venus", "Venus", swe.SE_VENUS],
     ["mars", "Mars", swe.SE_MARS],

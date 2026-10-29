@@ -42,12 +42,13 @@ type Props = {
   onChange: (path: string, value: unknown) => void;
   onLoadSource?: (key: string) => Promise<Record<string, any> | undefined>;
   onOpenSource: (key: string, path: string) => void;
+  onOpenDatedArticle?: (referenceDate: string) => void;
 };
 const title = (value: string) => value.split("-").map(word => word[0]?.toUpperCase() + word.slice(1)).join(" ");
 
 type EvergreenSection = SkyEditorialSection;
 
-export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sourceFields, source, initialField, selection, disabled, onChange, onOpenSource, onLoadSource }: Props) {
+export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sourceFields, source, initialField, selection, disabled, onChange, onOpenSource, onOpenDatedArticle, onLoadSource }: Props) {
   const [selectedField, setSelectedField] = useState(initialField ?? "");
   const [outline, setOutline] = useState("ingress");
   const [installingLibrary, setInstallingLibrary] = useState(false);
@@ -263,7 +264,8 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       <p className="admin-sky-writing-count">{field.value.trim() ? field.value.trim().split(/\s+/u).length : 0} words · {field.value.length} characters</p>
       {placement && ["placementArticle", "placementArticleDirect", "placementArticleRetrograde"].includes(field.key)
         && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items
-        && <SkyArticleAiWriter planet={planet} sign={sign} field={field.key} currentText={field.value} disabled={disabled} onUse={changeWriting} />}
+        && <SkyArticleAiWriter planet={planet} sign={sign} field={field.key} currentText={field.value} disabled={disabled} onUse={changeWriting}
+          onOpenDatedArticle={onOpenDatedArticle} />}
       {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && (supportsArticlePhrases
         ? <SkyPlacementArticleVariables key={contentKey} contentKey={contentKey} planet={planet} sign={sign} motion={rxContext ? "retrograde" : "direct"}
           fieldPath={field.key} value={field.value} source={activeLibrary ? { ...source, ingress: activeLibrary } : source} disabled={disabled} onInsert={insertVariable}

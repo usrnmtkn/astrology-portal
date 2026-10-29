@@ -2295,7 +2295,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       });
       await expectAdminRouteLoads(page, `/admin/content#${createCase.hash}`);
       await openCreateMenu(page);
-      const createAction = page.getByRole("menuitem", { name: createCase.action });
+      const createAction = page.getByRole("menuitem", { name: createCase.action === "Create article" ? /New article/u : createCase.action });
       await expect(createAction).toBeVisible();
       await createAction.click({ force: true });
       const editor = page.locator(".admin-editor-panel");
@@ -9503,7 +9503,66 @@ test("Natal editorial library owner draft preview", async ({ page }) => {
 });
 
 for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
+  test(`Moon visit Write article keeps the full visit and saved writing ${theme} ${width}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    const facts = workspaceVisitFacts('moon', 'gemini', '2026-10-27', '2026-10-29');
+    const initial = await workspaceFixtureRows();
+    const shared = { ...initial[1], id: 'synthetic-moon-default', content_key: 'sky-placement/article/moon/gemini',
+      sections: { packageRecord: { ...initial[1].sections.packageRecord, contentKey: 'sky-placement/article/moon/gemini' } } };
+    const writes: Array<{ method: string; payload: Record<string, any> }> = [];
+    let providerRequests = 0;
+    await seedAdminApi(page, { generatedRows: [shared], useGeneratedContentHandler: true, onGeneratedContentWrite: write => writes.push(write) });
+    await page.route('**/api/admin/sky-article-facts?**', route => {
+      const url = new URL(route.request().url());
+      expect(url.searchParams.get('planet')).toBe('moon'); expect(url.searchParams.get('date')).toBe('2026-10-28');
+      return route.fulfill({ json: { ok: true, facts } });
+    });
+    await page.route('**/api/admin/sky-article-template-slots', async route => { providerRequests++; await route.abort(); });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
+    const noErrors = await expectNoBrowserErrors(page);
+    await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=moon&sign=gemini');
+    const workspace = page.getByRole('region', { name: 'Moon in Gemini workspace', exact: true });
+    await workspace.getByLabel('Visit reference date', { exact: true }).fill('2026-10-28');
+    await expect(page.getByLabel('Sky reader date', { exact: true })).toHaveValue('2026-10-28');
+    await expect(workspace).toContainText('your dated article is the main Sky reading for that visit');
+    await workspace.getByRole('button', { name: 'Write article', exact: true }).click();
+    expect(providerRequests).toBe(0); expect(writes).toHaveLength(0);
+    const editor = workspace.getByRole('region', { name: 'Article for this visit', exact: true });
+    const writing = editor.getByRole('textbox', { name: 'Visit article body', exact: true });
+    await expect(editor).toBeFocused();
+    await editor.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Moon in Gemini visit');
+    await editor.getByRole('textbox', { name: 'Visit article summary', exact: true }).fill('Synthetic Moon summary.');
+    await writing.fill('Synthetic complete Moon opening.\n\nSynthetic complete Moon ending.');
+    page.once('dialog', dialog => dialog.dismiss());
+    await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
+    await expect(writing).toHaveValue('Synthetic complete Moon opening.\n\nSynthetic complete Moon ending.');
+    expect(providerRequests).toBe(0);
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+    expect(writes).toHaveLength(1);
+    const saved = writes[0].payload.rows[0];
+    expect(saved.contentKey).toBe('sky-article/moon/gemini/2026/2026-10-27'); expect(saved.status).toBe('DRAFT');
+    expect(saved.sections.skyArticleEdition.transitStartInstant).toBe(facts.transitStartInstant);
+    expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(facts.transitEndInstant);
+    expect(saved.sourceSnapshot.ownerApproval).toBeUndefined();
+    await page.reload();
+    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await expect(writing).toHaveValue(saved.body);
+    await workspace.getByLabel('Visit reference date', { exact: true }).fill('2026-10-28');
+    await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
+    await expect(writing).toHaveValue(saved.body);
+    await expect(workspace).toContainText('Its wording has been preserved. No generation was started.');
+    expect(providerRequests).toBe(0); expect(writes).toHaveLength(1);
+    await expectNoHorizontalOverflow(page, 'Moon visit article actions');
+    await page.screenshot({ path: `test-results/moon-visit-Write-article-${width}-${theme}.png`, fullPage: true });
+    await noErrors();
+  });
+}
+
+for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390]) {
   test(`Sky planet and sign workspace preserves separate writing ${theme} ${width}`, async ({ page }, testInfo) => {
+
     test.setTimeout(90_000);
     const initial = await workspaceFixtureRows();
     const writes: Array<{ method: string; payload: Record<string, any> }> = [];
@@ -9591,7 +9650,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true }).selectOption('venus');
     const venus = page.getByRole('region', { name: 'Venus in Scorpio workspace', exact: true });
     await expect(venus.getByText('No dated article is saved for this placement.', { exact: false })).toBeVisible();
-    await venus.getByRole('button', { name: 'Load calculated dates', exact: true }).click();
+    await venus.getByRole('button', { name: 'Write article', exact: true }).click();
     await venus.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic Venus visit');
     await venus.getByRole('textbox', { name: 'Visit article summary', exact: true }).fill('Synthetic Venus summary.');
     await venus.getByRole('textbox', { name: 'Visit article body', exact: true }).fill('Synthetic Venus opening.\n\nSynthetic Venus ending.');
@@ -9680,12 +9739,14 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   for (const body of bodies) {
     await planets.selectOption(body);
     await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Load calculated dates', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Write article', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Generate draft', exact: true })).toBeVisible();
   }
   for (const sign of zodiac) {
     await signs.selectOption(sign);
     await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Load calculated dates', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Write article', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Generate draft', exact: true })).toBeVisible();
   }
   expect(writes).toHaveLength(0);
 });

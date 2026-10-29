@@ -142,6 +142,7 @@ import {
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
 import { articleAppDestination, isAstro101ContentRow, isSkyWriteupContentRow } from "./articleWorkspace";
+import { skyArticleTemplateKey } from "./skyArticleTemplateKeys";
 import {
   ASTRO_101_KIND_LABELS,
   ASTRO_101_KINDS,
@@ -4414,11 +4415,8 @@ export function GeneratedContentAdminDashboard() {
         ? view as SkyWriteupWorkspaceView : "catalog"
     );
     if (page === "articles" && search !== null) {
+      clearArticleFilters();
       setArticleQuery(search);
-      setArticleStatusFilter("all");
-      setArticleKindFilter("all");
-      setArticlePointFilter("all");
-      setArticleContentSystemFilter("all");
     }
     if (page === "skyWriteups" && search !== null) {
       setSkyWriteupQuery(search);
@@ -6098,7 +6096,7 @@ export function GeneratedContentAdminDashboard() {
     return transitNatalLiveServingSource(payload.rendered, preferredField);
   }
 
-  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false, fieldPath?: string, options?: { resolvedLiveSource?: boolean; selection?: SkyPlacementSelection }) {
+  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false, fieldPath?: string, options?: { resolvedLiveSource?: boolean; selection?: SkyPlacementSelection; referenceDate?: string }) {
     const originatingHash = window.location.hash;
     const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
@@ -6160,7 +6158,9 @@ export function GeneratedContentAdminDashboard() {
         throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
       }
       setRows((current) => [row, ...current.filter(candidate => candidate.id !== row.id)]);
-      if (!await openRow(row, null, fieldPath, options?.selection)) return;
+      if (!await openRow(row, null, fieldPath, options?.selection)) return false;
+      const referenceDate = options?.referenceDate;
+      if (referenceDate && isSkyArticleTemplateRow(row)) setSkyArticleEditionForm(current => current ? { ...current, referenceDate } : current);
       if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
       setMessage(openTemplatePreview
         ? `Opened the assembled reader preview for ${label}. Colored sections link to their atomic sources.`
@@ -6168,6 +6168,7 @@ export function GeneratedContentAdminDashboard() {
     } catch (error) {
       if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       setMessage(error instanceof Error ? error.message : `Could not open ${label}.`);
+      return false;
     } finally {
       if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
     }
@@ -6428,7 +6429,7 @@ export function GeneratedContentAdminDashboard() {
     const editor = editorRef.current;
     if (!editor) return;
     const focusRequestedField = () => {
-      const field = Array.from(editor.querySelectorAll<HTMLTextAreaElement>("textarea[data-sky-field]"))
+      const field = Array.from(editor.querySelectorAll<HTMLTextAreaElement | HTMLInputElement>("textarea[data-sky-field],input[data-sky-field]"))
         .find(element => element.dataset.skyField === editorFocusField);
       if (!field || field.disabled) return false;
       field.focus({ preventScroll: true });
@@ -6529,6 +6530,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function handleCreateAction(page: AdminDashboardPage, nextMessage: string, calendarSign?: string, articleKind: "article" | "guide" = "article", season?: { sign: string; year: number }) {
+    if (page === "articles" && !closeEditor()) return;
     const isCalendarWriteup = page === "knowledge" && lunarWorkspaceActive;
     if (isCalendarWriteup && !calendarSign) {
       setIsCreateMenuOpen(false);
@@ -6544,6 +6546,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedRowId(null);
     setMessage(nextMessage);
     if (page === "articles") {
+      clearArticleFilters();
       setDraft({
         id: null,
         contentKey: season ? seasonArticleKey(season.sign, season.year)! : `article/${articleKind === "guide" ? "guide" : "manual"}/${crypto.randomUUID()}`,
@@ -7371,7 +7374,12 @@ export function GeneratedContentAdminDashboard() {
             href: item.page ? adminHashForPage(item.page) : undefined,
             onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
           }))}
-          createActions={["aiWriting", "horoscopes"].includes(activePage) || activePage === "calendarWriteups" && ["lunation-writing", "daily-writing"].includes(calendarWriteupWorkspaceView) ? [] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
+          createActions={["aiWriting", "horoscopes"].includes(activePage) || activePage === "calendarWriteups" && ["lunation-writing", "daily-writing"].includes(calendarWriteupWorkspaceView) ? [] : activePage === "articles" ? [
+            { key: "article", label: "New article", description: "Write a standalone article", icon: FileText,
+              onSelect: () => handleCreateAction("articles", "New article draft started.") },
+            { key: "guide", label: "New guide", description: "Write a standalone guide", icon: BookOpenText,
+              onSelect: () => handleCreateAction("articles", "New guide draft started.", undefined, "guide") }
+          ] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
             {
               key: "article",
               label: "Create article",
@@ -7875,6 +7883,7 @@ export function GeneratedContentAdminDashboard() {
                 {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
                   <Suspense fallback={<PageLoading message="Loading planet and sign writing…" />}>
                     <SkyPlacementWorkspace key={`${skyPlacementBody}/${skyPlacementSign}`} rows={compositionRows}
+                      date={skyReaderDate} onDateChange={setSkyReaderDate}
                       selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }}
                       readerSources={!draft ? renderPlacementSources(skyPlacementBody, skyPlacementSign) : null}
                       request={(path, options) => adminJsonRequest(path, secret, options)}
@@ -7918,19 +7927,22 @@ export function GeneratedContentAdminDashboard() {
                 <span className={fieldHintClassName}>{filteredArticleRows.length} of {articleRows.length} articles</span>
               </div>
               <div className="admin-surface-actions" aria-label="Article and guide tools">
-                <StudioButton type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
-                  <Plus size={16} aria-hidden="true" />
-                  New article
-                </StudioButton>
-                <StudioButton type="button" onClick={() => handleCreateAction("articles", "New guide draft started.", undefined, "guide")}>New guide</StudioButton>
-                <a className="admin-source-action" href="#articles-guides?q=sky%2Farticle-template%2F">Dated Sky article templates</a>
+                <a className="admin-source-action" href="#articles-guides?q=sky%2Farticle-template%2F" onClick={event => {
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                  event.preventDefault();
+                  if (!navigateAdminPage("articles", new URLSearchParams({ q: "sky/article-template/" }))) return;
+                  window.requestAnimationFrame(() => {
+                    const results = document.getElementById("article-results");
+                    results?.scrollIntoView({ block: "start" }); results?.focus({ preventScroll: true });
+                  });
+                }}>Browse Sky article templates</a>
                 <a className="admin-source-action" data-reader-navigation="collection" href="/#articles">Open Articles &amp; Guides in the app</a>
               </div>
             </section>
             {renderArticleFilters()}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
-              <aside className="admin-list-panel" aria-label="Article rows">
+              <aside className="admin-list-panel" id="article-results" tabIndex={-1} aria-label="Article rows">
                 {renderContentTable(filteredArticleRows, true)}
               </aside>
             </section>
@@ -9685,6 +9697,14 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  function clearArticleFilters() {
+    setArticleStatusFilter("all");
+    setArticleKindFilter("all");
+    setArticlePointFilter("all");
+    setArticleContentSystemFilter("all");
+    setArticleQuery("");
+  }
+
   function renderArticleFilters() {
     return (
       <AdminFilterBar
@@ -9718,13 +9738,7 @@ export function GeneratedContentAdminDashboard() {
         actions={<>
           <StudioButton
             type="button"
-            onClick={() => {
-              setArticleStatusFilter("all");
-              setArticleKindFilter("all");
-              setArticlePointFilter("all");
-              setArticleContentSystemFilter("all");
-              setArticleQuery("");
-            }}
+            onClick={clearArticleFilters}
           >
             Clear filters
           </StudioButton>
@@ -10421,6 +10435,9 @@ export function GeneratedContentAdminDashboard() {
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
     const isSkyPlacementSource = /^sky-placement\/(?:article|retrograde|seasonal-context)\//u.test(currentDraft.contentKey);
+    const placementArticleIdentity = currentDraft.contentKey.match(/^sky-placement\/article\/([^/]+)\/([^/]+)$/u);
+    const datedArticleTemplateKey = placementArticleIdentity ? skyArticleTemplateKey(placementArticleIdentity[1], placementArticleIdentity[2],
+      rows.filter(row => row.status !== "ARCHIVED" && isSkyArticleTemplateRow(row)).map(row => row.content_key)) : undefined;
     const isManualCalendarEventDraft = currentDraft.blockType === "calendar_event" && Boolean(calendarPlanetaryIdentity(currentDraft.contentKey));
     const SkyRelatedContainer = isSkyPlacementSource ? "details" : "section";
     const SkyChangesContainer = isSkyPlacementSource ? "details" : "section";
@@ -11646,6 +11663,9 @@ export function GeneratedContentAdminDashboard() {
                     return row ? effectivePackageRecord(row.sections) : undefined;
                   }}
                   disabled={isLoading} onChange={updateSkyFallbackField}
+                  onOpenDatedArticle={datedArticleTemplateKey ? referenceDate => {
+                    void openFromEditor(datedArticleTemplateKey, () => openContentKeyRow(datedArticleTemplateKey, "dated Sky article generator", false, "article-generator", { referenceDate }), { parentDraft: currentDraft });
+                  } : undefined}
                   onOpenSource={(key, path) => isZodiacSeasonSourceKey(key) ? void openSharedSeasonSource(key) : void openFromEditor(key, () => openRow(
                     rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow,
                     null, path, skyWritingContext.selection
@@ -11769,6 +11789,7 @@ export function GeneratedContentAdminDashboard() {
                   <span>Reference date</span>
                   <StudioInput
                     aria-label="Sky article reference date"
+                    data-sky-field="article-generator"
                     type="date"
                     value={skyArticleEditionForm.referenceDate}
                     onChange={(event) => {
@@ -12809,7 +12830,7 @@ export function GeneratedContentAdminDashboard() {
                       ? "Unsaved changes"
                       : isContentRetired(currentDraft.contentKey) ? "Retired everywhere" : "All changes saved"}
           </span>
-          <StudioButton
+          {!(isStandaloneArticleDraft && isNewDraft) && <StudioButton
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             type="button"
             onClick={() => void (async () => {
@@ -12838,10 +12859,10 @@ export function GeneratedContentAdminDashboard() {
                 : packageWillPublishOnSave
                   ? "Save & publish"
                   : "Save"}
-          </StudioButton>
+          </StudioButton>}
           {(directReaderDraft || packageOwnerCanPublish || unchangedSkySource) && (
             <StudioButton
-              className="admin-secondary-button"
+              className={isStandaloneArticleDraft && isNewDraft ? "admin-primary-button" : "admin-secondary-button"}
               type="button"
               onClick={() => void saveDraft("DRAFT")}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}

@@ -10,7 +10,7 @@ import {
   unfinishedSkyArticleTemplateSlots
 } from "../_lib/sky-article-template-slots.js";
 import { skyArticleTemplatePlaceholders } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
-import { isSkyIngressEssay, isSkyIngressArticle, skyIngressTemplateForFormat, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { isSkyIngressEssay, isSkyIngressArticle, skyIngressTemplateForFormat, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { ingressWriterContractReceipt } from '../_lib/transit-ingress-editorial-authority.js';
 import { hasVerifiedSameSignHistory } from "../../apps/web/src/services/retrogradeHistory.js";
 import { loadSkySeasonMeaning } from '../_lib/sky-season-meaning.js';
@@ -18,6 +18,7 @@ import { buildSkyIngressWritingContext, buildIngressTemplateReference } from '..
 import { approvedVoiceStyleReference } from '../../src/astro-writing/approvedVoiceStyle.mjs';
 import { loadExplicitWritingFeedback, ingressWritingFeedbackTarget } from '../_lib/studio-explicit-writing-feedback.js';
 import { createHash } from 'node:crypto';
+import { skyArticleVisitReference } from '../_lib/sky-article-visit-reference.js';
 
 loadLocalWebEnv();
 
@@ -39,6 +40,8 @@ type RequestBody = {
   includeRetrogradeHistory?: boolean;
   format?: SkyArticleFormat;
   templateId?: string;
+  visit?: { planet: string; sign: string };
+  articleScope?: 'visit' | 'day';
   referenceDate?: string;
   existingSlotValues?: Record<string, unknown>;
   provider?: "openai" | "claude" | "anthropic";
@@ -90,7 +93,7 @@ async function loadApprovedTemplate(templateId: string) {
   return row;
 }
 
-function templatePlanet(row: TemplateRow) {
+function templatePlanet(row: Pick<TemplateRow, 'content_key' | 'headline'>) {
   const fromKey = row.content_key.match(/^sky(?:\/|-)article-template\/([a-z-]+)\//u)?.[1];
   if (fromKey && !["slow-mover", "nodes"].includes(fromKey)) return fromKey;
   return row.headline?.match(/(?:article\s+—\s+)?([A-Za-z-]+)\s+(?:Enters|in)\b/u)?.[1]?.toLowerCase() ?? null;
@@ -99,6 +102,11 @@ function templatePlanet(row: TemplateRow) {
 function existingStringValues(value: Record<string, unknown> | undefined) {
   return Object.fromEntries(Object.entries(value ?? {})
     .filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+}
+
+function visitReference(value: unknown, format: unknown) {
+  try { return skyArticleVisitReference(value, format); }
+  catch (error) { throw new AdminHttpError(400, error instanceof Error ? error.message : 'Invalid dated visit.'); }
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -113,11 +121,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (inspect) {
       const params = new URL(req.url ?? '/', 'http://studio.invalid').searchParams;
       let correctionDelivery;
+      let templateKey: string | undefined;
+      const templateId = params.get('templateId')?.trim();
       if (params.has('templateId')) {
-        const templateId = params.get('templateId')?.trim();
         if (!templateId) throw new AdminHttpError(400, 'templateId is required for correction inspection.');
-        const template = await loadApprovedTemplate(templateId);
-        const templateKey = template.content_key.replace(/^sky-article-template\//u, 'sky/article-template/');
+        if (templateId !== 'builtin:moon-ingress-v3') {
+          if (params.has('planet') || params.has('sign')) throw new AdminHttpError(400, 'Choose a saved template or a visit for inspection.');
+          const template = await loadApprovedTemplate(templateId);
+          templateKey = template.content_key.replace(/^sky-article-template\//u, 'sky/article-template/');
+        }
+      }
+      if (!templateKey && (params.has('planet') || params.has('sign') || templateId)) {
+        const reference = visitReference({ planet: params.get('planet') ?? (templateId ? 'moon' : undefined), sign: params.get('sign') }, SKY_INGRESS_ARTICLE_FORMAT);
+        templateKey = reference?.content_key;
+      }
+      if (templateKey) {
         const feedback = await loadExplicitWritingFeedback(ingressWritingFeedbackTarget(templateKey));
         correctionDelivery = { templateKey, ...feedback.receipt,
           sectionSha256: createHash('sha256').update(feedback.prompt).digest('hex') };
@@ -142,7 +160,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (body.includeRetrogradeHistory !== undefined && typeof body.includeRetrogradeHistory !== "boolean") throw new AdminHttpError(400, "includeRetrogradeHistory must be a boolean.");
     if (body.format !== undefined && body.format !== "saved-template" && !isSkyIngressEssay(body.format)) throw new AdminHttpError(400, "Unsupported article format.");
     if (isSkyIngressEssay(body.format) && !isSkyIngressArticle(body.format)) throw new AdminHttpError(409, 'Generation for this ingress format is retired. Select Ingress article to use the current ingress writer. Saved text remains unchanged.');
-    if (typeof body.templateId !== "string" || !body.templateId.trim()) throw new AdminHttpError(400, "templateId is required.");
+    if (body.articleScope === 'day') throw new AdminHttpError(409, 'New generation uses the full calculated visit. Open a saved day article to edit its existing wording and coverage.');
+    if (body.articleScope !== undefined && body.articleScope !== 'visit') throw new AdminHttpError(400, 'Choose full-visit article coverage.');
+    const visit = visitReference(body.visit, body.format);
+    const builtinMoon = body.templateId === 'builtin:moon-ingress-v3';
+    if (visit && body.templateId !== undefined) throw new AdminHttpError(400, 'Choose a dated visit or a saved template, not both.');
+    if (builtinMoon && !isSkyIngressArticle(body.format)) throw new AdminHttpError(400, 'The standard Moon layout requires the current ingress article format.');
+    if (!visit && (typeof body.templateId !== "string" || !body.templateId.trim())) throw new AdminHttpError(400, "templateId is required.");
     if (body.provider !== undefined && !["openai", "claude", "anthropic"].includes(body.provider)) throw new AdminHttpError(400, "Invalid provider.");
     if (body.voiceNotes !== undefined && typeof body.voiceNotes !== "string") throw new AdminHttpError(400, "voiceNotes must be text.");
     if (body.existingSlotValues !== undefined && (!body.existingSlotValues || typeof body.existingSlotValues !== "object" || Array.isArray(body.existingSlotValues) || Object.values(body.existingSlotValues).some((value) => typeof value !== "string"))) throw new AdminHttpError(400, "existingSlotValues must contain text fields.");
@@ -150,11 +174,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const instant = new Date(`${referenceDate}T12:00:00.000Z`);
     if (typeof referenceDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/u.test(referenceDate) || !Number.isFinite(instant.getTime()) || instant.toISOString().slice(0, 10) !== referenceDate) throw new AdminHttpError(400, "referenceDate must be a valid YYYY-MM-DD date.");
 
-    const template = await loadApprovedTemplate(body.templateId.trim());
-    const planet = templatePlanet(template);
+    const savedTemplate = visit || builtinMoon ? null : await loadApprovedTemplate(body.templateId!.trim());
+    const planet = builtinMoon ? 'moon' : visit?.planet ?? (savedTemplate && templatePlanet(savedTemplate));
     if (!planet) throw new Error("The selected template does not identify one Sky planet.");
     const ingress = isSkyIngressEssay(body.format);
     const facts = await calculateSkyArticleEditionFacts(instant, planet, body.format);
+    const reference = visit ?? (builtinMoon ? visitReference({ planet: 'moon', sign: facts.sign }, body.format) : null);
+    const template: Pick<TemplateRow, 'content_key' | 'body' | 'headline' | 'sections' | 'source_snapshot'> = reference ?? savedTemplate!;
+    if (visit && facts.sign !== visit.sign) throw new AdminHttpError(422, 'The selected date is in a different sign. Choose the calculated placement before generating.');
     if (ingress && "nasa" in facts && facts.nasa.status === "disagreement") throw new AdminHttpError(422, "Swiss and NASA/JPL positions disagree. Resolve the calculation evidence before writing.");
     const templateSign = template.content_key.split("/").at(-1);
     if (ingress && ![facts.sign, "ingress"].includes(templateSign ?? "")) throw new AdminHttpError(422, "The reference date is in a different sign. Open the template for the calculated placement.");
@@ -221,6 +248,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         requestedSlots: generation.requestedSlots,
         generationMetadata: generation.generation_metadata ?? null,
         memoryReceipt: generation.memoryReceipt ?? null,
+        ...(reference ? { templateOrigin: reference.origin } : {}),
         ...(generation.ingressValidation ? { ingressValidation: generation.ingressValidation } : {})
       }
     });
