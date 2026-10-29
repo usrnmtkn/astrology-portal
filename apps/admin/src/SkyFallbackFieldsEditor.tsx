@@ -1,4 +1,5 @@
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
+import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { skyRetrogradeBodies, type SkyPlacementSelection } from "./skyPlacementAssembly";
@@ -203,18 +204,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       </>}
   </section>;
 
-  if (!planet) return <section className={`${surfaceSection} admin-sky-edition-fields`} aria-label="Editable fallback fields">
-    <header>
-      <p className="admin-eyebrow">Editable copy</p>
-      <h3>{kind === "article" ? "Article paragraphs" : "Aspect audience versions"}</h3>
-      <p>{kind === "article" ? "Each field is a section of the complete article, not a reusable variable." : "Each field is the complete aspect passage for its named reader surface."}</p>
-    </header>
-    {fields.map(item => <label className="admin-review-copy-editor" key={item.key}>
-      <span>{item.label}</span>
-      <small className="admin-field-hint">Internal source field: <code>{item.key}</code></small>
-      <StudioTextarea ref={item.key === initialField ? textarea : undefined} disabled={disabled} aria-label={`Fallback field ${item.label}`} data-sky-field={item.key} value={item.value} onChange={event => onChange(item.key, event.target.value)} />
-    </label>)}
-  </section>;
+  if (!planet) return <SkyFallbackPlainFields fields={fields} kind={kind} initialField={initialField} disabled={disabled} onChange={onChange} />;
 
   return <section className={`${surfaceSection} admin-sky-writing-editor`} aria-label="Writing editor">
     {planet && <div className="admin-sky-writing-context" aria-label="Placement writing context">
