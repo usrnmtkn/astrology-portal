@@ -183,9 +183,10 @@ export default defineConfig(({ command, mode }) => {
               if (/\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:mjs|tsx|ts)$/u, '');
             }
-            // Instructions and save recovery stay independently loadable from
-            // generation details, while sharing their optional editing code.
-            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
+            // Saved editions, instructions and recovery share their deferred
+            // management code; generation details remain independently loadable.
+            if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery|HoroscopeSavedEditions)\.tsx$/u.test(id)
+              || /apps\/admin\/src\/(?:horoscopeEditionDraft|horoscopeEditionDeletion)\.ts$/u.test(id)) return "HoroscopeWritingStudio";
             // Profile metadata and reconciliation load with their editing panels.
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)
               || /apps\/admin\/src\/horoscopeEditReconciliation\.ts$/u.test(id)) return "HoroscopeWritingStudio";
