@@ -198,7 +198,7 @@ const laterToday = resolveCalendarMoonFallback({
 }, {});
 assert.equal(
   laterToday?.body,
-  "If the same issue keeps returning, there may be something underneath it that has not been said plainly yet. Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next."
+  "The Moon starts the day in Scorpio and enters Sagittarius at 12:41 PM EDT. If the same issue keeps returning, there may be something underneath it that has not been said plainly yet. Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next."
 );
 assert.doesNotMatch(laterToday?.body ?? "", /mood may shift|from trust, privacy/);
 
@@ -224,13 +224,13 @@ const lateIngressWithReading = resolveCalendarMoonFallback({
   unusedAuthored: { contentKey: "authored/calendar-weekly-moon/scorpio", body: moonSignBody },
   transitionPhrase: key => key === "authored/calendar-moon-context/lateIngress" ? lateIngressBody : null
 });
-assert.equal(lateIngressWithReading?.body, `${moonSignBody} ${lateIngressBody}`,
-  "A sign-change day keeps the complete Moon-sign reading before the saved transition sentence");
+assert.equal(lateIngressWithReading?.body, `The Moon stays in Scorpio for most of today and enters Sagittarius at 9:10 PM EDT. ${moonSignBody} ${lateIngressBody}`,
+  "A sign-change day introduces the calculated Moon sign and keeps the complete reading and saved transition sentence");
 assert.equal(resolveCalendarMoonFallback({
   ...wednesday, moonChangesSignToday: true, nextMoonSign: "Sagittarius",
   nextMoonSignEntryTime: "12:41 PM EDT", moonSignExitHour: 12
 }, { unusedAuthored: { contentKey: "authored/calendar-weekly-moon/scorpio", body: moonSignBody } })?.body,
-`${moonSignBody} Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next.`,
+`The Moon starts the day in Scorpio and enters Sagittarius at 12:41 PM EDT. ${moonSignBody} Something that has been sitting under the surface may be harder to ignore early on. By afternoon, it can be easier to stop circling the same problem and decide what you want to do next.`,
 "Earlier sign changes also retain the complete Moon-sign reading before their transition");
 
 assert.equal(calendarSeasonTransitionWhen(1, "September 22"), "in 1 day");

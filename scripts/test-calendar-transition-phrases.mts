@@ -91,7 +91,7 @@ for (const [kind, facts, timing] of cases) {
   const revised = resolveCalendarMoonFallback(context, options)!;
   assert.ok(original.body.includes(calendarMoonContextPhrases[kind].body), kind);
   assert.equal(revised.body, original.body.replace(calendarMoonContextPhrases[kind].body, replacement), kind);
-  const lunarContext = !kind.includes('Season');
+  const lunarContext = !kind.includes('Season') && kind !== 'lateIngress';
   if (lunarContext) {
     assert.ok(!original.body.includes(timing), 'No uneditable lunar lead-in in bundled copy: ' + kind);
     assert.ok(!revised.body.includes(timing), 'No uneditable lunar lead-in in saved copy: ' + kind);
@@ -117,8 +117,7 @@ const explicitlySavedTiming = 'The Full Moon was yesterday. Synthetic owner-sele
 assert.ok(resolveCalendarMoonFallback(fullMoonFacts, { transitionPhrase: key => key === calendarMoonContextKey('dayAfterFullMoon') ? explicitlySavedTiming : undefined })!.body.endsWith(explicitlySavedTiming), 'An editable phrase may still contain timing wording chosen by the owner.');
 console.log('PASS: ten lunar contexts serve editable wording without extra timing sentences; all 13 routes respect draft visibility and match the Studio preview.');
 
-// An ingress passage is already introduced by the Calendar event row. Test
-// every timing boundary, including the separate late-night context selection.
+// The Moon passage introduces its calculated signs at every timing boundary.
 for (const hour of [0, 5, 6, 10, 11, 14, 15, 19, 20, 23]) {
   const context = { ...base, moonSign: 'Virgo', nextMoonSign: 'Libra', moonChangesSignToday: true,
     moonSignExitHour: hour, nextMoonSignEntryTime: '4:10 AM EDT' };
@@ -128,12 +127,13 @@ for (const hour of [0, 5, 6, 10, 11, 14, 15, 19, 20, 23]) {
   const options = { pairTransition: passage, transitionPhrase: (key: string) =>
     key === calendarMoonContextKey('lateIngress') ? late : key.startsWith('authored/calendar-timing/') ? timing : undefined };
   const result = resolveCalendarMoonFallback(context, options)!;
-  assert.equal(result.body, `Use the second pass to make the system easier, not stricter. ${hour < 20 ? passage : late}`,
-    `Moon-sign details precede the complete selected ingress copy at hour ${hour}`);
+  assert.equal(result.body, `Synthetic timing wrapper for Libra at 4:10 AM EDT. Use the second pass to make the system easier, not stricter. ${hour < 20 ? passage : late}`,
+    `Calculated opening precedes the complete Moon-sign and ingress copy at hour ${hour}`);
   assert.deepEqual(calendarMoonWritingParagraphs([{ ...result, role: 'leftover' }], 1), result.body.split('\n\n'));
   const rows = [
     { content_key: 'authored/calendar-moon-transition/virgo/libra', body: passage },
     { content_key: calendarMoonContextKey('lateIngress'), body: late },
+    { content_key: `authored/calendar-timing/${hour < 6 ? 'earlyIngress' : hour < 11 ? 'morningIngress' : hour < 15 ? 'middayIngress' : hour < 20 ? 'eveningIngress' : 'lateIngress'}`, body: timing },
   ].map((row, index) => ({ ...row, id: `ingress-${index}`, status: 'LIVE', lane: 'serving', surface: 'sky', mode: 'in_depth', review_state: null }));
   assert.equal(calendarMoonWriteupForDay(rows, day, context)?.body, result.body, `Studio matches at hour ${hour}`);
 }
@@ -141,7 +141,7 @@ const unknownPair = { ...base, moonSign: 'Unknown', nextMoonSign: 'Unknown', moo
   moonSignExitHour: 4, nextMoonSignEntryTime: '4:10 AM EDT' };
 assert.match(resolveCalendarMoonFallback(unknownPair)!.body, /4:10 AM EDT/, 'No passage still retains calculated timing');
 assert.equal(resolveCalendarMoonFallback({ ...unknownPair, moonChangesSignToday: false })?.kind, 'lastFullDayInMoonSign');
-console.log('PASS: ingress readings preserve complete source copy without duplicate timing wrappers in Day, Week, and Studio.');
+console.log('PASS: ingress readings introduce calculated signs and preserve complete source copy in Day, Week, and Studio.');
 
 assert.deepEqual(calendarMoonWritingParagraphs([{ role: 'leftover', contentKey: 'generated/calendar-moon-fallback/lastFullDayInMoonSign/2026-09-27', body: 'Synthetic opening.\n\nSynthetic ending.' }], 1), ['Synthetic opening.', 'Synthetic ending.']);
 assert.deepEqual(calendarMoonWritingParagraphs([{ role: 'lunation', contentKey: 'authored/sky-lunation-macro/full-moon/aries', body: 'Article preview.\n\nFull article continues.' }], 1), ['Article preview.']);

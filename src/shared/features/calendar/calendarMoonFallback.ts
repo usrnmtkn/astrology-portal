@@ -76,19 +76,16 @@ function continuationOpening(facts: CalendarMoonCycleFacts, lookup?: (key: strin
   return calendarTimingBody(visitDay <= 1 ? 'firstDay' : cycle === 0 ? 'anotherDay' : cycle === 1 ? 'remains' : 'still', { ...facts }, lookup);
 }
 
-function signChangeSentence(facts: CalendarMoonCycleFacts, transition: string, lookup?: (key: string) => string | null | undefined) {
+function signChangeReading(facts: CalendarMoonCycleFacts, transition: string, lookup?: (key: string) => string | null | undefined) {
   const time = facts.nextMoonSignEntryTime;
   const hour = ingressHour(facts);
   if (!facts.nextMoonSign || !time || hour == null) return null;
-  // Day and Week already display the calculated ingress and time in their
-  // event rows. Keep the selected passage intact instead of introducing it
-  // with another sentence announcing the same ingress.
-  const passage = hour < 20 ? transition : calendarMoonContextBody("lateIngress", lookup);
-  if (passage) return passage;
-  // Preserve the timing-only fallback when no transition passage is available.
   const timing = hour < 6 ? 'earlyIngress' : hour < 11 ? 'morningIngress'
     : hour < 15 ? 'middayIngress' : hour < 20 ? 'eveningIngress' : 'lateIngress';
-  return calendarTimingBody(timing, { ...facts }, lookup);
+  return {
+    opening: calendarTimingBody(timing, { ...facts }, lookup),
+    body: hour < 20 ? transition : calendarMoonContextBody("lateIngress", lookup)
+  };
 }
 
 function hasExactLunarEvent(facts: CalendarMoonCycleFacts) {
@@ -311,10 +308,10 @@ export function resolveCalendarMoonFallback(
     || Boolean(continuation);
 
   if (facts.moonChangesSignToday) {
-    const changed = signChangeSentence(facts, transition, options.transitionPhrase);
+    const changed = signChangeReading(facts, transition, options.transitionPhrase);
     if (changed) {
       moonKind = "moonChangesLaterToday";
-      moonBody = joinParts(options.unusedAuthored?.body || continuation, changed);
+      moonBody = joinParts(changed.opening, options.unusedAuthored?.body || continuation, changed.body);
       allowContext = false;
     }
   } else if (facts.isLastFullDayInMoonSign && facts.nextMoonSign) {
