@@ -2,7 +2,7 @@
 // Synthetic fixture ids are mapped to UUIDs only in the database boundary.
 import { createHash } from 'node:crypto';
 import { createPublicationDb, seedPublicationRow, callPublicationRpc } from './studio-publication-db.mjs';
-export function publicationRpcFixture(getRows, saveRows) {
+export function publicationRpcFixture(getRows, saveRows, getPublications = () => []) {
   let db, initializing;
   const ids = new Map(), originals = new Map(), seeded = new Map();
   const uuid = id => {
@@ -57,6 +57,14 @@ export function publicationRpcFixture(getRows, saveRows) {
         await db.query("select setval(pg_get_serial_sequence('public.content_publications','revision'), greatest(coalesce((select max(revision) from content_publications),1), nextval(pg_get_serial_sequence('public.content_publications','revision'))), true)");
       }
         }
+      if (name === 'retire_content_everywhere') {
+        const revisions = getPublications().map(row => Number(row.revision));
+        if (revisions.length) {
+          // Direct fixture writes already exposed these ledger revisions. The
+          // SQL retirement must advance the same sequence before its trigger runs.
+          await db.query("select setval(pg_get_serial_sequence('public.content_publications','revision'), greatest($1::bigint, coalesce((select max(revision) from content_publications),1), nextval(pg_get_serial_sequence('public.content_publications','revision'))), true)", [Math.max(...revisions)]);
+        }
+      }
       const mappedArgs = mapIds(args);
       const receipt = name === 'content_studio_row_history'
         ? (await db.query('select public.content_studio_row_history($1,$2) as receipt',[mappedArgs.p_row_id,mappedArgs.p_before])).rows[0].receipt

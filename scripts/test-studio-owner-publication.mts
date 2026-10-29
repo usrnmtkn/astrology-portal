@@ -118,6 +118,10 @@ try {
   const retired = await lunar.invoke('POST', {action: 'retire', id: live.id, contentKey: lunarOwnerKey,
     expectedUpdatedAt: live.updated_at}, '/api/admin/content-publication');
   assert.equal(retired.status, 200, JSON.stringify(retired.payload));
-  assert.equal((await read()).payload.rows.length, 0, 'Retirement remains authoritative.');
+  const afterRetirement = await read();
+  assert.equal(afterRetirement.payload.rows.length, 0, 'Retirement remains authoritative.');
+  assert(afterRetirement.payload.publications.find((item: any) => item.content_key === lunarOwnerKey).revision
+    > served.payload.publications.find((item: any) => item.content_key === lunarOwnerKey).revision,
+  'The SQL retirement must advance the already-observed fixture ledger revision.');
   console.log('PASS lunar owner publication: actual publish/read/retire handlers, exact copy, technical lint labels, unsafe metadata and approval boundaries.');
 } finally {await lunar.close();}
