@@ -9,6 +9,7 @@ export default defineConfig(base, {
     'calendar-journal-handoff.spec.ts',
     'card-typography.spec.ts',
     'child-page-back-navigation.spec.ts',
+    'daily-source-loading.spec.ts',
     'design-handoff-pages.spec.ts',
     'design-handoff-type-glyphs.spec.ts',
     'design-handoff-wheel.spec.ts',

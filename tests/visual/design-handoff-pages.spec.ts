@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '../helpers/polish-test';
+import { location, now, fixtureProfile, seed, authenticate, patternPreview, insightPreview, patternInsightFixtures, inspectMemberSourceFailures, withFinishedSocialReads } from '../helpers/synthetic-member-sources';
+import { expect, syntheticMemberTest, test, type Page } from '../helpers/polish-test';
 import { expectReadableTheme, expectRenderedTextContrast } from '../helpers/theme-contrast';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { getAstrodienstSky } from '../../apps/web/src/services/ephemeris';
@@ -10,37 +11,6 @@ import { readerResponse } from '../helpers/reader-response';
 import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import retrogradeCycleCopy from '../../apps/web/src/content/retrogradeCycleNarratives.json' with {type:'json'};
-
-const location = {label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'};
-const now = '2026-10-13T16:00:00.000Z';
-const fixtureProfile = {id:'design-reader',name:'Fixture Reader',email:'reader@example.test',provider:'email',sun:'Capricorn',moon:'Pisces',rising:'Aries',currentLocation:location.label,currentLocationData:location,charts:[{id:'design-natal',name:'Fixture Reader',type:'Birth chart',birthDate:'1990-01-01',birthTime:'12:00 PM',birthCity:location.label,birthLocation:location}]};
-async function seed(page: Page, theme: string, animations = 'off', manualNatalExtras: Record<string, unknown> = {}, sect?: 'day' | 'night') {
-  const birthTime = sect === 'night' ? '12:00 AM' : '12:00 PM';
-  const profile = structuredClone(fixtureProfile); profile.charts[0].birthTime = birthTime;
-  const birth = zonedDateTimeToUtc('1990-01-01',birthTime,location.timeZone);
-  const natal = {...await getAstrodienstSky(location,birth),birthTimeKnown:true};
-  const key = natalSkySnapshotCacheKey(location,birth);
-  await page.clock.setFixedTime(new Date(now));
-  await bundledPublications(page);
-  await page.route('**/auth/v1/**',route=>route.fulfill({json:null}));
-  await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**',route=>route.fulfill({status:503,body:'Local fixture'}));
-  await page.route('**/api/calendar?**',route=>route.fulfill({json:{ok:true,calendar:{days:[]}}}));
-  await page.route('**/api/sky?**',async route=>{
-    const response={statusCode:200,setHeader(){},end(body:string){void route.fulfill({status:this.statusCode,contentType:'application/json',body});}};
-    await skyHandler({method:'GET',url:route.request().url()} as IncomingMessage,response as unknown as ServerResponse);
-  });
-  await page.addInitScript(({location,theme,natal,key,schema,now,profile,animations,manualNatalExtras,birthTime})=>{
-    if(localStorage.getItem('designFixtureSeeded'))return;
-    localStorage.setItem('designFixtureSeeded','true');
-    localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:pageAnimations',animations);
-    localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));
-    localStorage.setItem('tldrastro:horoscopeLocation',JSON.stringify(location));
-    localStorage.setItem('tldrastro:userProfile',JSON.stringify(profile));
-    localStorage.setItem(key,JSON.stringify({schema,cacheKey:key,snapshot:natal,verifiedAt:now}));
-    localStorage.setItem('tldrastro:manualCharts:design-reader',JSON.stringify([{id:'fixture-friend',ownerUserId:'design-reader',chartType:'person',displayName:'Fixture Friend',firstName:'Fixture',relationshipType:'friend',birthDate:'1990-01-01',birthTime,birthTimeUnknown:false,birthPlace:location.label,birthLocation:location,natalChart:{...natal,...manualNatalExtras},createdAt:now,updatedAt:now}]));
-  },{location,theme,natal,key,schema:VERIFIED_SKY_CACHE_SCHEMA,now,profile,animations,manualNatalExtras,birthTime});
-  return natal;
-}
 
 async function showRelationshipOutlooks(page: Page) {
   await expect(page.getByRole('region',{name:'Friction and flow',exact:true})).toBeVisible({timeout:60_000});
@@ -327,20 +297,6 @@ test('Friction and flow: partial failure, retry, consent and birth-time boundari
   await expect(page.getByRole('dialog').locator('.pair-forecast-detail-date')).toHaveText('Today, Nov 1');
   await page.keyboard.press('Escape');
 });
-
-async function authenticate(page:Page, sect?: 'day' | 'night') {
-  const user={id:'design-reader',email:'reader@example.test',aud:'authenticated',role:'authenticated',app_metadata:{provider:'email'},user_metadata:{name:'Fixture Reader'}};
-  const authKey=`sb-${new URL(process.env.VITE_SUPABASE_URL??'https://visual-smoke.supabase.test').hostname.split('.')[0]}-auth-token`;
-  await page.addInitScript(({user,authKey,now})=>{localStorage.setItem(authKey,JSON.stringify({access_token:'synthetic-design-session',refresh_token:'synthetic-refresh',expires_at:Date.parse(now)/1000+3600,token_type:'bearer',user}));},{user,authKey,now});
-  await page.route('**/auth/v1/**',route=>route.fulfill({json:user}));
-  let persisted={version:1,profile:structuredClone(fixtureProfile)};
-  if(sect==='night')persisted.profile.charts[0].birthTime='12:00 AM';
-  await page.route('**/rest/v1/user_profiles*',route=>{
-    if(route.request().method()==='POST')persisted=route.request().postDataJSON().data;
-    return route.fulfill({json:{data:persisted}});
-  });
-  return {savedProfile:()=>persisted.profile};
-}
 
 for(const width of [320,390,960,1440]) for(const theme of ['light','dark']) {
  test(`You Transits handoff layout ${width} ${theme}`,async({page})=>{
@@ -939,7 +895,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   // Existing tabs can still contain the old duplicate article/hash entry.
   await page.goto(canonicalArticle);await expect(page.locator('.sky-detail-article')).toBeVisible();
   await page.evaluate(()=>{
-    const parent=location.href, legacy=new URL(parent), detail=legacy.searchParams.get('detail')!;
+    const parent=window.location.href, legacy=new URL(parent), detail=legacy.searchParams.get('detail')!;
     legacy.hash=`friends?tab=charts&chart=social%3Aconnected-fixture&view=transits&detail=${encodeURIComponent(detail)}`;
     history.replaceState({articleParent:parent,articleUrl:legacy.href},'',legacy.href);
   });
@@ -1760,40 +1716,6 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) for (const
   });
 }
 
-
-const patternPreview = 'A shared plan can leave room for a different answer. The complete pattern overview continues beyond the compact preview, with enough saved text to wrap across several lines on a small screen. This final sentence must remain available in the full pattern reading.';
-const insightPreview = 'Sometimes a familiar response needs a second look. The complete insight introduction continues beyond the compact preview, with enough saved text to wrap across several lines on a small screen.\n\nThis paragraph repeats.\n\nThis paragraph repeats.\n\nThe complete insight ending remains.';
-async function patternInsightFixtures(page: Page, theme: string, options: { patterns?: boolean; insights?: boolean; fail?: boolean } = {}) {
-  const aspectPatterns = {
-    patterns: [], relationships: [],
-    interpretationContexts: [
-      {patternId:'handoff-yod',patternType:'yod',members:[{planet:'Pluto'},{planet:'Neptune'},{planet:'Moon'}],display:{rank:1,isContained:false,parentPatternIds:[],childPatternIds:['handoff-child']}},
-      {patternId:'handoff-child',patternType:'yod',members:[],display:{rank:2,isContained:true,parentPatternIds:['handoff-yod'],childPatternIds:[]}}
-    ],
-    resolvedCopy: [
-      {patternId:'handoff-yod',content:{eyebrow:'Yod',headline:'A good plan can still leave you out of it',overview:patternPreview,sections:[{id:'feel',body:'The complete parent reading ending remains.'}],tags:[]}},
-      {patternId:'handoff-child',content:{eyebrow:'Yod',headline:'Supporting fixture pattern',overview:'The supporting pattern overview remains.',sections:[{id:'feel',body:'The complete supporting pattern ending remains.'}],tags:[]}}
-    ]
-  };
-  // Saved Friend charts carry their governed pattern copy with the natal snapshot.
-  // You also exercises the independent pattern-copy hydration request below.
-  const natal=await seed(page,theme,'off',options.patterns===false?{}:{aspectPatterns});
-  await authenticate(page);
-  await page.route('**/api/astrology-facts?**', route => {
-    if(!new URL(route.request().url()).searchParams.has('includeAspectPatternCopy'))return route.fallback();
-    return route.fulfill({json:{ok:true,sky:{aspectPatterns:options.patterns===false?{patterns:[],relationships:[],interpretationContexts:[],resolvedCopy:[]}:aspectPatterns}}});
-  });
-  const keys=['you','they'].flatMap(audience=>[`cms/natal-twelfth-ruler/${audience}/introduction`,...Array.from({length:12},(_,i)=>`cms/natal-twelfth-ruler/${audience}/ruler-house/${i+1}`)]);
-  const rows=keys.map((key,index)=>({id:`cccccccc-cccc-4ccc-bccc-${String(index).padStart(12,'0')}`,content_key:key,surface:'natal',mode:'article',status:'LIVE',lane:'serving',review_state:null,body:key.endsWith('introduction')?insightPreview:`Complete ${key} opening.\n\nThe complete ruler-house ending remains.`,updated_at:now}));
-  let fail=options.fail;
-  await page.route('**/api/content-reader',route=>{
-    if(fail)return route.fulfill({status:503,json:{error:'Synthetic unavailable publication'}});
-    const q=route.request().postDataJSON();
-    return route.fulfill({json:readerResponse(options.insights===false?[]:rows.filter(row=>q.keys?.includes(row.content_key)))});
-  });
-  return {natal,recover:()=>{fail=false;}};
-}
-
 for(const width of [320,390,768,1440]) for(const theme of ['light','dark']) for(const audience of ['you','they']) {
   test(`combined Patterns Insights handoff ${audience} ${width} ${theme}`,async({page})=>{
     test.setTimeout(120_000);await page.setViewportSize({width,height:1100});
@@ -2043,3 +1965,38 @@ for(const audience of ['you','they']) test(`Sect page unavailable writing and ne
  mode='error';await page.reload();await expect(page.getByRole('alert')).toContainText('The chart reading could not load.');
  mode='ready';await page.getByRole('button',{name:'Try again',exact:true}).click();await expect(page.locator('.natal-sect-article')).toContainText('The recovered complete sect paragraph.');
 });
+
+for(const width of [390,1440])for(const theme of ['light','dark']){
+  syntheticMemberTest(`Populated member source contracts ${width} ${theme}`,async({page})=>{
+    test.setTimeout(120000);await page.setViewportSize({width,height:1100});
+    const assertClean=await inspectMemberSourceFailures(page);
+    const fixture=await patternInsightFixtures(page,theme,{cachedSources:true});
+    for(const audience of ['you','they']){
+      const route=audience==='you'?'/#you?tab=chart':'/#friends?tab=charts&chart=fixture-friend&view=natal';
+      const reads:ReadonlyArray<readonly [string,string]>=[['GET','/rest/v1/social_profiles'],['POST','/rest/v1/rpc/list_social_friend_requests'],...(audience==='they'?[['POST','/rest/v1/rpc/list_social_friends']] as const:[])];
+      await withFinishedSocialReads(page,`${audience}-initial`,()=>page.goto(route),reads);
+      await expect(page.getByRole('heading',{level:1,name:audience==='you'?'Fixture Reader':'Fixture Friend',exact:true})).toBeVisible();
+      const section=page.getByRole('region',{name:'Patterns & Insights',exact:true});
+      const cards=section.locator('.natal-insight-card');await expect(cards).toHaveCount(2,{timeout:60000});
+      await expect(cards.last().locator('.natal-insight-card__preview')).toHaveText(insightPreview.replace(/\n+/g,' '));
+      await expect(cards.first().locator('.natal-insight-card__preview')).toHaveText(patternPreview);
+      await section.scrollIntoViewIfNeeded();await section.screenshot({path:test.info().outputPath(`member-sources-${audience}-${width}-${theme}.png`)});
+      await cards.first().click();await expect(page.locator('.sky-detail-article h1')).toHaveText(/A good plan can still leave.*out of it/);
+      await expect(page.locator('.sky-detail-article')).toContainText('The complete parent reading ending remains.');
+      await expect(page.locator('.sky-detail-article')).toContainText('The supporting pattern overview remains.');
+      await expect(page.locator('.sky-detail-article')).toContainText('The complete supporting pattern ending remains.');
+      const back=()=>page.getByRole('button',{name:audience==='you'?'Back to natal chart':'Close detail',exact:true}).click();
+      if(audience==='they')await withFinishedSocialReads(page,'friend-back',back,[['POST','/rest/v1/rpc/list_social_friend_requests']]);else await back();
+      await expect(section).toBeVisible();await assertClean();
+      await withFinishedSocialReads(page,`${audience}-reload`,()=>page.reload(),reads);
+      await expect(cards).toHaveCount(2,{timeout:60000});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      await assertClean();
+    }
+    expect(fixture.memberSourceRequests().profileReads).toBeGreaterThan(0);
+    expect(fixture.memberSourceRequests().profileSyncs).toBeGreaterThan(0);
+    expect(fixture.memberSourceRequests().manualInserts).toBe(0);
+    expect(fixture.generationAttempts()).toBe(0);
+    await assertClean();
+  });
+}
