@@ -12,6 +12,7 @@ export function horoscopeEditionKey(window:HoroscopeWindow):string;
 export function isHoroscopeEditionKey(key:string,window:HoroscopeWindow):boolean;
 export function validHoroscopeTimeZone(value:unknown):boolean;
 export function canonicalHoroscopeTimeZone(value:string):string;
+export function horoscopeReaderTimeZones(period:HoroscopePeriod,timeZone:string):string[];
 export function validateHoroscopeWindow(value:unknown):HoroscopeWindow;
 export function validateHoroscopeEdition(value:unknown, complete?:boolean):HoroscopeEdition;
 export function emptyHoroscopeEdition(window:HoroscopeWindow):HoroscopeEdition;
