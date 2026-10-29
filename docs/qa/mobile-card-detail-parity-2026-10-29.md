@@ -38,6 +38,11 @@ It is not a full-site or production release signoff.
   of the filled `✶` star, including card badges and article headers. Browser
   assertions and visual verification of this follow-up remain pending the
   release runtime handoff.
+- Full Moon and New Moon article eyebrows retain their supplied lunar glyph
+  instead of parsing the phase name as an unknown planet and displaying its
+  first letter. Ordinary planet and unknown-body parsing remain unchanged.
+  Focused rendered coverage is prepared for both phases, the sextile header,
+  ordinary planets and unknown bodies; execution remains pending the same slot.
 
 ## Validation and scope
 
@@ -82,7 +87,7 @@ during teardown; the test now waits for font readiness, and the fresh rerun exit
 cleanly. Mobile light/dark house-card screenshots were inspected locally.
 
 The required browser release gate includes a mobile-parity job running the
-countdown, return-URL and house-selection boundary regressions and 40 browser
+countdown, return-URL and house-selection boundary regressions and 48 browser
 cases across all eight viewport/theme/browser configurations.
 Workflow syntax, affected-surface selection, suite coverage and aggregate gate
 regressions pass locally. The complete connection source suite also remains in

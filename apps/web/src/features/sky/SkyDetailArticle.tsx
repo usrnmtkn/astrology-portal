@@ -236,7 +236,7 @@ function articleHouseToken(house: string | number) {
   return Number.isFinite(parsedHouse) && parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
 }
 
-function articlePlacementGlyphs(title: string, meta = "") {
+function articlePlacementGlyphs(title: string, meta = "", glyph = "") {
   const source = `${title} ${meta}`;
   const match = source.match(
     /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
@@ -247,8 +247,9 @@ function articlePlacementGlyphs(title: string, meta = "") {
   }
 
   const [, body, retrograde, sign, house] = match;
+  const lunarGlyph = /^(?:Full|New) Moon$/iu.test(body.trim()) ? glyph.trim() : "";
   return uniqueArticleGlyphs([
-    textArticleGlyph(pointGlyph(body.trim()), body.trim()),
+    textArticleGlyph(lunarGlyph || pointGlyph(body.trim()), body.trim()),
     retrograde ? textArticleGlyph("℞", "Retrograde") : null,
     signArticleGlyph(sign.trim()),
     house ? { key: `house-${house}`, label: `${house} house`, text: articleHouseToken(house), house: true } : null
@@ -279,7 +280,7 @@ function articleEyebrowGlyphs({
   title: string;
 }) {
   const aspect = articleAspectGlyphPartsFromHeading(title);
-  const placementGlyphs = articlePlacementGlyphs(title, meta);
+  const placementGlyphs = articlePlacementGlyphs(title, meta, glyph);
 
   if (placementGlyphs.length > 0 && !(aspect && /\bnatal\b/i.test(title))) {
     return placementGlyphs;
