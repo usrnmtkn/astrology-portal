@@ -54,22 +54,7 @@ function download(name:string,value:unknown) {
 export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEditionChange}:{secret:string;requestedEditionId?:string|null;onEditionChange?:(id:string|null)=>void}) {
   const [rows,setRows]=useState<any[]>([]),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState<string|{previous:string}>(''),[message,setMessage]=useState('');
   const [listError,setListError]=useState('');
-  const [editionSearch,setEditionSearch]=useState(''),[editionType,setEditionType]=useState('all'),[editionStatus,setEditionStatus]=useState('all'),[editionSort,setEditionSort]=useState('newest');
-  const searchTerms=editionSearch.toLowerCase().trim().split(/[\s,]+/).filter(Boolean);
-  const visibleEditions=rows.filter(row=>{
-    const window=row.sections.horoscopeEdition.window;
-    if(editionType!=='all'&&window.period!==editionType)return false;
-    if(editionStatus!=='all'&&row.status!==editionStatus)return false;
-    if(!searchTerms.length)return true;
-    const isoDate=new Intl.DateTimeFormat('en-CA',{timeZone:window.timeZone});
-    const searchable=`${row.headline} ${horoscopeWindowLabel(window)} ${isoDate.format(new Date(window.startsAt))} ${isoDate.format(new Date(Date.parse(window.endsAt)-1))} ${window.period} ${window.timeZone.replaceAll('_',' ')}`.toLowerCase();
-    return searchTerms.every(term=>searchable.includes(term));
-  }).sort((a,b)=>{
-    const dateOrder=Date.parse(b.sections.horoscopeEdition.window.startsAt)-Date.parse(a.sections.horoscopeEdition.window.startsAt);
-    return (editionSort==='updated'?Date.parse(b.updated_at)-Date.parse(a.updated_at)||dateOrder:editionSort==='oldest'?-dateOrder:dateOrder)||a.id.localeCompare(b.id);
-  });
-  const editionSortLabel=editionSort==='updated'?'Recently updated':editionSort==='oldest'?'Oldest first':'Newest first';
-  const editionViewChanged=Boolean(editionSearch||editionType!=='all'||editionStatus!=='all'||editionSort!=='newest');
+  const [editionView,setEditionView]=useState({search:'',type:'all',status:'all',sort:'newest'});
   const listRequest=useRef<AbortController|null>(null);
   const [period,setPeriod]=useState<HoroscopePeriod>('weekly'),[date,setDate]=useState(()=>new Intl.DateTimeFormat('en-CA',{timeZone:browserTimeZone()}).format(new Date())),[zone,setZone]=useState(browserTimeZone);
   const [draft,setDraft]=useState<HoroscopeEdition|null>(null),[saved,setSaved]=useState<any>(null),[packet,setPacket]=useState<any>(null),[profile,setProfile]=useState<any>(null);
@@ -622,17 +607,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       <p className="admin-field-hint">{period==='daily'?'The reading covers this local calendar day.':period==='weekly'?'The week runs Monday through Sunday.':period==='monthly'?'One shared overview covers the first through the last day of this calendar month, for all zodiac signs.':"We’ll calculate the Sun’s zodiac season for this date. A shared introduction comes before the twelve sign readings."}</p>
       <HoroscopeLocation value={{...place,timeZone:zone}} disabled={busy} onChange={next=>{setPlace(next);setZone(next.timeZone!);}}/>
       <footer className="admin-writing-savebar admin-horoscope-actions"><p>Next: review the writing plan before generating.</p><StudioButton className="admin-primary-button" disabled={busy||!date} onClick={()=>void prepare()}>{busy?'Preparing your edition…':'Continue to writing plan'}</StudioButton></footer>
-      <details className="admin-workspace-details"><AdminDisclosureSummary>Continue a saved edition{rows.length?` (${rows.length})`:''}</AdminDisclosureSummary>
-        <div className="admin-filter-form admin-filter-form--four" role="group" aria-label="Find saved editions">
-          <label><span>Search editions</span><StudioInput type="search" value={editionSearch} placeholder="October 2026" onChange={e=>setEditionSearch(e.target.value)}/></label>
-          <label><span>Horoscope type</span><AdminSelect value={editionType} onChange={e=>setEditionType(e.target.value)}><option value="all">All types</option>{HOROSCOPE_PERIODS.map(p=><option key={p} value={p}>{horoscopeSignLabel(p)}</option>)}</AdminSelect></label>
-          <label><span>Publication status</span><AdminSelect value={editionStatus} onChange={e=>setEditionStatus(e.target.value)}><option value="all">All statuses</option><option value="LIVE">Published</option><option value="DRAFT">Drafts</option><option value="ARCHIVED">Archived</option></AdminSelect></label>
-          <label><span>Sort editions</span><AdminSelect value={editionSort} onChange={e=>setEditionSort(e.target.value)}><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="updated">Recently updated</option></AdminSelect></label>
-        </div>
-        <div className="admin-filter-actions"><p aria-live="polite">{loading?'Loading editions…':`${visibleEditions.length} of ${rows.length} editions`}</p><StudioButton disabled={!editionViewChanged} onClick={()=>{setEditionSearch('');setEditionType('all');setEditionStatus('all');setEditionSort('newest');}}>Reset view</StudioButton></div>
-        {loading?<PageLoading message="Loading horoscope editions…"/>:visibleEditions.length?<Suspense fallback={<p role="status">Loading saved editions…</p>}><HoroscopeSavedEditions rows={visibleEditions} busy={busy} blockedId={dirty||locked?saved?.id:undefined} sortLabel={editionSortLabel} onOpen={row=>void open(row)} onDelete={row=>void removeEdition(row)}/></Suspense>:<p>{rows.length?'No editions match these filters. Change the filters or reset the view.':'No saved editions yet. Start with the dates above.'}</p>}
-        <StudioButton disabled={busy||loading} onClick={()=>void load()}>Refresh editions</StudioButton>
-      </details>
+      <Suspense fallback={<p role="status">Loading saved editions…</p>}><HoroscopeSavedEditions rows={rows} loading={loading} busy={busy} blockedId={dirty||locked?saved?.id:undefined}
+        view={editionView} onViewChange={setEditionView} onRefresh={()=>void load()} onOpen={row=>void open(row)} onDelete={row=>void removeEdition(row)}/></Suspense>
     </>:draft&&passage&&<>
       {step==='generate'?<>
         <label className="admin-review-copy-editor"><span>Writing model</span>
