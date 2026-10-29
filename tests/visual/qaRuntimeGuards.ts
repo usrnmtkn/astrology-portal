@@ -4,8 +4,10 @@ import "./qaUnresolvedContentFixtures";
 export const routeReadyTimeoutMs = 15_000;
 export const routeLoadBudgetMs = 15_000;
 
-export function watchBrowserErrors(page: Page) {
+export function watchBrowserErrors(page: Page, options: { webkitReaderReload?: boolean } = {}) {
   const errors: string[] = [];
+  const reloadCancellations: string[] = [];
+  let departingOrigin: string | null = null;
   const cancelledAssets: Array<{ request: Request; message: string }> = [];
   const ignoredConsolePatterns = [
     /Failed to load resource/i,
@@ -14,7 +16,17 @@ export function watchBrowserErrors(page: Page) {
   ];
 
   page.on("pageerror", (error) => {
+    const expected = departingOrigin && `Fetch API cannot load ${departingOrigin}/api/content-reader due to access control checks.`;
+    // WebKit can report an old document's fetch while an explicit reload commits.
+    // Keep this separate from successful reads and close the window at commit.
+    if (expected && (error.message === expected || error.stack?.split("\n")[0] === expected)) {
+      reloadCancellations.push(expected);
+      return;
+    }
     errors.push(`pageerror: ${error.message}`);
+  });
+  page.on("framenavigated", frame => {
+    if (frame === page.mainFrame()) departingOrigin = null;
   });
 
   // API outages are explicitly exercised by reader fixtures. Failed executable
@@ -44,10 +56,27 @@ export function watchBrowserErrors(page: Page) {
     errors.push(`console.error: ${text}`);
   });
 
-  return () => {
+  const assertNoErrors = () => {
     for (const { request, message } of cancelledAssets) if (!request.frame().isDetached()) errors.push(message);
     expect(errors, `Unexpected browser errors:\n${errors.join("\n")}`).toEqual([]);
   };
+  return Object.assign(assertNoErrors, {
+    reloadCancellations,
+    async reload() {
+      assertNoErrors();
+      departingOrigin = options.webkitReaderReload ? new URL(page.url()).origin : null;
+      try {
+        const response = await page.reload({ waitUntil: "commit" });
+        departingOrigin = null;
+        expect(response, "The replacement document must return a complete HTTP 200 response").not.toBeNull();
+        expect(response!.status()).toBe(200);
+        expect(await response!.finished()).toBeNull();
+        expect(response!.request().failure()).toBeNull();
+      } finally {
+        departingOrigin = null;
+      }
+    }
+  });
 }
 
 export async function expectRouteLoadsWithin(
