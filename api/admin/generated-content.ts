@@ -182,7 +182,8 @@ type ExistingGeneratedContentRow = {
   prompt_version?: string | null;
   source_snapshot?: Record<string, unknown> & {
     horoscopeGeneration?: {
-      dailyEditorial?: {version: string};
+      dailyEditorial?: {version: string; pending?: unknown};
+      weeklyEditorial?: {pending?: unknown};
       active?: unknown; batch?: { status?: string };
       candidateHolds?: Record<string, { candidate: { headline: string; body: string }; operation: { id: string } }>;
       candidateResolutions?: unknown[];
@@ -3563,8 +3564,9 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
-  if (existing.content_key.startsWith('horoscope/') && (existing.source_snapshot?.horoscopeGeneration?.active||existing.source_snapshot?.horoscopeGeneration?.batch?.status==='running')) {
-    throw new GeneratedContentRequestError('A horoscope reading is running. Retrieve or release that request before deleting the edition.', 409);
+  const generation=existing.source_snapshot?.horoscopeGeneration;
+  if (existing.content_key.startsWith('horoscope/') && (generation?.active||generation?.batch?.status==='running'||generation?.weeklyEditorial?.pending||generation?.dailyEditorial?.pending)) {
+    throw new GeneratedContentRequestError('Finish or explicitly release the saved horoscope request or batch review before deleting this edition.', 409);
   }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");

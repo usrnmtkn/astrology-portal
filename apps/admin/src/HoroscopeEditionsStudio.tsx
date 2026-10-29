@@ -22,6 +22,7 @@ const WeeklyBatchEditorial=lazy(()=>import('./HoroscopeGenerationDetails').then(
 const HoroscopeSaveRecovery=lazy(()=>import('./HoroscopeSaveRecovery'));
 const HoroscopePublicationReview=lazy(()=>import('./HoroscopePublicationReview'));
 const WritingProfiles=lazy(()=>import('./HoroscopeWritingStudio'));
+const HoroscopeSavedEditions=lazy(()=>import('./HoroscopeSavedEditions'));
 
 const endpoint = '/api/admin/generated-content';
 const steps = ['setup','generate','edit','publish'] as const;
@@ -33,7 +34,7 @@ async function request(secret:string,url:string,body?:unknown,method='POST',sign
   const timeout=AbortSignal.timeout(60000);
   if(url.startsWith(endpoint))url+=(url.includes('?')?'&':'?')+'horoscopeEditor=true';
   if(url==='/api/admin/horoscope-writing'&&body)body={...(body as object),editorView:true};
-  const response = await fetchWithOwnerSession(url,secret,{method:body ? method:'GET',headers:{'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body ? {body:JSON.stringify(body)}:{})});
+  const response = await fetchWithOwnerSession(url,secret,{method:body||method!=='POST'?method:'GET',headers:{'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body ? {body:JSON.stringify(body)}:{})});
   const data = await response.json().catch(()=>({ok:false,error:'The server response could not be read.'}));
   if (!response.ok || data.ok !== true) throw Object.assign(new Error(data.error ?? 'The edition could not be loaded.'),{rows:data.rows,status:response.status,dispatchNotStarted:data.dispatchNotStarted===true});
   return data;
@@ -306,6 +307,21 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       setEditorialImport({schema:'horoscope-editorial-import/v1',originalSource,sha256:Array.from(new Uint8Array(hash),byte=>byte.toString(16).padStart(2,'0')).join(''),importedAt:new Date().toISOString(),readerFields:['edition.passages[].headline','edition.passages[].body']});
       setDraft(imported);setSign(current=>imported.passages.some(p=>p.sign===current)?current:imported.passages[0].sign);setApproved(false);setMessage('Imported the readings as an unsaved draft. Review the complete edition before publishing.');
     }catch(reason){setError((reason as Error).message);}
+  }
+  async function removeEdition(row:any){
+    if(busy||running.current||row.id===saved?.id&&(dirty||locked))return;
+    const controller=beginOperation(),route=window.location.href;
+    setBusy(true);setError('');setMessage('');
+    try{
+      const {deleteHoroscopeEdition}=await import('./horoscopeEditionDeletion');
+      if(!isCurrent(controller)||window.location.href!==route)return;
+      if(!await deleteHoroscopeEdition(row,(url,body,method)=>request(secret,url,body,method,controller.signal),message=>window.confirm(message)))return;
+      if(!isCurrent(controller)||window.location.href!==route)return;
+      setRows(current=>current.filter(item=>item.id!==row.id));
+      if(saved?.id===row.id){setSaved(null);setDraft(null);setPlan(null);setPlanApproved(false);setStep('setup');syncEditionLink(null);}
+      setMessage('Deleted horoscope edition.');
+    }catch(reason){if(isCurrent(controller)&&window.location.href===route)setError((reason as Error).message);}
+    finally{endOperation(controller);}
   }
   async function reviewPlan(){
     if(!draft||running.current)return;setBusy(true);setError('');
@@ -589,6 +605,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     {visibleError&&(typeof visibleError==='string'?<p role="alert">{visibleError}{needsSignIn&&<> <a href={studioSignInHref('/admin/content#horoscopes'+(saved?.id?'?edition='+encodeURIComponent(saved.id):''))}>Sign in to Content Studio</a></>}</p>:step==='generate'&&<details className="admin-workspace-details"><AdminDisclosureSummary>Previous attempt</AdminDisclosureSummary><p>{visibleError.previous}</p></details>)}{message&&<p role="status">{message}</p>}
     {saved&&step!=='setup'&&<div className="admin-horoscope-actions">
       <StudioButton className={saved.status==='ARCHIVED'?undefined:'admin-danger-button'} disabled={locked||dirty} onClick={()=>void save(false,saved.status==='ARCHIVED'?'DRAFT':'ARCHIVED')}>{saved.status==='ARCHIVED'?'Restore as draft':saved.event_type==='horoscope-edition-revision'?'Archive draft revision':'Archive edition'}</StudioButton>
+      {saved.status!=='LIVE'&&<StudioButton className="admin-danger-button" disabled={locked||dirty} onClick={()=>void removeEdition(saved)}>{saved.event_type==='horoscope-edition-revision'?'Delete draft revision':'Delete edition'}</StudioButton>}
       {saved.event_type==='horoscope-edition-revision'&&<StudioButton disabled={locked||dirty} onClick={()=>void open({id:saved.source_snapshot?.targetRowId})}>Open published edition</StudioButton>}
       {needsSync&&<StudioButton disabled={busy} onClick={()=>void open(saved,true)}>Reload saved edition</StudioButton>}
     </div>}
@@ -613,23 +630,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
           <label><span>Sort editions</span><AdminSelect value={editionSort} onChange={e=>setEditionSort(e.target.value)}><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="updated">Recently updated</option></AdminSelect></label>
         </div>
         <div className="admin-filter-actions"><p aria-live="polite">{loading?'Loading editions…':`${visibleEditions.length} of ${rows.length} editions`}</p><StudioButton disabled={!editionViewChanged} onClick={()=>{setEditionSearch('');setEditionType('all');setEditionStatus('all');setEditionSort('newest');}}>Reset view</StudioButton></div>
-        {loading?<PageLoading message="Loading horoscope editions…"/>:visibleEditions.length?<div className="admin-content-table-scroll admin-horoscope-saved" role="region" aria-label="Saved horoscope editions" tabIndex={0}>
-          <table aria-label={`Saved editions, ${editionSortLabel.toLowerCase()}`}>
-            <thead><tr><th scope="col">Dates</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
-            <tbody>{visibleEditions.map(row=>{
-              const edition=row.sections.horoscopeEdition,dates=horoscopeWindowLabel(edition.window);
-              const written=edition.passages.filter((p:any)=>p.headline.trim()&&p.body.trim()).length;
-              const status=row.status==='LIVE'?'Published':row.status==='ARCHIVED'?'Archived':row.status==='DRAFT'?`${row.event_type==='horoscope-edition-revision'?'Draft revision · ':''}${written}/${edition.passages.length} drafted`:String(row.status??'Unknown status');
-              const action=row.status==='LIVE'||written===edition.passages.length?'Review / Edit':'Continue';
-              return <tr key={row.id}>
-                <td>{dates}<small>{edition.window.timeZone.replaceAll('_',' ')}</small></td>
-                <td>{horoscopeSignLabel(edition.window.period)}</td>
-                <td>{status}</td>
-                <td><StudioButton disabled={busy} aria-label={`${row.headline} · ${dates} · ${edition.window.timeZone} · ${status} · ${action}`} onClick={()=>void open(row)}>{action}</StudioButton></td>
-              </tr>;
-            })}</tbody>
-          </table>
-        </div>:<p>{rows.length?'No editions match these filters. Change the filters or reset the view.':'No saved editions yet. Start with the dates above.'}</p>}
+        {loading?<PageLoading message="Loading horoscope editions…"/>:visibleEditions.length?<Suspense fallback={<p role="status">Loading saved editions…</p>}><HoroscopeSavedEditions rows={visibleEditions} busy={busy} blockedId={dirty||locked?saved?.id:undefined} sortLabel={editionSortLabel} onOpen={row=>void open(row)} onDelete={row=>void removeEdition(row)}/></Suspense>:<p>{rows.length?'No editions match these filters. Change the filters or reset the view.':'No saved editions yet. Start with the dates above.'}</p>}
         <StudioButton disabled={busy||loading} onClick={()=>void load()}>Refresh editions</StudioButton>
       </details>
     </>:draft&&passage&&<>

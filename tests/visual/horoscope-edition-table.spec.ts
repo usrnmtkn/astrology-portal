@@ -180,7 +180,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByText(/^Continue a saved edition/).click();
    await studio.getByRole('button',{name:'Reset view',exact:true}).click();
    await expect(filters.getByLabel('Publication status')).toHaveValue('all');
-   await table.getByRole('button',{name:/October 1, 2026/}).click();
+   await table.getByRole('button',{name:/October 1, 2026.*Review \/ Edit/}).click();
    await expect.poll(()=>new URL(page.url()).hash).toBe(`#horoscopes?edition=${monthly.id}`);
    await page.reload();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(monthly.sections.horoscopeEdition.passages[0].body);
@@ -193,7 +193,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByText(/^Continue a saved edition/).click();
    const beforeDeclinedUrl=page.url();
    page.once('dialog',dialog=>dialog.dismiss());
-   await table.getByRole('button',{name:/November 2, 2026/}).click();
+   await table.getByRole('button',{name:/November 2, 2026.*Review \/ Edit/}).click();
    await expect(page).toHaveURL(beforeDeclinedUrl);
    await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
@@ -205,7 +205,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByRole('button',{name:'1 · Dates',exact:true}).click();
    await studio.getByText(/^Continue a saved edition/).click();
    holdDetail=true;detailStarted=false;
-   await table.getByRole('button',{name:/November 2, 2026/}).click();
+   await table.getByRole('button',{name:/November 2, 2026.*Review \/ Edit/}).click();
    await expect.poll(()=>detailStarted).toBe(true);
    await page.evaluate(()=>{window.location.hash='connection';});
    await expect(page.getByLabel('CONTENT_GENERATION_SECRET',{exact:true})).toBeVisible();

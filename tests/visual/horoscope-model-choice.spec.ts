@@ -34,7 +34,7 @@ async function fixture(page:Page,missing=1){
       await route.fulfill({status:result.status,json:result.payload});return true;
     }});
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
-    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved').getByRole('button',{name:/October 5, 2026/}).click();return studio;};
+    const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved').getByRole('button',{name:/October 5, 2026.*(?:Review \/ Edit|Continue)$/}).click();return studio;};
     const dispose = async () => {
       try {
         // Finish active handlers before changing network state or terminating their IPC fixture.

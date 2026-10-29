@@ -21,7 +21,7 @@ export async function routeStudioInventoryApi(page: Pick<Page, "route">, options
     if (url.pathname === "/api/admin/generated-content" || url.pathname === "/api/admin/generated-content-inventory") {
       const namesRows = ["id", "contentKey", "contentKeys", "variables", "writingProfiles", "horoscopeBrief", "horoscopeEditions"].some((key) => url.searchParams.has(key));
       if (request.method() !== "GET" || namesRows) {
-        const body = request.method() === "GET" ? undefined : request.postDataJSON();
+        const body = request.postData() ? request.postDataJSON() : undefined;
         const result = await options.call({
           method: request.method(),
           body,
