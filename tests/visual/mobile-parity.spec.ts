@@ -185,6 +185,7 @@ test('Mobile parity: article aspect and lunar icons preserve supplied glyphs',as
   await expect(article.getByRole('heading',{level:1})).toHaveText(title);
   await expect(article).toContainText('Synthetic complete opening paragraph.');
   await expect(article).toContainText('Synthetic complete ending paragraph.');
+  await expect(article.locator('hr')).toHaveCount(1);
   const cue=key==='aspect'?header.locator('.aspect-badge'):header.locator('.article-eyebrow__glyphs > span').first();
   if(glyph)await expect(cue).toHaveText(glyph);
   else await expect(header.locator('.article-eyebrow__glyphs')).toHaveCount(0);

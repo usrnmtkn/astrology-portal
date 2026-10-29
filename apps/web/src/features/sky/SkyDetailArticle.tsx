@@ -402,6 +402,8 @@ export function SkyDetailArticle({
   placementNavigation?: { previous?: { title: string; href: string }; next?: { title: string; href: string } };
 }) {
   const placementPage = /^sky\/placement\//u.test(detail.routePath ?? "");
+  // Friends handle routes carry calculated transit context without compactHeader.
+  const personalArticle = Boolean(detail.compactHeader || detail.transitDescription);
   const articleRef = useRef<HTMLElement>(null);
   const [csvExportRoute] = useState(() => new URL(window.location.href).searchParams.get("studioExport") === "sky-article-csv" ? detail.routePath : null);
   const editSource = detail.readerExport && skyPassageEditSource(detail.readerExport.keys);
@@ -592,7 +594,7 @@ export function SkyDetailArticle({
 
   return (
     <section
-      className={`article-page sky-detail-page${placementPage ? " sky-placement-article-page" : ""}${detail.compactHeader ? " you-transit-article-page" : ""}`}
+      className={`article-page sky-detail-page${placementPage ? " sky-placement-article-page" : ""}${personalArticle ? " you-transit-article-page" : ""}`}
       aria-label={`${detail.title} field guide`}
       aria-labelledby="sky-detail-title"
     >
@@ -600,7 +602,7 @@ export function SkyDetailArticle({
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
-      <article ref={articleRef} aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
+      <article ref={articleRef} aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${personalArticle ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
           {detail.readerExport && csvExportRoute === detail.routePath && <Suspense fallback={null}>
             <SkyReaderExportStatus key={detail.routePath} articleRef={articleRef} detail={detail} residencyAspectsPending={residencyAspectsPending} residencyAspectsFailed={residencyAspectsFailed} />
@@ -641,7 +643,7 @@ export function SkyDetailArticle({
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
           </header>
 
-          {hasReadableBody && !placementPage && !detail.compactHeader ? <hr className="article-rule" /> : null}
+          {hasReadableBody && !placementPage && !personalArticle ? <hr className="article-rule" /> : null}
 
           {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">

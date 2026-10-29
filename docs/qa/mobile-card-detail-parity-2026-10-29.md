@@ -108,6 +108,15 @@ and the subsequent source cleanup still require a fresh rendered rerun. Matrix
 43 is not acceptance evidence for these later changes. One earlier harness build failed before
 rendering because of a Node-only Swiss Ephemeris import; the browser harness now
 externalizes that built-in module, matching the existing browser fixtures.
+
+The first rerun (53) could not start its localhost preview inside the restricted
+sandbox and ran no browser assertions. Run 54 used the approved localhost
+permission and stopped after one pass and one failure: a Friends handle article
+carried calculated transit context but no compact-header flag, so its rule
+remained visible. The repaired presentation contract recognizes that existing
+personal context as well; ordinary Sky articles retain their separate layout.
+The strict own/friend divider assertions remain in place, and a fresh rerun is
+required. Logs, screenshot and trace from the failed run are retained locally.
 Matched independent builds of main `a8e89c62` and source build 52 use the same
 native Node 22.20.0 and synthetic preview environment. Candidate startup JS is
 396,860 gzip bytes versus 396,331 on main; the deferred horoscope reader is
@@ -119,6 +128,9 @@ to 396,900 and 5,650, leaving 40 and 45 bytes above the measured candidate.
 This records a feature cost, not a loading improvement. All other graph,
 payload, source and runtime limits remain unchanged.
 Birth inputs retain 16px text and theme icons retain 24px through existing tokens.
+After the Friends handle variant repair, source build 55 measures the deferred
+Sky detail at 6,827 bytes, two bytes over its unchanged 6,825 ceiling. That small
+measured cost remains under review; other bundle limits pass.
 
 Complete API/content release gates, final-main integration and deployed-main
 verification remain required before this candidate may be called live. Existing
