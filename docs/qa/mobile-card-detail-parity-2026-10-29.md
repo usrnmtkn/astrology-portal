@@ -114,7 +114,10 @@ native Node 22.20.0 and synthetic preview environment. Candidate startup JS is
 5,605 versus 5,311. They exceed the current ceilings by 10 and 5 bytes. Shared
 Studio CSS is unchanged at 31,799 bytes. Reader startup CSS drops by 207 bytes
 and aggregate CSS by 267 bytes. Every other measured graph/chunk budget passes.
-No size limit has been raised; a narrow measured allocation is under review.
+The reviewed feature allocation adds only 50 bytes to each of those two ceilings,
+to 396,900 and 5,650, leaving 40 and 45 bytes above the measured candidate.
+This records a feature cost, not a loading improvement. All other graph,
+payload, source and runtime limits remain unchanged.
 Birth inputs retain 16px text and theme icons retain 24px through existing tokens.
 
 Complete API/content release gates, final-main integration and deployed-main

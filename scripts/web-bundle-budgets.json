@@ -1,5 +1,5 @@
 {
-  "appBootGzipBytes": 396850,
+  "appBootGzipBytes": 396900,
   "appChunkGzipBytes": 89000,
   "readerBootGzipBytes": 455250,
   "readerInitialCssGzipBytes": 58750,
@@ -16,6 +16,7 @@
   "totalCssGzipBytes": 144000,
   "totalJavaScriptGzipBytes": 3687650,
   "_rationale": {
+    "mobileReadingParity20261029": "Matched isolated builds of main a8e89c62 and PR #1372 source 581abb2e, each with its own npm-ci dependencies, local knowledge build, native Node 22.20.0 and identical synthetic preview environment, measure App boot 396331 to 396860 gzip bytes (+529) and the deferred horoscope reader 5311 to 5605 (+294). Shared continuous-visit/station countdowns, validated forecast-dialog return navigation and the planetary reader route add this measured feature cost. Reused timing validation, sign lookup and existing design tokens before allocating only 50 bytes to each ceiling: App 396850 to 396900 and horoscope reader 5600 to 5650, leaving 40/45 bytes above these measurements. This is not a loading improvement. Reader startup CSS falls 207 bytes and aggregate CSS 267; shared deferred Studio CSS remains 31799. All other startup, total payload, deferred-chunk, graph isolation, source and runtime contracts remain unchanged. See docs/qa/mobile-card-detail-parity-2026-10-29.md.",
     "publicationStatusRefresh20261030": "Matched independent npm-ci builds of main ffa981518 and the repaired publication-status fix use native ARM Node 22.20.0, identical synthetic Supabase settings, natal aspect patterns enabled and zlib 1.3.1-470d3a2. Aggregate JavaScript measures 3687075/3687490 gzip bytes (+415) across the same 271 files; the deferred Studio dashboard accounts for 414 bytes. Allocate 500 aggregate bytes, leaving 160 bytes. App boot measures 396373/396374 and reader boot including initial CSS 454725/454726; initial/total CSS remains 58352/143985. Preserve every startup, individual chunk, CSS, dependency, source-payload and runtime limit. Retirement labels stay stable during verification. No owner writing changes. This records bounded status-verification cost, not a performance improvement. See docs/qa/studio-publication-status-refresh.md.",
     "frictionFlowDaySheet20261027": "The owner-requested handoff 11 replaces the old relationship day-detail list with a 520px desktop dialog, mobile sheet, shared aspect tallies, expandable synastry cards and person transit links. The same isolated production-build environment measured 143173 aggregate CSS gzip bytes before this task and 143992 after (+819). Reused the shared modal narrative/action primitives, removed obsolete day-detail rules and consolidated repeated type declarations before allocating 250 aggregate CSS bytes (144000 ceiling, 8 measured bytes remaining). This records the requested interface cost; it is not a performance improvement. All startup, reader CSS, JavaScript/chunk and runtime budgets remain unchanged.",
     "reportsHandoff20261026": "The owner-requested Reports handoff updates the library, ready toast, access/progress/error states and delivered articles with shared light/dark feedback colors. Fresh builds with the same isolated Playwright environment measure aggregate CSS at 138735 bytes before this task and 139697 after (+962 gzip bytes); shared Memory CSS is 30951/31130 (+179) because it includes the canonical theme tokens. Retired unused report image/spacing tokens, reused cover/button styles and retained the existing generation effect with a border mask before allocating 1100 aggregate CSS bytes (139850 ceiling, 153 measured bytes remaining) and 225 shared Memory CSS bytes (31200 ceiling, 70 remaining). This records the bounded requested interface cost, not a performance improvement. App/reader startup, startup CSS, all JavaScript/chunk, dependency and runtime limits remain unchanged. The fresh production-build Reports journey passes 68 browser cases in light/dark, including mobile, desktop, saved actions, protected full text, key-date focus, account recovery, notifications and reduced-motion generation effects.",
@@ -274,7 +275,7 @@
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
   "memoryGraphCssGzipBytes": 31800,
-  "horoscopeReaderChunkGzipBytes": 5600,
+  "horoscopeReaderChunkGzipBytes": 5650,
   "horoscopeEditorChunkGzipBytes": 16400,
   "studioCsvChunkGzipBytes": 8200
 }
