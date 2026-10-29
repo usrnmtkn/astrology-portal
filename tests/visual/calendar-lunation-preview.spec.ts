@@ -5,6 +5,8 @@ import { watchBrowserErrors } from "./qaRuntimeGuards";
 import { studioApiStore } from '../helpers/studio-api-store';
 import { lunarOwnerDraft } from '../helpers/lunar-owner-publication.mjs';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import skyHandler from '../../api/sky';
+import type { IncomingMessage, ServerResponse } from 'node:http';
 
 // Owner-supplied Calendar preview; the remainder is synthetic test-only copy.
 const opening = "The Full Moon in Aries shines a sharp light on the cost of keeping the peace. We may begin to recognize how much quiet frustration has accumulated beneath our instinct to be accommodating. When you are the one who always rearranges your schedule or swallows an objection, being easy to get along with becomes an expensive habit. Something you agreed to do as a one-time favor has become an expectation, and you are tired of being the default compromise.";
@@ -55,6 +57,12 @@ for (const scenario of scenarios) {
           ? route.abort() : route.continue();
       });
       await page.route('**/rest/v1/**', route => route.fulfill({json: []}));
+      await page.route('**/api/sky?**', async route => {
+        const response = {statusCode: 200, setHeader() {}, end(body: string) {
+          void route.fulfill({status: this.statusCode, contentType: 'application/json', body});
+        }};
+        await skyHandler({method: 'GET', url: route.request().url()} as IncomingMessage, response as unknown as ServerResponse);
+      });
       await page.route('**/api/calendar?**', route => route.fulfill({json: {ok: true, calendar: {days: []}}}));
       await page.route('**/content-studio-last-known-good.json', route => route.fulfill({json: {
         schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
