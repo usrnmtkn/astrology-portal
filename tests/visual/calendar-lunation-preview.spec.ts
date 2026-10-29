@@ -112,8 +112,12 @@ for (const scenario of scenarios) {
     expect(await card.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await card.locator(".calendar-sky-card").screenshot({ path: `test-results/lunation-preview-${scenario.kind}-${scenario.theme}-${scenario.width}-${scenario.remainder.length}.png` });
     if('dated' in scenario){
-      await page.getByRole('button', {name: 'Full Moon in Aries', exact: true}).click();
+      const eventCard = page.getByRole('button', {name: 'Full Moon in Aries', exact: true});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);
+      await eventCard.click();
       const detail = page.getByRole('dialog', {name: 'Event detail', exact: true});
+      await expect(detail).toContainText(scenario.opening);
+      await expect(detail.getByRole('heading', {name: 'Full Moon in Aries', exact: true})).toBeVisible();
       await detail.getByRole('button', {name: 'Read article', exact: true}).click();
       await expect(page).toHaveURL(new RegExp(`#sky/lunation/${scenario.date}/${scenario.sign}$`));
       await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
@@ -136,6 +140,10 @@ for (const scenario of scenarios) {
       await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
       await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toHaveCount(0);
+      await page.goto(`/?date=${scenario.date}#calendar?view=day&date=${scenario.date}`);
+      await expect(eventCard).toBeVisible({timeout:60000});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveCount(0);
+      await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
     }
     assertNoErrors();
     } finally {store?.close();}

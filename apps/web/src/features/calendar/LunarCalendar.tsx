@@ -927,6 +927,11 @@ export function liveCalendarEventContent(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
   event: LunarCalendarEvent
 ) {
+  if (event.type === "lunation") {
+    const selected = resolveLunationReaderSource(event, generatedContent);
+    if (selected) return selected.unavailable ? null
+      : generatedContent?.get(selected.contentKey) ?? fallbackArchitectureV3AuthoredContentForKey(selected.contentKey);
+  }
   if (
     event.type === "aspect"
     && event.planets
@@ -1864,6 +1869,9 @@ function calendarEventExcerpt(
   generatedContent: Parameters<typeof resolveLunarJournal>[1],
   editorialCopy?: string | null
 ) {
+  if (event.type === "lunation" && resolveLunationReaderSource(event, generatedContent)) {
+    return editorialCopy?.trim() || "";
+  }
   const journal = resolveLunarJournal(event, generatedContent);
   const fromJournal = journal ? lunarJournalSkyBlurbs(journal.blocks, 1)[0] : "";
   return fromJournal || editorialCopy?.trim() || "";
@@ -2663,7 +2671,9 @@ export function LunarCalendar({
     main: calendarMoonWritingParagraphs(selectedMoonWriting),
     prompt: null
   };
-  const readingJournal = readingEvent ? resolveLunarJournal(readingEvent, generatedContent) : null;
+  const readingJournal = readingEvent
+    && !(readingEvent.type === "lunation" && resolveLunationReaderSource(readingEvent, generatedContent))
+    ? resolveLunarJournal(readingEvent, generatedContent) : null;
   const readingEditorial = readingEvent
     ? calendarEventEditorialContent(
       readingEvent,
