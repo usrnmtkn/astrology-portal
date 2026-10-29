@@ -3,17 +3,19 @@ import { studioLazy as lazy } from './studioLazy';
 import { AdminDisclosureSummary } from './AdminNativeControls';
 import { StudioButton, StudioInput, StudioStatusBadge, StudioTabs, StudioTextarea } from './StudioControls';
 const SkyPlacementComposition = lazy(() => import('./SkyPlacementComposition'));
+import SkyVisitArticleWriter from './SkyVisitArticleWriter';
 import { openContextualReaderHref } from './adminReaderDestinations';
 import { isSkyIngressEssay, SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
 import { reviseSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
 import { assertPlacementVisit, placementEdition, placementTemplateKeys, placementVisitDraft, placementVisitRows, placementWorkspaceDocuments, placementWorkspaceTabs,
-  type PlacementVisitFacts, type PlacementWorkspaceRow as Row } from './skyPlacementWorkspaceModel';
+  type PlacementGeneratedArticle, type PlacementVisitFacts, type PlacementWorkspaceRow as Row } from './skyPlacementWorkspaceModel';
 import type { SkyPlacementSelection } from './skyPlacementAssembly';
 import type { LiveStatus } from './ContentLiveStatus';
 
 type Request = <T>(path: string, options?: RequestInit) => Promise<T>;
 type Props = {
   rows: Row[]; selection: SkyPlacementSelection; request: Request;
+  date: string | null; onDateChange: (date: string) => void;
   readerSources?: ReactNode;
   onRows: (rows: Row[]) => void; onDirty: (dirty: boolean, busy: boolean) => void;
   onEditRow: (row: Row) => void; onEditField: (row: Row, path: string, selection: SkyPlacementSelection) => void;
@@ -27,13 +29,19 @@ export default function SkyPlacementWorkspace(props: Props) {
   const { selection } = props;
   const latest = useRef(props); latest.current = props;
   const [tab, setTab] = useState<'visit' | 'default' | 'setup'>('visit');
-  const [date, setDate] = useState(today);
+  const date = props.date ?? today();
   const [documents, setDocuments] = useState<Row[]>([]);
   const [ready, setReady] = useState(false);
   const [retry, setRetry] = useState(0);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [facts, setFacts] = useState<PlacementVisitFacts | null>(null);
+  const [factsReferenceDate, setFactsReferenceDate] = useState('');
+  const [generationOpen, setGenerationOpen] = useState(false);
+  const [generationDirty, setGenerationDirty] = useState(false);
+  const [generated, setGenerated] = useState<PlacementGeneratedArticle | null>(null);
+  const [editorOpenRequest, setEditorOpenRequest] = useState(0);
+  const articlePanel = useRef<HTMLElement>(null), writerPanel = useRef<HTMLElement>(null);
   const [editing, setEditing] = useState<Row | null>(null);
   const [fields, setFields] = useState(empty);
   const [baseline, setBaseline] = useState(empty);
@@ -41,8 +49,14 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [statuses, setStatuses] = useState<LiveStatus[] | null>(null);
   const [statusError, setStatusError] = useState('');
   const mounted = useRef(true);
-  const dirty = JSON.stringify(fields) !== JSON.stringify(baseline);
+  const passageDirty = JSON.stringify(fields) !== JSON.stringify(baseline);
+  const dirty = passageDirty || generationDirty;
   useEffect(() => { latest.current.onDirty(dirty, busy); }, [dirty, busy]);
+  useEffect(() => {
+    if (!editorOpenRequest) return;
+    const panel = generationOpen ? writerPanel.current : articlePanel.current;
+    panel?.scrollIntoView({ block: 'start' }); panel?.focus({ preventScroll: true });
+  }, [editorOpenRequest, generationOpen]);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; latest.current.onDirty(false, false); }; }, []);
   const templates = placementTemplateKeys(selection.planet, selection.sign);
   const inventoryRevision = props.rows.filter(row => row.content_key.startsWith(`sky-article/${selection.planet}/${selection.sign}/`)
@@ -126,6 +140,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   function openVariableArticle(row: Row) {
     if (!(row.sections as Record<string, unknown> | null)?.skyArticleVariableDraft) return false;
     setEditing(null); setFields(empty); setBaseline(empty); setFacts(null); setError(''); setMessage('');
+    setGenerationOpen(false); setGenerationDirty(false); setGenerated(null);
     latest.current.onEditRow(row);
     return true;
   }
@@ -136,8 +151,10 @@ export default function SkyPlacementWorkspace(props: Props) {
     if (!edition) return;
     const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
     setEditing(row); setFields(next); setBaseline(next); setFacts(null); setError(''); setMessage('');
+    setGenerationOpen(false); setGenerationDirty(false); setGenerated(null);
+    setEditorOpenRequest(value => value + 1);
   }
-  async function loadVisit() {
+  async function loadVisit(generate = false) {
     if (busy || !discard()) return;
     setBusy(true); setError(''); setMessage('');
     try {
@@ -154,8 +171,11 @@ export default function SkyPlacementWorkspace(props: Props) {
         setEditing(saved); setFields(next); setBaseline(next);
       }
       else { setEditing(null); setFields({ ...empty, headline: payload.facts.slotValues.articleTitle ?? '' }); setBaseline({ ...empty, headline: payload.facts.slotValues.articleTitle ?? '' }); }
-      setFacts(payload.facts);
-      setMessage(saved ? 'Your saved article is open. Its wording has been preserved.' : 'Calculated dates loaded. Write the article for this visit below.');
+      setFacts(payload.facts); setFactsReferenceDate(date); setGenerated(null); setGenerationDirty(false);
+      setGenerationOpen(generate && !saved);
+      setEditorOpenRequest(value => value + 1);
+      setMessage(saved ? 'Your saved article is open. Its wording has been preserved. No generation was started.'
+        : generate ? 'Review the full calculated visit below, then choose Generate this draft to start the writer.' : 'Write your article below for the full calculated visit.');
     } catch (reason) { if (mounted.current) setError(reason instanceof Error ? reason.message : 'Calculated dates could not load.'); }
     finally { if (mounted.current) setBusy(false); }
   }
@@ -174,7 +194,7 @@ export default function SkyPlacementWorkspace(props: Props) {
         }) });
       } else {
         if (!facts) throw new Error('Load calculated dates before saving this visit.');
-        const row = await placementVisitDraft(facts, fields, setupRows[0]);
+        const row = await placementVisitDraft(facts, fields, setupRows[0], { generated });
         // Re-read exact identity before creating. Existing drafts are opened, never bulk-replaced.
         const current = await latest.current.request<{ ok: boolean; rows: Row[] }>(`/api/admin/generated-content-inventory?${new URLSearchParams({ contentKey: row.contentKey, status: 'all', visibility: 'all', limit: '2' })}`);
         if (current.ok !== true || !Array.isArray(current.rows)) throw new Error('The existing draft could not be checked. Your writing is still here.');
@@ -188,7 +208,7 @@ export default function SkyPlacementWorkspace(props: Props) {
       const edition = placementEdition(saved);
       if (!edition) throw new Error('The saved draft is missing its article record.');
       const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
-      setEditing(saved); setFields(next); setBaseline(next); setMessage('Draft saved. Nothing was published.');
+      setEditing(saved); setFields(next); setBaseline(next); setGenerated(null); setMessage('Draft saved. Nothing was published.');
     } catch (reason) { if (mounted.current) {
       const status = (reason as { status?: number } | null)?.status;
       setError(status === 409 ? 'This article changed in another editor. Your unsaved writing is still here. Reload saved writing before trying again.'
@@ -214,28 +234,44 @@ export default function SkyPlacementWorkspace(props: Props) {
         <p>Write for one calculated visit. Your default reading and reusable templates stay separate. Drafts stay private until you explicitly review and publish.</p>
         {!ready && !error && <p role="status">Loading saved writing…</p>}
         {ready && <>
+          <div className="admin-sky-edition-facts-row">
+            <label className="admin-title-field"><span>Choose a date in this visit</span><StudioInput aria-label="Visit reference date" type="date" value={date} disabled={busy} onChange={event => props.onDateChange(event.target.value)} /></label>
+            <StudioButton className="admin-primary-button" disabled={busy || !date} onClick={() => void loadVisit()}>Write article</StudioButton>
+            <StudioButton disabled={busy || !date} onClick={() => void loadVisit(true)}>Generate draft</StudioButton>
+          </div>
+          <p className="admin-field-hint">The date selects the full calculated {title(selection.planet)}-in-{title(selection.sign)} visit, including its entry and exit. An existing article opens with its wording intact.</p>
+          <p>After you approve and publish it, your dated article is the main Sky reading for that visit. Fallback and placement hooks remain available when no dated article is published.</p>
           <section className="admin-workspace" aria-label="Saved visits">
             <h3>Saved visits</h3>
             {!visits.length && <p>No dated article is saved for this placement. The default reading remains available.</p>}
             {visits.map(row => { const edition = placementEdition(row)!; return <article className="admin-hook-detail-section" key={row.id}>
               <strong>{edition.headline}</strong> <StudioStatusBadge tone={row.status === 'LIVE' ? 'live' : 'draft'}>{row.status === 'LIVE' ? 'Published' : 'Draft'}</StudioStatusBadge>
-              <p>{edition.validFrom} to {edition.validTo}{edition.contentKey !== row.content_key ? ' · Working revision' : ''}</p>
+              <p>{edition.scope === 'day' ? `Saved day article · ${edition.validFrom} (ET)` : `Full visit · ${edition.validFrom} to ${edition.validTo}`}{edition.contentKey !== row.content_key ? ' · Working revision' : ''}</p>
               <StudioButton disabled={busy} onClick={() => edit(row)}>{row.status === 'LIVE' ? 'Edit a draft of this article' : 'Open saved draft'}</StudioButton>
             </article>; })}
           </section>
-          <div className="admin-sky-edition-facts-row">
-            <label className="admin-title-field"><span>Date during this visit</span><StudioInput aria-label="Visit reference date" type="date" value={date} disabled={busy} onChange={event => setDate(event.target.value)} /></label>
-            <StudioButton disabled={busy || !date} onClick={() => void loadVisit()}>Load calculated dates</StudioButton>
-          </div>
-          <p className="admin-field-hint">Choose a date when {title(selection.planet)} is in {title(selection.sign)}. Retrograde returns are separate visits, even within the same year.</p>
         </>}
-        {(editing || facts) && <section className="admin-workspace" aria-label="Article for this visit">
+        {facts && generationOpen && <section ref={writerPanel} tabIndex={-1} className="admin-workspace" aria-label="Dated article generation workspace">
+          <SkyVisitArticleWriter key={`${facts.transitStartInstant}/${facts.transitEndInstant}`} facts={facts} referenceDate={factsReferenceDate}
+            request={props.request} onBusyChange={setBusy} onDirtyChange={setGenerationDirty} onUse={article => {
+              setGenerated(article); setFields({ headline: article.edition.headline, summary: article.edition.tldr, body: article.edition.body });
+              setGenerationOpen(false); setGenerationDirty(false); setMessage('Generated wording is in the editor. Review it, then Save draft. Nothing has been saved or published.');
+              setEditorOpenRequest(value => value + 1);
+            }} />
+          <StudioButton disabled={busy} onClick={() => {
+            if (generationDirty && !window.confirm('Discard the generated suggestion and direction before writing your article?')) return;
+            setGenerationOpen(false); setGenerationDirty(false);
+            setEditorOpenRequest(value => value + 1);
+          }}>Write article instead</StudioButton>
+        </section>}
+        {(editing || facts) && !generationOpen && <section ref={articlePanel} tabIndex={-1} className="admin-workspace" aria-label="Article for this visit">
+          {editing && placementEdition(editing)?.scope === 'day' && <p>Editing a saved day article. Its date and coverage stay unchanged; new articles use the full calculated visit.</p>}
           <p><strong>Calculated dates:</strong> {facts?.slotValues.when ?? placementEdition(editing!)?.slotValues.when}</p>
           <label className="admin-title-field"><span>Article title</span><StudioInput aria-label="Visit article title" value={fields.headline} disabled={busy} onChange={event => update('headline', event.target.value)} /></label>
           <label className="admin-review-copy-editor"><span>Summary</span><StudioTextarea aria-label="Visit article summary" value={fields.summary} disabled={busy} onChange={event => update('summary', event.target.value)} /></label>
           <label className="admin-review-copy-editor"><span>Article body</span><StudioTextarea aria-label="Visit article body" rows={20} value={fields.body} disabled={busy} onChange={event => update('body', event.target.value)} /></label>
           <div className="admin-toolbar-actions">
-            <StudioButton className="admin-primary-button" disabled={busy || !fields.headline.trim() || !fields.summary.trim() || !fields.body.trim() || editing !== null && !dirty} onClick={() => void save()}>Save draft</StudioButton>
+            <StudioButton className="admin-primary-button" disabled={busy || generationOpen || !fields.headline.trim() || !fields.summary.trim() || !fields.body.trim() || editing !== null && !passageDirty} onClick={() => void save()}>Save draft</StudioButton>
             {editing && <StudioButton disabled={busy || dirty} onClick={() => latest.current.onEditRow(editing)}>Review saved draft</StudioButton>}
           </div>
           <p className="admin-field-hint">Save draft changes only this dated article. Review saved draft opens the existing review and publication controls.</p>

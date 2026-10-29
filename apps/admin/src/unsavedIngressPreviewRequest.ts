@@ -38,9 +38,12 @@ export function renderUnsavedIngress(facts: IngressFacts, slotValues: Record<str
 
 // This path has no editor callbacks, content mutations, persistence, or request retries.
 async function prepareIngressRequest(planet: string, referenceDate: string, signal: AbortSignal) {
+  signal.throwIfAborted();
   const credential = await loadOwnerSessionAccessToken(undefined, true);
+  signal.throwIfAborted();
   if (!credential) throw new PreviewOwnerAccessError('Sign in with your Content Studio owner account before generating a preview.');
   const request = async (path: string, body?: unknown) => {
+    signal.throwIfAborted();
     const response = await fetch(path, {
       method: body ? 'POST' : 'GET', cache: 'no-store', signal,
       headers: { 'content-type': 'application/json', ...adminCredentialHeaders(credential) },
@@ -56,27 +59,35 @@ async function prepareIngressRequest(planet: string, referenceDate: string, sign
   const { payload: calculated } = await request(`/api/admin/sky-article-facts?${new URLSearchParams({ planet, date: referenceDate, format: SKY_INGRESS_ARTICLE_FORMAT })}`);
   const facts = calculated.facts as IngressFacts;
   if (facts?.planet !== planet || !facts.sign || facts.articleFormat !== SKY_INGRESS_ARTICLE_FORMAT) throw new Error('The calculated ingress could not be verified. No generation was sent.');
-  const contentKey = `sky/article-template/${facts.planet}/${facts.sign}`;
-  const { payload: inventory } = await request(`/api/admin/generated-content-inventory?${new URLSearchParams({ contentKey, status: 'all', visibility: 'all', limit: '2' })}`);
-  if (!Array.isArray(inventory.rows) || inventory.rows.length !== 1 || inventory.rows[0].content_key !== contentKey || typeof inventory.rows[0].id !== 'string') {
-    throw new Error('One approved ingress template could not be found for this placement. No generation was sent.');
+  for (const contentKey of [`sky/article-template/${facts.planet}/${facts.sign}`, `sky/article-template/${facts.planet}/ingress`]) {
+    const { payload: inventory } = await request(`/api/admin/generated-content-inventory?${new URLSearchParams({ contentKey, status: 'all', visibility: 'all', limit: '2' })}`);
+    const matches = Array.isArray(inventory.rows) ? inventory.rows.filter((row: any) => row.content_key === contentKey
+      && typeof row.id === 'string' && row.event_type === 'sky-article-template' && ['REVIEWED', 'LIVE'].includes(row.status)
+      && (row.lane ?? 'reference') === 'reference' && !row.review_state
+      && ['approved', 'approved_reuse', 'reviewed'].includes(String(row.source_snapshot?.review_status ?? '').toLowerCase())) : [];
+    if (matches.length === 1) return { request, facts, destination: { templateId: matches[0].id as string } };
   }
-  return {request, facts, templateId: inventory.rows[0].id as string};
+  if (planet === 'moon') return { request, facts, destination: { visit: { planet: facts.planet, sign: facts.sign } } };
+  throw new Error('No approved ingress article template is available for this placement. No generation was sent.');
 }
 
 export async function inspectIngressInputs(planet: string, referenceDate: string, signal: AbortSignal): Promise<IngressInputInspection> {
-  const {request,facts,templateId} = await prepareIngressRequest(planet,referenceDate,signal);
-  const {payload} = await request(`/api/admin/sky-article-template-slots?${new URLSearchParams({inspect:'ingress-voice',templateId})}`);
+  const {request,facts,destination} = await prepareIngressRequest(planet,referenceDate,signal);
+  const params = new URLSearchParams({ inspect: 'ingress-voice' });
+  if ('templateId' in destination && destination.templateId) params.set('templateId', destination.templateId);
+  else { params.set('planet', facts.planet); params.set('sign', facts.sign); }
+  const {payload} = await request(`/api/admin/sky-article-template-slots?${params}`);
   if (!payload.correctionDelivery || payload.providerCalls !== 0 || payload.saved !== false || payload.published !== false)
     throw new Error('The read-only writer input check could not be verified.');
   return {writerContract:payload.writerContract,voiceBenchmark:payload.voiceBenchmark,correctionDelivery:payload.correctionDelivery,
     providerCalls:0,saved:false,published:false,placement:{planet:facts.planet,sign:facts.sign,when:facts.slotValues.when}};
 }
 
-export async function generateUnsavedIngress(planet: string, referenceDate: string, signal: AbortSignal): Promise<UnsavedIngressPreview> {
-  const {request,facts,templateId} = await prepareIngressRequest(planet,referenceDate,signal);
+export async function generateUnsavedIngress(planet: string, referenceDate: string, signal: AbortSignal, articleScope: 'visit' | 'day' = 'visit'): Promise<UnsavedIngressPreview> {
+  if (articleScope !== 'visit') throw new Error('New generation uses the full calculated visit. Existing day drafts remain editable in Content Studio.');
+  const {request,facts,destination} = await prepareIngressRequest(planet,referenceDate,signal);
   const { status, payload } = await request('/api/admin/sky-article-template-slots', {
-    templateId, referenceDate, format: SKY_INGRESS_ARTICLE_FORMAT,
+    ...destination, referenceDate, format: SKY_INGRESS_ARTICLE_FORMAT,
     provider: 'openai', expectedModel: ingressPreviewModel, existingSlotValues: {}, includeRetrogradeHistory: false
   });
   const generation = (payload.generation ?? payload.rejectedGeneration) as Generation | undefined;

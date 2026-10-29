@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
+import './test-studio-article-actions.mjs';
 import { readFileSync } from 'node:fs';
 import { skyPlacementBodies, skyPlacementSigns } from '../apps/admin/src/skyWriteupRelations';
 import { assertPlacementVisit, placementEdition, placementTemplateKeys, placementVisitDraft, placementVisitRows, placementWorkspaceDocuments } from '../apps/admin/src/skyPlacementWorkspaceModel';
-import { reviseSkyArticleEdition, skyArticleEditableFields } from '../apps/web/src/content/skyArticleTemplateCompiler';
+import { compileSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields } from '../apps/web/src/content/skyArticleTemplateCompiler';
+import { SKY_INGRESS_ARTICLE_FORMAT } from '../apps/web/src/content/skyIngressEssay.mjs';
+import { skyMoonDatedDayBounds } from '../src/shared/skyMoonDatedScope';
 import { workspaceFixtureRows, workspaceVisitFacts } from '../tests/helpers/sky-placement-workspace-fixtures';
 import { studioApiStore } from '../tests/helpers/studio-api-store';
 
@@ -58,6 +61,50 @@ try {
     assert.equal(result.status, 200, JSON.stringify(result.payload));
     assert.equal(result.payload.rows[0].status, 'DRAFT');
   }
+  const moon = workspaceVisitFacts('moon', 'gemini', '2026-10-27', '2026-10-29');
+  const generatedEdition = await compileSkyArticleEdition({ ...moon, format: SKY_INGRESS_ARTICLE_FORMAT,
+    templateBody: '', templateKey: 'sky/article-template/moon/gemini', tldr: 'Synthetic generated summary.',
+    slotValues: { ...moon.slotValues, articleBody: 'Synthetic complete generated opening.\n\nSynthetic final generated sentence.',
+      priorOccurrenceSection: '', otherDatesSection: '## Key dates\n\nSynthetic calculated date list.' }, housePassages: [], aspectPassages: [] });
+  const generated = { edition: generatedEdition, generation: { responseId: 'synthetic-response', templateOrigin: 'standard-ingress-layout' } };
+  const generatedDraft = await placementVisitDraft(moon, { headline: generatedEdition.headline, summary: generatedEdition.tldr,
+    body: generatedEdition.body }, undefined, { generated });
+  assert.equal(generatedDraft.body, generatedEdition.body, 'Saving a generated article must not wrap its compiled date line twice.');
+  assert.equal(generatedDraft.body.split('**When:**').length - 1, 1);
+  assert.equal(generatedDraft.body.split('## Key dates').length - 1, 1);
+  assert.equal(generatedDraft.sourceSnapshot.slotGeneration?.responseId, 'synthetic-response');
+  const generatedSave = await store.call({ method: 'POST', body: { rows: [generatedDraft] } });
+  assert.equal(generatedSave.status, 200); assert.equal(generatedSave.payload.rows[0].status, 'DRAFT');
+  const reloaded = await store.call({ method: 'GET', url: `/api/admin/generated-content-inventory?contentKey=${encodeURIComponent(generatedDraft.contentKey)}` });
+  assert.equal(reloaded.payload.rows[0].body, generatedEdition.body);
+  assert.equal(reloaded.payload.rows[0].source_snapshot.slotGeneration.responseId, 'synthetic-response');
+  await assert.rejects(placementVisitDraft({ ...moon, sign: 'cancer' }, { headline: 'Synthetic', summary: 'Synthetic', body: 'Synthetic' }, undefined, { generated }), /different visit/);
+  await assert.rejects(placementVisitDraft(moon, { headline: 'Synthetic', summary: 'Synthetic', body: 'Synthetic' }, undefined, 'day' as any), /named draft options/);
+  await assert.rejects(placementVisitDraft({ ...moon, scope: 'day' } as typeof moon, { headline: 'Synthetic', summary: 'Synthetic', body: 'Synthetic' }), /full calculated visit/);
+  // Existing day documents retain their identity and complete writing; creation remains full-visit only.
+  const bounds = skyMoonDatedDayBounds('2026-10-28');
+  const dayEdition = await compileSkyArticleEdition({ ...moon, scope: 'day', validFrom: bounds.day, validTo: bounds.nextDay,
+    transitStartInstant: bounds.start, transitEndInstant: bounds.end, format: SKY_INGRESS_ARTICLE_FORMAT,
+    templateKey: 'sky/article-template/moon/gemini', templateBody: '', tldr: 'Synthetic saved day summary.',
+    slotValues: { ...moon.slotValues, when: 'Synthetic saved October 28 date.', articleBody: 'Synthetic complete saved day passage.' }, housePassages: [], aspectPassages: [] });
+  const daySaved = await store.call({ method: 'POST', body: { rows: [{ ...generatedDraft, contentKey: dayEdition.contentKey,
+    headline: dayEdition.headline, summary: dayEdition.tldr, body: dayEdition.body, sections: { skyArticleEdition: dayEdition },
+    facts: { ...generatedDraft.facts, validFrom: dayEdition.validFrom, validTo: dayEdition.validTo },
+    sourceSnapshot: { contentType: 'compiled-sky-article-edition', review_status: 'needs_review' } }] } });
+  assert.equal(daySaved.status, 200);
+  const dayRow = daySaved.payload.rows[0];
+  const dayRevision = await reviseSkyArticleEdition(dayEdition, { ...skyArticleEditableFields(dayEdition), body: dayEdition.body + '\n\nSynthetic saved day edit.' });
+  const dayEdit = await store.call({ method: 'PATCH', body: { id: dayRow.id, expectedUpdatedAt: dayRow.updated_at,
+    ownerAction: 'save-sky-article-edition-revision', sections: { skyArticleEdition: dayRevision } } });
+  assert.equal(dayEdit.status, 200);
+  assert.equal(dayEdit.payload.rows[0].content_key, dayEdition.contentKey);
+  assert.equal(dayEdit.payload.rows[0].sections.skyArticleEdition.scope, 'day');
+  assert.equal(dayEdit.payload.rows[0].body, dayRevision.body);
+  const { scope: _scope, ...forgedScope } = dayRevision;
+  const forged = await store.call({ method: 'PATCH', body: { id: dayRow.id, expectedUpdatedAt: dayEdit.payload.rows[0].updated_at,
+    ownerAction: 'save-sky-article-edition-revision', sections: { skyArticleEdition: forgedScope } } });
+  assert.notEqual(forged.status, 200, 'An existing day article cannot be changed into a visit through an edit.');
+  assert.deepEqual((await store.call({ method: 'rows' })).find((row: any) => row.id === dayRow.id), dayEdit.payload.rows[0]);
   const after = await store.call({ method: 'rows' });
   for (const source of protectedSources) assert.deepEqual(after.find((row: any) => row.id === source.id), source, 'Default and reusable template are byte-identical.');
   assert.equal(after.find((row: any) => row.id === scorpio.id).body, revised.body, 'Other planet visits cannot overwrite Scorpio.');

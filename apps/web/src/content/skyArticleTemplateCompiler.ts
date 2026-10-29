@@ -1,5 +1,6 @@
 import { isSkyIngressEssay, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
 import { resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../../../src/shared/skyArticleVariableDraft.js';
+import { skyMoonDatedDayBounds } from '../../../../src/shared/skyMoonDatedScope.js';
 
 export const SKY_ARTICLE_TEMPLATE_SCHEMA = "tldrastro-sky-article-template-v1";
 export const SKY_ARTICLE_EDITION_SCHEMA = "tldrastro-sky-article-edition-v2";
@@ -32,6 +33,7 @@ export type SkyArticleSection = {
 
 export type CompileSkyArticleEditionInput = {
   format?: SkyArticleFormat;
+  scope?: "day";
   aspectPassages?: SkyArticleAspectPassage[];
   entryYear: number;
   housePassages: SkyArticleHousePassage[];
@@ -50,6 +52,7 @@ export type CompileSkyArticleEditionInput = {
 
 export type CompiledSkyArticleEdition = {
   format?: SkyArticleFormat;
+  scope?: "day";
   articleSections: SkyArticleSection[];
   aspectPassages: SkyArticleAspectPassage[];
   body: string;
@@ -352,6 +355,13 @@ function assertEditionInput(input: CompileSkyArticleEditionInput) {
   if (!Number.isFinite(transitStart) || !Number.isFinite(transitEnd) || transitStart >= transitEnd) {
     throw new Error("Sky article transit instants must be an ordered ephemeris window.");
   }
+  if (input.scope === "day") {
+    const bounds = skyMoonDatedDayBounds(input.validFrom);
+    if (input.planet !== "moon" || !isSkyIngressEssay(input.format) || input.validTo !== bounds.nextDay
+      || transitStart < Date.parse(bounds.start) || transitEnd > Date.parse(bounds.end)) {
+      throw new Error("A day-specific edition must describe only the calculated Moon visit within one Eastern civil day.");
+    }
+  }
   if (!/^sky\/article-template\//u.test(input.templateKey)) {
     throw new Error("Sky article editions must be compiled from a sky/article-template/* row.");
   }
@@ -377,8 +387,9 @@ async function sha256(value: string) {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-export function skyArticleEditionContentKey(input: Pick<CompileSkyArticleEditionInput, "planet" | "sign" | "entryYear" | "validFrom" | "format">) {
+export function skyArticleEditionContentKey(input: Pick<CompileSkyArticleEditionInput, "planet" | "sign" | "entryYear" | "validFrom" | "format" | "scope">) {
   const base = `sky-article/${input.planet}/${input.sign}/${input.entryYear}`;
+  if (input.scope === "day") return `${base}/day/${input.validFrom}`;
   return isSkyIngressEssay(input.format) ? `${base}/${input.validFrom}` : base;
 }
 
@@ -450,6 +461,7 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
   return {
     schema: SKY_ARTICLE_EDITION_SCHEMA,
     ...(ingress ? { format: input.format } : {}),
+    ...(input.scope === "day" ? { scope: "day" as const } : {}),
     contentKey: skyArticleEditionContentKey(input),
     templateKey: input.templateKey,
     templateHash: await sha256(normalizeNewlines(articleTemplateWithHoroscopes(input.templateBody, input.templateSections))),
@@ -520,6 +532,16 @@ export function assertCompiledSkyArticleEdition(value: unknown) {
   if (!isSkyIngressEssay(edition.format) && (houses.size !== 12 || Array.from({ length: 12 }, (_, index) => index + 1).some((house) => !houses.has(house)))) {
     throw new Error("Sky article edition must contain approved horoscopes for all 12 houses.");
   }
+  if (edition.scope === "day") {
+    const bounds = skyMoonDatedDayBounds(edition.validFrom);
+    if (edition.planet !== "moon" || !isSkyIngressEssay(edition.format)
+      || edition.validTo !== bounds.nextDay || edition.contentKey !== skyArticleEditionContentKey(edition)
+      || transitStart < Date.parse(bounds.start) || transitEnd > Date.parse(bounds.end)) {
+      throw new Error("The Moon day article is outside its approved one-day scope.");
+    }
+  } else if (edition.scope !== undefined) {
+    throw new Error("Unknown Sky article coverage.");
+  }
   if (isSkyIngressEssay(edition.format) && (edition.housePassages.length || edition.aspectPassages.length)) {
     throw new Error("Ingress essay companions must remain separate from the article.");
   }
@@ -567,5 +589,6 @@ export function selectActiveSkyArticleEdition(
       && new Date(edition.transitEndInstant).getTime() > activeInstant
       ? [{ content, edition }]
       : [];
-  }).sort((left, right) => right.edition.validFrom.localeCompare(left.edition.validFrom))[0] ?? null;
+  }).sort((left, right) => Number(right.edition.scope === "day") - Number(left.edition.scope === "day")
+    || right.edition.validFrom.localeCompare(left.edition.validFrom))[0] ?? null;
 }

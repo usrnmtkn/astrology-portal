@@ -1,4 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
+import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { workspaceVisitFacts } from '../helpers/sky-placement-workspace-fixtures';
+import { compileSkyArticleEdition } from '../../apps/web/src/content/skyArticleTemplateCompiler';
+import { skyMoonDatedDayBounds } from '../../src/shared/skyMoonDatedScope';
 
 const token = 'fixture.owner.session';
 const owner = { id: 'preview-owner', email: 'owner@example.test', app_metadata: { role: 'admin' } };
@@ -11,6 +16,95 @@ const facts = { planet: 'sun', sign: 'libra', articleFormat: 'ingress-essay-v3',
 const values = { what: 'Synthetic season meaning.', takeaway: 'Synthetic specific takeaway.',
   articleBody: 'Complete synthetic opening paragraph. Its second sentence develops the same thought.\n\nThe complete transit interpretation stays here. This is its second sentence.\n\nThe synthetic close develops its thought. The complete final sentence stays in this preview.',
   otherDatesSection: '## Key dates\n\n- Synthetic additional calculated event.' };
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`signed-in full Moon visit preserves raw output and existing day draft ${width} ${theme}`, async ({ page }) => {
+    const moonFacts = { ...workspaceVisitFacts('moon', 'gemini', '2026-10-27', '2026-10-29'), articleFormat: 'ingress-essay-v3' };
+    const bounds = skyMoonDatedDayBounds('2026-10-28');
+    const dayEdition = await compileSkyArticleEdition({ ...moonFacts, format: 'ingress-essay-v3', scope: 'day', validFrom: bounds.day, validTo: bounds.nextDay,
+      transitStartInstant: bounds.start, transitEndInstant: bounds.end, templateKey: 'sky/article-template/moon/gemini', templateBody: '',
+      tldr: 'Synthetic saved day summary.', slotValues: { ...moonFacts.slotValues, when: 'Synthetic saved day date.', articleBody: 'Synthetic complete saved day passage.' },
+      housePassages: [], aspectPassages: [] });
+    const storedDay = { id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: dayEdition.contentKey, surface: 'sky', mode: 'article',
+      status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required', event_type: 'sky-article-edition', block_type: 'sky_article',
+      headline: dayEdition.headline, summary: dayEdition.tldr, body: dayEdition.body, sections: { skyArticleEdition: dayEdition },
+      source_snapshot: { contentType: 'compiled-sky-article-edition', review_status: 'needs_review' }, facts: {}, updated_at: '2026-10-28T10:00:00Z' };
+    const api = await studioApiStore([storedDay], { uuidIds: true });
+    const publications = await api.call({ method: 'publications' });
+    const requests: any[] = [], writes: any[] = [];
+    let fail = true;
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.clock.setFixedTime(new Date('2026-10-28T16:00:00Z'));
+      await page.addInitScript(({ token, owner, theme }) => {
+        localStorage.removeItem('tldrastro:contentAdminSecret'); localStorage.setItem('tldrastro:studio-theme', theme);
+        localStorage.setItem('sb-studio-auth-auth-token', JSON.stringify({ access_token: token, refresh_token: 'synthetic-refresh',
+          expires_at: Math.floor(Date.now() / 1000) + 3600, token_type: 'bearer', user: owner }));
+      }, { token, owner, theme });
+      await page.route('https://studio-auth.supabase.test/**', route => route.fulfill({ json: owner }));
+      await routeStudioInventoryApi(page, { call: api.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
+        if (url.pathname === '/api/admin/sky-article-facts') { await route.fulfill({ json: { ok: true, facts: moonFacts } }); return true; }
+        if (url.pathname !== '/api/admin/sky-article-template-slots') return false;
+        const body = route.request().postDataJSON(); requests.push(body);
+        expect(body.visit).toEqual({ planet: 'moon', sign: 'gemini' }); expect(body.referenceDate).toBe('2026-10-28');
+        expect(body.templateId).toBeUndefined(); expect(body.articleScope).toBeUndefined();
+        expect(route.request().headers()['x-content-admin-session']).toBe(token);
+        expect(route.request().headers()['x-content-generation-secret']).toBeUndefined();
+        await route.fulfill(fail ? { status: 500, json: { ok: false, error: 'Synthetic writer unavailable.' } } : { json: { ok: true, facts: moonFacts,
+          slotValues: { ...moonFacts.slotValues, what: 'Synthetic explicit visit summary.', articleBody: 'Synthetic complete visit opening.\n\nSynthetic complete visit ending.',
+            priorOccurrenceSection: '', otherDatesSection: '## Key dates\n\nSynthetic calculated visit dates.' },
+          generation: { provider: 'fixture', model: 'gpt-5.6-sol', responseId: 'synthetic-full-visit-response', providerCalls: 1 } } });
+        return true;
+      } });
+      await page.goto('/admin/content#sky-writeups?planet=moon&sign=gemini');
+      const workspace = page.getByRole('region', { name: 'Moon in Gemini workspace', exact: true });
+      await expect(workspace.getByRole('combobox', { name: 'Moon article coverage' })).toHaveCount(0);
+      await workspace.getByLabel('Visit reference date').fill('2026-10-28');
+      await expect(page.getByLabel('Sky reader date', { exact: true })).toHaveValue('2026-10-28');
+      await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
+      const writer = workspace.getByRole('region', { name: 'Generate a dated article', exact: true });
+      await expect(writer).toBeVisible(); expect(requests).toHaveLength(0); expect(writes).toHaveLength(0);
+      await writer.getByRole('button', { name: 'Generate this draft', exact: true }).click();
+      await expect(writer.getByRole('alert')).toContainText('Synthetic writer unavailable.');
+      expect(requests).toHaveLength(1); expect(writes).toHaveLength(0);
+      fail = false;
+      await writer.getByRole('button', { name: 'Generate this draft', exact: true }).click();
+      await expect(writer.getByLabel('Generated dated article', { exact: true })).toHaveValue('Synthetic complete visit opening.\n\nSynthetic complete visit ending.');
+      expect(requests).toHaveLength(2); expect(writes).toHaveLength(0);
+      await writer.getByRole('button', { name: 'Use this draft', exact: true }).click();
+      const article = workspace.getByLabel('Visit article body', { exact: true });
+      const compiled = await article.inputValue();
+      expect(compiled.split('**When:**')).toHaveLength(2); expect(compiled.split('## Key dates')).toHaveLength(2);
+      await article.fill(compiled + '\n\nSynthetic owner edit.');
+      await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+      const saved = await api.call({ method: 'rows' });
+      const visit = saved.find((row: any) => row.content_key === 'sky-article/moon/gemini/2026/2026-10-27');
+      expect(visit.status).toBe('DRAFT'); expect(visit.sections.skyArticleEdition.scope).toBeUndefined();
+      expect(visit.body).toBe(compiled + '\n\nSynthetic owner edit.');
+      expect(visit.sections.skyArticleEdition.slotValues.articleBody).toBe('Synthetic complete visit opening.\n\nSynthetic complete visit ending.');
+      expect(saved.find((row: any) => row.id === storedDay.id)).toEqual(storedDay);
+      await page.reload();
+      const fullCard = workspace.locator('article.admin-hook-detail-section').filter({ hasText: 'Full visit' });
+      await fullCard.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await expect(article).toHaveValue(visit.body);
+      await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
+      await expect(article).toHaveValue(visit.body); expect(requests).toHaveLength(2);
+      await workspace.locator('article.admin-hook-detail-section').filter({ hasText: 'Saved day article' }).getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await expect(article).toHaveValue(storedDay.body);
+      await article.fill(storedDay.body + '\n\nSynthetic preserved day edit.');
+      await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+      const after = await api.call({ method: 'rows' }); const day = after.find((row: any) => row.id === storedDay.id);
+      expect(day.content_key).toBe(storedDay.content_key); expect(day.sections.skyArticleEdition.scope).toBe('day');
+      expect(day.sections.skyArticleEdition.transitStartInstant).toBe(bounds.start); expect(day.sections.skyArticleEdition.transitEndInstant).toBe(bounds.end);
+      expect(after.find((row: any) => row.id === visit.id)).toEqual(visit);
+      expect(await api.call({ method: 'publications' })).toEqual(publications);
+      expect(writes).toHaveLength(2); expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+      await page.screenshot({ path: `test-results/moon-full-visit-${theme}-${width}.png`, fullPage: true });
+    } finally { try { await page.unrouteAll({ behavior: 'wait' }); } finally { api.close(); } }
+  });
+}
 
 async function prepare(page: Page, status = 200, expired = false, inspectionStatus = 200) {
   await page.addInitScript(({ token, owner, expired }) => {
@@ -62,6 +156,59 @@ async function prepare(page: Page, status = 200, expired = false, inspectionStat
   await preview.getByLabel('Preview reference date').fill('2026-10-21');
   return { observed, preview };
 }
+
+test('Moon preview inspects the full visit without approving an unfinished saved template', async ({ page }) => {
+  const { preview, observed } = await prepare(page);
+  let calls = 0;
+  const moonFacts = { ...facts, planet: 'moon', sign: 'gemini', slotValues: { articleTitle: 'Moon in Gemini 2026', when: 'Synthetic complete Moon visit.' } };
+  await page.route('**/api/admin/sky-article-facts?**', route => route.fulfill({ json: { ok: true, facts: moonFacts } }));
+  await page.route('**/api/admin/generated-content-inventory?**', route => route.fulfill({ json: { ok: true, rows: [{ ...source,
+    content_key: 'sky/article-template/moon/gemini', status: 'DRAFT', source_snapshot: { review_status: 'needs_review' } }], nextCursor: null } }));
+  await page.route('**/api/admin/sky-article-template-slots**', route => {
+    const url = new URL(route.request().url());
+    if (route.request().method() === 'GET') {
+      expect(url.searchParams.get('planet')).toBe('moon'); expect(url.searchParams.get('sign')).toBe('gemini');
+      expect(url.searchParams.get('templateId')).toBeNull();
+      return route.fulfill({ json: { ok: true, writerContract: {}, voiceBenchmark: {},
+        correctionDelivery: { templateKey: 'sky/article-template/moon/gemini' }, providerCalls: 0, saved: false, published: false } });
+    }
+    calls++;
+    expect(route.request().postDataJSON().visit).toEqual({ planet: 'moon', sign: 'gemini' });
+    expect(route.request().postDataJSON().templateId).toBeUndefined();
+    return route.fulfill({ json: { ok: true, facts: moonFacts, slotValues: values,
+      generation: { model: 'gpt-5.6-sol', responseId: 'synthetic-moon-preview', providerCalls: 1 } } });
+  });
+  await preview.getByLabel('Preview planet or point').selectOption('moon');
+  await preview.getByLabel('Preview reference date').fill('2026-10-28');
+  await preview.getByRole('button', { name: 'Verify writer inputs', exact: true }).click();
+  await expect(preview.getByLabel('Ingress writer input receipt')).toHaveValue(/sky\/article-template\/moon\/gemini/u);
+  expect(calls).toBe(0);
+  await preview.getByRole('button', { name: 'Preview without saving', exact: true }).click();
+  await expect(preview.getByLabel('Unsaved ingress draft')).toHaveValue(/Moon in Gemini 2026/u);
+  expect(calls).toBe(1); expect(observed.writes).toEqual([]);
+});
+
+test('leaving an ingress preflight aborts before a late lookup can dispatch writing', async ({ page }) => {
+  const { preview, observed } = await prepare(page);
+  let release!: () => void, started!: () => void;
+  const pending = new Promise<void>(resolve => { release = resolve; });
+  const began = new Promise<void>(resolve => { started = resolve; });
+  await page.route('**/api/admin/generated-content-inventory?**', async route => {
+    if (new URL(route.request().url()).searchParams.get('contentKey') !== source.content_key) return route.fallback();
+    started(); await pending;
+    try { await route.fulfill({ json: { ok: true, rows: [source] } }); }
+    catch (error) { expect(String(error)).toMatch(/closed|handled|disposed|cancel|abort|InterceptionId/iu); }
+  });
+  try {
+    await preview.getByRole('button', { name: 'Preview without saving', exact: true }).click();
+    await began;
+    await page.goto('/admin/content#articles-guides');
+    release();
+    await expect(page.getByRole('heading', { name: 'Articles & Guides', exact: true })).toBeVisible();
+    await page.evaluate(async () => { for (let i = 0; i < 5; i++) await new Promise(requestAnimationFrame); });
+    expect(observed.generationCalls).toBe(0); expect(observed.writes).toEqual([]);
+  } finally { release(); await page.unrouteAll({ behavior: 'wait' }); }
+});
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`unsaved ingress preview uses owner login and never persists: ${width} ${theme}`, async ({ page }) => {

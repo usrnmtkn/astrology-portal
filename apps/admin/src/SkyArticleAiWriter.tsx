@@ -11,6 +11,7 @@ type Props = {
   currentText: string;
   disabled: boolean;
   onUse: (text: string) => void;
+  onOpenDatedArticle?: (referenceDate: string) => void;
 };
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -26,7 +27,7 @@ async function contentStudioCredential() {
   }
 }
 
-export default function SkyArticleAiWriter({ planet, sign, field, currentText, disabled, onUse }: Props) {
+export default function SkyArticleAiWriter({ planet, sign, field, currentText, disabled, onUse, onOpenDatedArticle }: Props) {
   const [referenceDate, setReferenceDate] = useState(today);
   const [instruction, setInstruction] = useState('');
   const [draft, setDraft] = useState('');
@@ -69,18 +70,13 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
     }
   };
 
-  const openDatedArticleGenerator = () => {
-    const templateKey = `sky/article-template/${planet}/${sign}`;
-    window.location.hash = `#articles-guides?q=${encodeURIComponent(templateKey)}`;
-  };
-
   return <details className="admin-workspace-details">
     <AdminDisclosureSummary>AI writing</AdminDisclosureSummary>
     <p>This generator rewrites the reusable {surfaceName}. {isSunSeason ? `It writes about ${signName} season for all readers, not a natal Sun in ${signName} personality description.` : 'It writes about the current-sky transit, not a natal personality description.'} It does not put a specific year's story into the reusable source.</p>
-    <div className="admin-sky-writing-source-actions" role="group" aria-label="Choose AI article destination">
-      <StudioButton type="button" disabled={disabled || busy} onClick={openDatedArticleGenerator}>Open dated authored article generator</StudioButton>
+    {onOpenDatedArticle && <div className="admin-sky-writing-source-actions" role="group" aria-label="Choose AI article destination">
+      <StudioButton type="button" disabled={disabled || busy || !referenceDate} onClick={() => onOpenDatedArticle(referenceDate)}>Open dated authored article generator</StudioButton>
       <small className="admin-field-hint">Use the dated article generator for a specific year such as {signName} season {referenceDate.slice(0, 4)}. That workflow saves a separate authored edition for the calculated transit window.</small>
-    </div>
+    </div>}
     <label className="admin-field-wide">
       <span>Reference date</span>
       <StudioInput type="date" value={referenceDate} disabled={disabled || busy} onChange={event => setReferenceDate(event.target.value)} />

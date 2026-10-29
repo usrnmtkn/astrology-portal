@@ -2,6 +2,7 @@ import { INGRESS_WRITER_CONTRACT, ingressWriterContractReceipt } from '../api/_l
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { ingressFixtureValues } from './fixtures/sky-ingress-writing.mjs';
+import { verifySkyVisitWriter } from './fixtures/sky-visit-writer-route.mts';
 import { RHETORICAL_WRITER_POLICY } from '../src/astro-writing/rhetoricalPatterns.mjs';
 import { validateExplicitWritingFeedback } from '../src/astro-writing/explicitWritingFeedback.mjs';
 import { approvedVoiceStyleReference } from '../src/astro-writing/approvedVoiceStyle.mjs';
@@ -550,5 +551,6 @@ try {
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191.5)).status, "matched");
   assert.equal((await skyIngressNasaReceipt("sun", context.activeInstant, 191)).status, "disagreement");
   assert.equal((await skyIngressNasaReceipt("north-node", context.activeInstant, 191)).status, "unsupported");
+  await verifySkyVisitWriter(invoke, slotsHandler, factsHandler);
   console.log("PASS ingress Studio: actual authenticated facts/slot handlers, real Swiss roots, provider request, retained fields, isolated companion, exact approved reader payload, expiry, DST and scoped NASA receipts.");
 } finally { globalThis.fetch = originalFetch; }

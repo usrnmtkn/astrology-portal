@@ -36,7 +36,8 @@ export function contentLibraryDestination(row: LibraryRow): LibraryDestination |
     return { areas: ['calendar'], label: 'Calendar · Shared passage', detail: 'Reusable writing for matching dates.', kind: 'source' };
   }
   if (/^sky-article(?:-revision)?\//u.test(key)) return { areas: ['sky'], label: 'Sky · Dated article',
-    detail: date ? `Visit begins ${date}.` : 'Writing for one placement visit.', kind: 'article', date,
+    detail: key.includes('/day/') ? `For ${date ?? 'the selected date'} (ET) only.`
+      : date ? `Visit begins ${date}.` : 'Writing for one placement visit.', kind: 'article', date,
     sourceKey: key.replace(/^sky-article-revision\//u, 'sky-article/') };
   if (/^sky-article-workspace\//u.test(key)) return { areas: ['sky'], label: 'Sky · Article writing workspace',
     detail: date ? `Visit begins ${date}.` : 'Saved article work in progress.', kind: 'workspace', date };

@@ -11,6 +11,83 @@ import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Article actions reopen template results and start an unfiltered draft ${width} ${theme}`, async ({ page }) => {
+    const templateKey = 'sky/article-template/sun/libra';
+    const store = await studioApiStore([
+      { id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: templateKey,
+        surface: 'sky', mode: 'article', event_type: 'sky-article-template', block_type: 'sky_article', status: 'REVIEWED', lane: 'reference',
+        review_state: null, headline: 'Synthetic Sun in Libra template', body: '{{articleTitle}}\n\n{{articleBody}}', summary: '', sections: {},
+        updated_at: '2026-10-09T00:00:00Z', source_snapshot: { contentType: 'sky-article-template', review_status: 'approved' } },
+      { id: 'bbbbbbbb-bbbb-4bbb-abbb-bbbbbbbbbbbb', content_key: 'article/manual/synthetic-actions',
+        surface: 'sky', mode: 'article', status: 'DRAFT', lane: 'serving', review_state: 'EDITORIAL_REVIEW_REQUIRED',
+        headline: 'Synthetic standalone article', body, summary: '', sections: {}, updated_at: '2026-10-09T00:00:00Z',
+        source_snapshot: { contentType: 'authored-article' } }
+    ], { uuidIds: true });
+    const writes: unknown[] = [], providerRequests: string[] = [], errors: string[] = [];
+    try {
+      const before = await store.call({ method: 'rows' });
+      await page.setViewportSize({ width, height: 1000 });
+      page.on('pageerror', error => errors.push(error.message));
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await bundledPublications(page);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write),
+        answer: async (route, url) => {
+          if (route.request().method() !== 'POST' || !url.pathname.startsWith('/api/admin/sky-article-')) return false;
+          providerRequests.push(url.pathname);
+          await route.fulfill({ status: 500, json: { error: 'This navigation test must not generate writing.' } });
+          return true;
+        } });
+      await page.goto('/admin/content#articles-guides');
+      const results = page.getByRole('complementary', { name: 'Article rows', exact: true });
+      const browse = page.getByRole('link', { name: 'Browse Sky article templates', exact: true });
+      await expect(results.getByRole('row').filter({ hasText: 'article/manual/synthetic-actions' })).toBeVisible();
+      // Clear filters leaves the same hash. Repeating the browse action must still apply it.
+      for (let repeat = 0; repeat < 2; repeat++) {
+        await browse.click();
+        await expect(page.getByLabel('Search articles', { exact: true })).toHaveValue('sky/article-template/');
+        await expect(results).toBeFocused();
+        await expect(results.getByRole('row').filter({ hasText: templateKey })).toBeVisible();
+        await expect(results.getByRole('row').filter({ hasText: 'article/manual/synthetic-actions' })).toHaveCount(0);
+        if (repeat === 0) {
+          await page.getByRole('button', { name: 'Clear filters', exact: true }).click();
+          await expect(page.getByLabel('Search articles', { exact: true })).toHaveValue('');
+          await expect(page).toHaveURL(/#articles-guides\?q=sky%2Farticle-template%2F$/u);
+        }
+      }
+      await expect(page.getByRole('button', { name: 'New article', exact: true })).toHaveCount(0);
+      await expect(page.getByRole('button', { name: 'New guide', exact: true })).toHaveCount(0);
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await expect(page.getByRole('menuitem')).toHaveCount(2);
+      await page.getByRole('menuitem', { name: /New article/u }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      await expect(page.getByLabel('Search articles', { exact: true })).toHaveValue('');
+      await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
+      await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toHaveCount(0);
+      await editor.getByLabel('Article title', { exact: true }).fill('Synthetic unsaved article');
+      await editor.getByLabel('Article body', { exact: true }).fill('Synthetic unsaved complete body.');
+      page.once('dialog', dialog => dialog.dismiss());
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue('Synthetic unsaved complete body.');
+      await page.screenshot({ path: `test-results/article-actions-${width}-${theme}.png`, fullPage: true });
+      page.once('dialog', dialog => dialog.accept());
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      await expect(editor).toHaveCount(0);
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /New guide/u }).click();
+      await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
+      await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toHaveCount(0);
+      await editor.locator('details.admin-editor-key-details summary').click();
+      await expect(editor.getByLabel('Content key', { exact: true })).toHaveValue(/^article\/guide\//u);
+      expect(await store.call({ method: 'rows' })).toEqual(before);
+      expect(writes).toEqual([]); expect(providerRequests).toEqual([]); expect(errors).toEqual([]);
+    } finally { try { await page.unrouteAll({ behavior: 'wait' }); } finally { store.close(); } }
+  });
+}
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Dated Sky article editor archives and restores complete saved readings ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(120_000);
     const row = await syntheticLibrarySkyArticle();
@@ -258,14 +335,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(page.getByRole('row').filter({ hasText: 'sky/article-template/venus/scorpio' })).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await page.screenshot({ path: `test-results/articles-studio-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
-      await page.getByRole('link', { name: 'Dated Sky article templates', exact: true }).click();
+      await page.getByRole('link', { name: 'Browse Sky article templates', exact: true }).click();
       await expect(page).toHaveURL(/#articles-guides\?q=/u);
       await expect(page.getByLabel('Search articles')).toHaveValue('sky/article-template/');
       const definition = {name:'articleOpening',label:'Private fixture label',description:'Private fixture description',tags:[],value:'Synthetic complete opening.',overrides:[]};
       const variable = await store.call({method:'POST',url:'/api/admin/generated-content?variables=true',body:{variable:definition}});
       expect(variable.status).toBe(200);
       const guideTemplate = body.replace('Synthetic complete opening.','{{articleOpening}}');
-      await page.getByRole('button', { name: 'New guide', exact: true }).click();
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /New guide/u }).click();
       const editor = page.getByRole('dialog');
       await editor.getByLabel('Article title', { exact: true }).fill('Synthetic saved guide');
       await editor.getByLabel('Article body', { exact: true }).fill(guideTemplate);
