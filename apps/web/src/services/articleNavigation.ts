@@ -12,8 +12,8 @@ export function pushArticleUrl(url: URL) {
 export function forecastDialogReturnUrl(href: string) {
   try {
     const url = new URL(href, window.location.origin);
-    const [path, query] = url.hash.replace(/^#\/?/, "").split("?");
-    const params = url.pathname === "/friends" ? url.searchParams : url.pathname === "/" && path === "friends" ? new URLSearchParams(query) : null;
+    const params = url.pathname === "/friends" ? url.searchParams
+      : url.pathname === "/" && /^#\/?friends(?:\?|$)/.test(url.hash) ? new URLSearchParams(url.hash.split("?")[1]) : null;
     return url.origin === window.location.origin && params && (params.get("tab") ?? "feed") === "feed"
       && !params.has("chart") && url.searchParams.get("flowPair") && /^\d{4}-\d{2}-\d{2}$/.test(url.searchParams.get("flowDate") ?? "") ? url : null;
   } catch {

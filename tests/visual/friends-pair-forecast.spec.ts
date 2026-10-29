@@ -430,6 +430,9 @@ for(const start of ['/friends?tab=feed','/#friends?tab=feed']) test(`Day sheet s
     await dialog.locator(`a.pair-forecast-transit[data-endpoint-owner="${endpoint}"]`).first().click();
     const article=page.locator(endpoint==='reader'?'.you-transit-article':'.sky-detail-article');
     await expect(article).toBeVisible({timeout:60_000});
+    await expect(article.locator('hr')).toHaveCount(0);
+    await expect(article.locator('.article-transit-description')).toHaveCSS('border-top-width','0px');
+    await expect(article.locator('.sky-detail-body')).toHaveCSS('margin-top','32px');
     expect(new URL(page.url()).searchParams.get('flowReturn')).toBe(new URL(parent).pathname+new URL(parent).search+new URL(parent).hash);
     await page.evaluate(()=>history.replaceState(null,'',location.href));
     await page.reload();await expect(article).toBeVisible({timeout:60_000});

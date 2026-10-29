@@ -194,7 +194,7 @@
 .chart-modal .signup-meridiem button {
   min-width: 0;
   font-family: var(--font-ui);
-  font-size: var(--input-font-size);
+  font-size: var(--type-table-value-size);
   font-weight: var(--weight-regular);
   line-height: var(--leading-meta);
   letter-spacing: var(--tracking-normal);

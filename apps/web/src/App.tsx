@@ -1,4 +1,4 @@
-import {dateFromDurationInput,dateOnly,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
+import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
@@ -3509,7 +3509,7 @@ function getDurationParts(startInput: string | Date, endInput: string | Date) {
     return null;
   }
 
-  const days = Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000);
+  const days = differenceInCalendarDays(start, end);
   const months = days >= 30 ? Math.max(1, calendarMonthDiff(start, end)) : 0;
   const normalizedMonths = days >= 365 ? Math.max(12, months) : months;
   const years = Math.floor(normalizedMonths / 12);
@@ -3547,14 +3547,11 @@ function formatDurationCompact(startInput: string | Date, endInput: string | Dat
 }
 
 function formatApproximateDurationCompact(startInput: string | Date, endInput: string | Date) {
-  const start = dateFromDurationInput(startInput);
-  const end = dateFromDurationInput(endInput);
-
-  if (!start || !end || end.getTime() < start.getTime()) {
+  const duration = getDurationParts(startInput, endInput);
+  if (!duration) {
     return null;
   }
-
-  const days = Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000);
+  const { days } = duration;
 
   if (days < 1) {
     return "TODAY";

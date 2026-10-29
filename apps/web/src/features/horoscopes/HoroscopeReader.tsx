@@ -86,12 +86,14 @@ export default function HoroscopeReader({defaultSign,sunSign,location,sky}:{defa
   function select(next:typeof selection) {setSelection(next);window.location.hash=href(next);}
   function readSign(sign:string){select({...selection,sign});document.querySelector('.horoscope-periods')?.scrollIntoView({block:'start'});}
   function planetSelection(position:PlanetPosition){return {...selection,view:'planets',planet:position.planet.toLowerCase().replaceAll(' ','-'),placement:position.sign.toLowerCase()};}
-  const planetPositions=sky?skyNodeDisplayPositions(sky.positions):[];
-  const planetIndex=planetPositions.findIndex(position=>position.planet.toLowerCase().replaceAll(' ','-')===selection.planet&&position.sign.toLowerCase()===selection.placement)??-1;
+  const planetPositions=skyNodeDisplayPositions(sky?.positions??[]);
+  const planetIndex=planetPositions.findIndex(position=>position.planet.toLowerCase().replaceAll(' ','-')===selection.planet&&position.sign.toLowerCase()===selection.placement);
   const planetPosition=planetPositions[planetIndex];
   const signs=<Suspense fallback={null}><HoroscopeSigns sign={selection.sign} rising={rising} sun={sun} onSelect={readSign}/></Suspense>;
+  const reference = selection.at ?? new Date().toISOString();
+  const referenceTime = Date.parse(reference);
   const exactEdition=Boolean(selection.editionId&&loadedEditionId===selection.editionId);
-  const currentEdition=edition?.window.period===selection.period && (exactEdition || (!selection.editionId&&!loadedEditionId&&horoscopeReaderTimeZones(selection.period,timeZone).includes(canonicalHoroscopeTimeZone(edition.window.timeZone))&&Date.parse(edition.window.startsAt)<=Date.parse(selection.at??new Date().toISOString())&&Date.parse(selection.at??new Date().toISOString())<Date.parse(edition.window.endsAt))) ? edition : null;
+  const currentEdition=edition?.window.period===selection.period && (exactEdition || (!selection.editionId&&!loadedEditionId&&horoscopeReaderTimeZones(selection.period,timeZone).includes(canonicalHoroscopeTimeZone(edition.window.timeZone))&&Date.parse(edition.window.startsAt)<=referenceTime&&referenceTime<Date.parse(edition.window.endsAt))) ? edition : null;
   const holdingReading=useMinimumLoading(loading&&!currentEdition);
   const namedSeason=currentEdition?.window.period==='seasonal'?currentEdition.window:seasonWindow&&canonicalHoroscopeTimeZone(seasonWindow.timeZone)===timeZone&&Date.parse(seasonWindow.startsAt)<=Date.now()&&Date.now()<Date.parse(seasonWindow.endsAt)?seasonWindow:null;
   const overview=currentEdition?.passages.find(p=>p.sign==='overview');
@@ -108,7 +110,6 @@ export default function HoroscopeReader({defaultSign,sunSign,location,sky}:{defa
     : isCurrent ? selection.period==='weekly'?'This week':'This month' : periodNames[selection.period];
   const signName=horoscopeSignLabel(selection.sign);
   const duplicateHeadline=passage&&[dateTitle,signName,`${signName} & ${signName} Rising`,...(selection.period==='monthly'&&currentEdition?[horoscopeOverviewHeadline(currentEdition.window)]:[])].some(title=>articleHeadingComparisonKey(title)===articleHeadingComparisonKey(passage.headline));
-  const reference = selection.at ?? new Date().toISOString();
   const previousAt = currentEdition ? new Date(Date.parse(currentEdition.window.startsAt) - 1).toISOString()
     : selection.period === 'seasonal' && namedSeason ? new Date(Date.parse(namedSeason.startsAt) - 1).toISOString() : adjacentHoroscopeReference(selection.period, reference, timeZone, -1);
   const nextAt = currentEdition?.window.endsAt ?? adjacentHoroscopeReference(selection.period, reference, timeZone, 1);

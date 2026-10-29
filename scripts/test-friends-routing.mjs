@@ -187,13 +187,20 @@ for (const parent of [
   assert.equal(returnToArticleParent(), false, "The restored dialog must not create a return loop.");
 }
 assert.deepEqual(events, ["popstate", "popstate"]);
+for (const hash of ["#friends", "#/friends", "#/friends?tab=feed"]) {
+  const parent = `https://example.com/?flowPair=friend&flowDate=2026-10-29${hash}`;
+  assert.equal(forecastDialogReturnUrl(parent)?.href, parent);
+}
 for (const invalid of [
   "https://elsewhere.example/friends?flowPair=friend&flowDate=2026-10-29",
   "/friends?tab=charts&flowPair=friend&flowDate=2026-10-29",
   "/friends?tab=feed&chart=another&flowPair=friend&flowDate=2026-10-29",
   "/friends?flowPair=friend&flowDate=invalid",
   "/friends?flowDate=2026-10-29",
-  "/project_author/transits?flowPair=friend&flowDate=2026-10-29#friends?tab=feed"
+  "/project_author/transits?flowPair=friend&flowDate=2026-10-29#friends?tab=feed",
+  "/?flowPair=friend&flowDate=2026-10-29#friends-extra?tab=feed",
+  "/?flowPair=friend&flowDate=2026-10-29#/friends/other?tab=feed",
+  "/?flowPair=friend&flowDate=2026-10-29#sky?tab=feed"
 ]) {
   assert.equal(forecastDialogReturnUrl(invalid), null);
   const article = new URL("https://example.com/project_author/transits?detail=transit-sun-sextile-lilith");

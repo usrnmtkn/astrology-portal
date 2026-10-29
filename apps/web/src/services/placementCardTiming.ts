@@ -141,7 +141,8 @@ export function placementVisitWindow(position: PlanetPosition, generatedAt: stri
   const visit = position.residencyPasses?.find(pass => Date.parse(pass.entryDate) <= at && at <= Date.parse(pass.exitDate));
   const start = new Date(visit?.entryDate ?? position.transitStart ?? "");
   const end = new Date(visit?.exitDate ?? position.transitEnd ?? "");
-  return Number.isFinite(start.getTime()) && Number.isFinite(end.getTime()) && start < end ? { start, end } : null;
+  // Invalid dates compare false, so ordering also rejects missing/bad endpoints.
+  return start < end ? { start, end } : null;
 }
 
 export function placementCardCountdowns(position: PlanetPosition, generatedAt: string, timeZone = "UTC") {

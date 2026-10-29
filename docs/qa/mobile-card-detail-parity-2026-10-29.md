@@ -44,6 +44,9 @@ It is not a full-site or production release signoff.
   fallback. Rendered coverage includes both phases, whitespace variants, the
   sextile header, ordinary planets and retrogrades, empty fields, and unknown
   names including Moonstone and Full Moon Watcher.
+- Personal transit articles on You and Friends use whitespace above the main
+  reading and before its calculated context, without horizontal rules. Complete
+  paragraphs, dates and the return path to the selected forecast stay intact.
 
 ## Validation and scope
 
@@ -98,12 +101,21 @@ The focused mobile follow-up passes both the icon-header case and the combined
 theme/forms case after a fresh build. Visual inspection found an inherited
 alignment rule that left a planetary glyph tile at the card edge; its scoped
 story-card layout now centers the tile and its grid track. The regression checks
-both tile-to-card and glyph-to-tile alignment. The complete eight-configuration
-rerun remains pending final integration. One earlier harness build failed before
+both tile-to-card and glyph-to-tile alignment. Development matrix 43 completed
+48/48 with no retries on `2417bbf9`, rebased onto main `a8e89c62`. A later owner
+request removed the transit paragraph rules; its own/friend journey assertions
+and the subsequent source cleanup still require a fresh rendered rerun. Matrix
+43 is not acceptance evidence for these later changes. One earlier harness build failed before
 rendering because of a Node-only Swiss Ephemeris import; the browser harness now
 externalizes that built-in module, matching the existing browser fixtures.
-Current-main integration and bundle-budget verification remain outstanding;
-no size limit has been raised.
+Matched independent builds of main `a8e89c62` and source build 52 use the same
+native Node 22.20.0 and synthetic preview environment. Candidate startup JS is
+396,860 gzip bytes versus 396,331 on main; the deferred horoscope reader is
+5,605 versus 5,311. They exceed the current ceilings by 10 and 5 bytes. Shared
+Studio CSS is unchanged at 31,799 bytes. Reader startup CSS drops by 207 bytes
+and aggregate CSS by 267 bytes. Every other measured graph/chunk budget passes.
+No size limit has been raised; a narrow measured allocation is under review.
+Birth inputs retain 16px text and theme icons retain 24px through existing tokens.
 
 Complete API/content release gates, final-main integration and deployed-main
 verification remain required before this candidate may be called live. Existing

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {isDisplayRetrograde} from '../apps/web/src/services/astrologyDisplay';
 import {placementCardCountdownLabel,placementCardCountdowns,placementVisitWindow} from '../apps/web/src/services/placementCardTiming';
 import {createServer} from 'vite';
+import type {PlanetPosition} from '../apps/web/src/types';
 const vite=await createServer({root:'apps/web',appType:'custom',logLevel:'silent',server:{middlewareMode:true,ws:false}});
 const {planetaryHoroscopeWindow}=await vite.ssrLoadModule('/src/features/horoscopes/usePlanetaryHoroscopeSources.ts');
 const {getAstrodienstSky}=await vite.ssrLoadModule('/src/services/ephemeris.ts');
@@ -16,6 +17,10 @@ for(const [start,end,expected] of [
  ['2026-12-30','2027-01-02','3 days left']
 ])assert.equal(placementCardCountdownLabel(start,end,'America/New_York'),expected);
 assert.equal(placementCardCountdownLabel('invalid','2027-01-01'),null);
+for(const [transitStart,transitEnd] of [
+ [undefined,undefined],['invalid','2027-01-01'],['2026-01-01','invalid'],
+ ['2027-01-02','2027-01-01'],['2027-01-01','2027-01-01']
+])assert.equal(placementVisitWindow({planet:'Sun',transitStart,transitEnd} as PlanetPosition,'2026-10-29T16:00:00Z'),null,'Missing, invalid, reversed and empty visits cannot show a countdown');
 assert.equal(placementCardCountdownLabel('2027-01-02','2027-01-01'),null);
 assert.equal(placementCardCountdownLabel('2026-11-01T03:30:00Z','2026-11-02T05:30:00Z','America/New_York'),'2 days left');
 assert.equal(placementCardCountdownLabel('2026-11-01T03:30:00Z','2026-11-02T05:30:00Z','Pacific/Auckland'),'1 day left');

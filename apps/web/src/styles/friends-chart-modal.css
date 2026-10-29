@@ -43,7 +43,7 @@
   background: var(--control-bg);
   color: var(--ink);
   font-family: var(--font-ui);
-  font-size: var(--input-font-size);
+  font-size: var(--type-table-value-size);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);

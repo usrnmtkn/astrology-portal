@@ -27,7 +27,7 @@ import {
   isReaderFacingCopy
 } from "../../content/readerSafety";
 import type { GeneratedContentDrilldown } from "../../services/generatedContent";
-import { zodiacSignGlyphs, zodiacSigns } from "../../services/chartMath";
+import { zodiacSigns } from "../../services/chartMath";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import {
   articleAspectGlyphPartsFromHeading,
@@ -185,13 +185,6 @@ type ArticleEyebrowGlyph = {
   house?: boolean;
 };
 
-function articleTitleSignGlyph(title: string, meta = "") {
-  const source = `${title} ${meta}`;
-  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(source));
-
-  return sign ? zodiacSignGlyphs[sign] ?? "" : "";
-}
-
 function textArticleGlyph(text: string, label = text): ArticleEyebrowGlyph | null {
   return text ? { key: `text-${label}-${text}`, label, text } : null;
 }
@@ -233,7 +226,11 @@ function articleTitleHouseToken(title: string, meta = "") {
 function articleHouseToken(house: string | number) {
   const parsedHouse = typeof house === "number" ? house : Number.parseInt(house, 10);
 
-  return Number.isFinite(parsedHouse) && parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
+  return parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
+}
+
+function articleTitleSign(title: string) {
+  return zodiacSigns.find((sign) => new RegExp(`\\b${sign}\\b`, "i").test(title));
 }
 
 function articlePlacementGlyphs(title: string, meta = "") {
@@ -263,7 +260,7 @@ function articleEyebrowLabel(title: string, kicker?: string) {
 
   if (/\b(?:rx|retrograde)\b/i.test(title)) return "Retrograde";
 
-  if (articleTitleSignGlyph(title)) {
+  if (articleTitleSign(title)) {
     return "Placement";
   }
 
@@ -298,11 +295,11 @@ function articleEyebrowGlyphs({
     ]);
   }
 
-  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(`${title} ${meta}`));
+  const sign = articleTitleSign(`${title} ${meta}`);
   const house = articleTitleHouseToken(title, meta);
 
   return uniqueArticleGlyphs([
-    ...(glyph ? glyph.split(/\s+/).filter(Boolean).map((part) => textArticleGlyph(part)) : []),
+    ...(glyph ? glyph.split(/\s+/).map((part) => textArticleGlyph(part)) : []),
     sign ? signArticleGlyph(sign) : null,
     house
       ? { key: `house-${house}`, label: house, text: house, house: true }
@@ -644,7 +641,7 @@ export function SkyDetailArticle({
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
           </header>
 
-          {hasReadableBody && !placementPage ? <hr className="article-rule" /> : null}
+          {hasReadableBody && !placementPage && !detail.compactHeader ? <hr className="article-rule" /> : null}
 
           {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">

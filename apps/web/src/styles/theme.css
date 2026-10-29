@@ -1301,7 +1301,7 @@
   --input-bg: var(--surface-2);
   --input-border: var(--line);
   --input-padding-x: var(--sp-2);
-  --input-font-size: var(--type-table-value-size);
+  --input-font-size: 15px;
   --modal-bg: var(--surface);
   --modal-border: var(--line);
   --modal-radius: var(--radius);
@@ -1362,7 +1362,6 @@
   --top-brand-size: 32px;
   --top-nav-icon-size: 15px;
   --top-action-icon-size: 19px;
-  --top-theme-icon-size: 24px;
   --top-control-gap: 8px;
   /* Keep the centered header group clear of child-page Back controls. */
   --header-back-gutter: 176px;

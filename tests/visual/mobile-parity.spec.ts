@@ -94,6 +94,7 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
  await expect(dialog.getByRole('heading',{name:'Edit chart',level:2})).toHaveCSS('font-weight','400');
  for(const input of ['input[type=date]','input[type=time]']){
   await expect(dialog.locator(input)).toHaveCSS('font-family',/system-ui/);
+  await expect(dialog.locator(input)).toHaveCSS('font-size','16px');
   expect((await dialog.locator(input).boundingBox())!.width).toBeGreaterThan(Math.min(250,page.viewportSize()!.width-100));
  }
  const close=dialog.getByRole('button',{name:'Close',exact:true});
@@ -114,6 +115,7 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
  await expect(dialog.getByRole('heading',{name:'Your birth information'})).toHaveCSS('font-size',page.viewportSize()!.width<=800?'30px':'36px');
  await expect(dialog.getByRole('heading',{name:'Your birth information'})).toHaveCSS('font-weight','400');
  await expect(dialog.getByRole('textbox',{name:'Birth year'})).toHaveCSS('font-family',/system-ui/);
+ await expect(dialog.getByRole('textbox',{name:'Birth year'})).toHaveCSS('font-size','16px');
  await dialog.getByRole('button',{name:'Save birth details',exact:true}).scrollIntoViewIfNeeded();
  await expect(dialog.getByRole('button',{name:'Close create chart',exact:true})).toBeInViewport();
  await dialog.getByRole('textbox',{name:'Birth year'}).scrollIntoViewIfNeeded();
