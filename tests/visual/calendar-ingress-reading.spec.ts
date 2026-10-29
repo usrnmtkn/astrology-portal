@@ -7,11 +7,11 @@ const key = 'authored/calendar-moon-transition/virgo/libra';
 const body = 'Once the Moon enters Libra, the synthetic ingress passage begins.\n\nThe complete synthetic ending stays intact.';
 const moonSignBody = JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json', 'utf8'))
   .authoredCards.find((row: any) => row.contentKey === 'authored/calendar-weekly-moon/libra').body as string;
-const guidanceParagraphs = `${moonSignBody} ${body}`.split('\n\n');
-const wrapper = 'Synthetic redundant timing wrapper for {{nextMoonSign}} at {{nextMoonSignEntryTime}}.';
+const guidanceParagraphs = `Synthetic Moon-sign introduction for Libra at 4:10 AM EDT. ${moonSignBody} ${body}`.split('\n\n');
+const opening = 'Synthetic Moon-sign introduction for {{nextMoonSign}} at {{nextMoonSignEntryTime}}.';
 const rows = [
   { content_key: key, body },
-  { content_key: 'authored/calendar-timing/earlyIngress', body: wrapper },
+  { content_key: 'authored/calendar-timing/earlyIngress', body: opening },
 ].map((row, index) => ({ ...row, id: `ingress-reading-${index}`, updated_at: '2026-10-09T08:00:00Z',
   status: 'LIVE', lane: 'serving', review_state: null, surface: 'sky', mode: 'in_depth',
   provider: 'manual', headline: index === 0 ? 'Moon enters Libra' : 'Synthetic timing source' }));
@@ -41,7 +41,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     await expect(dayCopy.locator('p')).toHaveText(guidanceParagraphs, { timeout: 60_000 });
     const event = day.getByRole('button', { name: 'Moon enters Libra', exact: true });
     await expect(event).toContainText('4:10a');
-    await expect(dayCopy).not.toContainText('Synthetic redundant timing wrapper');
     await page.getByRole('tab', { name: 'Week', exact: true }).click();
     const friday = page.locator('#calendar-day-group-2026-10-09');
     const copy = friday.locator('.calendar-day-group__blurb');
@@ -49,7 +48,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       if (reload) await page.reload();
       await expect(copy.locator('p')).toHaveText(guidanceParagraphs, { timeout: 60_000 });
       await expect(friday.getByRole('button', { name: 'Moon enters Libra 4:10a', exact: true })).toBeVisible();
-      await expect(copy).not.toContainText('Synthetic redundant timing wrapper');
       await expect(copy).not.toContainText('most of today');
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
