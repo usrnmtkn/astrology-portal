@@ -1,3 +1,4 @@
+import {skyNodeDisplayPositions} from "../sky/skyHelpers";
 import { ContentLoading } from "../../components/LoadingPatterns";
 import {useMinimumLoading} from "../../hooks/useMinimumLoading";
 import {lazy,Suspense,useEffect,useState} from 'react';
@@ -85,8 +86,9 @@ export default function HoroscopeReader({defaultSign,sunSign,location,sky}:{defa
   function select(next:typeof selection) {setSelection(next);window.location.hash=href(next);}
   function readSign(sign:string){select({...selection,sign});document.querySelector('.horoscope-periods')?.scrollIntoView({block:'start'});}
   function planetSelection(position:PlanetPosition){return {...selection,view:'planets',planet:position.planet.toLowerCase().replaceAll(' ','-'),placement:position.sign.toLowerCase()};}
-  const planetIndex=sky?.positions.findIndex(position=>position.planet.toLowerCase().replaceAll(' ','-')===selection.planet&&position.sign.toLowerCase()===selection.placement)??-1;
-  const planetPosition=sky?.positions[planetIndex];
+  const planetPositions=sky?skyNodeDisplayPositions(sky.positions):[];
+  const planetIndex=planetPositions.findIndex(position=>position.planet.toLowerCase().replaceAll(' ','-')===selection.planet&&position.sign.toLowerCase()===selection.placement)??-1;
+  const planetPosition=planetPositions[planetIndex];
   const signs=<Suspense fallback={null}><HoroscopeSigns sign={selection.sign} rising={rising} sun={sun} onSelect={readSign}/></Suspense>;
   const exactEdition=Boolean(selection.editionId&&loadedEditionId===selection.editionId);
   const currentEdition=edition?.window.period===selection.period && (exactEdition || (!selection.editionId&&!loadedEditionId&&horoscopeReaderTimeZones(selection.period,timeZone).includes(canonicalHoroscopeTimeZone(edition.window.timeZone))&&Date.parse(edition.window.startsAt)<=Date.parse(selection.at??new Date().toISOString())&&Date.parse(selection.at??new Date().toISOString())<Date.parse(edition.window.endsAt))) ? edition : null;
@@ -117,7 +119,7 @@ export default function HoroscopeReader({defaultSign,sunSign,location,sky}:{defa
       <button type="button" aria-pressed={selection.view==='planets'} onClick={()=>select({...selection,view:'planets',planet:null,placement:null})}>Planets</button>
     </div>
     {selection.view==='planets' ? selection.planet ? <>
-      {!sky?<PageLoading message="Loading planetary horoscope…"/>:planetPosition?<Suspense fallback={<PageLoading message="Loading planetary horoscope…"/>}><PlanetaryHoroscope position={planetPosition} generatedAt={sky.generatedAt} sign={selection.sign} timeZone={planetPosition.transitTimeZone??sky.location.timeZone??timeZone} previous={sky.positions[planetIndex-1]} next={sky.positions[planetIndex+1]} onBack={()=>select({...selection,planet:null,placement:null})} onPlanet={position=>select(planetSelection(position))}/></Suspense>:<ReaderUnavailable kind="horoscope" onAction={()=>select({...selection,planet:null,placement:null})}/>}
+      {!sky?<PageLoading message="Loading planetary horoscope…"/>:planetPosition?<Suspense fallback={<PageLoading message="Loading planetary horoscope…"/>}><PlanetaryHoroscope position={planetPosition} generatedAt={sky.generatedAt} sign={selection.sign} timeZone={planetPosition.transitTimeZone??sky.location.timeZone??timeZone} previous={planetPositions[planetIndex-1]} next={planetPositions[planetIndex+1]} onBack={()=>select({...selection,planet:null,placement:null})} onPlanet={position=>select(planetSelection(position))}/></Suspense>:<ReaderUnavailable kind="horoscope" onAction={()=>select({...selection,planet:null,placement:null})}/>}
       {planetPosition&&signs}
     </> : <section className="horoscope-planet-view" aria-label="Planet readings"><h2>Planets</h2>
       {sky ? <Suspense fallback={<ContentLoading layout="placements" message="Loading planet readings…"/>}><PlanetaryHoroscopeCards sky={sky} sign={selection.sign} href={position=>href(planetSelection(position))}/></Suspense> : <ContentLoading layout="placements" message="Loading planet readings…"/>}

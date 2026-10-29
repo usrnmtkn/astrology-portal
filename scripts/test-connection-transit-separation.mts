@@ -48,7 +48,9 @@ const detail = panel.slice(panel.indexOf("  const openBondTransitDetail ="), pan
 const decision = panel.slice(panel.indexOf("  const selectedBondTransitSections ="), panel.indexOf("  const selectedBondTransitViewCards ="));
 assert.match(decision, /connectionTransitReading/);
 assert.match(detail, /const transitSections = selectedBondTransitSections\.get\(card\.id\) \?\? \[\];/);
-assert.doesNotMatch(detail, /card\.effectBody|renderReaderDirectedSynastryContact|bond-effect-/);
+assert.match(detail, /body: \[card\.effectBody, card\.activationBody\]\.filter\(Boolean\)/);
+assert.match(detail, /heading: "Personal transit", body: transitSections/);
+assert.doesNotMatch(detail, /renderReaderDirectedSynastryContact|bond-effect-/);
 const transitFacts = { transiting:"saturn",natal:"ascendant",aspect:"sextile",voice:"you",window:"Until November 15, 2026" };
 const approved = (contentKey:string, body_you = "The whole passage. {{aspectWord}} through {{untilDate}}.", body_they = "{{Name}} has the whole passage through {{untilDate}}.") => ({contentKey,content_role:"full_copy",body_you,body_they,review_status:"approved",approval:{approvalLevel:"exact_owner_approved",recordPath:"test-only",payloadSha256:"a".repeat(64),approvedAt:"2026-10-15"}} as AuthoredCard);
 const exactKey="authored/transit-aspect/saturn/ascendant/sextile";

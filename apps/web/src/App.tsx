@@ -1,3 +1,4 @@
+import {dateFromDurationInput,dateOnly,differenceInCalendarDays,differenceInCalendarParts,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
@@ -3484,21 +3485,7 @@ function formatSkyAspectDateRange(start: Date, end: Date, referenceDate = new Da
   return skyAspectDateRange({ timing: { timeZone } }, start, end);
 }
 
-function dateFromDurationInput(value: string | Date, timeZone = "UTC") {
-  // A date-only value already identifies the selected civil day; it is not a
-  // UTC instant to shift into the preceding date in western time zones.
-  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(`${value}T00:00:00Z`);
-  const instant = new Date(value);
-  if (Number.isNaN(instant.getTime())) return null;
-  const parts = eventCalendarParts(instant, timeZone);
-  return new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)));
-}
 
-function dateOnly(value: string | Date) {
-  const date = typeof value === "string" ? new Date(`${value.slice(0, 10)}T00:00:00Z`) : value;
-
-  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-}
 
 function calendarMonthDiff(start: Date, end: Date) {
   let months = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
@@ -3510,49 +3497,9 @@ function calendarMonthDiff(start: Date, end: Date) {
   return Math.max(0, months);
 }
 
-function differenceInCalendarDays(start: Date, end: Date) {
-  return Math.max(0, Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000));
-}
 
-function daysInUtcMonth(year: number, month: number) {
-  return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-}
 
-function addCalendarMonths(start: Date, months: number) {
-  const year = start.getUTCFullYear() + Math.floor((start.getUTCMonth() + months) / 12);
-  const month = (start.getUTCMonth() + months) % 12;
-  const normalizedMonth = month < 0 ? month + 12 : month;
-  const normalizedYear = month < 0 ? year - 1 : year;
-  const day = Math.min(start.getUTCDate(), daysInUtcMonth(normalizedYear, normalizedMonth));
 
-  return new Date(Date.UTC(normalizedYear, normalizedMonth, day));
-}
-
-function differenceInCalendarParts(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
-  const start = dateFromDurationInput(startInput, timeZone);
-  const end = dateFromDurationInput(endInput, timeZone);
-
-  if (!start || !end || end.getTime() < start.getTime()) {
-    return null;
-  }
-
-  let totalMonths = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
-  let monthAnchor = addCalendarMonths(start, totalMonths);
-
-  if (monthAnchor.getTime() > end.getTime()) {
-    totalMonths = Math.max(0, totalMonths - 1);
-    monthAnchor = addCalendarMonths(start, totalMonths);
-  }
-
-  const days = differenceInCalendarDays(monthAnchor, end);
-
-  return {
-    totalDays: differenceInCalendarDays(start, end),
-    years: Math.floor(totalMonths / 12),
-    months: totalMonths % 12,
-    days
-  };
-}
 
 function getDurationParts(startInput: string | Date, endInput: string | Date) {
   const start = dateFromDurationInput(startInput);
@@ -10888,7 +10835,7 @@ const MemberSettingsView = lazy(() =>
 
 const CalculationDiagnosticsPanel = lazy(() => import("./features/sky/CalculationDiagnosticsPanel"));
 const HeaderSkyControls = lazy(() => import("./features/sky/HeaderSkyControls"));
-const CreateChartFlow = lazy(() => import("./features/you/CreateChartFlow"));
+const CreateChartDialog = lazy(() => import("./features/you/CreateChartDialog"));
 const AccountView = lazy(() =>
   import("./features/settings/MemberSettingsView").then((module) => ({
     default: module.AccountView
@@ -15342,38 +15289,20 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           )}
 
           {chartModalOpen && (
-            <ModalPortal
-              className="chart-modal-root"
-              panelClassName="chart-modal"
-              titleId="chart-modal-title"
-              width="640px"
+            <Suspense fallback={<PageLoading message="Loading chart setup…" />}><CreateChartDialog
+              form={transitForm}
+              setForm={setTransitForm}
+              profile={userProfile}
+              step={chartModalStep}
+              setStep={setChartModalStep}
+              saving={chartModalSaving}
+              message={chartModalMessage}
+              onSave={drawTransitChart}
               onClose={() => {
                 setChartModalOpen(false);
                 setChartModalMessage("");
               }}
-            >
-                <button
-                  className="chart-modal-close modal-close"
-                  type="button"
-                  aria-label="Close create chart"
-                  onClick={() => {
-                    setChartModalOpen(false);
-                    setChartModalMessage("");
-                  }}
-                >
-                  ×
-                </button>
-                <Suspense fallback={<PageLoading message="Loading chart setup…" />}><CreateChartFlow
-                  form={transitForm}
-                  setForm={setTransitForm}
-                  profile={userProfile}
-                  step={chartModalStep}
-                  setStep={setChartModalStep}
-                  saving={chartModalSaving}
-                  message={chartModalMessage}
-                  onSave={drawTransitChart}
-                /></Suspense>
-            </ModalPortal>
+            /></Suspense>
           )}
 
           {pendingSocialInvitation && (
@@ -16698,8 +16627,7 @@ function PlacementTable({
           const solarPhase = solarPhaseStatusFor(position, positions);
           const statuses = placementStatuses(position);
           const isRetrograde = isDisplayRetrograde(position);
-          const durationLabel = primaryPlacementDurationLabel(position, generatedAt);
-          const retrogradeDurationLabel = null;
+          const { durationLabel, retrogradeDurationLabel } = placementCardCountdowns(position, generatedAt);
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);

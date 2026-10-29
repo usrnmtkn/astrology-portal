@@ -170,6 +170,7 @@
 .placement-progress text { fill: var(--accent); font-family: var(--font-glyph); font-size: var(--type-label-size); text-anchor: middle; dominant-baseline: central; }
 .placement-progress > span,
 .placement-progress__label { grid-column: 1 / -1; font-family: var(--font-ui); font-size: var(--type-degree-size); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-label); text-transform: uppercase; text-align: center; color: var(--ink); }
+.placement-progress > .placement-progress__retrograde { color: var(--accent); }
 @media (max-width: 1000px) {
   .sky-page .placement-table { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

@@ -4,11 +4,12 @@ import { ModalPortal } from "./ModalPortal";
 
 /** Shared reader, settings and confirmation shell from the modal handoff. */
 export function ModalDialog({ title, titleId: suppliedTitleId, onClose, children, glyph, actions,
-  variant = "reading", className = "", rootClassName = "", bodyClassName = "", closeLabel = "Close", restoreFocusId
+  variant = "reading", className = "", rootClassName = "", bodyClassName = "", closeLabel = "Close", restoreFocusId, closeOnBackdrop
 }: {
   title: string; titleId?: string; onClose: () => void; children: ReactNode; glyph?: ReactNode; actions?: ReactNode;
   variant?: "reading" | "settings" | "confirm"; className?: string; rootClassName?: string; bodyClassName?: string;
   closeLabel?: string; restoreFocusId?: string;
+  closeOnBackdrop?: boolean;
 }) {
   const generatedId = useId();
   const titleId = suppliedTitleId ?? generatedId;
@@ -34,7 +35,7 @@ export function ModalDialog({ title, titleId: suppliedTitleId, onClose, children
     document.getElementById(titleId)?.focus({ preventScroll: true });
     updateScroll();
   }, [title, titleId]);
-  return <ModalPortal onClose={onClose} closeOnBackdrop={variant !== "confirm"} titleId={titleId}
+  return <ModalPortal onClose={onClose} closeOnBackdrop={closeOnBackdrop ?? variant !== "confirm"} titleId={titleId}
     initialFocusId={titleId} restoreFocusId={restoreFocusId} dialogRole={variant === "confirm" ? "alertdialog" : "dialog"}
     className={`content-modal ${rootClassName}`} panelClassName={`modal-dialog modal-dialog--${variant} ${className}`}>
     <header className="modal-dialog__header" data-scrolled={scroll.scrolled || undefined}

@@ -1,3 +1,5 @@
+import {placementVisitWindow} from "../../services/placementCardTiming";
+import {isDisplayRetrograde} from "../../services/astrologyDisplay";
 import {useEffect,useState} from 'react';
 import type {PlanetPosition} from '../../types';
 import {HOROSCOPE_SIGNS} from '../../content/horoscopeEditions.mjs';
@@ -21,11 +23,10 @@ export function planetaryHoroscopeBody(position:PlanetPosition,sign:string) {
 }
 
 export function planetaryHoroscopeWindow(position:PlanetPosition,generatedAt:string) {
-  const station=position.motion==='retrograde'&&position.retrogradeWindowSource==='station';
-  const at=Date.parse(generatedAt);
-  const visit=position.residencyPasses?.find(pass=>Date.parse(pass.entryDate)<=at&&at<=Date.parse(pass.exitDate));
-  const start=Date.parse((station?position.retrogradeStart:visit?.entryDate??position.transitStart)??'');
-  const end=Date.parse((station?position.retrogradeEnd:visit?.exitDate??position.transitEnd)??'');
+  const station=isDisplayRetrograde(position)&&position.retrogradeWindowSource==='station';
+  const visit=placementVisitWindow(position,generatedAt);
+  const start=Date.parse((station?position.retrogradeStart:visit?.start.toISOString())??'');
+  const end=Date.parse((station?position.retrogradeEnd:visit?.end.toISOString())??'');
   return Number.isFinite(start)&&Number.isFinite(end)&&start<end?{start:new Date(start),end:new Date(end)}:null;
 }
 

@@ -1301,7 +1301,7 @@
   --input-bg: var(--surface-2);
   --input-border: var(--line);
   --input-padding-x: var(--sp-2);
-  --input-font-size: 15px;
+  --input-font-size: var(--type-table-value-size);
   --modal-bg: var(--surface);
   --modal-border: var(--line);
   --modal-radius: var(--radius);

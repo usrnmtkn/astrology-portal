@@ -1,5 +1,9 @@
 .modal-close,
 .picker-close {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  flex-shrink: 0;
   width: var(--size-5);
   height: var(--size-5);
   border: var(--border-width-thin) solid var(--button-border, var(--card-border));
@@ -74,3 +78,5 @@
   .modal-dialog--confirm .modal-dialog__actions { padding: 0 var(--space-6) var(--sheet-content-bottom); }
 }
 @media (prefers-reduced-motion: reduce) { .modal-panel.modal-dialog { animation-name: modal-dialog-fade; } }
+
+:is(.modal-close, .picker-close) > svg { width: var(--size-2); height: var(--size-2); flex: none; stroke: currentColor; }

@@ -325,7 +325,7 @@ export function FriendTransitsTab({
                   </span>
                   <span className="updates-aspect-row__meta" aria-label={card.houseLabel}>
                     <span className="updates-aspect-row__dot" aria-hidden="true" />
-                    <span className="updates-aspect-row__orb">{card.house}</span>
+                    <span className="updates-aspect-row__orb">{card.houseLabel}</span>
                   </span>
                 </button>
               ))}

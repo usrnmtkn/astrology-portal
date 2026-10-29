@@ -1,4 +1,5 @@
 import {useMinimumLoading} from "../../hooks/useMinimumLoading";
+import {isDisplayRetrograde} from "../../services/astrologyDisplay";
 import type {PlanetPosition} from '../../types';
 import {ChevronLeft,ChevronRight} from 'lucide-react';
 import {FormattedProse} from '../../components/FormattedProse';
@@ -11,7 +12,7 @@ export default function PlanetaryHoroscope({position,generatedAt,sign,timeZone,p
   const {ready,error,refresh}=usePlanetaryHoroscopeSources(`article:${planetarySlug(position.planet)}/${planetarySlug(position.sign)}`);
   const holding=useMinimumLoading(!ready);
   const body=ready?planetaryHoroscopeBody(position,sign):'';
-  const rx=position.motion==='retrograde';
+  const rx=isDisplayRetrograde(position);
   const window=planetaryHoroscopeWindow(position,generatedAt);
   const dateFormat=new Intl.DateTimeFormat('en-US',{month:'long',day:'numeric',year:'numeric',timeZone});
   const dateLine=window?dateFormat.formatRange(window.start,window.end):null;
@@ -30,7 +31,7 @@ export default function PlanetaryHoroscope({position,generatedAt,sign,timeZone,p
     </article>
     {!error&&<nav className="horoscope-edition-nav" aria-label="Planetary horoscopes">{[previous,next].map((entry,index)=>{
       const Icon=index?ChevronRight:ChevronLeft;
-      return <button type="button" key={index} disabled={!entry} className={index?'horoscope-edition-next':undefined} onClick={()=>entry&&onPlanet(entry)}><span className="horoscope-edition-arrow"><Icon aria-hidden="true"/></span><span className="horoscope-edition-label"><small>{index?'Next':'Previous'}</small><span>{entry?`${entry.planet}${entry.motion==='retrograde'?' Rx':''} in ${entry.sign}`:''}</span></span></button>;
+      return <button type="button" key={index} disabled={!entry} className={index?'horoscope-edition-next':undefined} onClick={()=>entry&&onPlanet(entry)}><span className="horoscope-edition-arrow"><Icon aria-hidden="true"/></span><span className="horoscope-edition-label"><small>{index?'Next':'Previous'}</small><span>{entry?`${entry.planet}${isDisplayRetrograde(entry)?' Rx':''} in ${entry.sign}`:''}</span></span></button>;
     })}</nav>}
   </>;
 }

@@ -173,7 +173,6 @@ import { useManualChartsController } from "./useManualChartsController";
 import { useRelationshipCompare } from "./useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatternLabels";
 import type { SkyDetail } from "../sky/SkyDetailArticle";
-import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 import { selectEligibleFriendTransits } from "./friendTransitEligibility";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
@@ -855,7 +854,7 @@ export function ManualChartsPanel({
           contentTrace
         },
         exactAspectLabel: hasExactAspect && exactAspect
-          ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
+          ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${precisePersonalOrb(exactAspect.orbValue)}`
           : undefined,
         contentTrace
       }];
@@ -885,7 +884,7 @@ export function ManualChartsPanel({
         aspect: contact.aspect,
         title: rendered?.headline ?? `${contact.yourPoint.name} ${contact.aspect} ${contact.friendPoint.name}`,
         summary: rendered?.body ?? contact.summary,
-        meta: rendered?.tag ?? wholeDegreeOrb(contact.orb)
+        meta: rendered?.tag ?? precisePersonalOrb(contact.orb)
       };
     });
   }
@@ -2028,7 +2027,7 @@ export function ManualChartsPanel({
       glyph: aspectGlyph(aspect.type),
       kicker: "Composite",
       title: `${aspect.from} ${aspect.type} ${aspect.to}`,
-      meta: wholeDegreeOrb(aspect.orb),
+      meta: precisePersonalOrb(aspect.orb),
       plainBody: true,
       suppressTldr: true,
       body: aspect.summary.split(/\n{2,}/)
@@ -2338,8 +2337,11 @@ export function ManualChartsPanel({
       transitDescription: description,
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: true,
-      body: transitSections.map(section => section.body),
-      sections: [connectionFacts, ...activatedConnectionSections]
+      body: [card.effectBody, card.activationBody].filter(Boolean),
+      sections: [
+        { heading: "Personal transit", body: transitSections.map(section => section.body).join("\n\n") },
+        connectionFacts, ...activatedConnectionSections
+      ]
     });
   };
   const openBondTransitById = (cardId: string) => {
@@ -2381,7 +2383,7 @@ export function ManualChartsPanel({
       glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
       kicker: "Synastry",
       title,
-      meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+      meta: `${subtitle.toUpperCase()} · ${precisePersonalOrb(contact.orb)}`,
       pills: { labels: [{ label: subtitle, tone: "muted" }] },
       body: rendered?.body ? [rendered.body] : [],
       content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle

@@ -280,6 +280,7 @@
   max-width: var(--shared-chart-size);
   margin: 0 auto;
   color: var(--ink);
+  font-family: var(--font-ui);
   font-size: var(--text-section-label-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-label);
