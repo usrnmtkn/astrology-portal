@@ -134,6 +134,22 @@ measured cost has a reviewed 25-byte allocation to a 6,850 ceiling, leaving
 23 bytes above the measurement. Its total increase from main is 15 bytes;
 other bundle limits and isolation guards remain unchanged.
 
+Focused rerun 57 passes both the actual Friends handle return journey and the
+ordinary Sky header check. Fresh-build matrix 58 then passes all 48 cases with
+zero retries and a clean exit on `58634dccfbc3dc7c92a8b2be6cdb5115cf392944`.
+It covers both personal article endpoints, both feed URL formats and all eight
+browser/viewport/theme configurations listed above. Assertions verify no rule
+around the personal reading, no context border, the shared 32px body gap, intact
+complete text, and Back/reload restoration of the selected forecast dialog.
+The ordinary Sky header fixture retains its existing divider. Desktop light and
+mobile WebKit dark personal-article screenshots were inspected. The owned preview
+port and browser-run descendants are closed after completion.
+
+These are development results against base `a8e89c62`. Main subsequently advanced
+to `9d0c5250` with the separate Calendar Moon-sign intro restoration. That behavior
+must be preserved in the final integration; this matrix does not certify the
+integrated or deployed revision.
+
 Complete API/content release gates, final-main integration and deployed-main
 verification remain required before this candidate may be called live. Existing
 held Calendar, outer transit ring and personal Key dates candidates are separate
