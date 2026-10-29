@@ -79,6 +79,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.getByRole('menuitem', { name: /New guide/u }).click();
       await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeEnabled();
       await expect(editor.getByRole('button', { name: 'Save & publish', exact: true })).toHaveCount(0);
+      await editor.locator('details.admin-editor-details > summary').click();
       await editor.locator('details.admin-editor-key-details summary').click();
       await expect(editor.getByLabel('Content key', { exact: true })).toHaveValue(/^article\/guide\//u);
       expect(await store.call({ method: 'rows' })).toEqual(before);
