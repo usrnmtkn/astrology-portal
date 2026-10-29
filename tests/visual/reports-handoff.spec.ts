@@ -45,6 +45,9 @@ async function fixture(page:Page,theme:string,signedIn=true){
 }
 for(const width of [320,390,1440])for(const theme of ['light','dark'])test(`Reports handoff library ${width} ${theme}`,async({page})=>{
  await page.setViewportSize({width,height:1100});const data=await fixture(page,theme);await page.goto('/reports/');
+ const themeAction=page.locator('.report-topbar .theme-toggle');
+ await expect(themeAction.locator('svg')).toHaveCSS('width','24px');await expect(themeAction.locator('svg')).toHaveCSS('height','24px');
+ await themeAction.click();await expect(themeAction).toHaveAccessibleName(`Switch to ${theme} mode`);await themeAction.click();
  await expect(page.locator('.report-library-row')).toHaveCount(7);
  await expect(page.getByRole('heading',{name:'Reports',exact:true})).toHaveCSS('font-size',width<=800?'34px':'36px');
  await expect(page.getByRole('tab',{name:'Reports 7',exact:true})).toBeVisible();

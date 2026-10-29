@@ -11,17 +11,18 @@ test.beforeAll(async()=>{
  import {FriendChartDeleteDialog} from './apps/web/src/features/friends/FriendChartDeleteDialog';
  import {ConnectionTransitDisclosure} from './apps/web/src/features/friends/ConnectionTransitDisclosure';
  import {AspectBadge} from './apps/web/src/components/charts/AspectBadge';
+ import {ThemeToggleButton} from './apps/web/src/components/ThemeControls';
  import CreateChartDialog from './apps/web/src/features/you/CreateChartDialog';
  import HoroscopeSigns from './apps/web/src/features/horoscopes/HoroscopeSigns';
  import './apps/web/src/styles/horoscopes.css';
  import './apps/web/src/styles/friends-detail.css';
  import './apps/web/src/styles/friends-compare-picker.css';
  import {RelationshipChartFullscreen} from './apps/web/src/features/friends/RelationshipChartFullscreen';
- function App(){const [open,setOpen]=useState('');const [deleting,setDeleting]=useState(false);
+ function App(){const [open,setOpen]=useState('');const [deleting,setDeleting]=useState(false);const [theme,setTheme]=useState(document.documentElement.dataset.theme);
  const [form,setForm]=useState({chartType:'person',displayName:'Sample Chart',pronouns:'they',relationshipType:'friend',birthDate:'1990-01-01',birthTime:'12:00',birthTimeUnknown:false,birthPlace:'Test City',birthLocation:null});
  const [own,setOwn]=useState({name:'Sample Reader',birthMonth:'01',birthDay:'01',birthYear:'1990',birthHour:'12',birthMinute:'00',birthMeridiem:'PM',unknownBirthTime:false,birthPlace:'Test City',birthLocation:null,currentLocation:'Test City',currentLocationData:null});
  const facts={summary:'This is the complete calculated relationship context.',caution:'These are connections through one endpoint.',groups:[{key:'primary',heading:'The primary transit',rows:[{key:'contact',title:'Saturn square the natal Midheaven',aspect:'square',orb:'0° 16′'}]},{key:'related',heading:'Related contacts',rows:Array.from({length:8},(_,i)=>({key:'related-'+i,title:'Complete related contact '+i,aspect:'trine',orb:'1° 27′'}))}]};
- return <><button id='edit-sample' onClick={()=>setOpen('friend')}>Edit sample chart</button><button onClick={()=>setOpen('own')}>Edit own chart</button><button className='social-secondary-button' onClick={()=>setOpen('wheel')}>Full-screen chart</button><button id='delete-sample' onClick={()=>setOpen('delete')}>Delete sample chart</button>
+ return <><ThemeToggleButton theme={theme} onThemeChange={next=>{setTheme(next);document.documentElement.dataset.theme=next}}/><button id='edit-sample' onClick={()=>setOpen('friend')}>Edit sample chart</button><button onClick={()=>setOpen('own')}>Edit own chart</button><button className='social-secondary-button' onClick={()=>setOpen('wheel')}>Full-screen chart</button><button id='delete-sample' onClick={()=>setOpen('delete')}>Delete sample chart</button>
  {open==='delete'&&<FriendChartDeleteDialog name='Sample Chart' pending={deleting} restoreFocusId='delete-sample' onClose={()=>setOpen('')} onDelete={()=>{window.__mobileDeletes=(window.__mobileDeletes||0)+1;setDeleting(true)}}/>}
  <ConnectionTransitDisclosure heading='Why this involves Sample' facts={facts} description='Complete calculated final description.'/>
  <div className='reading-story-card updates-aspect-row'><AspectBadge aspect='trine'/><span className='updates-aspect-row__glyphs'><span className='planet-glyph'>♀</span></span></div>
@@ -43,6 +44,18 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
  const manifest=JSON.parse(readFileSync(`${dist}/.vite/manifest.json`,'utf8'));
  await page.route('**/__mobile-parity',route=>route.fulfill({contentType:'text/html',body:`<!doctype html><html data-theme="${theme}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${[...manifest['index.html'].css,manifest['src/styles.css'].file].map(file=>`<link rel="stylesheet" href="/${file}">`).join('')}<style>${styles}</style></head><body><main id="root"></main><script>${script}</script></body></html>`}));
  await page.goto('/__mobile-parity');await page.evaluate(()=>document.fonts.ready);
+ const themeButton=page.locator('.theme-toggle');
+ for(const current of [theme,theme==='dark'?'light':'dark']){
+  await expect(themeButton).toHaveAccessibleName(`Switch to ${current==='dark'?'light':'dark'} mode`);
+  await expect(themeButton.locator('svg')).toHaveCSS('width','24px');await expect(themeButton.locator('svg')).toHaveCSS('height','24px');
+  const box=(await themeButton.boundingBox())!,icon=(await themeButton.locator('svg').boundingBox())!;
+  const controlSize=page.viewportSize()!.width<=720?48:56;
+  await expect(themeButton).toHaveCSS('width',`${controlSize}px`);await expect(themeButton).toHaveCSS('height',`${controlSize}px`);
+  expect(box.width).toBeCloseTo(controlSize,3);expect(box.height).toBeCloseTo(controlSize,3);
+  expect(Math.abs(icon.x+icon.width/2-box.x-box.width/2)).toBeLessThan(1);
+  expect(Math.abs(icon.y+icon.height/2-box.y-box.height/2)).toBeLessThan(1);
+  await themeButton.click();
+ }
  for(const selector of ['.aspect-badge','.updates-aspect-row__glyphs > .planet-glyph']){
   await expect(page.locator(selector)).toHaveCSS('text-align','center');
   const centered=await page.locator(selector).evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const text=range.getBoundingClientRect(),box=el.getBoundingClientRect();return Math.abs(text.x+text.width/2-box.x-box.width/2)<2;});

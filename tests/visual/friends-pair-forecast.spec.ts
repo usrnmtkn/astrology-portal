@@ -6,6 +6,7 @@ import { rateRelationshipContacts, type ForecastContact } from '../../apps/web/s
 import { personalDayBounds } from '../../apps/web/src/services/personalDailyTransits';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { readerResponse } from '../helpers/reader-response';
+import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
 import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 
@@ -361,6 +362,52 @@ for(const owner of ['reader','friend'] as const) test(`Day sheet real personal a
   await link.click();await expect(article).toBeVisible({timeout:60_000});
   await page.getByRole('button',{name:owner==='reader'?'Back to updates':'Close detail',exact:true}).click();await expect(dialog).toBeVisible();
   await page.keyboard.press('Escape');await expect(tile).toBeFocused();
+});
+
+for(const start of ['/friends?tab=feed','/#friends?tab=feed']) test(`Day sheet social transit returns to selected dialog ${start}`,async({page,baseURL},info)=>{
+  test.setTimeout(180_000);
+  const width=page.viewportSize()!.width,theme=info.project.use.colorScheme==='dark'?'dark':'light';
+  const guard=await installSyntheticNetworkGuard(page.context(),new URL(baseURL!).origin);
+  await page.route('**/rest/v1/**',route=>route.fulfill({json:[]}));
+  const {natal}=await forecastFixture(page,width,theme,'personal');
+  await page.route('**/rest/v1/rpc/list_social_friends',route=>route.fulfill({json:[{friendship_id:'forecast-connected',user_id:'forecast-circle',display_name:'Connected Friend',handle:'connected_friend',natal_chart:natal,viewer_shares_chart:true,friend_shares_chart:true,accepted_at:'2026-10-25T16:00:00Z'}]}));
+  await page.goto(start);
+  const tile=page.getByRole('region',{name:'Friction and flow',exact:true}).getByRole('button',{name:/^Today, Oct 25, .* for You and Connected Friend$/});
+  await tile.click({timeout:60_000});
+  const dialog=page.getByRole('dialog',{name:'You and Connected Friend',exact:true});
+  const link=dialog.locator('a.pair-forecast-transit[data-endpoint-owner="friend"]').first();
+  await expect(link).toBeVisible({timeout:60_000});
+  const parent=page.url();
+  await link.click();
+  await expect(page.locator('.sky-detail-article')).toBeVisible({timeout:60_000});
+  await expect(page).toHaveURL(/\/connected_friend\/transits\?/);
+  await page.getByRole('button',{name:'Close detail',exact:true}).click();
+  await expect(dialog).toBeVisible({timeout:60_000});
+  await expect(page).toHaveURL(parent);
+  await link.click();
+  await expect(page.locator('.sky-detail-article')).toBeVisible({timeout:60_000});
+  await page.reload();
+  await expect(page.locator('.sky-detail-article')).toBeVisible({timeout:60_000});
+  await page.goBack();
+  await expect(dialog).toBeVisible({timeout:60_000});
+  await expect(page).toHaveURL(parent);
+  // A restored tab or a reopened link may no longer have the original entry state.
+  for(const endpoint of ['reader','friend']){
+    await dialog.locator(`a.pair-forecast-transit[data-endpoint-owner="${endpoint}"]`).first().click();
+    const article=page.locator(endpoint==='reader'?'.you-transit-article':'.sky-detail-article');
+    await expect(article).toBeVisible({timeout:60_000});
+    expect(new URL(page.url()).searchParams.get('flowReturn')).toBe(new URL(parent).pathname+new URL(parent).search+new URL(parent).hash);
+    await page.evaluate(()=>history.replaceState(null,'',location.href));
+    await page.reload();await expect(article).toBeVisible({timeout:60_000});
+    await page.getByRole('button',{name:endpoint==='reader'?'Back to updates':'Close detail',exact:true}).click();
+    await expect(dialog).toBeVisible({timeout:60_000});
+    await expect(page).toHaveURL(parent);
+  }
+  await dialog.getByRole('button',{name:'Close forecast',exact:true}).click();
+  await expect(dialog).not.toBeVisible();
+  expect(new URL(page.url()).searchParams.has('flowPair')).toBe(false);
+  await expect(tile).toBeFocused();
+  expect(guard.unhandledExternal).toEqual([]);
 });
 
 for(const [width,theme] of [[360,'light'],[768,'dark']] as const) test(`Day sheet multiple links, long names and person Back ${width} ${theme}`,async({page})=>{

@@ -8,11 +8,32 @@ export function pushArticleUrl(url: URL) {
   window.history.pushState({ articleParent: parent, articleUrl: url.href }, "", url.href);
 }
 
+/** A reopened forecast link can restore its day sheet without browser-entry state. */
+export function forecastDialogReturnUrl(href: string) {
+  try {
+    const url = new URL(href, window.location.origin);
+    const [path, query] = url.hash.replace(/^#\/?/, "").split("?");
+    const params = url.pathname === "/friends" ? url.searchParams : url.pathname === "/" && path === "friends" ? new URLSearchParams(query) : null;
+    return url.origin === window.location.origin && params && (params.get("tab") ?? "feed") === "feed"
+      && !params.has("chart") && url.searchParams.get("flowPair") && /^\d{4}-\d{2}-\d{2}$/.test(url.searchParams.get("flowDate") ?? "") ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 export function returnToArticleParent() {
   const state = window.history.state;
-  if (state?.articleUrl !== window.location.href || typeof state.articleParent !== "string") return false;
-  const parent = new URL(state.articleParent, window.location.href);
-  if (parent.origin !== window.location.origin) return false;
-  window.history.back();
+  if (state?.articleUrl === window.location.href && typeof state.articleParent === "string") {
+    const parent = new URL(state.articleParent, window.location.href);
+    if (parent.origin === window.location.origin) {
+      window.history.back();
+      return true;
+    }
+  }
+  const fallback = new URL(window.location.href).searchParams.get("flowReturn");
+  const parent = fallback ? forecastDialogReturnUrl(fallback) : null;
+  if (!parent) return false;
+  window.history.replaceState({}, "", parent.href);
+  window.dispatchEvent(new PopStateEvent("popstate"));
   return true;
 }

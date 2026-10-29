@@ -1,7 +1,7 @@
 import {defineConfig} from '@playwright/test';
 import base from './playwright.config';
 export default defineConfig({...base,
- testMatch:['mobile-parity.spec.ts','connection-transit-separation.spec.ts','planetary-horoscope-navigation.spec.ts'],
+ testMatch:['mobile-parity.spec.ts','connection-transit-separation.spec.ts','planetary-horoscope-navigation.spec.ts','friends-pair-forecast.spec.ts'],
  timeout:120_000,workers:1,
  use:{...base.use,baseURL:'http://127.0.0.1:4381'},
  webServer:{command:'npm run build:web && npm run preview -w @tldr/web -- --port 4381 --strictPort',url:'http://127.0.0.1:4381',reuseExistingServer:false,timeout:180_000,

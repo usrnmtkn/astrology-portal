@@ -1362,6 +1362,7 @@
   --top-brand-size: 32px;
   --top-nav-icon-size: 15px;
   --top-action-icon-size: 19px;
+  --top-theme-icon-size: 24px;
   --top-control-gap: 8px;
   /* Keep the centered header group clear of child-page Back controls. */
   --header-back-gutter: 176px;

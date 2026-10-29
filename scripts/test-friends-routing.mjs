@@ -14,7 +14,7 @@ import {
   updateFriendProfileUrl
 } from "../apps/web/src/features/friends/friendsRouting.ts";
 import { friendProfileWorkForTab } from "../apps/web/src/features/friends/friendProfileWork.ts";
-import { returnToArticleParent } from "../apps/web/src/services/articleNavigation.ts";
+import { forecastDialogReturnUrl, returnToArticleParent } from "../apps/web/src/services/articleNavigation.ts";
 
 assert.equal(parseFriendsTab("charts"), "charts");
 assert.equal(parseFriendsTab("requests"), "requests");
@@ -150,6 +150,7 @@ globalThis.window = {
   history: {
     state: null,
     pushState(state, _, href) { entries.push({ state, href }); this.state = state; window.location.href = href; },
+    replaceState(state, _, href) { this.state = state; window.location.href = href; },
     back() { backCount += 1; }
   }
 };
@@ -166,6 +167,44 @@ window.location.href = "https://example.com/#friends?tab=charts&chart=manual-1&v
 updateFriendProfileUrl("manual-1", "natal", "push", "natal-placement-sun");
 assert.equal(entries[1].state.articleParent, "https://example.com/#friends?tab=charts&chart=manual-1&view=natal");
 assert.equal(entries[1].state.articleUrl, window.location.href);
+const originalPopStateEvent = globalThis.PopStateEvent;
+globalThis.PopStateEvent = class extends Event {};
+const events = [];
+window.dispatchEvent = event => { events.push(event.type); return true; };
+for (const parent of [
+  "https://example.com/?date=2026-10-29&flowPair=social%3Auser-1&flowDate=2026-10-30#friends?tab=feed",
+  "https://example.com/friends?tab=feed&date=2026-10-29&flowPair=social%3Auser-1&flowDate=2026-10-30"
+]) {
+  window.location.href = parent;
+  assert.equal(forecastDialogReturnUrl(parent)?.href, parent);
+  const url = new URL("https://example.com/project_author/transits?detail=transit-sun-sextile-lilith&date=2026-10-30");
+  const returnUrl = new URL(parent);
+  url.searchParams.set("flowReturn", returnUrl.pathname + returnUrl.search + returnUrl.hash);
+  window.location.href = url.href;
+  window.history.state = null;
+  assert.equal(returnToArticleParent(), true, "Reopened links restore the exact friend and selected day without entry state.");
+  assert.equal(window.location.href, parent);
+  assert.equal(returnToArticleParent(), false, "The restored dialog must not create a return loop.");
+}
+assert.deepEqual(events, ["popstate", "popstate"]);
+for (const invalid of [
+  "https://elsewhere.example/friends?flowPair=friend&flowDate=2026-10-29",
+  "/friends?tab=charts&flowPair=friend&flowDate=2026-10-29",
+  "/friends?tab=feed&chart=another&flowPair=friend&flowDate=2026-10-29",
+  "/friends?flowPair=friend&flowDate=invalid",
+  "/friends?flowDate=2026-10-29",
+  "/project_author/transits?flowPair=friend&flowDate=2026-10-29#friends?tab=feed"
+]) {
+  assert.equal(forecastDialogReturnUrl(invalid), null);
+  const article = new URL("https://example.com/project_author/transits?detail=transit-sun-sextile-lilith");
+  article.searchParams.set("flowReturn", invalid);
+  window.location.href = article.href;
+  window.history.state = null;
+  assert.equal(returnToArticleParent(), false, "Invalid return context must leave the article untouched.");
+  assert.equal(window.location.href, article.href);
+}
+if (originalPopStateEvent) globalThis.PopStateEvent = originalPopStateEvent;
+else delete globalThis.PopStateEvent;
 delete globalThis.window;
 
 console.log("Friends routing tests passed, including single-entry articles and immediate reader parents.");

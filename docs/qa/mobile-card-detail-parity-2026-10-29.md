@@ -26,6 +26,11 @@ It is not a full-site or production release signoff.
   friend/synastry orb metadata keeps degree/minute precision. Friends controls
   and chart legends use UI typography. Explore signs defines its own stacked
   glyph/label layout rather than depending on a lazy Learn stylesheet.
+- Header Moon/Sun actions use a centered 24px icon in the existing 48/56px
+  controls, including Reports. Friction & Flow transit and person links retain
+  their selected friend/day dialog as a same-origin return URL. Normal Back
+  keeps using browser history; reopened articles without entry state restore
+  that exact dialog. Invalid or external return URLs are ignored.
 
 ## Validation and scope
 
@@ -48,8 +53,19 @@ scrolling, focus trapping, backdrop behavior, swipe behavior and reduced motion.
 Existing compact timing formatters moved unchanged into the shared timing module;
 event-date consistency checks retain their midnight and DST assertions.
 
+The added navigation checks pass for both reader/friend personal articles and
+connected-friend handle routes, app Back, browser Back, reload and missing entry
+state. Both feed URL formats restore the selected dialog, and closing it returns
+focus to its day tile. Sixteen return-journey cases pass across the same eight
+browser configurations. Ten forecast/Reports browser cases pass; the eight-case
+mobile/theme matrix also passes. Reports icon checks include 320/390/1440px in
+both themes. One earlier icon test asserted raw floating-point bounds as an
+integer and was corrected to verify exact CSS dimensions and subpixel tolerance;
+the failed run is retained locally. Routing validation and CSS/token audits pass.
+
 The required browser release gate includes a mobile-parity job running the
-countdown boundary regression and all eight viewport/theme/browser configurations.
+countdown and return-URL boundary regressions and 32 browser cases across all
+eight viewport/theme/browser configurations.
 Workflow syntax, affected-surface selection, suite coverage and aggregate gate
 regressions pass locally. The complete connection source suite also remains in
 its existing required job.
