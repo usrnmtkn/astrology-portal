@@ -7713,10 +7713,14 @@ export function GeneratedContentAdminDashboard() {
               </Suspense>}
               {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "weekly-sky" || calendarWriteupWorkspaceView === "monthly-sky") && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio secret={secret} period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft} readerEntry={readerEntry?.surface === 'calendar' ? readerEntry : undefined}
-                onEditSource={row => void openCalendarWritingSource(row as AdminGeneratedContentRow)}
+                onEditSource={row => {
+                  const field = row.id.startsWith('builtin:') ? skyDailySummaryFields.find(field => field.key === row.content_key) : undefined;
+                  if (field) void openSkySummaryField(field);
+                  else void openCalendarWritingSource(row as AdminGeneratedContentRow);
+                }}
                 onEditOverview={field => void openSkyForecastTemplate(calendarWriteupWorkspaceView as SkyForecastPeriod, field)}
                 onBrowseSeasonTransitions={() => navigateAdminPage("calendarWriteups", new URLSearchParams({ view: "season-transitions" }))}
-                onOpen={period => void openSkyForecastTemplate(period)} editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} /></Suspense>}
+                onOpen={period => void openSkyForecastTemplate(period)} editor={renderEditor()} /></Suspense>}
               {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "season-transitions" || calendarWriteupWorkspaceView === "season-writeups" || calendarWriteupWorkspaceView === "lunar-ingresses" || calendarWriteupWorkspaceView === "moon-transition-phrases") && (
                 <Suspense fallback={<PageLoading message="Loading Calendar passages…" />}>
                   {calendarWriteupWorkspaceView === "season-writeups" && <SeasonArticleWorkspace loadRows={loadCalendarPreviewRows}
@@ -7724,7 +7728,7 @@ export function GeneratedContentAdminDashboard() {
                     onCreate={(sign, year) => handleCreateAction("articles", "Season article opened. Add your complete write-up, then save.", undefined, "article", { sign, year })} />}
                   <LunarCalendarWorkspace key={calendarWriteupWorkspaceView} scope={calendarWriteupWorkspaceView === "daily-sky" ? "all" : calendarWriteupWorkspaceView} rows={rows} query={query} onQuery={setQuery} createRequest={calendarCreateRequest}
                     onCreateRequestHandled={() => setCalendarCreateRequest(0)} isLoading={isLoading || loadState !== "loaded"}
-                    editor={renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow, null, calendarWriteupWorkspaceView !== "daily-sky" ? "body" : undefined)}
+                    editor={calendarWriteupWorkspaceView === "daily-sky" ? null : renderEditor()} onEdit={row => openRow(row as AdminGeneratedContentRow, null, calendarWriteupWorkspaceView !== "daily-sky" ? "body" : undefined)}
                     loadRows={loadCalendarPreviewRows} onLoad={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
                     onCreate={sign => handleCreateAction("knowledge", "Draft opened. Nothing has been saved yet.", sign)} />
                 </Suspense>

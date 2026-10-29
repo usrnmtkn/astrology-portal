@@ -1,6 +1,6 @@
 import { CalendarPassageProse } from '../../../src/shared/features/calendar/CalendarPassageProse';
 import { lunarContentIdentity } from './lunarCalendarContent';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { StudioButton, StudioInput } from './StudioControls';
 import CalendarPassageTemplateEditor, { type CalendarTemplateHandle } from './CalendarPassageTemplateEditor';
 import { calendarPassageVariableLabel as variableLabel, calendarPassageVariableHelp, calendarVariableKind, isConditionVariable } from './variablePresentation';
@@ -8,7 +8,8 @@ import { calendarPassageMoonTiming } from './calendarPassageMoonTiming';
 import { calendarVariableColor } from './calendarOverviewTemplate';
 import { AdminDisclosureSummary, AdminSelect } from './AdminNativeControls';
 import { calculateCalendarPreview, type CalendarPreviewCalculation } from './calendarPreviewCalculation';
-import { calendarPreviewSourceKeys, type CalendarPreviewRow } from './calendarPreviewModel';
+import { calendarPreviewSourceKeys, calendarPreviewValues, type CalendarPreviewRow } from './calendarPreviewModel';
+import { calendarSharedPassageSources } from './calendarSharedPassageSources';
 import { requestStudioJson, studioInventoryDocumentPath } from './generatedContentClient';
 import { announceContentUpdate, subscribeToContentUpdates } from '../../web/src/services/contentUpdateSignal';
 import { zonedDateTimeToUtc } from '../../web/src/services/timezones';
@@ -29,10 +30,12 @@ const localEdits = new Map<string, string>();
 type SavedRow = CalendarPreviewRow & { mode?: string; sections?: any; source_snapshot?: Record<string, any>; updated_at: string };
 const bodyOf = (row?: SavedRow) => row?.sections?.packageDraft?.body_you ?? row?.sections?.packageDraft?.body ?? row?.sections?.packageRecord?.body_you ?? row?.sections?.packageRecord?.body ?? row?.body;
 
-export default function CalendarPassageEditor({ period: studioPeriod, loadRows, secret, onEditSource, readerEntry }: {
+export default function CalendarPassageEditor({ period: studioPeriod, loadRows, secret, onEditSource, readerEntry, sourceEditor, sourceDraft }: {
   period: SkyForecastPeriod; loadRows: (keys: string[]) => Promise<CalendarPreviewRow[]>; secret: string;
   onEditSource: (row: CalendarPreviewRow) => void;
   readerEntry?: StudioPassageEdit | null;
+  sourceEditor?: ReactNode;
+  sourceDraft?: { contentKey: string; body: string } | null;
 }) {
   const period = studioPeriod.split('-')[0] as CalendarPassagePeriod;
   const [timeZone, setTimeZone] = useState(() => readerEntry?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC');
@@ -56,6 +59,8 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   const [historyId, setHistoryId] = useState('');
   const [history, setHistory] = useState<any[] | null>(null);
   const [sourcesChanged, setSourcesChanged] = useState(false);
+  const [selectedSourceKey, setSelectedSourceKey] = useState('');
+  const activeSourceKey = sourceEditor && sourceDraft?.contentKey === selectedSourceKey ? selectedSourceKey : '';
   const contextKey = `${studioPeriod}|${requested.date}|${requested.timeZone}|${attempt}|${scope}|${target}`;
   const sharedMoon = period === 'daily' && target === 'moon' && scope === 'shared';
   const selectionPending = date !== requested.date || timeZone !== requested.timeZone;
@@ -64,11 +69,29 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   const content = useMemo(() => publishedPassageSources(sources), [sources]);
   const values = useMemo(() => calculation ? calendarPeriodPassageValues(period, calculation, requested.date,
     new Map([[requested.date, calculation.sky]]), content, calendarStudioMoonSources(content)) : {}, [period, calculation, requested.date, content]);
+  const sourceValues = useMemo(() => calculation && scope === 'shared' && !sharedMoon ? calendarPreviewValues({
+    sunSign: calculation.sky.positions.find(position => position.planet === 'Sun')?.sign ?? '',
+    moonSign: values.moonSign?.text ?? '', calculation, rows: sources
+  }) : {}, [calculation, sources, values, scope, sharedMoon]);
   const errors = sharedMoon && /[{}]/u.test(body) ? ['Shared Moon transition sources use complete wording. Insert variables in a date-only passage or the daily template.'] : calendarPassageErrors(body);
   const rendered = ready && !errors.length ? sharedMoon ? body.trim() : renderCalendarPassage(body, values) : null;
   const previewIssues = errors.length ? errors : !rendered && ready ? ['The edited passage has no complete reader wording for this date. Check required values and conditions.'] : [];
   const publishedReading = useMemo(() => calculation ? calendarWorkspaceReading(period, calculation, requested.date, calculation.sky, content) : null, [period, calculation, requested.date, content]);
-  const draftReading = useMemo(() => calculation ? calendarWorkspaceReading(period, calculation, requested.date, calculation.sky, content, { key: contentKey, body }) : null, [period, calculation, requested.date, content, contentKey, body]);
+  const editingSource = useMemo(() => {
+    if (sourceDraft && sourceDraft.contentKey !== contentKey
+      && (sources.some(row => row.content_key === sourceDraft.contentKey) || Object.values(values).some(value => value.sourceKey === sourceDraft.contentKey))) return sourceDraft;
+    if (scope !== 'shared' || !selectedSourceKey) return null;
+    const drafts = sources.filter(row => row.content_key === selectedSourceKey && row.status === 'DRAFT' && !row.id.startsWith('package:'));
+    const pending = drafts.find(row => 'mode' in row && row.mode === 'studio-draft') ?? drafts[0];
+    const wording = bodyOf(pending as SavedRow | undefined);
+    return typeof wording === 'string' ? { contentKey: selectedSourceKey, body: wording } : null;
+  }, [sourceDraft, contentKey, sources, values, scope, selectedSourceKey]);
+  const draftReading = useMemo(() => calculation ? calendarWorkspaceReading(period, calculation, requested.date, calculation.sky, content,
+    [...(editingSource ? [{key:editingSource.contentKey,body:editingSource.body}] : []), { key: contentKey, body }]) : null,
+    [period, calculation, requested.date, content, contentKey, body, editingSource]);
+  const sourceDraftChanged = Boolean(editingSource && (publishedReading?.body !== draftReading?.body || publishedReading?.transition?.body !== draftReading?.transition?.body));
+  const sourceDraftSaved = Boolean(editingSource && sources.some(row => row.content_key === editingSource.contentKey && row.status === 'DRAFT'
+    && !row.id.startsWith('package:') && bodyOf(row as SavedRow) === editingSource.body));
   const transitionKey = calendarWorkspaceTransitionKey(values);
   const moonTiming = period === 'daily' && ready ? calendarPassageMoonTiming(calculation, requested.date, values.moonSign?.text) : null;
   const savedSources = saved?.sections?.calendarPassageSources as Record<string, string> | undefined;
@@ -130,8 +153,13 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   }, [body, baseline, ready, dirty, contentKey]);
 
   useEffect(() => subscribeToContentUpdates(notice => {
-    if (notice.contentKey !== contentKey && sources.some(row => row.content_key === notice.contentKey)) setSourcesChanged(true);
-  }), [contentKey, sources]);
+    if (notice.contentKey !== contentKey && sources.some(row => row.content_key === notice.contentKey)) {
+      setSourcesChanged(true);
+      // Refresh only while this shared source's direct editor is open. The
+      // retained preview selection must not authorize refresh after closing it.
+      if (!dirty && scope === 'shared' && activeSourceKey === notice.contentKey) setAttempt(value => value + 1);
+    }
+  }), [contentKey, sources, dirty, scope, activeSourceKey]);
 
   async function save() {
     setBusy(true); setError('');
@@ -184,6 +212,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
     </div>
     <div className="admin-new-actions"><StudioButton disabled={busy || dirty || !date} onClick={() => { setRequested({ date, timeZone }); setAttempt(value => value + 1); }}>Load passage</StudioButton><StudioButton disabled={busy || dirty} onClick={() => setAttempt(value => value + 1)}>Reload saved status</StudioButton></div>
     {!ready && <><p role="status" aria-label="Calendar save status">{selectionPending ? 'Choose Load passage to open the selected date and time zone.' : status}</p>{error && <p role="alert">{error}</p>}</>}
+    {sourceEditor}
     {ready && <>
       {period === 'daily' && <div className="studio-variable-description studio-context-panel" aria-label="Calendar editing source">
         <p><strong>{target === 'moon' ? 'Moon transition passage' : 'Daily overview'} · {scope === 'date' ? 'Date-only edit' : 'Shared edit'}</strong></p>
@@ -193,9 +222,25 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
       </div>}
       {(sourcesChanged || sourceChanges && sourceChanges.length > 0) && <p role="note">Shared writing has changed since this passage was loaded or saved. Your wording has been preserved. {sourcesChanged ? 'Save your draft and reload the sources before publishing.' : 'Review the assembled preview before publishing.'}</p>}
       <CalendarPassageTemplateEditor key={loaded} ref={templateEditor} value={body} onChange={setBody} disabled={busy} values={values} label={scope === 'date' ? `This ${period === 'daily' ? 'date' : period === 'weekly' ? 'week' : 'month'} only` : sharedMoon ? 'Shared Moon transition' : 'Shared template · all dates'}
+        sharedWording={scope === 'shared' && !sharedMoon ? names => <div aria-label="Shared passage wording" className="studio-section">
+          <p>Edit the saved wording below. Each source is shared by all dates that use it. Signs, dates, and event times stay calculated.</p>
+          {[...new Set(names)].filter(name => values[name]?.kind === 'copy').map(name => {
+            const value = values[name];
+            const editable = calendarSharedPassageSources(value, sourceValues[name], content, sources);
+            return <div key={name} className="studio-context-panel" role="group" aria-label={`Shared ${variableLabel(name)} wording`}>
+              <p><strong>{variableLabel(name)}</strong></p>
+              <div className="studio-preview-canvas"><CalendarPassageProse text={value.text} /></div>
+              <div className="admin-new-actions">{editable.map(row => <StudioButton key={row.id} data-calendar-source-key={row.content_key} disabled={busy || dirty} onClick={() => { setSelectedSourceKey(row.content_key); onEditSource(row); }}>
+                Edit {lunarContentIdentity(row.content_key)?.title ?? row.headline ?? variableLabel(name)}
+              </StudioButton>)}</div>
+              {!editable.length && <p>No editable saved source is available for this wording. Calculated wording stays in the Calendar assembly.</p>}
+            </div>;
+          })}
+          {!names.some(name => values[name]?.kind === 'copy') && <p>This section contains its wording directly. Open Template structure to edit it and keep its calculated variables.</p>}
+        </div> : undefined}
         workspace={period === 'daily' && publishedReading && draftReading ? {
-          date: requested.date, timeZone: requested.timeZone, literal: sharedMoon, preferredSection: target === 'moon' && !sharedMoon ? 'moonWriteup' : undefined,
-          reader: <CalendarPassageReaderPreview date={requested.date} timeZone={requested.timeZone} published={publishedReading} draft={draftReading} scope={scope} sourceKey={contentKey} saved={Boolean(saved?.status === 'DRAFT' && !saved.id.startsWith('package:'))} publishedSource={saved?.status === 'LIVE'} dirty={dirty} invalid={previewIssues} />,
+          date: requested.date, timeZone: requested.timeZone, literal: sharedMoon, template: scope === 'shared' && !sharedMoon, preferredSection: target === 'moon' && !sharedMoon ? 'moonWriteup' : undefined,
+          reader: <CalendarPassageReaderPreview date={requested.date} timeZone={requested.timeZone} published={publishedReading} draft={draftReading} scope={scope} sourceKey={sourceDraftChanged && editingSource ? editingSource.contentKey : contentKey} saved={sourceDraftChanged ? sourceDraftSaved : Boolean(saved?.status === 'DRAFT' && !saved.id.startsWith('package:'))} publishedSource={saved?.status === 'LIVE'} dirty={dirty || sourceDraftChanged && !sourceDraftSaved} invalid={previewIssues} />,
           source: name => { const value = values[name]; const publishedSource = value?.sourceKey ? content.get(value.sourceKey) : undefined; const source = sources.find(row => row.id === publishedSource?.id); return <>
             {value?.kind === 'fact' ? <p>Source: Swiss Ephemeris calculation for {requested.date} · {requested.timeZone}.</p> : value?.sourceKey ? <p>Source: <code>{value.sourceKey}</code></p> : <p>Source: Calendar assembly for the selected date.</p>}
             {publishedSource?.updatedAt && <p>Published source version: {publishedSource.updatedAt}</p>}

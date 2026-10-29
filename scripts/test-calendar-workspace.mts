@@ -7,6 +7,58 @@ import { calendarPassageKey } from '../src/shared/features/calendar/calendarPass
 import { installContentPublications, contentPublicationRecords } from '../apps/web/src/content/contentPublicationState';
 import { moonSignTransitionForPair } from '../src/shared/features/calendar/moonSignTransitions';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
+import { calendarSharedPassageSources } from '../apps/admin/src/calendarSharedPassageSources';
+
+test('shared editor resolves complete source units and leaves facts and ambiguous text alone', () => {
+  const rows = ['sun','continuation','context','phase','unused','duplicate-a','duplicate-b'].map(key => ({
+    id:key,content_key:key,status:'LIVE',body:key === 'phase' ? 'Phase in {{signTitle}}. Full phase ending.' : key.startsWith('duplicate') ? 'Same words.' : `${key} opening. Complete ${key} ending.`
+  }));
+  const content = new Map(rows.map(row => [row.content_key,{id:row.id,contentKey:row.content_key,body:row.body}]));
+  const text = 'continuation opening. Complete continuation ending.\n\ncontext opening. Complete context ending.\n\nPhase in Gemini. Full phase ending.\n\nSame words.';
+  const parts = [{name:'phase',kind:'copy' as const,sourceKey:'phase',text:'Phase in Gemini. Full phase ending.'},
+    {name:'wrong',kind:'copy' as const,sourceKey:'unused',text:'Different timing context.'}];
+  const selected = calendarSharedPassageSources({kind:'copy',text,sourceKey:'synthetic-assembly'}, {kind:'copy',text,parts},content,rows);
+  assert.deepEqual(selected.map(row => row.content_key), ['phase','continuation','context']);
+  assert.equal(selected[0].body, 'Phase in {{signTitle}}. Full phase ending.', 'Editing must open the whole stored template, preserving dynamic facts.');
+  const excerpt = calendarSharedPassageSources({kind:'copy',text:'sun opening.',sourceKey:'sun'},undefined,content,rows);
+  assert.equal(excerpt[0].body, 'sun opening. Complete sun ending.', 'A reader excerpt must never become the source editor body.');
+  assert.deepEqual(calendarSharedPassageSources({kind:'fact',text:rows[0].body},undefined,content,rows), []);
+  assert.deepEqual(calendarSharedPassageSources({kind:'copy',text,sourceKey:'context'},undefined,content,rows.map(row=>({...row,inventory_only:true}))), []);
+  const original = {id:'package:reusable',content_key:'reusable',status:'DRAFT',body:'Complete original wording.',sections:{packageRecord:{contentKey:'reusable',body:'Complete original wording.'}}};
+  const pending = {...original,id:'pending',body:'Complete original wording.',sections:{...original.sections,packageDraft:{body:'Complete pending wording.'}}};
+  assert.deepEqual(calendarSharedPassageSources({kind:'copy',text:original.body,sourceKey:'reusable'},undefined,new Map(),[original]), [original]);
+  assert.deepEqual(calendarSharedPassageSources({kind:'copy',text:original.body,sourceKey:'reusable'},undefined,new Map(),[pending]), [pending], 'Reopening must use the saved draft, even when readers still select the shipped original.');
+  const revision={...pending,id:'revision',mode:'studio-draft'};
+  assert.deepEqual(calendarSharedPassageSources({kind:'copy',text:original.body,sourceKey:'reusable'},undefined,new Map(),[pending,revision]),[revision], 'A pending publication revision takes precedence over an earlier ordinary draft.');
+  assert.equal(calendarSharedPassageSources({kind:'copy',text:'Selected Sun wording.',sourceKey:'cms/sky-daily-summary/sun/libra'},undefined,new Map(),[])[0]?.id, 'builtin:cms/sky-daily-summary/sun/libra');
+});
+
+test('source and template previews preserve Sun facts, live-cache bytes, and dated precedence', async () => {
+  const date='2026-10-21', zone='America/New_York';
+  const location={label:'QA reference',latitude:0,longitude:0,timeZone:zone};
+  const instant=zonedDateTimeToUtc(date,'12:00 PM',zone);
+  const context=await getLunarCalendarWeek(location,instant), sky=await getAstrodienstSky(location,instant);
+  const key='cms/sky-daily-summary/sun/libra';
+  const live={id:'sun-live',contentKey:key,body:'{sunPlacement} opens the synthetic live passage. Complete live ending.',status:'LIVE',updatedAt:'2026-10-20T00:00:00Z'};
+  const content=new Map([[key,live]]);
+  installContentPublications([{content_key:key,state:'live',row_id:live.id,row_updated_at:live.updatedAt,updated_at:live.updatedAt,revision:1}]);
+  try {
+    const published=calendarWorkspaceReading('daily',context,date,sky,content);
+    assert.match(published.body!, /Complete live ending/);
+    const before=JSON.stringify([[...content],contentPublicationRecords()]);
+    const draft=calendarWorkspaceReading('daily',context,date,sky,content,[
+      {key,body:'{sunPlacement} opens the synthetic draft. Complete draft ending.'},
+      {key:calendarPassageKey('daily'),body:'{{sunSummary}}\n\n{{moonWriteup}}'}
+    ]);
+    assert.match(draft.body!, /Sun in Libra at 28°/);
+    assert.match(draft.body!, /Complete draft ending/);
+    assert.equal(JSON.stringify([[...content],contentPublicationRecords()]),before);
+    assert.equal(calendarWorkspaceReading('daily',context,date,sky,new Map()).body,published.body,'A draft preview cannot replace the verified live Sun cache.');
+    const datedKey=calendarPassageKey('daily',date,zone);
+    content.set(datedKey,{id:'dated',contentKey:datedKey,body:'Complete date-only wording.',status:'LIVE'});
+    assert.equal(calendarWorkspaceReading('daily',context,date,sky,content,{key,body:'{sunPlacement} opens an unpublished change.'}).body,'Complete date-only wording.');
+  } finally {installContentPublications([], 'complete-live');}
+});
 
 for (const zone of ['America/New_York', 'Asia/Tokyo']) test(`same-date actual Calendar assembly and isolated publication simulation: ${zone}`, async () => {
   const date = '2026-10-21';
