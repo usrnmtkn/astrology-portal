@@ -279,7 +279,7 @@ test('dated Sky articles remain discoverable with their complete saved history',
 });
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
-  test(`Articles & Guides save, publish, read and retire ${width} ${theme}`, async ({ page }) => {
+  test(`Articles & Guides save, publish, read and retire ${width} ${theme}`, async ({ page }, testInfo) => {
     test.setTimeout(120_000);
     const store = await studioApiStore([{ id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: 'sky/article-template/venus/scorpio',
       surface: 'sky', mode: 'article', event_type: 'sky-article-template', block_type: 'sky_article', status: 'REVIEWED', lane: 'reference',
@@ -288,6 +288,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     let readerFailure = false;
     let raceVariable = false;
     let variableForRace: any;
+    let delayNextPublicationConfirmation = true;
+    const publicationEvidence: { action: string; injectedConflict: boolean; status?: number }[] = [];
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     try {
@@ -299,6 +301,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       }, theme);
       await bundledPublications(page);
       await routeStudioInventoryApi(page, { call: async request => {
+        const action = (request.body as any)?.ownerAction;
+        const evidence = typeof action === 'string' ? { action, injectedConflict: raceVariable } : null;
+        if (evidence) publicationEvidence.push(evidence);
         if (raceVariable && request.method === 'PATCH' && (request.body as any)?.ownerAction === 'publish-standalone-article-revision') {
           raceVariable = false;
           const changed = await store.call({ method: 'PATCH', url: '/api/admin/generated-content?variables=true', body: {
@@ -307,7 +312,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
           } });
           expect(changed.status).toBe(200); variableForRace = changed.payload.variable;
         }
-        return store.call(request);
+        const result = await store.call(request);
+        if (evidence) Object.assign(evidence, { status: result.status });
+        if (action === 'publish-standalone-article-revision' && delayNextPublicationConfirmation) {
+          delayNextPublicationConfirmation = false;
+          // Storage commits before the HTTP acknowledgment reaches the editor.
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        return result;
       }, actualDocumentRoute: true, answer: async (route, url) => {
         if (url.pathname === '/api/content-reader') {
           if (readerFailure) { await route.fulfill({ status: 503, json: { error: 'Synthetic read failure' } }); return true; }
@@ -346,6 +358,20 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.getByRole('button', { name: 'Create', exact: true }).click();
       await page.getByRole('menuitem', { name: /New guide/u }).click();
       const editor = page.getByRole('dialog');
+      async function confirmPublication(label: string, status = 200) {
+        const completed = page.waitForResponse(response => {
+          const request = response.request();
+          return new URL(response.url()).pathname === '/api/admin/generated-content'
+            && request.method() === 'PATCH'
+            && ['publish-owner-content', 'publish-standalone-article-revision'].includes(request.postDataJSON()?.ownerAction);
+        });
+        await editor.getByRole('button', { name: label, exact: true }).click();
+        const response = await completed;
+        expect(response.status()).toBe(status);
+        expect(await response.finished()).toBeNull();
+        expect(response.request().failure()).toBeNull();
+        await expect.poll(() => page.evaluate(() => sessionStorage.getItem('tldr-studio-pending-publication-v1') === null)).toBe(true);
+      }
       await editor.getByLabel('Article title', { exact: true }).fill('Synthetic saved guide');
       await editor.getByLabel('Article body', { exact: true }).fill(guideTemplate);
       await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
@@ -355,7 +381,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.reload();
       await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
-      await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await confirmPublication('Save & publish');
       await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id)?.status).toBe('LIVE');
       await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
       await page.goto('/#articles');
@@ -403,7 +429,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
           .getByRole('button', { name: 'Edit', exact: true }).click();
         await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(guideTemplate);
       }
-      await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
+      await confirmPublication('Publish to app');
       await expect.poll(async () => (await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
         .payload.rows[0]?.body).toBe(body.replace('Synthetic complete opening.', 'Updated complete author opening.'));
       await page.goto(directURL); await page.reload();
@@ -434,7 +460,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         .getByRole('button', { name: 'Edit', exact: true }).click();
       if (width === 1440) {
         raceVariable = true;
-        await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+        await confirmPublication('Save & publish', 409);
         await expect(editor.getByRole('alert')).toContainText('changed or was deleted');
         await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(resavedTemplate);
         const retained = (await store.call({ method: 'rows' })).find((row: any) => row.event_type === 'standalone-article-revision');
@@ -442,7 +468,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         expect((await store.call({ method: 'POST', url: '/api/content-reader', body: { keys: [saved.content_key] } }))
           .payload.rows[0]?.body).toBe(body.replace('Synthetic complete opening.', 'Updated complete author opening.'));
       }
-      await editor.getByRole('button', { name: width === 390 ? 'Save & publish' : 'Publish to app', exact: true }).click();
+      await confirmPublication(width === 390 ? 'Save & publish' : 'Publish to app');
       await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
       await page.goto(directURL);
       await page.reload();
@@ -472,6 +498,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       })).toBe(true);
       await page.screenshot({ path: `test-results/articles-empty-${width}-${theme}.png`, fullPage: true, animations: 'disabled' });
       expect(errors).toEqual([]);
-    } finally { await page.unrouteAll({ behavior: 'ignoreErrors' }); store.close(); }
+    } finally { await testInfo.attach('publication-requests', { body: JSON.stringify({ raceVariable, publicationEvidence }), contentType: 'application/json' }); await page.unrouteAll({ behavior: 'ignoreErrors' }); store.close(); }
   });
 }

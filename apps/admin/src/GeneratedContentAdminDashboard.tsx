@@ -91,6 +91,7 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
+import { useStudioPublicationRefresh } from "./useStudioPublicationRefresh";
 import {
   readLiveOmittedSectionQueue,
   subscribeToLiveOmittedSectionQueue,
@@ -3341,6 +3342,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const publicationRefresh = useStudioPublicationRefresh(draft?.contentKey);
   const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
@@ -12866,8 +12868,11 @@ export function GeneratedContentAdminDashboard() {
                     ? "New draft"
                     : draftHasUnsavedChanges
                       ? "Unsaved changes"
+                      : publicationRefresh.state === "pending" ? "Saved · Checking publication status…"
+                      : publicationRefresh.state === "error" ? "Saved · Publication status unavailable"
                       : isContentRetired(currentDraft.contentKey) ? "Retired everywhere" : "All changes saved"}
           </span>
+          {publicationRefresh.state === "error" && <StudioButton type="button" onClick={publicationRefresh.retry}>Refresh publication status</StudioButton>}
           {!(isStandaloneArticleDraft && isNewDraft) && <StudioButton
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             type="button"
@@ -12923,7 +12928,7 @@ export function GeneratedContentAdminDashboard() {
             </StudioButton>
           )}
           {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
-            <StudioButton type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges}
+            <StudioButton type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges || publicationRefresh.state !== "idle"}
               onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
               title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
               {isContentRetired(currentDraft.contentKey) ? "Publish again" : "Retire everywhere"}
