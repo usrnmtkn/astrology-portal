@@ -55,3 +55,17 @@ exact retained audit bytes, unchanged security and unrelated journals after the
 migration. Browser checks cover desktop/mobile in light/dark themes. No owner
 edition is deleted to obtain acceptance evidence. Record actual results and the
 tested revision in release evidence; source preparation alone is not a pass.
+
+## Release size measurement
+
+Matched independent Admin builds compare main `be6cabd3419fdef081a5cb986ac78993f5a7aa8c` with the combined Daily-review and deletion candidate `a72c6c098406185c5b6d24d7a01d2899e310049b`, before adding this budget record. The baseline's full tree `405329f663a9ceaae73c22e4ecde706739c6a693` is identical to tested revision `37f4f5504f7bea71286061646efd7a732699716b`. Both checkouts have independent npm-ci dependencies, the same lock and native Node 22.20.0 arm64 / zlib 1.3.1-470d3a2. Builds use no env files, identical visual-smoke Supabase placeholders, blank client publishable/generation keys, the enabled natal-aspect flag and CI=1.
+
+| Measurement (bytes) | Main | Candidate | Change |
+| --- | ---: | ---: | ---: |
+| Entry / complete startup, raw | 814,861 | 814,956 | +95 |
+| Entry / complete startup, gzip | 236,418 | 236,422 | +4 |
+| All JavaScript, gzip | 856,598 | 858,114 | +1,516 |
+| Startup files | 1 | 1 | 0 |
+| JavaScript files | 83 | 83 | 0 |
+
+The 1,600-byte aggregate allocation changes that ceiling from 857,000 to 858,600 bytes and leaves 486 measured bytes. It covers the requested Daily full-set review controls and horoscope deletion, including confirmations, version checks and uncertain-response recovery. This is feature cost, not a performance improvement. Every other numeric limit and source-entry, optional-writing, startup, payload, privacy, CSS and runtime guard stays intact. Both builds retain the source dynamic entry; optional writing/recovery panels stay outside its static imports. Final-head checks and browser results belong in the release PR; this measurement alone does not establish release readiness.
