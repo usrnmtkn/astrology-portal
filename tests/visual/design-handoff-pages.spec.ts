@@ -1840,9 +1840,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   });
 }
 
-for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Insight article empty and retry states ${width} ${theme}`,async({page})=>{
+for(const width of [390,1440]) for(const theme of ['light','dark']) for(const audience of ['you','they']) test(`Insight article empty and retry states ${audience} ${width} ${theme}`,async({page})=>{
   test.setTimeout(120_000);await page.setViewportSize({width,height:900});
-  for(const audience of ['you','they']){
     const fixture=await patternInsightFixtures(page,theme,{patterns:false,fail:true});
     await page.goto(audience==='you'?'/you/natal/twelfth-ruler':'/friends/fixture-friend/natal/twelfth-ruler');
     const article=page.locator('.natal-insight-page');
@@ -1858,7 +1857,6 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Insigh
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await article.getByRole('button',{name:'Back',exact:true}).click();
     await expect(page).toHaveURL(audience==='you'?/#you\?tab=chart$/:/#friends\?tab=charts&chart=fixture-friend&view=natal$/);
-  }
 });
 
 for(const width of [390,1440]) for(const theme of ['light','dark']) test(`dignity modal polish ${width} ${theme}`,async({page})=>{
@@ -1991,6 +1989,13 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
       await withFinishedSocialReads(page,`${audience}-reload`,()=>page.reload(),reads);
       await expect(cards).toHaveCount(2,{timeout:60000});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      if(audience==='they'){
+        // A directly loaded Friend detail omits SocialFriendsPanel. Its Charts
+        // workspace owns the subscription, so verify a new join there.
+        await withFinishedSocialReads(page,'friend-workspace-after-reload',
+          ()=>page.getByRole('button',{name:'Charts',exact:true}).click(),
+          [['POST','/rest/v1/rpc/list_social_friend_requests']]);
+      }
       await assertClean();
     }
     expect(fixture.memberSourceRequests().profileReads).toBeGreaterThan(0);
