@@ -166,6 +166,7 @@ import {
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
 import { natalSnapshotWithBirthTimeReliability } from "./services/birthTimeReliability";
 import {resolveLunationReaderSource,lunationReaderContentKeys} from './content/lunationReaderSource';
+import {lunationAspectCandidates} from './content/lunationAspectCandidates';
 import { lunationEventOccursOnLocalDate } from "./services/lunationEventDay";
 import {
   formatSignupBirthDate,
@@ -5442,7 +5443,7 @@ function currentSkyV4LunationDetailArticle({
   }
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
-  const aspectSections = (lunationArticleHoroscopeReader?.lunationAspectCandidates(sky.aspects) ?? [])
+  const aspectSections = lunationAspectCandidates(sky.aspects)
     .flatMap((aspect) => relatedSkyAspectSectionsForPlacement({
       aspects: [aspect],
       generatedAt,

@@ -49,11 +49,14 @@ explicit, then preserve exact whitespace only for receipt-checked lunar revision
 The existing contract stays intact, and a runtime regression checks complete
 ordinary-card revisions alongside the full lunar integrity suite.
 
-After the main integration, the repeated chart/Studio audit passed 217 cases with
-five optional private-snapshot skips. All 28 lunar browser cases also passed.
-The combined build exposed a small startup budget overage. Dated lunar loading,
-aspect selection and horoscope labels now stay in the lazy lunar reader, while
-three existing pure startup helpers share their existing transport. Lunar
+After the main integration, the expanded chart/Studio audit passed 229 cases with
+five optional private-snapshot skips, including saved-wording and publication
+status integration. Its default hydration wait matches the standard CI suite.
+All 28 lunar browser cases also passed.
+The combined build exposed a small startup budget overage. Dated lunar loading
+and horoscope labels stay in the lazy lunar reader. Aspect selection remains
+synchronous in a small shared helper, preserving the initial-render contract.
+Three existing pure startup helpers share their existing transport. Lunar
 identities share an optional reader chunk instead of importing Studio tools.
 The actual Rollup graph guard now covers that lunar boundary. Existing bundle
 ceilings remain unchanged; the final exact head and its checks are recorded in

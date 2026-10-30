@@ -297,6 +297,7 @@ export default defineConfig(({ mode }) => {
             // These reader helpers already load at startup. Share their chunk;
             // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")
+              || id.endsWith("/content/lunationAspectCandidates.ts")
               || id.endsWith("/utils/articleAspects.ts")
               || id.endsWith("/src/shared/solarHorizon.ts")
               || id.endsWith("/services/planetSignDignity.mjs")

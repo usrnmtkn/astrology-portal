@@ -8,6 +8,7 @@ import { fallbackArchitectureV3AuthoredContentForKey } from "../services/generat
 import { loadSkyDetailContent } from "../services/skyDetailContent";
 import { getAstrodienstSkyOffMainThread, getLunarCalendarRangeEventsOffMainThread } from "../services/skyCalculationClient";
 import type { LocationInput, SkySnapshot } from "../types";
+export { lunationAspectCandidates } from './lunationAspectCandidates';
 
 type Event = Parameters<typeof datedLunationContentKey>[0];
 
@@ -30,14 +31,6 @@ export function lunationArticleSnapshotKeys(sky: Pick<SkySnapshot, "moonEvent">,
   const selected = event ?? (moon ? { startsAt: moon.occursAt, sign: moon.sign,
     title: moon.name, eclipseType: moon.eclipseType } : null);
   return selected ? lunationArticleContentKeys(selected) : [];
-}
-
-export function lunationAspectCandidates(aspects: SkySnapshot["aspects"]) {
-  const orb = (aspect: SkySnapshot["aspects"][number]) => typeof aspect.separation === 'number' && typeof aspect.exactAngle === 'number'
-    ? Math.abs(aspect.separation - aspect.exactAngle) : aspect.orb;
-  return aspects.filter(aspect => [aspect.from, aspect.to].some(planet => planet === 'Moon' || planet === 'Sun'))
-    .sort((first, second) => orb(first) - orb(second)
-      || Number(second.from === 'Moon' || second.to === 'Moon') - Number(first.from === 'Moon' || first.to === 'Moon'));
 }
 
 /** Dated lunar calculations and source selection load only with the article. */
