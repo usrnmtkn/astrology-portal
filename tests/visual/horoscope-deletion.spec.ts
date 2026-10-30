@@ -1,9 +1,20 @@
-import {test,expect,type Page} from '@playwright/test';
+import {test,expect,type Page,type Locator} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {showSavedHoroscopeEditions} from '../helpers/horoscope-edition-navigation';
 import {emptyHoroscopeEdition,horoscopeEditionKey,horoscopeEditionBody} from '../../apps/web/src/content/horoscopeEditions.mjs';
+
+
+async function confirmAction(page:Page,button:Locator,check:(message:string)=>void,accept=true){
+ // A click can finish before its async dialog listener dismisses the confirm.
+ // Wait for both before arming another confirmation or inspecting storage.
+ const handled=page.waitForEvent('dialog').then(async dialog=>{
+  try{check(dialog.message());}catch(error){await dialog.dismiss();throw error;}
+  await(accept?dialog.accept():dialog.dismiss());
+ });
+ await Promise.all([handled,button.click()]);
+}
 
 async function fixture(page:Page){
  const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,ZODIAC_TEMPLATE_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
@@ -48,12 +59,10 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    const studio=await f.open(),table=studio.getByRole('region',{name:'Saved horoscope editions'}).getByRole('table');
    await expect(table.locator('tbody tr')).toHaveCount(5);
    const daily=table.getByRole('row').filter({hasText:'October 28, 2026'});
-   page.once('dialog',async dialog=>{expect(dialog.message()).toContain('Daily');expect(dialog.message()).toContain('all 12 saved readings');await dialog.dismiss();});
-   await daily.getByRole('button',{name:/^Delete Daily edition/}).click();
+   await confirmAction(page,daily.getByRole('button',{name:/^Delete Daily edition/}),message=>{expect(message).toContain('Daily');expect(message).toContain('all 12 saved readings');},false);
    expect(f.deletions).toHaveLength(0);expect((await f.call({method:'rows'})).some((r:any)=>r.id===f.rows[0].id)).toBe(true);
    const weekly=table.getByRole('row').filter({hasText:'November 2, 2026'}).filter({hasText:'Weekly'});
-   page.once('dialog',async dialog=>{expect(dialog.message()).toContain('November 2, 2026');expect(dialog.message()).toContain('cannot be undone');await dialog.accept();});
-   await weekly.getByRole('button',{name:/^Delete Weekly edition/}).click();
+   await confirmAction(page,weekly.getByRole('button',{name:/^Delete Weekly edition/}),message=>{expect(message).toContain('November 2, 2026');expect(message).toContain('cannot be undone');});
    await expect(studio.getByRole('status')).toContainText('Deleted horoscope edition.');
    await expect(table.locator('tbody tr')).toHaveCount(4);
    expect(new URL(f.deletions[0],'http://localhost').searchParams.get('expectedUpdatedAt')).toBe(f.rows[1].updated_at);
@@ -62,8 +71,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await seasonal.getByRole('button',{name:/Review \/ Edit/}).click();
    await expect(studio.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
    await expect(studio.getByRole('button',{name:'Delete edition',exact:true})).toBeVisible();
-   page.once('dialog',async dialog=>{expect(dialog.message()).toContain('Seasonal');expect(dialog.message()).toContain('all 13 saved readings');await dialog.accept();});
-   await studio.getByRole('button',{name:'Delete edition',exact:true}).click();
+   await confirmAction(page,studio.getByRole('button',{name:'Delete edition',exact:true}),message=>{expect(message).toContain('Seasonal');expect(message).toContain('all 13 saved readings');});
    await expect(studio.getByRole('status')).toContainText('Deleted horoscope edition.');
    await expect(page).not.toHaveURL(/edition=/);
    await showSavedHoroscopeEditions(page,studio);await expect(table.locator('tbody tr')).toHaveCount(3);
@@ -79,8 +87,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(edited);
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
-   page.once('dialog',async dialog=>{expect(dialog.message()).toContain('the saved reading');await dialog.accept();});
-   await studio.getByRole('button',{name:'Delete edition',exact:true}).click();
+   await confirmAction(page,studio.getByRole('button',{name:'Delete edition',exact:true}),message=>expect(message).toContain('the saved reading'));
    await expect(studio.getByRole('status')).toContainText('Deleted horoscope edition.');
    await showSavedHoroscopeEditions(page,studio);await expect(table.locator('tbody tr')).toHaveCount(2);
    const published=table.getByRole('row').filter({hasText:'Published'});
@@ -91,8 +98,7 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByLabel('Complete reading',{exact:true}).fill('A complete synthetic private revision opening. Its exact private ending belongs here.');
    await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
    await expect(studio.getByRole('button',{name:'Delete draft revision',exact:true})).toBeVisible();
-   page.once('dialog',async dialog=>{expect(dialog.message()).toContain('Weekly draft revision');await dialog.accept();});
-   await studio.getByRole('button',{name:'Delete draft revision',exact:true}).click();
+   await confirmAction(page,studio.getByRole('button',{name:'Delete draft revision',exact:true}),message=>expect(message).toContain('Weekly draft revision'));
    await expect(studio.getByRole('status')).toContainText('Deleted horoscope edition.');
    const rows=await f.call({method:'rows'});
    for(const original of [f.rows[0],f.rows[4]])expect(rows.find((row:any)=>row.id===original.id)).toEqual(original);
@@ -109,14 +115,14 @@ test('Horoscope deletion preserves conflicts and confirms a lost reply without r
   const studio=await f.open(),table=studio.getByRole('region',{name:'Saved horoscope editions'}).getByRole('table');
   const row=f.rows[0],changed=await f.call({method:'PATCH',body:{id:row.id,expectedUpdatedAt:row.updated_at,summary:'Exact newer owner metadata.'}});expect(changed.status).toBe(200);
   const daily=()=>table.getByRole('row').filter({hasText:'October 28, 2026'}).getByRole('button',{name:/^Delete/});
-  page.once('dialog',dialog=>dialog.accept());await daily().click();
+  await confirmAction(page,daily(),message=>expect(message).toContain('Daily edition'));
   await expect(studio.getByRole('alert')).toContainText('changed after it was selected');
   expect(f.deletions).toHaveLength(1);expect((await f.call({method:'rows'})).find((r:any)=>r.id===row.id)).toEqual(changed.payload.rows[0]);
   await studio.getByRole('button',{name:'Refresh editions',exact:true}).click();
-  f.setFailure(true);page.once('dialog',dialog=>dialog.accept());await daily().click();
+  f.setFailure(true);await confirmAction(page,daily(),message=>expect(message).toContain('Daily edition'));
   await expect(studio.getByRole('alert')).toContainText('Synthetic deletion unavailable.');
   expect(f.deletions).toHaveLength(2);await expect(table.locator('tbody tr')).toHaveCount(5);
-  f.setFailure(false);f.setLostReply();page.once('dialog',dialog=>dialog.accept());await daily().click();
+  f.setFailure(false);f.setLostReply();await confirmAction(page,daily(),message=>expect(message).toContain('Daily edition'));
   await expect(studio.getByRole('status')).toContainText('Deleted horoscope edition.');
   expect(f.deletions).toHaveLength(3);await expect(table.locator('tbody tr')).toHaveCount(4);
   await page.reload();await showSavedHoroscopeEditions(page,studio);await expect(table.locator('tbody tr')).toHaveCount(4);
