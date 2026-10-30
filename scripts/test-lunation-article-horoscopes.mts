@@ -18,12 +18,15 @@ try {
     export { resolveLunationArticleHoroscopes, lunationArticleHoroscopeKeys } from './apps/web/src/content/lunationArticleHoroscopes';
     export { loadLunationBookFallbackArchitectureV3Bundle, installFallbackArchitectureV3Bundle,
       loadFallbackArchitectureV3BundledCoreManifest, transitSynastryFallbackRendererV3 } from './apps/web/src/content/fallbackArchitectureV3Runtime';
-    export { packageFallbackArchitectureV3CoreRows } from './apps/web/src/services/fallbackArchitectureV3CorePackaging';
+    export { packageFallbackArchitectureV3CoreRows, packageAuthoredCardFromRow } from './apps/web/src/services/fallbackArchitectureV3CorePackaging';
     export { installContentPublications } from './apps/web/src/content/contentPublicationState';
     export { generatedContentMapFromRows } from './apps/web/src/services/generatedContent';
   `, resolveDir: process.cwd(), loader: "ts" }, bundle: true, outfile: bundle, platform: "node", format: "esm",
     define: { "import.meta.env": "{}" }, logLevel: "silent" });
   const reader = await import(pathToFileURL(bundle).href);
+  assert.equal(reader.packageAuthoredCardFromRow({ id: 'ordinary-card', content_key: 'authored/transit/saturn/sun/trine',
+    body: 'Saved owner revision. Complete final sentence.', sections: { packageRecord: { body: 'Stale packaged copy.' } } })?.body,
+    'Saved owner revision. Complete final sentence.', 'Ordinary authored cards retain the complete saved top-level revision.');
   await reader.loadLunationBookFallbackArchitectureV3Bundle();
   for (const kind of ["new-moon", "full-moon"] as const) for (const sign of lunationRisingSigns) {
     const event = { startsAt: "2026-10-26T04:00:00Z", sign, phase: kind };

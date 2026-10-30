@@ -31,7 +31,7 @@ cannot reveal an older original. All write tests use isolated fixture storage.
 | Privacy | Source and both built asset scans passed. Protected documents, source evidence and policy remain ignored. |
 | Browser CI coverage | The lunar source-publication job runs all three new specs; the aggregate browser release gate depends on it. Workflow syntax, coverage and failure/cancellation contracts pass. |
 
-The working code/test/workflow fingerprint is `7bfc047a4b9d5794fe0bfeb94867535b2848da019b4915430a32f344c8ebdac0`.
+The broad local run above used code/test/workflow fingerprint `7bfc047a4b9d5794fe0bfeb94867535b2848da019b4915430a32f344c8ebdac0`.
 Documentation is excluded; the private record retains each source path and hash.
 Local command logs and screenshots stay under protected temporary storage.
 
@@ -39,6 +39,12 @@ The hosted corpus check also required refreshing the non-serving production Sky
 comparison after the knowledge-index provenance changed. The existing builder
 updates only 36 packet/index hashes; all comparison evidence, fields and writing
 remain unchanged. Its deterministic freshness check passes with zero model calls.
+
+The hosted performance gate also caught a source-level contract that requires
+ordinary authored cards to prefer the saved top-level body. Keep that selection
+explicit, then preserve exact whitespace only for receipt-checked lunar revisions.
+The existing contract stays intact, and a runtime regression checks complete
+ordinary-card revisions alongside the full lunar integrity suite.
 
 Hosted checks must pass on the exact PR head before merge. Deployment proceeds
 through the main Git integration. The release PR records the final head, merge
