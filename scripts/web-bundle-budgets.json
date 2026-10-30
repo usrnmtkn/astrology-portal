@@ -14,7 +14,7 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 144000,
-  "totalJavaScriptGzipBytes": 3684050,
+  "totalJavaScriptGzipBytes": 3687150,
   "_rationale": {
     "frictionFlowDaySheet20261027": "The owner-requested handoff 11 replaces the old relationship day-detail list with a 520px desktop dialog, mobile sheet, shared aspect tallies, expandable synastry cards and person transit links. The same isolated production-build environment measured 143173 aggregate CSS gzip bytes before this task and 143992 after (+819). Reused the shared modal narrative/action primitives, removed obsolete day-detail rules and consolidated repeated type declarations before allocating 250 aggregate CSS bytes (144000 ceiling, 8 measured bytes remaining). This records the requested interface cost; it is not a performance improvement. All startup, reader CSS, JavaScript/chunk and runtime budgets remain unchanged.",
     "reportsHandoff20261026": "The owner-requested Reports handoff updates the library, ready toast, access/progress/error states and delivered articles with shared light/dark feedback colors. Fresh builds with the same isolated Playwright environment measure aggregate CSS at 138735 bytes before this task and 139697 after (+962 gzip bytes); shared Memory CSS is 30951/31130 (+179) because it includes the canonical theme tokens. Retired unused report image/spacing tokens, reused cover/button styles and retained the existing generation effect with a border mask before allocating 1100 aggregate CSS bytes (139850 ceiling, 153 measured bytes remaining) and 225 shared Memory CSS bytes (31200 ceiling, 70 remaining). This records the bounded requested interface cost, not a performance improvement. App/reader startup, startup CSS, all JavaScript/chunk, dependency and runtime limits remain unchanged. The fresh production-build Reports journey passes 68 browser cases in light/dark, including mobile, desktop, saved actions, protected full text, key-date focus, account recovery, notifications and reduced-motion generation effects.",
@@ -194,6 +194,41 @@
         }
       },
       "finalMainTimingIntegration": "Current main advanced during QA with Calendar contact and exact-aspect timing fixes. Preserve that implementation. Matched independent builds add 140 startup bytes on clean main and 132 on the integrated UI. Allocate only 100 more app-startup bytes (396750 to 396850; 56 remaining). The reader ceiling stays 455250 (116 remaining), as do aggregate JavaScript, every chunk/CSS cap and all source/deferred-boundary checks. These final measurements supersede the earlier 84c8c5e8 baseline; they do not describe a performance improvement."
+    },
+    "studioSavedWordingIntegration20261029": {
+      "baseRevision": "40f6d4a1a8dace3e9d3caabd5d8cb998afbec96e",
+      "node": "v22.20.0",
+      "architecture": "arm64",
+      "zlib": "1.3.1-470d3a2",
+      "environment": "Independent npm ci per worktree; identical synthetic Supabase URL/anonymous/publishable keys, STUDIO_PRODUCTION_ENTRY=1 and VITE_ENABLE_NATAL_ASPECT_PATTERNS=true; no dotenv fallback.",
+      "measurements": {
+        "baseline": {
+          "totalJavaScriptGzip": 3683123,
+          "appBootGzip": 396379,
+          "readerBootGzip": 454731,
+          "startupCssGzip": 58352,
+          "totalCssGzip": 143985,
+          "javaScriptFiles": 269,
+          "appBootFiles": 37,
+          "readerBootFiles": 50
+        },
+        "integrated": {
+          "totalJavaScriptGzip": 3687045,
+          "appBootGzip": 396369,
+          "readerBootGzip": 454721,
+          "startupCssGzip": 58352,
+          "totalCssGzip": 143985,
+          "javaScriptFiles": 271,
+          "appBootFiles": 37,
+          "readerBootFiles": 50
+        }
+      },
+      "aggregateDeltaBytes": 3922,
+      "previousAggregateCeiling": 3684050,
+      "aggregateAllowanceBytes": 3100,
+      "aggregateCeiling": 3687150,
+      "headroomBytes": 105,
+      "reason": "The requested complete-wording Studio panels remain deferred at1345+1531=2876gzip bytes, with the rest of the measured cost in existing deferred editing modules. The initial unchanged aggregate gate failed by2995bytes and is preserved as a failure. The earlier source-family predicate split removed avoidable startup imports; no concrete behavior-preserving2995-byte reduction remains. Allocate only3100aggregate Web JavaScript bytes for the measured editing feature. The10-byte App/reader graph shift is generated output, not a performance improvement. All other numeric startup/CSS/chunk limits, dependencies, source-payload/deferred boundaries and runtime guards remain unchanged. This does not authorize later increases; remeasure after final rebase."
     }
   },
   "memoryGraphJavaScriptGzipBytes": 64000,

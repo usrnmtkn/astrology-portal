@@ -20,6 +20,7 @@ export default defineConfig({
     'sky-reader-csv.spec.ts', 'sky-reader-preview.spec.ts',
     'sky-placement-sources.spec.ts', 'sky-placement-variables.spec.ts',
     'sky-writing-library-tables.spec.ts',
+    'studio-shared-wording.spec.ts', 'sky-placement-article-phrases.spec.ts',
     'studio-csv.spec.ts', 'studio-wide-readability.spec.ts'
   ],
   outputDir: './test-results/studio-ui-release',

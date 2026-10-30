@@ -1,8 +1,8 @@
 {
-  "entryJavaScriptRawBytes": 815100,
-  "entryJavaScriptGzipBytes": 236650,
-  "largestJavaScriptRawBytes": 815100,
-  "totalJavaScriptGzipBytes": 860100,
+  "entryJavaScriptRawBytes": 817100,
+  "entryJavaScriptGzipBytes": 237250,
+  "largestJavaScriptRawBytes": 817100,
+  "totalJavaScriptGzipBytes": 864100,
   "_rationale": {
     "aspectEditorLoading20261028": "Matched independently npm-ci-installed builds of current main c0a7c91c9 and the integrated aspect-editor repair use native ARM Node 22.20.0, the visual-smoke Supabase URL and visual-smoke-placeholder anonymous key. Baseline entry raw/gzip/aggregate measures 813339/235895/855998 bytes; repair measures 814861/236421/856374 (+1522/+526/+376). Existing plain fields move into the dashboard so a missing optional article-editor chunk cannot block basic aspect editing. Preserve the full-visit article controls and deferred workspace/writer from main; no dependency or reader copy is added. Retain the scoped 1600 entry/largest raw-byte and 500 entry-gzip allocations above current main ceilings, leaving 239 raw and 229 entry gzip bytes. Preserve the existing 857000 aggregate cap, leaving 626 bytes. All deferred-source, reader startup, memory graph, CSS, privacy and runtime-performance gates remain enforced. This records a measured reliability cost, not a loading-performance improvement.",
     "fullVisitSkyArticles20261028": "Matched standalone Admin builds compare common-fix baseline 9176c6d8eeefeac41aa74fd31194fba841c46918 with the reconciled full-visit Sky writer, Article/Guide actions, and saved Moon day-document compatibility at 65789f6e11d8ffd0d3ad40d6ab12b7ab6f677b9e plus the writer/workspace coalescing change. Both independently npm-ci-installed checkouts use native Node 22.20.0 arm64, the same lock and Vite configuration, no env files, identical visual-smoke Supabase placeholders, and the enabled natal-aspect flag. Baseline entry raw/gzip/aggregate is 810310/234762/852760 bytes across 83 JavaScript files; the feature measures 813339/235893/855999 (+3029/+1131/+3239), also across 83. The deferred full-visit workspace/writer adds 1691 gzip bytes and deferred ingress preflight adds 303; startup adds 1131 gzip, including civil-day bounds and validation for existing saved Moon articles plus the requested Article/Guide controls and dated-template handoff. Coalescing the writer with its already deferred workspace removes the dependency cycle and saves 858 aggregate gzip bytes before this measurement. Allocate 3100 entry/largest raw bytes, 1250 entry gzip bytes, and 3250 aggregate gzip bytes above the prior caps, leaving 161/257/1001 measured bytes. The dated workspace and optional writer remain outside startup, and all lazy-boundary, forbidden-payload, privacy, reader, dependency, CSS, and runtime-performance guards remain unchanged. No owner writing or validation is removed. This records requested feature cost, not a loading-performance improvement.",
@@ -238,6 +238,41 @@
         "totalGzip": 1557
       },
       "reason": "Matched independent npm-ci-installed Admin artifacts preserve the accepted Calendar build and add Daily complete-set review plus version-checked horoscope deletion. Identical explicit synthetic Supabase URL, anonymous and publishable keys and production entry settings use native ARM Node22.20.0. The final integrated artifact retains one startup file and83 JavaScript files. Preserve Calendar\u2019s1500-byte allocation and the reviewed1600-byte horoscope allocation: aggregate860100 leaves587 bytes; entry raw815100 and gzip236650 remain unchanged, leaving49 and176 bytes. The source-dynamic horoscope workspace and optional writing/recovery boundaries, Calendar core-editor plugin, private payload, dependency, CSS and runtime guards remain enforced. This records measured feature cost, not a performance improvement."
+    },
+    "studioSavedWording20261029": "Matched independent npm-ci builds of main a8e89c62c7495c0a776fd4131a92b4b54179d91d and the generic Studio saved-wording candidate use native ARM Node, identical lock/configuration and synthetic workflow Supabase settings. Main startup measures814871raw/236429gzip bytes and856554aggregate gzip across83JavaScript files; the candidate measures816743/236974/860166 across85. The requested top-level saved-source preview, full custom-value editor links, source hydration and refresh/CAS protection add1872startup raw/545startup gzip and3612aggregate bytes. Moving the small source-reference predicate out of the resolver-family module first removed5423unnecessary startup raw bytes. Allocate2000raw entry/largest,600entry gzip and4000aggregate bytes, leaving357raw/276entry gzip/834aggregate headroom. Complete startup graph, deferred source/editor boundaries, reader/Web budgets, CSS, memory graph and forbidden payload guards remain enforced. No dependency or stored reader writing changes. See docs/qa/studio-saved-wording-editability.md.",
+    "studioSavedWordingIntegration20261029": {
+      "baseRevision": "40f6d4a1a8dace3e9d3caabd5d8cb998afbec96e",
+      "preservedCandidate": "1d0b41ef64d5f483bd28ce15b06d09b9ac9a4a93",
+      "node": "v22.20.0",
+      "architecture": "arm64",
+      "zlib": "1.3.1-470d3a2",
+      "measurements": {
+        "baseline": {
+          "startupRaw": 815051,
+          "startupGzip": 236474,
+          "aggregateGzip": 859513,
+          "javaScriptFiles": 83,
+          "initialFiles": 1
+        },
+        "integration": {
+          "startupRaw": 816995,
+          "startupGzip": 237060,
+          "aggregateGzip": 863419,
+          "javaScriptFiles": 85,
+          "initialFiles": 1
+        }
+      },
+      "delta": {
+        "startupRaw": 1944,
+        "startupGzip": 586,
+        "aggregateGzip": 3906
+      },
+      "allocation": {
+        "entryAndLargestRaw": 2000,
+        "entryGzip": 600,
+        "aggregateGzip": 4000
+      },
+      "reason": "Matched native builds use separate npm-ci dependencies and identical synthetic settings on the frozen Calendar/Daily source. Preserve all upstream budget allocations and rationale; retain the existing saved-wording allowance only. The complete startup graph is measured with the entry ceiling. Current costs include the primary custom-library recovery states. No dependency, stored reader writing or runtime payload boundary changes. Earlier comparison remains preintegration evidence; this comparison supersedes it for the integrated release."
     }
   },
   "memoryGraphJavaScriptGzipBytes": 64000

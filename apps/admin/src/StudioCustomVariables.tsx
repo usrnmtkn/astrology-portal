@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { customVariableRequest, type CustomVariable, type CustomVariableInput, type CustomVariableOverride } from "./studioCustomVariableClient";
@@ -59,8 +59,14 @@ function VariableForm({ initial, secret, onCancel, onSave }: { initial: CustomVa
   </form>;
 }
 
-export default function StudioCustomVariables({ variables, secret, query, tag, onChange, createRequest = 0, onCreateHandled }: { variables: CustomVariable[]; secret: string; query: string; tag: string; onChange: (variables: CustomVariable[]) => void; createRequest?: number; onCreateHandled: () => void }) {
+export default function StudioCustomVariables({ variables, secret, query, tag, onChange, createRequest = 0, onCreateHandled, initialVariableName }: { variables: CustomVariable[]; secret: string; query: string; tag: string; onChange: (variables: CustomVariable[]) => void; createRequest?: number; onCreateHandled: () => void; initialVariableName?: string }) {
   const [editing, setEditing] = useState<CustomVariable | null | undefined>(undefined);
+  const openedName = useRef('');
+  useEffect(() => {
+    if (!initialVariableName || openedName.current === initialVariableName) return;
+    const variable = variables.find(variable => variable.name === initialVariableName);
+    if (variable) { openedName.current = initialVariableName; setEditing(variable); }
+  }, [initialVariableName, variables]);
   const [deleting, setDeleting] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);

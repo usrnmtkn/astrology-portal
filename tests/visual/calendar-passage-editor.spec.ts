@@ -3,6 +3,7 @@ import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { getLunarCalendarMonth } from '../../apps/web/src/services/ephemeris';
 import { emptyLastKnownGoodSnapshot } from '../helpers/bundled-publications';
+import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 
 const location = {label:'QA reference',latitude:0,longitude:0,timeZone:'America/New_York'};
 const date = '2026-09-28';
@@ -20,6 +21,12 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
         localStorage.setItem('tldrastro:studio-theme',theme);
         localStorage.setItem('tldrastro:theme',theme);
       },{location,theme});
+      // Reader popups must use the same publication identities as the isolated rows.
+      const publicationLedgerReply=async()=>{
+        const publications=canonicalPublicationLedger(await store.call({method:'publications'}));
+        return {headers:{etag:await publicationLedgerTag(publications),'x-tldr-qa-publication-ledger':'isolated-store'},json:{schema:'tldr-publications/v1',publications}};
+      };
+      await context.route('**/api/content-publications',async route=>route.fulfill(await publicationLedgerReply()));
       await context.route('**/rest/v1/**',async route=> {
         if (!route.request().url().includes('/content_publications?')) return route.fulfill({json:[]});
         const rows = await store.call({method:'publications'});
@@ -37,6 +44,9 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
         await route.fulfill({status:result.status,json:result.payload});
       });
       await routeStudioInventoryApi(page,{call:store.call,answer:async (route,url)=>{
+        if (url.pathname==='/api/content-publications') {
+          await route.fulfill(await publicationLedgerReply()); return true;
+        }
         if (['/api/admin/content-history','/api/admin/content-publication'].includes(url.pathname)) {
           const result=await store.call({method:route.request().method(),body:route.request().method()==='GET'?undefined:route.request().postDataJSON(),url:url.pathname+url.search});
           await route.fulfill({status:result.status,json:result.payload}); return true;

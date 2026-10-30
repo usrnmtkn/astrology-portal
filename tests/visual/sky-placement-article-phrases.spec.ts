@@ -79,6 +79,20 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   await writing.fill('{{openingHook}} {{planetTitle}} in {{signTitle}}. {{closingLine}}');
   await expect(preview).toHaveText(`During this transit, fixture ${prefilled ? 'local' : 'governed'} opening. Saturn in Aries. Fixture ${prefilled ? 'local' : 'governed'} ending.`);
   await expect(writing).not.toHaveAttribute('aria-invalid', 'true');
+  // Saved words can be edited from the reading itself, with the variable picker
+  // closed. Calculated facts remain separate from these complete source units.
+  if (await picker.evaluate(el => (el as HTMLDetailsElement).open)) await picker.locator(':scope > summary').click();
+  await expect(picker).not.toHaveAttribute('open', '');
+  await expect(preview.locator('[data-article-phrase="planetTitle"]')).toHaveCount(0);
+  await preview.locator('[data-article-phrase="openingHook"]').click();
+  const directPhrase=editor.getByRole('region',{name:'Edit article phrase'});
+  await expect(directPhrase.getByLabel('Phrase value',{exact:true})).toHaveValue(`During this transit, fixture ${prefilled ? 'local' : 'governed'} opening.`);
+  const completePhrase='Fixture complete opening paragraph.\n\nFixture complete final paragraph.';
+  await directPhrase.getByLabel('Phrase value',{exact:true}).fill(completePhrase);
+  await expect(preview.locator('[data-article-phrase="openingHook"]')).toHaveText(completePhrase);
+  await expect(preview.locator('[data-article-phrase="openingHook"]')).toHaveCSS('white-space','pre-wrap');
+  await expect(writing).toHaveValue('{{openingHook}} {{planetTitle}} in {{signTitle}}. {{closingLine}}');
+  await directPhrase.getByRole('button',{name:'Done editing phrase',exact:true}).click();
   await editor.locator('.admin-editor-toolbar-actions').getByRole('button', { name: 'Variables', exact: true }).click();
   const hooks = picker.locator('summary').filter({ hasText: 'Hooks and takeaways' });
   if (!await hooks.evaluate(el => (el.parentElement as HTMLDetailsElement).open)) await hooks.click();
