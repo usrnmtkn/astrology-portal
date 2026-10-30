@@ -241,13 +241,17 @@ test('transit titles identify the sky sign and natal chart owner in both section
     const label = getComputedStyle(element.querySelector('h3')!);
     return { titleFont: title.fontFamily, titleSize: title.fontSize,
       articleFont: getComputedStyle(document.querySelector('.sky-detail-page h1')!).fontFamily,
-      labelFont: label.fontFamily, labelWeight: label.fontWeight, labelSize: label.fontSize };
+      labelFont: label.fontFamily, labelWeight: label.fontWeight, labelSize: label.fontSize,
+      labelLine: label.lineHeight, labelTracking: label.letterSpacing, labelMargin: label.marginBottom };
   });
   expect(headingStyles.titleFont).toBe(headingStyles.articleFont);
   expect(headingStyles.titleSize).toBe('36px');
   expect(headingStyles.labelFont).toBe(factStyles.font);
   expect(headingStyles.labelWeight).toBe('600');
   expect(headingStyles.labelSize).toBe('22px');
+  expect(headingStyles.labelLine).toBe('27.5px');
+  expect(headingStyles.labelTracking).toBe('normal');
+  expect(headingStyles.labelMargin).toBe('16px');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/connection-facts-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
   await facts.getByRole('button', { name: 'Close connection details' }).click();

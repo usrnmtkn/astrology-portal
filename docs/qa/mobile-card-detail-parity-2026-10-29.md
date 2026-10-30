@@ -50,6 +50,13 @@ It is not a full-site or production release signoff.
 
 ## Validation and scope
 
+The expanded final dialog run (65) stopped at a real typography regression:
+connection-explanation section headings had been changed to 18px UI labels.
+They now retain the established 22px display-heading role, with the shared
+leading, weight and spacing. The original assertion remains and now also checks
+line height, tracking and margin. The failed log and screenshot are retained;
+this repair requires fresh rendered checks before release.
+
 The isolated checkout has its own locked dependencies and a local knowledge
 build. Web typecheck, shared CSS/token audits, reader-facing content contracts,
 complete-detail copy integrity, connection separation and friend transit
