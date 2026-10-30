@@ -300,9 +300,16 @@ test('relationship context separates direct transits from connections through on
     'Other connections through your natal Mars:'
   ]);
   const close = facts.getByRole('button', {name: 'Close connection details'});
-  await expect(close).toBeFocused();
+  const reading = facts.getByRole('region', {name: 'Reading text', exact: true});
+  await expect(facts.getByRole('heading', {level: 2})).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(close).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(reading).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(reading).toBeFocused();
   await page.keyboard.press('Shift+Tab');
   await expect(close).toBeFocused();
   await page.keyboard.press('Escape');
