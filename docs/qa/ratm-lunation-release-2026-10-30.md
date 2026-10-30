@@ -35,6 +35,11 @@ The working code/test/workflow fingerprint is `7bfc047a4b9d5794fe0bfeb94867535b2
 Documentation is excluded; the private record retains each source path and hash.
 Local command logs and screenshots stay under protected temporary storage.
 
+The hosted corpus check also required refreshing the non-serving production Sky
+comparison after the knowledge-index provenance changed. The existing builder
+updates only 36 packet/index hashes; all comparison evidence, fields and writing
+remain unchanged. Its deterministic freshness check passes with zero model calls.
+
 Hosted checks must pass on the exact PR head before merge. Deployment proceeds
 through the main Git integration. The release PR records the final head, merge
 and deployment revisions plus read-only production verification. Local fixtures
