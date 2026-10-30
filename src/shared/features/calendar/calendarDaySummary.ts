@@ -13,9 +13,9 @@ export function calendarSkyForDay(sky: SkySnapshot | null | undefined, dateKey: 
   return actualDate === dateKey ? sky : null;
 }
 
-export function calendarSunSummary(sky: SkySnapshot | null, content?: CmsGeneratedContentMap, events: LunarCalendarEvent[] = sky?.dailyEvents ?? []) {
+export function calendarSunSummary(sky: SkySnapshot | null, content?: CmsGeneratedContentMap, events: LunarCalendarEvent[] = sky?.dailyEvents ?? [], editorialPreview = false) {
   const sun = sky?.positions.find(position => position.planet === 'Sun');
   return sun ? skyDailySummaryParts({ sun, moonIsVoid: false,
     retrogradePlanets: sky?.positions.filter(p => p.motion === "retrograde").map(p => p.planet),
-    sunTransition: skySunTransition(events, sky?.generatedAt, sky?.location.timeZone) }, content, { openingOnly: true }) : [];
+    sunTransition: skySunTransition(events, sky?.generatedAt, sky?.location.timeZone) }, content, { openingOnly: true, editorialPreview }) : [];
 }

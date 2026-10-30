@@ -13,8 +13,15 @@ const datedKey=`calendar-passage/daily/${date}/America%2FNew_York`;
 const moonKey='authored/calendar-moon-transition/aquarius/pisces';
 async function expectEditLinkStyle(link: import('@playwright/test').Locator) {
   const style=await link.evaluate(node=>{
-    const css=getComputedStyle(node),font=(text:string)=>text.replace(/[\s'"]/gu,'').toLowerCase();
-    return {font:font(css.fontFamily),expectedFont:font(css.getPropertyValue('--font-ui')),size:css.fontSize,expectedSize:css.getPropertyValue('--type-ui-size').trim(),weight:css.fontWeight,expectedWeight:css.getPropertyValue('--weight-semibold').trim(),tracking:css.letterSpacing,expectedTracking:css.getPropertyValue('--tracking-normal').trim()};
+    const css=getComputedStyle(node),probe=document.createElement('span');
+    // Resolve the token in this browser too: macOS Chromium canonicalizes
+    // BlinkMacSystemFont to system-ui in computed font-family values.
+    probe.style.cssText='font-family:var(--font-ui);font-size:var(--type-ui-size);font-weight:var(--weight-semibold);letter-spacing:var(--tracking-normal)';
+    node.parentElement!.append(probe);
+    const expected=getComputedStyle(probe);
+    const result={font:css.fontFamily,expectedFont:expected.fontFamily,size:css.fontSize,expectedSize:expected.fontSize,weight:css.fontWeight,expectedWeight:expected.fontWeight,tracking:css.letterSpacing,expectedTracking:expected.letterSpacing};
+    probe.remove();
+    return result;
   });
   expect([style.font,style.size,style.weight,style.tracking]).toEqual([style.expectedFont,style.expectedSize,style.expectedWeight,style.expectedTracking]);
 }

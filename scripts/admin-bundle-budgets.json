@@ -2,7 +2,7 @@
   "entryJavaScriptRawBytes": 815100,
   "entryJavaScriptGzipBytes": 236650,
   "largestJavaScriptRawBytes": 815100,
-  "totalJavaScriptGzipBytes": 857000,
+  "totalJavaScriptGzipBytes": 858500,
   "_rationale": {
     "aspectEditorLoading20261028": "Matched independently npm-ci-installed builds of current main c0a7c91c9 and the integrated aspect-editor repair use native ARM Node 22.20.0, the visual-smoke Supabase URL and visual-smoke-placeholder anonymous key. Baseline entry raw/gzip/aggregate measures 813339/235895/855998 bytes; repair measures 814861/236421/856374 (+1522/+526/+376). Existing plain fields move into the dashboard so a missing optional article-editor chunk cannot block basic aspect editing. Preserve the full-visit article controls and deferred workspace/writer from main; no dependency or reader copy is added. Retain the scoped 1600 entry/largest raw-byte and 500 entry-gzip allocations above current main ceilings, leaving 239 raw and 229 entry gzip bytes. Preserve the existing 857000 aggregate cap, leaving 626 bytes. All deferred-source, reader startup, memory graph, CSS, privacy and runtime-performance gates remain enforced. This records a measured reliability cost, not a loading-performance improvement.",
     "fullVisitSkyArticles20261028": "Matched standalone Admin builds compare common-fix baseline 9176c6d8eeefeac41aa74fd31194fba841c46918 with the reconciled full-visit Sky writer, Article/Guide actions, and saved Moon day-document compatibility at 65789f6e11d8ffd0d3ad40d6ab12b7ab6f677b9e plus the writer/workspace coalescing change. Both independently npm-ci-installed checkouts use native Node 22.20.0 arm64, the same lock and Vite configuration, no env files, identical visual-smoke Supabase placeholders, and the enabled natal-aspect flag. Baseline entry raw/gzip/aggregate is 810310/234762/852760 bytes across 83 JavaScript files; the feature measures 813339/235893/855999 (+3029/+1131/+3239), also across 83. The deferred full-visit workspace/writer adds 1691 gzip bytes and deferred ingress preflight adds 303; startup adds 1131 gzip, including civil-day bounds and validation for existing saved Moon articles plus the requested Article/Guide controls and dated-template handoff. Coalescing the writer with its already deferred workspace removes the dependency cycle and saves 858 aggregate gzip bytes before this measurement. Allocate 3100 entry/largest raw bytes, 1250 entry gzip bytes, and 3250 aggregate gzip bytes above the prior caps, leaving 161/257/1001 measured bytes. The dated workspace and optional writer remain outside startup, and all lazy-boundary, forbidden-payload, privacy, reader, dependency, CSS, and runtime-performance guards remain unchanged. No owner writing or validation is removed. This records requested feature cost, not a loading-performance improvement.",
@@ -187,6 +187,28 @@
         "totalGzip": 6503
       },
       "finalReason": "After preserving the concurrently merged Calendar contact/aspect-timing fixes, independent current-main and final integrated builds produce these measurements. Existing integration caps remain unchanged: 208 raw-entry bytes, 76 entry gzip bytes and 189 aggregate gzip bytes remain. The complete initial graph still has one file and the actual Rollup deferred-source contracts pass. The 84c8c5e8 measurements above remain the initial integration comparison; these final 4fc3d7dde measurements supersede them for release QA."
+    },
+    "calendarReadableSharedWorkspace20261029": {
+      "base": "9d0c5250e379f30fb3a45862b230545db485d309",
+      "environment": "Independent npm ci installs; native ARM Node22.20.0/npm10.9.3, identical lockfile and synthetic visual-smoke Supabase settings, no environment files.",
+      "baseline": {
+        "entryRaw": 814871,
+        "entryGzip": 236455,
+        "totalGzip": 856580,
+        "chunks": 83
+      },
+      "release": {
+        "entryRaw": 814956,
+        "entryGzip": 236463,
+        "totalGzip": 857956,
+        "chunks": 83
+      },
+      "delta": {
+        "entryRaw": 85,
+        "entryGzip": 8,
+        "totalGzip": 1376
+      },
+      "reason": "The requested Calendar workspace shows complete reader wording beside its editable template and exposes complete shared source editing with private draft preview. Allocate only1500 aggregate gzip bytes above857000 for this feature, leaving544 bytes. Entry raw/gzip and largest-chunk limits remain unchanged. The complete startup graph remains one file; emitted core-editor, lazy-source, reader-startup, memory-graph, privacy and runtime guards remain enforced. This records feature cost, not a loading-performance improvement."
     }
   },
   "memoryGraphJavaScriptGzipBytes": 64000

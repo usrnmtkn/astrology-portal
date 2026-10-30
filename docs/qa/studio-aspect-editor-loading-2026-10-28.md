@@ -72,3 +72,26 @@ controls and API behavior. Only the bundle-accounting conflict needed manual
 resolution. Fresh API and browser gates are rerun on that final base.
 
 Commit, CI, merge and deployed verification are recorded on the release PR.
+
+## Recurrence prevention
+
+Both Vite production builds enforce the actual emitted dashboard import graph.
+The complete native aspect fields must be reachable through static imports once
+the dashboard loads. The optional article and formatting editors must remain
+outside that graph. Missing core fields or a direct/transitive dependency on an
+optional editor fails the build, including Vercel's production build.
+
+`node scripts/test-admin-lazy-boundary-contract.mjs` exercises this plugin with
+real Rollup bundles: standalone and website entry paths, a split shared-fields
+chain, and eight broken builds that must fail. It also verifies that both real
+Vite configurations install the guard. This command already runs in the required
+Content Studio API workflow through `qa:admin-boundary`.
+
+The existing required browser-release gate includes the missing-module editing,
+complete draft save/reload and unchanged LIVE-record regression. The existing
+post-deployment reader verification workflow now also runs all six Studio
+recovery cases automatically after a successful production deployment, checks out
+the deployment's source revision, and retains failure screenshots/traces. Those
+tests use deployed frontend assets and isolated actual API-handler storage; they
+do not save or publish an owner's production record. No new production credentials,
+paid service or scheduled automation is introduced.
