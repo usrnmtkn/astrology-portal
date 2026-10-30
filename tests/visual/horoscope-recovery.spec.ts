@@ -583,7 +583,10 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
    await expect(studio.getByRole('button',{name:'Refresh editions',exact:true})).toBeEnabled();
    expect(listRequests.at(-1)?.status).toBe(200);
    await expect(studio.getByRole('alert')).toHaveCount(0);
-   await expect(studio.locator('.admin-horoscope-saved button')).toHaveCount(1);
+   const table=studio.getByRole('table',{name:'Saved editions, newest first'});
+   await expect(table.locator('tbody tr')).toHaveCount(1);
+   await expect(table.getByRole('button',{name:/ · Continue$/})).toHaveCount(1);
+   await expect(table.getByRole('button',{name:/^Delete Weekly edition/})).toBeEnabled();
    expect(await f.latest()).toEqual(before);
    expect(await f.call({method:'writer-state'})).toMatchObject({calls:0,reviewCalls:0});
    await page.screenshot({path:`test-results/horoscope-session-bootstrap-${width}-${theme}.png`,fullPage:true});

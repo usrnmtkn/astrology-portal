@@ -266,7 +266,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       const edition=validateHoroscopeEdition(draft,publish);
       if(publish&&(!approved||dirty||!publicationReady))throw new Error('Check the saved edition and approve its exact wording before publishing.');
       const data=publish
-        ? await (await import('./HoroscopePublicationReview')).publishSavedHoroscope(saved,(url,body)=>request(secret,url,body,'PATCH'),validationOverride)
+        ? await (await import('./HoroscopePublicationReview')).publishSavedHoroscope(saved,(url,body)=>request(secret,url,body,body?'PATCH':'GET'),validationOverride)
         : await request(secret,endpoint,lifecycle?{...editionVersion(saved),status:lifecycle}:(await import('./horoscopeEditionDraft')).editionDraft(edition,packet,{horoscopeOutlines:outlines,studioWritingProfile:profile,editorialImport},saved),saved?'PATCH':'POST');
       const row=data.rows?.[0];
       if(!row?.id || !row.updated_at || !isHoroscopeEditionKey(row.content_key,edition.window) || JSON.stringify(validateHoroscopeEdition(row.sections?.horoscopeEdition))!==JSON.stringify(edition)
