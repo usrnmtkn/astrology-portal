@@ -1,5 +1,7 @@
 import {horoscopeRejectionPassage} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import {weeklyReviewCurrent,weeklyEditorialContent} from '../../src/astro-writing/weeklyBatchEditorial.mjs';
+import {dailyReviewCurrent,dailyEditorialContent} from '../../src/astro-writing/dailyBatchEditorial.mjs';
+import {decodeWeeklyHistoryRow} from './horoscope-history-storage.js';
 
 const pick=(value:any,keys:string[])=>value?Object.fromEntries(keys.filter(key=>value[key]!==undefined).map(key=>[key,value[key]])):value;
 const operation=(value:any)=>pick(value,['id','sign','workflow','phase','state','startedAt','responseId','requestHash','planHash','config','writerModel','reviewVersion','startupDiagnostic']);
@@ -10,7 +12,9 @@ const map=(values:any,project:(v:any)=>any)=>Object.fromEntries(Object.entries(v
  * remain in lossless server storage. Editor writes never round-trip this view. */
 export function horoscopeEditorRow(row:any){
   if(row?.inventory_only)return row;
-  if(row?.sections?.horoscopeEdition?.window?.period!=='weekly')return row;
+  const period=row?.sections?.horoscopeEdition?.window?.period;
+  if(period!=='weekly'&&!(period==='daily'&&row.source_snapshot?.horoscopeGeneration?.dailyEditorial))return row;
+  row=decodeWeeklyHistoryRow(row);
   const snapshot=row.source_snapshot??{},generation=snapshot.horoscopeGeneration;
   return {...row,source_snapshot:{...pick(snapshot,['horoscopeOutlines','studioWritingProfile','editorialImport','horoscopeWriterChoice','studioOwnerApproval','targetRowId','targetRowUpdatedAt','targetContentKey']),
     ...(snapshot.weeklyComparison?{weeklyComparison:{version:snapshot.weeklyComparison.version,contextHash:snapshot.weeklyComparison.contextHash,editionId:snapshot.weeklyComparison.editionId,editionCount:snapshot.weeklyComparison.editions?.length??snapshot.weeklyComparison.editionCount}}:{}),
@@ -18,6 +22,10 @@ export function horoscopeEditorRow(row:any){
       ...(generation.weeklyEditorial?{weeklyEditorial:{version:generation.weeklyEditorial.version,
         plan:generation.weeklyEditorial.plan,review:generation.weeklyEditorial.review?{...generation.weeklyEditorial.review,current:weeklyReviewCurrent(row),matchesCurrent:generation.weeklyEditorial.review.contentHash===weeklyEditorialContent(row)}:null,
         pending:operation(generation.weeklyEditorial.pending)}}:{}),
+      ...(generation.dailyEditorial?{dailyEditorial:{version:generation.dailyEditorial.version,
+        review:generation.dailyEditorial.review?{...generation.dailyEditorial.review,current:dailyReviewCurrent(row),
+          matchesCurrent:generation.dailyEditorial.review.contentHash===dailyEditorialContent(row)}:null,
+        pending:operation(generation.dailyEditorial.pending)}}:{}),
       lastError:failure(generation.lastError),candidateHolds:map(generation.candidateHolds,failure),
       heldRequests:map(generation.heldRequests,operation),readings:map(generation.readings,receipt),
       rejections:(generation.rejections??[]).map((entry:any)=>({...pick(entry,['id','scope','reason','rejectedAt']),

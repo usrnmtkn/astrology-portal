@@ -1,4 +1,5 @@
 import {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
+import {dailyBatchFixtureResult} from './daily-editorial-result.mts';
 export {weeklyBatchFixtureResult} from './weekly-editorial-result.mts';
 import horoscopeWriter from '../../api/admin/horoscope-writing';
 import {applyCheckpointFixture} from './horoscope-checkpoint-fixture.mts';
@@ -185,9 +186,9 @@ export function installHoroscopeWriterFixture(){
    const url=String(input);
    if(!url.startsWith('https://api.openai.com/'))return storageFetch(input,options);
    if(url==='https://api.openai.com/v1/responses'&&options.method==='POST'){
-     if(![...store.rows.values()].some(row=>(row.source_snapshot?.horoscopeGeneration?.active?.requestHash||row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.pending?.requestHash)))throw new Error('No durable request reservation before provider call');
+     if(![...store.rows.values()].some(row=>(row.source_snapshot?.horoscopeGeneration?.active?.requestHash||row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.pending?.requestHash||row.source_snapshot?.horoscopeGeneration?.dailyEditorial?.pending?.requestHash)))throw new Error('No durable request reservation before provider call');
      const request=JSON.parse(options.body);
-     if(request.instructions.includes('WEEKLY BATCH PLANNING AUTHORITY')||request.instructions.includes('WEEKLY BATCH REVIEW AUTHORITY')){
+     if(request.instructions.includes('WEEKLY BATCH PLANNING AUTHORITY')||request.instructions.includes('WEEKLY BATCH REVIEW AUTHORITY')||request.instructions.includes('DAILY BATCH REVIEW AUTHORITY')){
        writerFixture.batchCalls++;
        if(writerFixture.batchUnknownNext){writerFixture.batchUnknownNext=false;throw new Error('Fixture connection lost');}
        const id=`resp_batch_fixture_${writerFixture.batchCalls}`;writerFixture.batchRequests.set(id,request);return Response.json({id,status:'queued'});
@@ -212,7 +213,7 @@ export function installHoroscopeWriterFixture(){
      if(writerFixture.batchPendingPolls>0){writerFixture.batchPendingPolls--;return Response.json({id,status:'in_progress'});}
      if(writerFixture.nextBatchResult){const result=writerFixture.nextBatchResult;writerFixture.nextBatchResult=null;return Response.json({id,...result});}
      const input=JSON.parse(request.input),planning=input.stage==='planning';
-     const value=weeklyBatchFixtureResult(input);
+     const value=input.stage==='daily-batch-review'?dailyBatchFixtureResult(input):weeklyBatchFixtureResult(input);
      return Response.json({id,status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(value)}]}]});
    }
    if(writerFixture.pendingPolls>0){writerFixture.pendingPolls--;return Response.json({id,status:'in_progress'});}

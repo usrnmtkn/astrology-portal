@@ -183,8 +183,13 @@ export default defineConfig(({ command, mode }) => {
               if (/\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
               return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:mjs|tsx|ts)$/u, '');
             }
-            // Instructions and save recovery stay independently loadable from
-            // generation details, while sharing their optional editing code.
+            // Required edition helpers share one leaf chunk. The editor keeps
+            // its source entry and optional writing/recovery panels stay separate.
+            if (/apps\/admin\/src\/HoroscopeSavedEditions\.tsx$/u.test(id)
+              || /apps\/admin\/src\/(?:horoscopeEditionDraft|horoscopeEditionDeletion)\.ts$/u.test(id)
+              || /apps\/web\/src\/content\/horoscopeEditions\.mjs$/u.test(id)
+              || /src\/shared\/features\/horoscopes\/HoroscopeLocation\.tsx$/u.test(id)
+              || /src\/astro-writing\/horoscopeWriterCatalog\.mjs$/u.test(id)) return "horoscopeEditionManagement";
             if (/apps\/admin\/src\/(?:HoroscopeWritingStudio|HoroscopeSaveRecovery)\.tsx$/u.test(id)) return "HoroscopeWritingStudio";
             // Profile metadata and reconciliation load with their editing panels.
             if (/src\/astro-writing\/(?:horoscopeWritingProfiles|monthlyHoroscopeGuidance|seasonalComposition|horoscopeStreamCheckpoint)\.mjs$/u.test(id)

@@ -12,6 +12,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
   test.setTimeout(90000);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   let sequence=0,stderr='',loseResponse=false;const pending=new Map<number,{resolve:(v:any)=>void;reject:(e:Error)=>void}>();
+  const publicationRequests:{method:string;url?:string;body?:any}[]=[];
   child.stderr?.on('data',v=>stderr+=v);
   const ready=new Promise<void>((resolve,reject)=>{child.on('message',(m:any)=>{if(m.ready)return resolve();const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(new Error(m.error)):p.resolve(m.result);}});child.on('exit',code=>{const e=new Error(`Fixture exited ${code}: ${stderr}`);reject(e);pending.forEach(p=>p.reject(e));});});
   const call=(m:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...m,id});});
@@ -24,6 +25,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.setViewportSize({width,height:1000});
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:theme',theme);},theme);
    await routeStudioInventoryApi(page,{call:async m=>{
+    const ownerAction=(m.body as {ownerAction?:string}|undefined)?.ownerAction;
+    if(ownerAction?.startsWith('publish-')||m.url?.includes('publicationAction='))publicationRequests.push({method:m.method,url:m.url,body:m.body});
     const result=await call(m);
     if(loseResponse&&m.method==='PATCH'){loseResponse=false;expect(result.status).toBe(200);return {status:503,payload:{ok:false,error:'Synthetic lost save response'}};}
     return result;
@@ -112,9 +115,17 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.goto(revisionUrl);await expect(reading).toHaveValue(revisedCopy);
    await studio.getByRole('button',{name:'Continue to publish',exact:true}).click();
    await studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.').check();
+   const revisionBeforePublication=(await call({method:'rows'})).find((r:any)=>r.id===revision.id);
+   const publicationRequestsBefore=publicationRequests.length;
    loseResponse=true;
    await studio.getByRole('button',{name:'Publish edition',exact:true}).click();
    await expect(studio.getByRole('status')).toContainText('Published the complete edition.');
+   const recoveredPublication=publicationRequests.slice(publicationRequestsBefore);
+   expect(recoveredPublication.map(request=>request.method)).toEqual(['PATCH','GET']);
+   expect(recoveredPublication[0].body).toMatchObject({id:revisionBeforePublication.id,expectedUpdatedAt:revisionBeforePublication.updated_at,ownerAction:'publish-horoscope-edition-revision'});
+   const confirmation=new URL(recoveredPublication[1].url!,'http://localhost');
+   expect(confirmation.searchParams.get('id')).toBe(revisionBeforePublication.id);
+   expect(confirmation.searchParams.get('expectedUpdatedAt')).toBe(revisionBeforePublication.updated_at);
    expect((await current()).id).toBe(id);expect((await current()).body).toContain('Complete revised monthly ending.');
    revision=(await call({method:'rows'})).find((r:any)=>r.id===revision.id);expect(revision.status).toBe('ARCHIVED');
    await expect(page).toHaveURL(new RegExp(`edition=${id}$`));

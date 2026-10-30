@@ -1,5 +1,6 @@
 import {approvedVoiceStyleReference} from './approvedVoiceStyle.mjs';
 import {WEEKLY_BATCH_EDITORIAL,WEEKLY_CROSS_WEEK_EDITORIAL} from './weeklyBatchEditorial.mjs';
+import {DAILY_BATCH_EDITORIAL} from './dailyBatchEditorial.mjs';
 import {weeklyPreviousReadingsInput} from './weeklyPreviousReadings.mjs';
 import {horoscopeEvidenceReceipt} from './horoscopeEvidenceReceipt.mjs';
 import {loadWeeklyOwnerEvidence,WEEKLY_EVIDENCE_VERSION} from './weeklyOwnerEvidence.mjs';
@@ -108,6 +109,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   const sourceHash=seasonalMeaning?digest({repository:sources.sha256,seasonalMeaning:seasonalMeaning.sha256}):sources.sha256;
   const rejectedReadings=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.rejections??[]:[];
   const proseVersion=usesRefinedHoroscopeProse(edition.window.period)?{proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,
+    ...(edition.window.period==='daily'?{dailyBatchEditorial:DAILY_BATCH_EDITORIAL}:{}),
     ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL}:{})}:{};
   const comparison=edition.window.period==='weekly'?row.source_snapshot?.weeklyComparison:null;
   const comparisonBinding=comparison?{weeklyComparisonHash:comparison.contextHash,weeklyComparisonContract:WEEKLY_CROSS_WEEK_EDITORIAL}:{};
@@ -208,6 +210,7 @@ export function horoscopePlanPreview(prepared) {
     ...(prepared.edition.window.period==='seasonal'?{planningCalls:writerCalls*3,editorialReviewCalls:writerCalls*6,maximumPaidCalls:writerCalls*30}:{}),
     feedback:prepared.feedbackReceipt,
     ...(prepared.edition.window.period==='weekly'?{batchEditorialVersion:WEEKLY_BATCH_EDITORIAL,batchPlanningCalls:1,batchReviewCalls:1,maximumPaidCalls:writerCalls*2+2}:{}),
+    ...(prepared.edition.window.period==='daily'?{batchEditorialVersion:DAILY_BATCH_EDITORIAL,batchReviewCalls:1,maximumPaidCalls:writerCalls*2+1}:{}),
     synthesisCalls:prepared.edition.window.period==='monthly'&&prepared.edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?1:0};
 }
 

@@ -6,6 +6,7 @@ import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApprova
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
+import {persistDailyHoroscope} from '../_lib/daily-horoscope-storage.js';
 import {horoscopeEditorPayload} from '../_lib/horoscope-editor-payload.js';
 import {decodeWeeklyHistoryRow,encodeWeeklyHistory} from '../_lib/horoscope-history-storage.js';
 import { studioScopeStorageFilter } from "../../apps/admin/src/studioContentScope.js";
@@ -181,6 +182,8 @@ type ExistingGeneratedContentRow = {
   prompt_version?: string | null;
   source_snapshot?: Record<string, unknown> & {
     horoscopeGeneration?: {
+      dailyEditorial?: {version: string; pending?: unknown};
+      weeklyEditorial?: {pending?: unknown};
       active?: unknown; batch?: { status?: string };
       candidateHolds?: Record<string, { candidate: { headline: string; body: string }; operation: { id: string } }>;
       candidateResolutions?: unknown[];
@@ -2320,7 +2323,7 @@ async function upsertGeneratedContentRow(row: Record<string, unknown>) {
       ...(row.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "resolution=ignore-duplicates,return=representation"
     },
-    body: JSON.stringify((row.sections as any)?.horoscopeEdition?.window?.period==='weekly'
+    body: JSON.stringify(['daily','weekly'].includes((row.sections as any)?.horoscopeEdition?.window?.period)
       ?{...row,source_snapshot:encodeWeeklyHistory(row.source_snapshot)}:row)
   });
   const payload = response.payload;
@@ -2647,7 +2650,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       facts:existing.facts, source_snapshot:snapshot, status:'LIVE', lane:'serving', review_state:null,
       updated_at:now, reviewed_at:now, published_at:now};
     assertReaderEligiblePublication({...target,...editionPatch});
-    if(existing.sections?.horoscopeEdition?.window?.period==='weekly')editionPatch.source_snapshot=encodeWeeklyHistory(snapshot);
+    if(['daily','weekly'].includes(existing.sections?.horoscopeEdition?.window?.period))editionPatch.source_snapshot=encodeWeeklyHistory(snapshot);
     publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
     return publishRevisionAtomically(body,existing,target,editionPatch);
   }
@@ -3493,11 +3496,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   // Weekly editors send only editable fields. A compact, versioned checkpoint
   // retains the complete server-owned history without returning it through PATCH.
-  if(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&existing.status==='DRAFT'&&(patch.status===undefined||patch.status==='DRAFT')){
+  if((existing.sections?.horoscopeEdition?.window?.period==='weekly'
+    ||existing.sections?.horoscopeEdition?.window?.period==='daily'&&existing.source_snapshot?.horoscopeGeneration?.dailyEditorial)
+    &&existing.status==='DRAFT'&&(patch.status===undefined||patch.status==='DRAFT')){
     const changed=Object.fromEntries(Object.entries(patch).filter(([key,value])=>key!=='updated_at'&&!isDeepStrictEqual(value,existing[key])));
     if(Object.keys(changed).every(key=>['sections','source_snapshot','body','facts','review_state','reviewed_at','status'].includes(key))
       &&(changed.review_state===undefined||changed.review_state===null)&&(changed.reviewed_at===undefined||changed.reviewed_at===null)){
-      const saved=await persistWeeklyHoroscope({url:`${supabaseUrl()}/rest/v1/generated_interpretations`,headers:adminHeaders(),row:existing,patch:changed});
+      const persist=existing.sections?.horoscopeEdition?.window?.period==='daily'?persistDailyHoroscope:persistWeeklyHoroscope;
+      const saved=await persist({url:`${supabaseUrl()}/rest/v1/generated_interpretations`,headers:adminHeaders(),row:existing,patch:changed});
       return [saved];
     }
   }
@@ -3515,7 +3521,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       ...(patch.status === "LIVE" ? { "x-content-publication-action": "publish" } : {}),
       prefer: "return=representation"
     },
-    body: JSON.stringify(existing.sections?.horoscopeEdition?.window?.period==='weekly'&&patch.source_snapshot
+    body: JSON.stringify(['daily','weekly'].includes(existing.sections?.horoscopeEdition?.window?.period)&&patch.source_snapshot
       ?{...patch,source_snapshot:encodeWeeklyHistory(patch.source_snapshot)}:patch)
   });
   const payload = response.payload;
@@ -3541,7 +3547,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
   }
 
-  return updatedRows;
+  return updatedRows.map(decodeWeeklyHistoryRow);
 }
 
 async function deleteGeneratedContent(req: IncomingMessage) {
@@ -3558,8 +3564,9 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!existing) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
-  if (existing.content_key.startsWith('horoscope/') && (existing.source_snapshot?.horoscopeGeneration?.active||existing.source_snapshot?.horoscopeGeneration?.batch?.status==='running')) {
-    throw new GeneratedContentRequestError('A horoscope reading is running. Retrieve or release that request before deleting the edition.', 409);
+  const generation=existing.source_snapshot?.horoscopeGeneration;
+  if (existing.content_key.startsWith('horoscope/') && (generation?.active||generation?.batch?.status==='running'||generation?.weeklyEditorial?.pending||generation?.dailyEditorial?.pending)) {
+    throw new GeneratedContentRequestError('Finish or explicitly release the saved horoscope request or batch review before deleting this edition.', 409);
   }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");

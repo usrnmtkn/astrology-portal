@@ -1,5 +1,6 @@
 import {hasExactStudioOwnerApproval} from './studio-owner-publication.js';
 import {weeklyEditorialIssue} from '../../src/astro-writing/weeklyBatchEditorial.mjs';
+import {dailyEditorialIssue} from '../../src/astro-writing/dailyBatchEditorial.mjs';
 import {createHash,createHmac, timingSafeEqual} from 'node:crypto';
 import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
@@ -63,6 +64,8 @@ export function horoscopePublicationIssues(row:Record<string,any>, ownerFinal = 
   const issues:{sign:string|null;category:string;detail:string}[]=[];
   const batchIssue=weeklyEditorialIssue(row);
   if(batchIssue)issues.push({sign:null,category:'weekly_batch_editorial',detail:batchIssue});
+  const dailyIssue=dailyEditorialIssue(row);
+  if(dailyIssue)issues.push({sign:null,category:'daily_batch_editorial',detail:dailyIssue});
   if(generation?.active||generation?.batch?.status==='running')issues.push({sign:null,category:'generation_active',detail:'Pause generation and finish the saved request before publishing.'});
   for(const passage of edition.passages) {
     if(!passage.headline.trim()||!passage.body.trim()) {

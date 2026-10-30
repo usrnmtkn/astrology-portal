@@ -1,21 +1,22 @@
 import {AdminDisclosureSummary} from './AdminNativeControls';
 import {StudioButton} from './StudioControls';
 
-export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,running,hasPlan,planHash,onPrepare,onAction}:any){
+export default function WeeklyBatchEditorial({period='weekly',gate,complete,dirty,disabled,running,hasPlan,planHash,onPrepare,onAction}:any){
+  const daily=period==='daily',reviewAction='review-'+period,pollAction='poll-'+period,releaseAction='release-'+period;
   const pending=gate?.pending;
   const plan=gate?.plan,review=gate?.review;
   const findings=[...(plan?.status==='failed'?plan.findings??[]:[]),...(review?.matchesCurrent===true?review.findings??[]:[])];
   const current=review?.status==='passed'&&review.current&&!dirty;
   function act(action:string){
     if(disabled||dirty)return;
-    if(action==='release-weekly'&&!window.confirm('This check may be billed. Release its unknown outcome?'))return;
+    if(action===releaseAction&&!window.confirm('This check may be billed. Release its unknown outcome?'))return;
     void onAction(action,{
-      ...(['plan-weekly','review-weekly'].includes(action)?{approvedPlanHash:planHash}:{}),
-      ...(action==='release-weekly'?{acknowledgeUnknownOutcome:true}:{})
+      ...(['plan-weekly',reviewAction].includes(action)?{approvedPlanHash:planHash}:{}),
+      ...(action===releaseAction?{acknowledgeUnknownOutcome:true}:{})
     });
   }
-  return <section className="admin-horoscope-plan" aria-label="Weekly batch editorial gate">
-    <p aria-live="polite">{pending?pending.phase==='planning'?'Planning twelve distinct concerns…':'Checking all twelve readings…':current?'The current twelve-sign set passed its batch comparison.':review&&(!review.matchesCurrent||dirty)?'Batch check out of date. Save and recheck.':review?.status==='failed'?'Edit flagged readings, then recheck.':plan?.status==='passed'?'Twelve concerns saved.':'Plan twelve distinct concerns before drafting.'}</p>
+  return <section className="admin-horoscope-plan" aria-label={daily?'Daily batch editorial gate':'Weekly batch editorial gate'}>
+    <p aria-live="polite">{pending?pending.phase==='planning'?'Planning twelve distinct concerns…':'Checking all twelve readings…':current?'The current twelve-sign set passed its batch comparison.':review&&(!review.matchesCurrent||dirty)?'Batch check out of date. Save and recheck.':review?.status==='failed'?'Edit flagged readings, then recheck.':daily?complete?'Review all twelve Daily readings for repeated interpretations, openings and endings.':'The full-set Daily review runs after all twelve readings are saved.':plan?.status==='passed'?'Twelve concerns saved.':'Plan twelve distinct concerns before drafting.'}</p>
     {plan?.error&&<p role="alert">{plan.error}</p>}
     {review?.error&&<p role="alert">{review.error}</p>}
     {findings.map((finding:any,index:number)=><div className="admin-inline-warning" role="note" key={index}>
@@ -27,11 +28,11 @@ export default function WeeklyBatchEditorial({gate,complete,dirty,disabled,runni
     </details>}
     {!running&&<div className="admin-toolbar-actions">
       {pending?<>
-        <StudioButton disabled={disabled||dirty} onClick={()=>act('poll-weekly')}>Check saved batch progress</StudioButton>
-        {Date.now()-Date.parse(pending.startedAt)>=310000&&<StudioButton disabled={disabled||dirty} onClick={()=>act('release-weekly')}>Release interrupted batch check</StudioButton>}
+        <StudioButton disabled={disabled||dirty} onClick={()=>act(pollAction)}>Check saved batch progress</StudioButton>
+        {Date.now()-Date.parse(pending.startedAt)>=310000&&<StudioButton disabled={disabled||dirty} onClick={()=>act(releaseAction)}>Release interrupted batch check</StudioButton>}
       </>:!hasPlan?<StudioButton disabled={disabled||dirty} onClick={onPrepare}>Load batch review plan</StudioButton>:<>
-        {complete&&!current&&<StudioButton disabled={disabled||dirty} onClick={()=>act('review-weekly')}>Review all twelve · 1 AI request</StudioButton>}
-        {plan&&plan.status!=='passed'&&<StudioButton disabled={disabled||dirty} onClick={()=>act('plan-weekly')}>Plan twelve concerns again · 1 AI request</StudioButton>}
+        {complete&&!current&&<StudioButton disabled={disabled||dirty} onClick={()=>act(reviewAction)}>Review all twelve · 1 AI request</StudioButton>}
+        {!daily&&plan&&plan.status!=='passed'&&<StudioButton disabled={disabled||dirty} onClick={()=>act('plan-weekly')}>Plan twelve concerns again · 1 AI request</StudioButton>}
       </>}
     </div>}
   </section>;

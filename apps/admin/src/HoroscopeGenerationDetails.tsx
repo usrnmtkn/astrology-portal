@@ -95,7 +95,7 @@ export default function HoroscopeGenerationDetails({view,...props}:{view:"eviden
     const state:HoroscopeGenerationState=props.state;
     return <>
       <p aria-live="polite">{state==='approval'?`Check the plan approval box to ${retrySign?'retry':'continue'}.`:generationNotices[state]}</p>
-      {showBudget&&<p>{period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests: at most 3 plans and 3 prose candidates per reading, independently evaluated. Candidates stay private.`:period==='weekly'?`Up to ${2*available+2} paid AI requests: one twelve-sign plan, drafts and prose checks, then a full-set review.`:period==='monthly'?'Up to 3 paid AI requests: plan, draft and prose check. Matching saved plans are reused.':`Up to ${2*(retrySign?1:available)} paid AI requests: a draft and prose check per reading.`}{period!=='seasonal'&&' No automatic rewrites or paid retries. You approve wording.'}</p>}
+      {showBudget&&<p>{period==='seasonal'?`Up to ${(retrySign?1:available)*30} paid AI requests: at most 3 plans and 3 prose candidates per reading, independently evaluated. Candidates stay private.`:period==='weekly'?`Up to ${2*available+2} paid AI requests: one twelve-sign plan, drafts and prose checks, then a full-set review.`:period==='monthly'?'Up to 3 paid AI requests: plan, draft and prose check. Matching saved plans are reused.':period==='daily'?`Up to ${2*available+1} paid AI requests: a draft and prose check per reading, then one review of all twelve for repeated interpretations, openings and endings.`:`Up to ${2*(retrySign?1:available)} paid AI requests: a draft and prose check per reading.`}{period!=='seasonal'&&' No automatic rewrites or paid retries. You approve wording.'}</p>}
 
     </>;
   }
