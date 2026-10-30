@@ -5393,6 +5393,15 @@ function currentSkyPlacementDetailArticle({
   };
 }
 
+let lunationArticleHoroscopeReader: typeof import("./content/lunationArticleHoroscopes") | null = null;
+async function loadLunationArticleHoroscopes() {
+  const [reader] = await Promise.all([
+    import("./content/lunationArticleHoroscopes"), loadLunationBookFallbackArchitectureV3Bundle()
+  ]);
+  lunationArticleHoroscopeReader = reader;
+  return reader;
+}
+
 function currentSkyV4LunationDetailArticle({
   event,
   sky,
@@ -5459,6 +5468,9 @@ function currentSkyV4LunationDetailArticle({
     duration: dateLine,
     suppressTldr: true,
     body: readerParts,
+    risingHoroscopes: lunationArticleHoroscopeReader?.resolveLunationArticleHoroscopes(event, generatedContent).map(entry => ({
+      ...entry, risingSign: capitalizeText(entry.risingSign)
+    })),
     sections: aspectSections,
     relatedAspects: aspectSections.length > 0
       ? { heading: "Key aspects", grouping: "event", rows: [] }
@@ -12280,8 +12292,12 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         const events=await getLunarCalendarRangeEventsOffMainThread(sky.location,date,new Date(+date+86400000));
         const event=events.find(item=>item.type==='lunation'&&item.primary&&item.startsAt.slice(0,10)===routePlanet&&skyRoutePartMatches(item.sign??'',routeSign));
         if(!event){if(!cancelled)commitResolvedSkyDetail(null);return;}
-        const eventSky=await getAstrodienstSky(sky.location,new Date(event.startsAt),{includeTransitWindows:true,transitWindowPlanets:[]});
-        const content=await loadSkyDetailContent(eventSky,availableDetailContent,lunationReaderContentKeys(event),loadLiveGeneratedContentForKeys);
+        const [eventSky, horoscopeReader]=await Promise.all([
+          getAstrodienstSky(sky.location,new Date(event.startsAt),{includeTransitWindows:true,transitWindowPlanets:[]}),
+          loadLunationArticleHoroscopes()
+        ]);
+        const content=await loadSkyDetailContent(eventSky,availableDetailContent,
+          horoscopeReader.lunationArticleContentKeys(event),loadLiveGeneratedContentForKeys);
         if(cancelled||skyDetailRoutePath!==skyDetailRoutePathFromUrl())return;
         selectedSkyDetailContentRef.current=content;
         selectedSkyDetailRefreshKeyRef.current=refreshKey;
@@ -12346,9 +12362,15 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         : getAstrodienstSky(sky.location, new Date(calendarEvent.event.startsAt), { includeTransitWindows: true })
       : Promise.resolve(sky);
     void detailSnapshot.then(async detailSky => {
+      const lunarEvent = routeType === "lunation" ? calendarEvent?.event ?? (detailSky.moonEvent ? {
+        startsAt: detailSky.moonEvent.occursAt, sign: detailSky.moonEvent.sign,
+        title: detailSky.moonEvent.name, eclipseType: detailSky.moonEvent.eclipseType
+      } : null) : null;
+      const horoscopeReader = lunarEvent ? await loadLunationArticleHoroscopes() : null;
       const content = await loadSkyDetailContent(detailSky, availableDetailContent,
-        calendarEvent ? calendarTransitDetailContentKeys(calendarEvent.event)
-          : routeType === "aspect" ? skyDetailRequiredAspectKeys(detailSky, routePlanet, routeSign, routeOther) : [],
+        [...(calendarEvent ? calendarTransitDetailContentKeys(calendarEvent.event)
+          : routeType === "aspect" ? skyDetailRequiredAspectKeys(detailSky, routePlanet, routeSign, routeOther) : []),
+          ...(lunarEvent && horoscopeReader ? horoscopeReader.lunationArticleContentKeys(lunarEvent) : [])],
         loadLiveGeneratedContentForKeys);
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) { console.warn("Sky detail failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });

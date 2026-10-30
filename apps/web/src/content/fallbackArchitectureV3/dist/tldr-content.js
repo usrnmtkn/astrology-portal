@@ -85,9 +85,9 @@ var planetDignities = {
     Aries: "fall"
   }
 };
-for (const signs of Object.values(planetDignities)) {
-  for (const value of Object.values(signs)) if (Array.isArray(value)) Object.freeze(value);
-  Object.freeze(signs);
+for (const signs2 of Object.values(planetDignities)) {
+  for (const value of Object.values(signs2)) if (Array.isArray(value)) Object.freeze(value);
+  Object.freeze(signs2);
 }
 Object.freeze(planetDignities);
 var outsideFramework = /* @__PURE__ */ new Set([
@@ -1839,6 +1839,26 @@ function sharedLunationEclipseSectionKey(kind, sectionId, house = null) {
   return phase ? `authored/lunation-eclipse-section/shared/${phase}/${resolvedSectionId}` : null;
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs
+var LUNATION_STUDIO_REVISION_SCHEMA = "content-studio-lunation-revision/v1";
+var signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+var sha256 = (value) => typeof value === "string" && /^[a-f0-9]{64}$/u.test(value);
+function isLunationEclipseSectionKey(key) {
+  if (/^authored\/lunation-eclipse-house-layer\/solar\/house-(?:[1-9]|1[0-2])$/u.test(key)) return true;
+  if (/^authored\/lunation-eclipse-section\/shared\/lunar\/(?:nature|mechanics|recommendation|close|recommendation-endings|close-endings)$/u.test(key)) return true;
+  const match = key.match(/^authored\/lunation-eclipse-section\/pisces\/rising-([a-z]+)\/house-([1-9]|1[0-2])\/(?:opening|evergreen-body)$/u);
+  const rising = match ? signs.indexOf(match[1]) : -1;
+  return rising >= 0 && Number(match[2]) === (11 - rising + 12) % 12 + 1;
+}
+function isStudioLunationRevision(record2) {
+  const receipt = record2?.studio_lunation_revision;
+  const approval = record2?.approval;
+  return record2?.content_role === "full_copy" && record2.studio_version_status === "approved-serving-revision" && record2.review_status === "approved" && record2.promotion_authorized === true && receipt?.schema === LUNATION_STUDIO_REVISION_SCHEMA && receipt.contentKey === record2.contentKey && typeof receipt.approvedAt === "string" && Number.isFinite(Date.parse(receipt.approvedAt)) && sha256(receipt.baselineBodySha256) && sha256(receipt.previousBodySha256) && sha256(receipt.bodySha256) && receipt.bodySha256 === record2.protected_content?.body_sha256 && approval?.approvalLevel === "exact_owner_approved" && approval.action === "content-studio-publish" && approval.payloadSha256 === receipt.bodySha256 && approval.approvedAt === receipt.approvedAt && approval.recordPath === `studio:lunation/${encodeURIComponent(record2.contentKey)}#${receipt.bodySha256}`;
+}
+function isPinnedLunationBookRevision(section, book, bookHash, sectionHash) {
+  return isStudioLunationRevision(book) && bookHash === book.studio_lunation_revision.bodySha256 && section.protected_content?.source_body_sha256 === book.studio_lunation_revision.baselineBodySha256 && section.protected_content?.preservedBookRemainderSha256 === sectionHash;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs
 var payload = (row) => JSON.stringify({
   contentKey: row.contentKey,
@@ -2669,7 +2689,7 @@ ${passHook}`;
         throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
       }
     }
-    c ||= card(`authored/transit-return/${planet}`);
+    c || (c = card(`authored/transit-return/${planet}`));
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
     return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, audience, field2)) };
   }
@@ -3814,8 +3834,10 @@ ${passHook}`;
       return matchingNewMoonSlotCache;
     };
     const renderStoredBody = (stored) => {
+      if (isStudioLunationRevision(stored) && sha256Text(stored.body ?? "") !== stored.protected_content?.body_sha256)
+        throw new SourceGapError(`LUNATION_REVISION_MODIFIED: ${stored.contentKey}`);
       const needsMatchingNewMoon = /\{\{matchingNewMoon(?:Sign|Date)\}\}/u.test(stored.body ?? "");
-      const renderedBookBody = needsMatchingNewMoon ? fill2(stored.body, matchingNewMoonSlots()) : stored.body;
+      const renderedBookBody = needsMatchingNewMoon ? stored.body.replace(/\{\{(matchingNewMoonSign|matchingNewMoonDate)\}\}/gu, (_match, key) => matchingNewMoonSlots()[key]) : stored.body;
       if (/\{\{/u.test(renderedBookBody)) {
         throw new SourceGapError(`SOURCE_GAP: unresolved lunation book slot in ${stored.contentKey}`);
       }
@@ -3831,6 +3853,8 @@ ${passHook}`;
     };
     const assertProtectedEclipseBookBody = (stored, source) => {
       assertStoredEclipseSectionIntegrity(stored);
+      if (isStudioLunationRevision(stored)) return;
+      if (isPinnedLunationBookRevision(stored, source, sha256Text(source.body ?? ""), sha256Text(stored.body ?? ""))) return;
       const sourceBody = source.body ?? "";
       const sourceHash = sha256Text(sourceBody);
       const protectedSourceHash = source.protected_content?.body_sha256;
@@ -5315,7 +5339,7 @@ function title8(value) {
 function record(value) {
   return value && typeof value === "object" && !Array.isArray(value) ? value : {};
 }
-function sha256(value) {
+function sha2562(value) {
   return sha256Text(value);
 }
 function valueAt(source, path) {
@@ -5532,7 +5556,7 @@ function assertSkyV4ReaderCopyOwnerApproval(corpus, records = []) {
 }
 function assertSkyV4ReaderCopyServingRelease(corpus) {
   assertSkyV4ReaderCopyOwnerApproval(corpus);
-  const releasedKeysSha256 = sha256(JSON.stringify(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys));
+  const releasedKeysSha256 = sha2562(JSON.stringify(sky_v4_reader_copy_280_owner_approval_v1_default.approved_keys));
   const expectedCounts = sky_v4_reader_copy_280_owner_approval_v1_default.expected_counts_by_content_type;
   if (sky_v4_reader_copy_280_serving_release_v1_default.schema !== "tldrastro-sky-v4-serving-release/v1" || sky_v4_reader_copy_280_serving_release_v1_default.canonical_package_version !== SKY_V4_CANONICAL_PACKAGE_VERSION || sky_v4_reader_copy_280_serving_release_v1_default.canonical_json_sha256 !== SKY_V4_CANONICAL_JSON_SHA256 || sky_v4_reader_copy_280_serving_release_v1_default.approval_id !== sky_v4_reader_copy_280_owner_approval_v1_default.approval_id || sky_v4_reader_copy_280_serving_release_v1_default.expected_serving_records !== 280 || sky_v4_reader_copy_280_serving_release_v1_default.serving_enabled !== true || sky_v4_reader_copy_280_serving_release_v1_default.resolver_conditional !== true || sky_v4_reader_copy_280_serving_release_v1_default.configuration_records_excluded !== 25 || sky_v4_reader_copy_280_serving_release_v1_default.released_keys_sha256 !== releasedKeysSha256 || JSON.stringify(sky_v4_reader_copy_280_serving_release_v1_default.expected_counts_by_content_type) !== JSON.stringify(expectedCounts) || READER_COPY_SERVING_KEYS.size !== 280) {
     throw new Error("SKY_V4_GOVERNANCE: reader-copy serving release is invalid or stale.");
@@ -5569,7 +5593,7 @@ function studioRecord({
     surface: "sky",
     render_policy: "sky-v4-canonical-stage-preview",
     source_package: SKY_V4_CANONICAL_PACKAGE_VERSION,
-    source_baseline_sha256: sha256(baselineJson),
+    source_baseline_sha256: sha2562(baselineJson),
     studio_content_type: contentType,
     studio_editable_fields: editableFields,
     studio_read_only_fields: readOnlyFields,
@@ -5741,7 +5765,7 @@ function nodeStudioRecords(corpus) {
       ...source,
       Article,
       reader_source_correction: "authored-inputs/reader-source-reference-removals-v1.json",
-      original_source_baseline_sha256: sha256(JSON.stringify(source))
+      original_source_baseline_sha256: sha2562(JSON.stringify(source))
     };
   }).map((row) => studioRecord({
     source: row,
@@ -6265,7 +6289,7 @@ function skyV4GovernedAspectStudioRecord(sourceRow) {
     ],
     studio_source_baseline: baseline,
     studio_governed_source_record: structuredClone(sourceRow),
-    source_baseline_sha256: sha256(JSON.stringify(baseline)),
+    source_baseline_sha256: sha2562(JSON.stringify(baseline)),
     studio_provenance: {
       reviewStatus: sourceRow.review_status,
       approvedVia: sourceRow.approved_via,
@@ -6619,7 +6643,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-26-friend";
+var PACKAGE_VERSION = "v3-2026-10-30-lunation";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -6682,6 +6706,7 @@ function createPackageManifest(bundle, packageVersion = PACKAGE_VERSION) {
   };
 }
 export {
+  LUNATION_STUDIO_REVISION_SCHEMA,
   PACKAGE_VERSION,
   RoleViolationError,
   SKY_V4_CANONICAL_JSON_SHA256,
@@ -6702,6 +6727,9 @@ export {
   createSkyV4ReaderRoute,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
+  isLunationEclipseSectionKey,
+  isPinnedLunationBookRevision,
+  isStudioLunationRevision,
   makeSkyIngressComposition,
   natalPlacementMotionExactKey,
   normalizeAspect,

@@ -17,6 +17,7 @@ import { prepareHoroscopeBrief, assertHoroscopeRow, horoscopePublicationIssues }
 import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
+import { approveLunationStudioRevision, isLunationCycleVariable } from "../_lib/lunation-studio-publication.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
@@ -806,7 +807,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         if (libs().DAILY_GLANCE_PERSON_SLOT_KEYS.has(slot.slice(2, -2))) continue;
         throw new GeneratedContentRequestError(`${field} contains unsupported Daily Friend variable ${slot}. Use the Friend variable guide.`, 400);
       }
-      if (isLicensedPersonalTransitPlaceholder(row.content_key, slot)) continue;
+      if (isLicensedPersonalTransitPlaceholder(row.content_key, slot) || isLunationCycleVariable(row.content_key, slot)) continue;
       if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
         throw new GeneratedContentRequestError(`${field} contains unresolved placeholder ${slot} that was not in the package original.`, 400);
       }
@@ -2834,6 +2835,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("Write the Calendar passage before publishing.");
     }
     const now = new Date().toISOString();
+    try { await approveLunationStudioRevision(promotedRecord, targetRecord, now); }
+    catch (error) { throw new GeneratedContentRequestError(error instanceof Error ? error.message : 'Could not verify the complete lunation revision.'); }
     const promotionPatch: Record<string, unknown> = { updated_at: now };
     applyFallbackArchitectureV3ReviewPatch(target, {
       id: target.id,
@@ -2866,6 +2869,15 @@ async function updateGeneratedContent(req: IncomingMessage) {
       };
     }
     finalSections.dashboardEditHistory = history;
+    if (promotedRecord.studio_lunation_revision) {
+      // Preserve the full owner-approved unit, including boundary whitespace.
+      promotionPatch.body = promotedRecord.body;
+      Object.assign(finalSections.packageRecord as Record<string, unknown>, {
+        body: promotedRecord.body, approval: promotedRecord.approval, protected_content: promotedRecord.protected_content,
+        studio_lunation_revision: promotedRecord.studio_lunation_revision,
+        studio_version_status: promotedRecord.studio_version_status, promotion_authorized: true
+      });
+    }
     if (canonicalRevision) {
       const validation = validateSkyV4TransitPovCopy(promotedRecord, null, sharedSources);
       if (!validation.passed) throw new GeneratedContentRequestError(`SKY V4 POV validation failed: ${validation.hardFailures.join(", ")}.`);

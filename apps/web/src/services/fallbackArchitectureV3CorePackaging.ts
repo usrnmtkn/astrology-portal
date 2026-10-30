@@ -3,6 +3,7 @@ import type { AuthoredCard, HookRow, VocabRow, TemplateRow, FallbackArchitecture
 import { publicationAllowsContent } from "../content/contentPublicationState.js";
 import { generatedRowPackageRole } from "../content/generatedContentEligibility.js";
 import { isCanonicalSkyReaderRecord, isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions.js";
+import { isStudioLunationRevision } from '../content/lunationStudioRevision.js';
 import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3DashboardOverlay.js";
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging.js";
 import {isSkyPlacementFallbackPartitionKey} from './skyPlacementSourceScope.js';
@@ -73,7 +74,8 @@ export function isApprovedFallbackArchitectureV3Row(
 export function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
-  const recordBody = stringFrom(row.body, record.body);
+  const recordBody = isStudioLunationRevision(record) && typeof record.body === 'string'
+    ? record.body : stringFrom(row.body, record.body);
   const recordBodyYou = stringFrom(record.body_you);
   const recordBodyThey = stringFrom(record.body_they);
 

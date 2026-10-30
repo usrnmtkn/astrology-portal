@@ -140,7 +140,7 @@ const lunationSourceRows = [
     body: `house topic ${index + 1}`
   }))
 ];
-const lunationHoroscopes = relatedLunationHoroscopes(lunationSourceRows, piscesFullMoonContext);
+const lunationHoroscopes = relatedLunationHoroscopes(lunationSourceRows, { ...piscesFullMoonContext, eclipse: "lunar" });
 assert.equal(lunationHoroscopes.length, 12);
 assert.equal(lunationHoroscopes.every((horoscope) => horoscope.sourceReady), true);
 assert.deepEqual(

@@ -328,6 +328,7 @@ const StudioSavedVariableWording = lazy(() => import("./StudioSavedVariableWordi
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
+const LunationHoroscopeRelations = lazy(() => import("./LunationHoroscopeRelations"));
 const NatalAspectSourceFinder = lazy(() => import("./NatalAspectSourceFinder"));
 const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
 const DailyGlanceStudio = lazy(async () => {
@@ -12435,44 +12436,13 @@ export function GeneratedContentAdminDashboard() {
                   <ImportedArticleHoroscopesEditor sections={currentDraft.sections} onChange={sections => setDraft(invalidateContentStudioReview({...currentDraft, sections, status: "DRAFT", reviewState: "owner-review-required"}))} />
                 </Suspense>
               ) : skyLunationContext ? (
-                <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`} open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
-                  <AdminDisclosureSummary>
-                    <span>Rising-sign horoscopes</span>
-                    {" "}
-                    <strong>{sourceReadyLunationHoroscopes}/12 source-ready</strong>
-                  </AdminDisclosureSummary>
-                  <p className="admin-sky-related-help">
-                    The app assembles these twelve horoscopes from the saved frame, house opening, house jurisdiction, and lunation-sign focus below. Exact-date ruler and retrograde layers are calculated later, so the dashboard does not store twelve duplicate final articles.
-                  </p>
-                  <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
-                    {skyLunationHoroscopes.map((horoscope) => (
-                      <article key={horoscope.risingSign} className={`admin-hook-detail-section ${horoscope.sourceReady ? "has-passage" : "is-missing"}`}>
-                        <header className="admin-fallback-diagnostic-heading">
-                          <strong>{titleFromKey(horoscope.risingSign)} Rising · {ordinalLabel(horoscope.house)} House</strong>
-                          <span>{horoscope.sourceReady ? "Source-ready" : "Missing required source"}</span>
-                        </header>
-                        <div className="admin-copy-preview">
-                          {horoscope.preview
-                            ? horoscope.preview.split(/\n{2,}/u).map((paragraph) => <p key={paragraph}>{paragraph}</p>)
-                            : <p>No base horoscope preview can be assembled yet.</p>}
-                        </div>
-                        <div className="admin-sky-aspect-list">
-                          {horoscope.sources.map((source) => (
-                            <div className="admin-sky-related-row admin-hook-detail-section" key={`${source.role}-${source.row.id}`}>
-                              <div>
-                                <span>{source.role}</span>
-                                <code>{source.row.content_key}</code>
-                              </div>
-                              <StudioButton type="button" onClick={() => openRelatedSkyRow(selectedRow.id, source.row)}>
-                                Edit source
-                              </StudioButton>
-                            </div>
-                          ))}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </details>
+                <Suspense fallback={<PageLoading message="Loading horoscope sources…" />}>
+                  <LunationHoroscopeRelations key={`${skyLunationContext.kind}/${skyLunationContext.sign}/${skyLunationContext.eclipse}`}
+                    context={skyLunationContext} rows={rows} secret={secret} read={adminJsonRequest} onRows={setRows}
+                    open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}
+                    label={(risingSign, house) => `${titleFromKey(risingSign)} Rising · ${ordinalLabel(house)} House`}
+                    onEdit={row => openRelatedSkyRow(selectedRow.id, row)} />
+                </Suspense>
               ) : (
                 <details className={`${containedDisclosure} admin-workspace-details admin-sky-related-group admin-diagnostics-details`} open={Boolean(skyFallbackEditor) && !isSkyPlacementSource}>
                   <AdminDisclosureSummary>

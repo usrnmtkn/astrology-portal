@@ -1,4 +1,6 @@
 import {transitWritingBodies} from "../transitWritingIdentity.js";
+import { isLunationHoroscopeKey } from "../../../../../src/shared/lunationHoroscopeIdentity.js";
+import { isLunationEclipseSectionKey, isStudioLunationRevision } from '../lunationStudioRevision.js';
 import { isDynamicBondEffectExactRecord } from '../bondEffectIdentity.js';
 export { isDynamicBondEffectExactRecord } from '../bondEffectIdentity.js';
 import { isZodiacSeasonSourceKey } from "./resolver/zodiacSeasonVariables.mjs";
@@ -134,6 +136,8 @@ export function isFallbackDashboardRecordAllowed(
   currentPackageKeys: ReadonlySet<string>
 ) {
   return (isZodiacSeasonSourceKey(record.contentKey) && record.content_role === "fallback_hook")
+    || (isLunationHoroscopeKey(record.contentKey) && record.content_role === 'full_copy')
+    || (isLunationEclipseSectionKey(record.contentKey) && isStudioLunationRevision(record))
     || (Boolean(skyPlacementAspectBridgeIdentity(record.contentKey)) && record.content_role === 'fallback_hook'
       && record.render_policy === SKY_PLACEMENT_ASPECT_BRIDGE_POLICY)
     || currentPackageKeys.has(record.contentKey)

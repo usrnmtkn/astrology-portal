@@ -18,7 +18,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{if(url.pathname==='/api/admin/lunation-writing'){await route.fulfill({json:url.searchParams.has('month')?{ok:true,events:[]}:{ok:true,rows:[]}});return true;}if(url.pathname!=='/api/admin/calendar-lunation-writing')return false;const result=await call({method:'lunar-writing',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}});
    // Exercise cold lazy loading before interacting with the nested tab strip.
-   await page.route('**/DatedLunationWritingStudio-*.js',async route=>{await new Promise(resolve=>setTimeout(resolve,500));await route.continue();});
+   await page.route(/\/(?:DatedLunationWritingStudio|lunation-writing)-[^/]+\.js/u,async route=>{await new Promise(resolve=>setTimeout(resolve,500));await route.continue();});
    await page.goto('/admin/content#ai-writing');
    const style=(element:any)=>element.evaluate((el:HTMLElement)=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.margin,s.textTransform,s.textAlign];});
    const analogue=page.getByRole('heading',{name:'Weekly instructions',exact:true});await expect(analogue).toBeVisible();const headingStyle=await style(analogue);

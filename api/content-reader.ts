@@ -1,6 +1,7 @@
 import {hasExactStudioOwnerApproval} from './_lib/studio-owner-publication.js';
 import { articleLibraryPrefixes } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
+import { isStudioLunationRevision } from '../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
 import { SKY_SEASON_FALLBACK_PREFIX } from "../apps/web/src/content/skySeasonFallback.js";
 import { calendarPassageIdentity } from '../src/calendar-writing/passageContract.js';
 import { skyArticleDashboardScopeFilter, skyDashboardScopeFilter, skyListDashboardScopeFilter } from "../apps/web/src/services/skyDashboardScope.js";
@@ -67,6 +68,8 @@ export function readerRowIsEligible(row: GeneratedContentRow) {
   const record = (row.sections as Record<string, unknown> | null)?.packageRecord;
   if (record && typeof record === 'object' && !Array.isArray(record)) {
     const value = record as Record<string, unknown>;
+    if (value.studio_lunation_revision && (!isStudioLunationRevision(value) || typeof value.body !== 'string'
+      || value.body !== row.body || createHash('sha256').update(value.body).digest('hex') !== (value.protected_content as any)?.body_sha256)) return false;
     const approvedReviews = new Set(['approved', 'approved_reuse', 'reviewed']);
     const declaredReviews = [value.review_status, value.body_you_review_status, value.body_they_review_status,
       row.source_snapshot?.review_status];

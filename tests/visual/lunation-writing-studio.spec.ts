@@ -97,7 +97,8 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await expect(workspace.getByText('Writing your new draft…',{exact:true})).toBeVisible();
       await expect(workspace.getByLabel('Article generation progress',{exact:true})).toBeFocused();
       await expect(workspace.getByLabel('Full article',{exact:true})).toHaveCount(0);
-      await expect.poll(async()=>(await writer.call({method:'provider'})).polls).toBeGreaterThanOrEqual(3);
+      // The first check runs after one second, followed by five-second intervals.
+      await expect.poll(async()=>(await writer.call({method:'provider'})).polls,{timeout:20000}).toBeGreaterThanOrEqual(3);
       expect(disabledDuringPoll.length).toBeGreaterThanOrEqual(3);
       expect(disabledDuringPoll.every(disabled=>!disabled)).toBe(true);
       await page.screenshot({path:`test-results/lunation-writer-progress-${width}-${theme}.png`,fullPage:true});
@@ -106,7 +107,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Full Moon in Aries',exact:true}).click();
       await expect(workspace.getByText('Writing your new draft…',{exact:true})).toBeVisible();
       await writer.call({method:'provider',body:{pollFailures:1}});
-      await expect(workspace.getByText('Progress checks paused.',{exact:true})).toBeVisible();
+      await expect(workspace.getByText('Progress checks paused.',{exact:true})).toBeVisible({timeout:15000});
       await expect(workspace.getByRole('alert')).toContainText('The writer result is temporarily unavailable.');
       expect((await writer.call({method:'provider'})).calls).toBe(1);
       if(width===1440&&theme==='light'){
