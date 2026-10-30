@@ -155,22 +155,31 @@ test('Planetary and Sky cards share remaining countdowns',async({page},info)=>{
  const labels=new Map<string,string[]>();
  for(const card of await cards.all()){
   const title=(await card.locator('.planet-placement-row__title').innerText()).trim();
+  expect(title).not.toBe('');
   const captions=await card.locator('.placement-progress > span').allTextContents();
   for(const caption of await card.locator('.placement-progress > span').all())await expect(caption).toBeVisible();
   expect(captions.length,title).toBeGreaterThan(0);
   expect(captions.at(-1),title).toMatch(/^(?:Ends today|\d+ (?:day|week|month|year)s? left)$/);
   labels.set(title,captions);
  }
+ expect(labels.size).toBe(14);
  await expect(cards.first().locator('.placement-progress > span').last()).toHaveText('4 weeks left');
  await page.screenshot({path:info.outputPath('planetary-countdowns.png'),fullPage:true});
  await cards.first().click();await page.reload();
  await page.getByRole('button',{name:'All planets',exact:true}).click();
+ await expect(cards).toHaveCount(14);
  for(const card of await cards.all())expect(await card.locator('.placement-progress > span').allTextContents()).toEqual(labels.get((await card.locator('.planet-placement-row__title').innerText()).trim()));
  await page.goto('/?date=2026-10-25#sky');
  const skyCards=page.locator('.sky-placement-group .planet-placement-row');
+ // The loading layout also has 14 rows, whose titles are empty placeholders.
+ await expect(page.locator('.sky-reading-layout')).toHaveAttribute('aria-busy','false',{timeout:60_000});
  await expect(skyCards).toHaveCount(14,{timeout:60_000});
+ const skyTitles=(await skyCards.locator('.planet-placement-row__title').allTextContents()).map(title=>title.trim());
+ await info.attach('countdown-identity-parity',{body:JSON.stringify({planetary:[...labels.keys()],sky:skyTitles}),contentType:'application/json'});
+ expect([...skyTitles].sort()).toEqual([...labels.keys()].sort());
  for(const card of await skyCards.all()){
   const title=(await card.locator('.planet-placement-row__title').innerText()).trim();
+  expect(labels.has(title),title).toBe(true);
   for(const caption of await card.locator('.placement-progress > span').all())await expect(caption).toBeVisible();
   expect(await card.locator('.placement-progress > span').allTextContents(),title).toEqual(labels.get(title));
  }
