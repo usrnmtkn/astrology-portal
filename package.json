@@ -231,7 +231,7 @@
     "test:connection-transits": "node --import tsx scripts/test-connection-transit-separation.mts && node --import tsx scripts/test-connection-transit-publication.mts",
     "test:sky-placement-workspace": "node --import tsx scripts/test-sky-placement-workspace.mts",
     "test:studio-reader-edit": "node --import tsx --test scripts/test-studio-reader-edit.mts scripts/test-studio-reader-edit-access.mts",
-    "test:studio-library": "node --import tsx scripts/test-content-library-navigation.mts",
+    "test:studio-library": "node --import tsx scripts/test-content-library-navigation.mts && node --import tsx --test scripts/test-studio-publication-refresh.mts",
     "build:initial-sky-reader": "node scripts/build-initial-sky-reader.mjs",
     "pretest:performance-contracts": "npm run build:knowledge && npm run build:initial-sky-reader",
     "test:sky-placement-aspect-bridges": "node --import tsx scripts/test-sky-placement-aspect-bridges.mts",

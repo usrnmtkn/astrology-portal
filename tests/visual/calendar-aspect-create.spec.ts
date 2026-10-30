@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { bundledPublications } from '../helpers/bundled-publications';
@@ -14,6 +14,25 @@ const headingStyle = (element: Element) => {
   const style = getComputedStyle(element);
   return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
 };
+
+async function routeStoredPublications(page: Page, store: Awaited<ReturnType<typeof studioApiStore>>) {
+  await page.route('**/rest/v1/content_publications?**', async route => {
+    expect(route.request().method()).toBe('GET');
+    const params = new URL(route.request().url()).searchParams;
+    const rows = (await store.call({ method: 'publications' })).filter((row: { content_key: string }) =>
+      params.getAll('content_key').every(filter => {
+        if (filter.startsWith('gte.')) return row.content_key >= filter.slice(4);
+        if (filter.startsWith('gt.')) return row.content_key > filter.slice(3);
+        if (filter.startsWith('lt.')) return row.content_key < filter.slice(3);
+        throw new Error('Unexpected publication fixture filter');
+      })).sort((a: { content_key: string }, b: { content_key: string }) => a.content_key.localeCompare(b.content_key));
+    await route.fulfill({ json: rows.slice(0, Number(params.get('limit') ?? 1000)) });
+  });
+  await page.route('**/api/content-publications', async route => {
+    expect(route.request().method()).toBe('GET');
+    await route.fulfill({ json: { schema: 'tldr-publications/v1', publications: await store.call({ method: 'publications' }) } });
+  });
+}
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const paragraphs of [2, 3]) {
   test(`Calendar exact saved revision optional checks and owner publication ${paragraphs} paragraphs ${theme} ${width}`, async ({ page }) => {
@@ -42,6 +61,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
         await route.fulfill({ status: result.status, json: result.payload });
         return true;
       } });
+      await routeStoredPublications(page, store);
       await page.goto('/admin/content#exact-content?category=Calendar+Aspects&first=moon&aspect=trine&second=uranus&firstSign=aquarius&secondSign=gemini');
       await page.getByRole('button', { name: 'Open write-up', exact: true }).click();
       const editor = page.locator('.admin-editor-panel');
@@ -122,6 +142,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
           return true;
         }
       });
+      await routeStoredPublications(page, store);
       await page.goto(selectionUrl);
       await expect(page.getByRole('heading', { name: 'Calendar Aspect Cards', exact: true })).toHaveJSProperty('tagName', 'H1');
       const filters = page.getByRole('region', { name: 'Content list filters' });
