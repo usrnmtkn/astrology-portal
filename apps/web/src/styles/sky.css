@@ -1094,11 +1094,14 @@
   }
 }
 
-/* Calculated context closes transit articles, matching the divided bond-card facts. */
+/* Transit copy and calculated context are separated by whitespace. */
+.you-transit-article .sky-detail-body {
+  margin-top: var(--space-7);
+}
+
 .article-section.article-transit-description {
   margin-top: var(--space-6);
   padding-top: var(--space-4);
-  border-top: var(--border-width-thin) solid var(--card-border);
 }
 
 .article-transit-description p {

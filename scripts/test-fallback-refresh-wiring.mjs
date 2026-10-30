@@ -785,8 +785,12 @@ const connectionDetail = appSource.slice(appSource.indexOf("  const openBondTran
 assert.match(connectionDecision, /connectionTransitReading[\s\S]*?normalizePersonalTransitSurface[\s\S]*?section\.slot === "meaning"[\s\S]*?acceptedOwnerApprovedTransitSections/u);
 assert.match(connectionDetail, /selectedBondTransitSections\.get\(card\.id\)[\s\S]*?if \(!transitSections\.length\) return/u);
 assert.match(connectionDetail, /connectionActivationKey[\s\S]*?publishedConnectionCopy\(connectionSources, key, variables\)[\s\S]*?connectionBridgeCopy\(connectionSources, bridgeKey, variables\)[\s\S]*?sourceKeys: \[bridgeKey\][\s\S]*?About these connections[\s\S]*?sourceKeys: \[key\]/u);
-assert.match(connectionDetail, /body: transitSections\.map\(section => section\.body\)[\s\S]*?sections: \[connectionFacts, \.\.\.activatedConnectionSections\]/u);
-assert.doesNotMatch(connectionDetail, /card\.effectBody|card\.effectContentKey|connection\.headline|renderReaderDirectedSynastryContact/u);
+assert.match(
+  connectionDetail,
+  /bodyBeforeSections: true,[\s\S]*?body: \[card\.effectBody, card\.activationBody\]\.filter\(Boolean\),[\s\S]*?sections: \[[\s\S]*?heading: "Personal transit", body: transitSections\.map\(section => section\.body\)\.join\("\\n\\n"\)[\s\S]*?connectionFacts, \.\.\.activatedConnectionSections/u,
+  "Connection details must preserve the admitted card opening, then show the complete eligible personal transit under a separate heading."
+);
+assert.doesNotMatch(connectionDetail, /card\.effectContentKey|connection\.headline|renderReaderDirectedSynastryContact/u);
 assert.match(friendTransitsTabSource, /disabled=\{!card\.detailAvailable\}[\s\S]*?card\.detailAvailable \? <CardReadMore(?: appearance="icon")? \/> : null/u);
 assert.ok(
   /function FriendPersonalTransitCard[\s\S]*?onClick=\{\(\) => onOpen\(transit\.id\)\}/u.test(friendTransitsTabSource)

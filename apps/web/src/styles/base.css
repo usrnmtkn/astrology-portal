@@ -254,8 +254,7 @@ svg {
   .settings-row-title,
   .friends-feed-card-body h3,
   .crt,
-  .synastry-placement-column-header h3,
-  .add-chart-modal__title
+  .synastry-placement-column-header h3
 ) {
   color: var(--card-title-color);
   font-family: var(--font-display);

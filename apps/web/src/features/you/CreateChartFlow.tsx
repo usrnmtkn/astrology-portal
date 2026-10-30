@@ -12,8 +12,12 @@ export default function CreateChartFlow({
   setStep,
   saving,
   message,
-  onSave
+  onSave,
+  showSubmit = true,
+  formId
 }: {
+  showSubmit?: boolean;
+  formId?: string;
   form: TransitForm;
   setForm: (form: TransitForm) => void;
   profile: UserProfile | null;
@@ -67,10 +71,7 @@ export default function CreateChartFlow({
   if (step === "overview") {
     return (
       <div className="create-chart-flow create-chart-overview">
-        <div className="chart-modal-heading">
-          <h3 id="chart-modal-title">Create your chart</h3>
-          <p>Three quick steps to unlock your personalized sky.</p>
-        </div>
+        <p>Three quick steps to unlock your personalized sky.</p>
 
         {message && <p className="create-chart-message" role="status">{message}</p>}
 
@@ -103,11 +104,8 @@ export default function CreateChartFlow({
 
   if (step === "city") {
     return (
-      <form className="create-chart-flow create-chart-detail" onSubmit={submitCityForm}>
-        <div className="chart-modal-heading">
-          <h3 id="chart-modal-title">Where are you now?</h3>
-          <p>Your current city sets the sky for today's readings.</p>
-        </div>
+      <form id={formId} className="create-chart-flow create-chart-detail" onSubmit={submitCityForm}>
+        <p>Your current city sets the sky for today's readings.</p>
 
         <CitySearchField
           label="Current city"
@@ -123,19 +121,16 @@ export default function CreateChartFlow({
         />
 
         {message && <p className="create-chart-message" role="status">{message}</p>}
-        <button className="signup-submit create-chart-save" type="submit" disabled={saving}>
+        {showSubmit && <button className="signup-submit create-chart-save" type="submit" disabled={saving}>
           {saving ? "Saving…" : "Save location"}
-        </button>
+        </button>}
       </form>
     );
   }
 
   return (
-    <form className="create-chart-flow create-chart-detail" onSubmit={submitBirthForm}>
-      <div className="chart-modal-heading">
-        <h3 id="chart-modal-title">Your birth information</h3>
-        <p>This pinpoints the exact sky at your first breath.</p>
-      </div>
+    <form id={formId} className="create-chart-flow create-chart-detail" onSubmit={submitBirthForm}>
+      <p>This pinpoints the exact sky at your first breath.</p>
 
       <div className="signup-fields create-chart-fields">
         <label className="signup-field">
@@ -245,9 +240,9 @@ export default function CreateChartFlow({
       </div>
 
       {message && <p className="create-chart-message" role="status">{message}</p>}
-      <button className="signup-submit create-chart-save" type="submit" disabled={saving}>
+      {showSubmit && <button className="signup-submit create-chart-save" type="submit" disabled={saving}>
         {saving ? "Saving…" : "Save birth details"}
-      </button>
+      </button>}
     </form>
   );
 }

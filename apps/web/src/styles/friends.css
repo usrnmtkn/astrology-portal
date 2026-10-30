@@ -154,7 +154,9 @@
   gap: var(--space-2);
   min-height: 42px;
   border-radius: var(--radius-pill);
-  font: inherit;
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
+  line-height: var(--leading-meta);
   font-weight: var(--weight-medium);
   white-space: nowrap;
 }
@@ -1147,56 +1149,9 @@
   backdrop-filter: blur(4px);
 }
 
-.add-chart-modal {
-  position: relative;
-  width: min(440px, calc(100vw - 40px));
-  max-height: calc(100svh - 40px);
-  overflow-x: hidden;
-  overflow-y: auto;
-  box-sizing: border-box;
-  border: var(--border-width-thin) solid var(--overlay-border);
-  border-radius: var(--overlay-radius);
-  background: var(--overlay-bg);
-  color: var(--ink);
-  padding: var(--friends-modal-padding);
-  box-shadow: var(--modal-shadow);
-  animation: modal-pop 160ms ease-out;
-}
-
-@keyframes modal-pop {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 .add-chart-form {
   display: grid;
   gap: calc(var(--space-3) + var(--space-1) / 2);
-}
-
-.add-chart-modal__close {
-  color: var(--card-meta-color);
-}
-
-.add-chart-modal__heading {
-  margin: 0;
-}
-
-.add-chart-modal__title {
-  margin: 0;
-  margin-right: var(--space-9);
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--text-card-title-size);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--leading-tight);
 }
 
 .add-chart-modal__subtitle {
@@ -1204,70 +1159,5 @@
   color: var(--card-body-color);
   font-family: var(--font-body);
   font-size: var(--text-row-body-size);
-  line-height: var(--leading-body);
-}
-
-.friend-chart-delete-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-
-.friend-chart-delete-actions button {
-  min-height: 46px;
-  border-radius: var(--radius-pill);
-  padding: 0 calc(var(--space-6) + var(--space-1) / 2);
-  font-family: var(--font-ui);
-  font-size: var(--text-button-size);
-  font-weight: var(--weight-medium);
-  line-height: var(--leading-label);
-  letter-spacing: var(--tracking-number);
-  cursor: pointer;
-}
-
-.friend-chart-delete-actions .secondary-button {
-  border: var(--border-width-thin) solid var(--control-border);
-  background: var(--surface);
-  color: var(--ink);
-}
-
-.friend-chart-delete-actions .manual-chart-delete-confirm {
-  border: 0;
-  background: var(--ink);
-  color: var(--surface);
-}
-
-.friend-chart-delete-actions button:disabled {
-  cursor: not-allowed;
-  opacity: 0.62;
-}
-
-.friend-chart-delete-actions button:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
-
-.manual-chart-form-heading,
-.friend-chart-modal-heading {
-  display: grid;
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
-}
-
-.manual-chart-form-heading h3,
-.friend-chart-modal-heading h3 {
-  font-size: var(--type-display-size);
-  line-height: var(--leading-display);
-  font-weight: var(--weight-semibold);
-}
-
-.manual-chart-form-heading p,
-.friend-chart-modal-heading p {
-  color: var(--ink-2);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
   line-height: var(--leading-body);
 }

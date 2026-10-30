@@ -1,3 +1,4 @@
+import {installSyntheticNetworkGuard} from "../helpers/synthetic-network-guard";
 import {test,expect,type Page} from '../helpers/polish-test';
 import {bundledPublications} from '../helpers/bundled-publications';
 import {readerResponse} from '../helpers/reader-response';
@@ -77,6 +78,8 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
   await expect(sun.locator('.planet-placement-row__description')).toHaveCSS('font-size','19px');
   await expect(sun.locator('.planet-placement-row__description')).toHaveCSS('line-height','28.5px');
   await expect(sun.locator('.placement-progress svg')).toBeVisible();
+  await expect(sun.locator('.placement-progress > span').last()).toHaveText('4 weeks left');
+  await expect(sun.locator('.placement-progress')).not.toHaveAttribute('aria-hidden','true');
   const nextBox=(await page.locator('.horoscope-planet-grid > a').nth(1).boundingBox())!;
   const sunBox=(await sun.boundingBox())!;
   if(width>800)expect(nextBox.y).toBeCloseTo(sunBox.y,0);
@@ -133,4 +136,43 @@ for(const [date,cardDates,detailDates,skyDates] of [
  await page.reload();await expect(page.locator('.horoscope-reading .horoscope-date')).toHaveText(detailDates);
  await page.goto(`/?date=${date}#sky/placement/venus/scorpio`);
  await expect(page.locator('.article-duration').first()).toHaveText(skyDates,{timeout:60_000});
+});
+
+const guards = new WeakMap<import('@playwright/test').Page, Awaited<ReturnType<typeof installSyntheticNetworkGuard>>>();
+test.beforeEach(async ({page,baseURL}) => { guards.set(page, await installSyntheticNetworkGuard(page.context(), new URL(baseURL!).origin)); });
+test.afterEach(async ({page}, info) => {
+ const guard = guards.get(page);
+ await info.attach('synthetic-network-boundary', {body:JSON.stringify(guard),contentType:'application/json'});
+ expect(guard?.unhandledExternal).toEqual([]);
+});
+
+test('Planetary and Sky cards share remaining countdowns',async({page},info)=>{
+ const theme=info.project.name.endsWith('dark')?'dark':'light';
+ await seed(page,theme);
+ await page.goto(list);
+ const cards=page.locator('.horoscope-planet-grid .planet-placement-row');
+ await expect(cards).toHaveCount(14,{timeout:60_000});
+ const labels=new Map<string,string[]>();
+ for(const card of await cards.all()){
+  const title=(await card.locator('.planet-placement-row__title').innerText()).trim();
+  const captions=await card.locator('.placement-progress > span').allTextContents();
+  for(const caption of await card.locator('.placement-progress > span').all())await expect(caption).toBeVisible();
+  expect(captions.length,title).toBeGreaterThan(0);
+  expect(captions.at(-1),title).toMatch(/^(?:Ends today|\d+ (?:day|week|month|year)s? left)$/);
+  labels.set(title,captions);
+ }
+ await expect(cards.first().locator('.placement-progress > span').last()).toHaveText('4 weeks left');
+ await page.screenshot({path:info.outputPath('planetary-countdowns.png'),fullPage:true});
+ await cards.first().click();await page.reload();
+ await page.getByRole('button',{name:'All planets',exact:true}).click();
+ for(const card of await cards.all())expect(await card.locator('.placement-progress > span').allTextContents()).toEqual(labels.get((await card.locator('.planet-placement-row__title').innerText()).trim()));
+ await page.goto('/?date=2026-10-25#sky');
+ const skyCards=page.locator('.sky-placement-group .planet-placement-row');
+ await expect(skyCards).toHaveCount(14,{timeout:60_000});
+ for(const card of await skyCards.all()){
+  const title=(await card.locator('.planet-placement-row__title').innerText()).trim();
+  for(const caption of await card.locator('.placement-progress > span').all())await expect(caption).toBeVisible();
+  expect(await card.locator('.placement-progress > span').allTextContents(),title).toEqual(labels.get(title));
+ }
+ await page.screenshot({path:info.outputPath('sky-countdowns.png'),fullPage:true});
 });

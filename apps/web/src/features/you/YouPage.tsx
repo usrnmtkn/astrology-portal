@@ -1058,7 +1058,6 @@ function YouTransitArticlePage({
     ...group,
     sections: aspectSections.filter((section) => section.group === group.id)
   })).filter((group) => group.sections.length > 0);
-  const hasReadableBody = Boolean(displaySummary || displayIntroParagraphs.length || sections.length);
   const passKeyDates = displayArticle.meta.filter((row) => (
     /^Pass \d+$/u.test(row.label)
     || displayArticle.id.startsWith("personal-aspect:") && ["Current contact", "Full transit series"].includes(row.label)
@@ -1112,8 +1111,6 @@ function YouTransitArticlePage({
               </div>
             ) : null}
           </header>
-
-          {hasReadableBody ? <hr className="article-rule" /> : null}
 
           {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">

@@ -49,7 +49,7 @@
 .horoscope-explore > h2, .horoscope-planet-view > h2 { margin: 0; font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); }
 .horoscope-explore > p { margin: 0; color: var(--muted); font-family: var(--font-ui); font-size: var(--text-button-size); line-height: var(--leading-meta); }
 .horoscope-signs { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-4); margin-top: var(--space-5); }
-.horoscope-sign-link { flex-direction: column; justify-content: center; min-width: 0; gap: var(--space-3); padding: var(--space-4) var(--space-1); border: 0; border-radius: var(--radius-sm); background: transparent; font-family: var(--font-ui); font-size: var(--type-meta-size); }
+.horoscope-sign-link { display: grid; justify-items: center; justify-content: center; min-width: 0; gap: var(--space-3); padding: var(--space-4) var(--space-1); border: 0; border-radius: var(--radius-sm); background: transparent; font-family: var(--font-ui); font-size: var(--type-meta-size); }
 .horoscope-sign-link img { width: var(--size-4); height: var(--size-4); object-fit: contain; filter: var(--filter-glyph-current); }
 .horoscope-sign-link[aria-pressed="true"], .horoscope-sign-link:hover { background: var(--accent-bg); color: var(--accent); }
 .horoscope-page:has(.horoscope-planet-view) { width: min(var(--container-content), 100%); }

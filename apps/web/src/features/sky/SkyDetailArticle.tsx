@@ -27,7 +27,7 @@ import {
   isReaderFacingCopy
 } from "../../content/readerSafety";
 import type { GeneratedContentDrilldown } from "../../services/generatedContent";
-import { zodiacSignGlyphs, zodiacSigns } from "../../services/chartMath";
+import { zodiacSigns } from "../../services/chartMath";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import {
   articleAspectGlyphPartsFromHeading,
@@ -185,13 +185,6 @@ type ArticleEyebrowGlyph = {
   house?: boolean;
 };
 
-function articleTitleSignGlyph(title: string, meta = "") {
-  const source = `${title} ${meta}`;
-  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(source));
-
-  return sign ? zodiacSignGlyphs[sign] ?? "" : "";
-}
-
 function textArticleGlyph(text: string, label = text): ArticleEyebrowGlyph | null {
   return text ? { key: `text-${label}-${text}`, label, text } : null;
 }
@@ -233,13 +226,18 @@ function articleTitleHouseToken(title: string, meta = "") {
 function articleHouseToken(house: string | number) {
   const parsedHouse = typeof house === "number" ? house : Number.parseInt(house, 10);
 
-  return Number.isFinite(parsedHouse) && parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
+  return parsedHouse >= 1 && parsedHouse <= 12 ? `${parsedHouse}H` : "";
+}
+
+function articleTitleSign(title: string) {
+  return zodiacSigns.find((sign) => new RegExp(`\\b${sign}\\b`, "i").test(title));
 }
 
 function articlePlacementGlyphs(title: string, meta = "") {
   const source = `${title} ${meta}`;
+  // Phase names use the supplied lunar icon through the fallback below.
   const match = source.match(
-    /^(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
+    /^(?!(?:Full|New)\s+Moon\s+in\b)(\w[\w\s]*?)(\s+Rx)?\s+in\s+(\w+)(?:\s+in\s+the\s+(\d+)(?:st|nd|rd|th)\s+house)?/i
   );
 
   if (!match) {
@@ -262,7 +260,7 @@ function articleEyebrowLabel(title: string, kicker?: string) {
 
   if (/\b(?:rx|retrograde)\b/i.test(title)) return "Retrograde";
 
-  if (articleTitleSignGlyph(title)) {
+  if (articleTitleSign(title)) {
     return "Placement";
   }
 
@@ -297,11 +295,11 @@ function articleEyebrowGlyphs({
     ]);
   }
 
-  const sign = zodiacSigns.find((candidate) => new RegExp(`\\b${candidate}\\b`, "i").test(`${title} ${meta}`));
+  const sign = articleTitleSign(`${title} ${meta}`);
   const house = articleTitleHouseToken(title, meta);
 
   return uniqueArticleGlyphs([
-    ...(glyph ? glyph.split(/\s+/).filter(Boolean).map((part) => textArticleGlyph(part)) : []),
+    ...(glyph ? glyph.split(/\s+/).map((part) => textArticleGlyph(part)) : []),
     sign ? signArticleGlyph(sign) : null,
     house
       ? { key: `house-${house}`, label: house, text: house, house: true }
@@ -404,6 +402,8 @@ export function SkyDetailArticle({
   placementNavigation?: { previous?: { title: string; href: string }; next?: { title: string; href: string } };
 }) {
   const placementPage = /^sky\/placement\//u.test(detail.routePath ?? "");
+  // Friends handle routes carry calculated transit context without compactHeader.
+  const personalArticle = Boolean(detail.compactHeader || detail.transitDescription);
   const articleRef = useRef<HTMLElement>(null);
   const [csvExportRoute] = useState(() => new URL(window.location.href).searchParams.get("studioExport") === "sky-article-csv" ? detail.routePath : null);
   const editSource = detail.readerExport && skyPassageEditSource(detail.readerExport.keys);
@@ -594,7 +594,7 @@ export function SkyDetailArticle({
 
   return (
     <section
-      className={`article-page sky-detail-page${placementPage ? " sky-placement-article-page" : ""}${detail.compactHeader ? " you-transit-article-page" : ""}`}
+      className={`article-page sky-detail-page${placementPage ? " sky-placement-article-page" : ""}${personalArticle ? " you-transit-article-page" : ""}`}
       aria-label={`${detail.title} field guide`}
       aria-labelledby="sky-detail-title"
     >
@@ -602,7 +602,7 @@ export function SkyDetailArticle({
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Back</span>
       </button>
-      <article ref={articleRef} aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${detail.compactHeader ? " you-transit-article" : ""}`}>
+      <article ref={articleRef} aria-busy={Boolean(detail.placementFactsPending)} className={`article-shell sky-detail-article${personalArticle ? " you-transit-article" : ""}`}>
         <div className={`article-card sky-detail-card${isAspectsOnlyArticle ? " sky-detail-card--aspects-only" : ""}`}>
           {detail.readerExport && csvExportRoute === detail.routePath && <Suspense fallback={null}>
             <SkyReaderExportStatus key={detail.routePath} articleRef={articleRef} detail={detail} residencyAspectsPending={residencyAspectsPending} residencyAspectsFailed={residencyAspectsFailed} />
@@ -643,7 +643,7 @@ export function SkyDetailArticle({
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
           </header>
 
-          {hasReadableBody && !placementPage ? <hr className="article-rule" /> : null}
+          {hasReadableBody && !placementPage && !personalArticle ? <hr className="article-rule" /> : null}
 
           {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">

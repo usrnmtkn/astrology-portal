@@ -4,8 +4,8 @@
   flex-direction: column;
   gap: calc(var(--space-1) + var(--space-1) / 2);
   color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--text-section-label-size);
+  font-family: var(--font-ui);
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
@@ -16,8 +16,8 @@
 .add-chart-city-search label > span {
   margin: 0;
   color: var(--muted);
-  font-family: var(--font-body);
-  font-size: var(--text-section-label-size);
+  font-family: var(--font-ui);
+  font-size: var(--type-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-label);
   line-height: var(--leading-label);
@@ -36,14 +36,14 @@
 .add-chart-city-search .city-search-control,
 .add-chart-city-search .city-search-control input {
   width: 100%;
-  min-height: 46px;
+  min-height: var(--glyph-tile-compact-size);
   box-sizing: border-box;
   border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--control-radius);
   background: var(--control-bg);
   color: var(--ink);
-  font-family: var(--font-body);
-  font-size: var(--text-button-size);
+  font-family: var(--font-ui);
+  font-size: var(--type-table-value-size);
   font-variant-numeric: tabular-nums;
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-number);
@@ -61,23 +61,6 @@
 .add-chart-field input[type="date"]::-webkit-calendar-picker-indicator,
 .add-chart-field input[type="time"]::-webkit-calendar-picker-indicator {
   opacity: 0.72;
-}
-
-:is(.theme-dark, [data-theme="dark"]) .add-chart-modal {
-  border-color: var(--friend-add-chart-modal-dark-border);
-  background: var(--friend-add-chart-modal-dark-bg);
-  color-scheme: dark;
-}
-
-:is(.theme-dark, [data-theme="dark"]) .add-chart-modal :where(svg, .lucide) {
-  color: var(--ink);
-  stroke: currentColor;
-}
-
-:is(.theme-dark, [data-theme="dark"]) .add-chart-modal__close {
-  border-color: var(--friend-add-chart-close-dark-border);
-  background: var(--friend-add-chart-close-dark-bg);
-  color: var(--ink);
 }
 
 :is(.theme-dark, [data-theme="dark"]) .add-chart-field input[type="date"],
@@ -116,7 +99,7 @@
   color: var(--text);
   cursor: pointer;
   display: inline-flex;
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   gap: var(--space-2);
@@ -175,7 +158,7 @@
 }
 
 .add-chart-field select {
-  min-height: 46px;
+  min-height: var(--glyph-tile-compact-size);
   padding-right: calc(var(--space-8) + var(--space-1) / 2);
 }
 
@@ -209,7 +192,7 @@
   gap: var(--space-2);
   width: 100%;
   color: var(--card-meta-color);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--text-meta-size);
   font-weight: var(--weight-medium);
   letter-spacing: var(--tracking-number);
@@ -266,8 +249,8 @@
   border-radius: var(--card-radius);
   background: var(--pill-bg);
   color: var(--pill-fg);
-  font-family: var(--font-body);
-  font-size: var(--text-button-size);
+  font-family: var(--font-ui);
+  font-size: var(--type-ui-copy-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-number);
   line-height: var(--leading-meta);
@@ -278,3 +261,8 @@
 .add-chart-submit:hover {
   opacity: 0.92;
 }
+
+.add-chart-field input[type="date"],
+.add-chart-field input[type="time"] { display: block; min-width: 100%; text-align: left; }
+.add-chart-field input::-webkit-date-and-time-value { text-align: left; }
+.friend-chart-dialog .add-chart-modal__subtitle { margin: 0; }

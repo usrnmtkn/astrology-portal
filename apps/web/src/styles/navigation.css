@@ -260,7 +260,12 @@ html[data-scrolled] .menu-toggle {
 }
 
 .theme-toggle svg {
-  stroke-width: 2;
+  width: var(--size-3);
+  height: var(--size-3);
+}
+
+.theme-toggle {
+  padding: 0;
 }
 
 :is(.theme-dark, [data-theme="dark"]) .nav-pill {

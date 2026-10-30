@@ -1,3 +1,4 @@
+import {installSyntheticNetworkGuard} from "../helpers/synthetic-network-guard";
 import { test, expect, type Page, type Request, type Locator } from '@playwright/test';
 import { readerResponse } from '../helpers/reader-response';
 import { fork } from 'node:child_process';
@@ -240,13 +241,17 @@ test('transit titles identify the sky sign and natal chart owner in both section
     const label = getComputedStyle(element.querySelector('h3')!);
     return { titleFont: title.fontFamily, titleSize: title.fontSize,
       articleFont: getComputedStyle(document.querySelector('.sky-detail-page h1')!).fontFamily,
-      labelFont: label.fontFamily, labelWeight: label.fontWeight, labelSize: label.fontSize };
+      labelFont: label.fontFamily, labelWeight: label.fontWeight, labelSize: label.fontSize,
+      labelLine: label.lineHeight, labelTracking: label.letterSpacing, labelMargin: label.marginBottom };
   });
   expect(headingStyles.titleFont).toBe(headingStyles.articleFont);
-  expect(headingStyles.titleSize).toBe('36px');
+  expect(headingStyles.titleSize).toBe((page.viewportSize()?.width ?? 1440) <= 800 ? '30px' : '36px');
   expect(headingStyles.labelFont).toBe(factStyles.font);
   expect(headingStyles.labelWeight).toBe('600');
   expect(headingStyles.labelSize).toBe('22px');
+  expect(headingStyles.labelLine).toBe('27.5px');
+  expect(headingStyles.labelTracking).toBe('normal');
+  expect(headingStyles.labelMargin).toBe('16px');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/connection-facts-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
   await facts.getByRole('button', { name: 'Close connection details' }).click();
@@ -295,9 +300,16 @@ test('relationship context separates direct transits from connections through on
     'Other connections through your natal Mars:'
   ]);
   const close = facts.getByRole('button', {name: 'Close connection details'});
-  await expect(close).toBeFocused();
+  const reading = facts.getByRole('region', {name: 'Reading text', exact: true});
+  await expect(facts.getByRole('heading', {level: 2})).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(close).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(reading).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(close).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(reading).toBeFocused();
   await page.keyboard.press('Shift+Tab');
   await expect(close).toBeFocused();
   await page.keyboard.press('Escape');
@@ -407,7 +419,8 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
   const opening=await button.locator('.updates-aspect-row__description').first().innerText();
   await button.click();
   await expect(page.getByRole('heading',{level:1})).toBeVisible();
-  await expect(page.locator('.sky-detail-intro-section, .sky-detail-section').first()).not.toContainText(opening);
+  await expect(page.locator('.sky-detail-intro-section p').first()).toHaveText(opening);
+  await expect(page.getByRole('heading', {name:'Personal transit',exact:true})).toBeVisible();
   await expect(page.locator('main')).not.toContainText('{{untilDate}}');
   const disclosure = await openConnectionFacts(page);
   await expectConnectionFact(disclosure, "Your natal Mars conjunct Nikki's natal Saturn", '1° 51′');
@@ -471,7 +484,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await page.getByRole('dialog').getByRole('button',{name:'Close',exact:true}).click();
     await expect(edit).toBeFocused();
     const tabs=page.getByRole('tablist',{name:'Chart profile sections',exact:true});
-    await expect(tabs.getByRole('tab')).toHaveText(testInfo.project.name.startsWith('390')?['Compatibility','Transits','Natal']:['Compatibility','Transits','Natal','Synastry','Composite']);
+    await expect(tabs.getByRole('tab')).toHaveText((page.viewportSize()?.width ?? 1440)<=800?['Compatibility','Transits','Natal']:['Compatibility','Transits','Natal','Synastry','Composite']);
     await tabs.getByRole('tab',{name:'Transits',exact:true}).focus();
     await page.goto(detailUrl);
     await expect(page.getByRole('heading',{level:1})).toBeVisible();
@@ -479,7 +492,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(page.getByRole('tooltip')).toHaveCount(0);
     await page.getByRole('button',{name:'Close detail',exact:true}).click();
     await expect(tabs).toBeVisible();
-    if(testInfo.project.name.startsWith('390')){
+    if((page.viewportSize()?.width ?? 1440)<=800){
       await tabs.getByRole('button',{name:'More, 2 sections',exact:true}).click();
       const menu=page.getByRole('menu',{name:'More chart profile sections',exact:true});
       await expect(menu.getByRole('menuitemradio')).toHaveText([/Synastry/,/Composite/]);
@@ -552,7 +565,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(page.getByText('You talk to Nikki. This is the final activation sentence.',{exact:true})).toHaveCount(0);
     await settled();
     expect(sourceRequests).toBe(beforeReplacement+1);
-    await expect(aBody).toHaveText(completeABody);
+    await expect(aBody).toHaveText(completeABody,{useInnerText:true});
     phase='bridge-retirement';
     const beforeBridgeRetirement=sourceRequests;
     await install(connectionBridgeTemplates.map(template=>({...unrelated,content_key:template.contentKey,state:'retired',revision:707})));
@@ -565,7 +578,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await expect(page.getByText('About these connections',{exact:true})).toHaveCount(0);
     await expect(page.getByText(/connecting this transit to the pattern below/)).toHaveCount(0);
     await expect(page.getByRole('heading',{level:1})).toBeVisible();
-    await expect(aBody).toHaveText(completeABody);
+    await expect(aBody).toHaveText(completeABody,{useInnerText:true});
   }
   await settled();
   phase='held-read-unmount';
@@ -585,7 +598,7 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
     await page.goto(detailUrl);
     const notice=page.getByRole('status').filter({hasText:'The full placement reading could not load. Approved available copy remains below.'});
     await expect(notice).toBeVisible({timeout:30000});
-    await expect(aBody).toHaveText(completeABody);
+    await expect(aBody).toHaveText(completeABody,{useInnerText:true});
     const beforeRetry=placementSourceAttempts;
     await notice.getByRole('button',{name:'Retry',exact:true}).click();
     await expect.poll(()=>placementSourceAttempts,{timeout:30000}).toBeGreaterThan(beforeRetry);
@@ -624,6 +637,9 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
 });
 
 test('Studio saves and reopens separate activation and editable bridge drafts through the real handler', async({page},testInfo)=>{
+  // Studio also observes the public publication ledger. Keep that ancillary
+  // transport inside the same synthetic boundary as its actual-handler fixture.
+  await isolatedRest(page);
   const child=fork(path.resolve('tests/helpers/calendar-review-api.mjs'),['--ipc'],{env:{...process.env,CALENDAR_REVIEW_FIXTURE:path.resolve('tests/fixtures/connection-transit-empty-inventory.json')},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   const pending=new Map<number,{resolve:(v:any)=>void,reject:(e:Error)=>void}>();let sequence=0,stderr='';
   child.stderr?.on('data',data=>{stderr+=data;});
@@ -972,7 +988,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
   await expect(page.getByText('Synthetic recovery opening. Synthetic recovery final sentence.', { exact: true })).toHaveCount(0);
   await openChart('Nikki');
   await page.getByRole('region', { name: 'Between you two', exact: true }).getByRole('button', { name: 'Open full entry for Saturn in Aries trine your natal Mars', exact: true }).click();
-  if (targetChange === 'route') await expect(aBody).toHaveText(completeA);
+  if (targetChange === 'route') await expect(aBody).toHaveText(completeA,{useInnerText:true});
   else await expect(aBody).toBeVisible();
   if (heldStage === 'edition-fetch' && targetChange === 'route') {
     phase = 'returning-sky';
@@ -995,4 +1011,12 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
     await expect(page.getByText('Synthetic recovery opening. Synthetic recovery final sentence.', { exact: true })).toBeVisible();
     await assertRetained();
   }
+});
+
+const guards = new WeakMap<import('@playwright/test').Page, Awaited<ReturnType<typeof installSyntheticNetworkGuard>>>();
+test.beforeEach(async ({page,baseURL}) => { guards.set(page, await installSyntheticNetworkGuard(page.context(), new URL(baseURL!).origin)); });
+test.afterEach(async ({page}, info) => {
+ const guard = guards.get(page);
+ await info.attach('synthetic-network-boundary', {body:JSON.stringify(guard),contentType:'application/json'});
+ expect(guard?.unhandledExternal).toEqual([]);
 });

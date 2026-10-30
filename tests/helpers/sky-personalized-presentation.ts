@@ -46,7 +46,7 @@ export async function expectPersonalizedPlacementPresentation(page: Page, width:
     await expect(glyph).toHaveCSS("width", compact ? "44px" : "52px");
     await expect(glyph).toHaveCSS("height", compact ? "44px" : "52px");
     await expect(glyph).toHaveCSS("font-size", compact ? "19px" : "23px");
-    expect(await glyph.textContent()).toMatch(/^[☌☍□△✶⚻ ]+$/u);
+    expect(await glyph.textContent()).toMatch(/^[☌☍□△⚹⚻ ]+$/u);
     const bounds = (await title.boundingBox())!;
     expect(bounds.x + bounds.width).toBeLessThanOrEqual(cardBounds.x + cardBounds.width);
   }

@@ -884,7 +884,7 @@
   margin: 0;
   overflow-wrap: anywhere;
   color: var(--muted);
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
@@ -893,6 +893,7 @@
 }
 
 .chart-fullscreen-close {
+  padding: 0;
   display: grid;
   flex-shrink: 0;
   place-items: center;
@@ -1215,3 +1216,5 @@
 
 .sky-wheel--handoff .wheel-surface--inner-planets { fill: var(--surface-2); stroke: var(--chart-ring-line); }
 .sky-wheel--handoff .synastry-outer-house-labels text { font-family: var(--font-ui); font-size: var(--chart-house-label-size); font-weight: var(--weight-semibold); fill: var(--ink-2); }
+
+.chart-fullscreen-close > svg { width: var(--size-2); height: var(--size-2); flex: none; }

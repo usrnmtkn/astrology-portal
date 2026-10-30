@@ -20,7 +20,6 @@ import { useConnectionTransitSources, publishedConnectionCopy, connectionBridgeC
 import { connectionTransitReading } from "./connectionTransitReading";
 import { PageLoading, PageLoadError } from "../../components/PageLoading";
 import { FriendDetail } from "./FriendDetail";
-import { X } from "lucide-react";
 import {
   Suspense,
   lazy,
@@ -42,7 +41,7 @@ import type {
   YouTransitArticle,
   friendsViewModelDependencies
 } from "../../App";
-import { ModalPortal } from "../../components/ModalPortal";
+import { FriendChartDeleteDialog } from "./FriendChartDeleteDialog";
 import { profileInitials } from "../../components/ProfileAvatar";
 import { CitySearchField } from "../../components/CitySearchField";
 import {
@@ -173,7 +172,6 @@ import { useManualChartsController } from "./useManualChartsController";
 import { useRelationshipCompare } from "./useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatternLabels";
 import type { SkyDetail } from "../sky/SkyDetailArticle";
-import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 import { selectEligibleFriendTransits } from "./friendTransitEligibility";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
@@ -855,7 +853,7 @@ export function ManualChartsPanel({
           contentTrace
         },
         exactAspectLabel: hasExactAspect && exactAspect
-          ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${wholeDegreeOrb(exactAspect.orbValue)}`
+          ? `${comparisonPossessive} ${planet} ${exactAspect.type} their ${planet} · orb ${precisePersonalOrb(exactAspect.orbValue)}`
           : undefined,
         contentTrace
       }];
@@ -885,7 +883,7 @@ export function ManualChartsPanel({
         aspect: contact.aspect,
         title: rendered?.headline ?? `${contact.yourPoint.name} ${contact.aspect} ${contact.friendPoint.name}`,
         summary: rendered?.body ?? contact.summary,
-        meta: rendered?.tag ?? wholeDegreeOrb(contact.orb)
+        meta: rendered?.tag ?? precisePersonalOrb(contact.orb)
       };
     });
   }
@@ -1421,7 +1419,6 @@ export function ManualChartsPanel({
     }
 
     return currentSkyHouseActivations(currentSky, selectedFriendReadyNatalChart)
-      .slice(0, 4)
       .map((activation) => {
         const transit = {
           id: activation.id,
@@ -2028,7 +2025,7 @@ export function ManualChartsPanel({
       glyph: aspectGlyph(aspect.type),
       kicker: "Composite",
       title: `${aspect.from} ${aspect.type} ${aspect.to}`,
-      meta: wholeDegreeOrb(aspect.orb),
+      meta: precisePersonalOrb(aspect.orb),
       plainBody: true,
       suppressTldr: true,
       body: aspect.summary.split(/\n{2,}/)
@@ -2338,8 +2335,11 @@ export function ManualChartsPanel({
       transitDescription: description,
       meta: [card.transitSign, card.timingRange].filter(Boolean).join(" · "),
       bodyBeforeSections: true,
-      body: transitSections.map(section => section.body),
-      sections: [connectionFacts, ...activatedConnectionSections]
+      body: [card.effectBody, card.activationBody].filter(Boolean),
+      sections: [
+        { heading: "Personal transit", body: transitSections.map(section => section.body).join("\n\n") },
+        connectionFacts, ...activatedConnectionSections
+      ]
     });
   };
   const openBondTransitById = (cardId: string) => {
@@ -2381,7 +2381,7 @@ export function ManualChartsPanel({
       glyph: `${pointGlyph(contact.friendPoint.name)} ${aspectGlyph(contact.aspect)} ${pointGlyph(contact.yourPoint.name)}`,
       kicker: "Synastry",
       title,
-      meta: `${subtitle.toUpperCase()} · ${wholeDegreeOrb(contact.orb)}`,
+      meta: `${subtitle.toUpperCase()} · ${precisePersonalOrb(contact.orb)}`,
       pills: { labels: [{ label: subtitle, tone: "muted" }] },
       body: rendered?.body ? [rendered.body] : [],
       content: emptyContentFallback(rendered?.templateKey ?? contact.contentKeys[0] ?? contact.id).bundle
@@ -2909,51 +2909,17 @@ export function ManualChartsPanel({
         />
       )}
       {deleteCandidateChart && (
-        <ModalPortal
-          className="friend-chart-delete-modal-root"
-          panelClassName="chart-modal friend-chart-delete-modal add-chart-modal"
-          titleId="friend-chart-delete-title"
-          width="440px"
+        <FriendChartDeleteDialog
+          name={deleteCandidateChart.displayName}
+          restoreFocusId={`friend-menu-${deleteCandidateChart.id}`}
+          pending={status === "deleting"}
           onClose={() => {
             if (status !== "deleting") {
               setDeleteCandidateChart(null);
             }
           }}
-        >
-          <section className="manual-chart-form friend-chart-delete-form add-chart-form">
-            <button
-              className="chart-modal-close modal-close add-chart-modal__close"
-              type="button"
-              aria-label="Close"
-              disabled={status === "deleting"}
-              onClick={() => setDeleteCandidateChart(null)}
-            >
-              <X size={20} aria-hidden="true" />
-            </button>
-            <div className="manual-chart-form-heading friend-chart-modal-heading add-chart-modal__heading">
-              <h2 id="friend-chart-delete-title">Delete {deleteCandidateChart.displayName}?</h2>
-              <p className="add-chart-modal__subtitle">This removes the saved chart and cannot be undone.</p>
-            </div>
-            <div className="modal-actions friend-chart-delete-actions">
-              <button
-                className="secondary-button"
-                type="button"
-                disabled={status === "deleting"}
-                onClick={() => setDeleteCandidateChart(null)}
-              >
-                Cancel
-              </button>
-              <button
-                className="manual-chart-save manual-chart-delete-confirm"
-                type="button"
-                disabled={status === "deleting"}
-                onClick={() => void removeChart(deleteCandidateChart)}
-              >
-                {status === "deleting" ? "Deleting..." : "Delete chart"}
-              </button>
-            </div>
-          </section>
-        </ModalPortal>
+          onDelete={() => void removeChart(deleteCandidateChart)}
+        />
       )}
       {selectedChart && relationshipChartFullscreenMode && !selectedChartIsEvent && (
         <FriendProfileChartFullscreen

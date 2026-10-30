@@ -1,3 +1,4 @@
+import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
@@ -42,7 +43,7 @@ import { skyBodyLabel } from "./content/skyMotionLabels";
 import { skyPlacementMotionCopy, skyPlacementMotionParts } from "./content/skyPlacementMotion";
 import { initialSkyReaderKey, initialSkyReaderAvailable, initialSkyReaderPreview, pendingInitialSkyReaderRequest } from "./services/initialSkyReader";
 import { calendarDayDistance } from "./services/calendarDayDistance";
-import { liveSkyReference, remainingSkyMinutes, skyCivilDate } from "./services/skyClock";
+import { liveSkyReference, skyCivilDate } from "./services/skyClock";
 import { skySummaryParagraphs } from "./content/skyDailySummary";
 import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calendarSeasonTransitionFacts";
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
@@ -3484,21 +3485,7 @@ function formatSkyAspectDateRange(start: Date, end: Date, referenceDate = new Da
   return skyAspectDateRange({ timing: { timeZone } }, start, end);
 }
 
-function dateFromDurationInput(value: string | Date, timeZone = "UTC") {
-  // A date-only value already identifies the selected civil day; it is not a
-  // UTC instant to shift into the preceding date in western time zones.
-  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return new Date(`${value}T00:00:00Z`);
-  const instant = new Date(value);
-  if (Number.isNaN(instant.getTime())) return null;
-  const parts = eventCalendarParts(instant, timeZone);
-  return new Date(Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day)));
-}
 
-function dateOnly(value: string | Date) {
-  const date = typeof value === "string" ? new Date(`${value.slice(0, 10)}T00:00:00Z`) : value;
-
-  return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-}
 
 function calendarMonthDiff(start: Date, end: Date) {
   let months = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
@@ -3510,49 +3497,9 @@ function calendarMonthDiff(start: Date, end: Date) {
   return Math.max(0, months);
 }
 
-function differenceInCalendarDays(start: Date, end: Date) {
-  return Math.max(0, Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000));
-}
 
-function daysInUtcMonth(year: number, month: number) {
-  return new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
-}
 
-function addCalendarMonths(start: Date, months: number) {
-  const year = start.getUTCFullYear() + Math.floor((start.getUTCMonth() + months) / 12);
-  const month = (start.getUTCMonth() + months) % 12;
-  const normalizedMonth = month < 0 ? month + 12 : month;
-  const normalizedYear = month < 0 ? year - 1 : year;
-  const day = Math.min(start.getUTCDate(), daysInUtcMonth(normalizedYear, normalizedMonth));
 
-  return new Date(Date.UTC(normalizedYear, normalizedMonth, day));
-}
-
-function differenceInCalendarParts(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
-  const start = dateFromDurationInput(startInput, timeZone);
-  const end = dateFromDurationInput(endInput, timeZone);
-
-  if (!start || !end || end.getTime() < start.getTime()) {
-    return null;
-  }
-
-  let totalMonths = (end.getUTCFullYear() - start.getUTCFullYear()) * 12 + (end.getUTCMonth() - start.getUTCMonth());
-  let monthAnchor = addCalendarMonths(start, totalMonths);
-
-  if (monthAnchor.getTime() > end.getTime()) {
-    totalMonths = Math.max(0, totalMonths - 1);
-    monthAnchor = addCalendarMonths(start, totalMonths);
-  }
-
-  const days = differenceInCalendarDays(monthAnchor, end);
-
-  return {
-    totalDays: differenceInCalendarDays(start, end),
-    years: Math.floor(totalMonths / 12),
-    months: totalMonths % 12,
-    days
-  };
-}
 
 function getDurationParts(startInput: string | Date, endInput: string | Date) {
   const start = dateFromDurationInput(startInput);
@@ -3562,7 +3509,7 @@ function getDurationParts(startInput: string | Date, endInput: string | Date) {
     return null;
   }
 
-  const days = Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000);
+  const days = differenceInCalendarDays(start, end);
   const months = days >= 30 ? Math.max(1, calendarMonthDiff(start, end)) : 0;
   const normalizedMonths = days >= 365 ? Math.max(12, months) : months;
   const years = Math.floor(normalizedMonths / 12);
@@ -3600,14 +3547,11 @@ function formatDurationCompact(startInput: string | Date, endInput: string | Dat
 }
 
 function formatApproximateDurationCompact(startInput: string | Date, endInput: string | Date) {
-  const start = dateFromDurationInput(startInput);
-  const end = dateFromDurationInput(endInput);
-
-  if (!start || !end || end.getTime() < start.getTime()) {
+  const duration = getDurationParts(startInput, endInput);
+  if (!duration) {
     return null;
   }
-
-  const days = Math.floor((dateOnly(end) - dateOnly(start)) / 86_400_000);
+  const { days } = duration;
 
   if (days < 1) {
     return "TODAY";
@@ -3631,65 +3575,6 @@ function formatApproximateDurationCompact(startInput: string | Date, endInput: s
   return remainingMonths > 0
     ? `${years}Y ${remainingMonths}M`
     : `${years}Y`;
-}
-
-function exactDateFromInput(value: string | Date, timeZone = "UTC") {
-  const date = typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
-    ? zonedDateTimeToUtc(value, "12:00 PM", timeZone)
-    : new Date(value);
-
-  return Number.isNaN(date.getTime()) ? null : date;
-}
-
-function formatRemainingClockCompact(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
-  const start = exactDateFromInput(startInput, timeZone);
-  const end = exactDateFromInput(endInput, timeZone);
-
-  if (!start || !end) {
-    return null;
-  }
-
-  const remainingMs = end.getTime() - start.getTime();
-
-  if (remainingMs < 0) {
-    return null;
-  }
-
-  if (remainingMs >= 86_400_000) {
-    return formatCountdown(startInput, endInput, timeZone);
-  }
-
-  const remainingMinutes = remainingSkyMinutes(start, end);
-  const hours = Math.floor(remainingMinutes / 60);
-  const minutes = remainingMinutes % 60;
-
-  return `${hours}H ${minutes}MIN left`;
-}
-
-function formatCountdown(startInput: string | Date, endInput: string | Date, timeZone = "UTC") {
-  const parts = differenceInCalendarParts(startInput, endInput, timeZone);
-
-  if (!parts) {
-    return null;
-  }
-
-  if (parts.totalDays < 1) {
-    return "TODAY";
-  }
-
-  if (parts.totalDays < 60) {
-    return parts.years === 0 && parts.months === 1 && parts.days === 0
-      ? "1M left"
-      : `${parts.totalDays}D left`;
-  }
-
-  const segments = [
-    parts.years > 0 ? `${parts.years}Y` : null,
-    parts.months > 0 ? `${parts.months}M` : null,
-    parts.days > 0 ? `${parts.days}D` : null
-  ].filter(Boolean);
-
-  return `${segments.length > 0 ? segments.join(" ") : `${parts.totalDays}D`} left`;
 }
 
 function formatDurationLong(startInput: string | Date, endInput: string | Date, label?: string) {
@@ -4013,7 +3898,7 @@ const sampleTransits: TransitItem[] = [
   {
     id: "mars-sextile-mercury",
     term: "short",
-    glyph: "✶",
+    glyph: aspectGlyph("sextile"),
     transitPlanet: "Mars",
     aspect: "sextile",
     natalPoint: "Mercury",
@@ -4065,7 +3950,7 @@ const sampleTransits: TransitItem[] = [
   {
     id: "saturn-sextile-ascendant",
     term: "long",
-    glyph: "✶",
+    glyph: aspectGlyph("sextile"),
     transitPlanet: "Saturn",
     aspect: "sextile",
     natalPoint: "Ascendant",
@@ -10888,7 +10773,7 @@ const MemberSettingsView = lazy(() =>
 
 const CalculationDiagnosticsPanel = lazy(() => import("./features/sky/CalculationDiagnosticsPanel"));
 const HeaderSkyControls = lazy(() => import("./features/sky/HeaderSkyControls"));
-const CreateChartFlow = lazy(() => import("./features/you/CreateChartFlow"));
+const CreateChartDialog = lazy(() => import("./features/you/CreateChartDialog"));
 const AccountView = lazy(() =>
   import("./features/settings/MemberSettingsView").then((module) => ({
     default: module.AccountView
@@ -15342,38 +15227,20 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           )}
 
           {chartModalOpen && (
-            <ModalPortal
-              className="chart-modal-root"
-              panelClassName="chart-modal"
-              titleId="chart-modal-title"
-              width="640px"
+            <Suspense fallback={<PageLoading message="Loading chart setup…" />}><CreateChartDialog
+              form={transitForm}
+              setForm={setTransitForm}
+              profile={userProfile}
+              step={chartModalStep}
+              setStep={setChartModalStep}
+              saving={chartModalSaving}
+              message={chartModalMessage}
+              onSave={drawTransitChart}
               onClose={() => {
                 setChartModalOpen(false);
                 setChartModalMessage("");
               }}
-            >
-                <button
-                  className="chart-modal-close modal-close"
-                  type="button"
-                  aria-label="Close create chart"
-                  onClick={() => {
-                    setChartModalOpen(false);
-                    setChartModalMessage("");
-                  }}
-                >
-                  ×
-                </button>
-                <Suspense fallback={<PageLoading message="Loading chart setup…" />}><CreateChartFlow
-                  form={transitForm}
-                  setForm={setTransitForm}
-                  profile={userProfile}
-                  step={chartModalStep}
-                  setStep={setChartModalStep}
-                  saving={chartModalSaving}
-                  message={chartModalMessage}
-                  onSave={drawTransitChart}
-                /></Suspense>
-            </ModalPortal>
+            /></Suspense>
           )}
 
           {pendingSocialInvitation && (
@@ -16694,12 +16561,9 @@ function PlacementTable({
         {group.positions.map((position) => {
           const activeAspects = aspectsByPlacement.get(position.planet) ?? [];
           const title = placementDetailTitle(position, activeAspects);
-          const dignity = placementDignity(position, "sky");
           const solarPhase = solarPhaseStatusFor(position, positions);
           const statuses = placementStatuses(position);
           const isRetrograde = isDisplayRetrograde(position);
-          const durationLabel = primaryPlacementDurationLabel(position, generatedAt);
-          const retrogradeDurationLabel = null;
           const transitRangeLabel = isRetrograde
             ? retrogradeRangeText(position)
             : placementTransitRangeLabel(position, generatedAt);
@@ -16727,8 +16591,8 @@ function PlacementTable({
                 degree={formatPlanetDegree(position)}
                 description={rowSummary}
                 descriptionLoading={descriptionState === "loading"}
-                dignity={dignity}
-                durationLabel={durationLabel}
+                dignity={placementDignity(position, "sky")}
+                {...placementCardCountdowns(position, generatedAt)}
                 glyph={position.glyph}
                 onClick={openDetail}
                 pointName={position.planet}
@@ -16737,7 +16601,6 @@ function PlacementTable({
                   : undefined}
                 rangeLabel={transitRangeLabel}
                 retrograde={isRetrograde}
-                retrogradeDurationLabel={retrogradeDurationLabel}
                 sign={position.sign}
                 statuses={solarPhase ? [...statuses, solarPhase] : statuses}
                 title={title}

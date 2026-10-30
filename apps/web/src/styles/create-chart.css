@@ -179,3 +179,24 @@
   letter-spacing: var(--tracking-number);
   text-transform: none;
 }
+
+/* Birth-detail controls use the shared UI scale; their explanatory copy stays narrative. */
+.chart-modal .signup-field,
+.chart-modal .create-chart-city-search label,
+.chart-modal .unknown-time {
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: var(--type-meta-size);
+  line-height: var(--leading-meta);
+}
+.chart-modal .signup-field input,
+.chart-modal .create-chart-city-search input,
+.chart-modal .signup-meridiem button {
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: var(--type-table-value-size);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-meta);
+  letter-spacing: var(--tracking-normal);
+}
+.chart-modal .modal-dialog__actions .create-chart-save { justify-self: stretch; width: 100%; }

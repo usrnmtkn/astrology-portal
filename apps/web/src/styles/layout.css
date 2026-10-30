@@ -205,37 +205,6 @@ body.modal-open {
   outline: none;
 }
 
-.chart-modal {
-  position: relative;
-  width: min(var(--container-dialog-wide), 100%);
-  max-height: min(780px, calc(100svh - 80px));
-  overflow: auto;
-  border-radius: var(--radius);
-  background: var(--app-card);
-  color: var(--app-text);
-  box-shadow: var(--modal-shadow);
-  padding: var(--modal-panel-padding);
-}
-
-.chart-modal-heading {
-  display: grid;
-  gap: var(--space-2);
-  margin-bottom: var(--space-6);
-}
-
-.chart-modal-heading h3 {
-  font-size: var(--type-display-size);
-  line-height: var(--leading-display);
-  font-weight: var(--weight-semibold);
-}
-
-.chart-modal-heading p {
-  color: var(--ink-2);
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-}
-
 :is(.theme-dark, [data-theme="dark"]) .modal-overlay {
   background: var(--modal-overlay-dark-bg);
 }
