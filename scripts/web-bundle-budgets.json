@@ -229,6 +229,46 @@
       "aggregateCeiling": 3687150,
       "headroomBytes": 105,
       "reason": "The requested complete-wording Studio panels remain deferred at1345+1531=2876gzip bytes, with the rest of the measured cost in existing deferred editing modules. The initial unchanged aggregate gate failed by2995bytes and is preserved as a failure. The earlier source-family predicate split removed avoidable startup imports; no concrete behavior-preserving2995-byte reduction remains. Allocate only3100aggregate Web JavaScript bytes for the measured editing feature. The10-byte App/reader graph shift is generated output, not a performance improvement. All other numeric startup/CSS/chunk limits, dependencies, source-payload/deferred boundaries and runtime guards remain unchanged. This does not authorize later increases; remeasure after final rebase."
+    },
+    "studioSavedWordingFinalRebase20261030": {
+      "baseRevision": "02599d697abffdc8752d2362acc19f26e34e17b8",
+      "preservedCandidate": "149a9fc3b0533eb1bd63e9f4b5d62ff21810feec",
+      "node": "v22.20.0",
+      "architecture": "arm64",
+      "zlib": "1.3.1-470d3a2",
+      "measurements": {
+        "baseline": {
+          "totalJavaScriptGzip": 3683091,
+          "appBootGzip": 396383,
+          "readerBootGzip": 454735,
+          "startupCssGzip": 58352,
+          "totalCssGzip": 143985,
+          "javaScriptFiles": 269,
+          "appBootFiles": 37,
+          "readerBootFiles": 50
+        },
+        "integration": {
+          "totalJavaScriptGzip": 3687134,
+          "appBootGzip": 396386,
+          "readerBootGzip": 454738,
+          "startupCssGzip": 58352,
+          "totalCssGzip": 143985,
+          "javaScriptFiles": 271,
+          "appBootFiles": 37,
+          "readerBootFiles": 50
+        }
+      },
+      "delta": {
+        "totalJavaScriptGzip": 4043,
+        "appBootGzip": 3,
+        "readerBootGzip": 3,
+        "startupCssGzip": 0,
+        "totalCssGzip": 0,
+        "javaScriptFiles": 2,
+        "appBootFiles": 0,
+        "readerBootFiles": 0
+      },
+      "reason": "Fresh matched independent npm-ci builds after the verified Daily release; Web uses identical synthetic Playwright flags and standalone Admin uses its matched configuration. Feature and Calendar fixture bytes remain identical to149a. Preserve every earlier allocation/rationale and all numeric limits; no new allowance. The final comparison supersedes the prior pre-rebase measurements for this release, without a performance improvement claim."
     }
   },
   "memoryGraphJavaScriptGzipBytes": 64000,

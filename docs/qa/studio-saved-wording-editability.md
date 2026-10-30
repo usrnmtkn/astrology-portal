@@ -106,3 +106,29 @@ leaving 105 measured bytes. Preserve every existing rationale and all other
 startup, CSS, individual-chunk, dependency, source-payload, deferred-boundary and
 runtime guards. Final rebase requires fresh measurement; this records the editing
 feature cost and does not authorize further increases.
+
+## Final verified-main rebase
+
+The final release replays only the editor feature onto verified-live main
+`02599d697abffdc8752d2362acc19f26e34e17b8`. All application and fixture bytes match
+`149a9fc`; the Daily predecessor's three later changes do not overlap the feature.
+The stable 30-case rendered evidence is retained, with exact-head hosted checks
+and deployed-asset regressions required before completion.
+
+Fresh, independently installed native ARM builds use Node v22.20.0 and the
+same isolated configuration per application. Numeric ceilings and earlier
+rationale remain unchanged.
+
+| Gzip bytes unless marked raw | Main | Final feature | Added |
+| --- | ---: | ---: | ---: |
+| Admin startup, raw | 815,051 | 816,995 | 1,944 |
+| Admin startup | 236,484 | 237,053 | 569 |
+| Admin aggregate | 859,503 | 863,350 | 3,847 |
+| Web aggregate | 3,683,091 | 3,687,134 | 4,043 |
+| Web App boot | 396,383 | 396,386 | 3 |
+| Web reader boot | 454,735 | 454,738 | 3 |
+| Web startup CSS | 58,352 | 58,352 | 0 |
+
+Output hash/compression shifts are not a performance improvement. Both saved-wording
+panels remain deferred from Web startup. The existing source-payload, CSS,
+individual-chunk, privacy, runtime and required-check boundaries stay enforced.

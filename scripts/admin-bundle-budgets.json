@@ -273,6 +273,35 @@
         "aggregateGzip": 4000
       },
       "reason": "Matched native builds use separate npm-ci dependencies and identical synthetic settings on the frozen Calendar/Daily source. Preserve all upstream budget allocations and rationale; retain the existing saved-wording allowance only. The complete startup graph is measured with the entry ceiling. Current costs include the primary custom-library recovery states. No dependency, stored reader writing or runtime payload boundary changes. Earlier comparison remains preintegration evidence; this comparison supersedes it for the integrated release."
+    },
+    "studioSavedWordingFinalRebase20261030": {
+      "baseRevision": "02599d697abffdc8752d2362acc19f26e34e17b8",
+      "preservedCandidate": "149a9fc3b0533eb1bd63e9f4b5d62ff21810feec",
+      "node": "v22.20.0",
+      "architecture": "arm64",
+      "zlib": "1.3.1-470d3a2",
+      "measurements": {
+        "baseline": {
+          "startupRaw": 815051,
+          "startupGzip": 236484,
+          "aggregateGzip": 859503,
+          "javaScriptFiles": 83,
+          "initialFiles": 1
+        },
+        "integration": {
+          "startupRaw": 816995,
+          "startupGzip": 237053,
+          "aggregateGzip": 863350,
+          "javaScriptFiles": 85,
+          "initialFiles": 1
+        }
+      },
+      "delta": {
+        "startupRaw": 1944,
+        "startupGzip": 569,
+        "aggregateGzip": 3847
+      },
+      "reason": "Fresh matched independent npm-ci builds after the verified Daily release; Web uses identical synthetic Playwright flags and standalone Admin uses its matched configuration. Feature and Calendar fixture bytes remain identical to149a. Preserve every earlier allocation/rationale and all numeric limits; no new allowance. The final comparison supersedes the prior pre-rebase measurements for this release, without a performance improvement claim."
     }
   },
   "memoryGraphJavaScriptGzipBytes": 64000
