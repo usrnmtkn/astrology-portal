@@ -17,6 +17,20 @@ for(const [start,end,expected] of [
  ['2026-12-30','2027-01-02','3 days left']
 ])assert.equal(placementCardCountdownLabel(start,end,'America/New_York'),expected);
 assert.equal(placementCardCountdownLabel('invalid','2027-01-01'),null);
+// Preserve the explicit formatter and selected-zone cases from the Sky-only candidate.
+for(const [end,expected] of [
+ ['2026-10-13T23:00:00Z','Ends today'],
+ ['2026-10-14T16:00:00Z','1 day left'],
+ ['2026-10-23T16:00:00Z','10 days left'],
+ ['2026-10-27T16:00:00Z','2 weeks left'],
+ ['2026-12-07T16:00:00Z','8 weeks left'],
+ ['2026-12-13T16:00:00Z','2 months left'],
+ ['2027-02-08T16:00:00Z','4 months left'],
+ ['2032-08-03T16:00:00Z','6 years left']
+])assert.equal(placementCardCountdownLabel('2026-10-13T16:00:00Z',end,'America/New_York'),expected);
+assert.equal(placementCardCountdownLabel('2026-12-31T23:00:00Z','2027-01-01T01:00:00Z','America/New_York'),'Ends today');
+assert.equal(placementCardCountdownLabel('2026-12-31T23:00:00Z','2027-01-01T01:00:00Z','UTC'),'1 day left');
+assert.equal(placementCardCountdownLabel('2026-11-01T03:30:00Z','2026-11-02T04:30:00Z','America/New_York'),'1 day left');
 for(const [transitStart,transitEnd] of [
  [undefined,undefined],['invalid','2027-01-01'],['2026-01-01','invalid'],
  ['2027-01-02','2027-01-01'],['2027-01-01','2027-01-01']

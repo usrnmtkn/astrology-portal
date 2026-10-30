@@ -161,7 +161,7 @@
 :is(.sky-page, .horoscope-planet-grid) .planet-placement-row__degree { font-family: var(--font-ui); font-size: var(--type-meta-size); color: var(--muted); }
 .sky-page .planet-placement-row__description,
 .horoscope-planet-grid .planet-placement-row__description { --leading-body: var(--leading-reading); grid-column: 1 / -1; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--card-preview-lines-compact); overflow: hidden; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
-.placement-progress { display: grid; grid-column: 1 / -1; align-self: end; gap: var(--space-2); width: 100%; color: var(--accent); }
+.placement-progress { display: grid; grid-column: 1 / -1; align-self: end; gap: var(--space-2); color: var(--accent); }
 .placement-progress svg { width: 100%; height: var(--chart-progress-height); overflow: visible; }
 .placement-progress path { stroke-width: var(--border-width-medium); }
 .placement-progress__remaining { stroke: var(--line-strong); stroke-dasharray: var(--chart-aspect-sextile-dash); }
@@ -185,7 +185,9 @@
  .sky-page .placement-section .placements-heading { display: none; }
  .sky-page .sky-placement-group .placement-table { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); padding: var(--space-6); border-radius: var(--card-radius); background: var(--surface); }
  .sky-page .sky-placement-group .planet-placement-row--sky { position: relative; grid-template-columns: var(--glyph-tile-compact-size) minmax(0, 1fr) var(--size-4); gap: var(--space-2) var(--space-4); padding: 0; border-radius: 0; background: transparent; box-shadow: none; }
- .sky-page .sky-placement-group .planet-placement-row__timing, .sky-page .sky-placement-group .placement-progress, .sky-page .sky-placement-group .placement-progress__label { display: none; }
+ .sky-page .sky-placement-group .planet-placement-row__timing, .sky-page .sky-placement-group .placement-progress svg { display: none; }
+ .sky-page .sky-placement-group .placement-progress { grid-column: 2; }
+ .sky-page .sky-placement-group .placement-progress > span { text-align: left; }
  .sky-page .sky-placement-group .planet-placement-row__glyph { grid-column: 1; grid-row: 1; width: var(--glyph-tile-compact-size); height: var(--glyph-tile-compact-size); background: var(--surface-2); }
  .sky-page .sky-placement-group .planet-placement-row__topline { grid-column: 2; grid-row: 1; gap: var(--space-1); }
  .sky-page .sky-placement-group .planet-placement-row__title { font-family: var(--font-ui); font-size: var(--type-compact-row-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); letter-spacing: var(--tracking-normal); }

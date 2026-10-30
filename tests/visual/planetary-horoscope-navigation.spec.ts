@@ -156,6 +156,7 @@ test('Planetary and Sky cards share remaining countdowns',async({page},info)=>{
  for(const card of await cards.all()){
   const title=(await card.locator('.planet-placement-row__title').innerText()).trim();
   const captions=await card.locator('.placement-progress > span').allTextContents();
+  for(const caption of await card.locator('.placement-progress > span').all())await expect(caption).toBeVisible();
   expect(captions.length,title).toBeGreaterThan(0);
   expect(captions.at(-1),title).toMatch(/^(?:Ends today|\d+ (?:day|week|month|year)s? left)$/);
   labels.set(title,captions);
@@ -170,6 +171,7 @@ test('Planetary and Sky cards share remaining countdowns',async({page},info)=>{
  await expect(skyCards).toHaveCount(14,{timeout:60_000});
  for(const card of await skyCards.all()){
   const title=(await card.locator('.planet-placement-row__title').innerText()).trim();
+  for(const caption of await card.locator('.placement-progress > span').all())await expect(caption).toBeVisible();
   expect(await card.locator('.placement-progress > span').allTextContents(),title).toEqual(labels.get(title));
  }
  await page.screenshot({path:info.outputPath('sky-countdowns.png'),fullPage:true});

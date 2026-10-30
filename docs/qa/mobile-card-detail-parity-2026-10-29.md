@@ -150,6 +150,27 @@ to `9d0c5250` with the separate Calendar Moon-sign intro restoration. That behav
 must be preserved in the final integration; this matrix does not certify the
 integrated or deployed revision.
 
+Final integration onto main `e75656392` preserves the Calendar, Daily, saved-wording
+and publication-status releases. The only rebase conflict was the shared budget
+rationale record; both sets of evidence are retained. The remaining Sky-only
+countdown work is included here: compact mobile Sky rows show both labels below
+their descriptions, using the same timing adapter as planetary horoscopes.
+The explicit date/unit, selected-zone, live-clock and four Sky card browser
+regressions are retained; existing Friends readiness assertions are already on
+main. The eight-configuration parity journey now checks that every label is
+visible. Focused run 63 passes both 390px light and 1440px dark countdown cases.
+
+Matched independent final-base builds measure aggregate JavaScript at 3,686,964
+and 3,688,189 gzip bytes (+1,225), 539 bytes over the inherited aggregate ceiling.
+The reviewed allocation adds only 750 bytes to that ceiling (3,688,400), leaving
+211 measured bytes. App startup, App chunk, reader startup and all deferred
+chunks remain within their existing allocations. Reader initial CSS is 196 bytes
+smaller and aggregate CSS is 256 bytes smaller; shared Studio CSS is unchanged.
+The published publication-status budget evidence remains byte-identical.
+The initial failing measurement is retained. These are feature costs, not a
+performance improvement. Final browser, API/content, hosted and live acceptance
+results are recorded on the PR for its exact release revision.
+
 Complete API/content release gates, final-main integration and deployed-main
 verification remain required before this candidate may be called live. Existing
 held Calendar, outer transit ring and personal Key dates candidates are separate
