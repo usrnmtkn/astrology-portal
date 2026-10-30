@@ -54,8 +54,17 @@ assert(prepare);
 const transpile = (source: string) => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText;
 const admit = ast.statements.find(node => ts.isFunctionDeclaration(node) && node.name?.text === 'admitInitialSkyArticlePublication');
 assert(admit);
+let preparationInvalidation: string | undefined;
+function findPreparationInvalidation(node: ts.Node) {
+  if (ts.isIfStatement(node) && node.expression.getText(ast).includes('canLoadPlacementArticle && (skyArticlePreparationRef.current?.key !== preparationKey')) {
+    assert.equal(preparationInvalidation, undefined);
+    preparationInvalidation = transpile(`Boolean(${node.expression.getText(ast)})`);
+  }
+  ts.forEachChild(node, findPreparationInvalidation);
+}
+findPreparationInvalidation(ast); assert(preparationInvalidation);
 for (const scenario of ['initial', 'partial-first', 'later-revision', 'generation-gap', 'cached-ledger', 'explicit-refresh-batched'] as const) {
-  const preparation = { initialPublication: scenario !== 'cached-ledger', generation: 0, refreshVersion: 0,
+  const preparation = { key: 'same-placement', initialPublication: scenario !== 'cached-ledger', generation: 0, refreshVersion: 0,
     snapshot: Promise.resolve('same-facts'), request: Promise.resolve('same-writing'), early: {} };
   const originals = { ...preparation };
   const context = vm.createContext({ preparation, contentPublicationGeneration: scenario === 'generation-gap' ? 2 : 1 });
@@ -69,6 +78,17 @@ for (const scenario of ['initial', 'partial-first', 'later-revision', 'generatio
   assert.equal(preparation.snapshot, originals.snapshot);
   assert.equal(preparation.request, originals.request);
   assert.equal(preparation.early, originals.early);
+  const invalidates = (refreshVersion: number, generation = context.contentPublicationGeneration, key = preparation.key) =>
+    vm.runInNewContext(preparationInvalidation!, {
+      canLoadPlacementArticle: true, skyArticlePreparationRef: { current: preparation },
+      preparationKey: key, contentRefreshVersion: refreshVersion, contentPublicationGeneration: generation
+    });
+  assert.equal(invalidates(0), !admitted, `${scenario}: an already-scheduled render must retain the admitted request`);
+  assert.equal(invalidates(1), !admitted, `${scenario}: the publication render must retain the same request`);
+  assert.equal(invalidates(2), true, `${scenario}: an explicit refresh still invalidates preparation`);
+  assert.equal(invalidates(1, context.contentPublicationGeneration + 1), true, `${scenario}: a later publication invalidates preparation`);
+  assert.equal(invalidates(1, context.contentPublicationGeneration, 'different-placement'), true,
+    `${scenario}: route, date or location identity changes invalidate preparation`);
   if (scenario === 'later-revision') {
     context.contentPublicationGeneration = 2;
     vm.runInContext('admitInitialSkyArticlePublication(preparation, "complete-live")', context);

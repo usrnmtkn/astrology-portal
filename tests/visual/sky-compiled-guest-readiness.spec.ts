@@ -106,9 +106,10 @@ for (const { width, hasEdition, account, flow } of cases) {
     });
     const handoffFlow = flow.startsWith('aspect-handoff');
     const heldBroadFlow = flow === 'aspect-control' || flow === 'aspect-error' || handoffFlow;
-    let releaseCalculation!: () => void, releaseBroad!: () => void;
+    let releaseCalculation!: () => void, releaseBroad!: () => void, releaseInitialLedger!: () => void;
     const calculationGate = new Promise<void>(resolve => { releaseCalculation = resolve; });
     const broadGate = new Promise<void>(resolve => { releaseBroad = resolve; });
+    const initialLedgerGate = new Promise<void>(resolve => { releaseInitialLedger = resolve; });
     const broadRequests: Request[] = [];
     if (heldBroadFlow) await page.route('**/wasm/**', async route => {
       await calculationGate;
@@ -142,10 +143,14 @@ for (const { width, hasEdition, account, flow } of cases) {
     const ledgerGate = new Promise<void>(resolve => { releaseLedger = resolve; });
     await page.route('**/rest/v1/**', async route => {
       if (account !== 'guest' && route.request().url().includes('/user_profiles')) return route.fallback();
+      if (heldBroadFlow && route.request().url().includes('content_publications')) await initialLedgerGate;
       if (holdLedger && route.request().url().includes('content_publications')) { ledgerHeld = true; await ledgerGate; }
       return route.fulfill({ json: route.request().url().includes('content_publications') ? publications : [] });
     });
-    await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications } }));
+    await page.route('**/api/content-publications', async route => {
+      if (heldBroadFlow) await initialLedgerGate;
+      await route.fulfill({ json: { schema: 'tldr-publications/v1', publications } });
+    });
     await page.route('**/api/content-reader', async route => {
       const query = route.request().postDataJSON();
       // Identify the actual canonical+house consumer, not its request key count.
@@ -156,7 +161,8 @@ for (const { width, hasEdition, account, flow } of cases) {
       if (isEdition) editionRequests.push(route.request());
       const isAspect = query.keys?.includes(aspectKey) || query.ids?.includes('cccccccc-cccc-4ccc-accc-cccccccccccc');
       const isBroad = heldBroadFlow && query.keys?.length === 45 && isAspect;
-      if (isBroad) { broadRequests.push(route.request()); releaseCalculation(); await broadGate; }
+      // Establish the cold precondition before a fast ledger narrows this read.
+      if (isBroad) { broadRequests.push(route.request()); releaseInitialLedger(); releaseCalculation(); await broadGate; }
       if (isAspect && !isBroad) { aspectRequests++; exactAspectRequests.push(route.request()); if (holdAspect || handoffFlow) { aspectHeld = true; await aspectGate; } if (failAspect) return route.fulfill({ status: 503, json: { error: 'Synthetic current required aspect unavailable.' } }); }
       if (isEdition && holdEdition) { editionHeld = true; await editionGate; }
       if (isEdition && failEdition) return route.fulfill({ status: 503, json: { error: 'Synthetic required edition unavailable.' } });
@@ -585,6 +591,6 @@ for (const { width, hasEdition, account, flow } of cases) {
         }
       }
       expect(errors).toEqual([]);
-    } finally { releaseCalculation(); releaseBroad(); release(); releaseAccount(); releaseLedger(); releaseNewSky(); releaseRegistry(); releaseEdition(); releaseAspect(); await page.context().setOffline(false); await page.unrouteAll({ behavior: 'wait' }); }
+    } finally { releaseInitialLedger(); releaseCalculation(); releaseBroad(); release(); releaseAccount(); releaseLedger(); releaseNewSky(); releaseRegistry(); releaseEdition(); releaseAspect(); await page.context().setOffline(false); await page.unrouteAll({ behavior: 'wait' }); }
   });
 }
