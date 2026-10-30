@@ -23,7 +23,7 @@ try{
  await db.exec('set role service_role');
  await assert.rejects(db.query('delete from generated_interpretations where id=$1',[selected]),(error:any)=>error.code==='23503');
  await db.exec('reset role');assert.deepEqual(await journals(),before);
- await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261028231104_preserve_private_runs_after_horoscope_deletion.sql',import.meta.url),'utf8'));
+ await db.exec(readFileSync(new URL('../apps/web/supabase/migrations/20261030012206_preserve_private_runs_after_horoscope_deletion.sql',import.meta.url),'utf8'));
  assert.deepEqual(await db.query("select relrowsecurity,relacl::text from pg_class where oid='public.studio_editorial_runs'::regclass"),security);
  await db.exec('set role service_role');
  assert.equal((await db.query('delete from generated_interpretations where id=$1 and updated_at=$2 and status<>\'LIVE\' returning id',[selected,'2026-10-27T00:00:00Z'])).rows.length,0);
