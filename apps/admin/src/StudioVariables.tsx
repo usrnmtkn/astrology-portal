@@ -55,16 +55,19 @@ function VariableCard({ variable, color, query, onOpenSource }: { variable: Stud
   </article>;
 }
 
-export default function StudioVariables({ onOpenSource, secret, customVariables, onCustomChange, customError, customLoading, onReloadCustom, createRequest, onCreateHandled }: {
+export default function StudioVariables({ onOpenSource, secret, customVariables, onCustomChange, customError, customLoading, onReloadCustom, createRequest, onCreateHandled, initialVariableName, customLoaded = !customLoading && !customError }: {
   onOpenSource: (key: string, label: string, field: string) => void; secret: string;
   customVariables: CustomVariable[]; onCustomChange: (variables: CustomVariable[]) => void;
   customError: string; customLoading: boolean; onReloadCustom: () => void;
   createRequest: number; onCreateHandled: () => void;
+  initialVariableName?: string;
+  customLoaded?: boolean;
 }) {
   const [catalog, setCatalog] = useState<StudioVariableCatalog | null>(null);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
   const [query, setQuery] = useState('');
+  useEffect(() => { if (initialVariableName) { setQuery(initialVariableName); setKind('custom'); setTag(''); } }, [initialVariableName]);
   const [kind, setKind] = useState('custom');
   const [tag, setTag] = useState('');
   const custom = kind === 'custom' || Boolean(createRequest);
@@ -100,7 +103,10 @@ export default function StudioVariables({ onOpenSource, secret, customVariables,
         <StudioButton disabled={!query && !tag && !surface} onClick={reset}>Clear filters</StudioButton>
       </div>
     </div>
-    {custom ? customLoading ? <PageLoading compact message="Loading your variables…" /> : customError ? <div role="alert"><p>{customError}</p><StudioButton onClick={onReloadCustom}>Retry my variables</StudioButton></div> : <StudioCustomVariables variables={customVariables} secret={secret} query={query} tag={tag} onChange={onCustomChange} createRequest={createRequest} onCreateHandled={onCreateHandled} /> : error ? <div className="admin-empty-state" role="alert"><p>{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry catalog</StudioButton></div>
+    {custom ? <>
+      {customError && <div role="alert"><p>{customError}</p><StudioButton onClick={onReloadCustom}>Retry my variables</StudioButton></div>}
+      {customLoading ? <PageLoading compact message="Loading your variables…" /> : customLoaded && <StudioCustomVariables variables={customVariables} secret={secret} query={query} tag={tag} onChange={onCustomChange} createRequest={createRequest} onCreateHandled={onCreateHandled} initialVariableName={initialVariableName} />}
+    </> : error ? <div className="admin-empty-state" role="alert"><p>{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry catalog</StudioButton></div>
       : !catalog ? <PageLoading compact message="Loading variables…" /> : <>
         {filtered.length ? <AdminPaginatedCollection items={filtered} label="Variables" pageSize={20} resetKey={`${query}|${kind}|${surface}`}>
           {visible => <div className="studio-section studio-variable-list">{visible.map(variable => <VariableCard key={variable.id} variable={variable} color={colors.get(variable.name)} query={query} onOpenSource={onOpenSource} />)}</div>}

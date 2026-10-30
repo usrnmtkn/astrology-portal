@@ -21,6 +21,7 @@ import { skyPlacementArticleVariableSegments } from "../../web/src/content/fallb
 import { SKY_PLACEMENT_VARIABLES, skyPlacementVariableSegments } from "../../web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 
 import { variableLabel, variableMatches } from './variablePresentation';
+import { studioVariableEditorHref } from './studioCustomVariableClient';
 
 const libraryPhraseSlots = SKY_WRITING_LIBRARY_GROUPS.flatMap(group => group.fields.map(field => ({ name: field.id })));
 const variableColors = compositionVariableColors([...SKY_PLACEMENT_VARIABLES, ...libraryPhraseSlots]);
@@ -46,15 +47,25 @@ function scopeLabel(kind: string) {
   return "This planet-in-sign placement";
 }
 
-export function SkyVariableText({ value, facts, source, references = [] }: {
+export function SkyVariableText({ value, facts, source, references = [], onEditPhrase, disabled = false }: {
   value: string; facts: SkyVariableFacts; source?: Record<string, any>; references?: Record<string, any>[];
+  onEditPhrase?: (name: string) => void; disabled?: boolean;
 }) {
   const segments = source ? skyPlacementArticleVariableSegments(value, facts, source, references) : skyPlacementVariableSegments(value, facts);
-  return <>{segments.map((part: { text: string; token?: string; name?: string; kind?: string; reason?: string; available?: boolean }, index: number) => part.token
-    ? <span key={index} className={`admin-composition-variable ${!part.available ? "variable-unmapped" : part.kind && part.kind !== "fact" ? phraseClass(part.kind) : "variable-fact"}`}
-      data-variable-color={variableColors.get(part.name ?? "")}
-      title={`${part.token} · ${part.reason || (part.kind && part.kind !== "fact" ? "Writing Library phrase" : part.available ? "calculated value" : "needs a calculated value")}`}>{part.text}</span>
-    : <span key={index}>{part.text}</span>)}</>;
+  return <>{segments.map((part: { text: string; token?: string; name?: string; kind?: string; reason?: string; available?: boolean }, index: number) => {
+    if (!part.token) return <span key={index}>{part.text}</span>;
+    const className = `admin-composition-variable ${!part.available ? "variable-unmapped" : part.kind && part.kind !== "fact" ? phraseClass(part.kind) : "variable-fact"}`;
+    const title = `${part.token} · ${part.reason || (part.kind && part.kind !== "fact" ? "Writing Library phrase" : part.available ? "calculated value" : "needs a calculated value")}`;
+    const phrase = libraryPhraseSlots.find(slot => slot.name === part.name);
+    if (onEditPhrase && part.kind === 'custom' && part.name) return <a key={index} className={`${className} studio-variable-value`}
+      data-variable-color={variableColors.get(part.name)} href={studioVariableEditorHref(part.name)} target="_blank" rel="noopener noreferrer"
+      aria-label={`Edit saved variable ${part.name} in a separate tab`} aria-disabled={disabled} onClick={event => { if (disabled) event.preventDefault(); }} title={title}>{part.text}</a>;
+    return onEditPhrase && phrase && part.kind !== 'fact' && part.kind !== 'custom'
+      ? <StudioButton key={index} type="button" className={`${className} studio-variable-value`} data-variable-color={variableColors.get(part.name ?? '')}
+        data-article-phrase={part.name} aria-label={`Edit saved wording for ${variableLabel(phrase.name)}`} title={title} disabled={disabled}
+        onClick={() => onEditPhrase(phrase.name)}>{part.text}</StudioButton>
+      : <span key={index} className={className} data-variable-color={variableColors.get(part.name ?? '')} title={title}>{part.text}</span>;
+  })}</>;
 }
 
 export default function SkyPlacementVariableKey({ facts, onInsert, onInsertPhrase, disabled = false, phraseSource, omitKinds = [], usedNames }: {

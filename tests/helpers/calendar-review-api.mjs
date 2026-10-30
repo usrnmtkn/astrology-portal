@@ -61,6 +61,7 @@ export function matchesStoredInventory(row, params) {
     }
     if (value.startsWith("neq.")) return String(actual ?? "") !== value.slice(4);
     if (value.startsWith("gt.")) return actual > value.slice(3);
+    if (value.startsWith("gte.")) return actual >= value.slice(4);
     if (value.startsWith("lt.")) return actual < value.slice(3);
     if (value.startsWith("lte.")) return actual <= value.slice(4);
     if (value === "is.null") return actual == null;

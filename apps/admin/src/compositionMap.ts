@@ -70,6 +70,7 @@ export type CompositionPreview = {
   fields: CompositionPreviewField[];
   lineage: "runtime-traceable" | "not-traceable" | "saved-passage";
   lineageNote: string;
+  pendingSources: CompositionMapSource[];
   sources: CompositionMapSource[];
 };
 
@@ -303,7 +304,7 @@ function representativeSource(
 ) {
   if (["zodiacSeason", "zodiacSeasonPolarAxis"].includes(slot.name)) {
     const sign = (values.get("signTitle") || values.get("signATitle") || "").toLowerCase().trim();
-    return slot.sources.find(source => source.row.content_key.split("/").at(-1) === sign && previewSourceText(source, "you", slot.name).trim()) ?? null;
+    return slot.sources.find(source => source.row.content_key.split("/").at(-1) === sign) ?? null;
   }
   if ((!includeOptionalSources && slot.requirement === "Optional") || !slot.sources.length) return null;
   if (slot.sources.length === 1) return slot.sources[0];
@@ -551,6 +552,7 @@ function buildCompositionPreview(
   });
   Object.entries(options.exampleValues ?? {}).forEach(([name, value]) => values.set(name, value));
   const sources: CompositionMapSource[] = [];
+  const pendingSources: CompositionMapSource[] = [];
   const selectedSavedSlots = new Set<string>();
   const fields = compositionPreviewFields(row).map((field) => {
       const fieldValues = new Map(values);
@@ -559,9 +561,16 @@ function buildCompositionPreview(
       slots.forEach((slot) => {
         const source = representativeSource(slot, slots, values, options.includeOptionalSources);
         if (!source) return;
-        fieldValues.set(slot.name, previewSourceText(source, audience, slot.name));
+        if (source.row.inventory_only) {
+          if (!pendingSources.some(candidate => candidate.row.id === source.row.id)) pendingSources.push(source);
+          return;
+        }
         sourceByName.set(slot.name, source);
-        selectedSavedSlots.add(slot.name);
+        const wording = previewSourceText(source, audience, slot.name);
+        if (wording.trim()) {
+          fieldValues.set(slot.name, wording);
+          selectedSavedSlots.add(slot.name);
+        }
       });
       if (!fieldValues.has("transitTopic")) fieldValues.set("transitTopic", `${values.get("transitTitle") ?? "Transit"}'s focus`);
       if (!fieldValues.has("natalCore")) fieldValues.set("natalCore", `${values.get("natalTitle") ?? "natal"} themes`);
@@ -606,6 +615,7 @@ function buildCompositionPreview(
       : lineage === "runtime-traceable"
       ? "Every required saved-copy slot follows a declared resolver contract and resolves to one editable source for these sample facts."
       : `The runtime source cannot be proven for ${untraceableSlots.map((slot) => `{{${slot.name}}}`).join(", ")}. The preview is incomplete until that lineage is declared.`,
+    pendingSources,
     sources
   };
 }

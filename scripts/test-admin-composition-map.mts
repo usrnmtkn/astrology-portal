@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import { buildCompositionMap, buildCompositionTemplate, isCompositionTemplateRow, type CompositionMapRow } from "../apps/admin/src/compositionMap";
+import { studioVariablePreviewRow } from '../apps/admin/src/studioVariablePreviewRow';
+import { templateVariableReferences } from '../apps/admin/src/templateVariableReference';
+import { templateSavedWordingReferences } from '../apps/admin/src/templateSavedWordingReferences';
 
 const baseRow: CompositionMapRow = {
   id: "base",
@@ -11,6 +14,67 @@ const baseRow: CompositionMapRow = {
   status: "DRAFT",
   sections: []
 };
+
+// A private editor preview may show custom saved words, but it must never turn
+// that display copy into the source document or replace calculated facts.
+const fullCustomCopy = 'Synthetic complete opening.\n\nSynthetic complete final sentence.';
+const customRow: CompositionMapRow = {
+  ...baseRow,
+  body: '{{myOpening}} in {{signTitle}} at {{date}}',
+  sections: { packageRecord: {
+    body: '{{myOpening}} in {{signTitle}} at {{date}}',
+    body_you: '{{myOpening}}',
+    requiredSlots: ['myOpening', 'signTitle'],
+    _studioVariables: [{name:'myOpening', value:'Shared synthetic words.', overrides:[{scope:'sign',sign:'leo',value:fullCustomCopy}]}],
+    sign: 'leo'
+  } }
+};
+const originalCustomRow = structuredClone(customRow);
+const customPreview = studioVariablePreviewRow(customRow);
+assert.equal(customPreview.body, `${fullCustomCopy} in {{signTitle}} at {{date}}`);
+assert.equal((customPreview.sections as any).packageRecord.body_you, fullCustomCopy);
+assert.deepEqual((customPreview.sections as any).packageRecord.requiredSlots, ['signTitle'],
+  'A resolved custom value must not create a false unmapped-slot warning in the private preview.');
+assert.deepEqual(customRow, originalCustomRow, 'The source retains its tokens and complete variable definitions');
+assert.equal(studioVariablePreviewRow(baseRow), baseRow, 'Rows without custom writing need no display clone');
+const sharedCustomRow = {...customRow,sections:{packageRecord:{...(customRow.sections as any).packageRecord,sign:'virgo'}}};
+assert.equal(studioVariablePreviewRow(sharedCustomRow).body, 'Shared synthetic words. in {{signTitle}} at {{date}}');
+const emptyCustomRow = {...customRow,sections:{packageRecord:{...(customRow.sections as any).packageRecord,_studioVariables:[{name:'myOpening',value:'',overrides:[]}]}}};
+assert.deepEqual((studioVariablePreviewRow(emptyCustomRow).sections as any).packageRecord.requiredSlots, ['myOpening', 'signTitle'],
+  'A missing custom value retains its unresolved slot and cannot claim complete lineage.');
+
+const sourceReferences = templateVariableReferences({ Body: '{{zodiacSeason}}' }, {
+  contentKey: 'fallback-template/natal.angle-in-sign', content_role: 'template', requiredSlots: ['angleIntro']
+}, true);
+assert.deepEqual(templateSavedWordingReferences(sourceReferences).map(reference => reference.name).sort(), ['angleIntro', 'zodiacSeason'],
+  'Reader fields and declared resolver dependencies load saved wording; insertion-only suggestions do not.');
+
+const seasonTemplate: CompositionMapRow = {
+  ...baseRow, id: 'season-template', content_key: 'fallback-template/natal.angle-in-sign',
+  headline: 'Synthetic season template', body: '{{zodiacSeason}}', block_type: 'fallback_template',
+  sections: { packageRecord: { content_role: 'template', body: '{{zodiacSeason}}', requiredSlots: ['zodiacSeason'] } }
+};
+const seasonSource: CompositionMapRow = {
+  ...baseRow, id: 'season-source', content_key: 'fallback-hook/zodiac-season/leo',
+  headline: 'Synthetic season source', body: null, sections: null, inventory_only: true
+};
+const seasonOptions = { exampleValues: { signTitle: 'Leo' } };
+const pendingSeason = buildCompositionTemplate(seasonTemplate, [seasonSource], seasonOptions).preview;
+assert.deepEqual(pendingSeason.pendingSources.map(source => source.row.id), [seasonSource.id],
+  'Metadata must select the exact season document for hydration before its body exists.');
+assert.equal(pendingSeason.lineage, 'not-traceable');
+assert.ok(pendingSeason.fields.find(field => field.key === 'body')?.rendered.includes('[Missing zodiacSeason'));
+assert.equal(pendingSeason.sources.length, 0, 'Metadata cannot claim that full saved wording was rendered.');
+const seasonBody = 'Synthetic season opening.\n\nSynthetic season final sentence.';
+const loadedSeason = buildCompositionTemplate(seasonTemplate, [{ ...seasonSource, body: seasonBody, inventory_only: false }], seasonOptions).preview;
+assert.deepEqual(loadedSeason.pendingSources, []);
+assert.equal(loadedSeason.fields.find(field => field.key === 'body')?.rendered, seasonBody);
+assert.equal(loadedSeason.lineage, 'runtime-traceable');
+const emptySeason = buildCompositionTemplate(seasonTemplate, [{ ...seasonSource, body: '', inventory_only: false }], seasonOptions).preview;
+assert.equal(emptySeason.lineage, 'not-traceable');
+assert.deepEqual(emptySeason.sources.map(source => source.row.id), [seasonSource.id], 'A known empty source remains directly editable.');
+const wrongSeason = buildCompositionTemplate(seasonTemplate, [seasonSource], { exampleValues: { signTitle: 'Virgo' } }).preview;
+assert.deepEqual(wrongSeason.pendingSources, [], 'Never hydrate another sign as a substitute.');
 
 assert.equal(isCompositionTemplateRow({
   ...baseRow,

@@ -1,4 +1,5 @@
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
+import { templateSavedWordingReferences } from "./templateSavedWordingReferences";
 import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
 import { parseStudioPassageEdit, skyPassageEditPlacement } from '../../../src/shared/studioPassageEdit';
 import { calendarPassageReviewParams } from './calendarPassageReviewRoute';
@@ -321,6 +322,8 @@ const SkyForecastTemplateStudio = lazy(() => import("./SkyForecastTemplateStudio
 const CalendarPlanetaryWorkspace = lazy(() => import("./CalendarPlanetaryWorkspace"));
 const CalendarOverviewEditor = lazy(() => import("./CalendarOverviewEditor"));
 const TemplateVariablesRail = lazy(() => import("./TemplateVariablesRail"));
+const TemplateSavedWording = lazy(() => import("./TemplateSavedWording"));
+const StudioSavedVariableWording = lazy(() => import("./StudioSavedVariableWording"));
 const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
@@ -7460,7 +7463,7 @@ export function GeneratedContentAdminDashboard() {
           </nav>
         )}
 
-        {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
+        {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} customLoaded={customVariableLibrary.loaded} initialVariableName={parseAdminHash().params.get('editVariable') ?? undefined} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} /></Suspense></div>}
         {hasOpenedAiWriting && <div hidden={activePage !== "aiWriting"}><Suspense fallback={<PageLoading message="Loading AI writing…" />}><HoroscopeWritingStudio secret={secret} /></Suspense></div>}
@@ -10568,8 +10571,11 @@ export function GeneratedContentAdminDashboard() {
           body_they: packageFieldString(currentDraft, "body_they")
         }
       : null;
-    const templatePreviewRow = selectedRow && (isTemplateDraft || hasTransitTemplatePreviewContext) ? {
+    const hasSavedWording = templateSavedWordingReferences(variableReferences).length > 0;
+    const templatePreviewRow = (isTemplateDraft || hasTransitTemplatePreviewContext || hasSavedWording) ? {
       ...selectedRow,
+      id: currentDraft.id ?? 'draft-template',
+      content_key: currentDraft.contentKey,
       headline: currentDraft.headline,
       summary: currentDraft.summary,
       body: currentDraft.body,
@@ -10577,7 +10583,7 @@ export function GeneratedContentAdminDashboard() {
       status: currentDraft.status,
       block_type: currentDraft.blockType,
       sections: templatePreviewPackage
-        ? { ...(currentDraft.sections ?? {}), packageRecord: templatePreviewPackage }
+        ? { ...(currentDraft.sections ?? {}), packageRecord: templatePreviewPackage, packageDraft: templatePreviewPackage }
         : currentDraft.sections,
       source_snapshot: currentDraft.sourceSnapshot
     } : null;
@@ -10602,6 +10608,19 @@ export function GeneratedContentAdminDashboard() {
       },
       includeOptionalSources: true
     } : undefined;
+    const templateReaderPreviewOptions = hasTransitTemplatePreviewContext ? {
+      destination: friendsTransitAudience ? "Friends Transits" : "Personal Transits",
+      initialAudience: friendsTransitAudience ? "they" as const : "you" as const,
+      exampleValues: {
+        transitTitle: titleFromKey(transitNatalPlanet), natalTitle: titleFromKey(transitNatalPoint),
+        transitRef: `${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}`,
+        aspectName: transitNatalAspect,
+        aspectWord: transitNatalAspect === "conjunction" ? "conjunct" : transitNatalAspect === "opposition" ? "opposite" : transitNatalAspect,
+        untilDate: (transitReadingContext.window ?? "September 30").replace(/^until\s+/iu, ""),
+        Name: "{{Name}}", signTitle: titleFromKey(transitNatalSign),
+        timeOpen: transitReadingContext.window ?? "Currently", timeInline: transitReadingContext.window ?? "currently", otherPoss: "{{Name}}'s"
+      }
+    } : natalTemplatePreviewOptions;
     const normalizedTemplateVariableQuery = templateVariableQuery.trim().toLowerCase();
     const filteredVariableReferences = normalizedTemplateVariableQuery
       ? variableReferences.filter((variable) => [
@@ -12235,6 +12254,19 @@ export function GeneratedContentAdminDashboard() {
             onWritingAction={(action) => void runSkyDraftWriting(selectedRow.content_key, action, selectedRow)} /></Suspense>}
           {currentDraft.contentKey.startsWith("slot-template/calendar/") && <Suspense fallback={null}><CalendarOverviewEditor
             draft={currentDraft} initialField={skyWritingContext.fieldPath} onChange={next => setDraft(invalidateContentStudioReview(next))} /></Suspense>}
+          {(isTemplateDraft || isPackageDraft || isCmsSurfaceDraft) && !isReferenceDraft && !skyFallbackEditor && <Suspense fallback={null}>
+            <StudioSavedVariableWording variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading}
+              unmappedNames={variableReferences.filter(reference => reference.sourceKind === 'unmapped').map(reference => reference.name)}
+              values={[currentDraft.headline, currentDraft.summary, currentDraft.body, packageFieldString(currentDraft, 'body_you'), packageFieldString(currentDraft, 'body_they')]}
+              onReload={customVariableLibrary.reload} />
+          </Suspense>}
+          {hasSavedWording && (isTemplateDraft || isPackageDraft || isCmsSurfaceDraft) && !isReferenceDraft && templatePreviewRow && !skyFallbackEditor && <Suspense fallback={<PageLoading compact message="Loading saved wording…" />}>
+            <TemplateSavedWording key={currentDraft.contentKey} templateRow={templatePreviewRow} rows={[...rows.filter(row => !isZodiacSeasonSourceKey(row.content_key)), ...seasonSourceRows]}
+              references={variableReferences} onLoadSourceInventory={loadTemplateSourceInventory} onLoadSourceDocuments={loadSourceDocuments}
+              previewOptions={templateReaderPreviewOptions} disabled={isLoading}
+              onOpenVariable={(name, sourceId) => { setSelectedTemplateVariableName(name); setSelectedTemplateVariableSourceId(sourceId); setTemplateVariableReferenceOpen(true); }}
+              onEditSource={row => isZodiacSeasonSourceKey(row.content_key) ? void openSharedSeasonSource(row.content_key) : void openFromEditor(row.content_key, () => openRow(row as AdminGeneratedContentRow), { parentDraft: currentDraft, saveReturns: true })} />
+          </Suspense>}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && !(isAstro101Draft && (astro101Blocks.length || astro101Intro)) && (
             <label className="admin-review-copy-editor studio-surface">
               <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
@@ -12977,20 +13009,7 @@ export function GeneratedContentAdminDashboard() {
               sections: currentDraft.sections,
               source_snapshot: currentDraft.sourceSnapshot
             }}
-            previewOptions={hasTransitTemplatePreviewContext ? {
-              destination: friendsTransitAudience ? "Friends Transits" : "Personal Transits",
-              initialAudience: friendsTransitAudience ? "they" : "you",
-              exampleValues: {
-                transitTitle: titleFromKey(transitNatalPlanet), natalTitle: titleFromKey(transitNatalPoint),
-                transitRef: `${titleFromKey(transitNatalPlanet)} in ${titleFromKey(transitNatalSign)}`,
-                aspectName: transitNatalAspect,
-                aspectWord: transitNatalAspect === "conjunction" ? "conjunct" : transitNatalAspect === "opposition" ? "opposite" : transitNatalAspect,
-                untilDate: (transitReadingContext.window ?? "September 30").replace(/^until\s+/iu, ""),
-                Name: "{{Name}}",
-                signTitle: titleFromKey(transitNatalSign),
-                timeOpen: transitReadingContext.window ?? "Currently", timeInline: transitReadingContext.window ?? "currently", otherPoss: "{{Name}}'s"
-              }
-            } : natalTemplatePreviewOptions}
+            previewOptions={templateReaderPreviewOptions}
             selectedVariableName={selectedTemplateVariableName}
             selectedSourceId={selectedTemplateVariableSourceId}
             onSelectVariable={setSelectedTemplateVariableName}

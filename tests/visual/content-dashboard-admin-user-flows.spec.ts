@@ -2000,7 +2000,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await sourceFinder.getByText("Sentence structure (advanced)", { exact: true }).click();
     await sourceFinder.getByRole("button", { name: "Preview template" }).first().click();
     await expect(page.getByRole("complementary", { name: "Template variable reference" })).toBeVisible();
-    const templatePreview = page.getByRole("region", { name: "Example reader write-up" });
+    const templatePreview = page.getByRole("complementary", { name: "Template variable reference" }).getByRole("region", { name: "Example reader write-up" });
     await expect(templatePreview).toBeVisible();
     await expect(templatePreview.locator(".variable-fact")).toContainText(["Sun", "Cancer"]);
     const stylePhrase = templatePreview.getByRole("button", { name: /protectively.*Open the saved source for Sign Adverb/u });
