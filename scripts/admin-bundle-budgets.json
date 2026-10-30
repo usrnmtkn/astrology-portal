@@ -210,7 +210,35 @@
       },
       "reason": "The requested Calendar workspace shows complete reader wording beside its editable template and exposes complete shared source editing with private draft preview. Allocate only1500 aggregate gzip bytes above857000 for this feature, leaving544 bytes. Entry raw/gzip and largest-chunk limits remain unchanged. The complete startup graph remains one file; emitted core-editor, lazy-source, reader-startup, memory-graph, privacy and runtime guards remain enforced. This records feature cost, not a loading-performance improvement."
     },
-    "dailyReviewAndHoroscopeDeletion20261029": "Matched independent Admin builds compare main be6cabd3419fdef081a5cb986ac78993f5a7aa8c (full tree405329f663a9ceaae73c22e4ecde706739c6a693, identical to tested37f4f5504f7bea71286061646efd7a732699716b) with Daily complete-set review and version-checked horoscope deletion at a72c6c098406185c5b6d24d7a01d2899e310049b. Independently npm-ci-installed checkouts use native Node22.20.0 arm64/zlib1.3.1-470d3a2, identical lock, no env files, identical visual-smoke Supabase placeholders, blank publishable key/client generation secret, enabled natal-aspect flag and CI=1. Baseline entry raw/startup gzip/aggregate is814861/236418/856598 bytes; candidate814956/236422/858114 (+95/+4/+1516). Both retain one-file startup and83 JavaScript files. The saved-edition filters/table, deletion confirmation and uncertain-response readback share required deferred helpers; Daily adds the complete-set findings and recheck controls. Allocate1600 aggregate gzip bytes above the existing857000 limit, leaving486 measured bytes. Entry/startup/largest, source dynamic-entry, optional-writing/recovery exclusion, deferred-source, reader payload, privacy, CSS and runtime guards remain unchanged. No approved examples, saved profiles or reader prose change. This records requested feature cost, not a performance improvement."
+    "dailyReviewAndHoroscopeDeletion20261029": "Matched independent Admin builds compare main be6cabd3419fdef081a5cb986ac78993f5a7aa8c (full tree405329f663a9ceaae73c22e4ecde706739c6a693, identical to tested37f4f5504f7bea71286061646efd7a732699716b) with Daily complete-set review and version-checked horoscope deletion at a72c6c098406185c5b6d24d7a01d2899e310049b. Independently npm-ci-installed checkouts use native Node22.20.0 arm64/zlib1.3.1-470d3a2, identical lock, no env files, identical visual-smoke Supabase placeholders, blank publishable key/client generation secret, enabled natal-aspect flag and CI=1. Baseline entry raw/startup gzip/aggregate is814861/236418/856598 bytes; candidate814956/236422/858114 (+95/+4/+1516). Both retain one-file startup and83 JavaScript files. The saved-edition filters/table, deletion confirmation and uncertain-response readback share required deferred helpers; Daily adds the complete-set findings and recheck controls. Allocate1600 aggregate gzip bytes above the existing857000 limit, leaving486 measured bytes. Entry/startup/largest, source dynamic-entry, optional-writing/recovery exclusion, deferred-source, reader payload, privacy, CSS and runtime guards remain unchanged. No approved examples, saved profiles or reader prose change. This records requested feature cost, not a performance improvement.",
+    "dailyReviewAndHoroscopeDeletionCalendarIntegration20261029": {
+      "baseRevision": "c56344f35796fd88e489a549ba4835a767ad4c50",
+      "baseTree": "250f3ccdf6b159802b671023c35f3f83ebe543d9",
+      "node": "v22.20.0",
+      "architecture": "arm64",
+      "zlib": "1.3.1-470d3a2",
+      "lockSha256": "f0ae594b70d97fcf823c56ccae2b077a6779053326ae62bdae6a4a0190fe53e6",
+      "measurements": {
+        "calendar": {
+          "entryRaw": 814956,
+          "entryGzip": 236463,
+          "totalGzip": 857956,
+          "chunks": 83
+        },
+        "integrated": {
+          "entryRaw": 815051,
+          "entryGzip": 236474,
+          "totalGzip": 859513,
+          "chunks": 83
+        }
+      },
+      "delta": {
+        "entryRaw": 95,
+        "entryGzip": 11,
+        "totalGzip": 1557
+      },
+      "reason": "Matched independent npm-ci-installed Admin artifacts preserve the accepted Calendar build and add Daily complete-set review plus version-checked horoscope deletion. Identical explicit synthetic Supabase URL, anonymous and publishable keys and production entry settings use native ARM Node22.20.0. The final integrated artifact retains one startup file and83 JavaScript files. Preserve Calendar\u2019s1500-byte allocation and the reviewed1600-byte horoscope allocation: aggregate860100 leaves587 bytes; entry raw815100 and gzip236650 remain unchanged, leaving49 and176 bytes. The source-dynamic horoscope workspace and optional writing/recovery boundaries, Calendar core-editor plugin, private payload, dependency, CSS and runtime guards remain enforced. This records measured feature cost, not a performance improvement."
+    }
   },
   "memoryGraphJavaScriptGzipBytes": 64000
 }
