@@ -132,3 +132,26 @@ rationale remain unchanged.
 Output hash/compression shifts are not a performance improvement. Both saved-wording
 panels remain deferred from Web startup. The existing source-payload, CSS,
 individual-chunk, privacy, runtime and required-check boundaries stay enforced.
+
+## Composition source hydration regression
+
+The shared preview adapter separates unloaded source records into
+`preview.pendingSources`. Composition Map now requests those complete documents
+before presenting saved writing and source actions. Its existing loading,
+error, retry and identity deduplication behavior stays in place. The older
+Natal template interaction checks its intended variables-rail preview explicitly
+when the primary saved-wording preview is also present.
+
+All three affected browser cases pass on main `02599d6`, fail on the unrepaired
+feature, and pass with the hydration/selector repair. The repaired fresh-build
+matrix passes all 33 cases, with no skips or retries, preserving exact saved-hook
+and expanded-date copy assertions. Desktop and mobile composition screenshots
+show the complete saved text and source action. Both type checks, the eight
+targeted static/handler groups, fresh Admin build, bundle gates and source/built
+privacy scans pass. Final API and hosted results remain tied to the release PR's
+exact head.
+
+The repaired Web build measures 3,687,120 aggregate JavaScript gzip bytes against
+the unchanged 3,687,150 ceiling. App boot measures 396,383 and reader boot 454,735
+bytes; startup CSS stays 58,352 bytes. Both new panels remain deferred. Hash and
+compression shifts are measured output differences, not performance claims.
