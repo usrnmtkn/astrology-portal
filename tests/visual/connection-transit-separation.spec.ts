@@ -245,7 +245,7 @@ test('transit titles identify the sky sign and natal chart owner in both section
       labelLine: label.lineHeight, labelTracking: label.letterSpacing, labelMargin: label.marginBottom };
   });
   expect(headingStyles.titleFont).toBe(headingStyles.articleFont);
-  expect(headingStyles.titleSize).toBe('36px');
+  expect(headingStyles.titleSize).toBe((page.viewportSize()?.width ?? 1440) <= 800 ? '30px' : '36px');
   expect(headingStyles.labelFont).toBe(factStyles.font);
   expect(headingStyles.labelWeight).toBe('600');
   expect(headingStyles.labelSize).toBe('22px');
