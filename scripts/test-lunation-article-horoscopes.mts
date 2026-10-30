@@ -15,7 +15,9 @@ const directory = mkdtempSync(join(tmpdir(), "lunation-horoscopes-"));
 try {
   const bundle = join(directory, "reader.mjs");
   await build({ stdin: { contents: `
-    export { resolveLunationArticleHoroscopes, lunationArticleHoroscopeKeys } from './apps/web/src/content/lunationArticleHoroscopes';
+    export { resolveLunationArticleHoroscopes, lunationArticleHoroscopeKeys, lunationArticleContentKeys,
+      lunationArticleSnapshotKeys, loadDatedLunationArticle, lunationAspectCandidates,
+      lunationArticleHoroscopeCards } from './apps/web/src/content/lunationArticleHoroscopes';
     export { loadLunationBookFallbackArchitectureV3Bundle, installFallbackArchitectureV3Bundle,
       loadFallbackArchitectureV3BundledCoreManifest, transitSynastryFallbackRendererV3 } from './apps/web/src/content/fallbackArchitectureV3Runtime';
     export { packageFallbackArchitectureV3CoreRows, packageAuthoredCardFromRow } from './apps/web/src/services/fallbackArchitectureV3CorePackaging';
@@ -33,6 +35,9 @@ try {
     const identities = lunationHoroscopeIdentities(kind, sign);
     assert(identities.every(entry => isLunationHoroscopeKey(entry.contentKey)));
     const resolved = reader.resolveLunationArticleHoroscopes(event, new Map());
+    const cards = reader.lunationArticleHoroscopeCards(event, new Map());
+    assert.equal(cards[0].risingSign, 'Aries');
+    assert.deepEqual(cards.map(entry => entry.body), resolved.map(entry => entry.body), 'Reader labels preserve every complete passage.');
     assert.equal(resolved.length, 12, `${kind}/${sign}`);
     assert.deepEqual(reader.lunationArticleHoroscopeKeys(event), identities.map(entry => entry.contentKey));
     const rows = identities.map(identity => {
@@ -51,6 +56,17 @@ try {
     }
   }
   const event = { startsAt: "2026-10-26T04:00:00Z", sign: "taurus", phase: "full-moon" };
+  const moon = { moonEvent: { occursAt: event.startsAt, sign: event.sign, name: 'Full Moon' } };
+  assert.deepEqual(reader.lunationArticleSnapshotKeys(moon), reader.lunationArticleContentKeys({ ...event, title: 'Full Moon' }));
+  assert.deepEqual(reader.lunationArticleSnapshotKeys({ moonEvent: { ...moon.moonEvent, sign: 'cancer' } }, event),
+    reader.lunationArticleContentKeys(event), 'The selected calendar lunation takes precedence over the snapshot Moon.');
+  assert.equal(await reader.loadDatedLunationArticle({}, 'invalid-date', 'taurus', new Map(),
+    () => { throw new Error('Invalid dates must not load sources.'); }, () => true), null);
+  assert.deepEqual(reader.lunationAspectCandidates([
+    { from: 'Venus', to: 'Mars', orb: 0 }, { from: 'Sun', to: 'Saturn', separation: 61, exactAngle: 60, orb: 0 },
+    { from: 'Sun', to: 'Venus', orb: 0.5 }, { from: 'Moon', to: 'Mars', orb: 0.5 }
+  ]).map(entry => `${entry.from}/${entry.to}`), ['Moon/Mars', 'Sun/Venus', 'Sun/Saturn'],
+    'Lunar aspects use calculated separation, with Moon priority at equal orbs.');
   const identity = lunationHoroscopeIdentities("full-moon", "taurus")[0];
   assert.equal(isLunationHoroscopeKey(identity.contentKey), true);
   assert.equal(contentWiringStatus({ content_key: identity.contentKey, lane: "reference" }).state, "connected");

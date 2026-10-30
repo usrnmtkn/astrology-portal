@@ -273,7 +273,6 @@ export default defineConfig(({ mode }) => {
             // transport instead of adding a preload and gzip header per identity.
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|skyPlacementAspectBridge|generatedContentEligibility|lunationStudioRevision)\.ts$/u.test(id)
               || id.endsWith("/src/shared/lunationHoroscopeIdentity.ts")
-              || id.endsWith("/src/shared/lunationHoroscopeIdentities.ts")
               || id.endsWith("/services/templateInterpolation.ts")
               || id.endsWith("/shared/components/formattedWritingLoader.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
@@ -290,13 +289,17 @@ export default defineConfig(({ mode }) => {
             if (/\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader|lunationStudioRevision)\.mjs$/u.test(id)
               || /\/(?:content\/transitNatalIdentity|services\/transitReturns)\.ts$/u.test(id)) return "reader-eligibility";
             // Studio's reader-copy editors share one lazy workspace.
-            if (id.endsWith("/content/skyArticleHoroscopes.mjs")) return "sky-article-horoscopes";
+            if (id.endsWith("/content/skyArticleHoroscopes.mjs")
+              || id.endsWith("/src/shared/lunationHoroscopeIdentities.ts")) return "sky-article-horoscopes";
             // Lunar writing modes share their optional workspace and controls.
             if (/apps\/admin\/src\/(?:LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio)\.tsx$/u.test(id)) return "lunation-writing";
             if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
             // These reader helpers already load at startup. Share their chunk;
             // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")
+              || id.endsWith("/utils/articleAspects.ts")
+              || id.endsWith("/src/shared/solarHorizon.ts")
+              || id.endsWith("/services/planetSignDignity.mjs")
               || id.endsWith("/content/protectedOwnerSkyPlacementPassages.ts")
               || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache|skyPlacementSourceScope|generatedContentKeys)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and

@@ -1,8 +1,11 @@
 # RATM lunation wiring release verification
 
-Base: `e7565639297769576b764135ec6e2eff01cd7040` on current `origin/main`.
+Initial local base: `e7565639297769576b764135ec6e2eff01cd7040`.
 Branch: `codex/ratm-lunation-horoscopes-20261029`. This integrates the saved-wording
 and publication-status repairs from main before releasing the lunar work.
+The release also integrates main's mobile/chart-parity repair at
+`7402336cb8fd97327c74010e9b01c214e505e200`; both mobile and lunar jobs remain
+dependencies of the browser release gate.
 
 The complete 288 RATM records remain identical to main, including their approval
 metadata. Only the book source file's stale top-level provenance hash changes.
@@ -45,6 +48,16 @@ ordinary authored cards to prefer the saved top-level body. Keep that selection
 explicit, then preserve exact whitespace only for receipt-checked lunar revisions.
 The existing contract stays intact, and a runtime regression checks complete
 ordinary-card revisions alongside the full lunar integrity suite.
+
+After the main integration, the repeated chart/Studio audit passed 217 cases with
+five optional private-snapshot skips. All 28 lunar browser cases also passed.
+The combined build exposed a small startup budget overage. Dated lunar loading,
+aspect selection and horoscope labels now stay in the lazy lunar reader, while
+three existing pure startup helpers share their existing transport. Lunar
+identities share an optional reader chunk instead of importing Studio tools.
+The actual Rollup graph guard now covers that lunar boundary. Existing bundle
+ceilings remain unchanged; the final exact head and its checks are recorded in
+the release PR.
 
 Hosted checks must pass on the exact PR head before merge. Deployment proceeds
 through the main Git integration. The release PR records the final head, merge

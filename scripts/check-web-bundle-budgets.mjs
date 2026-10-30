@@ -117,6 +117,11 @@ if ([...skyListReaderFiles].some(file => /fallback-content-sky-placement-(?!mani
 if ([...skyReaderFiles, ...skyListReaderFiles].some(file => file.includes("studio-editor-tools-"))) {
   throw new Error("The Sky reader downloads Studio editor tools through a shared dependency.");
 }
+const lunarReaderKey = "src/content/lunationArticleHoroscopes.ts";
+if (!manifest[lunarReaderKey]) throw new Error("The lunar article reader is missing from the build manifest.");
+if ([...collectStaticManifestGraph(manifest, [lunarReaderKey])].some(file => file.includes("studio-editor-tools-"))) {
+  throw new Error("The lunar article reader downloads Studio editor tools through a shared dependency.");
+}
 const calendarReaderKey = "src/features/calendar/LunarCalendar.tsx";
 if (!manifest[calendarReaderKey]) throw new Error("The Calendar reader is missing from the build manifest.");
 if ([...collectStaticManifestGraph(manifest, [calendarReaderKey])].some(file => file.includes("studio-editor-tools-"))) {
