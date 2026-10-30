@@ -88,7 +88,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       const badge = cards.first().locator('.aspect-badge');
       await expect(badge).toHaveCSS('width', view === 'composite' ? '48px' : '64px');
       await expect(badge).toHaveCSS('border-radius', '50%');
-      expect(await badge.textContent()).toMatch(/^[☌☍□△✶⚻]$/u);
+      expect(await badge.textContent()).toMatch(/^[☌☍□△⚹⚻]$/u);
       await expect(cards.first().locator('.inline-glyph-icon')).toHaveCount(0);
       const title = cards.first().locator('h3');
       await expect(title).toHaveCSS('font-family', view === 'composite' ? /system-ui/ : /Newsreader/);

@@ -637,6 +637,9 @@ for (const [activationLive, bridgeLive] of [[false,false],[true,false],[true,tru
 });
 
 test('Studio saves and reopens separate activation and editable bridge drafts through the real handler', async({page},testInfo)=>{
+  // Studio also observes the public publication ledger. Keep that ancillary
+  // transport inside the same synthetic boundary as its actual-handler fixture.
+  await isolatedRest(page);
   const child=fork(path.resolve('tests/helpers/calendar-review-api.mjs'),['--ipc'],{env:{...process.env,CALENDAR_REVIEW_FIXTURE:path.resolve('tests/fixtures/connection-transit-empty-inventory.json')},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
   const pending=new Map<number,{resolve:(v:any)=>void,reject:(e:Error)=>void}>();let sequence=0,stderr='';
   child.stderr?.on('data',data=>{stderr+=data;});

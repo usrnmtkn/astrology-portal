@@ -145,7 +145,8 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
  dialog=page.getByRole('dialog',{name:'Why this involves Sample',exact:true});
  await expect(dialog.locator('.connection-facts__summary')).toHaveCSS('font-size','19px');
  await expect(dialog.locator('.connection-facts__summary')).toHaveCSS('font-family',/Newsreader/);
- await expect(dialog.getByRole('heading',{name:'The primary transit'})).toHaveCSS('font-family',/system-ui/);
+ await expect(dialog.getByRole('heading',{name:'The primary transit'})).toHaveCSS('font-family',/Newsreader/);
+ await expect(dialog.getByRole('heading',{name:'The primary transit'})).toHaveCSS('font-size','22px');
  await expect(dialog.locator('.connection-facts__orb').first()).toHaveText('Orb 0° 16′');
  await dialog.locator('.connection-facts__footer').scrollIntoViewIfNeeded();
  await expect(dialog.getByText('Complete calculated final description.',{exact:true})).toBeInViewport();
