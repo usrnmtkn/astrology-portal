@@ -10835,7 +10835,7 @@ type SkyArticlePreparation = {
   refreshVersion: number;
   generation: number;
   initialPublication: boolean;
-  initialPublicationFromRefreshVersion?: number;
+  initialRefreshVersion?: number;
   snapshot: Promise<SkySnapshot>;
   early?: ColdSkyAspectRead;
   request: Promise<{ placementSky: SkySnapshot; content: GeneratedContentMap }>;
@@ -10848,7 +10848,7 @@ function admitInitialSkyArticlePublication(preparation: SkyArticlePreparation | 
   // publication changes still replace it before any current writing is shown.
   if (source === "complete-live" && preparation.generation + 1 === contentPublicationGeneration) {
     preparation.generation = contentPublicationGeneration;
-    preparation.initialPublicationFromRefreshVersion = preparation.refreshVersion;
+    preparation.initialRefreshVersion = preparation.refreshVersion;
     preparation.refreshVersion += 1;
   }
 }
@@ -12181,7 +12181,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     if (canLoadPlacementArticle && (skyArticlePreparationRef.current?.key !== preparationKey
       // A queued effect may still carry the render before initial ledger admission.
       || (skyArticlePreparationRef.current.refreshVersion !== contentRefreshVersion
-        && skyArticlePreparationRef.current.initialPublicationFromRefreshVersion !== contentRefreshVersion)
+        && skyArticlePreparationRef.current.initialRefreshVersion !== contentRefreshVersion)
       || skyArticlePreparationRef.current.generation !== contentPublicationGeneration)) {
       skyArticlePreparationRef.current?.early?.discard();
       const snapshot = requestSkyPlacementArticleSnapshot(articleLocation, routePlanet, placementSign!, skyDate, initial?.date);
