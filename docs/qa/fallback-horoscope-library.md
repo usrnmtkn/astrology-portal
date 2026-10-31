@@ -10,7 +10,7 @@ The current catalog contains 1,314 complete source units: 984 placement house ho
 
 Save draft keeps a revision private. Save & publish validates and publishes the exact saved revision. Dated article horoscope sections retain their existing precedence over reusable fallbacks. No resolver selection, approved source body, chart calculation or writing profile changes are part of this interface change.
 
-The owner requested exclusion of tarot from horoscope write-ups on 2026-10-31 in `thread:01a189cd-3bdd-75f2-8843-02aafc84e64f`. Publication rejects explicit Tarot/Tarotscope or Major/Minor Arcana references in these fallback source families, including the older Publish again action. Draft saving preserves full originals and proposed wording. The owner separately authorized holding the 123 known RATM passages containing those references; publication-ledger tombstones prevent bundled originals from returning while replacements are being written. This is a publication hold, not deletion or editorial rewriting.
+The owner requested exclusion of tarot from horoscope write-ups on 2026-10-31 in `thread:01a189cd-3bdd-75f2-8843-02aafc84e64f`. Publication rejects explicit Tarot/Tarotscope or Major/Minor Arcana references in these fallback source families, including the older Publish again action and the normal publication path for legacy manual sources without package metadata. Draft saving preserves full originals and proposed wording. The owner separately authorized holding the 123 known RATM passages containing those references; publication-ledger tombstones prevent bundled originals from returning while replacements are being written. This is a publication hold, not deletion or editorial rewriting.
 
 ## Verification
 

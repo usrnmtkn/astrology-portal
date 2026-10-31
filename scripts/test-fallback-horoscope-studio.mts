@@ -43,6 +43,21 @@ const keys = [
 ];
 const store = await createApiStore([]);
 try {
+  // Older manual rows can use a fallback key without package metadata. Their
+  // normal publication path must honor the same editorial rule.
+  const manual = { id: 'a0000000-0000-4000-8000-000000000777', content_key: keys[0], surface: 'sky', mode: 'in_depth',
+    status: 'DRAFT', lane: 'reference', review_state: null, provider: 'manual-admin', block_type: 'fallback_hook',
+    headline: 'Synthetic manual source', summary: '', body: 'Synthetic Tarot draft. Complete draft ending.',
+    facts: {}, source_snapshot: {}, sections: {}, updated_at: '2026-10-31T12:00:00Z' };
+  store.rows.set(manual.id, manual);
+  const manualDraft = await store.invoke('PATCH', { id: manual.id, expectedUpdatedAt: manual.updated_at, body: manual.body + '\n\nComplete private addition.' });
+  assert.equal(manualDraft.status, 200);
+  const retained = JSON.stringify(store.rows.get(manual.id));
+  const manualPublish = await store.invoke('PATCH', { id: manual.id, expectedUpdatedAt: manualDraft.payload.rows[0].updated_at, status: 'LIVE', lane: 'serving' });
+  assert.equal(manualPublish.status, 409);
+  assert.match(manualPublish.payload.error, /tarot references/iu);
+  assert.equal(JSON.stringify(store.rows.get(manual.id)), retained);
+  store.rows.delete(manual.id);
   const result = await store.invoke('POST', { action: 'composition-catalog' }, '/api/admin/content-live-status');
   assert.equal(result.status, 200);
   assert.equal(fallbackHoroscopeSources(result.payload.rows.map(row => ({ ...row, id: `package:${row.content_key}` }))).length, 1314);
@@ -90,5 +105,5 @@ try {
     assert.equal((await store.publication.publications()).find(item => item.content_key === key)?.state, 'live');
   }
   assert.equal(JSON.stringify([...servingPackageRecords]), originals);
-  console.log('PASS: 1,314 canonical fallback sources across all 14 supported bodies, 288 lunations and 42 eclipse units; same Sky source selection; actual-handler draft retention, tarot publication rejection, retirement restoration and exact reader revision.');
+  console.log('PASS: 1,314 canonical fallback sources across all 14 supported bodies, 288 lunations and 42 eclipse units; same Sky source selection; actual-handler draft retention, legacy manual and package tarot publication rejection, retirement restoration and exact reader revision.');
 } finally { await store.close(); }
