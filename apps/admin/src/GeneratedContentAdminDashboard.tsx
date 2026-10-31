@@ -331,6 +331,7 @@ import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceE
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
 const LunationHoroscopeRelations = lazy(() => import("./LunationHoroscopeRelations"));
 const FallbackCompositionCheck = lazy(() => import("./FallbackCompositionCheck"));
+const FallbackHoroscopeStudio = lazy(() => import("./FallbackHoroscopeStudio"));
 import type { AdminFallbackCompositionDiagnostic } from "./FallbackCompositionCheck";
 const NatalAspectSourceFinder = lazy(() => import("./NatalAspectSourceFinder"));
 const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
@@ -377,6 +378,7 @@ type AdminDashboardPage =
   | "variables"
   | "aiWriting"
   | "horoscopes"
+  | "horoscopeFallbacks"
   | "slotDictionary"
   | "knowledge"
   | "templates"
@@ -774,6 +776,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   variables: "variables",
   aiWriting: "ai-writing",
   horoscopes: "horoscopes",
+  horoscopeFallbacks: "horoscope-fallbacks",
   knowledge: "fallback-hooks",
   templates: "templates",
   hooks: "surface-map",
@@ -1010,6 +1013,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "variables": return "Variables";
     case "aiWriting": return "AI Writing";
     case "horoscopes": return "Horoscopes";
+    case "horoscopeFallbacks": return "Fallback horoscopes";
     case "slotDictionary": return "Slots";
     case "knowledge": return "Fallback Articles & Passages";
     case "templates": return "Templates";
@@ -1045,6 +1049,7 @@ function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcru
     case "vocabulary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Vocabulary & phrases" }];
     case "variables": return [{ label: "Admin", page: "reviewQueue" }, { label: "Variables" }];
     case "horoscopes": return [{ label: "Admin", page: "reviewQueue" }, { label: "Horoscopes" }];
+    case "horoscopeFallbacks": return [{ label: "Admin", page: "reviewQueue" }, { label: "Horoscopes", page: "horoscopes" }, { label: "Fallback horoscopes" }];
     case "aiWriting": return [{ label: "Admin", page: "reviewQueue" }, { label: "AI Writing" }];
     case "slotDictionary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Slots" }];
     case "knowledge": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Fallback articles & passages" }];
@@ -7234,6 +7239,9 @@ export function GeneratedContentAdminDashboard() {
                   <Icon size={16} aria-hidden="true" />
                   <span>{item.label}</span>
                 </StudioButton>
+                {item.page === "horoscopes" && <div className="admin-nav-workspace-group" hidden={!["horoscopes", "horoscopeFallbacks"].includes(activePage)} aria-label="Horoscopes sections">
+                  <StudioButton type="button" onClick={() => navigateAdminPage("horoscopeFallbacks")} aria-current={activePage === "horoscopeFallbacks" ? "page" : undefined}>Fallback horoscopes</StudioButton>
+                </div>}
                 {(item.page === "calendarWriteups" || item.page === "skyWriteups") && (
                   <div className="admin-nav-workspace-group" hidden={activePage !== item.page}
                     aria-label={`${item.label} sections`}>
@@ -7375,7 +7383,7 @@ export function GeneratedContentAdminDashboard() {
             href: item.page ? adminHashForPage(item.page) : undefined,
             onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
           }))}
-          createActions={["aiWriting", "horoscopes"].includes(activePage) || activePage === "calendarWriteups" && ["lunation-writing", "daily-writing"].includes(calendarWriteupWorkspaceView) ? [] : activePage === "articles" ? [
+          createActions={["aiWriting", "horoscopes", "horoscopeFallbacks"].includes(activePage) || activePage === "calendarWriteups" && ["lunation-writing", "daily-writing"].includes(calendarWriteupWorkspaceView) ? [] : activePage === "articles" ? [
             { key: "article", label: "New article", description: "Write a standalone article", icon: FileText,
               onSelect: () => handleCreateAction("articles", "New article draft started.") },
             { key: "guide", label: "New guide", description: "Write a standalone guide", icon: BookOpenText,
@@ -7463,6 +7471,15 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} customLoaded={customVariableLibrary.loaded} initialVariableName={parseAdminHash().params.get('editVariable') ?? undefined} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} /></Suspense></div>}
+        {activePage === "horoscopeFallbacks" && <><Suspense fallback={<PageLoading message="Loading fallback horoscopes…" />}>
+          <FallbackHoroscopeStudio rows={rows}
+            onLoadCatalog={() => adminJsonRequest("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ action: "composition-catalog" }) })}
+            initialSourceKey={parseAdminHash().params.get("source") ?? undefined}
+            onSourceChange={source => setAdminHash(adminHashForPage("horoscopeFallbacks", new URLSearchParams({ source })), "replace")}
+            onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
+            onEditRow={row => void openRow(row as AdminGeneratedContentRow)}
+            onOpenPlacement={(planet, sign) => navigateAdminPage("skyWriteups", new URLSearchParams({ planet, sign }))} />
+        </Suspense>{renderEditor()}</>}
         {hasOpenedAiWriting && <div hidden={activePage !== "aiWriting"}><Suspense fallback={<PageLoading message="Loading AI writing…" />}><HoroscopeWritingStudio secret={secret} /></Suspense></div>}
 
         {activePage === "reviewQueue" && (
