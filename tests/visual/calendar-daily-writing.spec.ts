@@ -2,6 +2,7 @@ import {test,expect} from '@playwright/test';
 import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
+import {checkWritingExport} from '../helpers/check-writing-export';
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Daily Calendar writing ${width} ${theme}`,async({page})=>{
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,OPENAI_API_KEY:'synthetic-no-provider-dispatch'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
@@ -34,6 +35,19 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await editor.getByLabel('Thought for this date',{exact:true}).fill('Synthetic owner concern with a specific mechanism.');
    await editor.getByLabel('Exclusions for this date',{exact:true}).fill('Synthetic excluded frame.');
    await editor.getByRole('button',{name:'Save thought',exact:true}).click();await expect(editor.getByRole('status')).toHaveText('Thought saved.');
+   const beforeExport=await call({method:'rows'});
+   await checkWritingExport(page,editor,'Synthetic Calendar references opening.\n\nComplete synthetic final sentence.');
+   expect(await call({method:'rows'})).toEqual(beforeExport);
+   const thought=editor.getByLabel('Thought for this date',{exact:true}),originalThought=await thought.inputValue();
+   await thought.fill('Synthetic temporary edit invalidates the loaded export.');
+   await thought.fill(originalThought);
+   await checkWritingExport(page,editor,'Synthetic Calendar references opening.\n\nComplete synthetic final sentence.');
+   await editor.getByRole('tab',{name:'Instructions & references',exact:true}).click();
+   await editor.getByLabel('Writer instructions',{exact:true}).fill('Synthetic changed writer instructions. Preserve this complete new ending.');
+   await editor.getByRole('button',{name:'Save instructions and references',exact:true}).click();
+   await expect(editor.getByRole('status')).toHaveText('Daily writing references saved.');
+   await editor.getByRole('tab',{name:'Writer input',exact:true}).click();
+   await checkWritingExport(page,editor,'Synthetic changed writer instructions. Preserve this complete new ending.');
    await editor.getByRole('button',{name:'Preview writer input',exact:true}).click();await expect(editor.getByRole('heading',{name:'Input ready for review',level:3})).toBeVisible();
    await expect(editor.getByLabel('Complete writer input')).toHaveValue(/10:52 PM EDT/);await expect(editor.getByLabel('Complete writer input')).toHaveValue(/Synthetic Calendar references opening/);
    await expect(editor.getByRole('button',{name:'Generate one draft',exact:true})).toBeDisabled();

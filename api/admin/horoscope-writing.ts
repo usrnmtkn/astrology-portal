@@ -37,6 +37,7 @@ import {WEEKLY_BATCH_EDITORIAL,weeklyPlanCurrent} from '../../src/astro-writing/
 import {DAILY_BATCH_EDITORIAL} from '../../src/astro-writing/dailyBatchEditorial.mjs';
 import {dailyEditorialOperation} from '../_lib/daily-editorial-operation.js';
 import {persistDailyHoroscope} from '../_lib/daily-horoscope-storage.js';
+import {horoscopeWritingExport} from '../_lib/horoscope-writing-export.js';
 loadLocalWebEnv();
 export const maxDuration=300;
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -65,7 +66,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
   const invocationDeadline=deadline;
   const reply=(status:number,payload:any)=>({status,payload});
   try {
-    if(!['prepare','generate','continue','poll','recover-review','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence','validate-publication','plan-weekly','review-weekly','poll-weekly','release-weekly','review-daily','poll-daily','release-daily'].includes(input.action)||typeof input.id!=='string'||!input.id
+    if(!['export','prepare','generate','continue','poll','recover-review','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence','validate-publication','plan-weekly','review-weekly','poll-weekly','release-weekly','review-daily','poll-daily','release-daily'].includes(input.action)||typeof input.id!=='string'||!input.id
       ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome','writerChoice'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
     if(input.writerChoice!==undefined&&(input.action!=='prepare'||!horoscopeWriterOptions(process.env).some((writer:any)=>writer.id===input.writerChoice)))throw new AdminHttpError(400,'Choose a supported writing model while preparing the plan.');
     const {url,headers}=studioStorage();
@@ -74,7 +75,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     let row:any=adminStorageRows(read.payload)[0];
     if(!row)throw new AdminHttpError(404,'Edition not found.');
     if(row.updated_at!==input.expectedUpdatedAt)throw new AdminHttpError(409,'This edition changed. Reopen it before continuing.');
-    if(!row.content_key?.startsWith('horoscope/')||(row.status!=='DRAFT'&&input.action!=='evidence'))throw new AdminHttpError(409,'Open an editable horoscope draft.');
+    if(!row.content_key?.startsWith('horoscope/')||(row.status!=='DRAFT'&&!['evidence','export'].includes(input.action)))throw new AdminHttpError(409,'Open an editable horoscope draft.');
     assertHoroscopeRow(row);
     if(['review-daily','poll-daily','release-daily'].includes(input.action)&&row.sections.horoscopeEdition.window.period!=='daily')
       throw new AdminHttpError(400,'This batch review is Daily only.');
@@ -346,6 +347,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     let prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,explicitFeedback,seasonalSourceRows,writerSelection:writerChoice==='current'?null:writerConfig});
     const editorial=row.source_snapshot?.horoscopeGeneration?.weeklyEditorial;
     if(weeklyPlanCurrent(editorial,prepared.planHash))prepared={...prepared,weeklyBatchPlan:editorial.plan};
+    if(input.action==='export')return reply(200,{ok:true,writingExport:horoscopeWritingExport(prepared,writingRow)});
     if(['plan-weekly','review-weekly'].includes(input.action)){
       if(writingRow!==row)await persist({source_snapshot:writingRow.source_snapshot});
       return await weeklyEditorialOperation({action:input.action,row,persist,prepared,actor,approvedPlanHash:input.approvedPlanHash});

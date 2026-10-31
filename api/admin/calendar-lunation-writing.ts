@@ -7,6 +7,7 @@ import {workspaceKey,readLunarRow,saveLunarRow,loadLunarProfile,validateWorkspac
 import {lunationDigest} from '../../src/astro-writing/lunationWritingFacts.mjs';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
 import provider from '../../src/astro-writing/offlineProviderConfig.cjs';
+import {lunarWritingExport} from '../_lib/calendar-lunation-studio.js';
 loadLocalWebEnv();
 export const maxDuration=300;
 class Captured extends Error {}
@@ -26,7 +27,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const allowed=['action','phase','sign','expectedUpdatedAt','workspace','profile','approvedPlanHash','authorizeWriterCall'];
     if(Object.keys(input).some(k=>!allowed.includes(k)))throw new AdminHttpError(400,'Unknown lunar writing request field.');
     const action=req.method==='GET'?'load':input.action;
-    if(!['load','save','save-profile','prepare','generate','poll'].includes(action))throw new AdminHttpError(400,'Choose a lunar writing action.');
+    if(!['load','save','save-profile','export','prepare','generate','poll'].includes(action))throw new AdminHttpError(400,'Choose a lunar writing action.');
     if(action==='save-profile') {
       let profile;try{profile=validateLunationProfile(input.profile);}catch(error){throw new AdminHttpError(400,(error as Error).message);}
       const row=await readLunarRow(LUNATION_PROFILE_KEY);
@@ -52,6 +53,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     if(!row)throw new AdminHttpError(409,'Save this lunar workspace before preparing or writing.');
     const workspace=validateWorkspace(row.sections.lunationWorkspace,input.phase,input.sign);
     let operation=row.sections?.lunationRun?.active;
+    if(action==='export')return sendAdminJson(res,200,{ok:true,writingExport:lunarWritingExport(await prepareStudioLunation(workspace))});
     if(action==='prepare') {
       const prepared=await prepareStudioLunation(workspace);
       const approval=row.sections.approvedPlan;

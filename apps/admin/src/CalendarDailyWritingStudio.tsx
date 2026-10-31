@@ -3,6 +3,7 @@ import {StudioButton,StudioInput,StudioTabs,StudioTextarea} from './StudioContro
 import {AdminDisclosureSummary} from './AdminNativeControls';
 import {adminCredentialHeaders} from './adminSecret';
 import {PageLoading} from '../../../src/shared/components/PageLoading';
+import WritingPlanExport from './WritingPlanExport';
 const labels:Record<string,string>={instructions:'Writer instructions',calendarExamples:'Calendar references',bookExamples:'Book references',rejectedExamples:'Rejected writing and owner corrections',outputGuidance:'Length and output'};
 async function request(secret:string,body:any,signal?:AbortSignal){
   const response=await fetch('/api/admin/calendar-daily-writing',{method:'POST',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000)});
@@ -66,6 +67,7 @@ export default function CalendarDailyWritingStudio({secret,dirtyRef}:{secret:str
           <label>Thought for this date<StudioTextarea formatting={false} aria-label="Thought for this date" rows={6} maxLength={12000} value={workspace.thought} disabled={busy||Boolean(active)||selectionChanged} onChange={e=>{setWorkspace({...workspace,thought:e.target.value});invalidate();}}/></label>
           <label>Exclusions for this date<StudioTextarea formatting={false} aria-label="Exclusions for this date" rows={5} maxLength={12000} value={workspace.exclusions} disabled={busy||Boolean(active)||selectionChanged} onChange={e=>{setWorkspace({...workspace,exclusions:e.target.value});invalidate();}}/></label>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy||Boolean(active)||selectionChanged||!workspaceDirty&&Boolean(loaded.row)} onClick={()=>void action('save')}>Save thought</StudioButton><StudioButton disabled={busy||dirty||Boolean(active)||selectionChanged||!loaded.row||!loaded.profileRow} onClick={()=>void action('prepare')}>Preview writer input</StudioButton></div>
+          <WritingPlanExport secret={secret} endpoint="/api/admin/calendar-daily-writing" body={{action:'export',...selected,expectedUpdatedAt:loaded.row?.updated_at??null}} disabled={busy||dirty||selectionChanged||!loaded.row||!loaded.profileRow}/>
           {prepared&&<section className="admin-writing-preview" aria-label="Complete daily writer input">
             <h3>Input ready for review</h3><StudioTextarea formatting={false} readOnly aria-label="Complete writer input" rows={20} value={`${prepared.instructions}\n\n${prepared.request.input}`}/>
             <p>Request: <code>{prepared.requestHash}</code></p>

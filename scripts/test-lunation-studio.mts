@@ -49,6 +49,12 @@ for(const action of ['publish','retire'])assert.equal((await invoke({action,id:s
 assert.equal((await store.invoke('PATCH',{id:saved.row.id,status:'LIVE'})).status,400);
 assert.equal((await store.invoke('DELETE',{id:saved.row.id})).status,400);
 let plan=await invoke({action:'prepare',...target,expectedUpdatedAt:saved.row.updated_at});assert.equal(plan.status,200,JSON.stringify(plan));
+const beforeExport=JSON.stringify([...store.rows]);
+const exported=await invoke({action:'export',...target,expectedUpdatedAt:saved.row.updated_at});assert.equal(exported.status,200,JSON.stringify(exported));
+assert.equal(JSON.stringify([...store.rows]),beforeExport);assert.equal(calls,0);
+for(const passage of plan.plan.ownerPassages)assert(exported.writingExport.text.includes(passage.text)||exported.writingExport.text.includes(JSON.stringify(passage.text).slice(1,-1)),'Export preserves each complete lunar source');
+assert(!exported.writingExport.text.includes('I approve this exact plan and one writer call.'));
+assert.equal((await invoke({action:'export',...target,expectedUpdatedAt:saved.row.updated_at},'wrong')).status,401);
 assert.equal(plan.plan.facts.event.sign,'libra');assert.equal(plan.plan.facts.event.kind,'new-moon');assert.equal(plan.plan.ownerPassages.length,6+plan.plan.savedWriting.references.length);assert.equal(calls,0);
 store.rows.set(saved.row.id,{...saved.row,sections:{...saved.row.sections,approvedPlan:{outlineHash:plan.plan.outline.outlineHash,callAuthorization:{outlineHash:plan.plan.outline.outlineHash},sourceUri:'thread:synthetic-prior-approval',exactOwnerRuling:'Synthetic explicit approval of this exact plan and one writer call.'}}});
 assert.equal((await invoke({action:'prepare',...target,expectedUpdatedAt:saved.row.updated_at})).plan.previouslyApproved,true);

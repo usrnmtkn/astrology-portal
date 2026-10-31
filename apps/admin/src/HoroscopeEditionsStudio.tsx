@@ -3,6 +3,7 @@ import type {HoroscopeGenerationState} from './HoroscopeGenerationDetails';
 import {Suspense,useEffect,useRef,useState} from 'react';
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
+import WritingPlanExport from './WritingPlanExport';
 import {fetchWithOwnerSession,ownerSignInMessage} from './ownerSessionRequest';
 import {ownerCredentialIdentity} from './ownerSession';
 import {studioSignInHref} from '../../../src/shared/services/studioAuthReturn';
@@ -627,6 +628,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
           {instructions&&<Suspense fallback={<PageLoading message="Loading writing instructions…"/>}><WritingProfiles key={draft.window.period} secret={secret} initialPeriod={draft.window.period}/></Suspense>}
           <p>Your latest saved instructions are applied automatically when the writing plan is prepared.</p>
         </details>
+        {saved&&<WritingPlanExport secret={secret} endpoint="/api/admin/horoscope-writing" body={{action:'export',id:saved.id,expectedUpdatedAt:saved.updated_at}} disabled={dirty||locked}/>}
         {busy&&!running.current&&!plan&&!checking&&<PageLoading message="Preparing your writing plan…"/>}
         {plan&&(available>0||active)&&<>
           <p>{available} {available===1?'reading still needs a draft':'readings still need drafts'}. Existing writing is kept.</p>

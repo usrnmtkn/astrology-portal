@@ -214,19 +214,23 @@ export function horoscopePlanPreview(prepared) {
     synthesisCalls:prepared.edition.window.period==='monthly'&&prepared.edition.passages.some(p=>!p.headline.trim()&&!p.body.trim())?1:0};
 }
 
+export function horoscopeWriterContextInput(input,prepared,sign) {
+  const sharedConcerns=prepared.weeklyBatchPlan?.concerns.map(({priorQuote,priorEditionId,priorSign,...concern})=>concern);
+  return [input,...(prepared.weeklyBatchPlan?[
+      `SHARED WEEKLY CONCERNS\n${JSON.stringify(sharedConcerns)}`,
+      `CURRENT SIGN CONCERN\n${JSON.stringify(sharedConcerns.find(c=>c.sign===sign))}`,
+      'The shared plan supplies current meaning decisions and scope, not reader wording or a required paragraph script. Use its current astrologicalReason and development. weekDifference is comparison-only analysis, never voice evidence, current facts or a story to copy. Historical citations are retained by the planner and reviewer rather than passed as writer evidence. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
+    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
+}
+
 export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerClient,approvalReference}) {
   if(approvedPlanHash!==prepared.planHash||!approvalReference)throw new Error('Review and approve the current writing plan before generation.');
   const entry=prepared.entries.find(e=>e.sign===sign);if(!entry)throw new Error('Choose a zodiac sign.');
   const approved=approveArgumentOutline(entry.argumentOutline,{exactOwnerRuling:`Authenticated owner selected Generate drafts for plan ${approvedPlanHash}. Reference: ${approvalReference}`});
   const argumentSource={contentKey:`horoscope-plan/${approvedPlanHash}/${sign}`,sourcePath:approvalReference,ownerApproved:true,
     authority:'owner-approved-horoscope-plan',opening:approved.thesis,tension:approved.complication,development:approved.recognition,close:approved.response};
-  const sharedConcerns=prepared.weeklyBatchPlan?.concerns.map(({priorQuote,priorEditionId,priorSign,...concern})=>concern);
   const currentWriter=prepared.explicitFeedbackMarker||prepared.weeklyBatchPlan||prepared.previousReadings?Object.assign(async request=>{
-    const input=[request.input,...(prepared.weeklyBatchPlan?[
-      `SHARED WEEKLY CONCERNS\n${JSON.stringify(sharedConcerns)}`,
-      `CURRENT SIGN CONCERN\n${JSON.stringify(sharedConcerns.find(c=>c.sign===sign))}`,
-      'The shared plan supplies current meaning decisions and scope, not reader wording or a required paragraph script. Use its current astrologicalReason and development. weekDifference is comparison-only analysis, never voice evidence, current facts or a story to copy. Historical citations are retained by the planner and reviewer rather than passed as writer evidence. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
-    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
+    const input=horoscopeWriterContextInput(request.input,prepared,sign);
     return writerClient({...request,input,...(request.ownerEvidence?{ownerEvidence:{...request.ownerEvidence,inputSha256:createHash('sha256').update(input).digest('hex'),writingFeedback:prepared.feedbackReceipt}}:{})});
   },writerClient):writerClient;
   const result=await runWritingPipeline({...entry.contextOptions,meaningInput:entry.meaningInput,
