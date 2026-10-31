@@ -6,6 +6,7 @@ globalThis.authIsolationFixture = fixture;
 const result = await build({
   stdin: { contents: `export * from './apps/web/src/services/socialFriends.ts';
     export * from './apps/web/src/services/readerAuthReturn.ts';
+    export * from './apps/web/src/services/authCallback.ts';
     export * from './apps/web/src/services/verifiedAccountObserver.ts';`, resolveDir: process.cwd() },
   bundle: true, write: false, platform: "node", format: "esm",
   plugins: [{ name: "auth-transport", setup(b) {
@@ -35,7 +36,10 @@ const storage = () => {
 };
 globalThis.window = Object.assign(new EventTarget(), {
   sessionStorage: storage(), localStorage: storage(),
-  location: { href: "https://app.example.test/", origin: "https://app.example.test", replace: path => { window.location.href = path; } }
+  location: { href: "https://app.example.test/", origin: "https://app.example.test",
+    get pathname() { return new URL(this.href, this.origin).pathname; },
+    get search() { return new URL(this.href, this.origin).search; },
+    replace: path => { window.location.href = path; } }
 });
 globalThis.document = Object.assign(new EventTarget(), { visibilityState: "visible" });
 const key = "tldrastro.pending-social-invitation";
@@ -113,6 +117,33 @@ try {
   assert.equal(window.location.href, "https://app.example.test/#you");
   window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#account", at: Date.now() - 25*3600*1000}));
   assert.equal(api.rememberReaderReturnPath(), null);
+
+  const assets = deferred();
+  window.__tldrastroRecoverPageAssets = () => assets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(), true, "Asset recovery owns the pending navigation");
+  assert.match(window.location.href, /readerReturn=/, "Do not navigate before the failed asset cache is refreshed");
+  assets.resolve();
+  await tick();
+  assert.equal(window.location.href, "/#friends?tab=circle", "Recovery retains the requested feature");
+  const staleAssets = deferred();
+  window.__tldrastroRecoverPageAssets = () => staleAssets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(), true);
+  window.location.href = "https://app.example.test/#sky";
+  staleAssets.resolve();
+  await tick();
+  assert.equal(window.location.href, "https://app.example.test/#sky", "A later navigation supersedes pending auth recovery");
+  const cancelledAssets = deferred();
+  let cancelled = false;
+  window.__tldrastroRecoverPageAssets = () => cancelledAssets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(() => cancelled), true);
+  cancelled = true;
+  cancelledAssets.resolve();
+  await tick();
+  assert.match(window.location.href, /readerReturn=/, "A superseded account must not navigate when asset recovery finishes");
+  delete window.__tldrastroRecoverPageAssets;
 
   const states = [];
   const stop = api.observeVerifiedAccount(state => states.push(state));

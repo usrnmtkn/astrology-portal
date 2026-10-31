@@ -13678,8 +13678,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
     if (account) {
       if (returnToStudioAfterSignIn()) return;
-      const { returnToReaderAfterSignIn } = await import("./services/readerAuthReturn");
-      if (isCancelled() || returnToReaderAfterSignIn()) return;
+      const { returnToReaderAfterSignIn } = await import("./services/authCallback");
+      if (isCancelled() || returnToReaderAfterSignIn(isCancelled)) return;
     }
 
     setAuthAccountError(null);
