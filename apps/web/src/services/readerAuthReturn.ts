@@ -39,14 +39,3 @@ export function rememberReaderReturnPath(captureCurrent = false) {
   clearReaderReturnPath();
   return null;
 }
-
-export function returnToReaderAfterSignIn() {
-  const path = rememberReaderReturnPath();
-  clearReaderReturnPath();
-  if (!path) return false;
-  const current = new URL(window.location.href, window.location.origin);
-  const target = new URL(path, current);
-  if (target.href === current.href) return false;
-  window.location.replace(path);
-  return target.pathname !== current.pathname || target.search !== current.search;
-}

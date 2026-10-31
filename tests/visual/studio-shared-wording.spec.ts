@@ -5,6 +5,7 @@ import { ZODIAC_SEASON_SOURCE_STARTERS } from '../../apps/web/src/content/fallba
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { expectStudioReadingType } from '../helpers/studio-readability';
+import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
 
 const templateKey = 'fallback-template/natal.angle-in-sign';
 const sourceKey = 'fallback-hook/zodiac-season/leo';
@@ -12,6 +13,84 @@ const sourceCopy = 'Synthetic complete season opening.\n\nSynthetic complete sea
 const variableCopy = 'Synthetic complete variable opening.\n\nSynthetic complete variable final sentence.';
 const pattern = 'For {{signTitle}}. {{zodiacSeason}}\n\n{{myOpening}}';
 const variableEndpoint = '/api/admin/generated-content?variables=true';
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Packaged source only warns before discarding actual edits ${width} ${theme}`, async ({ page, context, baseURL }) => {
+    const key = 'fallback-hook/natal/planet-intro/sun';
+    const original = 'Synthetic complete Sun introduction.';
+    const source = { contentKey: key, content_role: 'fallback_hook', grammar_frame: 'complete_sentence', headline: 'Synthetic Sun introduction',
+      body: original, body_you: original, body_they: 'Synthetic complete Friend introduction.' };
+    const guard = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin);
+    const writes: string[] = [], errors: string[] = [], dialogs: string[] = [];
+    let discard = false;
+    page.on('pageerror', error => errors.push(error.message));
+    page.on('dialog', async dialog => { dialogs.push(dialog.message()); await (discard ? dialog.accept() : dialog.dismiss()); });
+    await context.addInitScript(theme => {
+      localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+      localStorage.setItem('tldrastro:studio-theme', theme);
+    }, theme);
+    await context.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+    await context.route('**/api/**', async route => {
+      const request = route.request(), url = new URL(request.url());
+      const readOnlyPost = ['/api/admin/content-live-status', '/api/admin/natal-placement-preview'].includes(url.pathname);
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method()) && !readOnlyPost) {
+        writes.push(`${request.method()} ${url.pathname}`);
+        await route.fulfill({ status: 405, json: { ok: false, error: 'Writes forbidden in this read-only fixture.' } });
+        return;
+      }
+      if (url.pathname === '/api/admin/package-source' && url.searchParams.get('contentKey') === key) {
+        await route.fulfill({ json: { ok: true, packageSource: source } });
+        return;
+      }
+      if (url.pathname === '/api/admin/natal-placement-preview') {
+        await route.fulfill({ json: { ok: true, rendered: { body: original, headline: 'Synthetic Sun in Libra', parts: [original], templateKey: 'fallback-template/natal.planet-in-sign' }, appliedOverrideKeys: [], ignoredOverrides: [] } });
+        return;
+      }
+      await route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
+    });
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto('/admin/content#exact-content?category=Natal+Chart&planet=sun&sign=libra');
+    const card = page.locator('.admin-natal-source-card').filter({ has: page.locator('code').filter({ hasText: key }) });
+    const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+    const copy = editor.getByRole('textbox', { name: 'Reader phrase · You', exact: true });
+    const open = async () => {
+      const response = page.waitForResponse(response => {
+        const url = new URL(response.url());
+        return url.pathname === '/api/admin/package-source' && url.searchParams.get('contentKey') === key;
+      });
+      await card.getByRole('button', { name: 'Load and edit', exact: true }).click();
+      const completed = await response;
+      expect(completed.status()).toBe(200);
+      expect(await completed.finished()).toBeNull();
+      await expect(copy).toHaveValue(original);
+    };
+    await open();
+    await editor.getByRole('button', { name: 'Close', exact: true }).click();
+    expect(dialogs, 'Opening existing package text does not create an unsaved edit.').toEqual([]);
+    await expect(editor).toHaveCount(0);
+    await open();
+    const edited = `${original}\n\nSynthetic unsaved final sentence.`;
+    await copy.fill(edited);
+    await editor.getByRole('button', { name: 'Close', exact: true }).click();
+    expect(dialogs).toEqual(['Discard the unsaved changes in this editor?']);
+    await expect(copy).toHaveValue(edited);
+    await copy.fill(original);
+    await editor.getByRole('button', { name: 'Close', exact: true }).click();
+    expect(dialogs).toHaveLength(2); // Editing created a proposal, even after its wording is restored.
+    await expect(copy).toHaveValue(original);
+    discard = true;
+    await editor.getByRole('button', { name: 'Close', exact: true }).click();
+    await expect(editor).toHaveCount(0);
+    discard = false;
+    await open();
+    await editor.getByRole('button', { name: 'Close', exact: true }).click();
+    expect(dialogs).toHaveLength(3);
+    await expect(editor).toHaveCount(0);
+    expect(writes).toEqual([]);
+    expect(errors).toEqual([]);
+    expect(guard.unhandledExternal).toEqual([]);
+  });
+}
 function fixtureRow(key: string, body: string, headline: string) {
   const canonical = servingPackageRecords.get(key) ?? ZODIAC_SEASON_SOURCE_STARTERS.find(record => record.contentKey === key);
   expect(canonical, `Canonical schema for ${key}`).toBeDefined();
