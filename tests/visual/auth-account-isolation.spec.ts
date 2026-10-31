@@ -144,6 +144,7 @@ async function seedSavedRequests(page: Page) {
 for (const stage of ['startup', 'mounted'] as const) {
   test(`auth callback recovery preserves ordinary ${stage} reader retries`, async ({ page }) => {
     await seed(page, false);
+    await page.clock.install();
     let documents = 0;
     page.on('request', request => {
       if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++;
@@ -153,7 +154,7 @@ for (const stage of ['startup', 'mounted'] as const) {
     await expect.poll(() => documents).toBe(2);
     await expect(page.getByRole('alert').first()).toBeVisible();
     expect(await page.evaluate(() => history.state?.__tldrastroReaderPageRecovery?.route)).toBe('/#sky');
-    await page.waitForTimeout(12_500);
+    await page.clock.runFor(12_500);
     expect(documents).toBe(2);
     await expect(page.getByRole('alert').first()).toBeVisible();
   });

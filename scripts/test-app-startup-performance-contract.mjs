@@ -212,7 +212,9 @@ const startupSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/startup.
 assert.match(startupSource, /vite:preloadError/u, "Startup import failures must have a visible recovery path.");
 assert.match(startupSource, /addEventListener\("unhandledrejection"/u, "Rejected startup imports must show an error.");
 assert.match(startupSource, /The page could not load/u, "Startup failures must explain the problem.");
-assert.match(startupSource, /querySelector\("button"\)\?\.addEventListener\("click", \(\) => location\.reload\(\)\)/u, "Reloading must remain an explicit user action.");
+// The explicit click may await failed module refresh before reloading. Verify
+// the real handler and its bounded body completion, rather than callback syntax.
+await import("./test-reader-deployment-recovery.mjs");
 assert.doesNotMatch(startupSource, /sessionStorage|document\.body\.innerHTML/u, "Recovery must preserve form state and avoid destructive automatic reloads.");
 assert.doesNotMatch(mainSource, /setInterval\s*\(/u, "Blank-restore recovery must not keep a lifetime polling interval.");
 assert.match(mainSource, /for \(const delay of \[1000, 5000, 15000\]\)/u, "Startup must keep bounded blank-mount checks.");
