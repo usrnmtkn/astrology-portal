@@ -377,7 +377,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, lunation-studio, studio-ui, sky-reader-preview]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, horoscope-writing, lunation-studio, sky-reader-preview]
+        include:
+          - suite: studio-ui
+            shard: 1
+          - suite: studio-ui
+            shard: 2
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -391,9 +396,15 @@ jobs:
       - run: npm run build:knowledge
       - run: bash scripts/ci-install-playwright.sh
       - name: Run the ${{ matrix.suite }} suite
+        if: matrix.suite != 'studio-ui'
         env:
-          STUDIO_PRODUCTION_ENTRY: ${{ (matrix.suite == 'horoscope-writing' || matrix.suite == 'studio-ui') && '1' || '0' }}
+          STUDIO_PRODUCTION_ENTRY: ${{ matrix.suite == 'horoscope-writing' && '1' || '0' }}
         run: npx playwright test -c playwright.${{ matrix.suite }}.config.ts
+      - name: Run the Studio UI shard with complete test files
+        if: matrix.suite == 'studio-ui'
+        env:
+          STUDIO_PRODUCTION_ENTRY: '1'
+        run: node scripts/balanced-browser-tests.mjs --config playwright.studio-ui.config.ts ${{ matrix.shard }}/2
       - name: Verify standalone Studio notification containment
         if: matrix.suite == 'studio-style'
         run: npx playwright test -c playwright.tooltip-toast-studio.config.ts --workers=1
@@ -404,7 +415,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: studio-preview-suite-results-${{ matrix.suite }}
+          name: studio-preview-suite-results-${{ matrix.suite }}${{ matrix.shard && format('-{0}', matrix.shard) || '' }}
           path: test-results/
           if-no-files-found: ignore
 

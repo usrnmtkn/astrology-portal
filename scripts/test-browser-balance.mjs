@@ -89,7 +89,8 @@ console.log('PASS: actual Playwright execution preserves shard selection through
 for (const [config, shard] of [
   ['playwright.horoscope-reader.config.ts', '1/3'],
   ['playwright.sky-placement-reader.config.ts', '1/2'],
-  ['playwright.reader-surfaces.config.ts', '1/3']
+  ['playwright.reader-surfaces.config.ts', '1/3'],
+  ['playwright.studio-ui.config.ts', '1/2']
 ]) {
   const result = spawnSync(process.execPath, ['scripts/balanced-browser-tests.mjs', '--config', config, shard, '--plan'], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stdout + result.stderr);

@@ -73,7 +73,8 @@ export function main(args) {
   const durationFiles = {
     'playwright.horoscope-reader.config.ts': 'config/browser-test-durations.json',
     'playwright.sky-placement-reader.config.ts': 'config/sky-reader-test-durations.json',
-    'playwright.reader-surfaces.config.ts': 'config/reader-surface-test-durations.json'
+    'playwright.reader-surfaces.config.ts': 'config/reader-surface-test-durations.json',
+    'playwright.studio-ui.config.ts': 'config/studio-ui-test-durations.json'
   };
   assert(Object.hasOwn(durationFiles, config), 'Unknown balanced browser suite');
   assert(/^\d+\/\d+$/u.test(shard));
@@ -81,7 +82,7 @@ export function main(args) {
   const [index, count] = shard.split('/').map(Number);
   assert(index >= 1 && index <= count);
   const cli = 'node_modules/@playwright/test/cli.js';
-  const byFile = config === 'playwright.reader-surfaces.config.ts';
+  const byFile = ['playwright.reader-surfaces.config.ts', 'playwright.studio-ui.config.ts'].includes(config);
   const base = ['test', '-c', config, ...(byFile ? [] : ['--fully-parallel']), '--workers=1'];
   const report = JSON.parse(execFileSync(process.execPath, [cli, ...base, '--list', '--reporter=json'], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }));
   assert.equal(report.errors.length, 0, 'Test discovery failed');
