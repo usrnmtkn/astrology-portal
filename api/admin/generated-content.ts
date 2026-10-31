@@ -1,7 +1,7 @@
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
-import {standaloneArticleKind} from '../../src/shared/articleLibrary.js';
+import {standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
 import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
@@ -345,6 +345,16 @@ function studioVariableStorage(params: URLSearchParams, options: { method?: stri
   return adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
     ...options, headers: { ...adminHeaders(), prefer: "return=representation" }
   });
+}
+
+function standalonePublicationSections(row: Record<string, any>, now: string, previous?: Record<string, any>) {
+  if (row.sections != null && !isRecord(row.sections)) return row.sections;
+  const sections = isRecord(row.sections) ? row.sections : {};
+  if (!standaloneArticleKind(row.content_key) || sections.articlePublication != null) return row.sections;
+  // An explicit clear publishes now. An unchanged legacy date survives revision.
+  const immediate = new Date(Math.min(Date.now(), Date.parse(now))).toISOString();
+  const publishAt = Object.hasOwn(sections, 'articlePublication') ? immediate : previous?.published_at ?? immediate;
+  return { ...sections, articlePublication: { publishAt: new Date(publishAt).toISOString() } };
 }
 
 async function prepareStudioVariables(body: GeneratedContentWriteBody, existing?: ExistingGeneratedContentRow) {
@@ -1360,6 +1370,11 @@ function validateWriteBody(body: Record<string, unknown>) {
     throw new GeneratedContentRequestError((error as Error).message);
   }
   if (isRecord(body.sections)) {
+    if (body.sections.articlePublication != null && (!isRecord(body.sections.articlePublication)
+      || !validArticlePublishAt(body.sections.articlePublication.publishAt)
+      || body.sections.articlePublication.timeZone !== undefined && !validArticleTimeZone(body.sections.articlePublication.timeZone))) {
+      throw new GeneratedContentRequestError("Choose a valid publish date and time.");
+    }
     for (const record of [body.sections, body.sections.packageRecord, body.sections.packageDraft]) {
       if (isRecord(record)) validateAspectRetrogradeCopy(typeof body.contentKey === "string" ? body.contentKey : null, record);
     }
@@ -1950,6 +1965,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   };
 
   Object.assign(row, normalizeArticleHoroscopes(row));
+  if (row.status === "LIVE") row.sections = standalonePublicationSections(row, now);
   stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), now);
   assertReaderEligiblePublication(row);
   await assertZodiacSeasonPublication(row);
@@ -2671,9 +2687,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     await assertVersionedStudioVariablePublication(v3PackageRecord(existing));
     const now = nextGeneratedContentVersion(target.updated_at);
     const approved = { ...target, headline: existing.headline, summary: existing.summary, body: existing.body, sections: existing.sections };
+    approved.sections = standalonePublicationSections(approved, now, target);
     publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
     const articlePatch = {
-      headline: existing.headline, summary: existing.summary, body: existing.body, sections: existing.sections,
+      headline: existing.headline, summary: existing.summary, body: existing.body, sections: approved.sections,
       source_snapshot: { ...target.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, now) },
       status: "LIVE", lane: "serving", review_state: null, updated_at: now, reviewed_at: now, published_at: now
     };
@@ -2689,6 +2706,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError("Use this editor's package or complete-edition publication action.", 409);
     }
     const approved = { ...existing, ...Object.fromEntries(fields.filter(field => body[field] !== undefined).map(field => [field, body[field]])) };
+    if (standaloneArticleKind(existing.content_key)) {
+      approved.sections = standalonePublicationSections(approved, String(patch.updated_at), existing);
+      patch.sections = approved.sections;
+      if (body.sections !== undefined) body.sections = approved.sections;
+    }
     if (body.horoscopeValidationOverride !== undefined && (typeof body.horoscopeValidationOverride !== 'boolean' || !existing.content_key.startsWith('horoscope/'))) {
       throw new GeneratedContentRequestError('The horoscope validation override requires a saved horoscope edition.', 400);
     }
@@ -3499,6 +3521,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
   Object.assign(patch, await validatedLunationPublication({ ...existing, ...patch }));
   for (const key of Object.keys(patch)) if (patch[key] === undefined) delete patch[key];
   const ownerRow = { ...existing, ...patch };
+  if (patch.status === "LIVE" && !ownerPublication && standaloneArticleKind(existing.content_key) && !ownerRow.source_snapshot?.studioOwnerApproval) {
+    patch.sections = standalonePublicationSections(ownerRow, String(patch.updated_at), existing);
+  }
   if (stampDailyOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body), String(patch.updated_at))) {
     patch.source_snapshot = ownerRow.source_snapshot;
   }

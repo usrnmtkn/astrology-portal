@@ -128,6 +128,7 @@ export type GeneratedContentRow = {
   judge_gate?: string | null;
   model: string | null;
   updated_at: string;
+  published_at?: string | null;
 };
 
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";

@@ -5,7 +5,8 @@ import { parseStudioPassageEdit, skyPassageEditPlacement } from '../../../src/sh
 import { calendarPassageReviewParams } from './calendarPassageReviewRoute';
 import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
-import { articleLibraryKind, articleReaderHref, standaloneArticleKind, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
+import { articleLibraryKind, articleReaderHref, standaloneArticleKind, articlePublicationIsDue, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
+import { ArticlePublicationField } from "./ArticlePublicationField";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
@@ -2788,6 +2789,8 @@ function publicationStateMessage(result: StudioPublicationResult) {
   if (receipt?.currentPublicationState === "retired") return completed + "This content is now retired.";
   if (receipt && (receipt.currentStatus !== "LIVE" || !["live", "dated"].includes(receipt.currentPublicationState ?? ""))) return completed + "This content is no longer published.";
   if (receipt && receipt.currentVersion !== receipt.targetVersion) return completed + "A newer saved version is available in the library.";
+  const row = result.rows?.[0];
+  if (row && !articlePublicationIsDue(row)) return "Release scheduled.";
   return "The reviewed revision is published.";
 }
 
@@ -3249,7 +3252,7 @@ export function GeneratedContentAdminDashboard() {
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
-  const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("all");
+  const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all" | "scheduled">("all");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
   const [skyPlacementBody, setSkyPlacementBody] = useState(() => readerEntry?.surface === 'sky' ? skyPassageEditPlacement(readerEntry.sourceKey).planet : 'all');
   const [skyPlacementSign, setSkyPlacementSign] = useState(() => readerEntry?.surface === 'sky' ? skyPassageEditPlacement(readerEntry.sourceKey).sign : 'all');
@@ -3535,7 +3538,9 @@ export function GeneratedContentAdminDashboard() {
   );
   const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
     return (articleKindFilter === "all" || articleLibraryKind(row) === articleKindFilter)
-      && (articleStatusFilter === "all" || row.status === articleStatusFilter)
+      && (articleStatusFilter === "all" || (articleStatusFilter === "scheduled"
+        ? row.status === "LIVE" && !articlePublicationIsDue(row)
+        : row.status === articleStatusFilter && (articleStatusFilter !== "LIVE" || articlePublicationIsDue(row))))
       && (articlePointFilter === "all" || articlePointForRow(row) === articlePointFilter)
       && (articleContentSystemFilter === "all" || contentSystemForRole(contentRoleForRecord(row)) === articleContentSystemFilter)
       && matchesAdminSearch(visibleRowSearchText(row), articleQuery);
@@ -4957,7 +4962,7 @@ export function GeneratedContentAdminDashboard() {
           ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
           : occurrence)
       } : current);
-      setMessage(ownerFinal ? `${saved.headline || saved.content_key} published.` : `${row.content_key} approved. ${row.block_type === "sky_placement" ? "Package release required." : "Eligible for matching Sky configurations."}`);
+      setMessage(ownerFinal ? publicationStateMessage(payload) : `${row.content_key} approved. ${row.block_type === "sky_placement" ? "Package release required." : "Eligible for matching Sky configurations."}`);
     } catch (error) {
       const feedback = dashboardErrorMessage(error);
       setEditorSaveError(feedback);
@@ -9722,8 +9727,9 @@ export function GeneratedContentAdminDashboard() {
           </AdminSelect></label>
           <label>
             <span>Status</span>
-            <AdminSelect aria-label="Article status" value={articleStatusFilter} onChange={(event) => setArticleStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+            <AdminSelect aria-label="Article status" value={articleStatusFilter} onChange={(event) => setArticleStatusFilter(event.target.value as typeof articleStatusFilter)}>
               <option value="all">All statuses</option>
+              <option value="scheduled">Scheduled</option>
               {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
             </AdminSelect>
           </label>
@@ -10385,6 +10391,7 @@ export function GeneratedContentAdminDashboard() {
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
     const isStandaloneArticleDraft = Boolean(standaloneArticleKind(currentDraft.contentKey));
+    const isScheduledStandaloneArticle = isStandaloneArticleDraft && !articlePublicationIsDue({ content_key: currentDraft.contentKey, sections: currentDraft.sections });
     const isAstro101Draft = isAstro101ContentRow({ content_key: currentDraft.contentKey, facts: currentDraft.facts });
     const astro101Blocks = astro101BlocksFromSections(currentDraft.sections);
     const astro101Intro = astro101IntroFromSections(currentDraft.sections);
@@ -12112,6 +12119,7 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && (
             <section className="studio-surface studio-section admin-editor-copy-section" aria-label="Content name and summary">
+              {isStandaloneArticleDraft && <ArticlePublicationField contentKey={currentDraft.contentKey} sections={currentDraft.sections ?? {}} onChange={sections => setDraft({ ...currentDraft, sections })} />}
               <label className="admin-title-field">
                 <span>{headlineFieldLabel}</span>
                 <StudioInput aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
@@ -12718,7 +12726,7 @@ export function GeneratedContentAdminDashboard() {
             </details>
             {standaloneArticleKind(currentDraft.contentKey) && <section className={surfaceSection} aria-label="Article reader destination">
               <p>Readers find published writing in Articles &amp; Guides.</p>
-              {currentDraft.id && currentDraft.status === "LIVE" && <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)}>Read in app</a>}
+              {currentDraft.id && currentDraft.status === "LIVE" && !isScheduledStandaloneArticle && <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)}>Read in app</a>}
             </section>}
             {isArticleDraft && (
               <section className={`${surfaceSection} admin-display-source-panel`} aria-label="Article content system">
@@ -12834,6 +12842,8 @@ export function GeneratedContentAdminDashboard() {
               ? currentDraft.status === "LIVE" ? "Save changes" : "Save draft"
               : isGuidedHeldReview && !packageOwnerCanPublish
               ? "Save held draft"
+              : isScheduledStandaloneArticle
+                ? "Save & schedule"
               : directReaderDraft || packageOwnerCanPublish || unchangedSkySource
                 ? "Save & publish"
                 : packageHasProposal
@@ -12918,7 +12928,7 @@ export function GeneratedContentAdminDashboard() {
               ) : (
                 <StudioButton className="admin-publish-button" type="button" onClick={() => void (isStandaloneArticleDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
-                  Publish to app
+                  {isScheduledStandaloneArticle ? "Schedule release" : "Publish to app"}
                 </StudioButton>
               )}
             </>
