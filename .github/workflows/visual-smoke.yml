@@ -206,6 +206,33 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  lunation-source-wiring:
+    needs: scope
+    if: needs.scope.outputs.reader == 'true' || needs.scope.outputs.studio == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: bash scripts/ci-install-playwright.sh
+      - name: Verify complete RATM sources and owner publication to readers
+        run: npx playwright test -c playwright.lunation-horoscopes.config.ts
+      - name: Upload lunar source wiring artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: lunation-source-wiring-results
+          path: test-results/
+          if-no-files-found: ignore
+
   connection-transit-sources:
     needs: scope
     if: needs.scope.outputs.reader == 'true'
@@ -563,7 +590,7 @@ jobs:
           if-no-files-found: ignore
 
   browser-release-gate:
-    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, design-handoff, mobile-parity]
+    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, lunation-source-wiring, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, design-handoff, mobile-parity]
     # Still inspect failed dependencies, but let a superseded workflow cancel.
     # An always() gate can remain queued and block the next revision's run.
     if: ${{ !cancelled() }}

@@ -5,6 +5,9 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { pathToFileURL } from 'node:url';
+import { tmpdir } from 'node:os';
+import { build } from 'esbuild';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
@@ -147,11 +150,30 @@ const runtimeSource = fs.readFileSync(
   "utf8",
 );
 assert.match(runtimeSource, /import\("\.\/fallbackArchitectureV3LunationBookBundle"\)/u);
-assert.match(
-  runtimeSource,
-  /mergeReaderBundles\(localLunationBookReaderBundle, dashboardCoreReaderBundle\)/u,
-  "An approved Content Studio row must override the local book baseline when both use the same key.",
-);
+// Assert actual shipped behavior, independent of the current recomposition syntax.
+const runtimeDirectory = fs.mkdtempSync(path.join(tmpdir(), 'book-runtime-precedence-'));
+try {
+  const runtimeFile = path.join(runtimeDirectory, 'runtime.mjs');
+  await build({ stdin: { resolveDir: repoRoot, loader: 'ts', contents: `
+    export { loadLunationBookFallbackArchitectureV3Bundle, installFallbackArchitectureV3Bundle,
+      transitSynastryFallbackRendererV3 } from './apps/web/src/content/fallbackArchitectureV3Runtime';
+  ` }, bundle: true, platform: 'node', format: 'esm', outfile: runtimeFile, define: { 'import.meta.env': '{}' }, logLevel: 'silent' });
+  const runtime = await import(pathToFileURL(runtimeFile).href);
+  await runtime.loadLunationBookFallbackArchitectureV3Bundle();
+  const original = cards.authoredCards.find(card => card.contentKey === 'authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-aries/house-2');
+  const facts = { kind: 'new-moon', sign: 'taurus', risingSign: 'aries', house: 2, ruler: 'venus', rulerHouse: 1 };
+  assert.ok(runtime.transitSynastryFallbackRendererV3.renderLunationHoroscope(facts).body.includes(original.body));
+  const body = 'Synthetic published book opening.\n\nThe exact synthetic final paragraph.';
+  const overlay = review_status => ({ transitLib: { authoredCards: [{ ...original, body, review_status }] },
+    templatesFile: { templates: [] }, rowsFile: { hookRows: [], vocabularyRows: [] } });
+  runtime.installFallbackArchitectureV3Bundle(overlay('approved'));
+  const published = runtime.transitSynastryFallbackRendererV3.renderLunationHoroscope(facts).body;
+  assert.ok(published.includes(body), 'The approved Studio version must override the local baseline.');
+  assert.ok(!published.includes(original.body));
+  runtime.installFallbackArchitectureV3Bundle(overlay('needs_review'));
+  assert.ok(runtime.transitSynastryFallbackRendererV3.renderLunationHoroscope(facts).body.includes(original.body),
+    'An unapproved revision cannot replace the owner-approved baseline.');
+} finally { fs.rmSync(runtimeDirectory, { recursive: true, force: true }); }
 assert.doesNotMatch(
   runtimeSource.split("const snapshotBundle", 1)[0],
   /lunation-book-cards-v1\.json/u,

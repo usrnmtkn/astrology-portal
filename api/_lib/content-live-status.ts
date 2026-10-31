@@ -1,4 +1,5 @@
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
+import { isLunationHoroscopeKey } from "../../src/shared/lunationHoroscopeIdentity.js";
 import { calendarMoonIngressPackageRecordForKey } from "./calendar-moon-ingress-sources.js";
 import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
 import { isRegisteredLunarJournalKey } from "./content-studio-package-admission.js";
@@ -179,6 +180,19 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
       const live = Boolean(servingBody && requestedBody === servingBody);
       return { id: row.id, live, label: live ? "Live" : "Not live", source: live ? current ? "studio" : "package" : null,
         detail: live ? `Readers can receive this ${phrase ? "Calendar transition phrase" : "complete Moon ingress passage"}.` : `This revision is not the published ${phrase ? "Calendar transition phrase" : "Moon ingress passage"}.`,
+        updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
+    }
+    if (isLunationHoroscopeKey(row.content_key)) {
+      const current = [...candidates].sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? ""))
+        .find(candidate => candidate.content_key === row.content_key && candidate.status === "LIVE"
+          && candidate.lane === "serving" && !candidate.review_state && candidate.body?.trim()
+          && isReaderServableGeneratedContentRow(candidate) && isGeneratedContentReaderBoundaryAllowed(candidate));
+      const baseline = servingPackageRecords.get(row.content_key);
+      const servingBody = current?.body ?? (allowsPublication(row) ? baseline?.body : null);
+      const requested = row.sections?.packageDraft?.body ?? row.body ?? row.sections?.packageRecord?.body;
+      const live = Boolean(servingBody && requested === servingBody);
+      return { id: row.id, live, label: live ? "Live" : "Not live", source: live ? current ? "studio" : "package" : null,
+        detail: live ? "Readers can receive this complete lunation horoscope." : "This horoscope revision is not published.",
         updatedAt: row.updated_at ?? null, servingRowId: live ? current?.id ?? null : null } as ContentLiveStatus;
     }
     const builtin = builtinContentRecords.get(row.content_key);

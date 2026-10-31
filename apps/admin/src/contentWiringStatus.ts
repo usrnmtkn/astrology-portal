@@ -1,5 +1,6 @@
 import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.js";
 import { standaloneArticleKind } from "../../../src/shared/articleLibrary.js";
+import { isLunationHoroscopeKey } from "../../../src/shared/lunationHoroscopeIdentity.js";
 
 export type ContentWiringRow = {
   block_type?: string | null;
@@ -72,6 +73,12 @@ function retirementReason(row: ContentWiringRow) {
   return "";
 }
 
+function isLunationSourceKey(key: string) {
+  return isLunationHoroscopeKey(key)
+    || key.startsWith('authored/lunation-eclipse-section/')
+    || key.startsWith('authored/lunation-eclipse-house-layer/');
+}
+
 function isSourceMaterial(row: ContentWiringRow) {
   const source = record(row.source_snapshot);
   const facts = record(row.facts);
@@ -94,11 +101,12 @@ function isSourceMaterial(row: ContentWiringRow) {
     || role === "fallback-source"
     || renderPolicy.includes("reference-only")
     || reviewState === "source-material-generic-aspect-baseline"
-    || row.lane === "reference" && !row.content_key.startsWith("authored/sky-lunation-macro/");
+    || row.lane === "reference" && !row.content_key.startsWith("authored/sky-lunation-macro/") && !isLunationSourceKey(row.content_key);
 }
 
 function isKnownRenderedKey(contentKey: string) {
   return contentKey.startsWith("authored/connection-activation/")
+    || isLunationSourceKey(contentKey)
     || contentKey.startsWith("fallback-template/connection-transit.bridge/")
     || contentKey.startsWith("horoscope/")
     || contentKey.startsWith("sky-season-fallback/")

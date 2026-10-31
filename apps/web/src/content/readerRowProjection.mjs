@@ -6,7 +6,8 @@ import { projectHoroscopeContext } from './horoscopeContext.mjs';
 const strings = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'string']));
 const numbers = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'number']));
 const booleans = names => Object.fromEntries(names.split(/\s+/u).filter(Boolean).map(name => [name, 'boolean']));
-const approval = { ...strings('approvalLevel recordPath payloadSha256 approvedAt taskId semanticAuthoritySha256') };
+const approval = { ...strings('approvalLevel recordPath payloadSha256 approvedAt taskId semanticAuthoritySha256'),
+  action: value => value === 'content-studio-publish' ? value : undefined };
 const reference = strings('contentKey field sha256');
 const source = { ...strings('kind text'), reference };
 const ingressSourceNames = `aspectChallengeSentence aspectManifestationSentence1 aspectManifestationSentence2 aspectMechanismSentence aspectResponseSentence astronomySummary challengeSentence closingLine deeperMeaningSentence dignitySentence durationSentence experienceBody experienceCreative experienceGeneral experienceHome experienceMoney experienceRecognition experienceRelationships experienceTime experienceWork historicalCallback introClosingSentence introManifestationSentence manifestationSentence1 manifestationSentence2 manifestationSentence3 openingHook placementCollectiveShadow placementCollectiveTheme placementCorrection placementDignityExpression placementDignityMeaning placementDignityMechanism placementMeaningSentence placementOpportunity placementPractice placementPressure placementShadow placementThesis planetCollectiveExpression planetDescriptor planetFunction planetFunctionSentence planetLore planetProductive planetRole planetShadow planetSignMechanismSentence practiceClosingLine reflectionQuestion responseSentence returnMeaning signCoreDrive signDescriptor signFunctionSentence signGift signMethod signShadow signValues stakesSentence timingFinalPass timingFirstPass timingLongCycle timingReturn timingSinglePass`;
@@ -42,7 +43,11 @@ const packageRecord = {
     title tagline preview_note core_theme sign_jurisdiction lived_experience rulership_twist history_echo closing_charge
     reader_content_type content_type`),
   ...numbers('word_count body_you_word_count body_they_word_count variant'),
-  ...booleans('owner_approved owner_authored reader_only serving_enabled studio_owner_wording'),
+  ...booleans('owner_approved owner_authored reader_only serving_enabled studio_owner_wording promotion_authorized'),
+  // Public runtime integrity only; original imports, private notes and omission text stay private.
+  protected_content: { body_sha256: value => typeof value === 'string' && /^[a-f0-9]{64}$/u.test(value) ? value : undefined,
+    ...numbers('char_count word_count') },
+  studio_lunation_revision: strings('schema contentKey approvedAt baselineBodySha256 previousBodySha256 bodySha256'),
   blocks: [lunarBlock], lunarJournal: { blocks: [lunarBlock] },
   approval, body_you_approval: approval, body_they_approval: approval,
   content_boundary: booleans('mixedOwnerApproved'),

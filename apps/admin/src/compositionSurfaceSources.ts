@@ -13,23 +13,29 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "natal-placement-detail": /^(?:natal\/placement|fallback-template\/natal[.](?:planet|node|angle)|fallback-hook\/(?:natal\/planet-intro|natal-you-placement|planet-best|sign-lived|placement-|house-lived|house-meaning|node-journey|angle-|dignity-line|natal-moon-phase-lived))/,
   "natal-aspect-detail": /^(?:natal\/aspect|fallback-template\/natal[.]aspect|fallback-hook\/(?:aspect-type|aspect-pair|aspect-lived|natal-aspect-lived))/,
   "natal-aspect-patterns": /^(?:authored\/(?:natal-pattern|aspect-pattern)|fallback-hook\/aspect-pattern)/,
-  "sky-placement-detail": /^(?:authored\/sky-placement|sky-placement\/|sky[.]placement[.]|sky\/article-|sky-context\/|sky-nodes\/|sky-lilith\/|fallback-template\/sky-placement|fallback-hook\/(?:sky-placement|sky-sign-copy|sky-sign-trap|sky-element-close|sky-planet-education|planet-lived|fog-note))/,
+  "sky-placement-detail": /^(?:sky-article\/|house-horoscope-core\/|authored\/sky-placement|sky-placement\/|sky[.]placement[.]|sky\/article-|sky-context\/|sky-nodes\/|sky-lilith\/|fallback-template\/sky-placement|fallback-hook\/(?:sky-placement|sky-sign-copy|sky-sign-trap|sky-element-close|sky-planet-education|planet-lived|fog-note))/,
   "sky-aspect-detail": /^(?:authored\/sky-aspect|sky[.]|fallback-template\/sky[.]aspect|fallback-hook\/sky-aspect)/,
   "sky-retrograde-summary": /^(?:cms\/sky-retrograde-summary|fallback-template\/transit[.]retro|fallback-hook\/transit-retro)/,
   "sky-debility-card": /^cms\/sky-debility/,
-  "personal-transit-detail": /^(?:authored\/transit-(?:aspect|return)\/|transit\/|fallback-template\/transit[.]aspect|fallback-hook\/(?:transit-aspect-type|transit-effect|transit-retro-aspect|transit-house-event-(?:wants|natal|scenes)))/,
+  "personal-transit-detail": /^(?:authored\/(?:point-explainer|transit-(?:aspect(?:-insert)?|return))\/|transit\/|fallback-template\/transit[.]aspect|fallback-hook\/(?:transit-aspect-type|transit-effect|transit-retro-aspect|transit-house-event-(?:wants|natal|scenes)))/,
   "sky-daily-timing": /^(?:daily-timing\/|fallback-template\/daily|fallback-hook\/daily-)/,
   "daily-at-a-glance": /^fallback-(?:hook|template)\/daily(?:[./-]|$)/,
-  "sky-calendar-event-cards": /^(?:authored\/(?:sky-lunation|calendar|lunar-journal)|lunation\/|season(?:-arc)?\/|transit-fallback\/|fallback-template\/(?:sky[.]|lunation)|fallback-hook\/(?:sky-event|sky-season|sky-lunation|sky-axis|sky-fullmoon|sky-newmoon|sky-eclipse|season-marker))/,
+  "sky-calendar-event-cards": /^(?:sky-lunation\/|sky-v4\/eclipse-generic\/|authored\/book-ritual-and-the-moon\/lunation-horoscope\/(?:new-moon|full-moon)\/|authored\/(?:sky-lunation|sky-newmoon|sky-fullmoon|sky-eclipse|lunation-eclipse-|station\/|week-opener\/|calendar|lunar-journal)|lunation\/|season(?:-arc)?\/|transit-fallback\/|fallback-template\/(?:sky[.]|lunation)|fallback-hook\/(?:sky-event|sky-season|sky-lunation|sky-axis|sky-fullmoon|sky-newmoon|sky-eclipse|season-marker))/,
   "sky-lunar-day-editorial": /^(?:authored\/(?:calendar|lunar-journal)|lunar\/|lunation\/|fallback-template\/(?:moon|lunation)|fallback-hook\/(?:moon-|lunation-))/,
   "sky-calendar-day-cards": /^(?:cms\/calendar-day|cms\/sky-daily-summary\/(?:sun|moon)\/|authored\/sky-lunation-macro\/|fallback-hook\/(?:moon-|season-marker|sky-event))/,
-  "sky-horoscopes": /^(?:cms\/weekly-horoscope|fallback-template\/(?:lunation|sky[.]horoscope)|fallback-hook\/(?:sky-horoscope|lunation-))/,
+  "sky-horoscopes": /^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/(?:new-moon|full-moon)\/|lunation-eclipse-|weekly-transit-aspect\/|station\/|week-opener\/)|cms\/weekly-horoscope|fallback-template\/(?:lunation|sky[.]horoscope)|fallback-hook\/(?:sky-horoscope|lunation-))/,
   "chart-placement-row-microcopy": /^(?:cms\/chart-placement-row|fallback-hook\/(?:planet-intro|placement-sentence|dignity-line))/,
   "natal-empty-house": /^(?:cms\/natal-empty-house|fallback-template\/(?:empty-house|natal[.]empty-house)|fallback-vocab\/empty-house-|fallback-hook\/(?:empty-house|house-cusp|house-glossary|ruler-method))/,
   "personal-transit-house": /^(?:authored\/transit-house(?:\/|-intro\/|-sign\/)|cms\/personal-transit-house|fallback-template\/transit[.]house|fallback-hook\/(?:transit-house|transit-effect-house|house-meaning))/,
   "generated-reports": /^(?:report\/|fallback-template\/(?:career|profection|circle)|fallback-hook\/(?:career-|profection-|circle-))/,
   "surface-specs-builders": /^(?:fallback-vocab\/|vocab\/|slot-template\/)/
 };
+
+/** Keep the slim package catalog aligned with the source families shown in Studio. */
+export function isCompositionSurfaceSourceKey(key: string) {
+  return !isRetiredCompositionKey(key)
+    && Object.values(compositionSurfaceFamilies).some(contract => contract.test(key));
+}
 
 export function compositionSourcesForSurface(surfaceId: string, rows: CompositionMapRow[], templates: CompositionMapTemplate[]) {
   const contract = compositionSurfaceFamilies[surfaceId];

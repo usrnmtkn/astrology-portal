@@ -3,6 +3,7 @@ import type { AuthoredCard, HookRow, VocabRow, TemplateRow, FallbackArchitecture
 import { publicationAllowsContent } from "../content/contentPublicationState.js";
 import { generatedRowPackageRole } from "../content/generatedContentEligibility.js";
 import { isCanonicalSkyReaderRecord, isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions.js";
+import { isStudioLunationRevision } from '../content/lunationStudioRevision.js';
 import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3DashboardOverlay.js";
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging.js";
 import {isSkyPlacementFallbackPartitionKey} from './skyPlacementSourceScope.js';
@@ -74,6 +75,10 @@ export function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCa
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
   const recordBody = stringFrom(row.body, record.body);
+  // Receipt-checked lunar revisions retain their exact whitespace. Ordinary
+  // authored cards keep the saved top-level body ahead of a stale package body.
+  const authoredBody = isStudioLunationRevision(record) && typeof record.body === 'string'
+    ? record.body : recordBody;
   const recordBodyYou = stringFrom(record.body_you);
   const recordBodyThey = stringFrom(record.body_they);
 
@@ -90,7 +95,7 @@ export function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCa
     publicationRowUpdatedAt: row.updated_at,
     contentKey: row.content_key,
     content_role: role || stringFrom(record.content_role) || "full_copy",
-    ...(recordBody ? { body: recordBody } : {}),
+    ...(recordBody ? { body: authoredBody } : {}),
     ...(recordBodyYou ? { body_you: recordBodyYou } : {}),
     ...(recordBodyThey ? { body_they: recordBodyThey } : {}),
     review_status: reviewStatus || stringFrom(record.review_status) || "approved"

@@ -6572,7 +6572,8 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (con
     expect(baseCopy.some(text => (text?.length ?? 0) > 50)).toBe(true);
     const aspects = article.locator(".article-related-aspects");
     const aspectCopy = await aspects.allTextContents();
-    await page.reload();
+    // Readiness is the rendered passage; an optional font response must not hold navigation open.
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(sect.locator("p")).toHaveText(body.split(/\n\s*\n/u));
     expect(await sect.evaluate(precedingCopy)).toEqual(baseCopy);
     expect(await aspects.allTextContents()).toEqual(aspectCopy);

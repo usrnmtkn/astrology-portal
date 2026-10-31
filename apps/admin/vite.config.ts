@@ -1,6 +1,7 @@
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
 import { adminLazyBoundaryManifestPlugin } from "../../scripts/admin-lazy-boundary-manifest-plugin.mjs";
 import { studioCoreEditorBoundaryPlugin } from "../../scripts/studio-core-editor-boundary-plugin.mjs";
+import { lunationReaderContractPlugin } from '../../scripts/lunation-reader-contract-plugin.mjs';
 import { browserOnlySwissEphemerisPlugin, trimSwissEphemerisWebDataPlugin, serveFullSwissEphemerisDataInDevPlugin, versionedSwissAssetsPlugin } from "../web/vite.config";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
@@ -132,7 +133,7 @@ export default defineConfig(({ command, mode }) => {
   };
 
   return {
-    plugins: [startupPartition, studioCoreEditorBoundaryPlugin(), adminLazyBoundaryManifestPlugin(repoRoot), memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
+    plugins: [startupPartition, lunationReaderContractPlugin(), studioCoreEditorBoundaryPlugin(), adminLazyBoundaryManifestPlugin(repoRoot), memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
       name: "studio-swiss-ephemeris-assets",
       generateBundle() {
         for (const name of ["swisseph.wasm", "swisseph.data"]) this.emitFile({ type: "asset", fileName: `wasm/${name}`, source: readFileSync(resolve(repoRoot, "apps/web/public/wasm", name)) });
@@ -209,7 +210,7 @@ export default defineConfig(({ command, mode }) => {
             }
             // Shared controls render immediately and remain outside this lazy group.
             // Editor and publication panels share a deferred workspace.
-            if (/apps\/admin\/src\/(?:ArticleBlockStyleFields|ConnectionTransitStudio|FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:ArticleBlockStyleFields|ConnectionTransitStudio|FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|StudioSavedVariableWording|TemplateSavedWording|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|emptyHouseSources|templateVariableSources)\.ts$/u.test(id)) {
               return "review";
             }
             // Review panels and owner publication share one deferred workspace chunk.
@@ -218,7 +219,7 @@ export default defineConfig(({ command, mode }) => {
             }
             // Fallback editors share the owner-publication workspace; combining
             // their deferred code avoids repeating its controls and copy in gzip.
-            if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:FallbackCompositionCheck|DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {
               return "review";
             }
           }

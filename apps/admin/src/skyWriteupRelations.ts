@@ -1,5 +1,7 @@
 import { memoByObject } from "./derivedCache";
 import { seasonArticleIdentity } from "../../../src/shared/seasonArticle";
+import { isLunationHoroscopeKey } from "../../../src/shared/lunationHoroscopeIdentity";
+import { lunationHoroscopeIdentities } from "../../../src/shared/lunationHoroscopeIdentities";
 export type SkyWriteupRelationRow = {
   id: string;
   content_key: string;
@@ -9,6 +11,8 @@ export type SkyWriteupRelationRow = {
   mode?: string | null;
   facts?: Record<string, unknown> | null;
   source_snapshot?: Record<string, unknown> | null;
+  updated_at?: string | null;
+  sections?: unknown;
 };
 
 export type SkyWriteupContext = {
@@ -37,7 +41,7 @@ export type RelatedLunationHoroscope<Row extends SkyWriteupRelationRow = SkyWrit
   preview: string;
   sourceReady: boolean;
   sources: Array<{
-    role: "Horoscope frame" | "House opening" | "House jurisdiction" | "Sign focus";
+    role: "RATM horoscope" | "Horoscope frame" | "House opening" | "House jurisdiction" | "Sign focus";
     row: Row;
   }>;
 };
@@ -304,6 +308,11 @@ function ordinal(value: number) {
 }
 
 function relationBody(row: SkyWriteupRelationRow | undefined) {
+  if (row && isLunationHoroscopeKey(row.content_key)) {
+    const sections = row.sections as { packageDraft?: { body?: unknown }; packageRecord?: { body?: unknown } } | null;
+    const body = sections?.packageDraft?.body ?? sections?.packageRecord?.body ?? row.body;
+    return typeof body === "string" ? body.trim() : "";
+  }
   return typeof row?.body === "string" ? row.body.trim() : "";
 }
 
@@ -319,6 +328,16 @@ export function relatedLunationHoroscopes<Row extends SkyWriteupRelationRow>(
   context: SkyLunationContext
 ): RelatedLunationHoroscope<Row>[] {
   const rowsByKey = new Map(rows.map((row) => [row.content_key.toLowerCase(), row]));
+  if (context.eclipse === "none") {
+    return lunationHoroscopeIdentities(context.kind, context.sign).map(identity => {
+      const row = rows.filter(candidate => candidate.content_key === identity.contentKey)
+        .sort((left, right) => Number(left.id.startsWith("package:")) - Number(right.id.startsWith("package:"))
+          || (right.updated_at ?? "").localeCompare(left.updated_at ?? ""))[0];
+      const preview = relationBody(row);
+      return { risingSign: identity.risingSign, house: identity.house, preview,
+        sourceReady: Boolean(preview), sources: row ? [{ role: "RATM horoscope", row }] : [] };
+    });
+  }
   const frameKey = `fallback-hook/lunation-horoscope/${context.kind === "new-moon" ? "new" : "full"}`;
   const frameRow = rowsByKey.get(frameKey);
   const signFocusKey = `fallback-hook/lunation-sign-compact/${context.kind}/${context.sign}`;
@@ -412,7 +431,10 @@ export function skyWriteupRelatedSourcePrefixes(row: SkyWriteupRelationRow) {
   const context = skyWriteupContextForRow(row);
   if (!context) return [];
   const aspect = `authored/transit-aspect/${context.planet}/`;
-  if (skyLunationContextForRow(row)) return [aspect,
+  const lunation = skyLunationContextForRow(row);
+  if (lunation?.eclipse === "none") return [aspect,
+    `authored/book-ritual-and-the-moon/lunation-horoscope/${lunation.kind}/${lunation.sign}/`];
+  if (lunation) return [aspect,
     "fallback-hook/lunation-horoscope/", "fallback-hook/lunation-sign-compact/",
     "fallback-hook/lunation-opening-situation/", "fallback-vocab/house-jurisdiction/"];
   return [aspect, `house-horoscope-core/${context.planet}/`,

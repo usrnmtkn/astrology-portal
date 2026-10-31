@@ -116,6 +116,12 @@ assert.equal((await catalog("wrong")).code, 401);
 const catalogResult = await catalog("live-status-qa-secret");
 assert.equal(catalogResult.code, 200);
 assert.ok(catalogResult.rows.some((row: any) => row.content_key === "fallback-hook/natal-you-placement-sign-final/uranus/scorpio"));
+for (const key of [
+  'house-horoscope-core/moon/sagittarius/house-1',
+  'authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/taurus/rising-aries/house-2',
+  'sky-lunation/full-moon/taurus',
+  'authored/compat-pair/jupiter/aries/aries'
+]) assert.ok(catalogResult.rows.some((row: any) => row.content_key === key), `${key}: complete source must be discoverable without a DB mirror`);
 assert.ok(catalogResult.rows.every((row: any) => !row.body && !row.sections), "Initial catalog should load identifiers; complete sources load on selection.");
 assert.equal((await request(["qa-virgo"], "wrong")).code, 401);
 assert.equal(storageReads, 0, "Unauthorized callers must not reach content storage.");

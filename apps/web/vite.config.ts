@@ -1,6 +1,7 @@
 import { internApplicationStringsPlugin, internPublicJsonStringsPlugin } from "../../scripts/public-json-string-interning-plugin.mjs";
 import { sharedReaderAuthoredRowsPlugin } from "../../scripts/reader-authored-sharing-plugin.mjs";
 import { studioCoreEditorBoundaryPlugin } from "../../scripts/studio-core-editor-boundary-plugin.mjs";
+import { lunationReaderContractPlugin } from '../../scripts/lunation-reader-contract-plugin.mjs';
 import { memoryGraphReferencePlugin } from "../../scripts/memory-graph-reference-plugin.mjs";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
@@ -213,6 +214,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      lunationReaderContractPlugin(),
       studioCoreEditorBoundaryPlugin(),
       sharedReaderAuthoredRowsPlugin(),
       memoryGraphReferencePlugin(),
@@ -269,7 +271,8 @@ export default defineConfig(({ mode }) => {
             if (id.endsWith("/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs")) return "sky";
             // Eligibility helpers are already read at startup. Share their small
             // transport instead of adding a preload and gzip header per identity.
-            if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|skyPlacementAspectBridge|generatedContentEligibility)\.ts$/u.test(id)
+            if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|skyPlacementAspectBridge|generatedContentEligibility|lunationStudioRevision)\.ts$/u.test(id)
+              || id.endsWith("/src/shared/lunationHoroscopeIdentity.ts")
               || id.endsWith("/services/templateInterpolation.ts")
               || id.endsWith("/shared/components/formattedWritingLoader.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
@@ -277,18 +280,27 @@ export default defineConfig(({ mode }) => {
             // Studio's deferred editor group so an editor import cannot pull it into boot.
             // UI-only shared primitives travel with their existing React
             // dependency; pure eligibility/bootstrap code must not await it.
-            if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)) return "react";
+            if (/\/shared\/components\/(?:LoadingIndicator|PageLoading|FormattedProse)\.tsx$/u.test(id)
+              || id.endsWith('/components/portalVisibility.ts')) return "react";
             // Calendar and Studio share these keys and timing templates. Keep
             // their reader dependency outside Studio's deferred editor workspace.
             if (/\/shared\/features\/calendar\/(?:calendarTransitionPhraseIdentity|calendarTimingTemplates)\.ts$/u.test(id)
               || /\/shared\/(?:seasonArticle|articleLibrary)\.ts$/u.test(id)) return "sky";
-            if (/\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader)\.mjs$/u.test(id)
+            if (/\/content\/fallbackArchitectureV3\/resolver\/(?:readerContentBoundary|readerEligibility|zodiacSeasonVariables|transitReturns|transitAspectSourcePriority|mercuryReturnReader|lunationStudioRevision)\.mjs$/u.test(id)
               || /\/(?:content\/transitNatalIdentity|services\/transitReturns)\.ts$/u.test(id)) return "reader-eligibility";
             // Studio's reader-copy editors share one lazy workspace.
-            if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
+            if (id.endsWith("/content/skyArticleHoroscopes.mjs")
+              || id.endsWith("/src/shared/lunationHoroscopeIdentities.ts")) return "sky-article-horoscopes";
+            // Lunar writing modes share their optional workspace and controls.
+            if (/apps\/admin\/src\/(?:LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio)\.tsx$/u.test(id)) return "lunation-writing";
+            if (/apps\/admin\/src\/(?:FallbackCompositionCheck|FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
             // These reader helpers already load at startup. Share their chunk;
             // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")
+              || id.endsWith("/content/lunationAspectCandidates.ts")
+              || id.endsWith("/utils/articleAspects.ts")
+              || id.endsWith("/src/shared/solarHorizon.ts")
+              || id.endsWith("/services/planetSignDignity.mjs")
               || id.endsWith("/content/protectedOwnerSkyPlacementPassages.ts")
               || /\/services\/(?:astrologyDisplay|astrologyFacts|natalAspectFacts|verifiedSkyCache|skyPlacementSourceScope|generatedContentKeys)\.ts$/u.test(id)) return "astrology-display";
             // Shared civil-date/location helpers are used together by Sky and

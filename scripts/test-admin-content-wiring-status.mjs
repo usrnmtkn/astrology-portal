@@ -53,6 +53,11 @@ const connected = contentWiringStatus({
 });
 assert.equal(connected.reason, "connected");
 assert.equal(connected.label, "Used by app");
+for (const key of [
+  'authored/lunation-eclipse-section/shared/lunar/nature',
+  'authored/lunation-eclipse-house-layer/solar/house-1'
+]) assert.equal(contentWiringStatus({ content_key: key, lane: 'reference' }).state, 'connected',
+  'A bundled eclipse source is connected even before it has a saved published revision.');
 
 const needsDestination = contentWiringStatus({
   content_key: "article/unregistered/unplaced",
