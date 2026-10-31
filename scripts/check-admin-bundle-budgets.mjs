@@ -134,6 +134,7 @@ if (initialChunks.has("src/NatalSectPlacementComparison.tsx")) failures.push("Na
 if (!manifest["src/NatalSectPlacementComparison.tsx"]?.isDynamicEntry) failures.push("Natal reading comparison must remain an independently lazy entry.");
 if (initialChunks.has('src/studioRevisionPublication.ts')) failures.push('Revision publication validation must remain deferred from Studio startup.');
 if (initialChunks.has("src/SkyPlacementWorkspace.tsx")) failures.push("The dated Sky workspace must remain deferred from Studio startup.");
+if (initialChunks.has("src/FallbackHoroscopeStudio.tsx")) failures.push("The fallback horoscope library must remain deferred from Studio startup.");
 if (initialChunks.has("src/SkyDebilityDatePreview.tsx")) failures.push("The dignity date preview must remain deferred from Studio startup.");
 if (memoryGraphFiles.length !== 1) failures.push('Expected one deferred memory graph route with its renderer.');
 for (const key of initialChunks) {
