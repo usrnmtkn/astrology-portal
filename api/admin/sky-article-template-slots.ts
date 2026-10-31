@@ -2,7 +2,7 @@ import { articleTemplateWithHoroscopes } from "../../apps/web/src/content/skyArt
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
-import { defaultIngressOpenAiModel, generateSkyArticleTemplateSlots, RejectedSkyArticleDraftError } from "../_lib/content-generation.js";
+import { defaultIngressOpenAiModel, generateSkyArticleTemplateSlots, skyArticleTemplateSlotsExport, RejectedSkyArticleDraftError } from "../_lib/content-generation.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
 import {
@@ -36,6 +36,7 @@ type TemplateRow = {
 };
 
 type RequestBody = {
+  preview?: boolean;
   expectedModel?: string;
   includeRetrogradeHistory?: boolean;
   format?: SkyArticleFormat;
@@ -149,6 +150,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       return;
     }
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);
+    if(body.preview!==undefined&&typeof body.preview!=='boolean')throw new AdminHttpError(400,'preview must be a boolean.');
     if (body.format === undefined) throw new AdminHttpError(400, "Choose an explicit ingress or saved-guide format before generation.");
     if (body.expectedModel !== undefined) {
       if (typeof body.expectedModel !== 'string' || !body.expectedModel.trim()
@@ -195,7 +197,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const unfinished = unfinishedSkyArticleTemplateSlots({
       placeholders,
       calculatedSlotValues: facts.slotValues,
-      existingSlotValues
+      existingSlotValues:body.preview?{}:existingSlotValues
     });
     const includeHistory = body.includeRetrogradeHistory === true && hasVerifiedSameSignHistory(facts.retrogradeHistory);
     const needsFacts = (slot: { name: string; description?: string }) => ingress
@@ -220,7 +222,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const seasonMeaning = await loadSkySeasonMeaning(facts.planet, facts.sign);
     const writingFacts = { ...facts, retrogradeHistory: includeHistory ? facts.retrogradeHistory : undefined,
       retrogradeHistoryIncluded: includeHistory };
-    const generation = await generateSkyArticleTemplateSlots({
+    const generationInput = {
       templateKey: template.content_key.replace(/^sky-article-template\//u, "sky/article-template/"),
       templateBody: completeTemplate,
       planet: facts.planet,
@@ -232,7 +234,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       seasonMeaning,
       ...(ingress ? { ingressWriting: buildSkyIngressWritingContext(writingFacts),
         ingressTemplateReference: buildIngressTemplateReference(template.content_key, template.body!) } : {}),
-    });
+    };
+    if(body.preview)return sendAdminJson(res,200,{ok:true,writingExport:await skyArticleTemplateSlotsExport(generationInput)});
+    const generation = await generateSkyArticleTemplateSlots(generationInput);
     sendAdminJson(res, 200, {
       ok: true,
       slotValues: generation.slotValues,

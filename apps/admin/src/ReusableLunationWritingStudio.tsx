@@ -3,6 +3,7 @@ import {StudioButton,StudioInput,StudioTabs,StudioTextarea} from './StudioContro
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {adminCredentialHeaders} from './adminSecret';
 import {PageLoading} from '../../../src/shared/components/PageLoading';
+import WritingPlanExport from './WritingPlanExport';
 import {LUNATION_SIGNS,LUNATION_PHASES,LUNATION_PROFILE_FIELDS,LUNATION_ARGUMENT_FIELDS,lunationContentKey} from '../../../src/astro-writing/lunationWritingIdentity.mjs';
 import type {LunationProfile} from '../../../src/astro-writing/lunationWritingProfile.mjs';
 
@@ -75,6 +76,7 @@ export default function LunationWritingStudio({secret,dirtyRef,onOpenContent}:{s
           {(['broad_mechanism','chosen_expression'] as const).map(field=><label key={field}>{field==='broad_mechanism'?'Broader meaning':'Chosen example'}<StudioTextarea formatting={false} value={workspace.argumentInput.scope_breadth[field]} rows={2} disabled={busy||Boolean(active)} onChange={event=>edit('argumentInput',{...workspace.argumentInput,scope_breadth:{...workspace.argumentInput.scope_breadth,[field]:event.target.value}})}/></label>)}
           {workspace.argumentInput.scope_breadth.other_valid_expressions.map((value:string,index:number)=><label key={index}>Alternative example {index+1}<StudioInput value={value} disabled={busy||Boolean(active)} onChange={event=>edit('argumentInput',{...workspace.argumentInput,scope_breadth:{...workspace.argumentInput.scope_breadth,other_valid_expressions:workspace.argumentInput.scope_breadth.other_valid_expressions.map((text:string,i:number)=>i===index?event.target.value:text)}})}/></label>)}
           <div className="admin-toolbar-actions"><StudioButton disabled={busy||Boolean(active)||!workspaceDirty&&Boolean(loaded.row)} onClick={()=>void action('save')}>Save plan and draft</StudioButton><StudioButton disabled={busy||dirty||Boolean(active)||!loaded.row||!loaded.profile.id} onClick={()=>void action('prepare')}>Prepare writing plan</StudioButton></div>
+          <WritingPlanExport secret={secret} endpoint={endpoint} body={{action:'export',phase,sign,expectedUpdatedAt:loaded.row?.updated_at??null}} disabled={busy||dirty||!loaded.row||!loaded.profile.id}/>
           {plan&&<section className="admin-writing-preview" aria-label="Prepared lunar plan"><h3>Plan ready for review</h3>
             <p>{title(plan.facts.event.kind)} in {title(plan.facts.event.sign)} · {new Intl.DateTimeFormat('en-US',{dateStyle:'full',timeStyle:'short',timeZone:plan.facts.timeZone}).format(new Date(plan.facts.event.startsAt))} · {plan.facts.timeZone}</p>
             {plan.ownerPassages.map((passage:any)=><details key={passage.sourceId} className="admin-workspace-details"><AdminDisclosureSummary>{passage.sourceId}</AdminDisclosureSummary><p>{passage.text}</p><small>{passage.sourcePath} · {passage.sourceSha256}</small></details>)}

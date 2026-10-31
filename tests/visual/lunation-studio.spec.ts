@@ -5,6 +5,7 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {studioApiStore} from '../helpers/studio-api-store';
 import {lunationPublicationDraft,lunationKey,lunationRevision} from '../helpers/lunation-publication.mjs';
 import {lunarSigns} from '../../apps/admin/src/lunarCalendarContent';
+import {checkWritingExport} from '../helpers/check-writing-export';
 for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const){
  test(`Lunar writing workspace ${width} ${theme}`,async({page})=>{
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{env:{...process.env,LUNAR_WRITER_FIXTURE:'1'},execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
@@ -50,6 +51,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    for(const label of ['Central thought','Lunar phase context','Meaning of the sign','What the reader might recognize','Intention or reflection','Journal focus','What this reading must not assume','Broader meaning','Chosen example'])await editor.getByRole('textbox',{name:label,exact:true}).fill(`Synthetic ${label} direction.`);
    for(let i=1;i<=3;i++)await editor.getByLabel(`Alternative example ${i}`,{exact:true}).fill(`Fixture example ${i}`);
    await editor.getByRole('button',{name:'Save plan and draft',exact:true}).click();await expect(editor.getByRole('status')).toHaveText('Workspace saved.');
+   const beforeExport=await call({method:'rows'});
+   await checkWritingExport(page,editor,'Synthetic saved lunar instructions.\n\nPreserve the second paragraph.');
+   expect(await call({method:'rows'})).toEqual(beforeExport);
    await editor.getByRole('button',{name:'Prepare writing plan',exact:true}).click();await expect(editor.getByRole('heading',{name:'Plan ready for review',level:3})).toBeVisible();
    await expect(editor.getByLabel('Prepared facts and plan')).toHaveValue(/swiss-ephemeris/);
    await expect(editor.getByRole('button',{name:'Generate one draft',exact:true})).toBeDisabled();

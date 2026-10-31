@@ -3,6 +3,7 @@ import { AdminDisclosureSummary } from './AdminNativeControls';
 import { StudioButton, StudioInput, StudioTextarea } from './StudioControls';
 import { adminCredentialHeaders, adminSecretStorageKey } from './adminSecret';
 import { loadOwnerSessionAccessToken } from './ownerSession';
+import WritingPlanExport from './WritingPlanExport';
 
 type Props = {
   planet: string;
@@ -95,6 +96,7 @@ export default function SkyArticleAiWriter({ planet, sign, field, currentText, d
       />
       <small className="admin-field-hint">Leave this blank to revise from the current article, calculated sky validation, and approved writing memory.</small>
     </label>
+    <WritingPlanExport getCredential={contentStudioCredential} endpoint="/api/admin/sky-article-writing" body={{preview:true,planet,sign,field,referenceDate,instruction,currentText}} disabled={disabled||busy||!referenceDate}/>
     <div className="admin-sky-writing-source-actions" role="group" aria-label="AI article writing actions">
       <StudioButton className="admin-primary-button" type="button" disabled={disabled || busy || !referenceDate} onClick={generate}>
         {busy ? 'Writing a suggestion…' : currentText.trim() ? 'Rewrite the reusable article' : 'Write the reusable article'}

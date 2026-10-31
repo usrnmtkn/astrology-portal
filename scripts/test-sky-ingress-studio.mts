@@ -36,6 +36,7 @@ const template = { id, content_key: "sky/article-template/sun/libra", event_type
   status: "REVIEWED", lane: "reference", review_state: null, source_snapshot: { review_status: "approved" },
   body: "# Immutable owner template\n\nSynthetic complete original writing. {{legacyField}}" };
 let prompts: string[] = [];
+let sentInstructions='';
 let requested: string[] = [];
 let rejectWriterCopy = false;
 let liveCorrections = false;
@@ -222,6 +223,7 @@ try {
     if (String(url).startsWith("https://ssd.jpl.nasa.gov/")) return new Response("Synthetic outage", { status: 503 });
     if (String(url) === "https://api.openai.com/v1/responses") {
       const request = JSON.parse(String(init.body)); prompts.push(request.input);
+      sentInstructions=request.instructions;
       assertSummaryGuidance('openai', request.input, request.text.format.schema, request.instructions);
       requested = request.text.format.schema.properties.slotValues.required;
       const slotValues = ingressFixtureValues(request.input, requested);
@@ -240,6 +242,7 @@ try {
     }
     if (String(url) === 'https://api.anthropic.com/v1/messages') {
       const request = JSON.parse(String(init.body)); prompts.push(request.messages[0].content[0].text);
+      sentInstructions=request.system;
       assertSummaryGuidance('claude', request.messages[0].content[0].text, request.tools[0].input_schema, request.system);
       requested = request.tools[0].input_schema.properties.slotValues.required;
       matches(request.system, /DATED INGRESS EDITORIAL AUTHORITY/);
@@ -479,11 +482,19 @@ try {
   assert.deepEqual(narrativeFacts.facts.events, facts.events, 'Changing the article contract cannot change calculated event coverage.');
   const beforeNarrative = prompts.length;
   for (const provider of ['openai', 'claude']) {
+    const beforePreview=prompts.length;
+    const exported=await invoke(slotsHandler,'POST','/api/admin/sky-article-template-slots',{preview:true,templateId:id,referenceDate:'2026-10-09',format:SKY_INGRESS_ARTICLE_FORMAT,provider});
+    assert.equal(exported.status,200,'The owner can inspect the complete dated writer material');
+    assert.equal(prompts.length,beforePreview,'A preview must not dispatch a provider');
+    assert.equal(exported.writingExport.saved,false);assert.equal(exported.writingExport.published,false);
+    assert.equal((await invoke(slotsHandler,'POST','/api/admin/sky-article-template-slots',{preview:true,templateId:id,referenceDate:'2026-10-09',format:SKY_INGRESS_ARTICLE_FORMAT,provider},false)).status,401);
     const narrative = await invoke(slotsHandler, 'POST', '/api/admin/sky-article-template-slots', {
       templateId: id, referenceDate: '2026-10-09', format: SKY_INGRESS_ARTICLE_FORMAT, provider,
       ...(provider === 'openai' ? { expectedModel: 'gpt-5.6-sol' } : {})
     });
     assert.equal(narrative.status, 200, 'The actual narrative handler must accept its full-body provider schema.');
+    assert(exported.writingExport.text.includes(prompts.at(-1)!),'The complete portable input equals the dispatched native input');
+    assert(exported.writingExport.text.includes(sentInstructions),'The portable instructions include the exact final provider instructions');
     assert.equal(narrative.generation.providerCalls, 1);
     assert.equal(narrative.generation.ingressValidation.passed, true);
     assert.equal(narrative.generation.ingressValidation.ownerApproved, false);

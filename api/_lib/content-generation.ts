@@ -1,3 +1,4 @@
+import {writingExport} from '../../src/astro-writing/writingExport.mjs';
 import {approvedVoiceStyleReference,approvedVoiceStylePrompt} from '../../src/astro-writing/approvedVoiceStyle.mjs';
 import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from '../../src/astro-writing/hellenisticMeaningSupport.mjs';
@@ -25,7 +26,7 @@ import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/revie
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
 import { generatedApprovalState, markPipelineReady } from "../../src/astro-writing/approvalGovernance.mjs";
 import { writeGenerationMetadata } from "../../src/astro-writing/generationMetadata.mjs";
-import { callOpenAIResponses, governedInstructionsForRole } from "../../src/astro-writing/openAIResponses.cjs";
+import { callOpenAIResponses, governedInstructionsForRole, inferredPromptContext } from "../../src/astro-writing/openAIResponses.cjs";
 import {
   buildProductionEvidenceShadow,
   recordLegacyPromptShadow
@@ -6029,9 +6030,9 @@ function skyArticleVoiceStyleContext(input: GenerateSkyArticleTemplateSlotsInput
     ? 'sky-ingress-essay' : input.eventType ?? 'sky-article-template-slots' };
 }
 
-export async function generateSkyArticleTemplateSlots(
+async function prepareSkyArticleTemplateSlots(
   input: GenerateSkyArticleTemplateSlotsInput
-): Promise<GeneratedSkyArticleTemplateSlots> {
+) {
   if ((input.surface ?? 'sky') === 'sky' && isSkyIngressEssay(input.facts.articleFormat)) {
     if (!isSkyIngressArticle(input.facts.articleFormat)) throw new Error('Generation for this ingress format is retired. Select Ingress article to use the current ingress writer. Saved text remains unchanged.');
     if (!input.ingressWriting || input.ingressWriting.plan.articleFormat !== input.facts.articleFormat)
@@ -6097,6 +6098,21 @@ export async function generateSkyArticleTemplateSlots(
     blockType: typeof generationInput.facts.blockType === "string" ? generationInput.facts.blockType : "sky_article",
     contentType: typeof generationInput.facts.contentType === "string" ? generationInput.facts.contentType : "sky_article"
   });
+  return {names,datedIngress,providerSlots,memory,generationInput,writingFeedback,productionGate,evidenceShadow,publicPrompt,prompt,writingReceipt,sourceIds,schema,provider};
+}
+
+export async function skyArticleTemplateSlotsExport(input: GenerateSkyArticleTemplateSlotsInput) {
+  const value=await prepareSkyArticleTemplateSlots(input);
+  assertProductionRoleGate(value.productionGate,"WRITER",value.generationInput);
+  const context=value.datedIngress?{surface:'sky',family:'sky-ingress-essay'}:{};
+  const instructions=value.provider==='openai'
+    ? governedInstructionsForRole('WRITER',inferredPromptContext({input:value.prompt},context))
+    : value.datedIngress?governedInstructionsForRole('WRITER',context):GHOSTWRITING_SKILL_INSTRUCTIONS;
+  return writingExport({title:`${input.planet} in ${input.sign} writing plan`,requests:[{label:'Article fields',instructions,input:value.prompt,schema:value.schema}]});
+}
+
+export async function generateSkyArticleTemplateSlots(input: GenerateSkyArticleTemplateSlotsInput): Promise<GeneratedSkyArticleTemplateSlots> {
+  const {names,datedIngress,providerSlots,memory,generationInput,writingFeedback,productionGate,evidenceShadow,publicPrompt,prompt,writingReceipt,sourceIds,schema,provider}=await prepareSkyArticleTemplateSlots(input);
   recordLegacyPromptShadow(evidenceShadow, publicPrompt);
   assertProductionRoleGate(productionGate, "WRITER", generationInput);
 

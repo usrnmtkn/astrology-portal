@@ -46,18 +46,18 @@ globalThis.fetch = async (url, init = {}) => {
   const body = JSON.parse(String(init.body));
   const prompt = openai ? body.input : body.messages[0].content[0].text;
   const schema = openai ? body.text.format.schema : body.tools[0].input_schema;
-  requests.push({ provider: openai ? 'openai' : 'claude', prompt, schema });
+  requests.push({ provider: openai ? 'openai' : 'claude', prompt, schema, instructions:openai?body.instructions:body.system });
   const slotValues = nextValues ?? Object.fromEntries(schema.properties.slotValues.required.map((name: string) => [name, generated]));
   return Response.json(openai
     ? { id: 'synthetic-prompt-response', output_text: JSON.stringify({ slotValues }) }
     : { id: 'synthetic-prompt-response', content: [{ type: 'tool_use', name: 'tldr_astro_sky_article_template_slots', input: { slotValues } }] });
 };
 
-async function revise(currentText: string, provider: 'openai' | 'claude', authorized = true) {
+async function revise(currentText: string, provider: 'openai' | 'claude', authorized = true, preview=false) {
   const response = { statusCode: 0, result: {} as any, setHeader() {}, end(body: string) { this.result = JSON.parse(body); } };
   await articleHandler({ method: 'POST', headers: authorized ? { 'x-content-generation-secret': env.CONTENT_GENERATION_SECRET } : {},
     body: { planet: 'sun', sign: 'virgo', field: 'placementArticle', referenceDate: '2026-09-01',
-      instruction: 'Clarify the last sentence while preserving the subject and source rules.', currentText, provider },
+      instruction: 'Clarify the last sentence while preserving the subject and source rules.', currentText, provider, ...(preview?{preview:true}:{}) },
   } as any, response as any);
   return response;
 }
@@ -75,11 +75,18 @@ function assertOutputContract(request: any, names: string[]) {
 try {
   for (const provider of ['openai', 'claude'] as const) {
     const start = requests.length;
+    const preview=await revise(existing,provider,true,true);assert.equal(preview.statusCode,200,JSON.stringify(preview.result));
+    assert.equal(requests.length,start,'Preview cannot send a paid provider request');
+    assert.equal(preview.result.writingExport.providerCalls,0);
+    assert.equal((await revise(existing,provider,false,true)).statusCode,401);
     const revised = await revise(existing, provider);
     assert.equal(revised.statusCode, 200, JSON.stringify(revised.result));
     assert.equal(revised.result.draft, generated);
     assert.equal(requests.length, start + 1, 'One successful rewrite uses one provider request.');
     const request = requests.at(-1);
+    assert(preview.result.writingExport.text.includes(request.prompt),'The complete exported article input equals the actual provider input');
+    assert(preview.result.writingExport.text.includes(request.instructions),'The complete exported system instructions equal the actual provider system');
+    assert(preview.result.writingExport.text.includes(JSON.stringify(request.schema,null,2)));
     assert.equal(request.provider, provider);
     assert(request.prompt.includes('EXISTING ARTICLE CONTEXT'), 'The existing article must have a distinct revision context.');
     assert(!request.prompt.includes("The template's fixed prose is immutable"),

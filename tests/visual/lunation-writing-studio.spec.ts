@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {studioApiStore} from '../helpers/studio-api-store';
+import {checkWritingExport} from '../helpers/check-writing-export';
 
 const typography=(element:Element)=>{
   const style=getComputedStyle(element);
@@ -69,6 +70,10 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await expect(workspace.getByRole('button',{name:'Create draft',exact:true})).toBeEnabled();
       await expect(workspace.getByRole('region',{name:'Saved lunation drafts',exact:true})).toHaveCount(0);
       await expect(workspace.locator('button.admin-primary-button:visible:enabled')).toHaveCount(1);
+      expect((await writer.call({method:'provider'})).calls).toBe(0);
+      const beforeExport=await writer.call({method:'rows'});
+      await checkWritingExport(page,workspace,'Synthetic saved full-moon aries opening.\n\nSynthetic complete full-moon aries ending.');
+      expect(await writer.call({method:'rows'})).toEqual(beforeExport);
       expect((await writer.call({method:'provider'})).calls).toBe(0);
       await workspace.getByText('Your writing examples',{exact:true}).click();
       await expect(workspace.getByText('Synthetic saved full-moon aries opening.\n\nSynthetic complete full-moon aries ending.',{exact:true})).toBeVisible();

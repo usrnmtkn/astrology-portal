@@ -5,6 +5,7 @@ import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
 import {DAILY_PROFILE_KEY,PROFILE_FIELDS,emptyProfile,target,validateTextFields,readDailyRow,saveDailyRow,prepareDaily,digest} from '../_lib/calendar-daily-writing.js';
 import responses from '../../src/astro-writing/openAIResponses.cjs';
+import {writingExport} from '../../src/astro-writing/writingExport.mjs';
 loadLocalWebEnv();
 export const maxDuration=300;
 export default async function handler(req:IncomingMessage,res:ServerResponse) {
@@ -15,7 +16,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const input:any=req.method==='GET'?Object.fromEntries(new URL(req.url!,'http://localhost').searchParams):await readAdminJsonBody(req,1000000);
     if(Object.keys(input).some(k=>!['action','date','timeZone','expectedUpdatedAt','profile','workspace','requestHash','authorizeWriterCall'].includes(k)))throw new AdminHttpError(400,'Unknown daily writing request field.');
     const action=req.method==='GET'?'load':input.action;
-    if(!['load','save-profile','save','prepare','generate','poll'].includes(action))throw new AdminHttpError(400,'Choose a daily writing action.');
+    if(!['load','save-profile','save','export','prepare','generate','poll'].includes(action))throw new AdminHttpError(400,'Choose a daily writing action.');
     if(action==='save-profile'){
       const profile=validateTextFields(input.profile,PROFILE_FIELDS,30000),row=await readDailyRow(DAILY_PROFILE_KEY);
       const saved=await saveDailyRow(DAILY_PROFILE_KEY,input.expectedUpdatedAt,{...row?.sections,profile},row,actor);
@@ -36,6 +37,10 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const workspace=validateTextFields(row.sections.workspace,['thought','exclusions'],12000);
     let operation=row.sections.run?.active;
     if(action==='prepare')return sendAdminJson(res,200,{ok:true,prepared:await prepareDaily(input.date,input.timeZone,workspace)});
+    if(action==='export'){
+      const value=await prepareDaily(input.date,input.timeZone,workspace);
+      return sendAdminJson(res,200,{ok:true,writingExport:writingExport({title:`Daily Calendar writing · ${input.date} · ${input.timeZone}`,requests:[{label:'Daily Moon passage',instructions:value.instructions,input:value.request.input}]})});
+    }
     const apiKey=process.env.OPENAI_API_KEY;
     if(!apiKey)throw new AdminHttpError(503,'The daily writer is not configured on this server.');
     if(action==='generate'&&operation)throw new AdminHttpError(409,'This request is already reserved. Retrieve its result; do not start another call.');

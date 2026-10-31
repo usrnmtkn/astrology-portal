@@ -36,6 +36,12 @@ for(const month of ['2026-08','2026-09']){
     const created=await invoke('POST',{action:'prepare',month,timeZone:'America/New_York',eventId:event.id,direction:'Develop the human consequence without inventing private motives.'});
     assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
     const action=(action:string,extra:any={})=>invoke('POST',{action,id:row.id,expectedUpdatedAt:row.updated_at,...extra});
+    const exportBefore=JSON.stringify([...rows]),exportCalls=providerFixture.calls;
+    const exported=await action('export');assert.equal(exported.status,200,JSON.stringify(exported.payload));
+    assert.equal(JSON.stringify([...rows]),exportBefore);assert.equal(providerFixture.calls,exportCalls);
+    assert(exported.payload.writingExport.text.includes('Synthetic shared guidance marker.'));
+    assert(exported.payload.writingExport.text.includes('DATED ARTICLE OPENING'));
+    for(const source of row.source_snapshot.lunationWriting.preview.voiceSources)assert(exported.payload.writingExport.text.includes(source.text)||exported.payload.writingExport.text.includes(JSON.stringify(source.text).slice(1,-1)),'Every complete dated lunar voice source survives export');
     assert.equal((await action('generate',{approvedPlanHash:'wrong'})).status,409);
     const priorCalls=providerFixture.calls;
     const generated=await action('generate',{approvedPlanHash:row.source_snapshot.lunationWriting.planHash});

@@ -38,6 +38,13 @@ for(const action of ['publish','retire'])assert.equal((await invoke({action,id:r
 assert.equal((await store.invoke('PATCH',{id:row.id,status:'LIVE'})).status,400);
 const call=(action:string,extra:any={})=>invoke({action,...selection,expectedUpdatedAt:row.updated_at,...extra});
 let prep=(await call('prepare')).prepared;
+const exportBefore=JSON.stringify([...store.rows]);
+const exported=await call('export');assert.equal(exported.status,200,JSON.stringify(exported));
+assert(exported.writingExport.text.includes(prep.instructions));assert(exported.writingExport.text.includes(prep.request.input));
+assert.equal(exported.writingExport.providerCalls,0);assert.equal(exported.writingExport.published,false);
+assert.equal(JSON.stringify([...store.rows]),exportBefore,'Copying the Daily input cannot reserve a writer or save content');
+assert.equal((await invoke({action:'export',...selection,expectedUpdatedAt:row.updated_at},'wrong')).status,401);
+assert.equal((await invoke({action:'export',...selection,expectedUpdatedAt:'stale'})).status,409);
 assert.equal(prep.facts.mainSign,'Virgo');assert.equal(prep.facts.transition,null);assert.equal(prep.facts.signs[0].hours,24);
 assert.equal(calls,0);
 assert.equal((await call('generate',{requestHash:prep.requestHash})).status,409);
