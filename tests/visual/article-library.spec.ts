@@ -11,6 +11,125 @@ import { routeStudioPublicReader } from '../helpers/studio-public-reader-route';
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Guide publish dates save, schedule and backdate ${width} ${theme}`, async ({ browser, baseURL }) => {
+    test.setTimeout(90_000);
+    const timeZone = width === 390 ? 'Asia/Tokyo' : 'America/New_York';
+    const context = await browser.newContext({ baseURL, viewport: { width, height: 1000 }, timezoneId: timeZone, locale: 'en-US' });
+    const page = await context.newPage();
+    const store = await studioApiStore([{
+      id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', content_key: 'article/guide/later-guide', surface: 'sky', mode: 'article',
+      event_type: 'sky_article', status: 'LIVE', lane: 'serving', review_state: null, headline: 'Synthetic later guide', body,
+      sections: { articlePublication: { publishAt: '2025-01-01T15:00:00.000Z' } }, updated_at: '2025-01-01T15:00:00.000Z'
+    }], { uuidIds: true });
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    try {
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:theme', theme);
+        localStorage.setItem('tldrastro:studio-theme', theme);
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+      }, theme);
+      await bundledPublications(page);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true, answer: async (route, url) => {
+        if (url.pathname === '/api/content-reader') {
+          const result = await store.call({ method: 'POST', body: route.request().postDataJSON(), url: url.pathname });
+          await route.fulfill({ status: result.status, json: result.payload }); return true;
+        }
+        if (url.pathname === '/api/admin/content-live-status') {
+          await route.fulfill({ json: { ok: true, statuses: await store.call({ method: 'statuses', body: route.request().postDataJSON() }) } });
+          return true;
+        }
+        return false;
+      } });
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /New guide/u }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      await editor.getByLabel('Article title', { exact: true }).fill('Synthetic scheduled guide');
+      await editor.getByLabel('Article body', { exact: true }).fill(body);
+      await editor.getByLabel('Publish date', { exact: true }).fill('2099-01-02T09:30');
+      await expect(editor).toContainText(timeZone);
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.headline === 'Synthetic scheduled guide')?.status).toBe('DRAFT');
+      let saved = (await store.call({ method: 'rows' })).find((row: any) => row.headline === 'Synthetic scheduled guide');
+      expect(saved.sections.articlePublication.publishAt).toBe(timeZone === 'Asia/Tokyo' ? '2099-01-02T00:30:00.000Z' : '2099-01-02T14:30:00.000Z');
+      await page.reload();
+      await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor.getByLabel('Publish date', { exact: true })).toHaveValue('2099-01-02T09:30');
+      await editor.getByRole('button', { name: 'Save & schedule', exact: true }).click();
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Scheduled');
+      await page.screenshot({ path: `test-results/guide-publish-date-${width}-${theme}.png`, fullPage: true });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      const filters = page.getByRole('button', { name: 'Filters', exact: true });
+      if (await filters.isVisible()) await filters.click();
+      await page.getByLabel('Article status', { exact: true }).selectOption('scheduled');
+      await expect(page.getByRole('row').filter({ hasText: saved.content_key })).toBeVisible();
+      await expect(page.getByRole('row').filter({ hasText: 'article/guide/later-guide' })).toHaveCount(0);
+      await page.goto(`/#articles/${encodeURIComponent(saved.content_key)}`);
+      await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();
+      await page.goto('/admin/content#articles-guides');
+      await page.getByRole('row').filter({ hasText: saved.content_key }).getByRole('button', { name: 'Edit', exact: true }).click();
+      await editor.getByLabel('Publish date', { exact: true }).fill('2020-01-02T09:30');
+      await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
+      await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
+      await page.goto('/#articles');
+      const library = page.getByRole('region', { name: 'Articles & Guides', exact: true });
+      await expect(library.locator('.article-cover__caption h2')).toHaveText(['Synthetic later guide', 'Synthetic scheduled guide']);
+      await library.getByRole('link', { name: 'Synthetic scheduled guide', exact: true }).click();
+      await expect(library.locator('time')).toHaveText('Published January 2, 2020');
+      await expect(library.locator('.learn-article-body')).toContainText('Synthetic complete opening.');
+      await expect(library.locator('.learn-article-body')).toContainText('Synthetic complete final paragraph.');
+      await page.reload();
+      await expect(library.locator('time')).toHaveText('Published January 2, 2020');
+      if (width === 390 && theme === 'light') {
+        const other = await browser.newContext({ baseURL, timezoneId: 'America/Los_Angeles', locale: 'en-US' });
+        try {
+          const reader = await other.newPage();
+          await bundledPublications(reader);
+          await reader.route('**/api/content-reader', async route => {
+            const result = await store.call({ method: 'POST', body: route.request().postDataJSON(), url: '/api/content-reader' });
+            await route.fulfill({ status: result.status, json: result.payload });
+          });
+          await reader.goto(page.url());
+          await expect(reader.locator('time')).toHaveText('Published January 2, 2020');
+        } finally { await other.close(); }
+      }
+      await page.screenshot({ path: `test-results/guide-publish-date-reader-${width}-${theme}.png`, fullPage: true });
+      expect(errors).toEqual([]);
+    } finally { await context.close(); store.close(); }
+  });
+}
+
+test('A failed publish-date panel preserves complete draft copy and its schedule', async ({ page }) => {
+  const publication = { publishAt: '2099-01-02T14:30:00.000Z', timeZone: 'America/New_York' };
+  const key = 'article/guide/date-panel-recovery';
+  const store = await studioApiStore([{
+    id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', content_key: key, surface: 'sky', mode: 'article',
+    event_type: 'sky_article', status: 'DRAFT', lane: 'serving', review_state: null,
+    headline: 'Synthetic retained guide', body, sections: { articlePublication: publication }, updated_at: '2025-01-01T15:00:00.000Z'
+  }], { uuidIds: true });
+  try {
+    await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await bundledPublications(page);
+    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+    await page.route(/\/assets\/(?:ArticlePublicationField|review)-[^/]+\.js(?:\?.*)?$/u, route => route.abort());
+    await page.goto('/admin/content#articles-guides');
+    await page.getByRole('row').filter({ hasText: key }).getByRole('button', { name: 'Edit', exact: true }).click();
+    const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+    await expect(editor.getByText('This section could not load. Save your changes, then reload the page to try again.', { exact: true }).first()).toBeVisible();
+    await expect(editor.getByLabel('Publish date', { exact: true })).toHaveCount(0);
+    const revised = body + '\n\nSynthetic complete retained addition.';
+    await editor.getByLabel('Article body', { exact: true }).fill(revised);
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key)?.body).toBe(revised);
+    const saved = (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key);
+    expect(saved.status).toBe('DRAFT');
+    expect(saved.sections.articlePublication).toEqual(publication);
+  } finally { await page.unrouteAll({ behavior: 'wait' }); store.close(); }
+});
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Article actions reopen template results and start an unfiltered draft ${width} ${theme}`, async ({ page }) => {
     const templateKey = 'sky/article-template/sun/libra';
     const store = await studioApiStore([

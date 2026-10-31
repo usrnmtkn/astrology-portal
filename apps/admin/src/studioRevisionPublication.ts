@@ -1,6 +1,19 @@
-import type { AdminDraft, AdminGeneratedContentRow } from './GeneratedContentAdminDashboard';
+import type { AdminDraft, AdminGeneratedContentRow, StudioPublicationResult } from './GeneratedContentAdminDashboard';
+import { articlePublicationIsDue } from '../../../src/shared/articleLibrary';
 import { contentStudioCopyChanges } from './contentStudioCopyRecovery';
 export { recoverContentStudioCopy } from './contentStudioCopyRecovery';
+
+export function publicationStateMessage(result: StudioPublicationResult) {
+  const receipt = result.publicationReceipt;
+  const completed = "The publication completed earlier. ";
+  if (receipt?.currentStatus === "DELETED") return completed + "Its source has since been removed.";
+  if (receipt?.currentPublicationState === "retired") return completed + "This content is now retired.";
+  if (receipt && (receipt.currentStatus !== "LIVE" || !["live", "dated"].includes(receipt.currentPublicationState ?? ""))) return completed + "This content is no longer published.";
+  if (receipt && receipt.currentVersion !== receipt.targetVersion) return completed + "A newer saved version is available in the library.";
+  const row = result.rows?.[0];
+  if (row && !articlePublicationIsDue(row)) return "Release scheduled.";
+  return "The reviewed revision is published.";
+}
 
 /** A publication acknowledges its submitted row, not text entered while it was pending. */
 export function retainPendingPublicationCopy(submitted: AdminDraft, current: AdminDraft | null, published: AdminDraft, directCopy = false) {
