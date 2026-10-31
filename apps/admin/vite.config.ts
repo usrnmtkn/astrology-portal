@@ -6,6 +6,7 @@ import { browserOnlySwissEphemerisPlugin, trimSwissEphemerisWebDataPlugin, serve
 import { defineConfig, loadEnv, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { appStartupHtmlPlugin } from "../../scripts/app-startup-html-plugin.mjs";
+import { deploymentAssetsPlugin } from "../../scripts/deployment-assets-plugin.mjs";
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -133,13 +134,13 @@ export default defineConfig(({ command, mode }) => {
   };
 
   return {
-    plugins: [startupPartition, lunationReaderContractPlugin(), studioCoreEditorBoundaryPlugin(), adminLazyBoundaryManifestPlugin(repoRoot), memoryGraphReferencePlugin(), appStartupHtmlPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
+    plugins: [startupPartition, lunationReaderContractPlugin(), studioCoreEditorBoundaryPlugin(), adminLazyBoundaryManifestPlugin(repoRoot), memoryGraphReferencePlugin(), appStartupHtmlPlugin(), deploymentAssetsPlugin(), localApiRoutePlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin(), serveFullSwissEphemerisDataInDevPlugin(), versionedSwissAssetsPlugin(), {
       name: "studio-swiss-ephemeris-assets",
       generateBundle() {
         for (const name of ["swisseph.wasm", "swisseph.data"]) this.emitFile({ type: "asset", fileName: `wasm/${name}`, source: readFileSync(resolve(repoRoot, "apps/web/public/wasm", name)) });
       }
     }, react()],
-    worker: { format: "es", plugins: () => [browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin()] },
+    worker: { format: "es", plugins: () => [deploymentAssetsPlugin(), browserOnlySwissEphemerisPlugin(), trimSwissEphemerisWebDataPlugin()] },
     assetsInclude: ["**/*.wasm"],
     define: {
       __LOCAL_CONTENT_GENERATION_SECRET__: JSON.stringify(localContentSecret)

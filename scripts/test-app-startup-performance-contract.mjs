@@ -58,6 +58,17 @@ assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: {} })
 const { "assets/placements.js": _placements, ...withoutPlacements } = bundle;
 assert.throws(() => preloadPlugin.transformIndexHtml.handler("", { bundle: withoutPlacements }), /placement rows/);
 
+const pinnedPlugin = skyEntryPreloadPlugin({ VERCEL_SKEW_PROTECTION_ENABLED: "1", VERCEL_DEPLOYMENT_ID: "dpl_sky_fixture" });
+const [pinnedHint, , pinnedBootstrap] = pinnedPlugin.transformIndexHtml.handler("", { bundle });
+const pinnedLinks = [], pinnedListeners = [];
+runInNewContext(pinnedHint.children, { location: { pathname: "/", hash: "#sky" }, window: {
+  addEventListener(_name, listener) { pinnedListeners.push(listener); }
+}, document: { querySelectorAll: () => pinnedLinks, createElement: () => ({ getAttribute(name) { return this[name]; } }),
+  head: { appendChild: link => pinnedLinks.push(link) } } });
+pinnedListeners.forEach(listener => listener());
+assert(pinnedLinks.length > 0 && pinnedLinks.every(link => link.href.endsWith("?dpl=dpl_sky_fixture")), "Custom Sky preloads and styles retain their deployment identity.");
+assert(pinnedBootstrap.children.includes('/assets/bootstrap.js?dpl=dpl_sky_fixture'), "The independent Sky import uses the same deployment.");
+
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 const signupViewSource = fs.readFileSync(

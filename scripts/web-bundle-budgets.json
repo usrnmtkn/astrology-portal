@@ -1,7 +1,7 @@
 {
-  "appBootGzipBytes": 396900,
-  "appChunkGzipBytes": 89000,
-  "readerBootGzipBytes": 455250,
+  "appBootGzipBytes": 398400,
+  "appChunkGzipBytes": 89500,
+  "readerBootGzipBytes": 456450,
   "readerInitialCssGzipBytes": 58750,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -14,7 +14,7 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 144000,
-  "totalJavaScriptGzipBytes": 3695650,
+  "totalJavaScriptGzipBytes": 3706650,
   "_rationale": {
     "studioWritingPlanExport20261031": "Matched independently npm-ci-installed integrated web builds of main 5a9de6cddd and the writing-plan export use ARM64 Node 22.20.0, zlib 1.3.1-470d3a2 and identical synthetic Supabase settings. Aggregate JavaScript is 3691307 bytes on main and 3693945 with the export controls (+2638), across 267 files in each build. Allocate 3000 aggregate gzip bytes for this owner-requested Studio interface. Reader startup, App, CSS, individual-chunk, memory, source-payload, privacy and runtime ceilings remain unchanged. This records interface cost, not a performance improvement. See docs/qa/studio-writing-plan-export.md.",
     "mobileReadingFinalIntegration20261030": "Matched independent main e75656392 and integrated PR #1372 builds use their own locked dependencies, local knowledge builds, native ARM Node 22.20.0 and identical synthetic Supabase settings with natal aspect patterns enabled. Aggregate JavaScript measures 3686964 and 3688189 gzip bytes (+1225); this exceeds the inherited 3687650 ceiling by 539. Allocate only 750 aggregate bytes to 3688400, leaving 211 measured bytes. App boot is 396868/396900, App chunk 88973/89000, reader boot 455024/455250, Sky detail 6829/6850 and horoscope reader 5603/5650; all existing individual limits remain unchanged. Reader initial CSS falls 196 bytes and aggregate CSS 256; shared deferred Studio CSS is unchanged. Preserve publicationStatusRefresh20261030 verbatim and all graph isolation, source-payload and runtime gates. This records the requested mobile feature cost, including visible compact Sky countdowns, not a performance improvement. See docs/qa/mobile-card-detail-parity-2026-10-29.md.",
@@ -275,10 +275,11 @@
       },
       "reason": "Fresh matched independent npm-ci builds after the verified Daily release; Web uses identical synthetic Playwright flags and standalone Admin uses its matched configuration. Feature and Calendar fixture bytes remain identical to149a. Preserve every earlier allocation/rationale and all numeric limits; no new allowance. The final comparison supersedes the prior pre-rebase measurements for this release, without a performance improvement claim."
     },
-    "skyDignityDatePreview20261027": "Matched integrated web builds of main b2babfec34847ff7207db111e9cd81cdece40577 and the owner-requested Studio dignity date preview use the same independently npm-ci-installed checkout, native Node22.20.0 arm64, lockfile and environment. Main measures3654773 aggregate gzip bytes across252 JavaScript files; the feature measures3658917 across253 (+4144). Allocate4250 aggregate bytes for the separately lazy Studio panel, exact draft binding, verified date/time calculation and full saved-copy rendering. Reader startup, App, CSS, individual chunks, private payload and runtime guards remain unchanged. The51 private draft bodies load through the owner API and are not bundled. This is the requested interface cost, not a performance improvement. See docs/qa/sky-dignity-date-preview.md."
+    "skyDignityDatePreview20261027": "Matched integrated web builds of main b2babfec34847ff7207db111e9cd81cdece40577 and the owner-requested Studio dignity date preview use the same independently npm-ci-installed checkout, native Node22.20.0 arm64, lockfile and environment. Main measures3654773 aggregate gzip bytes across252 JavaScript files; the feature measures3658917 across253 (+4144). Allocate4250 aggregate bytes for the separately lazy Studio panel, exact draft binding, verified date/time calculation and full saved-copy rendering. Reader startup, App, CSS, individual chunks, private payload and runtime guards remain unchanged. The51 private draft bodies load through the owner API and are not bundled. This is the requested interface cost, not a performance improvement. See docs/qa/sky-dignity-date-preview.md.",
+    "studioDeploymentAssets20261031": "Matched isolated builds at main fe6117eef use the same npm-ci dependencies, ARM64 Node 22.20.0, zlib 1.3.1-470d3a2 and visual-smoke Supabase placeholders. Unpinned versus a realistic 32-character deployment identity measures aggregate JS gzip 3693921/3705298 (+11377), App boot 396282/397903 (+1621), App chunk 88960/89363 (+403), reader boot 454438/456125 (+1687), and Memory stylesheet 31799/31831 (+32). Allocate 11000 aggregate, 1500 App boot, 500 App chunk, 1200 reader boot and 100 Memory CSS bytes above prior ceilings; existing headroom covers the remaining delta. This pays for deployment tags across existing chunks, stylesheet URLs and independent Sky preloads. It is a measured continuity cost, not a performance improvement. No extra runtime dependency, reader prose or eager editor source is introduced. All other numeric limits and module/source guards remain unchanged. See docs/qa/content-studio-api-verification.md#deployment-asset-continuity."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
-  "memoryGraphCssGzipBytes": 31800,
+  "memoryGraphCssGzipBytes": 31900,
   "horoscopeReaderChunkGzipBytes": 5650,
   "horoscopeEditorChunkGzipBytes": 16400,
   "studioCsvChunkGzipBytes": 8200
