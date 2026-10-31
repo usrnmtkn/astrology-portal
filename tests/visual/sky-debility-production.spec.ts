@@ -22,14 +22,17 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`pu
   const head = card.locator(".sky-today-ledger__head");
   await expect(head).toHaveText("Things may take more effort right now");
   await expect(head.locator(":scope > :not(h3)")).toHaveCount(0);
-  await expect(card.getByRole("link")).toHaveCount(3);
+  await expect(paragraphs.nth(1).getByRole("link")).toHaveCount(3);
+  await expect(card.locator(".sky-debility-card")).toHaveCount(3);
   await expect(paragraphs.nth(1).getByRole("link")).toHaveText(["Venus in Scorpio", "Mars in Cancer", "Saturn retrograde in Aries"]);
   await expect(card).not.toContainText("It may help to");
   await expect(card).not.toContainText("can take more out of you than you expected");
-  for (const link of await card.getByRole("link").all())
+  for (const link of await paragraphs.nth(1).getByRole("link").all())
     expect(await link.evaluate(el => getComputedStyle(el).textDecorationLine)).toContain("underline");
-  for (const placement of ["venus/scorpio", "mars/cancer", "saturn/aries"])
+  for (const placement of ["venus/scorpio", "mars/cancer", "saturn/aries"]) {
     await expect(paragraphs.nth(1).locator(`a[href="#sky/placement/${placement}"]`)).toBeVisible();
+    await expect(card.locator(`.sky-debility-card[href="#sky/placement/${placement}"]`)).toBeVisible();
+  }
   expect(await card.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
   await card.screenshot({ path: `test-results/effort-production-inline-${width}-${theme}.png` });
 });
