@@ -87,3 +87,29 @@ baseline and retain the exact PR head and production deployment provenance.
 Local screenshots are under `test-results/guide-publish-date-*` and
 `test-results/guide-publish-date-reader-*`. Final browser, API, bundle and CSS
 logs are retained in `/private/tmp/guide-publish-*` on this machine.
+
+## Release configuration and bundle boundary
+
+The first release matrix passed all 21 Article/Guide browser journeys but its
+final Studio bundle check failed. Reproducing CI's public Supabase URL and
+anonymous-key placeholders measured 819,427 raw / 237,943 gzip startup bytes,
+and 868,121 aggregate gzip bytes. The earlier empty-configuration measurement
+did not establish that this configuration fit the release limits.
+
+The date field now loads with the existing deferred editor group, and
+publication confirmation formatting loads with revision publication helpers.
+Repeated imports use one shared loader. Publication helpers load before the
+corresponding writes; pending-status recovery loads them before changing its
+local recovery state. Reader wording, publication approval and conflict rules
+are preserved. The date validator still requires an exact, four-digit-year UTC
+timestamp, with calendar, precision, offset and year-boundary regressions.
+
+Under the exact failing CI configuration, the revised build measures 817,841
+raw / 237,440 gzip startup bytes and 868,055 aggregate gzip bytes. All existing
+limits pass without changes: 559 raw startup bytes, 360 gzip startup bytes and
+45 aggregate gzip bytes remain. A new browser regression verifies that a failed
+date-panel download leaves complete draft text and the saved schedule intact.
+The release PR records fresh browser results and full exact-head API/CI gates.
+
+Revised source/test fingerprint, using the same method above:
+`26c2357c5474f8fea65d7ec1e961b7d3c181627ed64acbc8be407b6eeaeb0fa4`.

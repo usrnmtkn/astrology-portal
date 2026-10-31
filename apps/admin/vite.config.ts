@@ -210,7 +210,7 @@ export default defineConfig(({ command, mode }) => {
             }
             // Shared controls render immediately and remain outside this lazy group.
             // Editor and publication panels share a deferred workspace.
-            if (/apps\/admin\/src\/(?:ArticleBlockStyleFields|ConnectionTransitStudio|FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|StudioSavedVariableWording|TemplateSavedWording|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|emptyHouseSources|templateVariableSources)\.ts$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:ArticlePublicationField|ArticleBlockStyleFields|ConnectionTransitStudio|FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|StudioSavedVariableWording|TemplateSavedWording|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail)\.tsx$|apps\/admin\/src\/(?:compositionMap|emptyHouseSources|templateVariableSources)\.ts$/u.test(id)) {
               return "review";
             }
             // Review panels and owner publication share one deferred workspace chunk.

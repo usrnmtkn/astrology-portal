@@ -29,8 +29,8 @@ export function articlePublicationTimeZone(row: PublicationRow) {
   return validArticleTimeZone(zone) ? zone : undefined;
 }
 export function validArticlePublishAt(value: unknown): value is string {
-  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u.test(value)
-    && Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
+  // Invalid dates serialize to null; the exact comparison rejects normalized dates.
+  return typeof value === "string" && value.length === 24 && new Date(value).toJSON() === value;
 }
 export function articlePublishAt(row: PublicationRow): string | null {
   if (!standaloneArticleKind(row.content_key)) return null;
@@ -39,10 +39,8 @@ export function articlePublishAt(row: PublicationRow): string | null {
 }
 export function articlePublicationIsDue(row: PublicationRow, now = Date.now()) {
   if (!standaloneArticleKind(row.content_key)) return true;
-  const publication = (row.sections as { articlePublication?: unknown } | null)?.articlePublication;
-  if (publication == null) return true;
-  const at = articlePublishAt(row);
-  return at !== null && Date.parse(at) <= now;
+  const publication = (row.sections as { articlePublication?: { publishAt?: unknown } } | null)?.articlePublication;
+  return publication == null || validArticlePublishAt(publication.publishAt) && Date.parse(publication.publishAt) <= now;
 }
 export function articlePublicationDate(row: PublicationRow) {
   return articlePublishAt(row) ?? (standaloneArticleKind(row.content_key) ? row.published_at : null) ?? null;

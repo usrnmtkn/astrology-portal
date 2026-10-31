@@ -6,7 +6,6 @@ import { calendarPassageReviewParams } from './calendarPassageReviewRoute';
 import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
 import { articleLibraryKind, articleReaderHref, standaloneArticleKind, articlePublicationIsDue, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
-import { ArticlePublicationField } from "./ArticlePublicationField";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
@@ -274,6 +273,7 @@ const UnsavedIngressPreview = lazy(() => import('./UnsavedIngressPreview'));
 const SkyPlacementWorkspace = lazy(() => import("./SkyPlacementWorkspace"));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
+const ArticlePublicationField = lazy(() => import("./ArticlePublicationField").then(module => ({ default: module.ArticlePublicationField })));
 const ConnectionTransitStudio = lazy(() => import("./ConnectionTransitStudio"));
 const SkyPlacementAspectBridgeStudio = lazy(() => import('./SkyPlacementAspectBridgeStudio'));
 const CompositeReviewCard = lazy(() => import("./CompositeReviewCard"));
@@ -2780,17 +2780,10 @@ function restorePendingPublication(): PendingStudioPublication | null {
   } catch { /* Storage may be disabled; the database receipt remains durable. */ }
   return null;
 }
-type StudioPublicationResult = { ok: boolean; rows: AdminGeneratedContentRow[]; found?: boolean; publicationReceipt?: { targetId?: string; contentKey?: string; currentPublicationState?: string; currentStatus?: string; targetVersion?: string; currentVersion?: string } };
-function publicationStateMessage(result: StudioPublicationResult) {
-  const receipt = result.publicationReceipt;
-  const completed = "The publication completed earlier. ";
-  if (receipt?.currentStatus === "DELETED") return completed + "Its source has since been removed.";
-  if (receipt?.currentPublicationState === "retired") return completed + "This content is now retired.";
-  if (receipt && (receipt.currentStatus !== "LIVE" || !["live", "dated"].includes(receipt.currentPublicationState ?? ""))) return completed + "This content is no longer published.";
-  if (receipt && receipt.currentVersion !== receipt.targetVersion) return completed + "A newer saved version is available in the library.";
-  const row = result.rows?.[0];
-  if (row && !articlePublicationIsDue(row)) return "Release scheduled.";
-  return "The reviewed revision is published.";
+export type StudioPublicationResult = { ok: boolean; rows: AdminGeneratedContentRow[]; found?: boolean; publicationReceipt?: { targetId?: string; contentKey?: string; currentPublicationState?: string; currentStatus?: string; targetVersion?: string; currentVersion?: string } };
+function loadRevisionPublication() { return import("./studioRevisionPublication"); }
+async function publicationStateMessage(result: StudioPublicationResult) {
+  return (await loadRevisionPublication()).publicationStateMessage(result);
 }
 
 class AdminRequestError extends Error {
@@ -3536,10 +3529,9 @@ export function GeneratedContentAdminDashboard() {
     [skyWriteupRows]
   );
   const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
+    const status = row.status === "LIVE" && !articlePublicationIsDue(row) ? "scheduled" : row.status;
     return (articleKindFilter === "all" || articleLibraryKind(row) === articleKindFilter)
-      && (articleStatusFilter === "all" || (articleStatusFilter === "scheduled"
-        ? row.status === "LIVE" && !articlePublicationIsDue(row)
-        : row.status === articleStatusFilter && (articleStatusFilter !== "LIVE" || articlePublicationIsDue(row))))
+      && (articleStatusFilter === "all" || status === articleStatusFilter)
       && (articlePointFilter === "all" || articlePointForRow(row) === articlePointFilter)
       && (articleContentSystemFilter === "all" || contentSystemForRole(contentRoleForRecord(row)) === articleContentSystemFilter)
       && matchesAdminSearch(visibleRowSearchText(row), articleQuery);
@@ -4933,7 +4925,7 @@ export function GeneratedContentAdminDashboard() {
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const { retainPendingPublicationCopy } = await import("./studioRevisionPublication");
+      const { retainPendingPublicationCopy } = await loadRevisionPublication();
       const write = () => adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
         body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: copy ? "save-and-publish-owner-content" : ownerFinal ? "publish-owner-content" : "approve-and-schedule",
@@ -4961,7 +4953,7 @@ export function GeneratedContentAdminDashboard() {
           ? { ...occurrence, row: saved, reviewStatus: "approved_scheduled" }
           : occurrence)
       } : current);
-      setMessage(ownerFinal ? publicationStateMessage(payload) : `${row.content_key} approved. ${row.block_type === "sky_placement" ? "Package release required." : "Eligible for matching Sky configurations."}`);
+      setMessage(ownerFinal ? await publicationStateMessage(payload) : `${row.content_key} approved. ${row.block_type === "sky_placement" ? "Package release required." : "Eligible for matching Sky configurations."}`);
     } catch (error) {
       const feedback = dashboardErrorMessage(error);
       setEditorSaveError(feedback);
@@ -5236,11 +5228,15 @@ export function GeneratedContentAdminDashboard() {
   async function submitSavedPublication(row: AdminGeneratedContentRow, ownerAction: PendingStudioPublication["ownerAction"]) {
     if (pendingPublication) throw new Error(pendingPublicationMessage);
     if (!row.updated_at) throw new Error("Reload this row to get its saved version before publishing. Your writing is still here.");
+    await loadRevisionPublication();
     const operation: PendingStudioPublication = { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction };
     setPendingPublication(operation);
     try {
       const result = await adminJsonRequest<StudioPublicationResult>("/api/admin/generated-content", secret, { method: "PATCH", body: JSON.stringify(operation) });
-      if (result.publicationReceipt?.currentStatus === "DELETED") throw new AdminRequestError(publicationStateMessage(result), { status: 409, path: "/api/admin/generated-content", method: "PATCH", details: publicationStateMessage(result) });
+      if (result.publicationReceipt?.currentStatus === "DELETED") {
+        const message = await publicationStateMessage(result);
+        throw new AdminRequestError(message, { status: 409, path: "/api/admin/generated-content", method: "PATCH", details: message });
+      }
       // The catch below supplies the same recovery message for every uncertain result.
       if (!result.ok || !result.rows?.[0] || !result.publicationReceipt) throw new Error();
       setPendingPublication(null);
@@ -5258,11 +5254,12 @@ export function GeneratedContentAdminDashboard() {
     if (!pendingPublication) return;
     setIsLoading(true);
     try {
+      await loadRevisionPublication();
       const params = new URLSearchParams({ id: pendingPublication.id, expectedUpdatedAt: pendingPublication.expectedUpdatedAt, publicationAction: pendingPublication.ownerAction });
       const result = await adminJsonRequest<StudioPublicationResult>(`/api/admin/generated-content?${params}`, secret);
       if (result.found && result.publicationReceipt?.currentStatus === "DELETED") {
         setRows(rows => rows.filter(row => row.id !== result.publicationReceipt?.targetId && row.id !== pendingPublication.id));
-        setPendingPublication(null); setEditorSaveError(""); setMessage(publicationStateMessage(result));
+        setPendingPublication(null); setEditorSaveError(""); setMessage(await publicationStateMessage(result));
         return;
       }
       if (!result.found || !result.rows?.[0]) {
@@ -5277,7 +5274,7 @@ export function GeneratedContentAdminDashboard() {
       // reopened explicitly from the inventory without discarding unsaved text.
       setPendingPublication(null);
       setEditorSaveError("");
-      setMessage(publicationStateMessage(result));
+      setMessage(await publicationStateMessage(result));
       announceContentUpdate({ contentKey: current.content_key, published: result.publicationReceipt?.currentPublicationState === "live", updatedAt: current.updated_at ?? new Date().toISOString() });
       return { row: current, live: result.publicationReceipt?.currentPublicationState === "live" };
     } catch (error) { setEditorSaveError(dashboardErrorMessage(error)); setMessage(dashboardErrorMessage(error)); }
@@ -5299,6 +5296,7 @@ export function GeneratedContentAdminDashboard() {
     setEditorSaveError("");
     setIsLoading(true);
     try {
+      await loadRevisionPublication();
       const ownerAction = revisionRow.event_type === "sky-article-edition-revision"
         ? skyRevisionPublicationAction
         : skyEditionApprovalAction;
@@ -5312,7 +5310,7 @@ export function GeneratedContentAdminDashboard() {
       setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id && row.id !== revisionRow.id)]);
       openRow(saved);
       announceContentUpdate({ contentKey: saved.content_key, published: true, updatedAt: saved.updated_at ?? new Date().toISOString() });
-      setMessage(publicationStateMessage(payload));
+      setMessage(await publicationStateMessage(payload));
     } catch (error) {
       const message = dashboardErrorMessage(error);
       setEditorSaveError(message);
@@ -5384,7 +5382,7 @@ export function GeneratedContentAdminDashboard() {
 
     try {
       const directCopy = isPackageDraft && writesPersonalTransitExactCopy(draftForSave)
-        ? await import("./studioRevisionPublication") : null;
+        ? await loadRevisionPublication() : null;
       const body = isPackageDraft
         ? {
             ownerAuthoredWording: true,
@@ -5494,7 +5492,7 @@ export function GeneratedContentAdminDashboard() {
           const baseline = JSON.parse(recoveryBaseline) as AdminDraft;
           if (baseline.id !== activeDraft.id || baseline.contentKey !== activeDraft.contentKey) throw error;
           if (latest.status === "ARCHIVED") throw new Error("This source was archived while you were editing. Your edits are still here; restore the saved source before applying them.");
-          const { recoverContentStudioCopy } = await import("./studioRevisionPublication");
+          const { recoverContentStudioCopy } = await loadRevisionPublication();
           const latestDraft = draftFromRow(latest);
           const proposal = recoverContentStudioCopy(
             draftEditablePackageRecord(baseline), draftEditablePackageRecord(activeDraft), draftEditablePackageRecord(latestDraft));
@@ -5685,7 +5683,7 @@ export function GeneratedContentAdminDashboard() {
     setEditorSaveError("");
     setIsLoading(true);
     try {
-      const { assertPublishedRevision, retainPendingPublicationCopy } = await import("./studioRevisionPublication");
+      const { assertPublishedRevision, retainPendingPublicationCopy } = await loadRevisionPublication();
       const payload = await submitSavedPublication(row, ownerAction);
       const published = payload.rows[0];
       const publishedDraft = draftFromRow(published);
@@ -5702,7 +5700,7 @@ export function GeneratedContentAdminDashboard() {
           ? payload.publicationReceipt?.currentPublicationState === "live" : published.status === "LIVE",
         updatedAt: published.updated_at ?? new Date().toISOString()
       });
-      setMessage(publicationStateMessage(payload));
+      setMessage(await publicationStateMessage(payload));
       return published;
     } catch (error) {
       setEditorSaveError(dashboardErrorMessage(error));
@@ -9405,12 +9403,12 @@ export function GeneratedContentAdminDashboard() {
     }
     if (!saved.row) throw new Error("Save this passage before publishing.");
     const result = await submitSavedPublication(saved.row, packageRevisionPublicationAction);
-    if (result.publicationReceipt?.currentPublicationState !== "live") throw new Error(publicationStateMessage(result));
+    if (result.publicationReceipt?.currentPublicationState !== "live") throw new Error(await publicationStateMessage(result));
     const published = result.rows[0];
     const source = acknowledgeHouseTransitPublication(published);
     setRows(current => [published, ...current.filter(row => row.id !== published.id && row.id !== saved.row!.id)]);
     announceContentUpdate({ contentKey: key, published: true, updatedAt: published.updated_at ?? new Date().toISOString() });
-    setMessage(publicationStateMessage(result));
+    setMessage(await publicationStateMessage(result));
     return { published: source.published };
   }
 
@@ -10390,7 +10388,7 @@ export function GeneratedContentAdminDashboard() {
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
     const isStandaloneArticleDraft = Boolean(standaloneArticleKind(currentDraft.contentKey));
-    const isScheduledStandaloneArticle = isStandaloneArticleDraft && !articlePublicationIsDue({ content_key: currentDraft.contentKey, sections: currentDraft.sections });
+    const isScheduledStandaloneArticle = !articlePublicationIsDue({ content_key: currentDraft.contentKey, sections: currentDraft.sections });
     const isAstro101Draft = isAstro101ContentRow({ content_key: currentDraft.contentKey, facts: currentDraft.facts });
     const astro101Blocks = astro101BlocksFromSections(currentDraft.sections);
     const astro101Intro = astro101IntroFromSections(currentDraft.sections);
@@ -12117,7 +12115,7 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && (
             <section className="studio-surface studio-section admin-editor-copy-section" aria-label="Content name and summary">
-              {isStandaloneArticleDraft && <ArticlePublicationField contentKey={currentDraft.contentKey} sections={currentDraft.sections ?? {}} onChange={sections => setDraft({ ...currentDraft, sections })} />}
+              {isStandaloneArticleDraft && <Suspense fallback={<PageLoading compact />}><ArticlePublicationField sections={currentDraft.sections ?? {}} onChange={sections => setDraft({ ...currentDraft, sections })} /></Suspense>}
               <label className="admin-title-field">
                 <span>{headlineFieldLabel}</span>
                 <StudioInput aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
