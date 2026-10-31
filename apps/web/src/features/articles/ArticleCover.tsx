@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { articleLibraryKind, articleReaderHref } from "../../../../../src/shared/articleLibrary";
 import type { GeneratedContentRow } from "../../services/generatedContent";
+import { ArticlePublishDate } from "./ArticlePublishDate";
 
 const elements: Record<string, string> = {
   aries: "fire", leo: "fire", sagittarius: "fire", taurus: "earth", virgo: "earth", capricorn: "earth",
@@ -22,5 +23,6 @@ export function ArticleCover({ row, index, featured = false }: { row: GeneratedC
       <span className="article-cover__meta">{kind}</span>
     </div>
     <div className="article-cover__caption"><h2>{title}</h2><span>Read <ArrowUpRight size={16} aria-hidden="true" /></span></div>
+    <ArticlePublishDate row={row} />
   </a>;
 }

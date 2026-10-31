@@ -1,5 +1,5 @@
 import {hasExactStudioOwnerApproval} from './_lib/studio-owner-publication.js';
-import { articleLibraryPrefixes } from "../src/shared/articleLibrary.js";
+import { articleLibraryPrefixes, articlePublicationIsDue } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
 import { isStudioLunationRevision } from '../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
 import { SKY_SEASON_FALLBACK_PREFIX } from "../apps/web/src/content/skySeasonFallback.js";
@@ -19,7 +19,7 @@ import { HOROSCOPE_PERIODS, horoscopeEditionFromRow, validHoroscopeTimeZone, hor
 
 loadLocalWebEnv();
 const pageSize = 250;
-const select = 'id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,model,updated_at,judge_score,judge_gate';
+const select = 'id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,model,updated_at,published_at,judge_score,judge_gate';
 const providers = new Set(['tldrastro-fallback-architecture-v3', 'tldrastro-fallback-architecture-v3-sky-placement']);
 const surfaces = new Set(['sky', 'you', 'natal', 'synastry', 'composite', 'relationship', 'modifier', 'year_ahead', 'education']);
 type Query = { provider?: string; keys?: string[]; ids?: string[]; prefix?: string; surfaces?: string[]; targetDate?: string; afterId?: string; scope?: "sky" | "sky-list" | "sky-article"; vocabularyOnly?: boolean; latestVersion?: boolean; horoscope?: {period:string; at:string; timeZone?:string} };
@@ -56,6 +56,7 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
 
 export function readerRowIsEligible(row: GeneratedContentRow) {
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
+  if (!articlePublicationIsDue(row)) return false;
   if (row.content_key.startsWith('sample-') || row.facts?.sampleOnly || row.source_snapshot?.sampleOnly) return false;
   if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING', 'BLOCKLIST_MATCH'].includes(flag))) return false;
   if (row.content_key.startsWith(SKY_SEASON_FALLBACK_PREFIX) && (row.source_snapshot?.ownerApproval as {copySha256?: string} | undefined)?.copySha256
