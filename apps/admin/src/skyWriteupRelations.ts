@@ -28,6 +28,22 @@ export type SkyLunationContext = {
 
 export type SkyWriteupSubjectType = "planet" | "angle" | "point";
 
+type SkySourceIdentity = Pick<SkyWriteupRelationRow, "id" | "content_key" | "updated_at">;
+
+export function compareSkySourceRows(left: SkySourceIdentity, right: SkySourceIdentity) {
+  return Number(left.id.startsWith("package:")) - Number(right.id.startsWith("package:"))
+    || (right.updated_at ?? "").localeCompare(left.updated_at ?? "");
+}
+
+export function preferredSkySourceRows<Row extends SkySourceIdentity>(rows: Row[]) {
+  const selected = new Map<string, Row>();
+  for (const row of rows) {
+    const current = selected.get(row.content_key);
+    if (!current || compareSkySourceRows(row, current) < 0) selected.set(row.content_key, row);
+  }
+  return [...selected.values()];
+}
+
 export type RelatedHousePassage<Row extends SkyWriteupRelationRow = SkyWriteupRelationRow> = {
   house: number;
   kind: "Sky house horoscope" | "House and sign passage" | "House passage" | "House introduction";
@@ -327,12 +343,10 @@ export function relatedLunationHoroscopes<Row extends SkyWriteupRelationRow>(
   rows: Row[],
   context: SkyLunationContext
 ): RelatedLunationHoroscope<Row>[] {
-  const rowsByKey = new Map(rows.map((row) => [row.content_key.toLowerCase(), row]));
+  const rowsByKey = new Map(preferredSkySourceRows(rows).map((row) => [row.content_key.toLowerCase(), row]));
   if (context.eclipse === "none") {
     return lunationHoroscopeIdentities(context.kind, context.sign).map(identity => {
-      const row = rows.filter(candidate => candidate.content_key === identity.contentKey)
-        .sort((left, right) => Number(left.id.startsWith("package:")) - Number(right.id.startsWith("package:"))
-          || (right.updated_at ?? "").localeCompare(left.updated_at ?? ""))[0];
+      const row = rowsByKey.get(identity.contentKey);
       const preview = relationBody(row);
       return { risingSign: identity.risingSign, house: identity.house, preview,
         sourceReady: Boolean(preview), sources: row ? [{ role: "RATM horoscope", row }] : [] };
@@ -405,7 +419,7 @@ const houseKindPriority: Record<RelatedHousePassage["kind"], number> = {
 };
 
 export function relatedHousePassages<Row extends SkyWriteupRelationRow>(rows: Row[], context: SkyWriteupContext): RelatedHousePassage<Row>[] {
-  return rows.flatMap((row) => {
+  return preferredSkySourceRows(rows).flatMap((row) => {
     const match = housePassageMatch(row, context);
     return match && match.house >= 1 && match.house <= 12 ? [{ ...match, row }] : [];
   }).sort((left, right) => (

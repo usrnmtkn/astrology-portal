@@ -1,5 +1,6 @@
 import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
 import { isLunationHoroscopeKey } from '../../src/shared/lunationHoroscopeIdentity.js';
+import { fallbackHoroscopeEditorialIssue } from '../../src/shared/horoscopeEditorialPolicy.js';
 import { createHash } from 'node:crypto';
 import { isLunationEclipseSectionKey, isStudioLunationRevision } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
@@ -29,6 +30,8 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
     || snapshot.sourcePackage === "tldrastro-fallback-architecture-v3" || facts.fallbackArchitectureV3 === true;
   if (!isPackage) return null;
   const key = String(row.content_key ?? "");
+  const editorialIssue = fallbackHoroscopeEditorialIssue(key, record);
+  if (editorialIssue) return editorialIssue;
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
   if (isLunationEclipseSectionKey(key) || isLunationHoroscopeKey(key) && record.studio_lunation_revision) {
     if (!isStudioLunationRevision(record) || typeof record.body !== 'string'
