@@ -6,6 +6,9 @@ and publication-status repairs from main before releasing the lunar work.
 The release also integrates main's mobile/chart-parity repair at
 `7402336cb8fd97327c74010e9b01c214e505e200`; both mobile and lunar jobs remain
 dependencies of the browser release gate.
+The final integration is rebased onto
+`db1bbea9f4fe9dfd7a0dbd7f325ecb5d53278d63`, retaining main's cold Sky loading
+repair and balanced Studio/reader browser scheduling.
 
 The complete 288 RATM records remain identical to main, including their approval
 metadata. Only the book source file's stale top-level provenance hash changes.
@@ -62,7 +65,25 @@ The actual Rollup graph guard now covers that lunar boundary. Existing bundle
 ceilings remain unchanged; the final exact head and its checks are recorded in
 the release PR.
 
-Hosted checks must pass on the exact PR head before merge. Deployment proceeds
+The integrated source passed the fresh 229-case chart/Studio audit with five
+optional private-snapshot skips, followed by all 28 lunar browser cases
+(241 distinct passing cases). Shipped resolver, manifests, content book and
+knowledge outputs regenerated without changes. Approved records remain identical
+to current main, and full performance, types, CSS, browser coverage/balancing,
+reader-copy and public-asset privacy checks pass.
+
+The hosted configured-client Admin build exposed a 127-byte startup overage that
+the unset-client build did not reproduce. Deferring the existing fallback
+diagnostic view preserves its fields, headings and styles; the existing real
+editor/layout regression passes. On the integrated source, configured startup
+is 817,794 raw / 237,405 gzip bytes and aggregate JavaScript is 863,554 gzip
+bytes. Unset startup is 816,700 raw / 237,079 gzip, with 863,300 aggregate.
+Both existing ceilings pass unchanged; the entry guard now rejects this optional
+panel if it returns to startup. Fresh web builds also pass their existing limits.
+
+Hosted checks and the full local API rerun must pass on the exact final PR head
+before merge; their revision-specific results are recorded in the release PR.
+Deployment proceeds
 through the main Git integration. The release PR records the final head, merge
 and deployment revisions plus read-only production verification. Local fixtures
 do not establish production delivery, and no paid generation or live content
@@ -70,7 +91,7 @@ publication is part of these checks.
 
 ## Editing locations
 
-- **Content Studio → Composition → Sky Horoscopes**: search the RATM family or
+- **Content Studio → Composition → Sky / You: Horoscope Summaries**: search the RATM family or
   the released eclipse section/house-layer families, then choose **Edit selected
   source**.
 - **Sky Write-ups → selected lunation → Rising-sign horoscopes**: choose
