@@ -23,15 +23,15 @@ const object = (value: unknown): Record<string, any> => value && typeof value ==
 export function packagePublicationAdmissionIssue(row: Record<string, any>): string | null {
   if (row.status !== "LIVE") return null;
   const record = object(object(row.sections).packageRecord);
+  const key = String(row.content_key ?? "");
+  const editorialIssue = fallbackHoroscopeEditorialIssue(key, { ...row, ...record });
+  if (editorialIssue) return editorialIssue;
   const snapshot = object(row.source_snapshot);
   const facts = object(row.facts);
   const isPackage = row.provider === "tldrastro-fallback-architecture-v3"
     || row.provider === "tldrastro-fallback-architecture-v3-sky-placement"
     || snapshot.sourcePackage === "tldrastro-fallback-architecture-v3" || facts.fallbackArchitectureV3 === true;
   if (!isPackage) return null;
-  const key = String(row.content_key ?? "");
-  const editorialIssue = fallbackHoroscopeEditorialIssue(key, record);
-  if (editorialIssue) return editorialIssue;
   if (record.contentKey && record.contentKey !== key) return "The source and publication have different content keys. Reopen the correct source before publishing.";
   if (isLunationEclipseSectionKey(key) || isLunationHoroscopeKey(key) && record.studio_lunation_revision) {
     if (!isStudioLunationRevision(record) || typeof record.body !== 'string'
