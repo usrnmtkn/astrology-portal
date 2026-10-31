@@ -51,12 +51,18 @@ export default function SkyPlacementCompanions<T extends Row>({ view, house, onH
   const passages = houses.filter(passage => passage.house === house);
   const complete = passages.filter(passage => passage.availability === "Reader-ready");
   const supporting = passages.filter(passage => passage.availability === "Source candidate");
-  const renderPassage = (row: T, label: string) => <article className="admin-sky-related-row admin-hook-detail-section" key={row.id}>
+  const renderPassage = (row: T, label: string) => {
+    const sections = row.sections as { packageDraft?: Record<string, unknown>; packageRecord?: Record<string, unknown> } | undefined;
+    const record = sections?.packageDraft ?? sections?.packageRecord;
+    const body = row.content_key.startsWith('house-horoscope-core/') ? record?.body_you ?? record?.body ?? row.body : row.body;
+    return <article className="admin-sky-related-row admin-hook-detail-section" key={row.id}>
     <div className="admin-fallback-diagnostic-heading"><strong>{label}</strong><ContentLiveStatusBadge row={row} /></div>
-    <p className="admin-copy-preview">{row.body || (row.inventory_only ? "Open this passage to load its saved writing." : "No writing saved.")}</p>
+    <p className="admin-copy-preview">{typeof body === 'string' && body || (row.inventory_only ? "Open this passage to load its saved writing." : "No writing saved.")}</p>
     <StudioButton onClick={() => onEdit(row)}>Edit {label.toLowerCase()}</StudioButton>
+    {row.content_key.startsWith('house-horoscope-core/') && <a className="admin-source-action" href={`#horoscope-fallbacks?${new URLSearchParams({ source: row.content_key })}`}>Open in Fallback horoscopes</a>}
     <details className="admin-workspace-details"><AdminDisclosureSummary>Source details</AdminDisclosureSummary><code>{row.content_key}</code></details>
   </article>;
+  };
   return <section className="studio-section admin-sky-companion-editor" aria-label={view === "houses" ? "House horoscopes" : "Personal aspects"}>
     {view === "houses" ? <>
       <p>Choose a house to edit its complete horoscope. Supporting passages are listed separately below it.</p>
