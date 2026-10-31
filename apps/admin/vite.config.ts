@@ -220,7 +220,7 @@ export default defineConfig(({ command, mode }) => {
             }
             // Fallback editors share the owner-publication workspace; combining
             // their deferred code avoids repeating its controls and copy in gzip.
-            if (/apps\/admin\/src\/(?:FallbackCompositionCheck|DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:FallbackHoroscopeStudio|fallbackHoroscopeSources|FallbackCompositionCheck|DailyFallbackWorkspaceGuide|DailyGlanceStudio|dailyGlanceFriendPreview|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.(?:ts|tsx)$/u.test(id)) {
               return "review";
             }
           }

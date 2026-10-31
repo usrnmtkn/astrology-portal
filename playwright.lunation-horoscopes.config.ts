@@ -1,10 +1,10 @@
 import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./tests/visual", testMatch: ["lunation-horoscopes.spec.ts", "lunation-eclipse-publication.spec.ts", "composition-complete-sources.spec.ts"], timeout: 120_000,
+  testDir: "./tests/visual", testMatch: ["lunation-horoscopes.spec.ts", "lunation-eclipse-publication.spec.ts", "composition-complete-sources.spec.ts", "fallback-horoscope-studio.spec.ts"], timeout: 120_000,
   projects: [
     { name: "ratm", testMatch: "lunation-horoscopes.spec.ts", use: { baseURL: "http://127.0.0.1:4395" } },
-    { name: "source-publication", testMatch: ["lunation-eclipse-publication.spec.ts", "composition-complete-sources.spec.ts"], use: { baseURL: "http://127.0.0.1:4396" } }
+    { name: "source-publication", testMatch: ["lunation-eclipse-publication.spec.ts", "composition-complete-sources.spec.ts", "fallback-horoscope-studio.spec.ts"], use: { baseURL: "http://127.0.0.1:4396" } }
   ],
   workers: 1, reporter: "list",
   use: { baseURL: "http://127.0.0.1:4395", screenshot: "only-on-failure", trace: "retain-on-failure" },
