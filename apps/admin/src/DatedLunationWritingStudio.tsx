@@ -3,6 +3,7 @@ import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
 import {AdminSelect,AdminDisclosureSummary} from './AdminNativeControls';
 import {adminCredentialHeaders} from './adminSecret';
 import {Stack,Grid,Text} from './studio-ds/primitives';
+import WritingPlanExport from './WritingPlanExport';
 
 type Event={id:string;sign:string;title:string;startsAt:string;phase:string;eclipseType:string|null;timeZone:string};
 type Row={id:string;headline:string;body:string;updated_at:string;facts:{lunationArticle:{event:Event}};source_snapshot:{lunationWriting:any}};
@@ -255,6 +256,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
           if(window.confirm('The previous request may have been billed. Release it only if you accept that its outcome is unknown.'))void run(()=>act('release',{acknowledgeUnknownOutcome:true}));
         }}>Release interrupted request</StudioButton>}
       </Stack></div>}
+      {!writing.active&&!rejecting&&<WritingPlanExport secret={secret} endpoint={endpoint} body={{action:'export',id:row.id,expectedUpdatedAt:row.updated_at}} disabled={busy||dirty}/>}
       {plan&&!writing.active&&!rejecting&&<details className="admin-workspace-details" open={!row.body}>
         <AdminDisclosureSummary>Writing plan and sources</AdminDisclosureSummary>
         <Stack gap="sm">

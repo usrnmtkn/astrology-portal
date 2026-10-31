@@ -269,6 +269,7 @@ const SkyPlacementSources = lazy(() => import("./SkyPlacementSources"));
 const ReaderPassageEntry = lazy(() => import('./SkyPlacementSources').then(module => ({ default: module.ReaderPassageEntry })));
 const SkyPlacementEditorNav = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementEditorNav })));
 const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementWritingLinks })));
+const WritingPlanExport = lazy(() => import('./WritingPlanExport'));
 const UnsavedIngressPreview = lazy(() => import('./UnsavedIngressPreview'));
 const SkyPlacementWorkspace = lazy(() => import("./SkyPlacementWorkspace"));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
@@ -11843,6 +11844,7 @@ export function GeneratedContentAdminDashboard() {
                   Load calculated facts
                 </StudioButton>
               </div>
+              <Suspense fallback={null}><WritingPlanExport secret={secret} endpoint="/api/admin/sky-article-template-slots" body={{preview:true,templateId:selectedRow.id,format:skyArticleEditionForm.format,referenceDate:skyArticleEditionForm.referenceDate,existingSlotValues:skyArticleEditionForm.slotValues,voiceNotes:skyArticleEditionForm.writingDirection,includeRetrogradeHistory:skyArticleEditionForm.includeRetrogradeHistory===true}} disabled={isLoading||!skyArticleEditionForm.referenceDate||skyArticleEditionForm.format===SKY_INGRESS_ESSAY_FORMAT}/></Suspense>
               {skyArticleEditionFacts && (
                 <>
                   <dl className="admin-hook-pattern-list">

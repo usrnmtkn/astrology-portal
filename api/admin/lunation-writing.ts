@@ -7,7 +7,7 @@ import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {AdminHttpError,adminFetchJson,adminStorageRows,readAdminJsonBody,sendAdminJson,sendAdminMethodNotAllowed,adminErrorStatus} from '../_lib/admin-http.js';
 import {studioStorage} from '../_lib/sky-studio-sources.js';
 import {calculateLunationArticleFacts,lunationArticleEvents} from '../_lib/lunation-article-facts.js';
-import {prepareLunationArticle,writeLunationArticle,lunationArticleHash as hash} from '../../src/astro-writing/lunationArticleWriting.mjs';
+import {prepareLunationArticle,writeLunationArticle,lunationArticleWritingExport,lunationArticleHash as hash} from '../../src/astro-writing/lunationArticleWriting.mjs';
 import {LUNATION_ARTICLE_PROTOCOL_VERSION} from '../../src/astro-writing/lunationArticleInput.mjs';
 import {validateLunationArticle} from '../../src/astro-writing/lunationArticleValidation.mjs';
 import {loadLunarProfile,lunarFeedback} from '../_lib/calendar-lunation-studio.js';
@@ -56,7 +56,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       return sendAdminJson(res,200,{ok:true,rows});
     }
     const input=await readAdminJsonBody<Record<string,any>>(req,96000);
-    const allowed:Record<string,string[]>={prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],reject:['action','id','expectedUpdatedAt','reason'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
+    const allowed:Record<string,string[]>={export:['action','id','expectedUpdatedAt'],prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],reject:['action','id','expectedUpdatedAt','reason'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
     if(!allowed[input.action]||Object.keys(input).some(k=>!allowed[input.action].includes(k)))throw new AdminHttpError(400,'Choose a supported lunation writing action.');
     if(input.action==='prepare') {
       if(typeof input.month!=='string'||typeof input.timeZone!=='string'||typeof input.eventId!=='string'||typeof input.direction!=='string'||input.direction.length>6000)throw new AdminHttpError(400,'Choose an event and keep the writing direction under 6,000 characters.');
@@ -88,6 +88,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const state=()=>row.source_snapshot.lunationWriting;
     const persistState=async(value:Record<string,unknown>,patch:Record<string,unknown>={})=>persist({...patch,source_snapshot:{...row.source_snapshot,lunationWriting:{...state(),...value}}});
     let operation=state().active;
+    if(input.action==='export')return sendAdminJson(res,200,{ok:true,writingExport:lunationArticleWritingExport(await prepareSharedArticle(row.facts.lunationArticle,state().direction,state().rejections))});
     if(input.action==='reject') {
       if(operation)throw new AdminHttpError(409,'Retrieve or release the running request before rejecting this draft.');
       if(typeof input.reason!=='string'||!input.reason.trim()||input.reason.length>6000)throw new AdminHttpError(400,'Enter a reason for rejection under 6,000 characters.');

@@ -4,6 +4,7 @@ import { StudioButton, StudioTextarea } from './StudioControls';
 import { SKY_INGRESS_ARTICLE_FORMAT, skyIngressTemplateForFormat } from '../../web/src/content/skyIngressEssay.mjs';
 import { compileSkyArticleEdition, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
 import { assertPlacementVisit, type PlacementGeneratedArticle, type PlacementVisitFacts } from './skyPlacementWorkspaceModel';
+import WritingPlanExport from './WritingPlanExport';
 
 type Props = {
   facts: PlacementVisitFacts; referenceDate: string;
@@ -71,6 +72,7 @@ export default function SkyVisitArticleWriter(props: Props) {
     <label className="admin-review-copy-editor"><span>Optional direction</span>
       <StudioTextarea aria-label="Dated article direction" value={direction} disabled={busy || raw !== null} maxLength={6000} rows={3} onChange={event => setDirection(event.target.value)} />
     </label>
+    <WritingPlanExport request={props.request} endpoint="/api/admin/sky-article-template-slots" body={{preview:true,visit:{planet:props.facts.planet,sign:props.facts.sign},referenceDate:props.referenceDate,format:SKY_INGRESS_ARTICLE_FORMAT,voiceNotes:direction,existingSlotValues:{}}} disabled={busy}/>
     {!raw && <StudioButton className="admin-primary-button" disabled={busy} onClick={() => void generate()}>{busy ? 'Generating draft…' : 'Generate this draft'}</StudioButton>}
     {error && <p role="alert">{error}</p>}
     {raw && <>
