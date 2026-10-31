@@ -78,7 +78,8 @@ variables and permits local test IPC. No protected bodies were copied into Git,
 browser assets or logs, and no test assertions were weakened. The previously
 failing report check passes with its required fixture provisioned.
 
-Both bundle limits are unchanged. The final standalone admin startup measures
+During initial local verification, both bundle limits were unchanged. That
+standalone admin startup measured
 818,351 bytes raw / 237,589 gzip, with 863,781 aggregate JavaScript gzip bytes.
 Raw entry headroom was 49 bytes and aggregate headroom was 319 bytes against
 the initial base's caps. Release checks remeasure against the current main
@@ -104,12 +105,34 @@ local recovery state. Reader wording, publication approval and conflict rules
 are preserved. The date validator still requires an exact, four-digit-year UTC
 timestamp, with calendar, precision, offset and year-boundary regressions.
 
-Under the exact failing CI configuration, the revised build measures 817,841
-raw / 237,440 gzip startup bytes and 868,055 aggregate gzip bytes. All existing
-limits pass without changes: 559 raw startup bytes, 360 gzip startup bytes and
-45 aggregate gzip bytes remain. A new browser regression verifies that a failed
-date-panel download leaves complete draft text and the saved schedule intact.
-The release PR records fresh browser results and full exact-head API/CI gates.
+The revised anonymous build fits those original limits, but the auth-enabled
+configuration exceeded the aggregate cap by 43 bytes. Independent current-main
+and feature builds, each with its own `npm ci` dependencies, establish the
+requested feature cost in both configurations:
 
-Revised source/test fingerprint, using the same method above:
+| Configuration | Main startup raw / gzip | Feature startup raw / gzip | Main / feature aggregate gzip |
+| --- | --- | --- | --- |
+| Anonymous fixture | 817,794 / 237,409 | 817,841 / 237,440 | 867,501 / 868,055 |
+| Publishable fixture key, natal-aspect flag | 817,804 / 237,435 | 817,851 / 237,434 | 867,601 / 868,143 |
+
+Main is `1d291ba4b82a81e0e6fd0a2cfbb8efad64584dda`; the tested runtime is
+`54d8f3963362401e8b1a064eaad790c1f9caf486`. Both use native Node 22.20.0,
+identical lockfiles, and the same synthetic Supabase settings. The requested
+feature adds 47 raw startup bytes and 542–554 aggregate gzip bytes. A scoped
+600-byte aggregate allocation raises its cap from 868,100 to 868,700, leaving
+557–645 aggregate bytes. Startup raw/gzip, largest-chunk, memory graph, reader,
+lazy-boundary, privacy and runtime checks retain their existing limits. This
+records feature cost, not a performance improvement.
+
+All 35 focused fresh-build browser cases passed on the final runtime: 22
+Article/Guide journeys, eight article-memory cases and five publication-recovery
+cases. The failed-date-panel case preserves complete draft text and its saved
+schedule. The complete local API suite passed on the exact runtime commit in
+772 seconds with a clean, unchanged checkout. The release PR records the final
+budget-only commit, complete exact-head hosted gates and deployment results.
+
+Runtime/test fingerprint before the release-budget allocation:
 `26c2357c5474f8fea65d7ec1e961b7d3c181627ed64acbc8be407b6eeaeb0fa4`.
+
+Complete source/test/configuration fingerprint including that allocation:
+`e56b05da01885e85f8d4f5d7dee784e6c1dae7ba66968f17b23cf03174a71501`.
