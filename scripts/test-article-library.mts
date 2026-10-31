@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { mock } from 'node:test';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { articleKeyFromHash, articleLibraryKind, articleReaderHref } from '../src/shared/articleLibrary.ts';
 import { syntheticLibrarySkyArticle } from '../tests/helpers/article-library-fixture.ts';
@@ -13,6 +14,84 @@ try {
   store.rows.set(sky.id, { ...sky, source_snapshot: {} });
   assert.deepEqual((await readSky()).payload.rows, [], 'Dated editions still require exact owner approval');
   store.rows.set(sky.id, sky);
+  {
+    const contentKey = 'article/guide/scheduled-fixture';
+    const sections = { articlePublication: { publishAt: '2099-03-14T13:00:00.000Z' } };
+    let result = await store.invoke('POST', { contentKey, surface: 'sky', mode: 'article', eventType: 'sky_article',
+      status: 'DRAFT', headline: 'Scheduled guide', body, sections });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    let row = result.payload.rows[0];
+    assert.deepEqual(row.sections.articlePublication, sections.articlePublication);
+    result = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'publish-owner-content' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    row = result.payload.rows[0];
+    for (const query of [{ keys: [contentKey] }, { ids: [row.id] }, { prefix: 'article/guide/' }, { surfaces: ['sky'] }]) {
+      const reading = await store.invoke('POST', query, '/api/content-reader');
+      assert.equal(reading.status, 200, JSON.stringify(reading));
+      assert(!reading.payload.rows.some(item => item.id === row.id), 'Scheduled guides stay private on every reader query');
+    }
+    mock.timers.enable({ apis: ['Date'], now: Date.parse(sections.articlePublication.publishAt) - 1 });
+    try {
+      assert.equal((await store.invoke('POST', { keys: [contentKey] }, '/api/content-reader')).payload.rows.length, 0);
+      mock.timers.tick(1);
+      const released = await store.invoke('POST', { keys: [contentKey] }, '/api/content-reader');
+      assert.equal(released.payload.rows[0]?.body, body, 'The complete guide releases at the selected instant without another write');
+    } finally { mock.timers.reset(); }
+    const malformed = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at,
+      status: 'DRAFT', sections: { articlePublication: { publishAt: '2026-02-30T10:00:00.000Z' } } });
+    assert.equal(malformed.status, 400, 'Impossible publication dates are rejected before writes');
+    assert.deepEqual(store.rows.get(row.id), row);
+    const invalidZone = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at,
+      status: 'DRAFT', sections: { articlePublication: { publishAt: sections.articlePublication.publishAt, timeZone: 'Invalid/Zone' } } });
+    assert.equal(invalidZone.status, 400);
+    const backdated = { articlePublication: { publishAt: '2020-01-01T15:00:00.000Z', privateNotes: 'PRIVATE_DATE_CANARY' } };
+    result = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, status: 'DRAFT', sections: backdated });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const revision = result.payload.rows[0];
+    assert.equal((await store.invoke('POST', { keys: [contentKey] }, '/api/content-reader')).payload.rows.length, 0);
+    result = await store.invoke('PATCH', { id: revision.id, expectedUpdatedAt: revision.updated_at, ownerAction: 'publish-standalone-article-revision' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const reading = await store.invoke('POST', { keys: [contentKey] }, '/api/content-reader');
+    assert.equal(reading.payload.rows[0]?.body, body);
+    assert.deepEqual(reading.payload.rows[0]?.sections.articlePublication, { publishAt: backdated.articlePublication.publishAt });
+    assert(!JSON.stringify(reading.payload).includes('PRIVATE_DATE_CANARY'));
+    row = result.payload.rows[0];
+    const rescheduled = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, status: 'DRAFT', sections });
+    assert.equal(rescheduled.status, 200);
+    assert.equal((await store.invoke('POST', { keys: [contentKey] }, '/api/content-reader')).payload.rows[0]?.body, body,
+      'Saving a future revision preserves the current public guide');
+    result = await store.invoke('PATCH', { id: rescheduled.payload.rows[0].id, expectedUpdatedAt: rescheduled.payload.rows[0].updated_at,
+      ownerAction: 'publish-standalone-article-revision' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    row = result.payload.rows[0];
+    assert.equal((await store.invoke('POST', { keys: [contentKey] }, '/api/content-reader')).payload.rows.length, 0);
+    const cleared = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, status: 'DRAFT',
+      sections: { articlePublication: null } });
+    assert.equal(cleared.status, 200);
+    result = await store.invoke('PATCH', { id: cleared.payload.rows[0].id, expectedUpdatedAt: cleared.payload.rows[0].updated_at,
+      ownerAction: 'publish-standalone-article-revision' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const published = result.payload.rows[0];
+    assert(Date.parse(published.sections.articlePublication.publishAt) <= Date.now());
+    assert.equal((await store.invoke('POST', { keys: [contentKey] }, '/api/content-reader')).payload.rows[0]?.body, body,
+      'Clearing the date and publishing releases the complete guide immediately');
+    const retired = await store.invoke('POST', { contentKey, action: 'retire', id: published.id,
+      expectedUpdatedAt: published.updated_at }, '/api/admin/content-publication');
+    assert.equal(retired.status, 200, JSON.stringify(retired));
+  }
+  {
+    const legacy = { ...sky, id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', content_key: 'article/guide/legacy-sections',
+      event_type: 'sky_article', provider: 'manual-admin', status: 'DRAFT', lane: 'serving', review_state: null,
+      headline: 'Legacy guide', body, source_snapshot: {}, sections: [{ heading: 'Saved heading', body: 'Complete saved section.' }] };
+    store.rows.set(legacy.id, legacy);
+    const result = await store.invoke('PATCH', { id: legacy.id, expectedUpdatedAt: legacy.updated_at, ownerAction: 'publish-owner-content' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const saved = result.payload.rows[0];
+    assert.deepEqual(saved.sections, legacy.sections, 'Default publication dates never replace legacy section arrays');
+    const retired = await store.invoke('POST', { action: 'retire', id: saved.id, contentKey: saved.content_key,
+      expectedUpdatedAt: saved.updated_at }, '/api/admin/content-publication');
+    assert.equal(retired.status, 200, JSON.stringify(retired));
+  }
   for (const kind of ['guide', 'manual']) {
     const contentKey = `article/${kind}/synthetic-fixture`;
     const read = () => store.invoke('POST', { prefix: `article/${kind}/` }, '/api/content-reader');
@@ -25,6 +104,7 @@ try {
     const published: any = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, status: 'LIVE', reviewState: null });
     assert.equal(published.status, 200, JSON.stringify(published));
     let saved = published.payload.rows[0];
+    const originalPublishAt = saved.sections.articlePublication.publishAt;
     const result: any = await read();
     assert.equal(result.status, 200);
     assert.equal(result.payload.rows[0]?.body, body, JSON.stringify(result));
@@ -68,6 +148,7 @@ try {
       ownerAction: 'publish-standalone-article-revision' });
     assert.equal(republished.status, 200, JSON.stringify(republished));
     saved = republished.payload.rows[0];
+    assert.equal(saved.sections.articlePublication.publishAt, originalPublishAt, 'Ordinary revisions preserve the original publish date');
     assert.equal((await read()).payload.rows[0]?.body, revisionBody, 'Only explicit publication replaces the reader edition');
     const replayed = await publishRevision();
     assert.equal(replayed.status, 200, JSON.stringify(replayed));
