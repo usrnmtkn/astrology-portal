@@ -329,6 +329,8 @@ const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPre
 import type { NatalEditableRow, NatalSourceEdits } from "./NatalPlacementSourceEditor";
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
 const LunationHoroscopeRelations = lazy(() => import("./LunationHoroscopeRelations"));
+const FallbackCompositionCheck = lazy(() => import("./FallbackCompositionCheck"));
+import type { AdminFallbackCompositionDiagnostic } from "./FallbackCompositionCheck";
 const NatalAspectSourceFinder = lazy(() => import("./NatalAspectSourceFinder"));
 const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
 const DailyGlanceStudio = lazy(async () => {
@@ -397,15 +399,6 @@ type AdminAspectContext = {
 };
 type AdminContentSystemFilter = "all" | "authored" | "generated" | "fallback";
 type AdminReaderReadinessKey = "reader-ready" | "draft-held" | "reference-held" | "review-held" | "fallback-needed" | "needs-source-material";
-type AdminFallbackCompositionDiagnostic = {
-  title: string;
-  status: string;
-  body: string;
-  template: string;
-  slots: string[];
-  sourceLanes: string[];
-  action: string;
-};
 type AdminPhrasebankTier = "CONFIRMED" | "REVIEWED" | "SESSION_APPROVED_DRAFT" | "none";
 type AdminPhrasebankTierFilter = AdminPhrasebankTier | "all";
 type AdminContentCategoryFilter = "all" | "Sky" | "Calendar Aspects" | "Personal Transits" | "House Transits" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
@@ -12497,35 +12490,9 @@ export function GeneratedContentAdminDashboard() {
               </section>
             )}
             {fallbackDiagnostic && !isVocabularyDraft && (
-              <section className="studio-surface studio-section admin-fallback-diagnostic-panel" aria-label="Fallback composition check">
-                <div className="admin-fallback-diagnostic-heading">
-                  <div>
-                    <p className="admin-eyebrow">Fallback system</p>
-                    <h3>{fallbackDiagnostic.title}</h3>
-                  </div>
-                  <strong>{fallbackDiagnostic.status}</strong>
-                </div>
-                <p>{fallbackDiagnostic.body}</p>
-                <div className="admin-fallback-diagnostic-grid">
-                  <div>
-                    <span>Template</span>
-                    <code>{fallbackDiagnostic.template}</code>
-                  </div>
-                  <div>
-                    <span>Assembled slots</span>
-                    <ul>
-                      {fallbackDiagnostic.slots.map((slot) => <li key={slot}><code>{slot}</code></li>)}
-                    </ul>
-                  </div>
-                  <div>
-                    <span>Source lanes</span>
-                    <ul>
-                      {fallbackDiagnostic.sourceLanes.map((lane) => <li key={lane}><code>{lane}</code></li>)}
-                    </ul>
-                  </div>
-                </div>
-                <p><strong>Fix path:</strong> {fallbackDiagnostic.action}</p>
-              </section>
+              <Suspense fallback={<PageLoading message="Loading fallback details…" />}>
+                <FallbackCompositionCheck diagnostic={fallbackDiagnostic} />
+              </Suspense>
             )}
             {isPackageDraft && (isVocabularyDraft ? (
               <section className={`${surfaceSection} admin-package-edit-panel admin-vocabulary-settings`} aria-label="Variable settings">

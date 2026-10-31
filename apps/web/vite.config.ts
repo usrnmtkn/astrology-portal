@@ -293,7 +293,7 @@ export default defineConfig(({ mode }) => {
               || id.endsWith("/src/shared/lunationHoroscopeIdentities.ts")) return "sky-article-horoscopes";
             // Lunar writing modes share their optional workspace and controls.
             if (/apps\/admin\/src\/(?:LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio)\.tsx$/u.test(id)) return "lunation-writing";
-            if (/apps\/admin\/src\/(?:FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
+            if (/apps\/admin\/src\/(?:FallbackCompositionCheck|FriendsTransitSectionFinder|LunationHoroscopeRelations|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels|TemplateVariablesRail|AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview|HoroscopePublicationReview|StudioEditorReviewPanels|ReviewWorkflowPanel|DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) return "studio-editor-tools";
             // These reader helpers already load at startup. Share their chunk;
             // astronomy and protected passage data retain their separate lazy chunks.
             if (id.endsWith("/src/astrologyConfig.ts") || id.endsWith("/content/skyMotionLabels.ts")

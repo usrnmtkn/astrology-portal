@@ -101,6 +101,7 @@ if (javaScriptFiles.some(item => /fallbackArchitectureV3DeferredBundle-/.test(it
 }
 
 const forbiddenEntryMarkers = [
+  "Fallback composition check",
   "bundled-deferred-core-rows-v3",
   "bundled-sky-core-rows-v3",
   "fallbackArchitectureV3Runtime",
