@@ -96,6 +96,7 @@ const edition = {
 const relationshipVariant = value => typeof value === 'string' ? value
   : project(value, strings('body summary copy experience advice astro'));
 const sections = {
+  articlePublication: strings('publishAt timeZone'),
   byRelationshipType: Object.fromEntries(['romantic', 'friendship', 'family', 'coworkers', 'creative', 'exes', 'complicated']
     .map(type => [type, relationshipVariant])),
   horoscopeEdition: { ...strings('schema'), window: strings('period audience timeZone startsAt endsAt seasonSign'), passages: [strings('sign headline body')] },
@@ -115,7 +116,7 @@ const sections = {
   articleHoroscopes: { ...strings('schema heading introduction'), passages: [{ ...strings('risingSign heading body'), ...numbers('house') }] }
 };
 const rowContract = {
-  ...strings('id content_key surface mode status lane review_state event_type target_date headline summary body block_type provider model updated_at judge_gate'),
+  ...strings('id content_key surface mode status lane review_state event_type target_date headline summary body block_type provider model updated_at published_at judge_gate'),
   ...numbers('judge_score'),
   source_snapshot: metadata,
   facts: { ...metadata, ...strings('slug'), related: [strings('label content_key slug')] },

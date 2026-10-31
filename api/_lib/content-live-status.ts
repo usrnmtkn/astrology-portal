@@ -15,6 +15,7 @@ import { createPackageManifest } from "../../apps/web/src/content/fallbackArchit
 import { createRequire } from "node:module";
 import { createHash } from "node:crypto";
 import { hasExactStudioOwnerApproval } from "./studio-owner-publication.js";
+import { articlePublicationIsDue, articlePublishAt } from "../../src/shared/articleLibrary.js";
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 import { selectLatestLiveServingDashboardRows } from "../../apps/web/src/services/fallbackArchitectureV3DashboardOverlay.js";
 import { contentWiringStatus } from "../../apps/admin/src/contentWiringStatus.js";
@@ -141,6 +142,9 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
   }
   return rows.map((row) => {
     if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    if (row.status === "LIVE" && allowsPublication(row) && !articlePublicationIsDue(row)) return { id: row.id, live: false, label: "Not live", source: null,
+      detail: articlePublishAt(row) ? `Scheduled for ${articlePublishAt(row)}. Readers cannot open this version before its publish date.` : "This article has an invalid publish date.",
+      updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     // Dated daily overviews are selected directly by Calendar, outside the bundled package keys.
     if (row.content_key.startsWith('calendar-passage/daily/')) {

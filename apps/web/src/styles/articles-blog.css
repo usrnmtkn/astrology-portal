@@ -27,6 +27,7 @@
 .articles-page .article-cover__caption h2 { margin: 0; font-family: var(--font-ui); font-size: var(--type-ui-copy-size); font-weight: var(--weight-medium); line-height: var(--leading-placement-ui); letter-spacing: var(--tracking-normal); }
 .article-cover__caption > span { display: inline-flex; align-items: center; flex: none; gap: var(--space-1); color: var(--muted); font-family: var(--font-ui); font-size: var(--type-ui-copy-size); line-height: var(--leading-placement-ui); }
 .articles-library-empty { padding-block: var(--space-9); text-align: center; }
+.article-publish-date { color: var(--muted); font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); letter-spacing: var(--tracking-body); }
 @media (max-width: 800px) {
  .articles-page .articles-library-list { grid-template-columns: minmax(0, 1fr); }
  .article-cover-card--featured .article-cover { padding: var(--space-7) var(--space-6); }

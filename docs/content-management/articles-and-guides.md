@@ -28,6 +28,29 @@ saved summary and full body are separate fields. Collection cards use only the
 saved summary; they do not generate excerpts from the body. This organization
 does not generate, import, approve or publish any existing owner draft by itself.
 
+### Publish dates
+
+Standalone articles and guides have a **Publish date** field with a date and time
+in the editor's displayed time zone. Leave it blank to publish immediately, set
+a past date to backdate the piece, or choose a future time and **Save & schedule**.
+**Save draft** retains the date privately without scheduling publication. The
+Scheduled status and collection filter distinguish future releases from Live
+writing. Clear the date and publish to release a scheduled piece immediately.
+
+The public collection and article header show the saved publication date; the
+collection sorts newest first by that date. Ordinary revisions retain the
+publication date. The saved editing time zone determines the displayed day,
+including for readers in other zones. Scheduling an already published guide
+replaces its public version and makes it unavailable until the chosen time;
+saving its draft alone preserves the current published version.
+
+The reader handler enforces the release timestamp on every request, including
+direct links and ID queries. At the selected instant the approved guide becomes
+readable on the next request without another publication action or a cron job.
+Existing open collections refresh on navigation or reload. The publication ledger,
+owner approval, retirement and stale-version checks still apply. Metadata lives
+in `sections.articlePublication`; private siblings are excluded from public rows.
+
 ## Reader app
 
 Open **Articles & Guides** in the main navigation or mobile menu (`/#articles`).
