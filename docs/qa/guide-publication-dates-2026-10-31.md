@@ -134,5 +134,35 @@ budget-only commit, complete exact-head hosted gates and deployment results.
 Runtime/test fingerprint before the release-budget allocation:
 `26c2357c5474f8fea65d7ec1e961b7d3c181627ed64acbc8be407b6eeaeb0fa4`.
 
-Complete source/test/configuration fingerprint including that allocation:
+Pre-integration source/test/configuration fingerprint including that allocation:
 `e56b05da01885e85f8d4f5d7dee784e6c1dae7ba66968f17b23cf03174a71501`.
+
+## Integration with the writing-plan export release
+
+Main advanced to `fe6117eefc9a0da9f16ae0c6b94d4d11e7025d80` while release
+checks were running. The rebase preserves that complete feature and its existing
+bundle allocations. The independently installed benchmark worktree was updated
+to this exact main revision; the dependency lockfile is unchanged.
+
+In the auth-enabled configuration, main measures 818,362 raw / 237,600 gzip
+startup bytes and 869,989 aggregate gzip bytes. Integrated guide runtime
+`39c829959ecc9c95c41461f3e0ffef39472b64e3` measures 818,409 / 237,638 /
+870,524: additions of 47 raw, 38 startup gzip and 535 aggregate gzip bytes.
+Main's 38-byte raw headroom is less than the 47-byte addition, so the guide
+receives a 100-byte raw entry/largest-chunk allowance, raising those caps to
+818,500. Its 600-byte aggregate allocation remains additive to the upstream
+export allocation, giving a combined cap of 871,700. Integrated auth headroom
+is 91 raw, 162 startup gzip and 1,176 aggregate gzip bytes. Startup gzip and all
+source-isolation, memory graph, reader, privacy and runtime guards retain their
+existing limits.
+
+The full local API run on the previous base failed a save-deadline assertion in
+the large-history model-choice fixture. The unchanged isolated case then passed
+in 35 seconds, with 84 compact saves and no paid retries. The failure did not
+reproduce in isolation; its timing cause remains unconfirmed. The original log
+is retained, no timeout was relaxed, and the complete suite must pass again on
+the final rebased commit. Final integration/browser/CI and production evidence
+belongs to the release PR.
+
+Integrated source/test/configuration fingerprint:
+`245b9f79553f6e589d988849ef1a0640877d31e297ced820192eade5c43158f9`.
