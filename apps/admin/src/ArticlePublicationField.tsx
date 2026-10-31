@@ -1,11 +1,11 @@
-import { articlePublishAt } from "../../../src/shared/articleLibrary";
+import { validArticlePublishAt } from "../../../src/shared/articleLibrary";
 import { StudioInput } from "./StudioControls";
 
-export function ArticlePublicationField({ contentKey, sections, onChange }: {
-  contentKey: string; sections: Record<string, unknown>; onChange: (sections: Record<string, unknown>) => void;
+export function ArticlePublicationField({ sections, onChange }: {
+  sections: Record<string, unknown>; onChange: (sections: Record<string, unknown>) => void;
 }) {
-  const at = articlePublishAt({ content_key: contentKey, sections });
-  const date = at ? new Date(at) : null;
+  const at = (sections.articlePublication as { publishAt?: unknown } | null)?.publishAt;
+  const date = validArticlePublishAt(at) ? new Date(at) : null;
   const localValue = date ? new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16) : "";
   const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   return <label className="admin-title-field">
@@ -15,6 +15,6 @@ export function ArticlePublicationField({ contentKey, sections, onChange }: {
       if (value && !Number.isFinite(Date.parse(value))) return;
       onChange({ ...sections, articlePublication: value ? { publishAt: new Date(value).toISOString(), timeZone: zone } : null });
     }} />
-    <small className="admin-field-hint">{zone}. Future dates schedule release; blank publishes now. Drafts stay private.</small>
+    <small className="admin-field-hint">{zone}. Future dates schedule; blank publishes now. Drafts stay private.</small>
   </label>;
 }

@@ -101,6 +101,34 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   });
 }
 
+test('A failed publish-date panel preserves complete draft copy and its schedule', async ({ page }) => {
+  const publication = { publishAt: '2099-01-02T14:30:00.000Z', timeZone: 'America/New_York' };
+  const key = 'article/guide/date-panel-recovery';
+  const store = await studioApiStore([{
+    id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', content_key: key, surface: 'sky', mode: 'article',
+    event_type: 'sky_article', status: 'DRAFT', lane: 'serving', review_state: null,
+    headline: 'Synthetic retained guide', body, sections: { articlePublication: publication }, updated_at: '2025-01-01T15:00:00.000Z'
+  }], { uuidIds: true });
+  try {
+    await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
+    await bundledPublications(page);
+    await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+    await page.route(/\/assets\/(?:ArticlePublicationField|review)-[^/]+\.js(?:\?.*)?$/u, route => route.abort());
+    await page.goto('/admin/content#articles-guides');
+    await page.getByRole('row').filter({ hasText: key }).getByRole('button', { name: 'Edit', exact: true }).click();
+    const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+    await expect(editor.getByText('This section could not load. Save your changes, then reload the page to try again.', { exact: true }).first()).toBeVisible();
+    await expect(editor.getByLabel('Publish date', { exact: true })).toHaveCount(0);
+    const revised = body + '\n\nSynthetic complete retained addition.';
+    await editor.getByLabel('Article body', { exact: true }).fill(revised);
+    await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+    await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key)?.body).toBe(revised);
+    const saved = (await store.call({ method: 'rows' })).find((row: any) => row.content_key === key);
+    expect(saved.status).toBe('DRAFT');
+    expect(saved.sections.articlePublication).toEqual(publication);
+  } finally { await page.unrouteAll({ behavior: 'wait' }); store.close(); }
+});
+
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Article actions reopen template results and start an unfiltered draft ${width} ${theme}`, async ({ page }) => {
     const templateKey = 'sky/article-template/sun/libra';

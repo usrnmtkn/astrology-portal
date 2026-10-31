@@ -1,13 +1,20 @@
 import assert from 'node:assert/strict';
 import { mock } from 'node:test';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
-import { articleKeyFromHash, articleLibraryKind, articleReaderHref } from '../src/shared/articleLibrary.ts';
+import { articleKeyFromHash, articleLibraryKind, articleReaderHref, validArticlePublishAt } from '../src/shared/articleLibrary.ts';
 import { syntheticLibrarySkyArticle } from '../tests/helpers/article-library-fixture.ts';
 import { createPublicationDb, seedPublicationRow, callPublicationRpc } from '../tests/helpers/studio-publication-db.mjs';
 
 const sky = await syntheticLibrarySkyArticle();
 const store = await createApiStore([sky], { uuidIds: true });
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
+for (const value of ['0000-01-01T00:00:00.000Z', '2024-02-29T23:59:59.999Z', '9999-12-31T23:59:59.999Z']) {
+  assert(validArticlePublishAt(value), `Canonical UTC publication date is valid: ${value}`);
+}
+for (const value of [null, 0, '', '2026-02-30T10:00:00.000Z', '2100-02-29T10:00:00.000Z',
+  '2026-01-01', '2026-01-01T10:00:00Z', '2026-01-01T10:00:00.000+00:00', '+010000-01-01T00:00:00.000Z']) {
+  assert(!validArticlePublishAt(value), 'Noncanonical or impossible publication dates are rejected');
+}
 try {
   const readSky = () => store.invoke('POST', { prefix: 'sky-article/' }, '/api/content-reader');
   assert.equal((await readSky()).payload.rows[0]?.body, sky.body, 'Dated articles keep their complete saved text');
