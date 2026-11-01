@@ -82,6 +82,52 @@ for (const path of ["/#account?view=journal", "/#friends?tab=circle", "/reports/
   });
 }
 
+for (const stage of ['startup', 'mounted'] as const) {
+  test(`auth callback return preserves navigation during ${stage} asset recovery`, async ({ page }) => {
+    await seed(page);
+    let release!: () => void;
+    const verification = new Promise<void>(resolve => { release = resolve; });
+    await page.route('**/auth/v1/user', async route => {
+      await verification;
+      await route.fulfill({ json: owner });
+    });
+    let missing = true;
+    let documents = 0;
+    page.on('request', request => {
+      if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++;
+    });
+    await page.route(stage === 'startup' ? '**/assets/App-*.js' : '**/assets/sky-*.js', route => missing
+      ? route.abort('failed')
+      : route.continue());
+    try {
+      const callback = '/?readerReturn=%2F%23friends%3Ftab%3Dcircle';
+      await page.goto(callback);
+      const failure = stage === 'startup' ? page.locator('#app-startup')
+        : page.getByRole('alert').filter({ hasText: 'This page could not load.' });
+      await expect(failure).toHaveAttribute('role', 'alert');
+      expect(documents).toBe(1);
+      expect(await page.evaluate(() => history.state?.__tldrastroReaderPageRecovery)).toBeUndefined();
+      expect(new URL(page.url()).search).toBe(new URL(callback, page.url()).search);
+      if (stage === 'startup') await page.waitForLoadState('networkidle');
+      const returned = page.waitForResponse(response => response.request().isNavigationRequest()
+        && response.request().frame() === page.mainFrame()
+        && new URL(response.url()).pathname === '/' && new URL(response.url()).search === '');
+      missing = false;
+      release();
+      if (stage === 'startup') await failure.getByRole('button', { name: 'Reload page', exact: true }).click();
+      const response = await returned;
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
+      await expect(page).toHaveURL(/\/#friends\?tab=circle$/);
+      await expect(page.getByRole('heading', { name: 'Friends', exact: true, level: 1 })).toBeVisible();
+      await expect(page.getByRole('tab', { name: /^Circle/ })).toHaveAttribute('aria-selected', 'true');
+      await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeHidden();
+    } finally {
+      release();
+    }
+  });
+}
+
 async function seedSavedRequests(page: Page) {
   await page.addInitScript(owner => {
     if (sessionStorage.getItem("request-route-seeded")) return;
@@ -93,6 +139,25 @@ async function seedSavedRequests(page: Page) {
       sun: "Capricorn", moon: "Pisces", rising: "Aries", charts: []
     }));
   }, owner);
+}
+
+for (const stage of ['startup', 'mounted'] as const) {
+  test(`auth callback recovery preserves ordinary ${stage} reader retries`, async ({ page }) => {
+    await seed(page, false);
+    await page.clock.install();
+    let documents = 0;
+    page.on('request', request => {
+      if (request.isNavigationRequest() && request.frame() === page.mainFrame()) documents++;
+    });
+    await page.route(stage === 'startup' ? '**/assets/App-*.js' : '**/assets/sky-*.js', route => route.abort('failed'));
+    await page.goto('/#sky', { waitUntil: 'commit' });
+    await expect.poll(() => documents).toBe(2);
+    await expect(page.getByRole('alert').first()).toBeVisible();
+    expect(await page.evaluate(() => history.state?.__tldrastroReaderPageRecovery?.route)).toBe('/#sky');
+    await page.clock.runFor(12_500);
+    expect(documents).toBe(2);
+    await expect(page.getByRole('alert').first()).toBeVisible();
+  });
 }
 
 test("restored login does not reopen a saved Requests tab", async ({ page }) => {

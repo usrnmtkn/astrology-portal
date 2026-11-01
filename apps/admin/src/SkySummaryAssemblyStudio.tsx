@@ -30,6 +30,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
   const layoutDetails = useRef<HTMLDetailsElement>(null);
   const layoutInput = useRef<HTMLTextAreaElement>(null);
   const sentenceSelect = useRef<HTMLSelectElement>(null);
+  const sentenceDrafts = useRef(new Map<string, string>());
   const content = publishedSkySummaryContent(rows);
   const publishedLayout = content.get(layoutField.key)?.body ?? layoutField.body;
   const [editedLayout, setEditedLayout] = useState<string | null>(null);
@@ -109,7 +110,7 @@ export function SkySummaryAssemblyStudio({ rows, onEdit, busy, sunSign, moonSign
     <p className="admin-field-hint">Editing shared wording: {selectedField.label} · {content.has(selected) ? 'Published source' : 'Built-in source'} · <code>{selectedField.key}</code></p>
     <div className="admin-template-reader-surface"><div className="admin-template-reader-copy"><section className="admin-composition-preview-field field-body">
       <SkyInlineTemplate key={`${selected}:${content.get(selected)?.body ?? selectedField.body}`} field={selectedField} body={content.get(selected)?.body ?? selectedField.body}
-        slots={openingSlots} busy={busy} onEdit={onEdit} label="Sentence wording editor" />
+        slots={openingSlots} busy={busy} onEdit={onEdit} label="Sentence wording editor" drafts={sentenceDrafts.current} />
     </section></div></div>
     <StudioButton type="button" disabled={busy} onClick={() => onEdit(selectedField)}>Edit sentence template</StudioButton>
     <details className="admin-workspace-details"><AdminDisclosureSummary>Preview event examples</AdminDisclosureSummary>

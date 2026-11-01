@@ -657,6 +657,23 @@ type SkyArticleEditionForm = {
   workspaceId: string | null;
 };
 
+function initialSkyArticleEditionForm(): SkyArticleEditionForm {
+  return {
+    generationError: null,
+    rejectedGeneration: null,
+    writingDirection: "",
+    format: SKY_INGRESS_ARTICLE_FORMAT,
+    referenceDate: new Date().toISOString().slice(0, 10),
+    facts: null,
+    tldr: "",
+    slotValues: {},
+    slotGeneration: null,
+    factBlockedSlots: [],
+    saveState: "idle",
+    workspaceId: null
+  };
+}
+
 type SkyArticleEditorState = {
   baseEdition: CompiledSkyArticleEdition;
   error: string | null;
@@ -5456,6 +5473,9 @@ export function GeneratedContentAdminDashboard() {
       if (updateEditor && editorSessionAtSave === editorSessionRef.current) {
         setEditorSourceRow(saved);
         setSelectedRowId(saved.id);
+        if (isSkyArticleTemplateRow(saved)) {
+          setSkyArticleEditionForm((current) => current ?? initialSkyArticleEditionForm());
+        }
         const serializedSaved = JSON.stringify(savedDraft);
         editorBaselineRef.current = serializedSaved;
         editorSavedInputRef.current = serializedSaved;
@@ -6062,20 +6082,7 @@ export function GeneratedContentAdminDashboard() {
       error: null,
       reviewOpen: false
     } : null);
-    setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? {
-      generationError: null,
-      rejectedGeneration: null,
-      writingDirection: "",
-      format: SKY_INGRESS_ARTICLE_FORMAT,
-      referenceDate: new Date().toISOString().slice(0, 10),
-      facts: null,
-      tldr: "",
-      slotValues: {},
-      slotGeneration: null,
-      factBlockedSlots: [],
-      saveState: "idle",
-      workspaceId: null
-    } : null);
+    setSkyArticleEditionForm(isSkyArticleTemplateRow(row) ? initialSkyArticleEditionForm() : null);
     scrollEditorToTop(fieldPath);
     return true;
   }
@@ -8927,7 +8934,7 @@ export function GeneratedContentAdminDashboard() {
     if (!confirmSkyEditorNavigation()) return;
     setSelectedRowId(null);
     setCompositionEditorContext(null);
-    setDraft(packagedDraft);
+    rememberSavedDraft(packagedDraft);
     setMessage(`Opened ${label} from the packaged source. Saving keeps a draft; it does not publish.`);
     scrollEditorToTop(fieldPath);
   }

@@ -2,24 +2,6 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 import { LoadingIndicator } from "./LoadingIndicator";
 import "../../../apps/web/src/styles/loading.css";
 
-const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
-const readerRecoveryCooldownMs = 2 * 60 * 1000;
-const recoverableReaderHash = /^#\/?(?:you|sky|calendar|friends)(?:[/?]|$)/u;
-
-function readerPathname(pathname: string) {
-  return pathname.replace(/\/+$/u, "") || "/";
-}
-
-function readerRecoveryRoute() {
-  if (typeof window === "undefined") return false;
-  const query = new URLSearchParams(window.location.search);
-  if (query.has("auth") || query.has("code")) return false;
-  const path = readerPathname(window.location.pathname);
-  if (path === "/learn" || path.startsWith("/learn/") || path === "/friends") return true;
-  if (path !== "/") return false;
-  return window.location.hash === "" || recoverableReaderHash.test(window.location.hash);
-}
-
 function errorDetail(error: unknown) {
   if (error instanceof Error) return `${error.name}: ${error.message}`;
   if (typeof error === "string") return error;
@@ -43,25 +25,11 @@ function calendarOwnsRecovery(detail = "") {
  * the recovery state into other tabs or future sessions.
  */
 export function reloadReaderRouteOnce() {
-  if (!readerRecoveryRoute()) return false;
+  if (typeof window === "undefined") return false;
   // A calendar is also an editor: background asset recovery must never erase a draft.
   if (calendarOwnsRecovery()) return false;
-  const { history, location } = window;
-  const route = `${location.pathname}${location.hash}`;
-  const now = Date.now();
-  try {
-    const historyState = history.state && typeof history.state === "object" ? history.state as Record<string, unknown> : {};
-    const previous = historyState[readerRecoveryHistoryKey] as { route?: unknown; at?: unknown } | undefined;
-    if (previous?.route === route && typeof previous.at === "number" && now - previous.at < readerRecoveryCooldownMs) {
-      return false;
-    }
-    history.replaceState({ ...historyState, [readerRecoveryHistoryKey]: { route, at: now } }, "", location.href);
-  } catch {
-    // Without a reliable loop guard, keep recovery manual.
-    return false;
-  }
-  location.reload();
-  return true;
+  // The independent reader shell owns the live route and tab-local loop guard.
+  return (window as Window & { __tldrastroReloadReaderOnce?: () => boolean }).__tldrastroReloadReaderOnce?.() ?? false;
 }
 
 export function PageLoading({
