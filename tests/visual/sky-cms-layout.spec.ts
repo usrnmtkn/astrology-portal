@@ -44,7 +44,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     try {
       await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/'}#sky-writeups?planet=mercury&sign=scorpio`);
       const workspace = page.getByRole('region', { name: 'Mercury in Scorpio workspace', exact: true });
-      await expect(workspace.getByRole('button', { name: 'Open saved draft', exact: true })).toBeVisible();
+      await expect(workspace.getByRole('button', { name: 'Edit', exact: true })).toBeVisible();
       mkdirSync('test-results/sky-cms', { recursive: true });
       await page.evaluate(() => document.fonts.ready);
       if (process.env.SKY_CMS_BASELINE === '1') {
@@ -58,7 +58,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       await expect(workspace.getByRole('table', { name: 'Saved articles' })).toContainText('Oct 24, 2026');
       await expect(workspace.getByRole('table', { name: 'Saved articles' })).toContainText('Nov 13, 2026');
       await expect(workspace.getByRole('region', { name: 'Sky placement reader sources' })).toHaveCount(0);
-      await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       const editor = workspace.getByRole('region', { name: 'Article for this visit', exact: true });
       const body = editor.getByLabel('Visit article body', { exact: true });
       await expect(body).toHaveValue(initial.body);
@@ -77,7 +77,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
       expect(writes).toHaveLength(1);
       await page.reload();
-      await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(editor.getByLabel('Visit article title', { exact: true })).toHaveValue('Synthetic revised Mercury article');
       await expect(body).toHaveValue(initial.body);
       await expect(settings).toContainText('November 13, 2026');
@@ -163,7 +163,7 @@ for (const [width, theme] of [[1440, 'dark'], [390, 'light']] as const) {
       expect(saved.sections.skyArticleEdition.transitStartInstant).toBe(facts.transitStartInstant);
       expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(facts.transitEndInstant);
       await page.reload();
-      await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(editor.getByLabel('Visit article body', { exact: true })).toHaveValue(saved.body);
       await expect(editor.getByRole('complementary', { name: 'Article settings' })).toContainText('Retrograde in this sign');
       const publication = editor.getByLabel('Publication settings', { exact: true });
@@ -177,7 +177,7 @@ for (const [width, theme] of [[1440, 'dark'], [390, 'light']] as const) {
       await page.reload();
       await workspace.getByLabel('Article status', { exact: true }).selectOption('scheduled');
       await expect(workspace.getByRole('table', { name: 'Saved articles' })).toContainText('Scheduled');
-      await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(publication.getByLabel('Publication date and time')).toHaveValue('2099-01-15T09:30');
       expect((await store.call({ method: 'POST', body: { keys: [saved.content_key] }, url: '/api/content-reader' })).payload.rows).toEqual([]);
       const scheduledRow = (await store.call({ method: 'rows' })).find((row: any) => row.id === saved.id);
@@ -199,7 +199,7 @@ for (const [width, theme] of [[1440, 'dark'], [390, 'light']] as const) {
       await page.reload();
       await workspace.getByLabel('Article status', { exact: true }).selectOption('LIVE');
       await expect(workspace.getByRole('table', { name: 'Saved articles' })).toContainText('Published');
-      await workspace.getByRole('button', { name: 'Edit a draft of this article', exact: true }).click();
+      await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(publication).toContainText('Choose a previous date and time.');
       await expect(publication).not.toContainText('Leave blank to publish now.');
       await publication.getByLabel('Publication date and time').fill('2026-09-19T09:30');
@@ -211,7 +211,7 @@ for (const [width, theme] of [[1440, 'dark'], [390, 'light']] as const) {
       expect(corrected.body).toBe(saved.body);
       expect(corrected.sections.skyArticleEdition).toEqual(saved.sections.skyArticleEdition);
       await page.reload();
-      await workspace.getByRole('button', { name: 'Edit a draft of this article', exact: true }).click();
+      await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(publication.getByLabel('Publication date and time')).toHaveValue('2026-09-19T09:30');
       await expect(editor.getByLabel('Visit article body', { exact: true })).toHaveValue(saved.body);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
