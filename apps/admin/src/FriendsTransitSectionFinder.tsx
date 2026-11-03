@@ -2,12 +2,15 @@ import { StudioButton, StudioInput } from "./StudioControls";
 import { friendsTransitCardDestinations } from "./bondEffectPageAssembly";
 import { transitNatalLabel } from "./transitNatalSources";
 import { Stack, Text } from "./studio-ds/primitives";
+import { AdminDisclosureSummary } from "./AdminNativeControls";
+import { containedDisclosure } from "./studio-ds/recipes";
 
 export type FriendsTransitSection = "between-you-two" | "active-for-name" | "house-transit";
 
 export default function FriendsTransitSectionFinder({
   currentSection,
   onOpenActiveForName,
+  onOpenBetweenYouTwo,
   onOpenBetweenYouTwoOpening,
   onOpenHouseTransit,
   onQueryChange,
@@ -17,6 +20,7 @@ export default function FriendsTransitSectionFinder({
 }: {
   currentSection: FriendsTransitSection;
   onOpenActiveForName: () => void;
+  onOpenBetweenYouTwo: () => void;
   onOpenBetweenYouTwoOpening: () => void;
   onOpenHouseTransit: () => void;
   onQueryChange: (value: string) => void;
@@ -44,9 +48,17 @@ export default function FriendsTransitSectionFinder({
           </Stack>
         </div>
       ) : null}
-      {variant === "embedded" && showSearch ? (
-        <p className="admin-field-hint">This title can belong to more than one Friends section. Open the section the reader is on before editing.</p>
-      ) : null}
+      {showSearch && <nav className="admin-sky-writing-source-actions" aria-label="Friends Transits sections">
+        <StudioButton type="button" aria-current={currentSection === "between-you-two" ? "page" : undefined}
+          className={currentSection === "between-you-two" ? "admin-secondary-button" : undefined}
+          onClick={currentSection === "between-you-two" ? undefined : onOpenBetweenYouTwo}>Between you two</StudioButton>
+        <StudioButton type="button" aria-current={currentSection === "active-for-name" ? "page" : undefined}
+          className={currentSection === "active-for-name" ? "admin-secondary-button" : undefined}
+          onClick={currentSection === "active-for-name" ? undefined : onOpenActiveForName}>Active for {"{{Name}}"}</StudioButton>
+        <StudioButton type="button" aria-current={currentSection === "house-transit" ? "page" : undefined}
+          className={currentSection === "house-transit" ? "admin-secondary-button" : undefined}
+          onClick={currentSection === "house-transit" ? undefined : onOpenHouseTransit}>Where it lands</StudioButton>
+      </nav>}
       {showSearch ? (
       <label className="admin-title-field">
         <span>Find a Friends transit card</span>
@@ -60,7 +72,9 @@ export default function FriendsTransitSectionFinder({
       </label>
       ) : null}
       {showDestinations ? (
-      <div className="admin-natal-source-group" role="list">
+      <details className={`${containedDisclosure} admin-workspace-details`}>
+        <AdminDisclosureSummary>About these sections</AdminDisclosureSummary>
+        <div className="admin-natal-source-group" role="list">
         <article className="admin-natal-source-card" role="listitem">
           <header className="admin-natal-source-card-heading">
             <Stack gap="sm">
@@ -114,7 +128,8 @@ export default function FriendsTransitSectionFinder({
             Open house transit
           </StudioButton>
         </article>
-      </div>
+        </div>
+      </details>
       ) : null}
     </section>
   );
