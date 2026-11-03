@@ -12,8 +12,13 @@ const row = {
   sections: {}, facts: {}, source_snapshot: {}, updated_at: '2026-11-03T12:00:00Z'
 };
 const catalogPath = '/api/admin/content-live-status';
+const authOrigin = process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test';
 const routePath = `/admin/content#horoscope-fallbacks?source=${encodeURIComponent(key)}`;
 const library = (page: Page) => page.getByRole('region', { name: 'Fallback horoscope library', exact: true });
+function callStore(store: Awaited<ReturnType<typeof createApiStore>>) {
+  return async ({ method, body, url }: { method: string; body?: unknown; url?: string }) => method === 'rows'
+    ? [...store.rows.values()] : store.invoke(method, body, url);
+}
 
 async function component(page: Page, initialCredential: string) {
   const script = await build({
@@ -37,7 +42,7 @@ async function component(page: Page, initialCredential: string) {
       }
       createRoot(document.getElementById('root')).render(<View/>);` },
     bundle: true, write: false, format: 'iife', platform: 'browser', jsx: 'automatic',
-    define: { 'process.env.NODE_ENV': '"test"' }
+    loader: { '.css': 'empty' }, define: { 'process.env.NODE_ENV': '"test"', 'import.meta.env': '{}' }
   });
   await page.route('**/__fallback-catalog-fixture', route => route.fulfill({ contentType: 'text/html', body: '<div id="root"></div>' }));
   await page.goto('/__fallback-catalog-fixture');
@@ -71,7 +76,10 @@ test('an obsolete catalog refusal cannot replace the renewed credential result',
   const store = await createApiStore([row]);
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
-  let oldStarted = false;
+  let oldStarted = false, oldCancelled = false;
+  page.on('requestfailed', request => {
+    if (new URL(request.url()).pathname === catalogPath && request.headers()['x-content-generation-secret'] === 'obsolete-fixture') oldCancelled = true;
+  });
   await page.route(`**${catalogPath}`, async route => {
     const credential = route.request().headers()['x-content-generation-secret'] ?? '';
     const result = await store.invoke('POST', route.request().postDataJSON(), catalogPath, credential);
@@ -84,6 +92,7 @@ test('an obsolete catalog refusal cannot replace the renewed credential result',
     await page.getByRole('button', { name: 'Complete owner sign-in', exact: true }).click();
     await expect(library(page)).toContainText('1314 sources');
     release();
+    await expect.poll(() => oldCancelled).toBe(true);
     await expect(library(page)).toContainText('Complete synthetic catalog final sentence.');
     await expect(page.getByRole('button', { name: 'Retry fallback sources' })).toHaveCount(0);
   } finally { release(); await page.unrouteAll({ behavior: 'ignoreErrors' }); await store.close(); }
@@ -91,7 +100,6 @@ test('an obsolete catalog refusal cannot replace the renewed credential result',
 
 test('the dashboard opens fallback sources while owner session renewal finishes asynchronously', async ({ page }) => {
   const store = await createApiStore([row]);
-  const authOrigin = process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test';
   const sessionKey = `sb-${new URL(authOrigin).hostname.split('.')[0]}-auth-token`;
   const token = (expiry: number) => `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({ sub: '10000000-0000-4000-8000-000000000096', aud: 'authenticated', role: 'authenticated', exp: expiry })).toString('base64url')}.synthetic`;
   const expiry = Math.floor(Date.now() / 1000) + 3600;
@@ -111,7 +119,7 @@ test('the dashboard opens fallback sources while owner session renewal finishes 
     } else await route.fulfill({ json: user });
   });
   await page.route(`${authOrigin}/rest/v1/**`, route => route.fulfill({ json: [] }));
-  await routeStudioInventoryApi(page, { actualDocumentRoute: true, call: message => store.invoke(message.method, message.body, message.url), answer: async (route, url) => {
+  await routeStudioInventoryApi(page, { actualDocumentRoute: true, call: callStore(store), answer: async (route, url) => {
     if (url.pathname !== catalogPath) return false;
     const body = route.request().postDataJSON();
     const credential = route.request().headers()['x-content-admin-session'] ?? '';
@@ -147,7 +155,7 @@ for (const [failure, width, theme] of [
     localStorage.setItem('tldrastro:studio-theme', theme);
   }, theme);
   await routeStudioInventoryApi(page, { actualDocumentRoute: true,
-    call: message => store.invoke(message.method, message.body, message.url), onWrite: write => writes.push(write),
+    call: callStore(store), onWrite: write => writes.push(write),
     answer: async (route, url) => {
       if (url.pathname !== catalogPath) return false;
       const body = route.request().postDataJSON();
@@ -172,8 +180,16 @@ for (const [failure, width, theme] of [
     await expect(page.getByRole('button', { name: 'Retry fallback sources' })).toHaveCount(0);
     await library(page).getByLabel('Search fallback horoscopes', { exact: true }).fill('Synthetic Aries fallback');
     await expect(library(page)).toContainText('1 sources');
+    await library(page).getByLabel('Search fallback horoscopes', { exact: true }).fill('synthetic-no-matching-source');
+    await expect(library(page)).toContainText('0 sources');
+    await expect(library(page).getByLabel('Selected fallback horoscope', { exact: true })).toBeDisabled();
+    await expect(library(page)).toContainText('No saved fallback matches these filters.');
+    await library(page).getByLabel('Search fallback horoscopes', { exact: true }).fill('Synthetic Aries fallback');
+    await expect(library(page)).toContainText('Complete synthetic catalog final sentence.');
+    expect(catalogReads).toBe(2);
     await library(page).getByRole('button', { name: 'Edit horoscope', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('textbox', { name: 'Full lunar passage', exact: true })).toHaveValue(copy);
+    await page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('button', { name: 'Close', exact: true }).click();
     await page.reload();
     await expect(library(page)).toContainText('Complete synthetic catalog final sentence.');
     expect(catalogReads).toBe(3);
@@ -187,7 +203,7 @@ for (const status of [400, 401]) test(`fallback catalog keeps HTTP ${status} ref
   const store = await createApiStore([row]);
   let reads = 0;
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
-  await routeStudioInventoryApi(page, { call: message => store.invoke(message.method, message.body, message.url), answer: async (route, url) => {
+  await routeStudioInventoryApi(page, { call: callStore(store), answer: async (route, url) => {
     if (url.pathname !== catalogPath) return false;
     const body = route.request().postDataJSON();
     if (body.action === 'composition-catalog') {
@@ -216,7 +232,7 @@ test('fallback catalog retries are bounded and manual recovery remains available
   const store = await createApiStore([row]);
   let reads = 0, unavailable = true;
   await page.addInitScript(() => localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'));
-  await routeStudioInventoryApi(page, { call: message => store.invoke(message.method, message.body, message.url), answer: async (route, url) => {
+  await routeStudioInventoryApi(page, { call: callStore(store), answer: async (route, url) => {
     if (url.pathname !== catalogPath) return false;
     const body = route.request().postDataJSON();
     if (body.action === 'composition-catalog') {
