@@ -757,7 +757,7 @@ function readerUniqueParagraphs(values: string[], ownerWording = false) {
 
     if (
       !paragraph
-      || seen.has(normalized)
+      || !ownerWording && seen.has(normalized)
       || !ownerWording && (!isReaderFacingCopy(paragraph)
       || containsBlockedScaffoldCopy(paragraph)
       || containsInstructionMarker(paragraph))

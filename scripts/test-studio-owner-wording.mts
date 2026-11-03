@@ -7,8 +7,15 @@ const {servingPackageRecords} = await import('../api/_lib/serving-package-record
 const {isGovernedReaderEligible:nodeEligible} = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs');
 const {isGovernedReaderEligible:browserEligible} = await import('../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser');
 const {resolveSkyAspectGeneratedContent} = await import('../apps/web/src/services/skyAspectContent');
-const prose = 'Synthetic owner Tarot opening. Your degree of confidence changes in 2025.\n\nEditor notes: this is a deliberate quotation, not an instruction. Complete owner ending — heaven and whether.';
+const opening='Synthetic owner Tarot opening. Your degree of confidence changes in 2025. At work this reads as a deliberate owner example.';
+const prose = `${opening}\n\nEditor notes: this is a deliberate quotation, not an instruction. Complete owner ending — heaven and whether.\n\n${opening}`;
 const id='a0000000-0000-4000-8000-000000000981';
+const {build}=await import('esbuild');
+const {resolve}=await import('node:path');
+const {rm}=await import('node:fs/promises');
+const paragraphBundle=resolve(`test-results/owner-paragraphs-${process.pid}.mjs`);
+await build({stdin:{contents:"export {generatedContentParagraphs} from './apps/web/src/services/generatedContent.ts';",resolveDir:process.cwd(),loader:'ts'},bundle:true,platform:'node',format:'esm',packages:'external',define:{'import.meta.env':'{}'},loader:{'.css':'empty'},outfile:paragraphBundle,logLevel:'silent'});
+const {generatedContentParagraphs}=await import(pathToFileURL(paragraphBundle).href);
 const store=await createApiStore([{...baseline,id,body:'Synthetic original.',summary:'',sections:{}}]);
 try {
  let row=store.rows.get(id);
@@ -21,6 +28,7 @@ try {
  const read=await store.invoke('POST',{keys:[row.content_key]},'/api/content-reader');
  assert.equal(read.status,200);assert.equal(read.payload.rows[0].body,prose);
  const content={id:row.id,contentKey:row.content_key,body:row.body,summary:row.summary,headline:row.headline,updatedAt:row.updated_at,status:row.status,judgeGate:row.judge_gate,judgeScore:null,sourceSnapshot:row.source_snapshot};
+ assert.deepEqual(generatedContentParagraphs(content as any),prose.split('\n\n'),'Owner paragraphs and intentional repetitions remain intact.');
  assert(resolveSkyAspectGeneratedContent({first:'chiron',second:'nodes',aspect:'sextile',firstSign:'taurus',secondSign:'aquarius',generatedContent:new Map([[row.content_key,content]])} as any),'The app-facing card must preserve owner wording.');
  const key=[...servingPackageRecords.keys()].find(key=>key.startsWith('fallback-hook/synastry-pair/')&&!/soft|hard/u.test(key))!;
  assert(key);
@@ -53,4 +61,4 @@ try {
  const refused=await store.invoke('POST',{keys:[key]},'/api/content-reader');assert.deepEqual(refused.payload.rows,[],'A wording receipt cannot authorize different bytes.');
  store.rows.set(publishedRow.id,publishedRow);
  console.log('PASS owner wording: actual save/publish/read preserves Tarot, dates, degree, quoted notes, punctuation and vocabulary; stale writes and unapproved drafts remain refused.');
-}finally{store.close();}
+}finally{store.close();await rm(paragraphBundle,{force:true});}
