@@ -82,6 +82,7 @@ assert(!edition.compiledMarkdown.includes('## Summary'));
 assert(!edition.compiledMarkdown.includes('Synthetic metadata.\n\nSynthetic metadata.'));
 assertCompiledSkyArticleEdition(edition);
 const readerCandidate = { id: 'synthetic-narrative-edition', status: 'LIVE', contentKey: edition.contentKey,
+  lane: 'serving', reviewState: null, headline: edition.headline, summary: edition.tldr, body: edition.body,
   sections: { skyArticleEdition: edition }, sourceSnapshot: { ownerApproval: {
     approved: true, action: 'approve-sky-article-edition', contentKey: edition.contentKey, templateKey: edition.templateKey,
     templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash,

@@ -109,7 +109,9 @@ export async function verifySkyVisitWriter(invoke: (handler: any, method: string
     const edition = await compileSkyArticleEdition({ ...result.facts, format: body.format,
       templateBody: '', templateKey: 'sky/article-template/moon/gemini', tldr: result.slotValues.what,
       slotValues: { ...result.slotValues, ...result.facts.slotValues }, housePassages: [], aspectPassages: [] });
-    const candidate = { id: 'synthetic-moon-visit', contentKey: edition.contentKey, status: 'LIVE', sections: { skyArticleEdition: edition }, sourceSnapshot: {} as Record<string, unknown> };
+    const candidate = { id: 'synthetic-moon-visit', contentKey: edition.contentKey, status: 'LIVE', lane: 'serving', reviewState: null,
+      headline: edition.headline, summary: edition.tldr, body: edition.body,
+      sections: { skyArticleEdition: edition }, sourceSnapshot: {} as Record<string, unknown> };
     const context = { planet: 'moon', sign: 'gemini', activeInstant: '2026-10-28T12:00:00Z' };
     assert.equal(skyIngressEssayReaderSection([candidate], context), null, 'An unapproved generated article never overrides fallback copy.');
     candidate.sourceSnapshot = { ownerApproval: { approved: true, action: 'approve-sky-article-edition', contentKey: edition.contentKey,
