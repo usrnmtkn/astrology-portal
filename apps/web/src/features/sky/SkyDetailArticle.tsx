@@ -579,7 +579,7 @@ export function SkyDetailArticle({
       <div className="article-related-aspects__copy-list">
         <h2 id="sky-rising-horoscopes-title">Horoscopes by rising sign</h2>
         {detail.risingHoroscopes.map((entry) => {
-          const sign = zodiacSigns.find(sign => sign.toLowerCase() === entry.risingSign.toLowerCase()) ?? entry.risingSign;
+          const sign = zodiacSigns.find(sign => sign.toLowerCase() === entry.risingSign?.toLowerCase()) ?? entry.risingSign;
           return (
           <div className="sky-rising-horoscope" key={entry.risingSign}>
             <h3 className="sky-rising-horoscope__title">
