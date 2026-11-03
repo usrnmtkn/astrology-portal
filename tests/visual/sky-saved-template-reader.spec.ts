@@ -11,7 +11,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     const initial = { ...compiledReaderRow(edition), status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required',
       target_date: null, source_snapshot: { privateNotes: 'PRIVATE_READER_CANARY', review_status: 'needs_review' } };
     const store = await skyArticlePublicationStore([initial]);
-    const guard = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin);
+    const previewOrigin = new URL(baseURL!).origin;
+    const guard = await installSyntheticNetworkGuard(context, previewOrigin);
     const errors: string[] = [], privatePayloads: string[] = [];
     let exactRequests = 0;
     page.on('pageerror', error => errors.push(error.message));
@@ -34,10 +35,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         await route.fulfill({ status: 501, json: { error: message } });
         throw new Error(message);
       });
-      await context.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+      await context.route('**/rest/v1/**', route => {
+        expect(new URL(route.request().url()).origin).toBe('https://visual-smoke.supabase.test');
+        return route.fulfill({ json: [] });
+      });
       await context.route(/\/api\/(?:sky|sky-reader|calendar)\?/u, async route => {
         expect(route.request().method()).toBe('GET');
         const url = new URL(route.request().url());
+        expect(url.origin).toBe(previewOrigin);
         const result = await store.invoke(`${url.pathname}${url.search}` as `/api/sky${string}` | `/api/calendar${string}`);
         const { status, headers, ...payload } = result;
         expect(status, 'The actual local Sky calculation handler must return complete facts.').toBe(200);
@@ -46,12 +51,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await context.route('**/api/content-publications*', async route => {
         expect(route.request().method()).toBe('GET');
         const url = new URL(route.request().url());
+        expect(url.origin).toBe(previewOrigin);
+        expect(url.pathname).toBe('/api/content-publications');
         const result = await store.invoke(`/api/content-publications${url.search}`);
         const { status, headers, ...payload } = result;
         await route.fulfill({ status, headers, json: payload });
       });
       await context.route('**/api/content-reader', async route => {
         expect(route.request().method()).toBe('POST');
+        expect(new URL(route.request().url()).origin).toBe(previewOrigin);
         const query = route.request().postDataJSON();
         if (query.keys?.includes(edition.contentKey)) exactRequests++;
         const result = await store.invoke('/api/content-reader', query);
