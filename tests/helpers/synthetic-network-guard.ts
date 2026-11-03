@@ -1,4 +1,5 @@
 import type { BrowserContext } from '@playwright/test';
+import { readdirSync } from 'node:fs';
 
 export async function installSyntheticNetworkGuard(context: BrowserContext, previewOrigin: string, options: {
   deployedFixture?: { supabaseOrigin: string };
@@ -14,6 +15,11 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
   }
   // This origin is mocked in Playwright, never connected to its server.
   const mockRealtimeOrigin = service?.origin.replace('https:', 'wss:');
+  const shippedGlyphs = new Set(options.deployedFixture
+    ? readdirSync(new URL('../../apps/web/public/zodiac/', import.meta.url), { withFileTypes: true })
+      .filter(entry => entry.isFile() && /^[a-z0-9._-]+\.svg$/iu.test(entry.name))
+      .map(entry => `/zodiac/${entry.name}`)
+    : []);
 
       await context.routeWebSocket('**/*', socket => {
         const url = new URL(socket.url());
@@ -73,7 +79,7 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
             && ['/', '/index.html', '/admin/content', '/admin/content/'].includes(url.pathname);
           const asset = /^\/(?:assets|content|generated|fonts|images|icons|branding)\//u.test(url.pathname)
             || /^\/wasm\/[a-f0-9]{16}\/swisseph\.(?:data|wasm)$/u.test(url.pathname)
-            || /^\/zodiac\/(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)\.svg$/u.test(url.pathname)
+            || shippedGlyphs.has(url.pathname)
             || ['/', '/favicon.ico', '/favicon.svg', '/favicon.png', '/robots.txt', '/site.webmanifest', '/manifest.webmanifest', '/manifest.json', '/tldr-content.js'].includes(url.pathname);
           if (read && (document || asset)) return route.fallback();
           // Specific test routes must fulfill API reads and writes themselves.
