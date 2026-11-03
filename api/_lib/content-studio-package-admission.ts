@@ -1,6 +1,5 @@
 import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
 import { isLunationHoroscopeKey } from '../../src/shared/lunationHoroscopeIdentity.js';
-import { fallbackHoroscopeEditorialIssue } from '../../src/shared/horoscopeEditorialPolicy.js';
 import { createHash } from 'node:crypto';
 import { isLunationEclipseSectionKey, isStudioLunationRevision } from '../../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
@@ -24,8 +23,6 @@ export function packagePublicationAdmissionIssue(row: Record<string, any>): stri
   if (row.status !== "LIVE") return null;
   const record = object(object(row.sections).packageRecord);
   const key = String(row.content_key ?? "");
-  const editorialIssue = fallbackHoroscopeEditorialIssue(key, { ...row, ...record });
-  if (editorialIssue) return editorialIssue;
   const snapshot = object(row.source_snapshot);
   const facts = object(row.facts);
   const isPackage = row.provider === "tldrastro-fallback-architecture-v3"

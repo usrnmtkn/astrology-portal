@@ -7,7 +7,6 @@ import { studioServingStatusRow } from './studioServingStatus';
 import { skyPlacementBodies, skyPlacementSigns } from './skyWriteupRelations';
 import { fallbackHoroscopeIdentity, fallbackHoroscopeSources } from './fallbackHoroscopeSources';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
-import { hasHoroscopeTarotReferences } from '../../../src/shared/horoscopeEditorialPolicy';
 
 type Props = {
   rows: CompositionMapRow[];
@@ -110,7 +109,6 @@ export default function FallbackHoroscopeStudio({ rows, onLoadCatalog, onLoadRow
       : loading ? <PageLoading message="Loading complete horoscope…" />
       : selected ? <article className="admin-composition-source-card" aria-label="Selected fallback horoscope passage">
         <ContentLiveStatusBadge row={studioServingStatusRow(selected, selected.content_key)} />
-        {typeof body === 'string' && hasHoroscopeTarotReferences(body) && <p>This passage contains tarot references. Keep the complete original for reference and publish your rewrite after removing them.</p>}
         {typeof body === 'string' && body ? <div className="admin-copy-preview">{body.split(/\n{2,}/u).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div> : <p>The complete passage has not loaded.</p>}
         <StudioButton disabled={!!selected.inventory_only} onClick={() => onEditRow(selected)}>Edit horoscope</StudioButton>
         {identity?.kind === 'placement' && identity.sign && <StudioButton onClick={() => onOpenPlacement(identity.planet, identity.sign!)}>Open Sky Placement horoscopes</StudioButton>}

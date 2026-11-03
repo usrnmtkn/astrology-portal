@@ -3,6 +3,10 @@ import { servingPackageRecords } from '../api/_lib/serving-package-records';
 import { fallbackHoroscopeIdentity, fallbackHoroscopeSources } from '../apps/admin/src/fallbackHoroscopeSources';
 import { relatedHousePassages, relatedLunationHoroscopes, skyPlacementBodies, skyPlacementSigns } from '../apps/admin/src/skyWriteupRelations';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
+import { isGovernedReaderEligible as nodeEligible } from '../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs';
+import { isGovernedReaderEligible as browserEligible } from '../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser';
+import { createTransitSynastryRenderer as sourceFactory } from '../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser';
+import { createTransitSynastryRenderer as shippedFactory } from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
 
 const originals = JSON.stringify([...servingPackageRecords]);
 const catalog = fallbackHoroscopeSources([...servingPackageRecords.values()].map(record => ({
@@ -38,13 +42,15 @@ for (const key of ['house-horoscope-core/fake/aries/house-1', 'house-horoscope-c
 
 const keys = [
   'house-horoscope-core/moon/sagittarius/house-1',
+  'authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/aries/rising-aries/house-1',
+  'authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4',
   'authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/taurus/rising-taurus/house-1',
   'authored/lunation-eclipse-house-layer/solar/house-1'
 ];
 const store = await createApiStore([]);
 try {
   // Older manual rows can use a fallback key without package metadata. Their
-  // normal publication path must honor the same editorial rule.
+  // normal publication path must also permit the owner's choice of topic.
   const manual = { id: 'a0000000-0000-4000-8000-000000000777', content_key: keys[0], surface: 'sky', mode: 'in_depth',
     status: 'DRAFT', lane: 'reference', review_state: null, provider: 'manual-admin', block_type: 'fallback_hook',
     headline: 'Synthetic manual source', summary: '', body: 'Synthetic Tarot draft. Complete draft ending.',
@@ -52,11 +58,10 @@ try {
   store.rows.set(manual.id, manual);
   const manualDraft = await store.invoke('PATCH', { id: manual.id, expectedUpdatedAt: manual.updated_at, body: manual.body + '\n\nComplete private addition.' });
   assert.equal(manualDraft.status, 200);
-  const retained = JSON.stringify(store.rows.get(manual.id));
   const manualPublish = await store.invoke('PATCH', { id: manual.id, expectedUpdatedAt: manualDraft.payload.rows[0].updated_at, status: 'LIVE', lane: 'serving' });
-  assert.equal(manualPublish.status, 409);
-  assert.match(manualPublish.payload.error, /tarot references/iu);
-  assert.equal(JSON.stringify(store.rows.get(manual.id)), retained);
+  assert.equal(manualPublish.status, 200, JSON.stringify(manualPublish.payload));
+  const manualRead = await store.invoke('POST', { keys: [manual.content_key] }, '/api/content-reader');
+  assert.equal(manualRead.payload.rows[0].body, manual.body + '\n\nComplete private addition.');
   store.rows.delete(manual.id);
   const result = await store.invoke('POST', { action: 'composition-catalog' }, '/api/admin/content-live-status');
   assert.equal(result.status, 200);
@@ -75,35 +80,52 @@ try {
     assert.equal(held.status, 200, JSON.stringify(held.payload));
     assert.equal(held.payload.publication.state, 'retired');
     const tarot = 'Synthetic draft opening.\n\nThis mentions Tarot and the Major Arcana. Complete draft ending.';
-    store.rows.set(row.id, { ...row, status: 'LIVE', lane: 'serving', sections: { ...row.sections, packageRecord: { ...record, [field]: tarot } } });
-    const restoreRejected = await store.invoke('POST', { action: 'publish', contentKey: key, id: row.id, expectedUpdatedAt: row.updated_at }, '/api/admin/content-publication');
-    assert.equal(restoreRejected.status, 422);
-    assert.match(restoreRejected.payload.error, /tarot references/iu);
-    store.rows.set(row.id, row);
     const draftResult = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at,
       sections: { ...row.sections, packageDraft: { ...record, [field]: tarot } } });
     assert.equal(draftResult.status, 200, JSON.stringify(draftResult.payload));
     const draft = draftResult.payload.rows[0];
-    const before = JSON.stringify(store.rows.get(row.id));
-    const rejected = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' });
-    assert.equal(rejected.status, 409, JSON.stringify(rejected.payload));
-    assert.match(rejected.payload.error, /tarot references/iu);
-    assert.equal(JSON.stringify(store.rows.get(row.id)), before, 'Rejected publication preserves the draft and original.');
     assert.equal((await store.publication.publications()).find(item => item.content_key === key)?.state, 'retired');
+    const privateRead = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+    assert.equal(privateRead.payload.rows.length, 0, 'Saving a draft must not undo retirement.');
     const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${row.id}`);
     assert.equal(reopened.payload.rows[0].sections.packageDraft[field], tarot);
-    const clean = '\nSynthetic complete owner rewrite opening.\n\nThe complete owner rewrite ending.\n';
-    const saved = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: draft.updated_at,
-      sections: { ...draft.sections, packageDraft: { ...record, [field]: clean } } });
-    assert.equal(saved.status, 200, JSON.stringify(saved.payload));
-    const published = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: saved.payload.rows[0].updated_at, ownerAction: 'approve-package-revision' });
+    const stale = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: 'approve-package-revision' });
+    assert.equal(stale.status, 409, 'Topic freedom must preserve version checks.');
+    const published = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' });
     assert.equal(published.status, 200, JSON.stringify(published.payload));
     const response = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
     assert.equal(response.status, 200);
-    assert.equal(response.payload.rows[0].sections.packageRecord[field], clean);
+    assert.equal(response.payload.rows[0].sections.packageRecord[field], tarot);
+    const publishedRecord = response.payload.rows[0].sections.packageRecord;
+    for (const reader_content_type of ['astrology', 'mixed']) {
+      const typed = { ...publishedRecord, reader_content_type };
+      for (const eligible of [nodeEligible, browserEligible]) {
+        assert.equal(eligible(typed), true, key + ': topic cannot veto published copy');
+        assert.equal(eligible({ ...typed, review_status: 'needs_review' }), false);
+      }
+      if (key.includes('/new-moon/')) {
+        const identity = fallbackHoroscopeIdentity(key)!;
+        for (const factory of [sourceFactory, shippedFactory]) {
+          const renderer = factory({ authoredCards: [typed] }, { templates: [] }, { hookRows: [{
+            contentKey: 'fallback-hook/lunation-cycle-anchor/new', review_status: 'approved', body_you: 'Synthetic calculated cycle context.'
+          }], vocabularyRows: [] });
+          const rendered = renderer.renderLunationHoroscope({ kind: 'new-moon', sign: identity.sign!,
+            risingSign: identity.risingSign!, house: identity.house!, moonHouse: identity.house! });
+          assert.ok(rendered.body.includes(tarot), key + ': browser source and shipped artifact preserve the complete passage');
+        }
+      }
+    }
+    assert.deepEqual(store.rows.get(row.id).sections.packageOriginalRecord, record);
+    const live = published.payload.rows[0];
+    const retired = await store.invoke('POST', { action: 'retire', contentKey: key, id: live.id, expectedUpdatedAt: live.updated_at }, '/api/admin/content-publication');
+    assert.equal(retired.status, 200);
+    const restored = await store.invoke('POST', { action: 'publish', contentKey: key, id: live.id, expectedUpdatedAt: live.updated_at }, '/api/admin/content-publication');
+    assert.equal(restored.status, 200, JSON.stringify(restored.payload));
+    const restoredRead = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+    assert.equal(restoredRead.payload.rows[0].sections.packageRecord[field], tarot);
     assert.deepEqual(published.payload.rows[0].sections.packageOriginalRecord, record);
     assert.equal((await store.publication.publications()).find(item => item.content_key === key)?.state, 'live');
   }
   assert.equal(JSON.stringify([...servingPackageRecords]), originals);
-  console.log('PASS: 1,314 canonical fallback sources across all 14 supported bodies, 288 lunations and 42 eclipse units; same Sky source selection; actual-handler draft retention, legacy manual and package tarot publication rejection, retirement restoration and exact reader revision.');
+  console.log('PASS: 1,314 canonical fallback sources; same Sky source selection; actual-handler tarot draft retention, manual and package publication, typed astrology revision, retirement restoration, stale-version rejection and exact reader copy.');
 } finally { await store.close(); }

@@ -128,6 +128,9 @@ function mixedContentHasOwnerApproval(row: ReaderContentBoundaryRow): boolean {
 }
 
 export function readerContentBoundaryReason(row: ReaderContentBoundaryRow): string | null {
+  // Owner direction, 2026-11-03: fallback horoscope topics are the author's
+  // choice. Publication and review gates still decide whether a passage serves.
+  if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row.contentKey ?? ""))) return null;
   const contentType = readerContentType(row);
 
   // Untyped rows are legacy content. Preserve them during migration rather than

@@ -20,7 +20,7 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
   const fixture = async (input, init={}) => {
     const url = new URL(String(input), 'http://fixture.invalid');
     const name = url.pathname.split('/').at(-1);
-    if (!['content_studio_publication_receipt','content_studio_publish_revision','content_studio_row_history','retire_content_everywhere'].includes(name)) return null;
+    if (!['content_studio_publication_receipt','content_studio_publish_revision','content_studio_row_history','retire_content_everywhere','publish_content_publication'].includes(name)) return null;
     const args = JSON.parse(String(init.body));
     if (!db && name === 'content_studio_publication_receipt') return Response.json(null);
     await fixture.prepare();
@@ -70,6 +70,8 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
         ? (await db.query('select public.content_studio_row_history($1,$2) as receipt',[mappedArgs.p_row_id,mappedArgs.p_before])).rows[0].receipt
         : name === 'retire_content_everywhere'
         ? (await db.query('select to_jsonb(public.retire_content_everywhere($1,$2,$3)) as receipt',[mappedArgs.p_content_key,mappedArgs.p_row_id,mappedArgs.p_expected_updated_at])).rows[0].receipt
+        : name === 'publish_content_publication'
+        ? (await db.query('select to_jsonb(public.publish_content_publication($1,$2,$3)) as receipt',[mappedArgs.p_content_key,mappedArgs.p_row_id,mappedArgs.p_expected_updated_at])).rows[0].receipt
         : await callPublicationRpc(db,name,mappedArgs);
       if (name === 'content_studio_publish_revision') {
         const result=await db.query('select to_jsonb(g) as row from generated_interpretations g where id=any($1::uuid[])',[[uuid(args.p_proposal_id),uuid(args.p_target_id)]]);
