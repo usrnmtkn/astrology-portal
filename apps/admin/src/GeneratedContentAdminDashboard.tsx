@@ -1,4 +1,4 @@
-import { skyPublicationScheduled, skyPublicationIsFuture } from './skyArticlePublicationState';
+import { skyPublicationScheduled, skyPublicationIsFuture, type SkyPublicationRow } from './skyArticlePublicationState';
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
 import { templateSavedWordingReferences } from "./templateSavedWordingReferences";
 import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
@@ -5235,6 +5235,12 @@ export function GeneratedContentAdminDashboard() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function refreshSkyArticlePublication(result: SkyPublicationRow) {
+    const saved = result as AdminGeneratedContentRow;
+    setRows(rows => [saved, ...rows.filter(row => row.id !== saved.id)]);
+    void openRow(saved);
   }
 
   async function approveSkyArticleEdition(row: AdminGeneratedContentRow) {
@@ -12023,7 +12029,7 @@ export function GeneratedContentAdminDashboard() {
               {selectedRow && skyArticleEditor && <Suspense fallback={<PageLoading message="Loading publication settings…" />}><SkyArticlePublication row={selectedRow}
                 request={(path, options) => adminJsonRequest(path, secret, options)}
                 disabled={isLoading || skyArticleEditor.saveState !== 'saved'} onBusyChange={setIsLoading}
-                onSaved={result => { const saved = result as AdminGeneratedContentRow; setRows(rows => [saved, ...rows.filter(row => row.id !== saved.id)]); void openRow(saved); }} /></Suspense>}
+                onSaved={refreshSkyArticlePublication} /></Suspense>}
               {skyArticleEditor && (
                 <div className="admin-sky-article-editor" aria-label="Edit Sky article">
                   <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">

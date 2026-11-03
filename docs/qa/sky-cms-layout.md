@@ -116,3 +116,8 @@ isolated actual-handler store. It verifies deployed assets and interactions,
 not production content mutation or a live paid generation. Authenticated live
 facts checks remain read-only. Deployment evidence must identify main's merge
 SHA and a READY Vercel production deployment before claiming release.
+
+The Vercel prebuild also runs the editor navigation guard. Publication-result
+refresh uses the existing saved-row refresh path outside the rendered controls;
+opening a related source retains the editor's named return navigation. The
+prebuild component-consistency check covers that boundary.
