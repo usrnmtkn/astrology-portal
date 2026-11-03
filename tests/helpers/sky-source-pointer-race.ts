@@ -88,9 +88,12 @@ export async function holdSkySourcesUntilTemplatePointer(page: Page) {
         window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 73 }));
         const cancelRestored = restored();
         hold(); window.dispatchEvent(new Event('blur'));
-        return { pinned, elementBlurStillPinned, otherPointerStillPinned, cancelRestored, blurRestored: restored() };
+        const sourceFollowsTemplate = Boolean(button.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING);
+        return { sourceFollowsTemplate, pinned, elementBlurStillPinned, otherPointerStillPinned, cancelRestored, blurRestored: restored() };
       });
-      expect(result).toEqual({ pinned: true, elementBlurStillPinned: true, otherPointerStillPinned: true, cancelRestored: true, blurRestored: true });
+      // Reader diagnostics now follow the article/template workspace. Their
+      // expansion must keep the native click stable without pinning that panel.
+      expect(result).toEqual({ sourceFollowsTemplate: true, pinned: false, elementBlurStillPinned: false, otherPointerStillPinned: false, cancelRestored: true, blurRestored: true });
       await page.evaluate(() => {
         const button = [...document.querySelectorAll('button')].find(node => node.textContent === 'Edit reusable template')!;
         button.dispatchEvent(new PointerEvent('pointerdown', {

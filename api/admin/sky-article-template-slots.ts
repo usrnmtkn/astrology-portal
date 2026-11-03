@@ -4,7 +4,7 @@ import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, rea
 import { requireContentAdmin } from "../_lib/admin-auth.js";
 import { defaultIngressOpenAiModel, generateSkyArticleTemplateSlots, skyArticleTemplateSlotsExport, RejectedSkyArticleDraftError } from "../_lib/content-generation.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
-import { calculateSkyArticleEditionFacts } from "../_lib/sky-article-facts.js";
+import { calculateSkyArticleEditionFacts, skyArticlePeriod } from "../_lib/sky-article-facts.js";
 import {
   skyArticleTemplateSlotNeedsAdditionalFacts,
   unfinishedSkyArticleTemplateSlots
@@ -43,6 +43,7 @@ type RequestBody = {
   templateId?: string;
   visit?: { planet: string; sign: string };
   articleScope?: 'visit' | 'day';
+  articlePeriod?: 'visit' | 'current';
   referenceDate?: string;
   existingSlotValues?: Record<string, unknown>;
   provider?: "openai" | "claude" | "anthropic";
@@ -180,7 +181,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const planet = builtinMoon ? 'moon' : visit?.planet ?? (savedTemplate && templatePlanet(savedTemplate));
     if (!planet) throw new Error("The selected template does not identify one Sky planet.");
     const ingress = isSkyIngressEssay(body.format);
-    const facts = await calculateSkyArticleEditionFacts(instant, planet, body.format);
+    let articlePeriod;
+    try { articlePeriod = skyArticlePeriod(body.articlePeriod); }
+    catch (error) { throw new AdminHttpError(400, (error as Error).message); }
+    const facts = await calculateSkyArticleEditionFacts(instant, planet, body.format, articlePeriod);
     const reference = visit ?? (builtinMoon ? visitReference({ planet: 'moon', sign: facts.sign }, body.format) : null);
     const template: Pick<TemplateRow, 'content_key' | 'body' | 'headline' | 'sections' | 'source_snapshot'> = reference ?? savedTemplate!;
     if (visit && facts.sign !== visit.sign) throw new AdminHttpError(422, 'The selected date is in a different sign. Choose the calculated placement before generating.');

@@ -39,6 +39,7 @@ export default function SkyVisitArticleWriter(props: Props) {
       const payload = await props.request<{ ok: boolean; facts: PlacementVisitFacts; slotValues: Record<string, string>; generation: Record<string, unknown> | null }>(
         '/api/admin/sky-article-template-slots', { method: 'POST', signal: controller.signal, body: JSON.stringify({
           visit: { planet: props.facts.planet, sign: props.facts.sign }, referenceDate: props.referenceDate,
+          articlePeriod: props.facts.articlePeriod,
           format: SKY_INGRESS_ARTICLE_FORMAT, voiceNotes: direction, existingSlotValues: {}
         }) });
       if (!mounted.current) return;
@@ -72,7 +73,7 @@ export default function SkyVisitArticleWriter(props: Props) {
     <label className="admin-review-copy-editor"><span>Optional direction</span>
       <StudioTextarea aria-label="Dated article direction" value={direction} disabled={busy || raw !== null} maxLength={6000} rows={3} onChange={event => setDirection(event.target.value)} />
     </label>
-    <WritingPlanExport request={props.request} endpoint="/api/admin/sky-article-template-slots" body={{preview:true,visit:{planet:props.facts.planet,sign:props.facts.sign},referenceDate:props.referenceDate,format:SKY_INGRESS_ARTICLE_FORMAT,voiceNotes:direction,existingSlotValues:{}}} disabled={busy}/>
+    <WritingPlanExport request={props.request} endpoint="/api/admin/sky-article-template-slots" body={{preview:true,visit:{planet:props.facts.planet,sign:props.facts.sign},referenceDate:props.referenceDate,articlePeriod:props.facts.articlePeriod,format:SKY_INGRESS_ARTICLE_FORMAT,voiceNotes:direction,existingSlotValues:{}}} disabled={busy}/>
     {!raw && <StudioButton className="admin-primary-button" disabled={busy} onClick={() => void generate()}>{busy ? 'Generating draft…' : 'Generate this draft'}</StudioButton>}
     {error && <p role="alert">{error}</p>}
     {raw && <>

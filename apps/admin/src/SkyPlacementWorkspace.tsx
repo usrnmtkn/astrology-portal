@@ -1,9 +1,11 @@
 import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { studioLazy as lazy } from './studioLazy';
-import { AdminDisclosureSummary } from './AdminNativeControls';
+import { AdminDisclosureSummary, AdminSelect } from './AdminNativeControls';
 import { StudioButton, StudioInput, StudioStatusBadge, StudioTabs, StudioTextarea } from './StudioControls';
 const SkyPlacementComposition = lazy(() => import('./SkyPlacementComposition'));
 import SkyVisitArticleWriter from './SkyVisitArticleWriter';
+import SkyArticlePublication from './SkyArticlePublication';
+import { skyPublicationScheduled } from './skyArticlePublicationState';
 import { openContextualReaderHref } from './adminReaderDestinations';
 import { isSkyIngressEssay, SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
 import { reviseSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
@@ -29,6 +31,11 @@ export default function SkyPlacementWorkspace(props: Props) {
   const { selection } = props;
   const latest = useRef(props); latest.current = props;
   const [tab, setTab] = useState<'visit' | 'default' | 'setup'>('visit');
+  const [composing, setComposing] = useState(false);
+  const [articlePeriod, setArticlePeriod] = useState<'current' | 'visit'>('current');
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sourcesOpen, setSourcesOpen] = useState(false);
   const date = props.date ?? today();
   const [documents, setDocuments] = useState<Row[]>([]);
   const [ready, setReady] = useState(false);
@@ -151,20 +158,25 @@ export default function SkyPlacementWorkspace(props: Props) {
     if (!edition) return;
     const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
     setEditing(row); setFields(next); setBaseline(next); setFacts(null); setError(''); setMessage('');
+    setComposing(true);
     setGenerationOpen(false); setGenerationDirty(false); setGenerated(null);
     setEditorOpenRequest(value => value + 1);
   }
   async function loadVisit(generate = false) {
     if (busy || !discard()) return;
-    setBusy(true); setError(''); setMessage('');
+    setBusy(true); setError(''); setMessage(''); setComposing(true);
     try {
-      const payload = await latest.current.request<{ ok: boolean; facts: PlacementVisitFacts }>(`/api/admin/sky-article-facts?${new URLSearchParams({ planet: selection.planet, date, format: SKY_INGRESS_ARTICLE_FORMAT })}`);
+      const payload = await latest.current.request<{ ok: boolean; facts: PlacementVisitFacts }>(`/api/admin/sky-article-facts?${new URLSearchParams({ planet: selection.planet, date, period: articlePeriod, format: SKY_INGRESS_ARTICLE_FORMAT })}`);
       if (payload.ok !== true || !payload.facts) throw new Error('The calculated dates could not be loaded.');
+      if (articlePeriod === 'current' && payload.facts.articlePeriod !== 'current') throw new Error('The placement period could not be verified. Reload Studio before writing this article.');
       assertPlacementVisit(payload.facts, selection.planet, selection.sign);
       if (!mounted.current) return;
       const key = skyArticleEditionContentKey({ ...payload.facts, format: SKY_INGRESS_ARTICLE_FORMAT });
       const saved = visits.find(row => placementEdition(row)?.contentKey === key);
       if (saved) {
+        const savedEdition = placementEdition(saved)!;
+        if (savedEdition.transitStartInstant !== payload.facts.transitStartInstant || savedEdition.transitEndInstant !== payload.facts.transitEndInstant)
+          throw new Error('An article already uses this start date with different coverage. Open it from Articles to keep its saved period.');
         if (openVariableArticle(saved)) return;
         const edition = placementEdition(saved)!;
         const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
@@ -218,40 +230,62 @@ export default function SkyPlacementWorkspace(props: Props) {
   }
 
   const update = (key: keyof typeof fields, value: string) => setFields(current => ({ ...current, [key]: value }));
-  return <section className="admin-workspace" aria-label={`${title(selection.planet)} in ${title(selection.sign)} workspace`}>
-    {props.readerSources !== undefined ? props.readerSources : <section className="studio-section" aria-label="Currently live">
-      <h3>Currently live</h3>
-      {!ready && !error ? <p role="status">Loading saved visits…</p> : statusError ? <p role="alert">{statusError}</p> : statuses === null ? <p role="status">Checking publication…</p> : published ? <>
-        <p><strong>{published.edition.headline}</strong> · Published dated article</p>
-        <details className="admin-workspace-details"><AdminDisclosureSummary>Read published article</AdminDisclosureSummary>
-          <StudioTextarea aria-label="Published dated article" readOnly formatting={false} value={published.edition.body} rows={12} />
-        </details>
-      </> : <p>No published dated article covers right now. The reader uses its approved default sources for this placement.</p>}
-      <StudioButton onClick={() => openContextualReaderHref(`/#sky/placement/${selection.planet}/${selection.sign}`)}>Open published reader</StudioButton>
-    </section>}
+  const filteredVisits = visits.filter(row => (statusFilter === 'all' || (statusFilter === 'scheduled' ? skyPublicationScheduled(row) : row.status === statusFilter && !skyPublicationScheduled(row)))
+    && `${row.headline} ${placementEdition(row)?.validFrom} ${placementEdition(row)?.validTo}`.toLowerCase().includes(query.trim().toLowerCase()));
+  const shortDate = (instant: string) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(instant));
+  const openedEdition = editing ? placementEdition(editing) : null;
+  const openedFacts = facts ?? (editing?.source_snapshot as { engineFacts?: PlacementVisitFacts } | null)?.engineFacts;
+  const canSave = !busy && !generationOpen && Boolean(fields.headline.trim() && fields.summary.trim() && fields.body.trim()) && (editing === null || passageDirty);
+  function backToArticles() {
+    if (busy || !discard()) return;
+    setComposing(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
+    setGenerationOpen(false); setGenerationDirty(false); setGenerated(null); setMessage(''); setError('');
+  }
+  const periodFinder = <div className="studio-section">
+    <label><span>Find a period containing</span><StudioInput aria-label="Visit reference date" type="date" value={date} disabled={busy} onChange={event => props.onDateChange(event.target.value)} /></label>
+    <label><span>Article coverage</span><AdminSelect aria-label="Article coverage" value={articlePeriod} disabled={busy} onChange={event => setArticlePeriod(event.target.value as 'current' | 'visit')}>
+      <option value="current">Placement period (retrograde or visit)</option><option value="visit">Full sign visit</option>
+    </AdminSelect></label>
+    <p>The lookup date finds the complete calculated period. Retrograde coverage runs between its stations, within this sign.</p>
+    <div className="admin-toolbar-actions">
+      <StudioButton className="admin-primary-button" disabled={busy || !date} onClick={() => void loadVisit()}>Write article</StudioButton>
+      <StudioButton disabled={busy || !date} onClick={() => void loadVisit(true)}>Generate draft</StudioButton>
+    </div>
+  </div>;
+  return <section className="admin-workspace studio-sky-cms" aria-label={`${title(selection.planet)} in ${title(selection.sign)} workspace`}>
     <StudioTabs label="Planet and sign writing" tabs={placementWorkspaceTabs} value={tab} onValueChange={value => setTab(value)}>
       {tab === 'visit' ? <section className="admin-workspace" aria-label="Dated visit articles" aria-busy={busy}>
-        <p>Write for one calculated visit. Your default reading and reusable templates stay separate. Drafts stay private until you explicitly review and publish.</p>
         {!ready && !error && <p role="status">Loading saved writing…</p>}
-        {ready && <>
-          <div className="admin-sky-edition-facts-row">
-            <label className="admin-title-field"><span>Choose a date in this visit</span><StudioInput aria-label="Visit reference date" type="date" value={date} disabled={busy} onChange={event => props.onDateChange(event.target.value)} /></label>
-            <StudioButton className="admin-primary-button" disabled={busy || !date} onClick={() => void loadVisit()}>Write article</StudioButton>
-            <StudioButton disabled={busy || !date} onClick={() => void loadVisit(true)}>Generate draft</StudioButton>
+        {ready && !composing && <section className="studio-section" aria-label="Saved visits">
+          <header className="studio-section-header">
+            <h3>Articles</h3>
+            <StudioButton className="admin-primary-button" disabled={busy} onClick={() => { setComposing(true); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty); }}>New article</StudioButton>
+          </header>
+          <div className="admin-collection-toolbar">
+            <label className="admin-title-field studio-sky-article-search"><span>Search articles</span><StudioInput type="search" aria-label="Search saved articles" placeholder="Search title or period" value={query} onChange={event => setQuery(event.target.value)} /></label>
+            <label><span>Status</span><AdminSelect aria-label="Article status" value={statusFilter} onChange={event => setStatusFilter(event.target.value)}>
+              <option value="all">All statuses</option><option value="DRAFT">Draft</option><option value="LIVE">Published</option><option value="scheduled">Scheduled</option>
+            </AdminSelect></label>
           </div>
-          <p className="admin-field-hint">The date selects the full calculated {title(selection.planet)}-in-{title(selection.sign)} visit, including its entry and exit. An existing article opens with its wording intact.</p>
-          <p>After you approve and publish it, your dated article is the main Sky reading for that visit. Fallback and placement hooks remain available when no dated article is published.</p>
-          <section className="admin-workspace" aria-label="Saved visits">
-            <h3>Saved visits</h3>
-            {!visits.length && <p>No dated article is saved for this placement. The default reading remains available.</p>}
-            {visits.map(row => { const edition = placementEdition(row)!; return <article className="admin-hook-detail-section" key={row.id}>
-              <strong>{edition.headline}</strong> <StudioStatusBadge tone={row.status === 'LIVE' ? 'live' : 'draft'}>{row.status === 'LIVE' ? 'Published' : 'Draft'}</StudioStatusBadge>
-              <p>{edition.scope === 'day' ? `Saved day article · ${edition.validFrom} (ET)` : `Full visit · ${edition.validFrom} to ${edition.validTo}`}{edition.contentKey !== row.content_key ? ' · Working revision' : ''}</p>
-              <StudioButton disabled={busy} onClick={() => edit(row)}>{row.status === 'LIVE' ? 'Edit a draft of this article' : 'Open saved draft'}</StudioButton>
-            </article>; })}
-          </section>
-        </>}
-        {facts && generationOpen && <section ref={writerPanel} tabIndex={-1} className="admin-workspace" aria-label="Dated article generation workspace">
+          {!visits.length ? <p>No articles yet. Create an article for a calculated placement period.</p> : <div className="admin-content-table-scroll">
+            <table className="admin-data-table studio-sky-article-table" aria-label="Saved articles">
+              <thead><tr><th scope="col">Article</th><th scope="col">Period</th><th scope="col">Status</th><th scope="col">Updated</th><th scope="col">Actions</th></tr></thead>
+              <tbody>{filteredVisits.map(row => { const edition = placementEdition(row)!; return <tr key={row.id}>
+                <td data-label="Article"><strong>{edition.headline}</strong>{edition.contentKey !== row.content_key && <div><small>Working revision</small></div>}</td>
+                <td data-label="Period">{shortDate(edition.transitStartInstant)} to {shortDate(edition.transitEndInstant)}{edition.scope === 'day' && <div><small>Saved day article</small></div>}</td>
+                <td data-label="Status"><StudioStatusBadge tone={row.status === 'LIVE' ? statuses?.some(status => status.id === row.id && status.live) ? 'live' : 'unknown' : 'draft'}>{row.status === 'LIVE' ? statuses === null ? 'Checking…' : statuses.some(status => status.id === row.id && status.live) ? 'Published' : 'Inactive' : skyPublicationScheduled(row) ? 'Scheduled' : 'Draft'}</StudioStatusBadge></td>
+                <td data-label="Updated">{row.updated_at ? shortDate(row.updated_at) : 'Unavailable'}</td>
+                <td data-label="Actions"><StudioButton disabled={busy} onClick={() => edit(row)}>{row.status === 'LIVE' ? 'Edit a draft of this article' : 'Open saved draft'}</StudioButton></td>
+              </tr>; })}</tbody>
+            </table>
+            {!filteredVisits.length && <p className="admin-empty">No articles match these filters.</p>}
+          </div>}
+        </section>}
+        {ready && composing && !editing && !facts && <section className="studio-section" aria-label="New article period">
+          <header className="studio-section-header"><h3>New article</h3><StudioButton disabled={busy} onClick={backToArticles}>Back to articles</StudioButton></header>
+          {periodFinder}
+        </section>}
+        {composing && facts && generationOpen && <section ref={writerPanel} tabIndex={-1} className="admin-workspace" aria-label="Dated article generation workspace">
           <SkyVisitArticleWriter key={`${facts.transitStartInstant}/${facts.transitEndInstant}`} facts={facts} referenceDate={factsReferenceDate}
             request={props.request} onBusyChange={setBusy} onDirtyChange={setGenerationDirty} onUse={article => {
               setGenerated(article); setFields({ headline: article.edition.headline, summary: article.edition.tldr, body: article.edition.body });
@@ -264,24 +298,41 @@ export default function SkyPlacementWorkspace(props: Props) {
             setEditorOpenRequest(value => value + 1);
           }}>Write article instead</StudioButton>
         </section>}
-        {(editing || facts) && !generationOpen && <section ref={articlePanel} tabIndex={-1} className="admin-workspace" aria-label="Article for this visit">
-          {editing && placementEdition(editing)?.scope === 'day' && <p>Editing a saved day article. Its date and coverage stay unchanged; new articles use the full calculated visit.</p>}
-          <p><strong>Calculated dates:</strong> {facts?.slotValues.when ?? placementEdition(editing!)?.slotValues.when}</p>
-          <label className="admin-title-field"><span>Article title</span><StudioInput aria-label="Visit article title" value={fields.headline} disabled={busy} onChange={event => update('headline', event.target.value)} /></label>
-          <label className="admin-review-copy-editor"><span>Summary</span><StudioTextarea aria-label="Visit article summary" value={fields.summary} disabled={busy} onChange={event => update('summary', event.target.value)} /></label>
-          <label className="admin-review-copy-editor"><span>Article body</span><StudioTextarea aria-label="Visit article body" rows={20} value={fields.body} disabled={busy} onChange={event => update('body', event.target.value)} /></label>
-          <div className="admin-toolbar-actions">
-            <StudioButton className="admin-primary-button" disabled={busy || generationOpen || !fields.headline.trim() || !fields.summary.trim() || !fields.body.trim() || editing !== null && !passageDirty} onClick={() => void save()}>Save draft</StudioButton>
-            {editing && <StudioButton disabled={busy || dirty} onClick={() => latest.current.onEditRow(editing)}>Review saved draft</StudioButton>}
+        {composing && (editing || facts) && !generationOpen && <section ref={articlePanel} tabIndex={-1} className="admin-workspace" aria-label="Article for this visit">
+          <header className="studio-sky-editor-toolbar">
+            <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={backToArticles}>Back to articles</StudioButton><span className="admin-editor-save-state" role="status">{busy ? 'Working…' : passageDirty ? 'Unsaved changes' : editing ? 'Saved' : 'Not saved'}</span></div>
+            <div className="admin-toolbar-actions">
+              {editing && <StudioButton disabled={busy || dirty} onClick={() => latest.current.onEditRow(editing)}>Review & publish</StudioButton>}
+              <StudioButton className="admin-primary-button" disabled={!canSave} onClick={() => void save()}>Save draft</StudioButton>
+            </div>
+          </header>
+          <div className="studio-sky-editor-layout">
+            <div className="studio-sky-editor-writing studio-section studio-workspace-pane">
+              <label className="admin-title-field"><span>Title</span><StudioInput aria-label="Visit article title" value={fields.headline} disabled={busy} onChange={event => update('headline', event.target.value)} /></label>
+              <label className="admin-review-copy-editor"><span>Content</span><StudioTextarea aria-label="Visit article body" rows={20} value={fields.body} disabled={busy} onChange={event => update('body', event.target.value)} /></label>
+              <label className="admin-review-copy-editor"><span>Summary</span><StudioTextarea aria-label="Visit article summary" rows={3} value={fields.summary} disabled={busy} onChange={event => update('summary', event.target.value)} /></label>
+            </div>
+            <aside className="studio-sky-editor-settings studio-section studio-workspace-pane" aria-label="Article settings">
+              <h3>Article settings</h3>
+              <dl className="studio-detail-list">
+                <div><dt>Status</dt><dd>{skyPublicationScheduled(editing) ? 'Scheduled' : editing?.status === 'LIVE' ? 'Editing a new draft of a published article' : 'Draft'}</dd></div>
+                <div><dt>Placement</dt><dd>{title(selection.planet)}{openedFacts?.motion === 'retrograde' ? ' Rx' : ''} in {title(selection.sign)}</dd></div>
+                <div><dt>Article period</dt><dd>{facts?.slotValues.when ?? openedEdition?.slotValues.when}</dd></div>
+                <div><dt>Coverage</dt><dd>{openedEdition?.scope === 'day' ? 'Saved day article' : openedFacts?.periodLabel ?? 'Full sign visit'}</dd></div>
+              </dl>
+              {editing && <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}
+                onSaved={saved => { setEditing(saved); setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]); }} />}
+              {!editing && <details className="studio-contained-disclosure"><AdminDisclosureSummary>Choose another period</AdminDisclosureSummary>{periodFinder}</details>}
+              {editing && <StudioButton disabled={busy || dirty} onClick={() => latest.current.onEditRow(editing)}>History & article actions</StudioButton>}
+            </aside>
           </div>
-          <p className="admin-field-hint">Save draft changes only this dated article. Review saved draft opens the existing review and publication controls.</p>
         </section>}
         {message && <p role="status">{message}</p>}
       </section> : tab === 'default' ? <section className="admin-workspace" aria-label="Default placement reading">
         <p>This reusable reading supplies content when no dated article is published for a visit. Keep it year-neutral. Existing wording is preserved; changing a dated article never replaces it.</p>
         <Suspense fallback={<p role="status">Loading default reading sources…</p>}><SkyPlacementComposition defaultReadingOnly rows={props.rows} selection={selection} onEditRow={props.onEditRow} onEditField={props.onEditField} onLoadRow={props.onLoadRow} /></Suspense>
       </section> : <section className="admin-workspace" aria-label="Reusable writing setup">
-        <p>Reusable templates and writing sources apply to future visits. Edit a dated article in This visit.</p>
+        <p>Reusable templates and writing sources apply to future visits. Manage dated writing in Articles.</p>
         {ready && !setupRows.length && <p>No saved reusable article template is available for this placement. You can still save a dated article using the standard ingress layout.</p>}
         {setupRows.map(row => <article className="admin-hook-detail-section" key={row.id}>
           <strong>{row.headline || row.content_key}</strong>
@@ -295,6 +346,14 @@ export default function SkyPlacementWorkspace(props: Props) {
         </details>
       </section>}
     </StudioTabs>
+    <details className="studio-contained-disclosure" onToggle={event => setSourcesOpen(event.currentTarget.open)}>
+      <AdminDisclosureSummary>Reader preview & source details</AdminDisclosureSummary>
+      {sourcesOpen && (props.readerSources !== undefined ? props.readerSources : <section className="studio-section" aria-label="Currently live">
+        <h3>Currently live</h3>
+        {statusError ? <p role="alert">{statusError}</p> : published ? <p>{published.edition.headline} · Published dated article</p> : <p>No published dated article covers right now.</p>}
+        <StudioButton onClick={() => openContextualReaderHref(`/#sky/placement/${selection.planet}/${selection.sign}`)}>Open published reader</StudioButton>
+      </section>)}
+    </details>
     {error && <p role="alert">{error} <StudioButton disabled={busy} onClick={() => setRetry(value => value + 1)}>Reload saved writing</StudioButton></p>}
   </section>;
 }

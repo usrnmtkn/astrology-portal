@@ -2,7 +2,7 @@ import { placementVisitDraft, type PlacementVisitFacts } from '../../apps/admin/
 
 /** Synthetic text and explicit expected calculation responses. Never imported by runtime code. */
 export function workspaceVisitFacts(planet = 'sun', sign = 'scorpio', start = '2026-10-23', end = '2026-11-22'): PlacementVisitFacts {
-  return { planet, sign, entryYear: Number(start.slice(0, 4)), validFrom: start, validTo: end,
+  return { planet, sign, articlePeriod: 'current', entryYear: Number(start.slice(0, 4)), validFrom: start, validTo: end,
     transitStartInstant: `${start}T09:37:56.999Z`, transitEndInstant: `${end}T07:23:20.999Z`,
     referenceTimeZone: 'America/New_York', calculationSource: 'isolated synthetic fixture', generatedAt: `${start}T12:00:00Z`,
     slotValues: { sign, articleTitle: `Synthetic ${planet} in ${sign}`, when: `${start} at 5:37 AM EDT to ${end} at 2:23 AM EST` } };

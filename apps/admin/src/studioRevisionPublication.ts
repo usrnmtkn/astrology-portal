@@ -5,6 +5,7 @@ export { recoverContentStudioCopy } from './contentStudioCopyRecovery';
 
 export function publicationStateMessage(result: StudioPublicationResult) {
   const receipt = result.publicationReceipt;
+  if (receipt?.currentPublicationState === "scheduled") return "Publication scheduled. The saved article remains private until release.";
   const completed = "The publication completed earlier. ";
   if (receipt?.currentStatus === "DELETED") return completed + "Its source has since been removed.";
   if (receipt?.currentPublicationState === "retired") return completed + "This content is now retired.";

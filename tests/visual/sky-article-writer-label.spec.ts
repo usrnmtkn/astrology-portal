@@ -40,7 +40,7 @@ for (const [width, theme, hasTemplate] of [[390, 'light', true], [1440, 'dark', 
    await routeStudioInventoryApi(page, { call, actualDocumentRoute: true, onWrite: write => writes.push(write),
     answer: async (route, url) => {
      if(url.pathname==='/api/admin/sky-article-facts'){
-      await route.fulfill({json:{ok:true,facts:{planet:'sun',sign:'virgo',entryYear:2026,validFrom:'2026-08-22',validTo:'2026-09-22',transitStartInstant:'2026-08-22T14:00:00Z',transitEndInstant:'2026-09-22T14:00:00Z',referenceTimeZone:'America/New_York',calculationSource:'synthetic browser fixture',generatedAt:'2026-10-31T12:00:00Z',slotValues:{when:'Synthetic complete Virgo visit window',articleTitle:'Synthetic Virgo visit'}}}});
+      await route.fulfill({json:{ok:true,facts:{articlePeriod:'current',planet:'sun',sign:'virgo',entryYear:2026,validFrom:'2026-08-22',validTo:'2026-09-22',transitStartInstant:'2026-08-22T14:00:00Z',transitEndInstant:'2026-09-22T14:00:00Z',referenceTimeZone:'America/New_York',calculationSource:'synthetic browser fixture',generatedAt:'2026-10-31T12:00:00Z',slotValues:{when:'Synthetic complete Virgo visit window',articleTitle:'Synthetic Virgo visit'}}}});
       return true;
      }
      if (route.request().method() !== 'POST' || !url.pathname.startsWith('/api/admin/sky-article-')) return false;
@@ -58,6 +58,7 @@ for (const [width, theme, hasTemplate] of [[390, 'light', true], [1440, 'dark', 
    await page.getByLabel('Sky placement planet or point').selectOption('sun');
    await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
    const visit=page.getByRole('region',{name:'Dated visit articles',exact:true});
+   await visit.getByRole('button', { name: 'New article', exact: true }).click();
    await visit.getByLabel('Visit reference date',{exact:true}).fill('2026-09-07');
    await visit.getByRole('button',{name:'Generate draft',exact:true}).click();
    await checkWritingExport(page,visit.getByRole('region',{name:'Generate a dated article',exact:true}),'Synthetic planetary source opening.\n\nSynthetic planetary source final sentence.');

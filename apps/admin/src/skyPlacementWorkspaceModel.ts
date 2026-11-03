@@ -7,11 +7,12 @@ export type PlacementVisitFacts = {
   planet: string; sign: string; entryYear: number; validFrom: string; validTo: string;
   transitStartInstant: string; transitEndInstant: string; referenceTimeZone: string;
   calculationSource: string; generatedAt: string; slotValues: Record<string, string>;
+  articlePeriod?: 'current' | 'visit'; motion?: 'direct' | 'retrograde'; periodLabel?: string;
 };
 export type PlacementGeneratedArticle = { edition: CompiledSkyArticleEdition; generation: Record<string, unknown> | null };
 
 export const placementWorkspaceTabs = [
-  { value: 'visit', label: 'This visit' },
+  { value: 'visit', label: 'Articles' },
   { value: 'default', label: 'Default reading' },
   { value: 'setup', label: 'Writing setup' }
 ] as const;

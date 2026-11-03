@@ -200,6 +200,10 @@
     {
       "path": "/api/cron/run-horoscope-batches",
       "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/publish-sky-articles",
+      "schedule": "* * * * *"
     }
   ]
 }
