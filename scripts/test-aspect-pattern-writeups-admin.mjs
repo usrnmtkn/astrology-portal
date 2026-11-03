@@ -48,8 +48,14 @@ const styles = read("apps/admin/src/admin.css");
 
 assert.match(dashboard, /aspectPatternCoverage:\s*"content\/aspect-patterns"/);
 assert.match(dashboard, /aspectPatternActivationCoverage:\s*"content\/aspect-patterns\/activation"/);
-assert.match(dashboard, /<AspectPatternWriteups initialKind="natal" secret=\{secret\} \/>/);
-assert.match(dashboard, /<AspectPatternWriteups initialKind="activation" secret=\{secret\} \/>/);
+const patternEditors = dashboard.match(/<AspectPatternWriteups\b[^>]*\/>/gu) ?? [];
+for (const kind of ["natal", "activation"]) {
+  const editor = patternEditors.find(tag => tag.includes(`initialKind="${kind}"`));
+  assert.ok(editor, `The ${kind} write-up editor must remain mounted.`);
+  for (const [prop, binding] of [["secret", "secret"], ["dirtyRef", "aspectPatternDirtyRef"], ["busyRef", "aspectPatternBusyRef"]]) {
+    assert.match(editor, new RegExp(`\\b${prop}\\s*=\\s*\\{\\s*${binding}\\s*\\}`, "u"), `The ${kind} editor must retain its ${prop} wiring.`);
+  }
+}
 
 assert.match(component, /Natal Write-ups/);
 assert.match(component, /Active Now Write-ups/);
