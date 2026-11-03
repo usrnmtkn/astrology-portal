@@ -4,9 +4,10 @@ import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { articleKeyFromHash, articleLibraryKind, articleReaderHref, validArticlePublishAt } from '../src/shared/articleLibrary.ts';
 import { syntheticLibrarySkyArticle } from '../tests/helpers/article-library-fixture.ts';
 import { createPublicationDb, seedPublicationRow, callPublicationRpc } from '../tests/helpers/studio-publication-db.mjs';
+import { studioOwnerApproval } from '../api/_lib/studio-owner-publication.ts';
 
 const sky = await syntheticLibrarySkyArticle();
-const store = await createApiStore([sky], { uuidIds: true });
+const store = await createApiStore([sky], { uuidIds: true, projectSelect: true });
 const body = 'Synthetic complete opening.\n\n## Saved section\n\nSynthetic complete final paragraph.';
 for (const value of ['0000-01-01T00:00:00.000Z', '2024-02-29T23:59:59.999Z', '9999-12-31T23:59:59.999Z']) {
   assert(validArticlePublishAt(value), `Canonical UTC publication date is valid: ${value}`);
@@ -21,6 +22,41 @@ try {
   store.rows.set(sky.id, { ...sky, source_snapshot: {} });
   assert.deepEqual((await readSky()).payload.rows, [], 'Dated editions still require exact owner approval');
   store.rows.set(sky.id, sky);
+  for (const kind of ['guide', 'manual']) {
+    const legacyDate = '2020-04-12T14:30:00.000Z';
+    const legacy = { ...sky, id: kind === 'guide' ? 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' : 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      content_key: `article/${kind}/saved-publication-date`, event_type: 'sky_article', provider: 'manual-admin',
+      status: 'DRAFT', lane: 'serving', review_state: null, headline: 'Saved publication date',
+      body, summary: 'Complete saved summary.', sections: {}, source_snapshot: {}, published_at: legacyDate };
+    store.rows.set(legacy.id, legacy);
+    let result = await store.invoke('PATCH', { id: legacy.id, expectedUpdatedAt: legacy.updated_at, ownerAction: 'publish-owner-content' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    let saved = result.payload.rows[0];
+    assert.equal(saved.sections.articlePublication.publishAt, legacyDate, 'Ordinary legacy publication preserves the stored date through the real select projection');
+    assert.equal(saved.body, body);
+    assert.equal(saved.summary, legacy.summary);
+    // Older LIVE articles may still have no structured publication metadata.
+    saved = { ...saved, sections: {}, published_at: legacyDate };
+    saved.source_snapshot = { ...saved.source_snapshot, studioOwnerApproval: studioOwnerApproval(saved, legacyDate) };
+    store.rows.set(saved.id, saved);
+    const revisionBody = `${body}\n\nComplete revised ending.`;
+    result = await store.invoke('PATCH', { id: saved.id, expectedUpdatedAt: saved.updated_at, status: 'DRAFT', body: revisionBody });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const revision = result.payload.rows[0];
+    assert.deepEqual(store.rows.get(saved.id), saved, 'Saving the legacy revision preserves every LIVE field');
+    result = await store.invoke('PATCH', { id: revision.id, expectedUpdatedAt: revision.updated_at, ownerAction: 'publish-standalone-article-revision' });
+    assert.equal(result.status, 200, JSON.stringify(result));
+    const published = result.payload.rows[0];
+    assert.equal(published.sections.articlePublication.publishAt, legacyDate, 'Legacy revisions preserve the target stored date through the real select projection');
+    assert.equal(published.body, revisionBody);
+    assert.equal(published.summary, legacy.summary);
+    const read = await store.invoke('POST', { keys: [saved.content_key] }, '/api/content-reader');
+    assert.equal(read.payload.rows[0]?.body, revisionBody, 'Readers receive the complete revised copy');
+    assert.equal(read.payload.rows[0]?.sections.articlePublication.publishAt, legacyDate);
+    const retired = await store.invoke('POST', { action: 'retire', id: published.id, contentKey: published.content_key,
+      expectedUpdatedAt: published.updated_at }, '/api/admin/content-publication');
+    assert.equal(retired.status, 200, JSON.stringify(retired));
+  }
   {
     const contentKey = 'article/guide/scheduled-fixture';
     const sections = { articlePublication: { publishAt: '2099-03-14T13:00:00.000Z' } };

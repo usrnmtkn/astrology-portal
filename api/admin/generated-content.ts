@@ -118,9 +118,12 @@ type GeneratedContentWriteBody = {
   evergreenBy?: string | null;
   expectedUpdatedAt?: string;
   horoscopeValidationOverride?: boolean;
+  skyPublicationAt?: string | null;
   csvRecord?: CsvRecord;
   ownerAction?:
     | "approve-and-schedule"
+    | "set-sky-article-publication-date"
+    | "cancel-sky-article-publication"
     | "publish-owner-content"
     | "save-and-publish-owner-content"
     | "import-csv-draft"
@@ -1350,12 +1353,20 @@ async function readJsonBody(req: IncomingMessage) {
 }
 
 const generatedContentOwnerActions = new Set([
+  "set-sky-article-publication-date", "cancel-sky-article-publication",
   "import-csv-draft", "publish-owner-content", "save-and-publish-owner-content",
   "approve-and-schedule", "approve-package-revision", "publish-standalone-article-revision", "publish-horoscope-edition-revision", "approve-sky-article-edition",
   "save-sky-article-edition-revision", "publish-sky-article-edition-revision"
 ]);
 
 function validateWriteBody(body: Record<string, unknown>) {
+  if (Object.hasOwn(body, 'skyPublicationAt') && (body.ownerAction !== 'set-sky-article-publication-date'
+    || body.skyPublicationAt !== null && (typeof body.skyPublicationAt !== 'string'
+    || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/u.test(body.skyPublicationAt)
+    || !Number.isFinite(Date.parse(body.skyPublicationAt))
+    || new Date(body.skyPublicationAt).toISOString().replace('.000Z', 'Z') !== body.skyPublicationAt.replace('.000Z', 'Z')))) {
+    throw new GeneratedContentRequestError('Choose a valid publication date with its time zone.');
+  }
   if (body.ownerAction === 'import-csv-draft') {
     if (Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'ownerAction', 'csvRecord'].includes(key))
       || !isRecord(body.csvRecord) || Object.values(body.csvRecord).some(value => typeof value !== 'string')
@@ -1380,7 +1391,7 @@ function validateWriteBody(body: Record<string, unknown>) {
     }
   }
   if (isRecord(body.sourceSnapshot)) {
-    const { studioOwnerApproval: _untrustedApproval, ...snapshot } = body.sourceSnapshot;
+    const { studioOwnerApproval: _untrustedApproval, skyArticlePublication: _untrustedSchedule, ...snapshot } = body.sourceSnapshot;
     body.sourceSnapshot = snapshot;
   }
   for (const field of ["id", "contentKey", "surface", "mode", "eventType", "status", "headline", "summary", "body", "reviewStatus", "sourceLifecycleAction", "editorialNotes", "promptVersion", "provider", "model", "reviewerNotes", "expectedUpdatedAt", "ownerAction"]) {
@@ -2097,7 +2108,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
 
 async function fetchExistingRowById(id: string) {
   const params = new URLSearchParams();
-  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,updated_at");
+  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,updated_at,published_at");
   params.set("id", `eq.${id}`);
   params.set("limit", "1");
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
@@ -2213,6 +2224,7 @@ async function patchGeneratedContentRow(
 type PublicationDependency = { id: string; updatedAt: string; publicationRevision?: string };
 type PublicationContext = {
   actor: string; operationId?: string; requestSha256?: string;
+  scheduledExecution?: boolean;
   dependencies: Map<string, PublicationDependency>; targetPublication?: unknown; receipt?: Record<string, unknown>;
 };
 const publicationContext = new AsyncLocalStorage<PublicationContext>();
@@ -2426,6 +2438,75 @@ function skyArticleApprovalSnapshot(
   return snapshot;
 }
 
+function skyPublicationRecord(row: ExistingGeneratedContentRow): Record<string, any> {
+  const value = row.source_snapshot?.skyArticlePublication;
+  return isRecord(value) ? value : {};
+}
+const skyPublicationActions = new Set(['approve-sky-article-edition', 'publish-sky-article-edition-revision']);
+function canonicalSkyPublicationValue(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalSkyPublicationValue);
+  if (isRecord(value)) return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonicalSkyPublicationValue(value[key])]));
+  return value;
+}
+function skyPublicationHash(row: ExistingGeneratedContentRow) {
+  return createHash('sha256').update(JSON.stringify(canonicalSkyPublicationValue({ contentKey: row.content_key, headline: row.headline,
+    summary: row.summary, body: row.body, sections: row.sections, target: row.source_snapshot?.targetRowId,
+    targetVersion: row.source_snapshot?.targetRowUpdatedAt }))).digest('hex');
+}
+function skyPublicationDate(row: ExistingGeneratedContentRow, now: string) {
+  const value = skyPublicationRecord(row).publishAt;
+  return typeof value === 'string' && Number.isFinite(Date.parse(value)) ? value : now;
+}
+async function scheduleSkyPublication(row: ExistingGeneratedContentRow, body: GeneratedContentWriteBody, now: string) {
+  if (row.status !== 'DRAFT') throw new GeneratedContentRequestError('Save a private draft before scheduling publication.', 409);
+  const schedule = { schema: 'sky-article-publication/v1', state: 'scheduled', publishAt: skyPublicationDate(row, now),
+    approvedAt: now, actor: publicationContext.getStore()!.actor, action: body.ownerAction,
+    approvedHash: skyPublicationHash(row), requestedVersion: body.expectedUpdatedAt };
+  const saved = await patchGeneratedContentRow(row.id, { source_snapshot: { ...row.source_snapshot, skyArticlePublication: schedule },
+    updated_at: nextGeneratedContentVersion(row.updated_at) }, body.expectedUpdatedAt);
+  publicationContext.getStore()!.receipt = { currentStatus: 'DRAFT', currentPublicationState: 'scheduled', targetId: row.id };
+  return saved;
+}
+function publishedSkySnapshot(snapshot: Record<string, any>, row: ExistingGeneratedContentRow, now: string) {
+  const previous = skyPublicationRecord(row);
+  return { ...snapshot, skyArticlePublication: { ...previous, schema: 'sky-article-publication/v1', state: 'published',
+    publishAt: skyPublicationDate(row, now), approvedAt: previous?.approvedAt ?? now, executedAt: now } };
+}
+
+/** Only the authenticated cron calls this server export. Revalidate the exact saved
+ * wording and current target/dependencies through the ordinary publication path. */
+export async function publishDueSkyArticles() {
+  await loadGeneratedContentLibraries();
+  const query = new URLSearchParams({ select: '*', status: 'eq.DRAFT',
+    event_type: 'in.(sky-article-edition,sky-article-edition-revision)',
+    'source_snapshot->skyArticlePublication->>state': 'eq.scheduled',
+    'source_snapshot->skyArticlePublication->>publishAt': `lte.${new Date().toISOString()}`,
+    order: 'updated_at.asc', limit: '10' });
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${query}`, { headers: adminHeaders() });
+  if (!response.ok || !Array.isArray(response.payload)) throw new Error('Scheduled articles could not load.');
+  let published = 0, held = 0;
+  const deadline = Date.now() + 240_000;
+  for (const row of response.payload) {
+    if (Date.now() >= deadline) break;
+    const schedule = row.source_snapshot?.skyArticlePublication;
+    if (!schedule || schedule.state !== 'scheduled' || !skyPublicationActions.has(schedule.action)
+      || typeof schedule.actor !== 'string' || !schedule.actor || schedule.approvedHash !== skyPublicationHash(row)
+      || !Number.isFinite(Date.parse(schedule.publishAt)) || Date.parse(schedule.publishAt) > Date.now()) { held++; continue; }
+    try {
+      const req = { method: 'PATCH', body: { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction: schedule.action } } as unknown as IncomingMessage;
+      await publicationContext.run({ actor: schedule.actor, dependencies: new Map(), scheduledExecution: true }, () => updateGeneratedContent(req));
+      published++;
+    } catch {
+      // A changed target or unavailable source never publishes unchecked copy.
+      held++;
+      await patchGeneratedContentRow(row.id, { source_snapshot: { ...row.source_snapshot,
+        skyArticlePublication: { ...schedule, state: 'needs_attention', error: 'Publication could not be confirmed. Review the saved article and its current sources before scheduling again.' } },
+        updated_at: nextGeneratedContentVersion(row.updated_at) }, row.updated_at).catch(() => {});
+    }
+  }
+  return { published, held };
+}
+
 function generatedContentTargetKey({
   contentKey,
   targetDate,
@@ -2580,6 +2661,35 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
   if (body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
+  }
+  const scheduled = skyPublicationRecord(existing);
+  if (publicationContext.getStore()?.scheduledExecution && (existing.status !== 'DRAFT' || scheduled?.state !== 'scheduled'
+    || scheduled.action !== body.ownerAction || scheduled.approvedHash !== skyPublicationHash(existing)
+    || !Number.isFinite(Date.parse(scheduled.publishAt)) || Date.parse(scheduled.publishAt) > Date.now())) {
+    throw new GeneratedContentRequestError('The scheduled approval changed. Review this article again.', 409);
+  }
+  if (['set-sky-article-publication-date', 'cancel-sky-article-publication'].includes(body.ownerAction ?? '')) {
+    if (existing.event_type === 'sky-article-edition' && existing.status === 'LIVE'
+      && body.ownerAction === 'set-sky-article-publication-date') {
+      if (Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'ownerAction', 'skyPublicationAt'].includes(key))
+        || !body.skyPublicationAt || Date.parse(body.skyPublicationAt) > Date.now()) {
+        throw new GeneratedContentRequestError('Choose a previous publication date for this live article. Save content changes as a private draft to schedule a replacement.', 409);
+      }
+      const now = new Date().toISOString();
+      const dated = { status: 'LIVE', published_at: body.skyPublicationAt,
+        source_snapshot: { ...existing.source_snapshot, skyArticlePublication: { ...skyPublicationRecord(existing), schema: 'sky-article-publication/v1', state: 'published',
+          publishAt: body.skyPublicationAt, dateUpdatedAt: now, approvedAt: skyPublicationRecord(existing).approvedAt ?? (isRecord(existing.source_snapshot?.ownerApproval) ? existing.source_snapshot.ownerApproval.approvedAt : null) ?? now } } };
+      assertReaderEligiblePublication({ ...existing, ...dated });
+      return patchGeneratedContentRow(existing.id, dated, body.expectedUpdatedAt);
+    }
+    if (!['sky-article-edition', 'sky-article-edition-revision'].includes(existing.event_type ?? '') || existing.status !== 'DRAFT'
+      || Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'ownerAction', 'skyPublicationAt'].includes(key))) {
+      throw new GeneratedContentRequestError('Set publication timing on a saved private Sky article draft.', 409);
+    }
+    const publication = { schema: 'sky-article-publication/v1', state: 'draft',
+      publishAt: body.ownerAction === 'cancel-sky-article-publication' ? null : body.skyPublicationAt ?? null };
+    return patchGeneratedContentRow(existing.id, { source_snapshot: { ...existing.source_snapshot, skyArticlePublication: publication },
+      updated_at: nextGeneratedContentVersion(existing.updated_at) }, body.expectedUpdatedAt);
   }
   if (body.ownerAction === 'import-csv-draft') {
     const imported = body.csvRecord!;
@@ -2988,6 +3098,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       ...(isRecord(existing.source_snapshot) ? existing.source_snapshot : {}),
       review_status: "needs_review",
       ownerApproval: null,
+      skyArticlePublication: { schema: "sky-article-publication/v1", state: "draft", publishAt: skyPublicationRecord(existing).publishAt ?? null },
       targetRowId,
       targetRowUpdatedAt: existing.event_type === 'sky-article-edition-revision'
         ? existing.source_snapshot?.targetRowUpdatedAt : existing.updated_at,
@@ -3084,15 +3195,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
       summary: revised.tldr,
       body: revised.body,
       sections: { skyArticleEdition: revised, ...(variableDraft ? { skyArticleVariableDraft: variableDraft } : {}) },
-      source_snapshot: approvedSnapshot,
+      source_snapshot: publishedSkySnapshot(approvedSnapshot, existing, now),
       status: "LIVE",
       lane: "serving",
       review_state: null,
       reviewed_at: now,
-      published_at: now,
+      published_at: skyPublicationDate(existing, now),
       updated_at: now
     };
     assertReaderEligiblePublication({ ...target, ...publicationPatch });
+    if (Date.parse(skyPublicationDate(existing, now)) > Date.now()) return scheduleSkyPublication(existing, body, now);
     return publishRevisionAtomically(body, existing, target, publicationPatch);
   }
 
@@ -3176,8 +3288,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.lane = "serving";
     patch.review_state = null;
     patch.reviewed_at = now;
-    patch.published_at = now;
-    patch.source_snapshot = sourceSnapshot;
+    patch.published_at = skyPublicationDate(existing, now);
+    patch.source_snapshot = publishedSkySnapshot(sourceSnapshot, existing, now);
+    assertReaderEligiblePublication({ ...existing, ...patch });
+    if (Date.parse(skyPublicationDate(existing, now)) > Date.now()) return scheduleSkyPublication(existing, body, now);
   }
 
   if (isPackageRow && existing) {
@@ -3347,6 +3461,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.body = separatedArticle.body;
     patch.sections = separatedArticle.sections;
     patch.source_snapshot = separatedArticle.source_snapshot;
+  }
+  if (existing.source_snapshot?.skyArticlePublication && !skyPublicationActions.has(body.ownerAction ?? '')) {
+    patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : {}),
+      skyArticlePublication: { schema: 'sky-article-publication/v1', state: 'draft', publishAt: skyPublicationRecord(existing).publishAt ?? null } };
   }
   const generation = existing.source_snapshot?.horoscopeGeneration;
   if (editsHoroscopeEdition && generation?.candidateHolds) {
@@ -3705,6 +3823,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         }
         if (!atomicPublicationActions.has(action) || !id) throw new GeneratedContentRequestError("Select the saved publication to check.");
         requireCallerVersion(version);
+        const scheduledRow = await fetchExistingRowById(id);
+        const savedSchedule = scheduledRow ? skyPublicationRecord(scheduledRow) : {};
+        if (scheduledRow?.status === 'DRAFT' && savedSchedule.state === 'scheduled'
+          && savedSchedule.action === action && savedSchedule.requestedVersion === version) {
+          sendJson(res, 200, { ok: true, found: true, rows: [scheduledRow],
+            publicationReceipt: { targetId: id, currentStatus: 'DRAFT', currentPublicationState: 'scheduled' } });
+          return;
+        }
         const context: PublicationContext = { actor: (await getContentAdminPrincipal(req))!, dependencies: new Map() };
         identifyPublicationOperation({ id, ownerAction: action as GeneratedContentWriteBody["ownerAction"], expectedUpdatedAt: version,
           horoscopeValidationOverride:requestUrl.searchParams.get('horoscopeValidationOverride')==='true' }, context);

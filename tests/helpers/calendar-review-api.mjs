@@ -102,7 +102,14 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
         return 0;
       });
       const offset = Number(url.searchParams.get('offset') ?? 0);
-      return Response.json(found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length)));
+      const selected = found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length));
+      const fields = url.searchParams.get('select');
+      if (storeOptions.projectSelect && fields && fields !== '*') {
+        const names = fields.split(',');
+        assert(names.every(name => /^[a-z_]+$/.test(name)), 'Projection fixture requires explicit column names');
+        return Response.json(selected.map(row => Object.fromEntries(names.filter(name => Object.hasOwn(row, name)).map(name => [name, row[name]]))));
+      }
+      return Response.json(selected);
     }
     const patch = JSON.parse(String(options.body));
     if (patch.status === 'LIVE') assert.equal(new Headers(options.headers).get('x-content-publication-action'), 'publish', 'Validated Live writes must signal publication to storage');

@@ -180,7 +180,7 @@ assert.match(dashboard, /sourceReadyLunationHoroscopes\}\/12 source-ready/u, "Ad
 assert.match(dashboard, /passage\.availability === "Reader-ready"/u, "Edition compilation must not silently promote transit source candidates.");
 assert.match(dashboard, /Complete horoscope/u, "Admin must label usable house horoscopes in plain editorial language.");
 assert.match(dashboard, /Supporting passage/u, "Admin must label source candidates in plain editorial language.");
-assert.match(dashboard, /Approve &amp; publish complete edition/u, "Compiled editions need a distinct owner approval action.");
+assert.match(dashboard, /Approve (?:&amp;|&) publish complete edition/u, "Compiled editions need a distinct owner approval action.");
 assert.match(dashboard, /Edit the reader experience/u, "Compiled editions must open as one article-first editor.");
 assert.match(dashboard, /<SkyDatedArticleEditor\b/u, "The dashboard must render the extracted dated article editor.");
 const datedEditor = fs.readFileSync(path.join(repoRoot, "apps/admin/src/SkyDatedArticleEditor.tsx"), "utf8");

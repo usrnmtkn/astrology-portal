@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openSkyPlacementChooser, openSkyPlacementReaderSources } from '../helpers/sky-placement-workspace-navigation';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
@@ -41,8 +42,10 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
       await page.route('**/rest/v1/**', async route => route.fulfill({ json: new URL(route.request().url()).pathname.endsWith('/content_publications') ? await call({ method: 'publications' }) : [] }));
       const choosePlacement = async () => {
+        await openSkyPlacementChooser(page);
         await page.getByLabel('Sky placement planet or point').selectOption('saturn');
         await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+        await openSkyPlacementReaderSources(page);
       };
       const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
       await page.goto(`${entry}#sky-writeups`);
@@ -127,7 +130,9 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await editor.screenshot({ path: `test-results/sky-placement-sources-${width}-${theme}.png` });
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await editor.getByRole('button', { name: 'Done', exact: true }).click();
+      await openSkyPlacementChooser(page);
       await page.getByLabel('Sky placement zodiac sign').selectOption('pisces');
+      await openSkyPlacementReaderSources(page);
       await expect(summary.locator('p').filter({ hasText: /^Editing:/ })).toHaveText('Editing: Saturn in Pisces');
       await expect(summary.locator('p').filter({ hasText: /^Readers see:/ })).toContainText('Saturn in Aries');
       await expect(summary.getByRole('button', { name: 'Edit active article', exact: true })).toBeVisible();

@@ -1,3 +1,4 @@
+import { skyPublicationScheduled, skyPublicationIsFuture, type SkyPublicationRow } from './skyArticlePublicationState';
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
 import { templateSavedWordingReferences } from "./templateSavedWordingReferences";
 import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
@@ -272,6 +273,7 @@ const SkyPlacementWritingLinks = lazy(() => import("./SkyPlacementCompanions").t
 const WritingPlanExport = lazy(() => import('./WritingPlanExport'));
 const UnsavedIngressPreview = lazy(() => import('./UnsavedIngressPreview'));
 const SkyPlacementWorkspace = lazy(() => import("./SkyPlacementWorkspace"));
+const SkyArticlePublication = lazy(() => import("./SkyArticlePublication"));
 const SkyPlacementUnwiredNotice = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyPlacementUnwiredNotice })));
 const ArticleBlockStyleFields = lazy(() => import("./ArticleBlockStyleFields").then(module => ({default:module.ArticleBlockStyleFields})));
 const ArticlePublicationField = lazy(() => import("./ArticlePublicationField").then(module => ({ default: module.ArticlePublicationField })));
@@ -5235,6 +5237,12 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  function refreshSkyArticlePublication(result: SkyPublicationRow) {
+    const saved = result as AdminGeneratedContentRow;
+    setRows(rows => [saved, ...rows.filter(row => row.id !== saved.id)]);
+    void openRow(saved);
+  }
+
   async function approveSkyArticleEdition(row: AdminGeneratedContentRow) {
     setEditorSaveError("");
     setIsLoading(true);
@@ -5250,7 +5258,7 @@ export function GeneratedContentAdminDashboard() {
       setEditorSourceRow(saved);
       rememberSavedDraft(draftFromRow(saved));
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
-      setMessage(`${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
+      setMessage(skyPublicationScheduled(saved) ? 'Publication scheduled. This draft remains private until release.' : `${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
     } catch (error) {
       const message = dashboardErrorMessage(error);
       setEditorSaveError(message);
@@ -5273,7 +5281,7 @@ export function GeneratedContentAdminDashboard() {
         throw new AdminRequestError(message, { status: 409, path: "/api/admin/generated-content", method: "PATCH", details: message });
       }
       // The catch below supplies the same recovery message for every uncertain result.
-      if (!result.ok || !result.rows?.[0] || !result.publicationReceipt) throw new Error();
+      if (!result.ok || !result.rows?.[0] || !result.publicationReceipt && !skyPublicationScheduled(result.rows[0])) throw new Error();
       setPendingPublication(null);
       return result;
     } catch (error) {
@@ -5344,8 +5352,8 @@ export function GeneratedContentAdminDashboard() {
       if (!saved) throw new Error("The published article edition was not returned.");
       setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id && row.id !== revisionRow.id)]);
       openRow(saved);
-      announceContentUpdate({ contentKey: saved.content_key, published: true, updatedAt: saved.updated_at ?? new Date().toISOString() });
-      setMessage(await publicationStateMessage(payload));
+      announceContentUpdate({ contentKey: saved.content_key, published: saved.status === 'LIVE', updatedAt: saved.updated_at ?? new Date().toISOString() });
+      setMessage(skyPublicationScheduled(saved) ? 'Publication scheduled. The current live article is unchanged until release.' : await publicationStateMessage(payload));
     } catch (error) {
       const message = dashboardErrorMessage(error);
       setEditorSaveError(message);
@@ -7818,6 +7826,8 @@ export function GeneratedContentAdminDashboard() {
             ) : (
               <>
                 <Suspense fallback={null}><SkyPlacementWritingLinks /></Suspense>
+                <details className="studio-contained-disclosure" open={skyPlacementBody === 'all' || skyPlacementSign === 'all' ? true : undefined}>
+                  <AdminDisclosureSummary>{skyPlacementBody !== 'all' && skyPlacementSign !== 'all' ? `${titleFromKey(skyPlacementBody)} in ${titleFromKey(skyPlacementSign)} · Change placement` : 'Choose a placement'}</AdminDisclosureSummary>
                 <section className="studio-section admin-content-filters admin-sky-filters" aria-label="Sky write-up filters">
                   <div className="admin-review-filter-grid admin-filter-form admin-filter-form--three">
                     <label>
@@ -7913,6 +7923,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 {(skyPlacementBody === "all" || skyPlacementSign === "all") && <p className="admin-natal-placement-prompt">Choose a planet and zodiac sign above to preview and edit its complete write-up.</p>}
                 </section>
+                </details>
                 {skyPlacementBody === "sun" && skyPlacementSign !== "all" && <Suspense fallback={<PageLoading message="Loading season article…" />}>
                   <details className="admin-workspace-details" aria-label="Additional linked season article">
                     <AdminDisclosureSummary>Additional linked season article</AdminDisclosureSummary>
@@ -12015,6 +12026,10 @@ export function GeneratedContentAdminDashboard() {
           {compiledSkyArticleEdition && (
             <section className="studio-surface studio-section admin-sky-edition-builder admin-fallback-diagnostic-panel" aria-label="Compiled Sky article edition">
               <Suspense fallback={<PageLoading message="Loading article details…" />}><SkyArticleSourceDetails edition={compiledSkyArticleEdition} /></Suspense>
+              {selectedRow && skyArticleEditor && <Suspense fallback={<PageLoading message="Loading publication settings…" />}><SkyArticlePublication row={selectedRow}
+                request={(path, options) => adminJsonRequest(path, secret, options)}
+                disabled={isLoading || skyArticleEditor.saveState !== 'saved'} onBusyChange={setIsLoading}
+                onSaved={refreshSkyArticlePublication} /></Suspense>}
               {skyArticleEditor && (
                 <div className="admin-sky-article-editor" aria-label="Edit Sky article">
                   <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
@@ -12784,7 +12799,7 @@ export function GeneratedContentAdminDashboard() {
             disabled={isLoading || skyArticleEditor.saveState !== "saved"}
             onClick={() => void publishSkyArticleChanges()}
             title={skyArticleEditor.saveState !== "saved" ? "Wait for autosave to finish before publishing." : "Publish the complete validated article revision."}
-          >Publish changes</StudioButton> : skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading} onClick={() => {
+          >{skyPublicationIsFuture(selectedRow) ? 'Approve & schedule changes' : 'Publish changes'}</StudioButton> : skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading} onClick={() => {
             setSkyEditorSection("article");
             setSkyArticleEditor(current => current ? { ...current, reviewOpen: true } : current);
             window.requestAnimationFrame(() => {
@@ -12792,7 +12807,7 @@ export function GeneratedContentAdminDashboard() {
               review?.scrollIntoView({ block: "start" });
               review?.focus({ preventScroll: true });
             });
-          }}>Review &amp; publish</StudioButton> : selectedRow && currentDraft.status !== "LIVE" ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => void approveSkyArticleEdition(selectedRow)}>Approve &amp; publish complete edition</StudioButton>
+          }}>Review &amp; publish</StudioButton> : selectedRow && currentDraft.status !== "LIVE" ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => void approveSkyArticleEdition(selectedRow)}>{skyPublicationIsFuture(selectedRow) ? 'Approve & schedule complete edition' : 'Approve & publish complete edition'}</StudioButton>
             : <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)} target="_blank" rel="noreferrer">Read published article</a>}
           <StudioButton type="button" className={sourceIsArchived ? undefined : "admin-danger-button"}
             disabled={isLoading || skyArticleEditor.saveState !== "saved" || skyArticleChanges.length > 0 || Boolean(editorSaveError)}

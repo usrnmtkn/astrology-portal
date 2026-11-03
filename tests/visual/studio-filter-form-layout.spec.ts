@@ -1,4 +1,4 @@
-import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { normalizeTransitNatalPreviewInput, renderTransitNatalDraftStarter, renderTransitNatalPreviewState } from "../../api/admin/transit-natal-preview";
 
@@ -153,6 +153,7 @@ test("placement filters keep the composition, keyword results, advanced filters 
   await expect(list).toContainText("Saturn in Aries");
   await expect(list).not.toContainText("Mars in Taurus");
   await filters.getByLabel("Sky placement zodiac sign").selectOption("aries");
+  await openSkyPlacementChooser(page);
   await filters.getByLabel("Sky write-up motion").selectOption("direct");
   await openSkyPlacementSourceDetails(page);
   await page.getByText("Content library sources", { exact: true }).click();

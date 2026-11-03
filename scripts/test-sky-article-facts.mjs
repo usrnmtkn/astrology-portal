@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { skyArticleEditionFactsFromSnapshot } from "../api/_lib/sky-article-facts.ts";
+import { skyArticleEditionFactsFromSnapshot, skyArticlePeriod } from "../api/_lib/sky-article-facts.ts";
 
 const snapshot = {
   generatedAt: "2026-08-21T12:00:00.000Z",
@@ -58,3 +58,31 @@ assert.throws(
 );
 
 console.log("Sky article edition facts come from the calculated sign-residency window.");
+
+const mercury = { planet: 'Mercury', sign: 'Scorpio', motion: 'retrograde',
+  transitStart: '2026-09-30T12:00:00Z', transitEnd: '2026-12-06T12:00:00Z',
+  retrogradeStart: '2026-10-24T07:12:00Z', retrogradeEnd: '2026-11-13T15:53:00Z', retrogradeWindowSource: 'station' };
+for (const planet of ['Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto', 'Chiron']) {
+  const current = skyArticleEditionFactsFromSnapshot({ ...snapshot, generatedAt: '2026-10-31T12:00:00Z', positions: [{ ...mercury, planet }] }, planet, 'ingress-essay-v3', 'current');
+  assert.equal(current.transitStartInstant, '2026-10-24T07:12:00.000Z');
+  assert.equal(current.transitEndInstant, '2026-11-13T15:53:00.000Z');
+}
+for (const generatedAt of ['2026-10-25T12:00:00Z', '2026-10-31T12:00:00Z', '2026-11-10T12:00:00Z']) {
+  const current = skyArticleEditionFactsFromSnapshot({ ...snapshot, generatedAt, positions: [mercury] }, 'mercury', 'ingress-essay-v3', 'current');
+  assert.equal(current.transitStartInstant, '2026-10-24T07:12:00.000Z');
+  assert.equal(current.transitEndInstant, '2026-11-13T15:53:00.000Z');
+  assert.equal(current.validFrom, '2026-10-24'); assert.equal(current.validTo, '2026-11-13');
+  assert.equal(current.slotValues.articleTitle, 'Mercury Rx in Scorpio 2026');
+  assert.match(current.slotValues.when, /October 24, 2026.*November 13, 2026/);
+}
+const returnVisit = skyArticleEditionFactsFromSnapshot({ ...snapshot, generatedAt: '2026-10-31T12:00:00Z', positions: [{ ...mercury,
+  residencyPasses: [{ entryDate: '2026-10-28T01:00:00Z', exitDate: '2026-11-20T01:00:00Z' }] }] }, 'mercury', 'ingress-essay-v3', 'current');
+assert.equal(returnVisit.transitStartInstant, '2026-10-28T01:00:00.000Z', 'Coverage cannot extend into another sign.');
+assert.throws(() => skyArticleEditionFactsFromSnapshot({ ...snapshot, generatedAt: '2026-10-31T12:00:00Z', positions: [{ ...mercury, retrogradeWindowSource: null }] }, 'mercury', 'ingress-essay-v3', 'current'), /stations are unavailable/);
+const direct = skyArticleEditionFactsFromSnapshot({ ...snapshot, generatedAt: '2026-11-20T12:00:00Z', positions: [{ ...mercury, motion: 'direct',
+  residencyStations: [{ occursAt: '2026-10-24T07:12:00Z', direction: 'retrograde' }, { occursAt: '2026-11-13T15:53:00Z', direction: 'direct' }] }] }, 'mercury', 'ingress-essay-v3', 'current');
+assert.equal(direct.transitStartInstant, mercury.transitStart);
+assert.equal(direct.transitEndInstant, mercury.transitEnd);
+assert.equal(skyArticlePeriod(undefined), 'visit'); assert.equal(skyArticlePeriod('current'), 'current');
+assert.throws(() => skyArticlePeriod('today'), /Choose/);
+console.log('Current-motion article dates cover the calculated period across reference dates, return visits and stations.');

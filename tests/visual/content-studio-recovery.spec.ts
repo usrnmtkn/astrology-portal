@@ -1,4 +1,4 @@
-import { openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { fork } from "node:child_process";
@@ -72,6 +72,7 @@ async function openStudioPage(page: Page, name: string) {
 }
 
 async function selectSaturnPlacement(page: Page) {
+  await openSkyPlacementChooser(page);
   await page.getByLabel("Sky placement planet or point").selectOption("saturn");
   await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
   await openSkyPlacementDefaultReading(page);
@@ -484,11 +485,12 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     // Retry remounts the dashboard and reloads its inventory without clearing authentication.
     await page.evaluate(() => document.documentElement.setAttribute("data-qa-recovered", ""));
     await page.getByRole("button", { name: "Retry page", exact: true }).click();
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
+    await openSkyPlacementChooser(page);
     await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
     expect(await page.evaluate(() => localStorage.getItem("tldrastro:contentAdminSecret"))).toBe("studio-recovery-fixture");
 
     // A repeated crash can be escaped through a separate Studio destination.
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
     await openStudioPage(page, "Review Queue");
     await page.evaluate(() => document.documentElement.removeAttribute("data-qa-recovered"));
     await openStudioPage(page, "Sky Write-ups");
@@ -505,6 +507,8 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
       page.waitForEvent("load"),
       page.getByRole("button", { name: "Reload page", exact: true }).click()
     ]);
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Connected", recoveryReadiness);
+    await openSkyPlacementChooser(page);
     await expect(page.getByLabel("Sky placement planet or point")).toBeVisible();
     await selectSaturnPlacement(page);
     await expect(page.getByRole("alert").filter({ hasText: "This page could not load." })).toHaveCount(0);

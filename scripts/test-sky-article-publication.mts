@@ -1,0 +1,110 @@
+import assert from 'node:assert/strict';
+import { mock } from 'node:test';
+import { Readable } from 'node:stream';
+import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
+import { skyPlacementSourceFixture } from '../tests/helpers/sky-placement-source-fixture.mts';
+import { publishDueSkyArticles } from '../api/admin/generated-content';
+import cron from '../api/cron/publish-sky-articles';
+import { reviseSkyArticleEdition, skyArticleEditableFields } from '../apps/web/src/content/skyArticleTemplateCompiler';
+
+const { active, pending, edition } = await skyPlacementSourceFixture('sun', 'libra');
+(pending.source_snapshot as any).targetContentKey = active.content_key;
+const draft = { ...structuredClone(active), status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required', source_snapshot: {} };
+const store = await createApiStore([draft], { uuidIds: true });
+const patch = async (row: any, ownerAction: string, extra = {}, status = 200) => {
+  const result = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction, ...extra });
+  assert.equal(result.status, status, JSON.stringify(result.payload)); return result.payload.rows?.[0];
+};
+const read = async (key = active.content_key) => (await store.invoke('POST', { keys: [key] }, '/api/content-reader')).payload.rows;
+const now = Date.now(), future = new Date(now + 3600_000).toISOString(), past = '2026-09-20T14:00:00.000Z';
+try {
+  const anonymous = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'set-sky-article-publication-date', skyPublicationAt: future }, undefined, 'wrong');
+  assert.equal(anonymous.status, 401);
+  await patch(draft, 'set-sky-article-publication-date', { skyPublicationAt: 'bad' }, 400);
+  await patch(draft, 'set-sky-article-publication-date', { skyPublicationAt: '2027-02-30T12:00:00Z' }, 400);
+  let row = await patch(draft, 'set-sky-article-publication-date', { skyPublicationAt: future });
+  assert.equal(row.status, 'DRAFT'); assert.equal(row.source_snapshot.skyArticlePublication.state, 'draft');
+  assert.deepEqual(await read(), []);
+  row = await patch(row, 'approve-sky-article-edition');
+  assert.equal(row.status, 'DRAFT'); assert.equal(row.source_snapshot.skyArticlePublication.state, 'scheduled');
+  assert.equal(row.source_snapshot.skyArticlePublication.publishAt, future);
+  assert.deepEqual(await read(), []); assert.deepEqual(await publishDueSkyArticles(), { published: 0, held: 0 });
+  await patch(draft, 'set-sky-article-publication-date', { skyPublicationAt: past }, 409);
+  const cancelled = await patch(row, 'cancel-sky-article-publication');
+  assert.equal(cancelled.source_snapshot.skyArticlePublication.state, 'draft');
+  assert.deepEqual(await publishDueSkyArticles(), { published: 0, held: 0 });
+  row = await patch(cancelled, 'set-sky-article-publication-date', { skyPublicationAt: future });
+  row = await patch(row, 'approve-sky-article-edition');
+  const loaded = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${row.id}&status=all&visibility=all`);
+  assert.equal(loaded.payload.rows[0].source_snapshot.skyArticlePublication.state, 'scheduled');
+  // PostgreSQL jsonb orders object keys; that must not invalidate exact approval.
+  const reorder = (value: any): any => Array.isArray(value) ? value.map(reorder) : value && typeof value === 'object'
+    ? Object.fromEntries(Object.keys(value).reverse().map(key => [key, reorder(value[key])])) : value;
+  store.rows.set(row.id, reorder(store.rows.get(row.id)));
+  mock.timers.enable({ apis: ['Date'], now: now + 3600_001 });
+  assert.deepEqual(await publishDueSkyArticles(), { published: 1, held: 0 });
+  row = store.rows.get(row.id);
+  assert.equal(row.status, 'LIVE'); assert.equal(row.published_at, future);
+  assert(row.source_snapshot.skyArticlePublication.actor);
+  assert(row.source_snapshot.skyArticlePublication.approvedHash);
+  assert.equal(row.source_snapshot.skyArticlePublication.executedAt, new Date().toISOString());
+  assert.equal((await read())[0].body, active.body);
+  assert.deepEqual(await publishDueSkyArticles(), { published: 0, held: 0 });
+  mock.timers.reset();
+  // Backdating changes publication metadata, never calculated coverage or audit time.
+  store.rows.clear(); store.rows.set(draft.id, structuredClone(draft));
+  row = await patch(draft, 'set-sky-article-publication-date', { skyPublicationAt: past });
+  row = await patch(row, 'approve-sky-article-edition');
+  assert.equal(row.published_at, past);
+  assert(Date.parse(row.source_snapshot.ownerApproval.approvedAt) >= now);
+  assert.deepEqual(row.sections.skyArticleEdition, edition);
+  assert.equal((await read())[0].body, active.body);
+  const liveApproval = structuredClone(row.source_snapshot.ownerApproval);
+  const corrected = await patch(row, 'set-sky-article-publication-date', { skyPublicationAt: '2026-09-19T10:00:00.000Z' });
+  assert.equal(corrected.published_at, '2026-09-19T10:00:00.000Z');
+  assert.deepEqual(corrected.source_snapshot.ownerApproval, liveApproval);
+  assert.equal(corrected.source_snapshot.skyArticlePublication.executedAt, row.source_snapshot.skyArticlePublication.executedAt);
+  assert(corrected.source_snapshot.skyArticlePublication.dateUpdatedAt);
+  assert.equal((await read())[0].body, active.body);
+  await patch(corrected, 'set-sky-article-publication-date', { skyPublicationAt: future }, 409);
+  // A future revision leaves the complete current public article untouched.
+  store.rows.clear(); store.rows.set(active.id, structuredClone(active)); store.rows.set(pending.id, structuredClone(pending));
+  row = await patch(pending, 'set-sky-article-publication-date', { skyPublicationAt: future });
+  row = await patch(row, 'publish-sky-article-edition-revision');
+  assert.equal(row.status, 'DRAFT'); assert.equal((await read())[0].body, active.body);
+  mock.timers.enable({ apis: ['Date'], now: now + 3600_001 });
+  assert.deepEqual(await publishDueSkyArticles(), { published: 1, held: 0 });
+  assert.equal(store.rows.get(active.id).body, pending.body);
+  assert.equal((await read())[0].body, pending.body);
+  assert.equal(store.rows.get(pending.id).status, 'ARCHIVED');
+  mock.timers.reset();
+  // Editing after approval cancels the schedule; no changed copy can auto-publish.
+  store.rows.clear(); store.rows.set(draft.id, structuredClone(draft));
+  row = await patch(draft, 'set-sky-article-publication-date', { skyPublicationAt: future });
+  row = await patch(row, 'approve-sky-article-edition');
+  const revised = await reviseSkyArticleEdition(edition, { ...skyArticleEditableFields(edition), body: 'Synthetic changed opening. Synthetic changed final sentence.' });
+  row = await patch(row, 'save-sky-article-edition-revision', { sections: { skyArticleEdition: revised } });
+  assert.equal(row.source_snapshot.skyArticlePublication.state, 'draft');
+  mock.timers.enable({ apis: ['Date'], now: now + 3600_001 });
+  assert.deepEqual(await publishDueSkyArticles(), { published: 0, held: 0 });
+  assert.deepEqual(await read(), []);
+  mock.timers.reset();
+  // An outside edit to the live target holds the scheduled replacement.
+  store.rows.clear(); store.rows.set(active.id, structuredClone(active)); store.rows.set(pending.id, structuredClone(pending));
+  row = await patch(pending, 'set-sky-article-publication-date', { skyPublicationAt: future });
+  row = await patch(row, 'publish-sky-article-edition-revision');
+  store.rows.get(active.id).updated_at = new Date(now).toISOString();
+  mock.timers.enable({ apis: ['Date'], now: now + 3600_001 });
+  assert.deepEqual(await publishDueSkyArticles(), { published: 0, held: 1 });
+  assert.equal(store.rows.get(row.id).source_snapshot.skyArticlePublication.state, 'needs_attention');
+  assert.equal(store.rows.get(active.id).body, active.body);
+  mock.timers.reset();
+  process.env.CRON_SECRET = 'synthetic-sky-cron';
+  const req: any = Readable.from([]); req.method = 'GET'; req.headers = { authorization: 'Bearer wrong' };
+  const res: any = { statusCode: 0, setHeader() {}, end() {} };
+  await cron(req, res); assert.equal(res.statusCode, 401);
+  req.headers.authorization = 'Bearer synthetic-sky-cron';
+  await cron(req, res); assert.equal(res.statusCode, 200);
+  assert(JSON.parse((await import('node:fs')).readFileSync('vercel.json', 'utf8')).crons.some((job: any) => job.path === '/api/cron/publish-sky-articles' && job.schedule === '* * * * *'));
+  console.log('PASS: saved publication dates, future private drafts, cancellation, reload, real cron publication, exact public copy, backdating, live revision preservation, edit invalidation and stale target refusal.');
+} finally { mock.timers.reset(); await store.close(); }
