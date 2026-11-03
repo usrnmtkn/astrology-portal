@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { openSkyPlacementReaderSources } from '../helpers/sky-placement-workspace-navigation';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { workspaceVisitFacts } from '../helpers/sky-placement-workspace-fixtures';
@@ -59,6 +60,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.goto('/admin/content#sky-writeups?planet=moon&sign=gemini');
       const workspace = page.getByRole('region', { name: 'Moon in Gemini workspace', exact: true });
       await expect(workspace.getByRole('combobox', { name: 'Moon article coverage' })).toHaveCount(0);
+      await openSkyPlacementReaderSources(page);
+      await workspace.getByRole('button', { name: 'New article', exact: true }).click();
       await workspace.getByLabel('Visit reference date').fill('2026-10-28');
       await expect(page.getByLabel('Sky reader date', { exact: true })).toHaveValue('2026-10-28');
       await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
@@ -85,12 +88,17 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(visit.sections.skyArticleEdition.slotValues.articleBody).toBe('Synthetic complete visit opening.\n\nSynthetic complete visit ending.');
       expect(saved.find((row: any) => row.id === storedDay.id)).toEqual(storedDay);
       await page.reload();
-      const fullCard = workspace.locator('article.admin-hook-detail-section').filter({ hasText: 'Full visit' });
+      const fullCard = workspace.getByRole('table', { name: 'Saved articles' }).getByRole('row')
+        .filter({ hasNotText: 'Saved day article' }).filter({ has: page.getByRole('button', { name: 'Open saved draft', exact: true }) });
       await fullCard.getByRole('button', { name: 'Open saved draft', exact: true }).click();
       await expect(article).toHaveValue(visit.body);
+      await workspace.getByRole('button', { name: 'Back to articles', exact: true }).click();
+      await workspace.getByRole('button', { name: 'New article', exact: true }).click();
+      await workspace.getByLabel('Visit reference date').fill('2026-10-28');
       await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
       await expect(article).toHaveValue(visit.body); expect(requests).toHaveLength(2);
-      await workspace.locator('article.admin-hook-detail-section').filter({ hasText: 'Saved day article' }).getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await workspace.getByRole('button', { name: 'Back to articles', exact: true }).click();
+      await workspace.getByRole('row').filter({ hasText: 'Saved day article' }).getByRole('button', { name: 'Open saved draft', exact: true }).click();
       await expect(article).toHaveValue(storedDay.body);
       await article.fill(storedDay.body + '\n\nSynthetic preserved day edit.');
       await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();

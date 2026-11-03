@@ -6,6 +6,7 @@ import { moonRoutingRows } from '../helpers/moon-routing-fixtures';
 import { studioApiStore } from "../helpers/studio-api-store";
 import { workspaceFixtureRows, workspaceVisitFacts } from "../helpers/sky-placement-workspace-fixtures";
 import { holdSkySourcesUntilTemplatePointer } from '../helpers/sky-source-pointer-race';
+import { openSkyPlacementChooser, openSkyPlacementReaderSources } from '../helpers/sky-placement-workspace-navigation';
 import { readerResponse } from '../helpers/reader-response';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { emptyHousePreviewApi } from "../helpers/empty-house-preview-api";
@@ -6822,6 +6823,7 @@ test("Sky placement filters select exact planet sign and motion independently of
   await expectAdminRouteLoads(page,"/admin/content#sky-writeups");
   await page.getByLabel("Sky placement planet or point").selectOption("sun");
   await page.getByLabel("Sky placement zodiac sign").selectOption("virgo");
+  await openSkyPlacementChooser(page);
   await page.getByLabel("Sky write-up motion").selectOption("direct");
   await expect(page.locator(".admin-content-row")).toHaveCount(1);
   await expect(page.locator(".admin-content-row .admin-content-row-title")).toHaveText("Sun in Virgo · Direct");
@@ -9744,7 +9746,7 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   } }));
   await page.clock.setFixedTime(new Date('2026-10-30T12:00:00Z'));
   await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
-  const current = page.getByRole('region', { name: 'Sky placement reader sources', exact: true });
+  const current = await openSkyPlacementReaderSources(page);
   await expect(current.getByLabel('Sky reader date')).toHaveValue('2026-10-30');
   await expect(current.getByLabel('Active dated article')).toContainText('Synthetic Scorpio 2026 draft');
   await current.getByRole('button', { name: 'Preview reader', exact: true }).click();
@@ -9755,6 +9757,7 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   const editor = page.getByRole('dialog');
   await expect(editor.getByRole('textbox', { name: 'Sky article general copy', exact: true })).toHaveValue(live.body!);
   await editor.getByRole('button', { name: 'Done', exact: true }).click();
+  await openSkyPlacementChooser(page);
   const planets = page.getByRole('combobox', { name: 'Sky placement planet or point', exact: true });
   const signs = page.getByRole('combobox', { name: 'Sky placement zodiac sign', exact: true });
   const bodies = await planets.locator('option').evaluateAll(nodes => nodes.map(node => (node as HTMLOptionElement).value).filter(value => value !== 'all'));
@@ -9763,14 +9766,18 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   for (const body of bodies) {
     await planets.selectOption(body);
     await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'New article', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Write article', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Generate draft', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Back to articles', exact: true }).click();
   }
   for (const sign of zodiac) {
     await signs.selectOption(sign);
     await expect(page.getByRole('tablist', { name: 'Planet and sign writing', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'New article', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Write article', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Generate draft', exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Back to articles', exact: true }).click();
   }
   expect(writes).toHaveLength(0);
 });

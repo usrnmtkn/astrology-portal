@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { openSkyPlacementChooser, openSkyPlacementReaderSources } from '../helpers/sky-placement-workspace-navigation';
 import { readerCsvCells } from '../helpers/reader-csv';
 import { test, expect } from '@playwright/test';
 import { expectStudioPanel, expectStudioReadingType } from '../helpers/studio-readability';
@@ -55,9 +56,10 @@ async function prepare(page: any, theme = 'light', saved: boolean | 'active' = t
     })) });
   });
   await page.goto('/admin/content#sky-writeups');
+  await openSkyPlacementChooser(page);
   await page.getByLabel('Sky placement planet or point').selectOption(planet);
   await page.getByLabel('Sky placement zodiac sign').selectOption(sign);
-  const sources = page.getByRole('region', { name: 'Sky placement reader sources', exact: true });
+  const sources = await openSkyPlacementReaderSources(page);
   await expect(sources.getByRole('button', { name: 'Preview reader', exact: true })).toBeEnabled();
   return {
     fixture, store, writes, sources,
@@ -131,8 +133,10 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       await preview.getByRole('button', { name: 'Close preview', exact: true }).click();
       await page.reload();
+      await openSkyPlacementChooser(page);
       await page.getByLabel('Sky placement planet or point').selectOption('saturn');
       await page.getByLabel('Sky placement zodiac sign').selectOption('aries');
+      await openSkyPlacementReaderSources(page);
       await expect(state.sources.getByRole('button', { name: 'Open pending revision' })).toBeVisible();
     } finally { await state.close(); }
   });
@@ -419,8 +423,10 @@ test('Sky reader preview also renders Sun and Moon placement articles', async ({
   const state = await prepare(page, 'dark', false);
   try {
     for (const [planet, sign] of [['sun', 'libra'], ['moon', 'aries']]) {
+      await openSkyPlacementChooser(page);
       await page.getByLabel('Sky placement planet or point').selectOption(planet);
       await page.getByLabel('Sky placement zodiac sign').selectOption(sign);
+      await openSkyPlacementReaderSources(page);
       await expect(state.sources.getByRole('button', { name: 'Preview reader', exact: true })).toBeEnabled();
       await state.sources.getByRole('button', { name: 'Preview reader', exact: true }).click();
       const preview = page.getByRole('region', { name: 'Sky reader preview', exact: true });
@@ -506,8 +512,10 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await editor.getByRole('button', { name: 'Done', exact: true }).click();
       await page.reload();
+      await openSkyPlacementChooser(page);
       await page.getByLabel('Sky placement planet or point').selectOption('sun');
       await page.getByLabel('Sky placement zodiac sign').selectOption('libra');
+      await openSkyPlacementReaderSources(page);
       const savedVisit = page.getByRole('region', { name: 'Saved visits', exact: true });
       await savedVisit.getByRole('button', { name: 'Open saved draft', exact: true }).click();
       await expect(copy).toHaveValue(template);

@@ -1,5 +1,19 @@
 import { expect, type Page } from '@playwright/test';
 
+export async function openSkyPlacementChooser(page: Page) {
+  const disclosure = page.locator('section[aria-label="Sky write-up filters"]').locator('xpath=ancestor::details[1]');
+  if (!await disclosure.evaluate(element => element.hasAttribute('open'))) await disclosure.locator(':scope > summary').press('Enter');
+  await expect(disclosure).toHaveAttribute('open', '');
+}
+
+export async function openSkyPlacementReaderSources(page: Page) {
+  const summary = page.getByText('Reader preview & source details', { exact: true });
+  const disclosure = summary.locator('xpath=ancestor::details[1]');
+  if (!await disclosure.evaluate(element => element.hasAttribute('open'))) await summary.press('Enter');
+  await expect(disclosure).toHaveAttribute('open', '');
+  return page.getByRole('region', { name: 'Sky placement reader sources', exact: true });
+}
+
 // Source-editing regressions follow the same disclosure path as the owner.
 // The default visit tab deliberately does not expose reusable composition tools.
 export async function openSkyPlacementSourceDetails(page: Page) {
