@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { studioApiStore } from "../helpers/studio-api-store";
 
 const workspacePath = "/admin/content#fallback-hooks?section=friends&audience=friends&workspace=between-you-two";
 
@@ -147,6 +148,8 @@ test("Between you two composition follows its own dropdowns", async ({ page }) =
   // The section cards below are how an editor opens the row, so they must name the
   // pairing the map is showing rather than the one it started on.
   const sections = page.getByRole("region", { name: "Friends Transits sections" });
+  await page.getByText("Section and source details", { exact: true }).click();
+  await sections.getByText("About these sections", { exact: true }).click();
   await expect(sections.getByText("fallback-hook/bond-effect-trine/mars", { exact: true })).toBeVisible();
   await expect(sections.getByText("fallback-hook/bond-effect-sextile/chiron", { exact: true })).toHaveCount(0);
 
@@ -194,6 +197,7 @@ test("Saved relationship copy uses the selected name in both preview audiences a
     if (afterReload) await page.reload();
     await expect(map.getByRole("heading", { level: 3, name: "Jupiter opposite Name's Sun" })).toBeVisible();
     await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(`${opening.replaceAll("{{holder1}}", "Name")} Friend view.`);
+    await map.getByText("Preview details", { exact: true }).click();
     await map.getByLabel("Preview friend name").fill("Example Friend");
     await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toContainText("Example Friend wants the bigger version");
     await expect(map).toContainText("Jupiter in Libra in Example Friend's 5th house is opposite their natal Sun in Gemini.");
@@ -202,4 +206,157 @@ test("Saved relationship copy uses the selected name in both preview audiences a
     await expect(map.getByRole("heading", { level: 3, name: "Jupiter opposite your Sun" })).toBeVisible();
     await map.getByLabel("Opening audience").selectOption("they");
   }
+});
+
+test("Friends section navigation opens one workspace at a time", async ({ page }) => {
+  await isolate(page);
+  await page.goto("/admin/content#sky-writeups?view=transits-to-natal&audience=friends&transit=chiron&aspect=sextile&natal=sun");
+  const sections = page.getByRole("navigation", { name: "Friends Transits sections" });
+  await expect(sections.getByRole("button", { name: "Active for {{Name}}", exact: true })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByLabel("Transiting planet", { exact: true })).toHaveValue("chiron");
+  await expect(page.getByRole("region", { name: "Between you two compiled write-up" })).toHaveCount(0);
+  await page.getByLabel("Transiting planet", { exact: true }).selectOption("mars");
+  await page.getByLabel("Transit to natal aspect", { exact: true }).selectOption("trine");
+  await sections.getByRole("button", { name: "Between you two", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Between you two composition map" })).toContainText("Mars trine fixture opening.");
+  await expect(sections.getByRole("button", { name: "Between you two", exact: true })).toHaveAttribute("aria-current", "page");
+  await sections.getByRole("button", { name: "Where it lands", exact: true }).click();
+  await expect(page).toHaveURL(/view=house-transits/u);
+  await expect(page.getByRole("region", { name: "Between you two compiled write-up" })).toHaveCount(0);
+  await expect(sections.getByRole("button", { name: "Where it lands", exact: true })).toHaveAttribute("aria-current", "page");
+  await sections.getByRole("button", { name: "Active for {{Name}}", exact: true }).click();
+  await expect(page).toHaveURL(/view=transits-to-natal/u);
+});
+
+test("A missing opening offers its editor without showing another saved version", async ({ page }) => {
+  await isolate(page, {});
+  await page.goto(`${workspacePath}&q=Chiron+sextile+your+Sun`);
+  const workspace = page.getByRole("region", { name: "Between you two compiled write-up" });
+  await expect(workspace.getByRole("alert")).toContainText("The opening row is not saved yet.");
+  await expect(workspace.getByRole("button", { name: "Open the opening", exact: true })).toBeEnabled();
+  await expect(workspace.getByText(/Opening version history/u)).toHaveCount(0);
+  await expect(workspace.getByRole("button", { name: "Edit Friend opening", exact: true })).toContainText("No Friend opening saved.");
+});
+
+test("Loading and failed source reads do not expose an editable historical opening", async ({ page }) => {
+  await isolate(page);
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  await page.route("**/api/**", async route => {
+    const url = new URL(route.request().url());
+    if (url.searchParams.get("contentKey") !== "fallback-hook/bond-effect-sextile/chiron") return route.fallback();
+    await gate;
+    return route.fulfill({ status: 503, json: { ok: false, error: "Synthetic opening source unavailable." } });
+  });
+  await page.goto(`${workspacePath}&q=Chiron+sextile+your+Sun`);
+  const workspace = page.getByRole("region", { name: "Between you two compiled write-up" });
+  await expect(workspace.getByRole("button", { name: "Open opening editor", exact: true })).toBeDisabled();
+  release();
+  await expect(workspace.getByRole("alert")).toContainText("Synthetic opening source unavailable.");
+  await expect(workspace.getByText(/Opening version history/u)).toHaveCount(0);
+});
+
+for (const width of [1440, 390]) for (const theme of ["light", "dark"]) {
+  test(`History previews keep revisions separate at ${width}px in ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await isolate(page);
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const row = savedRows(savedCopy)[0];
+    const draft = { ...row.sections.packageRecord, body_you: "Current You opening, complete to the end.", body_they: "Current Friend opening, complete to the end." };
+    const older = { ...draft, body_you: "Earlier You opening, complete to the end.", body_they: "Earlier Friend opening, complete to the end." };
+    const sections = { ...row.sections, packageDraft: draft, dashboardEditHistory: [
+      { versionId: "revision-1", editedAt: "2026-10-15T04:27:12.045Z", packageDraft: older },
+      { versionId: "revision-2", editedAt: "2026-10-15T04:27:15.568Z", packageDraft: { ...older, body_they: "Another Friend revision, complete to the end." } }
+    ] };
+    await page.route("**/api/**", route => {
+      const url = new URL(route.request().url());
+      if (url.searchParams.get("contentKey") === row.content_key && !url.pathname.endsWith("/package-source")) {
+        return route.fulfill({ json: { ok: true, rows: [{ ...row, sections }], nextCursor: null } });
+      }
+      return route.fallback();
+    });
+    await page.goto(`${workspacePath}&q=Chiron+sextile+your+Sun`);
+    const workspace = page.getByRole("region", { name: "Between you two compiled write-up" });
+    const map = workspace.getByRole("region", { name: "Between you two composition map" });
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(draft.body_they);
+    await expect(workspace.getByRole("combobox", { name: "Opening version", exact: true })).toHaveCount(0);
+    await expect(map.getByLabel("Preview friend name")).toBeHidden();
+    await expect(map.getByRole("button", { name: "Open opening editor", exact: true })).toBeEnabled();
+    const history = map.getByRole("button", { name: "History", exact: true });
+    await expect(history).toHaveAttribute("aria-expanded", "false");
+    await expect(workspace.getByRole("region", { name: "Opening version history", exact: true })).toHaveCount(0);
+    await expect(map.getByRole("group", { name: "Open Between you two opening", exact: true }).getByRole("button")).toHaveText(["Open opening editor", "History"]);
+    await history.click();
+    await expect(history).toHaveAttribute("aria-expanded", "true");
+    const versions = workspace.getByRole("group", { name: "Opening versions" });
+    await expect(versions).not.toContainText("T04:");
+    await expect(versions.getByRole("button", { name: /Version 1/u })).toContainText("2026");
+    await versions.getByRole("button", { name: /Version 1/u }).click();
+    await expect(workspace.getByRole("status")).toContainText("Previewing an earlier version");
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(older.body_they);
+    await expect(map.getByRole("button", { name: "Edit You opening", exact: true })).toHaveText(older.body_you);
+    await expect(map.getByRole("button", { name: "Open opening editor", exact: true })).toBeDisabled();
+    await workspace.getByRole("button", { name: "Return to current version", exact: true }).click();
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(draft.body_they);
+    await expect(map.getByRole("button", { name: "Open opening editor", exact: true })).toBeEnabled();
+    await versions.getByRole("button", { name: /Version 1/u }).click();
+    await expect(map.getByRole("button", { name: "Open opening editor", exact: true })).toBeDisabled();
+    await history.click();
+    await expect(history).toHaveAttribute("aria-expanded", "false");
+    await expect(workspace.getByRole("region", { name: "Opening version history", exact: true })).toHaveCount(0);
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(draft.body_they);
+    await expect(map.getByRole("button", { name: "Open opening editor", exact: true })).toBeEnabled();
+
+    const metrics = await map.evaluate(el => {
+      const primary = el.querySelector('fieldset label span')!;
+      const reference = el.querySelectorAll('fieldset')[1].querySelector('label span')!;
+      const type = (node: Element) => { const s = getComputedStyle(node); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing, s.textTransform, s.textAlign]; };
+      return { primary: type(primary), reference: type(reference), overflow: document.documentElement.scrollWidth - innerWidth,
+        labels: Array.from(el.querySelectorAll('fieldset:first-of-type > label > span:first-child')).map(label => label.textContent),
+        headingOrder: Array.from(document.querySelectorAll('.admin-main h1,.admin-main h2,.admin-main h3')).slice(0, 3).map(node => node.tagName) };
+    });
+    expect(metrics.primary).toEqual(metrics.reference);
+    expect(metrics.labels).toEqual(["Transiting planet", "Aspect", "Your natal point"]);
+    expect(metrics.headingOrder).toEqual(["H1", "H2", "H3"]);
+    expect(metrics.overflow).toBeLessThanOrEqual(1);
+    await map.screenshot({ path: `test-results/friends-transit-${width}-${theme}.png` });
+    await page.reload();
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(draft.body_they);
+    await expect(history).toHaveAttribute("aria-expanded", "false");
+  });
+}
+
+test("The opening editor saves through the real handler and reloads the complete current pair", async ({ page }) => {
+  const initialRows = savedRows(savedCopy);
+  const store = await studioApiStore(initialRows);
+  const writes: number[] = [];
+  try {
+    await isolate(page);
+    await page.route("**/api/**", async route => {
+      const request = route.request(), url = new URL(request.url());
+      if (!["/api/admin/generated-content", "/api/admin/generated-content-inventory"].includes(url.pathname)) return route.fallback();
+      const result = await store.call({ method: request.method(), url: url.pathname + url.search,
+        ...(request.method() !== "GET" ? { body: request.postDataJSON() } : {}) });
+      if (request.method() !== "GET") writes.push(result.status);
+      return route.fulfill({ status: result.status, json: result.payload });
+    });
+    await page.goto(`${workspacePath}&q=Chiron+sextile+your+Sun`);
+    const map = page.getByRole("region", { name: "Between you two composition map" });
+    await map.getByRole("button", { name: "Open opening editor", exact: true }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor", exact: true });
+    const friend = editor.locator('textarea[data-sky-field="body_they"]');
+    await expect(friend).toHaveValue("Chiron sextile fixture opening. Friend view.");
+    const updated = "Complete synthetic Friend opening after the edit.\n\nThe final sentence remains saved.";
+    await friend.fill(updated);
+    await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+    await expect.poll(() => writes).toEqual([200]);
+    const stored = (await store.call({ method: "rows" })).find((row: any) => row.content_key === initialRows[0].content_key);
+    expect(stored.sections.packageDraft.body_they).toBe(updated);
+    expect(stored.sections.packageDraft.body_you).toBe("Chiron sextile fixture opening.");
+    expect(stored.sections.packageRecord.body_you).toBe(initialRows[0].sections.packageRecord.body_you);
+    expect(stored.sections.packageRecord.body_they).toBe(initialRows[0].sections.packageRecord.body_they);
+    await page.reload();
+    await expect(map.getByRole("button", { name: "Edit Friend opening", exact: true })).toHaveText(updated);
+    await expect(map.getByRole("button", { name: "Edit You opening", exact: true })).toHaveText("Chiron sextile fixture opening.");
+  } finally { store.close(); }
 });

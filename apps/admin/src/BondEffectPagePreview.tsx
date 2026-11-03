@@ -1,12 +1,11 @@
 import { interpolateRelationshipTemplate } from "../../web/src/content/fallbackArchitectureV3/resolver/relationshipTemplate.mjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentUpdates } from "../../web/src/services/contentUpdateSignal";
 import { StudioButton, StudioInput, StudioTabs } from "./StudioControls";
-import { MetricCard } from "./studio-ds/patterns";
-import { Grid, Stack, Text } from "./studio-ds/primitives";
-import { containedDisclosure, metricGrid } from "./studio-ds/recipes";
+import { Stack, Text } from "./studio-ds/primitives";
+import { containedDisclosure } from "./studio-ds/recipes";
 import {
   aspectTechnicalVerb,
   bondActivationHeadline,
@@ -58,11 +57,13 @@ function Fact({ children, title }: { children: string; title: string }) {
 function Passage({
   ariaLabel,
   children,
+  disabled = false,
   kind,
   onClick
 }: {
   ariaLabel: string;
   children: string;
+  disabled?: boolean;
   kind: "hook" | "copy";
   onClick: () => void;
 }) {
@@ -73,6 +74,7 @@ function Passage({
       className={`admin-composition-variable variable-${kind}`}
       data-variable-color={color}
       aria-label={ariaLabel}
+      disabled={disabled}
       onClick={onClick}
     >
       {children}
@@ -115,7 +117,10 @@ export default function BondEffectPagePreview({
   onActivationChange,
   previewNatalPoint,
   previewFriendPoint,
-  previewActivationAspect
+  previewActivationAspect,
+  openingReadOnly = false,
+  openingActions,
+  openingDetails
 }: {
   contentKey: string;
   youText: string;
@@ -127,6 +132,9 @@ export default function BondEffectPagePreview({
   previewNatalPoint?: TransitNatalPoint;
   previewFriendPoint?: string;
   previewActivationAspect?: string;
+  openingReadOnly?: boolean;
+  openingActions?: ReactNode;
+  openingDetails?: ReactNode;
 }) {
   const contact = parseBondEffectContentKey(contentKey);
   const [view, setView] = useState<(typeof views)[number]["id"]>("preview");
@@ -276,28 +284,10 @@ export default function BondEffectPagePreview({
     <section className="admin-composition-surface-actions admin-sky-placement-composition" aria-label="Between you two composition map" data-bond-page-preview="true">
       <Stack gap="sm">
         <Text size="meta" tone="secondary">Between you two</Text>
-        <Text size="body">This page has two compiled maps. Between you two is the transiting contact. What this activates is a separate synastry pair from the friend chart. Change either set of dropdowns to reload that map.</Text>
+        <Text size="body">Choose the transit, then open its opening editor. What this activates uses a separate synastry pair.</Text>
       </Stack>
-      <Grid className={metricGrid} aria-label="Selected Between you two contact">
-        <MetricCard label="Transiting planet" value={titleFromKey(transitingPlanet)} />
-        <MetricCard label="Aspect" value={transitAspect === "soft" || transitAspect === "hard" ? transitAspect : aspectTechnicalVerb(transitAspect)} />
-        <MetricCard label="Natal point" value={titleFromKey(natalPoint)} />
-        <MetricCard label="Their planet or point" value={titleFromKey(friendPoint)} />
-      </Grid>
-      <fieldset className="admin-metadata-fields" aria-label="Between you two transit">
+      <fieldset className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" aria-label="Between you two transit">
         <legend>Between you two</legend>
-        <p className="admin-field-hint">Address the reader as you and use the friend's name for the other person. Natural pronouns may follow when clear. Use the two of you for the pair.</p>
-        <label>
-          <span>Opening</span>
-          <AdminSelect aria-label="Opening audience" value={audience} onChange={(event) => setAudience(event.target.value as "you" | "they")}>
-            <option value="you">You, when the transit hits your chart</option>
-            <option value="they">They, when the transit hits their chart</option>
-          </AdminSelect>
-        </label>
-        <label>
-          <span>Friend name</span>
-          <StudioInput aria-label="Preview friend name" value={friendName} onChange={(event) => setFriendName(event.target.value)} />
-        </label>
         <label>
           <span>Transiting planet</span>
           <AdminSelect
@@ -306,7 +296,7 @@ export default function BondEffectPagePreview({
             onChange={(event) => commitContact({ planet: event.target.value as TransitNatalPlanet })}
           >
             {transitNatalPlanets.map((planet) => (
-              <option key={planet} value={planet}>{planet.replace(/-/gu, " ")}</option>
+              <option key={planet} value={planet}>{titleFromKey(planet)}</option>
             ))}
           </AdminSelect>
         </label>
@@ -331,15 +321,36 @@ export default function BondEffectPagePreview({
           >
             {transitNatalPointGroups.map((group) => (
               <optgroup key={group.label} label={group.label}>
-                {group.values.map((point) => <option key={point} value={point}>{point.replace(/-/gu, " ")}</option>)}
+                {group.values.map((point) => <option key={point} value={point}>{titleFromKey(point)}</option>)}
               </optgroup>
             ))}
           </AdminSelect>
         </label>
+      </fieldset>
+      <div className="admin-sky-writing-source-actions" role="group" aria-label="Open Between you two opening">
+        <StudioButton type="button" disabled={openingReadOnly} onClick={() => openOpening()}>Open opening editor</StudioButton>
+        {openingActions}
+      </div>
+      {openingDetails}
+      <details className={`${containedDisclosure} admin-workspace-details`}>
+        <AdminDisclosureSummary>Preview details</AdminDisclosureSummary>
+        <p className="admin-field-hint">These settings change the example shown below.</p>
+        <div className="admin-metadata-fields">
+        <label>
+          <span>Transit affects</span>
+          <AdminSelect aria-label="Opening audience" value={audience} onChange={(event) => setAudience(event.target.value as "you" | "they")}>
+            <option value="you">Your chart</option>
+            <option value="they">Friend's chart</option>
+          </AdminSelect>
+        </label>
+        <label>
+          <span>Friend name</span>
+          <StudioInput aria-label="Preview friend name" value={friendName} onChange={(event) => setFriendName(event.target.value)} />
+        </label>
         <label>
           <span>Transit sign</span>
           <AdminSelect aria-label="Preview transit sign" value={transitSign} onChange={(event) => setTransitSign(event.target.value as TransitNatalSign)}>
-            {transitNatalSigns.map((sign) => <option key={sign} value={sign}>{sign}</option>)}
+            {transitNatalSigns.map((sign) => <option key={sign} value={sign}>{titleFromKey(sign)}</option>)}
           </AdminSelect>
         </label>
         <label>
@@ -351,19 +362,18 @@ export default function BondEffectPagePreview({
         <label>
           <span>Natal sign</span>
           <AdminSelect aria-label="Preview natal sign" value={natalSign} onChange={(event) => setNatalSign(event.target.value as TransitNatalSign)}>
-            {transitNatalSigns.map((sign) => <option key={sign} value={sign}>{sign}</option>)}
+            {transitNatalSigns.map((sign) => <option key={sign} value={sign}>{titleFromKey(sign)}</option>)}
           </AdminSelect>
         </label>
-      </fieldset>
-      <div className="admin-sky-writing-source-actions" role="group" aria-label="Open Between you two opening">
-        <StudioButton type="button" onClick={() => openOpening()}>Open opening editor</StudioButton>
-      </div>
+        </div>
+        <p className="admin-field-hint">Address the reader as you and use the friend's name for the other person. Natural pronouns may follow when clear. Use the two of you for the pair.</p>
+      </details>
       <fieldset className="admin-metadata-fields" aria-label="What this activates synastry">
         <legend>What this activates</legend>
         <label>
           <span>Their planet or point</span>
           <AdminSelect aria-label="Preview friend point" value={friendPoint} onChange={(event) => commitActivation({ friendPoint: event.target.value as TransitNatalPoint })}>
-            {transitNatalPoints.map((point) => <option key={point} value={point}>{point.replace(/-/gu, " ")}</option>)}
+            {transitNatalPoints.map((point) => <option key={point} value={point}>{titleFromKey(point)}</option>)}
           </AdminSelect>
         </label>
         <label>
@@ -416,7 +426,7 @@ export default function BondEffectPagePreview({
                 <div className="admin-composition-preview-field field-body">
                   <Text size="meta" tone="secondary">Transit hits their chart</Text>
                   <p>
-                    <Passage ariaLabel="Edit Friend opening" kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_they")}>
+                    <Passage ariaLabel="Edit Friend opening" disabled={openingReadOnly} kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_they")}>
                       {openingThey || "No Friend opening saved. Select to write this section."}
                     </Passage>
                   </p>
@@ -424,7 +434,7 @@ export default function BondEffectPagePreview({
                 <div className="admin-composition-preview-field field-body">
                   <Text size="meta" tone="secondary">Transit hits your chart</Text>
                   <p>
-                    <Passage ariaLabel="Edit You opening" kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_you")}>
+                    <Passage ariaLabel="Edit You opening" disabled={openingReadOnly} kind="copy" onClick={() => onOpenSource(openingKey, "Between you two opening", "body_you")}>
                       {openingYou || "No You opening saved. Select to write this section."}
                     </Passage>
                   </p>
@@ -489,7 +499,7 @@ export default function BondEffectPagePreview({
                 <p className="admin-composition-source-copy">{headline}</p>
               </li>
               <li>
-                <StudioButton type="button" className="admin-composition-variable variable-copy" data-variable-color="3" onClick={() => openOpening()} aria-label="Edit opening">
+                <StudioButton type="button" disabled={openingReadOnly} className="admin-composition-variable variable-copy" data-variable-color="3" onClick={() => openOpening()} aria-label="Edit opening">
                   Opening
                 </StudioButton>
                 <Text size="meta" tone="secondary">Transit hits your chart</Text>
@@ -530,7 +540,7 @@ export default function BondEffectPagePreview({
               <p className="admin-composition-source-copy">{openingYou || "Missing you perspective."}</p>
               <Text size="meta" tone="secondary">Transit hits their chart</Text>
               <p className="admin-composition-source-copy">{openingThey || "Missing friend perspective."}</p>
-              <StudioButton type="button" onClick={() => openOpening()}>Edit opening</StudioButton>
+              <StudioButton type="button" disabled={openingReadOnly} onClick={() => openOpening()}>Edit opening</StudioButton>
               <details className={`${containedDisclosure} admin-workspace-details`}>
                 <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
                 <code>{openingKey}</code>

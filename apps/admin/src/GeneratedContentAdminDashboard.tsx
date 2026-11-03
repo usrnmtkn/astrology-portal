@@ -31,7 +31,7 @@ import { LoadingIndicator } from "../../../src/shared/components/LoadingIndicato
 import { readStudioInventoryPasses, studioInventoryPageSize } from "./studioInventoryPagination";
 import { reviewWorkBucket, skyWritingIssues } from "../../web/src/content/contentReviewReadiness";
 import { transitNatalContactFromFields, transitNatalContactReady, transitNatalContactContentKey, transitNatalExactContentKey, transitNatalSharedFallbackKey } from "./transitNatalSources";
-import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
+import { aspectTechnicalVerb, friendsTransitCardDestinations, friendsTransitCompositionQuery, friendsTransitReaderTitle, matchesBondEffectContactSearch, transitNatalSearchSelection, matchesTransitNatalContactSearch } from "./bondEffectPageAssembly";
 import { isDynamicTransitNatalExactKey } from "../../web/src/content/transitNatalIdentity";
 import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpenMode, transitNatalLiveServingSource } from "./transitNatalEditorScope";
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
@@ -4648,14 +4648,26 @@ export function GeneratedContentAdminDashboard() {
     onSearch: (value: string) => void,
     parts: "all" | "search" | "destinations" = "all"
   ) {
+    const activeContact = currentSection === "active-for-name"
+      ? transitNatalContactFromFields(transitNatalPlanet, transitNatalAspect, transitNatalPoint) : null;
+    const sectionQuery = activeContact
+      ? friendsTransitReaderTitle(activeContact.planet, activeContact.aspect, activeContact.natalPoint) : search;
     return (
       <Suspense fallback={<PageLoading compact message="Loading transit sources…" />}>
       <FriendsTransitSectionFinder
         currentSection={currentSection}
         onOpenActiveForName={() => {
           const destinations = friendsTransitCardDestinations(search);
-          if (!destinations.contact) return;
+          if (!destinations.contact) {
+            navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal", audience: "friends" }));
+            return;
+          }
           openTransitNatalContactFromSearch(destinations.contact, true);
+        }}
+        onOpenBetweenYouTwo={() => {
+          const params = new URLSearchParams({ section: "friends", audience: "friends", workspace: "between-you-two" });
+          if (sectionQuery.trim()) params.set("q", sectionQuery.trim());
+          navigateAdminPage("knowledge", params);
         }}
         onOpenBetweenYouTwoOpening={() => {
           const destinations = friendsTransitCardDestinations(search);
@@ -8152,7 +8164,8 @@ export function GeneratedContentAdminDashboard() {
                       onOpenSource={(sourceKey, label, field) => void openFromEditor(sourceKey, () => openContentKeyRow(sourceKey, label, false, field))}
                     />
                   </Suspense>
-                  <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Open another Friends Transits editor">
+                  <details className="admin-workspace-details" aria-label="Open another Friends Transits editor">
+                    <AdminDisclosureSummary>Section and source details</AdminDisclosureSummary>
                     <header className="studio-section-header">
                       <div>
                         <p className="admin-eyebrow">Friends Transits</p>
@@ -8164,7 +8177,7 @@ export function GeneratedContentAdminDashboard() {
                       </StudioButton>
                     </header>
                     {renderFriendsTransitSectionFinder("between-you-two", "page", friendsTransitCompositionQuery(query), (value) => persistBetweenYouTwoRoute(value), "destinations")}
-                  </section>
+                  </details>
                   <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
                     <p className="admin-eyebrow">Friends Transits · Between you two</p>
                     <strong>These passages feed the live “Between you two” transit cards.</strong>
@@ -9065,36 +9078,6 @@ export function GeneratedContentAdminDashboard() {
             natalHouse: ""
           });
         })}
-        {friendsTransitAudience && (
-          <Suspense fallback={<PageLoading compact message="Opening the Between you two composition…" />}>
-            <FriendsBetweenYouTwoComposition
-              query={transitNatalQuery}
-              activationQuery={friendsActivationQuery}
-              secret={secret}
-              onQueryChange={(value) => {
-                setTransitNatalQuery(value);
-                const hit = transitNatalSearchSelection(value);
-                if (!hit) return;
-                updateTransitNatalSelection({
-                  planet: hit.planet,
-                  aspect: hit.aspect,
-                  natalPoint: hit.natalPoint,
-                  sign: "",
-                  transitHouse: "",
-                  natalHouse: ""
-                });
-              }}
-              onActivationChange={setFriendsActivationQuery}
-              onOpenOpening={(contentKey) => {
-                const params = new URLSearchParams({ section: "friends", audience: "friends", workspace: "between-you-two" });
-                if (transitNatalQuery.trim()) params.set("q", transitNatalQuery.trim());
-                navigateAdminPage("knowledge", params, { keepEditorOpen: true });
-                void openContentKeyRow(contentKey, "Between you two opening", false, "body_they");
-              }}
-              onOpenSource={(sourceKey, label, field) => void openFromEditor(sourceKey, () => openContentKeyRow(sourceKey, label, false, field))}
-            />
-          </Suspense>
-        )}
 
         {!friendsTransitAudience && (
         <label className="admin-title-field">
