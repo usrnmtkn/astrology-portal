@@ -71,6 +71,11 @@ exercise navigation, delayed or malformed receipts, save/reload and complete
 reader copy. Synthetic checks do not establish native production acceptance or
 editorial approval.
 
+The Admin build coalesces small shared leaves at 8 KB while explicitly retaining
+the independent lunar, season, planetary Calendar, natal comparison, revision and
+library navigation entry points. Existing startup, lazy-boundary and bundle
+limits remain unchanged. Save-receipt validation retains every field check.
+
 The broader native audit remains tracked by the canonical owner-publishing
 matrix. Reports, paid generation, new personal profiles and private readings are
 outside these fixtures. Release evidence must record exact-head type, build,

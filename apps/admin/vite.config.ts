@@ -167,7 +167,7 @@ export default defineConfig(({ command, mode }) => {
       rollupOptions: {
         output: {
           onlyExplicitManualChunks: true,
-          experimentalMinChunkSize: 2048,
+          experimentalMinChunkSize: 8192,
           manualChunks(id, { getModuleInfo }) {
             // Keep source-only helpers deferred even when their unused exports are imported statically.
             if (!startupModules) {
@@ -180,6 +180,10 @@ export default defineConfig(({ command, mode }) => {
               visit(resolve(repoRoot, 'apps/admin/index.html'));
             }
             if (startupModules.has(id)) return "index";
+            // Preserve independently opened panels while coalescing small shared leaves.
+            if (/apps\/admin\/src\/(?:NatalSectPlacementComparison|LunationWritingStudio|ReusableLunationWritingStudio|DatedLunationWritingStudio|SeasonArticleWorkspace|CalendarPlanetaryWorkspace|studioRevisionPublication|contentLibraryNavigation)\.(?:tsx|ts)$/u.test(id)) {
+              return id.slice(id.lastIndexOf('/') + 1).replace(/\.(?:tsx|ts)$/u, '');
+            }
             // Coalesce small shared chunks without pulling deferred source models into startup.
             if (deferredSource(id)) {
               if (/\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)) return "admin-source-drafts";
