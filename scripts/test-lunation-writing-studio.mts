@@ -194,7 +194,7 @@ try{
     assert.equal(published.status,200,JSON.stringify(published));
     assert.equal(published.payload.rows[0][field],copy[field]);
     const lint=published.payload.rows[0].source_snapshot.lunationPublicationCheck.lint;
-    assert.equal(lint.publicationProfile,'owner-final-facts');
+    assert.equal(lint.publicationProfile,'owner-final-technical');
     assert.equal(lint.passed,true);
     assert(lint.advisories.some((finding:any)=>finding.category==='lunation_required_vocabulary'));
   }

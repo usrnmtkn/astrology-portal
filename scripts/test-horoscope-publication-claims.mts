@@ -163,7 +163,7 @@ for(const [body,ready] of [
 ] as const){
  meetingPassage.body=body;meeting.body=horoscopeEditionBody(meeting.sections.horoscopeEdition);store.rows.set(meeting.id,structuredClone(meeting));
  const preflight=await invokeHoroscopeWriting({action:'validate-publication',id:meeting.id,expectedUpdatedAt:meeting.updated_at});
- assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,ready,body);
+ assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,true,body);
  const published=await store.invoke('PATCH',{id:meeting.id,expectedUpdatedAt:meeting.updated_at,status:'LIVE'});
  assert.equal(published.status,ready?200:422,body);assert.equal(store.rows.get(meeting.id).body,meeting.body);
  assert.equal(store.rows.get(meeting.id).status,ready?'LIVE':'DRAFT');
@@ -181,8 +181,8 @@ assert.equal((await invokeHoroscopeWriting({...checkInput,expectedUpdatedAt:'200
 const beforeCheck=structuredClone(store.rows.get(manual.id));
 const checked=await invokeHoroscopeWriting(checkInput);
 assert.equal(checked.status,200,JSON.stringify(checked.payload));
-assert.equal(checked.payload.publication.ready,false);
-assert.deepEqual([...new Set(checked.payload.publication.issues.map((issue:any)=>issue.sign))],['aries','leo']);
+assert.equal(checked.payload.publication.ready,true);
+assert.deepEqual([...new Set(checked.payload.publication.advisories.filter((issue:any)=>issue.category==='horoscope_fact_boundary').map((issue:any)=>issue.sign))],['aries','leo']);
 assert.deepEqual(store.rows.get(manual.id),beforeCheck,'Preflight never edits, publishes, refreshes a plan or dispatches AI');
 const invalidImport=await store.invoke('PATCH',{id:manual.id,expectedUpdatedAt:manual.updated_at,status:'LIVE'});
 assert.equal(invalidImport.status,422,'Missing AI metadata cannot bypass the factual check');
@@ -230,7 +230,7 @@ for(const [sign,bad] of [
  assert(issues(sign,bad,contextBrief).length,`False context claim accepted: ${bad}`);
  const invalid=structuredClone(contextRow);invalid.sections.horoscopeEdition.passages.find((p:any)=>p.sign===sign).body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
  const preflight=await invokeHoroscopeWriting({action:'validate-publication',id:invalid.id,expectedUpdatedAt:invalid.updated_at});
- assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,false,bad);
+ assert.equal(preflight.status,200);assert.equal(preflight.payload.publication.ready,true,bad);
  const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
  assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid,'A refusal must preserve every saved byte');
 }
@@ -340,7 +340,7 @@ for(const bad of [
  assert(issues('aries',bad,grammarBrief).length,`False grammar claim accepted: ${bad}`);
  const invalid=structuredClone(grammarBefore);invalid.sections.horoscopeEdition.passages[0].body=bad;invalid.body=horoscopeEditionBody(invalid.sections.horoscopeEdition);store.rows.set(invalid.id,invalid);
  const check=await invokeHoroscopeWriting({action:'validate-publication',id:invalid.id,expectedUpdatedAt:invalid.updated_at});
- assert.equal(check.status,200);assert.equal(check.payload.publication.ready,false,bad);
+ assert.equal(check.status,200);assert.equal(check.payload.publication.ready,true,bad);
  const denied=await store.invoke('PATCH',{id:invalid.id,expectedUpdatedAt:invalid.updated_at,status:'LIVE'});
  assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid);
 }

@@ -90,7 +90,6 @@ export function skyDebilityTemplateErrors(key: string, body: string, headline?: 
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
-  if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   if (body.includes("{{") || body.includes("}}")) errors.push("Use single-brace slots, for example {count}.");
   if (slots.some(slot => !allowedSlots.includes(slot))) errors.push("This field contains an unsupported slot.");
   for (const slot of allowedSlots) {
@@ -99,17 +98,26 @@ export function skyDebilityTemplateErrors(key: string, body: string, headline?: 
   if (!body.trim()) errors.push("Keep wording in this field.");
   if (/\/(dignityExplanation(One|Many)|dignityDefinition)$/u.test(key) && /[<>]/u.test(body)) errors.push("Use plain wording, not markup.");
   if (key.includes("/placement/") || /\/signCondition(One|Many)$/u.test(key)) {
-    if (/[.!?;:,]$/u.test(body.trim())) errors.push("Leave final punctuation to the paragraph template.");
-    if (/[\r\n]/u.test(body)) errors.push("Keep this phrase on one line.");
-    if (/^(you may|it may help to|how we|and\b|or\b)/iu.test(body.trim())) errors.push("Do not repeat the sentence introduction or start with a conjunction.");
     if (/[<>]/u.test(body) || (key.includes("/placement/") && /[{}]/u.test(body)))
       errors.push("Use plain wording, not nested variables or markup.");
   }
-  if (key.endsWith("/situationPhrase") && !/^(a|an|the)\s/iu.test(body.trim())) errors.push("Include the situation's article: a, an, or the.");
   if (key.endsWith("/exampleOrder")) {
     const order = skyDebilityExampleOrder(body);
     if (order.length !== 7 || new Set(order).size !== 7 || order.some(name => !(TRADITIONAL_DIGNITY_PLANETS as readonly string[]).includes(name)))
       errors.push("List Sun, Moon, Mercury, Venus, Mars, Jupiter, and Saturn exactly once, separated by commas.");
   }
+  return errors;
+}
+
+export function skyDebilityWordingAdvisories(key: string, body: string): string[] {
+  if (!isSkyDebilityKey(key)) return [];
+  const errors: string[] = [];
+  if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
+  if (key.includes("/placement/") || /\/signCondition(One|Many)$/u.test(key)) {
+    if (/[.!?;:,]$/u.test(body.trim())) errors.push("Leave final punctuation to the paragraph template.");
+    if (/[\r\n]/u.test(body)) errors.push("Keep this phrase on one line.");
+    if (/^(you may|it may help to|how we|and\b|or\b)/iu.test(body.trim())) errors.push("Do not repeat the sentence introduction or start with a conjunction.");
+  }
+  if (key.endsWith("/situationPhrase") && !/^(a|an|the)\s/iu.test(body.trim())) errors.push("Include the situation's article: a, an, or the.");
   return errors;
 }

@@ -25,8 +25,8 @@ assert(isPersonalTransitSource(key));
 assert(!isSkyPlacementFallbackPartitionKey(key), 'Independent personal source hydration must not drop the bridge as a Sky-only row.');
 assert(skyPlacementAspectBridgeErrors(key, '').length);
 assert(skyPlacementAspectBridgeErrors(key, '{{untilDate}}').length);
-assert(skyPlacementAspectBridgeErrors(key, 'Through November 15, 2026.').length);
-assert(skyPlacementAspectBridgeErrors(key, 'Through Nov. 15, 2026.').length);
+assert.deepEqual(skyPlacementAspectBridgeErrors(key, 'Through November 15, 2026.'), []);
+assert.deepEqual(skyPlacementAspectBridgeErrors(key, 'Through Nov. 15, 2026.'), []);
 
 const bridge = 'Synthetic bridge opening. Synthetic bridge final sentence.';
 const passage = 'Synthetic source opening.\n\nSynthetic source final sentence.';

@@ -134,9 +134,13 @@ assert.equal(reordered.countLabel, "4 of 7");
 assert.match(reordered.paragraphs[1], /^Four of the seven/u);
 assert.ok(reordered.slots.planetFunctionList.includes("make ourselves understood"));
 const venusKey = skyDebilityPhraseKey("Venus", "Scorpio", "livedExperienceClause");
-for (const bad of ["", "You may need support", "need support.", "and need support", "need {anotherField}"]) {
+for (const bad of ["", "need {anotherField}"]) {
   assert.ok(skyDebilityTemplateErrors(venusKey, bad).length);
   assert.equal(assembleSkyDebilityCopy(original, withEdits({ [venusKey]: bad })).visible, false);
+}
+for (const ownerWording of ['You may need support', 'need support.', 'and need support', 'need support — if you choose']) {
+  assert.deepEqual(skyDebilityTemplateErrors(venusKey, ownerWording), []);
+  assert.equal(assembleSkyDebilityCopy(original, withEdits({[venusKey]:ownerWording})).visible,true);
 }
 assert.equal(assembleSkyDebilityCopy(original, withEdits({ [venusKey]: null })).visible, false);
 assert.ok(skyDebilityTemplateErrors("cms/sky-debility/experienceTemplate", "You may {wrong}.").length);

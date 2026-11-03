@@ -1,14 +1,6 @@
-// Owner ruling, 2026-09-06: astrology reader copy must not use tarot as an
-// interpretive framework. Tarot may exist in an explicitly designated Tarot
-// surface later; mixed astrology/tarot copy fails closed unless separately
-// owner-approved.
-//
-// Migration note: the legacy lunation library predates this boundary and
-// contains historical tarot/astrology blends. Do not blank that entire reader
-// surface in one release. New or explicitly typed content is gated now; legacy
-// cells remain available until an approved astrology-only replacement is
-// layered above them.
-
+import {hasStudioOwnerWording} from "../../studioOwnerWording.mjs";
+// Topic checks cannot veto an explicit, versioned Studio owner publication.
+// Unpublished package sources retain their existing review and topic diagnostics.
 export const READER_CONTENT_TYPES = Object.freeze({
   ASTROLOGY: "astrology",
   TAROT: "tarot",
@@ -39,7 +31,8 @@ export type ReaderContentBoundaryRow = {
   closing_charge?: string | null;
   article_sections?: { heading?: string | null; body?: string | null }[] | null;
   rising_horoscopes?: { body?: string | null }[] | null;
-  content_boundary?: { mixedOwnerApproved?: boolean | null } | null;
+  content_boundary?: { mixedOwnerApproved?: boolean | null; ownerPublishedWording?: boolean;
+    ownerPublication?: { action?: string; approvedAt?: string; recordPath?: string; payloadSha256?: string } } | null;
   approval?: {
     approvalLevel?: string | null;
     recordPath?: string | null;
@@ -131,6 +124,7 @@ export function readerContentBoundaryReason(row: ReaderContentBoundaryRow): stri
   // Owner direction, 2026-11-03: fallback horoscope topics are the author's
   // choice. Publication and review gates still decide whether a passage serves.
   if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row.contentKey ?? ""))) return null;
+  if (hasStudioOwnerWording(row)) return null;
   const contentType = readerContentType(row);
 
   // Untyped rows are legacy content. Preserve them during migration rather than

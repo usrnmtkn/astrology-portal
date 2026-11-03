@@ -14,13 +14,16 @@ const reader = await import(pathToFileURL(bundle).href);
 try {
   const original = calendarRxFixture();
   for (const changes of [ { RetrogradeBodyA: 'Invalid Moon variant.' }, { RetrogradeBodyB: 4 },
-    { RetrogradeBodyB: 'Editor notes: do not publish this.' }, { RetrogradeBodyB: '{{unresolved}}' } ]) {
+    { RetrogradeBodyB: '{{unresolved}}' } ]) {
     const invalid = await store.invoke('PATCH', { id: original.id, expectedUpdatedAt: original.updated_at,
       sections: { ...original.sections, packageDraft: { ...original.sections.packageRecord, ...changes } }, reviewStatus: 'needs_review' });
     assert.equal(invalid.status, 400, JSON.stringify(invalid.payload));
     assert.deepEqual(store.rows.get(original.id), original);
   }
-  const saved = await store.invoke('PATCH', { id: original.id, expectedUpdatedAt: original.updated_at,
+  const noteDraft=await store.invoke('PATCH',{id:original.id,expectedUpdatedAt:original.updated_at,sections:{...original.sections,packageDraft:{...original.sections.packageRecord,RetrogradeBodyB:'Editor notes: deliberate Tarot prose — heaven.'}},reviewStatus:'needs_review',ownerAuthoredWording:true});
+  assert.equal(noteDraft.status,200,JSON.stringify(noteDraft.payload));
+  const noteVersion=noteDraft.payload.rows[0];
+  const saved = await store.invoke('PATCH', { id: noteVersion.id, expectedUpdatedAt: noteVersion.updated_at,
     sections: { ...original.sections, packageDraft: { ...original.sections.packageRecord, RetrogradeBodyB: calendarRxBody } }, reviewStatus: 'needs_review' });
   assert.equal(saved.status, 200, JSON.stringify(saved.payload));
   const draft = saved.payload.rows[0];

@@ -1,4 +1,5 @@
 import { skyPublicationScheduled, skyPublicationIsFuture, type SkyPublicationRow } from './skyArticlePublicationState';
+import StudioWritingAdvice from "./StudioWritingAdvice";
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
 import { templateSavedWordingReferences } from "./templateSavedWordingReferences";
 import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
@@ -12816,6 +12817,7 @@ export function GeneratedContentAdminDashboard() {
           <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
         </div>}
         {renderNotification()}
+        <StudioWritingAdvice value={currentDraft} />
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>

@@ -27,3 +27,11 @@ export function stampDailyOwnerApproval(row: Record<string, any>, ownerPublicati
   row.source_snapshot = { ...row.source_snapshot, studioOwnerApproval: studioOwnerApproval(row, approvedAt) };
   return true;
 }
+
+/** Exact publication proof for every Studio-authored package revision. */
+export function stampStudioPackageOwnerApproval(row: Record<string, any>, ownerPublication: boolean, approvedAt: string) {
+  if (!ownerPublication || row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state
+    || row.sections?.packageRecord?.review_status !== 'approved') return false;
+  row.source_snapshot = { ...row.source_snapshot, studioOwnerApproval: studioOwnerApproval(row, approvedAt) };
+  return true;
+}

@@ -218,13 +218,14 @@ assert.deepEqual(skyDailySummaryParts({ ...facts, moonIsVoid: false, retrogradeP
 assert.ok(skyDailySummaryParts(facts).filter(part => part.emphasis).every(part => part.action));
 
 // Studio templates preserve required calculated slots and reader link segmentation.
-const { skyDailySummaryFields, skySummaryTemplateErrors } = await import("../apps/web/src/content/skyDailySummaryCatalog.ts");
+const { skyDailySummaryFields, skySummaryTemplateErrors, skySummaryWordingAdvisories } = await import("../apps/web/src/content/skyDailySummaryCatalog.ts");
 assert.equal(skyDailySummaryFields.filter(field => field.group !== "Assembly templates").length, 90);
 for (const field of skyDailySummaryFields) assert.deepEqual(skySummaryTemplateErrors(field.key, field.body), []);
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/lunation", "The next {name} arrives.").length);
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/lunation", "{name} {name} {sign} {countdown}").length);
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/sun/virgo", "{sign}").length);
-assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/sun/virgo", "one—two").length);
+assert.deepEqual(skySummaryTemplateErrors("cms/sky-daily-summary/sun/virgo", "one—two"), []);
+assert(skySummaryWordingAdvisories("cms/sky-daily-summary/sun/virgo", "one—two").length);
 const studioFacts = { sun: { sign: "Virgo", degree: 15 }, moonIsVoid: false, event: { name: "New Moon", sign: "Virgo", countdown: "in 3 days" } };
 const studioRow = (key: string, body: string, status?: string) => ({ contentKey: key, body, status } as any);
 const studioKey = "cms/sky-daily-summary/lunation";

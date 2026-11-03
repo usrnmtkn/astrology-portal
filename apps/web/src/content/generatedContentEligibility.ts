@@ -1,3 +1,4 @@
+import {hasStudioOwnerWording} from "./studioOwnerWording.mjs";
 import { isReaderFacingCopy } from "./readerSafety.js";
 import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
@@ -171,7 +172,7 @@ export function isReaderServableGeneratedContentRow(
   if (blockedPackageRoles.has(packageRole)) return false;
   if (packageReviewStatus && !approvedPackageReviews.has(packageReviewStatus)) return false;
   if (unsafeMetadataMarkers.some((marker) => metadataText.includes(marker))) return false;
-  if (copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
+  if (!hasStudioOwnerWording(row) && copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
 
   if (!store) {
     return true;

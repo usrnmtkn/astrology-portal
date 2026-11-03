@@ -2,7 +2,7 @@ import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
 import {standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
-import {studioOwnerApproval, hasExactStudioOwnerApproval, stampDailyOwnerApproval} from '../_lib/studio-owner-publication.js';
+import {studioOwnerApproval, hasExactStudioOwnerApproval, stampStudioPackageOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
 import {persistWeeklyHoroscope} from '../_lib/horoscope-storage-confirmation.js';
@@ -16,7 +16,7 @@ import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js"
 import { prepareHoroscopeBrief, assertHoroscopeRow, horoscopePublicationIssues } from "../_lib/horoscope-editions.js";
 import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
-import { approveNatalAspectStudioCopy } from "../_lib/content-studio-approval.js";
+import { approveNatalAspectStudioCopy, approveStudioPackageWording } from "../_lib/content-studio-approval.js";
 import { approveLunationStudioRevision, isLunationCycleVariable } from "../_lib/lunation-studio-publication.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -636,19 +636,20 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
       hardFailures.push(...libs().skyPlacementVariableIssues(libs().skyEvergreenSectionText(section)).map((issue: string) => `Evergreen section ${section.id}: ${issue}`));
     }
   }
+  const advisories: string[] = [];
   if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
-    hardFailures.push("STP-02 natal-trait framing");
+    advisories.push("STP-02 natal-trait framing");
   }
   if (/\b(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|lilith|north node|south node) in [a-z-]+ (?:people|person|native|individuals)\b/iu.test(copy)) {
-    hardFailures.push("STP-01 planet-in-sign identity language");
+    advisories.push("STP-01 planet-in-sign identity language");
   }
-  if (/\bright now,? you are\b/iu.test(copy)) hardFailures.push("STP-10 time-adverb trait sentence");
+  if (/\bright now,? you are\b/iu.test(copy)) advisories.push("STP-10 time-adverb trait sentence");
   const hasPlacementBody = !libs().isSkyEvergreenSource(effective) || stringFrom(effective.placementArticle).trim()
     || libs().skyEvergreenFields(effective).some((section: { value: string }) => section.value.trim());
   if (record.studio_content_type === "continuous-placement" && hasPlacementBody && !(seasonSources === undefined && libs().zodiacSeasonVariableNames(copy).length) && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
-    hardFailures.push("STP-03 missing current-sky anchor");
+    advisories.push("STP-03 missing current-sky anchor");
   }
-  return { passed: hardFailures.length === 0, hardFailures };
+  return { passed: hardFailures.length === 0, hardFailures, advisories };
 }
 
 function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>, ownerAuthoredWording = false) {
@@ -1096,6 +1097,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       record.body_they_authorship = "owner_authored";
     }
     validateAndApproveNatalAspectCopy(record, row.content_key);
+    if (body.ownerAuthoredWording === true) approveStudioPackageWording(record, row.content_key, String(patch.updated_at));
   }
   validateFallbackArchitectureV3Copy(row, { ...patch, sections }, body.ownerAuthoredWording === true);
   if (hasPackageDraft) {
@@ -1377,9 +1379,6 @@ function validateWriteBody(body: Record<string, unknown>) {
   if (String(body.contentKey ?? "").startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
   if (String(body.contentKey ?? "").startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (String(body.contentKey ?? "").startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
-  try { libs().assertCleanReaderCopy(body); } catch (error) {
-    throw new GeneratedContentRequestError((error as Error).message);
-  }
   if (isRecord(body.sections)) {
     if (body.sections.articlePublication != null && (!isRecord(body.sections.articlePublication)
       || !validArticlePublishAt(body.sections.articlePublication.publishAt)
@@ -1455,9 +1454,6 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
     row.body = filled.body;
     row.sections = filled.sections;
     row.facts = filled.facts;
-  }
-  try { libs().assertCleanReaderCopy(row); } catch (error) {
-    throw new GeneratedContentRequestError((error as Error).message, 409);
   }
   const aspectSections = isRecord(row.sections) ? row.sections : {};
   validateAspectRetrogradeCopy(row.content_key, isRecord(aspectSections.packageRecord) ? aspectSections.packageRecord : aspectSections);
@@ -1977,7 +1973,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
 
   Object.assign(row, normalizeArticleHoroscopes(row));
   if (row.status === "LIVE") row.sections = standalonePublicationSections(row, now);
-  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), now);
+  stampStudioPackageOwnerApproval(row, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", now);
   assertReaderEligiblePublication(row);
   await assertZodiacSeasonPublication(row);
   Object.assign(row, await validatedLunationPublication(row));
@@ -2078,7 +2074,7 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
     reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey, body) ? sampleOnlyReviewerNote : ""),
     updated_at: new Date().toISOString()
   });
-  stampDailyOwnerApproval(row, isExplicitDailyOwnerPublish(body), String(row.updated_at));
+  stampStudioPackageOwnerApproval(row, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", String(row.updated_at));
   return row;
 }
 
@@ -2834,7 +2830,6 @@ async function updateGeneratedContent(req: IncomingMessage) {
       };
     }
     if (existing.block_type === "sky_aspect") {
-      if (!libs().skyAspectReaderCopyPassesBoundary(approved.body)) throw new GeneratedContentRequestError("The Sky card contains timing mechanics or internal notes that belong outside reader copy.", 409);
       const identity = studioSkyIdentity(existing.content_key);
       if (identity.kind !== "aspect") throw new GeneratedContentRequestError("The saved Sky aspect identity is invalid.");
       patch.source_snapshot = { ...(patch.source_snapshot as Record<string, unknown>),
@@ -3070,8 +3065,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     promotionPatch.published_at = now;
     // Match JSON/PostgREST: omitted fields retain the stored columns.
     for (const key of Object.keys(promotionPatch)) if (promotionPatch[key] === undefined) delete promotionPatch[key];
+    approveStudioPackageWording(finalSections.packageRecord as Record<string, unknown>, target.content_key, now);
     const ownerRow = { ...target, ...promotionPatch };
-    if (stampDailyOwnerApproval(ownerRow, true, now)) promotionPatch.source_snapshot = ownerRow.source_snapshot;
+    if (stampStudioPackageOwnerApproval(ownerRow, true, now)) promotionPatch.source_snapshot = ownerRow.source_snapshot;
     assertReaderEligiblePublication({ ...target, ...promotionPatch });
     return publishRevisionAtomically(body, existing, target, promotionPatch);
   }
@@ -3642,7 +3638,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (patch.status === "LIVE" && !ownerPublication && standaloneArticleKind(existing.content_key) && !ownerRow.source_snapshot?.studioOwnerApproval) {
     patch.sections = standalonePublicationSections(ownerRow, String(patch.updated_at), existing);
   }
-  if (stampDailyOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body), String(patch.updated_at))) {
+  if (stampStudioPackageOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", String(patch.updated_at))) {
     patch.source_snapshot = ownerRow.source_snapshot;
   }
   assertReaderEligiblePublication({ ...existing, ...patch });

@@ -1,3 +1,4 @@
+import {hasStudioOwnerWording} from "../content/studioOwnerWording.mjs";
 import type { FallbackArchitectureV3MirrorMetadata } from "./fallbackArchitectureV3MirrorValidation";
 import { isSkyArticleDashboardRow, isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
 import { loadReaderRows, ReaderAdmissionError } from "./readerContentClient";
@@ -514,7 +515,7 @@ function servedFieldSections(content: LiveGeneratedContent): GeneratedContentSec
 
     const body = servedFieldValue(record, field);
 
-    if (!body || !isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body)) {
+    if (!body || !hasStudioOwnerWording(content) && (!isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body))) {
       return [];
     }
 
@@ -559,7 +560,7 @@ function isReaderServableGeneratedContent(content: LiveGeneratedContent) {
     ...arraySectionBodies
   ].filter(Boolean).join("\n");
 
-  if (containsInstructionMarker(visibleText)) {
+  if (!hasStudioOwnerWording(content) && containsInstructionMarker(visibleText)) {
     return false;
   }
 
@@ -718,7 +719,7 @@ export function generatedContentParagraphs(content?: LiveGeneratedContent | null
   const servedSections = content ? servedFieldSections(content) : [];
 
   if (servedSections.length > 0) {
-    return readerUniqueParagraphs(servedSections.map((section) => section.body));
+    return readerUniqueParagraphs(servedSections.map((section) => section.body), hasStudioOwnerWording(content));
   }
 
   if (!content?.body) {
@@ -727,7 +728,7 @@ export function generatedContentParagraphs(content?: LiveGeneratedContent | null
 
   return readerUniqueParagraphs(content.body
     .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim()));
+    .map((paragraph) => paragraph.trim()), hasStudioOwnerWording(content));
 }
 
 const blockedScaffoldCopyPatterns = [
@@ -747,7 +748,7 @@ function containsBlockedScaffoldCopy(text: string) {
   return blockedScaffoldCopyPatterns.some((pattern) => pattern.test(text));
 }
 
-function readerUniqueParagraphs(values: string[]) {
+function readerUniqueParagraphs(values: string[], ownerWording = false) {
   const seen = new Set<string>();
 
   return values.filter((value) => {
@@ -757,9 +758,9 @@ function readerUniqueParagraphs(values: string[]) {
     if (
       !paragraph
       || seen.has(normalized)
-      || !isReaderFacingCopy(paragraph)
+      || !ownerWording && (!isReaderFacingCopy(paragraph)
       || containsBlockedScaffoldCopy(paragraph)
-      || containsInstructionMarker(paragraph)
+      || containsInstructionMarker(paragraph))
     ) {
       return false;
     }
@@ -769,7 +770,7 @@ function readerUniqueParagraphs(values: string[]) {
   });
 }
 
-function normalizeSection(value: unknown): GeneratedContentSection | null {
+function normalizeSection(value: unknown, ownerWording = false): GeneratedContentSection | null {
   if (!value || typeof value !== "object") {
     return null;
   }
@@ -790,7 +791,7 @@ function normalizeSection(value: unknown): GeneratedContentSection | null {
     return null;
   }
 
-  if (!isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body)) {
+  if (!ownerWording && (!isReaderFacingCopy(body) || containsBlockedScaffoldCopy(body))) {
     return null;
   }
 
@@ -811,7 +812,7 @@ export function generatedContentSections(content?: LiveGeneratedContent | null):
   const sections = content?.sections;
 
   if (Array.isArray(sections)) {
-    return sections.map(normalizeSection).filter((section): section is GeneratedContentSection => Boolean(section));
+    return sections.map(value => normalizeSection(value, hasStudioOwnerWording(content))).filter((section): section is GeneratedContentSection => Boolean(section));
   }
 
   if (sections && typeof sections === "object") {
@@ -819,7 +820,7 @@ export function generatedContentSections(content?: LiveGeneratedContent | null):
     const nestedSections = record.sections;
 
     if (Array.isArray(nestedSections)) {
-      return nestedSections.map(normalizeSection).filter((section): section is GeneratedContentSection => Boolean(section));
+      return nestedSections.map(value => normalizeSection(value, hasStudioOwnerWording(content))).filter((section): section is GeneratedContentSection => Boolean(section));
     }
   }
 

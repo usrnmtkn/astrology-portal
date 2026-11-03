@@ -141,7 +141,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
     if (row.provider && approved.has(reviewStatus) && isReaderServableGeneratedContentRow(row) && isGovernedReaderEligible({ ...source, contentKey: row.content_key, review_status: reviewStatus })) overlays.set(row.content_key, row);
   }
   return rows.map((row) => {
-    if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
+    if ((row.source_snapshot?.studioOwnerApproval || (row.sections?.packageRecord as any)?.content_boundary?.ownerPublishedWording === true) && !hasExactStudioOwnerApproval(row)) return { id: row.id, live: false, label: "Not live", source: null, detail: "The saved wording differs from its owner approval.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     if (row.status === "LIVE" && allowsPublication(row) && !articlePublicationIsDue(row)) return { id: row.id, live: false, label: "Not live", source: null,
       detail: articlePublishAt(row) ? `Scheduled for ${articlePublishAt(row)}. Readers cannot open this version before its publish date.` : "This article has an invalid publish date.",
       updatedAt: row.updated_at ?? null } as ContentLiveStatus;

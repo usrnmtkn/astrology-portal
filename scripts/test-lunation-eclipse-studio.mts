@@ -47,7 +47,7 @@ try {
     export { installContentPublications } from './apps/web/src/content/contentPublicationState';
   ` }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': '{}' }, logLevel: 'silent' });
   const reader = await import(pathToFileURL(bundle).href);
-  assert.equal(reader.PACKAGE_VERSION, 'v3-2026-11-03-fallback-topics');
+  assert.equal(reader.PACKAGE_VERSION, 'v3-2026-11-03-owner-wording');
   await reader.loadLunationBookFallbackArchitectureV3Bundle();
   await reader.loadDeferredFallbackArchitectureV3Bundle();
   const catalog = await store.invoke('POST', { action: 'composition-catalog' }, '/api/admin/content-live-status');

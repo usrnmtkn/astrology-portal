@@ -55,6 +55,7 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
 }
 
 export function readerRowIsEligible(row: GeneratedContentRow) {
+  if ((row.sections as Record<string, any> | null)?.packageRecord?.content_boundary?.ownerPublishedWording === true && !hasExactStudioOwnerApproval(row)) return false;
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
   if (!articlePublicationIsDue(row)) return false;
   if (row.content_key.startsWith('sample-') || row.facts?.sampleOnly || row.source_snapshot?.sampleOnly) return false;
@@ -168,7 +169,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const admitted = rows.filter(row => (!row.source_snapshot?.studioOwnerApproval || hasExactStudioOwnerApproval(row)) && readerRowIsEligible(row)
       && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date, publications));
     res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(row => projectReaderRow(row, {
-      ownerApprovalVerified: /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key) && hasExactStudioOwnerApproval(row)
+      ownerApprovalVerified: hasExactStudioOwnerApproval(row)
     })).filter(Boolean), publications: ledger,
       nextCursor: rows.length === pageSize ? rows.at(-1)!.id : null }));
   } catch (error) {
