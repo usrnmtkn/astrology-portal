@@ -14,7 +14,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     const previewOrigin = new URL(baseURL!).origin;
     const guard = await installSyntheticNetworkGuard(context, previewOrigin);
     const errors: string[] = [], privatePayloads: string[] = [];
-    let exactRequests = 0;
+    let exactRequests = 0, directLedgerRequests = 0;
     page.on('pageerror', error => errors.push(error.message));
     try {
       const opened = (await store.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [initial.id])).rows[0].row as any;
@@ -35,9 +35,24 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         await route.fulfill({ status: 501, json: { error: message } });
         throw new Error(message);
       });
-      await context.route('**/rest/v1/**', route => {
-        expect(new URL(route.request().url()).origin).toBe('https://visual-smoke.supabase.test');
-        return route.fulfill({ json: [] });
+      await context.route('**/rest/v1/**', async route => {
+        const request = route.request(), url = new URL(request.url());
+        expect(url.origin).toBe('https://visual-smoke.supabase.test');
+        if (url.pathname === '/rest/v1/content_publications') {
+          expect(request.method()).toBe('GET');
+          directLedgerRequests++;
+          return route.fulfill({ json: await store.anonymousPublications(url.searchParams) });
+        }
+        if (url.pathname === '/rest/v1/rpc/content_runtime_revision') {
+          expect(request.method()).toBe('POST');
+          expect(url.search).toBe('');
+          const body = request.postDataJSON();
+          expect(Object.keys(body)).toEqual(['p_provider']);
+          return route.fulfill({ json: await store.anonymousRuntimeRevision(body.p_provider) });
+        }
+        const message = `Unexpected synthetic reader REST: ${request.method()} ${url.pathname}`;
+        await route.fulfill({ status: 501, json: { error: message } });
+        throw new Error(message);
       });
       await context.route(/\/api\/(?:sky|sky-reader|calendar)\?/u, async route => {
         expect(route.request().method()).toBe('GET');
@@ -99,6 +114,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await page.goto(href);
       const standalone = page.locator('.learn-sheet--article');
       await assertCopy(standalone, true);
+      expect(directLedgerRequests).toBeGreaterThan(0);
       await page.reload();
       await assertCopy(standalone, true);
       await page.screenshot({ path: `test-results/saved-template-standalone-${width}-${theme}.png`, fullPage: true });

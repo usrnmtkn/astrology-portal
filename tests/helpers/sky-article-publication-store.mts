@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { createPublicationDb, seedPublicationRow } from './studio-publication-db.mjs';
 import { publicationTimestamp } from '../../apps/web/src/content/contentPublicationState.ts';
@@ -15,6 +16,7 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
   let usedSkyCalculation = false;
   const db = await createPublicationDb();
   try {
+    await db.exec(readFileSync(new URL('../../apps/web/supabase/migrations/20260902060000_content_studio_hydration_crud_reliability.sql', import.meta.url), 'utf8'));
     const { matchesStoredInventory } = await import('./calendar-review-api.mjs');
     const { default: admin, publishDueSkyArticles } = await import('../../api/admin/generated-content.ts');
     const { default: reader } = await import('../../api/content-reader.ts');
@@ -84,7 +86,30 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
       } else await (publicLedger ? publications : path === '/api/content-reader' ? reader : admin)(req as any, res as any);
       return { status: res.statusCode, headers: res.headers, ...res.payload };
     };
-    return { db, invoke, publishDue: publishDueSkyArticles, secret: env.CONTENT_GENERATION_SECRET, async close() {
+    const anonymousPublications = async (params: URLSearchParams) => {
+      const fields = ['content_key', 'state', 'revision', 'row_id', 'row_updated_at', 'updated_at'];
+      assert.equal(params.get('select'), fields.join(','));
+      assert.equal(params.get('order'), 'content_key.asc');
+      const limit = Number(params.get('limit'));
+      assert.ok(Number.isInteger(limit) && limit > 0 && limit <= 1000);
+      for (const [name, value] of params) {
+        assert.ok(['select', 'order', 'limit', 'content_key'].includes(name));
+        if (name === 'content_key') assert.match(value, /^(?:gte|lt|gt)\..+/u);
+        else assert.equal(params.getAll(name).length, 1);
+      }
+      // Read the trigger-maintained ledger, preserving all repeated half-open
+      // range and keyset cursor filters used by the actual anonymous transport.
+      const rows = (await db.query('select to_jsonb(p) as row from content_publications p')).rows.map((item: any) => item.row)
+        .filter((row: any) => matchesStoredInventory(row, params))
+        .sort((a: any, b: any) => a.content_key < b.content_key ? -1 : a.content_key > b.content_key ? 1 : 0)
+        .slice(0, limit);
+      return rows.map((row: any) => Object.fromEntries(fields.map(field => [field, row[field]])));
+    };
+    const anonymousRuntimeRevision = async (provider: string) => {
+      assert.ok(['tldrastro-fallback-architecture-v3', 'tldrastro-fallback-architecture-v3-sky-placement'].includes(provider));
+      return (await db.query('select to_jsonb(public.content_runtime_revision($1)) as revision', [provider])).rows[0].revision;
+    };
+    return { db, invoke, anonymousPublications, anonymousRuntimeRevision, publishDue: publishDueSkyArticles, secret: env.CONTENT_GENERATION_SECRET, async close() {
       if (usedSkyCalculation) (await import('../../api/_lib/sky-reader-calculation.ts')).disposeInitialSkyWorker();
       globalThis.fetch = originalFetch;
       for (const [key, value] of Object.entries(previous)) {
