@@ -144,6 +144,39 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(first.locator('.compatibility-card__action')).toHaveCSS('width', '44px');
     await expect(first.locator('.compatibility-card__action')).toHaveCSS('height', '44px');
     await expect(first.locator('.compatibility-card__preview p').first()).toHaveCSS('font-size', '19px');
+    const dynamics = page.locator('.compatibility-dynamic-row');
+    await expect(dynamics.first()).toBeVisible();
+    const dynamicParagraphs = await dynamics.locator('p').allTextContents();
+    const dynamicTitles = await dynamics.locator('h4').allTextContents();
+    for (const dynamic of await dynamics.all()) {
+      await expect(dynamic).toHaveClass(/reading-story-card/);
+      await expect(dynamic).toHaveCSS('border-radius', '32px');
+      await expect(dynamic).toHaveCSS('background-color', await first.evaluate(node => getComputedStyle(node).backgroundColor));
+      await expect(dynamic).toHaveCSS('text-align', 'center');
+      await expect(dynamic).toHaveCSS('align-items', 'center');
+      await expect(dynamic.locator('.aspect-badge')).toHaveCSS('width', '64px');
+      await expect(dynamic.locator('.aspect-badge')).toHaveCSS('justify-content', 'center');
+      await expect(dynamic.locator('h4')).toHaveCSS('font-family', /Newsreader/);
+      await expect(dynamic.locator('h4')).toHaveCSS('font-size', '26px');
+      await expect(dynamic.locator('p').first()).toHaveCSS('font-size', '19px');
+      await expect(dynamic.locator('p').first()).toHaveCSS('line-height', '28.5px');
+      await expect(dynamic.locator('p').first()).toHaveCSS('text-align', 'center');
+      await expect(dynamic.locator('p').first()).toHaveCSS('max-height', 'none');
+      await expect(dynamic.locator('p').first()).toHaveCSS('mask-image', 'none');
+      await expect(dynamic.locator('.compatibility-dynamic-row__tag')).toHaveCSS('align-self', 'center');
+    }
+    const dynamicGrid = page.locator('.compatibility-dynamics__group .reading-story-grid').first();
+    const firstDynamicBox = (await dynamicGrid.locator('article').first().boundingBox())!;
+    const nextDynamicBox = (await dynamicGrid.locator('article').nth(1).boundingBox())!;
+    if (width > 800) expect(nextDynamicBox.y).toBeCloseTo(firstDynamicBox.y, 0);
+    else expect(nextDynamicBox.y).toBeGreaterThan(firstDynamicBox.y + firstDynamicBox.height);
+    await expectReadableTheme(page, '.compatibility-dynamic-row h4, .compatibility-dynamic-row p, .compatibility-dynamic-row__tag');
+    await dynamicGrid.evaluate(node => {
+      const navigationBottom = document.querySelector('.nav-pill')?.getBoundingClientRect().bottom ?? 0;
+      const gap = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--space-6'));
+      window.scrollBy(0, node.getBoundingClientRect().top - navigationBottom - gap);
+    });
+    await page.screenshot({ path: `test-results/compatibility-dynamics-${width}-${theme}.png` });
     const cardsBox = (await page.locator('.compatibility-card-list').boundingBox())!;
     const railBox = (await page.locator('.friend-chart-page').boundingBox())!;
     expect(cardsBox.width).toBeCloseTo(railBox.width, 0);
@@ -176,6 +209,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(prose).toHaveText(fullText, { useInnerText: true });
     await page.getByRole('button', { name: /Close detail|Back/ }).first().click();
     await expect(first).toBeVisible();
+    await expect(dynamics.locator('h4')).toHaveText(dynamicTitles);
+    await expect(dynamics.locator('p')).toHaveText(dynamicParagraphs);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }

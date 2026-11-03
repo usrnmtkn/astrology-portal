@@ -438,6 +438,18 @@
   --aspect-row-glyph-width: var(--ds-friends-route-aspect-row-glyph-width);
 }
 
+.compatibility-dynamics .reading-story-card.compatibility-dynamic-row {
+  align-items: center;
+}
+
+.compatibility-dynamics .reading-story-card .aspect-row-copy p {
+  text-align: center;
+}
+
+.compatibility-dynamics .reading-story-card .compatibility-dynamic-row__tag {
+  align-self: center;
+}
+
 .friend-compatibility-loading__card {
   overflow: hidden;
 }
