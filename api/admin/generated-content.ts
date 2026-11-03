@@ -2108,7 +2108,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
 
 async function fetchExistingRowById(id: string) {
   const params = new URLSearchParams();
-  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,updated_at");
+  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,updated_at,published_at");
   params.set("id", `eq.${id}`);
   params.set("limit", "1");
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
