@@ -8,6 +8,7 @@ export type PlacementSourceRow = {
   id: string;
   content_key: string;
   headline: string | null;
+  summary?: string | null;
   body?: string | null;
   status: string;
   event_type: string | null;
@@ -55,7 +56,7 @@ export function selectPlacementSources<T extends PlacementSourceRow>(
     && row.lane === "serving" && !row.review_state && liveIds.has(row.id))
     .map(row => ({ id: row.id, contentKey: row.content_key, status: row.status,
       lane: row.lane, reviewState: row.review_state, sections: row.sections,
-      sourceSnapshot: row.source_snapshot, body: row.body ?? undefined, headline: row.headline })),
+      sourceSnapshot: row.source_snapshot, body: row.body ?? undefined, headline: row.headline, summary: row.summary })),
   { planet, sign, activeInstant });
   const active = rows.find(row => row.status === "LIVE" && liveIds.has(row.id)
     && selected?.sourceKeys.includes(row.content_key)) ?? null;

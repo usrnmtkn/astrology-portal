@@ -15,11 +15,13 @@ import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../..
 import { subscribeToContentPublications } from "../../content/contentPublicationState";
 import type { GeneratedContentRow } from "../../services/generatedContent";
 import { articleKeyFromHash, articleLibraryKind, articleLibraryPrefixes, articlePublicationIsDue, articleSortDate } from "../../../../../src/shared/articleLibrary";
+import { approvedSkyArticleReaderEdition, skyArticleReaderMarkdown } from '../../content/skyArticleEditionReader';
 
 const labels = { article: "Article", guide: "Guide", sky: "Sky article" };
 function readable(row: GeneratedContentRow) {
   return articleLibraryKind(row) && row.status === "LIVE" && row.lane === "serving" && !row.review_state
-    && articlePublicationIsDue(row) && Boolean(row.headline?.trim() && row.body?.trim());
+    && articlePublicationIsDue(row) && Boolean(row.headline?.trim() && row.body?.trim())
+    && (row.event_type !== 'sky-article-edition' || Boolean(approvedSkyArticleReaderEdition(row)));
 }
 
 /** Render authored headings and every paragraph, without deriving an excerpt. */
@@ -76,6 +78,7 @@ export default function ArticlesExperience() {
     return () => controller.abort();
   }, [revision, key]);
   const selected = rows.find(row => row.content_key === key);
+  const selectedEdition = selected && approvedSkyArticleReaderEdition(selected);
   const filtered = useMemo(() => rows.filter(row => (kind === "all" || (kind === "guide" ? articleLibraryKind(row) === "guide" : articleLibraryKind(row) !== "guide"))
     && [row.headline, row.summary].some(text => text?.toLowerCase().includes(query.trim().toLowerCase()))), [rows, kind, query]);
 
@@ -90,7 +93,7 @@ export default function ArticlesExperience() {
     {key && (waiting || state === "error") && <header className="articles-library-header"><h1 className="article-title">Articles &amp; Guides</h1></header>}
     {key ? <PageLoadState key={key} scope="page" what="This article" failed={state === "error"} pending={waiting} onRetry={() => setRevision(value => value + 1)}>{waiting ? <PageLoading layout="reading" message="Loading articles and guides…" /> : selected ? <article className="learn-sheet learn-sheet--article">
       <header className="learn-article-header"><p className="learn-kicker">{labels[articleLibraryKind(selected)!]}</p><h1 className="article-title">{selected.headline}</h1><ArticlePublishDate row={selected} /></header>
-      <div className="learn-article-body"><ArticleBody body={selected.body!} /></div>
+      <div className="learn-article-body"><ArticleBody body={selectedEdition ? skyArticleReaderMarkdown(selectedEdition) : selected.body!} /></div>
     </article> : <ReaderUnavailable kind="article" />}</PageLoadState> : <div className="learn-hub">
       <header className="articles-library-header"><h1 className="article-title">Articles &amp; Guides</h1><p>Explore dated Sky articles and guides you can return to anytime.</p></header>
       {filters}
