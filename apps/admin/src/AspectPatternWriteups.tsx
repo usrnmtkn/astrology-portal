@@ -177,7 +177,10 @@ function cloneRecord(record: AuthoredAspectPatternRecord) {
   return JSON.parse(JSON.stringify(record)) as AuthoredAspectPatternRecord;
 }
 
-export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { initialKind?: AspectPatternWriteupKind; secret?: string }) {
+export function AspectPatternWriteups({ initialKind = "natal", secret = "", dirtyRef, busyRef }: {
+  initialKind?: AspectPatternWriteupKind; secret?: string;
+  dirtyRef?: { current: boolean }; busyRef?: { current: boolean };
+}) {
   const [kind, setKind] = useState<AspectPatternWriteupKind>(initialKind);
   const [response, setResponse] = useState<AspectPatternWriteupResponse | null>(null);
   const [selectedKey, setSelectedKey] = useState("");
@@ -192,10 +195,12 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const activeFieldRef = useRef<string>("overview");
 
   const rows = response?.rows ?? [];
   const selectedRow = rows.find((row) => row.key === selectedKey) ?? rows[0] ?? null;
+  const dirty = Boolean(draft && selectedRow && !sameAspectPatternContent(draft, selectedRow.record));
   const fieldOrder = response?.fieldOrder ?? (kind === "activation" ? activationWriteupFields : natalWriteupFields);
   const slots = response?.slots ?? [];
   const summary = response?.summary ?? {};
@@ -240,6 +245,23 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
   }, [kind]);
 
   useEffect(() => {
+    if (dirtyRef) dirtyRef.current = dirty;
+    return () => { if (dirtyRef) dirtyRef.current = false; };
+  }, [dirty, dirtyRef]);
+
+  useEffect(() => {
+    if (busyRef) busyRef.current = isSaving;
+    return () => { if (busyRef) busyRef.current = false; };
+  }, [isSaving, busyRef]);
+
+  useEffect(() => {
+    if (!dirty && !isSaving) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty, isSaving]);
+
+  useEffect(() => {
     if (!message) return;
     const timeout = window.setTimeout(() => {
       setMessage((current) => current === message ? "" : current);
@@ -263,10 +285,16 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
     return () => { window.clearTimeout(timeout); controller.abort(); };
   }, [draft]);
 
+  function confirmDiscardChanges() {
+    return !isLoading && (!dirty || window.confirm("Discard the unsaved changes to this aspect-pattern write-up?"));
+  }
+
   function selectKind(nextKind: AspectPatternWriteupKind) {
+    if (nextKind === kind || !confirmDiscardChanges()) return;
     setKind(nextKind);
     setSelectedKey("");
     setDraft(null);
+    setResponse(null);
     setPreviewMode("compare");
   }
 
@@ -288,6 +316,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
   async function saveDraft(nextStatus?: AuthoredStatus) {
     if (!draft || !selectedRow) return;
     setIsLoading(true);
+    setIsSaving(true);
     setError("");
     setMessage("");
     try {
@@ -311,12 +340,14 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
         throw new Error("Storage did not confirm your exact write-up. Your edits are still here. Reload before retrying.");
       }
       setResponse(json.dashboard!);
-      setDraft((current) => current?.id === record.id ? record : current);
+      setDraft((current) => current?.id === record.id && sameAspectPatternContent(current, draft)
+        ? cloneRecord(confirmed.record) : current);
       setMessage(`${record.id} saved as ${titlePart(record.status)}.`);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save aspect-pattern write-up.");
     } finally {
       setIsLoading(false);
+      setIsSaving(false);
     }
   }
 
@@ -345,9 +376,9 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
           <Text size="body" tone="secondary">Review, edit, preview, approve, and publish authored aspect-pattern write-ups through the normal content repository.</Text>
         </Stack>
         <div className="admin-new-actions">
-          <StudioButton className={kind === "natal" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("natal")}>Natal Write-ups</StudioButton>
-          <StudioButton className={kind === "activation" ? "admin-primary-button" : ""} type="button" onClick={() => selectKind("activation")}>Active Now Write-ups</StudioButton>
-          <StudioButton type="button" onClick={() => void loadWriteups(kind)} disabled={isLoading}>
+          <StudioButton className={kind === "natal" ? "admin-primary-button" : ""} type="button" disabled={isLoading} onClick={() => selectKind("natal")}>Natal Write-ups</StudioButton>
+          <StudioButton className={kind === "activation" ? "admin-primary-button" : ""} type="button" disabled={isLoading} onClick={() => selectKind("activation")}>Active Now Write-ups</StudioButton>
+          <StudioButton type="button" onClick={() => { if (confirmDiscardChanges()) void loadWriteups(kind); }} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" />
             Refresh
           </StudioButton>
@@ -431,7 +462,9 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
               className={row.key === selectedRow?.key ? "is-selected" : ""}
               key={row.key}
               type="button"
+              disabled={isLoading}
               onClick={() => {
+                if (row.key === selectedRow?.key || !confirmDiscardChanges()) return;
                 setSelectedKey(row.key);
                 setDraft(cloneRecord(row.record));
                 setDraftPreviews(row.previews);
@@ -488,7 +521,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
 
             <label className="aspect-writeups-status">
               <span>Editorial stage</span>
-              <AdminSelect value={draft.status} onChange={(event) => setDraft({ ...draft, status: event.target.value as AuthoredStatus })}>
+              <AdminSelect value={draft.status} disabled={isLoading && !isSaving} onChange={(event) => setDraft({ ...draft, status: event.target.value as AuthoredStatus })}>
                 {statusOptions.map((status) => <option key={status} value={status}>{titlePart(status)}</option>)}
               </AdminSelect>
             </label>
@@ -499,6 +532,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
                   <span>{titlePart(field)}</span>
                   <StudioTextarea
                     value={sectionTemplate(draft, field)}
+                    disabled={isLoading && !isSaving}
                     onChange={(event) => updateField(field, event.target.value)}
                     onFocus={() => {
                       activeFieldRef.current = field;
@@ -581,7 +615,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
             <h4>Approved slots</h4>
             <div>
               {slots.map((slot) => (
-                <StudioButton key={slot} type="button" onClick={() => insertSlot(slot)}>
+                <StudioButton key={slot} type="button" disabled={isLoading && !isSaving} onClick={() => insertSlot(slot)}>
                   {slot}
                 </StudioButton>
               ))}
