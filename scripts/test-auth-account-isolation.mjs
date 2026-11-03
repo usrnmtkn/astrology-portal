@@ -168,3 +168,49 @@ try {
 } finally {
   delete globalThis.window; delete globalThis.document; delete globalThis.authIsolationFixture;
 }
+
+const guardBuild = await build({ entryPoints: ['tests/helpers/synthetic-network-guard.ts'], bundle: true, write: false, platform: 'node', format: 'esm' });
+const { installSyntheticNetworkGuard } = await import(`data:text/javascript;base64,${Buffer.from(guardBuild.outputFiles[0].text).toString('base64')}`);
+let routeHandler;
+const network = await installSyntheticNetworkGuard({
+  routeWebSocket: async () => {},
+  route: async (_pattern, handler) => { routeHandler = handler; }
+}, 'http://127.0.0.1:4436');
+const stylesheet = deferred(), fulfillment = deferred(), font = deferred();
+const requests = [];
+function fontRoute(url, resourceType, response, fulfill) {
+  return {
+    request: () => ({ url: () => url, method: () => 'GET', resourceType: () => resourceType,
+      headers: () => ({ accept: '*/*', 'user-agent': 'Synthetic browser', cookie: 'must-not-forward', authorization: 'must-not-forward', referer: 'must-not-forward' }) }),
+    fetch: async options => { requests.push(options); return response; }, fulfill
+  };
+}
+let lateTransfer;
+const firstTransfer = routeHandler(fontRoute('https://fonts.googleapis.com/css2?family=Fixture', 'stylesheet', stylesheet.promise, async () => {
+  lateTransfer = routeHandler(fontRoute('https://fonts.gstatic.com/s/atkinsonhyperlegible/v1/fixture.woff2', 'font', font.promise, async () => {}));
+  await fulfillment.promise;
+}));
+let drained = false;
+const drain = network.finishStaticFonts().then(() => { drained = true; });
+await tick();
+assert.equal(drained, false, 'Teardown waits for the already-started stylesheet request');
+stylesheet.resolve({});
+await tick();
+assert.equal(drained, false, 'Receiving a response does not finish its route fulfillment');
+fulfillment.resolve();
+await tick();
+assert.equal(drained, false, 'A font request started by the stylesheet must finish too');
+let blocked = false;
+await routeHandler({ request: () => ({ url: () => 'https://external.example.test/private', method: () => 'POST', resourceType: () => 'fetch' }), abort: async () => { blocked = true; } });
+assert.equal(blocked, true, 'Containment stays installed during teardown');
+font.resolve({});
+await Promise.all([firstTransfer, lateTransfer, drain]);
+assert.equal(drained, true);
+assert.equal(network.staticFontRequests.length, 2);
+for (const options of requests) assert.deepEqual(options, { headers: { accept: '*/*', 'user-agent': 'Synthetic browser' }, maxRedirects: 0 });
+const failure = new Error('Synthetic font transport failed');
+const failedRoute = fontRoute('https://fonts.googleapis.com/css2?family=Fixture', 'stylesheet', null, async () => {});
+failedRoute.fetch = async () => { throw failure; };
+await assert.rejects(routeHandler(failedRoute), error => error === failure);
+await assert.rejects(network.finishStaticFonts(), error => error === failure);
+console.log('Synthetic font teardown: complete transfers, nested requests, containment and error propagation passed.');
