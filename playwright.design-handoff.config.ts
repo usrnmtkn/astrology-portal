@@ -18,6 +18,7 @@ export default defineConfig(base, {
     'friends-pair-forecast.spec.ts',
     'handoff-v4-states.spec.ts',
     'loading-handoff.spec.ts',
+    'synthetic-network-guard.spec.ts',
     'modal-focus.spec.ts',
     'modal-handoff-v9.spec.ts',
     'planetary-horoscope-navigation.spec.ts',

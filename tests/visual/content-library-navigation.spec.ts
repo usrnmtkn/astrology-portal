@@ -286,7 +286,7 @@ for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1
         await expect(unavailable.getByRole('button', { name: 'Open article', exact: true })).toBeVisible();
         await expect(unavailable.getByRole('button', { name: 'Edit published article', exact: true })).toHaveCount(0);
         let failedLibraryLoads = 0;
-        const libraryChunk = '**/assets/contentLibraryNavigation-*.js';
+        const libraryChunk = /\/assets\/contentLibraryNavigation-[^/?]+\.js(?:\?[^#]*)?$/u;
         await context.route(libraryChunk, route => { failedLibraryLoads++; return route.abort(); });
         await page.reload();
         await expect(page.getByRole('alert').filter({ hasText: 'This section could not load.' })).toBeVisible();

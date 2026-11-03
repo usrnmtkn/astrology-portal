@@ -1,16 +1,28 @@
 import type { BrowserContext } from '@playwright/test';
 
-export async function installSyntheticNetworkGuard(context: BrowserContext, previewOrigin: string) {
+export async function installSyntheticNetworkGuard(context: BrowserContext, previewOrigin: string, options: {
+  deployedFixture?: { supabaseOrigin: string };
+} = {}) {
   const unhandledExternal: string[] = [];
   const staticFontRequests: string[] = [];
   const syntheticRealtimeRequests: string[] = [];
   const staticFontTransfers: Promise<void>[] = [];
+  const service = options.deployedFixture ? new URL(options.deployedFixture.supabaseOrigin) : null;
+  if (service && (service.protocol !== 'https:' || service.username || service.password || service.port
+    || service.pathname !== '/' || service.search || service.hash)) {
+    throw new Error('A deployed fixture needs an exact public HTTPS service origin.');
+  }
+  // This origin is mocked in Playwright, never connected to its server.
+  const mockRealtimeOrigin = service?.origin.replace('https:', 'wss:');
 
       await context.routeWebSocket('**/*', socket => {
         const url = new URL(socket.url());
-        const synthetic = url.origin === 'wss://visual-smoke.supabase.test'
-          && url.pathname === '/realtime/v1/websocket'
-          && url.searchParams.get('apikey') === 'visual-smoke-placeholder'
+        const localService = url.origin === 'wss://visual-smoke.supabase.test'
+          && url.searchParams.get('apikey') === 'visual-smoke-placeholder';
+        const declaredMock = mockRealtimeOrigin && mockRealtimeOrigin !== 'wss://visual-smoke.supabase.test'
+          && url.origin === mockRealtimeOrigin && Boolean(url.searchParams.get('apikey')?.trim())
+          && [...url.searchParams.keys()].sort().join(',') === 'apikey,vsn';
+        const synthetic = (localService || declaredMock) && url.pathname === '/realtime/v1/websocket'
           && url.searchParams.get('vsn') === '2.0.0';
         if (!synthetic) {
           unhandledExternal.push(`WS ${url.origin}${url.pathname}`);
@@ -54,7 +66,18 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
       await context.route('**/*', async route => {
         const request = route.request();
         const url = new URL(request.url());
-        if (url.origin === previewOrigin) return route.fallback();
+        if (url.origin === previewOrigin) {
+          if (!options.deployedFixture) return route.fallback();
+          const read = request.method() === 'GET' || request.method() === 'HEAD';
+          const document = request.resourceType() === 'document'
+            && ['/', '/index.html', '/admin/content', '/admin/content/'].includes(url.pathname);
+          const asset = /^\/(?:assets|content|generated|fonts|images|icons|branding)\//u.test(url.pathname)
+            || ['/', '/favicon.ico', '/favicon.svg', '/favicon.png', '/robots.txt', '/site.webmanifest', '/manifest.webmanifest', '/manifest.json', '/tldr-content.js'].includes(url.pathname);
+          if (read && (document || asset)) return route.fallback();
+          // Specific test routes must fulfill API reads and writes themselves.
+          unhandledExternal.push(`${request.method()} ${url.origin}${url.pathname}`);
+          return route.abort();
+        }
         const fontStyles = url.origin === 'https://fonts.googleapis.com' && url.pathname === '/css2' && request.resourceType() === 'stylesheet';
         const fontFile = url.origin === 'https://fonts.gstatic.com' && /^\/s\/(atkinsonhyperlegible|notosanssymbols)\/v\d+\/[A-Za-z0-9_-]+\.woff2$/.test(url.pathname);
         const fontSubset = url.origin === 'https://fonts.gstatic.com' && url.pathname === '/l/font'
