@@ -23,7 +23,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       expect(published.status).toBe(200);
       expect(published.rows[0].sections.skyArticleEdition).toEqual(edition);
       await page.setViewportSize({ width, height: 1000 });
-      await page.clock.setFixedTime(new Date('1901-11-01T12:00:00.000Z'));
+      // The selected historical date comes from the reader URL. Keep the
+      // browser clock modern so zero-initialized transport caches expire.
+      await page.clock.setFixedTime(new Date('2026-11-03T12:00:00.000Z'));
       await context.addInitScript(theme => {
         localStorage.setItem('tldrastro:theme', theme);
         localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' }));
