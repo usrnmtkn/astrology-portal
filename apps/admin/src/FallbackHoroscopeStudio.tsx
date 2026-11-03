@@ -10,7 +10,8 @@ import { PageLoading } from '../../../src/shared/components/PageLoading';
 
 type Props = {
   rows: CompositionMapRow[];
-  onLoadCatalog: () => Promise<{ rows?: Array<{ content_key: string; headline: string | null; role: string }> }>;
+  credential: string;
+  onLoadCatalog: (signal: AbortSignal) => Promise<{ rows?: Array<{ content_key: string; headline: string | null; role: string }> }>;
   onLoadRow: (row: CompositionMapRow) => Promise<unknown>;
   onEditRow: (row: CompositionMapRow) => void;
   onOpenPlacement: (planet: string, sign: string) => void;
@@ -19,7 +20,7 @@ type Props = {
 };
 const label = (value: string) => value.replace(/(^|-)([a-z])/gu, (_match, separator, letter) => `${separator ? ' ' : ''}${letter.toUpperCase()}`);
 
-export default function FallbackHoroscopeStudio({ rows, onLoadCatalog, onLoadRow, onEditRow, onOpenPlacement, initialSourceKey, onSourceChange }: Props) {
+export default function FallbackHoroscopeStudio({ rows, credential, onLoadCatalog, onLoadRow, onEditRow, onOpenPlacement, initialSourceKey, onSourceChange }: Props) {
   const [catalog, setCatalog] = useState<CompositionMapRow[]>([]);
   const [catalogState, setCatalogState] = useState('loading');
   const [catalogRetry, setCatalogRetry] = useState(0);
@@ -28,7 +29,9 @@ export default function FallbackHoroscopeStudio({ rows, onLoadCatalog, onLoadRow
   useEffect(() => {
     let active = true;
     setCatalogState('loading');
-    void catalogRef.current().then(payload => {
+    if (!credential.trim()) return;
+    const controller = new AbortController();
+    void catalogRef.current(controller.signal).then(payload => {
       if (!Array.isArray(payload.rows)) throw new Error('The complete source catalog is unavailable.');
       if (active) {
         setCatalog(payload.rows.map(item => ({ id: `package:${item.content_key}`, content_key: item.content_key,
@@ -37,8 +40,8 @@ export default function FallbackHoroscopeStudio({ rows, onLoadCatalog, onLoadRow
         setCatalogState('ready');
       }
     }).catch(() => { if (active) setCatalogState('error'); });
-    return () => { active = false; };
-  }, [catalogRetry]);
+    return () => { active = false; controller.abort(); };
+  }, [credential, catalogRetry]);
   const [kind, setKind] = useState('all');
   const [planet, setPlanet] = useState('all');
   const [sign, setSign] = useState('all');
