@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { createPublicationDb, seedPublicationRow } from './studio-publication-db.mjs';
 import { publicationTimestamp } from '../../apps/web/src/content/contentPublicationState.ts';
+import { syntheticPublicationPage } from './synthetic-publication-page.ts';
 
 /** Actual handlers and SQL publication triggers; only synthetic, in-memory storage. */
 export async function skyArticlePublicationStore(initial: Record<string, unknown>[]) {
@@ -87,23 +88,10 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
       return { status: res.statusCode, headers: res.headers, ...res.payload };
     };
     const anonymousPublications = async (params: URLSearchParams) => {
-      const fields = ['content_key', 'state', 'revision', 'row_id', 'row_updated_at', 'updated_at'];
-      assert.equal(params.get('select'), fields.join(','));
-      assert.equal(params.get('order'), 'content_key.asc');
-      const limit = Number(params.get('limit'));
-      assert.ok(Number.isInteger(limit) && limit > 0 && limit <= 1000);
-      for (const [name, value] of params) {
-        assert.ok(['select', 'order', 'limit', 'content_key'].includes(name));
-        if (name === 'content_key') assert.match(value, /^(?:gte|lt|gt)\..+/u);
-        else assert.equal(params.getAll(name).length, 1);
-      }
       // Read the trigger-maintained ledger, preserving all repeated half-open
       // range and keyset cursor filters used by the actual anonymous transport.
-      const rows = (await db.query('select to_jsonb(p) as row from content_publications p')).rows.map((item: any) => item.row)
-        .filter((row: any) => matchesStoredInventory(row, params))
-        .sort((a: any, b: any) => a.content_key < b.content_key ? -1 : a.content_key > b.content_key ? 1 : 0)
-        .slice(0, limit);
-      return rows.map((row: any) => Object.fromEntries(fields.map(field => [field, row[field]])));
+      const rows = (await db.query('select to_jsonb(p) as row from content_publications p')).rows.map((item: any) => item.row);
+      return syntheticPublicationPage(rows, params);
     };
     const anonymousRuntimeRevision = async (provider: string) => {
       assert.ok(['tldrastro-fallback-architecture-v3', 'tldrastro-fallback-architecture-v3-sky-placement'].includes(provider));

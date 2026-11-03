@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { Readable } from 'node:stream';
 import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
+import { createFixturePublicationLedger } from '../helpers/fixture-publication-ledger.mjs';
+import { syntheticPublicationPage } from '../helpers/synthetic-publication-page';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
   test(`Aspect Pattern draft survives navigation and delayed save ${width} ${theme}`, async ({ page, context, baseURL }) => {
@@ -12,6 +14,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     Object.assign(process.env, env);
     const originalFetch = globalThis.fetch;
     const stored = new Map<string, any>();
+    const ledger = createFixturePublicationLedger();
     const writes: Array<{ expected: string | null; received: string; copy: string }> = [];
     let holdNextSave = false, held = false, reads = 0, discard = false;
     let releaseSave = () => {};
@@ -35,12 +38,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         if ([...stored.values()].some(row => row.content_key === submitted.content_key)) return Response.json({ code: '23505' }, { status: 409 });
         const row = { ...submitted, id: '00000000-0000-4000-8000-000000000001' };
         stored.set(row.id, row);
+        ledger.observe(undefined, row, init.headers);
         writes.push({ expected: null, received: row.updated_at, copy: row.source_snapshot.record.content.overview });
         return Response.json([row]);
       }
       expect(init.method).toBe('PATCH');
       const updated = matches.map(row => ({ ...row, ...submitted }));
       for (const row of updated) {
+        ledger.observe(stored.get(row.id), row, init.headers);
         stored.set(row.id, row);
         writes.push({ expected: url.searchParams.get('updated_at')?.slice(3) ?? null,
           received: row.updated_at, copy: row.source_snapshot.record.content.overview });
@@ -54,6 +59,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       }, { theme, secret: env.CONTENT_GENERATION_SECRET });
       page.on('pageerror', error => errors.push(error.message));
       page.on('dialog', async dialog => { dialogs.push(dialog.message()); await (discard ? dialog.accept() : dialog.dismiss()); });
+      await context.route('**/rest/v1/content_publications?**', async route => {
+        const request = route.request(), url = new URL(request.url());
+        expect(url.origin).toBe('https://visual-smoke.supabase.test');
+        expect(url.pathname).toBe('/rest/v1/content_publications');
+        expect(request.method()).toBe('GET');
+        await route.fulfill({ json: syntheticPublicationPage(ledger.records(), url.searchParams) });
+      });
       await context.route('**/api/**', async route => {
         const request = route.request(), url = new URL(request.url());
         if (url.origin !== new URL(baseURL!).origin) return route.fallback();

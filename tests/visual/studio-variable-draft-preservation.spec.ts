@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
+import { syntheticPublicationPage } from '../helpers/synthetic-publication-page';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
   test(`custom-variable pending saves and dirty navigation retain complete wording ${width} ${theme}`, async ({ page, context, baseURL }) => {
@@ -24,6 +25,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         localStorage.setItem('tldrastro:studio-theme', theme);
       }, theme);
       await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      await context.route('**/rest/v1/content_publications?**', async route => {
+        const request = route.request(), url = new URL(request.url());
+        expect(url.origin).toBe('https://visual-smoke.supabase.test');
+        expect(url.pathname).toBe('/rest/v1/content_publications');
+        expect(request.method()).toBe('GET');
+        await route.fulfill({ json: syntheticPublicationPage(await store.call({ method: 'publications' }), url.searchParams) });
+      });
       // This more-specific route delays the actual handler receipt, not a
       // fabricated successful save. The source is already persisted in storage.
       await page.route('**/api/admin/generated-content?variables=true', async route => {
