@@ -1,4 +1,4 @@
-import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { expect, test } from "@playwright/test";
 import { studioApiStore } from "../helpers/studio-api-store";
 import { moonStudioRows } from "../helpers/sky-moon-studio";
@@ -101,6 +101,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     copies[index] = revised;
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
+    await expect(page.getByLabel('Admin status', { exact: true })).toContainText('Connected');
+    await openSkyPlacementChooser(page, width === 1440 && theme === 'dark');
     await page.getByLabel("Sky placement planet or point").selectOption("moon");
     await page.getByLabel("Sky placement zodiac sign").selectOption("cancer");
     await openSkyPlacementSourceDetails(page);
@@ -111,6 +113,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
    const saved = await store.call({ method: "rows" });
    for (const row of originals.filter(row => !keys.includes(row.content_key))) expect(saved.find((item: any) => item.id === row.id)).toEqual(row);
    for (const key of keys) expect(saved.find((row: any) => row.content_key === key && row.status === "LIVE").sections.packageRecord.body_they).toBe(originals.find(row => row.content_key === key)!.sections.packageRecord.body_they);
+   await openSkyPlacementChooser(page);
+   await expect(page.getByRole("searchbox", { name: "Search Sky write-ups", exact: true })).toBeVisible();
    await page.getByRole("searchbox", { name: "Search Sky write-ups", exact: true }).fill("no matching moon section");
    await expect(table).toContainText("No Sky write-ups match");
    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

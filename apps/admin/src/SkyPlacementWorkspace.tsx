@@ -6,9 +6,8 @@ const SkyPlacementComposition = lazy(() => import('./SkyPlacementComposition'));
 import SkyVisitArticleWriter from './SkyVisitArticleWriter';
 import SkyArticlePublication from './SkyArticlePublication';
 import { skyPublicationScheduled } from './skyArticlePublicationState';
-import { openContextualReaderHref } from './adminReaderDestinations';
-import { isSkyIngressEssay, SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
-import { reviseSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
+import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
+import { reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
 import { assertPlacementVisit, placementEdition, placementTemplateKeys, placementVisitDraft, placementVisitRows, placementWorkspaceDocuments, placementWorkspaceTabs,
   type PlacementGeneratedArticle, type PlacementVisitFacts, type PlacementWorkspaceRow as Row } from './skyPlacementWorkspaceModel';
 import type { SkyPlacementSelection } from './skyPlacementAssembly';
@@ -18,7 +17,7 @@ type Request = <T>(path: string, options?: RequestInit) => Promise<T>;
 type Props = {
   rows: Row[]; selection: SkyPlacementSelection; request: Request;
   date: string | null; onDateChange: (date: string) => void;
-  readerSources?: ReactNode;
+  readerSources: ReactNode;
   onRows: (rows: Row[]) => void; onDirty: (dirty: boolean, busy: boolean) => void;
   onEditRow: (row: Row) => void; onEditField: (row: Row, path: string, selection: SkyPlacementSelection) => void;
   onLoadRow: (row: Row) => Promise<unknown>;
@@ -139,9 +138,6 @@ export default function SkyPlacementWorkspace(props: Props) {
     const row = allRows.find(row => row.content_key === key && row.status !== 'ARCHIVED');
     return row ? [row] : [];
   });
-  const published = statuses ? selectActiveSkyArticleEdition(visits.filter(row => isSkyIngressEssay(placementEdition(row)?.format) && statuses.some(status => status.id === row.id && status.live)).map(row => ({
-    ...row, contentKey: row.content_key, sourceSnapshot: row.source_snapshot as Record<string, unknown> | null
-  })), { ...selection, activeInstant: new Date().toISOString() }) : null;
 
   function discard() { return !dirty || window.confirm('Discard the unsaved changes to this dated article?'); }
   function openVariableArticle(row: Row) {
@@ -348,11 +344,7 @@ export default function SkyPlacementWorkspace(props: Props) {
     </StudioTabs>
     <details className="studio-contained-disclosure" onToggle={event => setSourcesOpen(event.currentTarget.open)}>
       <AdminDisclosureSummary>Reader preview & source details</AdminDisclosureSummary>
-      {sourcesOpen && (props.readerSources !== undefined ? props.readerSources : <section className="studio-section" aria-label="Currently live">
-        <h3>Currently live</h3>
-        {statusError ? <p role="alert">{statusError}</p> : published ? <p>{published.edition.headline} · Published dated article</p> : <p>No published dated article covers right now.</p>}
-        <StudioButton onClick={() => openContextualReaderHref(`/#sky/placement/${selection.planet}/${selection.sign}`)}>Open published reader</StudioButton>
-      </section>)}
+      {sourcesOpen && <>{statusError && <p role="alert">{statusError}</p>}{props.readerSources}</>}
     </details>
     {error && <p role="alert">{error} <StudioButton disabled={busy} onClick={() => setRetry(value => value + 1)}>Reload saved writing</StudioButton></p>}
   </section>;

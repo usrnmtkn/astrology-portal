@@ -1,4 +1,4 @@
-import { openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import path from 'node:path';
@@ -29,6 +29,7 @@ for (const legacyDraft of [false, true]) for (const [width, theme] of [[390, 'li
    await page.addInitScript(theme => { localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture'); localStorage.setItem('tldrastro:studio-theme', theme); }, theme);
    await routeStudioInventoryApi(page, { call, onWrite: ({ result }) => responses.push(result) });
    const selectSunVirgo = async () => {
+    await openSkyPlacementChooser(page);
     await page.getByLabel('Sky placement planet or point').selectOption('sun');
     await page.getByLabel('Sky placement zodiac sign').selectOption('virgo');
     await openSkyPlacementDefaultReading(page);

@@ -1,4 +1,4 @@
-import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
@@ -43,6 +43,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     }
    });
    const select = async () => {
+    await openSkyPlacementChooser(page);
     await page.getByLabel('Sky placement planet or point').selectOption('sun');
     await page.getByLabel('Sky placement zodiac sign').selectOption('libra');
     await openSkyPlacementSourceDetails(page);
