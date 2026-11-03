@@ -164,10 +164,10 @@ export function CompatibilityTab({
               groupedDynamics[heading].length > 0 ? (
                 <div className="compatibility-dynamics__group" key={heading}>
                   <span className="eyebrow section-label friend-section-label">{heading}</span>
-                  <div className="list you-aspects-list aspect-row-list friend-aspect-list">
+                  <div className="reading-story-grid">
                     {groupedDynamics[heading].map((dynamic) => (
-                      <article className="aspect-row aspect-row-static friend-aspect-row compatibility-dynamic-row" key={dynamic.id}>
-                        {dynamic.aspect ? <AspectBadge aspect={dynamic.aspect} className="aspect-row-glyphs" /> : null}
+                      <article className="aspect-row aspect-row-static friend-aspect-row compatibility-dynamic-row reading-story-card" key={dynamic.id}>
+                        {dynamic.aspect ? <AspectBadge aspect={dynamic.aspect} /> : null}
                         <span className="aspect-row-copy">
                           <h4>{dynamic.title}</h4>
                           <FormattedProse text={dynamic.summary} />
