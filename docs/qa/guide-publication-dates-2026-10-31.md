@@ -166,3 +166,28 @@ belongs to the release PR.
 
 Integrated source/test/configuration fingerprint:
 `245b9f79553f6e589d988849ef1a0640877d31e297ced820192eade5c43158f9`.
+
+## Final integration on verified main — November 3, 2026
+
+Final preparation uses main `0a924b34e80f6f53a01b41eda49a4052ce44f1d2`, preserving the complete Studio
+recovery, Friends dashboard, Sky highlight and deployed recovery-test fixes.
+All four guide patches rebased without conflicts and retain their exact patches.
+
+Matched builds use separate fresh `npm ci` installs, native Node 22.20.0,
+identical lockfiles and synthetic public Supabase settings. With the publishable
+fixture key and natal-aspect flag, main measures 819,029 raw startup bytes,
+237,684 startup gzip bytes and 873,130 aggregate gzip bytes. The guide build
+measures 819,079 / 237,711 / 873,621: additions of 50 / 27 / 491 bytes.
+The anonymous guide build measures 819,057 / 237,707 / 873,689.
+
+Both configurations fit current main's unchanged 827,650 raw entry/largest,
+238,650 startup gzip and 876,850 aggregate gzip limits. The guide's earlier
+100-byte raw and 600-byte aggregate allowances are removed; the budget file is
+byte-identical to current main, including all upstream rationale. Earlier
+allocations and measurements above remain historical evidence. No dependency,
+source-payload, memory graph, privacy, CSS or runtime guard is relaxed.
+
+Final exact-head local/hosted gates and production provenance are recorded in
+the release pull request after they complete. These matched build measurements
+do not establish merge or deployment. Integrated source/test/configuration
+fingerprint, excluding documentation: `7fc6238212f52e087f77059b656c1d4843506a6d8378cacfedcc135ad2e1e8b1`.
