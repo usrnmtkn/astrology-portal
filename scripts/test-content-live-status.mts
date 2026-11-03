@@ -157,9 +157,10 @@ const astro101 = {
 assert.equal(contentLiveStatuses([astro101])[0].live, true, "Learn-serving Astro 101 rows stay Live even with an education packageRecord.");
 assert.equal(contentLiveStatuses([astro101], [astro101], () => false)[0].live, false, "Learn now uses the reader API and must honor its publication ledger.");
 assert.equal(contentLiveStatuses([{ ...astro101, status: "DRAFT" }])[0].live, false);
-for (const extra of [{ facts: { sourceStatus: "legacy" } }, { flags: ["BLOCKLIST_MATCH"], facts: { tldrStore: {} } }, { sections: { body: "Imported from approved project source material." } }, { review_state: "needs-review" }]) {
+for (const extra of [{ facts: { sourceStatus: "legacy" } }, { flags: ["BLOCKLIST_MATCH"], facts: { tldrStore: {} } }, { review_state: "needs-review" }]) {
   assert.equal(contentLiveStatuses([{ ...safe, ...extra }])[0].live, false, JSON.stringify(extra));
 }
+assert.equal(contentLiveStatuses([{...safe,sections:{body:'Imported from approved project source material.'}}])[0].live,true,'A wording fingerprint does not override valid publication state.');
 const natal = { ...safe, content_key: "fallback-hook/natal-aspect-lived/lilith/square/ascendant", provider: "tldrastro-fallback-architecture-v3", sections: { packageRecord: { contentKey: "fallback-hook/natal-aspect-lived/lilith/square/ascendant", content_role: "full_copy", reader_only: true, render_policy: "reader-only-exact-lived-v1", review_status: "approved", body_you: "QA approved natal aspect." } } };
 const { approveNatalAspectStudioCopy } = await import("../api/_lib/content-studio-approval");
 approveNatalAspectStudioCopy(natal.sections.packageRecord, natal.content_key);

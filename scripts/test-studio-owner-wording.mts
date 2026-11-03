@@ -16,7 +16,7 @@ const {rm}=await import('node:fs/promises');
 const paragraphBundle=resolve(`test-results/owner-paragraphs-${process.pid}.mjs`);
 await build({stdin:{contents:"export {generatedContentParagraphs} from './apps/web/src/services/generatedContent.ts';",resolveDir:process.cwd(),loader:'ts'},bundle:true,platform:'node',format:'esm',packages:'external',define:{'import.meta.env':'{}'},loader:{'.css':'empty'},outfile:paragraphBundle,logLevel:'silent'});
 const {generatedContentParagraphs}=await import(pathToFileURL(paragraphBundle).href);
-const store=await createApiStore([{...baseline,id,body:'Synthetic original.',summary:'',sections:{}}]);
+const store=await createApiStore([{...baseline,id,body:'Synthetic original.',summary:'',sections:{},flags:['BLOCKLIST_MATCH']}]);
 try {
  let row=store.rows.get(id);
  const saved=await store.invoke('PATCH',{id,expectedUpdatedAt:row.updated_at,body:prose});

@@ -79,8 +79,9 @@ row=latest(id);assert.deepEqual(row.sections,before,'A failed review cannot rewr
 assert.equal(row.source_snapshot.horoscopeGeneration.weeklyEditorial.review.status,'failed');
 assert.equal(horoscopeEditorRow(row).source_snapshot.horoscopeGeneration.weeklyEditorial.review.matchesCurrent,true);
 assert.equal(horoscopeEditorRow(row).source_snapshot.horoscopeGeneration.weeklyEditorial.review.findings.length,3);
-const publication=await action(id,'validate-publication');assert.equal(publication.payload.publication.ready,false);assert.equal(publication.payload.publication.canOverride,false);
-const publish=await store.invoke('PATCH',{id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content',horoscopeValidationOverride:true});assert.equal(publish.status,422,'An owner fact-parser override cannot bypass the batch gate');
+const publication=await action(id,'validate-publication');assert.equal(publication.payload.publication.ready,true);assert.equal(publication.payload.publication.issues.length,0);assert(publication.payload.publication.advisories.some((i:any)=>i.category==='weekly_batch_editorial'));assert.equal(publication.payload.publication.canOverride,false);
+// Complete saved owner readings may publish despite these optional findings.
+// Keep this edition as a draft to exercise exact-text rechecks below.
 // Arbitrary evidence, incomplete checks and unsupported plan facts fail closed.
 const input=JSON.parse(requests[1].input);
 assert.throws(()=>validateWeeklyEditorialResult(review([{...findings[0],evidence:[{sign:'aries',quote:'Invented biography'}]}]),{phase:'batch-review',input}),/not supplied/);
@@ -98,7 +99,7 @@ for(const mutate of [(r:any)=>r.sections.horoscopeEdition.passages[0].body+=' Ch
 }
 const edited=structuredClone(row.sections);edited.horoscopeEdition.passages[0].body+=' An exact saved owner edit.';
 assert.equal((await store.invoke('PATCH',{id,expectedUpdatedAt:row.updated_at,status:'DRAFT',body:horoscopeEditionBody(edited.horoscopeEdition),sections:edited})).status,200);
-assert.equal((await action(id,'validate-publication')).payload.publication.ready,false);
+assert.equal((await action(id,'validate-publication')).payload.publication.ready,true);
 // A stale request cannot apply to a new save or silently dispatch a replacement.
 const staleStart=await action(id,'review-weekly',{approvedPlanHash:await prepare(id)});assert.equal(staleStart.status,202,JSON.stringify(staleStart.payload));row=latest(id);
 const pendingVersion=row.updated_at,newer=structuredClone(row.sections);newer.horoscopeEdition.passages[0].body+=' Newer edit.';

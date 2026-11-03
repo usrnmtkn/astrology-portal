@@ -445,9 +445,9 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  assert.match(wrongPath.error, /Complete edition/);
  assert.equal(stored.find(row => row.id === draft.id).sections.packageDraft.placementArticleDirect, copy);
  draft = (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, sections: { ...draft.sections, packageDraft: { ...draft.sections.packageDraft, placementArticleDirect: 'During this transit, you have a natural ability to finish the fixture.' } } })).rows[0];
- const traitCopy = await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' }, '', 400);
- assert.match(traitCopy.error, /STP-02/);
- draft = (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, sections: { ...draft.sections, packageDraft: { ...draft.sections.packageDraft, placementArticleDirect: copy } } })).rows[0];
+ const traitCopy = await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' });
+ draft=traitCopy.rows[0];assert.equal(draft.body,'During this transit, you have a natural ability to finish the fixture.','Owner-approved perspective is advisory.');
+ draft = (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, sections: { ...draft.sections, packageDraft: { ...draft.sections.packageRecord, placementArticleDirect: copy } } })).rows[0];
  const published = (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
  assert.equal(published.sections.packageRecord.placementArticleDirect, copy);
  assert.equal(published.sections.packageRecord.studio_version_status, 'approved-serving-revision');

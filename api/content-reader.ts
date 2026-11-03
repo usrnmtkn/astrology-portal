@@ -59,7 +59,8 @@ export function readerRowIsEligible(row: GeneratedContentRow) {
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
   if (!articlePublicationIsDue(row)) return false;
   if (row.content_key.startsWith('sample-') || row.facts?.sampleOnly || row.source_snapshot?.sampleOnly) return false;
-  if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING', 'BLOCKLIST_MATCH'].includes(flag))) return false;
+  if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING'].includes(flag)
+    || flag === 'BLOCKLIST_MATCH' && !hasExactStudioOwnerApproval(row))) return false;
   if (row.content_key.startsWith(SKY_SEASON_FALLBACK_PREFIX) && (row.source_snapshot?.ownerApproval as {copySha256?: string} | undefined)?.copySha256
     !== createHash('sha256').update(JSON.stringify([row.headline, row.summary, row.body])).digest('hex')) return false;
   if (row.content_key.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));

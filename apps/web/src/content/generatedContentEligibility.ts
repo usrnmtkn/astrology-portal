@@ -197,7 +197,7 @@ export function isReaderServableGeneratedContentRow(
   if (isLegacyLiveWritingRow(row)) return false;
   if (flags.has("REFERENCE_ONLY_NEVER_SERVE_VERBATIM")) return false;
   if (flags.has("PARAPHRASE_PENDING")) return false;
-  if (flags.has("BLOCKLIST_MATCH")) return false;
+  if (flags.has("BLOCKLIST_MATCH") && !hasStudioOwnerWording(row)) return false;
 
   return true;
 }

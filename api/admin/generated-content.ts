@@ -3067,7 +3067,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     for (const key of Object.keys(promotionPatch)) if (promotionPatch[key] === undefined) delete promotionPatch[key];
     approveStudioPackageWording(finalSections.packageRecord as Record<string, unknown>, target.content_key, now);
     const ownerRow = { ...target, ...promotionPatch };
-    if (stampStudioPackageOwnerApproval(ownerRow, true, now)) promotionPatch.source_snapshot = ownerRow.source_snapshot;
+    if (stampStudioPackageOwnerApproval(ownerRow, true, now)) {
+      for (const field of ['headline', 'summary', 'body', 'source_snapshot']) promotionPatch[field] = ownerRow[field];
+    }
     assertReaderEligiblePublication({ ...target, ...promotionPatch });
     return publishRevisionAtomically(body, existing, target, promotionPatch);
   }
@@ -3639,7 +3641,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.sections = standalonePublicationSections(ownerRow, String(patch.updated_at), existing);
   }
   if (stampStudioPackageOwnerApproval(ownerRow, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", String(patch.updated_at))) {
-    patch.source_snapshot = ownerRow.source_snapshot;
+    for (const field of ['headline', 'summary', 'body', 'source_snapshot']) patch[field] = ownerRow[field];
   }
   assertReaderEligiblePublication({ ...existing, ...patch });
   await assertZodiacSeasonPublication({ ...existing, ...patch });
