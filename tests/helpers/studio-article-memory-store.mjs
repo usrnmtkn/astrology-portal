@@ -6,11 +6,11 @@ import { compileSkyArticleEdition } from '../../apps/web/src/content/skyArticleT
 
 const db = await createStudioMemoryDb();
 const edition = await compileSkyArticleEdition({
-  templateKey:'sky/article-template/saturn/ingress',templateBody:'# Synthetic article\n\n{{opener}}\n\n{{risingBlocks}}',
+  templateKey:'sky/article-template/saturn/ingress',templateBody:'# Synthetic article\n\n{{opener}}\n\n## Horoscopes\n\n{{risingBlocks}}',
   planet:'saturn',sign:'aries',entryYear:2026,validFrom:'2026-02-14',validTo:'2028-04-11',
   transitStartInstant:'2026-02-14T00:00:00Z',transitEndInstant:'2028-04-12T00:00:00Z',
   slotValues:{opener:'Synthetic complete article opening. Synthetic final sentence.'}, tldr:'Synthetic summary.',
-  housePassages:Array.from({length:12},(_,i)=>({house:i+1,risingSign:'aries',contentKey:`synthetic/house/${i+1}`,body:`Synthetic complete house ${i+1} opening. Synthetic house ending.`})),aspectPassages:[]
+  housePassages:Array.from({length:12},(_,i)=>({house:i+1,risingSign:['aries','pisces','aquarius','capricorn','sagittarius','scorpio','libra','virgo','leo','cancer','gemini','taurus'][i],contentKey:`synthetic/house/${i+1}`,body:`Synthetic complete house ${i+1} opening. Synthetic house ending.`})),aspectPassages:[]
 });
 const id='22222222-2222-4222-8222-222222222222';
 const initial={id,content_key:edition.contentKey,surface:'sky',mode:'article',event_type:'sky-article-edition',

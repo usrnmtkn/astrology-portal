@@ -71,6 +71,13 @@ exercise navigation, delayed or malformed receipts, save/reload and complete
 reader copy. Synthetic checks do not establish native production acceptance or
 editorial approval.
 
+The article-memory lifecycle fixture uses twelve distinct rising-sign identities
+and the established Horoscopes section heading. Its draft and already-published
+browser journeys must both pass. A separate contract gap remains open: the
+generic compiler accepts a template without that section heading, while the
+complete-copy reader and publication guard refuse the resulting edition. This
+fixture correction does not establish support for every generic template.
+
 The Admin build coalesces small shared leaves at 8 KB while explicitly retaining
 the independent lunar, season, planetary Calendar, natal comparison, revision and
 library navigation entry points. Existing startup, lazy-boundary and bundle
