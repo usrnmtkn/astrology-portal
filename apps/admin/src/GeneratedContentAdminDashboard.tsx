@@ -1,5 +1,4 @@
 import { skyPublicationScheduled, skyPublicationIsFuture, type SkyPublicationRow } from './skyArticlePublicationState';
-import StudioWritingAdvice from "./StudioWritingAdvice";
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
 import { templateSavedWordingReferences } from "./templateSavedWordingReferences";
 import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
@@ -262,6 +261,7 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 // route is served by @tldr/web, which lazy-loads this component and never ran
 // apps/admin/src/main.tsx, so anything imported only there was missing in prod.
 
+const StudioWritingAdvice = lazy(() => import("./StudioWritingAdvice"));
 const RetrogradeHistoryFacts = lazy(() => import("../../../src/shared/components/RetrogradeHistory").then(module => ({ default: module.RetrogradeHistoryFacts })));
 const SkyPlacementCompanions = lazy(() => import("./SkyPlacementCompanions"));
 const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyArticleSourceDetails })));
@@ -12817,7 +12817,7 @@ export function GeneratedContentAdminDashboard() {
           <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
         </div>}
         {renderNotification()}
-        <StudioWritingAdvice value={currentDraft} />
+        <Suspense fallback={null}><StudioWritingAdvice value={currentDraft} /></Suspense>
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>

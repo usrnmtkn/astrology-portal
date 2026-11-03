@@ -1,3 +1,4 @@
+import {skySummaryWordingAdvisories} from "../apps/web/src/content/skyDailySummaryCatalog.ts";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import revision from "../docs/content-review/sky-summary-owner-revision-2026-09-11.json";
@@ -44,10 +45,12 @@ for (const [name, body] of Object.entries(legacy)) {
 const oldRows = new Map([...content, ...Object.entries(legacy).map(([name, body]) => [`cms/sky-daily-summary/assembly/${name}`, { id: name, body, status: "LIVE", updatedAt: "" }] as const)]);
 assert.deepEqual(render(facts, oldRows), paragraphs, "Saved former defaults must not reintroduce old grammar after hydration");
 assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/assembly/stationDirectAlso", "Also today, {stationList}.").length === 0, "Exact former default is migrated");
-assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/assembly/stationDirectFirst", "There are also changes: {stationList}.").length > 0, "New inventory-style templates are rejected");
+assert.ok(skySummaryTemplateErrors("cms/sky-daily-summary/assembly/stationDirectFirst", "There are also changes: {stationList}.").length === 0, "Owner sentence openings are advisory");
 const hidden = new Map(content); hidden.set("cms/sky-daily-summary/assembly/layout", { id: "hidden", body: "{openingSentence}\n\n{currentRetrogradesSentence}", status: "LIVE", updatedAt: "" });
 assert.equal(render(facts, hidden).length, 2);
 assert.match(render(facts, hidden)[1], /^Six planets are retrograde/u);
 const event = { id: station.id, type: "station", phase: "station-retrograde", direction: station.direction, planet: station.planet, sign: "Gemini", startsAt: station.startsAt } as any;
 assert.deepEqual(skySummaryEventFacts([event, event], new Map()).stations, [station]);
 console.log("Sky summary event grammar: exact owner example, 0/1/2/3 cardinality, station chronology, background Rx, source preservation, and saved-template migration passed.");
+
+assert(skySummaryWordingAdvisories("cms/sky-daily-summary/assembly/stationDirectFirst", "There are also changes: {stationList}.").length);
