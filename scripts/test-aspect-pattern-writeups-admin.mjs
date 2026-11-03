@@ -127,7 +127,8 @@ try {
   const preview = JSON.parse(previewResponse.body);
   assert.equal(preview.ok, true);
   assert.ok(preview.previews.some((item) => item.validation.unknownSlots.includes("unknown_slot")));
-  assert.ok(preview.previews.some((item) => item.validation.errors.some((error) => /prohibited|yod/i.test(error))));
+  assert.ok(preview.previews.some((item) => item.validation.errors.some((error) => /unknown_required_slot/.test(error))));
+  assert.ok(preview.previews.some((item) => item.validation.warnings.some((warning) => /prohibited|yod/i.test(warning))));
 } finally {
   await vite.close();
 }
