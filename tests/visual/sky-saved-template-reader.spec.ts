@@ -103,7 +103,31 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await sun.click();
       const sky = page.locator('.sky-detail-article').first();
       await assertCopy(sky);
+      // Let the normal native view transition finish before capturing the long
+      // page; capturing its root snapshot can compress it into one viewport.
+      await page.waitForFunction(() => !document.documentElement.hasAttribute('data-page-transition'), undefined, { timeout: 10_000 });
+      await sky.getByRole('heading', { name: edition.headline, exact: true }).scrollIntoViewIfNeeded();
+      await expect(sky.getByRole('heading', { name: edition.headline, exact: true })).toBeInViewport();
+      const layout = await sky.evaluate(element => {
+        const box = element.getBoundingClientRect();
+        const ancestors = [];
+        for (let current: HTMLElement | null = element as HTMLElement; current; current = current.parentElement) {
+          const style = getComputedStyle(current);
+          ancestors.push({ tag: current.tagName, className: current.className, transform: style.transform,
+            height: current.getBoundingClientRect().height, offsetHeight: current.offsetHeight, scrollTop: current.scrollTop });
+        }
+        return { width: box.width, height: box.height, offsetWidth: (element as HTMLElement).offsetWidth,
+          offsetHeight: (element as HTMLElement).offsetHeight, paragraphFontSize: parseFloat(getComputedStyle(element.querySelector('p')!).fontSize), ancestors };
+      });
+      expect(Math.abs(layout.height - layout.offsetHeight)).toBeLessThanOrEqual(2);
+      expect(layout.paragraphFontSize).toBeGreaterThanOrEqual(12);
+      await test.info().attach('settled-sky-layout', { body: JSON.stringify(layout), contentType: 'application/json' });
+      await page.screenshot({ path: `test-results/saved-template-sky-top-${width}-${theme}.png` });
       await page.screenshot({ path: `test-results/saved-template-sky-${width}-${theme}.png`, fullPage: true });
+      const finalHouseSentence = sky.getByText(edition.housePassages.at(-1)!.body.split('\n\n').at(-1)!, { exact: true });
+      await finalHouseSentence.scrollIntoViewIfNeeded();
+      await expect(finalHouseSentence).toBeInViewport();
+      await page.screenshot({ path: `test-results/saved-template-sky-bottom-${width}-${theme}.png` });
       await page.getByRole('button', { name: 'Close detail', exact: true }).click();
       await expect(sun).toContainText(edition.tldr);
       await sun.click();
