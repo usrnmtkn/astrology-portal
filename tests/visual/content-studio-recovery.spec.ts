@@ -102,7 +102,7 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
         return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
           ? route.continue() : route.abort("blockedbyclient");
       });
-      await page.route("**/SkyFallbackFieldsEditor-*.js", route => {
+      await page.route(url => /\/SkyFallbackFieldsEditor-[^/]+\.js$/u.test(url.pathname), route => {
         editorDownloads++;
         return route.fulfill({ status: 404, contentType: "text/javascript", body: "/* Old deployment chunk is gone. */" });
       });
@@ -562,7 +562,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
         return url.origin === studioOrigin && !url.pathname.startsWith("/api/")
           ? route.continue() : route.abort("blockedbyclient");
       });
-      await page.route("**/StudioFormattingEditor-*.js", route => missing
+      await page.route(url => /\/StudioFormattingEditor-[^/]+\.js$/u.test(url.pathname), route => missing
         ? route.fulfill({ status: 503, contentType: "text/javascript", body: "/* Optional formatting unavailable. */" })
         : route.continue());
       page.on("response", response => {
@@ -582,6 +582,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       const mountedEditor = await editor.elementHandle();
       expect(await store.call({ method: "rows" })).toEqual([]);
       await body.locator("..").getByRole("button", { name: "Format text", exact: true }).click();
+      await expect.poll(() => statuses).toEqual([503]);
       const recovery = editor.getByRole("alert").filter({ hasText: "This section could not load." });
       await expect(recovery).toBeVisible();
       await recovery.getByText("Error details", { exact: true }).click();
