@@ -341,6 +341,15 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       Count: plain(count), count: plain(count.toLowerCase()),
       [listSlot]: listParts(items.map(item => ({ text: item.label, action: "event", eventId: item.id, emphasis: true })))
     }) : [];
+    if (slot === "exactAspectsSentence") {
+      const listStart = values[slot].findIndex(part => part.action === "event");
+      const intro = values[slot].slice(0, Math.max(0, listStart)).map(part => part.text).join("");
+      if (intro.trim()) {
+        values[slot].splice(0, listStart,
+          { text: intro.trimEnd(), highlight: true },
+          ...plain(intro.slice(intro.trimEnd().length)));
+      }
+    }
     // A station changes the current Rx count only after its timestamp and when
     // the same calculated snapshot contains that planet as retrograde. Avoid
     // claiming a new count for future, direct, multiple, or unmatched stations.
