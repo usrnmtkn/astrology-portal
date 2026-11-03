@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, Search } from "lucide-react";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { ArticleCover } from "./ArticleCover";
+import { ArticlePublishDate } from "./ArticlePublishDate";
 import { FormattedProse, FormattedText } from "../../components/FormattedProse";
 import { useMinimumLoading } from "../../hooks/useMinimumLoading";
 import { PageLoading, PageLoadState } from "../../components/PageLoading";
@@ -13,12 +14,12 @@ import { loadReaderRows } from "../../services/readerContentClient";
 import { subscribeToContentUpdates, subscribeToContentRevalidation } from "../../services/contentUpdateSignal";
 import { subscribeToContentPublications } from "../../content/contentPublicationState";
 import type { GeneratedContentRow } from "../../services/generatedContent";
-import { articleKeyFromHash, articleLibraryKind, articleLibraryPrefixes } from "../../../../../src/shared/articleLibrary";
+import { articleKeyFromHash, articleLibraryKind, articleLibraryPrefixes, articlePublicationIsDue, articleSortDate } from "../../../../../src/shared/articleLibrary";
 
 const labels = { article: "Article", guide: "Guide", sky: "Sky article" };
 function readable(row: GeneratedContentRow) {
   return articleLibraryKind(row) && row.status === "LIVE" && row.lane === "serving" && !row.review_state
-    && Boolean(row.headline?.trim() && row.body?.trim());
+    && articlePublicationIsDue(row) && Boolean(row.headline?.trim() && row.body?.trim());
 }
 
 /** Render authored headings and every paragraph, without deriving an excerpt. */
@@ -67,7 +68,7 @@ export default function ArticlesExperience() {
       setResolvedKey(key);
       if (results.some(result => result.error)) { setRows([]); setState("error"); return; }
       const unique = new Map(results.flatMap(result => result.data ?? []).filter(readable).map(row => [row.content_key, row]));
-      setRows([...unique.values()].sort((a, b) => (b.target_date ?? b.updated_at).localeCompare(a.target_date ?? a.updated_at)));
+      setRows([...unique.values()].sort((a, b) => articleSortDate(b) - articleSortDate(a)));
       setState("ready");
     }).catch(() => {
       if (!controller.signal.aborted) { setResolvedKey(key); setRows([]); setState("error"); }
@@ -88,7 +89,7 @@ export default function ArticlesExperience() {
     {key && (state !== "ready" || selected) && <a className="sky-detail-back floating-back-button" href="#articles" aria-label="Back to Articles & Guides"><ChevronLeft size={18} aria-hidden="true" /><span>Back</span></a>}
     {key && (waiting || state === "error") && <header className="articles-library-header"><h1 className="article-title">Articles &amp; Guides</h1></header>}
     {key ? <PageLoadState key={key} scope="page" what="This article" failed={state === "error"} pending={waiting} onRetry={() => setRevision(value => value + 1)}>{waiting ? <PageLoading layout="reading" message="Loading articles and guides…" /> : selected ? <article className="learn-sheet learn-sheet--article">
-      <header className="learn-article-header"><p className="learn-kicker">{labels[articleLibraryKind(selected)!]}</p><h1 className="article-title">{selected.headline}</h1></header>
+      <header className="learn-article-header"><p className="learn-kicker">{labels[articleLibraryKind(selected)!]}</p><h1 className="article-title">{selected.headline}</h1><ArticlePublishDate row={selected} /></header>
       <div className="learn-article-body"><ArticleBody body={selected.body!} /></div>
     </article> : <ReaderUnavailable kind="article" />}</PageLoadState> : <div className="learn-hub">
       <header className="articles-library-header"><h1 className="article-title">Articles &amp; Guides</h1><p>Explore dated Sky articles and guides you can return to anytime.</p></header>

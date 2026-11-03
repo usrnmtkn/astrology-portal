@@ -18,3 +18,33 @@ export function articleKeyFromHash(hash: string) {
   if (!value.startsWith("articles/")) return null;
   try { return decodeURIComponent(value.slice("articles/".length)); } catch { return null; }
 }
+
+type PublicationRow = { content_key: string; sections?: unknown; published_at?: string | null; target_date?: string | null; updated_at?: string | null };
+export function validArticleTimeZone(value: unknown): value is string {
+  if (typeof value !== "string" || value.length > 100) return false;
+  try { new Intl.DateTimeFormat("en", { timeZone: value }); return true; } catch { return false; }
+}
+export function articlePublicationTimeZone(row: PublicationRow) {
+  const zone = (row.sections as { articlePublication?: { timeZone?: unknown } } | null)?.articlePublication?.timeZone;
+  return validArticleTimeZone(zone) ? zone : undefined;
+}
+export function validArticlePublishAt(value: unknown): value is string {
+  // Invalid dates serialize to null; the exact comparison rejects normalized dates.
+  return typeof value === "string" && value.length === 24 && new Date(value).toJSON() === value;
+}
+export function articlePublishAt(row: PublicationRow): string | null {
+  if (!standaloneArticleKind(row.content_key)) return null;
+  const value = (row.sections as { articlePublication?: { publishAt?: unknown } } | null)?.articlePublication?.publishAt;
+  return validArticlePublishAt(value) ? value : null;
+}
+export function articlePublicationIsDue(row: PublicationRow, now = Date.now()) {
+  if (!standaloneArticleKind(row.content_key)) return true;
+  const publication = (row.sections as { articlePublication?: { publishAt?: unknown } } | null)?.articlePublication;
+  return publication == null || validArticlePublishAt(publication.publishAt) && Date.parse(publication.publishAt) <= now;
+}
+export function articlePublicationDate(row: PublicationRow) {
+  return articlePublishAt(row) ?? (standaloneArticleKind(row.content_key) ? row.published_at : null) ?? null;
+}
+export function articleSortDate(row: PublicationRow) {
+  return Date.parse(articlePublicationDate(row) ?? row.target_date ?? row.updated_at ?? "") || 0;
+}
