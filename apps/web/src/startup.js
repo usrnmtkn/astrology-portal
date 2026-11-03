@@ -4,6 +4,18 @@ const startup = document.getElementById("app-startup");
 const readerRecoveryHistoryKey = "__tldrastroReaderPageRecovery";
 const readerRecoveryCooldownMs = 2 * 60 * 1000;
 const recoverableReaderHash = /^#\/?(?:you|sky|calendar|friends)(?:[/?]|$)/u;
+const failedPageAssets = new Set();
+const rememberPageAsset = (href) => {
+  const url = new URL(href, location.href);
+  if (url.origin === location.origin && /^\/assets\/[^/]+\.js$/u.test(url.pathname)) failedPageAssets.add(url.href);
+};
+// WebKit can retain a failed module preload across document navigation.
+// Refresh selected same-origin JS before an explicit recovery.
+window.__tldrastroRecoverPageAssets = () => failedPageAssets.size
+  ? Promise.allSettled([...failedPageAssets].map(async (href) => {
+    const response = await fetch(href, { cache: "reload", signal: AbortSignal.timeout(5000) });
+    await response.arrayBuffer();
+  })).then(() => {}) : undefined;
 try {
   document.documentElement.dataset.theme = localStorage.getItem("tldrastro:theme") === "dark" ? "dark" : "light";
 } catch { /* The loading screen also works when storage is unavailable. */ }
@@ -28,13 +40,12 @@ new MutationObserver(syncLoaderMotion).observe(motionRoot, { attributes: true, a
 const readerPathname = (pathname) => pathname.replace(/\/+$/u, "") || "/";
 const readerRecoveryRoute = () => {
   const query = new URLSearchParams(location.search);
-  if (query.has("auth") || query.has("code")) return false;
+  if (["auth", "code", "readerReturn", "returnTo"].some(key => query.has(key))) return false;
   const path = readerPathname(location.pathname);
   if (path === "/learn" || path.startsWith("/learn/") || path === "/friends") return true;
   if (path !== "/") return false;
   return location.hash === "" || recoverableReaderHash.test(location.hash);
 };
-
 const reloadReaderRouteOnce = () => {
   if (!readerRecoveryRoute()) return false;
   const route = `${location.pathname}${location.hash}`;
@@ -53,6 +64,9 @@ const reloadReaderRouteOnce = () => {
   location.reload();
   return true;
 };
+// Share the same route and history guard with mounted recovery. This shell
+// stays available when a module download fails; other pages remain manual.
+window.__tldrastroReloadReaderOnce = reloadReaderRouteOnce;
 
 const showStartupMessage = (failed = false) => {
   if (!startup?.isConnected) return;
@@ -66,7 +80,13 @@ const showStartupMessage = (failed = false) => {
   const action = startup.querySelector("button");
   if (action) action.hidden = false;
 };
-startup?.querySelector("button")?.addEventListener("click", () => location.reload());
+startup?.querySelector("button")?.addEventListener("click", async (event) => {
+  event.currentTarget.disabled = true;
+  // Head preloads can fail before this independent recovery script starts.
+  for (const link of document.querySelectorAll('link[rel="modulepreload"]')) rememberPageAsset(link.href);
+  await window.__tldrastroRecoverPageAssets();
+  location.reload();
+});
 const timeout = window.setTimeout(() => showStartupMessage(), 12000);
 const observer = new MutationObserver(() => {
   if (!startup?.isConnected) { clearTimeout(timeout); observer.disconnect(); }
@@ -75,10 +95,12 @@ if (root) observer.observe(root, { childList: true });
 window.addEventListener("tldrastro:startup-error", () => showStartupMessage(true));
 window.addEventListener("unhandledrejection", () => showStartupMessage(true));
 window.addEventListener("error", (event) => {
-  if (!startup?.isConnected) return;
   const script = event.target instanceof HTMLScriptElement ? event.target : null;
   // Optional artwork must never trigger reader recovery or hide a healthy app.
   if (script?.hasAttribute("data-startup-decoration")) return;
+  const href = script?.src || (event.target instanceof HTMLLinkElement && event.target.rel === "modulepreload" ? event.target.href : "");
+  if (href) rememberPageAsset(href);
+  if (!startup?.isConnected) return;
   if (script?.src.includes("/assets/") && reloadReaderRouteOnce()) return;
   if (script || event instanceof ErrorEvent) showStartupMessage(true);
 }, true);
