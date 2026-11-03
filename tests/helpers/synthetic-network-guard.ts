@@ -72,6 +72,8 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
           const document = request.resourceType() === 'document'
             && ['/', '/index.html', '/admin/content', '/admin/content/'].includes(url.pathname);
           const asset = /^\/(?:assets|content|generated|fonts|images|icons|branding)\//u.test(url.pathname)
+            || /^\/wasm\/[a-f0-9]{16}\/swisseph\.(?:data|wasm)$/u.test(url.pathname)
+            || /^\/zodiac\/(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)\.svg$/u.test(url.pathname)
             || ['/', '/favicon.ico', '/favicon.svg', '/favicon.png', '/robots.txt', '/site.webmanifest', '/manifest.webmanifest', '/manifest.json', '/tldr-content.js'].includes(url.pathname);
           if (read && (document || asset)) return route.fallback();
           // Specific test routes must fulfill API reads and writes themselves.

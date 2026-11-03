@@ -34,17 +34,23 @@ test('deployed fixture HTTP allows static reads and explicit mocks, rejecting un
   await page.route(`${origin}/api/fixture`, route => route.fulfill({ json: { exact: 'Synthetic complete response.' } }));
   expect(await page.evaluate(async () => (await fetch('/api/fixture', { method: 'POST' })).json())).toEqual({ exact: 'Synthetic complete response.' });
   expect(await page.evaluate(async () => (await fetch('/assets/probe.json?dpl=synthetic')).json())).toEqual({ simulatedRemote: true });
+  expect(await page.evaluate(async () => (await fetch('/wasm/0123456789abcdef/swisseph.wasm')).json())).toEqual({ simulatedRemote: true });
+  expect(await page.evaluate(async () => (await fetch('/zodiac/aries.svg')).json())).toEqual({ simulatedRemote: true });
   const probe = (path: string, method: string) => page.evaluate(async ({ path, method }) => {
     try { await fetch(path, { method }); return 'forwarded'; } catch { return 'blocked'; }
   }, { path, method });
   expect(await probe('/api/unhandled-write', 'POST')).toBe('blocked');
   expect(await probe('/api/unhandled-read', 'GET')).toBe('blocked');
   expect(await probe('/assets/probe.json', 'POST')).toBe('blocked');
-  expect(forwarded).toEqual(['GET /assets/probe.json']);
+  expect(await probe('/wasm/0123456789abcdef/private.json', 'GET')).toBe('blocked');
+  expect(await probe('/zodiac/not-a-sign.svg', 'GET')).toBe('blocked');
+  expect(forwarded).toEqual(['GET /assets/probe.json', 'GET /wasm/0123456789abcdef/swisseph.wasm', 'GET /zodiac/aries.svg']);
   expect(guard.unhandledExternal).toEqual([
     `POST ${origin}/api/unhandled-write`,
     `GET ${origin}/api/unhandled-read`,
     `POST ${origin}/assets/probe.json`
+    , `GET ${origin}/wasm/0123456789abcdef/private.json`
+    , `GET ${origin}/zodiac/not-a-sign.svg`
   ]);
   expect(connectionAttempts()).toBe(0);
   await guard.finishStaticFonts();
