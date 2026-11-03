@@ -15,7 +15,7 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
   const db = await createPublicationDb();
   try {
     const { matchesStoredInventory } = await import('./calendar-review-api.mjs');
-    const { default: admin } = await import('../../api/admin/generated-content.ts');
+    const { default: admin, publishDueSkyArticles } = await import('../../api/admin/generated-content.ts');
     const { default: reader } = await import('../../api/content-reader.ts');
     const { default: publications } = await import('../../api/content-publications.ts');
     await db.query("insert into content_publications(content_key,state) values('__content-publication-ledger/v1','live')");
@@ -49,7 +49,8 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
       assert.equal(init.method, 'PATCH');
       assert.ok(url.searchParams.get('id')?.startsWith('eq.'), 'Writes require one exact source row');
       assert.ok(url.searchParams.get('updated_at')?.startsWith('eq.'), 'Writes require the opened source version');
-      const patch = { ...JSON.parse(String(init.body)), updated_at: new Date().toISOString() };
+      const patch = JSON.parse(String(init.body));
+      patch.updated_at ??= new Date().toISOString();
       const names = Object.keys(patch);
       for (const name of names) assert.ok(columns.has(name), 'Only actual schema columns can be written');
       await db.query("select set_config('request.headers',$1,false),set_config('request.jwt.claims','{\"role\":\"service_role\"}',false)",
@@ -75,7 +76,7 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
       await (publicLedger ? publications : path === '/api/content-reader' ? reader : admin)(req as any, res as any);
       return { status: res.statusCode, headers: res.headers, ...res.payload };
     };
-    return { db, invoke, secret: env.CONTENT_GENERATION_SECRET, async close() {
+    return { db, invoke, publishDue: publishDueSkyArticles, secret: env.CONTENT_GENERATION_SECRET, async close() {
       globalThis.fetch = originalFetch;
       for (const [key, value] of Object.entries(previous)) {
         if (value === undefined) delete process.env[key]; else process.env[key] = value;

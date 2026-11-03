@@ -103,7 +103,7 @@ export default function StudioCustomVariables({ variables, secret, query, tag, o
     catch (reason) { setError(reason instanceof Error ? reason.message : "Could not delete variable."); }
     finally { setBusy(false); }
   }
-  if (creating || editing !== undefined) return <VariableForm key={creating ? "new" : editing?.id} initial={creating ? null : editing ?? null} secret={secret} onCancel={close} onDirty={onDirty} onSave={variable => { onChange([...variables.filter(item => item.id !== variable.id), variable].sort((a, b) => a.name.localeCompare(b.name))); close(); }} />;
+  if (creating || editing !== undefined) return <VariableForm key={creating ? `new-${createRequest}` : editing?.id} initial={creating ? null : editing ?? null} secret={secret} onCancel={close} onDirty={onDirty} onSave={variable => { onChange([...variables.filter(item => item.id !== variable.id), variable].sort((a, b) => a.name.localeCompare(b.name))); close(); }} />;
   return <div className="studio-section studio-variable-list">
     {!filtered.length && <div className="studio-surface studio-section studio-variable-card"><h2>{variables.length ? "No matching variables" : "Create your first variable"}</h2><p>{variables.length ? "Try another search or tag." : "Name a reusable piece of writing, give it a value, and organize it with your own tags."}</p></div>}
     {filtered.map(variable => <article key={variable.id} className="studio-surface studio-section studio-variable-card" aria-label={variable.label}>

@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import { mock } from 'node:test';
 import { compiledReaderFixture, compiledReaderRow, compiledReaderCandidate } from '../tests/helpers/sky-saved-template-reader-fixtures.mts';
 import { skyArticlePublicationStore } from '../tests/helpers/sky-article-publication-store.mts';
 import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from '../apps/web/src/content/skyIngressEssayReader.ts';
@@ -26,6 +28,27 @@ try {
   assert.equal((await store.db.query('select * from content_publications where content_key=$1', [initial.content_key])).rows.length, 0);
 
   const opened = (await store.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [initial.id])).rows[0].row as any;
+  const refusalCases: Array<[string, (value: any) => void]> = [
+    ['house copy without a new compiled hash', value => { value.housePassages[11].body += ' Changed.'; }],
+    ['matching house and Markdown without a new compiled hash', value => {
+      const old = value.housePassages[11].body; value.housePassages[11].body += ' Changed.';
+      value.compiledMarkdown = value.compiledMarkdown.replace(old, value.housePassages[11].body);
+    }],
+    ['extra property excluded from the old hash', value => { value.housePassages[0].extra = 'Changed.'; }],
+    ['unknown format with unchanged hash payload', value => { value.format = 'unknown'; }],
+    ['section inconsistent with the compiled article', value => { value.articleSections[0].body += ' Changed.'; }]
+  ];
+  for (const [label, mutate] of refusalCases) {
+    const sections = structuredClone(opened.sections); mutate(sections.skyArticleEdition);
+    await store.db.query('update generated_interpretations set sections=$1 where id=$2', [JSON.stringify(sections), initial.id]);
+    const before = (await store.db.query('select to_jsonb(g) as row from generated_interpretations g order by id')).rows;
+    const ledger = (await store.db.query('select to_jsonb(p) as row from content_publications p order by content_key')).rows;
+    const refused = await approve(opened.updated_at);
+    assert.equal(refused.status, 409, label + ': ' + JSON.stringify(refused));
+    assert.deepEqual((await store.db.query('select to_jsonb(g) as row from generated_interpretations g order by id')).rows, before, 'Refusal leaves every source field and version unchanged: ' + label);
+    assert.deepEqual((await store.db.query('select to_jsonb(p) as row from content_publications p order by content_key')).rows, ledger, 'Refusal never publishes to the ledger: ' + label);
+  }
+  await store.db.query('update generated_interpretations set sections=$1 where id=$2', [JSON.stringify(opened.sections), initial.id]);
   const result = await approve(opened.updated_at);
   assert.equal(result.status, 200, JSON.stringify(result));
   const published = result.rows[0];
@@ -158,4 +181,72 @@ for (const construction of ['imported', 'hydrated-imported', 'natural-sign-impor
     assert.ok(selected.articleSections.some(section => section.body === 'Synthetic companion introduction.'), construction + ': Sky retains the complete authored horoscope introduction');
   } finally { await lifecycle.close(); }
 }
-console.log('PASS stored hash compatibility: generic, imported, hydrated-imported and revised editions roundtrip actual JSONB with original hashes and complete reader copy.');
+console.log('PASS stored hash compatibility: generic, imported, hydrated-imported, natural-sign-order and revised editions roundtrip actual JSONB with original hashes and complete reader copy.');
+
+const scheduledStore = await skyArticlePublicationStore([initial]);
+let scheduled: any;
+const future = Date.now() + 60_000;
+try {
+  const opened = (await scheduledStore.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [initial.id])).rows[0].row as any;
+  const dated = await scheduledStore.invoke('/api/admin/generated-content', { id: initial.id, expectedUpdatedAt: opened.updated_at,
+    ownerAction: 'set-sky-article-publication-date', skyPublicationAt: new Date(future).toISOString() });
+  assert.equal(dated.status, 200, JSON.stringify(dated));
+  const approved = await scheduledStore.invoke('/api/admin/generated-content', { id: initial.id, expectedUpdatedAt: dated.rows[0].updated_at,
+    ownerAction: 'approve-sky-article-edition' });
+  assert.equal(approved.status, 200, JSON.stringify(approved));
+  scheduled = approved.rows[0];
+  assert.equal(scheduled.status, 'DRAFT');
+  assert.equal(scheduled.source_snapshot.skyArticlePublication.state, 'scheduled');
+  assert.deepEqual((await scheduledStore.invoke('/api/content-reader', { keys: [initial.content_key] })).rows, []);
+  mock.timers.enable({ apis: ['Date'], now: future + 1 });
+  assert.deepEqual(await scheduledStore.publishDue(), { published: 1, held: 0 });
+  const read = await scheduledStore.invoke('/api/content-reader', { keys: [initial.content_key] });
+  assert.equal(read.rows[0].sections.skyArticleEdition.compiledMarkdown, edition.compiledMarkdown);
+  assert.deepEqual(read.rows[0].sections.skyArticleEdition.housePassages, edition.housePassages);
+} finally { mock.timers.reset(); await scheduledStore.close(); }
+
+// Legacy schedules may have been approved before compiled-byte validation.
+// Model their existing canonical receipt schema, then require actual due
+// dispatch to enter its normal hold path rather than publish an unreadable row.
+const canonical = (value: any): any => Array.isArray(value) ? value.map(canonical) : value && typeof value === 'object'
+  ? Object.fromEntries(Object.keys(value).sort().map(key => [key, canonical(value[key])])) : value;
+for (const structural of [false, true]) {
+  const legacy = structuredClone(scheduled);
+  const value = legacy.sections.skyArticleEdition;
+  if (structural) value.articleSections[0].body += ' Changed.';
+  else {
+    const old = value.housePassages[11].body; value.housePassages[11].body += ' Changed.';
+    value.compiledMarkdown = value.compiledMarkdown.replace(old, value.housePassages[11].body);
+  }
+  legacy.source_snapshot.skyArticlePublication.approvedHash = createHash('sha256').update(JSON.stringify(canonical({
+    contentKey: legacy.content_key, headline: legacy.headline, summary: legacy.summary, body: legacy.body, sections: legacy.sections,
+    target: legacy.source_snapshot.targetRowId, targetVersion: legacy.source_snapshot.targetRowUpdatedAt
+  }))).digest('hex');
+  const lifecycle = await skyArticlePublicationStore([legacy, unrelated]);
+  try {
+    const companion = (await lifecycle.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [unrelated.id])).rows[0].row as any;
+    assert.equal((await lifecycle.invoke('/api/admin/generated-content', { id: unrelated.id, expectedUpdatedAt: companion.updated_at,
+      ownerAction: 'publish-owner-content' })).status, 200);
+    const before = (await lifecycle.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [legacy.id])).rows[0].row as any;
+    const ledger = (await lifecycle.db.query('select to_jsonb(p) as row from content_publications p order by content_key')).rows;
+    const previousReader = await lifecycle.invoke('/api/content-reader', { keys: [legacy.content_key, unrelated.content_key] });
+    assert.deepEqual(previousReader.rows.map((row: any) => row.content_key), [unrelated.content_key]);
+    mock.timers.enable({ apis: ['Date'], now: future + 1 });
+    assert.deepEqual(await lifecycle.publishDue(), { published: 0, held: 1 });
+    const after = (await lifecycle.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [legacy.id])).rows[0].row as any;
+    assert.equal(after.source_snapshot.skyArticlePublication.state, 'needs_attention', 'Actual dispatch reaches the existing hold receipt');
+    assert.ok(Date.parse(after.updated_at) > Date.parse(before.updated_at), 'The held source advances its saved version');
+    const hold = { ...after.source_snapshot.skyArticlePublication, state: before.source_snapshot.skyArticlePublication.state };
+    assert.equal(typeof hold.error, 'string'); delete hold.error;
+    assert.deepEqual(hold, before.source_snapshot.skyArticlePublication, 'Every prior approval and timing field stays intact');
+    const allowed = structuredClone(after);
+    allowed.updated_at = before.updated_at;
+    allowed.source_snapshot.skyArticlePublication = before.source_snapshot.skyArticlePublication;
+    assert.deepEqual(allowed, before, 'Only existing hold metadata/version changes; full source copy and liveness stay exact');
+    assert.deepEqual((await lifecycle.db.query('select to_jsonb(p) as row from content_publications p order by content_key')).rows, ledger);
+    assert.deepEqual((await lifecycle.invoke('/api/content-reader', { keys: [legacy.content_key] })).rows, []);
+    assert.deepEqual((await lifecycle.invoke('/api/content-reader', { keys: [legacy.content_key, unrelated.content_key] })).rows,
+      previousReader.rows, 'A refused schedule leaves the existing complete reading available');
+  } finally { mock.timers.reset(); await lifecycle.close(); }
+}
+console.log('PASS immediate hash/structure refusal leaves source+ledger exact; scheduled dispatch shares validation and changes only its existing hold receipt.');

@@ -69,6 +69,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(form.getByLabel('Name', { exact: true })).toBeDisabled();
       await expect(form.getByLabel('Description', { exact: true })).toBeDisabled();
       await expect(form.getByRole('button', { name: 'Cancel', exact: true })).toBeDisabled();
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /Create variable/u }).click();
+      await expect(form).toBeVisible();
+      await expect(page.getByRole('form', { name: 'Create variable', exact: true })).toHaveCount(0);
       await page.getByLabel('Library', { exact: true }).selectOption('editable');
       await expect(page.getByLabel('Library', { exact: true })).toHaveValue('custom');
       expect(await beforeUnload()).toBe(true);
@@ -95,6 +99,23 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await page.reload();
       await expect(value).toHaveValue(final);
       expect(await beforeUnload()).toBe(false);
+      discard = false;
+      const unsent = final + '\n\nSynthetic not-yet-saved ending.';
+      await value.fill(unsent);
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /Create variable/u }).click();
+      await expect(value).toHaveValue(unsent);
+      discard = true;
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /Create variable/u }).click();
+      const created = page.getByRole('form', { name: 'Create variable', exact: true });
+      await expect(created.getByRole('textbox', { name: 'Shared value', exact: true })).toHaveValue('');
+      await created.getByRole('textbox', { name: 'Shared value', exact: true }).fill('Synthetic unsaved new variable.');
+      await page.getByRole('button', { name: 'Create', exact: true }).click();
+      await page.getByRole('menuitem', { name: /Create variable/u }).click();
+      await expect(created.getByRole('textbox', { name: 'Shared value', exact: true })).toHaveValue('');
+      expect(writes).toHaveLength(2);
+      expect((await store.call({ method: 'GET', url: endpoint })).payload.variables[0].value).toBe(final);
       expect(errors).toEqual([]);
       expect(guard.unhandledExternal).toEqual([]);
     } finally {

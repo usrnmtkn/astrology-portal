@@ -16,7 +16,8 @@ The repairs retain the existing separate save and publish actions. Pattern
 receipts advance the saved baseline without replacing newer local text. Custom
 Variables keep writing controls disabled during a save and require a complete,
 matching receipt before closing. Dirty and pending operations participate in
-the owning workspace's navigation guard.
+the owning workspace's navigation guard. Starting another variable uses that
+same guard; a confirmed new draft starts empty, including repeated Create actions.
 
 Saved-template and ingress editions share row validation and existing selection
 rules. Exact owner approval, publication identity and version, serving state,
@@ -44,8 +45,15 @@ generic Studio house/aspect construction, imported horoscope construction, and
 that import after source-template JSONB hydration. Every candidate retains all
 properties, values and array order, including imported heading metadata. Unknown
 fields are never omitted to obtain a match. Unsupported inputs fail closed.
+The publication handler applies the same hash check and shared structural reader
+validation before any Live or ledger write. This includes future scheduling and
+due dispatch. A refused immediate publication leaves every source field, saved
+version and ledger row unchanged. A refused scheduled publication preserves
+source copy, liveness, prior approval and timing, and reader availability; only
+the existing attention-required receipt and saved version advance.
+
 No hash migration, stored wording change or browser crypto implementation is
-introduced.
+introduced. The rebase preserves the authored-fallback topic policy from #1392.
 
 ## Verification boundaries
 

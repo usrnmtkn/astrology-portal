@@ -7239,6 +7239,7 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     expect(saves).toBe(3);
     expect(row!.source_snapshot.record.content.overview).toBe('QA newer draft from another editor.');
     await expect(overview).toHaveValue('QA stale browser edit.');
+    page.once('dialog', dialog => dialog.accept());
     await page.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(overview).toHaveValue('QA newer draft from another editor.');
     omitPatternReceipt = true;

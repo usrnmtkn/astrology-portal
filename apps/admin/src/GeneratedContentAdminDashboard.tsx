@@ -3288,6 +3288,13 @@ export function GeneratedContentAdminDashboard() {
   const dailyWritingDirtyRef = useRef(false);
   const skyPlacementWorkspaceDirtyRef = useRef(false);
   const skyPlacementWorkspaceBusyRef = useRef(false);
+  const aspectPatternDirtyRef = useRef(false);
+  const aspectPatternBusyRef = useRef(false);
+  const customVariableDirtyRef = useRef(false);
+  const customVariableBusyRef = useRef(false);
+  const trackCustomVariableDraft = useCallback((dirty: boolean, busy: boolean) => {
+    customVariableDirtyRef.current = dirty; customVariableBusyRef.current = busy;
+  }, []);
   const lunationWritingDirtyRef = useRef(false);
   const [calendarWriteupWorkspaceView, setCalendarWriteupWorkspaceView] = useState<CalendarWriteupWorkspaceView>("daily-sky");
   const [transitReadingContext, setTransitReadingContext] = useState<import("./transitNatalSources").TransitNatalReadingContext>({});
@@ -4517,6 +4524,7 @@ export function GeneratedContentAdminDashboard() {
   function hasPendingArticleChanges() {
     return Boolean(
       subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || dailyWritingDirtyRef.current || skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current
+      || aspectPatternDirtyRef.current || aspectPatternBusyRef.current || customVariableDirtyRef.current || customVariableBusyRef.current
       || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
     );
@@ -4559,7 +4567,7 @@ export function GeneratedContentAdminDashboard() {
       || skyArticleEditor
       || skyArticleEditionForm
     );
-    if (skyPlacementWorkspaceBusyRef.current || isLoading && hasOpenEditor) {
+    if (skyPlacementWorkspaceBusyRef.current || aspectPatternBusyRef.current || customVariableBusyRef.current || isLoading && hasOpenEditor) {
       setMessage("Finish the current editor operation before leaving this section.");
       return false;
     }
@@ -7419,7 +7427,7 @@ export function GeneratedContentAdminDashboard() {
               onSelect: () => handleCreateAction("articles", "New article draft started.") },
             { key: "guide", label: "New guide", description: "Write a standalone guide", icon: BookOpenText,
               onSelect: () => handleCreateAction("articles", "New guide draft started.", undefined, "guide") }
-          ] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setVariableCreateRequest(value => value + 1); setIsCreateMenuOpen(false); } }] : [
+          ] : activePage === "variables" ? [{ key: "variable", label: "Create variable", description: "Name, write, and tag your own variable", icon: KeyRound, onSelect: () => { setIsCreateMenuOpen(false); if (!closeEditor()) return; setVariableCreateRequest(value => value + 1); } }] : [
             {
               key: "article",
               label: "Create article",
@@ -7499,7 +7507,7 @@ export function GeneratedContentAdminDashboard() {
           </nav>
         )}
 
-        {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} customLoaded={customVariableLibrary.loaded} initialVariableName={parseAdminHash().params.get('editVariable') ?? undefined} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
+        {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} customLoaded={customVariableLibrary.loaded} initialVariableName={parseAdminHash().params.get('editVariable') ?? undefined} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onDirty={trackCustomVariableDraft} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
         {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} /></Suspense></div>}
         {activePage === "horoscopeFallbacks" && <><Suspense fallback={<PageLoading message="Loading fallback horoscopes…" />}>
@@ -8601,13 +8609,13 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "aspectPatternCoverage" && (
           <Suspense fallback={<PageLoading message="Loading aspect-pattern tools…" />}>
-            <AspectPatternWriteups initialKind="natal" secret={secret} />
+            <AspectPatternWriteups initialKind="natal" secret={secret} dirtyRef={aspectPatternDirtyRef} busyRef={aspectPatternBusyRef} />
           </Suspense>
         )}
 
         {activePage === "aspectPatternActivationCoverage" && (
           <Suspense fallback={<PageLoading message="Loading aspect-pattern tools…" />}>
-            <AspectPatternWriteups initialKind="activation" secret={secret} />
+            <AspectPatternWriteups initialKind="activation" secret={secret} dirtyRef={aspectPatternDirtyRef} busyRef={aspectPatternBusyRef} />
           </Suspense>
         )}
 
