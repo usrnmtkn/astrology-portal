@@ -12,6 +12,7 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
   const previous = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
   Object.assign(process.env, env);
   const originalFetch = globalThis.fetch;
+  let usedSkyCalculation = false;
   const db = await createPublicationDb();
   try {
     const { matchesStoredInventory } = await import('./calendar-review-api.mjs');
@@ -66,17 +67,25 @@ export async function skyArticlePublicationStore(initial: Record<string, unknown
         return Response.json(updated);
       } finally { await db.exec('reset request.headers; reset request.jwt.claims'); }
     };
-    const invoke = async (path: '/api/admin/generated-content' | '/api/content-reader' | `/api/content-publications${string}`, body?: unknown, authorized = true) => {
+    const invoke = async (path: '/api/admin/generated-content' | '/api/content-reader' | `/api/content-publications${string}` | `/api/sky${string}` | `/api/calendar${string}`, body?: unknown, authorized = true) => {
       const publicLedger = path.startsWith('/api/content-publications');
+      const skyPath = new URL(path, 'http://fixture.invalid').pathname;
+      const calculation = ['/api/sky', '/api/sky-reader', '/api/calendar'].includes(skyPath);
       const req = Object.assign(Readable.from(body === undefined ? [] : [JSON.stringify(body)]), {
-        method: publicLedger ? 'GET' : path === '/api/content-reader' ? 'POST' : 'PATCH', url: path,
+        method: publicLedger || calculation ? 'GET' : path === '/api/content-reader' ? 'POST' : 'PATCH', url: path,
         headers: path !== '/api/admin/generated-content' || !authorized ? {} : { 'x-content-generation-secret': env.CONTENT_GENERATION_SECRET } });
       const res = { statusCode: 200, payload: {} as any, headers: {} as Record<string, string>,
         setHeader(key: string, value: string) { this.headers[key] = value; }, end(text: string) { this.payload = JSON.parse(text); } };
-      await (publicLedger ? publications : path === '/api/content-reader' ? reader : admin)(req as any, res as any);
+      if (calculation) {
+        usedSkyCalculation = true;
+        const handler = skyPath === '/api/sky' ? (await import('../../api/sky.ts')).default
+          : skyPath === '/api/sky-reader' ? (await import('../../api/sky-reader.ts')).default : (await import('../../api/calendar.ts')).default;
+        await handler(req as any, res as any);
+      } else await (publicLedger ? publications : path === '/api/content-reader' ? reader : admin)(req as any, res as any);
       return { status: res.statusCode, headers: res.headers, ...res.payload };
     };
     return { db, invoke, publishDue: publishDueSkyArticles, secret: env.CONTENT_GENERATION_SECRET, async close() {
+      if (usedSkyCalculation) (await import('../../api/_lib/sky-reader-calculation.ts')).disposeInitialSkyWorker();
       globalThis.fetch = originalFetch;
       for (const [key, value] of Object.entries(previous)) {
         if (value === undefined) delete process.env[key]; else process.env[key] = value;

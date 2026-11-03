@@ -28,14 +28,30 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' }));
       }, theme);
       await emptyLastKnownGoodSnapshot(page);
+      await context.route('**/api/**', async route => {
+        const request = route.request();
+        const message = `Unexpected synthetic reader API: ${request.method()} ${new URL(request.url()).pathname}`;
+        await route.fulfill({ status: 501, json: { error: message } });
+        throw new Error(message);
+      });
       await context.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+      await context.route(/\/api\/(?:sky|sky-reader|calendar)\?/u, async route => {
+        expect(route.request().method()).toBe('GET');
+        const url = new URL(route.request().url());
+        const result = await store.invoke(`${url.pathname}${url.search}` as `/api/sky${string}` | `/api/calendar${string}`);
+        const { status, headers, ...payload } = result;
+        expect(status, 'The actual local Sky calculation handler must return complete facts.').toBe(200);
+        await route.fulfill({ status, headers, json: payload });
+      });
       await context.route('**/api/content-publications*', async route => {
+        expect(route.request().method()).toBe('GET');
         const url = new URL(route.request().url());
         const result = await store.invoke(`/api/content-publications${url.search}`);
         const { status, headers, ...payload } = result;
         await route.fulfill({ status, headers, json: payload });
       });
       await context.route('**/api/content-reader', async route => {
+        expect(route.request().method()).toBe('POST');
         const query = route.request().postDataJSON();
         if (query.keys?.includes(edition.contentKey)) exactRequests++;
         const result = await store.invoke('/api/content-reader', query);
@@ -43,7 +59,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         if (JSON.stringify(payload).includes('PRIVATE_READER_CANARY')) privatePayloads.push('private source metadata');
         await route.fulfill({ status, headers, json: payload });
       });
-      await context.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
       const assertCopy = async (article: Locator, standalone = false) => {
         await expect(article).toContainText('Synthetic saved-template opening.', { timeout: 60_000 });
         await expect(article).toContainText('Synthetic final general sentence.');
@@ -87,10 +102,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       expect(errors).toEqual([]);
       expect(guard.unhandledExternal).toEqual([]);
     } finally {
-      await guard.finishStaticFonts();
-      await page.unrouteAll({ behavior: 'wait' });
-      await context.unrouteAll({ behavior: 'wait' });
-      await store.close();
+      try {
+        await guard.finishStaticFonts();
+        await page.unrouteAll({ behavior: 'wait' });
+        await context.unrouteAll({ behavior: 'wait' });
+      } finally { await store.close(); }
     }
   });
 }
