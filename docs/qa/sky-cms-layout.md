@@ -110,8 +110,10 @@ local and exact-head CI results are recorded in the release PR. The added
 budgets retain their existing limits; publication controls load with the editor.
 The protected source fixtures and privacy policy stay outside Git.
 
-`playwright.sky-cms-deployment.config.ts` exercises the same workflows against
-the deployed main app at `/admin/content`. Every write is intercepted by the
+The existing `playwright.config.ts` exercises the same workflows against
+the deployed main app at `/admin/content` with `PLAYWRIGHT_BASE_URL` set to the
+verified production origin and `STUDIO_PRODUCTION_ENTRY=1`. Select
+`sky-cms-layout.spec.ts` and `sky-article-writer-label.spec.ts` with one worker. Every write is intercepted by the
 isolated actual-handler store. It verifies deployed assets and interactions,
 not production content mutation or a live paid generation. Authenticated live
 facts checks remain read-only. Deployment evidence must identify main's merge
