@@ -58,7 +58,7 @@ async function readQuery(req: IncomingMessage): Promise<Query> {
 export function readerRowIsEligible(row: GeneratedContentRow) {
   if ((row.sections as Record<string, any> | null)?.packageRecord?.content_boundary?.ownerPublishedWording === true && !hasExactStudioOwnerApproval(row)) return false;
   if (row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state != null) return false;
-  if (row.event_type === 'sky-article-edition' && !skyArticleCompiledHashMatches(row.sections?.skyArticleEdition)) return false;
+  if (row.event_type === 'sky-article-edition' && !skyArticleCompiledHashMatches((row.sections as Record<string, unknown> | null)?.skyArticleEdition)) return false;
   if (!articlePublicationIsDue(row)) return false;
   if (row.content_key.startsWith('sample-') || row.facts?.sampleOnly || row.source_snapshot?.sampleOnly) return false;
   if (row.flags?.some(flag => ['REFERENCE_ONLY_NEVER_SERVE_VERBATIM', 'PARAPHRASE_PENDING'].includes(flag)

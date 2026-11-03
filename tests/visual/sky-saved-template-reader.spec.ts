@@ -92,7 +92,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         const houses = standalone ? article.locator('.learn-article-body > h3') : article.locator('.sky-rising-horoscope');
         await expect(houses).toHaveCount(12);
         for (const [index, passage] of edition.housePassages.entries()) {
-          if (!standalone) await expect(houses.nth(index).locator('p')).toHaveText(passage.body.split('\n\n'));
+          if (!standalone) {
+            const sign = passage.risingSign![0].toUpperCase() + passage.risingSign!.slice(1);
+            await expect(houses.nth(index).getByRole('heading', { level: 3 })).toHaveText(`${sign} & ${sign} Rising`);
+            await expect(houses.nth(index).locator('p')).toHaveText(passage.body.split('\n\n'));
+          }
           else for (const paragraph of passage.body.split('\n\n')) await expect(article.getByText(paragraph, { exact: true })).toHaveCount(1);
         }
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
