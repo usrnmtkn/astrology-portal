@@ -104,7 +104,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const sky = page.locator('.sky-detail-article').first();
       await assertCopy(sky);
       await page.screenshot({ path: `test-results/saved-template-sky-${width}-${theme}.png`, fullPage: true });
-      await page.getByRole('button', { name: 'Sky', exact: true }).click();
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
       await expect(sun).toContainText(edition.tldr);
       await sun.click();
       await assertCopy(sky);
