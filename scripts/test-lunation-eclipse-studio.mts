@@ -47,7 +47,7 @@ try {
     export { installContentPublications } from './apps/web/src/content/contentPublicationState';
   ` }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': '{}' }, logLevel: 'silent' });
   const reader = await import(pathToFileURL(bundle).href);
-  assert.equal(reader.PACKAGE_VERSION, 'v3-2026-10-30-lunation');
+  assert.equal(reader.PACKAGE_VERSION, 'v3-2026-11-03-fallback-topics');
   await reader.loadLunationBookFallbackArchitectureV3Bundle();
   await reader.loadDeferredFallbackArchitectureV3Bundle();
   const catalog = await store.invoke('POST', { action: 'composition-catalog' }, '/api/admin/content-live-status');
@@ -56,7 +56,7 @@ try {
   const liveRows: any[] = [];
   for (const row of rows) {
     // Boundary whitespace and paragraph breaks are part of this complete owner unit.
-    const body = `\nSynthetic ${row.content_key} opening.${row.content_key.endsWith('/nature') ? ' Matching cycle: {{matchingNewMoonSign}}.' : ''}\n\nThe complete synthetic final sentence.\n`;
+    const body = `\nSynthetic ${row.content_key} opening. Tarot and Major Arcana.${row.content_key.endsWith('/nature') ? ' Matching cycle: {{matchingNewMoonSign}}.' : ''}\n\nThe complete synthetic final sentence.\n`;
     const saved = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at,
       sections: { ...row.sections, packageDraft: { ...row.sections.packageRecord, body } } });
     assert.equal(saved.status, 200, row.content_key + ': save');

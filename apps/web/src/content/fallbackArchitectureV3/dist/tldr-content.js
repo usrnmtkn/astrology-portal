@@ -387,6 +387,7 @@ function mixedContentHasOwnerApproval(row) {
   return boundary?.mixedOwnerApproved === true && approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
 }
 function readerContentBoundaryReason(row) {
+  if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row?.contentKey ?? ""))) return null;
   const contentType = readerContentType(row);
   if (!contentType) return null;
   if (contentType === READER_CONTENT_TYPES.TAROT) return null;
@@ -1729,6 +1730,7 @@ function mixedContentHasOwnerApproval2(row) {
   return boundary?.mixedOwnerApproved === true && approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
 }
 function readerContentBoundaryReason2(row) {
+  if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row.contentKey ?? ""))) return null;
   const contentType = readerContentType2(row);
   if (!contentType) return null;
   if (contentType === READER_CONTENT_TYPES2.TAROT) return null;
@@ -6643,7 +6645,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-10-30-lunation";
+var PACKAGE_VERSION = "v3-2026-11-03-fallback-topics";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
