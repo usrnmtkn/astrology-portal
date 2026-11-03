@@ -77,6 +77,13 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    };
    await copy.evaluate(field=>field.scrollIntoView({block:'center',behavior:'instant'}));
    await expectAnchoredEditor();
+   const advice=editor.locator('details[aria-label="Optional writing suggestions"]');
+   await advice.locator('summary').click();
+   await expect(advice).toContainText('Your topics and wording are your choice.');
+   await expectAnchoredEditor();
+   await copy.evaluate(field=>field.scrollIntoView({block:'center',behavior:'instant'}));
+   await expectAnchoredEditor();
+   await advice.locator('summary').click();
    await editor.getByRole('button',{name:'Close',exact:true}).focus();
    const controls=editor.locator('button:enabled,input:enabled,select:enabled,textarea:enabled,summary,[href],[tabindex]:not([tabindex="-1"])');
    const visibleControls=(await Promise.all((await controls.all()).map(control=>control.isVisible()))).filter(Boolean).length;

@@ -12782,6 +12782,7 @@ export function GeneratedContentAdminDashboard() {
             )}
             </div>
           </details>
+          <Suspense fallback={null}><StudioWritingAdvice value={currentDraft} /></Suspense>
         </section>
           {hasSkyEditorNavigation && skyWriteupContext && selectedRow && skyEditorSection !== "article" && <section className="admin-post-editor" id="sky-placement-editor-content"><Suspense fallback={<PageLoading message="Loading placement passages…" />}>
             <SkyPlacementCompanions view={skyEditorSection} house={skyRelatedHouse} onHouse={setSkyRelatedHouse}
@@ -12817,7 +12818,6 @@ export function GeneratedContentAdminDashboard() {
           <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
         </div>}
         {renderNotification()}
-        <Suspense fallback={null}><StudioWritingAdvice value={currentDraft} /></Suspense>
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
         {pendingPublication && publicationStatusButton(isLoading)}
         {!compiledSkyArticleEdition && <div className={`admin-toolbar-actions admin-editor-savebar studio-surface${isLoading ? " is-saving" : ""}`} aria-busy={isLoading}>
