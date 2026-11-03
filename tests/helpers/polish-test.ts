@@ -48,7 +48,8 @@ export async function installReaderPolishObserver(page: Page) {
 export const test=base.extend({
   page: async({page},use,info)=>{
     const target = process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1' ? new URL(info.project.use.baseURL!) : null;
-    const deployedFixture = target && !['localhost', '127.0.0.1', '[::1]', '::1'].includes(target.hostname)
+    const deployedFixture = target && (info.project.metadata.syntheticDeploymentTransport === true
+      || !['localhost', '127.0.0.1', '[::1]', '::1'].includes(target.hostname))
       ? { supabaseOrigin: process.env.VITE_SUPABASE_URL ?? 'https://visual-smoke.supabase.test' } : undefined;
     const { unhandledExternal, staticFontRequests, syntheticRealtimeRequests, finishStaticFonts } = process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1'
       ? await installSyntheticNetworkGuard(page.context(), target!.origin, { deployedFixture })
