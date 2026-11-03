@@ -285,6 +285,11 @@ jobs:
           npx playwright test -c playwright.sky-composition.config.ts
       - name: Verify Studio crash recovery through the production web entry
         run: STUDIO_PRODUCTION_ENTRY=1 npx playwright test -c playwright.studio-recovery.config.ts
+      - name: Verify deployment-pinned assets and unsaved Studio editing
+        run: |
+          node scripts/test-deployment-assets.mjs
+          npx playwright test -c playwright.studio-deployment.config.ts
+          STUDIO_PRODUCTION_ENTRY=1 npx playwright test -c playwright.studio-deployment.config.ts
       - name: Upload Sky placement artifacts
         if: always()
         uses: actions/upload-artifact@v6
