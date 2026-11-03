@@ -9232,10 +9232,13 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Sky Write-ups", exact: true }).click();
     const library = page.getByRole("complementary", { name: "Sky write-up rows" });
     for (const planet of planets) await expect(library.locator(".admin-content-row").filter({ hasText: `fallback-hook/planet-lived/${planet}` })).toHaveCount(1);
+    await openSkyPlacementChooser(page);
     await page.getByLabel("Sky placement planet or point").selectOption("saturn");
     await page.getByLabel("Sky placement zodiac sign").selectOption("aries");
     await page.getByText("Content library sources", { exact: true }).click();
     for (const motion of ["direct", "retrograde"]) {
+      await openSkyPlacementChooser(page);
+      await expect(page.getByLabel("Sky write-up motion")).toBeVisible();
       await page.getByLabel("Sky write-up motion").selectOption(motion);
       await expect(library.locator(".admin-content-row")).toHaveCount(1);
       await expect(library).toContainText("Saturn · Planet lived");
@@ -9254,6 +9257,8 @@ for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) {
     await expect(editor.locator(".admin-editor-save-state")).toContainText(/Draft saved|All changes saved/);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.reload();
+    await openSkyPlacementChooser(page);
+    await expect(page.getByLabel("Search Sky write-ups")).toBeVisible();
     await page.getByLabel("Search Sky write-ups").fill("fallback-hook/planet-lived/saturn");
     await page.getByText("Content library sources", { exact: true }).click();
     await open();
