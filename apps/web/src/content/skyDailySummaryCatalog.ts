@@ -85,8 +85,6 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
     if (slots.includes(`${planet}Name`) && !placementPattern.test(body)) errors.push("Keep each planet, sign, and degree together in that order so the complete placement links to its article.");
   }
   if (/[{}]/u.test(body.replace(/\{[^{}]+\}/gu, ""))) errors.push("Close every slot with matching single braces.");
-  if (key.includes("/assembly/") && /\b(?:also today|there (?:is|are)(?: also)?|today brings)\b/iu.test(body)) errors.push("Use direct event sentences without Also today, There are, or Today brings.");
-  if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   if (body.includes("{{") || body.includes("}}")) errors.push("Use single-brace calculated slots, for example {name}.");
   if (slots.some(slot => !field.allowedSlots.includes(slot))) errors.push("This field contains an unsupported calculated slot.");
   if (key === "cms/sky-daily-summary/lunation" && !body.includes("{name} in {sign}")) errors.push("Keep {name} in {sign} together so the complete event name links to its article.");
@@ -97,5 +95,12 @@ export function skySummaryTemplateErrors(key: string, body: string): string[] {
   if (field.group === "Sun summaries") {
     if (body.trim() && (slots.length || key.endsWith("/ruler-retrograde")) && !slots.includes("sunPlacement")) errors.push("Include {sunPlacement} once in the complete Sun passage.");
   }
+  return errors;
+}
+
+export function skySummaryWordingAdvisories(key: string, body: string): string[] {
+  const errors: string[] = [];
+  if (key.includes("/assembly/") && /\b(?:also today|there (?:is|are)(?: also)?|today brings)\b/iu.test(body)) errors.push("Use direct event sentences without Also today, There are, or Today brings.");
+  if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   return errors;
 }

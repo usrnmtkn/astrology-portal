@@ -261,6 +261,7 @@ import { memoByObject, naturalCollator } from "./derivedCache";
 // route is served by @tldr/web, which lazy-loads this component and never ran
 // apps/admin/src/main.tsx, so anything imported only there was missing in prod.
 
+const StudioWritingAdvice = lazy(() => import("./StudioWritingAdvice"));
 const RetrogradeHistoryFacts = lazy(() => import("../../../src/shared/components/RetrogradeHistory").then(module => ({ default: module.RetrogradeHistoryFacts })));
 const SkyPlacementCompanions = lazy(() => import("./SkyPlacementCompanions"));
 const SkyArticleSourceDetails = lazy(() => import("./SkyPlacementCompanions").then(module => ({ default: module.SkyArticleSourceDetails })));
@@ -12781,6 +12782,7 @@ export function GeneratedContentAdminDashboard() {
             )}
             </div>
           </details>
+          <Suspense fallback={null}><StudioWritingAdvice value={currentDraft} /></Suspense>
         </section>
           {hasSkyEditorNavigation && skyWriteupContext && selectedRow && skyEditorSection !== "article" && <section className="admin-post-editor" id="sky-placement-editor-content"><Suspense fallback={<PageLoading message="Loading placement passages…" />}>
             <SkyPlacementCompanions view={skyEditorSection} house={skyRelatedHouse} onHouse={setSkyRelatedHouse}

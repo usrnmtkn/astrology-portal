@@ -208,7 +208,7 @@ function generatedSkyAspectCardPassesBoundary(
   const facts = recordField(source.cardFacts);
   const body = skyAspectBody(content);
   return Boolean(
-    skyAspectReaderCopyPassesBoundary(body)
+    Boolean(body.trim()) && (ownerFinal || skyAspectReaderCopyPassesBoundary(body))
     && (ownerFinal || (lint?.score === 3
     && lint?.fails === 0
     && (content.judgeScore === 3 || (recordField(source.studioWritingCheck)?.reviewPolicy === "owner-final-v1"

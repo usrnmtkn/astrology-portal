@@ -10,6 +10,8 @@ import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { isLunationEclipseSectionKey, isStudioLunationRevision } from '../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
 import { packagePublicationAdmissionIssue } from '../api/_lib/content-studio-package-admission';
 import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mjs';
+import { hasExactStudioOwnerApproval } from '../api/_lib/studio-owner-publication';
+import { readerRowIsEligible } from '../api/content-reader';
 
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 const records = [...servingPackageRecords.values()].filter(record => isLunationEclipseSectionKey(record.contentKey));
@@ -47,7 +49,7 @@ try {
     export { installContentPublications } from './apps/web/src/content/contentPublicationState';
   ` }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': '{}' }, logLevel: 'silent' });
   const reader = await import(pathToFileURL(bundle).href);
-  assert.equal(reader.PACKAGE_VERSION, 'v3-2026-11-03-fallback-topics');
+  assert.equal(reader.PACKAGE_VERSION, 'v3-2026-11-03-owner-wording');
   await reader.loadLunationBookFallbackArchitectureV3Bundle();
   await reader.loadDeferredFallbackArchitectureV3Bundle();
   const catalog = await store.invoke('POST', { action: 'composition-catalog' }, '/api/admin/content-live-status');
@@ -148,7 +150,11 @@ try {
   assert.equal(bookSave.status, 200);
   const bookPublish = await store.invoke('PATCH', { id: bookRow.id, expectedUpdatedAt: bookSave.payload.rows[0].updated_at, ownerAction: 'approve-package-revision' });
   assert.equal(bookPublish.status, 200);
+  assert.equal(hasExactStudioOwnerApproval(bookPublish.payload.rows[0]), true, 'Canonical copy mirrors retain the exact approval after PostgreSQL storage.');
+  assert.equal(readerRowIsEligible(bookPublish.payload.rows[0]), true);
   const bookRead = await store.invoke('POST', { keys: [bookKey] }, '/api/content-reader');
+  assert.equal(bookRead.status, 200);
+  assert.equal(bookRead.payload.rows.length, 1);
   const publishedBook = bookRead.payload.rows[0].sections.packageRecord;
   assert.equal(isStudioLunationRevision(publishedBook), true);
   const baselineEclipseKey = 'authored/lunation-eclipse-section/pisces/rising-pisces/house-1/evergreen-body';

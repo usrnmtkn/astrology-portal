@@ -17,9 +17,9 @@ export async function lunationPublicationPatch(row:Record<string,any>) {
   const copy={headline:String(row.headline??''),summary:String(row.summary??''),body:String(row.body??'')};
   const strictLint=validateLunationArticle({...copy,body:[copy.summary,copy.body].filter(Boolean).join('\n\n')},facts);
   const ownerFinal=hasExactStudioOwnerApproval(row);
-  const violations=ownerFinal ? strictLint.violations.filter((finding:any)=>['lunation_fact_boundary','required_fields'].includes(finding.category)) : strictLint.violations;
+  const violations=ownerFinal ? strictLint.violations.filter((finding:any)=>finding.category==='required_fields') : strictLint.violations;
   const lint={...strictLint,passed:violations.length===0,violations,
-    publicationProfile:ownerFinal?'owner-final-facts':'automatic',
+    publicationProfile:ownerFinal?'owner-final-technical':'automatic',
     advisories:ownerFinal?strictLint.violations.filter((finding:any)=>!violations.includes(finding)):[],
     governance:{...strictLint.governance,blockingViolationCount:violations.length}};
   if(!lint.passed)throw new AdminHttpError(422,`Correct these article errors before publishing: ${lint.violations.map((finding:any)=>finding.detail).join(' ')}`);

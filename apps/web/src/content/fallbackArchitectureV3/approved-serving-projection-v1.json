@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-11-03-fallback-topics",
+  "packageVersion": "v3-2026-11-03-owner-wording",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "db94aab2af88657d70eb0f796fc632d9e886db13b223e1958700b0383e13e28e",
+    "sha256": "c1aa77216c5e19d202e5a0743b3bca3c8c580da44e9e6c569ff67af5b6e29826",
     "count": 9826,
     "emissionCount": 9902,
     "exactSourceMatchCount": 7663

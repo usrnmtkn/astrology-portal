@@ -97,7 +97,7 @@ assert.equal(gate.review.status,'failed');assert.equal(gate.review.findings.leng
 assert.deepEqual(row.sections,original);assert.equal(writerFixture.calls,beforeManual);
 assert.equal(horoscopeEditorRow(row).source_snapshot.horoscopeGeneration.dailyEditorial.review.matchesCurrent,true);
 const issues=(await action(manual,'validate-publication')).payload.publication;
-assert(issues.issues.some((i:any)=>i.category==='daily_batch_editorial'));assert.equal(issues.canOverride,false);
+assert.equal(issues.ready,true);assert.equal(issues.issues.length,0);assert(issues.advisories.some((i:any)=>i.category==='daily_batch_editorial'));assert.equal(issues.canOverride,false);
 
 // Saving one owner edit invalidates the old check; one explicit recheck reads
 // that exact saved text without rewriting or regenerating any sign.
@@ -181,7 +181,8 @@ assert.deepEqual(latest(stopped).sections,stoppedReadings);
 const stoppedCalls=writerFixture.batchCalls;await worker(stopped);assert.equal(writerFixture.batchCalls,stoppedCalls);
 assert.equal(latest(stopped).source_snapshot.horoscopeGeneration.dailyEditorial.review.status,'failed');
 row=latest(stopped);
-assert.equal((await store.invoke('PATCH',{id:stopped,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content',horoscopeValidationOverride:true})).status,422);
+const stoppedPreflight=(await action(stopped,'validate-publication')).payload.publication;
+assert.equal(stoppedPreflight.ready,true);assert(stoppedPreflight.advisories.some((i:any)=>i.category==='daily_batch_editorial'));
 await action(stopped,'review-daily',{approvedPlanHash:await prepare(stopped)});await action(stopped,'poll-daily');
 assert.equal(latest(stopped).source_snapshot.horoscopeGeneration.batch.status,'complete');
 assert.equal(latest(stopped).source_snapshot.horoscopeGeneration.batch.error,null);
@@ -247,9 +248,12 @@ assert.equal((await cron('synthetic-daily-cron')).statusCode,200);
 assert.equal(latest(cronId).source_snapshot.horoscopeGeneration.batch.status,'complete');
 
 // Exact owner approval remains separate from review. A valid current review
-// reaches the isolated reader verbatim, while failed review cannot be bypassed.
+// reaches the isolated reader verbatim. Unavailable semantic advice also cannot veto an owner decision.
 row=latest(invalid);
-assert.equal((await store.invoke('PATCH',{id:invalid,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content',horoscopeValidationOverride:true})).status,422);
+const ownerPublished=await store.invoke('PATCH',{id:invalid,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
+assert.equal(ownerPublished.status,200);assert.deepEqual(ownerPublished.payload.rows[0].sections,row.sections);
+const ownerReader=await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify({ids:[invalid]})});
+assert.equal((await ownerReader.json()).rows[0].body,row.body);
 row=latest(manual);
 const published=await store.invoke('PATCH',{id:manual,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
 assert.equal(published.status,200,JSON.stringify(published.payload));

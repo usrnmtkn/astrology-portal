@@ -27,3 +27,32 @@ export function stampDailyOwnerApproval(row: Record<string, any>, ownerPublicati
   row.source_snapshot = { ...row.source_snapshot, studioOwnerApproval: studioOwnerApproval(row, approvedAt) };
   return true;
 }
+
+/** Exact publication proof for every Studio-authored package revision. */
+export function stampStudioPackageOwnerApproval(row: Record<string, any>, ownerPublication: boolean, approvedAt: string) {
+  if (!ownerPublication || row.status !== 'LIVE' || row.lane !== 'serving' || row.review_state
+    || row.sections?.packageRecord?.review_status !== 'approved') return false;
+  // Match content_studio_sync_package_copy_mirrors before signing the row.
+  // PostgreSQL's declared editable field wins over legacy casing aliases.
+  const record = row.sections.packageRecord;
+  if (!row.sections.packageDraft || typeof row.sections.packageDraft !== 'object' || Array.isArray(row.sections.packageDraft)) {
+    const definitions = {
+      headline: { tails: ['headline', 'title'], aliases: ['headline', 'Headline', 'title', 'Title'] },
+      summary: { tails: ['summary', 'tldr'], aliases: ['summary', 'Summary', 'tldr', 'TLDR'] },
+      body: { tails: ['bodyyou', 'body', 'text'], aliases: ['body_you', 'body', 'Body', 'text'] }
+    };
+    for (const [field, definition] of Object.entries(definitions)) {
+      let value: unknown;
+      for (const editable of Array.isArray(record.studio_editable_fields) ? record.studio_editable_fields : []) {
+        const path = typeof editable?.path === 'string' ? editable.path.trim() : '';
+        if (!definition.tails.includes(path.split('.').at(-1)?.toLowerCase().replace(/[_-]/gu, '') ?? '')) continue;
+        const candidate = path.split('.').reduce((parent: any, key: string) => parent?.[key], record);
+        if (typeof candidate === 'string') { value = candidate; break; }
+      }
+      if (value === undefined) value = definition.aliases.map(alias => record[alias]).find(candidate => typeof candidate === 'string');
+      if (typeof value === 'string') row[field] = value;
+    }
+  }
+  row.source_snapshot = { ...row.source_snapshot, studioOwnerApproval: studioOwnerApproval(row, approvedAt) };
+  return true;
+}

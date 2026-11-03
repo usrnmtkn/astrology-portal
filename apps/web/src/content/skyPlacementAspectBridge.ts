@@ -27,7 +27,6 @@ export function skyPlacementAspectBridgeErrors(key: string, body: string) {
   if (!skyPlacementAspectBridgeIdentity(key)) return ['Choose a supported house and aspect contact.'];
   if (!body.trim()) return ['Write the bridge before publishing.'];
   if (/[{}]/u.test(body)) return ['Write the bridge as complete prose. Timing is supplied by the reader.'];
-  if (datedTiming.test(body)) return ['Keep dates in the calculated timing, separate from the bridge.'];
   return [];
 }
 

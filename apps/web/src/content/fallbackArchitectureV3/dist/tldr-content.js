@@ -326,6 +326,16 @@ function isRetiredCompositionKey(key) {
   return typeof key === "string" && (key === "fallback-template/transit.house-event" || retiredCompositionFamilies.some((prefix) => key.startsWith(prefix)));
 }
 
+// apps/web/src/content/studioOwnerWording.mjs
+function hasStudioOwnerWording(row) {
+  const snapshot = row?.source_snapshot ?? row?.sourceSnapshot;
+  const approval = snapshot?.studioOwnerApproval;
+  if (approval?.action === "publish-owner-content" && approval.contentKey === (row?.content_key ?? row?.contentKey) && /^[a-f0-9]{64}$/iu.test(approval.copyHash ?? "") && /^[a-f0-9]{64}$/iu.test(approval.bodyHash ?? "")) return true;
+  const record2 = row?.sections?.packageRecord ?? row;
+  const receipt = record2?.content_boundary?.ownerPublication;
+  return record2?.content_boundary?.ownerPublishedWording === true && receipt?.action === "content-studio-publish" && /^[a-f0-9]{64}$/iu.test(receipt.payloadSha256 ?? "") && typeof receipt.recordPath === "string" && Boolean(receipt.recordPath.trim()) && typeof receipt.approvedAt === "string" && Boolean(receipt.approvedAt.trim());
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/readerContentBoundary.mjs
 var READER_CONTENT_TYPES = Object.freeze({
   ASTROLOGY: "astrology",
@@ -388,6 +398,7 @@ function mixedContentHasOwnerApproval(row) {
 }
 function readerContentBoundaryReason(row) {
   if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row?.contentKey ?? ""))) return null;
+  if (hasStudioOwnerWording(row)) return null;
   const contentType = readerContentType(row);
   if (!contentType) return null;
   if (contentType === READER_CONTENT_TYPES.TAROT) return null;
@@ -1731,6 +1742,7 @@ function mixedContentHasOwnerApproval2(row) {
 }
 function readerContentBoundaryReason2(row) {
   if (/^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/|lunation-eclipse-))/u.test(String(row.contentKey ?? ""))) return null;
+  if (hasStudioOwnerWording(row)) return null;
   const contentType = readerContentType2(row);
   if (!contentType) return null;
   if (contentType === READER_CONTENT_TYPES2.TAROT) return null;
@@ -2691,7 +2703,7 @@ ${passHook}`;
         throw new SourceGapError(`SOURCE_GAP: ineligible ${MERCURY_RETURN_CONTACT_KEY}`);
       }
     }
-    c || (c = card(`authored/transit-return/${planet}`));
+    c ||= card(`authored/transit-return/${planet}`);
     if (!c) throw new SourceGapError(`SOURCE_GAP: no return card for ${planet}`);
     return { ...result(c, "authored/transit-return"), ...passageSources(c.body, [{ text: c.body, keys: [c.contentKey] }], () => passageSource(c, audience, field2)) };
   }
@@ -6645,7 +6657,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-11-03-fallback-topics";
+var PACKAGE_VERSION = "v3-2026-11-03-owner-wording";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

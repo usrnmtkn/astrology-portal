@@ -81,7 +81,8 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
       throw new AdminHttpError(400,'This batch review is Daily only.');
     if(input.action==='validate-publication') {
       const issues=horoscopePublicationIssues(row, true);
-      return reply(200,{ok:true,publication:{id:row.id,updatedAt:row.updated_at,ready:issues.length===0,canOverride:issues.length>0&&issues.every(issue=>issue.category==='horoscope_fact_boundary'),issues}});
+      const advisories=horoscopePublicationIssues(row, false).filter(issue=>!issues.some(blocker=>blocker.sign===issue.sign&&blocker.detail===issue.detail));
+      return reply(200,{ok:true,publication:{id:row.id,updatedAt:row.updated_at,ready:issues.length===0,canOverride:false,issues,advisories}});
     }
     const persist=async(patch:Record<string,unknown>)=>{
       if(row.sections.horoscopeEdition.window.period==='weekly'){

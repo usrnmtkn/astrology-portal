@@ -1,3 +1,4 @@
+import {hasStudioOwnerWording} from "./studioOwnerWording.mjs";
 import { isReaderFacingCopy } from "./readerSafety.js";
 import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
@@ -171,7 +172,7 @@ export function isReaderServableGeneratedContentRow(
   if (blockedPackageRoles.has(packageRole)) return false;
   if (packageReviewStatus && !approvedPackageReviews.has(packageReviewStatus)) return false;
   if (unsafeMetadataMarkers.some((marker) => metadataText.includes(marker))) return false;
-  if (copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
+  if (!hasStudioOwnerWording(row) && copyValues.some((value) => value && !isReaderFacingCopy(value))) return false;
 
   if (!store) {
     return true;
@@ -196,7 +197,7 @@ export function isReaderServableGeneratedContentRow(
   if (isLegacyLiveWritingRow(row)) return false;
   if (flags.has("REFERENCE_ONLY_NEVER_SERVE_VERBATIM")) return false;
   if (flags.has("PARAPHRASE_PENDING")) return false;
-  if (flags.has("BLOCKLIST_MATCH")) return false;
+  if (flags.has("BLOCKLIST_MATCH") && !hasStudioOwnerWording(row)) return false;
 
   return true;
 }

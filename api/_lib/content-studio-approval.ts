@@ -1,6 +1,16 @@
 import { createHash } from "node:crypto";
 import { isDynamicNatalPlacementExactKey } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 
+/** Called only after an authenticated owner publishes the exact package revision. */
+export function approveStudioPackageWording(record: Record<string, unknown>, contentKey: string, approvedAt: string) {
+  const boundary = record.content_boundary && typeof record.content_boundary === 'object' ? record.content_boundary : {};
+  record.content_boundary = { ...boundary, ownerPublishedWording: true, ownerPublication: {
+    action: 'content-studio-publish', approvedAt,
+    recordPath: `/api/admin/generated-content?contentKey=${encodeURIComponent(contentKey)}`,
+    payloadSha256: createHash('sha256').update(JSON.stringify(record)).digest('hex')
+  } };
+}
+
 // Called only for the authenticated owner's explicit publication action.
 // Plain saves and proposed revisions must never acquire an approval receipt.
 export function approveNatalAspectStudioCopy(record: Record<string, unknown>, contentKey: string) {

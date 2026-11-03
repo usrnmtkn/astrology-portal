@@ -193,7 +193,7 @@ for (const [, context] of examples) {
 const writeupsComponent = read("apps/admin/src/AspectPatternWriteups.tsx");
 const dashboard = read("apps/admin/src/GeneratedContentAdminDashboard.tsx");
 
-assert.match(writeupsComponent, /fetch\(`\/api\/admin\/aspect-pattern-writeups\?kind=\$\{nextKind\}`/);
+assert.match(writeupsComponent, /requestStudioJson\(`\/api\/admin\/aspect-pattern-writeups\?kind=\$\{nextKind\}`, secret\)/);
 assert.match(writeupsComponent, /Authored result/);
 assert.match(writeupsComponent, /Approved fallback/);
 assert.match(dashboard, /aspectPatternCoverage: "content\/aspect-patterns"/);

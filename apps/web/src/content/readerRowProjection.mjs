@@ -50,7 +50,7 @@ const packageRecord = {
   studio_lunation_revision: strings('schema contentKey approvedAt baselineBodySha256 previousBodySha256 bodySha256'),
   blocks: [lunarBlock], lunarJournal: { blocks: [lunarBlock] },
   approval, body_you_approval: approval, body_they_approval: approval,
-  content_boundary: booleans('mixedOwnerApproved'),
+  content_boundary: { ...booleans('mixedOwnerApproved ownerPublishedWording'), ownerPublication: strings('action payloadSha256 approvedAt recordPath') },
   article_sections: [section], rising_horoscopes: [{ ...strings('body risingSign contentKey'), ...numbers('house') }],
   source_keys: ['string'],
   requiredSlots: ['string'], optionalSlots: ['string'], mainShifts: ['string'],
@@ -156,6 +156,10 @@ export function projectReaderRow(row, options = {}) {
     // A stored/client flag is never approval proof. Only the server verifies
     // the exact complete copy before requesting this derived transport field.
     delete publicRecord.studio_owner_wording;
+    if (options?.ownerApprovalVerified !== true && publicRecord.content_boundary) {
+      delete publicRecord.content_boundary.ownerPublishedWording;
+      delete publicRecord.content_boundary.ownerPublication;
+    }
     if (options?.ownerApprovalVerified === true && row.status === 'LIVE' && row.lane === 'serving'
       && !row.review_state && publicRecord.review_status === 'approved'
       && /^fallback-hook\/daily-(?:headline|body)\//u.test(row.content_key)) publicRecord.studio_owner_wording = true;

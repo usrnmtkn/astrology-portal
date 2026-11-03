@@ -25,6 +25,28 @@ try {
   }
   assert.equal((await invoke('GET', undefined, env.CONTENT_GENERATION_SECRET, '?kind=unknown')).status, 400);
  });
+ await test('owner aspect-pattern topics and wording are advisory while unknown variables stay blocked', async () => {
+  for(const kind of ['natal','activation']) {
+   let saved:any=null;
+   storage=async(_url,init)=>{
+    if(init.method==='POST'){saved={...JSON.parse(String(init.body)),id:'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'};return Response.json([saved]);}
+    return Response.json(saved?[saved]:[]);
+   };
+   const catalog=await invoke('GET',undefined,env.CONTENT_GENERATION_SECRET,`?kind=${kind}`);
+   assert.equal(catalog.status,200);
+   const source=catalog.rows.find((row:any)=>row.patternType==='yod');assert(source);
+   const record=structuredClone(source.record);record.status='approved';
+   record.content.overview='Synthetic Tarot opening. Finger of God, fate, destiny and a chosen special mission are deliberate owner wording. This will be discussed as policy. Complete owner ending.';
+   const result=await invoke('POST',{kind,record});assert.equal(result.status,200,JSON.stringify(result));
+   assert.equal(result.row.source_snapshot.record.content.overview,record.content.overview);
+   const refreshed=await invoke('GET',undefined,env.CONTENT_GENERATION_SECRET,`?kind=${kind}`);
+   const published=refreshed.rows.find((row:any)=>row.generatedContentId===saved.id);
+   assert.equal(published.productionSelected,true,'The actual reader resolver must select the complete owner copy.');
+   assert(published.previews.some((preview:any)=>preview.validation.warnings.length>0));
+   const invalid=structuredClone(record);invalid.content.headline='{{unknown_required_owner_slot}}';
+   const callsBefore=calls;const denied=await invoke('POST',{kind,record:invalid});assert.equal(denied.status,422);assert.equal(calls,callsBefore,'Unknown required variables still stop before writing.');
+  }
+ });
  await test('aspect saves preserve exact copy, reject stale versions and conflicting creates', async () => {
   storage = async () => Response.json([]);
   const catalog = await invoke('GET'); assert.equal(catalog.status, 200);

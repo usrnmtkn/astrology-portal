@@ -6,7 +6,7 @@ test.describe.configure({ retries: 0 });
 
 const id='10000000-0000-4000-8000-000000000089';
 const key='education/astro-101/chapter/synthetic-publication-status';
-const body='Synthetic neutral opening paragraph.\n\nComplete synthetic final sentence.';
+const body='Synthetic owner Tarot opening. Your degree of confidence changes in 2025.\n\nEditor notes: this quotation is intentional. Complete synthetic final sentence — heaven and whether.';
 const readerPath='/learn/astro-101/synthetic-publication-status';
 const editor=(page:Page)=>page.getByRole('dialog',{name:'Generated content editor'});
 const footer=(page:Page)=>editor(page).locator('.admin-editor-save-state');
@@ -57,6 +57,9 @@ async function fixture(page:Page,browser:Browser,info:TestInfo,options:{pendingO
     else if(scope==='admin'&&options.pendingOld&&publication?.state==='live'&&!freshHeld){freshHeld=true;entry.held='fresh';await fresh.promise;}
     await route.fulfill({status:result.status,json:result.payload});entry.completed=true;return;
    }
+   if(req.method()==='POST'&&u.pathname==='/rest/v1/rpc/content_runtime_revision'){
+    const rows=await api.call({method:'rows'});return route.fulfill({json:rows.map((row:any)=>row.updated_at).filter(Boolean).sort().at(-1)??null});
+   }
    // The public shell can check an empty session/profile plane; content reads use the real handler.
    if(scope==='reader'&&req.method()==='GET'&&['/rest/v1/user_profiles','/rest/v1/manual_charts'].includes(u.pathname))return route.fulfill({json:[]});
    evidence.blocked.push({scope,origin:u.origin,path:u.pathname,method:req.method()});await route.abort('blockedbyclient');
@@ -86,10 +89,11 @@ async function fixture(page:Page,browser:Browser,info:TestInfo,options:{pendingO
  }
  async function open(){
   await page.goto(`/admin/content#exact-content?q=${encodeURIComponent(row.content_key)}`);
-  if(row.status==='ARCHIVED')await page.getByRole('button',{name:'Show retired',exact:true}).click();
+  if(row.status==='ARCHIVED'){const filters=page.getByRole('button',{name:/^Filters/});if((page.viewportSize()?.width??1440)<861){await expect(filters).toBeVisible();if(await filters.getAttribute('aria-expanded')==='false')await filters.click();}await page.getByRole('button',{name:'Show retired',exact:true}).click();}
   const exact=page.getByRole('row').filter({hasText:row.content_key});await expect(exact).toBeVisible();
   const hydration=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/admin/generated-content-inventory'&&new URL(r.url()).searchParams.get('id')===row.id);
   await exact.getByRole('button',{name:'Edit',exact:true}).click();const r=await hydration;expect(r.status()).toBe(200);expect(await r.finished()).toBeNull();expect(r.request().failure()).toBeNull();await expect(editor(page)).toBeVisible();
+  const advice=editor(page).locator('details[aria-label="Optional writing suggestions"]');await expect(advice).toBeVisible();await advice.locator('summary').click();await expect(advice).toContainText('do not prevent saving or publishing');
  }
  async function action(label:string,status:string){
   const done=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/admin/generated-content'&&r.request().method()==='PATCH');
@@ -103,11 +107,14 @@ async function fixture(page:Page,browser:Browser,info:TestInfo,options:{pendingO
  return {api,row,evidence,open,action,proof,clean,fail:(value:boolean)=>{failLedger=value;},openingHeld:()=>openingHeld,releaseOpening:opening.release,oldHeld:()=>oldHeld,freshHeld:()=>freshHeld,releaseOld:old.release,releaseFresh:fresh.release};
 }
 
-test('restored publication and live save keep status and full rendered reader consistent',async({page,browser},info)=>{
+for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dark']] as const) test(`restored publication and live save keep status and full rendered reader consistent ${width} ${theme}`,async({page,browser},info)=>{
+ await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
  const f=await fixture(page,browser,info);try{
   await f.open();await f.proof('archived','retired',null);await expect(footer(page)).toHaveText('Retired everywhere');
   await f.action('Restore as draft','DRAFT');await f.proof('restored','retired',null);
   await f.action('Publish to app','LIVE');await f.proof('published','live',body);await expect(header(page)).toHaveText('Live');await expect(footer(page)).toHaveText('All changes saved');
+  expect(await editor(page).evaluate(element=>element.scrollWidth<=element.clientWidth+1)).toBe(true);
+  await page.screenshot({path:`test-results/studio-owner-advisory-${width}-${theme}.png`});
   const revision=body+'\n\nComplete synthetic live revision ending.';await editor(page).getByRole('textbox',{name:'Article body',exact:true}).fill(revision);
   await f.action('Save changes','LIVE');await f.proof('live-save','live',revision);await expect(header(page)).toHaveText('Live');await expect(footer(page)).toHaveText('All changes saved');
   await f.action('Move to draft','DRAFT');await f.proof('withdrawn','retired',null);await f.action('Archive source','ARCHIVED');await f.proof('archived-again','retired',null);

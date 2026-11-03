@@ -194,11 +194,16 @@ try{
     assert.equal(published.status,200,JSON.stringify(published));
     assert.equal(published.payload.rows[0][field],copy[field]);
     const lint=published.payload.rows[0].source_snapshot.lunationPublicationCheck.lint;
-    assert.equal(lint.publicationProfile,'owner-final-facts');
+    assert.equal(lint.publicationProfile,'owner-final-technical');
     assert.equal(lint.passed,true);
     assert(lint.advisories.some((finding:any)=>finding.category==='lunation_required_vocabulary'));
   }
-  for(const copy of [wrongCopy,{headline:'',body:correctedBody}]){
+  const currentOwner=generalStore.rows.get(invalidReader.id);
+  const ownerClaim=await generalStore.invoke('PATCH',{id:currentOwner.id,expectedUpdatedAt:currentOwner.updated_at,ownerAction:'save-and-publish-owner-content',...wrongCopy,summary:'',sections:currentOwner.sections});
+  assert.equal(ownerClaim.status,200);
+  assert.equal(ownerClaim.payload.rows[0].body,wrongCopy.body);
+  assert(ownerClaim.payload.rows[0].source_snapshot.lunationPublicationCheck.lint.advisories.some((finding:any)=>finding.category==='lunation_fact_boundary'));
+  for(const copy of [{headline:'',body:correctedBody}]){
     const current=generalStore.rows.get(invalidReader.id);
     const refused=await generalStore.invoke('PATCH',{id:current.id,expectedUpdatedAt:current.updated_at,ownerAction:'save-and-publish-owner-content',...copy,summary:'',sections:current.sections});
     assert.equal(refused.status,422,JSON.stringify(refused));

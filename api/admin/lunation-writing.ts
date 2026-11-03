@@ -1,5 +1,4 @@
 import type {IncomingMessage,ServerResponse} from 'node:http';
-import {assertCleanReaderCopy} from '../../apps/web/src/content/editorialCopyBoundary.mjs';
 import {validateCmsTemplate} from '../../apps/web/src/content/cmsTemplateValidation.js';
 import {randomUUID} from 'node:crypto';
 import {getContentAdminPrincipal,requireContentAdmin} from '../_lib/admin-auth.js';
@@ -115,7 +114,6 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       if(!contentKey)throw new AdminHttpError(409,'The saved article has no verified event identity.');
       const existing=await read({content_key:`eq.${contentKey}`,mode:'eq.article',target_date:'is.null',select:'id',limit:'1'});
       if(!existing.length){
-        try{assertCleanReaderCopy({headline:row.headline,body:row.body});}catch{throw new AdminHttpError(422,'Remove internal drafting notes before creating a reader draft.');}
         const validation=validateCmsTemplate({allowedSlots:[],headline:row.headline,summary:'',body:row.body});
         if(validation.errors.length)throw new AdminHttpError(422,`Reader draft cannot be created: ${validation.errors.join(' ')}`);
         const saved=await adminFetchJson(url,{method:'POST',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({
