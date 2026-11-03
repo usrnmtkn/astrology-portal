@@ -57,6 +57,9 @@ async function fixture(page:Page,browser:Browser,info:TestInfo,options:{pendingO
     else if(scope==='admin'&&options.pendingOld&&publication?.state==='live'&&!freshHeld){freshHeld=true;entry.held='fresh';await fresh.promise;}
     await route.fulfill({status:result.status,json:result.payload});entry.completed=true;return;
    }
+   if(req.method()==='POST'&&u.pathname==='/rest/v1/rpc/content_runtime_revision'){
+    const rows=await api.call({method:'rows'});return route.fulfill({json:rows.map((row:any)=>row.updated_at).filter(Boolean).sort().at(-1)??null});
+   }
    // The public shell can check an empty session/profile plane; content reads use the real handler.
    if(scope==='reader'&&req.method()==='GET'&&['/rest/v1/user_profiles','/rest/v1/manual_charts'].includes(u.pathname))return route.fulfill({json:[]});
    evidence.blocked.push({scope,origin:u.origin,path:u.pathname,method:req.method()});await route.abort('blockedbyclient');
