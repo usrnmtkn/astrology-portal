@@ -6,6 +6,7 @@ globalThis.authIsolationFixture = fixture;
 const result = await build({
   stdin: { contents: `export * from './apps/web/src/services/socialFriends.ts';
     export * from './apps/web/src/services/readerAuthReturn.ts';
+    export * from './apps/web/src/services/authCallback.ts';
     export * from './apps/web/src/services/verifiedAccountObserver.ts';`, resolveDir: process.cwd() },
   bundle: true, write: false, platform: "node", format: "esm",
   plugins: [{ name: "auth-transport", setup(b) {
@@ -35,7 +36,10 @@ const storage = () => {
 };
 globalThis.window = Object.assign(new EventTarget(), {
   sessionStorage: storage(), localStorage: storage(),
-  location: { href: "https://app.example.test/", origin: "https://app.example.test", replace: path => { window.location.href = path; } }
+  location: { href: "https://app.example.test/", origin: "https://app.example.test",
+    get pathname() { return new URL(this.href, this.origin).pathname; },
+    get search() { return new URL(this.href, this.origin).search; },
+    replace: path => { window.location.href = path; } }
 });
 globalThis.document = Object.assign(new EventTarget(), { visibilityState: "visible" });
 const key = "tldrastro.pending-social-invitation";
@@ -114,6 +118,33 @@ try {
   window.sessionStorage.setItem("tldrastro:readerAuthReturn", JSON.stringify({path:"/#account", at: Date.now() - 25*3600*1000}));
   assert.equal(api.rememberReaderReturnPath(), null);
 
+  const assets = deferred();
+  window.__tldrastroRecoverPageAssets = () => assets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(), true, "Asset recovery owns the pending navigation");
+  assert.match(window.location.href, /readerReturn=/, "Do not navigate before the failed asset cache is refreshed");
+  assets.resolve();
+  await tick();
+  assert.equal(window.location.href, "/#friends?tab=circle", "Recovery retains the requested feature");
+  const staleAssets = deferred();
+  window.__tldrastroRecoverPageAssets = () => staleAssets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(), true);
+  window.location.href = "https://app.example.test/#sky";
+  staleAssets.resolve();
+  await tick();
+  assert.equal(window.location.href, "https://app.example.test/#sky", "A later navigation supersedes pending auth recovery");
+  const cancelledAssets = deferred();
+  let cancelled = false;
+  window.__tldrastroRecoverPageAssets = () => cancelledAssets.promise;
+  window.location.href = "https://app.example.test/?readerReturn=%2F%23friends%3Ftab%3Dcircle";
+  assert.equal(api.returnToReaderAfterSignIn(() => cancelled), true);
+  cancelled = true;
+  cancelledAssets.resolve();
+  await tick();
+  assert.match(window.location.href, /readerReturn=/, "A superseded account must not navigate when asset recovery finishes");
+  delete window.__tldrastroRecoverPageAssets;
+
   const states = [];
   const stop = api.observeVerifiedAccount(state => states.push(state));
   await tick();
@@ -137,3 +168,49 @@ try {
 } finally {
   delete globalThis.window; delete globalThis.document; delete globalThis.authIsolationFixture;
 }
+
+const guardBuild = await build({ entryPoints: ['tests/helpers/synthetic-network-guard.ts'], bundle: true, write: false, platform: 'node', format: 'esm' });
+const { installSyntheticNetworkGuard } = await import(`data:text/javascript;base64,${Buffer.from(guardBuild.outputFiles[0].text).toString('base64')}`);
+let routeHandler;
+const network = await installSyntheticNetworkGuard({
+  routeWebSocket: async () => {},
+  route: async (_pattern, handler) => { routeHandler = handler; }
+}, 'http://127.0.0.1:4436');
+const stylesheet = deferred(), fulfillment = deferred(), font = deferred();
+const requests = [];
+function fontRoute(url, resourceType, response, fulfill) {
+  return {
+    request: () => ({ url: () => url, method: () => 'GET', resourceType: () => resourceType,
+      headers: () => ({ accept: '*/*', 'user-agent': 'Synthetic browser', cookie: 'must-not-forward', authorization: 'must-not-forward', referer: 'must-not-forward' }) }),
+    fetch: async options => { requests.push(options); return response; }, fulfill
+  };
+}
+let lateTransfer;
+const firstTransfer = routeHandler(fontRoute('https://fonts.googleapis.com/css2?family=Fixture', 'stylesheet', stylesheet.promise, async () => {
+  lateTransfer = routeHandler(fontRoute('https://fonts.gstatic.com/s/atkinsonhyperlegible/v1/fixture.woff2', 'font', font.promise, async () => {}));
+  await fulfillment.promise;
+}));
+let drained = false;
+const drain = network.finishStaticFonts().then(() => { drained = true; });
+await tick();
+assert.equal(drained, false, 'Teardown waits for the already-started stylesheet request');
+stylesheet.resolve({});
+await tick();
+assert.equal(drained, false, 'Receiving a response does not finish its route fulfillment');
+fulfillment.resolve();
+await tick();
+assert.equal(drained, false, 'A font request started by the stylesheet must finish too');
+let blocked = false;
+await routeHandler({ request: () => ({ url: () => 'https://external.example.test/private', method: () => 'POST', resourceType: () => 'fetch' }), abort: async () => { blocked = true; } });
+assert.equal(blocked, true, 'Containment stays installed during teardown');
+font.resolve({});
+await Promise.all([firstTransfer, lateTransfer, drain]);
+assert.equal(drained, true);
+assert.equal(network.staticFontRequests.length, 2);
+for (const options of requests) assert.deepEqual(options, { headers: { accept: '*/*', 'user-agent': 'Synthetic browser' }, maxRedirects: 0 });
+const failure = new Error('Synthetic font transport failed');
+const failedRoute = fontRoute('https://fonts.googleapis.com/css2?family=Fixture', 'stylesheet', null, async () => {});
+failedRoute.fetch = async () => { throw failure; };
+await assert.rejects(routeHandler(failedRoute), error => error === failure);
+await assert.rejects(network.finishStaticFonts(), error => error === failure);
+console.log('Synthetic font teardown: complete transfers, nested requests, containment and error propagation passed.');

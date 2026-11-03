@@ -47,9 +47,9 @@ export async function installReaderPolishObserver(page: Page) {
 
 export const test=base.extend({
   page: async({page},use,info)=>{
-    const { unhandledExternal, staticFontRequests, syntheticRealtimeRequests } = process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1'
+    const { unhandledExternal, staticFontRequests, syntheticRealtimeRequests, finishStaticFonts } = process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1'
       ? await installSyntheticNetworkGuard(page.context(), new URL(info.project.use.baseURL!).origin)
-      : { unhandledExternal: [] as string[], staticFontRequests: [] as string[], syntheticRealtimeRequests: [] as string[] };
+      : { unhandledExternal: [] as string[], staticFontRequests: [] as string[], syntheticRealtimeRequests: [] as string[], finishStaticFonts: async () => {} };
     await installReaderPolishObserver(page);
     const screenshot=page.screenshot.bind(page);let checkpoint=0;
     page.screenshot=async options=>{
@@ -64,14 +64,18 @@ export const test=base.extend({
       if(options?.fullPage)await screenshot({path:info.outputPath(`checkpoint-${checkpoint}-viewport.png`)});
       return bytes;
     };
-    await use(page);
-    if (process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1') {
-      await info.attach('isolated-network-guard', {
-        body: JSON.stringify({ unhandledExternal, staticFontRequests, syntheticRealtimeRequests }, null, 2), contentType: 'application/json'
-      });
-      expect(unhandledExternal, 'Synthetic UI checks must not dispatch unhandled external requests').toEqual([]);
+    try {
+      await use(page);
+      if(info.status==='passed')await auditReaderScreen(page,info);
+    } finally {
+      await finishStaticFonts();
+      if (process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1') {
+        await info.attach('isolated-network-guard', {
+          body: JSON.stringify({ unhandledExternal, staticFontRequests, syntheticRealtimeRequests }, null, 2), contentType: 'application/json'
+        });
+        expect(unhandledExternal, 'Synthetic UI checks must not dispatch unhandled external requests').toEqual([]);
+      }
     }
-    if(info.status==='passed')await auditReaderScreen(page,info);
   }
 });
 
@@ -84,6 +88,7 @@ export const syntheticMemberTest = test.extend({
     const network = await installSyntheticNetworkGuard(page.context(), new URL(info.project.use.baseURL!).origin);
     try { await use(page); }
     finally {
+      await network.finishStaticFonts();
       await info.attach('member-source-network-guard', { body: JSON.stringify(network, null, 2), contentType: 'application/json' });
       expect(network.unhandledExternal).toEqual([]);
     }

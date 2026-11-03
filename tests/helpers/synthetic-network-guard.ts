@@ -4,6 +4,7 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
   const unhandledExternal: string[] = [];
   const staticFontRequests: string[] = [];
   const syntheticRealtimeRequests: string[] = [];
+  const staticFontTransfers: Promise<void>[] = [];
 
       await context.routeWebSocket('**/*', socket => {
         const url = new URL(socket.url());
@@ -63,17 +64,31 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
           && /^v\d+$/.test(url.searchParams.get('v') ?? '');
         if (request.method() === 'GET' && (fontStyles || (request.resourceType() === 'font' && (fontFile || fontSubset)))) {
           // Keep the actual typefaces while forwarding no credentials or referrer.
-          const headers = request.headers();
-          const response = await route.fetch({
-            headers: { accept: headers.accept ?? '*/*', 'user-agent': headers['user-agent'] ?? '' },
-            maxRedirects: 0
-          });
-          staticFontRequests.push(`${request.method()} ${url.origin}${url.pathname}`);
-          return route.fulfill({ response });
+          const transfer = (async () => {
+            const headers = request.headers();
+            const response = await route.fetch({
+              headers: { accept: headers.accept ?? '*/*', 'user-agent': headers['user-agent'] ?? '' },
+              maxRedirects: 0
+            });
+            await route.fulfill({ response });
+            staticFontRequests.push(`${request.method()} ${url.origin}${url.pathname}`);
+          })();
+          staticFontTransfers.push(transfer);
+          return transfer;
         }
         unhandledExternal.push(`${request.method()} ${url.origin}${url.pathname}`);
         return route.abort();
       });
     
-  return { unhandledExternal, staticFontRequests, syntheticRealtimeRequests };
+  async function finishStaticFonts() {
+    // Keep containment installed while prior documents' font transfers finish.
+    // A stylesheet completion can start another font request during this wait.
+    let completed = 0;
+    while (completed < staticFontTransfers.length) {
+      const batch = staticFontTransfers.slice(completed);
+      completed += batch.length;
+      await Promise.all(batch);
+    }
+  }
+  return { unhandledExternal, staticFontRequests, syntheticRealtimeRequests, finishStaticFonts };
 }
