@@ -1,4 +1,5 @@
 import { PreparedProse as FormattedProse } from "../FormattedWritingContent";
+import { KeyDatesPanel } from "../KeyDatesPanel";
 import { useMemo, useState } from "react";
 import {
   fullDetailReaderFacingParagraphs,
@@ -157,9 +158,8 @@ export function ReportArticle({ report, backHref = "/reports/" }: { report: Repo
         </div>
 
         {report.keyDates?.length ? (
-          <section className="report-key-dates" data-report-block="key-dates" aria-labelledby="report-key-dates-title">
+          <KeyDatesPanel className="report-key-dates" data-report-block="key-dates" titleId="report-key-dates-title" count={report.keyDates.length}>
             <p className="report-label">Timeline</p>
-            <h2 id="report-key-dates-title">Key dates</h2>
             <div className="report-key-dates__list">
               {report.keyDates.map((keyDate) => (
                 <button
@@ -174,7 +174,7 @@ export function ReportArticle({ report, backHref = "/reports/" }: { report: Repo
                 </button>
               ))}
             </div>
-          </section>
+          </KeyDatesPanel>
         ) : null}
 
         <footer className="report-colophon" data-report-block="colophon" aria-labelledby="report-colophon-title">

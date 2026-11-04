@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectKeyDatesHeaderCentered } from '../helpers/key-dates-panel';
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 import { bundledPublications } from "../helpers/bundled-publications";
@@ -71,6 +72,14 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     await expect(article.getByRole("heading", { level: 1 })).toHaveText("Moon in Libra square your natal Jupiter");
     await expect(article.locator(".aspect-badge")).toHaveAttribute("data-aspect", "square");
     await expect(article.locator(".aspect-badge")).toHaveText("□");
+    const keyDates = article.locator('.key-dates-panel');
+    await expect(keyDates).not.toHaveAttribute('open','');
+    await expectKeyDatesHeaderCentered(keyDates);
+    await keyDates.locator('summary').focus();await page.keyboard.press('Space');
+    await expect(keyDates).toHaveAttribute('open','');
+    await expectKeyDatesHeaderCentered(keyDates);
+    await expect(keyDates.locator('dd')).toHaveText(['Current contact','Full transit series','Pass 1']);
+    await expect(keyDates.locator('.key-dates-panel__count')).toHaveText('3');
     await expect(article).toContainText("Current contact");
     await expect(article).toContainText("Full transit series");
     await expect(article).toContainText("Pass 1");

@@ -1,4 +1,5 @@
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { KeyDatesPanel } from "../../components/KeyDatesPanel";
 import { PreparedProse } from "../../components/FormattedWritingContent";
 import { aspectGlyph, pointGlyph, signGlyph } from "../../components/charts/chartAssets";
 import { zodiacSigns } from "../../services/chartMath";
@@ -27,8 +28,7 @@ export function SkyPlacementKeyDates({ dates, intro, context, pending }: {
     const parts = new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(instant));
     return ["year", "month", "day"].map(type => parts.find(part => part.type === type)!.value).join("-");
   };
-  return <details className="sky-placement-key-dates sky-placement-article__panel">
-    <summary><h2>Key dates</h2>{!pending && <span className="sky-placement-key-dates__count">{dates.length}</span>}<span className="sky-placement-article__chevron"><ChevronDown aria-hidden="true" /></span></summary>
+  return <KeyDatesPanel className="sky-placement-key-dates sky-placement-article__panel" count={dates.length} pending={pending}>
     {pending ? <p role="status">Calculating key dates…</p> : <>
       {intro && <PreparedProse text={intro} />}
       {dates.length ? <ol>{dates.map((entry, index) => {
@@ -49,5 +49,5 @@ export function SkyPlacementKeyDates({ dates, intro, context, pending }: {
         </li>;
       })}</ol> : <p>No key dates in this placement’s calculated window.</p>}
     </>}
-  </details>;
+  </KeyDatesPanel>;
 }

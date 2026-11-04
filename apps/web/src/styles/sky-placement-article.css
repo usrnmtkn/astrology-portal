@@ -24,12 +24,10 @@
 .retrograde-cycles--article .retrograde-cycles__section > summary { display: flex; align-items: baseline; gap: var(--space-3); list-style: none; font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); letter-spacing: var(--tracking-tight); color: var(--ink); cursor: pointer; }
 .sky-placement-article__panel > summary::-webkit-details-marker { display: none; }
 .sky-placement-article__panel h2 { margin: 0; font: inherit; }
-.sky-placement-key-dates__count { font-family: var(--font-ui); font-size: var(--type-ui-copy-size); color: var(--muted); }
 .sky-placement-article__chevron,
 .retrograde-cycles--article .retrograde-cycles__chevron { display: grid; place-items: center; flex: none; align-self: center; margin-left: auto; width: var(--placement-control-size); height: var(--placement-control-size); border-radius: var(--radius-pill); background: var(--surface-2); }
 .sky-placement-article__chevron svg { width: var(--space-4); height: var(--space-4); }
 .sky-placement-article__panel[open] > summary svg { transform: rotate(180deg); }
-.sky-placement-key-dates > p { margin: var(--space-6) 0 0; font-size: var(--text-body); line-height: var(--leading-body); }
 .sky-placement-key-dates ol { list-style: none; padding: 0; margin: var(--space-4) calc(-1 * var(--space-4)) calc(-1 * var(--space-3)); }
 .sky-placement-key-dates li { margin: 0; }
 .sky-placement-key-dates li > :is(a, .sky-placement-key-dates__row) { display: grid; grid-template-columns: var(--size-8) var(--size-5) minmax(0, 1fr) auto; gap: var(--space-4); align-items: center; padding: calc(var(--space-3) + var(--lunar-space-2)) var(--space-4); border-radius: var(--radius-tab); color: var(--ink); text-decoration: none; }

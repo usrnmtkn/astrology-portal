@@ -1,4 +1,5 @@
 import { NatalPatternsInsights } from "./NatalPatternsInsights";
+import { KeyDatesPanel } from "../../components/KeyDatesPanel";
 import "../../styles/profile-overview.css";
 import "../../styles/you-transits.css";
 import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
@@ -1149,8 +1150,7 @@ function YouTransitArticlePage({
               })}
               {displayArticle.natalPlanetReading ? <NatalChartReadings {...displayArticle.natalPlanetReading} /> : null}
               {passKeyDates.length ? (
-                <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="you-transit-key-dates-title">
-                  <h2 id="you-transit-key-dates-title">Key dates</h2>
+                <KeyDatesPanel className="article-section sky-detail-section sky-placement-key-dates" titleId="you-transit-key-dates-title" count={passKeyDates.length}>
                   <dl>
                     {passKeyDates.map((row) => (
                       <div key={`${row.label}-${row.value}`}>
@@ -1159,7 +1159,7 @@ function YouTransitArticlePage({
                       </div>
                     ))}
                   </dl>
-                </section>
+                </KeyDatesPanel>
               ) : null}
               {displayArticle.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label="Placement aspects">

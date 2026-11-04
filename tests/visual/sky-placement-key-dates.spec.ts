@@ -1,4 +1,5 @@
 import { readerResponse } from '../helpers/reader-response';
+import { expectKeyDatesHeaderCentered } from '../helpers/key-dates-panel';
 import { expect, test } from "../helpers/polish-test";
 import { skyPlacementSourceRecords } from "../../api/_lib/sky-placement-sources";
 import { getLunarCalendarWeek } from "../../apps/web/src/services/ephemeris";
@@ -56,8 +57,11 @@ for (const width of [390, 1440]) for (const withVariable of [false, true]) {
     const verifyDates = async () => {
       await expect(dates).toBeVisible({ timeout: 60_000 });
       await expect(dates).not.toHaveAttribute('open');
-      await dates.locator(':scope > summary').click();
+      await expectKeyDatesHeaderCentered(dates);
+      await dates.locator(':scope > summary').focus();await page.keyboard.press('Enter');
       await expect(dates).toHaveAttribute('open');
+      await expectKeyDatesHeaderCentered(dates);
+      await expect(dates.locator('.key-dates-panel__count')).toHaveText(String(timeline.length));
       await expect(dates.locator("ol > li")).toHaveCount(timeline.length, { timeout: 60_000 });
       expect(await dates.locator("ol > li").evaluateAll(rows => rows.map(row => [row.querySelector("time")?.getAttribute("aria-label"), row.querySelector(".sky-placement-key-dates__title strong")?.textContent]))).toEqual(timeline);
     };
