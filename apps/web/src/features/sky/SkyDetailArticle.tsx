@@ -8,7 +8,6 @@ import { skyPassageEditSource, studioPassageEditHref } from '../../../../../src/
 import { skyPreviewReferenceDate } from '../../../../../src/shared/skyReaderPreview';
 import type { RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { RetrogradeCycles } from "../calendar/RetrogradeCycles";
-import "../../styles/sky-placement-article.css";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
