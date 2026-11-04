@@ -119,11 +119,11 @@ export function ReportTopNavigation({
 
       <div className="topbar-actions">
         <ThemeToggleButton theme={theme} onThemeChange={changeTheme} />
-        <button className="profile-nav-button" type="button" aria-label="Your profile" onClick={() => goToAppRoute("you")}>
+        <button className="topbar-icon profile-nav-button" type="button" aria-label="Your profile" onClick={() => goToAppRoute("you")}>
           {account ? <ProfileAvatar name={account.name} email={account.email} avatarUrl={account.avatarUrl} /> : <User size={22} aria-hidden="true" />}
         </button>
         <button
-          className="menu-toggle"
+          className="topbar-icon menu-toggle"
           id="report-menu-toggle"
           type="button"
           aria-expanded={menuOpen}

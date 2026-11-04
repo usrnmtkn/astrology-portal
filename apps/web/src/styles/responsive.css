@@ -1306,7 +1306,7 @@
     display: none;
   }
 
-  .app-shell:has(.floating-back-button) .topbar-actions:has(.sky-header-date-button) .theme-toggle {
+  .app-shell:has(.floating-back-button):has(.sky-header-date-button) .theme-toggle {
     display: none;
   }
 
@@ -1331,20 +1331,20 @@
 }
 
 @media (max-width: 380px) {
-  .topbar:has(.profile-nav-button) {
+  .topbar {
     gap: var(--space-1);
     padding-inline: var(--space-2);
   }
 
-  .topbar-actions:has(.profile-nav-button) {
+  .topbar .topbar-actions {
     gap: var(--space-1);
   }
 
-  .topbar:has(.profile-nav-button) .nav-pill {
+  .topbar .nav-pill {
     padding-inline: var(--space-1);
   }
 
-  .topbar:has(.profile-nav-button) .sky-header-date-button {
+  .topbar .sky-header-date-button {
     gap: var(--space-1);
     min-width: 0;
     padding-inline: var(--space-1);

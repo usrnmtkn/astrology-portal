@@ -237,6 +237,10 @@ for (const photo of [false, true]) test(`profile avatar opens the saved profile 
   await page.reload();
   await expect(profile).toHaveAttribute('aria-current', 'page');
   await expectProfileBesideMenu(page);
+  const activeBorder = await profile.evaluate(button => getComputedStyle(button).borderTopColor);
+  await page.locator('html').evaluate(html => html.setAttribute('data-scrolled', ''));
+  await expect(profile).toHaveCSS('border-top-color', activeBorder);
+  await expectProfileBesideMenu(page);
 });
 
 test('guest profile button opens sign-up', async ({ page }) => {

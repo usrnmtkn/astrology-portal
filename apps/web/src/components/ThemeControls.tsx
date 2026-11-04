@@ -9,7 +9,7 @@ export function ThemeToggleButton({ theme, onThemeChange }: {
 }) {
   const nextTheme = theme === "dark" ? "light" : "dark";
   const label = `Switch to ${nextTheme} mode`;
-  return <button className="theme-toggle" type="button" aria-label={label} title={label} onClick={() => onThemeChange(nextTheme)}>
+  return <button className="topbar-icon theme-toggle" type="button" aria-label={label} title={label} onClick={() => onThemeChange(nextTheme)}>
     {theme === "dark" ? <Sun size={22} aria-hidden="true" /> : <Moon size={22} aria-hidden="true" />}
   </button>;
 }

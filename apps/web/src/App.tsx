@@ -14577,7 +14577,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           </Suspense>}
           <ThemeToggleButton theme={theme} onThemeChange={setTheme} />
           <button
-            className={`profile-nav-button ${navigationMode === "profile" ? "active" : ""}`}
+            className={`topbar-icon profile-nav-button ${navigationMode === "profile" ? "active" : ""}`}
             type="button"
             aria-label="Your profile"
             aria-current={navigationMode === "profile" ? "page" : undefined}
@@ -14589,7 +14589,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           </button>
           <button
             type="button"
-            className="menu-toggle"
+            className="topbar-icon menu-toggle"
             id="site-menu-toggle"
             ref={menuTriggerRef}
             aria-expanded={menuOpen}
