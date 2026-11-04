@@ -5435,6 +5435,9 @@ export function GeneratedContentAdminDashboard() {
     try {
       const directCopy = isPackageDraft && writesPersonalTransitExactCopy(draftForSave)
         ? await loadRevisionPublication() : null;
+      const templateReceipt = !isPackageDraft && /^sky\/article-(?:template|edition)\//u.test(draftForSave.contentKey)
+        ? (await import('./articleTemplateSaveReceipt')).default : null;
+      const expectedDraft = templateReceipt?.normalize(draftForSave) ?? draftForSave;
       const body = isPackageDraft
         ? {
             ownerAuthoredWording: true,
@@ -5475,7 +5478,7 @@ export function GeneratedContentAdminDashboard() {
             blockType: draftForSave.blockType || null,
             promptVersion: draftForSave.promptVersion || "manual-admin",
             eventType: persistedRow?.event_type ?? draftEventType(draftForSave),
-            sections: draftForSave.sections ?? {},
+            sections: expectedDraft.sections ?? {},
             facts: draftForSave.facts ?? {},
             reviewerNotes: draftForSave.reviewerNotes,
             sourceSnapshot: draftSourceSnapshot(draftForSave)
@@ -5494,7 +5497,8 @@ export function GeneratedContentAdminDashboard() {
           && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
         || (["LIVE", "REVIEWED"].includes(status) && saved.review_state)
-        || (["status", "headline", "summary", "body"] as const).some((field) => saved[field] !== draftForSave[field])
+        || (["status", "headline", "summary", "body"] as const).some((field) => saved[field] !== expectedDraft[field])
+        || (templateReceipt && !templateReceipt.matches(expectedDraft, saved))
       )) || (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft) && !writesPersonalTransitExactCopy(draftForSave))) {
         throw new Error("Save did not return the saved row.");
       }
@@ -5517,7 +5521,7 @@ export function GeneratedContentAdminDashboard() {
             if (directCopy) return directCopy.retainPendingPublicationCopy(editorDraftAtSave ?? activeDraft, current, savedDraft, true);
             const proposal = draftPackageProposal(current);
             const savedRecord = draftPackageRecord(savedDraft);
-            return { ...current, id: savedDraft.id, updatedAt: savedDraft.updatedAt,
+            return { ...(templateReceipt?.retain(draftForSave, current, savedDraft) ?? current), id: savedDraft.id, updatedAt: savedDraft.updatedAt,
               ...(proposal && savedRecord ? { sections: { ...current.sections, packageDraft: { ...proposal,
                 ...Object.fromEntries(["owner_approved", "serving_enabled"].filter(flag => Object.hasOwn(proposal, flag)).map(flag => [flag, savedRecord[flag]]))
               } } } : {}) };

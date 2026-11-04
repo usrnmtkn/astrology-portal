@@ -107,7 +107,7 @@ export default defineConfig(({ command, mode }) => {
     ? process.env.CONTENT_GENERATION_SECRET ?? webEnv.CONTENT_GENERATION_SECRET ?? ""
     : "";
   let startupModules: Set<string> | undefined;
-  const sourceDraftModule = (id: string) => /apps\/admin\/src\/(?:transitNatalExactDraft|calendarPlanetaryDraft|compatibilityAspectDraft|connectionTransitSources|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData|skyPlacementAspectBridgeDraft|studioSourceDraft)\.ts$/u.test(id);
+  const sourceDraftModule = (id: string) => /apps\/admin\/src\/(?:transitNatalExactDraft|calendarPlanetaryDraft|compatibilityAspectDraft|connectionTransitSources|missingFriendsSource|bondEffectExactDraft|transitNatalPackagedSource|adminHookCatalogData|skyPlacementAspectBridgeDraft|studioSourceDraft|articleTemplateSaveReceipt)\.ts$/u.test(id);
   const deferredIcon = (id: string) => /\/lucide-react\/dist\/esm\/icons\/(?:bold|circle-check|circle-help|columns-2|italic|list-ordered|list|log-in|redo-2|undo-2)\.js$/u.test(id);
   const deferredSource = (id: string) => /\/(?:skyArticleHoroscopes\.mjs|skyPlacementAspectBridge\.ts|studioMemoryIdentity\.ts)$/u.test(id)
     || /apps\/admin\/src\/(?:calendarPreviewCalculation\.ts|SkyPlacementAspectBridgeStudio\.tsx)$/u.test(id);
