@@ -5,7 +5,7 @@ import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources'
 import { syntheticLibrarySkyArticle } from '../helpers/article-library-fixture';
 import { readerResponse } from '../helpers/reader-response';
 import { emptyLastKnownGoodSnapshot } from '../helpers/bundled-publications';
-import { selectGeocodedCaliforniaCity } from '../helpers/geocoded-city';
+import { geocodedCaliforniaCity, selectGeocodedCaliforniaCity } from '../helpers/geocoded-city';
 
 const canonicalKey = 'sky-placement/article/sun/libra';
 const houseKey = 'house-horoscope-core/sun/libra/house-7';
@@ -411,7 +411,7 @@ for (const { width, hasEdition, account, flow } of cases) {
             .filter(key => key.startsWith('tldrastro:verifiedSky:v2:')).some(key => {
               const snapshot = JSON.parse(localStorage.getItem(key)!).snapshot;
               return snapshot.location.latitude === latitude && snapshot.location.longitude === longitude && snapshot.location.timeZone === timeZone && snapshot.generatedAt === at;
-            }), flow === 'location' ? { latitude: -5.5, longitude: -105.5, timeZone: 'America/Los_Angeles', at: requested.searchParams.get('at') } : { latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York', at: requested.searchParams.get('at') })).toBe(true);
+            }), flow === 'location' ? { ...geocodedCaliforniaCity, at: requested.searchParams.get('at') } : { latitude: 40.7128, longitude: -74.006, timeZone: 'America/New_York', at: requested.searchParams.get('at') })).toBe(true);
           const relocated = await article.locator(".sky-detail-card").evaluate(node => node.outerHTML);
           release(); await selectedResponseComplete();
           expect([...new Set(await articleFrames())]).toEqual([relocated]);
