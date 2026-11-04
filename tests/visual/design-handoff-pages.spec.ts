@@ -1603,12 +1603,19 @@ for (const width of [320, 390, 768, 820, 1024, 1440, 1920]) for (const theme of 
       const layout = await section.evaluate(node => {
         const rect = (selector: string) => node.querySelector(selector)!.getBoundingClientRect().toJSON();
         const style = getComputedStyle(node);
+        const sky = node.closest('.sky-page')!;
         return { root: node.getBoundingClientRect().toJSON(), padding: parseFloat(style.paddingLeft),
+          placements: sky.querySelector('.placement-section')!.getBoundingClientRect().toJSON(),
+          placementContent: sky.querySelector(innerWidth <= 800 ? '.sky-placement-group .planet-placement-row--sky' : '.sky-placement-group .placement-table')!.getBoundingClientRect().toJSON(),
           head: rect('.sky-today-ledger__head'), copy: rect('.sky-today-ledger__copy'),
           grid: rect('.sky-debility-cards'), help: rect('.sky-debility-explain'),
           columns: getComputedStyle(node.querySelector('.sky-debility-cards')!).gridTemplateColumns.split(' ').length };
       });
-      expect(layout.padding).toBe(width > 1024 ? 48 : 24);
+      expect(layout.padding).toBe(width <= 800 ? 24 : 0);
+      expect(layout.root.x).toBeCloseTo(layout.placements.x, 0);
+      expect(layout.root.right).toBeCloseTo(layout.placements.right, 0);
+      expect(layout.grid.x).toBeCloseTo(layout.placementContent.x, 0);
+      expect(layout.grid.right).toBeCloseTo(layout.placementContent.right, 0);
       expect(layout.head.x - layout.root.x).toBeCloseTo(layout.padding, 0);
       expect(layout.copy.x).toBeCloseTo(layout.head.x, 0);
       expect(layout.grid.x).toBeCloseTo(layout.head.x, 0);
@@ -1635,6 +1642,10 @@ for (const width of [320, 390, 768, 820, 1024, 1440, 1920]) for (const theme of 
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await section.locator('h3').click();
       await section.screenshot({ path: `test-results/sky-effort-layout-${width}-${theme}-${date}.png` });
+      await cards.first().click();
+      await expect(page.locator('.sky-detail-article')).toBeVisible({ timeout: 60_000 });
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+      await expect(cards).toHaveCount(count);
     }
   });
 }
