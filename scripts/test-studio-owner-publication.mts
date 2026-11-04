@@ -63,6 +63,29 @@ try {
   console.log('PASS owner publication: real handler, exact server approval, actual reader selection, unchanged prose, no fabricated judge result, stale/forged/mixed requests, re-publication and reader/source boundaries. No model calls.');
 } finally {await store.close();}
 
+const dignityDrafts = [
+  {key: 'sun-libra-direct__mars-cancer-direct', body: 'Synthetic complete opening.\n\n{sunPlacementSentence} and {marsPlacement} retain their original order.\n\nSynthetic complete ending.'},
+  {key: 'sun-aquarius-direct__mercury-pisces-direct__venus-aries-direct__saturn-aries-direct', body: 'Synthetic complete opening.\n\n{sunPlacementSentence} and {venusPlacement} share one clause; {saturnPlacement} has another; {mercuryPlacement} appears once.\n\nSynthetic complete ending.'}
+].map((fixture, index) => ({...baseline, id: `a0000000-0000-4000-8000-00000000000${index + 2}`,
+  content_key: `cms/sky-debility/reading/${fixture.key}`, body: fixture.body, headline: 'Synthetic complete dignity reading',
+  block_type: 'essay', event_type: 'essay', review_state: 'owner-review-required',
+  source_snapshot: {contentSystem: 'cms-surface-override', contentType: 'mustache-template',
+    allowedSlots: ['sunPlacementSentence', 'marsPlacement', 'venusPlacement', 'saturnPlacement', 'mercuryPlacement']}}));
+const dignity = await createApiStore(dignityDrafts);
+try {
+  for (const draft of dignityDrafts) {
+    const published = await dignity.invoke('PATCH', {id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'publish-owner-content'});
+    assert.equal(published.status, 200, JSON.stringify(published.payload));
+    const live = published.payload.rows[0];
+    assert.equal(live.body, draft.body); assert.equal(live.headline, draft.headline); assert(hasExactStudioOwnerApproval(live));
+    const read = await dignity.invoke('POST', {keys: [draft.content_key]}, '/api/content-reader');
+    assert.equal(read.status, 200); assert.equal(read.payload.rows[0].body, draft.body);
+    const stale = await dignity.invoke('PATCH', {id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'publish-owner-content'});
+    assert.equal(stale.status, 409);
+  }
+  console.log('PASS complete dignity publication: individual fact slots preserve both sentence shapes through exact-version owner approval and the public reader.');
+} finally {await dignity.close();}
+
 const lunar = await createApiStore([lunarOwnerDraft()]);
 try {
   const draft = lunar.rows.get(lunarOwnerDraft().id)!;

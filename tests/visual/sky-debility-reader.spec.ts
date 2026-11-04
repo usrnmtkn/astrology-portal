@@ -3,9 +3,43 @@ import { linkedThreePlanetContext, highlightedCountStatement } from "../fixtures
 import { expectEffortCardSpacing } from "./sky-debility-layout";
 import { readerResponse } from "../helpers/reader-response";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { skyDebilityInterpretationSlots } from "../../apps/web/src/content/skyDebilityIdentity.mjs";
 
 // The paired configuration serves Studio at 4297 and the reader at 4298.
 test.use({ baseURL: "http://127.0.0.1:4298" });
+
+// Historical witnesses exercise the actual ephemeris without publishing fixture facts.
+for (const fixture of [
+  {date: "2009-10-15", key: "sun-libra-direct__mars-cancer-direct",
+    template: "{sunPlacementSentence} and {marsPlacement} keep their sentence order.",
+    expected: "The Sun in Libra and Mars in Cancer keep their sentence order.", links: ["The Sun in Libra", "Mars in Cancer"]},
+  {date: "1940-02-16", key: "sun-aquarius-direct__mercury-pisces-direct__venus-aries-direct__saturn-aries-direct",
+    template: "{sunPlacementSentence} and {venusPlacement} share a clause; {saturnPlacement} has another; {mercuryPlacement} appears once.",
+    expected: "The Sun in Aquarius and Venus in Aries share a clause; Saturn in Aries has another; Mercury in Pisces appears once.",
+    links: ["The Sun in Aquarius", "Venus in Aries", "Saturn in Aries", "Mercury in Pisces"]}
+]) for (const [width, theme] of [[390, "light"], [1440, "dark"]] as const) test(`individual dignity links preserve full copy ${fixture.date} ${width}`, async ({page}) => {
+  await page.setViewportSize({width, height: 1000});
+  await page.clock.setFixedTime(new Date("2026-11-04T17:00:00Z"));
+  await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
+  await bundledPublications(page);
+  const row = {id: "individual-dignity-fixture", content_key: `cms/sky-debility/reading/${fixture.key}`,
+    surface: "sky", mode: "feed", event_type: "essay", block_type: "essay", status: "LIVE", lane: "serving", review_state: null,
+    headline: "Synthetic complete dignity reading", summary: "", sections: [], updated_at: "2026-11-04T16:00:00.000Z",
+    source_snapshot: {contentSystem: "cms-surface-override", contentType: "mustache-template", allowedSlots: skyDebilityInterpretationSlots},
+    body: `Synthetic complete opening.\n\n${fixture.template}\n\nSynthetic complete ending.`};
+  const publications = [{content_key: row.content_key, state: "live", revision: 1, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at}];
+  await page.route("**/content-studio-last-known-good.json", route => route.fulfill({json: {schema: "content-studio-last-known-good-v2", rowCount: 1, rows: [row], publications}}));
+  await page.route("**/api/content-reader", route => route.fulfill({json: readerResponse([row], publications)}));
+  await page.route("**/api/calendar?**", route => route.fulfill({json: {ok: true, calendar: {days: []}}}));
+  await page.goto(`/?date=${fixture.date}#sky`);
+  const card = page.locator(".sky-debility-ledger:visible").first();
+  const copy = card.locator(".sky-today-ledger__copy");
+  await expect(card.getByRole("heading", {level: 3})).toHaveText(row.headline, {timeout: 60_000});
+  await expect(copy.locator("p")).toHaveText(["Synthetic complete opening.", fixture.expected, "Synthetic complete ending."]);
+  await expect(copy.getByRole("link")).toHaveText(fixture.links);
+  await page.reload();
+  await expect(copy.locator("p")).toHaveText(["Synthetic complete opening.", fixture.expected, "Synthetic complete ending."], {timeout: 60_000});
+});
 
 // The actual ephemeris supplies sign and motion at the regression instant.
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`inline effort paragraph ${width} ${theme}`, async ({ page }) => {
