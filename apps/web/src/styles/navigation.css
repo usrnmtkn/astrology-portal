@@ -253,6 +253,7 @@ html[data-scrolled] .nav-pill {
   outline-offset: var(--space-1);
 }
 
+html[data-scrolled] .profile-nav-button[aria-current="page"],
 .profile-nav-button[aria-current="page"] {
   border-color: var(--nav-link-active-fg);
 }

@@ -1302,6 +1302,14 @@
 }
 
 @media (max-width: 520px) {
+  .app-shell:has(.floating-back-button) .brand-word {
+    display: none;
+  }
+
+  .app-shell:has(.floating-back-button) .topbar-actions:has(.sky-header-date-button) .theme-toggle {
+    display: none;
+  }
+
   .topbar:has(.sky-header-date-button) .brand-word { display: none; }
 
   :is(.mode-guest, .mode-member, .mode-profile, .mode-friends) .sky-header-date-button {
