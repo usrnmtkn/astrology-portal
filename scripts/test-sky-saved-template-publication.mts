@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { mock } from 'node:test';
-import { compiledReaderFixture, compiledReaderRow, compiledReaderCandidate } from '../tests/helpers/sky-saved-template-reader-fixtures.mts';
+import { compiledReaderFixture, compiledReaderRow, compiledReaderCandidate, legacyIngressReaderFixture } from '../tests/helpers/sky-saved-template-reader-fixtures.mts';
 import { skyArticlePublicationStore } from '../tests/helpers/sky-article-publication-store.mts';
 import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from '../apps/web/src/content/skyIngressEssayReader.ts';
 import { approvedSkyArticleReaderEdition, skyArticleReaderMarkdown } from '../apps/web/src/content/skyArticleEditionReader.ts';
@@ -250,3 +250,36 @@ for (const structural of [false, true]) {
   } finally { mock.timers.reset(); await lifecycle.close(); }
 }
 console.log('PASS immediate hash/structure refusal leaves source+ledger exact; scheduled dispatch shares validation and changes only its existing hold receipt.');
+
+const legacyEdition = await legacyIngressReaderFixture();
+const legacyRow = compiledReaderRow(legacyEdition);
+const legacyStore = await skyArticlePublicationStore([legacyRow]);
+try {
+  const before = (await legacyStore.db.query('select to_jsonb(g) as row from generated_interpretations g')).rows;
+  const ledger = (await legacyStore.db.query('select to_jsonb(p) as row from content_publications p order by content_key')).rows;
+  const response = await legacyStore.invoke('/api/content-reader', { keys: [legacyRow.content_key] });
+  assert.equal(response.status, 200);
+  assert.equal(response.rows.length, 1, 'An already approved legacy Overview edition must remain readable without republishing');
+  const projected = response.rows[0];
+  assert.equal(projected.body, legacyEdition.body);
+  assert.equal(projected.sections.skyArticleEdition.compiledHash, legacyEdition.compiledHash);
+  assert.equal(projected.sections.skyArticleEdition.compiledMarkdown, legacyEdition.compiledMarkdown);
+  assert.deepEqual(projected.sections.skyArticleEdition.articleSections, legacyEdition.articleSections);
+  assert.equal(skyIngressEssayReaderSection([compiledReaderCandidate(projected)], context)?.body, legacyEdition.body);
+  assert.deepEqual((await legacyStore.db.query('select to_jsonb(g) as row from generated_interpretations g')).rows, before);
+  assert.deepEqual((await legacyStore.db.query('select to_jsonb(p) as row from content_publications p order by content_key')).rows, ledger);
+  for (const [label, mutate] of [
+    ['changed section', (row: any) => { row.sections.skyArticleEdition.articleSections[0].body += ' Changed.'; }],
+    ['unknown heading', (row: any) => { row.sections.skyArticleEdition.articleSections[0].heading = 'Changed'; }],
+    ['duplicate section', (row: any) => { row.sections.skyArticleEdition.articleSections.push(row.sections.skyArticleEdition.articleSections[0]); }],
+    ['changed compiled text', (row: any) => { row.sections.skyArticleEdition.compiledMarkdown += ' Changed.'; }],
+    ['missing approval', (row: any) => { row.source_snapshot = {}; }],
+    ['draft', (row: any) => { row.status = 'DRAFT'; }]
+  ] as const) {
+    const row = structuredClone(legacyRow); mutate(row);
+    const refused = await skyArticlePublicationStore([row]);
+    try { assert.deepEqual((await refused.invoke('/api/content-reader', { keys: [row.content_key] })).rows, [], label); }
+    finally { await refused.close(); }
+  }
+} finally { await legacyStore.close(); }
+console.log('PASS legacy Overview editions retain exact approved text/hash/sections without source or ledger writes; altered text and ineligible rows stay unavailable.');
