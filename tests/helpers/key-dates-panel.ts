@@ -9,6 +9,8 @@ export async function expectKeyDatesHeaderCentered(panel: Locator) {
       return box.top + box.height / 2;
     };
     const controls = summary.querySelectorAll('.key-dates-panel__title, .key-dates-panel__count, .key-dates-panel__chevron');
-    return [...controls].every(element => Math.abs(center(element) - center(summary)) < 1);
+    const controlsCentered = [...controls].every(element => Math.abs(center(element) - center(summary)) < 1);
+    const collapsedCardCentered = node.hasAttribute('open') || Math.abs(center(summary) - center(node)) < 1;
+    return controlsCentered && collapsedCardCentered;
   })).toBe(true);
 }
