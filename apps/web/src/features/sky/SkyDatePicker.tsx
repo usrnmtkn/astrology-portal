@@ -30,19 +30,21 @@ export default function SkyDatePicker({
   onClose,
   embedded = false,
   pickerRef,
+  today = dateInputValue(),
   value,
   onSelect
 }: {
   onClose: () => void;
   embedded?: boolean;
   pickerRef?: Ref<HTMLElement>;
+  today?: string;
   value: string;
   onSelect: (value: string) => void;
 }) {
   const selectedDate = dateFromInput(value);
   const [visibleMonth, setVisibleMonth] = useState(() => new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
   const days = calendarDaysFor(visibleMonth);
-  const todayValue = dateInputValue();
+  const todayValue = today;
   const selectedValue = dateInputValue(selectedDate);
   const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

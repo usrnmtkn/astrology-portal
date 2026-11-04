@@ -1,4 +1,5 @@
 import {installSyntheticNetworkGuard} from "../helpers/synthetic-network-guard";
+import {geocodedCaliforniaCity, selectGeocodedCaliforniaCity} from '../helpers/geocoded-city';
 import { test, expect, type Page, type Request, type Locator } from '@playwright/test';
 import { readerResponse } from '../helpers/reader-response';
 import { fork } from 'node:child_process';
@@ -955,10 +956,8 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
         await page.locator('.sky-header-date-button').click();
         const controls = page.getByRole('dialog', {name:/^(Date and location|Transit date)$/});
         await controls.locator('.mobile-sky-controls__location').click();
-        const city = controls.getByRole('textbox', { name: 'City', exact: true });
-        await city.fill('Synthetic Recovery City');
-        await city.press('Enter');
-        await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('tldrastro:selectedLocation') ?? 'null')?.label)).toBe('Synthetic Recovery City');
+        await selectGeocodedCaliforniaCity(page);
+        await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('tldrastro:selectedLocation') ?? 'null'))).toMatchObject(geocodedCaliforniaCity);
       }
     }
     await openChart('Casey');

@@ -67,13 +67,19 @@ export function articleTemplateWithHoroscopes(body, sections) {
     ...section.passages.map(passage => `${passage.heading}\n\n${passage.body}`)].filter(Boolean).join('\n\n');
 }
 
+function orderedFields(_key, value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+  // JSONB may reorder object fields; keep every value and array position exact.
+  return Object.fromEntries(Object.keys(value).sort().map(key => [key, value[key]]));
+}
+
 /** Storage shape: preserve status, publication, provenance and unrelated sections. */
 export function separateArticleHoroscopeRow(row) {
   if (!articleKey.test(row.content_key ?? '')) return row;
   const current = articleHoroscopeSection(row.sections);
   const extracted = extractArticleHoroscopes(row.body, row.content_key);
   if (!extracted) return row;
-  if (current && JSON.stringify(current) !== JSON.stringify(extracted.articleHoroscopes)) {
+  if (current && JSON.stringify(current, orderedFields) !== JSON.stringify(extracted.articleHoroscopes, orderedFields)) {
     throw new Error('The article body and horoscope fields contain different versions. Keep the intended horoscope version in its fields before saving.');
   }
   if (Array.isArray(row.sections) && row.sections.length) throw new Error('Existing article sections need manual review before horoscope separation.');

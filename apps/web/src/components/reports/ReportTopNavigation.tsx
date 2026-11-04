@@ -13,7 +13,7 @@ import { getAuthAccount, type AuthAccount } from "../../services/auth";
 import { NavigationPill } from "../NavigationPill";
 import { ProfileAvatar } from "../ProfileAvatar";
 import { SiteMenuSheet } from "../SiteMenuSheet";
-import { ThemeToggleButton, type UiThemeOption } from "../ThemeControls";
+import type { UiThemeOption } from "../ThemeControls";
 
 export type ReportTheme = UiThemeOption;
 
@@ -118,7 +118,6 @@ export function ReportTopNavigation({
       </NavigationPill>
 
       <div className="topbar-actions">
-        <ThemeToggleButton theme={theme} onThemeChange={changeTheme} />
         <button className="topbar-icon profile-nav-button" type="button" aria-label="Your profile" onClick={() => goToAppRoute("you")}>
           {account ? <ProfileAvatar name={account.name} email={account.email} avatarUrl={account.avatarUrl} /> : <User size={22} aria-hidden="true" />}
         </button>

@@ -37,13 +37,18 @@ const locationKey='tldrastro:horoscopeLocation';
 function savedLocation():LocationPreference {
   try {const value=JSON.parse(localStorage.getItem(locationKey)??'null');return value?.mode==='device'?'device':value&&typeof value.label==='string'&&Number.isFinite(value.latitude)&&Number.isFinite(value.longitude)&&validHoroscopeTimeZone(value.timeZone)?value:null;}catch{return null;}
 }
-export default function HoroscopeReader({defaultSign,sunSign,location,sky}:{defaultSign?:string;sunSign?:string;location?:LocationInput;sky?:SkySnapshot|null}) {
+export default function HoroscopeReader({defaultSign,sunSign,location,sky,onLocationChange}:{defaultSign?:string;sunSign?:string;location?:LocationInput;sky?:SkySnapshot|null;onLocationChange?:(value:LocationInput)=>void}) {
   const rising=validSign(defaultSign), sun=validSign(sunSign), preferredSign=rising??sun??'aries';
   const [localLocation,setLocalLocation]=useState<LocationPreference>(savedLocation);
   const deviceLocation={label:'Device time zone',latitude:0,longitude:0,timeZone:browserTimeZone()};
-  const selectedLocation=localLocation==='device'?deviceLocation:localLocation??location??deviceLocation;
+  const selectedLocation=localLocation==='device'?deviceLocation:localLocation?.label==='Selected time zone'?localLocation:location??localLocation??deviceLocation;
   const timeZone=canonicalHoroscopeTimeZone(timeZoneForLocation(selectedLocation));
-  function changeLocation(next:LocationInput){setLocalLocation(next);select({...selection,editionId:null});try{localStorage.setItem(locationKey,JSON.stringify(next));}catch{/* Keep the selection for this visit if storage is unavailable. */}}
+  function changeLocation(next:LocationInput){
+    const isCity=next.label!=='Selected time zone'&&Boolean(onLocationChange);
+    if(isCity)onLocationChange!(next);
+    setLocalLocation(isCity?null:next);select({...selection,editionId:null});
+    try{if(isCity)localStorage.removeItem(locationKey);else localStorage.setItem(locationKey,JSON.stringify(next));}catch{/* Keep the selection for this visit if storage is unavailable. */}
+  }
   function resetLocation(){setLocalLocation('device');select({...selection,editionId:null});try{localStorage.setItem(locationKey,JSON.stringify({mode:'device'}));}catch{/* Keep device mode for this visit. */}}
   const [selection,setSelection]=useState(()=>route(preferredSign));
   const [edition,setEdition]=useState<HoroscopeEdition|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState(''),[version,setVersion]=useState(0);

@@ -45,7 +45,7 @@ export default function HeaderSkyControls({ value, today, tomorrow, onSelect, on
         }} options={[{value:"today",label:"Today"},{value:"tomorrow",label:"Tomorrow"},{value:"date",label:"Date"}]} />
         <button type="button" className="header-date-close" aria-label="Close date and location" onClick={onClose}><X size={18} aria-hidden="true" /></button>
       </div>
-      {tab === "date" && <SkyDatePicker embedded value={draft} onSelect={setDraft} onClose={onClose} />}
+      {tab === "date" && <SkyDatePicker embedded today={today} value={draft} onSelect={setDraft} onClose={onClose} />}
       {locationLabel && <div className="header-date-location">
         <span className="header-date-location__label">Location</span>
         {editingLocation ? <form ref={locationFormRef} onSubmit={event => { event.preventDefault(); onSubmitLocation(); }}>

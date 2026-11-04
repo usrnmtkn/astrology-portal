@@ -73,7 +73,7 @@ for (const authored of [false, true]) {
     assert.equal(request(submitted).body, raw, 'The original complete source is sent for provenance');
     const result = await store.invoke('/api/admin/generated-content', request(submitted));
     assert.equal(result.status, 200, JSON.stringify(result));
-    const saved = result.rows[0];
+    let saved = result.rows[0];
     assert.equal(saved.id, submitted.id); assert.equal(saved.content_key, submitted.contentKey); assert.equal(saved.status, 'DRAFT');
     assert.ok(articleTemplateCopyMatches(expected, saved));
     assert.equal(guardExports.rejects(saved, submitted, expected), false, 'The actual generic receipt guard accepts the canonical response');
@@ -83,6 +83,31 @@ for (const authored of [false, true]) {
     assert.ok(articleTemplateCopyMatches(expected, { ...saved, sections: reverseKeys(saved.sections) }),
       'JSONB key order, including distinct nested composed/decomposed Unicode keys, is not a copy change');
     controls += 8;
+    const reassembled = draft(saved, articleTemplateWithHoroscopes(saved.body, saved.sections));
+    assert.notEqual(JSON.stringify(reassembled.sections!.articleHoroscopes), JSON.stringify(expected.sections!.articleHoroscopes),
+      'The SQL roundtrip must exercise a genuinely different object field order');
+    const roundtripExpected = normalizedArticleTemplateDraft(reassembled);
+    assert.equal(articleTemplateWithHoroscopes(roundtripExpected.body, roundtripExpected.sections), raw,
+      'Preflight accepts complete inline writing alongside its JSONB-decoded section');
+    const beforeRoundtrip = await snapshot();
+    const roundtrip = await store.invoke('/api/admin/generated-content', {
+      ...request(reassembled), sections: reassembled.sections
+    });
+    assert.equal(roundtrip.status, 200, JSON.stringify(roundtrip));
+    saved = roundtrip.rows[0];
+    assert.ok(articleTemplateCopyMatches(roundtripExpected, saved));
+    assert.equal(articleTemplateWithHoroscopes(saved.body, saved.sections), raw);
+    assert.deepEqual((await snapshot()).ledger, beforeRoundtrip.ledger, 'Draft roundtrip never publishes');
+    assert.equal(saved.source_snapshot.horoscopeSeparation.originalBody, raw);
+    const beforeRefusal = await snapshot();
+    const conflictingSections = reverseKeys(saved.sections);
+    conflictingSections.articleHoroscopes.introduction += ' Genuine different version.';
+    const conflictRoundtrip = await store.invoke('/api/admin/generated-content', {
+      ...request(draft(saved)), body: raw, sections: conflictingSections
+    });
+    assert.equal(conflictRoundtrip.status, 422);
+    assert.deepEqual(await snapshot(), beforeRefusal, 'A real conflict changes neither stored rows nor ledger');
+    controls += 4;
     const badCopies: Array<[string, (row: any) => void]> = [
       ['shorter general article', row => { row.body = row.body.slice(0, -1); }],
       ['missing horoscope section', row => { delete row.sections.articleHoroscopes; }],

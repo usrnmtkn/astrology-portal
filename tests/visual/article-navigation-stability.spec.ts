@@ -16,7 +16,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   const errors: string[]=[];
   page.on('pageerror', error=>errors.push(error.message));
   await page.goto('/#sky');
-  await page.getByRole('button', {name:'Read more about Lilith in Capricorn',exact:true}).click();
+  await page.getByRole('button', {name:'Read more about True Black Moon Lilith in Capricorn',exact:true}).click();
   await expect(page.locator('#sky-detail-title')).toHaveText(/Lilith.*Capricorn/i, {timeout:60_000});
   const parentUrl=page.url();
   for (const aspect of ['Trine Sun','Opposition Mars']) {

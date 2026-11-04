@@ -154,7 +154,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
   );
   const shouldPreloadNatalSky = options.profile && options.preloadProfileNatalSky;
   const preloadedNatalSnapshot = shouldPreloadNatalSky
-    ? await getAstrodienstSky(fixtureLocation, profileBirthDateTime)
+    ? await getAstrodienstSky(fixtureLocation, profileBirthDateTime, { includeTransitWindows: false, includeDailyEvents: false, includeAspectTiming: false })
     : null;
   const preloadedNatalCache = preloadedNatalSnapshot
     ? {
@@ -1560,7 +1560,8 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: /settings/i }).click();
     await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Switch to dark mode", exact: true })).toBeVisible();
+    await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+    await expect(page.locator('.settings-theme-control').getByRole('button', { name: 'dark', exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: /^Sky$/ }).click();
     await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
@@ -2424,7 +2425,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#settings");
 
     await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Switch to dark mode", exact: true }).click();
+    await page.locator('.settings-theme-control').getByRole('button', { name: 'dark', exact: true }).click();
 
     const dyslexiaSwitch = page.getByRole("switch", { name: /dyslexia/i });
     if (await dyslexiaSwitch.isVisible()) {
@@ -3259,7 +3260,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(skyControls.getByRole('textbox', { name: 'City', exact: true })).toBeFocused();
     await skyControls.getByRole('textbox', { name: 'City', exact: true }).fill('Boston, MA');
     await skyControls.getByRole('textbox', { name: 'City', exact: true }).press('Enter');
-    await expect(skyControls.getByRole('button', { name: /Boston/ })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:selectedLocation")!).label)).toBe(fixtureLocation.label);
     await skyControls.getByRole('tab', { name: 'Tomorrow', exact: true }).click();
     await expect(skyControls).toBeHidden();
     await expect(page.getByRole('heading', { name: 'Sky', exact: true })).toBeVisible();
@@ -3304,7 +3305,8 @@ test.describe("client-facing user flow case studies", () => {
         expect(atTop.background).not.toBe("rgba(0, 0, 0, 0)");
         expect(atTop.shadow).not.toBe("none");
         const expectSharedElevation = async () => {
-          for (const selector of [".sky-header-date-button", ".menu-toggle", ".theme-toggle"]) {
+          await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+          for (const selector of [".sky-header-date-button", ".menu-toggle", ".profile-nav-button"]) {
             const control = page.locator(selector);
             if (await control.isVisible()) await expect(control).toHaveCSS("box-shadow", atTop.shadow);
           }
@@ -4591,7 +4593,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("signed-in user can edit current location from settings", async ({ page }) => {
+  test("signed-in settings reject a current city without selected coordinates", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { profile: true });
@@ -4605,11 +4607,12 @@ test.describe("client-facing user flow case studies", () => {
     await expectFormTypography(page, ".settings-location-editor", "Settings location form");
     await page.getByLabel("Current location").fill("Austin, TX");
     await page.keyboard.press("Escape");
-    await page.getByRole("button", { name: "Save location" }).click();
+    await expect(page.getByRole("button", { name: "Save location" })).toBeDisabled();
+    await page.getByRole("button", { name: "Cancel", exact: true }).click();
 
-    await expect(page.getByText("Austin")).toBeVisible();
+    await expect(page.getByRole("button", { name: /Current location/i })).toContainText("New York, NY");
     await page.reload();
-    await expect(page.getByText("Austin")).toBeVisible();
+    await expect(page.getByRole("button", { name: /Current location/i })).toContainText("New York, NY");
     await assertNoClientErrors();
   });
 

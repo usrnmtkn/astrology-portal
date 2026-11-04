@@ -6,7 +6,7 @@ import { compositeReaderRelationshipCopy } from "./content/compositeRelationship
 import { CalendarDaySkeleton } from "./features/calendar/CalendarDaySkeleton";
 import { skyIngressEssayPublicationKeys, skyIngressEssayReaderSection } from "./content/skyIngressEssayReader";
 import {
-  defaultLocation, selectedLocationStorageKey, isLocationInput, dateInputValue, dateFromInput,
+  defaultLocation, selectedLocationStorageKey, isLocationInput, profileCurrentLocation, skyMatchesSelection, dateInputValue, dateFromInput,
   isDateInputValue, transitDateFromUrl, getInitialTransitDate, skyDateTimeFromInput, getInitialLocation
 } from "./services/skySelection";
 import type { InitialSkyLoad } from "./services/skyApi";
@@ -82,7 +82,6 @@ import type { FormEvent, MouseEvent as ReactMouseEvent, ReactNode, Ref } from "r
 import { flushSync } from "react-dom";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
-import { ThemeToggleButton } from "./components/ThemeControls";
 import { SiteMenuSheet } from "./components/SiteMenuSheet";
 import { ModalPortal } from "./components/ModalPortal";
 import { natalReadingRoute } from "./services/natalReadingPath";
@@ -161,7 +160,8 @@ import {
   astrologyDateRangeLabel,
   hasBackgroundRetrogradeMotion,
   isDisplayRetrograde,
-  lunarNodeTransitRangeLabel
+  lunarNodeTransitRangeLabel,
+  skyPointDisplayName as skyDisplayPlanetName
 } from "./services/astrologyDisplay";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
 import { natalSnapshotWithBirthTimeReliability } from "./services/birthTimeReliability";
@@ -406,7 +406,7 @@ import {
 } from "./services/personReferences";
 import { hasMapboxToken, reverseGeocodeCity, searchCities, type CitySuggestion } from "./services/mapbox";
 import { getInitialAccountMode } from "./services/session";
-import { browserTimeZone, timeZoneForLocation, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
+import { browserTimeZone, withTimeZone, zonedDateTimeToUtc } from "./services/timezones";
 import {
   apiSettingsFromChartSettings,
   apiSubjectFromUserChart,
@@ -4239,7 +4239,8 @@ function generatedSkyAspectWritingSection(
   aspect: SkySnapshot["aspects"][number],
   generatedContent?: GeneratedContentMap,
   positions?: PlanetPosition[],
-  generatedAt?: string
+  generatedAt?: string,
+  timeZone = "UTC"
 ): NormalizedSkyAspectSection | null {
   if (!generatedContent) {
     return null;
@@ -4261,7 +4262,7 @@ function generatedSkyAspectWritingSection(
     secondSign,
     firstMotion: skyAspectPosition(aspect.from, positions)?.motion,
     secondMotion: skyAspectPosition(aspect.to, positions)?.motion,
-    targetDate: generatedAt?.slice(0, 10)
+    targetDate: generatedAt ? skyCivilDate(timeZone, new Date(generatedAt)) : undefined
   });
 
   if (!resolved) {
@@ -4407,13 +4408,14 @@ function normalizeSkyAspectSurface(
   aspect: SkySnapshot["aspects"][number],
   generatedContent?: GeneratedContentMap,
   positions?: PlanetPosition[],
-  generatedAt?: string
+  generatedAt?: string,
+  timeZone = "UTC"
 ): NormalizedSkyAspectArticle {
   if (isSkyAspectRetired(aspect.from, aspect.type, aspect.to)) return { surface: "sky-aspect", status: "not-servable", sections: [] };
   const signAwareSection = reviewedSkyAspectWritingSection(aspect, positions, "sign-aware");
   const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions, generatedContent);
   const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
-  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
+  const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt, timeZone);
   const selectedSection = selectSkyAspectCopyByPrecedence({
     signSpecific: signAwareSection,
     exact: authoredSection,
@@ -4458,12 +4460,13 @@ function currentSkyAspectDetailArticle(
   aspect: SkySnapshot["aspects"][number],
   generatedAt: string,
   generatedContent: GeneratedContentMap,
-  positions?: PlanetPosition[]
+  positions?: PlanetPosition[],
+  timeZone = "UTC"
 ): SkyDetail {
   const fromLabel = aspect.fromMotion ? skyBodyLabel(aspect.from, aspect.fromMotion) : skyAspectMotionName(aspect.from, positions);
   const toLabel = aspect.toMotion ? skyBodyLabel(aspect.to, aspect.toMotion) : skyAspectMotionName(aspect.to, positions);
   const title = `${fromLabel} ${titleCase(aspect.type)} ${toLabel}`;
-  const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
+  const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt, timeZone);
   const body = normalized.sections.flatMap((section) => taggedSectionParagraphs(section));
   const timing = currentSkyAspectTransitRange(aspect, generatedAt, positions);
   const historicalLookback = null;
@@ -4508,19 +4511,21 @@ function relatedSkyAspectSectionsForPlacement({
   generatedAt,
   generatedContent,
   pointName,
-  positions
+  positions,
+  timeZone
 }: {
   aspects: SkySnapshot["aspects"];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
   pointName: string;
   positions: PlanetPosition[];
+  timeZone?: string;
 }): SkyDetailSection[] {
   const resolvedSections = aspects
     .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
     .filter((aspect, index, matchingAspects) => uniqueNatalAspectRows(matchingAspects).includes(aspect))
     .flatMap((aspect) => {
-      const aspectDetail = currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions);
+      const aspectDetail = currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions, timeZone);
       const body = aspectDetail.body
         .filter((paragraph): paragraph is string => typeof paragraph === "string")
         .map((paragraph) => stripLegacySkyArticleScaffoldPrefix(stripTldrPrefix(paragraph)).trim())
@@ -5282,7 +5287,7 @@ function currentSkyPlacementDetailArticle({
     ? body
     : composeSkyPlacementFallbackParagraphs(fallbackBody);
   const relatedAspectRows = relatedAspectRowsForPlacement({
-    aspects, generatedAt, generatedContent, mode: "sky", pointName: position.planet, positions
+    aspects, generatedAt, generatedContent, mode: "sky", pointName: position.planet, positions, timeZone: locationTimeZone ?? undefined
   });
   const matchingAspectFacts = aspectFacts
     && normalizeContentIdPart(aspectFacts.planet) === normalizeContentIdPart(position.planet)
@@ -5449,7 +5454,8 @@ function currentSkyV4LunationDetailArticle({
       generatedAt,
       generatedContent,
       pointName: aspect.from,
-      positions: sky.positions
+      positions: sky.positions,
+      timeZone: sky.location.timeZone
     }))
     .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
     .slice(0, 2);
@@ -5589,7 +5595,7 @@ function skyDetailFromRoutePath(
       return null;
     }
 
-    return { ...currentSkyAspectDetailArticle(aspect, sky.generatedAt, generatedContent, sky.positions), routePath };
+    return { ...currentSkyAspectDetailArticle(aspect, sky.generatedAt, generatedContent, sky.positions, sky.location.timeZone), routePath };
   }
 
   return null;
@@ -5686,7 +5692,8 @@ function relatedAspectRowsForPlacement({
   onOpenSkyAspect,
   ownerContext,
   pointName,
-  positions
+  positions,
+  timeZone
 }: {
   aspects: SkySnapshot["aspects"];
   generatedAt?: string;
@@ -5697,6 +5704,7 @@ function relatedAspectRowsForPlacement({
   ownerContext?: ChartOwnerContext;
   pointName: string;
   positions?: PlanetPosition[];
+  timeZone?: string;
 }): Array<SkyDetailRelatedAspectRow | null> {
   const matchingAspects = mode === "natal"
     ? completeNatalAspectsForPlacement(aspects, pointName)
@@ -5708,7 +5716,7 @@ function relatedAspectRowsForPlacement({
   const rows = matchingAspects
     .map((aspect) => {
       const normalizedSkySurface = mode === "sky" && generatedAt
-        ? normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt)
+        ? normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt, timeZone)
         : null;
 
       const otherPoint = aspectOtherPoint(aspect, pointName);
@@ -11000,6 +11008,23 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [citySearchStatus, setCitySearchStatus] = useState<"idle" | "loading" | "ready" | "empty" | "error">("idle");
   const [transitForm, setTransitForm] = useState<TransitForm>(createBlankTransitForm);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(getInitialUserProfile);
+  const currentProfileId = useRef(userProfile?.id ?? null);
+  currentProfileId.current = userProfile?.id ?? null;
+  const locationChangeVersion = useRef(0);
+  const latestLocationChoice = useRef<{ location: LocationInput; accountId: string | null } | null>(null);
+  const applyLocation = useCallback((value: LocationInput) => {
+    locationChangeVersion.current += 1;
+    const nextLocation = withTimeZone(value);
+    latestLocationChoice.current = { location: nextLocation, accountId: appliedAuthAccountIdRef.current ?? currentProfileId.current };
+    setLocation(current => sameLocationInput(current, nextLocation) ? current : nextLocation);
+    setManualLocation(nextLocation.label);
+    setHasLocationPreference(true);
+    setUserProfile(profile => {
+      const savedLocation = profileCurrentLocation(profile);
+      return profile && (!savedLocation || !sameLocationInput(savedLocation, nextLocation))
+        ? { ...profile, currentLocation: nextLocation.label, currentLocationData: nextLocation } : profile;
+    });
+  }, []);
   const [remoteAccountId, setRemoteAccountId] = useState<string | null>(null);
   const [remoteProfileReady, setRemoteProfileReady] = useState(false);
   const [ownSocialProfile, setOwnSocialProfile] = useState<SocialProfile | null>(null);
@@ -11040,8 +11065,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const [chartModalMessage, setChartModalMessage] = useState("");
   const [transitsDrawn, setTransitsDrawn] = useState(false);
   const [profileTransits, setProfileTransits] = useState<TransitItem[]>([]);
-  const [profileTransitsTargetDate, setProfileTransitsTargetDate] = useState<string | null>(null);
-  const [profileTransitsGeneratedAt, setProfileTransitsGeneratedAt] = useState<string | null>(null);
+  const [profileTransitSelection, setProfileTransitSelection] = useState<Pick<SkySnapshot, "location" | "generatedAt"> | null>(null);
+  const profileTransitsTargetDate = profileTransitSelection ? skyCivilDate(profileTransitSelection.location.timeZone, new Date(profileTransitSelection.generatedAt)) : null;
+  const profileTransitsGeneratedAt = profileTransitSelection?.generatedAt ?? null;
   const [profileNatalSky, setProfileNatalSky] = useState<SkySnapshot | null>(null);
   const [profileNatalCalculationStatus, setProfileNatalCalculationStatus] = useState<NatalChartCalculationStatus>("idle");
   const [profileNatalCalculationError, setProfileNatalCalculationError] = useState("");
@@ -11070,7 +11096,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const initial = initialSkyLoad?.matches(getInitialTransitDate(), withTimeZone(initialLocationState.location), initialCacheDetail);
     return initial?.snapshot && skyFactValidation(initial.snapshot).ok ? initial.snapshot : null;
   });
-  const [sky, setSky] = useState<SkySnapshot | null>(() => initialFreshSky ?? initialCachedSky);
+  const [loadedSky, setSky] = useState<SkySnapshot | null>(() => initialFreshSky ?? initialCachedSky);
+  const sky = skyMatchesSelection(loadedSky, location, skyDate) ? loadedSky : null;
   const [skyLoadError, setSkyLoadError] = useState<unknown>(null);
   const [skyStatus, setSkyStatus] = useState<SkyLoadStatus>(initialFreshSky ? "ready" : initialCachedSky ? "cached" : "loading");
   const [skyTimingStatus, setSkyTimingStatus] = useState<"loading" | "ready" | "error">(
@@ -11181,8 +11208,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
   const showNatalAspectPatternActivation = showNatalAspectPatterns && natalAspectPatternActivationEnabled();
   const activeTransits = rankTransitsByLifeAreaFocus(profileTransits.length > 0 ? profileTransits : sampleTransits, userLifeAreaFocus);
-  const selectedDateSky = sky?.generatedAt.slice(0, 10) === skyDate ? sky : null;
-  const selectedDateTransits = profileTransitsTargetDate === skyDate
+  const selectedDateSky = sky;
+  const selectedDateTransits = skyMatchesSelection(profileTransitSelection, location, skyDate)
     ? rankTransitsByLifeAreaFocus(profileTransits, userLifeAreaFocus)
     : [];
   const selectedTransit = activeTransits.find((transit) => transit.id === selectedTransitId) ?? activeTransits[0] ?? sampleTransits[0];
@@ -11273,18 +11300,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     ]
   );
   const personalTimingLocation = useMemo(
-    () => userProfile?.currentLocationData
-      ? withTimeZone(userProfile.currentLocationData)
-      : userProfile?.currentLocation
-        ? locationFromLabel(userProfile.currentLocation)
-        : null,
-    [
-      userProfile?.currentLocation,
-      userProfile?.currentLocationData?.label,
-      userProfile?.currentLocationData?.latitude,
-      userProfile?.currentLocationData?.longitude,
-      userProfile?.currentLocationData?.timeZone
-    ]
+    () => withTimeZone(location),
+    [location]
   );
   const {
     response: personalTiming,
@@ -11602,7 +11619,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       };
 
       const detail = datedSkyAspectDetail(
-        currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent),
+        currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, detailSky.positions, detailSky.location.timeZone),
         event.startsAt, detailSky.location.timeZone || "UTC"
       );
       const eventBody = calendarEventDetailBody(event, generatedContent, description);
@@ -12778,6 +12795,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         !target ||
         cityPickerRef.current?.contains(target) ||
         cityPickerTriggerRef.current?.contains(target)
+        || cityPickerOpenedFromMobileControls && target instanceof Element && Boolean(target.closest("#mobile-sky-controls"))
       ) {
         return;
       }
@@ -12799,7 +12817,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [cityPickerOpen]);
+  }, [cityPickerOpen, cityPickerOpenedFromMobileControls]);
 
   useEffect(() => {
     if (!menuOpen) {
@@ -13144,33 +13162,42 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, [hasLocationPreference, location]);
 
   useEffect(() => {
-    if (hasLocationPreference) {
-      return;
+    function syncLocation(event: StorageEvent) {
+      if (!event.newValue) return;
+      try {
+        const value = JSON.parse(event.newValue);
+        const next = event.key === selectedLocationStorageKey && isLocationInput(value) ? value
+          : event.key === userProfileStorageKey && value.id === userProfile?.id ? profileCurrentLocation(value) : null;
+        if (next && !sameLocationInput(location, withTimeZone(next))) applyLocation(next);
+      } catch { /* Keep the current selection when another tab has invalid storage. */ }
     }
+    window.addEventListener("storage", syncLocation);
+    return () => window.removeEventListener("storage", syncLocation);
+  }, [location, userProfile?.id, applyLocation]);
 
-    if (!userProfile?.currentLocation && !userProfile?.currentLocationData) {
-      return;
+  useEffect(() => {
+    const nextLocation = profileCurrentLocation(userProfile);
+    if (!nextLocation) {
+      const label = userProfile?.currentLocation?.trim();
+      if (!label || !hasMapboxToken()) return;
+      let cancelled = false;
+      const version = locationChangeVersion.current;
+      void searchCities(label).then(cities => {
+        const matches = cities.filter(city => compactCityLabel(city.label).toLowerCase() === compactCityLabel(label).toLowerCase());
+        if (!cancelled && version === locationChangeVersion.current && matches.length === 1) applyLocation(matches[0]);
+      }).catch(() => { /* Keep the last verified city until the user can select a city. */ });
+      return () => { cancelled = true; };
     }
-
-    const nextLocation = userProfile.currentLocationData
-      ? withTimeZone(userProfile.currentLocationData)
-      : locationFromLabel(userProfile.currentLocation ?? defaultLocation.label);
-
-    if (sameLocationInput(location, nextLocation)) {
-      return;
-    }
-
-    setLocation(nextLocation);
+    setLocation(current => sameLocationInput(current, nextLocation) ? current : nextLocation);
     setManualLocation(nextLocation.label);
     setHasLocationPreference(true);
   }, [
-    hasLocationPreference,
-    location,
     userProfile?.currentLocation,
     userProfile?.currentLocationData?.label,
     userProfile?.currentLocationData?.latitude,
     userProfile?.currentLocationData?.longitude,
-    userProfile?.currentLocationData?.timeZone
+    userProfile?.currentLocationData?.timeZone,
+    applyLocation
   ]);
 
   useEffect(() => {
@@ -13197,7 +13224,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       sunriseOrbEnabled,
       dyslexiaFriendlyFont,
       journalPromptsEnabled,
-      selectedLocation: hasLocationPreference ? location : null
+      selectedLocation: profileCurrentLocation(userProfile) ?? (hasLocationPreference ? location : null)
     });
     const serializedPayload = JSON.stringify(payload);
 
@@ -13297,8 +13324,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     if (!birthDate || !birthCity || !birthTime || !primaryChart?.birthLocation?.timeZone) {
       profileNatalSkyRequestRef.current = null;
       setProfileNatalSky(null);
-      setProfileTransitsTargetDate(null);
-      setProfileTransitsGeneratedAt(null);
+      setProfileTransitSelection(null);
       setProfileNatalCalculationStatus("idle");
       setProfileNatalCalculationError("");
       setProfileNatalAspectPatternStatus("idle");
@@ -13336,8 +13362,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           : "idle"
       );
       setProfileTransits(nextTransits);
-      setProfileTransitsTargetDate(profileTransitSky?.generatedAt.slice(0, 10) ?? null);
-      setProfileTransitsGeneratedAt(profileTransitSky?.generatedAt ?? null);
+      setProfileTransitSelection(profileTransitSky ? { location: profileTransitSky.location, generatedAt: profileTransitSky.generatedAt } : null);
       setTransitsDrawn(true);
       setSelectedTransitId((currentId) => (
         nextTransits.some((transit) => transit.id === currentId)
@@ -13440,8 +13465,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         profileNatalSkyRequestRef.current = null;
         setProfileNatalSky(null);
         setProfileTransits([]);
-        setProfileTransitsTargetDate(null);
-        setProfileTransitsGeneratedAt(null);
+        setProfileTransitSelection(null);
         setTransitsDrawn(false);
         setProfileNatalCalculationStatus("error");
         setProfileNatalCalculationError(errorMessage);
@@ -13460,6 +13484,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     userProfile?.charts[0]?.birthLocation?.longitude,
     userProfile?.charts[0]?.birthLocation?.timeZone,
     profileTransitSky?.generatedAt,
+    profileTransitSky?.location.latitude,
+    profileTransitSky?.location.longitude,
+    profileTransitSky?.location.timeZone,
     activeSunriseOrbDegrees,
     friendCalculationNeeds,
     isProfileMode,
@@ -13723,6 +13750,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     setOwnSocialProfile(null);
 
     const pendingForm = readPendingSignupForm();
+    const preserveChosenLocation = (profile: UserProfile) => {
+      const choice = latestLocationChoice.current;
+      return choice && choice.accountId === account.id
+        ? { ...profile, currentLocation: choice.location.label, currentLocationData: choice.location } : profile;
+    };
     const storedLocalProfile = getInitialUserProfile();
     const cachedLocalProfile = storedLocalProfile?.id === account.id ? storedLocalProfile : null;
     let persistedProfileId: string | null = null;
@@ -13796,7 +13828,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         const remoteDyslexiaFont = persistedProfile.preferences?.dyslexiaFriendlyFont;
         const remoteJournalPrompts = persistedProfile.preferences?.journalPromptsEnabled;
         const remoteLocation = persistedProfile.preferences?.selectedLocation;
-        accountProfile = profileForAuthAccount(persistedProfile.profile, account);
+        accountProfile = preserveChosenLocation(profileForAuthAccount(persistedProfile.profile, account));
 
         setUserProfile(accountProfile);
         if (isCancelled()) {
@@ -13814,15 +13846,15 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         if (typeof remoteJournalPrompts === "boolean") {
           setJournalPromptsEnabled(remoteJournalPrompts);
         }
-        if (isLocationInput(remoteLocation)) {
-          const nextLocation = withTimeZone(remoteLocation);
-
+        const nextLocation = profileCurrentLocation(accountProfile)
+          ?? (isLocationInput(remoteLocation) ? withTimeZone(remoteLocation) : null);
+        if (nextLocation) {
           setLocation(nextLocation);
           setManualLocation(nextLocation.label);
           setHasLocationPreference(true);
         }
       } else {
-        accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
+        accountProfile = preserveChosenLocation(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
 
         setUserProfile(accountProfile);
         if (isCancelled()) {
@@ -13842,7 +13874,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       }
 
       console.warn("Supabase profile load failed; using local profile cache.", error);
-      const accountProfile = profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account);
+      const accountProfile = preserveChosenLocation(profileForAuthAccount(cachedLocalProfile ?? createUserProfile(pendingForm, "email", account), account));
 
       setUserProfile(accountProfile);
       if (isCancelled()) {
@@ -13948,7 +13980,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, [applyAuthAccount, mode, recoverAuthAccount, authRequested]);
 
   useEffect(() => {
-    if (hasLocationPreference || !("geolocation" in navigator)) {
+    if (hasLocationPreference || userProfile?.currentLocation?.trim() || !("geolocation" in navigator)) {
       return;
     }
 
@@ -13971,9 +14003,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
             const resolvedLocation = withTimeZone(mappedLocation ?? nextLocation);
 
-            setLocation(resolvedLocation);
-            setManualLocation(resolvedLocation.label);
-            setHasLocationPreference(true);
+            applyLocation(resolvedLocation);
           });
       },
       () => {
@@ -13989,7 +14019,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     return () => {
       cancelled = true;
     };
-  }, [hasLocationPreference]);
+  }, [hasLocationPreference, userProfile?.currentLocation, applyLocation]);
 
   useEffect(() => {
     function refreshSky(event: PageTransitionEvent) {
@@ -14043,39 +14073,34 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, [cityPickerOpen, manualLocation]);
 
   function applyManualLocation() {
-    const nextLocation = locationFromLabel(manualLocation);
-
-    setLocation(nextLocation);
-    setManualLocation(nextLocation.label);
-    setHasLocationPreference(true);
-    setCityPickerOpen(false);
-    setCityPickerOpenedFromMobileControls(false);
-    (cityPickerTriggerRef.current ?? mobileDatePickerTriggerRef.current)?.focus();
+    const suggestion = citySuggestions.find(city => city.label === manualLocation.trim());
+    if (suggestion) applyCitySuggestion(suggestion);
   }
 
   function applyCurrentLocation(): Promise<void> {
+    const version = ++locationChangeVersion.current;
+    const accountId = appliedAuthAccountIdRef.current ?? currentProfileId.current;
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) { reject(new Error("Location unavailable")); return; }
       navigator.geolocation.getCurrentPosition(position => {
         const coordinates = { label: "Current location", latitude: position.coords.latitude, longitude: position.coords.longitude };
         void reverseGeocodeCity(coordinates.latitude, coordinates.longitude).catch(() => null).then(mapped => {
+          if (version !== locationChangeVersion.current || accountId !== (appliedAuthAccountIdRef.current ?? currentProfileId.current)) { resolve(); return; }
           const next = withTimeZone(mapped ?? coordinates);
-          setLocation(next); setManualLocation(next.label); setHasLocationPreference(true);
+          applyLocation(next);
           setCityPickerOpen(false); setCityPickerOpenedFromMobileControls(false); resolve();
         });
-      }, reject, { enableHighAccuracy: false, maximumAge: 600000, timeout: 7000 });
+      }, reject, { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 });
     });
   }
 
   function applyCitySuggestion(suggestion: CitySuggestion) {
-    setLocation(withTimeZone({
+    applyLocation({
       label: suggestion.label,
       latitude: suggestion.latitude,
       longitude: suggestion.longitude,
       timeZone: suggestion.timeZone
-    }));
-    setManualLocation(suggestion.label);
-    setHasLocationPreference(true);
+    });
     setCitySuggestions([]);
     setCitySearchStatus("idle");
     setCityPickerOpen(false);
@@ -14221,18 +14246,19 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       }
 
       if (currentCity) {
-        const nextLocation = transitForm.currentLocationData?.label === currentCity
-          ? transitForm.currentLocationData
-          : locationFromLabel(currentCity);
+        const nextLocation = profileCurrentLocation({ currentLocation: currentCity, currentLocationData: transitForm.currentLocationData });
+        if (!nextLocation) {
+          setChartModalStep("city");
+          setChartModalMessage("Choose your current city from the suggestions so we can save its location.");
+          return;
+        }
 
         resolvedCurrentLocationData = nextLocation;
-        setLocation(nextLocation);
-        setManualLocation(nextLocation.label);
+        applyLocation(nextLocation);
         setTransitForm((currentForm) => ({
           ...currentForm,
           currentLocation: nextLocation.label
         }));
-        setHasLocationPreference(true);
       }
 
       let chartCalculationFailed = false;
@@ -14269,8 +14295,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           const calculatedNatalSky = await getAstrodienstSky(resolvedBirthLocation, birthDateTime);
           const natalSky = natalSnapshotWithBirthTimeReliability(calculatedNatalSky, !transitForm.unknownBirthTime) ?? calculatedNatalSky;
           const natalBigThree = natalBigThreeFromSky(natalSky, transitForm.unknownBirthTime);
-          const nextTransits = sky
-            ? rankedProfileTransits(sky, natalSky, nextBirthDate, !transitForm.unknownBirthTime, activeSunriseOrbDegrees)
+          const transitSky = skyMatchesSelection(sky, resolvedCurrentLocationData ?? location, skyDate) ? sky : null;
+          const nextTransits = transitSky
+            ? rankedProfileTransits(transitSky, natalSky, nextBirthDate, !transitForm.unknownBirthTime, activeSunriseOrbDegrees)
             : [];
 
           nextSun = natalBigThree.sun;
@@ -14278,8 +14305,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           nextRising = natalBigThree.rising;
           nextChart = { ...nextChart, birthLocation: resolvedBirthLocation };
           setProfileTransits(nextTransits);
-          setProfileTransitsTargetDate(sky?.generatedAt.slice(0, 10) ?? null);
-          setProfileTransitsGeneratedAt(sky?.generatedAt ?? null);
+          setProfileTransitSelection(transitSky ? { location: transitSky.location, generatedAt: transitSky.generatedAt } : null);
           setSelectedTransitId(nextTransits[0]?.id ?? sampleTransits[0].id);
         } catch {
           chartCalculationFailed = true;
@@ -14326,7 +14352,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     return { previous: link(entries[index - 1]), next: link(entries[index + 1]) };
   })();
 
-  const isSkyLoading = isTodayMode && skyStatus === "loading";
+  const isSkyLoading = isTodayMode && (skyStatus === "loading" || !sky && skyStatus !== "error");
   const isPersonalTransitDateMode = mode === "profile" || mode === "friends";
   const isTransitDateMode = isTodayMode || isPersonalTransitDateMode;
   const detailArticle = selectedSkyDetail && <>
@@ -14579,7 +14605,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               onSubmitLocation={applyManualLocation} onCurrentLocation={applyCurrentLocation}
               results={hasMapboxToken() ? <CitySuggestions suggestions={citySuggestions.slice(0,3)} status={citySearchStatus} mapboxEnabled onSelect={applyCitySuggestion} /> : <p role="status">City search is unavailable right now.</p>} />
           </Suspense>}
-          <ThemeToggleButton theme={theme} onThemeChange={setTheme} />
           <button
             className={`topbar-icon profile-nav-button ${navigationMode === "profile" ? "active" : ""}`}
             type="button"
@@ -14955,7 +14980,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                   natalSunSign={userProfile?.sun && userProfile.sun !== "Sun pending" ? userProfile.sun : undefined}
                 />
               )}
-              {mode === "horoscopes" && <HoroscopeReader sky={sky} defaultSign={profileNatalSky?.ascendant ?? userProfile?.rising} sunSign={profileNatalSky?.positions.find(position => position.planet === "Sun")?.sign ?? userProfile?.sun} location={hasLocationPreference ? location : undefined} />}
+              {mode === "horoscopes" && <HoroscopeReader sky={sky} defaultSign={profileNatalSky?.ascendant ?? userProfile?.rising} sunSign={profileNatalSky?.positions.find(position => position.planet === "Sun")?.sign ?? userProfile?.sun} location={hasLocationPreference ? location : undefined} onLocationChange={applyLocation} />}
               {mode === "articles" && <Suspense fallback={<PageLoading message="Loading articles and guides…" />}><ArticlesExperience /></Suspense>}
               {mode === "learn" && (
                 <LearnRoute>
@@ -15137,9 +15162,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                 <SettingsRoute>
                   {userProfile ? (
                     <MemberSettingsView
-                      currentLocation={userProfile.currentLocation}
-                      currentLocationData={userProfile.currentLocationData}
-                      currentCityDisplay={compactCityLabel(userProfile.currentLocation || defaultLocation.label)}
+                      currentLocation={location.label}
+                      currentLocationData={location}
+                      currentCityDisplay={compactCityLabel(location.label)}
                       defaultLocation={withTimeZone(defaultLocation)}
                       houseSignLabelStyle={normalizeChartSettings(userProfile.settings).houseSignLabelStyle}
                       socialProfile={ownSocialProfile}
@@ -15152,13 +15177,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                       onAnimationPreferenceChange={setAnimationPreference}
                       dyslexiaFriendlyFont={dyslexiaFriendlyFont}
                       onDyslexiaFontChange={setDyslexiaFriendlyFont}
-                      onCurrentLocationChange={(nextLocation) => {
-                        setUserProfile({
-                          ...userProfile,
-                          currentLocation: nextLocation.label,
-                          currentLocationData: nextLocation
-                        });
-                      }}
+                      onCurrentLocationChange={applyLocation}
                       onHouseSignLabelStyleChange={(houseSignLabelStyle) => {
                         setGuestHouseSignLabelStyle(houseSignLabelStyle);
                         setUserProfile({
@@ -15169,7 +15188,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                           }
                         });
                       }}
-                      resolveLocationLabel={locationFromLabel}
                     />
                   ) : (
                     <GuestSettingsView
@@ -15329,31 +15347,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       </PageLoadBoundary>
     </main>
   );
-}
-
-function locationFromLabel(label: string): LocationInput {
-  const seed = label.trim();
-
-  if (!seed) {
-    return withTimeZone(defaultLocation);
-  }
-
-  const hash = [...seed].reduce((total, char) => total + char.charCodeAt(0), 0);
-  const location = {
-    label: seed,
-    latitude: ((hash % 1400) / 10) - 70,
-    longitude: ((hash % 3000) / 10) - 150
-  };
-
-  return {
-    ...location,
-    timeZone: timeZoneForLocation(location)
-  };
-}
-
-
-function skyDisplayPlanetName(planet: string) {
-  return planet === "True Node" ? "North Node" : planet;
 }
 
 function retrogradeDetailKicker(position: PlanetPosition) {
@@ -16902,11 +16895,7 @@ function ProfileView({
       return;
     }
 
-    const currentLocation = profile.currentLocationData
-      ? withTimeZone(profile.currentLocationData)
-      : profile.currentLocation
-        ? locationFromLabel(profile.currentLocation)
-        : null;
+    const currentLocation = currentSky?.location ?? profileCurrentLocation(profile);
     if (!currentLocation) {
       setWeeklyHoroscopeAssembly(null);
       return;
@@ -16967,6 +16956,9 @@ function ProfileView({
     profile.currentLocationData?.timeZone,
     natalSky?.generatedAt,
     currentSky?.generatedAt,
+    currentSky?.location.latitude,
+    currentSky?.location.longitude,
+    currentSky?.location.timeZone,
     displayRising,
     fallbackArchitectureV3Version,
     generatedContent,
@@ -16992,11 +16984,7 @@ function ProfileView({
       return;
     }
 
-    const currentLocation = profile.currentLocationData
-      ? withTimeZone(profile.currentLocationData)
-      : profile.currentLocation
-        ? locationFromLabel(profile.currentLocation)
-        : null;
+    const currentLocation = currentSky?.location ?? profileCurrentLocation(profile);
     if (!currentLocation) {
       setDailyMatchingNewMoon(null);
       return;
@@ -17033,6 +17021,8 @@ function ProfileView({
     currentSky?.moonEvent?.name,
     currentSky?.moonEvent?.occursAt,
     currentSky?.moonEvent?.sign,
+    currentSky?.location.latitude,
+    currentSky?.location.longitude,
     currentSky?.location.timeZone,
     lunationBlendYouFallbackEnabled,
     profile.currentLocation,

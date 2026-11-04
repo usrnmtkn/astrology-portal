@@ -1,8 +1,22 @@
-import { expect, test, type Page, type TestInfo, type Request } from '@playwright/test';
+import { expect, test as base, type Page, type TestInfo, type Request } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
 import { articleTemplateWithHoroscopes } from '../../apps/web/src/content/skyArticleHoroscopes.mjs';
+
+const test = base.extend({
+  context: async ({ context, baseURL }, use, info) => {
+    const network = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin);
+    try { await use(context); }
+    finally {
+      await Promise.all(context.pages().map(page => page.close()));
+      await network.finishStaticFonts();
+      await info.attach('strict-network-ledger', { contentType: 'application/json',
+        body: JSON.stringify({ unhandledExternal: network.unhandledExternal }) });
+      expect(network.unhandledExternal).toEqual([]);
+    }
+  }
+});
 
 test.describe.configure({ retries: 0 });
 const key = 'sky/article-template/sun/libra';
@@ -23,7 +37,10 @@ async function setup(page: Page, info: TestInfo, delayed: boolean | { method: 'P
     if (path.startsWith('/api/') || path.startsWith('/rest/v1/')) transfers.add(request);
   });
   page.on('pageerror', error => evidence.errors.push(error.message));
-  page.on('requestfailed', request => evidence.failed.push({ path: new URL(request.url()).pathname, error: request.failure()?.errorText }));
+  page.on('requestfailed', request => {
+    transfers.delete(request);
+    evidence.failed.push({ path: new URL(request.url()).pathname, error: request.failure()?.errorText });
+  });
   page.on('response', async response => {
     const url = new URL(response.url());
     if (!url.pathname.startsWith('/api/') && !url.pathname.startsWith('/rest/v1/')) return;
@@ -65,11 +82,29 @@ async function setup(page: Page, info: TestInfo, delayed: boolean | { method: 'P
     const request = route.request(), url = new URL(request.url());
     if (url.origin === origin) return route.fallback();
     if (request.method() === 'GET' && url.origin === 'https://fonts.googleapis.com' && url.pathname === '/css2') return route.fulfill({ status: 200, contentType: 'text/css', body: '' });
-    if (request.method() === 'GET' && url.pathname === '/rest/v1/content_publications') {
+    if (request.method() === 'GET' && url.origin === 'https://visual-smoke.supabase.test' && url.pathname === '/rest/v1/content_publications') {
       const response = await api.call({ method: 'publication-page', url: url.pathname + url.search });
       return route.fulfill({ status: response.status, json: response.payload });
     }
     evidence.blocked.push({ method: request.method(), origin: url.origin, path: url.pathname }); await route.abort('blockedbyclient');
+  });
+  await page.route('**/api/**', async route => {
+    const request = route.request(), url = new URL(request.url());
+    if (url.origin === origin && request.method() === 'GET'
+      && ['/api/admin/review-records', '/api/admin/user-generated-content', '/api/admin/content-review-events'].includes(url.pathname)) {
+      return route.fulfill({ json: { ok: true, rows: [], records: [], statuses: [], nextCursor: null } });
+    }
+    const methods: Record<string, string[]> = {
+      '/api/admin/generated-content': ['GET', 'POST', 'PATCH'],
+      '/api/admin/generated-content-inventory': ['GET'],
+      '/api/admin/package-source': ['GET'],
+      '/api/admin/content-live-status': ['POST'],
+      '/api/content-publications': ['GET'],
+      '/api/admin/sky-article-facts': ['GET']
+    };
+    if (url.origin === origin && methods[url.pathname]?.includes(request.method())) return route.fallback();
+    evidence.blocked.push({ method: request.method(), origin: url.origin, path: url.pathname });
+    await route.abort('blockedbyclient');
   });
   await page.goto('/admin/content#exact-content');
   await page.locator('summary').filter({ hasText: /^Library tools$/ }).click();
@@ -152,19 +187,7 @@ test('late first-save acknowledgment retains newer template typing and initializ
   } finally { await f.clean(); }
 });
 
-const normalizedTemplateTest = test.extend({
-  context: async ({ context, baseURL }, use, info) => {
-    const network = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin);
-    try { await use(context); }
-    finally {
-      await Promise.all(context.pages().map(page => page.close()));
-      await network.finishStaticFonts();
-      await info.attach('strict-network-ledger', { contentType: 'application/json',
-        body: JSON.stringify({ unhandledExternal: network.unhandledExternal }) });
-      expect(network.unhandledExternal).toEqual([]);
-    }
-  }
-});
+const normalizedTemplateTest = test;
 const templateOpening = '# Synthetic template title\n\nSynthetic complete opening.\n\nSynthetic complete final paragraph.';
 const horoscopeIntro = 'Synthetic complete horoscope introduction.\n\n{{risingBlocks}}';
 const completeTemplate = `${templateOpening}\n\n## Horoscopes\n\n${horoscopeIntro}`;
@@ -206,9 +229,24 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(editor(page).getByLabel('Article body', { exact: true })).toHaveValue(templateOpening);
       const reopened = (await f.api.call({ method: 'rows' })).find((row: any) => row.id === saved.id);
       expect(articleTemplateWithHoroscopes(reopened.body, reopened.sections)).toBe(completeTemplate);
+      const revisedOpening = templateOpening + '\n\nSynthetic complete revision before the horoscope section.';
+      const reassembled = articleTemplateWithHoroscopes(revisedOpening, reopened.sections);
+      await editor(page).getByLabel('Article body', { exact: true }).fill(reassembled);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('Unsaved changes');
+      const roundtrip = await f.save('Save template', 'PATCH');
+      expect(roundtrip.id).toBe(saved.id);
+      expect(roundtrip.sections.articleHoroscopes.heading).toBe('## Horoscopes');
+      expect(roundtrip.sections.articleHoroscopes.introduction).toBe(horoscopeIntro);
+      expect(articleTemplateWithHoroscopes(roundtrip.body, roundtrip.sections)).toBe(reassembled);
+      expect(roundtrip.source_snapshot.horoscopeSeparation.originalBody).toBe(completeTemplate);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
+      await expect(editor(page).getByText(/The article body and horoscope fields contain different versions/u)).toHaveCount(0);
+      await reopenSavedTemplate(page);
+      await expect(editor(page).getByLabel('Article body', { exact: true })).toHaveValue(revisedOpening);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
       const archived = await f.save('Archive source', 'PATCH');
       expect(archived.id).toBe(saved.id); expect(archived.status).toBe('ARCHIVED');
-      expect(articleTemplateWithHoroscopes(archived.body, archived.sections)).toBe(completeTemplate);
+      expect(articleTemplateWithHoroscopes(archived.body, archived.sections)).toBe(reassembled);
       await expect(editor(page).getByRole('button', { name: 'Restore as draft', exact: true })).toBeEnabled();
       expect((await f.api.call({ method: 'publications' })).filter((row: any) => row.content_key !== '__content-publication-ledger/v1')).toEqual([]);
     } finally { await f.clean(); }

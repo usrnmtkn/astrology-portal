@@ -47,8 +47,7 @@ export function MemberSettingsView({
   onThemeChange,
   onSunriseOrbChange,
   onDyslexiaFontChange,
-  onHouseSignLabelStyleChange,
-  resolveLocationLabel
+  onHouseSignLabelStyleChange
 }: {
   currentLocation?: string;
   currentLocationData?: LocationInput | null;
@@ -67,7 +66,6 @@ export function MemberSettingsView({
   onSunriseOrbChange: (enabled: boolean) => void;
   onDyslexiaFontChange: (enabled: boolean) => void;
   onHouseSignLabelStyleChange: (style: HouseSignLabelOption) => void;
-  resolveLocationLabel: (label: string) => LocationInput;
 }) {
   const [currentCity, setCurrentCity] = useState(currentLocation ?? "");
   const [currentLocationDraft, setCurrentLocationDraft] = useState<LocationInput | null>(currentLocationData ?? null);
@@ -111,11 +109,8 @@ export function MemberSettingsView({
 
   function saveCurrentLocation() {
     const trimmed = currentCity.trim();
-    const nextLocation = trimmed
-      ? currentLocationDraft?.label === trimmed
-        ? withTimeZone(currentLocationDraft)
-        : resolveLocationLabel(trimmed)
-      : withTimeZone(defaultLocation);
+    if (!currentLocationDraft || currentLocationDraft.label !== trimmed) return;
+    const nextLocation = withTimeZone(currentLocationDraft);
 
     onCurrentLocationChange(nextLocation);
     setCurrentCity(nextLocation.label);
@@ -185,7 +180,7 @@ export function MemberSettingsView({
                     <button className="settings-location-cancel" type="button" onClick={cancelCurrentLocationEdit}>
                       Cancel
                     </button>
-                    <button className="settings-location-save" type="button" onClick={saveCurrentLocation}>
+                    <button className="settings-location-save" type="button" disabled={!currentLocationDraft || currentLocationDraft.label !== currentCity.trim()} onClick={saveCurrentLocation}>
                       Save location
                     </button>
                   </div>

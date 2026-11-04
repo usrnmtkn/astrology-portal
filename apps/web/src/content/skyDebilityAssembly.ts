@@ -6,6 +6,7 @@ import { skyDebilityClassifiedContext, skyDebilityExampleOrder, skyDebilityField
 import { skyDebilityPhraseKey, skyDebilityPhraseNames, skyDebilityPhraseSet, skyDebilityPlacementId } from "./skyDebilityPhrases.js";
 import { skyDebilityInterpretationErrors, skyDebilityInterpretationPlacements } from "./skyDebilityInterpretation.js";
 import { skyDebilityPlacementLinks } from "./skyDebilityPresentation.js";
+import { skyDebilityPlacementSlots } from "./skyDebilityIdentity.mjs";
 
 export type SkyDebilityCopyReader = (key: string) => string | null | undefined;
 export type SkyDebilityInterpretation = { contentKey: string; headline: string | null; body: string };
@@ -60,7 +61,12 @@ export function assembleSkyDebilityCopy(
     if (placements.length !== snapshot.count || placements.some(row => !snapshot.planets.some(value => value.planet === row.planet && value.sign === row.sign)))
       errors.push("The complete interpretation does not match every qualifying placement.");
     const allPlacementKeys = placements.map(row => skyDebilityPlacementId(row.planet, row.sign));
-    slots.planetList = joinSkyDebilityList(skyDebilityPlacementLinks(allPlacementKeys, placements, "reading").map(link => link.text), "and");
+    const placementLinks = skyDebilityPlacementLinks(allPlacementKeys, placements, "reading");
+    slots.planetList = joinSkyDebilityList(placementLinks.map(link => link.text), "and");
+    for (const { planet, name, sentence } of skyDebilityPlacementSlots) {
+      const index = placements.findIndex(row => row.planet === planet);
+      if (index !== -1) slots[name] = sentence ? capitalize(placementLinks[index].text) : placementLinks[index].text;
+    }
     for (const dignity of ["detriment", "fall"] as const) {
       const qualifying = placements.filter(row => planetSignDebilities(row.planet, row.sign).includes(dignity));
       slots[`${dignity}Count`] = String(qualifying.length);
