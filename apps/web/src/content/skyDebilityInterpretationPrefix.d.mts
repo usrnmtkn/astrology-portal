@@ -1,1 +1,0 @@
-export const SKY_DEBILITY_INTERPRETATION_PREFIX: string;

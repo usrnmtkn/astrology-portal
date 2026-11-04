@@ -1,7 +1,6 @@
 import { DIGNITY_SIGNS, TRADITIONAL_DIGNITY_PLANETS, planetSignDebilities, traditionalSkyDebilities } from "../services/planetSignDignity.mjs";
 
-import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "./skyDebilityInterpretationPrefix.mjs";
-export { SKY_DEBILITY_INTERPRETATION_PREFIX } from "./skyDebilityInterpretationPrefix.mjs";
+export const SKY_DEBILITY_INTERPRETATION_PREFIX = "cms/sky-debility/reading/";
 export const skyDebilityPlacementSlots = TRADITIONAL_DIGNITY_PLANETS.flatMap(planet => [
   { planet, name: `${planet.toLowerCase()}Placement`, sentence: false },
   { planet, name: `${planet.toLowerCase()}PlacementSentence`, sentence: true }
@@ -60,14 +59,10 @@ export function skyDebilityInterpretationErrors(key, body, headline) {
     const count = slots.filter(slot => slot === `${dignity}PlanetList`).length;
     return count <= 1 && (count === 1 || !placements.some(row => planetSignDebilities(row.planet, row.sign).includes(dignity)));
   });
-  const individualCounts = new Map();
-  for (const slot of slots) {
-    const placement = skyDebilityPlacementSlots.find(value => value.name === slot);
-    if (placement) individualCounts.set(placement.planet, (individualCounts.get(placement.planet) ?? 0) + 1);
-  }
-  if ([...individualCounts].some(([planet, count]) => count !== 1 || !placements?.some(row => row.planet === planet)))
+  const individualPlanets = slots.map(slot => skyDebilityPlacementSlots.find(value => value.name === slot)?.planet).filter(Boolean);
+  if (individualPlanets.some((planet, index) => individualPlanets.indexOf(planet) !== index || !placements?.some(row => row.planet === planet)))
     errors.push("Use each individual placement once and only for a qualifying planet in this reading.");
-  const individualPlacements = placements?.every(row => individualCounts.get(row.planet) === 1);
+  const individualPlacements = placements?.every(row => individualPlanets.filter(planet => planet === row.planet).length === 1);
   if (allLists !== 1 && !(allLists === 0 && (categoryLists || individualPlacements))) errors.push("Include {planetList} once, each applicable category list once, or an individual placement variable for every qualifying planet.");
   if (/[<>]/u.test(body)) errors.push("Use plain text, not markup.");
   if (headline !== undefined && (!headline?.trim() || /[{}<>\r\n]/u.test(headline))) errors.push("Give the complete card a plain-text heading without variables.");
