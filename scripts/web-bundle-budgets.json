@@ -1,7 +1,7 @@
 {
-  "appBootGzipBytes": 398400,
-  "appChunkGzipBytes": 89500,
-  "readerBootGzipBytes": 456450,
+  "appBootGzipBytes": 399200,
+  "appChunkGzipBytes": 89550,
+  "readerBootGzipBytes": 457350,
   "readerInitialCssGzipBytes": 58750,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -14,8 +14,9 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 144000,
-  "totalJavaScriptGzipBytes": 3709400,
+  "totalJavaScriptGzipBytes": 3710700,
   "_rationale": {
+    "currentLocationConsistency20261104": "Matched independent npm-ci builds of main 7ece1f041 and the final location repair use ARM Node 22.20.0, the same lockfile and identical synthetic Mapbox, timing-API, Supabase and natal-pattern inputs. App boot measures 398357/399142 gzip bytes (+785), reader boot 456513/457298 (+785), App chunk 89053/89523 (+470), and aggregate JavaScript 3709216/3710606 (+1390), across 272 files. Main already exceeds the inherited reader ceiling by 63 bytes. Allocate only 800 app-boot, 900 reader-boot, 50 App-chunk and 1300 aggregate bytes above main's ceilings for shared city validation, profile priority, legacy-coordinate recovery, account/cross-tab races and exact observer/local-date snapshot admission. Initial CSS stays 58156 bytes. No dependencies or astrology prose are added. Other chunk, CSS, source-payload, graph isolation and runtime limits remain unchanged; the full performance-contract suite passes. This records the requested correctness cost, not a performance improvement. See docs/qa/location-consistency.md.",
     "fallbackHoroscopeLibrary20261031": "Matched independent npm-ci builds of main 5a9de6cdd and the fallback horoscope library use native ARM Node 22.20.0, identical visual-smoke Supabase placeholders, the same lockfile and public build inputs. Web aggregate JavaScript measures 3691221/3694657 gzip bytes (+3436), across 267/268 files. The new Studio library remains deferred behind Content Studio and shares the existing source/editor/publication system. Allocate only 2750 aggregate bytes above the prior 3692650 ceiling, leaving 743 measured bytes. Every reader startup, CSS, individual chunk, memory graph, source-payload and runtime-performance limit remains unchanged. No dependency or owner prose is added. This records the requested Studio feature cost, not a performance improvement. See docs/qa/fallback-horoscope-library.md.",
     "studioWritingPlanExport20261031": "Matched independently npm-ci-installed integrated web builds of main 5a9de6cddd and the writing-plan export use ARM64 Node 22.20.0, zlib 1.3.1-470d3a2 and identical synthetic Supabase settings. Aggregate JavaScript is 3691307 bytes on main and 3693945 with the export controls (+2638), across 267 files in each build. Allocate 3000 aggregate gzip bytes for this owner-requested Studio interface. Reader startup, App, CSS, individual-chunk, memory, source-payload, privacy and runtime ceilings remain unchanged. This records interface cost, not a performance improvement. See docs/qa/studio-writing-plan-export.md.",
     "mobileReadingFinalIntegration20261030": "Matched independent main e75656392 and integrated PR #1372 builds use their own locked dependencies, local knowledge builds, native ARM Node 22.20.0 and identical synthetic Supabase settings with natal aspect patterns enabled. Aggregate JavaScript measures 3686964 and 3688189 gzip bytes (+1225); this exceeds the inherited 3687650 ceiling by 539. Allocate only 750 aggregate bytes to 3688400, leaving 211 measured bytes. App boot is 396868/396900, App chunk 88973/89000, reader boot 455024/455250, Sky detail 6829/6850 and horoscope reader 5603/5650; all existing individual limits remain unchanged. Reader initial CSS falls 196 bytes and aggregate CSS 256; shared deferred Studio CSS is unchanged. Preserve publicationStatusRefresh20261030 verbatim and all graph isolation, source-payload and runtime gates. This records the requested mobile feature cost, including visible compact Sky countdowns, not a performance improvement. See docs/qa/mobile-card-detail-parity-2026-10-29.md.",

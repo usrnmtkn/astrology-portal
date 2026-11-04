@@ -1,4 +1,4 @@
-import type { LocationInput } from "../types";
+import type { LocationInput, SkySnapshot } from "../types";
 import { withTimeZone, zonedDateTimeToUtc } from "./timezones";
 import { liveSkyReference, skyCivilDate } from "./skyClock";
 
@@ -11,6 +11,13 @@ export const defaultLocation: LocationInput = {
 
 export const selectedLocationStorageKey = "tldrastro:selectedLocation";
 
+function hasLegacyGeneratedCoordinates(location: Partial<LocationInput>) {
+  if (typeof location.label !== "string") return false;
+  const hash = [...location.label.trim()].reduce((total, char) => total + char.charCodeAt(0), 0);
+  return location.latitude === ((hash % 1400) / 10) - 70
+    && location.longitude === ((hash % 3000) / 10) - 150;
+}
+
 export function isLocationInput(value: unknown): value is LocationInput {
   if (!value || typeof value !== "object") {
     return false;
@@ -19,10 +26,28 @@ export function isLocationInput(value: unknown): value is LocationInput {
   const location = value as Partial<LocationInput>;
 
   return (
-    typeof location.label === "string" &&
-    typeof location.latitude === "number" &&
-    typeof location.longitude === "number"
+    typeof location.label === "string" && location.label.trim().length > 0 &&
+    typeof location.latitude === "number" && Number.isFinite(location.latitude) && Math.abs(location.latitude) <= 90 &&
+    typeof location.longitude === "number" && Number.isFinite(location.longitude) && Math.abs(location.longitude) <= 180 &&
+    !hasLegacyGeneratedCoordinates(location)
   );
+}
+
+export function profileCurrentLocation(profile: { currentLocation?: string; currentLocationData?: unknown } | null | undefined) {
+  const value = profile?.currentLocationData;
+  return isLocationInput(value) && (!profile?.currentLocation || typeof profile.currentLocation === "string" && profile.currentLocation.trim() === value.label)
+    ? withTimeZone(value) : null;
+}
+
+export function skyMatchesSelection(snapshot: Pick<SkySnapshot, "location" | "generatedAt"> | null | undefined, location: LocationInput, date: string): boolean {
+  return Boolean(snapshot && snapshot.location.latitude === location.latitude
+    && snapshot.location.longitude === location.longitude
+    && snapshot.location.timeZone === location.timeZone
+    && skySnapshotDate(snapshot) === date);
+}
+
+export function skySnapshotDate(snapshot: Pick<SkySnapshot, "location" | "generatedAt">): string {
+  return skyCivilDate(snapshot.location?.timeZone ?? "UTC", new Date(snapshot.generatedAt));
 }
 
 export function dateInputValue(date: Date = new Date()) {
@@ -74,6 +99,13 @@ export function skyDateTimeFromInput(value: string, location: LocationInput, liv
 
 export function getInitialLocation() {
   try {
+    let currentLocation: LocationInput | null = null;
+    try {
+      currentLocation = profileCurrentLocation(JSON.parse(window.localStorage.getItem("tldrastro:userProfile") ?? "null"));
+    } catch { /* A damaged profile must not hide a valid selected city. */ }
+    if (currentLocation) {
+      return { location: currentLocation, hasSavedLocation: true };
+    }
     const savedLocation = window.localStorage.getItem(selectedLocationStorageKey);
 
     if (!savedLocation) {

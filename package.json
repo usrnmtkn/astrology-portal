@@ -8,6 +8,7 @@
     "packages/*"
   ],
   "scripts": {
+    "test:location-consistency": "node --import tsx --test scripts/test-location-consistency.mts",
     "test:approved-voice-style": "node --test tests/astro-writing/approved-voice-style.test.mjs",
     "test:hellenistic-meaning": "node --test tests/astro-writing/hellenistic-meaning-support.test.mjs",
     "build:canonical-content": "node scripts/build-canonical-content-hub.mjs --write",

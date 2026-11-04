@@ -57,7 +57,7 @@ assert.match(
   "A non-pilot SOURCE_GAP must be logged and render no personalized block."
 );
 assert.match(article, /<h2[\s\S]*?detail\.personalizedPlacement\.heading[\s\S]*?<\/h2>/u);
-assert.match(article, /<p>\{detail\.personalizedPlacement\.body\}<\/p>/u);
-assert.match(article, /<h3>Aspects to the natal chart<\/h3>/u);
+assert.match(article, /<FormattedProse text=\{detail\.personalizedPlacement\.body\} \/>/u);
+assert.match(article, /<h3>\{aspect\.heading\}<\/h3>/u);
 
 console.log("Sun in Leo house cores preserve all 12 approved V13 bodies, expanded governed coverage renders, and unsupported combinations fail closed.");

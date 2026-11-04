@@ -2,6 +2,7 @@ import type { FormEvent } from "react";
 import { CalendarDays, ChevronRight, MapPin, User } from "lucide-react";
 import type { TransitForm, UserProfile } from "../../App";
 import { CitySearchField } from "../../components/CitySearchField";
+import { profileCurrentLocation } from "../../services/skySelection";
 import { formatSignupBirthDate, formatSignupBirthTime } from "../auth/signupModel";
 
 export default function CreateChartFlow({
@@ -61,7 +62,8 @@ export default function CreateChartFlow({
       meridiem: form.birthMeridiem
     }))
   );
-  const currentCityComplete = Boolean(form.currentLocation.trim() || profile?.currentLocation?.trim());
+  const selectedCurrentCity = profileCurrentLocation(form);
+  const currentCityComplete = Boolean(selectedCurrentCity || (!form.currentLocation.trim() && profileCurrentLocation(profile)));
   const flowSteps = [
     { id: "account", label: "Create account", status: accountComplete ? "complete" : "step 1", complete: accountComplete, icon: <User size={21} aria-hidden="true" />, onClick: null },
     { id: "birth", label: "Add birth information", status: birthComplete ? "complete" : accountComplete ? "next step" : "step 2", complete: birthComplete, icon: <CalendarDays size={21} aria-hidden="true" />, onClick: () => setStep("birth") },
@@ -121,7 +123,7 @@ export default function CreateChartFlow({
         />
 
         {message && <p className="create-chart-message" role="status">{message}</p>}
-        {showSubmit && <button className="signup-submit create-chart-save" type="submit" disabled={saving}>
+        {showSubmit && <button className="signup-submit create-chart-save" type="submit" disabled={saving || !selectedCurrentCity}>
           {saving ? "Saving…" : "Save location"}
         </button>}
       </form>

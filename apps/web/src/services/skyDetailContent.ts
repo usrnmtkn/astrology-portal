@@ -3,6 +3,7 @@ import { contentPublication, publicationAllowsContent, publicationRestoresBaseli
 import { SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from "../astrologyConfig";
 import { contentPublicationsAvailableOnline } from "./contentPublications";
 import type { SkySnapshot } from "../types";
+import { skySnapshotDate } from "./skySelection";
 import type { LiveGeneratedContent } from "./generatedContent";
 import { contentStudioExactSkyAspectKeys, skyAspectGeneratedContentKeys } from "./skyAspectContent";
 
@@ -66,7 +67,7 @@ export function skySnapshotAspectContentKeys(snapshot: SkySnapshot) {
     if (!firstSign || !secondSign) return [];
     return skyAspectGeneratedContentKeys({
       first: aspect.from, second: aspect.to, aspect: aspect.type,
-      firstSign, secondSign, targetDate: snapshot.generatedAt.slice(0, 10)
+      firstSign, secondSign, targetDate: skySnapshotDate(snapshot)
     });
   })));
 }
