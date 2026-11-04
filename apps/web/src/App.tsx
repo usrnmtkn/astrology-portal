@@ -14428,6 +14428,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }
   }
 
+  const headerProfile = !authAccountError && (remoteAccountId
+    ? authAccountChecked && userProfile?.id === remoteAccountId
+    : !isAuthConfigured || !hasStoredSupabaseSession()) ? userProfile : null;
+
   const friendChartLoadingState = resolveFriendChartLoadingState({
     authAccountChecked,
     isAuthConfigured,
@@ -14585,7 +14589,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             onPointerEnter={preloadYouExperience}
             onClick={openYouPage}
           >
-            {userProfile ? <ProfileAvatar name={userProfile.name} email={userProfile.email} avatarUrl={userProfile.avatarUrl} /> : <User size={22} aria-hidden="true" />}
+            {headerProfile ? <ProfileAvatar name={headerProfile.name} email={headerProfile.email} avatarUrl={headerProfile.avatarUrl} /> : <User size={22} aria-hidden="true" />}
           </button>
           <button
             type="button"
