@@ -41,8 +41,10 @@ details.key-dates-panel,
 .key-dates-panel__chevron svg { width: var(--space-4); height: var(--space-4); }
 .key-dates-panel[open] > summary .key-dates-panel__chevron svg { transform: rotate(180deg); }
 .key-dates-panel__content > :first-child { margin-top: var(--space-6); }
+.key-dates-panel__content > p { margin: var(--space-6) 0 0; }
 .key-dates-panel__content > p:not([class]) { font-size: var(--text-body); line-height: var(--leading-body); }
 .key-dates-panel.report-key-dates { display: block; }
+.report-key-dates .key-dates-panel__content { display: grid; gap: var(--space-5); }
 @media (max-width: 800px) {
   details.key-dates-panel,
   .article-page .key-dates-panel.article-section { padding: var(--lunar-space-28) var(--space-6); }
