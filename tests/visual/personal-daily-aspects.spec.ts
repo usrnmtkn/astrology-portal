@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "../helpers/polish-test";
 import { expectKeyDatesHeaderCentered } from '../helpers/key-dates-panel';
 import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";

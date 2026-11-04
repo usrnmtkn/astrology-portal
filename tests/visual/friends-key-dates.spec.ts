@@ -1,0 +1,56 @@
+import { expect, test } from '../helpers/polish-test';
+import { expectKeyDatesHeaderCentered } from '../helpers/key-dates-panel';
+import { authenticate, seed } from '../helpers/synthetic-member-sources';
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Friends transit Key dates survives navigation and reload ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    await seed(page, theme);
+    await authenticate(page);
+    await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-friend&view=transits');
+    const transits = page.getByLabel('Fixture Friend transits', { exact: true });
+    const card = transits.locator('.reading-story-card').first();
+    await expect(card).toBeVisible({ timeout: 60_000 });
+    const title = (await card.locator('h3').innerText()).trim();
+    await card.click();
+    const article = page.locator('.article-page');
+    await expect(article.getByRole('heading', { level: 1 })).toHaveText(title);
+    const dates = article.locator('.key-dates-panel');
+    await expect(dates).toBeVisible();
+    await expect(dates).not.toHaveAttribute('open', '');
+    await expectKeyDatesHeaderCentered(dates);
+    await dates.locator('summary').focus();
+    await page.keyboard.press('Enter');
+    await expect(dates).toHaveAttribute('open', '');
+    await expectKeyDatesHeaderCentered(dates);
+    const rows = dates.locator('dl > div');
+    await expect(rows.first()).toBeVisible();
+    const timeline = await rows.allTextContents();
+    expect(timeline.length).toBeGreaterThan(0);
+    await expect(dates.locator('.key-dates-panel__count')).toHaveText(String(timeline.length));
+    for (const value of await dates.locator('dt').allTextContents()) expect(value).toMatch(/\d{4}/);
+    const paragraphs = await article.locator('.article-section p').allTextContents();
+    expect(paragraphs.length).toBeGreaterThan(0);
+    expect(paragraphs[0].trim()).not.toBe('');
+    expect(paragraphs.at(-1)!.trim()).not.toBe('');
+    await dates.screenshot({ path: test.info().outputPath('friends-key-dates-expanded.png') });
+    await page.keyboard.press('Space');
+    await expect(dates).not.toHaveAttribute('open', '');
+    await expect(dates.locator('summary')).toBeFocused();
+    await page.reload();
+    await expect(article.getByRole('heading', { level: 1 })).toHaveText(title);
+    await expect(dates).not.toHaveAttribute('open', '');
+    await expectKeyDatesHeaderCentered(dates);
+    await dates.locator('summary').focus();
+    await page.keyboard.press('Space');
+    await expect(dates).toHaveAttribute('open', '');
+    await expectKeyDatesHeaderCentered(dates);
+    await expect(rows).toHaveText(timeline);
+    await expect(article.locator('.article-section p')).toHaveText(paragraphs);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.getByRole('button', { name: /Close detail|Back/ }).first().click();
+    await expect(transits).toBeVisible();
+    await expect(transits.locator('.reading-story-card').filter({ hasText: title }).first()).toBeVisible();
+  });
+}

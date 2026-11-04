@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from '../helpers/polish-test';
 import { build } from 'esbuild';
 import { readFileSync } from 'node:fs';
 import { expectReadableTheme } from '../helpers/theme-contrast';
@@ -8,14 +8,24 @@ async function componentHarness() {
     import React from 'react'; import {createRoot} from 'react-dom/client';
     import {SkyDebilityCard} from './apps/web/src/features/sky/SkyDebilityCard';
     import {ProfileAvatar} from './apps/web/src/components/ProfileAvatar';
+    import {installContentPublications} from './apps/web/src/content/contentPublicationState';
+    import {skyDebilityInterpretationKey} from './apps/web/src/content/skyDebilityInterpretation';
     const names=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn'];
     const qualified=['Libra','Scorpio','Pisces','Scorpio','Cancer','Gemini','Aries'];
     const neutral=['Leo','Cancer','Gemini','Taurus','Aries','Sagittarius','Capricorn'];
     const root=createRoot(document.getElementById('root'));
-    window.renderCount=n=>root.render(<main className='app-shell'><section className='portal-grid page-shell sky-page sky-layout chart-layout'>
-      <SkyDebilityCard positions={names.map((planet,i)=>({planet,sign:i<n?qualified[i]:neutral[i],motion:['Mercury','Venus','Saturn'].includes(planet)?'retrograde':'direct'}))}/>
+    const positions=n=>names.map((planet,i)=>({planet,sign:i<n?qualified[i]:neutral[i],motion:['Mercury','Venus','Saturn'].includes(planet)?'retrograde':'direct'}));
+    let revision=0;
+    window.renderCount=n=>root.render(<main className='app-shell'><section data-fixture-revision={revision} className='portal-grid page-shell sky-page sky-layout chart-layout'>
+      <SkyDebilityCard positions={positions(n)}/>
       <section className='placement-section'><header className='placements-heading'><h2>Placements</h2></header></section>
     </section></main>);
+    window.renderMissingCopy=state=>{
+      const key=skyDebilityInterpretationKey(positions(1));
+      if(!key)throw new Error('The synthetic qualified positions need an exact interpretation key.');
+      installContentPublications([{content_key:key,state,revision:++revision,row_id:state==='live'?'synthetic-missing-reading':null,row_updated_at:state==='live'?'2026-10-13T12:00:00Z':null,updated_at:'2026-10-13T12:00:00Z'}]);
+      window.renderCount(1);
+    };
     window.renderAvatars=()=>root.render(<main className='app-shell friends-page'><div className='friends-timing-card'><span className='friends-timing-card__avatar'><ProfileAvatar name='Fixture Reader' email='' avatarUrl='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="52" height="52"%3E%3Crect width="52" height="52" fill="tan"/%3E%3C/svg%3E' aspect='square'/></span></div></main>);
     window.renderCount(0);
   `, resolveDir: process.cwd(), loader: 'tsx' }, bundle: true, write: false, format: 'iife', jsx: 'automatic', loader: { '.css': 'empty' }, define: { 'import.meta.env': JSON.stringify({ MODE: 'test', DEV: false }) } });
@@ -42,7 +52,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Ha
     if (width === 1440) {
       expect(Math.abs(first.width - (grid.width - 32) / 3)).toBeLessThan(1);
       const title = (await effort.locator('h3').boundingBox())!; expect(Math.abs(title.x - grid.x)).toBeLessThan(1);
-      await expect(effort).toHaveCSS('padding', '56px 48px');
+      await expect(effort).toHaveCSS('padding', '56px 0px');
       const titleColor = await cards.first().locator('strong').evaluate(node => getComputedStyle(node).color); await cards.first().hover(); await expect(cards.first().locator('strong')).toHaveCSS('color', titleColor);
       if (count >= 4) expect((await cards.nth(3).boundingBox())!.y).toBeGreaterThan(first.y);
     } else {
@@ -53,6 +63,31 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Ha
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
   await page.screenshot({ path: `test-results/handoff-v4-seven-${width}-${theme}.png`, fullPage: true });
+});
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Dignity missing copy preserves surrounding placements ${width} ${theme}`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 1100 });
+  const { script, links } = await componentHarness();
+  await page.route('**/__dignity-missing-copy', route => route.fulfill({ contentType: 'text/html', body: `<html data-theme="${theme}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${links}</head><body><div id="root"></div><script>${script}</script></body></html>` }));
+  await page.goto('/__dignity-missing-copy');
+  const placements = page.getByRole('heading', { name: 'Placements', exact: true });
+  await expect(placements).toBeVisible();
+  // A snapshot with no qualifying planet never leaves an empty effort card.
+  await expect(page.locator('.sky-debility-ledger')).toHaveCount(0);
+  await page.evaluate(() => document.fonts.ready);
+  const before = await placements.boundingBox();
+  for (const [index, state] of ['live', 'retired'].entries()) {
+    // A missing pinned reading and an ineligible retired reading both stay hidden.
+    await page.evaluate(value => (window as any).renderMissingCopy(value), state);
+    await expect(page.locator('.sky-page')).toHaveAttribute('data-fixture-revision', String(index + 1));
+    await expect(page.locator('.sky-debility-ledger')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'What is dignity?', exact: true })).toHaveCount(0);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(placements).toBeVisible();
+    expect(await placements.boundingBox()).toEqual(before);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: test.info().outputPath(`dignity-copy-${state}-${width}-${theme}.png`) });
+  }
 });
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Handoff v4 shared avatar badge ${width} ${theme}`, async ({ page }) => {

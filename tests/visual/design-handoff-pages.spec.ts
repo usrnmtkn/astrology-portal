@@ -39,7 +39,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       const summary = page.locator('.sky-placement-key-dates > summary');
       await expect(summary).toHaveCSS('font-size', '26px');
       await expect(summary).toHaveCSS('line-height', '29.9px');
-      await expect(summary).toHaveCSS('align-items', 'baseline');
+      await expect(summary).toHaveCSS('align-items', 'center');
       await expect(page.locator('.sky-placement-key-dates')).not.toHaveAttribute('open', '');
       const row = first.locator('.article-related-aspects__copy').first();
       const badge = row.locator('.aspect-badge').first();
