@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "recordType": "synastry_reverse_authoring_batch",
+  "batchId": "synastry-directionality-authoring-batch-2-2026-09-08",
+  "servingChangesAuthorized": false,
+  "purpose": "Author the first post-classification semantic reverse passages for Friends synastry without changing serving copy.",
+  "readerQuestion": "What does {{Name}} bring out in me?",
+  "voice": "Project Author voice pass 2: casual, direct, easy to understand on the first read; recognizable relationship behavior first; no clever phrasing that makes the reader decode the point; no astrology jargon in the reader body; no manufactured event claims; no forced reciprocity.",
+  "scope": {
+    "family": "Sun with Moon, Mercury, Venus, Mars, and Jupiter",
+    "newCandidateCount": 13,
+    "existingBatch1CandidatesExcluded": [
+      "fallback-hook/synastry-pair/sun/mars/hard",
+      "fallback-hook/synastry-pair/sun/mercury/hard"
+    ]
+  },
+  "records": [
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/moon/conjunction",
+      "existingSemanticDirection": "sun_to_moon",
+      "missingSemanticDirection": "moon_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Moon",
+      "candidateNameToYou": "{{Name}}'s reactions can affect your confidence more than you expect. If they are excited about your plan, you may feel more sure of yourself. If they seem hurt, worried, or uncomfortable, you may start questioning a choice you felt good about. Their feelings matter, but you do not have to change your mind every time they react differently than you hoped.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/moon/hard",
+      "existingSemanticDirection": "sun_to_moon",
+      "missingSemanticDirection": "moon_to_sun",
+      "friendsUseCase": "Your Sun hard-aspect {{Name}}'s Moon",
+      "candidateNameToYou": "If {{Name}} is unhappy with your decision, you may start wondering if you should change it. You can end up explaining yourself, changing the plan, or feeling selfish for wanting something they do not want. Their feelings matter, but disappointment is not the same as proof that you made the wrong choice.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/moon/soft",
+      "existingSemanticDirection": "sun_to_moon",
+      "missingSemanticDirection": "moon_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Moon",
+      "candidateNameToYou": "{{Name}} usually makes it easier for you to be yourself. You can say what you want or make a choice without worrying as much about upsetting them. Because they tend to meet you with warmth instead of making you defend yourself, you may feel more confident around them without even noticing why.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mercury/conjunction",
+      "existingSemanticDirection": "mercury_to_sun",
+      "missingSemanticDirection": "sun_to_mercury",
+      "friendsUseCase": "Your Mercury conjunct {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can give you a lot to think and talk about. You may find yourself helping them explain an idea, finding the right words, or making sense of what they are trying to do. Just make sure you do not spend so much time explaining their point that your own opinion disappears from the conversation.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mercury/soft",
+      "existingSemanticDirection": "mercury_to_sun",
+      "missingSemanticDirection": "sun_to_mercury",
+      "friendsUseCase": "Your Mercury soft-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "Talking with {{Name}} usually feels easy. You can ask questions, add details, or disagree without the whole conversation becoming a fight. Because you usually know where they stand, you spend less time guessing what they meant and more time thinking about what you actually want to say.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/venus/conjunction",
+      "existingSemanticDirection": "venus_to_sun",
+      "missingSemanticDirection": "sun_to_venus",
+      "friendsUseCase": "Your Venus conjunct {{Name}}'s Sun",
+      "candidateNameToYou": "Something about {{Name}} makes it easy for you to show affection. You may remember the little things they like, want to make plans nicer for them, or say the compliment instead of keeping it to yourself. Just notice if you start changing what you give based on how much warmth you get back.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/venus/hard",
+      "existingSemanticDirection": "venus_to_sun",
+      "missingSemanticDirection": "sun_to_venus",
+      "friendsUseCase": "Your Venus hard-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "You can really like {{Name}} and still get annoyed by some of their choices. You may let things slide because you do not want to make the relationship tense, then realize later that you were more bothered than you admitted. Say something while the problem is still small instead of waiting until your warmth turns into distance.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/venus/soft",
+      "existingSemanticDirection": "venus_to_sun",
+      "missingSemanticDirection": "sun_to_venus",
+      "friendsUseCase": "Your Venus soft-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "Liking {{Name}} tends to feel easy. You do not have to talk yourself into being warm, generous, or affectionate with them. The care is already there, which means you can enjoy it instead of looking for a problem to solve. Saying what you appreciate about them still matters.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mars/conjunction",
+      "existingSemanticDirection": "sun_to_mars",
+      "missingSemanticDirection": "mars_to_sun",
+      "friendsUseCase": "Your Sun conjunct {{Name}}'s Mars",
+      "candidateNameToYou": "{{Name}} can get you moving when you have been stuck or overthinking. Their energy may help you make a decision, start the plan, or finally do something you kept putting off. Just make sure you are doing it because you want to, not because you feel rushed to keep up with them.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/mars/soft",
+      "existingSemanticDirection": "sun_to_mars",
+      "missingSemanticDirection": "mars_to_sun",
+      "friendsUseCase": "Your Sun soft-aspect {{Name}}'s Mars",
+      "candidateNameToYou": "{{Name}} makes it easier to act on what you already know you want. They tend to bring momentum without making everything feel like a race, so plans can move forward with less effort. Just check in with yourself before you say yes simply because they are ready to go.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/conjunction",
+      "existingSemanticDirection": "jupiter_to_sun",
+      "missingSemanticDirection": "sun_to_jupiter",
+      "friendsUseCase": "Your Jupiter conjunct {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can make you think bigger. Around them, you may see more possibilities, encourage them to try something new, or start imagining what else could be possible. That can be great, but it is easy to keep adding to the plan after they already told you what they want.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/hard",
+      "existingSemanticDirection": "jupiter_to_sun",
+      "missingSemanticDirection": "sun_to_jupiter",
+      "friendsUseCase": "Your Jupiter hard-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can make you want more for them than they want for themselves right now. You may suggest another opportunity, a bigger goal, or one more thing they could do when they are already telling you they have enough on their plate. Encouragement is helpful until the other person has to keep defending their limits.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    },
+    {
+      "contentKey": "fallback-hook/synastry-pair/sun/jupiter/soft",
+      "existingSemanticDirection": "jupiter_to_sun",
+      "missingSemanticDirection": "sun_to_jupiter",
+      "friendsUseCase": "Your Jupiter soft-aspect {{Name}}'s Sun",
+      "candidateNameToYou": "{{Name}} can make it easier for you to believe something will work out without pretending there are no problems. You may be the person who reminds them to apply, ask, try again, or not give up after one setback. Your encouragement helps most when it gives them confidence, not another plan they have to follow.",
+      "candidateStatus": "voice_pass_2_2026-09-09_awaiting_owner_review"
+    }
+  ],
+  "reviewGate": "Owner review required before any candidate is promoted, mapped into Content Studio, or used by the serving resolver."
+}
