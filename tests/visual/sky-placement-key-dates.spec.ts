@@ -24,15 +24,15 @@ const inlineAspects = [
   ["September 14, 2026", "Sun sextile Mars"],
   ["September 20, 2026", "Sun square Lilith"]
 ];
-for (const width of [390, 1440]) for (const withVariable of [false, true]) {
-  test(`placement Key dates ${width} ${withVariable ? "inline aspects" : "without aspect token"}`, async ({ page }) => {
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const withVariable of [false, true]) {
+  test(`placement Key dates ${width} ${theme} ${withVariable ? "inline aspects" : "without aspect token"}`, async ({ page }) => {
     test.setTimeout(120_000);
     await page.setViewportSize({ width, height: 1000 });
     await page.clock.setFixedTime(new Date("2026-09-12T12:00:00Z"));
     await page.addInitScript(theme => {
       localStorage.setItem("tldrastro:theme", theme);
       localStorage.setItem("tldrastro:selectedLocation", JSON.stringify({ label: "New York", latitude: 40.7, longitude: -74, timeZone: "America/New_York" }));
-    }, withVariable ? "dark" : "light");
+    }, theme);
     const key = "sky-placement/article/sun/virgo";
     const base = skyPlacementSourceRecords.get(key)!;
     const updatedAt = "2026-09-11T12:00:00.000Z";
@@ -70,7 +70,7 @@ for (const width of [390, 1440]) for (const withVariable of [false, true]) {
     await expect(body).toContainText(withVariable ? `Fixture exact dates: ${inlineAspects.map(([date, label]) => `${date}: ${label}`).join(", ")}.` : template);
     await expect(body).not.toContainText("{{");
     await dates.scrollIntoViewIfNeeded();
-    await dates.screenshot({ path: `test-results/sky-key-dates-${width}-${withVariable}.png` });
+    await dates.screenshot({ path: `test-results/sky-key-dates-${width}-${theme}-${withVariable}.png` });
     await page.getByRole("link", { name: "Read more about Sun Sextile Mars", exact: true }).click();
     await expect(page.locator("#sky-detail-title")).toHaveText("Sun Sextile Mars");
     await page.getByRole("button", { name: "Close detail", exact: true }).click();
