@@ -1,6 +1,8 @@
 import { expect, test, type Page, type TestInfo, type Request } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
+import { articleTemplateWithHoroscopes } from '../../apps/web/src/content/skyArticleHoroscopes.mjs';
 
 test.describe.configure({ retries: 0 });
 const key = 'sky/article-template/sun/libra';
@@ -10,7 +12,7 @@ const editor = (page: Page) => page.getByRole('dialog', { name: 'Generated conte
 const builder = (page: Page) => editor(page).getByRole('region', { name: 'Create an article edition from this template' });
 function gate() { let release!: () => void; const promise = new Promise<void>(resolve => { release = resolve; }); return { promise, release }; }
 
-async function setup(page: Page, info: TestInfo, delayed = false) {
+async function setup(page: Page, info: TestInfo, delayed: boolean | { method: 'POST' | 'PATCH'; bodyIncludes: string } = false) {
   const api = await studioApiStore([], { publicationDb: true, uuidIds: true });
   const ack = gate();
   const evidence: any = { writes: [], responses: [], errors: [], failed: [], blocked: [] };
@@ -35,7 +37,8 @@ async function setup(page: Page, info: TestInfo, delayed = false) {
     const result = await api.call(message);
     if (message.method !== 'GET' && message.method !== 'rows') {
       evidence.writes.push({ method: message.method, body: message.body, status: result.status });
-      if (delayed && message.method === 'POST' && (message.body as any)?.contentKey === key) await ack.promise;
+      if (delayed === true && message.method === 'POST' && (message.body as any)?.contentKey === key
+        || typeof delayed === 'object' && message.method === delayed.method && String((message.body as any)?.body).includes(delayed.bodyIncludes)) await ack.promise;
     }
     return result;
   }, answer: async (route, url) => {
@@ -148,3 +151,110 @@ test('late first-save acknowledgment retains newer template typing and initializ
     expect((await f.api.call({ method: 'publications' })).filter((row: any) => row.content_key !== '__content-publication-ledger/v1')).toEqual([]);
   } finally { await f.clean(); }
 });
+
+const normalizedTemplateTest = test.extend({
+  context: async ({ context, baseURL }, use, info) => {
+    const network = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin);
+    try { await use(context); }
+    finally {
+      await Promise.all(context.pages().map(page => page.close()));
+      await network.finishStaticFonts();
+      await info.attach('strict-network-ledger', { contentType: 'application/json',
+        body: JSON.stringify({ unhandledExternal: network.unhandledExternal }) });
+      expect(network.unhandledExternal).toEqual([]);
+    }
+  }
+});
+const templateOpening = '# Synthetic template title\n\nSynthetic complete opening.\n\nSynthetic complete final paragraph.';
+const horoscopeIntro = 'Synthetic complete horoscope introduction.\n\n{{risingBlocks}}';
+const completeTemplate = `${templateOpening}\n\n## Horoscopes\n\n${horoscopeIntro}`;
+
+async function reopenSavedTemplate(page: Page) {
+  await page.reload();
+  await expect(editor(page)).toHaveCount(0);
+  await expect(page.getByLabel('Search content', { exact: true })).toBeVisible();
+  const filters = page.getByRole('button', { name: /^Filters(?: \(\d+\))?$/ });
+  if (await filters.isVisible()) await filters.click({ timeout: 10_000 });
+  await page.getByRole('button', { name: 'Show reference', exact: true }).click({ timeout: 10_000 });
+  await page.getByLabel('Search content', { exact: true }).fill(key);
+  const row = page.locator('.admin-content-row').filter({ hasText: key });
+  await expect(row).toHaveCount(1);
+  await row.getByRole('button', { name: 'Continue draft', exact: true }).click({ timeout: 10_000 });
+  await expect(editor(page)).toBeVisible();
+}
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  normalizedTemplateTest(`normalized template save acknowledges complete stored copy ${width} ${theme}`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ colorScheme: theme });
+    await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), theme);
+    const f = await setup(page, info);
+    try {
+      const first = await f.save('Save', 'POST');
+      await editor(page).getByRole('button', { name: 'Complete edition', exact: true }).click();
+      await editor(page).getByLabel('Article body', { exact: true }).fill(completeTemplate);
+      const saved = await f.save('Save template', 'PATCH');
+      expect(saved.id).toBe(first.id);
+      expect(saved.source_snapshot.horoscopeSeparation.originalBody).toBe(completeTemplate);
+      expect(articleTemplateWithHoroscopes(saved.body, saved.sections)).toBe(completeTemplate);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved', { timeout: 10_000 });
+      await expect(editor(page).getByText('Save did not return the saved row.', { exact: true })).toHaveCount(0);
+      await expect(editor(page).getByLabel('Article body', { exact: true })).toHaveValue(templateOpening);
+      await expect(editor(page).getByRole('button', { name: 'Archive source', exact: true })).toBeEnabled();
+      await reopenSavedTemplate(page);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
+      await expect(editor(page).getByLabel('Article body', { exact: true })).toHaveValue(templateOpening);
+      const reopened = (await f.api.call({ method: 'rows' })).find((row: any) => row.id === saved.id);
+      expect(articleTemplateWithHoroscopes(reopened.body, reopened.sections)).toBe(completeTemplate);
+      const archived = await f.save('Archive source', 'PATCH');
+      expect(archived.id).toBe(saved.id); expect(archived.status).toBe('ARCHIVED');
+      expect(articleTemplateWithHoroscopes(archived.body, archived.sections)).toBe(completeTemplate);
+      await expect(editor(page).getByRole('button', { name: 'Restore as draft', exact: true })).toBeEnabled();
+      expect((await f.api.call({ method: 'publications' })).filter((row: any) => row.content_key !== '__content-publication-ledger/v1')).toEqual([]);
+    } finally { await f.clean(); }
+  });
+
+  normalizedTemplateTest(`normalized template delayed receipt retains typing through next save ${width} ${theme}`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ colorScheme: theme });
+    await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), theme);
+    const f = await setup(page, info, { method: 'PATCH', bodyIncludes: '{{risingBlocks}}' });
+    try {
+      const first = await f.save('Save', 'POST');
+      await editor(page).getByRole('button', { name: 'Complete edition', exact: true }).click();
+      await editor(page).getByLabel('Article body', { exact: true }).fill(completeTemplate);
+      const done = page.waitForResponse(response => new URL(response.url()).pathname === '/api/admin/generated-content' && response.request().method() === 'PATCH');
+      await editor(page).getByRole('button', { name: 'Save template', exact: true }).click();
+      await expect.poll(() => f.evidence.writes.length).toBe(2);
+      const newer = completeTemplate.replace('Synthetic complete final paragraph.', 'Synthetic complete final paragraph. Newer typed words.')
+        .replace('Synthetic complete horoscope introduction.', 'Synthetic newer complete horoscope introduction.');
+      await editor(page).getByLabel('Article body', { exact: true }).fill(newer);
+      f.ack.release();
+      const response = await done; expect(response.status()).toBe(200); expect(await response.finished()).toBeNull();
+      const acknowledged = (await response.json()).rows[0]; expect(acknowledged.id).toBe(first.id);
+      expect(acknowledged.source_snapshot.horoscopeSeparation.originalBody).toBe(completeTemplate);
+      await expect(editor(page).getByLabel('Article body', { exact: true })).toHaveValue(newer);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('Unsaved changes');
+      const storedBefore = (await f.api.call({ method: 'rows' })).find((row: any) => row.id === first.id);
+      expect(articleTemplateWithHoroscopes(storedBefore.body, storedBefore.sections)).toBe(completeTemplate);
+      const saved = await f.save('Save template', 'PATCH');
+      expect(f.evidence.writes[2].body.expectedUpdatedAt).toBe(acknowledged.updated_at);
+      expect(saved.source_snapshot.horoscopeSeparation.originalBody).toBe(completeTemplate);
+      expect(articleTemplateWithHoroscopes(saved.body, saved.sections)).toBe(newer);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
+      await expect(editor(page).getByText('Save did not return the saved row.', { exact: true })).toHaveCount(0);
+      const nextIntro = 'Synthetic revised structured introduction.\n\n{{risingBlocks}}';
+      await editor(page).getByLabel('Horoscope introduction', { exact: true }).fill(nextIntro);
+      const sectionRevision = await f.save('Save template', 'PATCH');
+      const completeRevised = newer.replace('Synthetic newer complete horoscope introduction.\n\n{{risingBlocks}}', nextIntro);
+      expect(articleTemplateWithHoroscopes(sectionRevision.body, sectionRevision.sections)).toBe(completeRevised);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
+      await reopenSavedTemplate(page);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
+      const reopened = (await f.api.call({ method: 'rows' })).find((row: any) => row.id === first.id);
+      expect(articleTemplateWithHoroscopes(reopened.body, reopened.sections)).toBe(completeRevised);
+      expect(reopened.source_snapshot.horoscopeSeparation.originalBody).toBe(completeTemplate);
+      expect((await f.api.call({ method: 'publications' })).filter((row: any) => row.content_key !== '__content-publication-ledger/v1')).toEqual([]);
+    } finally { await f.clean(); }
+  });
+}
