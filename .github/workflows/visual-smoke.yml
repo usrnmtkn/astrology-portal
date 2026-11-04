@@ -367,6 +367,8 @@ jobs:
         run: npm run test:sky-daily-summary && node scripts/test-sky-placement-aspect-matrix.mjs && node --import tsx scripts/test-calendar-template-preview.mts
       - name: Verify Sky reader loading and recovery
         if: matrix.phase == 'reader'
+        env:
+          VITE_MAPBOX_ACCESS_TOKEN: pk.location-fixture
         run: |
           node --import tsx scripts/test-qa-runtime-guards.mts
           npx playwright test -c playwright.config.ts --workers=1 --output=test-results/sky-summary/reader tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts
