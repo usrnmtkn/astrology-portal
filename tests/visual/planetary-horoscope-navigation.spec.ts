@@ -184,4 +184,16 @@ test('Planetary and Sky cards share remaining countdowns',async({page},info)=>{
   expect(await card.locator('.placement-progress > span').allTextContents(),title).toEqual(labels.get(title));
  }
  await page.screenshot({path:info.outputPath('sky-countdowns.png'),fullPage:true});
+ await page.goto(list);
+ const lilith=page.getByRole('link',{name:'True Black Moon Lilith in Sagittarius · Read horoscope',exact:true});
+ await expect(lilith).toHaveAttribute('href',/#horoscopes\?.*&planet=lilith&placement=sagittarius$/);
+ await lilith.click();
+ const lilithArticle=page.getByRole('article',{name:'True Black Moon Lilith in Sagittarius horoscope',exact:true});
+ await expect(lilithArticle.locator('.horoscope-reading-date')).toHaveText('True Black Moon Lilith in Sagittarius');
+ await page.reload();
+ await expect(lilithArticle.locator('.horoscope-reading-date')).toHaveText('True Black Moon Lilith in Sagittarius');
+ await page.getByRole('button',{name:'Previous Chiron Rx in Aries',exact:true}).click();
+ await page.getByRole('button',{name:'Next True Black Moon Lilith in Sagittarius',exact:true}).click();
+ await expect(lilithArticle.locator('.horoscope-reading-date')).toHaveText('True Black Moon Lilith in Sagittarius');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

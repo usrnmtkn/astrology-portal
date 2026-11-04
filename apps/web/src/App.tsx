@@ -161,7 +161,8 @@ import {
   astrologyDateRangeLabel,
   hasBackgroundRetrogradeMotion,
   isDisplayRetrograde,
-  lunarNodeTransitRangeLabel
+  lunarNodeTransitRangeLabel,
+  skyPointDisplayName
 } from "./services/astrologyDisplay";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
 import { natalSnapshotWithBirthTimeReliability } from "./services/birthTimeReliability";
@@ -15353,8 +15354,7 @@ function locationFromLabel(label: string): LocationInput {
 
 
 function skyDisplayPlanetName(planet: string) {
-  if (planet === "Lilith") return "True Black Moon Lilith";
-  return planet === "True Node" ? "North Node" : planet;
+  return skyPointDisplayName(planet);
 }
 
 function retrogradeDetailKicker(position: PlanetPosition) {

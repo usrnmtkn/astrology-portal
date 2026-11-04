@@ -1,5 +1,5 @@
 import {useMinimumLoading} from "../../hooks/useMinimumLoading";
-import {isDisplayRetrograde} from "../../services/astrologyDisplay";
+import {isDisplayRetrograde,skyPointDisplayName} from "../../services/astrologyDisplay";
 import type {PlanetPosition} from '../../types';
 import {ChevronLeft,ChevronRight} from 'lucide-react';
 import {FormattedProse} from '../../components/FormattedProse';
@@ -19,10 +19,10 @@ export default function PlanetaryHoroscope({position,generatedAt,sign,timeZone,p
   const signName=horoscopeSignLabel(sign);
   return <>
     <button className="horoscope-all-planets" type="button" onClick={onBack}><ChevronLeft aria-hidden="true"/>All planets</button>
-    <article className="learn-sheet horoscope-reading" aria-label={`${position.planet} in ${position.sign} horoscope`}>
+    <article className="learn-sheet horoscope-reading" aria-label={`${skyPointDisplayName(position.planet)} in ${position.sign} horoscope`}>
       <header className="horoscope-reading-header">
         <span className="horoscope-planet-card__glyph" aria-hidden="true">{pointGlyph(position.planet)}</span>
-        <h2 className="horoscope-reading-date">{position.planet}{rx?' Rx':''} in {position.sign}</h2>
+        <h2 className="horoscope-reading-date">{skyPointDisplayName(position.planet)}{rx?' Rx':''} in {position.sign}</h2>
         {dateLine&&<p className="horoscope-date">{dateLine}</p>}
         {rx&&<span className="horoscope-reading-sign">℞ Retrograde</span>}
         <div className="horoscope-controls" aria-label="Reading signs"><span className="horoscope-reading-sign"><img src={zodiacAssetHref(zodiacSignIconFiles[signName])!} alt=""/>{signName}</span><span className="horoscope-reading-sign"><span aria-hidden="true">↑</span>{signName} Rising</span></div>
@@ -31,7 +31,7 @@ export default function PlanetaryHoroscope({position,generatedAt,sign,timeZone,p
     </article>
     {!error&&<nav className="horoscope-edition-nav" aria-label="Planetary horoscopes">{[previous,next].map((entry,index)=>{
       const Icon=index?ChevronRight:ChevronLeft;
-      return <button type="button" key={index} disabled={!entry} className={index?'horoscope-edition-next':undefined} onClick={()=>entry&&onPlanet(entry)}><span className="horoscope-edition-arrow"><Icon aria-hidden="true"/></span><span className="horoscope-edition-label"><small>{index?'Next':'Previous'}</small><span>{entry?`${entry.planet}${isDisplayRetrograde(entry)?' Rx':''} in ${entry.sign}`:''}</span></span></button>;
+      return <button type="button" key={index} disabled={!entry} className={index?'horoscope-edition-next':undefined} onClick={()=>entry&&onPlanet(entry)}><span className="horoscope-edition-arrow"><Icon aria-hidden="true"/></span><span className="horoscope-edition-label"><small>{index?'Next':'Previous'}</small><span>{entry?`${skyPointDisplayName(entry.planet)}${isDisplayRetrograde(entry)?' Rx':''} in ${entry.sign}`:''}</span></span></button>;
     })}</nav>}
   </>;
 }

@@ -1,5 +1,5 @@
 import {placementCardCountdowns} from "../../services/placementCardTiming";
-import {isDisplayRetrograde} from "../../services/astrologyDisplay";
+import {isDisplayRetrograde,skyPointDisplayName} from "../../services/astrologyDisplay";
 import {useMinimumLoading} from "../../hooks/useMinimumLoading";
 import type {PlanetPosition,SkySnapshot} from '../../types';
 import {PlanetPlacementRow,ordinalHouse} from '../../components/charts/PlacementRows';
@@ -17,7 +17,7 @@ export default function PlanetaryHoroscopeCards({sky,sign,href}:{sky:SkySnapshot
     const timeZone=position.transitTimeZone??sky.location.timeZone??'UTC';
     const dateFormat=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',timeZone});
     const retrograde=isDisplayRetrograde(position);
-    const title=`${position.planet}${retrograde?' Rx':''} in ${position.sign}`;
+    const title=`${skyPointDisplayName(position.planet)}${retrograde?' Rx':''} in ${position.sign}`;
     const at=Date.parse(sky.generatedAt);
     const progress=window&&at>=window.start.getTime()&&at<=window.end.getTime()?(at-window.start.getTime())/(window.end.getTime()-window.start.getTime()):undefined;
     return <PlanetPlacementRow key={position.planet} variant="sky" title={title} glyph={position.glyph} pointName={position.planet} sign={position.sign}
