@@ -131,10 +131,23 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
     await studio.getByRole('button',{name:'Save edition draft',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Saved edition draft.');
     const approvedEdition=(await f.latest()).sections;
-    await f.open();await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+    await f.open();
+    const publicationCheck=page.waitForResponse(response=>response.url().includes('/api/admin/horoscope-writing')
+      &&response.request().method()==='POST'&&response.request().postDataJSON()?.action==='validate-publication'
+      &&response.request().postDataJSON()?.id===f.id);
+    await studio.getByRole('button',{name:'4 · Publish',exact:true}).click();
+    const checkedResponse=await publicationCheck;
+    expect(checkedResponse.status()).toBe(200);
+    const savedForPublication=await f.latest(),checked=await checkedResponse.json();
+    expect(checkedResponse.request().postDataJSON()).toMatchObject({id:savedForPublication.id,expectedUpdatedAt:savedForPublication.updated_at});
+    expect(checked.publication).toMatchObject({id:savedForPublication.id,updatedAt:savedForPublication.updated_at,ready:true,canOverride:false,issues:[]});
+    expect(checked.publication.advisories).toEqual(expect.arrayContaining([expect.objectContaining({category:'weekly_batch_editorial'})]));
+    expect(savedForPublication.status).toBe('DRAFT');expect(savedForPublication.sections).toEqual(approvedEdition);
+    await expect(studio.getByText('Checking all saved readings before publication…',{exact:true})).toHaveCount(0);
     await expect(studio.getByRole('region',{name:'Pisces reading preview'})).toContainText(edited);
     const approval=studio.getByLabel('I have reviewed and approve the exact wording of every saved reading in this edition.');
-    await expect(approval).toBeDisabled();
+    await expect(approval).toBeEnabled();await expect(approval).not.toBeChecked();
+    await expect(studio.getByRole('button',{name:'Publish edition',exact:true})).toBeDisabled();
     const batchReview=studio.getByRole('region',{name:'Weekly batch editorial gate'});
     await expect(batchReview).toContainText('out of date');
     const loadBatchPlan=batchReview.getByRole('button',{name:'Load batch review plan',exact:true});

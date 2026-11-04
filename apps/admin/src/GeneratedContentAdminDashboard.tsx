@@ -7511,8 +7511,16 @@ export function GeneratedContentAdminDashboard() {
 
         {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} /></Suspense></div>}
         {activePage === "horoscopeFallbacks" && <><Suspense fallback={<PageLoading message="Loading fallback horoscopes…" />}>
-          <FallbackHoroscopeStudio rows={rows}
-            onLoadCatalog={() => adminJsonRequest("/api/admin/content-live-status", secret, { method: "POST", body: JSON.stringify({ action: "composition-catalog" }) })}
+          <FallbackHoroscopeStudio rows={rows} credential={secret}
+            onLoadCatalog={signal => retryStudioRead(async () => {
+              const path = "/api/admin/content-live-status";
+              const payload = await adminJsonRequest<{ ok: boolean; rows: Array<{ content_key: string; headline: string | null; role: string }> }>(path, secret,
+                { method: "POST", body: JSON.stringify({ action: "composition-catalog" }), signal });
+              if (payload.ok !== true || !Array.isArray(payload.rows)) {
+                throw new AdminRequestError("Invalid source catalog.", { status: 502, path, method: "POST", details: "The complete source catalog is unavailable." });
+              }
+              return payload;
+            }, signal)}
             initialSourceKey={parseAdminHash().params.get("source") ?? undefined}
             onSourceChange={source => setAdminHash(adminHashForPage("horoscopeFallbacks", new URLSearchParams({ source })), "replace")}
             onLoadRow={row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow)}
