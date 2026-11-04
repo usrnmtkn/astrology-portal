@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { runInNewContext } from "node:vm";
 
 const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");
 const friendsPanel = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
 const friendTransits = fs.readFileSync("apps/web/src/features/friends/FriendTransitsTab.tsx", "utf8");
 const youPage = fs.readFileSync("apps/web/src/features/you/YouPage.tsx", "utf8");
 const responsiveStyles = fs.readFileSync("apps/web/src/styles/responsive.css", "utf8");
+const headerControls = fs.readFileSync("apps/web/src/features/sky/HeaderSkyControls.tsx", "utf8");
 
 assert.match(
   app,
@@ -14,27 +16,27 @@ assert.match(
 );
 assert.match(
   app,
-  /if \(isPersonalTransitDateMode\) \{[\s\S]*openMobileDatePicker\(\);[\s\S]*return;/u,
+  /showTransitDateControls && mobileSkyControlsOpen[\s\S]*<HeaderSkyControls/u,
   "You and Friends must open the date picker directly from the header control."
 );
 assert.match(
   app,
-  /isPersonalTransitDateMode && skyDate === todaySkyDate[\s\S]*\? "Today"/u,
+  /const transitDateButtonLabel = skyDate === todaySkyDate \? "Today"/u,
   "You and Friends must visibly present the current date as Today."
 );
 assert.equal(
-  (app.match(/<SkyDatePicker/gu) ?? []).length,
+  (headerControls.match(/<SkyDatePicker/gu) ?? []).length,
   1,
-  "The date picker must be mounted once in the shared app shell."
+  "The date picker must be mounted once inside the shared header controls."
 );
 assert.match(
   app,
-  /const selectedDateSky = sky\?\.generatedAt\.slice\(0, 10\) === skyDate \? sky : null;/u,
-  "Date-dependent surfaces must reject a sky snapshot from another date."
+  /const sky = skyMatchesSelection\(loadedSky, location, skyDate\) \? loadedSky : null;[\s\S]*const selectedDateSky = sky;/u,
+  "Date-dependent surfaces must reject a snapshot from another city or local date."
 );
 assert.match(
   app,
-  /transitItems=\{selectedDateTransits\}[\s\S]*currentSky=\{selectedDateSky\}/u,
+  /transitItems=\{youDetailsReady \? selectedDateTransits : \[\]\}[\s\S]*currentSky=\{youDetailsReady \? selectedDateSky : null\}/u,
   "You must receive only sky and transit facts for the selected date."
 );
 assert.match(
@@ -47,14 +49,19 @@ assert.match(
   /now: dateFromInput\(targetDate\)/u,
   "The You weekly forecast must use the week containing the selected date."
 );
+const updateUrlSource = app.slice(app.indexOf("function updateTransitDateUrl("), app.indexOf("function timeInZoneForInput("));
+const windowFixture = { location: { href: "https://date.test/?date=2026-11-04#you" }, history: {
+  state: {}, replaceState(_state, _title, href) { windowFixture.location.href = href; },
+  pushState(_state, _title, href) { windowFixture.location.href = href; }
+} };
+const updateUrl = runInNewContext(`(${updateUrlSource.replace('(value: string, mode: "push" | "replace", today: string | null)', '(value, mode, today)')})`, { window: windowFixture, URL });
+updateUrl("2026-11-05", "replace", "2026-11-05");
+assert.equal(new URL(windowFixture.location.href).searchParams.has("date"), false, "Today follows the selected location's day, even when the browser is on the previous date.");
+updateUrl("2026-11-04", "push", "2026-11-05");
+assert.equal(new URL(windowFixture.location.href).searchParams.get("date"), "2026-11-04", "Fixed transit dates remain restorable.");
 assert.match(
   app,
-  /if \(value === dateInputValue\(\)\) \{[\s\S]*url\.searchParams\.delete\("date"\);[\s\S]*\} else \{[\s\S]*url\.searchParams\.set\("date", value\);/u,
-  "Today must use a timeless URL while fixed transit dates remain restorable."
-);
-assert.match(
-  app,
-  /if \(followsCurrentTransitDateRef\.current\) \{[\s\S]*updateTransitDateUrl\(currentLocalDateRef\.current, "replace"\);/u,
+  /if \(mode !== "calendar" && followsCurrentTransitDateRef\.current\) \{[\s\S]*updateTransitDateUrl\(currentLocalDateRef\.current, "replace", currentLocalDateRef\.current\);/u,
   "A legacy current-date URL must be canonicalized into timeless Today mode."
 );
 assert.match(
@@ -64,7 +71,7 @@ assert.match(
 );
 assert.match(
   app,
-  /function syncTransitDateWithLocalDay\(\)[\s\S]*setCurrentLocalDate\(nextCurrentLocalDate\)[\s\S]*if \(followsCurrentTransitDateRef\.current\)[\s\S]*setSkyDate\(nextCurrentLocalDate\)[\s\S]*updateTransitDateUrl\(nextCurrentLocalDate, "replace"\)/u,
+  /function syncTransitDateWithLocalDay\(\)[\s\S]*setCurrentLocalDate\(nextCurrentLocalDate\)[\s\S]*if \(followsCurrentTransitDateRef\.current\)[\s\S]*setSkyDate\(nextCurrentLocalDate\)[\s\S]*updateTransitDateUrl\(nextCurrentLocalDate, "replace", nextCurrentLocalDate\)/u,
   "A live Today selection must advance the state and URL when the local day changes."
 );
 assert.match(
@@ -79,12 +86,12 @@ assert.match(
 );
 assert.match(
   friendsPanel,
-  /<FriendTransitsTab[\s\S]*dateLabel=\{transitDateLabel\}/u,
+  /buildFriendTransitsBrief\(\{[\s\S]*dateLabel: transitDateLabel/u,
   "The Friends transit tab must receive its selected-date label."
 );
 assert.match(
   friendsPanel,
-  /<FriendTransitsTab[\s\S]*isLoading=\{currentSkyLoading \|\| transitCopyLoading\}/u,
+  /<FriendTransitsTab[\s\S]*isLoading=\{currentSkyLoading \|\| transitCopyLoading(?: \|\| [^}]*)?\}/u,
   "The Friends transit tab must wait for the selected date and the transit copy packages."
 );
 assert.match(
@@ -93,13 +100,13 @@ assert.match(
   "Friends must show an explicit loading state while the selected date is calculated."
 );
 assert.match(
-  youPage,
-  /Calculating transits for \{transitDateLabel\}/u,
+  app,
+  /Calculating transits for \$\{formatSkyFullChartDate\(targetDate\)\}/u,
   "You must show an explicit loading state while the selected date is calculated."
 );
 assert.match(
   responsiveStyles,
-  /\.mode-profile :where\(\.sky-header-date-button, \.menu-toggle\),[\s\S]*\.mode-friends :where\(\.sky-header-date-button, \.menu-toggle\)/u,
+  /:is\(\.mode-guest, \.mode-member, \.mode-profile, \.mode-friends\) :where\(\.sky-header-date-button, \.menu-toggle\)/u,
   "The shared header date control must retain its mobile treatment on You and Friends."
 );
 

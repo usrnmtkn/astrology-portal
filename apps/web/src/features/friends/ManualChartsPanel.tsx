@@ -1,4 +1,5 @@
 import { returnToArticleParent } from "../../services/articleNavigation";
+import { skySnapshotDate } from "../../services/skySelection";
 import { compatibilityCardParagraphs } from "./compatibilityCardCopy";
 import { FriendsFeed, type FriendsFeedCard } from "./FriendsFeed";
 import { useFriendsFeedDailyPeaks, useFriendsFeedTiming } from "./useFriendsFeedTiming";
@@ -458,7 +459,7 @@ export function ManualChartsPanel({
     // driver and select one deterministically from chart id + date + driver.
 
     try {
-      const dateKey = currentSky.generatedAt.slice(0, 10);
+      const dateKey = skySnapshotDate(currentSky);
       const reference = ownerDisplayPronouns(ownerName, ownerPronouns);
       const preferredName = ownerPreferredName?.trim()
         || ownerName.trim().split(/\s+/u)[0]
@@ -564,7 +565,7 @@ export function ManualChartsPanel({
     }
 
     try {
-      const targetDate = currentSky.generatedAt.slice(0, 10);
+      const targetDate = skySnapshotDate(currentSky);
       const rendered = transitSynastryFallbackRendererV3.renderDoDont({
         voice: "they",
         planet: natalPoint,
@@ -1013,7 +1014,7 @@ export function ManualChartsPanel({
   );
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;
-  const friendTransitReadingSelectionKey = `${selectedChart?.id ?? ""}|${currentSky?.generatedAt.slice(0, 10) ?? ""}`;
+  const friendTransitReadingSelectionKey = `${selectedChart?.id ?? ""}|${currentSky ? skySnapshotDate(currentSky) : ""}`;
   const friendTransitReadingSelectionKeyRef = useRef(friendTransitReadingSelectionKey);
   friendTransitReadingSelectionKeyRef.current = friendTransitReadingSelectionKey;
   const selectedFriendNatalChartComplete = selectedChart
@@ -1513,7 +1514,7 @@ export function ManualChartsPanel({
       return null;
     }
 
-    const isoDate = currentSky.generatedAt.slice(0, 10);
+    const isoDate = skySnapshotDate(currentSky);
     const readerChartId = profile.charts[0]?.id ?? profile.id;
     const pairVariant = stablePairDailyVariant(readerChartId, selectedChart.id, isoDate);
 
@@ -1574,7 +1575,7 @@ export function ManualChartsPanel({
   const selectedPairDaily = useMemo(() => {
     if (!selectedPairDailySelection || !currentSky || !selectedChart) return null;
 
-    const isoDate = currentSky.generatedAt.slice(0, 10);
+    const isoDate = skySnapshotDate(currentSky);
 
     const renderShared = (shared: typeof selectedPairDailySelection.shared) => (
       transitSynastryFallbackRendererV3.renderPairDaily({
@@ -1887,7 +1888,7 @@ export function ManualChartsPanel({
     selectedFriendPersonalTransitGroups,
     transitDateLabel
   ]);
-  const selectedFriendTransitReadingDate = currentSky?.generatedAt.slice(0, 10) ?? "";
+  const selectedFriendTransitReadingDate = currentSky ? skySnapshotDate(currentSky) : "";
   const selectedFriendTransitReadingAvailable = Boolean(
     selectedFriendTransitReadingDate
     && selectedChart
