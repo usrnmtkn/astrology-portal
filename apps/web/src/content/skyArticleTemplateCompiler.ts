@@ -248,7 +248,11 @@ export function skyArticleReaderCopyIsConsistent(edition: CompiledSkyArticleEdit
   if (edition.body !== withoutFirstHeading(articleBodyBeforeHoroscopes(edition.compiledMarkdown))) return false;
   const sections = markdownSections(edition.body);
   if (sections.length !== edition.articleSections.length || sections.some((section, index) =>
-    section.heading !== edition.articleSections[index].heading || section.body !== edition.articleSections[index].body)) return false;
+    // Earlier compilers labeled the unheaded opening Overview. Preserve that
+    // stored presentation while requiring the same complete compiled prose.
+    (section.heading !== edition.articleSections[index].heading
+      && !(index === 0 && section.heading === '' && edition.articleSections[index].heading === 'Overview'))
+    || section.body !== edition.articleSections[index].body)) return false;
   if (!edition.housePassages.length) return true;
   const section = readerHoroscopeBlocks(edition);
   const seen = new Set();

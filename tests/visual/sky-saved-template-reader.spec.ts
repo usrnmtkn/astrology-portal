@@ -1,15 +1,16 @@
 import { expect, test, type Locator } from '@playwright/test';
-import { compiledReaderFixture, compiledReaderRow } from '../helpers/sky-saved-template-reader-fixtures.mts';
+import { compiledReaderFixture, compiledReaderRow, legacyIngressReaderFixture } from '../helpers/sky-saved-template-reader-fixtures.mts';
 import { skyArticlePublicationStore } from '../helpers/sky-article-publication-store.mts';
 import { emptyLastKnownGoodSnapshot } from '../helpers/bundled-publications';
 import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
 
-for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
-  test(`saved-template actual publication reaches complete Sky and standalone readers ${width} ${theme}`, async ({ page, context, baseURL }) => {
+for (const legacy of [false, true]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`${legacy ? 'legacy Overview' : 'saved-template'} actual publication reaches complete Sky and standalone readers ${width} ${theme}`, async ({ page, context, baseURL }) => {
     test.setTimeout(120_000);
-    const edition = await compiledReaderFixture({ templateBody: '# Synthetic saved-template article\n\nSynthetic saved-template opening.\n\nSynthetic final general sentence.\n\n## Horoscopes\n\nSynthetic complete companion introduction.\n\n{{risingBlocks}}' });
-    const initial = { ...compiledReaderRow(edition), status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required',
-      target_date: null, source_snapshot: { privateNotes: 'PRIVATE_READER_CANARY', review_status: 'needs_review' } };
+    const edition = legacy ? await legacyIngressReaderFixture() : await compiledReaderFixture({ templateBody: '# Synthetic saved-template article\n\nSynthetic saved-template opening.\n\nSynthetic final general sentence.\n\n## Horoscopes\n\nSynthetic complete companion introduction.\n\n{{risingBlocks}}' });
+    const initial = { ...compiledReaderRow(edition), ...(legacy ? {} : { status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required' }),
+      target_date: null, source_snapshot: { ...(legacy ? compiledReaderRow(edition).source_snapshot : {}),
+        privateNotes: 'PRIVATE_READER_CANARY', review_status: legacy ? 'approved' : 'needs_review' } };
     const store = await skyArticlePublicationStore([initial]);
     const previewOrigin = new URL(baseURL!).origin;
     const guard = await installSyntheticNetworkGuard(context, previewOrigin);
@@ -17,11 +18,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     let exactRequests = 0, directLedgerRequests = 0;
     page.on('pageerror', error => errors.push(error.message));
     try {
-      const opened = (await store.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [initial.id])).rows[0].row as any;
-      const published = await store.invoke('/api/admin/generated-content', { id: initial.id,
-        expectedUpdatedAt: opened.updated_at, ownerAction: 'approve-sky-article-edition' });
-      expect(published.status).toBe(200);
-      expect(published.rows[0].sections.skyArticleEdition).toEqual(edition);
+      if (!legacy) {
+        const opened = (await store.db.query('select to_jsonb(g) as row from generated_interpretations g where id=$1', [initial.id])).rows[0].row as any;
+        const published = await store.invoke('/api/admin/generated-content', { id: initial.id,
+          expectedUpdatedAt: opened.updated_at, ownerAction: 'approve-sky-article-edition' });
+        expect(published.status).toBe(200);
+        expect(published.rows[0].sections.skyArticleEdition).toEqual(edition);
+      }
       await page.setViewportSize({ width, height: 1000 });
       // The selected historical date comes from the reader URL. Keep the
       // browser clock modern so zero-initialized transport caches expire.
@@ -85,12 +88,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         await route.fulfill({ status, headers, json: payload });
       });
       const assertCopy = async (article: Locator, standalone = false) => {
-        await expect(article).toContainText('Synthetic saved-template opening.', { timeout: 60_000 });
-        await expect(article).toContainText('Synthetic final general sentence.');
-        await expect(article.getByText('Synthetic complete companion introduction.', { exact: true })).toHaveCount(1);
+        await expect(article).toContainText(legacy ? 'Synthetic ingress opening.' : 'Synthetic saved-template opening.', { timeout: 60_000 });
+        await expect(article).toContainText(legacy ? 'Synthetic ingress final sentence.' : 'Synthetic final general sentence.');
+        await expect(article.getByText('Synthetic complete companion introduction.', { exact: true })).toHaveCount(legacy ? 0 : 1);
         await expect(article.getByRole('heading', { name: edition.headline, exact: true })).toHaveCount(1);
         const houses = standalone ? article.locator('.learn-article-body > h3') : article.locator('.sky-rising-horoscope');
-        await expect(houses).toHaveCount(12);
+        await expect(houses).toHaveCount(edition.housePassages.length);
         for (const [index, passage] of edition.housePassages.entries()) {
           if (!standalone) {
             const sign = passage.risingSign![0].toUpperCase() + passage.risingSign!.slice(1);
@@ -126,12 +129,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       expect(Math.abs(layout.height - layout.offsetHeight)).toBeLessThanOrEqual(2);
       expect(layout.paragraphFontSize).toBeGreaterThanOrEqual(12);
       await test.info().attach('settled-sky-layout', { body: JSON.stringify(layout), contentType: 'application/json' });
-      await page.screenshot({ path: `test-results/saved-template-sky-top-${width}-${theme}.png` });
-      await page.screenshot({ path: `test-results/saved-template-sky-${width}-${theme}.png`, fullPage: true });
-      const finalHouseSentence = sky.getByText(edition.housePassages.at(-1)!.body.split('\n\n').at(-1)!, { exact: true });
+      const artifact = legacy ? 'legacy-overview' : 'saved-template';
+      await page.screenshot({ path: `test-results/${artifact}-sky-top-${width}-${theme}.png` });
+      await page.screenshot({ path: `test-results/${artifact}-sky-${width}-${theme}.png`, fullPage: true });
+      const finalHouseSentence = sky.getByText(legacy ? 'Synthetic ingress final sentence.' : edition.housePassages.at(-1)!.body.split('\n\n').at(-1)!, { exact: true });
       await finalHouseSentence.scrollIntoViewIfNeeded();
       await expect(finalHouseSentence).toBeInViewport();
-      await page.screenshot({ path: `test-results/saved-template-sky-bottom-${width}-${theme}.png` });
+      await page.screenshot({ path: `test-results/${artifact}-sky-bottom-${width}-${theme}.png` });
       await page.getByRole('button', { name: 'Close detail', exact: true }).click();
       await expect(sun).toContainText(edition.tldr);
       await sun.click();
@@ -147,7 +151,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       expect(directLedgerRequests).toBeGreaterThan(0);
       await page.reload();
       await assertCopy(standalone, true);
-      await page.screenshot({ path: `test-results/saved-template-standalone-${width}-${theme}.png`, fullPage: true });
+      await page.screenshot({ path: `test-results/${artifact}-standalone-${width}-${theme}.png`, fullPage: true });
       await store.db.query("update content_publications set state='retired',revision=default where content_key=$1", [edition.contentKey]);
       await page.reload();
       await expect(page.getByRole('heading', { name: 'Article unavailable', exact: true })).toBeVisible();

@@ -22,6 +22,13 @@ export async function compiledReaderFixture(overrides: Partial<CompileSkyArticle
   });
 }
 
+export async function legacyIngressReaderFixture() {
+  const edition = await compiledReaderFixture({ format: SKY_INGRESS_ARTICLE_FORMAT });
+  // Previously published ingress editions stored one complete Overview section.
+  edition.articleSections = [{ heading: 'Overview', body: edition.body }];
+  return edition;
+}
+
 export function compiledReaderRow(edition: Awaited<ReturnType<typeof compiledReaderFixture>>, id = '00000000-0000-4000-8000-000000000001') {
   return {
     id, content_key: edition.contentKey, surface: 'sky', mode: 'article', event_type: 'sky-article-edition',
