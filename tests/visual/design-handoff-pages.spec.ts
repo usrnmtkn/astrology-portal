@@ -446,6 +446,12 @@ for(const width of [320,390,960,1440]) for(const theme of ['light','dark']) {
   expect(logoBox.x+logoBox.width).toBeLessThanOrEqual(navBox.x+navBox.width);
   expect(backBox.x).toBeGreaterThanOrEqual(0);
   expect(menuBox.x+menuBox.width).toBeLessThanOrEqual(width);
+  await expect(page.getByRole('button',{name:'Your profile',exact:true})).toBeVisible();
+  if(width<=520){
+    await page.getByRole('button',{name:'Open menu',exact:true}).click();
+    await expect(page.locator('.site-menu-theme').getByRole('button',{name:theme,exact:true})).toHaveAttribute('aria-pressed','true');
+    await page.keyboard.press('Escape');
+  }
   expect(await page.locator('.brand-dot').evaluate(node=>{const b=node.getBoundingClientRect();const hit=document.elementFromPoint(b.x+b.width/2,b.y+b.height/2);return hit===node||Boolean(hit&&node.contains(hit));})).toBe(true);
   expect(Math.abs(backBox.y+backBox.height/2-navBox.y-navBox.height/2)).toBeLessThan(1);
   expect(panelBox.width).toBeLessThanOrEqual(1053);
@@ -1407,11 +1413,15 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
       await expect(paragraph, item.route).toHaveCSS('font-family', /Newsreader/); await expect(paragraph, item.route).toHaveCSS('font-size', '19px'); await expect(paragraph, item.route).toHaveCSS('line-height', '28.5px'); await expect(paragraph, item.route).toHaveCSS('font-weight', '400'); await expect(paragraph, item.route).toHaveCSS('letter-spacing', 'normal');
     }
     const toggle = page.locator('.topbar-actions > .theme-toggle'); await expect(toggle).toBeVisible(); await expect(toggle.locator('svg')).toHaveClass(theme === 'dark' ? /lucide-sun/ : /lucide-moon/);
-    await expect(page.locator('.theme-toggle + .menu-toggle')).toBeVisible();
+    await expect(page.locator('.profile-nav-button + .menu-toggle')).toBeVisible();
     if (theme === 'dark') {
       await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(18, 20, 24)'); await expect(page.locator('body')).toHaveCSS('background-image', /^none(?:, none)*$/);
       if(item.route !== 'articles') { const surface = page.locator(item.route === 'sky' && width <= 800 ? '.sky-debility-ledger' : item.surface).first(); await expect(surface).toHaveCSS('background-color', 'rgb(28, 31, 38)'); await expect(surface).toHaveCSS('box-shadow', 'none'); }
-      await expect(page.locator('.site-nav button.active')).toHaveCSS('color', 'rgb(143, 245, 214)');
+      if(item.route.startsWith('you')) {
+        const profile=page.getByRole('button',{name:'Your profile',exact:true});
+        await expect(profile).toHaveAttribute('aria-current','page');
+        await expect(profile).toHaveCSS('border-color','rgb(143, 245, 214)');
+      } else await expect(page.locator('.site-nav button.active')).toHaveCSS('color', 'rgb(143, 245, 214)');
       await page.mouse.move(0, 0); await expectRenderedTextContrast(page, item.body, 7);
     }
     await expectReadableTheme(page, `${item.title}, ${item.body}`);
@@ -1969,7 +1979,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) for(const au
   await page.locator('.natal-sun-card:visible').screenshot({path:test.info().outputPath(`sect-card-${sect}-${audience}-${width}-${theme}.png`)});
   await page.goForward();await expect(title).toBeVisible();await page.goBack();await expect(pill).toBeFocused();
   await page.goto(child);await expect(title).toBeVisible();await page.getByRole('button',{name:'Back',exact:true}).click();await expect(pill).toBeVisible();
-  if(width>800){await pill.click();await page.getByRole('button',{name:audience==='you'?'You':'Sky',exact:true}).click();await expect(article).toBeHidden();expect(new URL(page.url()).pathname).toBe('/');}
+  if(width>800){await pill.click();await page.getByRole('button',{name:audience==='you'?'Your profile':'Sky',exact:true}).click();await expect(article).toBeHidden();expect(new URL(page.url()).pathname).toBe('/');}
  });
 }
 

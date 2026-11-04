@@ -279,6 +279,7 @@ test.describe("visual regression baseline", () => {
         timeout: routeReadyTimeoutMs
       });
     });
+    await expect(page.locator('.calendar-sky-card__body')).toContainText('The Moon stays in Leo for most of today and enters Virgo at 8:07 PM EDT.', { timeout: routeReadyTimeoutMs });
     await expect.soft(page).toHaveScreenshot("client-calendar-desktop-light.png", screenshotOptions);
 
     await page.setViewportSize({ width: 390, height: 844 });
@@ -320,6 +321,7 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
     });
     await expectReadableTheme(page, ".segmented-control__item--active, .calendar-sky-card__today, .lunar-week-day__date.is-new-disc", 4.5);
+    await expect(page.locator('.calendar-sky-card__body')).toContainText('The Moon stays in Leo for most of today and enters Virgo at 8:07 PM EDT.', { timeout: routeReadyTimeoutMs });
     await expect.soft(page).toHaveScreenshot("client-calendar-desktop-dark.png", screenshotOptions);
     assertNoBrowserErrors();
   });

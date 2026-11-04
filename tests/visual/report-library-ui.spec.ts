@@ -41,7 +41,7 @@ test("Reports route keeps the TLDR navigation and design system across themes an
         await expect(primaryNavigation).toBeVisible();
         await expect(primaryNavigation.getByRole("button", { name: "Sky" })).toBeVisible();
         await expect(primaryNavigation.getByRole("button", { name: "Calendar" })).toBeVisible();
-        await expect(primaryNavigation.getByRole("button", { name: "You" })).toBeVisible();
+        await expect(page.getByRole("button", { name: "Your profile", exact: true })).toBeVisible();
         await expect(primaryNavigation.getByRole("button", { name: "Friends" })).toBeVisible();
       } else {
         await expect(primaryNavigation).toBeHidden();

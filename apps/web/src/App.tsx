@@ -14428,6 +14428,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     }
   }
 
+  const headerProfile = !authAccountError && (remoteAccountId
+    ? authAccountChecked && userProfile?.id === remoteAccountId
+    : !isAuthConfigured || !hasStoredSupabaseSession()) ? userProfile : null;
+
   const friendChartLoadingState = resolveFriendChartLoadingState({
     authAccountChecked,
     isAuthConfigured,
@@ -14524,16 +14528,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               {(
                 <>
                   <button
-                    className={`account-nav ${navigationMode === "profile" ? "active" : ""}`}
-                    type="button"
-                    onFocus={preloadYouExperience}
-                    onClick={openYouPage}
-                    onPointerEnter={preloadYouExperience}
-                  >
-                    <SmileNavIcon />
-                    <span>You</span>
-                  </button>
-                  <button
                     className={`primary-friends-nav ${navigationMode === "friends" ? "active" : ""}`}
                     type="button"
                     aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
@@ -14587,8 +14581,19 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           </Suspense>}
           <ThemeToggleButton theme={theme} onThemeChange={setTheme} />
           <button
+            className={`topbar-icon profile-nav-button ${navigationMode === "profile" ? "active" : ""}`}
             type="button"
-            className="menu-toggle"
+            aria-label="Your profile"
+            aria-current={navigationMode === "profile" ? "page" : undefined}
+            onFocus={preloadYouExperience}
+            onPointerEnter={preloadYouExperience}
+            onClick={openYouPage}
+          >
+            {headerProfile ? <ProfileAvatar name={headerProfile.name} email={headerProfile.email} avatarUrl={headerProfile.avatarUrl} /> : <User size={22} aria-hidden="true" />}
+          </button>
+          <button
+            type="button"
+            className="topbar-icon menu-toggle"
             id="site-menu-toggle"
             ref={menuTriggerRef}
             aria-expanded={menuOpen}

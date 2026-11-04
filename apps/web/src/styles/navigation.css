@@ -212,8 +212,8 @@ html[data-scrolled] .nav-pill {
   align-items: center;
 }
 
-.theme-toggle,
-.menu-toggle {
+html[data-scrolled] .topbar-icon,
+.topbar-icon {
   flex: none;
   display: grid;
   place-items: center;
@@ -224,8 +224,8 @@ html[data-scrolled] .nav-pill {
   background: var(--floating-button-bg);
   color: var(--ink);
   box-shadow: var(--nav-rest-shadow);
-  backdrop-filter: blur(0) saturate(1);
-  -webkit-backdrop-filter: blur(0) saturate(1);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   transition:
     background-color 320ms cubic-bezier(.4, 0, .2, 1),
     border-color 320ms cubic-bezier(.4, 0, .2, 1),
@@ -234,27 +234,26 @@ html[data-scrolled] .nav-pill {
     transform 160ms ease;
 }
 
-html[data-scrolled] .theme-toggle,
-html[data-scrolled] .menu-toggle {
-  border-color: var(--floating-button-border);
-  background: var(--floating-button-bg);
-  box-shadow: var(--nav-rest-shadow);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+.profile-nav-button .profile-avatar {
+  width: 100%;
+  height: 100%;
+  background: var(--avatar-owner-bg);
+  color: var(--avatar-owner-fg);
+  font-size: var(--avatar-initial-size);
 }
 
-.theme-toggle:hover,
-.menu-toggle:hover {
-  --floating-button-hover-lift: var(--ds-optical-offset-1);
+.topbar .profile-nav-button[aria-current="page"] {
+  border-color: var(--nav-link-active-fg);
+}
 
+.topbar-icon:hover {
   border-color: var(--floating-button-border-hover);
   background: var(--floating-button-bg-hover);
   color: var(--ink);
-  transform: translateY(var(--floating-button-hover-lift));
+  transform: translateY(var(--ds-optical-offset-1));
 }
 
-.theme-toggle svg,
-.menu-toggle svg {
+.topbar-icon svg {
   width: var(--top-action-icon-size);
   height: var(--top-action-icon-size);
 }
@@ -264,7 +263,8 @@ html[data-scrolled] .menu-toggle {
   height: var(--size-3);
 }
 
-.theme-toggle {
+.theme-toggle,
+.profile-nav-button {
   padding: 0;
 }
 
@@ -327,14 +327,14 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   color: var(--button-fg);
 }
 
-:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle, .floating-back-button) {
+:is(.theme-dark, [data-theme="dark"]) :where(.topbar-icon, .floating-back-button) {
   border-color: var(--floating-button-border);
   background: var(--floating-button-bg);
   color: var(--ink);
   box-shadow: var(--nav-rest-shadow);
 }
 
-:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle, .floating-back-button):hover {
+:is(.theme-dark, [data-theme="dark"]) :where(.topbar-icon, .floating-back-button):hover {
   border-color: var(--floating-button-border-hover);
   background: var(--floating-button-bg-hover);
   color: var(--ink);

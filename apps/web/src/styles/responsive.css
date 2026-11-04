@@ -1302,6 +1302,14 @@
 }
 
 @media (max-width: 520px) {
+  .app-shell:has(.floating-back-button) .brand-word {
+    display: none;
+  }
+
+  .app-shell:has(.floating-back-button):has(.sky-header-date-button) .theme-toggle {
+    display: none;
+  }
+
   .topbar:has(.sky-header-date-button) .brand-word { display: none; }
 
   :is(.mode-guest, .mode-member, .mode-profile, .mode-friends) .sky-header-date-button {
@@ -1323,6 +1331,25 @@
 }
 
 @media (max-width: 380px) {
+  .topbar {
+    gap: var(--space-1);
+    padding-inline: var(--space-2);
+  }
+
+  .topbar .topbar-actions {
+    gap: var(--space-1);
+  }
+
+  .topbar .nav-pill {
+    padding-inline: var(--space-1);
+  }
+
+  .topbar .sky-header-date-button {
+    gap: var(--space-1);
+    min-width: 0;
+    padding-inline: var(--space-1);
+  }
+
   .app-shell:has(.floating-back-button):has(.sky-header-date-button) {
     --mobile-control-inset: var(--space-2);
   }

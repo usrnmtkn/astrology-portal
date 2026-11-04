@@ -3586,7 +3586,7 @@ test.describe("client-facing user flow case studies", () => {
     await captureResponsiveSurface(page, "desktop", "sky");
     await expectNoHorizontalOverflow(page, "Desktop Sky");
 
-    await page.getByRole("button", { name: "You" }).click();
+    await page.getByRole("button", { name: "Your profile", exact: true }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
     await captureResponsiveSurface(page, "desktop", "you");
     await expectNoHorizontalOverflow(page, "Desktop You");

@@ -186,7 +186,7 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   await expect(page.locator(".lunar-milestones")).toHaveCount(0);
   await page.getByRole("tab", { name: "Month", exact: true }).click();
   await expect(page.locator(".lunar-calendar-day[data-calendar-date='2026-11-27']")).toBeVisible();
-  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true }).click();
+  await page.getByRole("button", { name: "Your profile", exact: true }).click();
   await expect(page.getByRole("button", { name: /Nov 28/ })).toBeVisible();
 });
 

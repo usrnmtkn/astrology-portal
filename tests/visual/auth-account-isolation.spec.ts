@@ -26,6 +26,49 @@ async function signOutSignal(page: Page) {
   }, key);
 }
 
+for (const photo of [false, true]) test(`profile avatar hides a different cached account during restored login: ${photo ? 'photo' : 'initials'}`, async ({ page }) => {
+  const account = { ...owner, id: '33333333-3333-4333-8333-333333333333', email: 'verified-b@example.test', user_metadata: { name: 'Verified B' } };
+  const avatarA = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="green"/></svg>';
+  const avatarB = avatarA.replace('green', 'purple');
+  const cached = { id: owner.id, name: 'Cached A', email: owner.email, provider: 'google', charts: [], ...(photo ? { avatarUrl: avatarA } : {}) };
+  const current = { ...cached, id: account.id, name: 'Verified B', email: account.email, ...(photo ? { avatarUrl: avatarB } : {}) };
+  await page.addInitScript(({ key, account, cached }) => {
+    if (sessionStorage.getItem('avatar-account-seeded')) return;
+    sessionStorage.setItem('avatar-account-seeded', 'true');
+    localStorage.setItem(key, JSON.stringify({ user: account, access_token: 'synthetic-b', refresh_token: 'synthetic-refresh', token_type: 'bearer', expires_at: Math.floor(Date.now() / 1000) + 3600 }));
+    localStorage.setItem('tldrastro:userProfile', JSON.stringify(cached));
+    localStorage.setItem('tldrastro:pageAnimations', 'off');
+  }, { key, account, cached });
+  await page.route('**/auth/v1/**', route => route.fulfill({ json: account }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+  let profileReads = 0, release!: () => void;
+  const hydration = new Promise<void>(resolve => { release = resolve; });
+  await page.route('**/rest/v1/user_profiles?**', async route => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    expect(new URL(route.request().url()).searchParams.get('user_id')).toBe(`eq.${account.id}`);
+    profileReads++;
+    await hydration;
+    await route.fulfill({ json: { data: { version: 1, profile: current } } });
+  });
+  try {
+    await page.goto('/#you');
+    await expect.poll(() => profileReads).toBeGreaterThan(0);
+    const avatar = page.getByRole('button', { name: 'Your profile', exact: true });
+    await expect(avatar).toBeVisible();
+    await expect(avatar).not.toContainText('CA');
+    await expect(avatar.locator('img')).toHaveCount(0);
+    await expect(avatar.locator('svg')).toBeVisible();
+    release();
+    if (photo) await expect(avatar.locator('img')).toHaveAttribute('src', avatarB);
+    else await expect(avatar).toHaveText('VB');
+    await page.reload();
+    if (photo) await expect(avatar.locator('img')).toHaveAttribute('src', avatarB);
+    else await expect(avatar).toHaveText('VB');
+  } finally {
+    release();
+  }
+});
+
 test("auth access clears private report rows on sign-out and ignores a late read", async ({ page }) => {
   await seed(page);
   let delay = false, reads = 0, release!: () => void;
@@ -165,11 +208,11 @@ test("restored login does not reopen a saved Requests tab", async ({ page }) => 
   await seedSavedRequests(page);
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await expect(page).not.toHaveURL(/friends.*requests/);
   await page.reload();
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await expect(page).not.toHaveURL(/friends.*requests/);
 });
 
@@ -179,7 +222,7 @@ test("OAuth login replaces an old Requests return with You", async ({ page }) =>
   await page.goto("/?readerReturn=%2F%23friends%3Ftab%3Drequests#access_token=synthetic-callback&refresh_token=synthetic-refresh&expires_in=3600&token_type=bearer");
   await expect(page).toHaveURL(/\/#you$/);
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await page.screenshot({ path: "test-results/login-returns-to-you.png" });
 });
 
@@ -200,7 +243,7 @@ test("email login ignores a stale Requests return", async ({ page }) => {
   await page.getByLabel("Password", { exact: true }).fill("synthetic-test-password");
   await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await expect(page).not.toHaveURL(/friends.*requests/);
 });
 

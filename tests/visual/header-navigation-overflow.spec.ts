@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '../helpers/polish-test';
 import { READER_ROW_SCHEMA } from '../../apps/web/src/content/readerRowSchema.mjs';
 
+test.beforeEach(async ({ page }) => {
+  await page.route('**/rest/v1/content_publications*', route => route.fulfill({ json: [] }));
+  await page.route('**/rest/v1/rpc/content_runtime_revision', route => route.fulfill({ json: 1 }));
+});
+
 async function expectFittingHeader(page: Page) {
   await expect.poll(() => page.locator('.topbar').evaluate(header => {
     const pill = header.querySelector<HTMLElement>('.nav-pill')!;
@@ -24,6 +29,19 @@ async function expectFittingHeader(page: Page) {
   })).toEqual({ scrollLeft: 0, fits: true, separate: true, logoFits: true, pageFits: true, scrollable: false });
 }
 
+async function expectProfileBesideMenu(page: Page) {
+  const profile = page.getByRole('button', { name: 'Your profile', exact: true });
+  await expect(profile).toBeVisible();
+  await expect(page.locator('.topbar-actions > .theme-toggle')).toBeVisible();
+  await expect(profile).toHaveCSS('border-radius', '999px');
+  await page.mouse.move(0, 0);
+  await expect.poll(() => profile.evaluate(button => {
+    const box = button.getBoundingClientRect();
+    const menu = button.nextElementSibling!.getBoundingClientRect();
+    return Math.abs(box.width - box.height) < 0.1 && box.right < menu.left && Math.abs(box.top - menu.top) < 0.1;
+  })).toBe(true);
+}
+
 for (const profile of [false, true]) for (const theme of ['light', 'dark']) {
   test(`header overflow keeps whole items and Guide reachable: ${profile ? 'member' : 'guest'}, ${theme}`, async ({ page }) => {
     await page.addInitScript(({ profile, theme }) => {
@@ -41,15 +59,19 @@ for (const profile of [false, true]) for (const theme of ['light', 'dark']) {
     await expect(primary.getByRole('button', { name: 'Guide', exact: true })).toBeVisible();
     if (profile) await expect(primary.getByRole('button', { name: 'Friends', exact: true })).toBeVisible();
 
-    const destinations = ['Sky', 'Calendar', 'Horoscopes', 'Guide', 'You', 'Friends'];
-    for (const width of [1440, 1200, 1100, 1081, 1080, 800, 390, 1440]) {
+    const destinations = ['Sky', 'Calendar', 'Horoscopes', 'Guide', 'Friends'];
+    const menuDestinations = ['Sky', 'Calendar', 'Horoscopes', 'Guide', 'You', 'Friends'];
+    for (const width of [1440, 1200, 1100, 1081, 1080, 800, 390, 320, 1440]) {
       await page.setViewportSize({ width, height: 1000 });
       await expectFittingHeader(page);
+      await expectProfileBesideMenu(page);
+      await expect(primary.getByRole('button', { name: 'You', exact: true })).toHaveCount(0);
+      if (profile) await expect(page.locator('.profile-nav-button .profile-avatar')).toHaveText('SR');
       const visible = await primary.locator('button:visible').allTextContents();
       if (width === 1440) expect(visible).toEqual(destinations);
       await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-      expect((await page.getByRole('menu', { name: 'Site menu' }).getByRole('menuitem').allTextContents()).slice(0, destinations.length)).toEqual(destinations);
-      for (const name of destinations) {
+      expect((await page.getByRole('menu', { name: 'Site menu' }).getByRole('menuitem').allTextContents()).slice(0, menuDestinations.length)).toEqual(menuDestinations);
+      for (const name of menuDestinations) {
         await expect(page.getByRole('menuitem', { name, exact: true })).toBeVisible();
       }
       await expect(page.getByRole('menuitem', { name: 'Articles & Guides', exact: true })).toHaveCount(0);
@@ -91,11 +113,13 @@ test('reports shares the stationary header and mobile menu', async ({ page }) =>
   for (const width of [1440, 1081, 390, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await expectFittingHeader(page);
+    await expectProfileBesideMenu(page);
     await page.getByRole('button', { name: 'Open menu', exact: true }).click();
-    const destinations = ['Sky', 'Calendar', 'Horoscopes', 'Guide', 'You', 'Friends'];
+    const destinations = ['Sky', 'Calendar', 'Horoscopes', 'Guide', 'Friends'];
+    const menuDestinations = ['Sky', 'Calendar', 'Horoscopes', 'Guide', 'You', 'Friends'];
     expect(await page.locator('.site-nav button').allTextContents()).toEqual(destinations);
-    expect((await page.getByRole('menu', { name: 'Site menu' }).getByRole('menuitem').allTextContents()).slice(0, destinations.length)).toEqual(destinations);
-    for (const name of destinations) {
+    expect((await page.getByRole('menu', { name: 'Site menu' }).getByRole('menuitem').allTextContents()).slice(0, menuDestinations.length)).toEqual(menuDestinations);
+    for (const name of menuDestinations) {
       await expect(page.getByRole('menuitem', { name, exact: true })).toBeVisible();
     }
     await page.keyboard.press('Escape');
@@ -129,7 +153,9 @@ for (const theme of ['light', 'dark']) {
       const actions = header.querySelector('.topbar-actions')!.getBoundingClientRect();
       return { top: pill.top, height: pill.height, center: (pill.left + actions.right) / 2 };
     });
-    expect(group).toEqual({ top: 56, height: 56, center: 720 });
+    expect(group.top).toBe(56);
+    expect(group.height).toBe(56);
+    expect(group.center).toBeCloseTo(720, 1);
     await page.screenshot({ path: `test-results/design-handoff-shell-${theme}-desktop.png` });
 
     for (const width of [390, 320]) {
@@ -170,7 +196,7 @@ for (const theme of ['light', 'dark']) {
       await page.setViewportSize({ width, height: 1000 });
       await expectFittingHeader(page);
       const controls = await page.locator('.topbar').evaluate(header => {
-        const boxes = ['.nav-pill', '.sky-header-date-button', '.menu-toggle'].map(selector => header.querySelector(selector)!.getBoundingClientRect());
+        const boxes = ['.nav-pill', '.sky-header-date-button', '.theme-toggle', '.profile-nav-button', '.menu-toggle'].map(selector => header.querySelector(selector)!.getBoundingClientRect());
         return boxes.every((box, index) => box.left >= 0 && box.right <= innerWidth && (index === 0 || boxes[index - 1].right < box.left));
       });
       expect(controls).toBe(true);
@@ -185,3 +211,41 @@ for (const theme of ['light', 'dark']) {
     }
   });
 }
+
+for (const photo of [false, true]) test(`profile avatar opens the saved profile and survives reload: ${photo ? 'photo' : 'initials'}`, async ({ page }) => {
+  const avatarUrl = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56"><rect width="56" height="56" fill="teal"/></svg>';
+  await page.addInitScript(({ photo, avatarUrl }) => {
+    localStorage.setItem('tldrastro:pageAnimations', 'off');
+    localStorage.setItem('tldrastro:userProfile', JSON.stringify({
+      id: 'header-fixture', name: 'Synthetic Reader', email: 'header@example.test', provider: 'email', charts: [],
+      ...(photo ? { avatarUrl } : {}),
+    }));
+  }, { photo, avatarUrl });
+  await page.goto('/#articles');
+  const profile = page.getByRole('button', { name: 'Your profile', exact: true });
+  await expectProfileBesideMenu(page);
+  if (photo) {
+    await expect(profile.locator('img')).toHaveAttribute('src', avatarUrl);
+    await expect.poll(() => profile.locator('img').evaluate(image => (image as HTMLImageElement).naturalWidth)).toBe(56);
+  } else await expect(profile).toHaveText('SR');
+  await page.screenshot({ path: `test-results/profile-avatar-${photo ? 'photo' : 'initials'}-desktop.png`, clip: { x: 0, y: 40, width: 1440, height: 100 } });
+  await profile.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#you$/u);
+  await expect(profile).toHaveAttribute('aria-current', 'page');
+  await expect(page.getByRole('heading', { name: 'Create your chart.', exact: true })).toBeVisible();
+  await page.reload();
+  await expect(profile).toHaveAttribute('aria-current', 'page');
+  await expectProfileBesideMenu(page);
+  const activeBorder = await profile.evaluate(button => getComputedStyle(button).borderTopColor);
+  await page.locator('html').evaluate(html => html.setAttribute('data-scrolled', ''));
+  await expect(profile).toHaveCSS('border-top-color', activeBorder);
+  await expectProfileBesideMenu(page);
+});
+
+test('guest profile button opens sign-up', async ({ page }) => {
+  await page.goto('/#articles');
+  await page.getByRole('button', { name: 'Your profile', exact: true }).click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Create an account', exact: true })).toBeVisible();
+});
