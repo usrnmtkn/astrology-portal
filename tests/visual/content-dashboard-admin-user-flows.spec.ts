@@ -3726,6 +3726,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const compatibilityReads: URL[] = [];
     let compatibilityWrite: { method: string; payload: Record<string, unknown> } | null = null;
+    async function saveCreatedCompatibility(contentKey: string, button: Locator) {
+      const [response] = await Promise.all([
+        page.waitForResponse(response => new URL(response.url()).pathname === '/api/admin/generated-content'
+          && response.request().method() === 'POST' && response.request().postDataJSON()?.contentKey === contentKey),
+        button.click()
+      ]);
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
+      expect(await response.json()).toMatchObject({ ok: true, rows: [{ content_key: contentKey }] });
+    }
     const directionalCompatibilityRow = {
       ...generatedContentRows.find((row) => row.id === "qa-compatibility-content-row")!,
       id: "qa-directional-compatibility-content-row",
@@ -3846,7 +3856,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByLabel("Content key")).toHaveValue("authored/compat-pair/mars/pisces/aquarius");
     await compatibilityEditor.getByLabel("Compatibility write-up").fill("Mars between Pisces and Aquarius needs room for both instinct and perspective.");
     await expect(newCardSave).toBeEnabled();
-    await newCardSave.click();
+    await saveCreatedCompatibility('authored/compat-pair/mars/pisces/aquarius', newCardSave);
     expect(compatibilityWrite?.method).toBe("POST");
     expect(compatibilityWrite?.payload).toMatchObject({
       contentKey: "authored/compat-pair/mars/pisces/aquarius",
@@ -3876,7 +3886,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByRole("region", { name: "Content role" })).toHaveCount(0);
     await compatibilityEditor.getByLabel("Phrase title").fill("Repair timing phrase");
     await compatibilityEditor.getByLabel("Reusable phrase").fill("Name the timing mismatch before assigning blame.");
-    await compatibilityEditor.getByRole("button", { name: "Save", exact: true }).click();
+    await saveCreatedCompatibility('vocab/relationship/repair-timing-phrase', compatibilityEditor.getByRole("button", { name: "Save", exact: true }));
     expect(compatibilityWrite?.payload).toMatchObject({
       contentKey: "vocab/relationship/repair-timing-phrase",
       lane: "reference",
