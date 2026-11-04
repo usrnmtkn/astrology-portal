@@ -36,6 +36,20 @@ The preview is explicitly labeled **Saved draft · Not published**. It simulates
 which exact draft would match the calculated sky; publication eligibility on
 the public reader remains unchanged. Draft coverage does not publish a reading.
 
+Complete published readings also accept individual calculated placement slots,
+such as `{sunPlacementSentence}` and `{marsPlacement}`, instead of requiring an
+author's sentences to contain a combined list. Each qualifying planet must have
+exactly one individual placement slot when this form supplies coverage. Slots
+for other planets or repeated individual placements fail validation. The
+`Sentence` form capitalizes the first word; all signs and motion still come
+from the exact reading identity. Reader and Studio retain the authored order,
+punctuation and complete wording while linking the individual placements.
+
+The synthetic regressions in `test-sky-debility-interpretation.mts`,
+`test-studio-owner-publication.mts` and `sky-debility-reader.spec.ts` cover
+separate clauses, a planet in both conditions, sentence-initial capitalization,
+retrograde labels, versioned publication, public reads and browser reload.
+
 Verification commands:
 
 ```sh
