@@ -38,7 +38,7 @@ import { isTransitNatalFamilyKey, isTransitNatalSituationKey, packagedTransitOpe
 import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors, type SkySummaryField } from "../../web/src/content/skyDailySummaryCatalog";
 import { SKY_DEBILITY_KEY_PREFIX, skyDebilityFields, skyDebilityTemplateErrors } from "../../web/src/content/skyDebilityCatalog";
 import { frictionFlowDraftErrors } from "../../web/src/content/frictionFlowTemplateValidation";
-import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "../../web/src/content/skyDebilityInterpretation";
+import { SKY_DEBILITY_INTERPRETATION_PREFIX } from "../../web/src/content/skyDebilityInterpretationPrefix.mjs";
 import { refreshContentPublications } from "../../web/src/services/contentPublications";
 import { installContentPublications, isContentRetired, subscribeToContentPublications, validContentPublication } from "../../web/src/content/contentPublicationState";
 import { lunarContentIdentity } from "./lunarCalendarContent";
