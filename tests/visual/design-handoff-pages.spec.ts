@@ -1979,7 +1979,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) for(const au
   await page.locator('.natal-sun-card:visible').screenshot({path:test.info().outputPath(`sect-card-${sect}-${audience}-${width}-${theme}.png`)});
   await page.goForward();await expect(title).toBeVisible();await page.goBack();await expect(pill).toBeFocused();
   await page.goto(child);await expect(title).toBeVisible();await page.getByRole('button',{name:'Back',exact:true}).click();await expect(pill).toBeVisible();
-  if(width>800){await pill.click();await page.getByRole('button',{name:audience==='you'?'You':'Sky',exact:true}).click();await expect(article).toBeHidden();expect(new URL(page.url()).pathname).toBe('/');}
+  if(width>800){await pill.click();await page.getByRole('button',{name:audience==='you'?'Your profile':'Sky',exact:true}).click();await expect(article).toBeHidden();expect(new URL(page.url()).pathname).toBe('/');}
  });
 }
 
