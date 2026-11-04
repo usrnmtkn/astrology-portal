@@ -211,7 +211,7 @@
     "test:placement-dignity-editor": "node --import tsx scripts/test-placement-dignity-editor.mts",
     "test:placement-dignity": "node scripts/test-planet-sign-dignity.mjs && node --import tsx scripts/test-sky-placement-planet-sign-template.mjs && node --import tsx scripts/test-placement-dignity-runtime.mts && node --import tsx scripts/test-sky-debility-date-preview.mts",
     "test:sky-placement-article-variables": "node scripts/test-sky-placement-article-variable-unit.mjs && node --import tsx scripts/test-sky-placement-article-variables.mts",
-    "test:sky-saved-template-reader": "node --import tsx scripts/test-sky-saved-template-reader.mts && node --import tsx scripts/test-sky-saved-template-publication.mts",
+    "test:sky-saved-template-reader": "node --import tsx scripts/test-sky-saved-template-reader.mts && node --import tsx scripts/test-sky-saved-template-publication.mts && node --import tsx scripts/test-sky-ingress-section-compat.mts",
     "test:weekly-focus-tags": "node --import tsx scripts/test-weekly-focus-tags.mjs",
     "test:zodiac-season-variables": "node --import tsx scripts/test-zodiac-season-variables.mts && node --import tsx scripts/test-zodiac-season-renderers.mts",
     "test:event-dates": "node --import tsx scripts/test-app-event-date-consistency.mts",

@@ -1,5 +1,5 @@
 import { approvedSkySeasonFallback } from "./skySeasonFallback.js";
-import { assertCompiledSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditionRecord, skyArticleReaderHoroscopeIntroduction, type SkyArticleEditionCandidate } from "./skyArticleTemplateCompiler.js";
+import { selectActiveSkyArticleEdition, skyArticleEditionRecord, skyArticleReaderHoroscopeIntroduction, type SkyArticleEditionCandidate } from "./skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay } from "./skyIngressEssay.mjs";
 import { publicationTimestamp, type ContentPublication } from "./contentPublicationState.js";
 import { approvedSkyArticleReaderEdition } from './skyArticleEditionReader.js';
@@ -13,10 +13,11 @@ export function skyIngressEssayReaderSection(
   publicationFor?: (key: string) => ContentPublication | undefined
 ) {
   const rows = [...candidates];
-  const eligible = rows.filter(row => approvedSkyArticleReaderEdition({
+  const readerEdition = (row: (typeof rows)[number]) => approvedSkyArticleReaderEdition({
     content_key: row.contentKey, status: row.status, lane: row.lane, review_state: row.reviewState,
     headline: row.headline, summary: row.summary, body: row.body, sections: row.sections, source_snapshot: row.sourceSnapshot
-  }));
+  });
+  const eligible = rows.filter(row => readerEdition(row));
   // Stable selector ordering retains the existing ingress when coverage ties.
   const ingress = (row: (typeof rows)[number]) => isSkyIngressEssay(skyArticleEditionRecord((row.sections as { skyArticleEdition?: unknown })?.skyArticleEdition)?.format);
   const selected = selectActiveSkyArticleEdition([...eligible.filter(ingress), ...eligible.filter(row => !ingress(row))], context);
@@ -38,7 +39,8 @@ export function skyIngressEssayReaderSection(
       risingHoroscopes: [], keyDates: [], tagline: null, closingCharge: null
     };
   }
-  const edition = assertCompiledSkyArticleEdition(selected.edition);
+  const edition = readerEdition(selected.content as (typeof rows)[number]);
+  if (!edition) return null;
   const introduction = skyArticleReaderHoroscopeIntroduction(edition);
   if (publicationFor) {
     // Loading requirements need the selected candidate's exact version; the

@@ -1,4 +1,4 @@
-import { isSkyIngressEssay, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
+import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
 import { resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../../../src/shared/skyArticleVariableDraft.js';
 import { skyMoonDatedDayBounds } from '../../../../src/shared/skyMoonDatedScope.js';
 
@@ -257,6 +257,20 @@ export function skyArticleReaderCopyIsConsistent(edition: CompiledSkyArticleEdit
     if (!passage || seen.has(passage.house) || block.body !== passage.body.trim()) return false;
     seen.add(passage.house); return true;
   });
+}
+
+/** Legacy v2 imports labeled their sole unheaded section outside the signed
+ * compilation. Derive that presentation without trusting or storing its label. */
+export function skyArticleReaderEditionProjection(edition: CompiledSkyArticleEdition) {
+  if (skyArticleReaderCopyIsConsistent(edition)) return edition;
+  if (edition.format !== SKY_INGRESS_ESSAY_FORMAT || edition.housePassages.length || edition.aspectPassages.length
+    || edition.articleSections.length !== 1 || /^##(?:\s|$)/mu.test(edition.body)) return null;
+  const stored = edition.articleSections[0];
+  const sections = markdownSections(edition.body);
+  if (typeof stored.heading !== 'string' || !stored.heading.trim() || stored.body !== edition.body
+    || sections.length !== 1 || sections[0].heading !== '' || sections[0].body !== edition.body) return null;
+  const projected = { ...edition, articleSections: sections };
+  return skyArticleReaderCopyIsConsistent(projected) ? projected : null;
 }
 
 export function skyArticleEditableFields(edition: CompiledSkyArticleEdition): SkyArticleEditableFields {

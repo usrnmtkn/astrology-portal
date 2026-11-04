@@ -1,4 +1,4 @@
-import { assertCompiledSkyArticleEdition, hasExactSkyArticleOwnerApproval, skyArticleEditionContentKey, skyArticleReaderCopyIsConsistent } from './skyArticleTemplateCompiler.js';
+import { assertCompiledSkyArticleEdition, hasExactSkyArticleOwnerApproval, skyArticleEditionContentKey, skyArticleReaderEditionProjection } from './skyArticleTemplateCompiler.js';
 import { isSkyIngressEssay } from './skyIngressEssay.mjs';
 
 type ReaderEditionRow = {
@@ -18,10 +18,9 @@ export function approvedSkyArticleReaderEdition(row: ReaderEditionRow) {
       || !hasExactSkyArticleOwnerApproval(edition, row.source_snapshot)
       || typeof edition.compiledMarkdown !== 'string' || !edition.compiledMarkdown.trim()
       || edition.compiledMarkdown.match(/^#\s+(.+)$/mu)?.[1]?.trim() !== edition.headline
-      || !skyArticleReaderCopyIsConsistent(edition)
       || !isSkyIngressEssay(edition.format) && (edition.housePassages.length !== 12
         || edition.housePassages.some(passage => typeof passage.body !== 'string' || !passage.body.trim()))) return null;
-    return edition;
+    return skyArticleReaderEditionProjection(edition);
   } catch {
     return null;
   }

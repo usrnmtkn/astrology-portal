@@ -1,5 +1,6 @@
 import {hasExactStudioOwnerApproval} from './_lib/studio-owner-publication.js';
 import { skyArticleCompiledHashMatches } from './_lib/sky-article-reader-integrity.js';
+import { approvedSkyArticleReaderEdition } from '../apps/web/src/content/skyArticleEditionReader.js';
 import { articleLibraryPrefixes, articlePublicationIsDue } from "../src/shared/articleLibrary.js";
 import { createHash } from "node:crypto";
 import { isStudioLunationRevision } from '../apps/web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
@@ -171,9 +172,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!publications.has(publicationLedgerKey)) throw new Error('Publication state is unavailable.');
     const admitted = rows.filter(row => (!row.source_snapshot?.studioOwnerApproval || hasExactStudioOwnerApproval(row)) && readerRowIsEligible(row)
       && publicationAllowsContent(row.content_key, row.id, row.updated_at, row.target_date, publications));
-    res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(row => projectReaderRow(row, {
-      ownerApprovalVerified: hasExactStudioOwnerApproval(row)
-    })).filter(Boolean), publications: ledger,
+    res.end(JSON.stringify({ schema: READER_ROW_SCHEMA, rows: admitted.map(row => {
+      const edition = row.event_type === 'sky-article-edition' ? approvedSkyArticleReaderEdition(row) : null;
+      const projected = edition ? { ...row, sections: { ...(row.sections as Record<string, unknown>), skyArticleEdition: edition } } : row;
+      return projectReaderRow(projected, { ownerApprovalVerified: hasExactStudioOwnerApproval(row) });
+    }).filter(Boolean), publications: ledger,
       nextCursor: rows.length === pageSize ? rows.at(-1)!.id : null }));
   } catch (error) {
     const invalidBody = error instanceof AdminHttpError && [400, 413].includes(error.statusCode);
