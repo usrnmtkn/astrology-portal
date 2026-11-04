@@ -145,7 +145,7 @@ export function SkyDebilityStudio({ rows, onEdit, onOpenDraft, secret, busy }: {
 
     <details className="admin-workspace-details">
       <AdminDisclosureSummary>Complete interpretation for these placements</AdminDisclosureSummary>
-      <p>Write the complete heading and card for this exact preview. List placements once with {"{planetList}"}, the applicable {"{detrimentPlanetList}"}/{"{fallPlanetList}"}, or individual variables for every qualifying planet. Preserve sentence order with {"{sunPlacementSentence}"} (first word capitalized) and {"{marsPlacement}"} (inline). Placements render as calculated links.</p>
+      <p>Write the heading and complete card together. This version applies only when every qualifying planet, sign, and motion matches the preview. Use {"{planetList}"} once, or use {"{detrimentPlanetList}"} and {"{fallPlanetList}"} for the applicable categories. To keep an existing sentence's order, use an individual placement variable for every qualifying planet, such as {"{sunPlacementSentence}"} and {"{marsPlacement}"}. Sentence variants capitalize the first word. Each placement displays as a calculated link.</p>
       <p>{interpretationRow ? <ContentLiveStatusBadge row={interpretationRow} /> : "No complete interpretation is saved for this combination. The existing phrase template supplies the reader card."}</p>
       {interpretationRow?.inventory_only && <p role="status">Saved interpretation is loading.</p>}
       <StudioButton type="button" disabled={busy || !interpretationKey || interpretationRow?.inventory_only} onClick={() => {
