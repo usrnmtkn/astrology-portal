@@ -32,7 +32,7 @@ async function expectFittingHeader(page: Page) {
 async function expectProfileBesideMenu(page: Page) {
   const profile = page.getByRole('button', { name: 'Your profile', exact: true });
   await expect(profile).toBeVisible();
-  await expect(page.locator('.topbar-actions > .theme-toggle')).toBeVisible();
+  await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
   await expect(profile).toHaveCSS('border-radius', '999px');
   await page.mouse.move(0, 0);
   await expect.poll(() => profile.evaluate(button => {
@@ -70,6 +70,10 @@ for (const profile of [false, true]) for (const theme of ['light', 'dark']) {
       const visible = await primary.locator('button:visible').allTextContents();
       if (width === 1440) expect(visible).toEqual(destinations);
       await page.getByRole('button', { name: 'Open menu', exact: true }).click();
+      for (const option of ['light', 'dark']) {
+        await expect(page.locator('.site-menu-theme').getByRole('button', { name: option, exact: true }))
+          .toHaveAttribute('aria-pressed', String(option === theme));
+      }
       expect((await page.getByRole('menu', { name: 'Site menu' }).getByRole('menuitem').allTextContents()).slice(0, menuDestinations.length)).toEqual(menuDestinations);
       for (const name of menuDestinations) {
         await expect(page.getByRole('menuitem', { name, exact: true })).toBeVisible();
@@ -196,7 +200,7 @@ for (const theme of ['light', 'dark']) {
       await page.setViewportSize({ width, height: 1000 });
       await expectFittingHeader(page);
       const controls = await page.locator('.topbar').evaluate(header => {
-        const boxes = ['.nav-pill', '.sky-header-date-button', '.theme-toggle', '.profile-nav-button', '.menu-toggle'].map(selector => header.querySelector(selector)!.getBoundingClientRect());
+        const boxes = ['.nav-pill', '.sky-header-date-button', '.profile-nav-button', '.menu-toggle'].map(selector => header.querySelector(selector)!.getBoundingClientRect());
         return boxes.every((box, index) => box.left >= 0 && box.right <= innerWidth && (index === 0 || boxes[index - 1].right < box.left));
       });
       expect(controls).toBe(true);

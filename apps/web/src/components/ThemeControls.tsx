@@ -2,7 +2,7 @@ import { Moon, Sun } from "lucide-react";
 
 export type UiThemeOption = "light" | "dark";
 
-/** The same theme action stays beside the menu on every reader route. */
+/** Accessible icon control for standalone theme surfaces. */
 export function ThemeToggleButton({ theme, onThemeChange }: {
   theme: UiThemeOption;
   onThemeChange: (theme: UiThemeOption) => void;

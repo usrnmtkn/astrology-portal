@@ -1,6 +1,7 @@
 import { location, now, fixtureProfile, seed, authenticate, patternPreview, insightPreview, patternInsightFixtures, inspectMemberSourceFailures, withFinishedSocialReads } from '../helpers/synthetic-member-sources';
 import { expect, syntheticMemberTest, test, type Page } from '../helpers/polish-test';
 import { expectReadableTheme, expectRenderedTextContrast } from '../helpers/theme-contrast';
+import { expectMenuTheme, selectMenuTheme } from '../helpers/menu-theme';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { getAstrodienstSky } from '../../apps/web/src/services/ephemeris';
 import { zonedDateTimeToUtc } from '../../apps/web/src/services/timezones';
@@ -1280,7 +1281,7 @@ for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) test(`Ha
 });
 
 
-for (const width of [320,390,768,1440]) test(`Persistent header theme control and dark readability ${width}`,async({page})=>{
+for (const width of [320,390,768,1440]) test(`Overflow theme control persists and preserves dark readability ${width}`,async({page})=>{
   test.setTimeout(180_000);await page.setViewportSize({width,height:1100});
   const natal=await seed(page,'light');await authenticate(page);
   await page.route('**/rest/v1/rpc/list_social_friends',route=>route.fulfill({json:[{friendship_id:'theme-friendship',user_id:'theme-connected',display_name:'Theme Friend',handle:'theme_friend',natal_chart:natal,viewer_shares_chart:true,friend_shares_chart:true,accepted_at:now}]}));
@@ -1303,29 +1304,22 @@ for (const width of [320,390,768,1440]) test(`Persistent header theme control an
     await page.goto(route==='reports'?'/reports/':`/?date=2026-10-13#${route}`);
     await expect(page.locator(first).first()).toBeVisible({timeout:60_000});
     if(route==='sky')await expect(page.getByLabel('Daily sky summary')).toBeVisible({timeout:60_000});
-    const toggle=page.locator('.topbar-actions > .theme-toggle');
-    await expect(toggle).toBeVisible();
-    if(await page.locator('html').getAttribute('data-theme')==='dark')await toggle.click();
-    await expect(toggle).toHaveAccessibleName('Switch to dark mode');await expect(toggle.locator('svg')).toHaveClass(/lucide-moon/);
-    await page.mouse.move(0,0);await expect(toggle).toHaveCSS('transform','none');await expect(page.locator('.menu-toggle')).toHaveCSS('transform','none');
+    await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+    await selectMenuTheme(page,'light');
+    const profile=page.locator('.topbar-actions > .profile-nav-button');
+    await page.mouse.move(0,0);await expect(profile).toHaveCSS('transform','none');await expect(page.locator('.menu-toggle')).toHaveCSS('transform','none');
     const geometry=await page.locator('.topbar').evaluate(header=>{
-      const nav=header.querySelector('.nav-pill')!.getBoundingClientRect(),theme=header.querySelector('.theme-toggle')!.getBoundingClientRect(),menu=header.querySelector('.menu-toggle')!.getBoundingClientRect();
-      return {navRight:nav.right,themeX:theme.x,themeRight:theme.right,menuX:menu.x,themeY:theme.y,menuY:menu.y,navY:nav.y,themeSize:theme.width,menuSize:menu.width,visible:theme.x>=0&&menu.right<=innerWidth};
+      const nav=header.querySelector('.nav-pill')!.getBoundingClientRect(),profile=header.querySelector('.profile-nav-button')!.getBoundingClientRect(),menu=header.querySelector('.menu-toggle')!.getBoundingClientRect();
+      return {navRight:nav.right,profileX:profile.x,profileRight:profile.right,menuX:menu.x,profileY:profile.y,menuY:menu.y,navY:nav.y,profileSize:profile.width,menuSize:menu.width,visible:profile.x>=0&&menu.right<=innerWidth};
     });
-    expect(geometry.navRight).toBeLessThan(geometry.themeX);expect(geometry.themeRight).toBeLessThan(geometry.menuX);expect(geometry.themeY).toBe(geometry.menuY);expect(geometry.themeY).toBe(geometry.navY);expect(geometry.themeSize).toBe(geometry.menuSize);expect(geometry.themeSize).toBe(width<=720?48:56);expect(geometry.visible).toBe(true);
+    expect(geometry.navRight).toBeLessThan(geometry.profileX);expect(geometry.profileRight).toBeLessThan(geometry.menuX);expect(geometry.profileY).toBe(geometry.menuY);expect(geometry.profileY).toBe(geometry.navY);expect(geometry.profileSize).toBe(geometry.menuSize);expect(geometry.profileSize).toBe(width<=720?48:56);expect(geometry.visible).toBe(true);
     await expectReadableTheme(page,readable);
-    await toggle.focus();await page.keyboard.press('Enter');
-    await expect(page.locator('html')).toHaveAttribute('data-theme','dark');await expect(toggle).toHaveAccessibleName('Switch to light mode');await expect(toggle.locator('svg')).toHaveClass(/lucide-sun/);
+    await selectMenuTheme(page,'dark');
     await expect.poll(()=>page.evaluate(()=>localStorage.getItem('tldrastro:theme'))).toBe('dark');
     await expect(async()=>await expectReadableTheme(page,readable)).toPass({timeout:2000});
     if(narrative)await expectRenderedTextContrast(page,narrative,7);
-    if(route!=='reports'){
-      await page.getByRole('button',{name:'Open menu',exact:true}).click();
-      const appearance=page.locator('.site-menu-theme');await expect(appearance.getByRole('button',{name:'dark',exact:true})).toHaveAttribute('aria-pressed','true');
-      await appearance.getByRole('button',{name:'light',exact:true}).click();await expect(page.locator('html')).toHaveAttribute('data-theme','light');await expect(toggle).toHaveAccessibleName('Switch to dark mode');
-      await page.keyboard.press('Escape');await toggle.click();await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
-    }
-    await page.reload();await expect(page.locator(first).first()).toBeVisible({timeout:60_000});await expect(page.locator('html')).toHaveAttribute('data-theme','dark');await expect(toggle).toBeVisible();
+    await selectMenuTheme(page,'light');await selectMenuTheme(page,'dark');
+    await page.reload();await expect(page.locator(first).first()).toBeVisible({timeout:60_000});await expect(page.locator('html')).toHaveAttribute('data-theme','dark');await expectMenuTheme(page,'dark');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.evaluate(()=>scrollTo(0,0));
     await page.screenshot({path:`test-results/theme-refinement-${route.replace(/[^a-z]+/g,'-')}-${width}-dark.png`});
@@ -1341,7 +1335,7 @@ for(const width of [320,1440]) test(`Dark route error keeps navigation clear ${w
   const nav=(await page.locator('.nav-pill').boundingBox())!,card=(await error.boundingBox())!;
   expect(card.y-nav.y-nav.height).toBeCloseTo(width<=720?64:80,0);await expect(error.getByRole('button',{name:'Try again',exact:true})).toBeVisible();
   await expectReadableTheme(page,'.load-error--page p, .load-error--page h2, .load-error__retry');
-  await page.getByRole('button',{name:'Switch to light mode',exact:true}).click();await expect(page.locator('html')).toHaveAttribute('data-theme','light');
+  await selectMenuTheme(page,'light');
   await page.getByRole('button',{name:'Open menu',exact:true}).click();await page.getByRole('menuitem',{name:'Guide',exact:true}).click();await expect(page.locator('.articles-library-header')).toBeVisible();
 });
 
@@ -1412,7 +1406,7 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
     for (const paragraph of await page.locator(item.body).all()) {
       await expect(paragraph, item.route).toHaveCSS('font-family', /Newsreader/); await expect(paragraph, item.route).toHaveCSS('font-size', '19px'); await expect(paragraph, item.route).toHaveCSS('line-height', '28.5px'); await expect(paragraph, item.route).toHaveCSS('font-weight', '400'); await expect(paragraph, item.route).toHaveCSS('letter-spacing', 'normal');
     }
-    const toggle = page.locator('.topbar-actions > .theme-toggle'); await expect(toggle).toBeVisible(); await expect(toggle.locator('svg')).toHaveClass(theme === 'dark' ? /lucide-sun/ : /lucide-moon/);
+    await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0); await expectMenuTheme(page,theme as 'light'|'dark');
     await expect(page.locator('.profile-nav-button + .menu-toggle')).toBeVisible();
     if (theme === 'dark') {
       await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(18, 20, 24)'); await expect(page.locator('body')).toHaveCSS('background-image', /^none(?:, none)*$/);
@@ -1587,7 +1581,8 @@ for (const width of [390, 1440]) test(`Local theme choice survives a stale saved
     await restored;
     await expect(page.locator('.settings-header')).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-    await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveAccessibleName('Switch to light mode');
+    await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+    await expectMenuTheme(page,'dark');
     await expect.poll(() => page.evaluate(() => localStorage.getItem('tldrastro:theme'))).toBe('dark');
   }
 });

@@ -1306,10 +1306,6 @@
     display: none;
   }
 
-  .app-shell:has(.floating-back-button):has(.sky-header-date-button) .theme-toggle {
-    display: none;
-  }
-
   .topbar:has(.sky-header-date-button) .brand-word { display: none; }
 
   :is(.mode-guest, .mode-member, .mode-profile, .mode-friends) .sky-header-date-button {
