@@ -28,7 +28,7 @@ export function SkyPlacementKeyDates({ dates, intro, context, pending }: {
     const parts = new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(instant));
     return ["year", "month", "day"].map(type => parts.find(part => part.type === type)!.value).join("-");
   };
-  return <KeyDatesPanel className="sky-placement-key-dates sky-placement-article__panel" count={dates.length} pending={pending}>
+  return <KeyDatesPanel className="sky-placement-key-dates" count={dates.length} pending={pending}>
     {pending ? <p role="status">Calculating key dates…</p> : <>
       {intro && <PreparedProse text={intro} />}
       {dates.length ? <ol>{dates.map((entry, index) => {

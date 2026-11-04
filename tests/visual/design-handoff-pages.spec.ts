@@ -1420,8 +1420,8 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
     }
     await expectReadableTheme(page, `${item.title}, ${item.body}`);
     if (item.route === 'sky/placement/mercury/scorpio') {
-      await expect(page.locator('.sky-placement-article__panel[open], .retrograde-cycles__section[open]')).toHaveCount(0);
-      for (const panel of await page.locator('.sky-placement-article__panel > summary, .retrograde-cycles__section > summary').all()) { await expect(panel).toHaveCSS('font-size', '26px'); await expect(panel).toHaveCSS('line-height', '29.9px'); }
+      await expect(page.locator('.key-dates-panel[open], .retrograde-cycles__section[open]')).toHaveCount(0);
+      for (const panel of await page.locator('.key-dates-panel > summary, .retrograde-cycles__section > summary').all()) { await expect(panel).toHaveCSS('font-size', '26px'); await expect(panel).toHaveCSS('line-height', '29.9px'); }
     }
     // Compact Calendar intentionally hides the duplicate Today tag.
     if (item.route === 'calendar' && width > 720) await expectReadableTheme(page, '.calendar-sky-card__today, .lunar-calendar-day__number.is-today-disc');

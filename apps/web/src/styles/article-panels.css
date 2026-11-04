@@ -1,7 +1,6 @@
 @import url("./sky-placement-article.css");
 @import url("./report-article.css");
 
-.sky-placement-article__panel,
 .retrograde-cycles--article .retrograde-cycles__section,
 .sky-placement-article__status,
 details.key-dates-panel {
@@ -12,7 +11,6 @@ details.key-dates-panel {
   background: var(--surface);
   box-shadow: var(--card-shadow);
 }
-.sky-placement-article__panel > summary,
 .retrograde-cycles--article .retrograde-cycles__section > summary,
 .key-dates-panel > summary {
   display: flex;
@@ -27,12 +25,9 @@ details.key-dates-panel {
   color: var(--ink);
   cursor: pointer;
 }
-.sky-placement-article__panel > summary::-webkit-details-marker,
 .key-dates-panel > summary::-webkit-details-marker { display: none; }
-.sky-placement-article__panel h2,
 .key-dates-panel > summary .key-dates-panel__title { margin: 0; font: inherit; }
 .key-dates-panel__count { font-family: var(--font-ui); font-size: var(--type-ui-copy-size); color: var(--muted); }
-.sky-placement-article__chevron,
 .retrograde-cycles--article .retrograde-cycles__chevron,
 .key-dates-panel__chevron {
   display: grid;
@@ -45,9 +40,7 @@ details.key-dates-panel {
   border-radius: var(--radius-pill);
   background: var(--surface-2);
 }
-.sky-placement-article__chevron svg,
 .key-dates-panel__chevron svg { width: var(--space-4); height: var(--space-4); }
-.sky-placement-article__panel[open] > summary svg,
 .key-dates-panel[open] > summary svg { transform: rotate(180deg); }
 details.key-dates-panel,
 .article-page .key-dates-panel.article-section { padding-block: var(--space-7); }
@@ -56,7 +49,6 @@ details.key-dates-panel,
 .key-dates-panel > p { margin: var(--space-6) 0 0; }
 .key-dates-panel > p:not([class]) { font-size: var(--text-body); line-height: var(--leading-body); }
 @media (max-width: 800px) {
-  .sky-placement-article__panel,
   .retrograde-cycles--article .retrograde-cycles__section,
   .sky-placement-article__status,
   details.key-dates-panel,
