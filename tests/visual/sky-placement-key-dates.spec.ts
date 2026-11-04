@@ -14,6 +14,15 @@ const timeline = [
   ["September 20, 2026", "Sun square True Black Moon Lilith"],
   ["September 22, 2026", "Sun completes its passage through Virgo"]
 ];
+// Timeline display names and inline fact labels have separate contracts.
+const inlineAspects = [
+  ["August 27, 2026", "Sun conjunction Mercury"],
+  ["August 28, 2026", "Sun square Uranus"],
+  ["September 2, 2026", "Sun trine Lilith"],
+  ["September 10, 2026", "Sun trine Lilith"],
+  ["September 14, 2026", "Sun sextile Mars"],
+  ["September 20, 2026", "Sun square Lilith"]
+];
 for (const width of [390, 1440]) for (const withVariable of [false, true]) {
   test(`placement Key dates ${width} ${withVariable ? "inline aspects" : "without aspect token"}`, async ({ page }) => {
     test.setTimeout(120_000);
@@ -54,7 +63,7 @@ for (const width of [390, 1440]) for (const withVariable of [false, true]) {
     };
     await verifyDates();
     const body = page.locator(".article-body-inner").first();
-    await expect(body).toContainText(withVariable ? `Fixture exact dates: ${timeline.slice(1, -1).map(([date, label]) => `${date}: ${label}`).join(", ")}.` : template);
+    await expect(body).toContainText(withVariable ? `Fixture exact dates: ${inlineAspects.map(([date, label]) => `${date}: ${label}`).join(", ")}.` : template);
     await expect(body).not.toContainText("{{");
     await dates.scrollIntoViewIfNeeded();
     await dates.screenshot({ path: `test-results/sky-key-dates-${width}-${withVariable}.png` });
