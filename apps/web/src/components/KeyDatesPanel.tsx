@@ -1,6 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useId, type ComponentPropsWithoutRef, type ReactNode } from "react";
-import "../styles/key-dates-panel.css";
+import "../styles/article-panels.css";
 
 /** Shared disclosure chrome; each reader retains its verified dates and actions. */
 export function KeyDatesPanel({ children, count, pending, titleId, className = "", ...attributes }: Omit<ComponentPropsWithoutRef<"details">, "children"> & {
@@ -19,6 +19,6 @@ export function KeyDatesPanel({ children, count, pending, titleId, className = "
       {!pending && <span className="key-dates-panel__count">{count}</span>}
       <span className="key-dates-panel__chevron"><ChevronDown aria-hidden="true" /></span>
     </summary>
-    <div className="key-dates-panel__content">{children}</div>
+    {children}
   </details>;
 }
