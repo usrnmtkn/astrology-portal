@@ -75,7 +75,7 @@ async function seedYouPerformanceState(page: Page) {
     };
     const readiness: { profile?: number; milestone?: number; click?: number } = {};
     document.addEventListener("click", event => {
-      if ((event.target as Element)?.closest('nav[aria-label="Primary navigation"] button')?.textContent?.trim() === "You") {
+      if ((event.target as Element)?.closest('button[aria-label="Your profile"]')) {
         readiness.click = performance.timeOrigin + performance.now();
       }
     }, true);
