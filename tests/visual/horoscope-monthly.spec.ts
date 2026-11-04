@@ -230,7 +230,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    // reader's current month and preferred time zone differ.
    await page.goto('/?date=2026-10-10#calendar?view=month&date=2026-10-10');
    await expect(readMore).toHaveAttribute('href',`/#horoscopes?period=monthly&edition=${saved.id}`);
-   await page.evaluate(()=>localStorage.setItem('tldrastro:horoscopeLocation',JSON.stringify({label:'Tokyo',latitude:35.68,longitude:139.76,timeZone:'Asia/Tokyo'})));
+   await page.evaluate(()=>localStorage.setItem('tldrastro:horoscopeLocation',JSON.stringify({label:'Selected time zone',latitude:0,longitude:0,timeZone:'Asia/Tokyo'})));
    await page.reload();
    await readMore.click();
    await expect(overview).toContainText('You can read the exact monthly fixture opening.');
