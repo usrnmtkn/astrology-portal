@@ -519,7 +519,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       const savedVisit = page.getByRole('region', { name: 'Saved visits', exact: true });
       const workingRevision = savedVisit.getByRole('row').filter({ hasText: 'Working revision' });
       await expect(workingRevision).toHaveCount(1);
-      await expect(workingRevision.getByRole('cell', { name: 'Draft', exact: true })).toBeVisible();
+      await expect(workingRevision.getByText('Draft', { exact: true })).toBeVisible();
       await workingRevision.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(copy).toHaveValue(template);
       await expect(comparison).toContainText('Reader wording unchanged');
