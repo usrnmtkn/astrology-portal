@@ -492,7 +492,7 @@ assert.doesNotMatch(
 );
 assert.doesNotMatch(appSource, /import\s+(?!type\b)[^;]+from\s+["']\.\/components\/SettingsControls["']/u, "Global theme controls must not import Settings form controls into startup.");
 const themeControlsSource=fs.readFileSync(path.join(repoRoot,"apps/web/src/components/ThemeControls.tsx"),"utf8");
-assert.match(themeControlsSource,/export function ThemeToggleButton[\s\S]*export function AppearanceToggle/u,"The header and menu must retain the shared accessible theme controls.");
+assert.match(themeControlsSource,/export function ThemeToggleButton[\s\S]*export function AppearanceToggle/u,"Standalone surfaces, the menu, and Settings must retain the shared accessible theme controls.");
 assert.doesNotMatch(themeControlsSource,/(?:HouseSignLabelToggle|SwitchControl|CalculationMethodSettingsGroup|from ["']\.\/SettingsControls)/u,"Shared theme chrome must stay independent of Settings-only controls.");
 assert.doesNotMatch(
   appSource,

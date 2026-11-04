@@ -82,7 +82,6 @@ import type { FormEvent, MouseEvent as ReactMouseEvent, ReactNode, Ref } from "r
 import { flushSync } from "react-dom";
 import { buildAnnualTimingContext, rankTransits } from "@tldr/astro-knowledge/timing-engine";
 import type { TraditionalPlanet, ZodiacSign } from "@tldr/astro-knowledge/timing-engine";
-import { ThemeToggleButton } from "./components/ThemeControls";
 import { SiteMenuSheet } from "./components/SiteMenuSheet";
 import { ModalPortal } from "./components/ModalPortal";
 import { natalReadingRoute } from "./services/natalReadingPath";
@@ -14579,7 +14578,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               onSubmitLocation={applyManualLocation} onCurrentLocation={applyCurrentLocation}
               results={hasMapboxToken() ? <CitySuggestions suggestions={citySuggestions.slice(0,3)} status={citySearchStatus} mapboxEnabled onSelect={applyCitySuggestion} /> : <p role="status">City search is unavailable right now.</p>} />
           </Suspense>}
-          <ThemeToggleButton theme={theme} onThemeChange={setTheme} />
           <button
             className={`topbar-icon profile-nav-button ${navigationMode === "profile" ? "active" : ""}`}
             type="button"

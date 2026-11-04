@@ -1560,7 +1560,8 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Open menu" }).click();
     await page.getByRole("menuitem", { name: /settings/i }).click();
     await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Switch to dark mode", exact: true })).toBeVisible();
+    await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+    await expect(page.locator('.settings-theme-control').getByRole('button', { name: 'dark', exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: /^Sky$/ }).click();
     await expect(page.getByRole("heading", { name: "Sky", exact: true })).toBeVisible();
@@ -2424,7 +2425,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#settings");
 
     await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
-    await page.getByRole("button", { name: "Switch to dark mode", exact: true }).click();
+    await page.locator('.settings-theme-control').getByRole('button', { name: 'dark', exact: true }).click();
 
     const dyslexiaSwitch = page.getByRole("switch", { name: /dyslexia/i });
     if (await dyslexiaSwitch.isVisible()) {
@@ -3304,7 +3305,8 @@ test.describe("client-facing user flow case studies", () => {
         expect(atTop.background).not.toBe("rgba(0, 0, 0, 0)");
         expect(atTop.shadow).not.toBe("none");
         const expectSharedElevation = async () => {
-          for (const selector of [".sky-header-date-button", ".menu-toggle", ".theme-toggle"]) {
+          await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0);
+          for (const selector of [".sky-header-date-button", ".menu-toggle", ".profile-nav-button"]) {
             const control = page.locator(selector);
             if (await control.isVisible()) await expect(control).toHaveCSS("box-shadow", atTop.shadow);
           }
