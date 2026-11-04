@@ -58,7 +58,10 @@ for (const authored of [false, true]) {
     surface: 'sky', mode: 'article', status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required',
     event_type: 'sky-article-template', block_type: null, prompt_version: 'manual-admin',
     headline: 'Synthetic template', summary: 'Synthetic separately authored summary.', body: opening,
-    sections: { retainedMetadata: { b: 2, a: 1 } }, facts: {}, reviewer_notes: '',
+    sections: { retainedMetadata: { b: 2, a: 1 }, unicodeMetadata: { nested: {
+      '\u00e9': { text: 'Synthetic composed-key value.' },
+      'e\u0301': { text: 'Synthetic decomposed-key value.' }
+    } } }, facts: {}, reviewer_notes: '',
     source_snapshot: { contentType: 'sky-article-template', content_role: 'template' }, updated_at: '2026-11-03T00:00:00.000Z' };
   const store = await skyArticlePublicationStore([initial]);
   const snapshot = async () => ({ rows: (await store.db.query('select to_jsonb(g) as row from generated_interpretations g')).rows,
@@ -77,7 +80,8 @@ for (const authored of [false, true]) {
     assert.equal(articleTemplateWithHoroscopes(saved.body, saved.sections), raw);
     assert.equal(saved.source_snapshot.horoscopeSeparation.originalBody, raw);
     assert.deepEqual(saved.sections.retainedMetadata, initial.sections.retainedMetadata);
-    assert.ok(articleTemplateCopyMatches(expected, { ...saved, sections: reverseKeys(saved.sections) }), 'JSONB object order is not a copy change');
+    assert.ok(articleTemplateCopyMatches(expected, { ...saved, sections: reverseKeys(saved.sections) }),
+      'JSONB key order, including distinct nested composed/decomposed Unicode keys, is not a copy change');
     controls += 8;
     const badCopies: Array<[string, (row: any) => void]> = [
       ['shorter general article', row => { row.body = row.body.slice(0, -1); }],
@@ -86,7 +90,8 @@ for (const authored of [false, true]) {
       ['changed introduction', row => { row.sections.articleHoroscopes.introduction += ' Changed'; }],
       ['changed schema', row => { row.sections.articleHoroscopes.schema = 'unknown'; }],
       ['unknown section field', row => { row.sections.articleHoroscopes.unexpected = true; }],
-      ['changed unrelated section metadata', row => { row.sections.retainedMetadata.a = 9; }]
+      ['changed unrelated section metadata', row => { row.sections.retainedMetadata.a = 9; }],
+      ['changed nested Unicode-key value', row => { row.sections.unicodeMetadata.nested['e\u0301'].text += ' Changed'; }]
     ];
     if (authored) badCopies.push(
       ['missing passage', row => { row.sections.articleHoroscopes.passages.pop(); }],

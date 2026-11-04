@@ -1,9 +1,13 @@
 import type { AdminDraft, AdminGeneratedContentRow } from './GeneratedContentAdminDashboard';
 import { separateArticleHoroscopeRow } from '../../web/src/content/skyArticleHoroscopes.mjs';
 
+function ordered(_key: string, value: unknown) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
+  const record = value as Record<string, unknown>;
+  // Distinct Unicode keys must not compare equal under locale collation.
+  return Object.fromEntries(Object.keys(record).sort().map(key => [key, record[key]]));
+}
 function sameContent(left: unknown, right: unknown) {
-  const ordered = (_key: string, value: unknown) => value && typeof value === 'object' && !Array.isArray(value)
-    ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b))) : value;
   return JSON.stringify(left, ordered) === JSON.stringify(right, ordered);
 }
 
