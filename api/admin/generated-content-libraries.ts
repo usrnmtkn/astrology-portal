@@ -16,6 +16,7 @@ export { separateArticleHoroscopeRow } from "../../apps/web/src/content/skyArtic
 export { assertCleanReaderCopy } from "../../apps/web/src/content/editorialCopyBoundary.mjs";
 export { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 export { packagePublicationAdmissionIssue, isRegisteredLunarJournalKey } from "../_lib/content-studio-package-admission.js";
+export { approvedSkyArticleReaderEdition } from '../../apps/web/src/content/skyArticleEditionReader.js';
 export { astro101PublicationIssue } from "../../apps/web/src/content/astro101.ts";
 export { fillAstro101EphemerisSlots } from "../../apps/web/src/content/astro101Ephemeris.ts";
 export { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";

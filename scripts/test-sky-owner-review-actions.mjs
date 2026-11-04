@@ -388,7 +388,7 @@ const compiledEdition = await compileSkyArticleEdition({
   slotValues: { sign: "Aquarius", opener: "Owner article opening." },
   housePassages: Array.from({ length: 12 }, (_, index) => ({
     house: index + 1,
-    risingSign: "aquarius",
+    risingSign: ["aquarius", "capricorn", "sagittarius", "scorpio", "libra", "virgo", "leo", "cancer", "gemini", "taurus", "aries", "pisces"][index],
     contentKey: `house-horoscope-core/pluto/aquarius/house-${index + 1}`,
     body: `Owner house ${index + 1} passage.`
   }))

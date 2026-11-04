@@ -259,6 +259,7 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) {
         await variableEditor.getByRole('button',{name:'Save variable',exact:true}).click();
         await expect(variableEditor.getByRole('alert')).toContainText(/changed|newer|reload/i);
         await expect(variableEditor.getByLabel('Shared value',{exact:true})).toHaveValue(variableRevision);
+        variablePage.once('dialog', dialog => dialog.accept());
         await variableEditor.getByRole('button',{name:'Cancel',exact:true}).click();
         await variablePage.getByRole('article',{name:'Synthetic opening',exact:true}).getByRole('button',{name:'Edit',exact:true}).click();
         await expect(variableEditor.getByLabel('Shared value',{exact:true})).toHaveValue(competing);

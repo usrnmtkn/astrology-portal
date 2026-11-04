@@ -1,6 +1,6 @@
 import StudioCustomVariables from "./StudioCustomVariables";
 import type { CustomVariable } from "./studioCustomVariableClient";
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StudioButton, StudioInput } from './StudioControls';
 import { AdminSelect, AdminDisclosureSummary } from './AdminNativeControls';
 import { AdminPaginatedCollection } from './AdminPaginatedCollection';
@@ -55,14 +55,19 @@ function VariableCard({ variable, color, query, onOpenSource }: { variable: Stud
   </article>;
 }
 
-export default function StudioVariables({ onOpenSource, secret, customVariables, onCustomChange, customError, customLoading, onReloadCustom, createRequest, onCreateHandled, initialVariableName, customLoaded = !customLoading && !customError }: {
+export default function StudioVariables({ onOpenSource, secret, customVariables, onCustomChange, customError, customLoading, onReloadCustom, createRequest, onCreateHandled, initialVariableName, customLoaded = !customLoading && !customError, onDirty }: {
   onOpenSource: (key: string, label: string, field: string) => void; secret: string;
   customVariables: CustomVariable[]; onCustomChange: (variables: CustomVariable[]) => void;
   customError: string; customLoading: boolean; onReloadCustom: () => void;
   createRequest: number; onCreateHandled: () => void;
   initialVariableName?: string;
   customLoaded?: boolean;
+  onDirty?: (dirty: boolean, busy: boolean) => void;
 }) {
+  const customDraft = useRef({ dirty: false, busy: false });
+  const trackDraft = useCallback((dirty: boolean, busy: boolean) => {
+    customDraft.current = { dirty, busy }; onDirty?.(dirty, busy);
+  }, [onDirty]);
   const [catalog, setCatalog] = useState<StudioVariableCatalog | null>(null);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(0);
@@ -95,7 +100,10 @@ export default function StudioVariables({ onOpenSource, secret, customVariables,
       <p>{custom ? "Create and organize your reusable writing. Your variables support a shared value and optional planet, sign, or placement overrides." : "Look up a token, then open its writing. Calculated facts can be copied; phrase tokens open one field."}</p>
       <section className="admin-filter-form" aria-label="Variable filters">
         <label className="admin-filter-search"><span>Search variables</span><StudioInput type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Token, meaning, planet, sign, or source" /></label>
-        <label><span>Library</span><AdminSelect aria-label="Library" value={kind} onChange={event => setKind(event.target.value)}><option value="custom">My variables</option><option value="readonly">Calculated facts</option><option value="editable">Existing phrase variables</option></AdminSelect></label>
+        <label><span>Library</span><AdminSelect aria-label="Library" value={kind} onChange={event => {
+          if (event.target.value !== kind && !customDraft.current.busy
+            && (!customDraft.current.dirty || window.confirm('Discard the unsaved variable changes?'))) setKind(event.target.value);
+        }}><option value="custom">My variables</option><option value="readonly">Calculated facts</option><option value="editable">Existing phrase variables</option></AdminSelect></label>
         {custom ? <label><span>Tag</span><AdminSelect aria-label="Tag" value={tag} onChange={event => setTag(event.target.value)}><option value="">All tags</option>{tags.map(value => <option key={value}>{value}</option>)}</AdminSelect></label> : <label><span>Available in</span><AdminSelect aria-label="Available in" value={surface} onChange={event => setSurface(event.target.value)}><option value="">All surfaces</option>{surfaces.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>}
       </section>
       <div className="admin-filter-actions">
@@ -105,7 +113,7 @@ export default function StudioVariables({ onOpenSource, secret, customVariables,
     </div>
     {custom ? <>
       {customError && <div role="alert"><p>{customError}</p><StudioButton onClick={onReloadCustom}>Retry my variables</StudioButton></div>}
-      {customLoading ? <PageLoading compact message="Loading your variables…" /> : customLoaded && <StudioCustomVariables variables={customVariables} secret={secret} query={query} tag={tag} onChange={onCustomChange} createRequest={createRequest} onCreateHandled={onCreateHandled} initialVariableName={initialVariableName} />}
+      {customLoading ? <PageLoading compact message="Loading your variables…" /> : customLoaded && <StudioCustomVariables variables={customVariables} secret={secret} query={query} tag={tag} onChange={onCustomChange} createRequest={createRequest} onCreateHandled={onCreateHandled} initialVariableName={initialVariableName} onDirty={trackDraft} />}
     </> : error ? <div className="admin-empty-state" role="alert"><p>{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry catalog</StudioButton></div>
       : !catalog ? <PageLoading compact message="Loading variables…" /> : <>
         {filtered.length ? <AdminPaginatedCollection items={filtered} label="Variables" pageSize={20} resetKey={`${query}|${kind}|${surface}`}>

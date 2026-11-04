@@ -3726,6 +3726,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const compatibilityReads: URL[] = [];
     let compatibilityWrite: { method: string; payload: Record<string, unknown> } | null = null;
+    async function saveCreatedCompatibility(contentKey: string, button: Locator) {
+      const [response] = await Promise.all([
+        page.waitForResponse(response => new URL(response.url()).pathname === '/api/admin/generated-content'
+          && response.request().method() === 'POST' && response.request().postDataJSON()?.contentKey === contentKey),
+        button.click()
+      ]);
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
+      expect(await response.json()).toMatchObject({ ok: true, rows: [{ content_key: contentKey }] });
+    }
     const directionalCompatibilityRow = {
       ...generatedContentRows.find((row) => row.id === "qa-compatibility-content-row")!,
       id: "qa-directional-compatibility-content-row",
@@ -3846,7 +3856,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByLabel("Content key")).toHaveValue("authored/compat-pair/mars/pisces/aquarius");
     await compatibilityEditor.getByLabel("Compatibility write-up").fill("Mars between Pisces and Aquarius needs room for both instinct and perspective.");
     await expect(newCardSave).toBeEnabled();
-    await newCardSave.click();
+    await saveCreatedCompatibility('authored/compat-pair/mars/pisces/aquarius', newCardSave);
     expect(compatibilityWrite?.method).toBe("POST");
     expect(compatibilityWrite?.payload).toMatchObject({
       contentKey: "authored/compat-pair/mars/pisces/aquarius",
@@ -3876,7 +3886,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByRole("region", { name: "Content role" })).toHaveCount(0);
     await compatibilityEditor.getByLabel("Phrase title").fill("Repair timing phrase");
     await compatibilityEditor.getByLabel("Reusable phrase").fill("Name the timing mismatch before assigning blame.");
-    await compatibilityEditor.getByRole("button", { name: "Save", exact: true }).click();
+    await saveCreatedCompatibility('vocab/relationship/repair-timing-phrase', compatibilityEditor.getByRole("button", { name: "Save", exact: true }));
     expect(compatibilityWrite?.payload).toMatchObject({
       contentKey: "vocab/relationship/repair-timing-phrase",
       lane: "reference",
@@ -7239,6 +7249,7 @@ test('Aspect Patterns authenticates reads and previews and preserves newer draft
     expect(saves).toBe(3);
     expect(row!.source_snapshot.record.content.overview).toBe('QA newer draft from another editor.');
     await expect(overview).toHaveValue('QA stale browser edit.');
+    page.once('dialog', dialog => dialog.accept());
     await page.getByRole('button', { name: 'Refresh', exact: true }).click();
     await expect(overview).toHaveValue('QA newer draft from another editor.');
     omitPatternReceipt = true;
@@ -9572,7 +9583,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(facts.transitEndInstant);
     expect(saved.sourceSnapshot.ownerApproval).toBeUndefined();
     await page.reload();
-    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(writing).toHaveValue(saved.body);
     await editor.getByRole('button', { name: 'Back to articles', exact: true }).click();
     await workspace.getByRole('button', { name: 'New article', exact: true }).click();
@@ -9609,10 +9620,10 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     const workspace = page.getByRole('region', { name: 'Sun in Scorpio workspace', exact: true });
     const tabs = workspace.getByRole('tablist', { name: 'Planet and sign writing' });
     await expect(tabs.getByRole('tab')).toHaveText(['Articles', 'Default reading', 'Writing setup']);
-    await expect(workspace.getByRole('button', { name: 'Open saved draft', exact: true })).toBeVisible();
+    await expect(workspace.getByRole('button', { name: 'Edit', exact: true })).toBeVisible();
     expect(writes).toHaveLength(0);
     await workspace.getByText('Reader preview & source details', { exact: true }).press('Enter');
-    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
     const body = workspace.getByRole('textbox', { name: 'Visit article body', exact: true });
     await expect(body).toHaveValue(initial[0].body!);
     await expect(workspace.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Scorpio 2026 draft');
@@ -9672,7 +9683,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expect(workspace.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
     expect(writes).toHaveLength(1); expect(writes[0].payload.ownerAction).toBe('save-sky-article-edition-revision');
     await page.reload();
-    await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(workspace.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Scorpio edited draft');
     await expect(body).toHaveValue(initial[0].body!);
 
@@ -9692,7 +9703,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     expect(writes[1].payload.rows[0].status).toBe('DRAFT');
     expect(generated).toHaveLength(0);
     await page.reload();
-    await venus.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+    await venus.getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(venus.getByRole('textbox', { name: 'Visit article title', exact: true })).toHaveValue('Synthetic Venus visit');
     await expect(venus.getByRole('textbox', { name: 'Visit article body', exact: true })).toHaveValue(/Synthetic Venus ending\.$/);
     await noErrors();
@@ -9714,7 +9725,7 @@ test('Sky planet and sign workspace distinguishes failed reads and keeps text af
   await expect(workspace.getByText('No dated article is saved', { exact: false })).toHaveCount(0);
   failInventory = false;
   await workspace.getByRole('button', { name: 'Reload saved writing', exact: true }).click();
-  await workspace.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+  await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
   await workspace.getByRole('textbox', { name: 'Visit article title', exact: true }).fill('Synthetic unsaved title remains');
   await page.route('**/api/admin/generated-content', route => route.request().method() === 'PATCH'
     ? route.fulfill({ status: 409, json: { ok: false, error: 'Synthetic stale saved version.' } }) : route.fallback());

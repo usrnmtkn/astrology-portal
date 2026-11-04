@@ -228,6 +228,37 @@ function passageMarkdown(edition: Pick<CompiledSkyArticleEdition, "housePassages
     .join("\n\n");
 }
 
+function readerHoroscopeBlocks(edition: CompiledSkyArticleEdition) {
+  const match = edition.compiledMarkdown.match(/^## ([^\n]*\bHoroscopes\b[^\n]*)$([\s\S]*)/imu);
+  if (!match) return null;
+  const tail = match[2];
+  const headings = [...tail.matchAll(/^### (?:([A-Za-z]+)(?: & \1)? Rising|([1-9]|1[0-2])(?:st|nd|rd|th) House)[ \t]*$/gmu)];
+  return { heading: match[1], introduction: tail.slice(0, headings[0]?.index ?? tail.length).trim(),
+    passages: headings.map((heading, index) => ({ risingSign: heading[1]?.toLowerCase(), house: Number(heading[2]),
+      body: tail.slice(heading.index! + heading[0].length, headings[index + 1]?.index).trim() })) };
+}
+
+export function skyArticleReaderHoroscopeIntroduction(edition: CompiledSkyArticleEdition) {
+  const section = edition.housePassages.length ? readerHoroscopeBlocks(edition) : null;
+  return section?.introduction ? { heading: section.heading, body: section.introduction } : null;
+}
+
+/** Reader projections must agree with the complete stored compilation. */
+export function skyArticleReaderCopyIsConsistent(edition: CompiledSkyArticleEdition) {
+  if (edition.body !== withoutFirstHeading(articleBodyBeforeHoroscopes(edition.compiledMarkdown))) return false;
+  const sections = markdownSections(edition.body);
+  if (sections.length !== edition.articleSections.length || sections.some((section, index) =>
+    section.heading !== edition.articleSections[index].heading || section.body !== edition.articleSections[index].body)) return false;
+  if (!edition.housePassages.length) return true;
+  const section = readerHoroscopeBlocks(edition);
+  const seen = new Set();
+  return section?.passages.length === edition.housePassages.length && section.passages.every(block => {
+    const passage = edition.housePassages.find(passage => passage.risingSign ? passage.risingSign === block.risingSign : passage.house === block.house);
+    if (!passage || seen.has(passage.house) || block.body !== passage.body.trim()) return false;
+    seen.add(passage.house); return true;
+  });
+}
+
 export function skyArticleEditableFields(edition: CompiledSkyArticleEdition): SkyArticleEditableFields {
   return {
     headline: edition.headline,
@@ -301,10 +332,11 @@ export async function reviseSkyArticleEdition(
   const housePassages = fields.housePassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
   const aspectPassages = fields.aspectPassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
   const changes = skyArticleEditionFieldChanges(base, { headline, tldr, body, housePassages, aspectPassages });
+  const horoscopeSection = readerHoroscopeBlocks(base);
   const compiledMarkdown = compactBlankLines([
     `# ${headline}`,
     body,
-    ...(housePassages.length ? ["## Horoscopes", passageMarkdown({ housePassages })] : [])
+    ...(housePassages.length ? [`## ${horoscopeSection?.heading ?? 'Horoscopes'}`, horoscopeSection?.introduction ?? '', passageMarkdown({ housePassages })] : [])
   ].join("\n\n"));
   const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
 

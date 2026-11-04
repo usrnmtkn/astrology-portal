@@ -1,5 +1,6 @@
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
+import { skyArticleCompiledHashMatches } from '../_lib/sky-article-reader-integrity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
 import {standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
 import {studioOwnerApproval, hasExactStudioOwnerApproval, stampStudioPackageOwnerApproval} from '../_lib/studio-owner-publication.js';
@@ -1440,6 +1441,10 @@ function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previ
 function assertReaderEligiblePublication(row: Record<string, any>) {
   assertHoroscopeRow(row);
   if (row.status !== "LIVE") return;
+  if (row.event_type === 'sky-article-edition' && (!skyArticleCompiledHashMatches(row.sections?.skyArticleEdition)
+    || !libs().approvedSkyArticleReaderEdition(row as ExistingGeneratedContentRow))) {
+    throw new GeneratedContentRequestError('The compiled article no longer matches its approved reader copy. Recompile the complete edition before publishing.', 409);
+  }
   if (row.source_snapshot?.studioOwnerApproval && !hasExactStudioOwnerApproval(row)) throw new GeneratedContentRequestError("This wording changed after owner approval. Publish the current saved version again.", 409);
   if (row.content_key?.startsWith(libs().CONNECTION_ACTIVATION_PREFIX) || row.content_key?.startsWith(libs().CONNECTION_BRIDGE_PREFIX)) {
     const record = isRecord(row.sections?.packageRecord) ? row.sections.packageRecord : {};

@@ -271,7 +271,7 @@ export default function SkyPlacementWorkspace(props: Props) {
                 <td data-label="Period">{shortDate(edition.transitStartInstant)} to {shortDate(edition.transitEndInstant)}{edition.scope === 'day' && <div><small>Saved day article</small></div>}</td>
                 <td data-label="Status"><StudioStatusBadge tone={row.status === 'LIVE' ? statuses?.some(status => status.id === row.id && status.live) ? 'live' : 'unknown' : 'draft'}>{row.status === 'LIVE' ? statuses === null ? 'Checking…' : statuses.some(status => status.id === row.id && status.live) ? 'Published' : 'Inactive' : skyPublicationScheduled(row) ? 'Scheduled' : 'Draft'}</StudioStatusBadge></td>
                 <td data-label="Updated">{row.updated_at ? shortDate(row.updated_at) : 'Unavailable'}</td>
-                <td data-label="Actions"><StudioButton disabled={busy} onClick={() => edit(row)}>{row.status === 'LIVE' ? 'Edit a draft of this article' : 'Open saved draft'}</StudioButton></td>
+                <td data-label="Actions"><StudioButton disabled={busy} onClick={() => edit(row)}>Edit</StudioButton></td>
               </tr>; })}</tbody>
             </table>
             {!filteredVisits.length && <p className="admin-empty">No articles match these filters.</p>}

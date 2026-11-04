@@ -517,7 +517,10 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await page.getByLabel('Sky placement zodiac sign').selectOption('libra');
       await openSkyPlacementReaderSources(page);
       const savedVisit = page.getByRole('region', { name: 'Saved visits', exact: true });
-      await savedVisit.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      const workingRevision = savedVisit.getByRole('row').filter({ hasText: 'Working revision' });
+      await expect(workingRevision).toHaveCount(1);
+      await expect(workingRevision.getByText('Draft', { exact: true })).toBeVisible();
+      await workingRevision.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(copy).toHaveValue(template);
       await expect(comparison).toContainText('Reader wording unchanged');
       await preview.getByRole('button', { name: 'Draft', exact: true }).click();

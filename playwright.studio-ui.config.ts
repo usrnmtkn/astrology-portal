@@ -21,6 +21,7 @@ export default defineConfig({
     'sky-placement-sources.spec.ts', 'sky-placement-variables.spec.ts',
     'sky-writing-library-tables.spec.ts',
     'studio-shared-wording.spec.ts', 'sky-placement-article-phrases.spec.ts',
+    'sky-saved-template-reader.spec.ts',
     'studio-csv.spec.ts', 'studio-wide-readability.spec.ts'
   ],
   outputDir: './test-results/studio-ui-release',

@@ -5151,7 +5151,7 @@ function normalizeSkyPlacementSurface(
   const fallbackSection = ingressSection ?? skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
   const sections = fallbackSection ? [fallbackSection] : [];
   const protectedSections = sections.map((section) => {
-    if (!section.risingHoroscopes?.length) return section;
+    if (section === ingressSection || !section.risingHoroscopes?.length) return section;
 
     return {
       ...section,

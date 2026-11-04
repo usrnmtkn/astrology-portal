@@ -375,13 +375,14 @@ try {
   const approval = { approved: true, action: "approve-sky-article-edition", contentKey: edition.contentKey,
     templateKey: edition.templateKey, templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash };
   const projected = projectReaderRow({ id, content_key: edition.contentKey, status: "LIVE", lane: "serving", event_type: "sky-article-edition", updated_at: "2026-10-09T00:00:00Z",
+    headline: edition.headline, summary: edition.tldr, body: edition.body,
     sections: { skyArticleEdition: edition }, source_snapshot: { ownerApproval: approval, engineFacts: facts } });
   assert.equal(projected.sections.skyArticleEdition.format, SKY_INGRESS_ESSAY_FORMAT);
   assert.equal(isGeneratedContentReaderBoundaryAllowed(projected), true);
   assert.equal(isGeneratedContentReaderBoundaryAllowed({ ...projected, status: "DRAFT" }), false);
   assert.equal(isGeneratedContentReaderBoundaryAllowed({ ...projected, source_snapshot: {} }), false);
   assert(!JSON.stringify(projected).includes("requestUrl"), "Private fact receipts must not enter reader payloads");
-  const candidate = { id, contentKey: edition.contentKey, status: "LIVE", sections: projected.sections, sourceSnapshot: projected.source_snapshot };
+  const candidate = { ...projected, contentKey: edition.contentKey, sourceSnapshot: projected.source_snapshot, reviewState: projected.review_state };
   const context = { activeInstant: "2026-10-09T12:00:00Z", planet: "sun", sign: "libra" };
   const publication = { content_key: edition.contentKey, state: "live" as const, row_id: id,
     row_updated_at: "2026-10-09T00:00:00Z", updated_at: "2026-10-09T00:00:00Z", revision: 1 };
@@ -392,7 +393,7 @@ try {
     { ...publication, content_key: "sky-article/sun/scorpio/2026/2026-10-23" },
     { ...publication, content_key: "sky-article/sun/libra/2024/2024-09-22", state: "retired" },
     { ...publication, content_key: "sky-article/sun/libra/2023/2023-09-22", row_id: null }
-  ], context), [edition.contentKey, "sky-article/sun/libra/2025/2025-09-22"]);
+  ], context), [edition.contentKey, "sky-article/sun/libra/2025/2025-09-22", "sky-article/sun/libra/2026"]);
   const reading = skyIngressEssayReaderSection([candidate], context);
   assert.equal(reading?.body, edition.body);
   assert.equal(reading?.tldr, edition.tldr);

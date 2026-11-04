@@ -89,8 +89,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(saved.find((row: any) => row.id === storedDay.id)).toEqual(storedDay);
       await page.reload();
       const fullCard = workspace.getByRole('table', { name: 'Saved articles' }).getByRole('row')
-        .filter({ hasNotText: 'Saved day article' }).filter({ has: page.getByRole('button', { name: 'Open saved draft', exact: true }) });
-      await fullCard.getByRole('button', { name: 'Open saved draft', exact: true }).click();
+        .filter({ hasNotText: 'Saved day article' }).filter({ has: page.getByRole('button', { name: 'Edit', exact: true }) });
+      await fullCard.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(article).toHaveValue(visit.body);
       await workspace.getByRole('button', { name: 'Back to articles', exact: true }).click();
       await workspace.getByRole('button', { name: 'New article', exact: true }).click();
@@ -98,7 +98,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await workspace.getByRole('button', { name: 'Generate draft', exact: true }).click();
       await expect(article).toHaveValue(visit.body); expect(requests).toHaveLength(2);
       await workspace.getByRole('button', { name: 'Back to articles', exact: true }).click();
-      await workspace.getByRole('row').filter({ hasText: 'Saved day article' }).getByRole('button', { name: 'Open saved draft', exact: true }).click();
+      await workspace.getByRole('row').filter({ hasText: 'Saved day article' }).getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(article).toHaveValue(storedDay.body);
       await article.fill(storedDay.body + '\n\nSynthetic preserved day edit.');
       await workspace.getByRole('button', { name: 'Save draft', exact: true }).click();

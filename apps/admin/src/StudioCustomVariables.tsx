@@ -2,45 +2,67 @@ import { useEffect, useId, useRef, useState } from "react";
 import { AdminSelect, AdminDisclosureSummary } from "./AdminNativeControls";
 import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { customVariableRequest, type CustomVariable, type CustomVariableInput, type CustomVariableOverride } from "./studioCustomVariableClient";
-import { VARIABLE_PLANETS, VARIABLE_SIGNS, studioVariableValue } from "../../web/src/content/studioCustomVariables.mjs";
+import { VARIABLE_PLANETS, VARIABLE_SIGNS, studioVariableValue, validateStudioVariable } from "../../web/src/content/studioCustomVariables.mjs";
 
 const title = (value: string) => value.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ");
 const emptyVariable = (): CustomVariableInput => ({ name: "", label: "", description: "", value: "", tags: [], overrides: [] });
 const tokenColor = (name: string) => String([...name].reduce((hash, character) => (hash * 31 + character.charCodeAt(0)) >>> 0, 0) % 6 + 1);
 
-function VariableForm({ initial, secret, onCancel, onSave }: { initial: CustomVariable | null; secret: string; onCancel: () => void; onSave: (variable: CustomVariable) => void }) {
+function VariableForm({ initial, secret, onCancel, onSave, onDirty }: { initial: CustomVariable | null; secret: string; onCancel: () => void; onSave: (variable: CustomVariable) => void; onDirty?: (dirty: boolean, busy: boolean) => void }) {
   const helpId = useId();
   const [draft, setDraft] = useState<CustomVariableInput>(initial ?? emptyVariable);
   const [tags, setTags] = useState(initial?.tags.join(", ") ?? "");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const saving = useRef(false);
   const [planet, setPlanet] = useState("");
   const [sign, setSign] = useState("");
   const editor = useRef<HTMLFormElement>(null);
   const update = (field: keyof CustomVariableInput, value: any) => setDraft(current => ({ ...current, [field]: value }));
   const override = (index: number, patch: Partial<CustomVariableOverride>) => update("overrides", draft.overrides.map((item, position) => position === index ? { ...item, ...patch } : item));
   const resolved = studioVariableValue(draft, { planet, sign });
+  const dirty = JSON.stringify([draft, tags]) !== JSON.stringify([initial ?? emptyVariable(), initial?.tags.join(", ") ?? ""]);
+  useEffect(() => {
+    onDirty?.(dirty, busy);
+    return () => onDirty?.(false, false);
+  }, [dirty, busy, onDirty]);
+  useEffect(() => {
+    if (!dirty && !busy) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty, busy]);
+  function cancel() {
+    if (!saving.current && (!dirty || window.confirm('Discard the unsaved variable changes?'))) onCancel();
+  }
   async function save() {
+    if (saving.current) return;
+    saving.current = true;
     setBusy(true); setError("");
     try {
-      const data = await customVariableRequest(secret, initial ? "PATCH" : "POST", { ...(initial ? { id: initial.id, expectedUpdatedAt: initial.updatedAt } : {}), variable: { ...draft, tags: tags.split(",").map(tag => tag.trim()).filter(Boolean) } });
+      const variable = { ...draft, tags: tags.split(",").map(tag => tag.trim()).filter(Boolean) };
+      const data = await customVariableRequest(secret, initial ? "PATCH" : "POST", { ...(initial ? { id: initial.id, expectedUpdatedAt: initial.updatedAt } : {}), variable });
+      if (initial && (data.variable.id !== initial.id || data.variable.updatedAt === initial.updatedAt)
+        || JSON.stringify(validateStudioVariable(data.variable)) !== JSON.stringify(validateStudioVariable(variable))) {
+        throw new Error('Storage did not confirm the complete variable. Your edits are still here. Reload the library before retrying.');
+      }
       onSave(data.variable);
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not save the variable."); }
-    finally { setBusy(false); }
+    finally { saving.current = false; setBusy(false); }
   }
   return <form ref={editor} className="studio-surface studio-section studio-variable-card" aria-label={initial ? `Edit ${initial.label}` : "Create variable"} onSubmit={event => { event.preventDefault(); void save(); }}>
-    <header className="studio-section-header"><h2>{initial ? "Edit variable" : "Create variable"}</h2><StudioButton disabled={busy} onClick={onCancel}>Cancel</StudioButton></header>
+    <header className="studio-section-header"><h2>{initial ? "Edit variable" : "Create variable"}</h2><StudioButton disabled={busy} onClick={cancel}>Cancel</StudioButton></header>
     <div className="admin-filter-form">
-      <label><span>Name</span><StudioInput autoFocus required maxLength={160} value={draft.label} onChange={event => update("label", event.target.value)} placeholder="A name that makes sense to you" /></label>
-      <label><span>Token name</span><StudioInput aria-label="Token name" aria-describedby={`${helpId}-token`} required maxLength={64} pattern="[A-Za-z][A-Za-z0-9_]*" value={draft.name} onChange={event => update("name", event.target.value)} placeholder="myOpening" /><span id={`${helpId}-token`} className="admin-field-hint">{`Use {{${draft.name || "myOpening"}}} in your writing.`}</span></label>
+      <label><span>Name</span><StudioInput disabled={busy} autoFocus required maxLength={160} value={draft.label} onChange={event => update("label", event.target.value)} placeholder="A name that makes sense to you" /></label>
+      <label><span>Token name</span><StudioInput disabled={busy} aria-label="Token name" aria-describedby={`${helpId}-token`} required maxLength={64} pattern="[A-Za-z][A-Za-z0-9_]*" value={draft.name} onChange={event => update("name", event.target.value)} placeholder="myOpening" /><span id={`${helpId}-token`} className="admin-field-hint">{`Use {{${draft.name || "myOpening"}}} in your writing.`}</span></label>
     </div>
     {initial && draft.name !== initial.name && <p role="status">Renaming changes the token for future use. Update drafts that use {`{{${initial.name}}}`} before publishing them. Existing published writing retains its approved value.</p>}
-    <label><span>Description</span><StudioTextarea rows={2} maxLength={2000} value={draft.description} onChange={event => update("description", event.target.value)} placeholder="What this variable means and how you use it" /></label>
-    <label><span>Tags</span><StudioInput aria-label="Tags" aria-describedby={`${helpId}-tags`} value={tags} onChange={event => setTags(event.target.value)} placeholder="Your tags, separated by commas" /><span id={`${helpId}-tags`} className="admin-field-hint">Choose any tags you want. Tags organize the library; they do not change the value.</span></label>
-    <label><span>Shared value</span><StudioTextarea aria-label="Shared value" aria-describedby={`${helpId}-value`} rows={4} maxLength={20000} value={draft.value} onChange={event => update("value", event.target.value)} placeholder="Write the reusable words or prose" /><span id={`${helpId}-value`} className="admin-field-hint">Used when no override matches. Values can be left unfinished while drafting; every used value must be complete before publication.</span></label>
+    <label><span>Description</span><StudioTextarea disabled={busy} rows={2} maxLength={2000} value={draft.description} onChange={event => update("description", event.target.value)} placeholder="What this variable means and how you use it" /></label>
+    <label><span>Tags</span><StudioInput disabled={busy} aria-label="Tags" aria-describedby={`${helpId}-tags`} value={tags} onChange={event => setTags(event.target.value)} placeholder="Your tags, separated by commas" /><span id={`${helpId}-tags`} className="admin-field-hint">Choose any tags you want. Tags organize the library; they do not change the value.</span></label>
+    <label><span>Shared value</span><StudioTextarea disabled={busy} aria-label="Shared value" aria-describedby={`${helpId}-value`} rows={4} maxLength={20000} value={draft.value} onChange={event => update("value", event.target.value)} placeholder="Write the reusable words or prose" /><span id={`${helpId}-value`} className="admin-field-hint">Used when no override matches. Values can be left unfinished while drafting; every used value must be complete before publication.</span></label>
     <section className="studio-section" aria-label="Context overrides">
-      <div className="studio-section-header"><div><h3>Overrides</h3><p>Use different writing for a planet, sign, or placement. Priority: placement, planet, sign, shared value.</p></div><StudioButton onClick={() => update("overrides", [...draft.overrides, { scope: "placement", planet: "sun", sign: "aries", value: "" }])}>Add override</StudioButton></div>
-      {draft.overrides.map((item, index) => <fieldset key={index} className="studio-section"><legend>Override {index + 1}</legend>
+      <div className="studio-section-header"><div><h3>Overrides</h3><p>Use different writing for a planet, sign, or placement. Priority: placement, planet, sign, shared value.</p></div><StudioButton disabled={busy} onClick={() => update("overrides", [...draft.overrides, { scope: "placement", planet: "sun", sign: "aries", value: "" }])}>Add override</StudioButton></div>
+      {draft.overrides.map((item, index) => <fieldset disabled={busy} key={index} className="studio-section"><legend>Override {index + 1}</legend>
         <div className="admin-filter-form admin-filter-form--three">
           <label><span>Applies to</span><AdminSelect aria-label="Applies to" value={item.scope} onChange={event => override(index, { scope: event.target.value as CustomVariableOverride["scope"], planet: item.planet || "sun", sign: item.sign || "aries" })}><option value="placement">Placement</option><option value="planet">Planet</option><option value="sign">Sign</option></AdminSelect></label>
           {item.scope !== "sign" && <label><span>Planet</span><AdminSelect aria-label="Planet" value={item.planet} onChange={event => override(index, { planet: event.target.value })}>{VARIABLE_PLANETS.map((value: string) => <option key={value} value={value}>{title(value)}</option>)}</AdminSelect></label>}
@@ -59,7 +81,7 @@ function VariableForm({ initial, secret, onCancel, onSave }: { initial: CustomVa
   </form>;
 }
 
-export default function StudioCustomVariables({ variables, secret, query, tag, onChange, createRequest = 0, onCreateHandled, initialVariableName }: { variables: CustomVariable[]; secret: string; query: string; tag: string; onChange: (variables: CustomVariable[]) => void; createRequest?: number; onCreateHandled: () => void; initialVariableName?: string }) {
+export default function StudioCustomVariables({ variables, secret, query, tag, onChange, createRequest = 0, onCreateHandled, initialVariableName, onDirty }: { variables: CustomVariable[]; secret: string; query: string; tag: string; onChange: (variables: CustomVariable[]) => void; createRequest?: number; onCreateHandled: () => void; initialVariableName?: string; onDirty?: (dirty: boolean, busy: boolean) => void }) {
   const [editing, setEditing] = useState<CustomVariable | null | undefined>(undefined);
   const openedName = useRef('');
   useEffect(() => {
@@ -81,7 +103,7 @@ export default function StudioCustomVariables({ variables, secret, query, tag, o
     catch (reason) { setError(reason instanceof Error ? reason.message : "Could not delete variable."); }
     finally { setBusy(false); }
   }
-  if (creating || editing !== undefined) return <VariableForm key={creating ? "new" : editing?.id} initial={creating ? null : editing ?? null} secret={secret} onCancel={close} onSave={variable => { onChange([...variables.filter(item => item.id !== variable.id), variable].sort((a, b) => a.name.localeCompare(b.name))); close(); }} />;
+  if (creating || editing !== undefined) return <VariableForm key={creating ? `new-${createRequest}` : editing?.id} initial={creating ? null : editing ?? null} secret={secret} onCancel={close} onDirty={onDirty} onSave={variable => { onChange([...variables.filter(item => item.id !== variable.id), variable].sort((a, b) => a.name.localeCompare(b.name))); close(); }} />;
   return <div className="studio-section studio-variable-list">
     {!filtered.length && <div className="studio-surface studio-section studio-variable-card"><h2>{variables.length ? "No matching variables" : "Create your first variable"}</h2><p>{variables.length ? "Try another search or tag." : "Name a reusable piece of writing, give it a value, and organize it with your own tags."}</p></div>}
     {filtered.map(variable => <article key={variable.id} className="studio-surface studio-section studio-variable-card" aria-label={variable.label}>

@@ -146,9 +146,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
 for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1440, 'dark'], [900, 'light'], [900, 'dark']] as const) {
   test(`Content Library finds and opens Sky and Calendar writing ${width} ${theme}`, async ({ page, context }) => {
     test.setTimeout(180_000);
-    const fixture = await skyPlacementSourceFixture('sun', 'libra');
-    fixture.active.headline = 'Libra Season 2026';
-    fixture.pending.headline = 'Libra Season 2026';
+    const fixture = await skyPlacementSourceFixture('sun', 'libra', 'Libra Season 2026');
     const unrelatedMoon = { ...structuredClone(fixture.fallback), id: '33333333-3333-4333-a333-333333333333',
       status: 'DRAFT', lane: 'reference', review_state: 'owner-review-required', headline: 'Moon in Scorpio · October 11, 2026',
       content_key: 'sky-season-fallback/libra-2026/moon/scorpio/2026-10-11' };
@@ -286,7 +284,7 @@ for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1
         await expect(unavailable.getByRole('button', { name: 'Open article', exact: true })).toBeVisible();
         await expect(unavailable.getByRole('button', { name: 'Edit published article', exact: true })).toHaveCount(0);
         let failedLibraryLoads = 0;
-        const libraryChunk = '**/assets/contentLibraryNavigation-*.js';
+        const libraryChunk = /\/assets\/contentLibraryNavigation-[^/?]+\.js(?:\?[^#]*)?$/u;
         await context.route(libraryChunk, route => { failedLibraryLoads++; return route.abort(); });
         await page.reload();
         await expect(page.getByRole('alert').filter({ hasText: 'This section could not load.' })).toBeVisible();
