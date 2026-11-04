@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import { readFileSync } from 'node:fs';
 import { educationReaderResponse } from '../helpers/astro101-reader-fixture';
 import { readerResponse } from '../helpers/reader-response';
+import { expectMenuTheme } from '../helpers/menu-theme';
 
 const educationPackage = JSON.parse(readFileSync('data/astro-101/astro-101-rows.json', 'utf8'));
 
@@ -104,7 +105,8 @@ test("Learn article uses the full desktop navigation", async ({ page }) => {
   await expect(primaryNav.getByRole("button", { name: "Learn" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toContainText("Back");
-  await expect(page.getByRole("button", { name: /^Switch to (light|dark) mode$/ })).toBeVisible();
+  await expect(page.locator(".topbar-actions > .theme-toggle")).toHaveCount(0);
+  await expectMenuTheme(page, (await page.locator("html").getAttribute("data-theme")) as "light" | "dark");
   await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
   await page.getByRole("button", { name: "Open menu" }).click();
   await expect(page.getByRole("menuitem", { name: "Learn", exact: true })).toHaveClass("active");
@@ -121,7 +123,8 @@ test("Learn article uses compact navigation on mobile", async ({ page }) => {
   await expect(page.locator(".learn-article-page")).toBeVisible({ timeout: 60_000 });
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeHidden();
   await expect(page.getByRole("button", { name: "Back to Astro 101" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /^Switch to (light|dark) mode$/ })).toBeVisible();
+  await expect(page.locator(".topbar-actions > .theme-toggle")).toHaveCount(0);
+  await expectMenuTheme(page, (await page.locator("html").getAttribute("data-theme")) as "light" | "dark");
   await expect(page.getByRole("button", { name: "Open menu" })).toBeVisible();
 });
 

@@ -8,10 +8,10 @@ const timeline = [
   ["August 22, 2026", "Sun enters Virgo"],
   ["August 27, 2026", "Sun conjunction Mercury"],
   ["August 28, 2026", "Sun square Uranus"],
-  ["September 2, 2026", "Sun trine Lilith"],
-  ["September 10, 2026", "Sun trine Lilith"],
+  ["September 2, 2026", "Sun trine True Black Moon Lilith"],
+  ["September 10, 2026", "Sun trine True Black Moon Lilith"],
   ["September 14, 2026", "Sun sextile Mars"],
-  ["September 20, 2026", "Sun square Lilith"],
+  ["September 20, 2026", "Sun square True Black Moon Lilith"],
   ["September 22, 2026", "Sun completes its passage through Virgo"]
 ];
 for (const width of [390, 1440]) for (const withVariable of [false, true]) {

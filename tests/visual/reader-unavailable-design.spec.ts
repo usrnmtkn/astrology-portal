@@ -3,6 +3,7 @@ import { build } from "esbuild";
 import { readFileSync } from "node:fs";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { expectReadableTheme } from "../helpers/theme-contrast";
+import { expectMenuTheme } from "../helpers/menu-theme";
 
 const kinds = ["page", "article", "removed-article", "placement", "date", "horoscope", "profile", "connection", "chart", "invite", "report", "signed-out"];
 async function harness() {
@@ -60,7 +61,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     for (const [url, title, action, owner] of cases) {
       await page.goto(url); await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
       await expect(page.locator(".floating-back-button")).toHaveCount(0);
-      await expect(page.getByRole("button", { name: /Switch to (light|dark) mode/ })).toBeVisible();
+      await expect(page.locator(".topbar-actions > .theme-toggle")).toHaveCount(0);
+      await expectMenuTheme(page, theme as "light" | "dark");
       await page.reload(); await expect(page.getByRole("heading", { name: title, exact: true })).toBeVisible();
       await page.getByRole("link", { name: action, exact: true }).click();
       await expect(page.locator(".reader-unavailable")).toHaveCount(0);
