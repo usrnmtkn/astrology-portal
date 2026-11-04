@@ -57,7 +57,7 @@ export function normalizeSkyBodyName(body: string) {
     return "South Node";
   }
 
-  if (normalized === "black moon lilith" || normalized === "lilith") {
+  if (normalized === "true black moon lilith" || normalized === "black moon lilith" || normalized === "lilith") {
     return "Lilith";
   }
 

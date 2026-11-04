@@ -161,7 +161,8 @@ import {
   astrologyDateRangeLabel,
   hasBackgroundRetrogradeMotion,
   isDisplayRetrograde,
-  lunarNodeTransitRangeLabel
+  lunarNodeTransitRangeLabel,
+  skyPointDisplayName
 } from "./services/astrologyDisplay";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
 import { natalSnapshotWithBirthTimeReliability } from "./services/birthTimeReliability";
@@ -15351,7 +15352,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 }
 
 function skyDisplayPlanetName(planet: string) {
-  return planet === "True Node" ? "North Node" : planet;
+  return skyPointDisplayName(planet);
 }
 
 function retrogradeDetailKicker(position: PlanetPosition) {
