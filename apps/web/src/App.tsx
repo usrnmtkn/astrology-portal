@@ -14524,16 +14524,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               {(
                 <>
                   <button
-                    className={`account-nav ${navigationMode === "profile" ? "active" : ""}`}
-                    type="button"
-                    onFocus={preloadYouExperience}
-                    onClick={openYouPage}
-                    onPointerEnter={preloadYouExperience}
-                  >
-                    <SmileNavIcon />
-                    <span>You</span>
-                  </button>
-                  <button
                     className={`primary-friends-nav ${navigationMode === "friends" ? "active" : ""}`}
                     type="button"
                     aria-label={`Friends${pendingFriendRequestCount > 0 ? `, ${pendingFriendRequestCount} pending ${pendingFriendRequestCount === 1 ? "request" : "requests"}` : ""}`}
@@ -14586,6 +14576,17 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               results={hasMapboxToken() ? <CitySuggestions suggestions={citySuggestions.slice(0,3)} status={citySearchStatus} mapboxEnabled onSelect={applyCitySuggestion} /> : <p role="status">City search is unavailable right now.</p>} />
           </Suspense>}
           <ThemeToggleButton theme={theme} onThemeChange={setTheme} />
+          <button
+            className={`profile-nav-button ${navigationMode === "profile" ? "active" : ""}`}
+            type="button"
+            aria-label="Your profile"
+            aria-current={navigationMode === "profile" ? "page" : undefined}
+            onFocus={preloadYouExperience}
+            onPointerEnter={preloadYouExperience}
+            onClick={openYouPage}
+          >
+            {userProfile ? <ProfileAvatar name={userProfile.name} email={userProfile.email} avatarUrl={userProfile.avatarUrl} /> : <User size={22} aria-hidden="true" />}
+          </button>
           <button
             type="button"
             className="menu-toggle"

@@ -1323,6 +1323,25 @@
 }
 
 @media (max-width: 380px) {
+  .topbar:has(.profile-nav-button) {
+    gap: var(--space-1);
+    padding-inline: var(--space-2);
+  }
+
+  .topbar-actions:has(.profile-nav-button) {
+    gap: var(--space-1);
+  }
+
+  .topbar:has(.profile-nav-button) .nav-pill {
+    padding-inline: var(--space-1);
+  }
+
+  .topbar:has(.profile-nav-button) .sky-header-date-button {
+    gap: var(--space-1);
+    min-width: 0;
+    padding-inline: var(--space-1);
+  }
+
   .app-shell:has(.floating-back-button):has(.sky-header-date-button) {
     --mobile-control-inset: var(--space-2);
   }

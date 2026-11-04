@@ -213,6 +213,7 @@ html[data-scrolled] .nav-pill {
 }
 
 .theme-toggle,
+.profile-nav-button,
 .menu-toggle {
   flex: none;
   display: grid;
@@ -234,7 +235,30 @@ html[data-scrolled] .nav-pill {
     transform 160ms ease;
 }
 
+.profile-nav-button {
+  padding: 0;
+  overflow: hidden;
+}
+
+.profile-nav-button .profile-avatar {
+  width: 100%;
+  height: 100%;
+  background: var(--avatar-owner-bg);
+  color: var(--avatar-owner-fg);
+  font-size: var(--avatar-initial-size);
+}
+
+.profile-nav-button:focus-visible {
+  outline: var(--border-width-medium) solid var(--ink);
+  outline-offset: var(--space-1);
+}
+
+.profile-nav-button[aria-current="page"] {
+  border-color: var(--nav-link-active-fg);
+}
+
 html[data-scrolled] .theme-toggle,
+html[data-scrolled] .profile-nav-button,
 html[data-scrolled] .menu-toggle {
   border-color: var(--floating-button-border);
   background: var(--floating-button-bg);
@@ -244,6 +268,7 @@ html[data-scrolled] .menu-toggle {
 }
 
 .theme-toggle:hover,
+.profile-nav-button:hover,
 .menu-toggle:hover {
   --floating-button-hover-lift: var(--ds-optical-offset-1);
 
@@ -254,6 +279,7 @@ html[data-scrolled] .menu-toggle {
 }
 
 .theme-toggle svg,
+.profile-nav-button svg,
 .menu-toggle svg {
   width: var(--top-action-icon-size);
   height: var(--top-action-icon-size);
@@ -327,14 +353,14 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   color: var(--button-fg);
 }
 
-:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle, .floating-back-button) {
+:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .profile-nav-button, .menu-toggle, .floating-back-button) {
   border-color: var(--floating-button-border);
   background: var(--floating-button-bg);
   color: var(--ink);
   box-shadow: var(--nav-rest-shadow);
 }
 
-:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .menu-toggle, .floating-back-button):hover {
+:is(.theme-dark, [data-theme="dark"]) :where(.theme-toggle, .profile-nav-button, .menu-toggle, .floating-back-button):hover {
   border-color: var(--floating-button-border-hover);
   background: var(--floating-button-bg-hover);
   color: var(--ink);

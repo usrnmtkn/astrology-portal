@@ -1407,7 +1407,7 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
       await expect(paragraph, item.route).toHaveCSS('font-family', /Newsreader/); await expect(paragraph, item.route).toHaveCSS('font-size', '19px'); await expect(paragraph, item.route).toHaveCSS('line-height', '28.5px'); await expect(paragraph, item.route).toHaveCSS('font-weight', '400'); await expect(paragraph, item.route).toHaveCSS('letter-spacing', 'normal');
     }
     const toggle = page.locator('.topbar-actions > .theme-toggle'); await expect(toggle).toBeVisible(); await expect(toggle.locator('svg')).toHaveClass(theme === 'dark' ? /lucide-sun/ : /lucide-moon/);
-    await expect(page.locator('.theme-toggle + .menu-toggle')).toBeVisible();
+    await expect(page.locator('.profile-nav-button + .menu-toggle')).toBeVisible();
     if (theme === 'dark') {
       await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(18, 20, 24)'); await expect(page.locator('body')).toHaveCSS('background-image', /^none(?:, none)*$/);
       if(item.route !== 'articles') { const surface = page.locator(item.route === 'sky' && width <= 800 ? '.sky-debility-ledger' : item.surface).first(); await expect(surface).toHaveCSS('background-color', 'rgb(28, 31, 38)'); await expect(surface).toHaveCSS('box-shadow', 'none'); }

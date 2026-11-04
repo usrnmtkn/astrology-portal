@@ -173,7 +173,7 @@ test.describe("You loading performance matrix", () => {
     await seedYouPerformanceState(page);
     await page.goto("/#sky", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
-    const youButton = page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You" });
+    const youButton = page.getByRole("button", { name: "Your profile", exact: true });
     await youButton.focus();
     const startedAt = Date.now();
 

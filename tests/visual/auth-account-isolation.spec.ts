@@ -165,11 +165,11 @@ test("restored login does not reopen a saved Requests tab", async ({ page }) => 
   await seedSavedRequests(page);
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await expect(page).not.toHaveURL(/friends.*requests/);
   await page.reload();
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await expect(page).not.toHaveURL(/friends.*requests/);
 });
 
@@ -179,7 +179,7 @@ test("OAuth login replaces an old Requests return with You", async ({ page }) =>
   await page.goto("/?readerReturn=%2F%23friends%3Ftab%3Drequests#access_token=synthetic-callback&refresh_token=synthetic-refresh&expires_in=3600&token_type=bearer");
   await expect(page).toHaveURL(/\/#you$/);
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await page.screenshot({ path: "test-results/login-returns-to-you.png" });
 });
 
@@ -200,7 +200,7 @@ test("email login ignores a stale Requests return", async ({ page }) => {
   await page.getByLabel("Password", { exact: true }).fill("synthetic-test-password");
   await page.getByRole("button", { name: "Log in", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Create your chart.", exact: true, level: 1 })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Primary navigation" }).getByRole("button", { name: "You", exact: true })).toHaveClass(/active/);
+  await expect(page.getByRole("button", { name: "Your profile", exact: true })).toHaveClass(/active/);
   await expect(page).not.toHaveURL(/friends.*requests/);
 });
 
