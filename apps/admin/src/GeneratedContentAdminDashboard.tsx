@@ -3292,6 +3292,11 @@ export function GeneratedContentAdminDashboard() {
   const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
   const dailyWritingDirtyRef = useRef(false);
+  const dailyGlanceDirtyRef = useRef(false);
+  const dailyGlanceBusyRef = useRef(false);
+  const trackDailyGlanceDraft = useCallback((dirty: boolean, busy: boolean) => {
+    dailyGlanceDirtyRef.current = dirty; dailyGlanceBusyRef.current = busy;
+  }, []);
   const skyPlacementWorkspaceDirtyRef = useRef(false);
   const skyPlacementWorkspaceBusyRef = useRef(false);
   const aspectPatternDirtyRef = useRef(false);
@@ -4532,6 +4537,7 @@ export function GeneratedContentAdminDashboard() {
   function hasPendingArticleChanges() {
     return Boolean(
       subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || moonHoroscopesDirtyRef.current || dailyWritingDirtyRef.current || skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current
+      || dailyGlanceDirtyRef.current || dailyGlanceBusyRef.current
       || aspectPatternDirtyRef.current || aspectPatternBusyRef.current || customVariableDirtyRef.current || customVariableBusyRef.current
       || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
@@ -4572,10 +4578,11 @@ export function GeneratedContentAdminDashboard() {
       selectedRow
       || draft
       || compositionEditorContext
+      || dailyGlancePairSelector
       || skyArticleEditor
       || skyArticleEditionForm
     );
-    if (skyPlacementWorkspaceBusyRef.current || aspectPatternBusyRef.current || customVariableBusyRef.current || isLoading && hasOpenEditor) {
+    if (dailyGlanceBusyRef.current || skyPlacementWorkspaceBusyRef.current || aspectPatternBusyRef.current || customVariableBusyRef.current || isLoading && hasOpenEditor) {
       setMessage("Finish the current editor operation before leaving this section.");
       return false;
     }
@@ -4609,6 +4616,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedTemplateVariableName(null);
     setSelectedTemplateVariableSourceId(null);
     setCompositionEditorContext(null);
+    setDailyGlancePairSelector(null);
     setSelectedRowId(null);
     setDraft(null);
     setHouseTransitEditor(null);
@@ -10418,6 +10426,7 @@ export function GeneratedContentAdminDashboard() {
             isSaving={isLoading}
             pair={selectedDailyGlancePair}
             onClose={closeDailyGlancePairEditor}
+            onDirty={trackDailyGlanceDraft}
             onSave={saveDailyGlancePairEdits}
             onPublish={(pair, edits) => saveDailyGlancePairEdits(pair, edits, true)}
             publicationPending={Boolean(pendingPublication)}
