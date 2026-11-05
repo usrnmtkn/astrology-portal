@@ -8,6 +8,8 @@ async function componentHarness() {
     import React from 'react'; import {createRoot} from 'react-dom/client';
     import {SkyDebilityCard} from './apps/web/src/features/sky/SkyDebilityCard';
     import {ProfileAvatar} from './apps/web/src/components/ProfileAvatar';
+    import {SkyPlacementSection,SkyPlacementList} from './apps/web/src/features/sky/SkyToday';
+    import {PlanetPlacementRow} from './apps/web/src/components/charts/PlacementRows';
     import {installContentPublications} from './apps/web/src/content/contentPublicationState';
     import {skyDebilityInterpretationKey} from './apps/web/src/content/skyDebilityInterpretation';
     const names=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn'];
@@ -18,7 +20,9 @@ async function componentHarness() {
     let revision=0;
     window.renderCount=n=>root.render(<main className='app-shell'><section data-fixture-revision={revision} className='portal-grid page-shell sky-page sky-layout chart-layout'>
       <SkyDebilityCard positions={positions(n)}/>
-      <section className='placement-section'><header className='placements-heading'><h2>Placements</h2></header></section>
+      <SkyPlacementSection><section className='sky-placement-group' aria-label='Planets'><h3>Planets</h3>
+        <SkyPlacementList><PlanetPlacementRow variant='sky' glyph='☉' pointName='Sun' title='Sun in Leo' sign='Leo' degree='0°' description='Preserved fixture placement.'/></SkyPlacementList>
+      </section></SkyPlacementSection>
     </section></main>);
     window.renderMissingCopy=state=>{
       const key=skyDebilityInterpretationKey(positions(1));
@@ -70,8 +74,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Di
   const { script, links } = await componentHarness();
   await page.route('**/__dignity-missing-copy', route => route.fulfill({ contentType: 'text/html', body: `<html data-theme="${theme}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${links}</head><body><div id="root"></div><script>${script}</script></body></html>` }));
   await page.goto('/__dignity-missing-copy');
-  const placements = page.getByRole('heading', { name: 'Placements', exact: true });
+  const placements = page.getByRole('region', { name: 'Placements', exact: true });
   await expect(placements).toBeVisible();
+  const heading = placements.locator('.placements-heading h2');
+  await expect(heading).toHaveText('Placements');
+  if (width <= 800) await expect(heading).toBeHidden();
+  else await expect(heading).toBeVisible();
+  const row = placements.locator('.planet-placement-row--sky');
+  await expect(row).toBeVisible();
+  const placementCopy = await row.innerText();
   // A snapshot with no qualifying planet never leaves an empty effort card.
   await expect(page.locator('.sky-debility-ledger')).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
@@ -84,6 +95,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Di
     await expect(page.getByRole('button', { name: 'What is dignity?', exact: true })).toHaveCount(0);
     await expect(page.getByRole('dialog')).toHaveCount(0);
     await expect(placements).toBeVisible();
+    await expect(row).toBeVisible();
+    expect(await row.innerText()).toEqual(placementCopy);
     expect(await placements.boundingBox()).toEqual(before);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: test.info().outputPath(`dignity-copy-${state}-${width}-${theme}.png`) });
