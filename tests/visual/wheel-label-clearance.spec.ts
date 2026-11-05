@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { build } from 'esbuild';
 import { readFileSync } from 'node:fs';
 
@@ -10,19 +10,64 @@ test.beforeAll(async () => {
     import {SkyWheel,signs} from './apps/web/src/components/charts/Wheels';
     import {SynastryWheel} from './apps/web/src/components/charts/SynastryWheel';
     import {CompositeWheel} from './apps/web/src/components/charts/CompositeWheel';
-    const kind = new URLSearchParams(location.search).get('kind');
+    const params = new URLSearchParams(location.search);
+    const kind = params.get('kind');
     const names = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','North Node','South Node','Chiron','Lilith'];
     const sky = [214,54,230,208,136,143,9,64,2,303,327,147,28,251];
+    const crowded = [359,0.2,1.5,2.7,4.2,50,91,127,164,199,232,267,300,330];
+    const rotation = Number(params.get('rotation') ?? 0);
+    const transits = params.has('rotation') ? crowded.map(value => (value + rotation) % 360) : sky;
     const natal = [329,223,307,284,322,120,161,230,260,199,347,167,35,155];
     const positions = (values) => names.map((planet,index) => ({planet,longitude:values[index],sign:signs[Math.floor(values[index]/30)],degree:values[index]%30,glyph:planet,motion:index===2||index===3?'retrograde':'direct'}));
     const props = {positions:positions(kind==='sky'?sky:natal),aspects:[],ascendant:'Gemini',ascendantLongitude:kind==='sky'?300:71,midheavenLongitude:kind==='sky'?230:347,showHouses:true,aspectInspector:true};
     createRoot(document.getElementById('root')).render(kind==='synastry'
       ? <SynastryWheel outerPositions={positions(natal)} innerPositions={positions(natal)} interAspects={[]} ascendant='Gemini' ascendantLongitude={71} midheavenLongitude={347} aspectInspector />
-      : kind==='composite' ? <CompositeWheel {...props} /> : <SkyWheel {...props} variant={kind==='sky'?'zodiac':'natal'} transitPositions={kind==='transit'?positions(sky):[]} />);
+      : kind==='composite' ? <CompositeWheel {...props} /> : <SkyWheel {...props} variant={kind==='sky'?'zodiac':'natal'} transitPositions={kind==='transit'?positions(transits):[]} />);
   ` }, bundle: true, write: false, platform: 'browser', format: 'iife', jsx: 'automatic',
     define: { 'process.env.NODE_ENV': '"production"', 'import.meta.env': '{"BASE_URL":"/"}' } });
   script = output.outputFiles[0].text;
 });
+
+async function expectTransitContainment(svg: Locator) {
+  const geometry = await svg.evaluate(root => {
+    const svg = root as SVGSVGElement;
+    const inner = Number(root.querySelector('.transit-planet-band-outline--inner')!.getAttribute('r'));
+    const outer = Number(root.querySelector('.transit-planet-band-outline--outer')!.getAttribute('r'));
+    const inverse = svg.getScreenCTM()!.inverse();
+    const viewport = svg.getBoundingClientRect();
+    const labels = [...root.querySelectorAll<SVGGraphicsElement>('.transit-planet-labels .wheel-placement__glyph, .transit-planet-degree')].map(node => {
+      const box = node.getBoundingClientRect();
+      const corners = [[box.left, box.top], [box.right, box.top], [box.right, box.bottom], [box.left, box.bottom]]
+        .map(([x, y]) => new DOMPoint(x, y).matrixTransform(inverse));
+      const left = Math.min(...corners.map(point => point.x)), right = Math.max(...corners.map(point => point.x));
+      const top = Math.min(...corners.map(point => point.y)), bottom = Math.max(...corners.map(point => point.y));
+      return {
+        planet: node.closest('[data-inspector-point-id]')!.getAttribute('data-inspector-point-id'),
+        kind: node.classList.contains('transit-planet-degree') ? 'degree' : 'glyph including Rx',
+        innerPadding: Math.hypot(Math.max(left, Math.min(300, right)) - 300, Math.max(top, Math.min(300, bottom)) - 300) - inner,
+        outerPadding: outer - Math.max(...corners.map(point => Math.hypot(point.x - 300, point.y - 300))),
+        clipped: box.left < viewport.left || box.right > viewport.right || box.top < viewport.top || box.bottom > viewport.bottom,
+        box: { left, right, top, bottom }
+      };
+    });
+    const overlaps = labels.flatMap((a, index) => labels.slice(index + 1).flatMap(b =>
+      Math.min(a.box.right, b.box.right) > Math.max(a.box.left, b.box.left)
+      && Math.min(a.box.bottom, b.box.bottom) > Math.max(a.box.top, b.box.top) ? [{ a, b }] : []));
+    const band = root.querySelector('.transit-planet-band')!;
+    const middle = Number(band.getAttribute('r')), thickness = Number(getComputedStyle(band).strokeWidth.replace('px', ''));
+    return { labels, overlaps, inner, outer, bandInner: middle - thickness / 2, bandOuter: middle + thickness / 2 };
+  });
+  expect(geometry.bandInner).toBe(geometry.inner);
+  expect(geometry.bandOuter).toBe(geometry.outer);
+  expect(geometry.inner).toBe(284);
+  expect(geometry.labels).toHaveLength(28);
+  expect(geometry.labels.filter(label => label.innerPadding < 4 || label.outerPadding < 4 || label.clipped),
+    'Every complete transit glyph, Rx asset and degree label has padding inside the band and SVG').toEqual([]);
+  expect(geometry.overlaps, 'Crowded transit glyphs and degrees remain separate').toEqual([]);
+  await expect(svg).toHaveAttribute('viewBox', '-76 -76 752 752');
+  expect(await svg.locator('.wheel-surfaces circle').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('r')))))
+    .toEqual([284, 240, 132, 96]);
+}
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const kind of ['sky','natal','composite','synastry','transit']) {
   test(`wheel label clearance ${kind} ${width} ${theme}`, async ({ page }) => {
@@ -75,6 +120,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     expect(geometry.badgesAboveTicks, 'Exact angle badges cover coincident longitude strokes').toBe(true);
     expect(geometry.radii).toHaveLength(4);
     for (const radius of geometry.radii) expect(radius).toBeCloseTo(geometry.divider, 3);
+    if (kind === 'transit') await expectTransitContainment(svg);
     const facts = await svg.locator('.planet-marker').evaluateAll(nodes => nodes.map(node => node.getAttribute('aria-label')));
     const planet = svg.locator('.planet-marker').first();
     await planet.focus(); await page.keyboard.press('Enter');
@@ -86,5 +132,36 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     await page.keyboard.press('Escape');
     expect(await svg.locator('.planet-marker').evaluateAll(nodes => nodes.map(node => node.getAttribute('aria-label')))).toEqual(facts);
     await svg.screenshot({ path: test.info().outputPath(`wheel-${kind}-${width}-${theme}.png`) });
+  });
+}
+
+for (const width of [320, 390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`transit band contains crowded labels around the full circle ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const dist = process.env.PLAYWRIGHT_DIST_ROOT ?? 'apps/web/dist';
+    const manifest = JSON.parse(readFileSync(`${dist}/.vite/manifest.json`, 'utf8'));
+    const styles = [...manifest['index.html'].css, manifest['src/styles.css'].file];
+    await page.route('**/__transit-containment?**', route => route.fulfill({ contentType: 'text/html', body:
+      `<!doctype html><html data-theme="${theme}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${styles.map(file => `<link rel="stylesheet" href="/${file}">`).join('')}</head><body><main id="root"></main><script>${script}</script></body></html>` }));
+    let natalGeometry: unknown;
+    for (let rotation = 0; rotation < 360; rotation += 15) {
+      await page.goto(`/__transit-containment?kind=transit&rotation=${rotation}`);
+      const svg = page.locator('svg.sky-wheel').first();
+      await expect(svg.locator('.planet-marker-transit')).toHaveCount(14);
+      await page.evaluate(() => document.fonts.ready);
+      await expectTransitContainment(svg);
+      const currentNatalGeometry = await svg.locator('.wheel-sectors line, .sign-band-dividers line, .house-labels text, .planet-labels:not(.transit-planet-labels) .planet-label-group')
+        .evaluateAll(nodes => nodes.map(node => ['x', 'y', 'x1', 'y1', 'x2', 'y2', 'transform'].map(attribute => node.getAttribute(attribute))));
+      if (natalGeometry) expect(currentNatalGeometry).toEqual(natalGeometry);
+      else natalGeometry = currentNatalGeometry;
+      const ticks = await svg.locator('.planet-marker-transit').evaluateAll(nodes => nodes.map(node => {
+        const tick = node.querySelector<SVGLineElement>('.transit-planet-tick')!;
+        return { planet: node.getAttribute('data-inspector-point-id'), angle: (Math.atan2(300 - tick.y1.baseVal.value, tick.x1.baseVal.value - 300) * 180 / Math.PI + 360) % 360 };
+      }));
+      const longitudes = [359, 0.2, 1.5, 2.7, 4.2, 50, 91, 127, 164, 199, 232, 267, 300, 330];
+      ticks.forEach((tick, index) => expect(tick.angle, `${tick.planet} retains its exact calculated longitude tick`).toBeCloseTo((180 + longitudes[index] + rotation - 71 + 360) % 360, 5));
+      if (rotation === 0) await svg.screenshot({ path: test.info().outputPath(`transit-band-${width}-${theme}.png`) });
+    }
   });
 }

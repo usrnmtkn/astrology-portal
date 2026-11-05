@@ -392,9 +392,8 @@ export const SkyWheel = memo(function SkyWheel({
     outer: 284,
     signInner: 240,
     planet: refinedLayout || handoffLayout ? 212 : 200,
-    transitPlanet: 314,
-    transitBand: 314,
-    transitBandOuter: 344,
+    transitPlanet: 316,
+    transitBandOuter: 374,
     aspect: handoffLayout ? 96 : refinedLayout ? 160 : 132,
     house: 240 * chartHouseLabelRadiusFactor,
     inner: handoffLayout ? 96 : refinedLayout ? 0 : 44
@@ -848,7 +847,7 @@ export const SkyWheel = memo(function SkyWheel({
         ) : null}
         {hasTransitOverlay ? (
           <g className="transit-planet-row" aria-hidden="true">
-            <circle className="transit-planet-band" cx={center} cy={center} r={radius.transitBand} />
+            <circle className="transit-planet-band" cx={center} cy={center} r={(radius.outer + radius.transitBandOuter) / 2} strokeWidth={radius.transitBandOuter - radius.outer} />
             <circle className="transit-planet-band-outline transit-planet-band-outline--inner" cx={center} cy={center} r={radius.outer} />
             <circle className="transit-planet-band-outline transit-planet-band-outline--outer" cx={center} cy={center} r={radius.transitBandOuter} />
           </g>
