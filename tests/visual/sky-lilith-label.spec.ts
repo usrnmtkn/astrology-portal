@@ -5,6 +5,7 @@ import { writeFileSync } from 'node:fs';
 import skyHandler from '../../api/sky';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { readerResponse } from '../helpers/reader-response';
+import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
 import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const published of [false, true]) {
@@ -97,10 +98,13 @@ test('original fast Lilith reader navigation preserves labels without pageerrors
  const expected = process.env.EXPECTED_APP_SOURCE_SHA;
  if (expected) expect(sourceSha).toBe(expected);
  const errors: string[] = [], denied: string[] = [], snapshots: { positionCount: number; lilithSign?: string }[] = [];
+ const { unhandledExternal, finishStaticFonts } = await installSyntheticNetworkGuard(page.context(), new URL(String(info.project.use.baseURL)).origin);
  page.on('pageerror', error => errors.push(error.message));
  await page.route('**/*', route => {
   const request = route.request(), url = new URL(request.url());
   if (['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname) && ['GET', 'HEAD', 'OPTIONS'].includes(request.method())) return route.continue();
+  // The shared guard validates exact static-font paths and drains transfers.
+  if (request.method() === 'GET' && ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'].includes(url.origin)) return route.fallback();
   denied.push(`${request.method()} ${url.origin}${url.pathname}`); return route.abort('blockedbyclient');
  });
  await bundledPublications(page);
@@ -124,5 +128,5 @@ test('original fast Lilith reader navigation preserves labels without pageerrors
  await page.locator('.sky-placement-article__previous').click();await expect(page.locator('#sky-detail-title')).toHaveText('South Node in Leo',{timeout:60000});await expect(page).toHaveURL(/#sky\/placement\/south-node\/leo$/);await expect(page.locator('.sky-placement-article__next')).toContainText('True Black Moon Lilith in Sagittarius');await page.locator('.sky-placement-article__next').click();await expect(page).toHaveURL(/#sky\/placement\/lilith\/sagittarius$/);await expect(page.locator('#sky-detail-title')).toHaveText('True Black Moon Lilith in Sagittarius');await expect.poll(()=>lilithBody.innerText(),{timeout:60000}).toBe(completeLilithBody);await page.reload();await expect(page.locator('#sky-detail-title')).toHaveText('True Black Moon Lilith in Sagittarius',{timeout:60000});await expect.poll(()=>lilithBody.innerText(),{timeout:60000}).toBe(completeLilithBody);await page.getByRole('button',{name:'Close detail',exact:true}).click();await expect(page.locator('#sky-detail-title')).toHaveText('South Node in Leo',{timeout:60000});await expect(page).toHaveURL(/#sky\/placement\/south-node\/leo$/);await page.goto('/?date=2026-11-04#sky');await expect(card).toBeVisible({timeout:60000});
  await page.goto('/?date=2026-11-04#horoscopes?period=monthly&sign=gemini&view=planets');const lilith=page.getByRole('link',{name:'True Black Moon Lilith in Sagittarius · Read horoscope',exact:true});await expect(lilith).toBeVisible({timeout:60000});await expect(lilith).toHaveAttribute('href',/#horoscopes\?.*&planet=lilith&placement=sagittarius$/);await lilith.click();
  const article=page.getByRole('article',{name:'True Black Moon Lilith in Sagittarius horoscope',exact:true});await expect(article.locator('.horoscope-reading-date')).toHaveText('True Black Moon Lilith in Sagittarius');await page.getByRole('button',{name:'Previous Chiron Rx in Aries',exact:true}).click();await page.getByRole('button',{name:'Next True Black Moon Lilith in Sagittarius',exact:true}).click();await page.reload();await expect(article.locator('.horoscope-reading-date')).toHaveText('True Black Moon Lilith in Sagittarius');await expect(page.locator('html')).toHaveAttribute('data-theme','light');
- expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);expect(denied).toEqual([]);expect(errors).toEqual([]);await page.screenshot({path:info.outputPath('live-lilith-label.png')});writeFileSync(info.outputPath('original-fast-local-evidence.json'),JSON.stringify({sourceSha,scope:'fresh local App; real Swiss Sky handler and bundled synthetic reader transport',snapshots,denied,errors},null,2));
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await finishStaticFonts();expect(unhandledExternal).toEqual([]);expect(denied).toEqual([]);expect(errors).toEqual([]);await page.screenshot({path:info.outputPath('live-lilith-label.png')});writeFileSync(info.outputPath('original-fast-local-evidence.json'),JSON.stringify({sourceSha,scope:'fresh local App; real Swiss Sky handler and bundled synthetic reader transport',snapshots,denied,errors},null,2));
 });
