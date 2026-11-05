@@ -56,7 +56,7 @@ function harness() {
  const qa = context.module.exports;
  writes.length = 0;
  return { target, qa, requests, timeouts, writes, coldArrived, revisionArrived, publicationArrived,
-  holdPublications: () => { holdPublication = true; }, releasePublications: () => publicationGate.resolve(),
+  holdPublications: () => { holdPublication = true; }, releasePublications: () => publicationGate.resolve(), rejectPublications: (error: Error) => publicationGate.reject(error),
   cancelRevision: () => revision.resolve(failure()), fresh: () => { fresh = true; },
   clean: () => {
    assert.equal(getEventListeners(target, 'beforeunload').length, 0);
@@ -102,16 +102,23 @@ for (const mode of ['beforeunload', 'cancelled-beforeunload', 'bfcache-pagehide'
  h.clean();
 }
 
-{
+for (const rejected of [false, true]) {
  const h = harness(); h.holdPublications();
- const outcome = h.qa.loadFallbackArchitectureV3DashboardBundle('sky-article')
+ let consumed = 0, discarded = 0;
+ const owned = new AbortController();
+ const early = { consume: () => { consumed++; return undefined; }, discard: () => { discarded++; owned.abort(); } };
+ const outcome = h.qa.loadFallbackArchitectureV3DashboardBundle('sky-article', early)
   .then(() => null, (error: unknown) => error);
  await h.publicationArrived.promise;
- h.target.dispatchEvent(new Event('beforeunload'));
- h.releasePublications();
+ const unavailable = new Error('Synthetic publication readiness failure');
+ if (rejected) h.rejectPublications(unavailable);
+ else { h.target.dispatchEvent(new Event('beforeunload')); h.releasePublications(); }
  const error = await outcome;
- assert(error instanceof DOMException); assert.equal(error.name, 'AbortError');
- assert.equal(h.requests.length, 0, 'Navigation while publication readiness is pending cannot start a new read.');
+ if (rejected) assert.equal(error, unavailable);
+ else { assert(error instanceof DOMException); assert.equal(error.name, 'AbortError'); }
+ assert.equal(h.requests.length, 0, 'An early publication exit cannot start a new read.');
+ assert.equal(consumed, 0); assert.equal(discarded, 1, 'An unconsumed early handle is cleaned exactly once.');
+ assert(owned.signal.aborted);
  h.clean();
 }
 
@@ -125,13 +132,15 @@ for (const mode of ['beforeunload', 'cancelled-beforeunload', 'bfcache-pagehide'
 }
 
 {
- const h = harness(), consumed = [0, 0], discarded = [0, 0];
- const early = (index: number) => ({ consume: () => { consumed[index]++; return undefined; }, discard: () => { discarded[index]++; } });
+ const h = harness(), consumed = [0, 0], discarded = [0, 0], handles = [new AbortController(), new AbortController()];
+ const early = (index: number) => ({ consume: () => { consumed[index]++; return undefined; }, discard: () => { discarded[index]++; if (!consumed[index]) handles[index].abort(); } });
  const pending = [0, 1].map(index => h.qa.loadFallbackArchitectureV3DashboardBundle('sky-article', early(index))
   .then((value: unknown) => ({ value, error: null }), (error: unknown) => ({ value: null, error })));
  await Promise.all([h.coldArrived.promise, h.revisionArrived.promise]);
  assert.equal(h.requests.length, 1, 'Joiners share the active cold read.');
  assert.deepEqual(consumed, [1, 0]); assert.deepEqual(discarded, [1, 1]);
+ assert.equal(handles[0].signal.aborted, false, 'Cleanup cannot abort a consumed shared handle.');
+ assert.equal(handles[1].signal.aborted, true, 'An unconsumed joining handle is discarded.');
  h.target.dispatchEvent(new Event('beforeunload'));
  h.requests[0].reply.reject(new TypeError('Synthetic navigation cancellation'));
  h.cancelRevision();

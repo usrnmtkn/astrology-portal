@@ -1205,15 +1205,19 @@ export function prefetchColdSkyPlacementRows(selection: string, publications: Pr
 }
 
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all", earlyRead?: ColdSkyArticleRead): Promise<FallbackArchitectureV3Bundle | null> {
-  return withReaderNavigation(async navigation => {
-    await (scope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
-    navigation.throwIfAborted();
-    return shareDashboardBundle(scope, canCache => {
-      const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
-      earlyRead?.discard();
-      return readFallbackArchitectureV3DashboardBundle(scope, canCache, navigation, earlyRows);
-    }, () => earlyRead?.discard());
-  });
+  let unclaimed = earlyRead;
+  const discard = () => { const read = unclaimed; unclaimed = undefined; read?.discard(); };
+  try {
+    return await withReaderNavigation(async navigation => {
+      await (scope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
+      navigation.throwIfAborted();
+      return shareDashboardBundle(scope, canCache => {
+        const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
+        discard();
+        return readFallbackArchitectureV3DashboardBundle(scope, canCache, navigation, earlyRows);
+      }, discard);
+    });
+  } finally { discard(); }
 }
 
 function shareDashboardBundle(key: string, read: (canCache: () => boolean) => Promise<FallbackArchitectureV3Bundle | null>, joining: () => void) {
