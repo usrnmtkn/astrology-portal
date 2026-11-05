@@ -17,7 +17,9 @@ test.beforeAll(async () => {
           {date:'October 10, 2026',label:'Second complete fixture event'}]};
       createRoot(document.getElementById('root')).render(<div className="app-shell mode-detail"><SkyDetailArticle detail={detail} onClose={()=>{}}/></div>);
     ` },
-    bundle: true, write: false, format: 'esm', jsx: 'automatic', loader: { '.css': 'empty' },
+    // Match the existing season-article browser harness: Swiss Ephemeris's
+    // unused Node branch must not resolve a browser package named "module".
+    bundle: true, write: false, format: 'esm', jsx: 'automatic', external: ['module'], loader: { '.css': 'empty' },
     define: { 'import.meta.env': JSON.stringify({ DEV: false, MODE: 'test' }) },
   });
   script = result.outputFiles[0].text;
