@@ -78,7 +78,7 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     await keyDates.locator('summary').focus();await page.keyboard.press('Space');
     await expect(keyDates).toHaveAttribute('open','');
     await expectKeyDatesHeaderCentered(keyDates);
-    await expect(keyDates.locator('dd')).toHaveText(['Current contact','Full transit series','Pass 1']);
+    await expect(keyDates.locator('dd')).toHaveText(['Current contact','Pass 1','Full transit series']);
     await expect(keyDates.locator('.key-dates-panel__count')).toHaveText('3');
     await expect(article).toContainText("Current contact");
     await expect(article).toContainText("Full transit series");
