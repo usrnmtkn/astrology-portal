@@ -13,7 +13,8 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Paste, s
   try{
     await ready;
     let failEvents=width===1440&&theme==='light';
-    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
+    const writes:any[]=[];
+    await routeStudioInventoryApi(page,{call,onWrite:write=>writes.push(write),answer:async(route,url)=>{
       if(url.pathname!=='/api/admin/lunation-writing')return false;
       if(failEvents){failEvents=false;await route.fulfill({status:503,json:{ok:false,error:'Synthetic event lookup unavailable.'}});return true;}
       const result=await call({method:route.request().method(),url:url.pathname+url.search});
@@ -47,6 +48,37 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Paste, s
     await studio.getByRole('button',{name:'Save 12 horoscopes as draft',exact:true}).click();
     await expect(studio.getByRole('status')).toHaveText('All twelve readings saved as a draft.');
     let rows=await call({method:'rows'});expect(rows).toHaveLength(1);expect(rows[0].source_snapshot.editorialImport.originalSource).toBe(source);
+    const beforeReplacement=structuredClone(rows),reviewedBody=rows[0].sections.articleHoroscopes.passages[0].body,writesBeforeReplacement=writes.length;
+    const replacement=source.replaceAll('complete synthetic','replacement synthetic');
+    const save=studio.getByRole('button',{name:'Save 12 horoscopes as draft',exact:true});
+    await studio.getByText('Replace from a new paste',{exact:true}).click();
+    const replacementField=studio.getByLabel('Replacement twelve horoscopes',{exact:true});
+    await replacementField.fill(replacement);
+    await expect(save).toBeDisabled();
+    await expect(studio.getByText('Match and review the replacement paste, or clear it before saving.',{exact:true})).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await page.screenshot({path:`test-results/dated-moon-pending-replacement-${width}-${theme}.png`,fullPage:true});
+    page.once('dialog',dialog=>dialog.dismiss());
+    await studio.getByRole('button',{name:'Choose another Moon',exact:true}).click();
+    await expect(replacementField).toHaveValue(replacement);
+    expect(await call({method:'rows'})).toEqual(beforeReplacement);
+    expect(writes).toHaveLength(writesBeforeReplacement);
+    await studio.getByRole('button',{name:'Clear replacement paste',exact:true}).click();
+    await expect(replacementField).toHaveValue('');
+    await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(reviewedBody);
+    await expect(save).toBeDisabled();
+    expect(await call({method:'rows'})).toEqual(beforeReplacement);
+    expect(writes).toHaveLength(writesBeforeReplacement);
+    await replacementField.fill(replacement);
+    await studio.getByRole('button',{name:'Match and review replacement',exact:true}).click();
+    await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(reviewedBody.replaceAll('complete synthetic','replacement synthetic'));
+    await expect(save).toBeEnabled();await save.click();
+    await expect(studio.getByRole('status')).toHaveText('All twelve readings saved as a draft.');
+    rows=await call({method:'rows'});expect(rows[0].source_snapshot.editorialImport.originalSource).toBe(replacement);
+    const replacementPassages=beforeReplacement[0].sections.articleHoroscopes.passages.map((p:any)=>({...p,body:p.body.replaceAll('complete synthetic','replacement synthetic')}));
+    expect(rows[0].sections.articleHoroscopes.passages).toEqual(replacementPassages);
+    expect(writes.at(-1).body.sections.articleHoroscopes.passages).toEqual(replacementPassages);
+    expect(writes.at(-1).body.sourceSnapshot.editorialImport.originalSource).toBe(replacement);
     if(width===1440&&theme==='light'){
       const changed=await call({method:'PATCH',body:{id:rows[0].id,expectedUpdatedAt:rows[0].updated_at,reviewerNotes:'Synthetic concurrent metadata change.'}});expect(changed.status).toBe(200);
       await studio.getByLabel('Complete horoscope',{exact:true}).fill('An unsaved local reading must survive a save conflict.');
