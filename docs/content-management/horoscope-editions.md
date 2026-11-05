@@ -58,7 +58,7 @@ dated-Moon migration extends that transaction's target-family guard without chan
 its grants, locks or caller access. Conflicts preserve newer writing and the open text.
 
 Verification: `node --import tsx scripts/test-dated-moon-horoscopes.mts` and
-`npx playwright test -c playwright.moon-horoscopes.config.ts`. The latter exercises
+`npx playwright test -c playwright.lunation-studio.config.ts tests/visual/dated-moon-horoscopes.spec.ts`. The latter exercises
 desktop/mobile and light/dark using actual handlers and isolated storage; it does
 not publish owner content or establish production deployment.
 

@@ -74,5 +74,14 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Paste, s
     await studio.getByRole('checkbox').check();await studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Published. These twelve readings');
     rows=await call({method:'rows'});expect(rows.find((row:any)=>row.id===published.id).sections.articleHoroscopes.passages[11].body).toBe(exact);
+    if(width===1440&&theme==='light'){
+      await studio.getByLabel('Complete horoscope',{exact:true}).fill(exact+'\n\nAnother private revision.');
+      await studio.getByRole('button',{name:'Save 12 horoscopes as draft',exact:true}).click();
+      await expect(studio.getByRole('status')).toHaveText('All twelve readings saved as a draft.');
+      page.once('dialog',dialog=>dialog.accept());await studio.getByRole('button',{name:'Archive draft revision',exact:true}).click();
+      await expect(studio.getByRole('status')).toHaveText('Draft revision archived. The current published readings are open.');
+      await studio.getByRole('group',{name:'Moon readings by sign'}).getByRole('button',{name:'Pisces',exact:true}).click();
+      await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(exact);
+    }
   }finally{child.kill();}
 });

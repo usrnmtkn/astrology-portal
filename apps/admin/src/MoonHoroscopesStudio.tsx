@@ -85,6 +85,13 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
     if(!row||row.status!=='LIVE'||row.content_key!==saved.content_key||row.body!==saved.body)throw new Error('Publication was not confirmed. Reload the saved version to check its status.');
     accept(row);announceContentUpdate({contentKey:row.content_key,published:true,updatedAt:row.updated_at});setMessage('Published. These twelve readings are connected to this Moon event in the app.');
   }
+  async function archiveRevision(){
+    const targetId=saved.source_snapshot.targetRowId;
+    await request(secret,endpoint,{id:saved.id,expectedUpdatedAt:saved.updated_at,status:'ARCHIVED'},'PATCH');
+    const data=await request(secret,`${endpoint}?${new URLSearchParams({id:targetId,status:'all',visibility:'all'})}`);
+    if(!data.rows?.[0])throw new Error('The revision was archived. Reopen the Moon event to load its current readings.');
+    accept(data.rows[0]);setMessage('Draft revision archived. The current published readings are open.');
+  }
   const selected=events.find(event=>event.id===eventId),passage=section?.passages.find(p=>p.risingSign===sign);
   return <section className="admin-template-page" aria-label="Dated Moon horoscopes">
     <header className="admin-composition-detail-header"><div><h2 ref={editor} tabIndex={-1}>{opened?'Review your Moon horoscopes':'Choose a Moon event'}</h2><p>Paste all twelve sign readings for one dated Moon event, then review and publish them.</p></div></header>
@@ -102,6 +109,7 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
           <p>{saved?.status==='LIVE'&&!dirty?'Published':saved?.mode==='studio-draft'?'Draft revision · published readings remain available':saved?'Draft':'No saved readings yet'}</p>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={()=>{if(dirty&&!window.confirm('Leave these unsaved horoscope changes?'))return;setOpened(null);setSaved(null);setSection(null);setPaste('');setApproved(false);setError('');setMessage('');window.history.replaceState(null,'',`${window.location.pathname}${window.location.search}#moon-horoscopes`);}}>Choose another Moon</StudioButton>
             <StudioButton disabled={busy} onClick={()=>{if(dirty&&!window.confirm('Replace your unsaved edits with the saved version?'))return;void run(()=>open(opened));}}>Reload saved version</StudioButton></div>
+          {saved?.event_type==='horoscope-edition-revision'&&<StudioButton disabled={busy||dirty} onClick={()=>{if(window.confirm('Archive this saved draft revision and open the current published readings?'))void run(archiveRevision);}}>Archive draft revision</StudioButton>}
         </Stack></section>
         {!section?<section className="studio-surface studio-section" aria-label="Paste Moon horoscopes"><Stack gap="md">
           <label><span>All twelve horoscopes</span><StudioTextarea formatting={false} rows={16} maxLength={240000} disabled={busy} value={paste} onChange={e=>setPaste(e.target.value)} placeholder={'Aries / Aries Rising\nYour complete reading…\n\nTaurus / Taurus Rising\nYour complete reading…'}/></label>
