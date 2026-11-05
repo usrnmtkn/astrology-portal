@@ -616,6 +616,9 @@ jobs:
       - run: npm run build:knowledge
       - run: bash scripts/ci-install-playwright.sh
       - run: npx playwright install --with-deps webkit
+      - name: Verify reader navigation cancellation and transient recovery
+        timeout-minutes: 3
+        run: node --import tsx scripts/test-reader-navigation-browser.mts
       - name: Verify calculated placement countdown boundaries
         run: node --import tsx scripts/test-placement-card-countdowns.mts
       - name: Verify forecast return and house selection boundaries
