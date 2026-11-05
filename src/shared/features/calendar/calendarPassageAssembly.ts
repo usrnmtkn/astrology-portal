@@ -26,7 +26,7 @@ export function calendarDailyPassageValues(context: CalendarPassageContext, date
   const factsByDate = calendarMoonCycleFactsForDays(days, [...(cycleEvents ?? []), ...events], timeZone);
   const facts = factsByDate.get(date);
   const resolved = calendarMoonResolvedByDate(days, factsByDate, content);
-  const moon = moonWritingForDay(day, content, packagedWeeklyMoon(day, facts, content, resolved));
+  const moon = moonWritingForDay(day, content, packagedWeeklyMoon(day, facts, content, resolved), timeZone);
   const paragraphs = moon.flatMap(piece => calendarMoonWritingParagraphs([piece], piece.role === 'lunation' ? 1 : undefined));
   const lunation = day.events.find(event => event.type === 'lunation' && (event.primary || event.eclipseType));
   const lunarLink = lunation && moon.some(piece => piece.role === 'lunation')

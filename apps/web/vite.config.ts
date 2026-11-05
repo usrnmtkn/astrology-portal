@@ -276,6 +276,7 @@ export default defineConfig(({ mode }) => {
             // transport instead of adding a preload and gzip header per identity.
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|skyPlacementAspectBridge|generatedContentEligibility|lunationStudioRevision)\.ts$/u.test(id)
               || id.endsWith("/src/shared/lunationHoroscopeIdentity.ts")
+              || id.endsWith("/src/shared/lunationTimingVariables.ts")
               || id.endsWith("/services/templateInterpolation.ts")
               || id.endsWith("/shared/components/formattedWritingLoader.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";

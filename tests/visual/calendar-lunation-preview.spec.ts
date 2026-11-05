@@ -15,6 +15,8 @@ const remainder = ["The second fixture paragraph remains part of this saved arti
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 
 const scenarios = [
+  {theme: 'light', width: 1440, date: '2026-09-26', kind: 'full-moon', sign: 'aries', opening: 'Synthetic timing: September 26 at 12:49 PM EDT.', remainder, timingTemplate: 'Synthetic timing: {{startDate}} at {{startTime}}.'},
+  {theme: 'dark', width: 390, date: '2026-07-14', kind: 'new-moon', sign: 'cancer', opening: 'Synthetic timing: July 14 at 5:43 AM EDT.', remainder, timingTemplate: 'Synthetic timing: {{startDate}} at {{startTime}}.'},
   ...["light", "dark"].flatMap(theme => [390,1440].map(width=>({theme,width,date:"2026-09-26",kind:"full-moon",sign:"aries",opening:"Synthetic dated article opening, preserved exactly.",remainder,dated:true}))),
   ...["light", "dark"].flatMap(theme => [390, 1440].map(width => ({ theme, width, date: "2026-09-26", kind: "full-moon", sign: "aries", opening, remainder }))),
   { theme: "light", width: 390, date: "2026-07-14", kind: "new-moon", sign: "cancer", opening: "The complete opening of the New Moon fixture.", remainder },
@@ -22,7 +24,7 @@ const scenarios = [
 ];
 
 for (const scenario of scenarios) {
-  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs ${"dated" in scenario ? "dated" : "reusable"}`, async ({ page, browserName }, testInfo) => {
+  test(`Calendar lunation preview ${scenario.kind} ${scenario.theme} ${scenario.width} ${scenario.remainder.length} extra paragraphs ${"timingTemplate" in scenario ? "timing" : "dated" in scenario ? "dated" : "reusable"}`, async ({ page, browserName }, testInfo) => {
     test.setTimeout(120_000);
     const assertNoErrors = watchBrowserErrors(page, { webkitReaderReload: browserName === 'webkit' });
     const assetRequests: Request[] = [];
@@ -55,7 +57,7 @@ for (const scenario of scenarios) {
     const row = {
       id: "lunation-preview-fixture", content_key: key, updated_at: `${scenario.date}T12:00:00.000Z`,
       status: "LIVE", lane: "serving", review_state: "reviewed", surface: "sky", mode: "article",
-      headline: "Lunation fixture", body: [scenario.opening, ...scenario.remainder].join("\n\n"),
+      headline: "Lunation fixture", body: ['timingTemplate' in scenario ? scenario.timingTemplate : scenario.opening, ...scenario.remainder].join("\n\n"),
       sections: { packageRecord: { contentKey: key, content_role: "authored", review_status: "approved" } }
     };
     const rows = [row, {
@@ -138,6 +140,20 @@ for (const scenario of scenarios) {
     await expect(sun).toHaveText(sunBefore);
     expect(await card.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await card.locator(".calendar-sky-card").screenshot({ path: `test-results/lunation-preview-${scenario.kind}-${scenario.theme}-${scenario.width}-${scenario.remainder.length}.png` });
+    if ('timingTemplate' in scenario) {
+      const eventCard = page.getByRole('button', {name: 'Lunation fixture', exact: true});
+      await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);
+      await eventCard.click();
+      const detail = page.getByRole('dialog', {name: 'Event detail', exact: true});
+      await expect(detail).toContainText(scenario.opening);
+      await detail.getByRole('button', {name: 'Read article', exact: true}).click();
+      await expect(page.getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
+      await expect(page.getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
+      await finishAssetReads();
+      await assertNoErrors.reload();
+      await expect(page.getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
+      await expect(page.getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
+    }
     if('dated' in scenario){
       const eventCard = page.getByRole('button', {name: 'Full Moon in Aries', exact: true});
       await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);

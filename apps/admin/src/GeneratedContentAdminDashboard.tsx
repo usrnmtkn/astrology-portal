@@ -10495,6 +10495,7 @@ export function GeneratedContentAdminDashboard() {
       : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
     const effectiveSkyFallback: Record<string, any> = {
       ...effectivePackageRecord(currentDraft.sections),
+      contentKey: currentDraft.contentKey,
       _studioVariables: customVariableLibrary.variables,
       _studioVariablesLoading: customVariableLibrary.loading,
       _studioVariablesError: customVariableLibrary.error

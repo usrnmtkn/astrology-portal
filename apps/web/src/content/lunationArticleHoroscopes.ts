@@ -49,8 +49,8 @@ export async function loadDatedLunationArticle(location: LocationInput, datePart
   return { event, eventSky, content };
 }
 
-export function resolveLunationArticleHoroscopes(event: Event, content: CmsGeneratedContentMap) {
-  const source = resolveLunationReaderSource(event, content);
+export function resolveLunationArticleHoroscopes(event: Event, content: CmsGeneratedContentMap, timeZone?: string) {
+  const source = resolveLunationReaderSource(event, content, timeZone);
   const saved = source?.body ? content.get(source.contentKey) : null;
   const explicit = articleHoroscopeSection(saved?.sections);
   if (explicit?.passages.length) {
@@ -65,7 +65,7 @@ export function resolveLunationArticleHoroscopes(event: Event, content: CmsGener
   });
 }
 
-export function lunationArticleHoroscopeCards(event: Event, content: CmsGeneratedContentMap) {
-  return resolveLunationArticleHoroscopes(event, content).map(entry => ({ ...entry,
+export function lunationArticleHoroscopeCards(event: Event, content: CmsGeneratedContentMap, timeZone?: string) {
+  return resolveLunationArticleHoroscopes(event, content, timeZone).map(entry => ({ ...entry,
     risingSign: entry.risingSign.charAt(0).toUpperCase() + entry.risingSign.slice(1) }));
 }

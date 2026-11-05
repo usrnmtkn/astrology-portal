@@ -1,4 +1,5 @@
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
+import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared/lunationTimingVariables.js';
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import { skyArticleCompiledHashMatches } from '../_lib/sky-article-reader-integrity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
@@ -790,6 +791,8 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
+      if (isReusableLunationKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
+        && LUNATION_TIMING_VARIABLES.some(name => slot === `{{${name}}}`)) continue;
       if (/^fallback-hook\/natal-you-placement-complete-final\//u.test(row.content_key)
         && field.endsWith("body_they") && slot === "{{ownerName}}") continue;
       if (libs().isConnectionSourceKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)

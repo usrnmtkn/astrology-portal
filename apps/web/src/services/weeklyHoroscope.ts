@@ -1498,7 +1498,7 @@ export async function buildWeeklyHoroscope({
       const lunarContent = await loadLiveGeneratedContentForKeys(lunationReaderContentKeys(macroEvent));
       const override = resolveLunationReaderSource(macroEvent, new Map([
         ...(generatedContent ?? []), ...lunarContent
-      ])) ?? resolveCmsSurfaceOverride(
+      ]), location.timeZone) ?? resolveCmsSurfaceOverride(
         generatedContent,
         cmsSurfaceKeys.weeklySection("macro", risingSign),
         { risingSign, weekStart: window.weekStart, weekEnd: window.weekEnd }
