@@ -5470,7 +5470,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       content_key: contentKey,
       surface: "you",
       mode: "feed",
-      status: "LIVE",
+      status: "DRAFT",
       event_type: "fallback-hook",
       target_date: null,
       headline: contentKey,
@@ -5486,7 +5486,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       },
       block_type: "fallback_hook",
-      lane: "serving",
+      lane: "reference",
       review_state: null,
       facts: { fallbackArchitectureV3: true, review_status: "approved" },
       knowledge_ids: [],
@@ -5496,7 +5496,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       provider: "fallback-architecture-v3",
       model: null,
       reviewed_at: now,
-      published_at: now,
+      published_at: null,
       updated_at: now,
       created_at: now
     });
@@ -5511,10 +5511,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     const original = await api.call({ method: "rows" });
     let release!: () => void, heldReads = 0;
     const held = new Promise<void>(resolve => { release = resolve; });
+    let releasePrefetch!: () => void;
+    const heldPrefetch = new Promise<void>(resolve => { releasePrefetch = resolve; });
+    const prefetchKeys = rows.map(row => row.content_key).sort();
     const firstIds = new Set(rows.slice(0, 2).map(row => row.id));
     const writes: string[] = [];
     await routeStudioInventoryApi(page, { actualDocumentRoute: true, call: async message => {
       const url = new URL(message.url ?? "/api/admin/generated-content", "https://synthetic.test");
+      const keys = url.searchParams.getAll("contentKeys").sort();
+      if (message.method === "GET" && url.pathname === "/api/admin/generated-content-inventory"
+        && !url.searchParams.has("id") && keys.length === prefetchKeys.length
+        && keys.every((key, index) => key === prefetchKeys[index])) await heldPrefetch;
       const hold = message.method === "GET" && firstIds.has(url.searchParams.get("id") ?? "") && heldReads < 2;
       if (hold) { heldReads++; await held; }
       if (["POST", "PATCH", "DELETE"].includes(message.method) && url.pathname === "/api/admin/generated-content") writes.push(message.method);
@@ -5529,8 +5536,38 @@ test.describe("content dashboard admin user flow case studies", () => {
       await route.fulfill({ status: result.status, json: result.payload });
     });
     const completedReads: Array<{ id: string; contentKey: string; status: number; finished: boolean; exactBody: boolean }> = [];
+    const completedPrefetch: typeof completedReads = [];
+    async function confirmCompletedRead(request: import("@playwright/test").Request, expectedRows: typeof rows) {
+      const [response, finished] = await Promise.all([
+        page.waitForResponse(response => response.request() === request),
+        page.waitForEvent("requestfinished", finished => finished === request)
+      ]);
+      expect(finished).toBe(request);
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
+      expect(request.failure()).toBeNull();
+      const payload = await response.json();
+      expect(payload.ok).toBe(true);
+      expect(payload.rows).toHaveLength(expectedRows.length);
+      return expectedRows.map(expected => {
+        const document = payload.rows.find((row: { id: string }) => row.id === expected.id);
+        expect(document).toBeDefined();
+        expect(document.content_key).toBe(expected.content_key);
+        expect(document.body).toBe(expected.body);
+        expect(document.sections.packageRecord.body_you).toBe(expected.sections.packageRecord.body_you);
+        expect(document.sections.packageRecord.body_they).toBe(expected.sections.packageRecord.body_they);
+        return { id: document.id as string, contentKey: document.content_key as string, status: response.status(), finished: true, exactBody: true };
+      });
+    }
     try {
+      const pendingPrefetch = page.waitForRequest(request => {
+        const url = new URL(request.url()), keys = url.searchParams.getAll("contentKeys").sort();
+        return request.method() === "GET" && url.origin === new URL(baseURL!).origin
+          && url.pathname === "/api/admin/generated-content-inventory" && !url.searchParams.has("id")
+          && keys.length === prefetchKeys.length && keys.every((key, index) => key === prefetchKeys[index]);
+      });
       await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily");
+      const prefetchRequest = await pendingPrefetch;
       const studio = page.getByRole("region", { name: "Daily At-a-Glance editor" });
       await expect(studio).toContainText("2 matched write-ups");
       const first = studio.locator(".admin-daily-glance-pair-list article").filter({ hasText: "Moon Soft Contact natal Mars" });
@@ -5544,29 +5581,14 @@ test.describe("content dashboard admin user flow case studies", () => {
       await first.getByRole("button", { name: "Edit write-up", exact: true }).click();
       await expect.poll(() => heldReads).toBe(2);
       const requests = await Promise.all(pendingRequests);
+      const prefetchCompletion = confirmCompletedRead(prefetchRequest, rows);
+      releasePrefetch();
+      completedPrefetch.push(...await prefetchCompletion);
+      expect(completedPrefetch).toHaveLength(rows.length);
       async function releaseAndConfirmReads() {
-        const completed = requests.map((request, index) => Promise.all([
-          page.waitForResponse(response => response.request() === request),
-          page.waitForEvent("requestfinished", finished => finished === request)
-        ]).then(async ([response, finished]) => {
-          const expected = rows[index];
-          expect(finished).toBe(request);
-          expect(response.status()).toBe(200);
-          expect(await response.finished()).toBeNull();
-          expect(request.failure()).toBeNull();
-          const payload = await response.json();
-          expect(payload.ok).toBe(true);
-          expect(payload.rows).toHaveLength(1);
-          const document = payload.rows[0];
-          expect(document.id).toBe(expected.id);
-          expect(document.content_key).toBe(expected.content_key);
-          expect(document.body).toBe(expected.body);
-          expect(document.sections.packageRecord.body_you).toBe(expected.sections.packageRecord.body_you);
-          expect(document.sections.packageRecord.body_they).toBe(expected.sections.packageRecord.body_they);
-          completedReads.push({ id: document.id, contentKey: document.content_key, status: response.status(), finished: true, exactBody: true });
-        }));
+        const completed = requests.map((request, index) => confirmCompletedRead(request, [rows[index]]));
         release();
-        await Promise.all(completed);
+        completedReads.push(...(await Promise.all(completed)).flat());
         expect(completedReads).toHaveLength(2);
         expect(completedReads.map(read => read.id).sort()).toEqual(rows.slice(0, 2).map(row => row.id).sort());
       }
@@ -5577,6 +5599,8 @@ test.describe("content dashboard admin user flow case studies", () => {
         await releaseAndConfirmReads();
         await page.waitForLoadState("networkidle");
         await expect(editor, "A completed old read must not reopen an editor after navigation").toHaveCount(0);
+        await page.evaluate(() => { window.location.hash = "#exact-content"; });
+        await expect(page.getByRole("button", { name: "Refresh rows", exact: true }), "Leaving a source load must release the shared loading state").toBeEnabled();
         await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily"; });
         await expect(studio).toBeVisible();
         await first.getByRole("button", { name: "Edit write-up", exact: true }).click();
@@ -5599,10 +5623,11 @@ test.describe("content dashboard admin user flow case studies", () => {
       expect(writes).toEqual([]); expect(await api.call({ method: "rows" })).toEqual(original);
       await assertNoBrowserErrors();
     } finally {
-      release();
+      release(); releasePrefetch();
       try { await page.waitForLoadState("networkidle", { timeout: 5_000 }); await network.finishStaticFonts(); }
       finally {
         await page.close(); api.close();
+        await info.attach("completed-prefetch-ledger", { contentType: "application/json", body: JSON.stringify(completedPrefetch) });
         await info.attach("completed-held-read-ledger", { contentType: "application/json", body: JSON.stringify(completedReads) });
         await info.attach("strict-network-ledger", { contentType: "application/json", body: JSON.stringify({ unhandledExternal: network.unhandledExternal }) });
         expect(network.unhandledExternal).toEqual([]);

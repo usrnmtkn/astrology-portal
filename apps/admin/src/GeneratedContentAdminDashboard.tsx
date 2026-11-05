@@ -5657,17 +5657,20 @@ export function GeneratedContentAdminDashboard() {
       setMessage(`Could not find the Daily At-a-Glance sources for ${selector}.`);
       return;
     }
+    const originatingHash = window.location.hash;
+    const requestId = ++sourceOpenRequestRef.current;
     setIsLoading(true);
     try {
       await Promise.all([
         hydrateGeneratedContentRow(pair.headlineRow as AdminGeneratedContentRow),
         hydrateGeneratedContentRow(pair.passageRow as AdminGeneratedContentRow)
       ]);
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       setDailyGlancePairSelector(selector);
     } catch (error) {
-      setMessage(dashboardErrorMessage(error));
+      if (requestId === sourceOpenRequestRef.current && window.location.hash === originatingHash) setMessage(dashboardErrorMessage(error));
     } finally {
-      setIsLoading(false);
+      if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
     }
   }
 
