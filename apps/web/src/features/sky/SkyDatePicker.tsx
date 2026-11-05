@@ -51,11 +51,11 @@ export default function SkyDatePicker({
   return (
     <section className={`date-picker${embedded ? " date-picker--embedded" : ""}`} id="sky-date-picker" ref={pickerRef} aria-label="Pick Date">
       <div className="date-picker-header">
-        <button className="date-picker-nav" type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
-          <ChevronLeft size={16} aria-hidden="true" />
-        </button>
         <strong>{monthLabel(visibleMonth)}</strong>
         <span className="date-picker-header-actions">
+          <button className="date-picker-nav" type="button" aria-label="Previous month" onClick={() => setVisibleMonth((month) => addMonths(month, -1))}>
+            <ChevronLeft size={16} aria-hidden="true" />
+          </button>
           <button className="date-picker-nav" type="button" aria-label="Next month" onClick={() => setVisibleMonth((month) => addMonths(month, 1))}>
             <ChevronRight size={16} aria-hidden="true" />
           </button>

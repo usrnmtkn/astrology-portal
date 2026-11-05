@@ -945,7 +945,7 @@ for (const heldStage of ['prepare', 'edition-fetch'] as const) for (const target
         const picker=page.getByRole('dialog', {name:/^(Date and location|Transit date)$/});
         if(heldStage==='prepare') await picker.getByRole('tab',{name:'Date',exact:true}).click();
         await picker.getByRole('gridcell', { name: 'Friday, October 16, 2026', exact: true }).click();
-        await picker.getByRole('button',{name:'Show Oct 16',exact:true}).click();
+        await picker.getByRole('button',{name:'Apply date',exact:true}).click();
         if (heldStage === 'prepare') await expect(page.getByRole('button', { name: /^Pick Date\. Viewing transits/ })).toHaveAttribute('aria-label', /Fri, Oct 16/);
         else await expect(page.locator('.sky-header-date-button')).toHaveAttribute('aria-label', /^Tomorrow,/);
         expect(new URL(page.url()).searchParams.get('date')).toBe('2026-10-16');

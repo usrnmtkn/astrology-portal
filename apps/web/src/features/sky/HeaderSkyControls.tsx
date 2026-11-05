@@ -4,7 +4,6 @@ import { MapPin, Navigation, Search, X } from "lucide-react";
 import { ModalPortal } from "../../components/ModalPortal";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import SkyDatePicker from "./SkyDatePicker";
-import { dateFromInput } from "../../services/skySelection";
 
 export default function HeaderSkyControls({ value, today, tomorrow, onSelect, onClose, anchorRef, locationLabel,
   editingLocation, onEditLocation, query, onQuery, locationFormRef, locationInputRef, locationTriggerRef, results, onSubmitLocation, onCurrentLocation
@@ -39,12 +38,17 @@ export default function HeaderSkyControls({ value, today, tomorrow, onSelect, on
         <span>{locationLabel ? "Date and place" : "Transit date"}</span>
         <button type="button" className="header-date-close" aria-label="Close date and location" onClick={onClose}><X size={18} aria-hidden="true" /></button>
       </div>
+      {tab === "date" && <div className="header-date-actions">
+        <button type="button" onClick={onClose}>Cancel</button>
+        <button className="header-date-apply" type="button" onClick={() => onSelect(draft)}>Apply date</button>
+      </div>}
       <div className="header-date-toolbar">
         <SegmentedControl ariaLabel="Transit date shortcuts" value={tab} onChange={next => {
           setTab(next); if (next !== "date") onSelect(next === "today" ? today : tomorrow);
         }} options={[{value:"today",label:"Today"},{value:"tomorrow",label:"Tomorrow"},{value:"date",label:"Date"}]} />
         <button type="button" className="header-date-close" aria-label="Close date and location" onClick={onClose}><X size={18} aria-hidden="true" /></button>
       </div>
+      <div className="header-date-content">
       {tab === "date" && <SkyDatePicker embedded today={today} value={draft} onSelect={setDraft} onClose={onClose} />}
       {locationLabel && <div className="header-date-location">
         <span className="header-date-location__label">Location</span>
@@ -59,7 +63,7 @@ export default function HeaderSkyControls({ value, today, tomorrow, onSelect, on
         }}><Navigation size={18} aria-hidden="true" />{locating ? "Finding your location…" : "Use my current location"}</button>
         {error && <p role="alert">{error}</p>}
       </div>}
-      {tab === "date" && <button className="header-date-apply" type="button" onClick={() => onSelect(draft)}>Show {dateFromInput(draft).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</button>}
+      </div>
     </section>
   </ModalPortal>;
 }

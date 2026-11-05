@@ -1709,7 +1709,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.reload();await expect(trigger).toHaveText('Tomorrow');await trigger.click();await dialog.getByRole('tab',{name:'Date',exact:true}).click();
     await expect(dialog.getByRole('grid')).toHaveAccessibleName('October 2026');await dialog.getByRole('button',{name:'Next month',exact:true}).click();
     await expect(dialog.getByRole('grid')).toHaveAccessibleName('November 2026');await dialog.getByRole('gridcell',{name:/November 18, 2026/}).click();
-    await expect(page).toHaveURL(/date=2026-10-14/);await dialog.getByRole('button',{name:'Show Nov 18',exact:true}).click();await expect(page).toHaveURL(/date=2026-11-18/);
+    await expect(page).toHaveURL(/date=2026-10-14/);await dialog.getByRole('button',{name:'Apply date',exact:true}).click();await expect(page).toHaveURL(/date=2026-11-18/);
     await page.reload();await trigger.click();await expect(dialog.getByRole('gridcell',{name:/November 18, 2026/})).toHaveAttribute('aria-selected','true');
     const bounds=await dialog.boundingBox();expect(bounds!.x).toBeGreaterThanOrEqual(0);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width+1);
     if(width<800){expect(bounds!.y+bounds!.height).toBeCloseTo(1100,0);await expect(dialog.locator('.header-date-sheet-heading')).toHaveText('Date and place');await expect(dialog.locator('.header-date-sheet-heading')).toHaveCSS('font-size','30px');const close=await dialog.getByRole('button',{name:'Close date and location',exact:true}).boundingBox();expect(close!.height).toBe(44);}else {const anchor=await trigger.boundingBox();expect(bounds!.x+bounds!.width).toBeCloseTo(anchor!.x+anchor!.width,0);expect(bounds!.y).toBeGreaterThan(anchor!.y+anchor!.height);}

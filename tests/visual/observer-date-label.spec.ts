@@ -46,8 +46,10 @@ for (const scenario of scenarios) test.describe(scenario.name, () => {
           const url = new URL(route.request().url());
           const location = { label: "Calculated fixture", latitude: Number(url.searchParams.get("lat")),
             longitude: Number(url.searchParams.get("lon")), timeZone: url.searchParams.get("timeZone")! };
+          const detail = url.searchParams.get("detail");
+          expect(["core", "placements", "full"]).toContain(detail);
           const sky = await getAstrodienstSky(location, new Date(url.searchParams.get("at")!),
-            { includeTransitWindows: true, includeAspectTiming: false });
+            { includeTransitWindows: detail !== "core", includeAspectTiming: detail === "full" });
           await route.fulfill({ json: { sky } });
         })();
         calculations.push(calculation);
@@ -81,12 +83,13 @@ for (const scenario of scenarios) test.describe(scenario.name, () => {
             const dialog = page.getByRole("dialog", { name: "Date and location" });
             await dialog.getByRole("tab", { name: "Date", exact: true }).click();
             await dialog.getByRole("gridcell", { name: expected.cell, exact: true }).click();
-            await dialog.getByRole("button", { name: /^Show / }).click();
+            await dialog.getByRole("button", { name: "Apply date", exact: true }).click();
           }
           const response = await responsePromise;
           expect(await response.finished()).toBeNull();
           const { sky } = await response.json();
           expect(sky.positions).toHaveLength(14);
+          expect(sky.calculationDetail).toBe(new URL(response.url()).searchParams.get("detail"));
           expect(sky.location).toMatchObject({ latitude: scenario.location.latitude,
             longitude: scenario.location.longitude, timeZone: scenario.location.timeZone });
           expect(civilDate(sky.generatedAt)).toBe(expected.date);
