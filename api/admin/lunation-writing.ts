@@ -55,7 +55,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       return sendAdminJson(res,200,{ok:true,rows});
     }
     const input=await readAdminJsonBody<Record<string,any>>(req,96000);
-    const allowed:Record<string,string[]>={export:['action','id','expectedUpdatedAt'],prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],reject:['action','id','expectedUpdatedAt','reason'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
+    const allowed:Record<string,string[]>={archive:['action','id','expectedUpdatedAt'],restore:['action','id','expectedUpdatedAt'],export:['action','id','expectedUpdatedAt'],prepare:['action','month','timeZone','eventId','direction'],review:['action','id','expectedUpdatedAt','direction'],reject:['action','id','expectedUpdatedAt','reason'],generate:['action','id','expectedUpdatedAt','approvedPlanHash'],poll:['action','id','expectedUpdatedAt'],save:['action','id','expectedUpdatedAt','headline','body'],release:['action','id','expectedUpdatedAt','acknowledgeUnknownOutcome'],stage:['action','id','expectedUpdatedAt']};
     if(!allowed[input.action]||Object.keys(input).some(k=>!allowed[input.action].includes(k)))throw new AdminHttpError(400,'Choose a supported lunation writing action.');
     if(input.action==='prepare') {
       if(typeof input.month!=='string'||typeof input.timeZone!=='string'||typeof input.eventId!=='string'||typeof input.direction!=='string'||input.direction.length>6000)throw new AdminHttpError(400,'Choose an event and keep the writing direction under 6,000 characters.');
@@ -75,8 +75,9 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       return sendAdminJson(res,200,{ok:true,rows});
     }
     if(typeof input.id!=='string'||typeof input.expectedUpdatedAt!=='string')throw new AdminHttpError(400,'Open a saved draft first.');
+    const lifecycle=input.action==='archive'||input.action==='restore';
     let row=(await read({id:`eq.${input.id}`,select:'*',limit:'1'}))[0];
-    if(!row||!row.content_key?.startsWith(prefix)||row.mode!=='article'||row.status!=='DRAFT'||row.lane!=='reference')throw new AdminHttpError(404,'Lunation draft not found.');
+    if(!row||!row.content_key?.startsWith(prefix)||row.mode!=='article'||(row.status!=='DRAFT'&&(!lifecycle||row.status!=='ARCHIVED'))||row.lane!=='reference')throw new AdminHttpError(404,'Lunation draft not found.');
     if(row.updated_at!==input.expectedUpdatedAt)throw new AdminHttpError(409,'This draft changed. Reload it before continuing; your open text has been preserved.');
     const persist=async(patch:Record<string,unknown>)=>{
       const result=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${row.id}`,updated_at:`eq.${row.updated_at}`})}`,{method:'PATCH',headers:{...headers,prefer:'return=representation'},body:JSON.stringify({...patch,updated_at:new Date(Math.max(Date.now(),Date.parse(row.updated_at)+1)).toISOString()})});
@@ -87,6 +88,16 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
     const state=()=>row.source_snapshot.lunationWriting;
     const persistState=async(value:Record<string,unknown>,patch:Record<string,unknown>={})=>persist({...patch,source_snapshot:{...row.source_snapshot,lunationWriting:{...state(),...value}}});
     let operation=state().active;
+    if(lifecycle) {
+      if(operation)throw new AdminHttpError(409,'Retrieve or release the running request before archiving or restoring this draft.');
+      const status=input.action==='archive'?'ARCHIVED':'DRAFT';
+      if(row.status!==(input.action==='archive'?'DRAFT':'ARCHIVED'))throw new AdminHttpError(409,'This draft is already in that state. Reload it before continuing.');
+      const preserved=(value:Record<string,unknown>)=>Object.fromEntries(Object.entries(value).filter(([key])=>key!=='status'&&key!=='updated_at'));
+      const before=hash(preserved(row));
+      await persist({status});
+      if(row.status!==status||hash(preserved(row))!==before)throw new AdminHttpError(502,'The archive or restore could not be confirmed. Reopen this draft before continuing.');
+      return sendAdminJson(res,200,{ok:true,rows:[row]});
+    }
     if(input.action==='export')return sendAdminJson(res,200,{ok:true,writingExport:lunationArticleWritingExport(await prepareSharedArticle(row.facts.lunationArticle,state().direction,state().rejections))});
     if(input.action==='reject') {
       if(operation)throw new AdminHttpError(409,'Retrieve or release the running request before rejecting this draft.');

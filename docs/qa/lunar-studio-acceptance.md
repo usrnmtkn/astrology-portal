@@ -13,6 +13,7 @@ ready for review. Editorial approval of generated prose remains the owner's.
 | Opening an entry preserves the complete saved writing. | Compare the editor's full body with storage, including opening and final text, and confirm browsing makes no content mutation. |
 | Saved writing reaches New Moon and Full Moon requests. | The complete matching lunar passage and Sun-season writing appear before supporting examples in the plan and actual provider input. Test a Full Moon with opposing Sun/Moon signs, newer draft precedence, changed-source plan invalidation, complete text/hash preservation, empty/archived sources, storage failure before billing and immutable polling receipts. |
 | Editing an existing entry survives save and reload. | Actual-handler browser regression uses isolated storage and exact saved draft bytes. Opening a generation workspace does not replace a reader source. |
+| Dated workspaces can be archived and restored. | The dedicated owner-authenticated endpoint conditionally changes only a reference workspace's DRAFT/ARCHIVED status. Complete copy, facts, sections, writing plan and rejection history survive. Active requests and stale versions are refused. Archived drafts are discoverable and read-only, and Restore returns a non-serving draft without a provider call or publication. |
 | A published dated article reaches its reader. | Publish through the actual handler with the current validation metadata, then verify the Calendar event card and detail select its title and opening before Calendar → Read article and a direct reader reload preserve the complete saved passage. Retirement must remove it without revealing an older event excerpt. The validator's exact `legacy` profile label at the two known lunar lint paths is technical metadata, not a retired-source flag; other unsafe metadata and publication checks still apply. |
 | Generation has a clear start and stable progress. | Calculated event → Create new draft → saved plan → explicit Create draft; one enabled primary action, no unrelated header Create menu, and no separate approval checkbox. Multiple pending polls leave Back to drafts available, and completion opens persisted text. |
 | Reloads and errors preserve the same request. | Test reload, transient retrieval failure, terminal failure and completion in another tab, with provider-call counts. |
@@ -31,6 +32,12 @@ through the actual publish, reader and retirement handlers, including preserved
 validation evidence, rejected unsafe metadata and exact owner-copy approval.
 The dated cases in `tests/visual/calendar-lunation-preview.spec.ts` use those
 handlers with isolated storage for Calendar and Sky delivery, reload and retirement.
+
+`scripts/test-lunation-workspace-lifecycle.mts` covers the dedicated workspace
+archive/restore contract and is included by the dated writer's API regression.
+The archive/restore cases in `lunation-writing-studio.spec.ts` cover discovery,
+reload, complete-text preservation, unsaved edits and concurrent changes at both
+widths and themes. Execution results belong to the tested revision's QA receipt.
 
 The September 27 recheck identified a navigation gap: all 24 reusable readings
 were saved and reachable through Daily Sky, but the consolidated lunar section
