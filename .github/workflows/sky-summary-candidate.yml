@@ -1,6 +1,9 @@
 name: Sky summary browser regression
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/sky-summary-candidate.yml'
   push:
     branches: [main]
     paths:
@@ -20,7 +23,9 @@ concurrency:
 
 jobs:
   summary-browser:
-    runs-on: ubuntu-latest
+    # Ubuntu 26 dependency installs used >11m of this 15m job:
+    # https://github.com/usrnmtkn/astrology-portal/actions/runs/42109877466
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
