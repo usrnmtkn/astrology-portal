@@ -1,7 +1,7 @@
 import {hasStudioOwnerWording} from "../content/studioOwnerWording.mjs";
 import type { FallbackArchitectureV3MirrorMetadata } from "./fallbackArchitectureV3MirrorValidation";
 import { isSkyArticleDashboardRow, isSkyDashboardRow, isSkyListDashboardRow } from "./skyDashboardScope";
-import { loadReaderRows, ReaderAdmissionError } from "./readerContentClient";
+import { loadReaderRows, ReaderAdmissionError, withReaderNavigation } from "./readerContentClient";
 import { isRecord, isApprovedFallbackArchitectureV3Row, isSkyPlacementFallbackPartitionKey, packageAuthoredCardFromRow, packageHookRowFromRow, packageVocabRowFromRow, packageTemplateRowFromRow, packageFallbackArchitectureV3CoreRows } from "./fallbackArchitectureV3CorePackaging";
 // @ts-ignore Exact owner-requested source versions, shared with package materialization.
 import { correctedReaderSummary } from "../content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
@@ -1205,12 +1205,15 @@ export function prefetchColdSkyPlacementRows(selection: string, publications: Pr
 }
 
 export async function loadFallbackArchitectureV3DashboardBundle(scope: DashboardScope = "all", earlyRead?: ColdSkyArticleRead): Promise<FallbackArchitectureV3Bundle | null> {
-  await (scope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
-  return shareDashboardBundle(scope, canCache => {
-    const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
-    earlyRead?.discard();
-    return readFallbackArchitectureV3DashboardBundle(scope, canCache, earlyRows);
-  }, () => earlyRead?.discard());
+  return withReaderNavigation(async navigation => {
+    await (scope === "sky-list" ? refreshSkyListPublications() : refreshContentPublications());
+    navigation.throwIfAborted();
+    return shareDashboardBundle(scope, canCache => {
+      const earlyRows = scope === "sky-article" && !readCachedFallbackArchitectureV3Bundle(scope) ? earlyRead?.consume() : undefined;
+      earlyRead?.discard();
+      return readFallbackArchitectureV3DashboardBundle(scope, canCache, navigation, earlyRows);
+    }, () => earlyRead?.discard());
+  });
 }
 
 function shareDashboardBundle(key: string, read: (canCache: () => boolean) => Promise<FallbackArchitectureV3Bundle | null>, joining: () => void) {
@@ -1227,10 +1230,13 @@ function shareDashboardBundle(key: string, read: (canCache: () => boolean) => Pr
 async function readFallbackArchitectureV3DashboardBundle(
   scope: DashboardScope,
   canCache: () => boolean,
+  navigation: AbortSignal,
   earlyRows?: ReturnType<typeof loadReaderRows>
 ): Promise<FallbackArchitectureV3Bundle | null> {
   const anonymous = scope === "sky-list" || scope === "sky-article" ? await anonymousReader() : null;
+  navigation.throwIfAborted();
   const supabase = anonymous ? null : await getSupabaseClient();
+  navigation.throwIfAborted();
   const cached = readCachedFallbackArchitectureV3Bundle(scope);
   const recoverUnavailableOverlay = (error: unknown) => {
     if (scope === "sky-list" && !(publicationLedgerReady() && loadedLastKnownGoodRows.length)) throw new Error("Current Sky content did not load.");
@@ -1253,6 +1259,7 @@ async function readFallbackArchitectureV3DashboardBundle(
   const { data: runtimeRevision, error: runtimeRevisionError } = anonymous
     ? await anonymous.readAnonymousRuntimeRevision(fallbackArchitectureV3Provider)
     : await supabase!.rpc("content_runtime_revision", { p_provider: fallbackArchitectureV3Provider });
+  navigation.throwIfAborted();
   let dashboardVersion = typeof runtimeRevision === "string" ? Date.parse(runtimeRevision) : 0;
 
   if (runtimeRevisionError || !Number.isFinite(dashboardVersion)) {
@@ -1260,17 +1267,20 @@ async function readFallbackArchitectureV3DashboardBundle(
     // This fallback cannot detect every demotion, so it is used only when the revision
     // RPC is unavailable.
     const { data: versionRows, error: versionError } = await loadReaderRows({ provider: fallbackArchitectureV3Provider, latestVersion: true });
+    navigation.throwIfAborted();
     if (versionError) return recoverUnavailableOverlay(versionError);
     dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   }
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
   let result = await (coldArticleRows ?? loadReaderRows({ provider: fallbackArchitectureV3Provider, ...(scope !== "all" ? { scope } : {}) }));
+  navigation.throwIfAborted();
   // An initial live ledger can reveal edits or new keys absent from the early
   // snapshot. Discard it and use the unchanged post-ledger request once.
   if (earlyRows && result.error instanceof ReaderAdmissionError) {
     result = await loadReaderRows({ provider: fallbackArchitectureV3Provider, scope: "sky-article" });
   }
+  navigation.throwIfAborted();
   const { data, error } = result;
   if (error) return recoverUnavailableOverlay(error);
   const rows = data ?? [];
@@ -1282,6 +1292,7 @@ async function readFallbackArchitectureV3DashboardBundle(
     console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);
     return cached?.bundle ?? null;
   }
+  navigation.throwIfAborted();
   const bundle = packageFallbackArchitectureV3CoreRows(rows, currentCoreManifest);
   if (!bundle) {
     if (canCache()) clearCachedFallbackArchitectureV3Bundle(scope);

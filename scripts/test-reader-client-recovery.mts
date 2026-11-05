@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { Readable } from 'node:stream';
+import { getEventListeners } from 'node:events';
 import handler from '../api/content-reader.ts';
 import { loadReaderRows } from '../apps/web/src/services/readerContentClient.ts';
 import { contentPublication, installContentPublications, publicationLedgerKey } from '../apps/web/src/content/contentPublicationState.ts';
@@ -258,5 +259,118 @@ try {
   assert(!admitted.data?.some(row => row.id === rows[0].id), 'A retirement observed at admission excludes buffered copy.');
   assert.equal(admitted.data?.at(-1)?.body, body, 'Admission retains the complete later page.');
   assert.equal(queries.length, 2);
+  // Exercise the real transport with a browser-like event target. Navigation
+  // owns only the active read; later reads must keep their normal retry budget.
+  const windowDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  const page = new EventTarget();
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: page });
+  const response = () => Response.json({ schema: 'content-reader-row-v1', rows: [], publications: [], nextCursor: null });
+  const query = { keys: ['cms/recovery/navigation'] };
+  const cleanListeners = () => {
+    assert.equal(getEventListeners(page, 'beforeunload').length, 0);
+    assert.equal(getEventListeners(page, 'pagehide').length, 0);
+  };
+  try {
+    for (const kind of ['beforeunload', 'cancelled-beforeunload', 'bfcache-pagehide']) {
+      let attempts = 0, arrive!: () => void;
+      const arrived = new Promise<void>(resolve => { arrive = resolve; });
+      globalThis.fetch = async (_input, init) => {
+        attempts++;
+        if (attempts > 1) return response();
+        return new Promise<Response>((_resolve, reject) => {
+          const signal = init!.signal!;
+          signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+          arrive();
+        });
+      };
+      const pending = loadReaderRows(query);
+      await arrived;
+      const event = new Event(kind === 'bfcache-pagehide' ? 'pagehide' : 'beforeunload', { cancelable: true });
+      if (kind === 'cancelled-beforeunload') event.preventDefault();
+      if (kind === 'bfcache-pagehide') Object.defineProperty(event, 'persisted', { value: true });
+      assert.equal(page.dispatchEvent(event), kind !== 'cancelled-beforeunload');
+      const cancelled = await pending;
+      assert(cancelled.error instanceof DOMException);
+      assert.equal(cancelled.error.name, 'AbortError');
+      assert.equal(cancelled.data, null);
+      assert.equal(attempts, 1, 'Navigation must not retry the obsolete request.');
+      cleanListeners();
+      if (kind === 'bfcache-pagehide') {
+        const restored = new Event('pageshow');
+        Object.defineProperty(restored, 'persisted', { value: true });
+        page.dispatchEvent(restored);
+      }
+      const fresh = await loadReaderRows(query);
+      assert.equal(fresh.error, null, `${kind} must not poison a later read in the same document.`);
+      assert.deepEqual(fresh.data, []);
+      assert.equal(attempts, 2);
+      cleanListeners();
+    }
+
+    let attempts = 0, arrive!: () => void;
+    const arrived = new Promise<void>(resolve => { arrive = resolve; });
+    globalThis.fetch = async () => { attempts++; arrive(); throw new TypeError('Synthetic active request interruption'); };
+    const backoff = loadReaderRows(query);
+    await arrived;
+    await new Promise(resolve => setTimeout(resolve, 0));
+    page.dispatchEvent(new Event('beforeunload'));
+    const stoppedBackoff = await backoff;
+    assert(stoppedBackoff.error instanceof DOMException);
+    assert.equal(stoppedBackoff.error.name, 'AbortError');
+    assert.equal(attempts, 1, 'Navigation during backoff must prevent the next fetch.');
+    cleanListeners();
+
+    for (const failure of ['TypeError', 502, 503, 504] as const) {
+      attempts = 0;
+      const bodies: string[] = [];
+      globalThis.fetch = async (_input, init) => {
+        bodies.push(String(init?.body)); attempts++;
+        if (failure === 'TypeError' && attempts <= 2) throw new TypeError('Synthetic transient connection interruption');
+        if (failure !== 'TypeError' && attempts === 1) return new Response('Synthetic transient outage', { status: failure });
+        return response();
+      };
+      assert.equal((await loadReaderRows(query)).error, null);
+      assert.equal(attempts, failure === 'TypeError' ? 3 : 2, 'An active document keeps legitimate retries.');
+      assert.equal(new Set(bodies).size, 1);
+      cleanListeners();
+    }
+
+    attempts = 0;
+    const deadline = new AbortController();
+    globalThis.fetch = async (_input, init) => {
+      attempts++;
+      return new Promise<Response>((_resolve, reject) => init!.signal!.addEventListener('abort', () => reject(init!.signal!.reason), { once: true }));
+    };
+    const pending = loadReaderRows(query, deadline.signal);
+    deadline.abort(new DOMException('Synthetic caller deadline', 'TimeoutError'));
+    const timedOut = await pending;
+    assert.equal(timedOut.error, deadline.signal.reason);
+    assert.equal(attempts, 1);
+    cleanListeners();
+
+    let bodyArrived!: () => void;
+    const bodyStarted = new Promise<void>(resolve => { bodyArrived = resolve; });
+    attempts = 0;
+    globalThis.fetch = async (_input, init) => {
+      attempts++;
+      return new Response(new ReadableStream({ start(controller) {
+        init!.signal!.addEventListener('abort', () => controller.error(init!.signal!.reason), { once: true });
+        bodyArrived();
+      } }));
+    };
+    const readingBody = loadReaderRows(query);
+    await bodyStarted;
+    page.dispatchEvent(new Event('pagehide'));
+    const stoppedBody = await readingBody;
+    assert(stoppedBody.error instanceof DOMException);
+    assert.equal(stoppedBody.error.name, 'AbortError');
+    assert.equal(attempts, 1, 'Navigation stops a pending body read without another request.');
+    cleanListeners();
+  } finally {
+    if (windowDescriptor) Object.defineProperty(globalThis, 'window', windowDescriptor);
+    else Reflect.deleteProperty(globalThis, 'window');
+  }
+
+  await import('./test-reader-navigation-recovery.mts');
   console.log('PASS reader recovery: actual-handler 503, exact copy/privacy, interrupted headers/body, bounded attempts, cancellation, malformed JSON refusal, retirement, pagination and late superseded responses.');
 } finally { globalThis.fetch = originalFetch; }
