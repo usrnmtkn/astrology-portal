@@ -10,7 +10,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await authenticate(page);
     await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-friend&view=transits');
     const transits = page.getByLabel('Fixture Friend transits', { exact: true });
-    const card = transits.locator('.reading-story-card').first();
+    const datedTransits = transits.locator('button.friend-transit-row').filter({
+      has: page.locator('.updates-aspect-row__meta-line')
+    });
+    const card = datedTransits.first();
     await expect(card).toBeVisible({ timeout: 60_000 });
     const title = (await card.locator('h3').innerText()).trim();
     const cardDate = (await card.locator('.updates-aspect-row__meta-line').innerText()).trim();
@@ -49,7 +52,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('button', { name: /Close detail|Back/ }).first().click();
     await expect(transits).toBeVisible();
-    await expect(transits.locator('.reading-story-card').filter({ hasText: title }).first()).toBeVisible();
-    await expect(transits.locator('.reading-story-card').filter({ hasText: title }).first().locator('.updates-aspect-row__meta-line')).toHaveText(cardDate);
+    await expect(datedTransits.filter({ hasText: title }).first()).toBeVisible();
+    await expect(datedTransits.filter({ hasText: title }).first().locator('.updates-aspect-row__meta-line')).toHaveText(cardDate);
   });
 }
