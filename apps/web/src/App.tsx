@@ -4840,7 +4840,7 @@ function splitSurfaceParagraphs(value: string, title: string, timing?: string | 
 }
 
 function skyPlacementDisplayTitle(position: PlanetPosition) {
-  return `${position.planet} in ${position.sign}`;
+  return `${skyDisplayPlanetName(position.planet)} in ${position.sign}`;
 }
 
 function skyPlacementWritingSection(
@@ -5260,6 +5260,8 @@ function currentSkyPlacementDetailArticle({
   const normalizedParagraphs = normalized.sections
     .flatMap((section) => taggedSectionParagraphs(section));
   const placementSection = normalized.sections[0];
+  const sectionHeading = placementSection?.heading === `${position.planet} in ${position.sign}`
+    ? skyPlacementDisplayTitle(position) : placementSection?.heading;
   const isRegistryArticle = placementSection?.sourceKeys.some((key) => key === "sky-article-v1" || key === "compiled-sky-article-edition-v2") ?? false;
   const isContinuousFallback = placementSection?.sourceKeys.includes("sky-placement-continuous-v2") ?? false;
   const authoredBody = normalized.sections
@@ -5341,7 +5343,7 @@ function currentSkyPlacementDetailArticle({
     glyph: detailGlyphForPlacement(position),
     kicker: placementDetailKicker(position, activeAspects),
     title: isRetrograde && !placementSection?.sourceKeys.includes("compiled-sky-article-edition-v2")
-      ? fallbackTitle : placementSection?.heading || fallbackTitle,
+      ? fallbackTitle : sectionHeading || fallbackTitle,
     meta: [
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
       isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel
