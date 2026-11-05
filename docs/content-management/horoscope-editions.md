@@ -29,6 +29,41 @@ restoration, reload, archive links, sign switching and empty-period discovery in
 
 Open **Write → Horoscopes** (`/admin/content#horoscopes`).
 
+### Dated New and Full Moon horoscopes
+
+Open **Horoscopes → New & Full Moon horoscopes** (`/admin/content#moon-horoscopes`).
+Choose a month and time zone, select the calculated Moon event, then open its
+horoscopes. Paste the twelve complete readings with sign headings such as
+`Aries / Aries Rising`, `Aries & Aries Rising`, or `Aries Rising`. Match and review
+the signs, then save the complete set as a draft. Saved links reopen the same set
+after reload. Existing sets also open from Content Library and Review Queue.
+
+The preview identifies each rising sign and its calculated whole-sign house.
+Missing, duplicate or conflicting signs, incorrect Moon/house subheadings, and
+recognized editorial notes stop the import. The original paste and server-generated
+SHA-256 stay private; only the complete reader headings and passages are public.
+The import preserves paragraph text and does not generate or rewrite it.
+
+Publishing requires approval of the complete saved wording. The server verifies
+the event against the ephemeris again and stores one exact UTC event-date/phase/sign
+identity, independent of the editor's time zone. Its twelve passages take precedence
+over reusable lunar readings only for that event, in both Sky and Calendar article
+horoscope cards. The main Moon article remains a separate source. Other events keep
+their own dated or reusable readings. Drafts are excluded from public transport.
+
+Edits to a published set create a private `horoscope-edition-revision`; the current
+published copy remains available. Publishing the revision uses the existing atomic,
+version-checked transaction, with its history, publication ledger and receipt. The
+dated-Moon migration extends that transaction's target-family guard without changing
+its grants, locks or caller access. Conflicts preserve newer writing and the open text.
+
+Verification: `node --import tsx scripts/test-dated-moon-horoscopes.mts` and
+`npx playwright test -c playwright.moon-horoscopes.config.ts`. The latter exercises
+desktop/mobile and light/dark using actual handlers and isolated storage; it does
+not publish owner content or establish production deployment.
+
+### Daily, weekly, monthly and seasonal editions
+
 1. **Dates:** choose daily, weekly, monthly or seasonal, a date, and a city or time zone.
    **Continue to writing plan** calculates the period, saves an empty draft and
    prepares its plan without a model call. An existing edition opens with its
