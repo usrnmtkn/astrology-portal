@@ -2979,9 +2979,9 @@ function formatSkyHeroTitle() {
   return "Sky";
 }
 
-function formatSkyHeaderDateLabel(value: string, today = new Date()) {
+function formatSkyHeaderDateLabel(value: string, todayValue: string) {
   const selectedDay = localDayStart(dateFromInput(value));
-  const todayDay = localDayStart(today);
+  const todayDay = localDayStart(dateFromInput(todayValue));
   const dayDelta = Math.round((selectedDay.getTime() - todayDay.getTime()) / 86_400_000);
 
   if (dayDelta === 0) return "Today";
@@ -14381,7 +14381,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   const needsChartSetup = Boolean(userProfile && !hasCompleteChartSetup(userProfile));
   const todaySkyDate = currentLocalDate;
   const tomorrowSkyDate = dateInputValue(new Date(dateFromInput(currentLocalDate).getTime() + 86_400_000));
-  const transitDateButtonLabel = skyDate === todaySkyDate ? "Today" : skyDate === tomorrowSkyDate ? "Tomorrow" : formatSkyHeaderDateLabel(skyDate);
+  const transitDateButtonLabel = skyDate === todaySkyDate ? "Today" : skyDate === tomorrowSkyDate ? "Tomorrow" : formatSkyHeaderDateLabel(skyDate, todaySkyDate);
   const skyFullChartTitleId = "sky-full-chart-title";
   const skyFullChartMeta = `${formatSkyFullChartDate(skyDate)} · ${compactCityLabel(location.label)}`;
 
@@ -14585,7 +14585,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               aria-expanded={mobileSkyControlsOpen}
               aria-controls="mobile-sky-controls"
               aria-label={showSkyLocationControl
-                ? `${formatSkyHeaderDateLabel(skyDate)}, ${compactCityLabel(location.label)}`
+                ? `${transitDateButtonLabel}, ${compactCityLabel(location.label)}`
                 : `Pick Date. Viewing transits for ${formatSkyFullChartDate(skyDate)}`}
               onClick={() => {
                 setCityPickerOpen(false); setCityPickerOpenedFromMobileControls(false); setMenuOpen(false);

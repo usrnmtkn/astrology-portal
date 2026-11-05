@@ -112,7 +112,7 @@ jobs:
           VITE_TLDRASTRO_API_URL: https://location-api.invalid
         run: |
           npm run test:location-consistency
-          npx playwright test -c playwright.config.ts tests/visual/location-consistency.spec.ts --workers=1
+          npx playwright test -c playwright.config.ts tests/visual/location-consistency.spec.ts tests/visual/observer-date-label.spec.ts --workers=1
       - name: Enforce fresh browser release path
         run: npm run test:playwright-release-path
       - name: Build app
