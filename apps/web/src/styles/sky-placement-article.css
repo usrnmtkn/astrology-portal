@@ -1,7 +1,7 @@
 /* Sky placement articles: the October 24 handoff. Shared Calendar calculation
    and disclosure markup retain their own presentation outside this page. */
 .sky-placement-article-page .sky-detail-article { gap: var(--space-6); }
-.sky-placement-article-page .sky-detail-card { padding: var(--size-8) var(--layout-reading-padding) var(--layout-reading-block-space); gap: var(--space-8); }
+.sky-placement-article-page .article-card.sky-detail-card { padding: var(--size-8) var(--layout-reading-padding) var(--layout-reading-block-space); gap: var(--space-8); }
 .sky-placement-article-page .article-id { gap: var(--space-4); padding-block: var(--space-6) var(--space-2); }
 .sky-placement-article-page .article-title { font-size: var(--type-placement-title-size); line-height: var(--leading-placement-title); letter-spacing: var(--tracking-dialog-title); }
 .sky-placement-article-page .article-duration { margin: 0; font-family: var(--font-display); font-size: var(--type-row-title-size); font-weight: var(--weight-regular); line-height: var(--leading-row-title); color: var(--muted); }
@@ -80,7 +80,7 @@
  .sky-detail-personalized-aspect__heading h3 { font-size: var(--type-compact-row-size); }
  .sky-detail-personalized-aspect__glyph { width: var(--placement-control-size); height: var(--placement-control-size); font-size: var(--glyph-aspect-compact-size); }
  .sky-placement-article-page { padding-inline: var(--space-4); }
- .sky-placement-article-page .sky-detail-card { padding: var(--space-7) var(--space-6); gap: var(--lunar-space-28); }
+ .sky-placement-article-page .article-card.sky-detail-card { padding: var(--space-7) var(--space-6); gap: var(--lunar-space-28); }
  .sky-placement-article-page .article-title { font-size: var(--type-compact-title-size); line-height: var(--leading-compact-title); }
  .sky-placement-article-page .article-id { gap: var(--space-3); padding-block: var(--space-2) var(--space-1); }
  .sky-placement-article-page .article-duration { font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-body); }

@@ -76,7 +76,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(dates.locator('h2')).toHaveCSS('font-weight', '400');
     await expect(dates.locator('summary')).toHaveCSS('letter-spacing', '-0.26px');
     await expect(dates.locator('summary')).toHaveCSS('text-align', 'start');
-    await expect(dates.locator('.sky-placement-article__chevron')).toHaveCSS('width', '44px');
+    await expect(dates.locator('.key-dates-panel__chevron')).toHaveCSS('width', '44px');
     await expect(dates.locator('.sky-placement-key-dates__title strong').first()).toHaveCSS('font-size', compact ? '16px' : '18px');
     await expect(article.locator('.sky-detail-card .sky-placement-key-dates')).toHaveCount(0);
     await expect(dates.locator('.sky-placement-key-dates__next')).toHaveCount(1);
