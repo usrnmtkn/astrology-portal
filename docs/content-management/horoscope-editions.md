@@ -63,19 +63,25 @@ desktop/mobile and light/dark using actual handlers and isolated storage; it doe
 not publish owner content or establish production deployment.
 
 The November 6 integration controls compare accepted main `25092e7c9` with
-`474ff03ca`, using independent locked installs and knowledge builds, native
-ARM64 Node 22.20.0, gzip level 9 and identical synthetic CI settings. Both Web
-profiles (standard and natal-aspect-pattern auth) produced the same measurements.
+the Moon feature, using independent locked installs and knowledge builds, native
+ARM64 Node 22.20.0, gzip level 9 and identical synthetic CI settings. The enabled
+Web profile uses the actual `VITE_ENABLE_NATAL_ASPECT_PATTERNS=true` flag.
 
 | Gzip metric | Main | Moon integration | Cost | Resulting limit |
 | --- | ---: | ---: | ---: | ---: |
 | Admin entry | 238,837 | 239,024 | 187 | 239,100 |
 | Admin aggregate JavaScript | 880,262 | 886,688 | 6,426 | 886,900 |
-| Web App boot | 398,701 | 399,102 | 401 | 399,250 |
-| Web reader boot | 456,971 | 457,372 | 401 | 457,500 |
-| Web aggregate JavaScript | 3,711,979 | 3,717,752 | 5,773 | 3,718,000 |
+| Web App boot, standard | 398,701 | 399,102 | 401 | 399,250 |
+| Web App boot, enabled | 398,683 | 399,107 | 424 | 399,250 |
+| Web reader boot, standard | 456,971 | 457,372 | 401 | 457,500 |
+| Web reader boot, enabled | 456,953 | 457,377 | 424 | 457,500 |
+| Web aggregate JavaScript, standard | 3,711,979 | 3,717,752 | 5,773 | 3,718,000 |
+| Web aggregate JavaScript, enabled | 3,711,906 | 3,717,605 | 5,699 | 3,718,000 |
 
-The original strict failures remain in the release evidence. Rollup also merged
+The budget rationale retains exact candidate heads. The initial enabled-profile
+attempt used an unread flag and counts as standard-only evidence; the corrected
+pair supplies enabled coverage. The original strict failures remain recorded.
+Rollup also merged
 shared leaves into the existing feedback panel, removing its exact source
 facade. Preserving that panel in the established manual-chunk list restores its
 independent dynamic entry with no static parents; the original guard is retained.
