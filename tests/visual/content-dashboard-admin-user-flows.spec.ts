@@ -9024,6 +9024,7 @@ for (const theme of ['light','dark']) for (const width of [1440,390]) {
       await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
       // Any loading line is chrome on the canvas while it waits, so the audit runs after the
       // workspace has finished. Listing only some waits reported the natal aspect finder's.
+      await expect(page.locator(".admin-loaded-workspace .app-loading:visible")).toHaveCount(0);
       await expect(page.locator('.admin-loaded-workspace')).not.toContainText(/Loading\b/iu);
       await page.locator('.admin-main details').evaluateAll(items => items.forEach(item => { (item as HTMLDetailsElement).open = true; }));
       for (const toggle of await page.locator('.admin-filter-disclosure-toggle[aria-expanded="false"],.admin-browse-filter-toggle[aria-expanded="false"]').all()) {

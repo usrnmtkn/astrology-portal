@@ -407,3 +407,28 @@ before replacing the document, with every browser-error and external-service
 assertion still enabled. All 14 affected wheel journeys plus both unchanged
 Seasonal quality-exhaustion cases pass in a fresh 16-case Chrome/WebKit rerun.
 No product timeout, error filter or publication assertion is relaxed.
+
+CI at `04c10e685` passes the complete unfiltered API workflow, Linux bundle
+budgets, reader-copy/privacy boundaries and startup/recovery contracts. Its
+visual job passes 100 cases and reports only the intended Sky light image
+mismatch; one existing Settings reload case passes on retry. The exact-head
+Linux artifact (run `42266972399`, artifact `13533508573`) was visually reviewed:
+new drawing, caption and expand-button geometry match the requested wheel.
+Only `client-sky-desktop-light-chromium-desktop-linux.png` is refreshed; all
+other Linux baselines and the 0.015 pixel tolerance stay unchanged. A fresh
+three-case macOS baseline pass confirms its earlier single-image refresh.
+The Settings race comes from the synthetic reader-session profile handler
+evaluating a document while the test reloads it. It now completes fixture
+network reads before that explicit reload, retaining every assertion.
+
+All 12 repeated On/Off/System Settings checks pass in Chrome and WebKit.
+The wider Studio container audit also caught its readiness wait inspecting
+the new lazy workspace while its “Opening…” fallback was still visible.
+The audit now explicitly waits for visible shared loading components to
+finish before applying all existing containment and overflow assertions.
+
+All four light/dark desktop/mobile Studio container audits pass with that
+explicit readiness check. The final local unfiltered API attempt again stops
+only at the same three unavailable private ingress-reference fixtures; the
+complete CI API suite is green at the source-identical `04c10e685` revision.
+The final pushed head must pass the full unfiltered CI suite again.
