@@ -68,6 +68,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(article.locator('h1')).toContainText('Saturn');
     await expectReadableTheme(page, '.sky-placement-article h1, .sky-placement-article .article-section p, .sky-placement-article__retrograde, .sky-placement-key-dates h2, .retrograde-cycles__title');
     await expect(article.locator('h1')).toHaveCSS('font-size', '36px');
+    await expect(article.locator('h1')).toHaveCSS('letter-spacing', '-0.54px');
+    await expect(article.locator('.article-duration').first()).toHaveCSS('font-family', compact ? /system-ui/ : /Newsreader/);
+    if (compact) {
+      await expect(article).toHaveCSS('padding-left', '16px');
+      await expect(article).toHaveCSS('padding-right', '16px');
+    }
     await expect(article.locator('.article-section p').first()).toHaveCSS('font-size', '19px');
     await expect(article.locator('.sky-placement-article__glyph')).toHaveCSS('width', '64px');
     await expect(article.locator('.article-title')).toHaveCSS('font-weight', '400');
@@ -97,6 +103,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(facts.locator('.retrograde-cycles__date').first()).toHaveCSS('font-family', /system-ui/);
     await expect(facts.locator('.retrograde-cycles__date').first()).toHaveCSS('font-size', compact ? '17px' : '18px');
     await expect(facts.locator('.retrograde-cycles__meta').first()).toHaveCSS('font-size', '14px');
+    await expect(facts.locator('.retrograde-cycles__open').first()).toHaveCSS('font-size', '15px');
+    await expect(facts.locator('.retrograde-cycles__open').first()).toHaveCSS('min-height', compact ? '44px' : '40px');
     await expectReadableTheme(page, '.sky-placement-key-dates__title strong, .sky-placement-key-dates__next, .retrograde-cycles__date, .retrograde-cycles__meta, .retrograde-cycles__jump, .retrograde-cycles__compare-title');
     await expect(article.locator('.retrograde-history-facts')).toHaveCount(0);
     await facts.locator('.retrograde-cycles__date').first().scrollIntoViewIfNeeded();

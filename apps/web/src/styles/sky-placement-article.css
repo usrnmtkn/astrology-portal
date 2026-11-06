@@ -3,8 +3,8 @@
 .sky-placement-article-page .sky-detail-article { gap: var(--space-6); }
 .sky-placement-article-page .article-card.sky-detail-card { padding: var(--size-8) var(--layout-reading-padding) var(--layout-reading-block-space); gap: var(--space-8); }
 .sky-placement-article-page .article-id { gap: var(--space-4); padding-block: var(--space-6) var(--space-2); }
-.sky-placement-article-page .article-title { font-size: var(--type-placement-title-size); line-height: var(--leading-placement-title); letter-spacing: var(--tracking-dialog-title); }
-.sky-placement-article-page .article-duration { margin: 0; font-family: var(--font-display); font-size: var(--type-row-title-size); font-weight: var(--weight-regular); line-height: var(--leading-row-title); color: var(--muted); }
+.article-page.sky-placement-article-page .article-title { font-size: var(--type-placement-title-size); line-height: var(--leading-placement-title); letter-spacing: var(--tracking-dialog-title); }
+.article-page.sky-placement-article-page .article-duration { margin: 0; font-family: var(--font-display); font-size: var(--type-row-title-size); font-weight: var(--weight-regular); line-height: var(--leading-row-title); color: var(--muted); }
 .sky-placement-article-page .article-duration + .article-duration { padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); background: var(--surface-sheet); font-family: var(--font-ui); font-size: var(--type-meta-size); color: var(--ink-2); }
 .sky-placement-article__glyph { display: grid; place-items: center; width: var(--size-8); height: var(--size-8); border-radius: var(--radius-pill); background: var(--surface-symbol); color: var(--accent); font-family: var(--font-glyph); font-size: var(--space-7); line-height: var(--leading-display); }
 .sky-placement-article__retrograde { display: inline-flex; align-items: center; padding: var(--space-1) var(--space-2); border-radius: var(--radius-pill); background: var(--color-mint); color: var(--color-brand); font-family: var(--font-ui); font-size: var(--type-degree-size); font-weight: var(--weight-medium); }
@@ -44,7 +44,7 @@
 .retrograde-cycles--article .retrograde-cycles__date { font-size: var(--type-row-title-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); letter-spacing: var(--tracking-body); color: var(--ink); }
 .retrograde-cycles--article .retrograde-cycles__meta { color: var(--muted); line-height: var(--leading-body); }
 .retrograde-cycles--article p { color: var(--ink-2); }
-.retrograde-cycles--article .retrograde-cycles__open { min-height: var(--space-8); font-size: var(--type-ui-copy-size); background: var(--surface-2); color: var(--ink); }
+.retrograde-cycles.retrograde-cycles--article .retrograde-cycles__open { min-height: var(--space-8); font-size: var(--type-ui-copy-size); background: var(--surface-2); color: var(--ink); }
 .retrograde-cycles--article .retrograde-cycles__section > .retrograde-cycles__compare { margin-top: var(--space-4); padding: var(--space-5) var(--space-6); border-radius: var(--radius-sm); background: var(--surface-sheet); }
 .retrograde-cycles--article .retrograde-cycles__compare > summary { font-size: var(--type-row-title-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); color: var(--ink); }
 .retrograde-cycles--article .retrograde-cycles__compare > summary > svg { box-sizing: content-box; padding: var(--space-2); border-radius: var(--radius-pill); background: var(--surface-2); }
@@ -79,11 +79,11 @@
  .article-page .article-card.sky-detail-personalized-placement { padding: var(--lunar-space-28) var(--space-6) var(--space-7); border-radius: var(--card-radius-sm); }
  .sky-detail-personalized-aspect__heading h3 { font-size: var(--type-compact-row-size); }
  .sky-detail-personalized-aspect__glyph { width: var(--placement-control-size); height: var(--placement-control-size); font-size: var(--glyph-aspect-compact-size); }
- .sky-placement-article-page { padding-inline: var(--space-4); }
+ .article-page.sky-placement-article-page { padding-inline: var(--space-4); }
  .sky-placement-article-page .article-card.sky-detail-card { padding: var(--space-7) var(--space-6); gap: var(--lunar-space-28); }
- .sky-placement-article-page .article-title { font-size: var(--type-compact-title-size); line-height: var(--leading-compact-title); }
+ .article-page.sky-placement-article-page .article-title { font-size: var(--type-compact-title-size); line-height: var(--leading-compact-title); }
  .sky-placement-article-page .article-id { gap: var(--space-3); padding-block: var(--space-2) var(--space-1); }
- .sky-placement-article-page .article-duration { font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-body); }
+ .article-page.sky-placement-article-page .article-duration { font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-body); }
  .sky-placement-article-page .article-body-inner { --text-body: var(--type-reading-size); --leading-body: var(--leading-reading); letter-spacing: var(--tracking-body); }
  .sky-placement-article__glyph { background: var(--surface-2); }
  .sky-placement-key-dates ol { display: grid; gap: var(--space-6); margin: var(--space-6) 0 0; }
@@ -95,7 +95,7 @@
  .retrograde-cycles--article .retrograde-cycles__date { font-size: var(--type-compact-row-size); }
  .retrograde-cycles--article .retrograde-cycles__section > .retrograde-cycles__compare { padding: var(--space-3) var(--space-4); background: var(--surface-2); }
  .retrograde-cycles--article .retrograde-cycles__compare > summary { font-size: var(--type-ui-copy-size); }
- .retrograde-cycles--article .retrograde-cycles__open { min-height: var(--placement-control-size); }
+ .retrograde-cycles.retrograde-cycles--article .retrograde-cycles__open { min-height: var(--placement-control-size); }
  .sky-placement-article__navigation { gap: var(--space-3); }
  .sky-placement-article__navigation a { gap: var(--space-2); }
 }
