@@ -16538,9 +16538,9 @@ function PlacementTable({
   const holdingCards = useMinimumLoading(!cardsSettled);
   const cardsLoading = contentStatus !== "error" && holdingCards;
   const factsSettled = skyPlacementCardsSettled(orderedPositions, "ready", skyPlacementPlanetOrder.length);
-  const [hasShownCards, setHasShownCards] = useState(false);
+  const hasShownCards = useRef(false);
   useLayoutEffect(() => {
-    if (!cardsLoading) setHasShownCards(true);
+    if (!cardsLoading) hasShownCards.current = true;
   }, [cardsLoading]);
   useSkyCardsSettled(cardsSettled && !cardsLoading);
   const aspectsByPlacement = useMemo(() => {
@@ -16565,7 +16565,7 @@ function PlacementTable({
 
   // Initial loading remains complete. Later publication changes keep the native
   // controls mounted so a press can finish while their old prose is withdrawn.
-  if (cardsLoading && (!hasShownCards || !factsSettled)) return <SkyPlacementListSkeleton count={skyPlacementPlanetOrder.length} grouped />;
+  if (cardsLoading && (!hasShownCards.current || !factsSettled)) return <SkyPlacementListSkeleton count={skyPlacementPlanetOrder.length} grouped />;
 
   return (
     <>{cardsLoading ? <LoadingStatus>Loading description</LoadingStatus> : null}{[
