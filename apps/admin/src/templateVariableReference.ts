@@ -1,4 +1,5 @@
 import { ZODIAC_SEASON_VARIABLES, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../../src/shared/lunationTimingVariables';
 export type TemplateVariableRequirement = "Required" | "Optional" | "Runtime";
 
 export type TemplateVariableReference = {
@@ -619,6 +620,11 @@ export function templateVariableReferences(
     if (!usages.has(field.id)) usages.set(field.id, { fields: new Set(["Available for insertion"]), conditional: true });
   }
   const transitExactKey = String(packageRecord.contentKey ?? "");
+  if (includeAvailable && isReusableLunationKey(transitExactKey)) {
+    for (const name of LUNATION_TIMING_VARIABLES) {
+      if (!usages.has(name)) usages.set(name, {fields: new Set(['Available for insertion']), conditional: true});
+    }
+  }
   if (includeAvailable && (/^authored\/transit-aspect\//u.test(transitExactKey) || /^authored\/transit-return\//u.test(transitExactKey))) {
     for (const name of ["aspectWord", "untilDate", "Name"]) {
       if (!usages.has(name)) usages.set(name, { fields: new Set(["Available for insertion"]), conditional: name === "Name" });
@@ -626,7 +632,10 @@ export function templateVariableReferences(
   }
   return [...usages.entries()]
     .map(([name, usage]) => {
-      const definition = variableDefinitions[name] ?? genericDefinition(name);
+      const definition = isReusableLunationKey(transitExactKey) && LUNATION_TIMING_VARIABLES.includes(name as typeof LUNATION_TIMING_VARIABLES[number])
+        ? {meaning: name === 'startDate' ? 'The exact New or Full Moon date in the selected location’s time zone.' : 'The exact New or Full Moon time, including the selected location’s time zone.',
+          example: name === 'startDate' ? 'September 26' : '12:49 PM EDT', source: 'Calculated lunation timing', sourceKind: 'runtime' as const}
+        : variableDefinitions[name] ?? genericDefinition(name);
       const requirement: TemplateVariableRequirement = required.has(name) || ZODIAC_SEASON_VARIABLES.some(field => field.id === name) && !usage.fields.has("Available for insertion")
         ? "Required"
         : optional.has(name) || usage.conditional

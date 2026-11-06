@@ -5,6 +5,7 @@ import { createCalendarMoonSources } from '../../../src/shared/features/calendar
 import { lunationReaderContentKeys } from '../../web/src/content/lunationArticleIdentity';
 import { isGovernedReaderEligible } from '../../web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser';
 import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from '../../web/src/content/contentPublicationState';
+import {lunationTimingValues, renderLunationTiming} from '../../../src/shared/lunationTimingVariables';
 
 /** Package sources come from the authenticated source API, never the full reader bundle. */
 export function publishedPassageSources(rows: CalendarPreviewRow[]) {
@@ -23,10 +24,10 @@ export function calendarStudioMoonSources(content: Map<string, LiveGeneratedCont
   return createCalendarMoonSources({
     hookBody: key => content.get(key)?.body ?? '',
     weeklyMoon: () => null, // Eligible packaged passages are already in the same source map.
-    lunation: event => {
+    lunation: (event, _content, timeZone) => {
       for (const key of lunationReaderContentKeys(event)) {
         const body = content.get(key)?.body?.trim();
-        if (body) return { contentKey: key, body };
+        if (body) return { contentKey: key, body: renderLunationTiming(body, lunationTimingValues(event.startsAt, timeZone)) };
         const publication=contentPublication(key);
         if (publication && !publicationRestoresBaseline(publication)) return { contentKey: key, body: '' };
       }

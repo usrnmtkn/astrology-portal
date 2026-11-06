@@ -5447,7 +5447,7 @@ function currentSkyV4LunationDetailArticle({
       throw error;
     }
   }
-  const selectedLunarSource = resolveLunationReaderSource(event, generatedContent);
+  const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
   const aspectSections = lunationAspectCandidates(sky.aspects)
     .flatMap((aspect) => relatedSkyAspectSectionsForPlacement({
@@ -5470,7 +5470,7 @@ function currentSkyV4LunationDetailArticle({
     duration: dateLine,
     suppressTldr: true,
     body: readerParts,
-    risingHoroscopes: lunationArticleHoroscopeReader?.lunationArticleHoroscopeCards(event, generatedContent),
+    risingHoroscopes: lunationArticleHoroscopeReader?.lunationArticleHoroscopeCards(event, generatedContent, sky.location.timeZone),
     sections: aspectSections,
     relatedAspects: aspectSections.length > 0
       ? { heading: "Key aspects", grouping: "event", rows: [] }

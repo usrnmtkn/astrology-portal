@@ -19,6 +19,7 @@ import { calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "../.
 import { resolveCalendarMoonFallback } from "../../../src/shared/features/calendar/calendarMoonFallback";
 import { calendarMoonPhaseCopy } from "../../../src/shared/features/calendar/calendarMoonPhaseCopy";
 import { calendarLunationMacroKey } from "../../../src/shared/features/calendar/calendarDayMoonReading";
+import {lunationTimingValues, renderLunationTiming} from '../../../src/shared/lunationTimingVariables';
 import { calendarLocalDateKey } from "../../../src/shared/features/calendar/calendarPhaseLabel";
 import { moonContinuationSummaryKey, moonContinuationSummaryForSign } from "../../../src/shared/features/calendar/moonContinuationSummaries";
 import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen, calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../../src/shared/features/calendar/calendarSeasonTransitions";
@@ -118,7 +119,7 @@ export function calendarMoonPassageForDay(
 
 export function calendarMoonWriteupForDay(
   rows: CalendarPreviewRow[],
-  day: { date: string; dateKey: string; moonSign: string; moonPhase: string; events?: Array<{ type?: string; title: string; sign?: string; eclipseType?: string }> },
+  day: { date: string; dateKey: string; moonSign: string; moonPhase: string; events?: Array<{ type?: string; title: string; sign?: string; eclipseType?: string; startsAt?: string }> },
   facts: CalendarMoonCycleFacts | undefined,
   seasonSummary?: string,
   usedAuthoredBodies: Iterable<string> = []
@@ -155,7 +156,7 @@ export function calendarMoonWriteupForDay(
   const resolved = resolveCalendarMoonFallback(facts, {
     transitionPhrase,
     exactLunationCopy: lunationRow?.body
-      ? { body: lunationRow.body, contentKey: lunationRow.content_key }
+      ? { body: renderLunationTiming(lunationRow.body, lunationTimingValues(lunation?.startsAt ?? '', facts.timeZone)), contentKey: lunationRow.content_key }
       : null,
     unusedAuthored: authored?.body
       ? { body: authored.body, contentKey: authored.content_key }

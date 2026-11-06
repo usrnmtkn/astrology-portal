@@ -925,12 +925,15 @@ function contentMatchesCalendarEventFacts(event: LunarCalendarEvent, content: Li
 
 export function liveCalendarEventContent(
   generatedContent: Map<string, LiveGeneratedContent> | undefined,
-  event: LunarCalendarEvent
+  event: LunarCalendarEvent,
+  timeZone?: string
 ) {
   if (event.type === "lunation") {
-    const selected = resolveLunationReaderSource(event, generatedContent);
-    if (selected) return selected.unavailable ? null
-      : generatedContent?.get(selected.contentKey) ?? fallbackArchitectureV3AuthoredContentForKey(selected.contentKey);
+    const selected = resolveLunationReaderSource(event, generatedContent, timeZone);
+    if (selected) {
+      const source = generatedContent?.get(selected.contentKey) ?? fallbackArchitectureV3AuthoredContentForKey(selected.contentKey);
+      return selected.unavailable || !source ? null : {...source, body: selected.body};
+    }
   }
   if (
     event.type === "aspect"
@@ -1252,7 +1255,7 @@ export function normalizeCalendarEventSurface(
   timeZone = "UTC"
 ): NormalizedCalendarEventSurface {
   if (event.type === 'lunation') {
-    const selected=resolveLunationReaderSource(event,generatedContent);
+    const selected=resolveLunationReaderSource(event,generatedContent,timeZone);
     if(selected)return selected.body ? {surface:'calendar-event',status:'servable',sections:[{slot:'description',required:false,layer:'authored',tier:'stored-source',sourceKeys:selected.sourceKeys,body:selected.body.split(/\n\s*\n/u)[0]}]} : {surface:'calendar-event',status:'not-servable',sections:[]};
   }
   if (event.type === "ingress" && event.planet === "Moon") {
@@ -1531,7 +1534,7 @@ function calendarEventEditorialContent(
   composedSkyCalendarCardLookup?: SkyCalendarComposedCardLookup | null
 ): CalendarEditorialContent {
   const dateLine = calendarCanonicalEventDateLine(event, timeZone);
-  const content = liveCalendarEventContent(generatedContent, event);
+  const content = liveCalendarEventContent(generatedContent, event, timeZone);
   const normalized = normalizeCalendarEventSurface(
     event,
     content,
@@ -2664,7 +2667,8 @@ export function LunarCalendar({
       generatedContent,
       selectedPackageWeeklyMoon
         ? { contentKey: selectedPackageWeeklyMoon.contentKey, body: selectedPackageWeeklyMoon.body }
-        : null
+        : null,
+      zone
     )
     : [];
   const selectedDayBodyPresentation = {
@@ -2998,7 +3002,8 @@ export function LunarCalendar({
               return moonWritingForDay(
                 day,
                 generatedContent,
-                packagedWeeklyMoon(day, moonCycleFacts.get(day.dateKey), generatedContent, moonResolvedByDate)
+                packagedWeeklyMoon(day, moonCycleFacts.get(day.dateKey), generatedContent, moonResolvedByDate),
+                zone
               );
             }, (day) => calendarMoonCycleFallbackPiece(day, moonCycleFacts.get(day.dateKey), generatedContent)).map((moonPieces, index) => {
               const day = selectedWeekDays[index];
@@ -3260,7 +3265,7 @@ export function LunarCalendar({
                   .map((day, index) => ({ day, index, phase: calendarPhaseLabelForDay(day, calendar.days) }))
                   .filter(({ day, phase }) => isMonthAgendaDay(day, phase));
                 return calendarMoonWritingSequenceWithoutRepeat(agendaDays, ({ day }) => (
-                  moonWritingForDay(day, generatedContent, packagedWeeklyMoon(day, moonCycleFacts.get(day.dateKey), generatedContent, moonResolvedByDate))
+                  moonWritingForDay(day, generatedContent, packagedWeeklyMoon(day, moonCycleFacts.get(day.dateKey), generatedContent, moonResolvedByDate), zone)
                 ), ({ day }) => calendarMoonCycleFallbackPiece(day, moonCycleFacts.get(day.dateKey), generatedContent)).flatMap((moonPieces, agendaIndex) => {
                 const { day, index, phase } = agendaDays[agendaIndex];
                 const previousDay = index > 0 ? calendar.days[index - 1] : null;
