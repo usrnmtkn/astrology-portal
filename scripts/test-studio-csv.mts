@@ -50,6 +50,8 @@ test('CSV eligibility excludes dedicated article editions before their full docu
     ['sky-article/sun/libra/2026/2026-09-22', 'sky-article-edition'],
     ['sky-article-revision/sun/libra/2026/2026-09-22', 'sky-article-edition-revision'],
     ['horoscope/daily/20261021040000000/America/New_York', 'horoscope-edition'],
+    ['cms/lunation-horoscopes/2026-11-09/new-moon/scorpio', 'lunation-horoscopes'],
+    ['content/manual/synthetic-moon-edition', 'lunation-horoscopes'],
     ['content/manual/synthetic-edition', 'sky-article-edition'],
   ]) {
     const row = { ...original, content_key, event_type, sections: { skyArticleEdition: { schema: 'synthetic' } } };

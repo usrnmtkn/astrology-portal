@@ -93,7 +93,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`CSV picker excludes dedicated editions and exports supported sources at ${width} ${theme}`, async ({ page, context }) => {
     test.setTimeout(120_000);
     const fixture = await skyPlacementSourceFixture();
-    const editions = [{ ...fixture.active, headline: 'Unavailable CSV edition' }, { ...fixture.pending, headline: 'Unavailable CSV revision' }];
+    const editions = [{ ...fixture.active, headline: 'Unavailable CSV edition' }, { ...fixture.pending, headline: 'Unavailable CSV revision' },
+      { ...fixtures[1], content_key: 'cms/lunation-horoscopes/2026-11-09/new-moon/scorpio', event_type: 'lunation-horoscopes',
+        headline: 'Unavailable CSV Moon set', sections: { articleHoroscopes: { schema: 'sky-article-horoscopes-v1', passages: [] } } }];
     const store = await studioApiStore([fixtures[0], ...editions]);
     const writes: unknown[] = [], errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -112,7 +114,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await page.goto('/admin/content#exact-content');
       await page.getByRole('button', { name: 'Export sources for bulk editing', exact: true }).click();
       const panel = page.getByRole('region', { name: 'CSV offline editing' });
-      await expect(panel).toContainText('1 available for CSV editing · 2 excluded.');
+      await expect(panel).toContainText('1 available for CSV editing · 3 excluded.');
       const types = panel.getByLabel('CSV content type', { exact: true });
       await expect(types.locator('option')).toHaveText(['Choose a content type', 'essay (1)']);
       await panel.getByText('Choose rows for this export', { exact: true }).click();
@@ -127,14 +129,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       expect(records[0].body).toBe(fixtures[0].body);
       await expect(panel).toContainText('Exported 1 rows.');
       await page.getByRole('searchbox', { name: 'Search content', exact: true }).fill('Unavailable');
-      await expect(panel).toContainText('0 available for CSV editing · 2 excluded.');
+      await expect(panel).toContainText('0 available for CSV editing · 3 excluded.');
       await expect(types.locator('option')).toHaveText(['Choose a content type']);
       await expect(panel.getByRole('button', { name: 'Download CSV', exact: true })).toBeDisabled();
       const typography = (element: Element) => {
         const style = getComputedStyle(element);
         return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];
       };
-      expect(await panel.getByText('0 available for CSV editing · 2 excluded. Open structured articles in their dedicated editor.', { exact: true }).evaluate(typography))
+      expect(await panel.getByText('0 available for CSV editing · 3 excluded. Open structured articles in their dedicated editor.', { exact: true }).evaluate(typography))
         .toEqual(await panel.locator('.admin-field-hint').first().evaluate(typography));
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await panel.screenshot({ path: `test-results/studio-csv-eligibility-${width}-${theme}.png` });
