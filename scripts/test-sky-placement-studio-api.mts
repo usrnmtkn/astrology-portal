@@ -474,3 +474,47 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  assert.equal(stored.find(row => row.id === saved.id).status, 'DRAFT');
  console.log('PASS: article template retains all four slots on save and directs publication to a complete edition.');
 }
+
+// Preserve the canonical editor's case-sensitive TLDR paths through publication.
+{
+ const key = 'sky-lilith/article/sagittarius';
+ const baseline = skyPlacementSourceRecords.get(key)!;
+ const privateNote = 'Synthetic private TLDR editorial note.';
+ let live: any = null;
+ for (const version of [1, 2]) {
+  const what = `During this transit, fixture revised Lilith premise ${version}.`;
+  const takeaway = `Fixture revised Lilith takeaway ${version}.`;
+  const body = `During this transit, fixture Lilith opening ${version}.\n\nFixture Lilith final sentence ${version}.`;
+  const copy = { ...(live?.sections.packageRecord ?? baseline), TLDR_What: what, TLDR_Takeaway: takeaway, LilithArticle: body };
+  const saved = (await request(live ? 'PATCH' : 'POST', {
+   ...(live ? { id: live.id, expectedUpdatedAt: live.updated_at } : { contentKey: key, surface: 'sky', mode: 'in_depth', status: 'DRAFT', eventType: 'fallback-hook', blockType: 'fallback_hook', lane: 'reference' }),
+   headline: baseline.headline, summary: baseline.summary, body: baseline.body_you, editorialNotes: privateNote,
+   sections: { ...(live?.sections ?? { packageRecord: baseline }), packageDraft: copy },
+   sourceSnapshot: { ...(live?.source_snapshot ?? {}), sourcePackage: baseline.source_package, content_role: baseline.content_role },
+   facts: { fallbackArchitectureV3: true }, reviewStatus: 'needs_review'
+  })).rows[0];
+  live = (await request('PATCH', { id: saved.id, expectedUpdatedAt: saved.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
+  for (const [field, value] of Object.entries({ TLDR_What: what, TLDR_Takeaway: takeaway, LilithArticle: body })) {
+   assert.equal(live.sections.packageRecord[field], value);
+   assert.equal(live.sections.packageOriginalRecord[field], baseline[field]);
+  }
+  assert.equal(live.sections.packageRecord.editorial_notes, privateNote);
+  const response = await readerRouteResponse('/api/content-reader', { method: 'POST', body: JSON.stringify({ keys: [key] }) });
+  assert(response); assert.equal(response.status, 200);
+  const payload = await response.json();
+  assert.equal(payload.rows.length, 1);
+  const projected = payload.rows[0].sections.packageRecord;
+  assert(!JSON.stringify(payload).includes(privateNote), 'TLDR_PRIVATE_NOTE_EXCLUDED');
+  for (const field of ['editorial_notes', 'studio_source_baseline', 'studio_editable_fields']) assert(!Object.hasOwn(projected, field));
+  assert(!Object.hasOwn(payload.rows[0].sections, 'packageOriginalRecord'));
+  assert.equal(projected.TLDR_What, what, 'TLDR_PUBLIC_WHAT');
+  assert.equal(projected.TLDR_Takeaway, takeaway, 'TLDR_PUBLIC_TAKEAWAY');
+  assert.equal(projected.LilithArticle, body, 'TLDR_PUBLIC_BODY');
+  await runtime.refreshContentPublications(true);
+  runtime.clearCachedFallbackArchitectureV3Bundle();
+  runtime.installFallbackArchitectureV3Bundle(await runtime.loadFallbackArchitectureV3DashboardBundle());
+  assert.deepEqual(runtime.skyV4ReaderRenderer.renderRoute({ route: 'placement', planet: 'lilith', sign: 'sagittarius' }).readerParts,
+   [what, takeaway, body], 'TLDR_CANONICAL_READER');
+ }
+ console.log('PASS: exact uppercase TLDR and complete body save/publish twice → public reader projection → canonical reader, with private metadata excluded and originals preserved.');
+}
