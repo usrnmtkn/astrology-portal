@@ -62,6 +62,27 @@ Verification: `node --import tsx scripts/test-dated-moon-horoscopes.mts` and
 desktop/mobile and light/dark using actual handlers and isolated storage; it does
 not publish owner content or establish production deployment.
 
+The November 6 integration controls compare accepted main `25092e7c9` with
+`474ff03ca`, using independent locked installs and knowledge builds, native
+ARM64 Node 22.20.0, gzip level 9 and identical synthetic CI settings. Both Web
+profiles (standard and natal-aspect-pattern auth) produced the same measurements.
+
+| Gzip metric | Main | Moon integration | Cost | Resulting limit |
+| --- | ---: | ---: | ---: | ---: |
+| Admin entry | 238,837 | 239,024 | 187 | 239,100 |
+| Admin aggregate JavaScript | 880,262 | 886,688 | 6,426 | 886,900 |
+| Web App boot | 398,701 | 399,102 | 401 | 399,250 |
+| Web reader boot | 456,971 | 457,372 | 401 | 457,500 |
+| Web aggregate JavaScript | 3,711,979 | 3,717,752 | 5,773 | 3,718,000 |
+
+The original strict failures remain in the release evidence. Rollup also merged
+shared leaves into the existing feedback panel, removing its exact source
+facade. Preserving that panel in the established manual-chunk list restores its
+independent dynamic entry with no static parents; the original guard is retained.
+All other limits remain unchanged, including the Web App chunk and CSS. These
+measurements account for the requested feature, not a speed improvement. Final
+exact-head API, content, budget, privacy and rendered-flow gates remain required.
+
 ### Daily, weekly, monthly and seasonal editions
 
 1. **Dates:** choose daily, weekly, monthly or seasonal, a date, and a city or time zone.
