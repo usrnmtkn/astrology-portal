@@ -39,7 +39,7 @@
 .sky-placement-key-dates__arrow { display: grid; place-items: center; width: var(--space-7); height: var(--space-7); border-radius: var(--radius-pill); background: var(--surface-2); }
 .sky-placement-key-dates__arrow svg { width: var(--space-4); height: var(--space-4); }
 .sky-placement-key-dates__mobile-date { display: none; }
-.retrograde-cycles--article { font-family: var(--font-ui); }
+.retrograde-cycles.retrograde-cycles--article { font-family: var(--font-ui); }
 .retrograde-cycles--article .retrograde-cycles__section > .retrograde-cycles__card { margin-top: var(--space-6); padding: 0; border: 0; border-radius: 0; background: transparent; }
 .retrograde-cycles--article .retrograde-cycles__date { font-size: var(--type-row-title-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); letter-spacing: var(--tracking-body); color: var(--ink); }
 .retrograde-cycles--article .retrograde-cycles__meta { color: var(--muted); line-height: var(--leading-body); }
