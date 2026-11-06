@@ -250,6 +250,32 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await workspace.getByLabel('Full article',{exact:true}).fill(body+' Unsaved.');
       await expect(workspace.getByRole('button',{name:'Archive draft',exact:true})).toBeDisabled();
       await workspace.getByLabel('Full article',{exact:true}).fill(body);
+      await workspace.getByLabel('Full article',{exact:true}).locator('..').getByRole('button',{name:'Format text',exact:true}).click();
+      const formatted=workspace.getByRole('textbox',{name:'Full article formatted text',exact:true});
+      await expect(formatted).toHaveAttribute('contenteditable','true');
+      const visibleBeforeArchive=await formatted.innerText();
+      await expect(workspace.getByRole('button',{name:'Archive draft',exact:true})).toBeEnabled();
+      await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
+      await expect(workspace.getByText('Draft archived. Restore it to continue editing.',{exact:true})).toBeVisible();
+      const locked=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
+      expect(locked.body).toBe(body);expect((await writer.call({method:'provider'})).calls).toBe(0);
+      await expect(formatted).toHaveAttribute('contenteditable','false');
+      for(const name of ['Bold','Italic','Bulleted list','Numbered list','Undo formatting','Redo formatting']){
+        await expect(workspace.getByRole('button',{name,exact:true})).toBeDisabled();
+      }
+      await formatted.click();
+      await page.keyboard.press('ControlOrMeta+b');
+      await page.keyboard.type('Blocked archived keyboard edit.');
+      await page.keyboard.press('ControlOrMeta+i');
+      await expect(formatted).toHaveText(visibleBeforeArchive);
+      expect(await formatted.innerText()).toBe(visibleBeforeArchive);
+      expect((await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id).body).toBe(body);
+      await workspace.getByRole('button',{name:'Restore draft',exact:true}).click();
+      await expect(workspace.getByText('Draft restored. Review and publish when ready.',{exact:true})).toBeVisible();
+      await expect(formatted).toHaveAttribute('contenteditable','true');
+      expect(await formatted.innerText()).toBe(visibleBeforeArchive);
+      await expect(workspace.getByRole('button',{name:'Bold',exact:true})).toBeEnabled();
+      expect((await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id).body).toBe(body);
       await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
       await expect(workspace.getByText('Draft archived. Restore it to continue editing.',{exact:true})).toBeVisible();
       await expect(workspace.getByLabel('Full article',{exact:true})).toBeDisabled();

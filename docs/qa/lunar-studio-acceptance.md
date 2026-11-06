@@ -37,7 +37,11 @@ handlers with isolated storage for Calendar and Sky delivery, reload and retirem
 archive/restore contract and is included by the dated writer's API regression.
 The archive/restore cases in `lunation-writing-studio.spec.ts` cover discovery,
 reload, complete-text preservation, unsaved edits and concurrent changes at both
-widths and themes. Execution results belong to the tested revision's QA receipt.
+widths and themes. They also keep formatting open across archive and restore,
+attempt typing and formatting shortcuts while archived, and compare the visible
+writing and stored body before and after those attempts. Restoring re-enables
+formatting without changing the saved writing. Execution results belong to the
+tested revision's QA receipt.
 
 The September 27 recheck identified a navigation gap: all 24 reusable readings
 were saved and reachable through Daily Sky, but the consolidated lunar section
