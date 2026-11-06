@@ -118,7 +118,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
           await saveGeneration({...g,active:null,plan:null,lastError:'The provider did not confirm a stored writing response. Review the saved request before trying again.',history:[...(g.history??[]),{...active,state:'provider-error',providerResult:result.payload}]});
           return finish();
         }
-        active={...active,state:'running',responseId:result.payload.id,...(['completed','failed','cancelled','incomplete'].includes(result.payload.status)?{providerResult:result.payload}:{})};
+        active={...active,state:'running',responseId:result.payload.id,...(typeof result.payload.status==='string'&&['completed','failed','cancelled','incomplete'].includes(result.payload.status)?{providerResult:result.payload}:{})};
         await saveGeneration({...g,active});return finish(202);
       }catch{
         // The reserved row remains recoverable even if dispatch or confirmation times out.

@@ -188,6 +188,7 @@ type ExistingGeneratedContentRow = {
   provider?: string | null;
   prompt_version?: string | null;
   source_snapshot?: Record<string, unknown> & {
+    planetaryGeneration?: { active?: unknown };
     horoscopeGeneration?: {
       dailyEditorial?: {version: string; pending?: unknown};
       weeklyEditorial?: {pending?: unknown};
