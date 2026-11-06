@@ -122,7 +122,7 @@ function navigationFixture(confirm = false) {
     dailyGlancePairSelector: "soft/mars", csvBusy: false, houseTransitEditor: null, isLoading: false,
     draftFromRow: () => { throw new Error("Unexpected draft read"); },
     transitExactDismissedKeysRef: { current: new Set() }, houseTransitEditorDrafts: { current: new Map() },
-    editorLoadRef: { current: null }, editorReturnFocusRef: { current: null },
+    editorLoadRef: { current: null }, editorReturnFocusRef: { current: null }, dailyGlanceLoadingRequestRef: { current: null },
     editorBaselineRef: { current: null }, editorSavedInputRef: { current: null }, natalUnsavedSourcesRef: { current: new Set() },
     handledHashRef: { current: "#fallback-hooks" }, acceptedHashRef: { current: "#fallback-hooks" },
     window: { confirm: () => { calls.push("confirm"); return confirm; }, requestAnimationFrame: (fn: () => void) => fn(), scrollTo() {},
@@ -138,6 +138,7 @@ function navigationFixture(confirm = false) {
     "dailyGlanceDirtyRef", "dailyGlanceBusyRef"]) scope[ref] = { current: false };
   for (const ref of ["sourceOpenRequestRef", "houseTransitOpenRequest", "editorSessionRef", "skyArticleAutosaveSequenceRef", "skyArticleWorkspaceAutosaveSequenceRef"]) scope[ref] = { current: 0 };
   for (const setter of new Set(dashboardText.match(/\bset[A-Z]\w+/gu))) scope[setter] = () => calls.push(setter);
+  scope.setIsLoading = (value: boolean) => { scope.isLoading = value; calls.push("setIsLoading"); };
   scope.setDailyGlancePairSelector = (value: string | null) => { scope.dailyGlancePairSelector = value; calls.push("setDailyGlancePairSelector"); };
   for (const name of ["hasChangedSavedDraft", "hasPendingArticleChanges", "confirmDiscardEditorChanges", "confirmNatalNavigation", "closeEditor", "navigateAdminPage", "applyHash"]) scope[name] = actual(nodeNamed(name), scope);
   scope.routeNavigationGuardRef = { current: () => scope.confirmNatalNavigation() && scope.closeEditor() };
@@ -168,5 +169,15 @@ for (const dirty of [true, false]) {
   let prevented = false;
   scope.warnBeforeUnload({ preventDefault: () => { prevented = true; } });
   assert.equal(prevented, false, "An unmounted clean paired editor must not leave a stale unload warning.");
+}
+for (const ownsLoading of [true, false]) {
+  const { scope } = navigationFixture(true);
+  scope.dailyGlancePairSelector = null;
+  scope.isLoading = true;
+  scope.sourceOpenRequestRef.current = 3;
+  scope.dailyGlanceLoadingRequestRef.current = ownsLoading ? 3 : 2;
+  assert.equal(scope.navigateAdminPage("surfaceMap"), true);
+  assert.equal(scope.isLoading, !ownsLoading, "Leaving a Daily source load releases only its own loading state.");
+  if (ownsLoading) assert.equal(scope.dailyGlanceLoadingRequestRef.current, null);
 }
 console.log("Admin Daily At-a-Glance paired editor and parent navigation checks passed.");

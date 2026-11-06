@@ -3395,6 +3395,7 @@ export function GeneratedContentAdminDashboard() {
   const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
+  const dailyGlanceLoadingRequestRef = useRef<number | null>(null);
   const editorLoadRef = useRef<AbortController | null>(null);
   useEffect(() => () => editorLoadRef.current?.abort(), []);
   const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) => Promise<void>>(async () => {});
@@ -4604,6 +4605,10 @@ export function GeneratedContentAdminDashboard() {
       return false;
     }
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
+    if (dailyGlanceLoadingRequestRef.current === sourceOpenRequestRef.current) {
+      dailyGlanceLoadingRequestRef.current = null;
+      setIsLoading(false);
+    }
     sourceOpenRequestRef.current += 1;
     if (editorLoadRef.current) {
       editorLoadRef.current.abort();
@@ -5659,6 +5664,7 @@ export function GeneratedContentAdminDashboard() {
     }
     const originatingHash = window.location.hash;
     const requestId = ++sourceOpenRequestRef.current;
+    dailyGlanceLoadingRequestRef.current = requestId;
     setIsLoading(true);
     try {
       await Promise.all([
@@ -5670,7 +5676,10 @@ export function GeneratedContentAdminDashboard() {
     } catch (error) {
       if (requestId === sourceOpenRequestRef.current && window.location.hash === originatingHash) setMessage(dashboardErrorMessage(error));
     } finally {
-      if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
+      if (dailyGlanceLoadingRequestRef.current === requestId) {
+        dailyGlanceLoadingRequestRef.current = null;
+        if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
+      }
     }
   }
 
