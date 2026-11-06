@@ -14850,7 +14850,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                     <InteractiveZodiacWheel snapshot={sky} />
                   </div>
                 </div>
-                <button type="button" className="sky-chart-expand" aria-label="Open full current sky chart" onClick={() => {
+                <button id={`${skyFullChartTitleId}-open`} type="button" className="sky-chart-expand" aria-label="Open full current sky chart" onClick={() => {
                                                 setCityPickerOpen(false);
                           setCityPickerOpenedFromMobileControls(false);
                           setMobileSkyControlsOpen(false);
@@ -15219,6 +15219,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               className="sky-full-chart-modal-root"
               panelClassName="sky-full-chart-panel"
               titleId={skyFullChartTitleId}
+              restoreFocusId={`${skyFullChartTitleId}-open`}
               width="100vw"
               onClose={() => setSkyFullChartOpen(false)}
             >

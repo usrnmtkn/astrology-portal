@@ -359,3 +359,17 @@ as above. Web/Admin/server types, actual-handler tooltip and variable lifecycles
 direct Swiss calculations, module boundaries, Node startup and link policy
 regressions pass again. A fresh combined browser run and exact-head CI provide
 the remaining release evidence on the PR.
+
+The combined run at `3009d6f6e` passed 100 cases and found two WebKit focus-return
+failures in the existing fullscreen journey. Safari does not always focus a
+clicked button, so relying on the previously active element lost the opener.
+The shared fullscreen control and Sky modal now declare their opener ids for
+restoration. A fresh 16-case Chrome/WebKit app-journey/page-hierarchy run passes
+all viewport/theme variants, including both reproduced failures and an explicit
+Sky opener-focus assertion. Existing assertions remain intact. The full startup
+and recovery performance-contract chain also passes.
+
+Latest Web App/reader startup is 390516/449101, App chunk 89809, aggregate JS
+3735072 and CSS 147403 gzip bytes; Studio measurements remain 828863 raw,
+240765 entry gzip and 901285 aggregate gzip. All numeric ceilings remain
+unchanged and pass. The PR records the follow-up revision and required CI.

@@ -6673,6 +6673,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await sky.getByRole("button", { name: "Open full current sky chart" }).click();
     await expect(page.locator(".sky-full-chart-view .interactive-zodiac-wheel")).toBeVisible();
     await page.locator(".sky-full-chart-view").getByRole("button", { name: "Back", exact: true }).click();
+    await expect(sky.getByRole("button", { name: "Open full current sky chart" })).toBeFocused();
 
     await expectClientRouteLoads(page, "/#you?tab=chart");
     await selectYouNatalTab(page);
