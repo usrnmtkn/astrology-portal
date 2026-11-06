@@ -147,6 +147,8 @@ for (const initialRoute of ["", "#sky", "#sky/placement/sun/virgo", "#sky/retrog
     expect(await page.evaluate(() => (window as any).__initialSkyWorkerKinds)).toEqual([]);
     expect(wasmPaths()).toEqual([]);
     expect(errors).toEqual([]);
+    // Chart metadata uses the local mono font after its deferred renderer arrives.
+    await expect(page.locator(".interactive-wheel-angle").first()).toBeVisible();
     await page.evaluate(()=>document.fonts.ready);
     expect(await page.evaluate(() => document.fonts.check('400 16px Newsreader') && document.fonts.check('500 16px "Geist Mono"'))).toBe(true);
     expect(requests.some(url=>url.pathname===newsreaderPath&&url.host===new URL(page.url()).host)).toBe(true);

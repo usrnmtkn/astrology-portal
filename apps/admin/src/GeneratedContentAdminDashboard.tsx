@@ -3422,6 +3422,7 @@ export function GeneratedContentAdminDashboard() {
   const editorBaselineRef = useRef<string | null>(null);
   const editorSavedInputRef = useRef<string | null>(null);
   const wheelTooltipEditorRef = useRef<WheelTooltipEditorSession | null>(null);
+  const wheelTooltipSourceRequestRef = useRef(0);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
   const hookBodyPackagesRef = useRef(new Map<AdminHookCatalogDomain, Map<string, string>>());
   const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
@@ -4615,7 +4616,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedRowId(null);
     setDraft(null);
     wheelTooltipEditorRef.current = null;
-    connectionSourceRequestRef.current += 1;
+    wheelTooltipSourceRequestRef.current += 1;
     setHouseTransitEditor(null);
     setHouseTransitOpening(false);
     houseTransitEditorDrafts.current.clear();
@@ -10902,7 +10903,7 @@ export function GeneratedContentAdminDashboard() {
     };
     const navigateWheelTooltipSource = async (key: string) => {
       if (isLoading || key === currentDraft.contentKey || !key.startsWith(WHEEL_TOOLTIP_PREFIX)) return;
-      const requestId = ++connectionSourceRequestRef.current, editorSession = editorSessionRef.current, hash = window.location.hash;
+      const requestId = ++wheelTooltipSourceRequestRef.current, editorSession = editorSessionRef.current, hash = window.location.hash;
       setIsLoading(true);
       try {
         const { WheelTooltipEditorSession } = await import("./wheelTooltipEditorSession");
@@ -10917,13 +10918,13 @@ export function GeneratedContentAdminDashboard() {
           const baseline = JSON.stringify(next);
           return { draft: next, baseline, savedInput: baseline, row };
         });
-        if (requestId !== connectionSourceRequestRef.current || editorSession !== editorSessionRef.current || hash !== window.location.hash) return;
+        if (requestId !== wheelTooltipSourceRequestRef.current || editorSession !== editorSessionRef.current || hash !== window.location.hash) return;
         editorBaselineRef.current = state.baseline; editorSavedInputRef.current = state.savedInput;
         setEditorSourceRow(state.row); setSelectedRowId(state.draft.id); setCompositionEditorContext(null);
         setEditorSaveError(""); setDraft(state.draft);
       } catch (error) {
-        if (requestId === connectionSourceRequestRef.current) setEditorSaveError(dashboardErrorMessage(error));
-      } finally { if (requestId === connectionSourceRequestRef.current) setIsLoading(false); }
+        if (requestId === wheelTooltipSourceRequestRef.current) setEditorSaveError(dashboardErrorMessage(error));
+      } finally { if (requestId === wheelTooltipSourceRequestRef.current) setIsLoading(false); }
     };
     const updateSkyArticleFields = (next: Partial<SkyArticleEditableFields>) => {
       setSkyArticleEditor((current) => current ? {

@@ -373,3 +373,17 @@ Latest Web App/reader startup is 390516/449101, App chunk 89809, aggregate JS
 3735072 and CSS 147403 gzip bytes; Studio measurements remain 828863 raw,
 240765 entry gzip and 901285 aggregate gzip. All numeric ceilings remain
 unchanged and pass. The PR records the follow-up revision and required CI.
+
+The broader CI at `2663b0c5f` passed the unfiltered Content Studio API workflow.
+Browser CI exposed a shared request-counter regression: closing the wheel editor
+invalidated an unrelated Connection Transits request and prevented its loading
+cleanup. Wheel wayfinding now owns a separate counter. The existing actual-handler
+late-completion test passes without reducing its cancellation assertions.
+A wheel-shaped placeholder now reserves the drawing and caption before the lazy
+renderer arrives. All 22 focused Chrome checks pass: actual-handler cancellation,
+Studio navigation, all 16 initial-response cases and four mobile/desktop/theme
+loading-layout cases. Font and inspector checks wait for the deferred renderer;
+nav coverage includes the requested Zodiac Wheel group. CSS/token audits pass.
+Before integration with newer main, fresh Web App/reader startup is 390594/449251,
+App chunk 89812, aggregate JS/CSS 3735202/147475 gzip bytes. Studio entry raw/gzip
+is 827710/240346 and aggregate JS 900789. Existing numeric ceilings pass.

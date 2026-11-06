@@ -1280,11 +1280,15 @@ async function expectAspectInspector(
 ) {
   await expect(wheel, `${label} is visible`).toBeVisible();
 
+  // The lazy renderer may still be replacing its visible loading placeholder.
+  await expect(wheel.locator(".interactive-wheel-planet-button, .aspect-inspector-point").first()).toBeAttached();
+
   if (await wheel.locator(".interactive-zodiac-wheel").count()) {
     const point = wheel.locator(pointId ? `[data-planet="${pointId}"] [role="button"]` : '.interactive-wheel-planet-button').first();
     await point.click();
     await expect(point).toHaveAttribute("aria-pressed", "true");
     await expect(wheel.locator(".interactive-wheel-detail")).toBeVisible();
+    await expect(wheel.locator(".interactive-wheel-aspects [data-active]"), `${label} highlights configured aspects`).not.toHaveCount(0);
     await point.press("Enter");
     await expect(wheel.locator(".interactive-wheel-detail")).toHaveCount(0);
     return;

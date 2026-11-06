@@ -4,9 +4,13 @@ import type { InteractiveZodiacWheel as WheelComponent } from "./InteractiveZodi
 
 const Wheel = lazy(() => import("./InteractiveZodiacWheel").then(module => ({ default: module.InteractiveZodiacWheel })));
 
+export function InteractiveWheelLoading({ message = "Loading chart…" }: { message?: string }) {
+  return <div className="wheel-loading"><PageLoading layout="wheel" message={message}/><span aria-hidden="true"/></div>;
+}
+
 // Only chart views download the interactive drawing, inspection styles and copy.
 export function InteractiveZodiacWheel(props: ComponentProps<typeof WheelComponent>) {
-  return <Suspense fallback={<PageLoading layout="wheel" message="Loading chart…" />}>
+  return <Suspense fallback={<InteractiveWheelLoading />}>
     <Wheel {...props} />
   </Suspense>;
 }

@@ -214,3 +214,7 @@
  :is(.sky-page, .horoscope-planet-grid) .planet-placement-row__glyph .placement-glyph-svg { width: var(--size-3); height: var(--size-3); }
  :is(.sky-page, .horoscope-planet-grid) .planet-placement-row__glyph .placement-sign-glyph-svg { width: var(--type-degree-size); height: var(--type-degree-size); }
 }
+
+.sky-page > .sky-chart-column,
+.sky-page .sky-chart-shell,
+.sky-page .sky-chart-shell .chart-frame { height: auto; aspect-ratio: auto; }

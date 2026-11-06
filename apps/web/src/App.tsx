@@ -115,7 +115,7 @@ import {
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
 import { type InterChartAspectLine } from "./components/charts/Wheels";
-import { InteractiveZodiacWheel } from "./components/charts/LazyInteractiveZodiacWheel";
+import { InteractiveZodiacWheel, InteractiveWheelLoading } from "./components/charts/LazyInteractiveZodiacWheel";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
@@ -14860,7 +14860,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             )}
             {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Loading current sky chart">
-                <PageLoading layout="wheel" message="Loading the sky chart…" />
+                <InteractiveWheelLoading message="Loading the sky chart…" />
               </section>
             )}
             <section className={isCalendarMode ? "detail-panel calendar-content-column" : isLearnMode ? "detail-panel learn-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">

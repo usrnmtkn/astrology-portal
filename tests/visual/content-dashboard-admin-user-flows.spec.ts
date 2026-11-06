@@ -134,6 +134,7 @@ const adminPages = [
   { nav: "Astro 101", title: "Astro 101", breadcrumb: "Admin / Write / Astro 101", hash: "astro-101" },
   { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
+  { nav: "Tooltips", title: "Zodiac Wheel tooltips", breadcrumb: "Admin / Zodiac Wheel / Tooltips", hash: "wheel-tooltips" },
   { nav: "Composition", title: "Composition Map", breadcrumb: "Admin / Composition / Map", hash: "composition-map" },
   { nav: "Aspect Patterns", title: "Aspect Patterns", breadcrumb: "Admin / Language System / Aspect Patterns", hash: "content/aspect-patterns" }
 ];
@@ -1451,7 +1452,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
     await expect(page.getByRole("button", { name: "Studio Home" })).toHaveCount(0);
     const navigationGroups = page.getByRole("navigation", { name: "Content operations" }).locator(".admin-nav-section > .admin-eyebrow, details.admin-nav-advanced > summary");
-    await expect(navigationGroups).toHaveText(["Publish", "Write", "Compose", "Operations"]);
+    await expect(navigationGroups).toHaveText(["Publish", "Write", "Zodiac Wheel", "Compose", "Operations"]);
     const advanced = page.locator("details.admin-nav-advanced");
     // Operations stays expanded at desktop widths so Users / Reports / Connection are one click away.
     await expect(advanced).toHaveAttribute("open", "");
