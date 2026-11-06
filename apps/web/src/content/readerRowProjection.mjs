@@ -113,14 +113,16 @@ const sections = {
   calendarOverview: strings('weeklyOverview weeklyIntegration monthlyOverview monthlyIntegration seasonOverview lunarOverview transitOverview seasonOpening planetaryHighlights newMoonOverview fullMoonOverview lunationConnection'),
   packageRecord, skyArticleEdition: edition,
   seasonFallback: strings('schema body sign entry exit seasonStart seasonEnd'),
-  articleHoroscopes: { ...strings('schema heading introduction'), passages: [{ ...strings('risingSign heading body'), ...numbers('house') }] }
+  articleHoroscopes: { ...strings('schema heading introduction'), passages: [{ ...strings('risingSign heading body'), ...numbers('house') }] },
+  planetaryHoroscopes: {...strings('schema'),passages:[{...strings('sign headline body'),...numbers('house')}]}
 };
 const rowContract = {
   ...strings('id content_key surface mode status lane review_state event_type target_date headline summary body block_type provider model updated_at published_at judge_gate'),
   ...numbers('judge_score'),
   source_snapshot: metadata,
   facts: { ...metadata, ...strings('slug'), related: [strings('label content_key slug')],
-    lunationHoroscopes: {event:strings('id startsAt sign phase title eclipseType timeZone')} },
+    lunationHoroscopes: {event:strings('id startsAt sign phase title eclipseType timeZone')},
+    planetaryEvent:{event:strings('schema planet sign startsAt endsAt referenceInstant timeZone')} },
   sections
 };
 

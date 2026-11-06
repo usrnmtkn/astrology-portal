@@ -5,6 +5,9 @@ import {createHash,createHmac, timingSafeEqual} from 'node:crypto';
 import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
 import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {PLANETARY_HOROSCOPE_PREFIX,assertPlanetaryHoroscopeRow} from '../../src/shared/planetaryHoroscopes.js';
+import {assertSignedPlanetaryEvent} from './planetary-horoscope-facts.js';
+import {validatePlanetaryReading} from '../../src/astro-writing/planetaryHoroscopeValidation.mjs';
 
 import {validateHoroscopeReading,horoscopeValidationVersion} from '../../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';
@@ -59,6 +62,15 @@ export async function prepareHoroscopeBrief(url: URL) {
 }
 /** Read-only preflight and the final write use the same current-copy checks. */
 export function horoscopePublicationIssues(row:Record<string,any>, ownerFinal = hasExactStudioOwnerApproval(row)) {
+  if(String(row.content_key??'').startsWith(PLANETARY_HOROSCOPE_PREFIX)){
+    const issues:{sign:string|null;category:string;detail:string}[]=[];
+    if(row.source_snapshot?.planetaryGeneration?.active)issues.push({sign:null,category:'generation_active',detail:'Retrieve the saved writing request before publishing.'});
+    try{
+      const readings=assertPlanetaryHoroscopeRow(row,true);
+      for(const p of readings.passages)for(const issue of validatePlanetaryReading(p,row.facts.planetaryEvent.event).violations)issues.push({sign:p.sign,category:issue.category,detail:issue.detail});
+    }catch(error){issues.push({sign:null,category:'incomplete_reading',detail:(error as Error).message});}
+    return issues;
+  }
   const edition=validateHoroscopeEdition(row.sections?.horoscopeEdition);
   const generation=row.source_snapshot?.horoscopeGeneration;
   const issues:{sign:string|null;category:string;detail:string}[]=[];
@@ -91,6 +103,13 @@ export function hasHoroscopeValidationOverride(row:Record<string,any>) {
 export function assertHoroscopeRow(row: Record<string,any>, {enforcePunctuation=false,previous=null}:{enforcePunctuation?:boolean;previous?:Record<string,any>|null}={}) {
   if (!String(row.content_key ?? '').startsWith(HOROSCOPE_EDITION_PREFIX)) return;
   try {
+    if(row.content_key.startsWith(PLANETARY_HOROSCOPE_PREFIX)){
+      assertPlanetaryHoroscopeRow(row);
+      assertSignedPlanetaryEvent(row.facts?.planetaryEvent);
+      if(row.status==='LIVE'&&(!hasExactStudioOwnerApproval(row)||row.source_snapshot?.planetaryGeneration?.active))throw new Error('Approve the complete saved readings after generation finishes before publishing.');
+      if(row.status==='LIVE'){const issue=horoscopePublicationIssues(row)[0];if(issue)throw new Error(`${issue.sign??'Readings'}: ${issue.detail}`);}
+      return;
+    }
     const ownerFinal = hasExactStudioOwnerApproval(row);
     const edition = validateHoroscopeEdition(row.sections?.horoscopeEdition,row.status === 'LIVE');
     for(const passage of edition.passages){

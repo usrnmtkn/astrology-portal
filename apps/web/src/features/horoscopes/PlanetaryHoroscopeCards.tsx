@@ -9,11 +9,11 @@ import {formatPlanetDegree,skyNodeDisplayPositions} from '../sky/skyHelpers';
 import {planetaryHoroscopeBody,planetaryHoroscopeWindow,planetaryHouse,usePlanetaryHoroscopeSources} from './usePlanetaryHoroscopeSources';
 
 export default function PlanetaryHoroscopeCards({sky,sign,href}:{sky:SkySnapshot;sign:string;href:(position:PlanetPosition)=>string}) {
-  const {ready,error,refresh}=usePlanetaryHoroscopeSources();
+  const {ready,error,refresh,dated}=usePlanetaryHoroscopeSources(undefined,{positions:sky.positions,generatedAt:sky.generatedAt,timeZone:sky.location.timeZone??'UTC'});
   const holding=useMinimumLoading(!ready);
   const positions=skyNodeDisplayPositions(sky.positions);
   return <PageLoadState scope="section" what="Planetary horoscopes" failed={Boolean(error)} pending={holding} onRetry={refresh}>{holding?<PageLoading layout="placements" count={positions.length} message="Loading planet readings…"/>:<div className="horoscope-planet-grid">{positions.map(position=>{
-    const window=planetaryHoroscopeWindow(position,sky.generatedAt);
+    const window=planetaryHoroscopeWindow(position,sky.generatedAt,dated);
     const timeZone=position.transitTimeZone??sky.location.timeZone??'UTC';
     const dateFormat=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',timeZone});
     const retrograde=isDisplayRetrograde(position);
@@ -23,7 +23,7 @@ export default function PlanetaryHoroscopeCards({sky,sign,href}:{sky:SkySnapshot
     return <PlanetPlacementRow key={position.planet} variant="sky" title={title} glyph={position.glyph} pointName={position.planet} sign={position.sign}
       ariaLabel={`${title} · Read horoscope`} href={href(position)}
       degree={`Your ${ordinalHouse(planetaryHouse(position,sign))} house · ${formatPlanetDegree(position)}`}
-      description={planetaryHoroscopeBody(position,sign)}
+      description={planetaryHoroscopeBody(position,sign,dated,sky.generatedAt,timeZone)}
       rangeLabel={window?dateFormat.formatRange(window.start,window.end):null}
       progress={progress} {...placementCardCountdowns(position,sky.generatedAt,timeZone)} retrograde={retrograde}/>
   })}</div>}</PageLoadState>;

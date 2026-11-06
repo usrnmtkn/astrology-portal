@@ -16,6 +16,7 @@ import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariable
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
 import { prepareHoroscopeBrief, assertHoroscopeRow, horoscopePublicationIssues } from "../_lib/horoscope-editions.js";
+import {horoscopeCanonicalJson} from '../../apps/web/src/content/horoscopeEditions.mjs';
 import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy, approveStudioPackageWording } from "../_lib/content-studio-approval.js";
@@ -1447,6 +1448,7 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
   catch(error) { throw new GeneratedContentRequestError((error as Error).message,422); }
   if (row.status !== "LIVE") return;
   if(String(row.content_key??'').startsWith('cms/lunation-horoscopes/')&&!hasExactStudioOwnerApproval(row))throw new GeneratedContentRequestError('Save these Moon horoscopes as a draft, then approve and publish the saved wording.',409);
+  if(row.content_key?.startsWith('studio-planetary-writing/'))throw new GeneratedContentRequestError('Private planetary writing records cannot be published.',409);
   if (row.event_type === 'sky-article-edition' && (!skyArticleCompiledHashMatches(row.sections?.skyArticleEdition)
     || !libs().approvedSkyArticleReaderEdition(row as ExistingGeneratedContentRow))) {
     throw new GeneratedContentRequestError('The compiled article no longer matches its approved reader copy. Recompile the complete edition before publishing.', 409);
@@ -1909,6 +1911,7 @@ async function generatedContentStats(req: IncomingMessage) {
 }
 
 async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
+  if(body.contentKey?.trim().startsWith('studio-planetary-writing/'))throw new GeneratedContentRequestError('Private planetary writing records are retained by the planetary horoscope workspace.',409);
   if (body.eventType === 'horoscope-edition-revision') throw new GeneratedContentRequestError('Save a revision from its published horoscope edition.', 409);
   await prepareStudioVariables(body);
   if (!body.contentKey?.trim()) {
@@ -1984,6 +1987,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
 
   Object.assign(row, normalizeArticleHoroscopes(row));
   if(row.content_key.startsWith('cms/lunation-horoscopes/')&&(await fetchExistingRowsByContentKey([row.content_key])).some(existing=>existing.mode===row.mode))throw new GeneratedContentRequestError('These Moon horoscopes already exist. Reload the saved version before editing.',409);
+  if(row.content_key.startsWith('horoscope/planetary/')&&(await fetchExistingRowsByContentKey([row.content_key])).some(existing=>existing.mode===row.mode))throw new GeneratedContentRequestError('These planetary horoscopes already exist. Open the saved event before editing.',409);
   if (row.status === "LIVE") row.sections = standalonePublicationSections(row, now);
   stampStudioPackageOwnerApproval(row, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", now);
   assertReaderEligiblePublication(row);
@@ -2140,6 +2144,10 @@ async function validatedLunationPublication(row: Record<string, any>) {
   if (String(row.content_key ?? '').startsWith('cms/lunation-horoscopes/')) {
     const {moonHoroscopePublicationPatch}=await import('../_lib/moon-horoscope-publication.js');
     return moonHoroscopePublicationPatch(row);
+  }
+  if(String(row.content_key??'').startsWith('horoscope/planetary/')&&row.status==='LIVE'){
+    const {planetaryPublicationPrivacyPatch}=await import('../_lib/planetary-horoscope-private-record.js');
+    return planetaryPublicationPrivacyPatch(row);
   }
   if (row.status !== "LIVE" || !String(row.content_key ?? "").startsWith("cms/lunation-article/")) return {};
   const { lunationPublicationPatch } = await import("../_lib/lunation-article-publication.js");
@@ -2545,6 +2553,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
   if (!Array.isArray(rows) || rows.length === 0) {
     throw new GeneratedContentRequestError("rows must be a non-empty array.");
   }
+  if(rows.some(row=>row.contentKey?.trim().startsWith('studio-planetary-writing/')))throw new GeneratedContentRequestError('Private planetary writing records cannot be changed by a batch save.',409);
 
   // Validate the complete batch before the first storage write.
   for (const row of rows) await prepareStudioVariables(row);
@@ -2729,7 +2738,13 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (existing.content_key.startsWith('horoscope/') && (existing.source_snapshot?.horoscopeGeneration?.active||existing.source_snapshot?.horoscopeGeneration?.batch?.status==='running')) {
     throw new GeneratedContentRequestError('A horoscope reading is running. Resume generation before editing or publishing this edition.', 409);
   }
+  if(existing.content_key.startsWith('horoscope/planetary/')){
+    if(existing.source_snapshot?.planetaryGeneration?.active)throw new GeneratedContentRequestError('Retrieve or explicitly release the saved planetary writing request before editing or publishing.',409);
+    if(['contentKey','surface','mode','eventType','targetDate'].some(key=>(body as Record<string,unknown>)[key]!==undefined)
+      ||body.facts!==undefined&&horoscopeCanonicalJson(body.facts)!==horoscopeCanonicalJson(existing.facts))throw new GeneratedContentRequestError('A planetary horoscope set keeps its calculated event identity.',409);
+  }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
+  if(existing.content_key.startsWith('studio-planetary-writing/'))throw new GeneratedContentRequestError('Private planetary writing records are retained by the planetary horoscope workspace.',409);
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   await prepareStudioVariables(body, existing);
@@ -3422,7 +3437,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
     patch.source_snapshot = body.sourceSnapshot;
     if (existing.content_key.startsWith('horoscope/')) {
       patch.source_snapshot = { ...existing.source_snapshot, ...(isRecord(body.sourceSnapshot) ? body.sourceSnapshot : {}),
-        ...(existing.source_snapshot?.horoscopeGeneration ? {horoscopeGeneration: existing.source_snapshot.horoscopeGeneration} : {}) };
+        ...(existing.source_snapshot?.horoscopeGeneration ? {horoscopeGeneration: existing.source_snapshot.horoscopeGeneration} : {}),
+        ...(existing.source_snapshot?.planetaryGeneration ? {planetaryGeneration:existing.source_snapshot.planetaryGeneration} : {}) };
     }
   }
 
@@ -3734,10 +3750,12 @@ async function deleteGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError("Content row was not found.", 404);
   }
   const generation=existing.source_snapshot?.horoscopeGeneration;
+  if(existing.content_key.startsWith('horoscope/planetary/')&&existing.source_snapshot?.planetaryGeneration?.active)throw new GeneratedContentRequestError('Retrieve or explicitly release the saved planetary writing request before deleting.',409);
   if (existing.content_key.startsWith('horoscope/') && (generation?.active||generation?.batch?.status==='running'||generation?.weeklyEditorial?.pending||generation?.dailyEditorial?.pending)) {
     throw new GeneratedContentRequestError('Finish or explicitly release the saved horoscope request or batch review before deleting this edition.', 409);
   }
   if (existing.content_key.startsWith("studio-lunation/")) throw new GeneratedContentRequestError("Manage dated drafts in Calendar Write-ups → New & Full Moons & Eclipses.");
+  if(existing.content_key.startsWith('studio-planetary-writing/'))throw new GeneratedContentRequestError('Private planetary writing records are retained by the planetary horoscope workspace.',409);
   if (existing.content_key.startsWith(libs().STUDIO_VARIABLE_PREFIX)) throw new GeneratedContentRequestError("Manage this definition in Variables.");
   if (existing.content_key.startsWith("studio-writing-profile/")) throw new GeneratedContentRequestError("Manage writing profiles in their Studio writing workspace.");
   if (existing.status === "LIVE") {
@@ -3799,6 +3817,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",
         or:'(mode.eq.article,and(mode.eq.studio-draft,event_type.eq.horoscope-edition-revision))',
         select:versionOnly?'id,updated_at':inventoryOnly?'id,content_key,headline,status,event_type,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
+      if(!id&&!contentKey)params.append('content_key','not.like.horoscope/planetary/*');
       // Completed private revisions stay in history, but must not obscure the
       // current published edition when opening its dates or browsing the list.
       if(!id)params.set('and','(or(event_type.neq.horoscope-edition-revision,event_type.is.null,status.neq.ARCHIVED))');

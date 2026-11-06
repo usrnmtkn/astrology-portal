@@ -20,6 +20,7 @@ for (const endpoint of [
   "api/admin/sky-article-template-slots.ts",
   "api/admin/personal-transit-writing.ts",
   "api/admin/horoscope-writing.ts",
+  "api/admin/planetary-horoscope-writing.ts",
   "api/admin/lunation-writing.ts",
   "api/admin/calendar-lunation-writing.ts",
   "api/admin/calendar-daily-writing.ts",
@@ -36,6 +37,11 @@ for (const endpoint of [
 }
 
 const horoscopeFiles=new Set(fs.globSync(deployment.functions['api/admin/horoscope-writing.ts'].includeFiles));
+const planetaryFiles=new Set(fs.globSync(deployment.functions['api/admin/planetary-horoscope-writing.ts'].includeFiles));
+for(const source of ['src/astro-writing/planetaryHoroscopeWriting.mjs','src/astro-writing/planetaryHoroscopeValidation.mjs',
+  'data/writing/seasonal-horoscope-units.json','packages/astro-knowledge/data/primitives/houses.json',
+  'tldr-astro-phrasebank/phrasebank/cc-planet-in-sign-reviewed.json',
+  'packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/manifest.json'])assert(planetaryFiles.has(source),`Missing planetary writer source: ${source}`);
 const ingressFiles = new Set(fs.globSync(deployment.functions['api/admin/sky-article-template-slots.ts'].includeFiles));
 assert.ok(ingressFiles.has('data/writing/approved-voice-style/libra-ingress-benchmark-20261021.json'),
   'The dated ingress writer must package the complete owner-selected Libra voice benchmark.');

@@ -75,7 +75,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     let row:any=adminStorageRows(read.payload)[0];
     if(!row)throw new AdminHttpError(404,'Edition not found.');
     if(row.updated_at!==input.expectedUpdatedAt)throw new AdminHttpError(409,'This edition changed. Reopen it before continuing.');
-    if(!row.content_key?.startsWith('horoscope/')||(row.status!=='DRAFT'&&!['evidence','export'].includes(input.action)))throw new AdminHttpError(409,'Open an editable horoscope draft.');
+    if(!row.content_key?.startsWith('horoscope/')||row.content_key.startsWith('horoscope/planetary/')||(row.status!=='DRAFT'&&!['evidence','export'].includes(input.action)))throw new AdminHttpError(409,'Open an editable horoscope draft.');
     assertHoroscopeRow(row);
     if(['review-daily','poll-daily','release-daily'].includes(input.action)&&row.sections.horoscopeEdition.window.period!=='daily')
       throw new AdminHttpError(400,'This batch review is Daily only.');

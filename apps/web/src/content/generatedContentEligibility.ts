@@ -1,5 +1,6 @@
 import {hasStudioOwnerWording} from "./studioOwnerWording.mjs";
 import {isMoonHoroscopeReaderRow,MOON_HOROSCOPE_PREFIX} from '../../../../src/shared/datedMoonIdentity.mjs';
+import {PLANETARY_HOROSCOPE_PREFIX,planetaryReaderReadings} from '../../../../src/shared/planetaryHoroscopeIdentity';
 import { isReaderFacingCopy } from "./readerSafety.js";
 import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
@@ -126,6 +127,7 @@ export function isReaderServableGeneratedContentRow(
 ) {
   const normalizedContentKey = row.content_key.trim().toLowerCase();
   if(normalizedContentKey.startsWith(MOON_HOROSCOPE_PREFIX))return isMoonHoroscopeReaderRow(row);
+  if(normalizedContentKey.startsWith(PLANETARY_HOROSCOPE_PREFIX))return Boolean(planetaryReaderReadings(row));
   if (normalizedContentKey.startsWith('horoscope/')) return Boolean(horoscopeEditionFromRow(row));
   if (normalizedContentKey.startsWith("sky/article-template/") || normalizedContentKey.startsWith("sky-article-template/")) {
     return false;
