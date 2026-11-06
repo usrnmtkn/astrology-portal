@@ -418,7 +418,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        suite: [studio-style, studio-web-entry, studio-variables, sky-article, sky-cms, horoscope-writing, lunation-studio, sky-reader-preview]
+        suite: [studio-style, studio-web-entry, studio-variables, sky-article, sky-cms, horoscope-writing, planetary-studio, lunation-studio, sky-reader-preview]
         include:
           - suite: studio-ui
             shard: 1

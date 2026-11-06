@@ -142,6 +142,10 @@
       "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner*},apps/web/{public,src}/content,tldr-astro-phrasebank,data/writing}/**/*.{*js,json*,md,ts}}",
       "maxDuration": 300
     },
+    "api/admin/planetary-horoscope-writing.ts": {
+      "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,config,src/*-writing,packages/astro-knowledge/{generated,data,voice},tldr-astro-phrasebank,data/writing}/**/*.{*js,json*,md,ts}}",
+      "maxDuration": 300
+    },
     "api/admin/calendar-lunation-writing.ts": {
       "includeFiles": "{node_modules/swisseph-wasm/wasm/*,{api/_lib,artifacts,config,src/*-writing,packages/*/{generated,scripts,data,config,reference,voice,sources/authored/owner-author-book},apps/web/*/content,tldr-astro-phrasebank,data/writing}/**/*.{*js,json,jsonl,md,ts}}",
       "maxDuration": 300
