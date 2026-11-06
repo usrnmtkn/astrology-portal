@@ -133,7 +133,7 @@ function navigationFixture(confirm = false) {
     applyAdminRouteState: (page: string) => calls.push(`route:${page}`),
     adminHashForPage: (page: string) => `#${page}`,
   };
-  for (const ref of ["subscriptionEventDirtyRef", "lunationWritingDirtyRef", "dailyWritingDirtyRef", "skyPlacementWorkspaceDirtyRef",
+  for (const ref of ["subscriptionEventDirtyRef", "lunationWritingDirtyRef", "moonHoroscopesDirtyRef", "dailyWritingDirtyRef", "skyPlacementWorkspaceDirtyRef",
     "skyPlacementWorkspaceBusyRef", "aspectPatternDirtyRef", "aspectPatternBusyRef", "customVariableDirtyRef", "customVariableBusyRef"]) scope[ref] = { current: false };
   for (const ref of ["sourceOpenRequestRef", "houseTransitOpenRequest", "editorSessionRef", "skyArticleAutosaveSequenceRef", "skyArticleWorkspaceAutosaveSequenceRef"]) scope[ref] = { current: 0 };
   for (const setter of new Set(dashboardText.match(/\bset[A-Z]\w+/gu))) scope[setter] = () => calls.push(setter);
@@ -158,6 +158,16 @@ for (const [dirty, busy] of [[true, false], [false, true], [true, true]]) {
   assert(!calls.some(call => call.startsWith("route:")));
   assert(calls.includes("restore:/admin/content#fallback-hooks"), "Hash/popstate navigation restores the accepted route.");
   assert.equal(calls.filter(call => call === "confirm").length, busy ? 0 : 2, "Saving blocks navigation before a discard prompt.");
+}
+{
+  const { scope, calls } = navigationFixture();
+  scope.moonHoroscopesDirtyRef.current = true;
+  let prevented = false;
+  scope.warnBeforeUnload({ preventDefault: () => { prevented = true; } });
+  assert(prevented, "Integrating Daily guards must preserve the dated Moon editor's unload protection.");
+  assert.equal(scope.navigateAdminPage("surfaceMap"), false, "An independently dirty Moon editor must still block navigation.");
+  assert(calls.includes("confirm"));
+  assert(!calls.some(call => call.startsWith("route:")));
 }
 for (const dirty of [true, false]) {
   const { scope } = navigationFixture(true);

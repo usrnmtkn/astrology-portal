@@ -194,7 +194,7 @@ let drained = false;
 const drain = network.finishStaticFonts().then(() => { drained = true; });
 await tick();
 assert.equal(drained, false, 'Teardown waits for the already-started stylesheet request');
-stylesheet.resolve({});
+stylesheet.resolve({ status: () => 200 });
 await tick();
 assert.equal(drained, false, 'Receiving a response does not finish its route fulfillment');
 fulfillment.resolve();
@@ -203,14 +203,54 @@ assert.equal(drained, false, 'A font request started by the stylesheet must fini
 let blocked = false;
 await routeHandler({ request: () => ({ url: () => 'https://external.example.test/private', method: () => 'POST', resourceType: () => 'fetch' }), abort: async () => { blocked = true; } });
 assert.equal(blocked, true, 'Containment stays installed during teardown');
-font.resolve({});
+font.resolve({ status: () => 200 });
 await Promise.all([firstTransfer, lateTransfer, drain]);
 assert.equal(drained, true);
 assert.equal(network.staticFontRequests.length, 2);
+// Standalone Studio declares these display faces in its shipped HTML. The
+// Newsreader URL is the actual mobile CI request that containment rejected.
+for (const url of [
+  'https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK4397yjA.woff2',
+  'https://fonts.gstatic.com/s/geistmono/v6/fixture.woff2'
+]) await routeHandler(fontRoute(url, 'font', { status: () => 200 }, async () => {}));
+await network.finishStaticFonts();
+assert.equal(network.staticFontRequests.length, 4, 'Declared Studio display fonts complete through the sanitized font transport');
+const rejectedFonts = [
+  ['https://fonts.gstatic.com/s/newsreader/v26/fixture.woff2', 'fetch', 'GET'],
+  ['https://fonts.gstatic.com/s/newsreader/v26/fixture.woff2', 'font', 'POST'],
+  ['https://fonts.gstatic.com.example.test/s/newsreader/v26/fixture.woff2', 'font', 'GET'],
+  ['https://fonts.gstatic.com/s/undeclaredfamily/v1/fixture.woff2', 'font', 'GET'],
+  ['https://fonts.gstatic.com/s/newsreader/v26/private.json', 'font', 'GET']
+];
+for (const [url, resourceType, method] of rejectedFonts) {
+  let aborted = false;
+  await routeHandler({ request: () => ({ url: () => url, method: () => method, resourceType: () => resourceType }), abort: async () => { aborted = true; } });
+  assert.equal(aborted, true, 'Font exceptions must retain method, resource type, exact host, family and path containment');
+}
+assert.deepEqual(network.unhandledExternal, [
+  'POST https://external.example.test/private',
+  ...rejectedFonts.map(([url, , method]) => { const parsed = new URL(url); return `${method} ${parsed.origin}${parsed.pathname}`; })
+]);
+for (const options of requests) assert.deepEqual(options, { headers: { accept: '*/*', 'user-agent': 'Synthetic browser' }, maxRedirects: 0 });
+const redirectUrls = ['https://fonts.googleapis.com/css2',
+  'https://fonts.gstatic.com/s/newsreader/v26/fixture.woff2',
+  'https://fonts.gstatic.com/s/geistmono/v6/fixture.woff2'];
+for (const url of redirectUrls) for (const status of [300, 301, 302, 303, 304, 305, 307, 308, 399]) {
+  let rejected = false;
+  await routeHandler({
+    ...fontRoute(`${url}?status=${status}`, url.endsWith('.woff2') ? 'font' : 'stylesheet', { status: () => status }, async () => {
+      assert.fail('A font redirect must never be fulfilled, even to an allowed destination.');
+    }),
+    abort: async () => { rejected = true; }
+  });
+  assert.equal(rejected, true, `Font HTTP ${status} must be rejected before the browser can follow it`);
+}
+assert.equal(network.staticFontRequests.length, 4, 'Rejected font redirects are never recorded as accepted transfers');
+assert.deepEqual(network.unhandledExternal.slice(1 + rejectedFonts.length), redirectUrls.flatMap(url => Array(9).fill(`FONT_REDIRECT GET ${url}`)));
 for (const options of requests) assert.deepEqual(options, { headers: { accept: '*/*', 'user-agent': 'Synthetic browser' }, maxRedirects: 0 });
 const failure = new Error('Synthetic font transport failed');
 const failedRoute = fontRoute('https://fonts.googleapis.com/css2?family=Fixture', 'stylesheet', null, async () => {});
 failedRoute.fetch = async () => { throw failure; };
 await assert.rejects(routeHandler(failedRoute), error => error === failure);
 await assert.rejects(network.finishStaticFonts(), error => error === failure);
-console.log('Synthetic font teardown: complete transfers, nested requests, containment and error propagation passed.');
+console.log('Synthetic font teardown: complete transfers, nested requests, redirect denial, containment and error propagation passed.');
