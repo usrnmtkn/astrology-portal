@@ -488,17 +488,18 @@ console.log("PASS: an empty published evergreen layout survives reload without r
   const copy = { ...(live?.sections.packageRecord ?? baseline), TLDR_What: what, TLDR_Takeaway: takeaway, LilithArticle: body };
   const saved = (await request(live ? 'PATCH' : 'POST', {
    ...(live ? { id: live.id, expectedUpdatedAt: live.updated_at } : { contentKey: key, surface: 'sky', mode: 'in_depth', status: 'DRAFT', eventType: 'fallback-hook', blockType: 'fallback_hook', lane: 'reference' }),
-   headline: baseline.headline, summary: baseline.summary, body: baseline.body_you, editorialNotes: privateNote,
+   headline: baseline.headline, summary: baseline.summary, body: baseline.body_you,
    sections: { ...(live?.sections ?? { packageRecord: baseline }), packageDraft: copy },
-   sourceSnapshot: { ...(live?.source_snapshot ?? {}), sourcePackage: baseline.source_package, content_role: baseline.content_role },
+   sourceSnapshot: { ...(live?.source_snapshot ?? {}), sourcePackage: baseline.source_package, content_role: baseline.content_role, privateQaNote: privateNote },
    facts: { fallbackArchitectureV3: true }, reviewStatus: 'needs_review'
   })).rows[0];
+  assert.equal(saved.source_snapshot.privateQaNote, privateNote);
   live = (await request('PATCH', { id: saved.id, expectedUpdatedAt: saved.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
   for (const [field, value] of Object.entries({ TLDR_What: what, TLDR_Takeaway: takeaway, LilithArticle: body })) {
    assert.equal(live.sections.packageRecord[field], value);
    assert.equal(live.sections.packageOriginalRecord[field], baseline[field]);
   }
-  assert.equal(live.sections.packageRecord.editorial_notes, privateNote);
+  assert.equal(live.source_snapshot.privateQaNote, privateNote);
   const response = await readerRouteResponse('/api/content-reader', { method: 'POST', body: JSON.stringify({ keys: [key] }) });
   assert(response); assert.equal(response.status, 200);
   const payload = await response.json();
