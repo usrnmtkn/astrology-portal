@@ -399,3 +399,11 @@ renderer and still checks highlighted configured aspects and keyboard closure.
 Only the intentional Sky light wheel image differs in local visual baselines;
 the reviewed macOS actual replaces that one image. All other baseline images
 pass unchanged. Linux review will use the exact PR-head CI artifact.
+
+The final integrated Chrome/WebKit run passed 101 of 102 cases. The remaining
+Safari journey completed its UI assertions but full-document navigation
+canceled old-document synthetic report reads. It now completes fixture reads
+before replacing the document, with every browser-error and external-service
+assertion still enabled. All 14 affected wheel journeys plus both unchanged
+Seasonal quality-exhaustion cases pass in a fresh 16-case Chrome/WebKit rerun.
+No product timeout, error filter or publication assertion is relaxed.

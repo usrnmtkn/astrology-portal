@@ -6663,7 +6663,13 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     const assertNoClientErrors = await expectNoClientErrors(page);
     await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
     await routeWheelSavedCharts(page);
-    await expectClientRouteLoads(page, "/#sky");
+    const navigate = async (href: string) => {
+      // Complete isolated member reads before a full document navigation cancels
+      // WebKit fetches. Browser-error and network assertions stay enabled.
+      await page.waitForLoadState("networkidle");
+      await expectClientRouteLoads(page, href);
+    };
+    await navigate("/#sky");
     const sky = page.getByRole("region", { name: "Current sky", exact: true });
     const skyWheel = sky.locator(".interactive-zodiac-wheel");
     await expect(skyWheel).toBeVisible();
@@ -6679,7 +6685,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await page.locator(".sky-full-chart-view").getByRole("button", { name: "Back", exact: true }).click();
     await expect(sky.getByRole("button", { name: "Open full current sky chart" })).toBeFocused();
 
-    await expectClientRouteLoads(page, "/#you?tab=chart");
+    await navigate("/#you?tab=chart");
     await selectYouNatalTab(page);
     const you = page.locator("#wheel-natal .interactive-zodiac-wheel");
     await expect(you).toBeVisible();
@@ -6690,11 +6696,11 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await expect(you.getByRole("dialog", { name: "House ruler", exact: true })).toContainText("Your 1st house ruler");
     await you.screenshot({ path: info.outputPath("you-ruler.png") });
     await page.keyboard.press("Escape"); await page.keyboard.press("Escape");
-    await expectClientRouteLoads(page, "/?date=2026-07-20#you?tab=chart");
+    await navigate("/?date=2026-07-20#you?tab=chart");
     await selectYouNatalTab(page);
     await expect.poll(() => you.locator(".interactive-wheel-planet-button").evaluateAll(nodes => nodes.map(node => node.getAttribute("aria-label")))).toEqual(natalFacts);
 
-    await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=natal");
+    await navigate("/#friends?tab=charts&chart=friend-nikki&view=natal");
     await selectFriendDetailTab(page, "Natal");
     const friend = page.getByLabel("Nikki natal chart wheel", { exact: true }).locator(".interactive-zodiac-wheel");
     await expect(friend).toBeVisible();
@@ -6703,6 +6709,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await friend.getByRole("button", { name: "House ruler details" }).last().click();
     await expect(friend.getByRole("dialog", { name: "House ruler", exact: true })).toContainText("Nikki's 1st house ruler");
     await friend.screenshot({ path: info.outputPath("friend-ruler.png") });
+    await page.waitForLoadState("networkidle");
     await page.reload();
     await expect(friend).toBeVisible();
     await expect(friend.locator(".interactive-wheel-detail")).toHaveCount(0);
