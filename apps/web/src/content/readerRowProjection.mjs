@@ -119,7 +119,8 @@ const rowContract = {
   ...strings('id content_key surface mode status lane review_state event_type target_date headline summary body block_type provider model updated_at published_at judge_gate'),
   ...numbers('judge_score'),
   source_snapshot: metadata,
-  facts: { ...metadata, ...strings('slug'), related: [strings('label content_key slug')] },
+  facts: { ...metadata, ...strings('slug'), related: [strings('label content_key slug')],
+    lunationHoroscopes: {event:strings('id startsAt sign phase title eclipseType timeZone')} },
   sections
 };
 

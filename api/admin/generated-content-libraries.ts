@@ -67,3 +67,4 @@ export { publicationTimestamp, validContentPublication } from '../../apps/web/sr
 
 export {skyAspectReaderCopyPassesBoundary} from "../../apps/web/src/services/skyAspectContent.js";
 export { isCalendarMoonIngressContentKey } from '../_lib/calendar-moon-ingress-sources.js';
+export {assertMoonHoroscopeRow} from '../../src/shared/datedLunationHoroscopes.mjs';

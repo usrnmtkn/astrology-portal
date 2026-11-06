@@ -6,7 +6,7 @@ export function isSkyListPublicationKey(key: string) {
   // Retain flat/dotted legacy event aliases across all signs. Aspect articles
   // belong to the full reader and have their own complete publication check.
   return !/^(?:sky[./-]aspect[./-]|fallback-hook\/sky-aspect-)/u.test(key)
-    && /^(?:sky[./-]|fallback-(?:vocab|template)\/|fallback-hook\/(?:sky-|transit-retro\/|dignity-line\/)|cc\/(?:planet|sign)\/|cms\/(?:sky-|lunation-article\/)|authored\/sky-lunation-macro\/)/u.test(key);
+    && /^(?:sky[./-]|fallback-(?:vocab|template)\/|fallback-hook\/(?:sky-|transit-retro\/|dignity-line\/)|cc\/(?:planet|sign)\/|cms\/(?:sky-|lunation-article\/|lunation-horoscopes\/)|authored\/sky-lunation-macro\/)/u.test(key);
 }
 
 /** A superset of the list's key families, plus the real global marker. Filter
@@ -15,5 +15,5 @@ export function isSkyListPublicationKey(key: string) {
 export const skyListPublicationDatabaseFilter = '(content_key.eq.__content-publication-ledger/v1,'
   + ['sky.', 'sky/', 'sky-', 'fallback-vocab/', 'fallback-template/', 'fallback-hook/sky-',
     'fallback-hook/transit-retro/', 'fallback-hook/dignity-line/', 'cc/planet/', 'cc/sign/',
-    'cms/sky-', 'cms/lunation-article/', 'authored/sky-lunation-macro/']
+    'cms/sky-', 'cms/lunation-article/', 'cms/lunation-horoscopes/', 'authored/sky-lunation-macro/']
     .map(prefix => `content_key.like.${prefix}*`).join(',') + ')';
