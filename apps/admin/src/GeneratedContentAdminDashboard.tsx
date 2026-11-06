@@ -3292,10 +3292,10 @@ export function GeneratedContentAdminDashboard() {
   const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
   const dailyWritingDirtyRef = useRef(false);
-  const dailyGlanceDirtyRef = useRef(false);
-  const dailyGlanceBusyRef = useRef(false);
+  // Navigation needs clean (0), dirty (1), or busy (2); the child owns the writing.
+  const dailyGlanceNavigationStateRef = useRef<0 | 1 | 2>(0);
   const trackDailyGlanceDraft = useCallback((dirty: boolean, busy: boolean) => {
-    dailyGlanceDirtyRef.current = dirty; dailyGlanceBusyRef.current = busy;
+    dailyGlanceNavigationStateRef.current = busy ? 2 : dirty ? 1 : 0;
   }, []);
   const skyPlacementWorkspaceDirtyRef = useRef(false);
   const skyPlacementWorkspaceBusyRef = useRef(false);
@@ -4538,7 +4538,7 @@ export function GeneratedContentAdminDashboard() {
   function hasPendingArticleChanges() {
     return Boolean(
       subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || moonHoroscopesDirtyRef.current || dailyWritingDirtyRef.current || skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current
-      || dailyGlanceDirtyRef.current || dailyGlanceBusyRef.current
+      || dailyGlanceNavigationStateRef.current
       || aspectPatternDirtyRef.current || aspectPatternBusyRef.current || customVariableDirtyRef.current || customVariableBusyRef.current
       || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
@@ -4583,7 +4583,7 @@ export function GeneratedContentAdminDashboard() {
       || skyArticleEditor
       || skyArticleEditionForm
     );
-    if (dailyGlanceBusyRef.current || skyPlacementWorkspaceBusyRef.current || aspectPatternBusyRef.current || customVariableBusyRef.current || isLoading && hasOpenEditor) {
+    if (dailyGlanceNavigationStateRef.current === 2 || skyPlacementWorkspaceBusyRef.current || aspectPatternBusyRef.current || customVariableBusyRef.current || isLoading && hasOpenEditor) {
       setMessage("Finish the current editor operation before leaving this section.");
       return false;
     }

@@ -119,7 +119,7 @@ function navigationFixture(confirm = false) {
   const calls: string[] = [];
   const scope: Record<string, any> = {
     draft: null, selectedRow: null, compositionEditorContext: null, skyArticleEditor: null, skyArticleEditionForm: null,
-    dailyGlancePairSelector: "soft/mars", csvBusy: false, houseTransitEditor: null, isLoading: false,
+    dailyGlancePairSelector: "soft/mars", dailyGlanceNavigationStateRef: { current: 0 }, csvBusy: false, houseTransitEditor: null, isLoading: false,
     draftFromRow: () => { throw new Error("Unexpected draft read"); },
     transitExactDismissedKeysRef: { current: new Set() }, houseTransitEditorDrafts: { current: new Map() },
     editorLoadRef: { current: null }, editorReturnFocusRef: { current: null }, dailyGlanceLoadingRequestRef: { current: null },
@@ -134,8 +134,7 @@ function navigationFixture(confirm = false) {
     adminHashForPage: (page: string) => `#${page}`,
   };
   for (const ref of ["subscriptionEventDirtyRef", "lunationWritingDirtyRef", "dailyWritingDirtyRef", "skyPlacementWorkspaceDirtyRef",
-    "skyPlacementWorkspaceBusyRef", "aspectPatternDirtyRef", "aspectPatternBusyRef", "customVariableDirtyRef", "customVariableBusyRef",
-    "dailyGlanceDirtyRef", "dailyGlanceBusyRef"]) scope[ref] = { current: false };
+    "skyPlacementWorkspaceBusyRef", "aspectPatternDirtyRef", "aspectPatternBusyRef", "customVariableDirtyRef", "customVariableBusyRef"]) scope[ref] = { current: false };
   for (const ref of ["sourceOpenRequestRef", "houseTransitOpenRequest", "editorSessionRef", "skyArticleAutosaveSequenceRef", "skyArticleWorkspaceAutosaveSequenceRef"]) scope[ref] = { current: 0 };
   for (const setter of new Set(dashboardText.match(/\bset[A-Z]\w+/gu))) scope[setter] = () => calls.push(setter);
   scope.setIsLoading = (value: boolean) => { scope.isLoading = value; calls.push("setIsLoading"); };
