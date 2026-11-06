@@ -47,4 +47,34 @@ for(const version of [horoscope.HOROSCOPE_RHETORICAL_REVIEW,horoscope.PREVIOUS_H
   assert.equal(transport.governedInstructionsForRole('RHETORICAL_REVIEWER',{surface:'horoscopes',family:'horoscope',governedInstructions:instructions}),instructions);
 }
 assert.equal(transport.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope',governedInstructions:history.PREVIOUS_HOROSCOPE_WRITER_POLICY}),history.PREVIOUS_HOROSCOPE_WRITER_POLICY);
-console.log('PASS aphorism policy, review-only findings, owner-review visibility, independent blockers and frozen v1/v2 requests. Injected responses only.');
+const horoscopeEnding = transport.instructionsForRole('WRITER','',{surface:'horoscopes',family:'horoscope'});
+for(const direction of [
+  'No separate concluding paragraph is required in a horoscope.',
+  'End the new reading when the previous paragraph has already made its insight clear.',
+  'a meaningful new implication, a sharper contrast, or something the reader can recognize in their own life',
+  'makes older wrap-up paragraph instructions optional',
+  'never authorizes cutting complete owner source passages or saved reader copy'
+]) assert(horoscopeEnding.includes(direction),`Missing horoscope ending direction: ${direction}`);
+for(const scope of [{},{surface:'sky',family:'sky-ingress-essay'},{surface:'synastry',family:'synastry-aspect'}])
+  assert(!transport.instructionsForRole('WRITER','',scope).includes('No separate concluding paragraph is required in a horoscope.'),'The horoscope amendment must remain scoped.');
+const frozenHoroscope='HOROSCOPE EDITORIAL AUTHORITY: Previously saved complete writer instructions.';
+assert.equal(transport.governedInstructionsForRole('WRITER',{surface:'horoscopes',family:'horoscope',governedInstructions:frozenHoroscope}),frozenHoroscope,'Saved requests retain their original instructions.');
+let endingRequestCount=0;
+const {usesRefinedHoroscopeProse,horoscopeProseInstructions}=await import('../../src/astro-writing/horoscopeProseInstructions.mjs');
+const {HOROSCOPE_ENDING_GUIDANCE}=await import('../../src/astro-writing/horoscopeEndingGuidance.mjs');
+for(const period of ['daily','weekly','monthly','seasonal']){
+  const instructions=usesRefinedHoroscopeProse(period)?horoscopeProseInstructions(period):horoscopeEnding;
+  assert(instructions.includes(HOROSCOPE_ENDING_GUIDANCE),`${period} must receive the full rule in its actual writer stack`);
+  const request={model:'synthetic-unbilled',input:`Synthetic ${period} horoscope transport fixture.`,text:{format:{type:'json_schema',name:'fixture',schema:{type:'object',properties:{},additionalProperties:false}}}};
+  await transport.callOpenAIResponses({apiKey:'synthetic-unbilled',role:'WRITER',surface:'horoscopes',family:'horoscope',governedInstructions:instructions,request,
+    fetchImpl:async(url,options)=>{
+      assert.equal(url,'https://api.openai.com/v1/responses');
+      const sent=JSON.parse(options.body);
+      assert.equal(sent.instructions,instructions,`${period} must preserve its selected writer authority`);
+      assert(sent.instructions.includes(HOROSCOPE_ENDING_GUIDANCE));
+      assert.equal(sent.input,request.input);assert.deepEqual(sent.text,request.text);
+      endingRequestCount++;return Response.json({});
+    }});
+}
+assert.equal(endingRequestCount,4,'All period transport fixtures stay intercepted and unbilled.');
+console.log('PASS aphorism review-only policy, earned horoscope endings, source preservation, scope isolation and frozen requests. Injected responses only.');
