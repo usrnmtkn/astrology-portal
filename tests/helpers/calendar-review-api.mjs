@@ -119,6 +119,11 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       return Response.json([created]);
     }
     if (method === "PATCH") {
+      if (storeOptions.sqlMoonLifecycle && found.every(row => row.content_key.startsWith('cms/lunation-horoscopes/') && row.mode === 'article')) {
+        const updated = await publication.patchMoonRows(found,patch,options.headers);
+        for (const row of updated) rows.set(row.id,row);
+        return Response.json(updated);
+      }
       const updated = found.map(row => ({ ...row, ...patch, updated_at: nextVersion() }));
       for (const row of updated) rows.set(row.id, row);
       return Response.json(updated);

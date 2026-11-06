@@ -77,6 +77,7 @@ try{
       assert.equal((await invoke('reader',{keys:[row.content_key]})).payload.rows.length,0,'Archiving withdraws the exact public reader set.');
       const ledger=await fetch(`${process.env.SUPABASE_URL}/rest/v1/content_publications`).then(response=>response.json());
       assert.equal(ledger.find((record:any)=>record.content_key===row.content_key).state,'retired');
+      assert.equal((await store.publication.publications()).find((record:any)=>record.content_key===row.content_key).state,'retired','The actual SQL trigger/ledger is retired.');
       assert.equal((await lifecycle('archive')).status,409);
       assert.equal((await invoke('PATCH',{id:row.id,expectedUpdatedAt:archived.updated_at,body:archived.body})).status,409);
       assert.equal((await invoke('PATCH',{id:row.id,expectedUpdatedAt:archived.updated_at,ownerAction:'publish-owner-content'})).status,409);
@@ -88,6 +89,7 @@ try{
       assert.equal((await invoke('reader',{keys:[row.content_key]})).payload.rows.length,0,'Restore never republishes.');
       result=await invoke('PATCH',{id:row.id,expectedUpdatedAt:restored.updated_at,ownerAction:'publish-owner-content'});
       assert.equal(result.status,200,JSON.stringify(result.payload));assert.equal(result.payload.rows[0].body,published.body);
+      assert.equal((await store.publication.publications()).find((record:any)=>record.content_key===row.content_key).state,'live','Only the explicit owner publication reopens the actual SQL ledger.');
       if(month==='2026-11'&&event.phase==='new-moon'){
         const beforeFailure=structuredClone(store.rows.get(row.id)),fixtureFetch=globalThis.fetch;
         globalThis.fetch=async(input:any,options:any={})=>String(input).endsWith('/rpc/retire_content_everywhere')
