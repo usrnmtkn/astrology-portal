@@ -110,7 +110,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       try{
         const result=await responses.startStoredWritingResponse({apiKey:process.env.OPENAI_API_KEY,role:'WRITER',request:active.request,governedInstructions:active.instructions,
           surface:'horoscopes',family:'horoscope',fetchImpl:(url:any,options:any)=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})});
-        if(result.response.ok&&!/^resp_[A-Za-z0-9_-]+$/u.test(result.payload?.id??'')){
+        const responseId=result.payload?.id;
+        if(result.response.ok&&(typeof responseId!=='string'||!/^resp_[A-Za-z0-9_-]+$/u.test(responseId))){
           await saveGeneration({...g,active:{...active,state:'outcome-unknown',providerResult:result.payload},lastError:'The provider accepted a request without a recoverable response ID. It may have been billed. Reload this set before releasing the unconfirmed request.'});
           return finish(202);
         }
@@ -118,7 +119,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
           await saveGeneration({...g,active:null,plan:null,lastError:'The provider did not confirm a stored writing response. Review the saved request before trying again.',history:[...(g.history??[]),{...active,state:'provider-error',providerResult:result.payload}]});
           return finish();
         }
-        active={...active,state:'running',responseId:result.payload.id,...(typeof result.payload.status==='string'&&['completed','failed','cancelled','incomplete'].includes(result.payload.status)?{providerResult:result.payload}:{})};
+        active={...active,state:'running',responseId,...(typeof result.payload.status==='string'&&['completed','failed','cancelled','incomplete'].includes(result.payload.status)?{providerResult:result.payload}:{})};
         await saveGeneration({...g,active});return finish(202);
       }catch{
         // The reserved row remains recoverable even if dispatch or confirmation times out.
