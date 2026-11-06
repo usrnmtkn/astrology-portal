@@ -270,7 +270,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.keyboard.press('ControlOrMeta+b');
       await page.keyboard.type('Blocked archived keyboard edit.');
       await page.keyboard.press('ControlOrMeta+i');
-      await expect(formatted).toHaveText(visibleBeforeArchive);
+      await expect(formatted).toHaveText(visibleBeforeArchive,{useInnerText:true});
       expect(await formatted.innerText()).toBe(visibleBeforeArchive);
       const afterLockedInput=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
       expect(afterLockedInput.status).toBe('ARCHIVED');expect(afterLockedInput.body).toBe(body);
