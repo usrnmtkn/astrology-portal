@@ -263,13 +263,17 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       for(const name of ['Bold','Italic','Bulleted list','Numbered list','Undo formatting','Redo formatting']){
         await expect(workspace.getByRole('button',{name,exact:true})).toBeDisabled();
       }
-      await formatted.click();
+      await formatted.scrollIntoViewIfNeeded();
+      const lockedBounds=await formatted.boundingBox();
+      expect(lockedBounds).not.toBeNull();
+      await page.mouse.click(lockedBounds!.x+lockedBounds!.width/2,lockedBounds!.y+Math.min(lockedBounds!.height/2,20));
       await page.keyboard.press('ControlOrMeta+b');
       await page.keyboard.type('Blocked archived keyboard edit.');
       await page.keyboard.press('ControlOrMeta+i');
       await expect(formatted).toHaveText(visibleBeforeArchive);
       expect(await formatted.innerText()).toBe(visibleBeforeArchive);
-      expect((await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id).body).toBe(body);
+      const afterLockedInput=(await writer.call({method:'rows'})).find((row:any)=>row.id===saved.id);
+      expect(afterLockedInput.status).toBe('ARCHIVED');expect(afterLockedInput.body).toBe(body);
       await workspace.getByRole('button',{name:'Restore draft',exact:true}).click();
       await expect(workspace.getByText('Draft restored. Review and publish when ready.',{exact:true})).toBeVisible();
       await expect(formatted).toHaveAttribute('contenteditable','true');
