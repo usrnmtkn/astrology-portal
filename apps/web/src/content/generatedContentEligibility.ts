@@ -1,6 +1,6 @@
 import {hasStudioOwnerWording} from "./studioOwnerWording.mjs";
 import {isMoonHoroscopeReaderRow,MOON_HOROSCOPE_PREFIX} from '../../../../src/shared/datedMoonIdentity.mjs';
-import {PLANETARY_HOROSCOPE_PREFIX,planetaryReaderReadings} from '../../../../src/shared/planetaryHoroscopeIdentity';
+import {PLANETARY_HOROSCOPE_PREFIX,planetaryReaderReadings} from '../../../../src/shared/planetaryHoroscopeIdentity.js';
 import { isReaderFacingCopy } from "./readerSafety.js";
 import { horoscopeEditionFromRow } from './horoscopeEditions.mjs';
 import { skyArticleEditionRecord, hasExactSkyArticleOwnerApproval } from "./skyArticleTemplateCompiler.js";
