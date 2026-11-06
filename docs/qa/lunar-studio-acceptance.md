@@ -43,6 +43,15 @@ writing and stored body before and after those attempts. Restoring re-enables
 formatting without changing the saved writing. Execution results belong to the
 tested revision's QA receipt.
 
+Canonical dated Moon horoscope sets also need a visible archive/restore journey.
+Check all twelve complete passages and their original import metadata through
+publication, archive, reload, event selection, restore as a non-serving draft,
+explicit republication and final retirement. Unsaved text must prevent archival;
+archived fields must remain read-only. The handler must reject stale versions,
+private-revision targets and combined copy edits. A failed retirement confirmation
+must report an unconfirmed transition, preserve the saved writing, and permit
+recovery by reloading the actual state; stale retries must never overwrite it.
+
 The September 27 recheck identified a navigation gap: all 24 reusable readings
 were saved and reachable through Daily Sky, but the consolidated lunar section
 exposed writing workspaces without the existing library. Saved write-ups brings

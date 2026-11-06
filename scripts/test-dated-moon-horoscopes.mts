@@ -63,6 +63,56 @@ try{
       assert.equal(result.status,200,JSON.stringify(result.payload));const revision=result.payload.rows[0];assert.equal(revision.mode,'studio-draft');assert.equal(store.rows.get(row.id).body,row.body,'Draft edits preserve the published reading.');
       result=await invoke('PATCH',{id:revision.id,expectedUpdatedAt:revision.updated_at,ownerAction:'publish-horoscope-edition-revision'});
       assert.equal(result.status,200,JSON.stringify(result.payload));assert.equal(result.payload.rows[0].id,row.id);assert.equal(result.payload.rows[0].sections.articleHoroscopes.passages[11].body,revised.passages[11].body);
+      const published=structuredClone(result.payload.rows[0]);
+      const copy=(value:any)=>Object.fromEntries(Object.entries(value).filter(([key])=>!['status','updated_at'].includes(key)));
+      const lifecycle=(action:string,version=store.rows.get(row.id).updated_at,extra={})=>invoke('PATCH',{id:row.id,expectedUpdatedAt:version,sourceLifecycleAction:action,...extra});
+      assert.equal((await lifecycle('archive',version)).status,409,'A stale archive cannot overwrite newer publication.');
+      assert.equal((await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:published.updated_at,sourceLifecycleAction:'archive'},undefined,'wrong-secret')).status,401);
+      assert.deepEqual(store.rows.get(row.id),published);
+      result=await lifecycle('archive');assert.equal(result.status,200,'MOON_CANONICAL_ARCHIVE');
+      const archived=structuredClone(result.payload.rows[0]);assert.equal(archived.status,'ARCHIVED');assert.deepEqual(copy(archived),copy(published));
+      assert.equal((await invoke('PATCH',{id:revision.id,expectedUpdatedAt:store.rows.get(revision.id).updated_at,sourceLifecycleAction:'archive'})).status,409,'Canonical lifecycle cannot target a private revision.');
+      assert.equal((await lifecycle('archive',archived.updated_at,{body:'Do not replace the writing.'})).status,400);
+      assert.deepEqual(store.rows.get(row.id),archived);
+      assert.equal((await invoke('reader',{keys:[row.content_key]})).payload.rows.length,0,'Archiving withdraws the exact public reader set.');
+      const ledger=await fetch(`${process.env.SUPABASE_URL}/rest/v1/content_publications`).then(response=>response.json());
+      assert.equal(ledger.find((record:any)=>record.content_key===row.content_key).state,'retired');
+      assert.equal((await lifecycle('archive')).status,409);
+      assert.equal((await invoke('PATCH',{id:row.id,expectedUpdatedAt:archived.updated_at,body:archived.body})).status,409);
+      assert.equal((await invoke('PATCH',{id:row.id,expectedUpdatedAt:archived.updated_at,ownerAction:'publish-owner-content'})).status,409);
+      result=await invoke('GET',undefined,`/api/admin/generated-content?contentKeys=${encodeURIComponent(row.content_key)}&status=all&visibility=all`);
+      assert.equal(result.payload.rows.find((candidate:any)=>candidate.id===row.id).status,'ARCHIVED','The complete archived set remains discoverable.');
+      result=await lifecycle('restore');assert.equal(result.status,200,JSON.stringify(result.payload));
+      const restored=result.payload.rows[0];assert.equal(restored.status,'DRAFT');assert.deepEqual(copy(restored),copy(published));
+      assert.equal((await lifecycle('restore')).status,409);
+      assert.equal((await invoke('reader',{keys:[row.content_key]})).payload.rows.length,0,'Restore never republishes.');
+      result=await invoke('PATCH',{id:row.id,expectedUpdatedAt:restored.updated_at,ownerAction:'publish-owner-content'});
+      assert.equal(result.status,200,JSON.stringify(result.payload));assert.equal(result.payload.rows[0].body,published.body);
+      if(month==='2026-11'&&event.phase==='new-moon'){
+        const beforeFailure=structuredClone(store.rows.get(row.id)),fixtureFetch=globalThis.fetch;
+        globalThis.fetch=async(input:any,options:any={})=>String(input).endsWith('/rpc/retire_content_everywhere')
+          ?Response.json({message:'Synthetic retirement interruption.'},{status:503}):fixtureFetch(input,options);
+        try{assert.equal((await lifecycle('archive')).status,503,'A failed second step must not acknowledge success.');}
+        finally{globalThis.fetch=fixtureFetch;}
+        const unconfirmed=structuredClone(store.rows.get(row.id));assert.equal(unconfirmed.status,'ARCHIVED');assert.deepEqual(copy(unconfirmed),copy(beforeFailure));
+        assert.equal((await lifecycle('archive',beforeFailure.updated_at)).status,409,'A stale retry does not overwrite the saved transition.');
+        assert.deepEqual(store.rows.get(row.id),unconfirmed);
+        assert.equal((await invoke('reader',{keys:[row.content_key]})).payload.rows.length,0);
+        assert.equal((await lifecycle('restore')).status,200,'Reloaded archived state can safely recover as a non-serving draft.');
+        const beforeRace=structuredClone(store.rows.get(row.id));let raced=false;
+        globalThis.fetch=async(input:any,options:any={})=>{
+          if(!raced&&options.method==='PATCH'&&String(input).includes('/rest/v1/generated_interpretations?')){
+            raced=true;store.rows.set(row.id,{...beforeRace,reviewer_notes:'Synthetic concurrent metadata.',updated_at:new Date(Date.now()+100000).toISOString()});
+          }
+          return fixtureFetch(input,options);
+        };
+        try{assert.equal((await lifecycle('archive')).status,409,'A between-read/write race refuses the conditional transition.');}
+        finally{globalThis.fetch=fixtureFetch;}
+        assert(raced);assert.equal(store.rows.get(row.id).reviewer_notes,'Synthetic concurrent metadata.');
+        assert.equal(store.rows.get(row.id).status,'DRAFT');assert.equal(store.rows.get(row.id).body,beforeRace.body);
+      }
+      assert.equal((await lifecycle('archive')).status,200);
+      assert.equal((await invoke('reader',{keys:[row.content_key]})).payload.rows.length,0);
     }
   }
   console.log('PASS dated Moon import: four calculated New/Full Moons, twelve exact signs/houses, draft/save/reload, isolated publication and reader delivery, private source boundary, date isolation, conflicts and atomic revisions.');

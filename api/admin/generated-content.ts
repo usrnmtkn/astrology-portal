@@ -2674,6 +2674,44 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (body.expectedUpdatedAt !== existing.updated_at) {
     throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
   }
+  if (body.sourceLifecycleAction && existing.content_key.startsWith('cms/lunation-horoscopes/')) {
+    if (Object.keys(body).some(key => !['id', 'expectedUpdatedAt', 'sourceLifecycleAction'].includes(key))) {
+      throw new GeneratedContentRequestError('Archive or restore the saved Moon readings separately from other edits.', 400);
+    }
+    if (existing.mode !== 'article' || existing.event_type !== 'lunation-horoscopes' || existing.lane !== 'serving') {
+      throw new GeneratedContentRequestError('Open the canonical Moon horoscope set to archive or restore it.', 409);
+    }
+    const {assertMoonHoroscopeRow} = await import('../../src/shared/datedLunationHoroscopes.mjs');
+    try { assertMoonHoroscopeRow(existing); }
+    catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
+    const archive = body.sourceLifecycleAction === 'archive';
+    if (archive ? !['DRAFT', 'LIVE'].includes(existing.status) : existing.status !== 'ARCHIVED') {
+      throw new GeneratedContentRequestError('The Moon readings changed state. Reload the saved version before retrying.', 409);
+    }
+    const status = archive ? 'ARCHIVED' : 'DRAFT';
+    const savedRows = await patchGeneratedContentRow(existing.id, {status}, body.expectedUpdatedAt);
+    const saved = savedRows[0];
+    if (savedRows.length !== 1 || saved?.status !== status || saved.updated_at === existing.updated_at
+      || typeof saved.updated_at !== 'string' || !Number.isFinite(Date.parse(saved.updated_at))
+      || Object.entries(existing).some(([key, value]) => !['status', 'updated_at'].includes(key) && !isDeepStrictEqual((saved as Record<string, unknown>)[key], value))) {
+      throw new GeneratedContentRequestError('Storage did not confirm the complete unchanged Moon readings. Reload before retrying.', 502);
+    }
+    // The row trigger withdraws serving copy. Confirm retirement explicitly too;
+    // restoration must remain a private draft until a separate owner publication.
+    const retired = await adminStorageFetch(`${supabaseUrl()}/rest/v1/rpc/retire_content_everywhere`, {
+      method: 'POST', headers: {...adminHeaders(), 'content-type': 'application/json'},
+      body: JSON.stringify({p_content_key: saved.content_key, p_row_id: saved.id, p_expected_updated_at: saved.updated_at})
+    });
+    const retirement = isRecord(retired.payload) ? retired.payload : null;
+    if (!retired.ok || !libs().validContentPublication(retirement) || retirement?.state !== 'retired'
+      || retirement.content_key !== saved.content_key) {
+      throw new GeneratedContentRequestError('The saved state changed, but reader retirement was not confirmed. Reload before retrying.', retired.status === 409 || retirement?.code === '40001' ? 409 : 503);
+    }
+    return savedRows;
+  }
+  if (existing.content_key.startsWith('cms/lunation-horoscopes/') && existing.status === 'ARCHIVED') {
+    throw new GeneratedContentRequestError('Restore the archived Moon readings as a draft before editing or publishing.', 409);
+  }
   const scheduled = skyPublicationRecord(existing);
   if (publicationContext.getStore()?.scheduledExecution && (existing.status !== 'DRAFT' || scheduled?.state !== 'scheduled'
     || scheduled.action !== body.ownerAction || scheduled.approvedHash !== skyPublicationHash(existing)
