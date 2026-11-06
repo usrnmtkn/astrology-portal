@@ -28,8 +28,9 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Dated pl
     for(const sign of HOROSCOPE_SIGNS){
       const name=sign[0].toUpperCase()+sign.slice(1);await page.getByRole('button',{name:`${name} & ${name} Rising`,exact:true}).click();
       await expect(article.getByRole('heading',{level:3})).toHaveText(`Synthetic ${sign}`);
-      const paragraphs=article.locator('.horoscope-prose p');await expect(paragraphs.first()).toHaveText(`Your synthetic ${sign} opening remains complete.`);await expect(paragraphs.last()).toHaveText(`You keep the complete synthetic final sentence for ${sign}.`);
-      await page.reload();await expect(article.locator('.horoscope-prose p').last()).toHaveText(`You keep the complete synthetic final sentence for ${sign}.`,{timeout:60000});
+      const prose=article.locator('.horoscope-prose'),body=`Your synthetic ${sign} opening remains complete.\n\nYou keep the complete synthetic final sentence for ${sign}.`;
+      await expect(prose).toHaveJSProperty('textContent',body);await expect(prose).toHaveCSS('white-space','pre-wrap');
+      await page.reload();await expect(prose).toHaveJSProperty('textContent',body,{timeout:60000});
     }
     await expect(page.getByRole('heading',{level:1})).toHaveText('Horoscopes');await expect(article.getByRole('heading',{level:2})).toHaveText(/Mercury.*in Scorpio/);
     await expect(article.getByRole('heading',{level:3})).toHaveCSS('font-family',/Newsreader/);
