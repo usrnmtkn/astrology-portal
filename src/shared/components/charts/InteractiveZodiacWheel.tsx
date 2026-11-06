@@ -58,6 +58,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
     if (previewHouse && facts.hasHouses) { setSelected({ type: "house", house: previewHouse }); setLordOpen(true); }
   }, [previewHouse, facts.hasHouses, tooltipPreview?.source]);
   const rootRef = useRef<HTMLDivElement>(null);
+  const touchFocusRef = useRef<Element | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const id = useId().replace(/:/g, "");
   const fan = useMemo(() => wheelFanLongitudes(facts.planets), [facts.planets]);
@@ -105,12 +106,23 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
     role: "button", tabIndex: 0, "aria-label": label, "aria-pressed": sameSelection(selected, target),
     "aria-disabled": tooltipPreview?.disabled || undefined,
     "aria-describedby": hovered && sameSelection(hovered.target, target) ? `${id}-tip` : undefined,
-    onClick: (event: React.MouseEvent<SVGGElement>) => { event.stopPropagation(); pick(target); },
+    onPointerDown: (event: React.PointerEvent<SVGGElement>) => { touchFocusRef.current = event.pointerType === "touch" ? event.currentTarget : null; },
+    onPointerCancel: () => { touchFocusRef.current = null; },
+    onClick: (event: React.MouseEvent<SVGGElement>) => { event.stopPropagation(); pick(target); touchFocusRef.current = null; },
     onKeyDown: (event: KeyboardEvent<SVGGElement>) => keyboardPick(event, () => pick(target)),
-    onPointerEnter: (event: React.PointerEvent<SVGGElement>) => { if (event.pointerType === "mouse") setHovered({ target, anchor: event.currentTarget }); },
-    onPointerLeave: () => setHovered(null),
-    onFocus: (event: React.FocusEvent<SVGGElement>) => { if (event.currentTarget.matches(":focus-visible")) setHovered({ target, anchor: event.currentTarget }); },
-    onBlur: () => setHovered(null)
+    onPointerEnter: (event: React.PointerEvent<SVGGElement>) => {
+      if (event.pointerType !== "mouse") return;
+      const anchor = event.currentTarget;
+      // Resizing can move another sector under the pointer while a glyph owns keyboard focus.
+      setHovered(current => current && document.activeElement === current.anchor ? current : { target, anchor });
+    },
+    onPointerLeave: () => setHovered(current => current && document.activeElement === current.anchor ? current : null),
+    onFocus: (event: React.FocusEvent<SVGGElement>) => {
+      // Programmatic focus after opening a chart need not match :focus-visible.
+      // A touch tap still selects details without opening a hover tooltip.
+      if (touchFocusRef.current !== event.currentTarget || event.currentTarget.matches(":focus-visible")) setHovered({ target, anchor: event.currentTarget });
+    },
+    onBlur: () => { touchFocusRef.current = null; setHovered(null); }
   });
   const tip = hovered ? tooltipFacts(hovered.target, facts, mode, templates) : null;
   const connector = house !== null && lord && lord.house !== house ? (() => {

@@ -434,7 +434,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Open Zodiac Wheel → Tooltips, choose the wording source, edit its body, then save a draft or explicitly save and publish.",
     sources: [
       { label: "Wheel tooltip sources", path: "apps/web/src/content/wheelTooltipCatalog.ts", role: "stored-source" },
-      { label: "InteractiveZodiacWheel.tsx", path: "apps/web/src/components/charts/InteractiveZodiacWheel.tsx", role: "renderer" }
+      { label: "InteractiveZodiacWheel.tsx", path: "src/shared/components/charts/InteractiveZodiacWheel.tsx", role: "renderer" }
     ]
   },
   {

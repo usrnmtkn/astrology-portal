@@ -303,9 +303,9 @@ Local acceptance evidence:
 
 Matched native ARM64 Node 22.20.0/zlib 1.3.1-470d3a2 builds use identical
 synthetic Supabase settings and natal-aspect-pattern flags, with independent
-dependencies for current main and the candidate:
+dependencies for current main and the first candidate `89e5cece6b`:
 
-| Gzip bytes unless marked raw | Main | Release |
+| Gzip bytes unless marked raw | Main | First candidate |
 | --- | ---: | ---: |
 | Web App startup | 398713 | 390513 |
 | Reader startup including awaited CSS | 456983 | 449098 |
@@ -331,3 +331,31 @@ Local evidence does not prove deployment. Merge requires green exact-head
 current main, followed by main's automatic Vercel deployment and read-only
 rendered verification. Release commit, CI and deployed-revision results belong
 on the release PR; previewing alone never approves or publishes tooltip wording.
+
+### Release-check follow-up
+
+CI at `89e5cece6b` found an extensionless validation import in the plain Node ESM
+startup path and a missing reader-destination policy for the new Composition Map
+surface. The import now uses `.js`; the production-style Node startup regression
+reaches authorization. The surface now declares chart context as required and
+registers its canonical source family. The link audit passes all 27 surfaces;
+no contextless app link or policy exception was introduced.
+
+The existing mobile tooltip viewport regression also exposed programmatic focus
+after opening a chart: Chromium need not mark it `:focus-visible`, leaving the
+tooltip owned by a different pointer-hovered sector. Resizing then dismissed it.
+Focus now owns the tooltip until blur, pointer events preserve a focused target,
+and touch initiation still suppresses hover. The original focused SVG node is
+asserted connected and focused after resizing. All 18 Chrome/WebKit tooltip
+resize/scroll and touch cases pass, across all eight viewport/theme combinations.
+No browser error, viewport, focus or touch assertion was removed.
+
+Fresh matching artifacts after these corrections measure Web startup 390505,
+reader startup including CSS 449090, App chunk 89791, aggregate JavaScript
+3735092 and aggregate CSS 147403 gzip bytes. Studio entry raw/gzip is
+828863/240765 and aggregate gzip is 901285. Every numeric ceiling stays unchanged
+and passes; startup CSS, shared Memory CSS and all deferred boundaries remain
+as above. Web/Admin/server types, actual-handler tooltip and variable lifecycles,
+direct Swiss calculations, module boundaries, Node startup and link policy
+regressions pass again. A fresh combined browser run and exact-head CI provide
+the remaining release evidence on the PR.

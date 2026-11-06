@@ -196,7 +196,11 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       surface=page.locator('.friends-toast');
     }
     await contained(page,surface);
+    const focusedTrigger = name === 'Planet tooltip' ? await anchor!.elementHandle() : null;
     await page.setViewportSize({width:viewport.width,height:240});
+    if (focusedTrigger) await expect.poll(() => focusedTrigger.evaluate(el => ({
+      connected: el.isConnected, focused: document.activeElement === el
+    })), 'resizing retains the original focused wheel trigger').toEqual({connected:true,focused:true});
     await contained(page,surface);
     if (anchor) {
       await anchor.evaluate(el=>window.scrollBy(0,el.getBoundingClientRect().top - 12));

@@ -1,4 +1,4 @@
-import { WHEEL_TOOLTIP_PREFIX, wheelTooltipDraftErrors, wheelTooltipHouseSlots, wheelTooltipHouseVariable } from "./wheelTooltipValidation";
+import { WHEEL_TOOLTIP_PREFIX, wheelTooltipDraftErrors, wheelTooltipHouseSlots, wheelTooltipHouseVariable } from "./wheelTooltipValidation.js";
 export { WHEEL_TOOLTIP_PREFIX };
 
 // Existing wheel wording, moved intact into editable sources. These defaults
