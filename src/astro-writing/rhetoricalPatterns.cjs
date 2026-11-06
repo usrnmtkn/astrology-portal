@@ -1,8 +1,8 @@
 "use strict";
 
-// Owner directions, 2026-10-06 and 2026-10-09. This module judges the function of rhetoric;
+// Owner directions, 2026-10-06, 2026-10-09 and 2026-11-06. This module judges the function of rhetoric;
 // it does not change astrology, owner evidence, or published reader copy.
-const RHETORICAL_PATTERN_VERSION = "rhetorical-patterns/v2-2026-10-09";
+const RHETORICAL_PATTERN_VERSION = "rhetorical-patterns/v3-2026-11-06";
 const RHETORICAL_LABELS = Object.freeze(["CORRECTIO", "TRICOLON", "PURPLE_PROSE"]);
 const RELATED_PROSE_LABELS = Object.freeze([
   "POLISHED_ASTROLOGY_PROSE", "ABSTRACT_MECHANISM", "GENERIC_ASTROLOGY",
@@ -10,11 +10,14 @@ const RELATED_PROSE_LABELS = Object.freeze([
   "HOUSE_STYLE_PHRASE_REPETITION"
 ]);
 const PROSE_PATTERN_LABELS = Object.freeze([...RHETORICAL_LABELS, ...RELATED_PROSE_LABELS]);
+const RHETORICAL_REVIEW_LABELS = Object.freeze([...PROSE_PATTERN_LABELS, 'APHORISM']);
 const AI_PATTERN_CONTEXT_POLICY = `AVOID AI WRITING PATTERNS — owner rule, 2026-10-09
 Write with clarity, specificity and emotional precision. The reader should recognize an experience, not decipher the language describing it. Flag the pattern's function, not just an exact phrase.
 ATMOSPHERIC AND EMOTIONAL FILLER: examine quiet + tension/resentment/confidence/knowing/power; subtle + shift/reminder/tension/undercurrent; gentle + reminder/invitation/nudge/unfolding; soft + power/resistance/landing or softening into; unspoken + expectations/tension/agreement; uncomfortable + truth/realization/awareness; deeper + truth/understanding/connection/knowing; inner + landscape/knowing/truth/compass; emotional weight or the weight of expectations/what remains unsaid. Name the behavior causing resentment, or the expectation and how it affects someone. These combinations warrant context review, not automatic rejection.
 STOCK PSYCHOLOGICAL OR SPIRITUAL LANGUAGE: examine vague revelation (something shifting/stirring/changing/coming to the surface; what is ready to emerge; a deeper truth revealed), generic emotional instructions (hold/create space, give yourself permission, allow yourself to, it's okay to, honor your needs, lean into discomfort, allow yourself to receive, embrace the unknown), abstract movement (navigate this energy, move through this season, step into your power, find alignment), manufactured profundity (the truth is, here's the thing, at its core, what matters most), and spiritualized conclusions (trust the process, honor your journey). Identify the actual circumstance, behavior, decision or consequence; a stock expression contributes no insight by itself.
 ASTROLOGICAL PERSONIFICATION: the Moon asks, Saturn reminds, Venus invites, Mercury encourages, or the cosmos wants must not replace interpretation. Explain how the astrology creates a recognizable experience. Personification can remain when it adds genuine narrative meaning and the passage actually interprets the astrology.
+NO MIXED METAPHORS — owner update 2026-11-06: Once a sentence starts an image, keep every word tied to it in the same world. Within a planting image, keep related actions consistent with sowing, growth, taking root and harvest. Check that the image's objects and actions fit together when read as a literal scene. If the image does not hold up literally, say it plainly instead. In semantic review, identify the incompatible elements under PURPLE_PROSE, with the exact span, complete paragraph and literal-image consistency test. Preserve coherent, useful imagery; multiple literal actions or words that can belong to different images are not proof of a mixed metaphor.
+APHORISMS AND MAXIMS — REVIEW ONLY, owner update 2026-11-06: an aphorism states a general truth about life as a rule, often dropped in as a closing line. Use sparingly, never as the default ending. Flag a conclusion that preaches a lesson instead of developing something specific about the reader or the actual astrology, including the New Moon under discussion. Hedging a maxim does not make it specific. Default to the reader's experience, choice or possibility in relation to this astrology; end when that thought is complete. Remove an unnecessary moral or revise it in context without adding another moral, compulsory advice or an invented scene. An occasional aphorism can remain when it earns its place in the complete passage. Review repetition across paragraphs and entries; there is no fixed quota or blanket ban. An aphorism alone is not a PURPLE_PROSE failure or a reason to regenerate, lower a score or reject a draft. When the return schema permits it, record a contextual APHORISM finding for owner review while leaving the three rhetorical checks passed unless an independent material defect exists. Otherwise explain the review flag in the relevant check's reason without failing it solely for the aphorism.
 HARD FLAG — REWRITE: only a contextual semantic finding establishes a failure: stock spiritual/psychological language contributes no specific meaning; generic planetary personification replaces explanation; a decorative tricolon contains redundant elements; a rhetorical reversal manufactures emphasis without a necessary distinction; or an abstract metaphor obscures the subject. Use CORRECTIO for the reversal, TRICOLON for dispensable triples, and PURPLE_PROSE for atmosphere, stock language, personification or metaphor substituting for observation. Preserve overlapping GENERIC_ADVICE or GENERIC_ASTROLOGY findings when relevant; those related labels alone do not establish this hard flag.
 REVIEW FLAG — CHECK CONTEXT: atmospheric adjectives, abstract terms (energy, truth, space, weight, shift, transformation), potentially useful figures of speech, three necessary items, and emotional descriptions that may be explained elsewhere in the passage require context. Never fail a passage solely because a word, phrase, negation or three-part construction appears. A quiet morning, quiet house or someone becoming quiet during an argument can convey literal information. A quiet resentment or unspoken expectation can be explained by the surrounding behavior. Useful imagery, personification and emotionally precise abstraction can remain.
 REVISION STANDARD: establish the situation (what is happening), behavior (what someone does, avoids, expects or decides), consequence (what it costs or changes), and insight (what the reader can now recognize). Do not force all four into every sentence, append an explanation after an example that already makes the point, or invent errands, appointments or other scenes merely to look concrete. Preserve natural rhythm, emotional complexity and the writer's individual voice. Do not substitute flat clinical explanations or repetitive sentence formulas for poetic clichés. Specificity creates emotional depth. Decorative language cannot substitute for it.`;
@@ -41,7 +44,7 @@ const object = properties => ({type:"object",additionalProperties:false,required
 const string = {type:"string"};
 const RHETORICAL_REVIEW_SCHEMA = object({
   checks: {type:"array",items:object({label:{type:"string",enum:[...RHETORICAL_LABELS]},outcome:{type:"string",enum:["pass","fail","indeterminate"]},reason:string})},
-  findings: {type:"array",items:object({label:{type:"string",enum:[...PROSE_PATTERN_LABELS]},field:string,quote:string,paragraph:string,reason:string,readerConsequence:string,meaningTest:string})}
+  findings: {type:"array",items:object({label:{type:"string",enum:[...RHETORICAL_REVIEW_LABELS]},field:string,quote:string,paragraph:string,reason:string,readerConsequence:string,meaningTest:string})}
 });
 
 function textFields(value,path="") {
@@ -61,7 +64,7 @@ function validateRhetoricalReview(review,candidate) {
   }
   if(seen.size!==RHETORICAL_LABELS.length)fail('incomplete_checks');
   for(const f of review.findings){
-    if(!keys(f,['label','field','quote','paragraph','reason','readerConsequence','meaningTest'])||!PROSE_PATTERN_LABELS.includes(f.label)
+    if(!keys(f,['label','field','quote','paragraph','reason','readerConsequence','meaningTest'])||!RHETORICAL_REVIEW_LABELS.includes(f.label)
       ||Object.values(f).some(v=>typeof v!=='string'||!v.trim())||!fields[f.field]
       ||!fields[f.field].split(/\n\s*\n/u).includes(f.paragraph)||!f.paragraph.includes(f.quote))fail('unsupported_finding');
     if(RHETORICAL_LABELS.includes(f.label)&&review.checks.find(c=>c.label===f.label).outcome!=='fail')fail('finding_check_conflict');

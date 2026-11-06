@@ -5463,7 +5463,9 @@ async function reviewGeneratedContentWithOpenAI({
   const contextualViolations = contextualReview.violations.filter((item) => item.category !== "cold_rendered_prose").map((item): CanonicalReviewViolation => advisoryModelViolation(item));
   const rhetoricalViolations = rhetoric.findings.map(f => ({category:f.label,severity:RHETORICAL_LABELS.some(label=>label===f.label)?'blocking' as const:'nonblocking' as const,location:f.field,text:f.quote,
     reason:`${f.reason} ${f.readerConsequence} ${f.meaningTest}`,paragraph:f.paragraph,
-    revision_instruction:'Regenerate the affected prose from supported meaning, preserving owner sources and factual boundaries.'}));
+    revision_instruction:f.label==='APHORISM'
+      ?'Review this maxim in context. Retain it sparingly when it earns its place, or remove an unnecessary moral; no automatic rewrite is required.'
+      :'Regenerate the affected prose from supported meaning, preserving owner sources and factual boundaries.'}));
   if(rhetoricResult === 'evaluation_unavailable') throw new ContentGenerationQualityError('Rhetorical evaluation is indeterminate; no prose admission.');
   return {
     ...contextualReview,
