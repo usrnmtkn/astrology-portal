@@ -9,7 +9,7 @@ const emitted=mkdtempSync(join(tmpdir(),'planetary-horoscope-node-'));
 try{
   // A bundled or tsx-loaded test can hide a missing deployment-module extension.
   await build({entryPoints:['api/_lib/planetary-horoscope-facts.ts','api/_lib/admin-http.ts','api/_lib/horoscope-history-storage.ts',
-    'src/shared/planetaryHoroscopes.ts','src/shared/planetaryHoroscopeIdentity.ts','apps/web/src/services/timezones.ts'],
+    'src/shared/planetaryHoroscopes.ts','src/shared/planetaryHoroscopeIdentity.ts','src/shared/planetaryHoroscopeVisit.ts','apps/web/src/services/timezones.ts'],
     outbase:'.',outdir:emitted,platform:'node',format:'esm',bundle:false,logLevel:'silent'});
   writeFileSync(join(emitted,'package.json'),'{"type":"module"}');
   for(const path of ['apps/web/src/content/horoscopeEditions.mjs','apps/web/src/content/editorialCopyBoundary.mjs']){

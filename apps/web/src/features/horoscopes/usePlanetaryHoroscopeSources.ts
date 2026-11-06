@@ -8,7 +8,8 @@ import {prepareSkyPlacementSources,skyPlacementPublicationIdentity} from '../../
 import {subscribeToContentUpdates,subscribeToContentRevalidation} from '../../services/contentUpdateSignal';
 import {subscribeToContentPublications} from '../../content/contentPublicationState';
 import {isReaderFacingCopy} from '../../content/readerSafety';
-import {planetaryEventFromPosition,planetaryEventKey,planetaryEventMatches,planetaryReaderReadings} from '../../../../../src/shared/planetaryHoroscopeIdentity';
+import {planetaryEventKey,planetaryReaderReadings} from '../../../../../src/shared/planetaryHoroscopeIdentity';
+import {planetaryEventFromPosition,planetaryEventMatches} from '../../../../../src/shared/planetaryHoroscopeVisit';
 import {loadReaderRows} from '../../services/readerContentClient';
 import type {GeneratedContentRow} from '../../services/generatedContent';
 

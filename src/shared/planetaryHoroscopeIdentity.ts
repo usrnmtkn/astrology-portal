@@ -1,9 +1,6 @@
 import {HOROSCOPE_SIGNS,horoscopeCanonicalJson,horoscopeSignLabel} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 export const PLANETARY_HOROSCOPE_PREFIX='horoscope/planetary/';
-// Reservation, dispatch and response-ID confirmation each have bounded waits.
-// Let the original invocation finish before an owner can release its reservation.
-export const PLANETARY_DISPATCH_RECOVERY_DELAY_MS=120000;
 export const PLANETARY_HOROSCOPE_PLANETS=['mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto'] as const;
 export type PlanetaryEvent={schema:'planetary-horoscope-event/v1';planet:string;sign:string;startsAt:string;endsAt:string;referenceInstant:string;timeZone:string};
 export type PlanetaryReadings={schema:'planetary-horoscopes/v1';passages:Array<{sign:string;house:number;headline:string;body:string}>};
@@ -20,9 +17,7 @@ export function planetaryEventKey(event:PlanetaryEvent) {
   assertPlanetaryEvent(event);
   return `${PLANETARY_HOROSCOPE_PREFIX}${event.planet}/${event.sign}/${event.startsAt.slice(0,10)}`;
 }
-export const planetaryEventTitle=(event:PlanetaryEvent)=>`${horoscopeSignLabel(event.planet)} in ${horoscopeSignLabel(event.sign)}`;
 export const planetaryReadingsBody=(readings:PlanetaryReadings)=>readings.passages.map(p=>`## ${horoscopeSignLabel(p.sign)} / ${horoscopeSignLabel(p.sign)} Rising\n\n${p.headline}\n\n${p.body}`).join('\n\n');
-export const emptyPlanetaryReadings=(event:PlanetaryEvent):PlanetaryReadings=>({schema:'planetary-horoscopes/v1',passages:HOROSCOPE_SIGNS.map(sign=>({sign,house:planetaryHouse(event.sign,sign),headline:'',body:''}))});
 export function validatePlanetaryReadings(value:any,event:PlanetaryEvent,complete=false):PlanetaryReadings {
   assertPlanetaryEvent(event);
   if(value?.schema!=='planetary-horoscopes/v1'||Object.keys(value).some(k=>!['schema','passages'].includes(k))||!Array.isArray(value.passages)||value.passages.length!==12)throw new Error('Keep all twelve sign readings.');
@@ -51,18 +46,5 @@ export function planetaryReaderReadings(row:any) {
     if(row.status!=='LIVE'||row.lane!=='serving'||row.review_state||row.mode!=='article')return null;
     return assertPlanetaryHoroscopeRow(row,true);
   }catch{return null;}
-}
-/** Compare calculated visits, not a planet/sign pair shared by unrelated years or return visits. */
-export function planetaryEventMatches(saved:PlanetaryEvent,event:PlanetaryEvent) {
-  return planetaryEventKey(saved)===planetaryEventKey(event)&&Math.abs(Date.parse(saved.startsAt)-Date.parse(event.startsAt))<2000
-    &&Math.abs(Date.parse(saved.endsAt)-Date.parse(event.endsAt))<2000;
-}
-export function planetaryEventFromPosition(position:any,referenceInstant:string,timeZone:string):PlanetaryEvent|null {
-  const planet=String(position.planet).toLowerCase(),sign=String(position.sign).toLowerCase(),at=Date.parse(referenceInstant);
-  if(!PLANETARY_HOROSCOPE_PLANETS.includes(planet as any))return null;
-  const pass=position.residencyPasses?.find((p:any)=>Date.parse(p.entryDate)<=at&&at<Date.parse(p.exitDate));
-  const event:PlanetaryEvent={schema:'planetary-horoscope-event/v1',planet,sign,startsAt:pass?.entryDate??position.transitStart,
-    endsAt:pass?.exitDate??position.transitEnd,referenceInstant,timeZone};
-  try{assertPlanetaryEvent(event);return event;}catch{return null;}
 }
 export {HOROSCOPE_SIGNS,horoscopeCanonicalJson};

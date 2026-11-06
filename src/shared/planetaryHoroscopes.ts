@@ -1,6 +1,7 @@
 import {assertCleanReaderCopy} from '../../apps/web/src/content/editorialCopyBoundary.mjs';
 import {validatePlanetaryReadings as validateStructure,assertPlanetaryHoroscopeRow as assertRowStructure,type PlanetaryEvent} from './planetaryHoroscopeIdentity.js';
 export * from './planetaryHoroscopeIdentity.js';
+export * from './planetaryHoroscopeVisit.js';
 
 function assertReaderFields(readings:ReturnType<typeof validateStructure>){
   assertCleanReaderCopy({headline:readings.passages.map(p=>p.headline).join('\n'),body:readings.passages.map(p=>p.body).join('\n\n')});
