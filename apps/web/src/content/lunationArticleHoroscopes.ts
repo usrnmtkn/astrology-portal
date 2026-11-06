@@ -2,6 +2,7 @@ import { lunationHoroscopeIdentities } from "../../../../src/shared/lunationHoro
 import { datedLunationContentKey, lunationReaderContentKeys } from "./lunationArticleIdentity";
 import { resolveLunationReaderSource } from "./lunationReaderSource";
 import { articleHoroscopeSection } from "./skyArticleHoroscopes.mjs";
+import {moonHoroscopeKey} from '../../../../src/shared/datedMoonIdentity.mjs';
 import { resolveCmsSurfaceOverride, type CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { publicationAllowsContent } from "./contentPublicationState";
 import { fallbackArchitectureV3AuthoredContentForKey } from "../services/generatedContent";
@@ -23,7 +24,7 @@ export function lunationArticleHoroscopeKeys(event: Event) {
 }
 
 export function lunationArticleContentKeys(event: Event) {
-  return [...lunationReaderContentKeys(event), ...lunationArticleHoroscopeKeys(event)];
+  return [...lunationReaderContentKeys(event), ...[moonHoroscopeKey(event)].filter(Boolean), ...lunationArticleHoroscopeKeys(event)];
 }
 
 export function lunationArticleSnapshotKeys(sky: Pick<SkySnapshot, "moonEvent">, event?: Event) {
@@ -50,6 +51,13 @@ export async function loadDatedLunationArticle(location: LocationInput, datePart
 }
 
 export function resolveLunationArticleHoroscopes(event: Event, content: CmsGeneratedContentMap, timeZone?: string) {
+  const datedKey=moonHoroscopeKey(event);
+  const dated=datedKey?resolveCmsSurfaceOverride(content,[datedKey]):null;
+  if(dated){
+    if(!dated.body)return [];
+    const section=articleHoroscopeSection(content.get(datedKey)?.sections);
+    return section?.passages.map(({risingSign,house,body})=>({risingSign,house,body,contentKey:datedKey}))??[];
+  }
   const source = resolveLunationReaderSource(event, content, timeZone);
   const saved = source?.body ? content.get(source.contentKey) : null;
   const explicit = articleHoroscopeSection(saved?.sections);

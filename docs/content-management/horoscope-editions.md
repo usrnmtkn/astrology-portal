@@ -29,6 +29,68 @@ restoration, reload, archive links, sign switching and empty-period discovery in
 
 Open **Write → Horoscopes** (`/admin/content#horoscopes`).
 
+### Dated New and Full Moon horoscopes
+
+Open **Horoscopes → New & Full Moon horoscopes** (`/admin/content#moon-horoscopes`).
+Choose a month and time zone, select the calculated Moon event, then open its
+horoscopes. Paste the twelve complete readings with sign headings such as
+`Aries / Aries Rising`, `Aries & Aries Rising`, or `Aries Rising`. Match and review
+the signs, then save the complete set as a draft. Saved links reopen the same set
+after reload. Existing sets also open from Content Library and Review Queue.
+
+The preview identifies each rising sign and its calculated whole-sign house.
+Missing, duplicate or conflicting signs, incorrect Moon/house subheadings, and
+recognized editorial notes stop the import. The original paste and server-generated
+SHA-256 stay private; only the complete reader headings and passages are public.
+The import preserves paragraph text and does not generate or rewrite it.
+
+Publishing requires approval of the complete saved wording. The server verifies
+the event against the ephemeris again and stores one exact UTC event-date/phase/sign
+identity, independent of the editor's time zone. Its twelve passages take precedence
+over reusable lunar readings only for that event, in both Sky and Calendar article
+horoscope cards. The main Moon article remains a separate source. Other events keep
+their own dated or reusable readings. Drafts are excluded from public transport.
+
+Edits to a published set create a private `horoscope-edition-revision`; the current
+published copy remains available. Publishing the revision uses the existing atomic,
+version-checked transaction, with its history, publication ledger and receipt. The
+dated-Moon migration extends that transaction's target-family guard without changing
+its grants, locks or caller access. Conflicts preserve newer writing and the open text.
+
+Verification: `node --import tsx scripts/test-dated-moon-horoscopes.mts` and
+`npx playwright test -c playwright.lunation-studio.config.ts tests/visual/dated-moon-horoscopes.spec.ts`. The latter exercises
+desktop/mobile and light/dark using actual handlers and isolated storage; it does
+not publish owner content or establish production deployment.
+
+The November 6 integration controls compare accepted main `25092e7c9` with
+the Moon feature, using independent locked installs and knowledge builds, native
+ARM64 Node 22.20.0, gzip level 9 and identical synthetic CI settings. The enabled
+Web profile uses the actual `VITE_ENABLE_NATAL_ASPECT_PATTERNS=true` flag.
+
+| Gzip metric | Main | Moon integration | Cost | Resulting limit |
+| --- | ---: | ---: | ---: | ---: |
+| Admin entry | 238,837 | 239,024 | 187 | 239,100 |
+| Admin aggregate JavaScript | 880,262 | 886,688 | 6,426 | 886,900 |
+| Web App boot, standard | 398,701 | 399,102 | 401 | 399,250 |
+| Web App boot, enabled | 398,683 | 399,107 | 424 | 399,250 |
+| Web reader boot, standard | 456,971 | 457,372 | 401 | 457,500 |
+| Web reader boot, enabled | 456,953 | 457,377 | 424 | 457,500 |
+| Web aggregate JavaScript, standard | 3,711,979 | 3,717,752 | 5,773 | 3,718,000 |
+| Web aggregate JavaScript, enabled | 3,711,906 | 3,717,605 | 5,699 | 3,718,000 |
+
+The budget rationale retains exact candidate heads. The initial enabled-profile
+attempt used an unread flag and counts as standard-only evidence; the corrected
+pair supplies enabled coverage. The original strict failures remain recorded.
+Rollup also merged
+shared leaves into the existing feedback panel, removing its exact source
+facade. Preserving that panel in the established manual-chunk list restores its
+independent dynamic entry with no static parents; the original guard is retained.
+All other limits remain unchanged, including the Web App chunk and CSS. These
+measurements account for the requested feature, not a speed improvement. Final
+exact-head API, content, budget, privacy and rendered-flow gates remain required.
+
+### Daily, weekly, monthly and seasonal editions
+
 1. **Dates:** choose daily, weekly, monthly or seasonal, a date, and a city or time zone.
    **Continue to writing plan** calculates the period, saves an empty draft and
    prepares its plan without a model call. An existing edition opens with its

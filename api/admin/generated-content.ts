@@ -1438,13 +1438,16 @@ function validateAspectRetrogradeCopy(contentKey: string | null, record: Record<
 
 function normalizeArticleHoroscopes<T extends Record<string, any>>(row: T, previous:Record<string,any>|null=null): T {
   assertHoroscopeRow(row,{previous});
-  try { return libs().separateArticleHoroscopeRow(row); }
+  try { libs().assertMoonHoroscopeRow(row); return libs().separateArticleHoroscopeRow(row); }
   catch (error) { throw new GeneratedContentRequestError((error as Error).message, 422); }
 }
 
 function assertReaderEligiblePublication(row: Record<string, any>) {
   assertHoroscopeRow(row);
+  try { libs().assertMoonHoroscopeRow(row); }
+  catch(error) { throw new GeneratedContentRequestError((error as Error).message,422); }
   if (row.status !== "LIVE") return;
+  if(String(row.content_key??'').startsWith('cms/lunation-horoscopes/')&&!hasExactStudioOwnerApproval(row))throw new GeneratedContentRequestError('Save these Moon horoscopes as a draft, then approve and publish the saved wording.',409);
   if (row.event_type === 'sky-article-edition' && (!skyArticleCompiledHashMatches(row.sections?.skyArticleEdition)
     || !libs().approvedSkyArticleReaderEdition(row as ExistingGeneratedContentRow))) {
     throw new GeneratedContentRequestError('The compiled article no longer matches its approved reader copy. Recompile the complete edition before publishing.', 409);
@@ -1981,6 +1984,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
   };
 
   Object.assign(row, normalizeArticleHoroscopes(row));
+  if(row.content_key.startsWith('cms/lunation-horoscopes/')&&(await fetchExistingRowsByContentKey([row.content_key])).some(existing=>existing.mode===row.mode))throw new GeneratedContentRequestError('These Moon horoscopes already exist. Reload the saved version before editing.',409);
   if (row.status === "LIVE") row.sections = standalonePublicationSections(row, now);
   stampStudioPackageOwnerApproval(row, isExplicitDailyOwnerPublish(body) || body.ownerAuthoredWording === true && body.reviewStatus === "approved", now);
   assertReaderEligiblePublication(row);
@@ -2134,6 +2138,10 @@ function nextGeneratedContentVersion(previous?: string | null) {
 }
 
 async function validatedLunationPublication(row: Record<string, any>) {
+  if (String(row.content_key ?? '').startsWith('cms/lunation-horoscopes/')) {
+    const {moonHoroscopePublicationPatch}=await import('../_lib/moon-horoscope-publication.js');
+    return moonHoroscopePublicationPatch(row);
+  }
   if (row.status !== "LIVE" || !String(row.content_key ?? "").startsWith("cms/lunation-article/")) return {};
   const { lunationPublicationPatch } = await import("../_lib/lunation-article-publication.js");
   return lunationPublicationPatch(row);
@@ -2765,7 +2773,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
     const target = horoscopeRevision && existing.mode === 'studio-draft' && existing.status === 'DRAFT'
       ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
-    if (!target || !target.content_key.startsWith('horoscope/') || target.content_key !== existing.content_key
+    if (!target || !(target.content_key.startsWith('horoscope/')||target.content_key.startsWith('cms/lunation-horoscopes/')) || target.content_key !== existing.content_key
       || target.mode !== 'article' || target.status !== 'LIVE' || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
       throw new GeneratedContentRequestError('The published horoscope edition changed. Reopen it before publishing this revision.', 409);
     }
@@ -3450,7 +3458,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && !(body.sections as Record<string, unknown>)?.articleHoroscopes) {
     throw new GeneratedContentRequestError("Saved article horoscopes cannot be omitted. Reload the article before saving.", 422);
   }
-  const editsHoroscopeEdition = existing.content_key.startsWith('horoscope/') && (
+  const editsHoroscopeEdition = (existing.content_key.startsWith('horoscope/') || existing.content_key.startsWith('cms/lunation-horoscopes/')) && (
     (body.body !== undefined && body.body !== existing.body)
     || (body.headline !== undefined && body.headline !== existing.headline)
     || (body.summary !== undefined && body.summary !== existing.summary)
@@ -3562,7 +3570,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       targetRowId:existing.source_snapshot?.targetRowId, targetRowUpdatedAt:existing.source_snapshot?.targetRowUpdatedAt,
       targetContentKey:existing.source_snapshot?.targetContentKey};
   }
-  if (existing.content_key.startsWith('horoscope/') && existing.mode === 'article' && existing.status === 'LIVE'
+  if ((existing.content_key.startsWith('horoscope/')||existing.content_key.startsWith('cms/lunation-horoscopes/')) && existing.mode === 'article' && existing.status === 'LIVE'
     && patch.status === 'DRAFT' && !body.ownerAction && !body.sourceLifecycleAction) {
     const revision = {...existing,...patch,id:undefined,mode:'studio-draft',event_type:'horoscope-edition-revision',
       source_snapshot:{...existing.source_snapshot,...(patch.source_snapshot as object ?? {}),

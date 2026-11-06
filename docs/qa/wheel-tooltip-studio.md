@@ -387,3 +387,15 @@ nav coverage includes the requested Zodiac Wheel group. CSS/token audits pass.
 Before integration with newer main, fresh Web App/reader startup is 390594/449251,
 App chunk 89812, aggregate JS/CSS 3735202/147475 gzip bytes. Studio entry raw/gzip
 is 827710/240346 and aggregate JS 900789. Existing numeric ceilings pass.
+
+Integration with current main `625dc6266` preserves its dated Moon editor,
+publication tests and deferred feedback panel. Matched independent-dependency
+builds record Web aggregate JS 3717682/3741098 and Studio aggregate JS
+886688/908016 gzip bytes (main/integrated). The narrowly measured combined
+allocations and initial strict failures are retained in both budget rationales;
+reader startup limits, lazy boundaries and runtime guards are not relaxed.
+The existing guest Sky/article journey passes after waiting for the lazy
+renderer and still checks highlighted configured aspects and keyboard closure.
+Only the intentional Sky light wheel image differs in local visual baselines;
+the reviewed macOS actual replaces that one image. All other baseline images
+pass unchanged. Linux review will use the exact PR-head CI artifact.
