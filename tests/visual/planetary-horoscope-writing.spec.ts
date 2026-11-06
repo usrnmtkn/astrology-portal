@@ -28,7 +28,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Generate
     await expect(studio.locator('h1,h2,h3')).toHaveText(['Planetary horoscopes']);
     await expect(studio.getByText('No saved planetary horoscope sets yet.',{exact:true})).toBeHidden();
     await page.screenshot({path:`test-results/planetary-writer-empty-${width}-${theme}.png`,fullPage:true});
-    await studio.getByLabel('Planet',{exact:true}).selectOption('mercury');await studio.getByLabel('A date during the visit',{exact:true}).fill('2026-11-05');await studio.getByLabel('Time zone',{exact:true}).fill('America/New_York');
+    await studio.getByRole('combobox',{name:'Planet',exact:true}).selectOption('mercury');await studio.getByLabel('A date during the visit',{exact:true}).fill('2026-11-05');await studio.getByLabel('Time zone',{exact:true}).fill('America/New_York');
     await studio.getByRole('button',{name:'Find planetary event',exact:true}).click();
     if(width===1440&&theme==='light'){await expect(studio.getByRole('alert')).toHaveText('Synthetic event lookup unavailable.');await studio.getByRole('button',{name:'Find planetary event',exact:true}).click();}
     await expect(studio.getByText(/Mercury in Scorpio ·/)).toBeVisible();expect(await api.call({method:'rows'})).toHaveLength(0);expect(await api.call({method:'provider-calls'})).toHaveLength(0);
