@@ -205,6 +205,15 @@
       "access": "owner"
     },
     {
+      "path": "/api/admin/planetary-horoscope-writing",
+      "file": "api/admin/planetary-horoscope-writing.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "access": "owner"
+    },
+    {
       "path": "/api/admin/prepopulate-content",
       "file": "api/admin/prepopulate-content.ts",
       "methods": [
