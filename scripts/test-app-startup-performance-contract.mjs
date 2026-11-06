@@ -95,6 +95,9 @@ const reportFixtureEntrySource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/components/reports/ReportArticleFixtureEntry.tsx"),
   "utf8"
 );
+const reportArticleSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/reports/ReportArticle.tsx"), "utf8");
+const keyDatesPanelSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/KeyDatesPanel.tsx"), "utf8");
+const articlePanelStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/article-panels.css"), "utf8");
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
 const friendDetailStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-detail.css"), "utf8");
 const friendChartModalStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-chart-modal.css"), "utf8");
@@ -345,16 +348,27 @@ assert.doesNotMatch(
   /report-article\.css/u,
   "Report-only CSS must not remain in the reader startup stylesheet."
 );
-assert.match(
-  reportRouteSource,
-  /import "\.\.\/styles\/report-article\.css";/u,
-  "The lazy report route must own its production article stylesheet."
-);
-assert.match(
-  reportFixtureEntrySource,
-  /import "\.\.\/\.\.\/styles\/report-article\.css";/u,
-  "The standalone report fixture must explicitly own its article stylesheet."
-);
+assert.doesNotMatch(readerStylesSource, /article-panels\.css/u,
+  "Shared article-panel CSS must remain outside the reader startup stylesheet.");
+for (const entry of ["ReportDeliveryView", "ReportVanityDeliveryView"]) {
+  assert.match(reportRouteSource, new RegExp(`const ${entry} = lazy\\(\\(\\) =>\\s*import\\("\\.\\./components/reports/${entry}"\\)`, "u"),
+    `${entry} must remain deferred behind the report route.`);
+}
+assert.match(reportFixtureEntrySource, /import \{ ReportArticleFixtureHarness \} from "\.\/ReportArticleFixtureHarness";/u,
+  "The standalone fixture must load the real article renderer through its harness.");
+for (const entry of ["ReportDeliveryView", "ReportVanityDeliveryView", "ReportArticleFixtureHarness"]) {
+  const source = fs.readFileSync(path.join(repoRoot, `apps/web/src/components/reports/${entry}.tsx`), "utf8");
+  assert.match(source, /import \{ ReportArticle\b[^}]*\} from "\.\/ReportArticle";/u,
+    `${entry} must retain the shared article renderer and its stylesheet dependency.`);
+}
+assert.match(reportArticleSource, /import \{ KeyDatesPanel \} from "\.\.\/KeyDatesPanel";/u,
+  "ReportArticle must retain the shared disclosure and its stylesheet dependency.");
+assert.match(keyDatesPanelSource, /import "\.\.\/styles\/article-panels\.css";/u,
+  "The shared disclosure must own its deferred article stylesheet.");
+for (const stylesheet of ["report-article", "sky-placement-article"]) {
+  assert.match(articlePanelStylesSource, new RegExp(`@import url\\("\\./${stylesheet}\\.css"\\);`, "u"),
+    `The shared article stylesheet must include ${stylesheet} styles.`);
+}
 assert.match(
   readerStylesSource,
   /styles\/responsive\.css/u,

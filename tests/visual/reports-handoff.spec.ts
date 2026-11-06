@@ -1,6 +1,7 @@
 import {test,expect,type Page} from '../helpers/polish-test';
 import {expectReadableTheme} from '../helpers/theme-contrast';
 import {selectMenuTheme} from '../helpers/menu-theme';
+import {expectKeyDatesHeaderCentered} from '../helpers/key-dates-panel';
 import {build} from 'esbuild';
 import {readFileSync} from 'node:fs';
 const owner='11111111-1111-4111-8111-111111111111';
@@ -133,7 +134,13 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Reports 
  await page.screenshot({path:`test-results/reports-article-${width}-${theme}.png`,fullPage:true});
  await page.reload();await expect(page.locator('.report-chapter').first()).toContainText('The complete overview opening.');
  const h=await articleHarness();await page.route('**/__reports-handoff',route=>route.fulfill({contentType:'text/html',body:`<!doctype html><html data-theme="${theme}"><head>${h.links}</head><body><div id="root"></div><script type="module">${h.script}</script></body></html>`}));
- await page.goto('/__reports-handoff');await page.getByRole('button',{name:'October 2, 2026 Date 2',exact:true}).click();
+ await page.goto('/__reports-handoff');
+ const keyDates=page.locator('.report-key-dates');await expect(keyDates).not.toHaveAttribute('open','');
+ await expectKeyDatesHeaderCentered(keyDates);
+ await keyDates.locator('summary').focus();await page.keyboard.press('Enter');await expect(keyDates).toHaveAttribute('open','');
+ await expectKeyDatesHeaderCentered(keyDates);
+ await expect(keyDates.locator('.key-dates-panel__count')).toHaveText('3');
+ await page.getByRole('button',{name:'October 2, 2026 Date 2',exact:true}).click();
  const dialog=page.getByRole('dialog');await expect(dialog).toContainText('Key date · 2 of 3');await expect(dialog).toContainText('Complete key date ending.');
  if(width<=800)await expect(page.locator('.report-key-date-modal .modal-positioner')).toHaveCSS('align-items','end');
  await page.screenshot({path:`test-results/reports-key-date-${width}-${theme}.png`});await page.keyboard.press('Escape');await expect(page.getByRole('button',{name:'October 2, 2026 Date 2',exact:true})).toBeFocused();

@@ -4,7 +4,6 @@ import { observeVerifiedAccount, type VerifiedAccountState } from "../services/v
 import { reportShareKeyFromHash } from "../services/reportLinks";
 import { ReportStateCard } from "../components/reports/ReportStateCard";
 import type { ReportTheme } from "../components/reports/ReportTopNavigation";
-import "../styles/report-article.css";
 import "../styles/report-library.css";
 
 const ReportTopNavigation = lazy(() =>

@@ -19,26 +19,44 @@ async function waitForAdmission(admission: Promise<boolean>, signal?: AbortSigna
   } finally { signal.removeEventListener('abort', abort); }
 }
 
-async function readPage(body: string, signal: AbortSignal) {
-  for (let attempt = 0; ; attempt++) {
-    signal.throwIfAborted();
-    try {
-      const response = await fetch('/api/content-reader', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body, signal, cache: 'no-store' });
-      // A successful header does not establish that the whole page arrived.
-      // Keep body transport failures inside the same attempt/deadline budget.
-      if (response.ok) return await response.json();
-      if (![502, 503, 504].includes(response.status) || attempt === 2) {
-        throw new Error(`Published content request failed (${response.status}).`);
-      }
-      await response.body?.cancel();
-    } catch (error) {
-      if (signal.aborted || attempt === 2 || !(error instanceof TypeError)) throw error;
-    }
-    // Retry only transient transport failures. The same page/caller deadline
-    // bounds every attempt; content validation and access errors are not retried.
-    await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+/** A scope belongs to one load, so cancelled navigation cannot poison later reads. */
+export async function withReaderNavigation<T>(operation: (signal: AbortSignal) => Promise<T>): Promise<T> {
+  const navigation = new AbortController();
+  const page = typeof window === 'undefined' ? null : window;
+  const cancel = () => navigation.abort();
+  page?.addEventListener?.('beforeunload', cancel, { once: true });
+  page?.addEventListener?.('pagehide', cancel, { once: true });
+  try { return await operation(navigation.signal); }
+  finally {
+    page?.removeEventListener?.('beforeunload', cancel);
+    page?.removeEventListener?.('pagehide', cancel);
   }
+}
+
+async function readPage(body: string, signal: AbortSignal) {
+  return withReaderNavigation(async navigation => {
+    // Keep the caller/default page deadline; navigation only adds cancellation.
+    const requestSignal = AbortSignal.any([signal, navigation]);
+    for (let attempt = 0; ; attempt++) {
+      requestSignal.throwIfAborted();
+      try {
+        const response = await fetch('/api/content-reader', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body, signal: requestSignal, cache: 'no-store' });
+        // A successful header does not establish that the whole page arrived.
+        // Keep body transport failures inside the same attempt/deadline budget.
+        if (response.ok) return await response.json();
+        if (![502, 503, 504].includes(response.status) || attempt === 2) {
+          throw new Error(`Published content request failed (${response.status}).`);
+        }
+        await response.body?.cancel();
+      } catch (error) {
+        if (requestSignal.aborted || attempt === 2 || !(error instanceof TypeError)) throw error;
+      }
+      // Retry only transient transport failures. The same page/caller deadline
+      // bounds every attempt; content validation and access errors are not retried.
+      await new Promise(resolve => setTimeout(resolve, 250 * (attempt + 1)));
+    }
+  });
 }
 /** Only this transport may fetch shared Studio rows in a reader. It deliberately
  * has no table name, arbitrary select, or authoring-field escape hatch. */

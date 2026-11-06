@@ -1,6 +1,10 @@
 name: Sky summary browser regression
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/sky-summary-candidate.yml'
+      - 'scripts/ci-install-playwright.sh'
   push:
     branches: [main]
     paths:
@@ -9,6 +13,7 @@ on:
       - 'playwright*.ts'
       - 'package*.json'
       - '.github/workflows/sky-summary-candidate.yml'
+      - 'scripts/ci-install-playwright.sh'
   workflow_dispatch:
 
 permissions:
@@ -20,7 +25,10 @@ concurrency:
 
 jobs:
   summary-browser:
-    runs-on: ubuntu-latest
+    # Azure mirror dependency stalls consumed the browser-job deadline:
+    # https://github.com/usrnmtkn/astrology-portal/actions/runs/42109877466
+    # https://github.com/usrnmtkn/astrology-portal/actions/runs/42119649830
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -37,7 +45,8 @@ jobs:
       - run: npm ci
       - run: npm run build:knowledge
       - run: npm run typecheck
-      - run: npx playwright install --with-deps chromium
+      - name: Install Chromium with shared Ubuntu mirror recovery
+        run: bash scripts/ci-install-playwright.sh
       - name: Verify cold load, warm refresh, publication replacement, retirement, retry and initial loading budget
         run: npx playwright test -c playwright.config.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts --workers=1 --shard=${{ matrix.shard }}/2
       - uses: actions/upload-artifact@v6

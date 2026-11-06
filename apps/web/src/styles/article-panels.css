@@ -1,0 +1,56 @@
+@import url("./sky-placement-article.css");
+@import url("./report-article.css");
+
+.retrograde-cycles--article .retrograde-cycles__section,
+.sky-placement-article__status,
+details.key-dates-panel {
+  margin: 0;
+  padding: var(--space-7) var(--space-8) calc(var(--space-7) + var(--space-1));
+  border: 0;
+  border-radius: var(--card-radius);
+  background: var(--surface);
+  box-shadow: var(--card-shadow);
+}
+.retrograde-cycles--article .retrograde-cycles__section > summary,
+.key-dates-panel > summary {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  list-style: none;
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-title);
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink);
+  cursor: pointer;
+}
+.key-dates-panel > summary::-webkit-details-marker { display: none; }
+.key-dates-panel > summary .key-dates-panel__title { margin: 0; font: inherit; }
+.key-dates-panel__count { font-family: var(--font-ui); font-size: var(--type-ui-copy-size); color: var(--muted); }
+.retrograde-cycles--article .retrograde-cycles__chevron,
+.key-dates-panel__chevron {
+  display: grid;
+  place-items: center;
+  flex: none;
+  align-self: center;
+  margin-left: auto;
+  width: var(--placement-control-size);
+  height: var(--placement-control-size);
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+}
+.key-dates-panel__chevron svg { width: var(--space-4); height: var(--space-4); }
+.key-dates-panel[open] > summary svg { transform: rotate(180deg); }
+details.key-dates-panel,
+.article-page .key-dates-panel.article-section { padding-block: var(--space-7); }
+.key-dates-panel > .key-dates-panel__summary { align-items: center; }
+.key-dates-panel > summary + * { margin-top: var(--space-6); }
+.key-dates-panel > p { margin: var(--space-6) 0 0; }
+.key-dates-panel > p:not([class]) { font-size: var(--text-body); line-height: var(--leading-body); }
+@media (max-width: 800px) {
+  .retrograde-cycles--article .retrograde-cycles__section,
+  .sky-placement-article__status,
+  details.key-dates-panel,
+  .article-page .key-dates-panel.article-section { padding: var(--lunar-space-28) var(--space-6); }
+}

@@ -140,7 +140,7 @@ function group(initial, snapshot = initial, { storageUnavailable = false, tabCou
     class ClockDate extends Date { constructor(value) { super(value === undefined ? clock++ : value); } static now() { return clock++; } }
     Object.assign(window, { localStorage, navigator: { onLine: true }, setInterval: () => 1, clearInterval() {} });
     const context = vm.createContext({ window, document, localStorage, navigator: window.navigator,
-      CustomEvent: FixtureEvent, BroadcastChannel: Channel, Date: ClockDate, setTimeout, clearTimeout, AbortSignal,
+      CustomEvent: FixtureEvent, BroadcastChannel: Channel, Date: ClockDate, setTimeout, clearTimeout, AbortSignal, AbortController,
       console: { log() {}, warn() {} }, URL, TextEncoder, TextDecoder, crypto: webcrypto, structuredClone, __fixture: { counts, client, contentKey },
       fetch: async (url, options) => {
         if (String(url) === '/api/content-reader') {

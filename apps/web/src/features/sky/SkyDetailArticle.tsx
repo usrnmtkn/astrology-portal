@@ -1,4 +1,5 @@
 import { NatalChartReadings } from "../../components/NatalChartReadings";
+import { KeyDatesPanel } from "../../components/KeyDatesPanel";
 import { skyPlacementAspectParagraphs } from '../../content/skyPlacementAspectBridge';
 import { SeasonArticleLink } from "../../components/SeasonArticleLink";
 import { PreparedProse as FormattedProse } from "../../components/FormattedWritingContent";
@@ -7,7 +8,6 @@ import { skyPassageEditSource, studioPassageEditHref } from '../../../../../src/
 import { skyPreviewReferenceDate } from '../../../../../src/shared/skyReaderPreview';
 import type { RetrogradeHistoryContext } from "../../components/RetrogradeHistory";
 import { RetrogradeCycles } from "../calendar/RetrogradeCycles";
-import "../../styles/sky-placement-article.css";
 import { ArticlePills, type ArticlePillData } from "../../components/ArticlePills";
 import { SkyMechanics, TransitFacts } from "../../components/ArticleFacts";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -712,8 +712,7 @@ export function SkyDetailArticle({
               )}
               {detail.natalPlanetReading ? <NatalChartReadings {...detail.natalPlanetReading} /> : null}
               {!placementPage && detail.keyDates?.length ? (
-                <section className="article-section sky-detail-section sky-placement-key-dates" aria-labelledby="sky-detail-key-dates-title">
-                  <h2 id="sky-detail-key-dates-title">Key dates</h2>
+                <KeyDatesPanel className="article-section sky-detail-section sky-placement-key-dates" titleId="sky-detail-key-dates-title" count={detail.keyDates.length}>
                   {detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null}
                   <dl>
                     {detail.keyDates.map((keyDate) => (
@@ -723,7 +722,7 @@ export function SkyDetailArticle({
                       </div>
                     ))}
                   </dl>
-                </section>
+                </KeyDatesPanel>
               ) : null}
               {detail.closingCharge ? (
                 <section className="article-section sky-detail-section sky-placement-closing-charge">

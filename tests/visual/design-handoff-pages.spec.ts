@@ -39,7 +39,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       const summary = page.locator('.sky-placement-key-dates > summary');
       await expect(summary).toHaveCSS('font-size', '26px');
       await expect(summary).toHaveCSS('line-height', '29.9px');
-      await expect(summary).toHaveCSS('align-items', 'baseline');
+      await expect(summary).toHaveCSS('align-items', 'center');
       await expect(page.locator('.sky-placement-key-dates')).not.toHaveAttribute('open', '');
       const row = first.locator('.article-related-aspects__copy').first();
       const badge = row.locator('.aspect-badge').first();
@@ -1420,8 +1420,8 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
     }
     await expectReadableTheme(page, `${item.title}, ${item.body}`);
     if (item.route === 'sky/placement/mercury/scorpio') {
-      await expect(page.locator('.sky-placement-article__panel[open], .retrograde-cycles__section[open]')).toHaveCount(0);
-      for (const panel of await page.locator('.sky-placement-article__panel > summary, .retrograde-cycles__section > summary').all()) { await expect(panel).toHaveCSS('font-size', '26px'); await expect(panel).toHaveCSS('line-height', '29.9px'); }
+      await expect(page.locator('.key-dates-panel[open], .retrograde-cycles__section[open]')).toHaveCount(0);
+      for (const panel of await page.locator('.key-dates-panel > summary, .retrograde-cycles__section > summary').all()) { await expect(panel).toHaveCSS('font-size', '26px'); await expect(panel).toHaveCSS('line-height', '29.9px'); }
     }
     // Compact Calendar intentionally hides the duplicate Today tag.
     if (item.route === 'calendar' && width > 720) await expectReadableTheme(page, '.calendar-sky-card__today, .lunar-calendar-day__number.is-today-disc');
@@ -1603,12 +1603,19 @@ for (const width of [320, 390, 768, 820, 1024, 1440, 1920]) for (const theme of 
       const layout = await section.evaluate(node => {
         const rect = (selector: string) => node.querySelector(selector)!.getBoundingClientRect().toJSON();
         const style = getComputedStyle(node);
+        const sky = node.closest('.sky-page')!;
         return { root: node.getBoundingClientRect().toJSON(), padding: parseFloat(style.paddingLeft),
+          placements: sky.querySelector('.placement-section')!.getBoundingClientRect().toJSON(),
+          placementContent: sky.querySelector(innerWidth <= 800 ? '.sky-placement-group .planet-placement-row--sky' : '.sky-placement-group .placement-table')!.getBoundingClientRect().toJSON(),
           head: rect('.sky-today-ledger__head'), copy: rect('.sky-today-ledger__copy'),
           grid: rect('.sky-debility-cards'), help: rect('.sky-debility-explain'),
           columns: getComputedStyle(node.querySelector('.sky-debility-cards')!).gridTemplateColumns.split(' ').length };
       });
-      expect(layout.padding).toBe(width > 1024 ? 48 : 24);
+      expect(layout.padding).toBe(width <= 800 ? 24 : 0);
+      expect(layout.root.x).toBeCloseTo(layout.placements.x, 0);
+      expect(layout.root.right).toBeCloseTo(layout.placements.right, 0);
+      expect(layout.grid.x).toBeCloseTo(layout.placementContent.x, 0);
+      expect(layout.grid.right).toBeCloseTo(layout.placementContent.right, 0);
       expect(layout.head.x - layout.root.x).toBeCloseTo(layout.padding, 0);
       expect(layout.copy.x).toBeCloseTo(layout.head.x, 0);
       expect(layout.grid.x).toBeCloseTo(layout.head.x, 0);
@@ -1635,6 +1642,10 @@ for (const width of [320, 390, 768, 820, 1024, 1440, 1920]) for (const theme of 
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await section.locator('h3').click();
       await section.screenshot({ path: `test-results/sky-effort-layout-${width}-${theme}-${date}.png` });
+      await cards.first().click();
+      await expect(page.locator('.sky-detail-article')).toBeVisible({ timeout: 60_000 });
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+      await expect(cards).toHaveCount(count);
     }
   });
 }
