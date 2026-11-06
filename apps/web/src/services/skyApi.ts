@@ -14,6 +14,7 @@ import {loadFormattedWriting} from '../../../../src/shared/components/formattedW
 
 const pending = new Map<string, Promise<SkySnapshot>>();
 let primedInitialSkyLoad: InitialSkyLoad | null = null;
+const isCancelled = (error: unknown) => (error as { name?: string } | null)?.name === "AbortError";
 
 /** Share exact inputs only. Never reuse an earlier live instant or another location. */
 export function getSkyFromApi(location: LocationInput, date: Date, complete: boolean | "placements" = true): Promise<SkySnapshot> {
@@ -35,7 +36,7 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
           payload = await response.json();
         }
       } catch (error) {
-        if (detail !== "placements" || signal.aborted) throw error;
+        if (detail !== "placements" || signal.aborted || isCancelled(error)) throw error;
         const response = await fetch(`/api/sky?${key}`, { signal, priority: "high" });
         if (!response.ok) throw new Error("Sky API unavailable.");
         payload = await response.json();
@@ -59,7 +60,8 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
         void loadFormattedWriting().catch(() => {});
       }
       return sky;
-    }, { timeoutMs: primedTransport ? Math.max(1, 8_000 - (performance.now() - primedTransport.startedAt)) : 8_000 }).finally(() => pending.delete(key));
+    }, { timeoutMs: primedTransport ? Math.max(1, 8_000 - (performance.now() - primedTransport.startedAt)) : 8_000,
+      cancelOnNavigation: true }).finally(() => pending.delete(key));
     pending.set(key, request);
     if (detail === "placements") trackInitialSkyReaderRequest(request);
   }
@@ -69,7 +71,8 @@ export function getSkyFromApi(location: LocationInput, date: Date, complete: boo
 export async function getSkyOnlineFirst(location: LocationInput, date: Date, complete: boolean | "placements" = true) {
   try {
     return await getSkyFromApi(location, date, complete);
-  } catch {
+  } catch (error) {
+    if (isCancelled(error)) throw error;
     // Offline or unavailable service: calculate the identical inputs locally.
     return getSkyLocally(location, date, complete);
   }
@@ -81,6 +84,7 @@ async function getSkyLocally(location: LocationInput, date: Date, complete: bool
 }
 
 export type InitialSkyLoad = {
+  cancelled?: boolean;
   detail?: "placements" | "full";
   day: string;
   location: LocationInput;
@@ -107,7 +111,10 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const date = transport ? new Date(transport.at) : skyDateTimeFromInput(day, location, true, now);
   const primed = matchingInitialSkyLoad(primedInitialSkyLoad, day, location, detail);
   if (primed) return primed;
-  const result = getSkyFromApi(location, date, detail === "placements" ? detail : true).catch(() => null);
+  const result = getSkyFromApi(location, date, detail === "placements" ? detail : true).catch(error => {
+    if (isCancelled(error)) initial.cancelled = true;
+    return null;
+  });
   // Direct articles benefit from early sources. On the list, let App mount and
   // start the selected publication reads before large source downloads compete.
   // The mounted source gate still requires the same complete package.
@@ -120,6 +127,7 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
     day, location, date, detail, live: Boolean(liveSkyReference(day, location.timeZone, now)), startedAt: performance.now(), result,
     matches: (selectedDay, selectedLocation, selectedDetail) => matchingInitialSkyLoad(initial, selectedDay, selectedLocation, selectedDetail),
     resolve: () => calculation ??= result.then(async snapshot => {
+      if (initial.cancelled) throw new DOMException("Sky request cancelled", "AbortError");
       if (snapshot) return snapshot;
       return getSkyLocally(location, date, detail === "placements" ? detail : true);
     })
@@ -132,7 +140,7 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
 /** Never apply a preloaded response to a changed location, date or clock mode.
  * Bound live adoption by monotonic time, including a delayed/suspended mount. */
 export function matchingInitialSkyLoad(initial: InitialSkyLoad | null, day: string, location: LocationInput, detail: "placements" | "full" = "full"): InitialSkyLoad | null {
-  if (!initial || (initial.detail ?? "full") !== detail || initial.day !== day || initial.location.latitude !== location.latitude
+  if (!initial || initial.cancelled || (initial.detail ?? "full") !== detail || initial.day !== day || initial.location.latitude !== location.latitude
     || initial.location.longitude !== location.longitude || initial.location.timeZone !== location.timeZone
     || initial.live !== Boolean(liveSkyReference(day, location.timeZone))
     || performance.now() - initial.startedAt > 10_000) return null;

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import handler from '../api/sky';
 import { getAstrodienstSky, getLunarCalendarWeek } from '../apps/web/src/services/ephemeris';
-import { getSkyFromApi, getSkyOnlineFirst } from '../apps/web/src/services/skyApi';
+import { getSkyFromApi, getSkyOnlineFirst, startInitialSkyLoad } from '../apps/web/src/services/skyApi';
 import SwissEph from 'swisseph-wasm';
 import { readCachedSkySnapshot, writeCachedSkySnapshot, scopedSkySnapshotCacheKey } from '../apps/web/src/services/verifiedSkyCache';
 const json = (value: unknown) => JSON.parse(JSON.stringify(value));
@@ -37,6 +37,7 @@ for(const fixture of fixtures) {
   const day=new Intl.DateTimeFormat('en-CA',{timeZone:location.timeZone,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(at));
   assert.deepEqual(sky.dailyEvents,json(calendar.days.find(d=>d.dateKey===day)?.events));
   const list=await invoke(`/api/sky?${params}&detail=placements`);
+  first.placements ??= list.payload.sky;
   assert.equal(list.status,200);
   assert.equal(list.payload.sky.calculationDetail,'placements');
   assert.deepEqual(list.payload.sky.positions,sky.positions,'List mode retains every complete placement window, station, shadow and residency fact.');
@@ -76,4 +77,60 @@ try {
   const local=await getSkyOnlineFirst(first.location,first.date);
   assert.deepEqual(json(local.positions),first.sky.positions,'API failure retains the exact local ephemeris fallback');
 } finally {globalThis.fetch=originalFetch;}
+const originalWindow=Object.getOwnPropertyDescriptor(globalThis,'window');
+const originalWorker=Object.getOwnPropertyDescriptor(globalThis,'Worker');
+try {
+  const page=Object.assign(new EventTarget(),{location:new URL('https://fixture.test/?date=2026-09-21#sky'),
+    localStorage:{getItem:(key:string)=>key==='tldrastro:selectedLocation'?JSON.stringify(first.location):null},
+    sessionStorage:{getItem:()=>null,setItem(){},removeItem(){}}});
+  Object.defineProperty(globalThis,'window',{configurable:true,value:page});
+  let workerStarts=0;
+  Object.defineProperty(globalThis,'Worker',{configurable:true,value:class {
+    constructor(){workerStarts++;throw new Error('Cancelled reads must not start local calculations.');}
+  }});
+  const calls:string[]=[];
+  let rejectTransport:(error:Error)=>void=()=>{};
+  globalThis.fetch=((input:RequestInfo|URL)=>{
+    calls.push(String(input));return new Promise<Response>((_resolve,reject)=>{rejectTransport=reject;});
+  }) as typeof fetch;
+  for(const event of ['beforeunload','pagehide']) for(const detail of ['placements',true,false] as const){
+    calls.length=0;
+    const request=getSkyFromApi(first.location,first.date,detail);
+    const rejected=assert.rejects(request,{name:'AbortError'});
+    page.dispatchEvent(new Event(event));rejectTransport(new TypeError('Synthetic native navigation rejection'));
+    await rejected;await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(calls.length,1,'Navigation cannot start a retry after the original request rejects.');
+  }
+  calls.length=0;
+  const online=getSkyOnlineFirst(first.location,first.date,'placements');
+  const cancelled=assert.rejects(online,{name:'AbortError'});
+  page.dispatchEvent(new Event('beforeunload'));rejectTransport(new TypeError('Synthetic native navigation rejection'));
+  await cancelled;assert.equal(calls.length,1);assert.equal(workerStarts,0);
+  calls.length=0;
+  const initial=startInitialSkyLoad()!;assert(initial);
+  const resolved=assert.rejects(initial.resolve(),{name:'AbortError'});
+  page.dispatchEvent(new Event('beforeunload'));rejectTransport(new TypeError('Synthetic native navigation rejection'));
+  assert.equal(await initial.result,null);await resolved;
+  assert.equal(initial.matches(initial.day,initial.location,initial.detail),null);
+  assert.equal(calls.length,1);assert.equal(workerStarts,0,'Cancelled initial reads cannot start a local fallback.');
+  calls.length=0;
+  const key=new URLSearchParams({at:first.date.toISOString(),lat:String(first.location.latitude),lon:String(first.location.longitude),
+    timeZone:first.location.timeZone,version:'tldrastro-calculation-v4',detail:'placements'}).toString();
+  const aborted=Promise.reject(new DOMException('Synthetic cancelled priming','AbortError'));void aborted.catch(()=>{});
+  Object.assign(page,{__tldrInitialSkyTransport:{key,startedAt:performance.now(),request:aborted}});
+  await assert.rejects(getSkyFromApi(first.location,first.date,'placements'),{name:'AbortError'});
+  assert.equal(calls.length,0,'Adopting an already cancelled transport cannot start another fetch.');
+  globalThis.fetch=(async input=>{
+    calls.push(String(input));return String(input).startsWith('/api/sky-reader?')
+      ?new Response('{}',{status:503}):new Response(JSON.stringify({sky:first.placements}));
+  }) as typeof fetch;
+  const recovered=await getSkyFromApi(first.location,first.date,'placements');
+  assert.deepEqual(calls.map(url=>new URL(url,'https://fixture.test').pathname),['/api/sky-reader','/api/sky']);
+  assert.equal(recovered.positions.length,14,'Active pages retain the verified transient-service fallback.');
+} finally {
+  globalThis.fetch=originalFetch;
+  for(const [key,value] of [['window',originalWindow],['Worker',originalWorker]] as const){
+    if(value)Object.defineProperty(globalThis,key,value);else Reflect.deleteProperty(globalThis,key);
+  }
+}
 console.log('PASS: actual Sky handler, three dates/two zones, direct Swiss positions, complete timing parity, input validation, exact-input coalescing, corrupt-response rejection and local fallback.');
