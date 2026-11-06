@@ -22,7 +22,7 @@ export async function seed(page: Page, theme: string, animations = 'off', manual
   await page.clock.setFixedTime(new Date(now));
   await bundledPublications(page);
   await page.route('**/auth/v1/**',route=>route.fulfill({json:null}));
-  await page.route('https://tldrastro-api-27165565299.us-central1.run.app/**',route=>route.fulfill({status:503,body:'Local fixture'}));
+  await page.route(`${(process.env.VITE_TLDRASTRO_API_URL || 'https://tldrastro-api-27165565299.us-central1.run.app').replace(/\/$/, '')}/**`,route=>route.fulfill({status:503,body:'Local fixture'}));
   await page.route('**/api/calendar?**',route=>route.fulfill({json:{ok:true,calendar:{days:[]}}}));
   await page.route('**/api/astrology-facts?**',route=>route.fulfill({json:{ok:true,sky:{aspectPatterns:{patterns:[],relationships:[],interpretationContexts:[],resolvedCopy:[]}}}}));
   await page.route('**/api/sky?**',async route=>{

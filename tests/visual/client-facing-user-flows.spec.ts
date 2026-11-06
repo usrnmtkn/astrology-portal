@@ -167,7 +167,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       }
     : null;
 
-  await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
+  await page.route(`${(process.env.VITE_TLDRASTRO_API_URL || "https://tldrastro-api-27165565299.us-central1.run.app").replace(/\/$/, "")}/**`, async (route) => {
     await route.fulfill({
       status: 503,
       contentType: "text/plain",
