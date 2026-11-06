@@ -1,8 +1,11 @@
 import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {mkdtempSync,mkdirSync,rmSync} from 'node:fs';
+import {join} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {invoke,store,providerCalls,syntheticReadings} from '../tests/helpers/planetary-horoscope-api.mts';
 import {planetaryEventKey,planetaryEventMatches,planetaryEventFromPosition,planetaryHouse,PLANETARY_HOROSCOPE_PLANETS,PLANETARY_DISPATCH_RECOVERY_DELAY_MS,HOROSCOPE_SIGNS,planetaryReadingsBody,validatePlanetaryReadings} from '../src/shared/planetaryHoroscopes';
 import {calculatePlanetaryEvent} from '../api/_lib/planetary-horoscope-facts';
-import {planetaryHoroscopeBody} from '../apps/web/src/features/horoscopes/usePlanetaryHoroscopeSources';
 import {preparePlanetaryHoroscopeWriting,planetaryWritingHash} from '../src/astro-writing/planetaryHoroscopeWriting.mjs';
 import {validatePlanetaryReading} from '../src/astro-writing/planetaryHoroscopeValidation.mjs';
 
@@ -10,7 +13,15 @@ const action=(row:any,action:string,extra:any={})=>invoke('POST',{action,id:row.
 const open=(date:string,planet='mercury')=>invoke('POST',{action:'open',planet,date,timeZone:'America/New_York'});
 const patch=(row:any,body:any)=>invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,...body},'/api/admin/generated-content');
 const reader=(row:any)=>invoke('POST',{keys:[row.content_key]},'/api/content-reader');
+mkdirSync('test-results',{recursive:true});
+const directory=mkdtempSync(join(process.cwd(),'test-results/planetary-reader-test-'));
 try{
+  const bundle=join(directory,'reader.mjs');
+  await build({stdin:{contents:"export {planetaryHoroscopeBody} from './apps/web/src/features/horoscopes/usePlanetaryHoroscopeSources';",resolveDir:process.cwd(),loader:'ts'},
+    bundle:true,format:'esm',platform:'node',outfile:bundle,external:['react'],
+    banner:{js:"import {createRequire} from 'node:module'; const require=createRequire(import.meta.url);"},
+    loader:{'.css':'empty'},define:{'import.meta.env':'{}'},logLevel:'silent'});
+  const {planetaryHoroscopeBody}=await import(pathToFileURL(bundle).href);
   assert.equal((await invoke('GET',undefined,'/api/admin/planetary-horoscope-writing','wrong-secret')).status,401);
   assert.equal((await invoke('POST',{action:'generate',id:'missing',expectedUpdatedAt:'missing'})).status,404);
   assert.equal(providerCalls.length,0);
@@ -128,4 +139,4 @@ try{
   }
   assert.equal(providerCalls.length,7,'Polling and failures never start a replacement writing call.');
   console.log('Planetary horoscope API: calculated visits, governed twelve-reading request, durable response, conflicts, revision publication and private reader boundary passed.');
-}finally{await store.close();}
+}finally{await store.close();rmSync(directory,{recursive:true,force:true});}
