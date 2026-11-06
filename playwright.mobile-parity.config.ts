@@ -1,4 +1,4 @@
-import {defineConfig} from '@playwright/test';
+import {defineConfig,devices} from '@playwright/test';
 import base from './playwright.config';
 export default defineConfig({...base,
  testMatch:['mobile-parity.spec.ts','connection-transit-separation.spec.ts','planetary-horoscope-navigation.spec.ts','friends-pair-forecast.spec.ts','sky-placement-press-refresh.spec.ts'],
@@ -13,6 +13,6 @@ export default defineConfig({...base,
   {name:'320-light',use:{browserName:'chromium' as const,viewport:{width:320,height:568},colorScheme:'light' as const}},
   {name:'430-dark',use:{browserName:'webkit' as const,viewport:{width:430,height:740},colorScheme:'dark' as const}}
   ].map(project=>({...project,testIgnore:'sky-placement-press-refresh.spec.ts'})),
-  {name:'390-webkit-publication-press',testMatch:'sky-placement-press-refresh.spec.ts',use:{browserName:'webkit' as const,viewport:{width:390,height:844},colorScheme:'light' as const}}
+  {name:'390-webkit-publication-press',testMatch:'sky-placement-press-refresh.spec.ts',use:{...devices['iPhone 13'],timezoneId:'America/New_York',colorScheme:'light' as const}}
  ]
 });
