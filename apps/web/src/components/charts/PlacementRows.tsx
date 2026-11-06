@@ -552,7 +552,7 @@ function SkyPlacementDescription({ description, interactive, loading }: { descri
   }, [description, loading]);
   // Let the card own input in both states. Changing the pressed text's hit
   // target during loading can suppress WebKit's click on mouse release.
-  return <span ref={ref} className={`planet-placement-row__description${loading ? " loading-lines card-skeleton" : ""}`} style={interactive ? { pointerEvents: "none" } : undefined}>
+  return <span ref={ref} aria-hidden={loading || undefined} className={`planet-placement-row__description${loading ? " loading-lines card-skeleton" : ""}`} style={interactive ? { pointerEvents: "none" } : undefined}>
     {loading ? <><SkeletonBar /><SkeletonBar /><SkeletonBar short /></> : <FormattedText text={description ?? ""} />}
   </span>;
 }

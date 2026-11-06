@@ -53,6 +53,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await expect(page.locator(".placement-table-wrap")).toHaveAttribute("aria-busy", "false");
     await expect(page.locator(".calendar-day-events")).toHaveAttribute("aria-busy", "false");
     await expect(page.locator(".planet-placement-row.card-skeleton, .calendar-day-panel .card-skeleton")).toHaveCount(0);
+    for (const description of await page.locator(".planet-placement-row__description").all()) {
+      await expect(description).not.toHaveAttribute("aria-hidden", "true");
+    }
     const after = await sizes();
     writeFileSync(info.outputPath("card-heights.json"), JSON.stringify({ before, after, beforeAnatomy, afterAnatomy: await anatomy(), beforeCalendarAnatomy, afterCalendarAnatomy: await calendarAnatomy() }, null, 2));
     await info.attach("card-heights", { path: info.outputPath("card-heights.json"), contentType: "application/json" });
