@@ -3,7 +3,7 @@ import {build} from 'esbuild';
 import {mkdtempSync,mkdirSync,rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {invoke,store,providerCalls,syntheticReadings} from '../tests/helpers/planetary-horoscope-api.mts';
+import {invoke,store,providerCalls,feedbackCalls,syntheticReadings} from '../tests/helpers/planetary-horoscope-api.mts';
 import {planetaryEventKey,planetaryEventMatches,planetaryEventFromPosition,planetaryHouse,PLANETARY_HOROSCOPE_PLANETS,PLANETARY_DISPATCH_RECOVERY_DELAY_MS,HOROSCOPE_SIGNS,planetaryReadingsBody,validatePlanetaryReadings} from '../src/shared/planetaryHoroscopes';
 import {calculatePlanetaryEvent} from '../api/_lib/planetary-horoscope-facts';
 import {preparePlanetaryHoroscopeWriting,planetaryWritingHash} from '../src/astro-writing/planetaryHoroscopeWriting.mjs';
@@ -47,7 +47,7 @@ try{
   assert(!JSON.stringify(inventory.payload).includes('planetaryGeneration'));
   assert.equal((await invoke('GET',undefined,'/api/admin/generated-content?horoscopeEditions=true&editionInventory=true')).payload.rows.length,0,'Period editions must exclude planetary sets.');
   const before=structuredClone(row);
-  await invoke('feedback-enabled',true);assert.equal((await action(row,'prepare')).status,503);assert.equal(providerCalls.length,0);await invoke('feedback-enabled',false);
+  await invoke('feedback-enabled',true);assert.equal((await action(row,'prepare')).status,503);assert.equal(feedbackCalls.length,1);assert.equal(providerCalls.length,0);await invoke('feedback-enabled',false);
   assert.equal((await action(row,'generate',{approvedPlanHash:'unreviewed'})).status,409);assert.equal(providerCalls.length,0);
   let result=await action(row,'prepare',{direction:'Synthetic private direction.'});assert.equal(result.status,200,JSON.stringify(result));row=result.payload.rows[0];
   assert.equal((await action(before,'generate',{approvedPlanHash:row.source_snapshot.planetaryGeneration.plan.planHash})).status,409);

@@ -8,6 +8,7 @@ process.env.OPENAI_API_KEY='synthetic-planetary-provider-key';
 process.env.STUDIO_MEMORY_FEEDBACK_ENABLED='false';
 const storageFetch=globalThis.fetch;
 export const providerCalls:any[]=[];
+export const feedbackCalls:string[]=[];
 let mode='complete',polls=0,privateRecordFailure=false;
 const results=new Map<string,any>();
 export const syntheticReadings=(event:any)=>HOROSCOPE_SIGNS.map(sign=>({sign,house:planetaryHouse(event.sign,sign),headline:`Synthetic ${sign}`,
@@ -15,6 +16,10 @@ export const syntheticReadings=(event:any)=>HOROSCOPE_SIGNS.map(sign=>({sign,hou
 globalThis.fetch=async(input:any,options:any={})=>{
   const url=new URL(String(input));
   if(url.origin!=='https://api.openai.com'){
+    if(url.origin==='https://calendar-api.invalid'&&url.pathname==='/rest/v1/rpc/studio_memory_active_snapshot'&&options.method==='POST'){
+      feedbackCalls.push(url.pathname);
+      return Response.json({error:'Synthetic owner feedback unavailable.'},{status:503});
+    }
     if(privateRecordFailure&&options.method==='POST'&&url.pathname.endsWith('/generated_interpretations')
       &&JSON.parse(options.body).content_key?.startsWith('studio-planetary-writing/'))return Response.json({error:'Synthetic private record unavailable.'},{status:503});
     return storageFetch(input,options);
