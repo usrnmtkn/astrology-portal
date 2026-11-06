@@ -33,6 +33,15 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Dated pl
     }
     await expect(page.getByRole('heading',{level:1})).toHaveText('Horoscopes');await expect(article.getByRole('heading',{level:2})).toHaveText(/Mercury.*in Scorpio/);
     await expect(article.getByRole('heading',{level:3})).toHaveCSS('font-family',/Newsreader/);
+    await expect(article.locator('h1,h2,h3')).toHaveText([/Mercury.*in Scorpio/,'Synthetic pisces']);
+    const headingContract=await article.getByRole('heading',{level:3}).evaluate(node=>{
+      const fields=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','marginTop','marginRight','marginBottom','marginLeft','textTransform','textAlign'];
+      const actual=getComputedStyle(node),probe=document.createElement('span');
+      probe.style.cssText='position:absolute;visibility:hidden;margin:0 0 var(--space-4);font-family:var(--font-display);font-size:var(--text-card-title);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-title)';
+      node.parentElement!.append(probe);const expected=getComputedStyle(probe);
+      const values=(style:CSSStyleDeclaration)=>Object.fromEntries(fields.map(key=>[key,style[key as keyof CSSStyleDeclaration]]));
+      const result={actual:values(actual),expected:values(expected)};probe.remove();return result;
+    });expect(headingContract.actual).toEqual(headingContract.expected);
     const dates=new Intl.DateTimeFormat('en-US',{month:'long',day:'numeric',year:'numeric',timeZone:'America/New_York'}).formatRange(new Date(row.facts.planetaryEvent.event.startsAt),new Date(row.facts.planetaryEvent.event.endsAt));
     await expect(article.locator('.horoscope-date')).toHaveText(dates);
     await page.screenshot({path:`test-results/dated-planetary-horoscopes-${width}-${theme}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
