@@ -2958,6 +2958,8 @@ export function ManualChartsPanel({
                 activeTab={friendProfileTab}
                 chartIsEvent={selectedChartIsEvent}
                 chartName={selectedChart.displayName}
+                birthTimeUnknown={selectedChart.birthTimeUnknown}
+                pronouns={selectedChart.pronouns}
                 comparisonIsSelf={relationshipComparisonIsSelf}
                 comparisonName={relationshipComparisonName}
                 comparisonOptions={relationshipComparisonOptions}

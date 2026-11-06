@@ -147,6 +147,7 @@ function catalogQuery(visibility: StudioInventoryVisibility = "all"): StudioInve
 }
 
 export function studioInventoryQuery(route: StudioInventoryRoute): StudioInventoryQuery {
+  if (route.page === "wheelTooltips") return prefixesQuery(["cms/wheel-tooltip/"]);
   if (route.page === "connectionTransits") return prefixesQuery(["authored/connection-activation/", "fallback-template/connection-transit.bridge/"]);
   // Visibility widens the rows inside a section, never the section itself.
   const catalogVisibility = route.showReferenceRows || route.showRetiredRows ? "all" : "editorial";

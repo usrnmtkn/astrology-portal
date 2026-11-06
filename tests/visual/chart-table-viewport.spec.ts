@@ -156,7 +156,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
     await page.goto(family==='Sky'?'/#sky':family.startsWith('You')?'/#you':'/#friends?tab=charts');
     if (family==='Sky') {
      if(viewport.width<=820) await page.getByRole('button',{name:'Open full current sky chart',exact:true}).click();
-     await chartFits(page,page.locator('.sky-wheel:visible').first());
+     await chartFits(page,page.locator('svg.interactive-zodiac-wheel__svg:visible').first());
      return;
     }
     if(family.startsWith('You')) {
@@ -187,7 +187,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
       await expect(page.getByRole('tab',{name:family,exact:true,includeHidden:true})).toHaveAttribute('aria-selected','true');
      }
     }
-    await chartFits(page,page.locator('.sky-wheel:visible').first());
+    await chartFits(page,page.locator('svg.sky-wheel:visible, svg.interactive-zodiac-wheel__svg:visible').first());
     if(friendNatal) {
      const bigThree = page.locator('.friend-big-three-list');
      await expect(bigThree).toContainText('Sun');
@@ -203,7 +203,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
       expect(width.scroll,JSON.stringify(width)).toBeLessThanOrEqual(width.client+1);
      }
      await page.getByRole('tab',{name:'Circle',exact:true}).click();
-     await chartFits(page,page.locator('.sky-wheel:visible').first());
+     await chartFits(page,page.locator('svg.interactive-zodiac-wheel__svg:visible').first());
     }
     if(family==='Friend natal') {
      const ascendant=page.getByRole('button',{name:/Ascendant in/});

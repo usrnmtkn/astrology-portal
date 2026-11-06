@@ -5,6 +5,7 @@ import { selectMoonTransitVariant } from '../../apps/web/src/content/fallbackArc
 import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
+import { installSyntheticNetworkGuard } from "../helpers/synthetic-network-guard";
 import { expectPersonalizedPlacementPresentation } from "../helpers/sky-personalized-presentation";
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
 import { readFileSync } from "node:fs";
@@ -1278,6 +1279,16 @@ async function expectAspectInspector(
   pointId?: string
 ) {
   await expect(wheel, `${label} is visible`).toBeVisible();
+
+  if (await wheel.locator(".interactive-zodiac-wheel").count()) {
+    const point = wheel.locator(pointId ? `[data-planet="${pointId}"] [role="button"]` : '.interactive-wheel-planet-button').first();
+    await point.click();
+    await expect(point).toHaveAttribute("aria-pressed", "true");
+    await expect(wheel.locator(".interactive-wheel-detail")).toBeVisible();
+    await point.press("Enter");
+    await expect(wheel.locator(".interactive-wheel-detail")).toHaveCount(0);
+    return;
+  }
 
   let resolvedPointId = pointId;
 
@@ -6337,6 +6348,9 @@ test("Natal published readings stay unavailable for unknown birth times", async 
   await seedClientState(page, { profile: true, profileBirthTime: "Time unknown" });
   await expectClientRouteLoads(page, "/#you");
   await selectYouNatalTab(page);
+  const wheel = page.locator("#wheel-natal .interactive-zodiac-wheel");
+  await expect(wheel).toHaveAttribute("data-has-houses", "false");
+  await expect(wheel.locator(".interactive-wheel-angle, .interactive-wheel-house, .interactive-wheel-lord-connector")).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Day chart", exact: true })).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Night chart", exact: true })).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Chart sect", exact: true })).toHaveCount(0);
@@ -6590,4 +6604,158 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) for (con
       await expect(article).not.toContainText("Unpublished Saturn proposal must not appear.");
     }
   }
+});
+
+// Keep member reads inside the fixture. The shared empty-inventory fixture is
+// not a valid save receipt and otherwise causes repeated chart synchronization.
+const wheelJourneyTest = test.extend({
+  page: async ({ page }, use, info) => {
+    const network = await installSyntheticNetworkGuard(page.context(), new URL(info.project.use.baseURL as string).origin);
+    try { await use(page); }
+    finally {
+      await network.finishStaticFonts();
+      expect(network.unhandledExternal, "Wheel journeys must not contact unhandled external services").toEqual([]);
+    }
+  }
+});
+
+async function routeWheelSavedCharts(page: Page) {
+  // Register after seedClientState's bundled-publication defaults. Return the
+  // same synthetic saved charts in the database's read shape, not an empty
+  // successful insert that loses the chart's identity during navigation.
+  let savedRows: Promise<Array<Record<string, any>>> | undefined;
+  await page.route("**/rest/v1/manual_charts*", async route => {
+    expect(["GET", "PATCH"]).toContain(route.request().method());
+    // Cloud storage survives local-cache migration and document reloads.
+    const rows = await (savedRows ??= page.evaluate(userId => {
+      const charts = JSON.parse(localStorage.getItem(`tldrastro:manualCharts:${userId}`) ?? "[]");
+      return charts.map((chart: Record<string, any>) => ({
+        id: chart.id, owner_user_id: userId, claimed_by_user_id: null,
+        display_name: chart.displayName, first_name: chart.firstName, last_name: chart.lastName,
+        pronouns: chart.pronouns, relationship_type: chart.relationshipType,
+        birth_date: chart.birthDate, birth_time: chart.birthTime,
+        birth_time_unknown: chart.birthTimeUnknown, birth_place: chart.birthPlace,
+        birth_latitude: chart.birthLocation.latitude, birth_longitude: chart.birthLocation.longitude,
+        birth_timezone: chart.birthLocation.timeZone, natal_chart: chart.natalChart, notes: chart.notes,
+        created_at: chart.createdAt, updated_at: chart.updatedAt
+      }));
+    }, fixtureUserId));
+    expect(rows).toHaveLength(3);
+    const id = new URL(route.request().url()).searchParams.get("id")?.replace(/^eq\./u, "");
+    const result = id ? rows.filter((row: { id: string }) => row.id === id) : rows;
+    if (route.request().method() === "PATCH") {
+      expect(id).toBeTruthy();
+      expect(result).toHaveLength(1);
+      Object.assign(result[0], route.request().postDataJSON());
+    }
+    return route.fulfill({ json: route.request().headers().accept?.includes("vnd.pgrst.object") ? result[0] ?? null : result });
+  });
+}
+
+for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
+  wheelJourneyTest(`interactive zodiac wheel journey across Sky You and Friend ${theme} ${width}`, async ({ page }, info) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
+    await routeWheelSavedCharts(page);
+    await expectClientRouteLoads(page, "/#sky");
+    const sky = page.getByRole("region", { name: "Current sky", exact: true });
+    const skyWheel = sky.locator(".interactive-zodiac-wheel");
+    await expect(skyWheel).toBeVisible();
+    await skyWheel.locator('[data-planet="Sun"] [role="button"]').click();
+    await expect(skyWheel.locator(".interactive-wheel-detail")).toBeVisible();
+    const detailBounds = (await skyWheel.locator(".interactive-wheel-detail").boundingBox())!;
+    const columnBounds = (await sky.boundingBox())!;
+    expect(detailBounds.y + detailBounds.height).toBeLessThanOrEqual(columnBounds.y + columnBounds.height + 1);
+    await expect(skyWheel.locator(".interactive-wheel-lord-connector")).toHaveCount(0);
+    await skyWheel.screenshot({ path: info.outputPath("sky-selected.png") });
+    await sky.getByRole("button", { name: "Open full current sky chart" }).click();
+    await expect(page.locator(".sky-full-chart-view .interactive-zodiac-wheel")).toBeVisible();
+    await page.locator(".sky-full-chart-view").getByRole("button", { name: "Back", exact: true }).click();
+
+    await expectClientRouteLoads(page, "/#you?tab=chart");
+    await selectYouNatalTab(page);
+    const you = page.locator("#wheel-natal .interactive-zodiac-wheel");
+    await expect(you).toBeVisible();
+    const natalFacts = await you.locator(".interactive-wheel-planet-button").evaluateAll(nodes => nodes.map(node => node.getAttribute("aria-label")));
+    await you.locator('[data-house="1"]').focus(); await page.keyboard.press("Enter");
+    await expect(you.locator(".interactive-wheel-detail__heading")).toContainText("Lord:");
+    await you.getByRole("button", { name: "House ruler details" }).last().click();
+    await expect(you.getByRole("dialog", { name: "House ruler", exact: true })).toContainText("Your 1st house ruler");
+    await you.screenshot({ path: info.outputPath("you-ruler.png") });
+    await page.keyboard.press("Escape"); await page.keyboard.press("Escape");
+    await expectClientRouteLoads(page, "/?date=2026-07-20#you?tab=chart");
+    await selectYouNatalTab(page);
+    await expect.poll(() => you.locator(".interactive-wheel-planet-button").evaluateAll(nodes => nodes.map(node => node.getAttribute("aria-label")))).toEqual(natalFacts);
+
+    await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=natal");
+    await selectFriendDetailTab(page, "Natal");
+    const friend = page.getByLabel("Nikki natal chart wheel", { exact: true }).locator(".interactive-zodiac-wheel");
+    await expect(friend).toBeVisible();
+    await friend.locator('[data-house="1"]').focus(); await page.keyboard.press("Enter");
+    await expect(friend.locator(".interactive-wheel-detail__heading")).toContainText("Lord:");
+    await friend.getByRole("button", { name: "House ruler details" }).last().click();
+    await expect(friend.getByRole("dialog", { name: "House ruler", exact: true })).toContainText("Nikki's 1st house ruler");
+    await friend.screenshot({ path: info.outputPath("friend-ruler.png") });
+    await page.reload();
+    await expect(friend).toBeVisible();
+    await expect(friend.locator(".interactive-wheel-detail")).toHaveCount(0);
+    await friend.locator('[data-planet="Moon"] [role="button"]').click();
+    await expect(friend.locator(".interactive-wheel-detail__heading")).toContainText("Moon");
+    await expectNoHorizontalOverflow(page, "Interactive Friend chart");
+    await assertNoClientErrors();
+  });
+}
+
+for (const width of [390, 1440]) wheelJourneyTest(`interactive Friend placement card opens its matching Sky article ${width}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width, height: 1000 });
+  await seedClientState(page, { profile: true, friends: true, friendMatchesProfile: true, preloadProfileNatalSky: true,
+    profileBirthDate: "1980-05-12", profileBirthTime: "12:00 PM", now: "2026-11-05T17:00:00.000Z" });
+  await routeWheelSavedCharts(page);
+  const friendUrl = "/#friends?tab=charts&chart=friend-nikki&view=natal";
+  await expectClientRouteLoads(page, friendUrl);
+  const wheel = page.getByLabel("Nikki natal chart wheel", { exact: true }).locator(".interactive-zodiac-wheel");
+  await wheel.locator('[data-planet="Chiron"] [role="button"]').click();
+  const reading = wheel.getByRole("link", { name: "Read about Chiron in Taurus", exact: true });
+  await expect(reading).toHaveAttribute("href", "#sky/placement/chiron/taurus");
+  const chevron = reading.locator(".lucide-chevron-right");
+  await expect(chevron).toBeVisible();
+  expect((await chevron.boundingBox())!.width).toBeLessThanOrEqual(18);
+  expect((await chevron.boundingBox())!.height).toBeLessThanOrEqual(18);
+  await wheel.locator(".interactive-wheel-detail").screenshot({ path: test.info().outputPath("chiron-taurus-detail.png") });
+  await expect(wheel.getByRole("button", { name: "Clear chart selection" })).toHaveCount(0);
+  await reading.click();
+  await expect(page).toHaveURL(/#sky\/placement\/chiron\/taurus$/);
+  await expect(page.locator(".sky-detail-article")).toBeVisible({ timeout: 90_000 });
+  await expect(page.getByRole("heading", { name: /^Chiron(?: Rx)? in Taurus$/ })).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath("chiron-taurus-article.png"), fullPage: true });
+  await page.goBack();
+  await expect(page).toHaveURL(new RegExp("#friends\\?tab=charts&chart=friend-nikki&view=natal$"));
+  await expect(wheel).toBeVisible();
+});
+
+wheelJourneyTest("interactive Friend wheel preserves an unknown birth time after reload", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true });
+  await routeWheelSavedCharts(page);
+  await page.addInitScript(() => {
+    const key = "tldrastro:manualCharts:qa-flow-user";
+    const charts = JSON.parse(localStorage.getItem(key) ?? "[]");
+    for (const chart of charts) if (chart.id === "friend-nikki") {
+      chart.birthTimeUnknown = true;
+      chart.birthTime = null;
+    }
+    localStorage.setItem(key, JSON.stringify(charts));
+  });
+  await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=natal");
+  const wheel = page.getByLabel("Nikki natal chart wheel", { exact: true }).locator(".interactive-zodiac-wheel");
+  await expect(wheel).toHaveAttribute("data-has-houses", "false");
+  await expect(wheel.locator(".interactive-wheel-angle, .interactive-wheel-house, .interactive-wheel-lord-connector")).toHaveCount(0);
+  await wheel.locator('[data-planet="Sun"] [role="button"]').click();
+  await expect(wheel.locator(".interactive-wheel-detail")).not.toContainText(/house|Lord|sect/i);
+  await page.reload();
+  await expect(wheel).toHaveAttribute("data-has-houses", "false");
+  await expect(wheel.locator(".interactive-wheel-sector[role=button]")).toHaveCount(0);
 });

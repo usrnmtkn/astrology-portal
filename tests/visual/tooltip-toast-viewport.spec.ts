@@ -172,8 +172,8 @@ for (const viewport of [{width:360,height:640},{width:390,height:844},{width:844
       await surface.locator('span').first().evaluate((el,text)=>{el.textContent=text},longTitle + longName);
     } else if (name === 'Planet tooltip') {
       if (viewport.width <= 820) await page.getByRole('button',{name:'Open full current sky chart',exact:true}).click();
-      anchor=(viewport.width <= 820 ? page.getByRole('dialog') : page.getByRole('region', {name:'Current sky',exact:true})).locator('.planet-marker:visible').first();
-      await anchor.focus();surface=page.locator('.floating-tooltip--planet');
+      anchor=(viewport.width <= 820 ? page.getByRole('dialog') : page.getByRole('region', {name:'Current sky',exact:true})).locator('.interactive-wheel-planet-button:visible').first();
+      await anchor.focus();surface=page.locator('.interactive-wheel-tooltip');
     } else if (name === 'Dignity tooltip') {
       // Dignity badges belong to natal readers, not the updated Sky articles.
       await expect(page.locator('.you-transit-article-page h1')).toHaveText('Sun in Libra in the 11th house');

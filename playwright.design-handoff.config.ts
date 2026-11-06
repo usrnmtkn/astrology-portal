@@ -13,6 +13,7 @@ export default defineConfig(base, {
     'design-handoff-pages.spec.ts',
     'design-handoff-type-glyphs.spec.ts',
     'design-handoff-wheel.spec.ts',
+    'interactive-zodiac-wheel.spec.ts',
     'friends-feed-exact.spec.ts',
     'friends-feed-priority.spec.ts',
     'friends-pair-forecast.spec.ts',

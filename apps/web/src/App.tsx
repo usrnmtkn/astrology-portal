@@ -114,7 +114,8 @@ import {
   zodiacAssetHref,
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
-import { SkyWheel, type InterChartAspectLine } from "./components/charts/Wheels";
+import { type InterChartAspectLine } from "./components/charts/Wheels";
+import { InteractiveZodiacWheel } from "./components/charts/LazyInteractiveZodiacWheel";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
@@ -14846,16 +14847,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
                   <div className="chart-frame">
-                    <SkyWheel
-                      positions={sky.positions}
-                      aspects={sky.aspects}
-                      ascendant={sky.ascendant}
-                      ascendantLongitude={sky.ascendantLongitude}
-                      midheavenLongitude={sky.midheavenLongitude}
-                      houseSignLabelStyle={activeHouseSignLabelStyle}
-                      variant="zodiac"
-                      aspectInspector
-                    />
+                    <InteractiveZodiacWheel snapshot={sky} />
                   </div>
                 </div>
                 <button type="button" className="sky-chart-expand" aria-label="Open full current sky chart" onClick={() => {
@@ -15242,16 +15234,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                   <h2 className="sr-only" id={skyFullChartTitleId}>Full sky chart</h2>
                   <div className="sky-full-chart-shell">
                     <div className="wheel natal-wheel chart-frame" aria-label={`Full sky chart for ${skyFullChartMeta}`}>
-                      <SkyWheel
-                        positions={sky.positions}
-                        aspects={sky.aspects}
-                        ascendant={sky.ascendant}
-                        ascendantLongitude={sky.ascendantLongitude}
-                        midheavenLongitude={sky.midheavenLongitude}
-                        houseSignLabelStyle={activeHouseSignLabelStyle}
-                        variant="zodiac"
-                        aspectInspector
-                      />
+                      <InteractiveZodiacWheel snapshot={sky} />
                     </div>
                   </div>
                 </div>

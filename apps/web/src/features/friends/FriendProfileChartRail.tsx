@@ -12,17 +12,20 @@ import type { PlanetPosition, SkySnapshot } from "../../types";
 import { FriendNatalViewControl, type FriendNatalChartViewMode } from "./FriendNatalViewControl";
 import type { FriendProfileTab } from "./friendsRouting";
 import { RelationshipComparePicker, type RelationshipComparisonOption } from "./RelationshipComparePicker";
-import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
+import { InteractiveZodiacWheel } from "../../components/charts/LazyInteractiveZodiacWheel";
+import type { PronounChoice } from "../../services/personReferences";
 
 type WheelSky = Pick<
   SkySnapshot,
   "positions" | "aspects" | "ascendant" | "ascendantLongitude" | "midheavenLongitude"
->;
+> & Partial<Pick<SkySnapshot, "generatedAt" | "birthTimeKnown" | "solarHorizon" | "sharedNatalSect">>;
 
 type FriendProfileChartRailProps = {
   activeTab: FriendProfileTab;
   chartName: string;
   chartIsEvent: boolean;
+  birthTimeUnknown?: boolean;
+  pronouns?: PronounChoice;
   comparisonIsSelf: boolean;
   comparisonName: string;
   comparisonOptions: RelationshipComparisonOption[];
@@ -48,6 +51,8 @@ export function FriendProfileChartRail({
   activeTab,
   chartName,
   chartIsEvent,
+  birthTimeUnknown = false,
+  pronouns,
   comparisonIsSelf,
   comparisonName,
   comparisonOptions,
@@ -84,7 +89,7 @@ export function FriendProfileChartRail({
             value={natalViewMode}
             onChange={onNatalViewModeChange}
             ariaLabel={`${chartName} natal chart display`}
-          />{natalViewMode === "circle" && <ChartFullscreenButton title="Natal chart"><SkyWheel positions={natalSky.positions} aspects={canonicalNatalAspectsForSnapshot(natalSky)} ascendant={natalSky.ascendant} ascendantLongitude={natalSky.ascendantLongitude} midheavenLongitude={natalSky.midheavenLongitude} showHouses houseSignLabelStyle={houseSignLabelStyle} variant="natal" aspectInspector /></ChartFullscreenButton>}</div>
+          />{natalViewMode === "circle" && <ChartFullscreenButton title="Natal chart"><InteractiveZodiacWheel snapshot={natalSky} mode="natal" ownerName={chartName} birthTimeUnknown={birthTimeUnknown} pronouns={pronouns} /></ChartFullscreenButton>}</div>
           {natalViewMode === "table" ? (
             <NatalChartDataTable
               rows={natalTableRows}
@@ -93,17 +98,7 @@ export function FriendProfileChartRail({
           ) : (
             <div className="chart-shell">
               <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${chartName} natal chart wheel`}>
-                <SkyWheel
-                  positions={natalSky.positions}
-                  aspects={canonicalNatalAspectsForSnapshot(natalSky)}
-                  ascendant={natalSky.ascendant}
-                  ascendantLongitude={natalSky.ascendantLongitude}
-                  midheavenLongitude={natalSky.midheavenLongitude}
-                  showHouses
-                  houseSignLabelStyle={houseSignLabelStyle}
-                  variant="natal"
-                  aspectInspector
-                />
+                <InteractiveZodiacWheel snapshot={natalSky} mode="natal" ownerName={chartName} birthTimeUnknown={birthTimeUnknown} pronouns={pronouns} />
               </div>
             </div>
           )}

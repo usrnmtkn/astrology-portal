@@ -153,3 +153,6 @@
   --workspace-on-selected: light-dark(#06201a, #cde8e0);
   --workspace-hover: color-mix(in srgb, var(--workspace-selected) 42%, var(--workspace-canvas));
 }
+
+/* Reader wheel previews keep the canonical reader typography and controls. */
+#root .admin-dashboard .interactive-zodiac-wheel { --font-display: var(--font-serif); --font-body: var(--font-serif); --font-label: var(--font-mono); }
