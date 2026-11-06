@@ -29,6 +29,9 @@ test.beforeAll(async () => {
 });
 
 async function expectTransitContainment(svg: Locator) {
+  const compact = await svg.evaluate(root => root.getBoundingClientRect().width
+    <= Number.parseFloat(getComputedStyle(root).getPropertyValue('--container-chart-mobile')));
+  await expect(svg.locator('.transit-planet-labels')).toHaveAttribute('data-transit-label-layout', compact ? 'paired' : 'radial');
   const geometry = await svg.evaluate(root => {
     const svg = root as SVGSVGElement;
     const inner = Number(root.querySelector('.transit-planet-band-outline--inner')!.getAttribute('r'));
@@ -55,7 +58,23 @@ async function expectTransitContainment(svg: Locator) {
       && Math.min(a.box.bottom, b.box.bottom) > Math.max(a.box.top, b.box.top) ? [{ a, b }] : []));
     const band = root.querySelector('.transit-planet-band')!;
     const middle = Number(band.getAttribute('r')), thickness = Number(getComputedStyle(band).strokeWidth.replace('px', ''));
-    return { labels, overlaps, inner, outer, bandInner: middle - thickness / 2, bandOuter: middle + thickness / 2 };
+    const styles = getComputedStyle(root);
+    const scale = Math.hypot(svg.getScreenCTM()!.a, svg.getScreenCTM()!.b);
+    const degree = getComputedStyle(root.querySelector('.transit-planet-degree')!);
+    const normalizeFamily = (value: string) => value.replace(/["'\s]/g, '').toLowerCase();
+    const fontProbe = document.createElement('span');
+    fontProbe.style.fontFamily = styles.getPropertyValue('--font-ui');
+    document.body.append(fontProbe);
+    const targetDegreeFamily = normalizeFamily(getComputedStyle(fontProbe).fontFamily);
+    fontProbe.remove();
+    return { labels, overlaps, inner, outer, bandInner: middle - thickness / 2, bandOuter: middle + thickness / 2,
+      renderedDegreeSize: Number.parseFloat(degree.fontSize) * scale,
+      renderedGlyphSize: root.querySelector('.transit-planet-labels .wheel-placement__glyph')!.getBoundingClientRect().width,
+      targetDegreeSize: Number.parseFloat(styles.getPropertyValue('--text-placement-degree')),
+      targetGlyphSize: Number.parseFloat(styles.getPropertyValue('--text-glyph')),
+      degreeFamily: normalizeFamily(degree.fontFamily), targetDegreeFamily,
+      degreeWeight: degree.fontWeight, targetDegreeWeight: styles.getPropertyValue('--weight-semibold').trim(),
+      degreeTracking: degree.letterSpacing, degreeLeading: degree.lineHeight };
   });
   expect(geometry.bandInner).toBe(geometry.inner);
   expect(geometry.bandOuter).toBe(geometry.outer);
@@ -64,9 +83,49 @@ async function expectTransitContainment(svg: Locator) {
   expect(geometry.labels.filter(label => label.innerPadding < 4 || label.outerPadding < 4 || label.clipped),
     'Every complete transit glyph, Rx asset and degree label has padding inside the band and SVG').toEqual([]);
   expect(geometry.overlaps, 'Crowded transit glyphs and degrees remain separate').toEqual([]);
+  expect(geometry.degreeFamily).toBe(geometry.targetDegreeFamily);
+  expect(geometry.degreeWeight).toBe(geometry.targetDegreeWeight);
+  expect(['normal', '0px']).toContain(geometry.degreeTracking);
+  if (compact) {
+    expect(geometry.renderedDegreeSize, 'Mobile degree text keeps its shared readable screen size').toBeCloseTo(geometry.targetDegreeSize, 1);
+    expect(geometry.renderedGlyphSize, 'Mobile glyphs keep their shared readable screen size').toBeCloseTo(geometry.targetGlyphSize, 1);
+  }
   await expect(svg).toHaveAttribute('viewBox', '-76 -76 752 752');
   expect(await svg.locator('.wheel-surfaces circle').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('r')))))
     .toEqual([284, 240, 132, 96]);
+  return geometry;
+}
+
+for (const theme of ['light', 'dark']) {
+  test(`transit readability survives mobile and desktop resizing ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 1000 });
+    const dist = process.env.PLAYWRIGHT_DIST_ROOT ?? 'apps/web/dist';
+    const manifest = JSON.parse(readFileSync(`${dist}/.vite/manifest.json`, 'utf8'));
+    const styles = [...manifest['index.html'].css, manifest['src/styles.css'].file];
+    await page.route('**/__transit-readability?**', route => route.fulfill({ contentType: 'text/html', body:
+      `<!doctype html><html data-theme="${theme}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${styles.map(file => `<link rel="stylesheet" href="/${file}">`).join('')}</head><body><main id="root"></main><script>${script}</script></body></html>` }));
+    await page.goto('/__transit-readability?kind=transit&rotation=0');
+    const svg = page.locator('svg.sky-wheel');
+    await expect(svg.locator('.planet-marker-transit')).toHaveCount(14);
+    await page.evaluate(() => document.fonts.ready);
+    const natalNodes = svg.locator('.wheel-surfaces circle, .wheel-sectors line, .sign-band-dividers line, .house-labels text, .planet-labels:not(.transit-planet-labels) .planet-label-group');
+    const captureNatal = () => natalNodes.evaluateAll(nodes => nodes.map(node => ['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'transform'].map(attribute => node.getAttribute(attribute))));
+    const natal = await captureNatal();
+    const typography = [];
+    for (const width of [390, 320, 1440, 390]) {
+      await page.setViewportSize({ width, height: 1000 });
+      const geometry = await expectTransitContainment(svg);
+      expect(await captureNatal(), 'Resizing only changes transit labels').toEqual(natal);
+      const natalGlyphSize = await svg.evaluate(root => {
+        const matrix = (root as SVGSVGElement).getScreenCTM()!;
+        return root.querySelector('.planet-labels:not(.transit-planet-labels) .wheel-placement__glyph')!.getBoundingClientRect().width / Math.hypot(matrix.a, matrix.b);
+      });
+      expect(natalGlyphSize, 'Natal symbols retain their original SVG size').toBeCloseTo(24, 2);
+      typography.push({ width, degree: geometry.renderedDegreeSize, glyph: geometry.renderedGlyphSize,
+        family: geometry.degreeFamily, weight: geometry.degreeWeight, leading: geometry.degreeLeading, tracking: geometry.degreeTracking });
+    }
+    await test.info().attach('transit-screen-typography', { body: JSON.stringify(typography, null, 2), contentType: 'application/json' });
+  });
 }
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const kind of ['sky','natal','composite','synastry','transit']) {

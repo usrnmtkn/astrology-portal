@@ -15,9 +15,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     await page.clock.setFixedTime(new Date('2026-11-04T17:21:35Z'));
     await bundledPublications(page);
     const passage = 'Published label fixture opening.\n\nPublished label fixture final sentence.';
+    const what = 'Published label fixture complete TLDR premise.';
+    const takeaway = 'Published label fixture complete TLDR takeaway.';
     if (published) {
       const key = 'sky-lilith/article/sagittarius';
-      const source = { ...skyPlacementSourceRecords.get(key)!, LilithArticle: passage,
+      const source = { ...skyPlacementSourceRecords.get(key)!, LilithArticle: passage, TLDR_What: what, TLDR_Takeaway: takeaway,
         body_you: passage, studio_version_status: 'approved-serving-revision' };
       const updatedAt = '2026-11-04T12:00:00.000Z';
       const row = { id: 'qa-lilith-label-publication', content_key: key, surface: 'sky', mode: 'in_depth',
@@ -78,11 +80,19 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
 
     await card.click();
     await expect(page.locator('#sky-detail-title')).toHaveText('True Black Moon Lilith in Sagittarius');
-    const publishedParagraphs = page.locator('.article-body-inner p').filter({ hasText: /^Published label fixture / });
+    const publishedParagraphs = page.locator('.article-body-inner p').filter({ hasText: /^Published label fixture (?:opening|final sentence)\.$/ });
     if (published) await expect(publishedParagraphs).toHaveText(passage.split('\n\n'));
+    if (published) {
+      await expect(page.locator('.article-card.sky-detail-card')).toContainText(what);
+      await expect(page.locator('.article-card.sky-detail-card')).toContainText(takeaway);
+    }
     await page.reload();
     await expect(page.locator('#sky-detail-title')).toHaveText('True Black Moon Lilith in Sagittarius');
     if (published) await expect(publishedParagraphs).toHaveText(passage.split('\n\n'));
+    if (published) {
+      await expect(page.locator('.article-card.sky-detail-card')).toContainText(what);
+      await expect(page.locator('.article-card.sky-detail-card')).toContainText(takeaway);
+    }
     await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     await expect(title).toHaveText('True Black Moon Lilith in Sagittarius');
     await page.reload();

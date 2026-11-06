@@ -46,13 +46,22 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const before = await sizes();
     await page.screenshot({ path: info.outputPath("skeletons.png"), fullPage: true });
     await page.evaluate(() => {
+      (window as any).initialPlacementRows = [...document.querySelectorAll(".planet-placement-row")];
       (window as any).animations = [];
       document.addEventListener("animationstart", e => (window as any).animations.push({ target: (e.target as Element).className, name: e.animationName }));
       (window as any).renderFixture({ loading: false });
     });
     await expect(page.locator(".placement-table-wrap")).toHaveAttribute("aria-busy", "false");
     await expect(page.locator(".calendar-day-events")).toHaveAttribute("aria-busy", "false");
+    expect(await page.evaluate(() => {
+      const before = (window as any).initialPlacementRows as Element[];
+      const after = [...document.querySelectorAll(".planet-placement-row")];
+      return before.length === 3 && after.length === 3 && before.every((row, index) => row === after[index]);
+    })).toBe(true);
     await expect(page.locator(".planet-placement-row.card-skeleton, .calendar-day-panel .card-skeleton")).toHaveCount(0);
+    for (const description of await page.locator(".planet-placement-row__description").all()) {
+      await expect(description).not.toHaveAttribute("aria-hidden", "true");
+    }
     const after = await sizes();
     writeFileSync(info.outputPath("card-heights.json"), JSON.stringify({ before, after, beforeAnatomy, afterAnatomy: await anatomy(), beforeCalendarAnatomy, afterCalendarAnatomy: await calendarAnatomy() }, null, 2));
     await info.attach("card-heights", { path: info.outputPath("card-heights.json"), contentType: "application/json" });
@@ -72,7 +81,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect(card).toHaveCSS("opacity", "1");
     }
     const firstAnimations = await page.evaluate(() => (window as any).animations.length);
-    expect(firstAnimations).toBe(theme === "dark" ? 0 : 9); // Three placements, three stoic cards, three transit rows.
+    // Placement cards mounted while loading and retain their original nodes.
+    // Only the three Calendar cards and three transit rows mount on resolution.
+    expect(firstAnimations).toBe(theme === "dark" ? 0 : 6);
+    expect(await page.evaluate(() => (window as any).animations.filter((animation: { target: string; name: string }) =>
+      animation.name === "lazy-fade" && animation.target.includes("planet-placement-row")
+    ).length)).toBe(0);
     await page.evaluate(() => (window as any).renderFixture({}));
     await page.waitForTimeout(150);
     expect(await page.evaluate(() => (window as any).animations.length)).toBe(firstAnimations);

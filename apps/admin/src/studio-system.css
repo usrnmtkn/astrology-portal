@@ -500,9 +500,6 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-variables :is(.admin-pagination,.admin-pagination > div) { display: flex; align-items: center; flex-wrap: wrap; gap: var(--workspace-control-inset); }
 #root .admin-dashboard .studio-variables .admin-pagination { justify-content: space-between; }
 
-#root .admin-dashboard .admin-help-popover { position: relative; }
-#root .admin-dashboard .admin-help-popover .admin-hook-pattern-list { grid-template-columns: minmax(0,1fr); }
-#root .admin-dashboard .admin-help-popover > div { position: absolute; inset-inline-end: 0; z-index: var(--studio-layer-help-popover); width: var(--studio-menu-width); max-width: var(--studio-overlay-max-width); padding: var(--workspace-panel-inset); background: var(--workspace-raised); border-radius: var(--workspace-radius); box-shadow: var(--workspace-menu-shadow); }
 
 #root .admin-dashboard .admin-surface-sources > p { color: var(--workspace-muted); }
 

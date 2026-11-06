@@ -84,6 +84,43 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
   };
   fixture.prepare = () => initializing ??= createPublicationDb().then(database => { db = database; });
   fixture.publications = async () => db ? (await db.query('select to_jsonb(p) as row from content_publications p')).rows.map(item => mapIds(item.row,true)) : [];
+  // Opt-in Moon fixtures must run ordinary row updates through the same real
+  // publication trigger as RPC writes. A Map-only LIVE update cannot reopen a
+  // retired SQL ledger and would falsely fail owner republication confirmation.
+  fixture.patchMoonRows = async (rows, patch, headers) => {
+    if (!rows.length) return [];
+    if (!rows.every(row => row.content_key.startsWith('cms/lunation-horoscopes/') && row.mode === 'article')) throw Error('Moon SQL fixture scope');
+    await fixture.prepare();
+    const columns = new Set(['content_key','updated_at','status','lane','review_state','headline','summary','body','sections','facts','source_snapshot','mode','event_type','target_date','surface','provider','prompt_version','model','block_type','reviewed_at','published_at','judge_score','judge_gate','judge_verdict','judge_why','reviewer_notes','flags','knowledge_ids','created_at','evergreen','evergreen_at','evergreen_by']);
+    if (Object.keys(patch).some(key => !columns.has(key))) throw Error('Unmodeled Moon SQL patch');
+    const previous = (await db.query("select current_setting('request.headers',true) as value")).rows[0].value;
+    const requestHeaders = new Headers(headers);
+    const updateHeaders = JSON.stringify({'x-content-publication-action':requestHeaders.get('x-content-publication-action') ?? ''});
+    try {
+      const updated = [];
+      for (const row of rows) {
+        // Synchronizing an already-stored fixture version is not the new owner
+        // action. Only the actual conditional UPDATE gets its publish header.
+        await db.query("select set_config('request.headers','{}',false)");
+        const mapped = mapIds(row), serialized = JSON.stringify(row);
+        if (!seeded.has(row.id)) await seedPublicationRow(db,mapped);
+        else if (seeded.get(row.id) !== serialized) {
+          const names = Object.keys(mapped).filter(key => columns.has(key));
+          await db.query(`update generated_interpretations set (${names.join(',')})=(select ${names.join(',')} from jsonb_populate_record(null::generated_interpretations,$1)) where id=$2`, [mapped,mapped.id]);
+        }
+        const names = Object.keys(patch);
+        await db.query("select set_config('request.headers',$1,false)",[updateHeaders]);
+        const result = await db.query(`update generated_interpretations set (${names.join(',')})=(select ${names.join(',')} from jsonb_populate_record(null::generated_interpretations,$1)) where id=$2 and updated_at=$3 returning to_jsonb(generated_interpretations) as row`, [mapIds(patch),mapped.id,row.updated_at]);
+        for (const value of result.rows) {
+          const saved = mapIds(value.row,true);
+          updated.push(saved);seeded.set(row.id,JSON.stringify(saved));
+        }
+      }
+      return updated;
+    } finally {
+      await db.query("select set_config('request.headers',$1,false)",[previous ?? '{}']);
+    }
+  };
   fixture.close=async()=>{await initializing;await db?.close();};
   return fixture;
 }

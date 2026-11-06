@@ -49,6 +49,7 @@ import { calendarSeasonTransitionFactsFromSun } from "./features/calendar/calend
 import { PublishedSkySummary } from "./features/sky/PublishedSkySummary";
 import { skySunTransition } from "./content/skySunTransition";
 import { useMinimumLoading } from "./hooks/useMinimumLoading";
+import { LoadingStatus } from "./components/CardSkeleton";
 import {loadFormattedWriting} from '../../../src/shared/components/formattedWritingLoader.js';
 import { SkyReadingLayout, useSkyCardsSettled } from "./features/sky/SkyReadingLayout";
 import { SkyRoute } from "./routes/SkyRoute";
@@ -76,7 +77,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PageLoading, PageLoadBoundary, PageLoadError, PageLoadState, reloadReaderRouteOnce } from "./components/PageLoading";
 import type { FormEvent, MouseEvent as ReactMouseEvent, ReactNode, Ref } from "react";
 import { flushSync } from "react-dom";
@@ -16536,6 +16537,11 @@ function PlacementTable({
   const cardsSettled = skyPlacementCardsSettled(orderedPositions, contentStatus, skyPlacementPlanetOrder.length);
   const holdingCards = useMinimumLoading(!cardsSettled);
   const cardsLoading = contentStatus !== "error" && holdingCards;
+  const factsSettled = skyPlacementCardsSettled(orderedPositions, "ready", skyPlacementPlanetOrder.length);
+  const hasShownCards = useRef(false);
+  useLayoutEffect(() => {
+    if (!cardsLoading) hasShownCards.current = true;
+  }, [cardsLoading]);
   useSkyCardsSettled(cardsSettled && !cardsLoading);
   const aspectsByPlacement = useMemo(() => {
     const nextAspects = new Map<string, SkySnapshot["aspects"]>();
@@ -16557,15 +16563,17 @@ function PlacementTable({
     return nextAspects;
   }, [aspects]);
 
-  if (cardsLoading) return <SkyPlacementListSkeleton count={skyPlacementPlanetOrder.length} grouped />;
+  // Initial loading remains complete. Later publication changes keep the native
+  // controls mounted so a press can finish while their old prose is withdrawn.
+  if (cardsLoading && (!hasShownCards.current || !factsSettled)) return <SkyPlacementListSkeleton count={skyPlacementPlanetOrder.length} grouped />;
 
   return (
-    <>{[
+    <>{cardsLoading ? <LoadingStatus>Loading description</LoadingStatus> : null}{[
       { label: "Planets", positions: orderedPositions.filter(position => !["North Node", "South Node", "Lilith", "Chiron"].includes(position.planet)) },
       { label: "Points", positions: ["North Node", "South Node", "Lilith", "Chiron"].flatMap(planet => orderedPositions.filter(position => position.planet === planet)) }
     ].filter(group => group.positions.length).map(group => <section className="sky-placement-group" aria-label={group.label} key={group.label}>
       <h3>{group.label}</h3>
-      <SkyPlacementList>
+      <SkyPlacementList loading={cardsLoading}>
         {group.positions.map((position) => {
           const activeAspects = aspectsByPlacement.get(position.planet) ?? [];
           const title = placementDetailTitle(position, activeAspects);
@@ -16598,7 +16606,7 @@ function PlacementTable({
                 ariaLabel={`Read more about ${title}`}
                 degree={formatPlanetDegree(position)}
                 description={rowSummary}
-                descriptionLoading={descriptionState === "loading"}
+                descriptionLoading={cardsLoading || descriptionState === "loading"}
                 dignity={placementDignity(position, "sky")}
                 {...placementCardCountdowns(position, generatedAt)}
                 glyph={position.glyph}

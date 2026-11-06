@@ -6168,7 +6168,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" }).click();
     variableDetails = variableGuide.getByRole("region", { name: "Planet title variable details" });
     await expect(variableDetails).toContainText("Calculated by app");
-    await expect(variableDetails).toContainText("No saved passage to review");
+    await expect(variableDetails).toContainText("Example value");
+    await expect(variableDetails).not.toContainText("No saved passage to review");
     await variableDetails.getByRole("button", { name: "All variables" }).click();
 
     await variableGuide.locator("summary[aria-label='Template syntax help']").click();
