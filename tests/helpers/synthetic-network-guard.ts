@@ -87,7 +87,7 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
           return route.abort();
         }
         const fontStyles = url.origin === 'https://fonts.googleapis.com' && url.pathname === '/css2' && request.resourceType() === 'stylesheet';
-        const fontFile = url.origin === 'https://fonts.gstatic.com' && /^\/s\/(atkinsonhyperlegible|notosanssymbols)\/v\d+\/[A-Za-z0-9_-]+\.woff2$/.test(url.pathname);
+        const fontFile = url.origin === 'https://fonts.gstatic.com' && /^\/s\/(atkinsonhyperlegible|notosanssymbols|newsreader|geistmono)\/v\d+\/[A-Za-z0-9_-]+\.woff2$/.test(url.pathname);
         const fontSubset = url.origin === 'https://fonts.gstatic.com' && url.pathname === '/l/font'
           && [...url.searchParams.keys()].sort().join(',') === 'kit,skey,v'
           && /^[A-Za-z0-9_-]+$/.test(url.searchParams.get('kit') ?? '')
@@ -101,6 +101,12 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
               headers: { accept: headers.accept ?? '*/*', 'user-agent': headers['user-agent'] ?? '' },
               maxRedirects: 0
             });
+            // Playwright routes only the first request in a redirect chain.
+            // Never hand a redirect to the browser to follow outside this guard.
+            if (response.status() >= 300 && response.status() < 400) {
+              unhandledExternal.push(`FONT_REDIRECT ${request.method()} ${url.origin}${url.pathname}`);
+              return route.abort();
+            }
             await route.fulfill({ response });
             staticFontRequests.push(`${request.method()} ${url.origin}${url.pathname}`);
           })();
