@@ -97,7 +97,21 @@ try{
   assert.equal(revisedReceipt.payload.receipt.history[0].providerResult.status,'completed','Republishing a private revision retains the complete writing record.');
   assert.equal(revisedReceipt.payload.receipt.direction,'Synthetic private direction.');
   assert(!JSON.stringify(store.rows.get(revisedLive.id)!.source_snapshot).includes('Synthetic private direction.'),'Republishing still keeps the actual LIVE row private.');
-  assert.equal((await patch(revision,{ownerAction:'publish-horoscope-edition-revision'})).status,409);
+  const beforeReplay=structuredClone([...store.rows.values()]);
+  const replay=await patch(revision,{ownerAction:'publish-horoscope-edition-revision'});
+  assert.equal(replay.status,200,JSON.stringify(replay));
+  assert.equal(replay.payload.rows[0].updated_at,revisedLive.updated_at,'The same committed operation returns its saved publication receipt.');
+  assert.deepEqual([...store.rows.values()],beforeReplay,'Receipt recovery must not write or publish again.');
+  const nextReadings=structuredClone(revised);nextReadings.passages[0].body+=' A second private revision remains complete.';
+  const nextFork=await patch(revisedLive,{status:'DRAFT',body:planetaryReadingsBody(nextReadings),sections:{planetaryHoroscopes:nextReadings}});
+  assert.equal(nextFork.status,200,JSON.stringify(nextFork));
+  const nextRevision=nextFork.payload.rows[0];
+  const changedSource=await patch(revisedLive,{reviewerNotes:'Synthetic concurrent source metadata update.'});
+  assert.equal(changedSource.status,200,JSON.stringify(changedSource));
+  const beforeStalePublication=structuredClone([...store.rows.values()]);
+  assert.equal((await patch(nextRevision,{ownerAction:'publish-horoscope-edition-revision'})).status,409,'A stale new revision cannot replace a changed live source.');
+  assert.deepEqual([...store.rows.values()],beforeStalePublication,'The stale publication preserves the newer source and private revision.');
+  assert.equal(store.rows.get(nextRevision.id)!.status,'DRAFT');
   const invalid=structuredClone(revised);invalid.passages[0].house=1;assert.throws(()=>validatePlanetaryReadings(invalid,event));
   assert(validatePlanetaryReading({...revised.passages[0],body:'Mercury in Taurus moves through your first house. You keep this sentence.'},event).violations.some((v:any)=>v.category==='horoscope_fact_boundary'));
   // Distinct return visits and years never share a dated reader identity.
