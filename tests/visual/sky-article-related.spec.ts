@@ -79,7 +79,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       });
       expect(styles[0]).toEqual(styles[1]);
       await body.fill('Synthetic unsaved article opening.\n\nSynthetic unsaved article ending.');
-      const trigger = workspace.getByRole('button', { name: 'Horoscopes', exact: true });
+      const trigger = workspace.getByRole('button', { name: 'Related horoscope editions', exact: true });
       await trigger.click();
       const panel = page.getByRole('dialog', { name: 'Horoscopes', exact: true });
       await expect(panel.getByRole('heading', { name: 'Horoscopes', exact: true })).toBeVisible();

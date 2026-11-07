@@ -290,6 +290,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .studio-side-panel::backdrop { background: var(--modal-overlay-bg); }
 #root .admin-dashboard .studio-side-panel > .studio-section-header { position: sticky; top: 0; background: var(--workspace-surface); padding-block-end: var(--workspace-panel-inset); border-block-end: var(--border-width-thin) solid var(--workspace-line); z-index: var(--z-picker); }
 #root .admin-dashboard .studio-side-panel-content { display: grid; gap: var(--workspace-block-gap); padding-block-start: var(--workspace-block-gap); }
+#root .admin-dashboard .studio-writeup-horoscopes-panel { display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
+#root .admin-dashboard .studio-writeup-horoscopes-panel > .studio-side-panel-content { overflow: auto; }
 #root .admin-dashboard .admin-editor-panel.studio-horoscope-editor:not(.has-variables-rail) { width: var(--container-dialog-wide); }
 #root .admin-dashboard .studio-article-events { list-style: none; display: grid; gap: var(--workspace-panel-inset); margin: 0; padding: 0; }
 #root .admin-dashboard .studio-article-events > li { display: grid; gap: var(--workspace-field-gap); padding-block-end: var(--workspace-panel-inset); border-block-end: var(--border-width-thin) solid var(--workspace-line); }
