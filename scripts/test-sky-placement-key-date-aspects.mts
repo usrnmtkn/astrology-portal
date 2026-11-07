@@ -67,6 +67,19 @@ try {
       const fullDetail = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects, aspectFacts: facts,
         generatedAt: sky.generatedAt, generatedContent: new Map([[edition.contentKey, row]]) });
       assert.deepEqual(fullDetail.articlePeriod, { startsAt: start, endsAt: end });
+      assert.deepEqual(fullDetail.relatedAspects.rows, [], 'A saved-period article must not append the selected day\'s unrelated aspect rows.');
+      assert(fullDetail.sections.some((section: any) => section.role === 'aspect'), 'The saved-period fixture must contain calculated aspect sections.');
+      const withoutTimeline = { ...facts, inSign: [] };
+      const fullWithoutTimeline = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects,
+        aspectFacts: withoutTimeline, generatedAt: sky.generatedAt, generatedContent: new Map([[edition.contentKey, row]]) });
+      assert(!fullWithoutTimeline.sections.some((section: any) => section.role === 'aspect'));
+      assert.deepEqual(fullWithoutTimeline.relatedAspects.rows, [], 'Missing saved-period facts must not fall back to selected-day aspects.');
+      assert(detail.sections.some((section: any) => section.role === 'aspect'), 'The ordinary article fixture must contain calculated aspect sections.');
+      assert.deepEqual(detail.relatedAspects.rows, [], 'Ordinary timeline sections must suppress duplicate current-aspect rows.');
+      const ordinaryWithoutTimeline = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects,
+        aspectFacts: withoutTimeline, generatedAt: sky.generatedAt, generatedContent: new Map() });
+      assert(!ordinaryWithoutTimeline.sections.some((section: any) => section.role === 'aspect'));
+      assert(ordinaryWithoutTimeline.relatedAspects.rows.length > 0, 'An ordinary article without timeline sections retains its calculated current-aspect fallback.');
       assert.equal(fullDetail.duration, detail.duration, 'A saved full-visit article must retain the calculated current primary duration.');
       const archivedDetail = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: [],
         generatedAt: sky.generatedAt, generatedContent: new Map([[edition.contentKey, row]]),
