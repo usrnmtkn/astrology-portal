@@ -1,40 +1,7 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 
 export async function expectTransitContainment(svg: Locator) {
-  const compact = await svg.evaluate(root => root.getBoundingClientRect().width
-    <= Number.parseFloat(getComputedStyle(root).getPropertyValue('--container-chart-mobile')));
-  await expect(svg.locator('.transit-planet-labels')).toHaveAttribute('data-transit-label-layout', 'paired');
-  await expect.poll(() => svg.evaluate(root => {
-    const matrix = (root as SVGSVGElement).getScreenCTM()!;
-    const scale = Math.hypot(matrix.a, matrix.b), styles = getComputedStyle(root);
-    const compact = root.getBoundingClientRect().width <= Number.parseFloat(styles.getPropertyValue('--container-chart-mobile'));
-    const degreeSize = Number.parseFloat(styles.getPropertyValue('--text-placement-degree'));
-    const glyphSize = Number.parseFloat(styles.getPropertyValue(compact ? '--text-glyph' : '--chart-planet-glyph-size'));
-    return [...root.querySelectorAll('.transit-planet-degree')]
-      .every(node => Math.abs(Number.parseFloat(getComputedStyle(node).fontSize) * scale - degreeSize) < 0.05)
-      && [...root.querySelectorAll('.transit-planet-labels .wheel-placement__glyph')]
-        .every(node => Math.abs(node.getBoundingClientRect().width - glyphSize) < 0.05);
-  }), { message: 'Transit typography settles at its screen size after resizing' }).toBe(true).catch(async error => {
-    const sizing = await svg.evaluate(root => {
-      const matrix = (root as SVGSVGElement).getScreenCTM()!;
-      const scale = Math.hypot(matrix.a, matrix.b), styles = getComputedStyle(root);
-      const rect = root.getBoundingClientRect();
-      const compact = rect.width <= Number.parseFloat(styles.getPropertyValue('--container-chart-mobile'));
-      const overlay = root.closest('.chart-fullscreen-overlay');
-      return {
-        viewport: { width: innerWidth, height: innerHeight },
-        fullscreen: Boolean(root.closest('[role="dialog"]')),
-        svgRect: rect.toJSON(), matrix: { a: matrix.a, b: matrix.b, c: matrix.c, d: matrix.d, e: matrix.e, f: matrix.f },
-        targetDegree: Number.parseFloat(styles.getPropertyValue('--text-placement-degree')),
-        targetGlyph: Number.parseFloat(styles.getPropertyValue(compact ? '--text-glyph' : '--chart-planet-glyph-size')),
-        overlayPadding: overlay ? { start: getComputedStyle(overlay).paddingInlineStart, end: getComputedStyle(overlay).paddingInlineEnd } : null,
-        degrees: [...root.querySelectorAll('.transit-planet-degree')].map(node => ({ id: node.closest('[data-inspector-point-id]')!.getAttribute('data-inspector-point-id'), svgFontSize: getComputedStyle(node).fontSize, screenFontSize: Number.parseFloat(getComputedStyle(node).fontSize) * scale })),
-        glyphs: [...root.querySelectorAll('.transit-planet-labels .wheel-placement__glyph')].map(node => ({ id: node.closest('[data-inspector-point-id]')!.getAttribute('data-inspector-point-id'), screenRect: node.getBoundingClientRect().toJSON() }))
-      };
-    });
-    await test.info().attach('transit-label-sizing-failure', { body: JSON.stringify(sizing, null, 2), contentType: 'application/json' });
-    throw error;
-  });
+  await expect(svg.locator('.transit-planet-labels')).not.toHaveAttribute('data-transit-label-layout', 'paired');
   const geometry = await svg.evaluate(root => {
     const svg = root as SVGSVGElement;
     const inner = Number(root.querySelector('.transit-planet-band-outline--inner')!.getAttribute('r'));
@@ -64,9 +31,11 @@ export async function expectTransitContainment(svg: Locator) {
     const styles = getComputedStyle(root);
     const scale = Math.hypot(svg.getScreenCTM()!.a, svg.getScreenCTM()!.b);
     const degree = getComputedStyle(root.querySelector('.transit-planet-degree')!);
-    const compact = viewport.width <= Number.parseFloat(styles.getPropertyValue('--container-chart-mobile'));
     const renderedDegreeSizes = [...root.querySelectorAll('.transit-planet-degree')]
       .map(node => Number.parseFloat(getComputedStyle(node).fontSize) * scale);
+    const glyphSvgSizes = [...root.querySelectorAll('.transit-planet-labels .wheel-placement__glyph')]
+      .map(node => ({ planet: node.closest('[data-inspector-point-id]')!.getAttribute('data-inspector-point-id'),
+        width: node.getBoundingClientRect().width / scale, height: node.getBoundingClientRect().height / scale }));
     const renderedGlyphSizes = [...root.querySelectorAll('.transit-planet-labels .wheel-placement__glyph')]
       .map(node => node.getBoundingClientRect().width);
     const normalizeFamily = (value: string) => value.replace(/["'\s]/g, '').toLowerCase();
@@ -78,17 +47,16 @@ export async function expectTransitContainment(svg: Locator) {
     return { labels, overlaps, inner, outer, bandInner: middle - thickness / 2, bandOuter: middle + thickness / 2,
       renderedDegreeSize: renderedDegreeSizes[0], renderedDegreeSizes,
       renderedGlyphSize: renderedGlyphSizes[0], renderedGlyphSizes,
-      targetDegreeSize: Number.parseFloat(styles.getPropertyValue('--text-placement-degree')),
-      targetGlyphSize: Number.parseFloat(styles.getPropertyValue(compact ? '--text-glyph' : '--chart-planet-glyph-size')),
+      targetDegreeSize: Number.parseFloat(styles.getPropertyValue('--chart-transit-degree-size')) * scale,
+      glyphSvgSizes,
       degreeFamily: normalizeFamily(degree.fontFamily), targetDegreeFamily,
       degreeWeight: degree.fontWeight, targetDegreeWeight: styles.getPropertyValue('--weight-semibold').trim(),
       degreeTracking: degree.letterSpacing, degreeLeading: degree.lineHeight };
   });
-  expect(geometry.targetDegreeSize).toBe(13);
-  expect(geometry.targetGlyphSize).toBe(compact ? 22 : 28);
   expect(geometry.bandInner).toBe(geometry.inner);
   expect(geometry.bandOuter).toBe(geometry.outer);
   expect(geometry.inner).toBe(284);
+  expect(geometry.outer).toBe(374);
   expect(geometry.labels).toHaveLength(28);
   expect(geometry.labels.filter(label => label.innerPadding < 4 || label.outerPadding < 4 || label.clipped),
     'Every complete transit glyph, Rx asset and degree label has padding inside the band and SVG').toEqual([]);
@@ -99,10 +67,12 @@ export async function expectTransitContainment(svg: Locator) {
   expect(geometry.renderedDegreeSizes).toHaveLength(14);
   expect(geometry.renderedGlyphSizes).toHaveLength(14);
   for (const size of geometry.renderedDegreeSizes) {
-    expect(size, 'Every transit degree keeps its shared readable screen size').toBeCloseTo(geometry.targetDegreeSize, 1);
+    expect(size, 'Every transit degree preserves the original SVG typography').toBeCloseTo(geometry.targetDegreeSize, 1);
   }
-  for (const size of geometry.renderedGlyphSizes) {
-    expect(size, 'Every transit glyph keeps its shared readable screen size').toBeCloseTo(geometry.targetGlyphSize, 1);
+  for (const glyph of geometry.glyphSvgSizes) {
+    const originalSize = glyph.planet === 'transit:Sun' ? 30 : 28;
+    expect(glyph.width, 'Transit glyphs retain their original SVG width').toBeCloseTo(originalSize, 2);
+    expect(glyph.height, 'Transit glyphs retain their original SVG height').toBeCloseTo(originalSize, 2);
   }
   await expect(svg).toHaveAttribute('viewBox', '-76 -76 752 752');
   expect(await svg.locator('.wheel-surfaces circle').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('r')))))

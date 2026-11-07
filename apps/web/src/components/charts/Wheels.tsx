@@ -27,7 +27,6 @@ import {
   wheelAngleBadgeBounds,
   wheelAngleBadgeWidth,
   wheelDegreeOffset,
-  transitLabelPair,
   wheelTickGeometry,
   longitudeToChartAngle,
   polarToCartesian,
@@ -389,51 +388,16 @@ export const SkyWheel = memo(function SkyWheel({
   const ascendantSignIndex = ascendant ? signs.indexOf(ascendant) : -1;
   const wholeHouseStartLongitude = ascendantSignIndex >= 0 ? ascendantSignIndex * 30 : 0;
   const center = 300;
-  const hasTransitOverlay = transitPositions.length > 0;
-  const wheelShellRef = useRef<HTMLElement | null>(null);
-  const [transitLabelSizes, setTransitLabelSizes] = useState<{ glyph: number; degree: number; gap: number } | null>(null);
   const radius = {
     outer: 284,
     signInner: 240,
     planet: refinedLayout || handoffLayout ? 212 : 200,
-    transitPlanet: 316,
+    transitPlanet: 314,
     transitBandOuter: 374,
     aspect: handoffLayout ? 96 : refinedLayout ? 160 : 132,
     house: 240 * chartHouseLabelRadiusFactor,
     inner: handoffLayout ? 96 : refinedLayout ? 0 : 44
   };
-  const transitLabelRadius = (radius.outer + radius.transitBandOuter) / 2;
-  const transitMarkerRadius = transitLabelSizes ? transitLabelRadius : radius.transitPlanet;
-
-  useEffect(() => {
-    if (!hasTransitOverlay) return;
-    const svg = wheelShellRef.current?.querySelector("svg");
-    if (!svg) return;
-    const measure = () => {
-      const width = svg.getBoundingClientRect().width;
-      const styles = getComputedStyle(svg);
-      const compactWidth = Number.parseFloat(styles.getPropertyValue("--container-chart-mobile"));
-      if (!width || !Number.isFinite(compactWidth)) {
-        setTransitLabelSizes(null);
-        return;
-      }
-      // Convert the shared screen typography into SVG units without resizing the wheel.
-      const scale = svg.viewBox.baseVal.width / width;
-      const halfBand = (radius.transitBandOuter - radius.outer) / 2 - 4.25;
-      const glyphRole = width <= compactWidth ? "--text-glyph" : "--chart-planet-glyph-size";
-      const sizes = {
-        glyph: Math.min(Number.parseFloat(styles.getPropertyValue(glyphRole)) * scale, halfBand * Math.SQRT2),
-        degree: Math.min(Number.parseFloat(styles.getPropertyValue("--text-placement-degree")) * scale, halfBand / Math.hypot(0.95, 0.65)),
-        gap: Number.parseFloat(styles.getPropertyValue("--space-1")) * scale
-      };
-      setTransitLabelSizes(current => current && Math.abs(current.glyph - sizes.glyph) < 0.01
-        && Math.abs(current.degree - sizes.degree) < 0.01 && Math.abs(current.gap - sizes.gap) < 0.01 ? current : sizes);
-    };
-    const observer = new ResizeObserver(measure);
-    observer.observe(svg);
-    measure();
-    return () => observer.disconnect();
-  }, [hasTransitOverlay, radius.outer, radius.transitBandOuter]);
 
   function point(angle: number, distance: number) {
     return polarToCartesian(center, center, distance, angle);
@@ -547,7 +511,7 @@ export const SkyWheel = memo(function SkyWheel({
     (position) => position.planet,
     (position) => angleForLongitude(zodiacLongitude(position)),
     {
-      baseRadius: transitMarkerRadius,
+      baseRadius: radius.transitPlanet,
       center,
       clusterThreshold: 7,
       maxClusterSpan: 24,
@@ -555,17 +519,16 @@ export const SkyWheel = memo(function SkyWheel({
       maxClusterTangentOffset: relationshipClusterTangentLimit,
       useClusterLane: true,
       radialOffsets: [0],
-      minMarkerRadius: transitMarkerRadius,
-      maxMarkerRadius: transitMarkerRadius
+      minMarkerRadius: radius.transitPlanet,
+      maxMarkerRadius: radius.transitPlanet
     }
-  ), center, sunIconSize, 26, [...transitTicks.values()].map(tick => tick.bounds), true,
-  transitLabelSizes ? marker => transitLabelPair(center, marker, transitLabelRadius, transitLabelSizes.glyph, transitLabelSizes.degree, transitLabelSizes.gap).bounds : undefined
-  ), [transitPositions, ascendantLongitude, isAscendantAnchored, transitTicks, transitLabelSizes]);
+  ), center, sunIconSize, 26, [...transitTicks.values()].map(tick => tick.bounds), true), [transitPositions, ascendantLongitude, isAscendantAnchored, transitTicks]);
   const signLabelRadius = (radius.outer + radius.signInner) / 2;
   const signDividerInnerRadius = radius.signInner - 2;
   const signDividerOuterRadius = radius.outer;
   const wheelClipId = `wheel-clip-${useId().replace(/:/g, "")}`;
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
+  const hasTransitOverlay = transitPositions.length > 0;
   const angleAxisRadius = handoffLayout ? 225 : hasTransitOverlay ? radius.transitBandOuter + 16 : radius.outer + angleAxisOuterPadding;
   const aspectRadius = refinedLayout ? Math.min(radius.aspect, ...[...planetLayouts.values()].map(layout => Math.hypot(layout.marker.x - center, layout.marker.y - center) - (planetDegreeOffset + 18))) : radius.aspect;
   const houseLabelRadius = handoffLayout ? 114 : refinedLayout ? Math.min(radius.house, aspectRadius * 0.57) : radius.house;
@@ -580,6 +543,7 @@ export const SkyWheel = memo(function SkyWheel({
   const [activeTooltipPlanet, setActiveTooltipPlanet] = useState<string | null>(null);
   const [focusedInspectorPointId, setFocusedInspectorPointId] = useState<string | null>(null);
   const planetMarkerRefs = useRef(new Map<string, SVGGElement>());
+  const wheelShellRef = useRef<HTMLElement | null>(null);
   const signLabels = useMemo(() => chartSignLabelGeometry({
     angleForLongitude,
     center,
@@ -1110,12 +1074,7 @@ export const SkyWheel = memo(function SkyWheel({
           })}
         </g>
         {transitPositions.length > 0 && (
-          <g className="planet-labels transit-planet-labels" aria-label="Current transiting planets"
-            data-transit-label-layout={transitLabelSizes ? "paired" : "radial"}
-            style={transitLabelSizes ? {
-              "--chart-transit-degree-size": `${transitLabelSizes.degree}px`,
-              "--chart-planet-glyph-size": `${transitLabelSizes.glyph}px`
-            } as CSSProperties : undefined}>
+          <g className="planet-labels transit-planet-labels" aria-label="Current transiting planets">
             {transitPositions.map((position) => {
               const layout = transitLayouts.get(position.planet);
               const tickAngle = planetAngle(position);
@@ -1126,9 +1085,7 @@ export const SkyWheel = memo(function SkyWheel({
               const marker = layoutMarker ?? point(markerAngle, radius.transitPlanet);
               const { inner: tickInner, outer: tickOuter } = transitTicks.get(position.planet)!;
               const degreeOffset = wheelDegreeOffset(center, marker, sunIconSize, 26);
-              const pair = transitLabelSizes ? transitLabelPair(center, marker, transitLabelRadius, transitLabelSizes.glyph, transitLabelSizes.degree, transitLabelSizes.gap) : null;
-              const glyphMarker = pair?.glyph ?? marker;
-              const degreeMarker = pair?.degree ?? { x: marker.x - degreeOffset.x, y: marker.y - degreeOffset.y };
+              const degreeMarker = { x: marker.x - degreeOffset.x, y: marker.y - degreeOffset.y };
               const transitPointId = transitInspectorPointId(position.planet);
               const inspectorState = inspectorPointState(transitPointId);
               const inspectorActiveLines = focusedInspectorPoint && inspectorState === "averse"
@@ -1168,9 +1125,9 @@ export const SkyWheel = memo(function SkyWheel({
                     />
                   ) : null}
                   <line x1={tickInner.x} y1={tickInner.y} x2={tickOuter.x} y2={tickOuter.y} className="planet-tick wheel-placement__tick transit-planet-tick" />
-                  <g className="planet-label-group wheel-placement" transform={`translate(${glyphMarker.x.toFixed(2)} ${glyphMarker.y.toFixed(2)})`}>
+                  <g className="planet-label-group wheel-placement" transform={`translate(${marker.x.toFixed(2)} ${marker.y.toFixed(2)})`}>
                     <circle cx={0} cy={0} r={planetHitAreaRadius} className="planet-hit-area" />
-                    <WheelPlanetGlyph position={position} yOffset={0} size={transitLabelSizes?.glyph} />
+                    <WheelPlanetGlyph position={position} yOffset={0} />
                   </g>
                   <text x={degreeMarker.x.toFixed(2)} y={degreeMarker.y.toFixed(2)} className="planet-degree wheel-placement__degree transit-planet-degree">
                     {formatWheelDegree(position)}

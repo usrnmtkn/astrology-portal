@@ -215,35 +215,11 @@ export function wheelPlacementBounds(center: number, marker: PolarPoint, glyphSi
   ];
 }
 
-export function transitLabelPair(center: number, marker: PolarPoint, radius: number, glyphSize: number, degreeSize: number, gap: number) {
-  const angle = Math.atan2(center - marker.y, marker.x - center);
-  const glyphHalf = glyphSize / 2;
-  // Reserve the complete upright glyph/Rx asset and the widest whole-degree label.
-  const degreeHalfWidth = degreeSize * 0.95;
-  const degreeHalfHeight = degreeSize * 0.65;
-  const glyph = polarToCartesian(center, center, radius, angle * 180 / Math.PI);
-  let lower = 0, upper = Math.PI / 2;
-  for (let step = 0; step < 10; step++) {
-    const offset = (lower + upper) / 2;
-    const candidate = polarToCartesian(center, center, radius, (angle + offset) * 180 / Math.PI);
-    const separate = Math.abs(candidate.x - glyph.x) >= glyphHalf + degreeHalfWidth + gap
-      || Math.abs(candidate.y - glyph.y) >= glyphHalf + degreeHalfHeight + gap;
-    if (separate) upper = offset;
-    else lower = offset;
-  }
-  const degree = polarToCartesian(center, center, radius, (angle + upper) * 180 / Math.PI);
-  return { glyph, degree, bounds: [
-    { ...glyph, halfWidth: glyphHalf, halfHeight: glyphHalf },
-    { ...degree, halfWidth: degreeHalfWidth, halfHeight: degreeHalfHeight }
-  ] };
-}
-
 /** Move only the displayed labels. Exact longitude ticks and aspect anchors
  * stay on the calculated angle, and labels retain their circular order. */
 export function avoidWheelLabelCollisions<T extends { marker: PolarPoint; visualAngle: number }>(
   layouts: Map<string, T>, center: number, glyphSize: number, minimumOffset: number,
-  obstacles: WheelLabelBox[] = [], outward = false,
-  placementBounds?: (marker: PolarPoint) => WheelLabelBox[]
+  obstacles: WheelLabelBox[] = [], outward = false
 ) {
   const entries = [...layouts].map(([key, layout]) => [key, { ...layout,
     visualAngle: normalizedAngle(Math.atan2(center - layout.marker.y, layout.marker.x - center) * 180 / Math.PI)
@@ -273,7 +249,7 @@ export function avoidWheelLabelCollisions<T extends { marker: PolarPoint; visual
         const angle = reference + (step % 2 ? (step + 1) / 2 : -step / 2);
         if (angle < previous || angle > origin + 360 - cutGap / 2) continue;
         const marker = polarToCartesian(center, center, radius, angle);
-        const boxes = placementBounds?.(marker) ?? wheelPlacementBounds(center, marker, glyphSize, minimumOffset, outward);
+        const boxes = wheelPlacementBounds(center, marker, glyphSize, minimumOffset, outward);
         if (boxes.some(box => occupied.some(other =>
           Math.abs(box.x - other.x) < box.halfWidth + other.halfWidth + 2
           && Math.abs(box.y - other.y) < box.halfHeight + other.halfHeight + 2))) continue;
