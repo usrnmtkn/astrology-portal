@@ -8658,7 +8658,7 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     await expectNoHorizontalOverflow(page,'Fallback library cards');
     await noErrors();
   });
-  test(`Studio container insets ${theme} ${width}`, async ({page,context}) => {
+  test(`Studio container insets ${theme} ${width}`, async ({page,context,browserName}) => {
     await seedAdminApi(page);
     await page.setViewportSize({width,height:1000});
     await page.addInitScript(value=>localStorage.setItem('tldrastro:studio-theme',value),theme);
@@ -8706,7 +8706,7 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
     expect(Math.abs(fieldBox.x-(await body.boundingBox())!.x)).toBeLessThan(2);
     expect(Math.abs((await button.boundingBox())!.x-fieldBox.x)).toBeLessThan(2);
     expect((await button.boundingBox())!.height).toBeGreaterThanOrEqual(40);
-    await context.grantPermissions(['clipboard-read','clipboard-write']);
+    await context.grantPermissions(browserName === 'webkit' ? ['clipboard-read'] : ['clipboard-read','clipboard-write']);
     await button.click();
     expect(await page.evaluate(()=>navigator.clipboard.readText())).toBe('sky.placement.sun.cancer');
     await key.screenshot({path:`outputs/studio-style/token-content-key-${theme}-${width}.png`});
