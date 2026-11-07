@@ -1,4 +1,5 @@
 import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
+import { installSyntheticNetworkGuard } from "../helpers/synthetic-network-guard";
 import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { natalEditorialDraftForKey, natalEditorialIdentity, natalSectPlanets, type NatalEditorialSelection } from "../../apps/admin/src/natalEditorialLibrary";
 import { moonRoutingPreviewApi } from '../helpers/moon-routing-preview-api';
@@ -5164,7 +5165,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) for (const scenario of ["publish", "partial refusal", "lost receipt", "stale passage"] as const) test(`Daily At-a-Glance pairs headline and passage with calculated Moon context: ${scenario} ${width} ${theme}`, async ({ page }) => {
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) for (const scenario of ["publish", "partial refusal", "lost receipt", "stale passage", "cancel navigation", "saving navigation"] as const) test(`Daily At-a-Glance pairs headline and passage with calculated Moon context: ${scenario} ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await page.setViewportSize({ width, height: 1000 });
@@ -5242,12 +5243,16 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
 
     const api = await studioApiStore(generatedRows);
+    const originalStoredRows = await api.call({ method: "rows" });
     let interrupt = scenario !== "publish";
+    let releaseSave: (() => void) | undefined;
+    const heldSave = scenario === "saving navigation" ? new Promise<void>(resolve => { releaseSave = resolve; }) : null;
     await page.route("**/api/admin/generated-content**", async route => {
       if (new URL(route.request().url()).pathname !== "/api/admin/generated-content") return route.fallback();
       const method = route.request().method();
       const body = method === "GET" ? undefined : route.request().postDataJSON();
       if (body) writes.push({ method, payload: body });
+      if (heldSave && body?.id === "qa-daily-headline") await heldSave;
       if (interrupt && scenario === "partial refusal" && body?.id === "qa-daily-passage" && body?.ownerAction === "approve-package-revision") {
         interrupt = false;
         await route.fulfill({ status: 409, json: { ok: false, error: "Synthetic passage publication refused; retained writing must be retryable." } });
@@ -5263,7 +5268,12 @@ test.describe("content dashboard admin user flow case studies", () => {
       await route.fulfill({ status: result.status, json: result.payload });
     });
     try {
-    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily&q=daily");
+    if (scenario === "cancel navigation") {
+      await expectAdminRouteLoads(page, "/admin/content#surface-map");
+      await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily&q=daily"; });
+    } else {
+      await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily&q=daily");
+    }
     const studio = page.getByRole("region", { name: "Daily At-a-Glance editor" });
     await expect(studio.getByRole("heading", { name: "Edit the complete write-up" })).toBeVisible();
     await expect(studio).toContainText("1 matched write-ups");
@@ -5314,6 +5324,89 @@ test.describe("content dashboard admin user flow case studies", () => {
     const publish = editor.getByRole("button", { name: "Save & publish", exact: true });
     await expect(publish).toBeVisible();
     await expectNoHorizontalOverflow(page, `Daily paired editor ${width} ${theme}`);
+    const expectCompleteWriting = async () => {
+      await expect(editor.getByLabel("Headline · You")).toHaveValue(youHeadline);
+      await expect(editor.getByLabel("Passage · You")).toHaveValue(youPassageText);
+      await expect(editor.getByLabel("Headline · Friend")).toHaveValue(friendHeadline);
+      await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
+    };
+    const cancelReload = async () => {
+      const browserPage = await page.context().newCDPSession(page);
+      try {
+        const before = (await browserPage.send("Page.getFrameTree")).frameTree.frame.loaderId;
+        expect(before).toEqual(expect.any(String));
+        expect(before).not.toBe("");
+        const prompt = page.waitForEvent("dialog", { timeout: 5_000 });
+        // Issue the real reload without waiting for a new document that cancellation prevents.
+        const reload = browserPage.send("Page.reload");
+        const dialog = await prompt;
+        expect(dialog.type()).toBe("beforeunload");
+        await dialog.dismiss();
+        await reload;
+        expect((await browserPage.send("Page.getFrameTree")).frameTree.frame.loaderId).toBe(before);
+        await expectCompleteWriting();
+      } finally { await browserPage.detach(); }
+    };
+    if (scenario === "cancel navigation") {
+      await cancelReload();
+      const acceptedUrl = page.url();
+      let confirmations = 0;
+      const cancel = async (dialog: import("@playwright/test").Dialog) => {
+        expect(dialog.type()).toBe("confirm");
+        confirmations += 1;
+        await dialog.dismiss();
+      };
+      page.on("dialog", cancel);
+      await editor.getByRole("button", { name: "Close", exact: true }).click();
+      await expectCompleteWriting();
+      await page.evaluate(() => window.history.back());
+      await expect.poll(() => confirmations).toBe(2);
+      await expect(page).toHaveURL(acceptedUrl);
+      await expectCompleteWriting();
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect.poll(() => confirmations).toBe(3);
+      await expect(page).toHaveURL(acceptedUrl);
+      await expectCompleteWriting();
+      page.off("dialog", cancel);
+      expect(writes).toHaveLength(0);
+      expect(await api.call({ method: "rows" })).toEqual(originalStoredRows);
+      page.once("dialog", dialog => dialog.accept());
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect(editor).toHaveCount(0);
+      await expect(page).toHaveURL(/#surface-map$/u);
+      await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily&q=daily"; });
+      await expect(studio).toBeVisible();
+      await expect(editor).toHaveCount(0);
+      expect(writes).toHaveLength(0);
+      await assertNoBrowserErrors();
+      return;
+    }
+    if (scenario === "saving navigation") {
+      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      await expect.poll(() => writes.length).toBe(1);
+      await expect(editor.getByLabel("Passage · You")).toBeDisabled();
+      const acceptedUrl = page.url();
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect(page).toHaveURL(acceptedUrl);
+      await expect(page.getByText("Finish the current editor operation before leaving this section.", { exact: true })).toBeVisible();
+      await expectCompleteWriting();
+      await cancelReload();
+      expect(writes).toHaveLength(1);
+      releaseSave!();
+      await expect.poll(() => writes.length).toBe(2);
+      await expect(editor).toContainText("No unsaved changes");
+      await expectCompleteWriting();
+      expect((await api.call({ method: "rows" })).every((row: any) => row.status === "DRAFT")).toBe(true);
+      await page.evaluate(() => { window.location.hash = "#surface-map"; });
+      await expect(editor).toHaveCount(0);
+      await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily&q=daily"; });
+      await expect(studio).toBeVisible();
+      await expect(editor).toHaveCount(0);
+      await studio.getByRole("button", { name: "Edit this headline and passage" }).click();
+      await expectCompleteWriting();
+      await assertNoBrowserErrors();
+      return;
+    }
     if (scenario === "stale passage") {
       const newer = await api.call({ method: "PATCH", body: { id: "qa-daily-passage", expectedUpdatedAt: now, summary: "A concurrent owner correction must survive." } });
       expect(newer.status).toBe(200);
@@ -5359,7 +5452,187 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Headline · Friend")).toHaveValue(friendHeadline);
     await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
     await assertNoBrowserErrors();
-    } finally { api.close(); }
+    } finally {
+      releaseSave?.();
+      try { if (heldSave) await page.waitForLoadState("networkidle", { timeout: 5_000 }); }
+      finally { api.close(); }
+    }
+  });
+
+  for (const [width, theme] of [[1440, "light"], [390, "dark"]] as const) for (const scenario of ["leave while loading", "newer pair wins"] as const) test(`Daily At-a-Glance source opening ignores stale reads: ${scenario} ${width} ${theme}`, async ({ page, context, baseURL }, info) => {
+    test.setTimeout(60_000);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const network = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin, { deployedFixture: { supabaseOrigin: "https://visual-smoke.supabase.test" } });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
+    const dailyRow = (id: string, contentKey: string, bodyYou: string, bodyThey: string) => ({
+      id,
+      content_key: contentKey,
+      surface: "you",
+      mode: "feed",
+      status: "DRAFT",
+      event_type: "fallback-hook",
+      target_date: null,
+      headline: contentKey,
+      summary: "Owner-approved Daily At-a-Glance fixture.",
+      body: bodyYou,
+      sections: {
+        packageRecord: {
+          content_role: "fallback_hook",
+          contentKey,
+          review_status: "approved",
+          body_you: bodyYou,
+          body_they: bodyThey
+        }
+      },
+      block_type: "fallback_hook",
+      lane: "reference",
+      review_state: null,
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      knowledge_ids: [],
+      source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: "approved" },
+      reviewer_notes: null,
+      prompt_version: "qa-daily-glance",
+      provider: "fallback-architecture-v3",
+      model: null,
+      reviewed_at: now,
+      published_at: null,
+      updated_at: now,
+      created_at: now
+    });
+    const rows = [
+      dailyRow("31000000-0000-4000-8000-000000000001", "fallback-hook/daily-headline/soft/mars", "Synthetic first headline.", "Synthetic first Friend headline."),
+      dailyRow("31000000-0000-4000-8000-000000000002", "fallback-hook/daily-body/soft/mars", "Synthetic first passage. Final sentence.", "Synthetic first Friend passage. Final sentence."),
+      dailyRow("31000000-0000-4000-8000-000000000003", "fallback-hook/daily-headline/house/7", "Synthetic second headline.", "Synthetic second Friend headline."),
+      dailyRow("31000000-0000-4000-8000-000000000004", "fallback-hook/daily-body/house/7", "Synthetic second passage. Final sentence.", "Synthetic second Friend passage. Final sentence.")
+    ];
+    await seedAdminApi(page, { generatedRows: rows });
+    const api = await studioApiStore(rows, { publicationDb: true });
+    const original = await api.call({ method: "rows" });
+    let release!: () => void, heldReads = 0;
+    const held = new Promise<void>(resolve => { release = resolve; });
+    let releasePrefetch!: () => void;
+    const heldPrefetch = new Promise<void>(resolve => { releasePrefetch = resolve; });
+    const prefetchKeys = rows.map(row => row.content_key).sort();
+    const firstIds = new Set(rows.slice(0, 2).map(row => row.id));
+    const writes: string[] = [];
+    await routeStudioInventoryApi(page, { actualDocumentRoute: true, call: async message => {
+      const url = new URL(message.url ?? "/api/admin/generated-content", "https://synthetic.test");
+      const keys = url.searchParams.getAll("contentKeys").sort();
+      if (message.method === "GET" && url.pathname === "/api/admin/generated-content-inventory"
+        && !url.searchParams.has("id") && keys.length === prefetchKeys.length
+        && keys.every((key, index) => key === prefetchKeys[index])) await heldPrefetch;
+      const hold = message.method === "GET" && firstIds.has(url.searchParams.get("id") ?? "") && heldReads < 2;
+      if (hold) { heldReads++; await held; }
+      if (["POST", "PATCH", "DELETE"].includes(message.method) && url.pathname === "/api/admin/generated-content") writes.push(message.method);
+      return api.call(message);
+    }, answer: async (route, url) => {
+      if (!["/api/admin/content-live-status", "/api/content-publications"].includes(url.pathname)) return false;
+      const result = await api.call({ method: route.request().method(), url: url.pathname + url.search, body: route.request().method() === "GET" ? undefined : route.request().postDataJSON() });
+      await route.fulfill({ status: result.status, headers: result.headers, json: result.payload }); return true;
+    } });
+    await page.route("https://visual-smoke.supabase.test/rest/v1/content_publications*", async route => {
+      const url = new URL(route.request().url()), result = await api.call({ method: "publication-page", url: url.pathname + url.search });
+      await route.fulfill({ status: result.status, json: result.payload });
+    });
+    const completedReads: Array<{ id: string; contentKey: string; status: number; finished: boolean; exactBody: boolean }> = [];
+    const completedPrefetch: typeof completedReads = [];
+    async function confirmCompletedRead(request: import("@playwright/test").Request, expectedRows: typeof rows) {
+      const [response, finished] = await Promise.all([
+        page.waitForResponse(response => response.request() === request),
+        page.waitForEvent("requestfinished", finished => finished === request)
+      ]);
+      expect(finished).toBe(request);
+      expect(response.status()).toBe(200);
+      expect(await response.finished()).toBeNull();
+      expect(request.failure()).toBeNull();
+      const payload = await response.json();
+      expect(payload.ok).toBe(true);
+      expect(payload.rows).toHaveLength(expectedRows.length);
+      return expectedRows.map(expected => {
+        const document = payload.rows.find((row: { id: string }) => row.id === expected.id);
+        expect(document).toBeDefined();
+        expect(document.content_key).toBe(expected.content_key);
+        expect(document.body).toBe(expected.body);
+        expect(document.sections.packageRecord.body_you).toBe(expected.sections.packageRecord.body_you);
+        expect(document.sections.packageRecord.body_they).toBe(expected.sections.packageRecord.body_they);
+        return { id: document.id as string, contentKey: document.content_key as string, status: response.status(), finished: true, exactBody: true };
+      });
+    }
+    try {
+      const pendingPrefetch = page.waitForRequest(request => {
+        const url = new URL(request.url()), keys = url.searchParams.getAll("contentKeys").sort();
+        return request.method() === "GET" && url.origin === new URL(baseURL!).origin
+          && url.pathname === "/api/admin/generated-content-inventory" && !url.searchParams.has("id")
+          && keys.length === prefetchKeys.length && keys.every((key, index) => key === prefetchKeys[index]);
+      });
+      await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily");
+      const prefetchRequest = await pendingPrefetch;
+      const studio = page.getByRole("region", { name: "Daily At-a-Glance editor" });
+      await expect(studio).toContainText("2 matched write-ups");
+      const first = studio.locator(".admin-daily-glance-pair-list article").filter({ hasText: "Moon Soft Contact natal Mars" });
+      const second = studio.locator(".admin-daily-glance-pair-list article").filter({ hasText: "7th House fallback" });
+      const pendingRequests = rows.slice(0, 2).map(row => page.waitForRequest(request => {
+        const url = new URL(request.url());
+        return request.method() === "GET" && url.origin === new URL(baseURL!).origin
+          && url.pathname === "/api/admin/generated-content-inventory"
+          && url.searchParams.getAll("id").length === 1 && url.searchParams.get("id") === row.id;
+      }));
+      await first.getByRole("button", { name: "Edit write-up", exact: true }).click();
+      await expect.poll(() => heldReads).toBe(2);
+      const requests = await Promise.all(pendingRequests);
+      const prefetchCompletion = confirmCompletedRead(prefetchRequest, rows);
+      releasePrefetch();
+      completedPrefetch.push(...await prefetchCompletion);
+      expect(completedPrefetch).toHaveLength(rows.length);
+      async function releaseAndConfirmReads() {
+        const completed = requests.map((request, index) => confirmCompletedRead(request, [rows[index]]));
+        release();
+        completedReads.push(...(await Promise.all(completed)).flat());
+        expect(completedReads).toHaveLength(2);
+        expect(completedReads.map(read => read.id).sort()).toEqual(rows.slice(0, 2).map(row => row.id).sort());
+      }
+      const editor = page.getByRole("dialog", { name: "Daily At-a-Glance paired editor" });
+      if (scenario === "leave while loading") {
+        await page.evaluate(() => { window.location.hash = "#surface-map"; });
+        await expect(page).toHaveURL(/#surface-map$/u);
+        await releaseAndConfirmReads();
+        await page.waitForLoadState("networkidle");
+        await expect(editor, "A completed old read must not reopen an editor after navigation").toHaveCount(0);
+        await page.evaluate(() => { window.location.hash = "#exact-content"; });
+        await expect(page.getByRole("button", { name: "Refresh rows", exact: true }), "Leaving a source load must release the shared loading state").toBeEnabled();
+        await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily"; });
+        await expect(studio).toBeVisible();
+        await first.getByRole("button", { name: "Edit write-up", exact: true }).click();
+        await expect(editor.getByLabel("Headline · You")).toHaveValue(rows[0].body);
+        await expect(editor.getByLabel("Passage · You")).toHaveValue(rows[1].body);
+      } else {
+        await second.getByRole("button", { name: "Edit write-up", exact: true }).click();
+        await expect(editor.getByLabel("Headline · You")).toHaveValue(rows[2].body);
+        const writing = {
+          "Headline · You": "Synthetic newer selected headline.",
+          "Passage · You": "Synthetic newer selected passage.\n\nRetain its complete final sentence.",
+          "Headline · Friend": "Synthetic newer selected Friend headline.",
+          "Passage · Friend": "Synthetic newer selected Friend passage.\n\nRetain its complete Friend final sentence."
+        };
+        for (const [label, value] of Object.entries(writing)) await editor.getByLabel(label).fill(value);
+        await releaseAndConfirmReads();
+        await page.waitForLoadState("networkidle");
+        for (const [label, value] of Object.entries(writing)) await expect(editor.getByLabel(label), "An older read must retain the newer selection and every local field").toHaveValue(value);
+      }
+      expect(writes).toEqual([]); expect(await api.call({ method: "rows" })).toEqual(original);
+      await assertNoBrowserErrors();
+    } finally {
+      release(); releasePrefetch();
+      try { await page.waitForLoadState("networkidle", { timeout: 5_000 }); await network.finishStaticFonts(); }
+      finally {
+        await page.close(); api.close();
+        await info.attach("completed-prefetch-ledger", { contentType: "application/json", body: JSON.stringify(completedPrefetch) });
+        await info.attach("completed-held-read-ledger", { contentType: "application/json", body: JSON.stringify(completedReads) });
+        await info.attach("strict-network-ledger", { contentType: "application/json", body: JSON.stringify({ unhandledExternal: network.unhandledExternal }) });
+        expect(network.unhandledExternal).toEqual([]);
+      }
+    }
   });
 
   test("composition map opens canonical templates and saved hook sources for editing", async ({ page }) => {

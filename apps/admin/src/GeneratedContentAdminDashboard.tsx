@@ -3292,6 +3292,11 @@ export function GeneratedContentAdminDashboard() {
   const [focusSunSummaries, setFocusSunSummaries] = useState(false);
   const subscriptionEventDirtyRef = useRef(false);
   const dailyWritingDirtyRef = useRef(false);
+  // Navigation needs clean (0), dirty (1), or busy (2); the child owns the writing.
+  const dailyGlanceNavigationStateRef = useRef<0 | 1 | 2>(0);
+  const trackDailyGlanceDraft = useCallback((dirty: boolean, busy: boolean) => {
+    dailyGlanceNavigationStateRef.current = busy ? 2 : dirty ? 1 : 0;
+  }, []);
   const skyPlacementWorkspaceDirtyRef = useRef(false);
   const skyPlacementWorkspaceBusyRef = useRef(false);
   const aspectPatternDirtyRef = useRef(false);
@@ -3390,6 +3395,7 @@ export function GeneratedContentAdminDashboard() {
   const routeNavigationGuardRef = useRef<() => boolean>(() => true);
   const guidedReviewOpenedRef = useRef("");
   const sourceOpenRequestRef = useRef(0);
+  const dailyGlanceLoadingRequestRef = useRef<number | null>(null);
   const editorLoadRef = useRef<AbortController | null>(null);
   useEffect(() => () => editorLoadRef.current?.abort(), []);
   const openExactTransitNatalSourceRef = useRef<(selection: TransitNatalContact & Partial<Pick<TransitNatalSelection, "sign" | "transitHouse" | "natalHouse">>) => Promise<void>>(async () => {});
@@ -4532,6 +4538,7 @@ export function GeneratedContentAdminDashboard() {
   function hasPendingArticleChanges() {
     return Boolean(
       subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || moonHoroscopesDirtyRef.current || dailyWritingDirtyRef.current || skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current
+      || dailyGlanceNavigationStateRef.current
       || aspectPatternDirtyRef.current || aspectPatternBusyRef.current || customVariableDirtyRef.current || customVariableBusyRef.current
       || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
@@ -4572,10 +4579,11 @@ export function GeneratedContentAdminDashboard() {
       selectedRow
       || draft
       || compositionEditorContext
+      || dailyGlancePairSelector
       || skyArticleEditor
       || skyArticleEditionForm
     );
-    if (skyPlacementWorkspaceBusyRef.current || aspectPatternBusyRef.current || customVariableBusyRef.current || isLoading && hasOpenEditor) {
+    if (dailyGlanceNavigationStateRef.current === 2 || skyPlacementWorkspaceBusyRef.current || aspectPatternBusyRef.current || customVariableBusyRef.current || isLoading && hasOpenEditor) {
       setMessage("Finish the current editor operation before leaving this section.");
       return false;
     }
@@ -4597,6 +4605,10 @@ export function GeneratedContentAdminDashboard() {
       return false;
     }
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
+    if (dailyGlanceLoadingRequestRef.current === sourceOpenRequestRef.current) {
+      dailyGlanceLoadingRequestRef.current = null;
+      setIsLoading(false);
+    }
     sourceOpenRequestRef.current += 1;
     if (editorLoadRef.current) {
       editorLoadRef.current.abort();
@@ -4609,6 +4621,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedTemplateVariableName(null);
     setSelectedTemplateVariableSourceId(null);
     setCompositionEditorContext(null);
+    setDailyGlancePairSelector(null);
     setSelectedRowId(null);
     setDraft(null);
     setHouseTransitEditor(null);
@@ -5649,17 +5662,24 @@ export function GeneratedContentAdminDashboard() {
       setMessage(`Could not find the Daily At-a-Glance sources for ${selector}.`);
       return;
     }
+    const originatingHash = window.location.hash;
+    const requestId = ++sourceOpenRequestRef.current;
+    dailyGlanceLoadingRequestRef.current = requestId;
     setIsLoading(true);
     try {
       await Promise.all([
         hydrateGeneratedContentRow(pair.headlineRow as AdminGeneratedContentRow),
         hydrateGeneratedContentRow(pair.passageRow as AdminGeneratedContentRow)
       ]);
+      if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
       setDailyGlancePairSelector(selector);
     } catch (error) {
-      setMessage(dashboardErrorMessage(error));
+      if (requestId === sourceOpenRequestRef.current && window.location.hash === originatingHash) setMessage(dashboardErrorMessage(error));
     } finally {
-      setIsLoading(false);
+      if (dailyGlanceLoadingRequestRef.current === requestId) {
+        dailyGlanceLoadingRequestRef.current = null;
+        if (requestId === sourceOpenRequestRef.current) setIsLoading(false);
+      }
     }
   }
 
@@ -10418,6 +10438,7 @@ export function GeneratedContentAdminDashboard() {
             isSaving={isLoading}
             pair={selectedDailyGlancePair}
             onClose={closeDailyGlancePairEditor}
+            onDirty={trackDailyGlanceDraft}
             onSave={saveDailyGlancePairEdits}
             onPublish={(pair, edits) => saveDailyGlancePairEdits(pair, edits, true)}
             publicationPending={Boolean(pendingPublication)}
