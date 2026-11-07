@@ -167,7 +167,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
       }
     : null;
 
-  await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
+  await page.route(`${(process.env.VITE_TLDRASTRO_API_URL || "https://tldrastro-api-27165565299.us-central1.run.app").replace(/\/$/, "")}/**`, async (route) => {
     await route.fulfill({
       status: 503,
       contentType: "text/plain",
@@ -1943,7 +1943,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Date", exact: true }).click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
     await page.getByRole("gridcell", { name: "Monday, July 20, 2026" }).click();
-    await page.getByRole("button", { name: "Show Jul 20", exact: true }).click();
+    await page.getByRole("button", { name: "Apply date", exact: true }).click();
 
     await expect(page).toHaveURL(/[?&]date=2026-07-20(?:&|#|$)/u);
     await expect(dateTrigger).toContainText("Jul 20");
@@ -1959,7 +1959,7 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Date", exact: true }).click();
     await expect(page.getByRole("region", { name: "Pick Date" })).toBeVisible();
     await page.getByRole("gridcell", { name: "Sunday, July 12, 2026" }).click();
-    await page.getByRole("button", { name: "Show Jul 12", exact: true }).click();
+    await page.getByRole("button", { name: "Apply date", exact: true }).click();
 
     await expect(page).toHaveURL(/[?&]date=2026-07-12(?:&|#|$)/u);
     await expect(dateTrigger).toContainText("Jul 12");
@@ -1994,7 +1994,7 @@ test.describe("client-facing user flow case studies", () => {
     await dateTrigger.click();
     await page.getByRole("tab", { name: "Date", exact: true }).click();
     await page.getByRole("gridcell", { name: "Thursday, August 20, 2026" }).click();
-    await page.getByRole("button", { name: "Show Aug 20", exact: true }).click();
+    await page.getByRole("button", { name: "Apply date", exact: true }).click();
     await expect(page).toHaveURL(/[?&]date=2026-08-20(?:&|#|$)/u);
     await expect(dateTrigger).toContainText("Aug 20");
 
@@ -6209,7 +6209,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   await page.locator('.sky-header-date-button').click();
   await page.getByRole('tab', { name: 'Date', exact: true }).click();
   await page.getByRole('gridcell', { name: 'Monday, October 26, 2026' }).click();
-  await page.getByRole('button', { name: 'Show Oct 26', exact: true }).click();
+  await page.getByRole('button', { name: 'Apply date', exact: true }).click();
   const card = page.locator('button.updates-aspect-row').filter({ hasText: 'Primary You source' }).first();
   await expect(card).toBeVisible();
   await card.click();

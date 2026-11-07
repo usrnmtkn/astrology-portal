@@ -42,9 +42,13 @@ export function primeInitialSkyTransport(){
     const response=await fetch('/api/sky-reader?'+key,{signal,priority:'high'});
     if(!response.ok)throw new Error('Initial Sky transport unavailable.');
     return response.json();
-  },{timeoutMs:8_000});
-  void request.catch(()=>{});
-  (window as PrimedWindow).__tldrInitialSkyTransport={day,location,at:date.toISOString(),
+  },{timeoutMs:8_000,cancelOnNavigation:true});
+  const transport={day,location,at:date.toISOString(),
     live:Boolean(liveSkyReference(day,location.timeZone,now)),key,startedAt,request};
+  (window as PrimedWindow).__tldrInitialSkyTransport=transport;
+  void request.catch(error=>{
+    if(error?.name==='AbortError'&&(window as PrimedWindow).__tldrInitialSkyTransport===transport)
+      delete (window as PrimedWindow).__tldrInitialSkyTransport;
+  });
   window.dispatchEvent(new Event('tldr:sky-bootstrap-started'));
 }
