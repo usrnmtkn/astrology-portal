@@ -48,18 +48,24 @@ verification or the saved passage text.
   removed header link and reload. Synthetic fixtures use isolated content storage.
 - CSS/token audits, server/Web type checks and reader-copy boundary checks.
 
-Matched independent main `020f885c07301b276640b2866ac260075bc51951` and candidate
-builds use their own locked dependencies, native ARM Node 22.20.0 and identical
-sanitized CI settings. The requested feature adds 1,925 gzip bytes to aggregate
-Web JavaScript and 1,478 to aggregate Admin JavaScript. The affected allowances
-add only the measured positive feature delta, retaining the passing control's
-exact headroom. All other numeric, graph, deferred-source, privacy and runtime
-guards remain intact. Detailed measurements are retained in the existing budget
-rationales. This is feature cost, not a performance improvement.
+Matched accepted main `2c2eab8415fb678ab1ad7a3be44d464263818d8e` and integrated
+feature source `4030f709b42d006eb7c76ba9be1d52fa33971745` use their own locked
+dependencies and native ARM Node 22.20.0. Complete normal prerequisites run before
+normalizing only the generated knowledge's validated top-level timestamp. The
+complete normalized knowledge matches. Unchanged build bodies use identical
+sanitized settings: standard CI for Admin, standard and native public-reader
+profiles for Web. Maximum required-profile feature cost is 2,221 aggregate Web
+gzip bytes and 2,106 aggregate Admin gzip bytes. Five affected allowances add
+only that measured positive cost to accepted main, preserving its headroom.
+No separate Sky detail chunk allowance is retained. All other numeric, graph,
+deferred-source, privacy and runtime guards remain intact, with detailed evidence
+in the budget rationales. This records feature cost, not a performance improvement.
 
-Those measurements precede integration with the accepted header-link removal;
-the final accepted-main comparison remains required before release. No separate
-Sky detail chunk allowance is retained for the removed link.
+Initial provisional Admin limits failed by 124 raw entry bytes and 618 aggregate
+gzip bytes; those failures are retained. An exploratory standalone Admin build
+using the Web-only native public-reader key also makes accepted main fail its
+aggregate guard by 110 bytes. That separate baseline failure is retained and is
+not added to the feature allowance or reported as a passing control profile.
 
 These are local integration results. Release additionally requires the full
 unfiltered local content/API commands, exact-head hosted gates, and verification
