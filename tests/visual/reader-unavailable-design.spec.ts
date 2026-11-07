@@ -5,7 +5,7 @@ import { bundledPublications } from "../helpers/bundled-publications";
 import { expectReadableTheme } from "../helpers/theme-contrast";
 import { expectMenuTheme } from "../helpers/menu-theme";
 
-const kinds = ["page", "article", "removed-article", "placement", "date", "horoscope", "profile", "connection", "chart", "invite", "report", "signed-out"];
+const kinds = ["page", "article", "removed-article", "placement", "sky-event", "date", "horoscope", "profile", "connection", "chart", "invite", "report", "signed-out"];
 async function harness() {
   const bundle = await build({ stdin: { resolveDir: process.cwd(), loader: "tsx", contents: `
     import React from 'react';import {createRoot} from 'react-dom/client';

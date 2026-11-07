@@ -101,8 +101,12 @@ export default function StudioVariables({ onOpenSource, secret, customVariables,
       <section className="admin-filter-form" aria-label="Variable filters">
         <label className="admin-filter-search"><span>Search variables</span><StudioInput type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Token, meaning, planet, sign, or source" /></label>
         <label><span>Library</span><AdminSelect aria-label="Library" value={kind} onChange={event => {
-          if (event.target.value !== kind && !customDraft.current.busy
-            && (!customDraft.current.dirty || window.confirm('Discard the unsaved variable changes?'))) setKind(event.target.value);
+          const nextKind = event.target.value;
+          if (nextKind !== kind && !customDraft.current.busy
+            && (!customDraft.current.dirty || window.confirm('Discard the unsaved variable changes?'))) {
+            if (createRequest && nextKind !== 'custom') onCreateHandled();
+            setKind(nextKind);
+          }
         }}><option value="custom">My variables</option><option value="readonly">Calculated facts</option><option value="editable">Existing phrase variables</option></AdminSelect></label>
         {custom ? <label><span>Tag</span><AdminSelect aria-label="Tag" value={tag} onChange={event => setTag(event.target.value)}><option value="">All tags</option>{tags.map(value => <option key={value}>{value}</option>)}</AdminSelect></label> : <label><span>Available in</span><AdminSelect aria-label="Available in" value={surface} onChange={event => setSurface(event.target.value)}><option value="">All surfaces</option>{surfaces.map(value => <option key={value}>{value}</option>)}</AdminSelect></label>}
       </section>
