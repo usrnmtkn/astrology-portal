@@ -88,6 +88,12 @@ try {
     assert(preview.result.writingExport.text.includes(request.instructions),'The complete exported system instructions equal the actual provider system');
     assert(preview.result.writingExport.text.includes(JSON.stringify(request.schema,null,2)));
     assert.equal(request.provider, provider);
+    const completeRequest = `${request.instructions}\n\n${request.prompt}`;
+    assert(completeRequest.includes('APHORISMS AND MAXIMS — REVIEW ONLY'), 'Both providers receive the aphorism review rule.');
+    assert(completeRequest.includes('Use sparingly, never as the default ending'), 'The rule discourages default maxim endings without banning occasional use.');
+    assert(completeRequest.includes('NO MIXED METAPHORS'), 'Both providers receive the image-consistency rule.');
+    assert(completeRequest.includes('keep every word tied to it in the same world'), 'The whole image must stay consistent.');
+    assert(completeRequest.includes('If the image does not hold up literally, say it plainly instead.'), 'A broken image must use plain language.');
     assert(request.prompt.includes('EXISTING ARTICLE CONTEXT'), 'The existing article must have a distinct revision context.');
     assert(!request.prompt.includes("The template's fixed prose is immutable"),
       'Existing article prose must be editable under the owner direction, not declared immutable.');

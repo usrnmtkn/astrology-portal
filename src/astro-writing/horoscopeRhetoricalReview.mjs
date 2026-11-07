@@ -6,11 +6,13 @@ import {monthlyReviewEvidence} from './monthlyRequestEvidence.mjs';
 import {weeklyMeaningReferences} from './weeklyRequestEvidence.mjs';
 
 export const HOROSCOPE_RHETORICAL_REVIEW = `horoscope-review/v1:${patterns.RHETORICAL_PATTERN_VERSION}`;
+export const PREVIOUS_HOROSCOPE_RHETORICAL_REVIEW = `horoscope-review/v1:${history.PREVIOUS_RHETORICAL_PATTERN_VERSION}`;
 export const LEGACY_HOROSCOPE_RHETORICAL_REVIEW = `horoscope-review/v1:${history.LEGACY_RHETORICAL_PATTERN_VERSION}`;
-export const supportedHoroscopeReview = version => [HOROSCOPE_RHETORICAL_REVIEW, LEGACY_HOROSCOPE_RHETORICAL_REVIEW].includes(version);
+export const supportedHoroscopeReview = version => [HOROSCOPE_RHETORICAL_REVIEW, PREVIOUS_HOROSCOPE_RHETORICAL_REVIEW, LEGACY_HOROSCOPE_RHETORICAL_REVIEW].includes(version);
 export function horoscopeReviewPolicy(version) {
   if (!supportedHoroscopeReview(version)) throw new Error('Unsupported horoscope review policy.');
-  return version === LEGACY_HOROSCOPE_RHETORICAL_REVIEW ? history.LEGACY_RHETORICAL_JUDGE_POLICY : patterns.RHETORICAL_JUDGE_POLICY;
+  if (version === LEGACY_HOROSCOPE_RHETORICAL_REVIEW) return history.LEGACY_RHETORICAL_JUDGE_POLICY;
+  return version === PREVIOUS_HOROSCOPE_RHETORICAL_REVIEW ? history.PREVIOUS_RHETORICAL_JUDGE_POLICY : patterns.RHETORICAL_JUDGE_POLICY;
 }
 export const horoscopeReviewHash = value => createHash('sha256').update(horoscopeCanonicalJson(value)).digest('hex');
 export const HOROSCOPE_REVIEW_SCHEMA = patterns.RHETORICAL_REVIEW_SCHEMA;
