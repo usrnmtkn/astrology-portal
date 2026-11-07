@@ -8,6 +8,11 @@ draft**. The same save retains the article and every entered reading. Closing
 the panel keeps unsaved text in the article editor. The normal navigation,
 conflict, revision and publication controls still apply.
 
+The panel includes the write-up's existing **Publication** controls after the
+sign fields. Save the draft, then approve publication now, schedule a future
+release, or use a previous publication date. The article and its manually
+written readings publish together; publication timing does not change coverage.
+
 A partial set can be saved privately. Once a set is started, all twelve readings
 must be complete before publishing or approving a scheduled release. An article
 without a sign set remains publishable. The public article displays all twelve
@@ -30,11 +35,13 @@ verification or the saved passage text.
 - `scripts/test-sky-writeup-horoscopes.mts`: actual handler POST/PATCH, partial
   draft round trip, incomplete publication rejection without a write, exact
   twelve-passage public transport and reader selection, stale edit rejection,
-  backdating, immutable coverage and article body, tamper detection and JSONB
-  ordering. It runs in `test:sky-placement-workspace` and the full API gate.
+  backdating, future private scheduling and actual due-cron publication,
+  immutable coverage and article body, tamper detection and JSONB ordering.
+  It runs in `test:sky-placement-workspace` and the full API gate.
 - `playwright.sky-cms.config.ts`: nineteen browser cases, including manual sign
   entry in both themes at desktop/mobile widths, partial save/reload, all twelve
-  saved readings, closing/reopening unsaved fields and publication availability.
+  saved readings, closing/reopening unsaved fields and publication directly from
+  the horoscope panel, including now, future and backdated publication.
   The new sheet keeps its header outside the scrolling content region.
 - Reader regression: sixteen cases across ingress articles, saved full-period
   aspects, dates/countdowns and complete manual sign readings, including the

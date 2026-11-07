@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { mock } from 'node:test';
+import { publishDueSkyArticles } from '../api/admin/generated-content';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { skyPlacementSourceFixture } from '../tests/helpers/sky-placement-source-fixture.mts';
 import { reviseSkyArticleEdition, skyArticleEditableFields, skyArticleReaderCopyIsConsistent } from '../apps/web/src/content/skyArticleTemplateCompiler';
@@ -52,6 +54,20 @@ try {
   assert.deepEqual(selected?.risingHoroscopes.map(p => p.body), readings.map(p => p.body));
   assert.deepEqual(selected?.risingHoroscopes.map(p => p.risingSign), WRITEUP_HOROSCOPE_SIGNS);
   assert.equal(selected?.body, edition.body);
+  store.rows.clear(); store.rows.set(draft.id, structuredClone(draft));
+  let scheduled = await patch(draft, 'save-sky-article-edition-revision', { sections: { skyArticleEdition: complete } });
+  const dueAt = Date.now() + 3600_000, future = new Date(dueAt).toISOString();
+  scheduled = await patch(scheduled, 'set-sky-article-publication-date', { skyPublicationAt: future });
+  scheduled = await patch(scheduled, 'approve-sky-article-edition');
+  assert.equal(scheduled.status, 'DRAFT');
+  assert.equal(scheduled.source_snapshot.skyArticlePublication.state, 'scheduled');
+  assert.deepEqual(await read(), []);
+  mock.timers.enable({ apis: ['Date'], now: dueAt + 1 });
+  assert.deepEqual(await publishDueSkyArticles(), { published: 1, held: 0 });
+  assert.equal(store.rows.get(scheduled.id).published_at, future);
+  assert.deepEqual((await read())[0].sections.skyArticleEdition.writeupHoroscopes, readings);
+  assert.equal((await read())[0].body, edition.body);
+  mock.timers.reset();
   const sorted = JSON.parse(JSON.stringify(complete, (_key, value) => value && typeof value === 'object' && !Array.isArray(value)
     ? Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b))) : value));
   assert(skyArticleCompiledHashMatches(sorted), 'JSONB order preserves the complete sign copy hash.');
@@ -59,5 +75,5 @@ try {
   assert.equal(skyArticleCompiledHashMatches(sorted), false);
   const duplicate = readings.map(p => ({ ...p })); duplicate[1].sign = 'aries';
   await assert.rejects(reviseSkyArticleEdition(edition, { ...skyArticleEditableFields(edition), writeupHoroscopes: duplicate }), /distinct signs/u);
-} finally { store.close(); }
-console.log('PASS: article-owned sign drafts round-trip through the actual handler; incomplete sets stay private; stale saves fail; complete approved copy reaches all twelve reader passages with unchanged dates and body, backdating and tamper/JSONB checks.');
+} finally { mock.timers.reset(); store.close(); }
+console.log('PASS: article-owned sign drafts round-trip through the actual handler; incomplete sets stay private; stale saves fail; complete approved copy reaches all twelve reader passages with unchanged dates and body, backdating, scheduled cron publication and tamper/JSONB checks.');

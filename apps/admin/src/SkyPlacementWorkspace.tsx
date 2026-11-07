@@ -47,6 +47,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [horoscopeEditor, setHoroscopeEditor] = useState({ dirty: false, busy: false });
+  const [writeupHoroscopesOpen, setWriteupHoroscopesOpen] = useState(false);
   const [facts, setFacts] = useState<PlacementVisitFacts | null>(null);
   const [factsReferenceDate, setFactsReferenceDate] = useState('');
   const [generationOpen, setGenerationOpen] = useState(false);
@@ -243,9 +244,13 @@ export default function SkyPlacementWorkspace(props: Props) {
       request={props.request} onLoadRow={props.onLoadRow} onEditRow={props.onEditRow} onEditorState={setHoroscopeEditor} />
   </Suspense>;
   const canSave = !busy && !generationOpen && Boolean(fields.headline.trim() && fields.summary.trim() && fields.body.trim()) && (editing === null || passageDirty);
+  const publicationControls = editing ? <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}
+    publicationBlocked={writeupHoroscopesReady(fields.writeupHoroscopes) ? undefined : 'Complete all 12 sign readings before publishing these write-up horoscopes. You can keep saving the draft.'}
+    onSaved={saved => { setEditing(saved); setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]); }} />
+    : <p>Save the write-up draft to set its publication date and publish these readings.</p>;
   function backToArticles() {
     if (busy || !discard()) return;
-    setComposing(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
+    setComposing(false); setWriteupHoroscopesOpen(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
     setGenerationOpen(false); setGenerationDirty(false); setGenerated(null); setMessage(''); setError('');
   }
   const periodFinder = <div className="studio-section">
@@ -326,6 +331,7 @@ export default function SkyPlacementWorkspace(props: Props) {
               <h3>Article settings</h3>
               <Suspense fallback={<p role="status">Loading write-up horoscopes…</p>}>
                 <SkyWriteupHoroscopesEditor passages={fields.writeupHoroscopes} period={facts?.slotValues.when ?? openedEdition?.slotValues.when ?? ''}
+                  open={writeupHoroscopesOpen} onOpenChange={setWriteupHoroscopesOpen} publicationControls={publicationControls}
                   busy={busy} canSave={canSave} articleReady={Boolean(fields.headline.trim() && fields.body.trim() && fields.summary.trim())} message={message} error={error} onSave={() => void save()}
                   onChange={writeupHoroscopes => setFields(current => ({ ...current, writeupHoroscopes }))} />
               </Suspense>
@@ -336,9 +342,7 @@ export default function SkyPlacementWorkspace(props: Props) {
                 <div><dt>Article period</dt><dd>{facts?.slotValues.when ?? openedEdition?.slotValues.when}</dd></div>
                 <div><dt>Coverage</dt><dd>{openedEdition?.scope === 'day' ? 'Saved day article' : openedFacts?.periodLabel ?? 'Full sign visit'}</dd></div>
               </dl>
-              {editing && <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}
-                publicationBlocked={writeupHoroscopesReady(fields.writeupHoroscopes) ? undefined : 'Complete all 12 sign readings before publishing these write-up horoscopes. You can keep saving the draft.'}
-                onSaved={saved => { setEditing(saved); setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]); }} />}
+              {!writeupHoroscopesOpen && editing && publicationControls}
               {!editing && <details className="studio-contained-disclosure"><AdminDisclosureSummary>Choose another period</AdminDisclosureSummary>{periodFinder}</details>}
               {editing && <StudioButton disabled={busy || dirty} onClick={() => latest.current.onEditRow(editing)}>History & article actions</StudioButton>}
             </aside>

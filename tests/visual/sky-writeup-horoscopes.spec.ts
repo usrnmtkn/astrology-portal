@@ -34,6 +34,7 @@ for (const width of [1440, 390]) for (const theme of ['light', 'dark']) {
       await panel.getByLabel('Aries write-up horoscope', { exact: true }).fill(passage('aries'));
       await panel.getByRole('button', { name: 'Save draft', exact: true }).click();
       await expect(panel.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+      await expect(panel.getByRole('button', { name: 'Approve & publish', exact: true })).toBeDisabled();
       await panel.getByRole('button', { name: 'Back to write-up', exact: true }).click();
       await expect(workspace.getByRole('button', { name: 'Approve & publish', exact: true })).toBeDisabled();
       await expect(workspace.getByLabel('Visit article body', { exact: true })).toHaveValue(initial.body);
@@ -50,7 +51,10 @@ for (const width of [1440, 390]) for (const theme of ['light', 'dark']) {
       await expect(panel.getByLabel('Pisces write-up horoscope', { exact: true })).toHaveValue(passage('pisces'));
       await panel.getByRole('button', { name: 'Save draft', exact: true }).click();
       await expect(panel.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
+      await expect(panel.getByRole('button', { name: 'Approve & publish', exact: true })).toBeEnabled();
+      await expect(panel).toContainText('These readings publish with the write-up in its Horoscopes by rising sign section.');
       await expect(panel.getByRole('heading', { name: 'Horoscopes for this write-up' })).toHaveCSS('font-family', /system-ui/);
+      await panel.getByLabel('Pisces write-up horoscope', { exact: true }).scrollIntoViewIfNeeded();
       const header = await panel.getByRole('heading', { name: 'Horoscopes for this write-up' }).boundingBox();
       const field = await panel.getByLabel('Pisces write-up horoscope', { exact: true }).boundingBox();
       expect(field!.y).toBeGreaterThan(header!.y + header!.height);
@@ -59,11 +63,20 @@ for (const width of [1440, 390]) for (const theme of ['light', 'dark']) {
       expect(await panel.evaluate(node => node.scrollTop)).toBe(0);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: test.info().outputPath('writeup-horoscopes.png') });
-      await page.reload(); await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
+      const scheduled = width === 1440 && theme === 'light';
+      const publicationDate = scheduled ? '2030-10-24T12:00' : theme === 'dark' ? '2026-10-24T08:00' : '';
+      const expectedPublishedAt = publicationDate ? await page.evaluate(value => new Date(value).toISOString(), publicationDate) : null;
+      if (publicationDate) await panel.getByLabel('Publication date and time', { exact: true }).fill(publicationDate);
+      await panel.getByRole('button', { name: scheduled ? 'Approve & schedule' : 'Approve & publish', exact: true }).click();
+      await expect(panel.getByText(scheduled ? 'Publication scheduled. The saved article stays private until release.' : 'Article published with the selected publication date.', { exact: true })).toBeVisible();
+      await page.reload();
       const saved = (await store.call({ method: 'rows' })).find((r: any) => r.id === initial.id);
-      expect(saved.status).toBe('DRAFT');
+      expect(saved.status).toBe(scheduled ? 'DRAFT' : 'LIVE');
+      if (scheduled) expect(saved.source_snapshot.skyArticlePublication.state).toBe('scheduled');
+      else if (expectedPublishedAt) expect(saved.published_at).toBe(expectedPublishedAt);
       expect(saved.sections.skyArticleEdition.writeupHoroscopes).toEqual(WRITEUP_HOROSCOPE_SIGNS.map(sign => ({ sign, body: passage(sign) })));
-      await expect(workspace.getByRole('button', { name: 'Approve & publish', exact: true })).toBeEnabled();
+      expect(saved.sections.skyArticleEdition.transitStartInstant).toBe(article.sections.skyArticleEdition.transitStartInstant);
+      expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(article.sections.skyArticleEdition.transitEndInstant);
       expect(errors).toEqual([]);
     } finally { store.close(); }
   });
