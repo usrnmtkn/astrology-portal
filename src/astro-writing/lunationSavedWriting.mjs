@@ -33,7 +33,8 @@ export function resolveLunarSavedWriting(target,rows,seasonRecords=[]) {
     const draft=row?.sections?.packageDraft;
     if(draft?.contentKey&&draft.contentKey!==contentKey)fail(`source identity does not match ${contentKey}.`);
     const body=row?(typeof draft?.body==='string'?draft.body:row.body):original.body;
-    if(typeof body!=='string'||!body.trim()||/\{\{|\}\}/u.test(body))fail(`complete the passage for ${contentKey} in Content Studio, then update the writing plan.`);
+    const referenceText=typeof body==='string'?body.replace(/\{\{\s*(?:startDate|startTime)\s*\}\}/gu,''):'';
+    if(!referenceText.trim()||/\{\{|\}\}/u.test(referenceText))fail(`complete the passage for ${contentKey} in Content Studio, then update the writing plan.`);
     references.push({id:`saved-writing:${row?.id??contentKey}`,contentKey,role:contentKey===target.contentKey?'matching-lunation':'sun-season',
       title:row?.headline||original?.headline||contentKey,body,bodySha256:hash(body),wordCount:body.trim().split(/\s+/u).length,
       provenance:{kind:row?'content-studio':'content-studio-original',rowId:row?.id??null,updatedAt:row?.updated_at??null,status:row?.status??'original',
