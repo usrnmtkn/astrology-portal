@@ -14,7 +14,7 @@ import {loadFormattedWriting} from '../../../../src/shared/components/formattedW
 
 const pending = new Map<string, Promise<SkySnapshot>>();
 let primedInitialSkyLoad: InitialSkyLoad | null = null;
-const isCancelled = (error: unknown) => (error as { name?: string } | null)?.name === "AbortError";
+const isCancelled = (error: unknown): error is Error => (error as { name?: string } | null)?.name === "AbortError";
 
 /** Share exact inputs only. Never reuse an earlier live instant or another location. */
 export function getSkyFromApi(location: LocationInput, date: Date, complete: boolean | "placements" = true): Promise<SkySnapshot> {
@@ -84,7 +84,7 @@ async function getSkyLocally(location: LocationInput, date: Date, complete: bool
 }
 
 export type InitialSkyLoad = {
-  cancelled?: boolean;
+  cancelled?: Error;
   detail?: "placements" | "full";
   day: string;
   location: LocationInput;
@@ -112,7 +112,7 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
   const primed = matchingInitialSkyLoad(primedInitialSkyLoad, day, location, detail);
   if (primed) return primed;
   const result = getSkyFromApi(location, date, detail === "placements" ? detail : true).catch(error => {
-    if (isCancelled(error)) initial.cancelled = true;
+    if (isCancelled(error)) initial.cancelled = error;
     return null;
   });
   // Direct articles benefit from early sources. On the list, let App mount and
@@ -127,7 +127,7 @@ export function startInitialSkyLoad(): InitialSkyLoad | null {
     day, location, date, detail, live: Boolean(liveSkyReference(day, location.timeZone, now)), startedAt: performance.now(), result,
     matches: (selectedDay, selectedLocation, selectedDetail) => matchingInitialSkyLoad(initial, selectedDay, selectedLocation, selectedDetail),
     resolve: () => calculation ??= result.then(async snapshot => {
-      if (initial.cancelled) throw new DOMException("Sky request cancelled", "AbortError");
+      if (initial.cancelled) throw initial.cancelled;
       if (snapshot) return snapshot;
       return getSkyLocally(location, date, detail === "placements" ? detail : true);
     })

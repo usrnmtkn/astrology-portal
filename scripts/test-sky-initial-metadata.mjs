@@ -30,6 +30,9 @@ function literalArray(path, name) {
   return values;
 }
 const apiAst = parse('apps/web/src/services/skyApi.ts');
+const cancellationHelpers = apiAst.statements.filter(node => ts.isVariableStatement(node)
+  && node.declarationList.declarations.some(declaration => declaration.name.getText(apiAst) === 'isCancelled'));
+assert.equal(cancellationHelpers.length, 1);
 const functions = ['startInitialSkyLoad', 'matchingInitialSkyLoad'].map(name => {
   const matches = apiAst.statements.filter(node => ts.isFunctionDeclaration(node) && node.name?.text === name);
   assert.equal(matches.length, 1);
@@ -39,7 +42,8 @@ const transpile = source => ts.transpileModule(source, {
   compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext }
 }).outputText;
 assert.equal((functions.match(/import\("\.\.\/content\/canonicalSkyReaderAssets"\)/gu) ?? []).length, 1);
-const runnableApi = transpile(functions).replace('import("../content/canonicalSkyReaderAssets")', 'loadAssets()');
+const runnableApi = transpile(cancellationHelpers[0].getText(apiAst) + '\n' + functions)
+  .replace('import("../content/canonicalSkyReaderAssets")', 'loadAssets()');
 const entryAst = parse('apps/web/src/main.tsx', ts.ScriptKind.TSX);
 const declarations = [];
 function visit(node) {
