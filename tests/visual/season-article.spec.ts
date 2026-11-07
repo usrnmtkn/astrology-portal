@@ -102,11 +102,29 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       await expect(editor.getByLabel("Article title", { exact: true })).toHaveValue("Scorpio Season 2026");
       await editor.getByLabel("Article title", { exact: true }).fill(title);
       await editor.getByLabel("Article body", { exact: true }).fill(body);
-      await editor.getByRole("button", { name: "Save draft", exact: true }).click();
+      const [saveResponse] = await Promise.all([
+        page.waitForResponse(response => {
+          const request = response.request();
+          if (request.method() !== "POST" || new URL(response.url()).pathname !== "/api/admin/generated-content") return false;
+          const input = request.postDataJSON();
+          return input.contentKey === key && input.headline === title && input.body === body && input.status === "DRAFT";
+        }),
+        editor.getByRole("button", { name: "Save draft", exact: true }).click()
+      ]);
+      expect(saveResponse.status()).toBe(200);
+      expect(await saveResponse.finished()).toBeNull();
+      const savePayload = await saveResponse.json();
+      expect(savePayload.ok).toBe(true);
+      expect(savePayload.rows).toEqual(expect.arrayContaining([expect.objectContaining({ content_key: key, body, status: "DRAFT" })]));
+      await expect(editor.getByText("All changes saved", { exact: true })).toBeVisible();
+      const close = editor.getByRole("button", { name: "Close", exact: true });
+      await expect(close).toBeEnabled();
       await expect.poll(async () => (await store.call({ method: "rows" })).find((row: any) => row.content_key === key)?.body).toBe(body);
       const saved = (await store.call({ method: "rows" })).find((row: any) => row.content_key === key);
       expect(saved.summary).toBe("");
       expect(saved.status).toBe("DRAFT");
+      await close.click();
+      await expect(editor).toBeHidden();
       await page.goto("/admin/content#sky-writeups");
       await page.reload();
       await page.getByLabel("Sky placement planet or point", { exact: true }).selectOption("sun");
