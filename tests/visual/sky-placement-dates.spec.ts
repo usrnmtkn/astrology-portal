@@ -48,7 +48,7 @@ for (const scenario of [
   await expect(page.locator(".article-body-inner").first()).toContainText(`Fixture interval from ${scenario.entry} to ${scenario.exit}.`);
   await expect(page.locator(".article-body-inner").first()).not.toContainText("{{");
   if (scenario.planet === "Venus") await expect(page.locator(".sky-detail-id .article-duration").nth(1))
-    .toHaveText("Venus in Scorpio September 10, 2026 to January 7, 2027");
+    .toHaveText("Full residency in Scorpio: September 10, 2026 to January 7, 2027");
   await page.reload();
   await expect(page.locator(".sky-detail-id .article-duration").first()).toHaveText(`${entry} to ${primaryExit}`, { timeout: 60_000 });
   await page.getByRole("button", { name: "Close detail", exact: true }).click();

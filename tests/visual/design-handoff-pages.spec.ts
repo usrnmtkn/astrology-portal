@@ -1138,7 +1138,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await effort.scrollIntoViewIfNeeded(); await page.screenshot({ path: `test-results/handoff-v4-sky-${width}-${theme}.png` });
     await page.goto('/?date=2026-10-24#sky/placement/mercury/scorpio');
     await expect(page.locator('#sky-detail-title')).toHaveText('Mercury Rx in Scorpio', { timeout: 60_000 });
-    await expect(page.locator('.article-duration').nth(1)).toContainText('Mercury in Scorpio');
+    await expect(page.locator('.article-duration').nth(1)).toContainText('Full residency in Scorpio:');
     const cycles = page.locator('.retrograde-cycles--article'); await expect(cycles).toBeVisible({ timeout: 60_000 });
     await expect(cycles.locator('.retrograde-cycles__section[open]')).toHaveCount(0);
     await cycles.locator('.retrograde-cycles__section > summary').first().click();
