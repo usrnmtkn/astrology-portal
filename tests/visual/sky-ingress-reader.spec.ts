@@ -327,3 +327,37 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
   await page.screenshot({ path: `test-results/sky-ingress-reader-${width}-${theme}.png`, fullPage: true });
  });
 }
+
+
+for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) {
+ test(`write-up horoscopes render complete sign readings ${width} ${theme}`, async ({ page }) => {
+  const { skyPlacementSourceFixture } = await import('../helpers/sky-placement-source-fixture.mts');
+  const { reviseSkyArticleEdition, skyArticleEditableFields } = await import('../../apps/web/src/content/skyArticleTemplateCompiler');
+  const { WRITEUP_HOROSCOPE_SIGNS } = await import('../../src/shared/skyWriteupHoroscopes');
+  const fixture = await skyPlacementSourceFixture('mercury', 'scorpio');
+  const readings = WRITEUP_HOROSCOPE_SIGNS.map(sign => ({ sign, body: `Synthetic ${sign} opening.\n\nSynthetic ${sign} complete final sentence.` }));
+  const edition = await reviseSkyArticleEdition(fixture.edition, { ...skyArticleEditableFields(fixture.edition), writeupHoroscopes: readings });
+  const row = { ...fixture.active, body: edition.body, sections: { skyArticleEdition: edition }, source_snapshot: { ownerApproval: {
+   approved: true, action: 'approve-sky-article-edition', contentKey: edition.contentKey, templateKey: edition.templateKey,
+   templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash } } };
+  const publications = [{ content_key: row.content_key, state: 'live', revision: 1, row_id: row.id, row_updated_at: row.updated_at, updated_at: row.updated_at }];
+  await page.setViewportSize({ width, height: 1000 }); await page.clock.setFixedTime(new Date('2026-10-10T12:00:00Z'));
+  await page.addInitScript(theme => { localStorage.setItem('tldrastro:theme', theme); localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York' })); }, theme);
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json:{ schema:'content-studio-last-known-good-v2', rows:[], publications:[], rowCount:0 } }));
+  await page.route('**/rest/v1/**', route => route.fulfill({ json:[] }));
+  await page.route('**/api/content-publications*', route => route.fulfill({ json:{ schema:'tldr-publications/v1', publications } }));
+  await page.route('**/api/sky-reader?**', route => route.fulfill({ status:404, json:{ error:'Isolated fixture ledger.' } }));
+  await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse(route.request().postDataJSON().keys?.includes(row.content_key) ? [row] : [], publications) }));
+  await page.goto('/?date=2026-10-10#sky/placement/mercury/scorpio');
+  const article = page.locator('.sky-detail-article').first();
+  await expect(article.getByRole('heading', { name:'Horoscopes by rising sign', exact:true })).toBeVisible({ timeout:60000 });
+  for (const reading of readings) await expect(article).toContainText(reading.body.split('\n\n')[1]);
+  await expect(article.locator('.sky-rising-horoscope')).toHaveCount(12);
+  const link = article.getByRole('link', { name:'Horoscopes',exact:true });
+  await expect(link).toHaveAttribute('href','#sky-rising-horoscopes');
+  const url = page.url(); await link.click(); expect(page.url()).toBe(url);
+  await page.reload(); await expect(article).toContainText(readings[11].body.split('\n\n')[1], { timeout:60000 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: test.info().outputPath('writeup-horoscopes-reader.png') });
+ });
+}

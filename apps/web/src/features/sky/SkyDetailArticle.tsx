@@ -647,7 +647,8 @@ export function SkyDetailArticle({
             ) : null}
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
             {placementPage && <nav aria-label="Article links">
-              <a className="learn-jump__link" href={`#horoscopes${detail.articlePeriod?.startsAt || detail.placementContext?.referenceDate ? `?at=${encodeURIComponent(detail.articlePeriod?.startsAt ?? detail.placementContext!.referenceDate)}` : ''}`}>Horoscopes</a>
+              <a className="learn-jump__link" href={detail.risingHoroscopes?.length ? '#sky-rising-horoscopes' : `#horoscopes${detail.articlePeriod?.startsAt || detail.placementContext?.referenceDate ? `?at=${encodeURIComponent(detail.articlePeriod?.startsAt ?? detail.placementContext!.referenceDate)}` : ''}`}
+                onClick={detail.risingHoroscopes?.length ? event => { event.preventDefault(); document.getElementById('sky-rising-horoscopes')?.scrollIntoView({ block: 'start' }); } : undefined}>Horoscopes</a>
             </nav>}
           </header>
 

@@ -8,8 +8,8 @@ const localValue = (value: string | null | undefined) => {
   const date = value ? new Date(value) : null;
   return date && Number.isFinite(date.getTime()) ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '';
 };
-export default function SkyArticlePublication<T extends PublicationRow>({ row, request, disabled, onSaved, onBusyChange }: {
-  row: T; request: Request; disabled: boolean; onSaved: (row: T) => void; onBusyChange?: (busy: boolean) => void;
+export default function SkyArticlePublication<T extends PublicationRow>({ row, request, disabled, onSaved, onBusyChange, publicationBlocked }: {
+  row: T; request: Request; disabled: boolean; onSaved: (row: T) => void; onBusyChange?: (busy: boolean) => void; publicationBlocked?: string;
 }) {
   const savedAt = publication(row).publishAt ?? (row.status === 'LIVE' ? row.published_at : null) ?? null;
   const [value, setValue] = useState(localValue(savedAt));
@@ -57,9 +57,10 @@ export default function SkyArticlePublication<T extends PublicationRow>({ row, r
       <small>Time zone: {Intl.DateTimeFormat().resolvedOptions().timeZone}. {row.status === 'LIVE' ? 'Choose a previous date and time.' : 'Leave blank to publish now.'} Astrology coverage stays unchanged.</small>
       <div className="admin-toolbar-actions">
         <StudioButton disabled={disabled || busy || localValue(savedAt) === value} onClick={() => void submit('save')}>Save publication date</StudioButton>
-        {row.status !== 'LIVE' && <StudioButton disabled={disabled || busy || scheduled && localValue(savedAt) === value} onClick={() => void submit('publish')}>{future ? 'Approve & schedule' : 'Approve & publish'}</StudioButton>}
+        {row.status !== 'LIVE' && <StudioButton disabled={disabled || busy || Boolean(publicationBlocked) || scheduled && localValue(savedAt) === value} onClick={() => void submit('publish')}>{future ? 'Approve & schedule' : 'Approve & publish'}</StudioButton>}
         {scheduled && <StudioButton disabled={disabled || busy} onClick={() => void submit('cancel')}>Cancel schedule</StudioButton>}
       </div>
+    {publicationBlocked && <p>{publicationBlocked}</p>}
     {message && <p role="status">{message}</p>}{error && <p role="alert">{error}</p>}
   </div>;
 }

@@ -12,7 +12,7 @@ type EditionInventoryRow = Pick<CompositionMapRow, 'id' | 'content_key' | 'headl
   horoscope_window: ReturnType<typeof validateHoroscopeWindow>;
 };
 type Props = {
-  window?: ArticleWindow; placement: { planet: string; sign: string }; rows: CompositionMapRow[]; credential: string;
+  buttonLabel?: string; window?: ArticleWindow; placement: { planet: string; sign: string }; rows: CompositionMapRow[]; credential: string;
   request: <T>(path: string, options?: RequestInit) => Promise<T>;
   onLoadRow: (row: CompositionMapRow) => Promise<unknown>; onEditRow: (row: CompositionMapRow) => void;
   onEditorState: (state: HoroscopeEditorState) => void;
@@ -72,7 +72,7 @@ export default function SkyArticleHoroscopes(props: Props) {
   const visible = rows.filter(row => !props.window || horoscopeOverlapsArticle(props.window, row.horoscope_window)).sort((a, b) =>
       Date.parse(a.horoscope_window.startsAt) - Date.parse(b.horoscope_window.startsAt));
   return <>
-    <StudioButton disabled={!props.credential.trim()} onClick={() => { setTab(props.window ? 'dated' : 'evergreen'); setOpen(true); }}>Horoscopes</StudioButton>
+    <StudioButton disabled={!props.credential.trim()} onClick={() => { setTab(props.window ? 'dated' : 'evergreen'); setOpen(true); }}>{props.buttonLabel ?? 'Horoscopes'}</StudioButton>
     {open && <StudioSidePanel title="Horoscopes" busy={editor.busy} onClose={() => { if (leaveEdition()) setOpen(false); }}>
       <StudioTabs label="Linked horoscopes" tabs={[{ value: 'dated', label: 'Dated editions' }, { value: 'evergreen', label: 'Evergreen' }]} value={tab}
         onValueChange={value => { if (value !== tab && leaveEdition()) setTab(value); }}>
