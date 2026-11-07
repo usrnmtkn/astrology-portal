@@ -20,7 +20,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
         const url=new URL(route.request().url());expect(url.origin).toBe('https://visual-smoke.supabase.test');
         await route.fulfill({json:syntheticPublicationPage(await call({method:'publications'}),url.searchParams)});
       });
-      await routeStudioInventoryApi(page,{call,listRows:rows=>rows.filter(row=>row.status!=='ARCHIVED'),answer:async(route,url)=>{
+      await routeStudioInventoryApi(page,{actualBaselineRecovery:true,call,listRows:rows=>rows.filter(row=>row.status!=='ARCHIVED'),answer:async(route,url)=>{
         if(url.pathname==='/api/content-publications'){await route.fulfill({json:{schema:'tldr-publications/v1',publications:await call({method:'publications'})}});return true;}
         if(url.pathname!=='/api/admin/content-baseline-recovery')return false;
         const body=route.request().postDataJSON(),result=await call({method:'recovery',body});
