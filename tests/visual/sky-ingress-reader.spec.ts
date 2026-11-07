@@ -353,9 +353,7 @@ for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) {
   await expect(article.getByRole('heading', { name:'Horoscopes by rising sign', exact:true })).toBeVisible({ timeout:60000 });
   for (const reading of readings) await expect(article).toContainText(reading.body.split('\n\n')[1]);
   await expect(article.locator('.sky-rising-horoscope')).toHaveCount(12);
-  const link = article.getByRole('link', { name:'Horoscopes',exact:true });
-  await expect(link).toHaveAttribute('href','#sky-rising-horoscopes');
-  const url = page.url(); await link.click(); expect(page.url()).toBe(url);
+  await expect(article.getByRole('link', { name:'Horoscopes',exact:true })).toHaveCount(0);
   await page.reload(); await expect(article).toContainText(readings[11].body.split('\n\n')[1], { timeout:60000 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.screenshot({ path: test.info().outputPath('writeup-horoscopes-reader.png') });

@@ -11,8 +11,8 @@ conflict, revision and publication controls still apply.
 A partial set can be saved privately. Once a set is started, all twelve readings
 must be complete before publishing or approving a scheduled release. An article
 without a sign set remains publishable. The public article displays all twelve
-approved passages, and its Horoscopes link jumps to that section. Articles
-without their own sign readings retain the existing link to the Horoscope page.
+approved passages in its existing rising-sign horoscope section. The accepted
+removal of the public header's misplaced Horoscopes link stays intact.
 
 **Related horoscope editions** retains the existing overlapping daily, weekly,
 monthly and seasonal edition panel. Those editions and the evergreen library
@@ -38,17 +38,21 @@ verification or the saved passage text.
   The new sheet keeps its header outside the scrolling content region.
 - Reader regression: sixteen cases across ingress articles, saved full-period
   aspects, dates/countdowns and complete manual sign readings, including the
-  in-article jump and reload. Synthetic fixtures use isolated content storage.
+  removed header link and reload. Synthetic fixtures use isolated content storage.
 - CSS/token audits, server/Web type checks and reader-copy boundary checks.
 
 Matched independent main `020f885c07301b276640b2866ac260075bc51951` and candidate
 builds use their own locked dependencies, native ARM Node 22.20.0 and identical
 sanitized CI settings. The requested feature adds 1,925 gzip bytes to aggregate
-Web JavaScript and 1,478 to aggregate Admin JavaScript. Six affected allowances
+Web JavaScript and 1,478 to aggregate Admin JavaScript. The affected allowances
 add only the measured positive feature delta, retaining the passing control's
 exact headroom. All other numeric, graph, deferred-source, privacy and runtime
 guards remain intact. Detailed measurements are retained in the existing budget
 rationales. This is feature cost, not a performance improvement.
+
+Those measurements precede integration with the accepted header-link removal;
+the final accepted-main comparison remains required before release. No separate
+Sky detail chunk allowance is retained for the removed link.
 
 These are local integration results. Release additionally requires the full
 unfiltered local content/API commands, exact-head hosted gates, and verification
