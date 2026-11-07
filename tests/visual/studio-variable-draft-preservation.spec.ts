@@ -135,3 +135,117 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     }
   });
 }
+
+for (const [width, theme] of [[1440, 'light'], [390, 'dark']] as const) {
+  test(`custom-variable Create yields to an accepted Library switch ${width} ${theme}`, async ({ page, context, baseURL }, info) => {
+    test.setTimeout(60_000);
+    const store = await studioApiStore([], { uuidIds: true });
+    const guard = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin);
+    const endpoint = '/api/admin/generated-content?variables=true';
+    const dialogs: string[] = [], errors: string[] = [], mutationRequests: string[] = [];
+    let discard = false;
+    try {
+      page.on('pageerror', error => errors.push(error.message));
+      page.on('dialog', async dialog => {
+        dialogs.push(dialog.message());
+        await (discard ? dialog.accept() : dialog.dismiss());
+      });
+      await context.addInitScript(value => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', value);
+      }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      await context.route('**/rest/v1/content_publications?**', async route => {
+        const request = route.request(), url = new URL(request.url());
+        expect(url.origin).toBe('https://visual-smoke.supabase.test');
+        expect(url.pathname).toBe('/rest/v1/content_publications');
+        expect(request.method()).toBe('GET');
+        await route.fulfill({ json: syntheticPublicationPage(await store.call({ method: 'publications' }), url.searchParams) });
+      });
+      await page.route('**/api/admin/generated-content?variables=true', async route => {
+        const method = route.request().method();
+        if (method !== 'GET') {
+          mutationRequests.push(method);
+          await route.fulfill({ status: 405, json: { error: 'No variable writes are allowed in this switch regression.' } });
+          return;
+        }
+        const result = await store.call({ method, url: endpoint });
+        await route.fulfill({ status: result.status, json: result.payload });
+      });
+      await page.setViewportSize({ width, height: 1000 });
+      await page.goto('/admin/content#variables');
+      const form = page.getByRole('form', { name: 'Create variable', exact: true });
+      const library = page.getByLabel('Library', { exact: true });
+      const beforeUnload = () => page.evaluate(() => {
+        const event = new Event('beforeunload', { cancelable: true });
+        window.dispatchEvent(event);
+        return event.defaultPrevented;
+      });
+      const create = async () => {
+        await page.getByRole('button', { name: 'Create', exact: true }).click();
+        await page.getByRole('menuitem', { name: /Create variable/u }).click();
+        await expect(form).toBeVisible();
+      };
+      await expect(page.getByRole('heading', { name: 'Create your first variable', exact: true })).toBeVisible();
+      await create();
+      await expect(form.getByLabel('Shared value', { exact: true })).toHaveValue('');
+      expect(await beforeUnload()).toBe(false);
+      await library.selectOption('readonly');
+      await expect(library).toHaveValue('readonly');
+      await expect(form).toHaveCount(0);
+      await expect(page.getByText('Calculated fact', { exact: true }).first()).toBeVisible();
+      expect(dialogs).toEqual([]);
+
+      await library.selectOption('custom');
+      await expect(form).toHaveCount(0);
+      await expect(page.getByRole('heading', { name: 'Create your first variable', exact: true })).toBeVisible();
+      await create();
+      const values = {
+        Name: 'Synthetic complete reusable opening',
+        'Token name': 'switchOpening',
+        Description: 'Synthetic complete description.\n\nSynthetic final description paragraph.',
+        Tags: 'synthetic, retained',
+        'Shared value': 'Synthetic complete opening paragraph.\n\nSynthetic complete final paragraph.'
+      };
+      for (const [label, value] of Object.entries(values)) await form.getByLabel(label, { exact: true }).fill(value);
+      expect(await beforeUnload()).toBe(true);
+      await library.selectOption('editable');
+      await expect(library).toHaveValue('custom');
+      for (const [label, value] of Object.entries(values)) await expect(form.getByLabel(label, { exact: true })).toHaveValue(value);
+      expect(await beforeUnload()).toBe(true);
+      expect(dialogs).toEqual(['Discard the unsaved variable changes?']);
+
+      discard = true;
+      await library.selectOption('editable');
+      await expect(library).toHaveValue('editable');
+      await expect(form).toHaveCount(0);
+      await expect(page.getByText('Reusable phrase', { exact: true }).first()).toBeVisible();
+      expect(await beforeUnload()).toBe(false);
+      expect(dialogs).toEqual(['Discard the unsaved variable changes?', 'Discard the unsaved variable changes?']);
+      await library.selectOption('custom');
+      await expect(form).toHaveCount(0);
+      await expect(page.getByRole('heading', { name: 'Create your first variable', exact: true })).toBeVisible();
+      await create();
+      for (const label of Object.keys(values)) await expect(form.getByLabel(label, { exact: true })).toHaveValue('');
+      await form.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await expect(form).toHaveCount(0);
+      expect(await beforeUnload()).toBe(false);
+      expect(mutationRequests).toEqual([]);
+      expect((await store.call({ method: 'GET', url: endpoint })).payload.variables).toEqual([]);
+      expect(errors).toEqual([]);
+      await guard.finishStaticFonts();
+      expect(guard.unhandledExternal).toEqual([]);
+    } finally {
+      try {
+        await guard.finishStaticFonts();
+        await info.attach('strict-network-ledger', { body: JSON.stringify({ unhandledExternal: guard.unhandledExternal, mutationRequests }), contentType: 'application/json' });
+      } finally {
+        try { await page.unrouteAll({ behavior: 'wait' }); }
+        finally {
+          try { await context.unrouteAll({ behavior: 'wait' }); }
+          finally { store.close(); }
+        }
+      }
+    }
+  });
+}

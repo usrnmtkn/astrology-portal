@@ -1,10 +1,11 @@
 name: Content Studio API contract
 
-# Every branch push and PR must verify the actual Content Studio contract.
+# Every PR and actual main revision verifies the complete Content Studio contract.
+# Feature-branch pushes are covered by their PR event without a duplicate full run.
 on:
   pull_request:
   push:
-    branches: ['**']
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -21,6 +22,8 @@ jobs:
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       # Both public registries can throttle shared runners. Starting the same
       # official PostgreSQL image here lets us fall back before running tests.
       - name: Start PostgreSQL with registry fallback
