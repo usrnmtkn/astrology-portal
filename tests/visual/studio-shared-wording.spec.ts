@@ -432,6 +432,7 @@ for (const mode of ['empty', 'cached'] as const) {
     const store=await studioApiStore([template,source],{uuidIds:true});
     let unavailable=false;
     let variableReads=0;
+    let recoveryPreviews=0;
     let releaseInitial:(()=>void)|undefined;
     const statuses:number[]=[];
     const pageErrors:string[]=[];
@@ -445,13 +446,21 @@ for (const mode of ['empty', 'cached'] as const) {
     });
     page.on('request',request=>{
       const url=new URL(request.url());
-      let readOnlyStatusPost=false;
+      let readOnlyPost=false;
       if (request.method()==='POST' && url.pathname==='/api/admin/content-live-status') {
         const body=request.postDataJSON();
-        readOnlyStatusPost=Object.keys(body).length===1 && (body.action==='composition-catalog'
+        readOnlyPost=Object.keys(body).length===1 && (body.action==='composition-catalog'
           || Array.isArray(body.ids) && body.ids.length<=64 && body.ids.every((id:unknown)=>typeof id==='string'));
       }
-      if (request.method()!=='GET' && url.pathname.startsWith('/api/') && !readOnlyStatusPost
+      if (request.method()==='POST' && url.pathname==='/api/admin/content-baseline-recovery') {
+        const body=request.postDataJSON();
+        readOnlyPost=Object.keys(body).sort().join(',')==='action,sources' && body.action==='preview'
+          && Array.isArray(body.sources) && body.sources.length===1 && body.sources.every((item:any)=>
+            Object.keys(item).sort().join(',')==='contentKey,expectedUpdatedAt,id' && item.id===template.id
+              && item.contentKey===templateKey && item.expectedUpdatedAt===template.updated_at);
+        if (readOnlyPost) recoveryPreviews++;
+      }
+      if (request.method()!=='GET' && url.pathname.startsWith('/api/') && !readOnlyPost
           || /\/(?:writing|publication|generate|models)(?:[/?]|$)/u.test(url.pathname)
           || /openai|anthropic|openrouter|generativelanguage|gateway\.ai|x\.ai/u.test(url.hostname)) forbidden.push(request.method()+' '+url.pathname);
     });
@@ -542,13 +551,14 @@ for (const mode of ['empty', 'cached'] as const) {
       await expect(primary).toContainText(mode==='empty'?'No saved variables match this draft.':'Synthetic complete variable final sentence.');
       expect(variableReads).toBe(mode==='empty'?1:3);
       expect(statuses).toEqual(mode==='empty'?[200]:[200,503,200]);
+      expect(recoveryPreviews).toBe(1);
       expect(forbidden).toEqual([]);
       expect(pageErrors).toEqual([]);
       expect(failedApiRequests).toEqual([]);
       expect(unexpectedApiStatuses).toEqual([]);
       expect((await store.call({method:'rows'})).find((row:any)=>row.id===template.id).body).toBe(pattern);
     } finally {
-      await test.info().attach('primary-variable-library-state',{contentType:'application/json',body:JSON.stringify({mode,variableReads,statuses,forbidden,pageErrors,failedApiRequests,unexpectedApiStatuses})});
+      await test.info().attach('primary-variable-library-state',{contentType:'application/json',body:JSON.stringify({mode,variableReads,recoveryPreviews,statuses,forbidden,pageErrors,failedApiRequests,unexpectedApiStatuses})});
       releaseInitial?.();store.close();
     }
   });

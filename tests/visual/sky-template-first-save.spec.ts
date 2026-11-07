@@ -1,6 +1,6 @@
 import { expect, test as base, type Page, type TestInfo, type Request } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
-import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { routeStudioInventoryApi, isBaselineRecoveryPreview } from '../helpers/studio-inventory-route';
 import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
 import { articleTemplateWithHoroscopes } from '../../apps/web/src/content/skyArticleHoroscopes.mjs';
 
@@ -94,6 +94,8 @@ async function setup(page: Page, info: TestInfo, delayed: boolean | { method: 'P
       && ['/api/admin/review-records', '/api/admin/user-generated-content', '/api/admin/content-review-events'].includes(url.pathname)) {
       return route.fulfill({ json: { ok: true, rows: [], records: [], statuses: [], nextCursor: null } });
     }
+    if (url.origin === origin && url.pathname === '/api/admin/content-baseline-recovery'
+      && request.method() === 'POST' && isBaselineRecoveryPreview(request.postDataJSON())) return route.fallback();
     const methods: Record<string, string[]> = {
       '/api/admin/generated-content': ['GET', 'POST', 'PATCH'],
       '/api/admin/generated-content-inventory': ['GET'],
