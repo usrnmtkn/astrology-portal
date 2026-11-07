@@ -6,6 +6,21 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 async function fixture(page:Page,missing=1){
+  let disposing = false;
+  const activeHandlers = new Set<Promise<void>>();
+  const route: Page['route'] = (url, handler, options) =>
+    page.route(url, async (requestRoute, request) => {
+      let finish!: () => void;
+      const finished = new Promise<void>(resolve => { finish = resolve; });
+      activeHandlers.add(finished);
+      try {
+        if (disposing) await requestRoute.abort('aborted');
+        else await handler(requestRoute, request);
+      } finally {
+        activeHandlers.delete(finished);
+        finish();
+      }
+    }, options);
   const child=fork(path.resolve('tests/helpers/sky-article-save-api.mts'),[],{
     env:{...process.env,HOROSCOPE_WRITER_FIXTURE:'1',HOROSCOPE_ALTERNATIVE_PROVIDERS_FIXTURE:'1'},
     execArgv:['--import','tsx'],stdio:['ignore','pipe','pipe','ipc']});
@@ -25,7 +40,7 @@ async function fixture(page:Page,missing=1){
     expect(created.status).toBe(200);const id=created.payload.rows[0].id;
     const latest=async()=>decodeWeeklyHistoryRow((await call({method:'rows'})).find((row:any)=>row.id===id));
     const state={loseBatchStart:false};
-    await routeStudioInventoryApi(page,{call,answer:async(route,url)=>{
+    await routeStudioInventoryApi({route},{call,answer:async(route,url)=>{
       if(url.pathname==='/api/content-reader'){const result=await call({method:'reader',body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
       if(url.pathname!=='/api/admin/horoscope-writing')return false;
       const body=route.request().postDataJSON();
@@ -36,31 +51,36 @@ async function fixture(page:Page,missing=1){
     await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
     const open=async()=>{await page.goto('/admin/content#horoscopes');await page.reload();const studio=page.getByRole('region',{name:'Horoscope editions'});await studio.getByText(/^Continue a saved edition/).click();await studio.locator('.admin-horoscope-saved').getByRole('button',{name:/October 5, 2026.*(?:Review \/ Edit|Continue)$/}).click();return studio;};
     const dispose = async () => {
+      disposing = true;
       try {
-        // Finish active handlers before changing network state or terminating their IPC fixture.
+        // Keep interception registered until callbacks finish: unrouteAll can otherwise
+        // auto-continue a second held request when the first callback completes.
+        while (activeHandlers.size) await Promise.all([...activeHandlers]);
         await page.unrouteAll({behavior: 'wait'});
         await page.context().setOffline(true);
       } finally {
         child.kill();
       }
     };
-    return {child,call,latest,state,open,original:edition,id,dispose};
+    return {child,call,latest,state,open,original:edition,id,dispose,route};
   }catch(error){child.kill();throw error;}
 }
 
 test('Weekly fixture cleanup drains simultaneous reader requests', async ({page}) => {
   const f = await fixture(page);
-  let release!: () => void, entered!: () => void;
-  const held = new Promise<void>(resolve => { release = resolve; });
+  const releases: Array<() => void> = [];
+  const held = [0, 1].map(() => new Promise<void>(resolve => { releases.push(resolve); }));
+  let entered!: () => void;
   const started = new Promise<void>(resolve => { entered = resolve; });
   const urls = ['/api/qa-held-fixture-read/first', '/api/qa-held-fixture-read/second'];
   let enteredCount = 0;
   let closing: Promise<void> | undefined;
   try {
+    const expectedCount = (await f.call({method: 'rows'})).length;
     await page.goto('/admin/content#templates');
-    await page.route('**/api/qa-held-fixture-read/*', async route => {
+    await f.route('**/api/qa-held-fixture-read/*', async route => {
       if (++enteredCount === urls.length) entered();
-      await held;
+      await held[urls.findIndex(url => route.request().url().endsWith(url))];
       const rows = await f.call({method: 'rows'});
       await route.fulfill({status: 200, json: {count: rows.length}});
     });
@@ -72,16 +92,33 @@ test('Weekly fixture cleanup drains simultaneous reader requests', async ({page}
     closing = f.dispose();
     expect(await Promise.race([closing.then(() => 'closed'), page.evaluate(() => 'responsive')])).toBe('responsive');
     expect(f.child.killed).toBe(false);
-    release();
-    for (const response of responses) {
+    const lateUrl = '/api/qa-held-fixture-read/late';
+    const lateResult = await page.evaluate(async url => {
+      try {
+        const response = await fetch(url);
+        return {outcome: 'response', status: response.status, contentType: response.headers.get('content-type')};
+      } catch {
+        return {outcome: 'rejected'};
+      }
+    }, lateUrl);
+    for (const [index, response] of responses.entries()) {
+      releases[index]();
       const completed = await response;
       expect(completed.status()).toBe(200);
       expect(await completed.finished()).toBeNull();
+      expect(completed.headers()['content-type']).toContain('application/json');
+      expect(await completed.json()).toEqual({count: expectedCount});
+      if (index === 0) {
+        expect(await Promise.race([closing.then(() => 'closed'), page.evaluate(() => 'responsive')])).toBe('responsive');
+        expect(f.child.killed).toBe(false);
+      }
     }
+    expect(lateResult).toEqual({outcome: 'rejected'});
+    expect(enteredCount).toBe(urls.length);
     await closing;
     expect(f.child.killed).toBe(true);
   } finally {
-    release();
+    for (const release of releases) release();
     if (closing) await closing;
     else await f.dispose();
   }

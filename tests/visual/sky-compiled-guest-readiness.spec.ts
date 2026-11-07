@@ -582,7 +582,7 @@ for (const { width, hasEdition, account, flow } of cases) {
           const retrogradeDates = await article.locator('.article-duration').allTextContents();
           expect(retrogradeDates).toHaveLength(2);
           expect(retrogradeDates[0].trim()).toBeTruthy();
-          expect(retrogradeDates[1]).toContain('Venus in Scorpio September 10, 2026 to January 7, 2027');
+          expect(retrogradeDates[1]).toContain('Full residency in Scorpio: September 10, 2026 to January 7, 2027');
           await page.reload();
           await expect(article.locator('#sky-detail-title')).toHaveText(/Venus.*Scorpio/i);
           await expect(body).toHaveJSProperty('innerHTML', retrogradeBody);

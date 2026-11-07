@@ -328,6 +328,9 @@ jobs:
       - run: bash scripts/ci-install-playwright.sh
       - name: Verify exact placement scan parity and calculation reuse
         run: node --import tsx scripts/test-sky-placement-scan-reuse.mts
+      - name: Verify current visit and full residency labels
+        if: matrix.shard == 1
+        run: npm run test:sky-placement-range-labels
       - name: Verify Calendar Moon ingress facts and complete reader copy
         if: matrix.shard == 1
         run: node scripts/test-calendar-moon-ingress-reader.mjs && node --import tsx scripts/test-calendar-surface-events.mjs && node --import tsx scripts/test-calendar-api-timezone-anchor.mjs

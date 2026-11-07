@@ -2,12 +2,13 @@ import { useEffect, useId } from "react";
 import { EightBall } from "./EightBall";
 import "../styles/reader-unavailable.css";
 
-export type ReaderUnavailableKind = "page" | "article" | "removed-article" | "placement" | "date" | "horoscope" | "profile" | "connection" | "chart" | "invite" | "report" | "signed-out";
+export type ReaderUnavailableKind = "page" | "article" | "removed-article" | "placement" | "sky-event" | "date" | "horoscope" | "profile" | "connection" | "chart" | "invite" | "report" | "signed-out";
 const states: Record<ReaderUnavailableKind, [string, string, string, string]> = {
   page: ["Page not found", "This link doesn’t go anywhere. It may be mistyped or out of date.", "Go to Sky", "/#sky"],
   article: ["Article unavailable", "This article isn’t published right now.", "Go to the Guide", "/#articles"],
   "removed-article": ["This article was removed", "It’s no longer on TLDR Astro.", "Go to the Guide", "/#articles"],
   placement: ["We couldn’t find that placement", "Check the planet and sign in the link.", "Go to Sky", "/#sky"],
+  "sky-event": ["Sky event unavailable", "We couldn’t find a sky event for this link.", "Go to Sky", "/#sky"],
   date: ["Date not found", "We couldn’t read the date in this link.", "Go to today", "/#calendar"],
   horoscope: ["We couldn’t find that horoscope", "The sign or date in the link isn’t one we publish.", "Go to Horoscopes", "/#horoscopes"],
   profile: ["There’s no one at this handle", "The handle may have changed.", "Search people", "/#friends?tab=circle"],
