@@ -5,6 +5,8 @@ import { StudioButton, StudioInput, StudioStatusBadge, StudioTabs, StudioTextare
 const SkyPlacementComposition = lazy(() => import('./SkyPlacementComposition'));
 import SkyVisitArticleWriter from './SkyVisitArticleWriter';
 import SkyArticlePublication from './SkyArticlePublication';
+const SkyArticleAspects = lazy(() => import('./SkyArticleAspects'));
+const SkyArticleHoroscopes = lazy(() => import('./SkyArticleHoroscopes'));
 import { skyPublicationScheduled } from './skyArticlePublicationState';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
 import { reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
@@ -15,7 +17,7 @@ import type { LiveStatus } from './ContentLiveStatus';
 
 type Request = <T>(path: string, options?: RequestInit) => Promise<T>;
 type Props = {
-  rows: Row[]; selection: SkyPlacementSelection; request: Request;
+  rows: Row[]; selection: SkyPlacementSelection; request: Request; credential: string;
   date: string | null; onDateChange: (date: string) => void;
   readerSources: ReactNode;
   onRows: (rows: Row[]) => void; onDirty: (dirty: boolean, busy: boolean) => void;
@@ -41,6 +43,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [retry, setRetry] = useState(0);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [horoscopeEditor, setHoroscopeEditor] = useState({ dirty: false, busy: false });
   const [facts, setFacts] = useState<PlacementVisitFacts | null>(null);
   const [factsReferenceDate, setFactsReferenceDate] = useState('');
   const [generationOpen, setGenerationOpen] = useState(false);
@@ -56,8 +59,8 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [statusError, setStatusError] = useState('');
   const mounted = useRef(true);
   const passageDirty = JSON.stringify(fields) !== JSON.stringify(baseline);
-  const dirty = passageDirty || generationDirty;
-  useEffect(() => { latest.current.onDirty(dirty, busy); }, [dirty, busy]);
+  const dirty = passageDirty || generationDirty || horoscopeEditor.dirty;
+  useEffect(() => { latest.current.onDirty(dirty, busy || horoscopeEditor.busy); }, [dirty, busy, horoscopeEditor.busy]);
   useEffect(() => {
     if (!editorOpenRequest) return;
     const panel = generationOpen ? writerPanel.current : articlePanel.current;
@@ -231,6 +234,11 @@ export default function SkyPlacementWorkspace(props: Props) {
   const shortDate = (instant: string) => new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(instant));
   const openedEdition = editing ? placementEdition(editing) : null;
   const openedFacts = facts ?? (editing?.source_snapshot as { engineFacts?: PlacementVisitFacts } | null)?.engineFacts;
+  const articleWindow = openedEdition ?? facts;
+  const horoscopes = (period = false) => <Suspense fallback={<p role="status">Loading linked horoscopes…</p>}>
+    <SkyArticleHoroscopes window={period && articleWindow ? articleWindow : undefined} placement={selection} rows={props.rows} credential={props.credential}
+      request={props.request} onLoadRow={props.onLoadRow} onEditRow={props.onEditRow} onEditorState={setHoroscopeEditor} />
+  </Suspense>;
   const canSave = !busy && !generationOpen && Boolean(fields.headline.trim() && fields.summary.trim() && fields.body.trim()) && (editing === null || passageDirty);
   function backToArticles() {
     if (busy || !discard()) return;
@@ -307,9 +315,13 @@ export default function SkyPlacementWorkspace(props: Props) {
               <label className="admin-title-field"><span>Title</span><StudioInput aria-label="Visit article title" value={fields.headline} disabled={busy} onChange={event => update('headline', event.target.value)} /></label>
               <label className="admin-review-copy-editor"><span>Content</span><StudioTextarea aria-label="Visit article body" rows={20} value={fields.body} disabled={busy} onChange={event => update('body', event.target.value)} /></label>
               <label className="admin-review-copy-editor"><span>Summary</span><StudioTextarea aria-label="Visit article summary" rows={3} value={fields.summary} disabled={busy} onChange={event => update('summary', event.target.value)} /></label>
+              {articleWindow && <Suspense fallback={<p role="status">Loading article aspects…</p>}>
+                <SkyArticleAspects window={articleWindow} facts={openedFacts} request={props.request} />
+              </Suspense>}
             </div>
             <aside className="studio-sky-editor-settings studio-section studio-workspace-pane" aria-label="Article settings">
               <h3>Article settings</h3>
+              {horoscopes(true)}
               <dl className="studio-detail-list">
                 <div><dt>Status</dt><dd>{skyPublicationScheduled(editing) ? 'Scheduled' : editing?.status === 'LIVE' ? 'Editing a new draft of a published article' : 'Draft'}</dd></div>
                 <div><dt>Placement</dt><dd>{title(selection.planet)}{openedFacts?.motion === 'retrograde' ? ' Rx' : ''} in {title(selection.sign)}</dd></div>
@@ -326,9 +338,12 @@ export default function SkyPlacementWorkspace(props: Props) {
         {message && <p role="status">{message}</p>}
       </section> : tab === 'default' ? <section className="admin-workspace" aria-label="Default placement reading">
         <p>This reusable reading supplies content when no dated article is published for a visit. Keep it year-neutral. Existing wording is preserved; changing a dated article never replaces it.</p>
+        {horoscopes()}
         <Suspense fallback={<p role="status">Loading default reading sources…</p>}><SkyPlacementComposition defaultReadingOnly rows={props.rows} selection={selection} onEditRow={props.onEditRow} onEditField={props.onEditField} onLoadRow={props.onLoadRow} /></Suspense>
       </section> : <section className="admin-workspace" aria-label="Reusable writing setup">
         <p>Reusable templates and writing sources apply to future visits. Manage dated writing in Articles.</p>
+        <p>Evergreen horoscopes use the same sources as Horoscopes in the main navigation.</p>
+        {horoscopes()}
         {ready && !setupRows.length && <p>No saved reusable article template is available for this placement. You can still save a dated article using the standard ingress layout.</p>}
         {setupRows.map(row => <article className="admin-hook-detail-section" key={row.id}>
           <strong>{row.headline || row.content_key}</strong>

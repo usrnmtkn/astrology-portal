@@ -677,6 +677,7 @@ type NormalizedSkyPlacementSection = NormalizedSurfaceSection<SkyPlacementSlot> 
   keyDates?: SkyDetailKeyDate[];
   keyDatesIntro?: string | null;
   articleWindow?: string | null;
+  articlePeriod?: { startsAt: string; endsAt: string };
   residencyWindow?: string;
   articleMode?: "current" | "archive" | null;
   risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
@@ -4711,13 +4712,15 @@ function skyPlacementKeyDates(
   options?: {
     generatedAt?: string;
     articleMode?: "current" | "archive";
+    timelineWindow?: PlacementArticleTimelineWindow;
+    endExclusiveAspects?: boolean;
   }
 ): SkyDetailKeyDate[] {
   const planet = skyDisplayPlanetName(position.planet);
   const sign = position.sign;
-  const timelineWindow = options?.generatedAt
+  const timelineWindow = options?.timelineWindow ?? (options?.generatedAt
     ? skyPlacementArticleTimelineWindow(position, options.generatedAt, options.articleMode)
-    : null;
+    : null);
   const candidates: { value?: string | null; endValue?: string; label: string }[] = sourceDates?.map(item => ({
     value: item.date, endValue: item.endDate, label: item.label
   })) ?? [
@@ -4733,7 +4736,8 @@ function skyPlacementKeyDates(
     candidates.push(...filterPlacementTimelineEvents(
       aspectFacts.inSign.filter(event => normalizeContentIdPart(event.planet) === normalizeContentIdPart(position.planet)),
       timelineWindow
-    ).map(event => ({ value: event.occursAt, label: `${planet} ${event.aspect} ${skyDisplayPlanetName(event.otherPlanet)}` })));
+    ).filter(event => !options?.endExclusiveAspects || !timelineWindow || Date.parse(event.occursAt) < timelineWindow.end.getTime())
+      .map(event => ({ value: event.occursAt, label: `${planet} ${event.aspect} ${skyDisplayPlanetName(event.otherPlanet)}` })));
   }
   const formatter = new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -5297,9 +5301,12 @@ function currentSkyPlacementDetailArticle({
     && normalizeContentIdPart(aspectFacts.sign) === normalizeContentIdPart(position.sign)
     ? aspectFacts
     : null;
-  const timelineWindow = skyPlacementArticleTimelineWindow(position, generatedAt, articleMode);
+  const savedArticlePeriod = placementSection?.articlePeriod;
+  const timelineWindow = savedArticlePeriod ? { start: new Date(savedArticlePeriod.startsAt), end: new Date(savedArticlePeriod.endsAt) }
+    : skyPlacementArticleTimelineWindow(position, generatedAt, articleMode);
   const timelineAspectEvents = matchingAspectFacts
     ? filterPlacementTimelineEvents(matchingAspectFacts.inSign, timelineWindow)
+      .filter(event => !savedArticlePeriod || Date.parse(event.occursAt) < Date.parse(savedArticlePeriod.endsAt))
     : [];
   const inSignAspectSections = matchingAspectFacts
     ? skyPlacementInSignAspectSections(
@@ -5363,7 +5370,9 @@ function currentSkyPlacementDetailArticle({
     seasonArticle: normalizeContentIdPart(position.planet) === "sun" ? {
       sign: position.sign, startsAt: visit.start.toISOString(), timeZone: locationTimeZone || position.transitTimeZone || "UTC"
     } : undefined,
-    keyDates: placementSection?.keyDates?.length ? placementSection.keyDates : skyPlacementKeyDates(position, aspectFacts, undefined, { generatedAt, articleMode }),
+    keyDates: placementSection?.keyDates?.length ? placementSection.keyDates : skyPlacementKeyDates(position, aspectFacts, undefined, { generatedAt, articleMode, ...(savedArticlePeriod && timelineWindow ? { timelineWindow, endExclusiveAspects: true } : {}) }),
+    articlePeriod: savedArticlePeriod,
+    articleTimeZone: locationTimeZone || position.transitTimeZone || "UTC",
     placementContext: articleMode === "current" ? {
       planet: position.planet, sign: position.sign, referenceDate: generatedAt,
       timeZone: locationTimeZone || position.transitTimeZone || "UTC"
@@ -5373,6 +5382,7 @@ function currentSkyPlacementDetailArticle({
     tldr: placementSection?.tldr,
     risingHoroscopes: placementSection?.risingHoroscopes,
     placementResidencyContext: articleMode === "current"
+      && !savedArticlePeriod
       && normalizeContentIdPart(position.planet) === "sun"
       && inSignAspectSections.length === 0
       ? {
@@ -5394,7 +5404,7 @@ function currentSkyPlacementDetailArticle({
     sections: [...displayArticleSections, ...inSignAspectSections],
     relatedAspects: {
       heading: "Aspects",
-      rows: inSignAspectSections.length
+      rows: savedArticlePeriod || inSignAspectSections.length
         ? []
         : relatedAspectRows.filter((row): row is SkyDetailRelatedAspectRow => row !== null)
     },
@@ -10887,7 +10897,13 @@ async function prepareSkyPlacementArticleContent(
   const early = readEarly();
   const handoff = early?.handoff();
   let prepared = availableContent;
+  let completedCandidates = new Map<string, LiveGeneratedContent>();
   if (handoff) {
+    let acceptingCandidates = true;
+    const retainCompleted = (rows: GeneratedContentMap) => {
+      if (acceptingCandidates) completedCandidates = eligibleSkyDetailContent(new Map([...completedCandidates, ...rows]));
+    };
+    retainCompleted(handoff.completed);
     const selected = (rows: GeneratedContentMap) => new Map([...eligibleSkyDetailContent(rows)].filter(([key]) => required.has(key)));
     const completed = selected(handoff.completed);
     const normal = loadSkyDetailContent(placementSky, new Map([...availableContent, ...completed]), [], loadLiveGeneratedContentForKeys, aspectKeys);
@@ -10896,16 +10912,31 @@ async function prepareSkyPlacementArticleContent(
     // for normal loading without extending its failure or deadline behavior.
     const remainingRequest = Promise.race([normal,
       handoff.rows.then(rows => {
+        retainCompleted(rows);
         const candidate = eligibleSkyDetailContent(new Map([...availableContent, ...completed, ...selected(rows)]));
         return aspectKeys.every(key => contentPublication(key)?.state !== "live" || publicationRestoresBaseline(contentPublication(key)!) || candidate.has(key)) ? candidate : normal;
       }).catch(() => normal)
-    ]).finally(handoff.finish);
+    ]).finally(() => { acceptingCandidates = false; handoff.finish(); });
     const [ingress, remaining] = await Promise.all([early!.ingress, remainingRequest]);
     prepared = new Map([...remaining,
       ...[...eligibleSkyDetailContent(ingress)].filter(([key]) => required.has(key))]);
   }
   const content = await loadSkyDetailContent(placementSky, prepared, [...required],
     loadLiveGeneratedContentForKeys, aspectKeys);
+  const savedPeriod = ingressKeys.length ? skyIngressEssayReaderSection(eligibleSkyDetailContent(content).values(), {
+    activeInstant: placementSky.generatedAt, planet: normalizeContentIdPart(planet), sign: normalizeContentIdPart(sign)
+  }, contentPublication)?.articlePeriod : undefined;
+  if (savedPeriod) {
+    const fullEvents = (placementSky.placementAspectFacts?.inSign ?? []).filter(event =>
+      Date.parse(event.occursAt) >= Date.parse(savedPeriod.startsAt) && Date.parse(event.occursAt) < Date.parse(savedPeriod.endsAt));
+    const fullKeys = skyPlacementInSignAspectContentKeys(fullEvents);
+    if (fullKeys.some(key => !required.has(key))) {
+      const fullRequired = new Set([...ingressKeys, ...fullKeys]);
+      const retained = [...eligibleSkyDetailContent(completedCandidates)].filter(([key]) => fullRequired.has(key));
+      return { placementSky, content: await loadSkyDetailContent(placementSky, new Map([...retained, ...content]), [...fullRequired],
+        loadLiveGeneratedContentForKeys, fullKeys) };
+    }
+  }
   return { placementSky, content };
 }
 

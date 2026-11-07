@@ -75,6 +75,7 @@ for (const format of ['ingress-essay-v2', 'ingress-essay-v3']) for (const [width
       calculationSource: 'synthetic browser fixture', generatedAt: '2026-10-09T12:00:00Z', referenceTimeZone: 'America/New_York',
       planet: 'sun', sign: 'libra', entryYear: 2026, validFrom: '2026-09-22', validTo: '2026-10-23',
       transitStartInstant: '2026-09-23T00:05:14Z', transitEndInstant: '2026-10-23T09:37:57Z',
+      eventCoverage: { start: '2026-09-23T00:05:14Z', end: '2026-10-23T09:37:57Z', complete: true }, events: [],
       slotValues: { articleTitle: 'Libra Season 2026', when: 'September 22, 2026 at 8:05 PM ET to October 23, 2026 at 5:37 AM ET' } };
     await route.fulfill({ json: { ok: true, facts: articleFacts } });
     return true;

@@ -104,6 +104,8 @@ export type SkyDetail = {
   retrogradeHistoryContext?: RetrogradeHistoryContext;
   placementFactsPending?: boolean;
   placementContext?: { planet: string; sign: string; referenceDate: string; timeZone: string };
+  articlePeriod?: { startsAt: string; endsAt: string };
+  articleTimeZone?: string;
   pills?: ArticlePillData;
   transitDescription?: string;
   routePath?: string;
@@ -644,6 +646,9 @@ export function SkyDetailArticle({
               </div>
             ) : null}
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
+            {placementPage && <nav aria-label="Article links">
+              <a className="learn-jump__link" href={`#horoscopes${detail.articlePeriod?.startsAt || detail.placementContext?.referenceDate ? `?at=${encodeURIComponent(detail.articlePeriod?.startsAt ?? detail.placementContext!.referenceDate)}` : ''}`}>Horoscopes</a>
+            </nav>}
           </header>
 
           {hasReadableBody && !placementPage && !personalArticle ? <hr className="article-rule" /> : null}
@@ -775,7 +780,7 @@ export function SkyDetailArticle({
         </div>
 
         {placementPage && <div className="sky-placement-article__sections" key={detail.routePath}>
-          <Suspense fallback={<p className="sky-placement-article__status" role="status">Loading key dates…</p>}><SkyPlacementKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro} context={detail.placementContext} pending={detail.placementFactsPending} /></Suspense>
+          <Suspense fallback={<p className="sky-placement-article__status" role="status">Loading key dates…</p>}><SkyPlacementKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro} context={detail.placementContext} articlePeriod={detail.articlePeriod} timeZone={detail.articleTimeZone} pending={detail.placementFactsPending} /></Suspense>
           {detail.retrogradeHistoryContext && <RetrogradeCycles key={`${detail.retrogradeHistoryContext.planet}:${detail.retrogradeHistoryContext.sign}`} context={detail.retrogradeHistoryContext} presentation="article" />}
         </div>}
 

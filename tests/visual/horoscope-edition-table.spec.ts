@@ -198,6 +198,48 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
    await studio.getByRole('button',{name:'3 · Review',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
    expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   // Presentation navigation retains the edition; an explicit close still
+   // requires a decision before discarding its complete unsaved passage.
+   const drawer=page.getByRole('dialog',{name:'Edit horoscopes',exact:true});
+   await expect(drawer).toBeVisible();
+   expect(await drawer.evaluate(node=>node.matches(':modal'))).toBe(false);
+   if(width===390){
+    const mountedEdition=await studio.elementHandle();
+    await drawer.getByRole('button',{name:'Minimize',exact:true}).click();
+    await expect(drawer).toHaveCount(0);
+    const resume=page.getByRole('button',{name:'Resume editing horoscopes',exact:true});
+    await expect(resume).toBeFocused();
+    for(const destination of ['Review Queue','Horoscopes']){
+     const navigation=page.getByRole('button',{name:'Open Content Studio navigation',exact:true});
+     await expect(navigation).toBeVisible();await navigation.click();
+     await page.locator('#admin-content-navigation').getByRole('button',{name:destination,exact:true}).click();
+     if(destination==='Review Queue')await expect(page.getByRole('heading',{name:'Review Queue',exact:true})).toBeVisible();
+    }
+    await expect(resume).toBeFocused();await resume.click();
+    expect(await mountedEdition!.evaluate(node=>node.isConnected)).toBe(true);
+    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+    expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   }
+   const beforeCloseUrl=page.url();
+   page.once('dialog',dialog=>dialog.dismiss());
+   await drawer.getByRole('button',{name:'Close Edit horoscopes',exact:true}).click();
+   await expect(drawer).toBeVisible();
+   await expect(page).toHaveURL(beforeCloseUrl);
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+   expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
+   const beforeUnloadPrompt=page.waitForEvent('dialog');
+   await page.close({runBeforeUnload:true});
+   const unload=await beforeUnloadPrompt;
+   expect(unload.type()).toBe('beforeunload');
+   await unload.dismiss();
+   expect(page.isClosed()).toBe(false);
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(unsaved);
+   page.once('dialog',dialog=>dialog.accept());
+   await drawer.getByRole('button',{name:'Close Edit horoscopes',exact:true}).click();
+   await expect(drawer).toHaveCount(0);
+   await expect(page).toHaveURL(/#horoscopes$/);
+   await expect(studio.getByRole('heading',{name:'Choose your horoscopes',exact:true})).toBeFocused();
+   expect((await call({method:'rows'})).find((row:any)=>row.id===monthly.id)).toEqual(monthly);
    // Reset the independently proven dirty session before the late-detail scenario.
    await page.goto(`/admin/content#horoscopes?edition=${monthly.id}`);
    await page.reload();

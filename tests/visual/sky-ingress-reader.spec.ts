@@ -2,6 +2,170 @@ import { expect, test } from '@playwright/test';
 import { compileSkyArticleEdition } from '../../apps/web/src/content/skyArticleTemplateCompiler';
 import { skyIngressEssayFields } from '../../apps/web/src/content/skyIngressEssay.mjs';
 import { readerResponse } from '../helpers/reader-response';
+import { skyPlacementInSignAspectContentKeys } from '../../apps/web/src/services/skyPlacementInSignAspectSections';
+import { filterPlacementTimelineEvents, placementArticleTimelineWindow } from '../../apps/web/src/services/skyPlacementArticleTimeline';
+import { contentStudioExactSkyAspectKeys } from '../../apps/web/src/services/skyAspectContent';
+import { expectReadableTheme } from '../helpers/theme-contrast';
+
+let savedPeriodFixture: ReturnType<typeof createSavedPeriodFixture> | undefined;
+async function createSavedPeriodFixture() {
+ const { getSkyPlacementSnapshot } = await import('../../apps/web/src/services/ephemeris');
+ const sky = await getSkyPlacementSnapshot({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' },
+  'mercury', 'Cancer', new Date('2026-07-10T12:00:00Z'), true, 'placement');
+ const position = sky.positions.find(position => position.planet === 'Mercury')!;
+ const start = position.transitStart!, end = position.transitEnd!;
+ const chapter = placementArticleTimelineWindow({ generatedAt: sky.generatedAt, isRetrograde: true,
+  visitStart: new Date(start), visitEnd: new Date(end), retrogradeStart: position.retrogradeStart, retrogradeEnd: position.retrogradeEnd });
+ expect(chapter).not.toBeNull();
+ const events = sky.placementAspectFacts!.inSign.filter(event => Date.parse(event.occursAt) >= Date.parse(start) && Date.parse(event.occursAt) < Date.parse(end));
+ const chapterKeys = new Set(skyPlacementInSignAspectContentKeys(filterPlacementTimelineEvents(events, chapter)));
+ const extensionKey = skyPlacementInSignAspectContentKeys(events).find(key => !chapterKeys.has(key));
+ expect(extensionKey, 'The real saved visit must need writing outside its selected retrograde chapter').toBeTruthy();
+ const edition = await compileSkyArticleEdition({ format: 'ingress-essay-v3', planet: 'mercury', sign: 'cancer', entryYear: 2026,
+  validFrom: start.slice(0, 10), validTo: end.slice(0, 10), transitStartInstant: start, transitEndInstant: end,
+  referenceTimeZone: 'America/New_York', templateKey: 'sky/article-template/ingress-layout/v3', templateBody: '',
+  tldr: 'Synthetic complete saved-visit summary.', housePassages: [], aspectPassages: [],
+  slotValues: { articleTitle: 'Synthetic complete Mercury visit', articleBody: 'Synthetic saved-visit opening.\n\nSynthetic saved-visit final sentence.', when: 'Synthetic saved visit.' } });
+ const stamp = '2026-07-10T00:00:00.000001Z';
+ const article = { id: 'bbbbbbbb-bbbb-4bbb-abbb-bbbbbbbbbbbb', content_key: edition.contentKey, surface: 'sky', mode: 'article',
+  status: 'LIVE', lane: 'serving', review_state: null, event_type: 'sky-article-edition', block_type: 'sky_article', target_date: null,
+  updated_at: stamp, headline: edition.headline, body: edition.body, summary: edition.tldr, sections: { skyArticleEdition: edition },
+  source_snapshot: { ownerApproval: { approved: true, action: 'approve-sky-article-edition', contentKey: edition.contentKey,
+   templateKey: edition.templateKey, templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash, compiledHash: edition.compiledHash } } };
+ const sourceEvents = new Map(events.flatMap(event => contentStudioExactSkyAspectKeys(event.planet, event.aspect, event.otherPlanet).map(key => [key, event] as const)));
+ const aspectRows = [...sourceEvents].map(([key], index) => ({
+  id: `cccccccc-cccc-4ccc-accc-${String(index + 1).padStart(12, '0')}`, content_key: key, surface: 'sky', mode: 'feed',
+  status: 'LIVE', lane: 'serving', review_state: null, target_date: null, updated_at: stamp,
+  event_type: 'sky-aspect-owner-approved-exact', block_type: 'sky_aspect', headline: 'Synthetic exact aspect', summary: null,
+  body: `Synthetic period aspect ${index} opening.\n\nSynthetic period aspect ${index} final sentence.`, sections: {},
+  source_snapshot: { contentStudioExactAspect: true, review_status: 'approved', exactSkyAspectIdentity: {
+   a: key.split('.')[2], b: key.split('.')[4], aspect: key.split('.')[3] } }
+ }));
+ const rows = [article, ...aspectRows];
+ const publications = [{ content_key: '__content-publication-ledger/v1', state: 'live', revision: 1,
+  row_id: null, row_updated_at: null, updated_at: stamp }, ...rows.map(row => ({ content_key: row.content_key, state: 'live', revision: 1,
+  row_id: row.id, row_updated_at: stamp, updated_at: stamp }))];
+ return { start, end, events, extensionKey: extensionKey!, extension: aspectRows.find(row => row.content_key === extensionKey)!, rows, publications };
+}
+
+for (const [width, delivery] of [[390, 'late'], [1440, 'completed']] as const) {
+ test(`saved visit waits for complete aspect writing and reuses it ${width} ${delivery}`, async ({ page }) => {
+  test.setTimeout(120_000);
+  const theme = width === 390 ? 'dark' : 'light';
+  const fixture = await (savedPeriodFixture ??= createSavedPeriodFixture());
+  await page.setViewportSize({ width, height: 1000 });
+  await page.clock.setFixedTime(new Date('2026-07-10T12:00:00Z'));
+  await page.addInitScript(theme => {
+   localStorage.setItem('tldrastro:theme', theme);
+   localStorage.setItem('tldrastro:pageAnimations', 'off');
+   localStorage.setItem('tldrastro:selectedLocation', JSON.stringify({ label: 'New York', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' }));
+   (window as any).__savedVisitPaints = [];
+   new MutationObserver(() => {
+    const article = document.querySelector('.sky-detail-article .article-body-inner');
+    if (!article?.getClientRects().length) return;
+    const text = article.textContent?.trim();
+    const paints = (window as any).__savedVisitPaints;
+    if (text && paints.at(-1) !== text) paints.push(text);
+   }).observe(document, { subtree: true, childList: true, characterData: true });
+  }, theme);
+  let releaseBroad!: () => void, releaseExtension!: () => void, releaseCompleted!: () => void;
+  const broadGate = new Promise<void>(resolve => { releaseBroad = resolve; });
+  const extensionGate = new Promise<void>(resolve => { releaseExtension = resolve; });
+  const completedGate = new Promise<void>(resolve => { releaseCompleted = resolve; });
+  let broadSeen = false, extensionHeld = false;
+  const requests: Array<{ keys: string[]; startedAt: number; finishedAt?: number }> = [];
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: {
+   schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
+  await page.route('**/rest/v1/**', async route => {
+   const url = new URL(route.request().url());
+   if (!url.pathname.endsWith('/content_publications')) return route.fulfill({ json: [] });
+   if (delivery === 'completed') await completedGate;
+   const constraints = url.searchParams.getAll('content_key');
+   return route.fulfill({ json: fixture.publications.filter(row => constraints.every(constraint => {
+    if (constraint.startsWith('gte.')) return row.content_key >= constraint.slice(4);
+    if (constraint.startsWith('gt.')) return row.content_key > constraint.slice(3);
+    if (constraint.startsWith('lt.')) return row.content_key < constraint.slice(3);
+    return true;
+   })) });
+  });
+  await page.route('**/api/content-publications*', async route => {
+   if (delivery === 'completed') await completedGate;
+   await route.fulfill({ json: { schema: 'tldr-publications/v1', publications: fixture.publications } });
+  });
+  await page.route('**/api/content-reader', async route => {
+   const query = route.request().postDataJSON();
+   const measured = { keys: query.keys ?? [], startedAt: Date.now(), finishedAt: undefined as number | undefined };
+   requests.push(measured);
+   const aspectRead = measured.keys.some((key: string) => key.startsWith('sky.aspect.'));
+   const firstBroad = aspectRead && !broadSeen;
+   if (firstBroad) {
+    broadSeen = true;
+    if (delivery === 'late') await broadGate;
+   } else if (delivery === 'late' && measured.keys.includes(fixture.extensionKey)) {
+    extensionHeld = true;
+    await extensionGate;
+   }
+   const rows = fixture.rows.filter(row => query.keys?.includes(row.content_key) || query.ids?.includes(row.id));
+   const requestedKeys = new Set([...(query.keys ?? []), ...rows.map(row => row.content_key)]);
+   await route.fulfill({ json: readerResponse(rows, fixture.publications.filter(row => requestedKeys.has(row.content_key))) });
+   measured.finishedAt = Date.now();
+   if (firstBroad) releaseCompleted();
+  });
+  await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
+  const article = page.locator('.sky-detail-article').first();
+  const opening = page.locator('.sky-detail-article .article-body-inner').first();
+  const started = Date.now();
+  try {
+   await page.goto('/?date=2026-07-10#sky/placement/mercury/cancer');
+   if (delivery === 'late') {
+    await expect.poll(() => extensionHeld, { timeout: 60_000 }).toBe(true);
+    await expect(opening).toHaveCount(0);
+    releaseExtension();
+   }
+   await expect(opening).toContainText('Synthetic saved-visit opening.', { timeout: 60_000 });
+   const openingMs = Date.now() - started;
+   await expect(opening).toContainText('Synthetic saved-visit final sentence.');
+   await expect(article.locator('.article-duration').first()).toHaveText('Jun 29, 2026 - Jul 23, 2026');
+   await expect(article).toContainText(fixture.extension.body.split('\n\n')[0]);
+   await expect(article).toContainText(fixture.extension.body.split('\n\n')[1]);
+   await expect(article.getByRole('link', { name: 'Horoscopes', exact: true })).toHaveAttribute('href', `#horoscopes?at=${encodeURIComponent(fixture.start)}`);
+   const expectedDates = [...new Set(fixture.events.map(event => new Date(event.occursAt).toISOString()))].sort();
+   await expect.poll(() => article.locator('.sky-placement-key-dates li').evaluateAll(items =>
+    [...new Set(items.filter(item => /Mercury (conjunction|opposition|square|trine|sextile)/u.test(item.textContent ?? ''))
+     .map(item => item.querySelector('time')!.dateTime))].sort())).toEqual(expectedDates);
+   await article.locator('.sky-placement-key-dates > summary').click();
+   await expect(article.getByText('Article coverage: June 1, 2026 to August 9, 2026.', { exact: true })).toBeVisible();
+   await expectReadableTheme(page, '.sky-placement-key-dates > .sky-placement-key-dates__meta');
+   const aspectLinks = await article.locator('.article-related-aspects__copy-link').evaluateAll(links =>
+    links.map(link => (link as HTMLAnchorElement).hash));
+   expect(aspectLinks.some(link => link.includes(`/at/${encodeURIComponent(fixture.events.find(event => contentStudioExactSkyAspectKeys(event.planet, event.aspect, event.otherPlanet).includes(fixture.extensionKey))!.occursAt)}`))).toBe(true);
+   await page.screenshot({ path: test.info().outputPath('saved-period-reader.png'), fullPage: true });
+   releaseBroad();
+   await expect.poll(() => requests.filter(request => request.keys.includes(fixture.extensionKey) && request.finishedAt).length).toBe(delivery === 'completed' ? 1 : 2);
+   const beforeReopen = requests.filter(request => request.keys.includes(fixture.extensionKey)).length;
+   await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+   const reopenStarted = Date.now();
+   await page.getByRole('button', { name: 'Read more about Mercury Rx in Cancer', exact: true }).click();
+   await expect(opening).toContainText('Synthetic saved-visit final sentence.', { timeout: 60_000 });
+   await expect(article).toContainText(fixture.extension.body.split('\n\n')[1]);
+   const reopenMs = Date.now() - reopenStarted;
+   expect(requests.filter(request => request.keys.includes(fixture.extensionKey)).length).toBe(beforeReopen);
+   const paints = await page.evaluate(() => (window as any).__savedVisitPaints as string[]);
+   expect(paints.length).toBeGreaterThan(0);
+   expect(paints.every(text => text.includes('Synthetic saved-visit opening.') && text.includes('Synthetic saved-visit final sentence.'))).toBe(true);
+   expect(errors).toEqual([]);
+   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+   const timing = { width, theme, delivery, openingMs, reopenMs, extensionKey: fixture.extensionKey,
+    extensionRequests: beforeReopen, savedPeriod: { startsAt: fixture.start, endsAt: fixture.end } };
+   console.log(JSON.stringify({ savedPeriodReader: timing }));
+   await test.info().attach('saved-period-reader-timing', { contentType: 'application/json', body: JSON.stringify({ ...timing, requests }) });
+  } finally {
+   releaseBroad(); releaseExtension(); releaseCompleted();
+   await page.unrouteAll({ behavior: 'ignoreErrors' });
+  }
+ });
+}
 
 for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
  test(`approved ingress edition preserves the complete reader article after reload ${width} ${theme}`, async ({ page }) => {
@@ -35,7 +199,11 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
    schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0
   } }));
   await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
-  await page.route('**/api/content-publications', route => route.fulfill({ json: { schema: 'tldr-publications/v1', publications } }));
+  await page.route(url => url.origin === new URL(test.info().project.use.baseURL!).origin
+    && url.pathname === '/api/content-publications' && ['', '?scope=sky-list'].includes(url.search), route => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    return route.fulfill({ json: { schema: 'tldr-publications/v1', publications } });
+  });
   let exactEditionRequests = 0;
   let editionUnavailable = width === 390 && theme === 'light';
   await page.route('**/api/content-reader', route => {

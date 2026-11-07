@@ -1,11 +1,10 @@
-export type HoroscopePeriod = 'daily' | 'weekly' | 'monthly' | 'seasonal';
-export type HoroscopeWindow = {period:HoroscopePeriod; audience:'rising'|'collective'; timeZone:string; startsAt:string; endsAt:string; seasonSign?:string};
+import type {HoroscopePeriod, HoroscopeWindow} from '../../../../src/shared/horoscopeWindow.mjs';
+export type {HoroscopePeriod, HoroscopeWindow} from '../../../../src/shared/horoscopeWindow.mjs';
+export {HOROSCOPE_SIGNS, HOROSCOPE_PERIODS, validateHoroscopeWindow} from '../../../../src/shared/horoscopeWindow.mjs';
 export type HoroscopePassage = {sign:string; headline:string; body:string};
 export type HoroscopeEdition = {schema:string; window:HoroscopeWindow; passages:HoroscopePassage[]};
 export const HOROSCOPE_EDITION_PREFIX:string;
 export const HOROSCOPE_EDITION_SCHEMA:string;
-export const HOROSCOPE_SIGNS:readonly string[];
-export const HOROSCOPE_PERIODS:readonly HoroscopePeriod[];
 export function horoscopeCanonicalJson(value:unknown):string;
 export function horoscopeSignLabel(sign:string):string;
 export function horoscopeEditionKey(window:HoroscopeWindow):string;
@@ -13,7 +12,6 @@ export function isHoroscopeEditionKey(key:string,window:HoroscopeWindow):boolean
 export function validHoroscopeTimeZone(value:unknown):boolean;
 export function canonicalHoroscopeTimeZone(value:string):string;
 export function horoscopeReaderTimeZones(period:HoroscopePeriod,timeZone:string):string[];
-export function validateHoroscopeWindow(value:unknown):HoroscopeWindow;
 export function validateHoroscopeEdition(value:unknown, complete?:boolean):HoroscopeEdition;
 export function emptyHoroscopeEdition(window:HoroscopeWindow):HoroscopeEdition;
 export function horoscopeEditionBody(edition:HoroscopeEdition):string;

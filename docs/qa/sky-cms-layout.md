@@ -123,3 +123,83 @@ The Vercel prebuild also runs the editor navigation guard. Publication-result
 refresh uses the existing saved-row refresh path outside the rendered controls;
 opening a related source retains the editor's named return navigation. The
 prebuild component-consistency check covers that boundary.
+
+## Related article content
+
+Calculated aspects use the saved article period, including events before and
+after the lookup date. The editor distinguishes missing or partial calculation
+coverage from a verified empty list and excludes events at the period's end.
+The reader uses the same validated coverage for related aspects and the
+Horoscopes link. Its calculated primary date line remains unchanged; Key dates
+labels article coverage separately in the selected time zone, including archives.
+
+Horoscopes opens a contextual side panel. Dated editions lists existing daily,
+weekly, monthly and seasonal editions whose saved intervals overlap the article
+period; touching endpoints do not overlap. Evergreen opens the same canonical
+placement sources as the main horoscope library. Requests wait for owner access
+and abort when access changes or the panel closes. Dated edits retain the
+existing version-checked draft, review and publication flow.
+
+The contextual list requests server-side overlap filtering before its bounded
+30-row page. Updated-time and ID cursors preserve deterministic ties, with
+incremental Load more for longer lists and the no-period picker. The existing
+unpaged endpoint remains unchanged. Invalid or nonadvancing responses produce
+an error rather than a false empty-period result.
+Only the opt-in paged query selects window and identity metadata in storage;
+complete passages and history load through the existing exact detail request
+when Edit is chosen. Metadata is validated as a window, not an incomplete edition.
+
+Imported horoscope fields open in a separate panel with one rising sign at a
+time. Their existing ArticleHoroscopeSection payload stays in the parent draft
+until it is saved. Closing an unchanged evergreen source retains unsaved article
+writing; page navigation still checks the article and all other dirty or busy
+editors. Evergreen reading and Templates & sources replace Default reading and
+Writing setup. These changes do not migrate, approve or publish stored content.
+
+The shell shares the canonical horoscope key validator with the deferred source
+library. Complete identity formatting and source collection stay with that
+library; related dated-article UI stays inside the existing deferred editor.
+Native panels inherit the Studio body typography. The four layout variants
+compare the computed font properties with the dashboard's shared body role.
+
+The panel layout draws on
+[Intercom](https://mobbin.com/screens/ffc2a5ad-1c00-4a66-99c6-1f92a62ca267)
+and [GoDaddy](https://mobbin.com/screens/85bddef2-4fb9-41bd-8158-d52d21636a7d).
+Existing Studio tokens and content identities remain authoritative.
+
+The saved-period reader reuses completed optional source reads only after
+rechecking exact publication versions. Late, retired, unrelated and changed
+sources cannot enter the article through that reuse path. Missing required
+sources retain the existing loading and recovery behavior.
+
+Related-content acceptance requires:
+
+- Actual-handler draft save/reopen, overlap filtering, exact aspect links,
+  retained article writing, rejected navigation, unchanged adjacent records,
+  focus return, and desktop/mobile layouts in both themes through
+  `tests/visual/sky-article-related.spec.ts` and the existing CMS workflows.
+- `scripts/test-sky-related-horoscope-inventory.mts` checks older matches beyond
+  the recent-30 control, half-open boundaries, no match, deterministic cursor
+  ties, no duplicate or skipped rows, malformed requests and unchanged storage.
+- `sky-related-horoscope-access.spec.ts` checks late owner access and cancellation
+  of an obsolete credential response with the actual read handler and synthetic storage.
+- Complete imported horoscope passages through the existing Studio user flows.
+- Cold and warm reader journeys through `sky-ingress-reader.spec.ts`, preserving
+  required-source reads, full copy, the primary date contract, and the separate
+  article coverage label. The date-label suite retains its original Venus checks.
+- `scripts/test-sky-article-related-content.mts` and
+  `scripts/test-sky-placement-key-date-aspects.mts`, including archived midnight
+  boundaries in New York and UTC without current-only reference state.
+- Fresh final-base builds, types, CSS/token and asset-privacy audits, bundle
+  budgets, the unfiltered local API/content suites, exact-head hosted checks,
+  and acceptance against the READY main deployment.
+
+Interim results do not establish final integration or production acceptance.
+Final revision and release results belong in the release PR and its receipts.
+
+The Studio key classifier shares the small canonical eclipse predicate directly.
+The reader-contract build plugin keeps this identity-only import separate from
+the shipped renderer; the fallback horoscope contract test covers both Studio
+identity helpers and the unchanged reader redirection. Bundle qualification must
+also verify that extracting the classifier does not retain renderer setup in
+Admin startup.

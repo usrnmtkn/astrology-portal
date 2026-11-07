@@ -16,11 +16,12 @@ type Props = {
   onEditRow: (row: CompositionMapRow) => void;
   onOpenPlacement: (planet: string, sign: string) => void;
   initialSourceKey?: string;
+  placement?: { planet: string; sign: string };
   onSourceChange: (key: string) => void;
 };
 const label = (value: string) => value.replace(/(^|-)([a-z])/gu, (_match, separator, letter) => `${separator ? ' ' : ''}${letter.toUpperCase()}`);
 
-export default function FallbackHoroscopeStudio({ rows, credential, onLoadCatalog, onLoadRow, onEditRow, onOpenPlacement, initialSourceKey, onSourceChange }: Props) {
+export default function FallbackHoroscopeStudio({ rows, credential, onLoadCatalog, onLoadRow, onEditRow, onOpenPlacement, initialSourceKey, onSourceChange, placement }: Props) {
   const [catalog, setCatalog] = useState<CompositionMapRow[]>([]);
   const [catalogState, setCatalogState] = useState('loading');
   const [catalogRetry, setCatalogRetry] = useState(0);
@@ -54,6 +55,7 @@ export default function FallbackHoroscopeStudio({ rows, credential, onLoadCatalo
   const sources = useMemo(() => fallbackHoroscopeSources([...rows, ...catalog]), [rows, catalog]);
   const filtered = sources.filter(row => {
     const identity = fallbackHoroscopeIdentity(row.content_key)!;
+    if (placement && (identity.kind !== 'placement' || identity.planet !== placement.planet || identity.sign && identity.sign !== placement.sign)) return false;
     return (kind === 'all' || identity.kind === kind) && (planet === 'all' || identity.planet === planet)
       && (sign === 'all' || !identity.sign || identity.sign === sign)
       && (rising === 'all' || !identity.risingSign || identity.risingSign === rising)
@@ -89,6 +91,7 @@ export default function FallbackHoroscopeStudio({ rows, credential, onLoadCatalo
     <h2 className="sr-only">Reusable horoscope sources</h2>
     <p>These are the same sources linked from Sky Placement horoscopes. Drafts stay private until you choose Save &amp; publish.</p>
     <div className="admin-natal-placement-selectors" aria-label="Fallback horoscope filters">
+      {!placement && <>
       <label>Type<AdminSelect aria-label="Horoscope type" value={kind} onChange={event => setKind(event.target.value)}>
         <option value="all">All horoscopes</option><option value="placement">Planetary placements</option><option value="new-moon">New Moons</option><option value="full-moon">Full Moons</option><option value="eclipse">Eclipse components</option>
       </AdminSelect></label>
@@ -98,6 +101,7 @@ export default function FallbackHoroscopeStudio({ rows, credential, onLoadCatalo
       <label>Sign<AdminSelect aria-label="Horoscope sign" value={sign} onChange={event => setSign(event.target.value)}>
         <option value="all">All signs</option>{skyPlacementSigns.map(value => <option key={value} value={value}>{label(value)}</option>)}
       </AdminSelect></label>
+      </>}
       <label>Rising sign<AdminSelect aria-label="Horoscope rising sign" value={rising} onChange={event => setRising(event.target.value)}>
         <option value="all">All rising signs</option>{skyPlacementSigns.map(value => <option key={value} value={value}>{label(value)}</option>)}
       </AdminSelect></label>
@@ -114,7 +118,7 @@ export default function FallbackHoroscopeStudio({ rows, credential, onLoadCatalo
         <ContentLiveStatusBadge row={studioServingStatusRow(selected, selected.content_key)} />
         {typeof body === 'string' && body ? <div className="admin-copy-preview">{body.split(/\n{2,}/u).map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div> : <p>The complete passage has not loaded.</p>}
         <StudioButton disabled={!!selected.inventory_only} onClick={() => onEditRow(selected)}>Edit horoscope</StudioButton>
-        {identity?.kind === 'placement' && identity.sign && <StudioButton onClick={() => onOpenPlacement(identity.planet, identity.sign!)}>Open Sky Placement horoscopes</StudioButton>}
+        {!placement && identity?.kind === 'placement' && identity.sign && <StudioButton onClick={() => onOpenPlacement(identity.planet, identity.sign!)}>Open Sky Placement horoscopes</StudioButton>}
       </article> : <p>No saved fallback matches these filters. Choose another placement or clear the filters.</p>}
   </section>;
 }

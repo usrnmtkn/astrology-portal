@@ -106,7 +106,15 @@ for(const [width,theme,choice] of [[1440,'light','gemini'],[390,'dark','gemini']
    await expect(studio.getByText('Generating the approved batch. You can leave this page.',{exact:true})).toBeVisible();
    await expect(selector).toBeDisabled();
    await expect.poll(async()=>(await f.call({method:'writer-state'})).calls).toBeGreaterThan(0);
-   await page.goto('/admin/content#templates');
+   await page.getByRole('dialog',{name:'Edit horoscopes',exact:true}).getByRole('button',{name:'Minimize',exact:true}).click();
+   await expect(page.getByRole('button',{name:'Resume editing horoscopes',exact:true})).toBeFocused();
+   const navigation=page.getByRole('button',{name:'Open Content Studio navigation',exact:true});
+   if(width===390)await expect(navigation).toBeVisible();
+   if(await navigation.isVisible())await navigation.click();
+   await page.locator('#admin-content-navigation').getByRole('button',{name:'Composition',exact:true}).click();
+   await page.getByRole('navigation',{name:'Composition workspace',exact:true}).getByRole('button',{name:'Templates',exact:true}).click();
+   await expect(page).toHaveURL(/#templates$/);
+   await expect(page.getByRole('dialog',{name:'Edit horoscopes',exact:true})).toHaveCount(0);
    await f.call({method:'writer-state',body:{pendingPolls:0}});
    await expect.poll(async()=>(await f.latest()).source_snapshot.horoscopeGeneration.batch.status,{timeout:120000,intervals:[1000]}).toBe('complete');
    let saved=await f.latest();

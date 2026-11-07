@@ -14,13 +14,15 @@ function eventGlyph(label: string) {
   return { text: sign ? signGlyph(sign) : pointGlyph(label.split(" ")[0]), tone: "station" };
 }
 
-export function SkyPlacementKeyDates({ dates, intro, context, pending }: {
+export function SkyPlacementKeyDates({ dates, intro, context, articlePeriod, timeZone, pending }: {
   dates: SkyDetailKeyDate[];
   intro?: string | null;
   context?: SkyDetail["placementContext"];
+  articlePeriod?: SkyDetail["articlePeriod"];
+  timeZone?: string;
   pending?: boolean;
 }) {
-  const zone = context?.timeZone ?? "UTC";
+  const zone = timeZone ?? context?.timeZone ?? "UTC";
   const reference = context ? Date.parse(context.referenceDate) : NaN;
   const next = dates.findIndex(entry => entry.occursAt && Date.parse(entry.occursAt) >= reference);
   const format = (instant: string, options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-US", { timeZone: zone, ...options }).format(new Date(instant));
@@ -30,6 +32,7 @@ export function SkyPlacementKeyDates({ dates, intro, context, pending }: {
   };
   return <KeyDatesPanel className="sky-placement-key-dates" count={dates.length} pending={pending}>
     {pending ? <p role="status">Calculating key dates…</p> : <>
+      {articlePeriod && <p className="sky-placement-key-dates__meta">Article coverage: {format(articlePeriod.startsAt, { month: "long", day: "numeric", year: "numeric" })} to {format(articlePeriod.endsAt, { month: "long", day: "numeric", year: "numeric" })}.</p>}
       {intro && <PreparedProse text={intro} />}
       {dates.length ? <ol>{dates.map((entry, index) => {
         const instant = entry.occursAt;

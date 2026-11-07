@@ -76,7 +76,7 @@ export async function installSyntheticNetworkGuard(context: BrowserContext, prev
           if (!options.deployedFixture) return route.fallback();
           const read = request.method() === 'GET' || request.method() === 'HEAD';
           const document = request.resourceType() === 'document'
-            && ['/', '/index.html', '/admin/content', '/admin/content/'].includes(url.pathname);
+            && ['/', '/index.html', '/admin/content', '/admin/content/', '/studio/sky-reader-preview'].includes(url.pathname);
           const asset = /^\/(?:assets|content|generated|fonts|images|icons|branding)\//u.test(url.pathname)
             || /^\/wasm\/[a-f0-9]{16}\/swisseph\.(?:data|wasm)$/u.test(url.pathname)
             || shippedGlyphs.has(url.pathname)

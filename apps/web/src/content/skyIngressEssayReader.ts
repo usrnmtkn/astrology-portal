@@ -55,6 +55,7 @@ export function skyIngressEssayReaderSection(
     tier: "fallback-architecture-v3-authored" as const,
     sourceKeys: ["compiled-sky-article-edition-v2", edition.contentKey],
     heading: edition.headline, tldr: edition.tldr, body: edition.body,
+    articlePeriod: { startsAt: edition.transitStartInstant, endsAt: edition.transitEndInstant },
     articleSections: [...edition.articleSections, ...(introduction ? [introduction] : [])].map(section => ({ ...section, kind: isSkyIngressEssay(edition.format) ? "ingress-essay" : "saved-template" })),
     risingHoroscopes: edition.housePassages.map(passage => ({ ...passage })), keyDates: [], tagline: null, closingCharge: null
   };

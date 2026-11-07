@@ -214,7 +214,7 @@ assert.doesNotMatch(appSource, /if \(!aspect \|\| normalizeSkyAspectSurface\(/u)
 assert.doesNotMatch(appSource, /if \(mode === "sky" && !normalizedSkySurface\?\.sections\.length\)/u);
 assert.doesNotMatch(appSource, /\.filter\(\(\{ normalized \}\) => normalized\.sections\.length > 0\)/u);
 assert.match(appSource, /sections: \[\.\.\.displayArticleSections, \.\.\.inSignAspectSections\]/u);
-assert.match(appSource, /rows: inSignAspectSections\.length[\s\S]*relatedAspectRows\.filter/u);
+assert.match(appSource, /rows: savedArticlePeriod \|\| inSignAspectSections\.length\s*\? \[\]\s*:\s*relatedAspectRows\.filter/u);
 assert.doesNotMatch(appSource, /All calculated aspects/u);
 assert.doesNotMatch(appSource, /Facts only/u);
 assert.match(adminSource, /type AdminContentSystemFilter = "all" \| "authored" \| "generated" \| "fallback"/u);

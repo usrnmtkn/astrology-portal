@@ -1268,10 +1268,6 @@
     gap: var(--card-padding-sm);
   }
 
-  .chart-fullscreen-overlay:has(.sky-wheel-transit-overlay) {
-    padding-inline: var(--space-1);
-  }
-
   .chart-shell--fullscreen {
     max-width: 100%;
     max-height: 100%;
