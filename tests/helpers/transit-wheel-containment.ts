@@ -1,4 +1,4 @@
-import { expect, type Locator } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 export async function expectTransitContainment(svg: Locator) {
   const compact = await svg.evaluate(root => root.getBoundingClientRect().width
@@ -14,7 +14,27 @@ export async function expectTransitContainment(svg: Locator) {
       .every(node => Math.abs(Number.parseFloat(getComputedStyle(node).fontSize) * scale - degreeSize) < 0.05)
       && [...root.querySelectorAll('.transit-planet-labels .wheel-placement__glyph')]
         .every(node => Math.abs(node.getBoundingClientRect().width - glyphSize) < 0.05);
-  }), { message: 'Transit typography settles at its screen size after resizing' }).toBe(true);
+  }), { message: 'Transit typography settles at its screen size after resizing' }).toBe(true).catch(async error => {
+    const sizing = await svg.evaluate(root => {
+      const matrix = (root as SVGSVGElement).getScreenCTM()!;
+      const scale = Math.hypot(matrix.a, matrix.b), styles = getComputedStyle(root);
+      const rect = root.getBoundingClientRect();
+      const compact = rect.width <= Number.parseFloat(styles.getPropertyValue('--container-chart-mobile'));
+      const overlay = root.closest('.chart-fullscreen-overlay');
+      return {
+        viewport: { width: innerWidth, height: innerHeight },
+        fullscreen: Boolean(root.closest('[role="dialog"]')),
+        svgRect: rect.toJSON(), matrix: { a: matrix.a, b: matrix.b, c: matrix.c, d: matrix.d, e: matrix.e, f: matrix.f },
+        targetDegree: Number.parseFloat(styles.getPropertyValue('--text-placement-degree')),
+        targetGlyph: Number.parseFloat(styles.getPropertyValue(compact ? '--text-glyph' : '--chart-planet-glyph-size')),
+        overlayPadding: overlay ? { start: getComputedStyle(overlay).paddingInlineStart, end: getComputedStyle(overlay).paddingInlineEnd } : null,
+        degrees: [...root.querySelectorAll('.transit-planet-degree')].map(node => ({ id: node.closest('[data-inspector-point-id]')!.getAttribute('data-inspector-point-id'), svgFontSize: getComputedStyle(node).fontSize, screenFontSize: Number.parseFloat(getComputedStyle(node).fontSize) * scale })),
+        glyphs: [...root.querySelectorAll('.transit-planet-labels .wheel-placement__glyph')].map(node => ({ id: node.closest('[data-inspector-point-id]')!.getAttribute('data-inspector-point-id'), screenRect: node.getBoundingClientRect().toJSON() }))
+      };
+    });
+    await test.info().attach('transit-label-sizing-failure', { body: JSON.stringify(sizing, null, 2), contentType: 'application/json' });
+    throw error;
+  });
   const geometry = await svg.evaluate(root => {
     const svg = root as SVGSVGElement;
     const inner = Number(root.querySelector('.transit-planet-band-outline--inner')!.getAttribute('r'));
