@@ -40,7 +40,7 @@ export async function expectTransitContainment(svg: Locator) {
       .map(node => node.getBoundingClientRect().width);
     const normalizeFamily = (value: string) => value.replace(/["'\s]/g, '').toLowerCase();
     const fontProbe = document.createElement('span');
-    fontProbe.style.fontFamily = styles.getPropertyValue('--font-body');
+    fontProbe.style.fontFamily = styles.getPropertyValue('--font-ui');
     document.body.append(fontProbe);
     const targetDegreeFamily = normalizeFamily(getComputedStyle(fontProbe).fontFamily);
     fontProbe.remove();
