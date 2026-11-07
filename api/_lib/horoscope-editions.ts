@@ -1,10 +1,11 @@
+import {validateHoroscopeWindow} from '../../src/shared/horoscopeWindow.mjs';
 import {hasExactStudioOwnerApproval} from './studio-owner-publication.js';
 import {weeklyEditorialIssue} from '../../src/astro-writing/weeklyBatchEditorial.mjs';
 import {dailyEditorialIssue} from '../../src/astro-writing/dailyBatchEditorial.mjs';
 import {createHash,createHmac, timingSafeEqual} from 'node:crypto';
 import {AdminHttpError} from './admin-http.js';
 import {zonedDateTimeToUtc} from '../../apps/web/src/services/timezones.js';
-import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, validateHoroscopeWindow, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {HOROSCOPE_PERIODS, HOROSCOPE_SIGNS, HOROSCOPE_EDITION_PREFIX, validateHoroscopeEdition, isHoroscopeEditionKey, horoscopeEditionBody, horoscopeCanonicalJson, canonicalHoroscopeTimeZone} from '../../apps/web/src/content/horoscopeEditions.mjs';
 
 import {validateHoroscopeReading,horoscopeValidationVersion} from '../../src/astro-writing/horoscopeValidation.mjs';
 import {horoscopePunctuationFindings,horoscopeVocabularyFindings} from '../../src/astro-writing/horoscopeEditorialConstraints.mjs';

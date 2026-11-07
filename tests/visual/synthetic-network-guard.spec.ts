@@ -37,6 +37,22 @@ test('deployed fixture HTTP allows static reads and explicit mocks, rejecting un
   expect(await page.evaluate(async () => (await fetch('/wasm/0123456789abcdef/swisseph.wasm')).json())).toEqual({ simulatedRemote: true });
   expect(await page.evaluate(async () => (await fetch('/zodiac/aries.svg')).json())).toEqual({ simulatedRemote: true });
   expect(await page.evaluate(async () => (await fetch('/zodiac/sun-wheel-glyph.svg')).json())).toEqual({ simulatedRemote: true });
+  const readerPath = '/studio/sky-reader-preview';
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.addInitScript(() => localStorage.setItem('synthetic-reader-storage', 'ready'));
+  const readerNavigation = page.waitForEvent('framenavigated', frame => frame.url() === origin + readerPath);
+  await page.evaluate(path => {
+    const frame = document.createElement('iframe');
+    frame.setAttribute('sandbox', 'allow-scripts allow-same-origin');
+    frame.src = path;
+    document.body.append(frame);
+  }, readerPath);
+  const reader = await readerNavigation;
+  await reader.waitForLoadState();
+  expect(await reader.evaluate(() => ({ origin: location.origin, value: localStorage.getItem('synthetic-reader-storage') })))
+    .toEqual({ origin, value: 'ready' });
+  expect(errors).toEqual([]);
   const probe = (path: string, method: string) => page.evaluate(async ({ path, method }) => {
     try { await fetch(path, { method }); return 'forwarded'; } catch { return 'blocked'; }
   }, { path, method });
@@ -45,13 +61,24 @@ test('deployed fixture HTTP allows static reads and explicit mocks, rejecting un
   expect(await probe('/assets/probe.json', 'POST')).toBe('blocked');
   expect(await probe('/wasm/0123456789abcdef/private.json', 'GET')).toBe('blocked');
   expect(await probe('/zodiac/not-a-sign.svg', 'GET')).toBe('blocked');
-  expect(forwarded).toEqual(['GET /assets/probe.json', 'GET /wasm/0123456789abcdef/swisseph.wasm', 'GET /zodiac/aries.svg', 'GET /zodiac/sun-wheel-glyph.svg']);
+  expect(await probe(readerPath, 'GET')).toBe('blocked');
+  expect(await probe(readerPath, 'POST')).toBe('blocked');
+  const refusedDocument = await context.newPage();
+  await expect(refusedDocument.goto(origin + readerPath + '/')).rejects.toThrow();
+  await expect(refusedDocument.goto('https://deployed-guard.example.test.attacker.test' + readerPath)).rejects.toThrow();
+  await expect(refusedDocument.goto('https://deployed-guard.example.test:444' + readerPath)).rejects.toThrow();
+  expect(forwarded).toEqual(['GET /assets/probe.json', 'GET /wasm/0123456789abcdef/swisseph.wasm', 'GET /zodiac/aries.svg', 'GET /zodiac/sun-wheel-glyph.svg', `GET ${readerPath}`]);
   expect(guard.unhandledExternal).toEqual([
     `POST ${origin}/api/unhandled-write`,
     `GET ${origin}/api/unhandled-read`,
     `POST ${origin}/assets/probe.json`,
     `GET ${origin}/wasm/0123456789abcdef/private.json`,
-    `GET ${origin}/zodiac/not-a-sign.svg`
+    `GET ${origin}/zodiac/not-a-sign.svg`,
+    `GET ${origin}${readerPath}`,
+    `POST ${origin}${readerPath}`,
+    `GET ${origin}${readerPath}/`,
+    `GET https://deployed-guard.example.test.attacker.test${readerPath}`,
+    `GET https://deployed-guard.example.test:444${readerPath}`
   ]);
   expect(connectionAttempts()).toBe(0);
   await guard.finishStaticFonts();

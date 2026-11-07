@@ -124,6 +124,8 @@ function navigationFixture(confirm = false) {
     transitExactDismissedKeysRef: { current: new Set() }, houseTransitEditorDrafts: { current: new Map() },
     editorLoadRef: { current: null }, editorReturnFocusRef: { current: null }, dailyGlanceLoadingRequestRef: { current: null },
     wheelTooltipEditorRef: { current: null },
+    relatedHoroscopeStateRef: { current: { dirty: false, busy: false } },
+    horoscopeEditionStateRef: { current: { dirty: false, busy: false } },
     editorBaselineRef: { current: null }, editorSavedInputRef: { current: null }, natalUnsavedSourcesRef: { current: new Set() },
     handledHashRef: { current: "#fallback-hooks" }, acceptedHashRef: { current: "#fallback-hooks" },
     window: { confirm: () => { calls.push("confirm"); return confirm; }, requestAnimationFrame: (fn: () => void) => fn(), scrollTo() {},
@@ -192,6 +194,24 @@ for (const [dirty, busy] of [[true, false], [false, true], [true, true]]) {
   assert.equal(scope.wheelTooltipSourceRequestRef.current, 5, "Accepted navigation invalidates the wheel's own pending read.");
   assert.equal(scope.sourceOpenRequestRef.current, 1, "The generic source request owner stays independent of the wheel sequence.");
   assert.equal(scope.dailyGlancePairSelector, null, "Accepted navigation still closes the Daily editor.");
+}
+// The integrated dashboard keeps the main horoscope workspace mounted across
+// routes, while its unload warning and destructive related-editor guards differ.
+for (const state of [{ dirty: true, busy: false }, { dirty: false, busy: true }]) {
+  const { scope, calls } = navigationFixture();
+  scope.horoscopeEditionStateRef.current = state;
+  let prevented = false;
+  scope.warnBeforeUnload({ preventDefault: () => { prevented = true; } });
+  assert(prevented, "Retained horoscope edits or work must still warn before unload.");
+  assert.equal(scope.navigateAdminPage("surfaceMap"), true, "Non-destructive workspace navigation retains the main horoscope editor.");
+  assert(!calls.includes("confirm"), "Retained writing is not a discard operation.");
+}
+for (const state of [{ dirty: true, busy: false }, { dirty: false, busy: true }]) {
+  const { scope, calls } = navigationFixture();
+  scope.relatedHoroscopeStateRef.current = state;
+  assert.equal(scope.navigateAdminPage("surfaceMap"), false, "Related horoscope panels must guard departure before their editor unmounts.");
+  assert(!calls.some(call => call.startsWith("route:")));
+  assert.equal(calls.includes("confirm"), !state.busy, "Busy related editors stop before offering discard.");
 }
 for (const dirty of [true, false]) {
   const { scope } = navigationFixture(true);

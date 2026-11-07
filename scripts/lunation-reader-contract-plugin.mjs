@@ -12,7 +12,8 @@ export function lunationReaderContractPlugin() {
       if (!importer || !id.endsWith('/lunationStudioRevision.mjs')) return null;
       // The Studio catalog needs only the small identity predicate. Loading
       // the shipped renderer here would also retain its unrelated setup data.
-      if (importer.endsWith('/apps/admin/src/fallbackHoroscopeSources.ts')) return null;
+      if (importer.endsWith('/apps/admin/src/fallbackHoroscopeSources.ts')
+        || importer.endsWith('/apps/admin/src/fallbackHoroscopeKey.ts')) return null;
       return resolve(dirname(importer.split('?')[0]), id) === source ? reader : null;
     }
   };

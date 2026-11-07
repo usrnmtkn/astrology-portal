@@ -1,26 +1,24 @@
-import { isLunationHoroscopeKey } from '../../../src/shared/lunationHoroscopeIdentity';
-import { isLunationEclipseSectionKey } from '../../web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs';
-import { preferredSkySourceRows, skyPlacementBodies, skyPlacementSigns, type SkyWriteupRelationRow } from './skyWriteupRelations';
+import { fallbackHoroscopeKind, type FallbackHoroscopeKind } from './fallbackHoroscopeKey';
+import { preferredSkySourceRows, skyPlacementSigns, type SkyWriteupRelationRow } from './skyWriteupRelations';
 
-export type FallbackHoroscopeKind = 'placement' | 'new-moon' | 'full-moon' | 'eclipse';
+export type { FallbackHoroscopeKind } from './fallbackHoroscopeKey';
 export type FallbackHoroscopeIdentity = { kind: FallbackHoroscopeKind; planet: string; sign?: string; risingSign?: string; house?: number };
-const bodies = new Set<string>(skyPlacementBodies);
 const signs = new Set<string>(skyPlacementSigns);
 
 export function fallbackHoroscopeIdentity(key: string): FallbackHoroscopeIdentity | null {
-  const core = key.match(/^house-horoscope-core\/([^/]+)\/([^/]+)\/house-([1-9]|1[0-2])$/u);
-  if (core && bodies.has(core[1]) && signs.has(core[2])) {
-    const house = Number(core[3]);
-    const sign = skyPlacementSigns.indexOf(core[2] as typeof skyPlacementSigns[number]);
-    return { kind: 'placement', planet: core[1], sign: core[2], house,
+  const kind = fallbackHoroscopeKind(key);
+  if (kind === 'placement') {
+    const parts = key.split('/'), house = Number(parts[3].slice('house-'.length));
+    const sign = skyPlacementSigns.indexOf(parts[2] as typeof skyPlacementSigns[number]);
+    return { kind, planet: parts[1], sign: parts[2], house,
       risingSign: skyPlacementSigns[(sign - house + 13) % 12] };
   }
-  if (isLunationHoroscopeKey(key)) {
+  if (kind === 'new-moon' || kind === 'full-moon') {
     const parts = key.split('/');
-    return { kind: parts[3] as 'new-moon' | 'full-moon', planet: 'moon', sign: parts[4],
+    return { kind, planet: 'moon', sign: parts[4],
       risingSign: parts[5].slice('rising-'.length), house: Number(parts[6].slice('house-'.length)) };
   }
-  if (isLunationEclipseSectionKey(key)) {
+  if (kind === 'eclipse') {
     const parts = key.split('/');
     const rising = parts.find(part => part.startsWith('rising-'))?.slice('rising-'.length);
     const house = parts.find(part => /^house-\d+$/u.test(part));

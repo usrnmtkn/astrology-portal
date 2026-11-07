@@ -1,9 +1,10 @@
 import type { CompositionMapRow } from './compositionMap';
+import type { ArticleEventFacts } from './skyArticleRelatedContent';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
 import { compileSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionRecord, SKY_ARTICLE_COMPILER_VERSION, type CompiledSkyArticleEdition } from '../../web/src/content/skyArticleTemplateCompiler';
 
 export type PlacementWorkspaceRow = CompositionMapRow & { event_type?: string | null; facts?: Record<string, unknown> | null };
-export type PlacementVisitFacts = {
+export type PlacementVisitFacts = ArticleEventFacts & {
   planet: string; sign: string; entryYear: number; validFrom: string; validTo: string;
   transitStartInstant: string; transitEndInstant: string; referenceTimeZone: string;
   calculationSource: string; generatedAt: string; slotValues: Record<string, string>;
@@ -13,8 +14,8 @@ export type PlacementGeneratedArticle = { edition: CompiledSkyArticleEdition; ge
 
 export const placementWorkspaceTabs = [
   { value: 'visit', label: 'Articles' },
-  { value: 'default', label: 'Default reading' },
-  { value: 'setup', label: 'Writing setup' }
+  { value: 'default', label: 'Evergreen reading' },
+  { value: 'setup', label: 'Templates & sources' }
 ] as const;
 
 export { placementTemplateKeys } from './skyArticleTemplateKeys';

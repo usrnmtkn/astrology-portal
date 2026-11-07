@@ -37,7 +37,7 @@ function compare(a, b, pairs = new WeakMap(), reverse = new WeakMap()) {
 const long = 'Synthetic repeated string with Unicode 🌙 é and separators \u2028\u2029. '.repeat(3);
 const filterPlugin = internPublicJsonStringsPlugin();
 const filterCode = transformJson(JSON.stringify({ first: long, second: long }));
-for (const file of ['bundled-sky-core-rows-v3.json', 'bundled-sky-placement-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
+for (const file of ['bundled-sky-core-rows-v3.json', 'initial-sky-core-transport-v1.json', 'deferred-reader-support-transport-v1.json', 'bundled-sky-placement-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
   const id = `/repo/apps/web/src/content/fallbackArchitectureV3/${file}`;
   assert(filterPlugin.transform.call({ parse: parseAst }, filterCode, id));
   for (const suffix of ['?raw', '?url', '?import']) assert.equal(filterPlugin.transform.call({ parse: parseAst }, filterCode, id + suffix), undefined);
@@ -70,12 +70,12 @@ const output = await bundle.generate({ format: 'es' });
 assert(!output.output[0].code.includes('unused'));
 assert.equal((await evaluate(output.output[0].code)).used, long);
 await bundle.close();
-for (const file of ['bundled-sky-core-rows-v3.json', 'bundled-sky-placement-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
+for (const file of ['bundled-sky-core-rows-v3.json', 'initial-sky-core-transport-v1.json', 'deferred-reader-support-transport-v1.json', 'bundled-sky-placement-rows-v3.json', 'bundled-deferred-core-rows-v3.json']) {
   const path = new URL(`../apps/web/src/content/fallbackArchitectureV3/${file}`, import.meta.url);
   const raw = await readFile(path);
   const digest = createHash('sha256').update(raw).digest('hex');
   const original = transformJson(raw.toString());
-  const changed = internJsonStringLiterals(original, parseAst);
+  const changed = filterPlugin.transform.call({ parse: parseAst }, original, `/repo/apps/web/src/content/fallbackArchitectureV3/${file}`);
   assert(changed);
   compare(await evaluate(original), await evaluate(changed.code));
   assert.equal(createHash('sha256').update(await readFile(path)).digest('hex'), digest);
@@ -95,4 +95,21 @@ for (const chunk of [{ name: 'memory-graph-renderer', modules: appChunk.modules 
   assert.equal(applicationPlugin.renderChunk.call({ parse: parseAst }, applicationCode, chunk, { format: 'es' }), null);
 }
 assert.equal(applicationPlugin.renderChunk.call({ parse: parseAst }, applicationCode, appChunk, { format: 'cjs' }), null);
+const repeatedKey = 'synthetic/complete-source-identity/one';
+const shorterCode = `export default {first:${JSON.stringify(repeatedKey)},second:${JSON.stringify(repeatedKey)}};`;
+assert.equal(internJsonStringLiterals(shorterCode, parseAst), null, 'The general application threshold remains unchanged.');
+const shortData = filterPlugin.transform.call({ parse: parseAst }, shorterCode, '/repo/apps/web/src/content/fallbackArchitectureV3/initial-sky-core-transport-v1.json');
+assert(shortData);
+compare(await evaluate(shorterCode), await evaluate(shortData.code));
+assert.equal(applicationPlugin.renderChunk.call({ parse: parseAst }, shorterCode, appChunk, { format: 'es' }), null);
+assert.equal(applicationPlugin.renderChunk.call({ parse: parseAst }, shorterCode,
+  { name: 'other', modules: { '/repo/apps/web/src/features/Other.tsx': {} } }, { format: 'es' }), null);
+const dynamicCode = `export const first=${JSON.stringify(moduleUrl)},second=${JSON.stringify(moduleUrl)}; export const load=()=>import(${JSON.stringify(moduleUrl)});`;
+const dynamicResult = applicationPlugin.renderChunk.call({ parse: parseAst }, dynamicCode, appChunk, { format: 'es' });
+assert(dynamicResult);
+assert(dynamicResult.code.includes(`import(${JSON.stringify(moduleUrl)})`), 'Native dynamic imports remain literal for deployment asset tagging.');
+const dynamicBefore = await evaluate(dynamicCode), dynamicAfter = await evaluate(dynamicResult.code);
+assert.equal(dynamicAfter.first, dynamicBefore.first);
+assert.equal(dynamicAfter.second, dynamicBefore.second);
+assert.equal((await dynamicAfter.load()).imported, (await dynamicBefore.load()).imported);
 console.log('PASS application chunk imports, complete string values, ES-module boundary and pinned renderer exclusions');

@@ -282,7 +282,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
       await expect(editor(page).getByText('Save did not return the saved row.', { exact: true })).toHaveCount(0);
       const nextIntro = 'Synthetic revised structured introduction.\n\n{{risingBlocks}}';
-      await editor(page).getByLabel('Horoscope introduction', { exact: true }).fill(nextIntro);
+      await editor(page).getByRole('button', { name: 'Edit article horoscopes', exact: true }).click();
+      const horoscopes = page.getByRole('dialog', { name: 'Article horoscopes', exact: true });
+      await horoscopes.getByLabel('Horoscope introduction', { exact: true }).fill(nextIntro);
+      await horoscopes.getByRole('button', { name: 'Done', exact: true }).click();
+      await expect(horoscopes).toHaveCount(0);
+      await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('Unsaved changes');
       const sectionRevision = await f.save('Save template', 'PATCH');
       const completeRevised = newer.replace('Synthetic newer complete horoscope introduction.\n\n{{risingBlocks}}', nextIntro);
       expect(articleTemplateWithHoroscopes(sectionRevision.body, sectionRevision.sections)).toBe(completeRevised);

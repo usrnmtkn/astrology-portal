@@ -7,16 +7,16 @@ const sourceFiles = [
   "/apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"
 ];
 
-export function internJsonStringLiterals(code, parse) {
+export function internJsonStringLiterals(code, parse, minimumLength = 80) {
   const ast = parse(code);
   const names = new Set();
   const strings = new Map();
   function visit(node, parent, key) {
     if (!node || typeof node !== "object") return;
     if (node.type === "Identifier") names.add(node.name);
-    if (node.type === "Literal" && typeof node.value === "string" && node.value.length >= 80
+    if (node.type === "Literal" && typeof node.value === "string" && node.value.length >= minimumLength
       && key !== "key"
-      && !(key === "source" && ["ImportDeclaration", "ExportNamedDeclaration", "ExportAllDeclaration"].includes(parent?.type))
+      && !(key === "source" && ["ImportDeclaration", "ImportExpression", "ExportNamedDeclaration", "ExportAllDeclaration"].includes(parent?.type))
       && !(parent?.type === "ExpressionStatement" && parent.directive)) {
       const occurrences = strings.get(node.value) ?? [];
       occurrences.push(node);
@@ -58,7 +58,7 @@ export function internPublicJsonStringsPlugin() {
     enforce: "post",
     transform(code, id) {
       if (!sourceFiles.some(file => id.replaceAll("\\", "/").endsWith(file))) return;
-      return internJsonStringLiterals(code, code => this.parse(code));
+      return internJsonStringLiterals(code, code => this.parse(code), 32);
     }
   };
 }

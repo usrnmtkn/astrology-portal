@@ -16,6 +16,7 @@ import { calendarPassageIdentity, calendarPassageErrors, calendarPassageVariable
 import { handleStudioVariables, StudioVariableError, snapshotStudioVariables, assertStudioVariablePublication } from "../_lib/studio-variables.js";
 import { handleStudioWritingProfiles } from "../_lib/studio-writing-profiles.js";
 import { prepareHoroscopeBrief, assertHoroscopeRow, horoscopePublicationIssues } from "../_lib/horoscope-editions.js";
+import { validateHoroscopeWindow } from '../../src/shared/horoscopeWindow.mjs';
 import { AdminHttpError, readPlatformRequestBody } from "../_lib/admin-http.js";
 import { mergeGeneratedInterpretationSections } from "../_lib/generated-interpretation-sections.js";
 import { approveNatalAspectStudioCopy, approveStudioPackageWording } from "../_lib/content-studio-approval.js";
@@ -3829,6 +3830,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       if(contentKey&&!/^horoscope\/[a-zA-Z0-9_./+-]+$/u.test(contentKey))throw new AdminHttpError(400,'Choose a horoscope edition.');
       const detail=Boolean(id||contentKey);
       const inventoryOnly=!detail&&query.get('editionInventory')==='true';
+      const pagedInventory=query.get('editionInventoryPage')==='true';
+      if(pagedInventory&&!inventoryOnly)throw new AdminHttpError(400,'Use edition inventory to browse pages.');
+      const startsAt=query.get('articleStartsAt'),endsAt=query.get('articleEndsAt'),cursor=query.get('cursor');
+      if((startsAt!==null||endsAt!==null||cursor!==null)&&!pagedInventory)throw new AdminHttpError(400,'Use paged edition inventory for an article period or cursor.');
+      if(startsAt!==null||endsAt!==null){
+        const canonical=(value:string|null)=>typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u.test(value)
+          &&Number.isFinite(Date.parse(value))&&new Date(value).toISOString()===value;
+        if(!canonical(startsAt)||!canonical(endsAt)||Date.parse(startsAt!)>=Date.parse(endsAt!))throw new AdminHttpError(400,'Choose a valid complete article period.');
+      }
       // Recovery compares the complete document returned by horoscope-writing.
       // The generic detail projection omits storage fields and falsely looks
       // like an outside edit after a provider checkpoint advances updated_at.
@@ -3837,16 +3847,43 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       // Project in storage, before transferring and parsing the result.
       const params=new URLSearchParams({content_key:contentKey?`eq.${contentKey}`:"like.horoscope/*",
         or:'(mode.eq.article,and(mode.eq.studio-draft,event_type.eq.horoscope-edition-revision))',
-        select:versionOnly?'id,updated_at':inventoryOnly?'id,content_key,headline,status,event_type,sections,updated_at':'*',order:"updated_at.desc",limit:detail?'1':'30'});
+        select:versionOnly?'id,updated_at':pagedInventory?'id,content_key,headline,status,event_type,updated_at,horoscope_window:sections->horoscopeEdition->window':inventoryOnly?'id,content_key,headline,status,event_type,sections,updated_at':'*',
+        order:pagedInventory?'updated_at.desc,id.desc':'updated_at.desc',limit:detail?'1':pagedInventory?'31':'30'});
       // Completed private revisions stay in history, but must not obscure the
       // current published edition when opening its dates or browsing the list.
-      if(!id)params.set('and','(or(event_type.neq.horoscope-edition-revision,event_type.is.null,status.neq.ARCHIVED))');
+      const filters:string[]=[];
+      if(!id)filters.push('or(event_type.neq.horoscope-edition-revision,event_type.is.null,status.neq.ARCHIVED)');
+      if(pagedInventory&&cursor){
+        if(cursor.length>512)throw new AdminHttpError(400,'cursor is invalid.');
+        const decoded=decodeGeneratedContentCursor(cursor);
+        if(!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/iu.test(decoded.id)
+          ||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/u.test(decoded.updatedAt))throw new AdminHttpError(400,'cursor is invalid.');
+        params.set('updated_at',`lte.${decoded.updatedAt}`);
+        filters.push(`or(updated_at.lt.${decoded.updatedAt},and(updated_at.eq.${decoded.updatedAt},id.lt.${decoded.id}))`);
+      }
+      if(filters.length)params.set('and',`(${filters.join(',')})`);
+      if(startsAt&&endsAt){
+        // Horoscope windows are stored as validated canonical UTC ISO strings.
+        // Compare before limiting the page, with half-open interval boundaries.
+        params.set('sections->horoscopeEdition->window->>startsAt',`lt.${endsAt}`);
+        params.set('sections->horoscopeEdition->window->>endsAt',`gt.${startsAt}`);
+      }
       if(id)params.set('id',`eq.${id}`);
       // Full saved documents retain the writer's bounded read budget. They can
       // contain many complete historical requests; opening must not truncate them.
       const result = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`,{headers:adminHeaders()},detail?30_000:adminStorageTimeoutMs);
       if (!result.ok || !Array.isArray(result.payload)) throw new AdminHttpError(502, "Horoscope editions could not load.");
-      sendJson(res, 200, {ok:true,rows:inventoryOnly?result.payload.map(row=>({...row,inventory_only:true})):result.payload});
+      const page=pagedInventory?result.payload.slice(0,30):result.payload;
+      const nextCursor=pagedInventory&&result.payload.length>30?encodeGeneratedContentCursor(page.at(-1)):null;
+      if(pagedInventory&&result.payload.length>30&&!nextCursor)throw new AdminHttpError(502,'The horoscope edition page could not be verified.');
+      let inventoryRows;
+      try {
+        inventoryRows=pagedInventory?page.map(row=>({id:row.id,content_key:row.content_key,headline:row.headline,
+          status:row.status,event_type:row.event_type,updated_at:row.updated_at,
+          horoscope_window:validateHoroscopeWindow(row.horoscope_window),inventory_only:true}))
+          :inventoryOnly?page.map(row=>({...row,inventory_only:true})):page;
+      } catch { throw new AdminHttpError(502,'The horoscope edition page could not be verified.'); }
+      sendJson(res, 200, {ok:true,rows:inventoryRows,...(pagedInventory?{nextCursor}:{})});
       return;
     }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("writingProfiles") === "true") {

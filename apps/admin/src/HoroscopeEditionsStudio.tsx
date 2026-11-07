@@ -3,6 +3,8 @@ import type {HoroscopeGenerationState} from './HoroscopeGenerationDetails';
 import {Suspense,useEffect,useRef,useState} from 'react';
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
+import StudioSidePanel from './StudioSidePanel';
+import type { HoroscopeEditorState } from './SkyArticleHoroscopes';
 import WritingPlanExport from './WritingPlanExport';
 import {fetchWithOwnerSession,ownerSignInMessage} from './ownerSessionRequest';
 import {ownerCredentialIdentity} from './ownerSession';
@@ -52,10 +54,12 @@ function download(name:string,value:unknown) {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value,null,2)+'\n'],{type:'application/json'}));
   const link = document.createElement('a'); link.href=url; link.download=name; link.click(); setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEditionChange}:{secret:string;requestedEditionId?:string|null;onEditionChange?:(id:string|null)=>void}) {
+export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEditionChange,onStateChange,sidePanel=false,active:isActive=true,editRequestedEdition=false}:{secret:string;requestedEditionId?:string|null;onEditionChange?:(id:string|null)=>void;onStateChange?:(state:HoroscopeEditorState)=>void;sidePanel?:boolean;active?:boolean;editRequestedEdition?:boolean}) {
   const [rows,setRows]=useState<any[]>([]),[loading,setLoading]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState<string|{previous:string}>(''),[message,setMessage]=useState('');
   const [listError,setListError]=useState('');
   const [editionView,setEditionView]=useState({search:'',type:'all',status:'all',sort:'newest'});
+  const [minimized,setMinimized]=useState(false),resume=useRef<HTMLButtonElement>(null);
+  useEffect(()=>{if(isActive&&minimized)resume.current?.focus({preventScroll:true});},[isActive,minimized]);
   const listRequest=useRef<AbortController|null>(null);
   const [period,setPeriod]=useState<HoroscopePeriod>('weekly'),[date,setDate]=useState(()=>new Intl.DateTimeFormat('en-CA',{timeZone:browserTimeZone()}).format(new Date())),[zone,setZone]=useState(browserTimeZone);
   const [draft,setDraft]=useState<HoroscopeEdition|null>(null),[saved,setSaved]=useState<any>(null),[packet,setPacket]=useState<any>(null),[profile,setProfile]=useState<any>(null);
@@ -66,6 +70,8 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
   const [plan,setPlan]=useState<any>(null),[planApproved,setPlanApproved]=useState(false),[configured,setConfigured]=useState(true),[progress,setProgress]=useState('');
   const [step,setStep]=useState<Step>('setup'),[instructions,setInstructions]=useState(false);
   const [privateRuns,setPrivateRuns]=useState<Record<string,any>>({});
+  const reportState=useRef(onStateChange);reportState.current=onStateChange;
+  useEffect(()=>()=>{reportState.current?.({dirty:false,busy:false});},[]);
   const [savedEvidence,setSavedEvidence]=useState<any>(null);
   useEffect(()=>{setSavedEvidence(null);},[saved?.id,saved?.updated_at,sign]);
   async function loadEvidence(){
@@ -120,6 +126,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
   const mayReplace=()=>!dirty || window.confirm('Discard the unsaved changes to this edition?');
   function adopt(row:any) {
     const edition=validateHoroscopeEdition(row.sections?.horoscopeEdition);
+    setMinimized(false);
     retain(row,true);setPacket(row.facts?.horoscopeBrief);setSign(edition.passages[0].sign);setInstructions(false);
     setPeriod(edition.window.period);setZone(edition.window.timeZone);
     setDate(row.facts?.horoscopeBrief?.brief?.referenceDate??new Intl.DateTimeFormat('en-CA',{timeZone:edition.window.timeZone}).format(new Date(edition.window.startsAt)));
@@ -177,7 +184,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
   const locallySyncedEdition=useRef<{id:string|null;credential:string}|null>(null);
   function syncEditionLink(id:string|null) {
     const url=new URL(window.location.href);
-    if(url.hash.slice(1).split('?')[0]!=='horoscopes')return;
+    if(url.hash.slice(1).split('?')[0]!=='horoscopes'){onEditionChange?.(id);return;}
     const params=new URLSearchParams(url.hash.split('?')[1]??'');
     if(id)params.set('edition',id);else params.delete('edition');
     url.hash=`horoscopes${params.size?'?'+params.toString():''}`;
@@ -202,7 +209,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       const next=adopt(row);
       // Saved-edition actions open published writing in the editor. Opening it
       // never changes its publication state or starts another generation.
-      if(!fromLink&&row.status==='LIVE')setStep('edit');
+      if((!fromLink||editRequestedEdition)&&row.status==='LIVE')setStep('edit');
       // Library links read only; preparing a writing plan remains explicit.
       if(!fromLink&&next==='generate'&&row.source_snapshot?.horoscopeGeneration?.batch?.status!=='running'&&(!row.source_snapshot?.horoscopeGeneration?.active||row.sections.horoscopeEdition.window.period==='weekly'))await loadPlan(row,undefined,undefined,current);
       if(!fromLink)link(row.id);
@@ -561,6 +568,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
   }
   const retrySign=!active&&!generation?.heldRequests?.[failedSign]&&!generation?.candidateHolds?.[failedSign]&&draft?.passages.some(p=>p.sign===failedSign&&!p.headline.trim()&&!p.body.trim())?failedSign:null;
   const locked=busy||Boolean(saveConflict)||Boolean(active)||Boolean(sharedPending)||serverRunning||needsSync;
+  useEffect(()=>{onStateChange?.({dirty,busy:busy||checking});},[onStateChange,dirty,busy,checking]);
   const generationState:HoroscopeGenerationState=serverRunning?'running':serverPaused?'paused':checking?'checking':needsSync?'sync':busy?'saving':active?'active':empty===0?'ready':available===0?'attention':dirty||!plan?'prepare':!planApproved?'approval':'generate';
   const stepIndex=steps.indexOf(step),signIndex=readingSigns.indexOf(sign),planEntry=plan?.readings.find((entry:any)=>entry.sign===sign);
   const isPublished=saved?.status==='LIVE'&&!dirty;
@@ -580,7 +588,7 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
     else {if(dirty&&!await save())return;setSign(readingSigns[signIndex+1]);}
     heading.current?.scrollIntoView({block:'center'});
   }
-  return <section className="admin-panel admin-horoscope-wizard" aria-label="Horoscope editions">
+  const wizard = <section className="admin-panel admin-horoscope-wizard" aria-label="Horoscope editions">
     <nav aria-label="Horoscope creation steps"><ol className="admin-horoscope-steps">{steps.map((value,index)=><li key={value}><StudioButton aria-current={step===value?'step':undefined} disabled={value==='setup'?busy&&!running.current&&!checking:busy||(Boolean(active)||needsSync)&&value!=='generate'||!draft||value==='publish'&&complete!==total} onClick={()=>void moveTo(value)}>{index+1} · {stepLabels[index]}</StudioButton></li>)}</ol></nav>
     <header className="admin-horoscope-step-heading">
       <p className="admin-field-hint">Step {stepIndex+1} of 4</p>
@@ -693,4 +701,10 @@ export default function HoroscopeEditionsStudio({secret,requestedEditionId,onEdi
       </details>}
     </>}
   </section>;
+  return sidePanel&&step!=='setup' ? <>
+  <StudioButton ref={resume} hidden={!minimized||!isActive} onClick={()=>setMinimized(false)}>Resume editing horoscopes</StudioButton>
+  <StudioSidePanel title="Edit horoscopes" open={isActive&&!minimized} modal={false} busy={busy||checking} onMinimize={()=>setMinimized(true)} onClose={()=>{
+    if(busy||checking||!mayReplace())return;
+    setDraft(null);setSaved(null);setPlan(null);setPlanApproved(false);setStep('setup');syncEditionLink(null);void load();
+  }}>{wizard}</StudioSidePanel></> : wizard;
 }

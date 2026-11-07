@@ -129,6 +129,7 @@ import {
   skyWriteupRelatedSourcePrefixes,
   skyWriteupSubjectTypeForRow
 } from "./skyWriteupRelations";
+import { fallbackHoroscopeKind } from './fallbackHoroscopeKey';
 import {
   ownerApprovedReplacementLabel,
   ownerApprovedSkyPlacementArticleKey
@@ -3307,6 +3308,8 @@ export function GeneratedContentAdminDashboard() {
     dailyGlanceNavigationStateRef.current = busy ? 2 : dirty ? 1 : 0;
   }, []);
   const skyPlacementWorkspaceDirtyRef = useRef(false);
+  const relatedHoroscopeStateRef = useRef({ dirty: false, busy: false });
+  const horoscopeEditionStateRef = useRef({ dirty: false, busy: false });
   const skyPlacementWorkspaceBusyRef = useRef(false);
   const aspectPatternDirtyRef = useRef(false);
   const aspectPatternBusyRef = useRef(false);
@@ -4546,12 +4549,17 @@ export function GeneratedContentAdminDashboard() {
     return serialized !== editorBaselineRef.current && serialized !== editorSavedInputRef.current;
   }
 
-  function hasPendingArticleChanges() {
+  function hasPendingArticleChanges(retainPlacementWriting = false) {
+    // The main horoscope workspace stays mounted across routes. Its own
+    // replacement/close guards and beforeunload warning protect that draft.
+    // Related article panels unmount on departure, so their guards still apply.
     return Boolean(
       wheelTooltipEditorRef.current?.hasUnsavedExcept(draft?.contentKey)
-      || subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || moonHoroscopesDirtyRef.current || dailyWritingDirtyRef.current || skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current
+      || subscriptionEventDirtyRef.current || lunationWritingDirtyRef.current || moonHoroscopesDirtyRef.current || dailyWritingDirtyRef.current
       || dailyGlanceNavigationStateRef.current
+      || !retainPlacementWriting && (skyPlacementWorkspaceDirtyRef.current || skyPlacementWorkspaceBusyRef.current)
       || aspectPatternDirtyRef.current || aspectPatternBusyRef.current || customVariableDirtyRef.current || customVariableBusyRef.current
+      || relatedHoroscopeStateRef.current.dirty || relatedHoroscopeStateRef.current.busy
       || skyArticleEditor && skyArticleEditor.saveState !== "saved"
       || skyArticleEditionForm && ["unsaved", "saving", "error"].includes(skyArticleEditionForm.saveState)
     );
@@ -4576,7 +4584,7 @@ export function GeneratedContentAdminDashboard() {
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
       const draftChanged = hasChangedSavedDraft();
-      if (!csvBusy && !draftChanged && !hasPendingArticleChanges() && natalUnsavedSourcesRef.current.size === 0) return;
+      if (!csvBusy && !draftChanged && !hasPendingArticleChanges() && !horoscopeEditionStateRef.current.dirty && !horoscopeEditionStateRef.current.busy && natalUnsavedSourcesRef.current.size === 0) return;
       event.preventDefault();
       event.returnValue = "";
     };
@@ -4584,7 +4592,7 @@ export function GeneratedContentAdminDashboard() {
     return () => window.removeEventListener("beforeunload", warnBeforeUnload);
   }, [draft, skyArticleEditor, skyArticleEditionForm, csvBusy]);
 
-  function closeEditor() {
+  function closeEditor(options?: { retainPlacementWriting?: boolean }) {
     if (csvBusy) { setMessage('Finish the CSV operation before leaving this section.'); return false; }
     if (houseTransitEditor && houseTransitCloseGuard.current && !houseTransitCloseGuard.current()) return false;
     const hasOpenEditor = Boolean(
@@ -4613,7 +4621,10 @@ export function GeneratedContentAdminDashboard() {
       || draft.body.trim()
     ));
     const hasUnsavedChanges = Boolean(draft && !matchesSavedDraft && hasDraftContent);
-    if ((hasUnsavedChanges || hasPendingArticleChanges()) && !confirmDiscardEditorChanges()) {
+    // A horoscope source closes over a still-mounted article. Route navigation
+    // uses the default guard and still checks that article's unsaved writing.
+    const retainPlacementWriting = options?.retainPlacementWriting === true && Boolean(draft && fallbackHoroscopeKind(draft.contentKey));
+    if ((hasUnsavedChanges || hasPendingArticleChanges(retainPlacementWriting)) && !confirmDiscardEditorChanges()) {
       return false;
     }
     if (draft?.contentKey) transitExactDismissedKeysRef.current.add(draft.contentKey);
@@ -6552,6 +6563,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function confirmDiscardEditorChanges() {
+    if (relatedHoroscopeStateRef.current.busy) { setMessage('Finish the current horoscope operation before leaving this editor.'); return false; }
     return window.confirm("Discard the unsaved changes in this editor?");
   }
 
@@ -7559,7 +7571,7 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "variables" && <><Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariables secret={secret} customVariables={customVariableLibrary.variables} onCustomChange={customVariableLibrary.setVariables} customError={customVariableLibrary.error} customLoading={customVariableLibrary.loading} customLoaded={customVariableLibrary.loaded} initialVariableName={parseAdminHash().params.get('editVariable') ?? undefined} onReloadCustom={customVariableLibrary.reload} createRequest={variableCreateRequest} onCreateHandled={() => setVariableCreateRequest(0)} onDirty={trackCustomVariableDraft} onOpenSource={(key, _label, field) => void openRow(rows.find(row => row.content_key === key) ?? { id: `package:${key}`, content_key: key, inventory_only: true } as AdminGeneratedContentRow, null, field)} /></Suspense>{renderEditor()}</>}
 
-        {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} /></Suspense></div>}
+        {hasOpenedHoroscopes && <div hidden={activePage !== "horoscopes"}><Suspense fallback={<PageLoading message="Loading horoscope editions…" />}><HoroscopeEditionsStudio sidePanel active={activePage === "horoscopes"} secret={secret} requestedEditionId={requestedEditionId} onEditionChange={setRequestedEditionId} onStateChange={state => { horoscopeEditionStateRef.current = state; }} /></Suspense></div>}
         {activePage === "moonHoroscopes" && <Suspense fallback={<PageLoading message="Loading Moon horoscopes…" />}><MoonHoroscopesStudio key={requestedMoonDraftId??'new'} secret={secret} dirtyRef={moonHoroscopesDirtyRef} requestedDraftId={requestedMoonDraftId}/></Suspense>}
         {activePage === "horoscopeFallbacks" && <><Suspense fallback={<PageLoading message="Loading fallback horoscopes…" />}>
           <FallbackHoroscopeStudio rows={rows} credential={secret}
@@ -8005,7 +8017,7 @@ export function GeneratedContentAdminDashboard() {
                 )}
                 {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
                   <Suspense fallback={<PageLoading message="Loading planet and sign writing…" />}>
-                    <SkyPlacementWorkspace key={`${skyPlacementBody}/${skyPlacementSign}`} rows={compositionRows}
+                    <SkyPlacementWorkspace key={`${skyPlacementBody}/${skyPlacementSign}`} rows={compositionRows} credential={secret}
                       date={skyReaderDate} onDateChange={setSkyReaderDate}
                       selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }}
                       readerSources={!draft ? renderPlacementSources(skyPlacementBody, skyPlacementSign) : null}
@@ -11401,7 +11413,7 @@ export function GeneratedContentAdminDashboard() {
           else closeVariablesRail();
           return;
         }
-        closeEditor();
+        closeEditor({ retainPlacementWriting: true });
         return;
       }
       if (event.key !== "Tab") return;
@@ -11424,8 +11436,8 @@ export function GeneratedContentAdminDashboard() {
 
     return (
       <>
-      <StudioButton type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} disabled={isLoading} />
-      <aside ref={editorRef} className={`admin-editor-panel admin-review-detail${skyArticleEditor ? " has-dated-workspace" : ""}${templateVariableReferenceOpen ? " has-variables-rail" : ""}`} role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown} onSelectCapture={event => rememberVariableSelection(event.target)} onBlurCapture={event => rememberVariableSelection(event.target)}>
+      <StudioButton type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={() => closeEditor({ retainPlacementWriting: true })} disabled={isLoading} />
+      <aside ref={editorRef} className={`admin-editor-panel admin-review-detail${fallbackHoroscopeKind(currentDraft.contentKey) ? " studio-horoscope-editor" : ""}${skyArticleEditor ? " has-dated-workspace" : ""}${templateVariableReferenceOpen ? " has-variables-rail" : ""}`} role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown} onSelectCapture={event => rememberVariableSelection(event.target)} onBlurCapture={event => rememberVariableSelection(event.target)}>
         {skyWriteupParent && (
           <StudioButton type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup} disabled={isLoading}>
             <ArrowLeft size={16} aria-hidden="true" />
@@ -11434,7 +11446,7 @@ export function GeneratedContentAdminDashboard() {
         )}
         <header className="admin-editor-toolbar admin-editor-header">
           <h2>{editorHeading}</h2>
-          <StudioButton className="admin-editor-close" type="button" onClick={closeEditor} disabled={isLoading} autoFocus aria-label="Close" title="Close editor">
+          <StudioButton className="admin-editor-close" type="button" onClick={() => closeEditor({ retainPlacementWriting: true })} disabled={isLoading} autoFocus aria-label="Close" title="Close editor">
             <X size={18} aria-hidden="true" />
           </StudioButton>
           <div className="admin-editor-meta">
@@ -12158,6 +12170,11 @@ export function GeneratedContentAdminDashboard() {
                   }, <Suspense fallback={<PageLoading message="Loading article variables…" />}><SkyDatedArticleEditor key={compiledSkyArticleEdition.contentKey}
                     edition={skyArticleEditor.baseEdition} fields={skyArticleEditor.fields} variables={skyArticleEditor.variables}
                     engineFacts={currentDraft.sourceSnapshot?.engineFacts as Record<string, any> | undefined} disabled={isLoading} custom={customVariableLibrary}
+                    relatedHoroscopes={{ rows, credential: secret,
+                      request: (path, options) => adminJsonRequest(path, secret, options),
+                      onLoadRow: row => hydrateGeneratedContentRow(row as AdminGeneratedContentRow),
+                      onEditRow: row => void openFromEditor(row.content_key, () => openRow(row as AdminGeneratedContentRow), { parentDraft: currentDraft, saveReturns: true }),
+                      onEditorState: state => { relatedHoroscopeStateRef.current = state; } }}
                     saveState={skyArticleEditor.saveState} publishedUnchanged={currentDraft.status === 'LIVE' && !skyArticleChanges.length}
                     onSave={() => { skyArticleSaveNowRef.current = true; updateSkyArticleFields({}); }}
                     onChange={(fields, variables) => setSkyArticleEditor(current => current ? { ...current, fields, variables, saveState: 'unsaved', reviewOpen: false } : current)}
@@ -12924,7 +12941,7 @@ export function GeneratedContentAdminDashboard() {
             disabled={isLoading || skyArticleEditor.saveState !== "saved" || skyArticleChanges.length > 0 || Boolean(editorSaveError)}
             onClick={() => void updateSourceLifecycle()}>{sourceIsArchived ? "Restore as draft" : "Archive article"}</StudioButton>
           {editorSaveError && selectedRow && <StudioButton type="button" disabled={isLoading} onClick={() => void openFromEditor(selectedRow.content_key, () => openRow(selectedRow))}>Reload saved article</StudioButton>}
-          <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={closeEditor}>Done</StudioButton>
+          <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => closeEditor()}>Done</StudioButton>
         </div>}
         {renderNotification()}
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}

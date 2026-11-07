@@ -7384,9 +7384,16 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     await detail.locator('summary').click();
     await expect(detail).toContainText(notes);
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
-    await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue(passages[0].body);
-    await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
-    await expect(editor.getByLabel(/rising horoscope$/)).toHaveCount(12);
+    await editor.getByRole('button',{name:'Edit article horoscopes',exact:true}).click();
+    const horoscopePanel=page.getByRole('dialog',{name:'Article horoscopes',exact:true});
+    const rising=horoscopePanel.getByLabel('Article horoscope rising sign',{exact:true});
+    await expect(rising.locator('option')).toHaveCount(12);
+    for(const passage of passages){
+      await rising.selectOption(passage.risingSign);
+      await expect(horoscopePanel.getByLabel(`${passage.risingSign} rising horoscope`,{exact:true})).toHaveValue(passage.body);
+    }
+    await rising.selectOption('aries');
+    await expect(horoscopePanel.getByLabel(/rising horoscope$/)).toHaveCount(1);
     const headings=await editor.locator('h2,h3').allTextContents();
     expect(headings.indexOf('Sun Enters Aries')>=0 || headings.some(h=>h.includes('Edit Sun Enters Aries'))).toBeTruthy();
     const styles=await editor.evaluate(root=>{
@@ -7396,8 +7403,12 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     expect(styles.horoscope).toEqual(styles.body);
     const revised='Revised complete opening.\n\nRevised complete ending.';
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill('');
+    await rising.selectOption('pisces');
     await expect(editor.getByLabel('pisces rising horoscope',{exact:true})).toHaveValue(passages[11].body);
+    await rising.selectOption('aries');
+    await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue('');
     await editor.getByLabel('aries rising horoscope',{exact:true}).fill(revised);
+    await horoscopePanel.getByRole('button',{name:'Done',exact:true}).click();
     await editor.getByRole('button',{name:'Save template',exact:true}).click();
     await expect.poll(()=>writes.length).toBe(1);
     expect(writes[0].payload.body).toBe(body);
@@ -7407,6 +7418,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
     expect(savedSections.articleHoroscopes.passages.slice(1)).toEqual(passages.slice(1));
     await editor.getByRole('button',{name:'Close',exact:true}).click();
     await page.getByRole('row').filter({hasText:row.content_key}).getByRole('button',{name:'Edit',exact:true}).click();
+    await editor.getByRole('button',{name:'Edit article horoscopes',exact:true}).click();
     await expect(editor.getByLabel('aries rising horoscope',{exact:true})).toHaveValue(revised);
     await expect(editor.locator('.admin-copy-field-body')).toHaveValue(body);
     await editor.getByLabel('aries rising horoscope',{exact:true}).scrollIntoViewIfNeeded();
@@ -7426,6 +7438,7 @@ for (const contentKey of ['sky/article-template/nodes','sky/article-template/ura
     await expectAdminRouteLoads(page,'/admin/content#review-queue?view=all');
     await page.getByRole('row').filter({hasText:contentKey}).getByRole('button',{name:'Edit',exact:true}).click();
     const editor=page.getByRole('dialog',{name:'Generated content editor'});
+    await editor.getByRole('button',{name:'Edit article horoscopes',exact:true}).click();
     await expect(editor.getByLabel('Horoscope introduction',{exact:true})).toHaveValue(row.sections.articleHoroscopes.introduction);
     await editor.getByLabel('Horoscope introduction',{exact:true}).fill('');
     await editor.getByLabel('Horoscope introduction',{exact:true}).fill(row.sections.articleHoroscopes.introduction);
@@ -9892,7 +9905,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
     const workspace = page.getByRole('region', { name: 'Sun in Scorpio workspace', exact: true });
     const tabs = workspace.getByRole('tablist', { name: 'Planet and sign writing' });
-    await expect(tabs.getByRole('tab')).toHaveText(['Articles', 'Default reading', 'Writing setup']);
+    await expect(tabs.getByRole('tab')).toHaveText(['Articles', 'Evergreen reading', 'Templates & sources']);
     await expect(workspace.getByRole('button', { name: 'Edit', exact: true })).toBeVisible();
     expect(writes).toHaveLength(0);
     await workspace.getByText('Reader preview & source details', { exact: true }).press('Enter');
@@ -9903,7 +9916,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await expect(workspace.getByRole('region', { name: 'Article for this visit', exact: true }).getByRole('complementary', { name: 'Article settings' })).toContainText('2026-11-22');
     await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
     await expectNoHorizontalOverflow(page, 'Planet and sign dated editor');
-    await expect.poll(() => page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.slice(0, 4).map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })))).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Article settings' }, { level: 3, text: 'Reader sources' }]);
+    await expect.poll(() => page.getByRole('main').getByRole('heading').evaluateAll(nodes => nodes.slice(0, 5).map(node => ({ level: Number(node.tagName.slice(1)), text: node.textContent?.trim() })))).toEqual([{ level: 1, text: 'Sky Write-ups' }, { level: 2, text: 'Sky writing workspaces' }, { level: 3, text: 'Aspects during this period' }, { level: 3, text: 'Article settings' }, { level: 3, text: 'Reader sources' }]);
     await expect(workspace.getByRole('region', { name: 'Currently live', exact: true })).toHaveCount(0);
     const typography = await workspace.getByRole('heading', { name: 'Reader sources' }).evaluate(node => {
       const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
@@ -9919,8 +9932,8 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await workspace.getByRole('heading', { name: 'Reader sources', exact: true }).evaluate(node => node.scrollIntoView({ block: 'center' }));
     await page.screenshot({ path: `test-results/sky-placement-workspace/visit-${theme}-${width}.png` });
 
-    await tabs.getByRole('tab', { name: 'Default reading', exact: true }).press('Enter');
-    await expect(tabs.getByRole('tab', { name: 'Default reading', exact: true })).toHaveAttribute('aria-selected', 'true');
+    await tabs.getByRole('tab', { name: 'Evergreen reading', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'Evergreen reading', exact: true })).toHaveAttribute('aria-selected', 'true');
     await expect(workspace.getByText('This reusable reading supplies content', { exact: false })).toBeVisible();
     await expect(workspace.getByText('Synthetic year-neutral default remains intact.', { exact: true })).toBeVisible();
     const establishedHeadingTypography = await workspace.getByRole('heading', { name: 'Sun in Scorpio', exact: true }).evaluate(node => {
@@ -9929,10 +9942,10 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
         family: style.fontFamily, leading: style.lineHeight, tracking: style.letterSpacing, margin: style.margin, casing: style.textTransform, alignment: style.textAlign };
     });
     expect(typography).toEqual(establishedHeadingTypography);
-    await expectNoHorizontalOverflow(page, 'Default reading');
+    await expectNoHorizontalOverflow(page, 'Evergreen reading');
     await page.screenshot({ path: `test-results/sky-placement-workspace/default-${theme}-${width}.png` });
-    await tabs.getByRole('tab', { name: 'Writing setup', exact: true }).press('Enter');
-    await expect(tabs.getByRole('tab', { name: 'Writing setup', exact: true })).toHaveAttribute('aria-selected', 'true');
+    await tabs.getByRole('tab', { name: 'Templates & sources', exact: true }).press('Enter');
+    await expect(tabs.getByRole('tab', { name: 'Templates & sources', exact: true })).toHaveAttribute('aria-selected', 'true');
     await pointerRace.ready();
     await pointerRace.activate(Boolean(testInfo.project.use.hasTouch));
     await pointerRace.verify();
@@ -10080,7 +10093,7 @@ test('Sky planet and sign workspace shows the evergreen default when the complet
   const writes: unknown[] = [];
   await seedAdminApi(page, { generatedRows: rows, onGeneratedContentWrite: write => { writes.push(write); } });
   await expectAdminRouteLoads(page, '/admin/content#sky-writeups?planet=sun&sign=scorpio');
-  await page.getByRole('tab', { name: 'Default reading', exact: true }).click();
+  await page.getByRole('tab', { name: 'Evergreen reading', exact: true }).click();
   const reading = page.getByRole('region', { name: 'Default placement reading', exact: true });
   await expect(reading.getByText('Synthetic evergreen opening remains available.', { exact: true })).toBeVisible();
   await expect(reading.getByText('Synthetic evergreen ending.', { exact: true })).toBeVisible();

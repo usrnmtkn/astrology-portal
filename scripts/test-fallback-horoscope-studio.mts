@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
+import { lunationReaderContractPlugin } from './lunation-reader-contract-plugin.mjs';
 import { servingPackageRecords } from '../api/_lib/serving-package-records';
 import { fallbackHoroscopeIdentity, fallbackHoroscopeSources } from '../apps/admin/src/fallbackHoroscopeSources';
 import { relatedHousePassages, relatedLunationHoroscopes, skyPlacementBodies, skyPlacementSigns } from '../apps/admin/src/skyWriteupRelations';
@@ -7,6 +9,17 @@ import { isGovernedReaderEligible as nodeEligible } from '../apps/web/src/conten
 import { isGovernedReaderEligible as browserEligible } from '../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser';
 import { createTransitSynastryRenderer as sourceFactory } from '../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser';
 import { createTransitSynastryRenderer as shippedFactory } from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
+
+const readerContract = lunationReaderContractPlugin();
+for (const name of ['fallbackHoroscopeSources', 'fallbackHoroscopeKey']) {
+  assert.equal(readerContract.resolveId('../../web/src/content/fallbackArchitectureV3/resolver/lunationStudioRevision.mjs',
+    fileURLToPath(new URL(`../apps/admin/src/${name}.ts`, import.meta.url))), null,
+  'Studio key identity must retain the small canonical predicate without importing the packaged renderer.');
+}
+assert.equal(readerContract.resolveId('./fallbackArchitectureV3/resolver/lunationStudioRevision.mjs',
+  fileURLToPath(new URL('../apps/web/src/content/lunationArticleHoroscopes.ts', import.meta.url))),
+fileURLToPath(new URL('../apps/web/src/content/lunationStudioRevision.ts', import.meta.url)),
+'Reader consumers must keep sharing the shipped publication contract.');
 
 const originals = JSON.stringify([...servingPackageRecords]);
 const catalog = fallbackHoroscopeSources([...servingPackageRecords.values()].map(record => ({

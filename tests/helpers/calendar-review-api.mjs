@@ -105,9 +105,14 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       const selected = found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length));
       const fields = url.searchParams.get('select');
       if (storeOptions.projectSelect && fields && fields !== '*') {
-        const names = fields.split(',');
-        assert(names.every(name => /^[a-z_]+$/.test(name)), 'Projection fixture requires explicit column names');
-        return Response.json(selected.map(row => Object.fromEntries(names.filter(name => Object.hasOwn(row, name)).map(name => [name, row[name]]))));
+        const names = fields.split(',').map(field => {
+          const match = /^(?:([a-z_]+):)?([a-z_]+(?:->>?[a-zA-Z_][a-zA-Z0-9_]*)*)$/u.exec(field);
+          assert(match, 'Projection fixture requires explicit columns or JSON paths');
+          const parts = match[2].split(/->>?/u);
+          return { name: match[1] ?? parts.at(-1), parts };
+        });
+        return Response.json(selected.map(row => Object.fromEntries(names.map(({name,parts}) =>
+          [name, parts.reduce((value, key) => value?.[key], row)]))));
       }
       return Response.json(selected);
     }
@@ -145,7 +150,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
 }
 
 if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {
-  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true"});
+  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true", projectSelect: process.env.STUDIO_PROJECT_SELECT === "true"});
   const { contentLiveStatuses } = await import("../../api/_lib/content-live-status.ts");
   process.on("message", async ({ id, method, body, url, key }) => {
     try {
