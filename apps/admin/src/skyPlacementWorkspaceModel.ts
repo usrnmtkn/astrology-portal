@@ -1,3 +1,4 @@
+import type { WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes';
 import type { CompositionMapRow } from './compositionMap';
 import type { ArticleEventFacts } from './skyArticleRelatedContent';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
@@ -51,7 +52,7 @@ export function assertPlacementVisit(facts: PlacementVisitFacts, planet: string,
 }
 
 /** Only the dated draft is written. No default, source template or authoring workspace is updated. */
-export async function placementVisitDraft(facts: PlacementVisitFacts, fields: { headline: string; summary: string; body: string }, template?: PlacementWorkspaceRow, options: { generated?: PlacementGeneratedArticle | null } = {}) {
+export async function placementVisitDraft(facts: PlacementVisitFacts, fields: { headline: string; summary: string; body: string; writeupHoroscopes?: WriteupHoroscope[] }, template?: PlacementWorkspaceRow, options: { generated?: PlacementGeneratedArticle | null } = {}) {
   if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('Use named draft options; article creation always covers the full calculated visit.');
   if (Object.hasOwn(facts, 'scope')) throw new Error('New articles use the full calculated visit. Open a saved day article to edit its existing date and scope.');
   const generated = options.generated;
@@ -60,10 +61,10 @@ export async function placementVisitDraft(facts: PlacementVisitFacts, fields: { 
   if (generated && (generated.edition.planet !== facts.planet || generated.edition.sign !== facts.sign
     || generated.edition.transitStartInstant !== facts.transitStartInstant || generated.edition.transitEndInstant !== facts.transitEndInstant))
     throw new Error('The generated article belongs to a different visit. Your writing has not been changed.');
-  const edition = generated ? await reviseSkyArticleEdition(generated.edition, { ...skyArticleEditableFields(generated.edition), headline: fields.headline, tldr: fields.summary, body: fields.body }) : await compileSkyArticleEdition({
+  const edition = generated ? await reviseSkyArticleEdition(generated.edition, { ...skyArticleEditableFields(generated.edition), headline: fields.headline, tldr: fields.summary, body: fields.body, writeupHoroscopes: fields.writeupHoroscopes }) : await compileSkyArticleEdition({
     ...facts, format: SKY_INGRESS_ARTICLE_FORMAT,
     templateBody: template?.body ?? '', templateKey: template?.content_key ?? 'sky/article-template/ingress-layout/v3',
-    tldr: fields.summary, housePassages: [], aspectPassages: [],
+    tldr: fields.summary, housePassages: [], aspectPassages: [], writeupHoroscopes: fields.writeupHoroscopes,
     slotValues: { ...facts.slotValues, articleTitle: fields.headline, articleBody: fields.body }
   });
   return {

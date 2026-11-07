@@ -1,6 +1,6 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
-  testDir: './tests/visual', testMatch: ['sky-cms-layout.spec.ts', 'sky-article-writer-label.spec.ts', 'sky-article-related.spec.ts', 'sky-related-horoscope-access.spec.ts'],
+  testDir: './tests/visual', testMatch: ['sky-writeup-horoscopes.spec.ts', 'sky-cms-layout.spec.ts', 'sky-article-writer-label.spec.ts', 'sky-article-related.spec.ts', 'sky-related-horoscope-access.spec.ts'],
   timeout: 90000, expect: { timeout: 15000 }, workers: 1, retries: 0,
   use: { baseURL: 'http://127.0.0.1:4196', trace: 'retain-on-failure', screenshot: 'only-on-failure' },
   webServer: { command: 'npm run build:admin && npm run preview -w @tldr/admin -- --port 4196',

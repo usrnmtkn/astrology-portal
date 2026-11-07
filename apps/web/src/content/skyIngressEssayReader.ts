@@ -1,3 +1,4 @@
+import { writeupRisingHoroscopes } from '../../../../src/shared/skyWriteupHoroscopes';
 import { approvedSkySeasonFallback } from "./skySeasonFallback.js";
 import { assertCompiledSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditionRecord, skyArticleReaderHoroscopeIntroduction, type SkyArticleEditionCandidate } from "./skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay } from "./skyIngressEssay.mjs";
@@ -57,6 +58,6 @@ export function skyIngressEssayReaderSection(
     heading: edition.headline, tldr: edition.tldr, body: edition.body,
     articlePeriod: { startsAt: edition.transitStartInstant, endsAt: edition.transitEndInstant },
     articleSections: [...edition.articleSections, ...(introduction ? [introduction] : [])].map(section => ({ ...section, kind: isSkyIngressEssay(edition.format) ? "ingress-essay" : "saved-template" })),
-    risingHoroscopes: edition.housePassages.map(passage => ({ ...passage })), keyDates: [], tagline: null, closingCharge: null
+    risingHoroscopes: edition.writeupHoroscopes ? writeupRisingHoroscopes(edition.writeupHoroscopes, edition.sign) : edition.housePassages.map(passage => ({ ...passage })), keyDates: [], tagline: null, closingCharge: null
   };
 }
