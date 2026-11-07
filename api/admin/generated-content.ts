@@ -2881,7 +2881,26 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new GeneratedContentRequestError('The horoscope validation override requires a saved horoscope edition.', 400);
     }
     if (!approved.body?.trim()) throw new GeneratedContentRequestError("Add the reader copy before publishing.");
-    patch.source_snapshot = { ...existing.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, patch.updated_at as string) };
+    // Manual rows naming an installed Lilith article must publish the same
+    // canonical record shape consumed by its reader, rather than a body-only row.
+    if (/^sky-lilith\/article\/[a-z-]+$/u.test(existing.content_key)) {
+      const { servingPackageRecords } = await import("../_lib/serving-package-records.js");
+      const installed = servingPackageRecords.get(existing.content_key);
+      if (!installed || typeof installed.LilithArticle !== "string") throw new GeneratedContentRequestError("The installed Lilith source is unavailable. Reload before publishing.", 409);
+      const record = { ...structuredClone(installed), headline: approved.headline, summary: approved.summary ?? "",
+        LilithArticle: approved.body, body_you: approved.body, TLDR_What: approved.summary ?? "", TLDR_Takeaway: "",
+        review_status: "approved", studio_version_status: "approved-serving-revision" };
+      approveStudioPackageWording(record, existing.content_key, String(patch.updated_at));
+      approved.sections = { ...(isRecord(approved.sections) ? approved.sections : {}), packageRecord: record,
+        packageOriginalRecord: structuredClone(installed), body_you: approved.body };
+      patch.sections = approved.sections;
+      if (body.sections !== undefined) body.sections = approved.sections;
+      patch.provider = fallbackArchitectureV3Provider;
+      patch.facts = { ...existing.facts, fallbackArchitectureV3: true, review_status: "approved", readerServing: true };
+      approved.source_snapshot = { ...existing.source_snapshot, sourcePackage: fallbackArchitectureV3Provider,
+        content_role: installed.content_role, review_status: "approved" };
+    }
+    patch.source_snapshot = { ...approved.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, patch.updated_at as string) };
     if (body.horoscopeValidationOverride === true) {
       const issues = horoscopePublicationIssues(approved, true);
       (patch.source_snapshot as any).studioOwnerApproval.horoscopeValidationOverride = {
