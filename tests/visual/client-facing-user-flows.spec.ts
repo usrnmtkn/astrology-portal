@@ -5249,7 +5249,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText([
       "August 6 to September 10, 2026",
-      "Venus in Libra August 6 to December 4, 2026"
+      "Full residency in Libra: August 6 to December 4, 2026"
     ]);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await assertNoClientErrors();
