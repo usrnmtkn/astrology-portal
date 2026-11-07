@@ -10,6 +10,7 @@ export default defineConfig(base, {
     'card-typography.spec.ts',
     'child-page-back-navigation.spec.ts',
     'daily-source-loading.spec.ts',
+    'dated-sky-route-recovery.spec.ts',
     'design-handoff-pages.spec.ts',
     'design-handoff-type-glyphs.spec.ts',
     'design-handoff-wheel.spec.ts',

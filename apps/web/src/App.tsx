@@ -5357,7 +5357,7 @@ function currentSkyPlacementDetailArticle({
       isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel
     ].filter(Boolean).join(" · "),
     residencyDuration: articleMode === "current" && (isRetrograde || hasSeparateResidency)
-      ? `${position.planet} in ${position.sign} ${placementArticleDateLine(position, residencyStart, residencyEnd)}`
+      ? `Full residency in ${position.sign}: ${placementArticleDateLine(position, residencyStart, residencyEnd)}`
       : undefined,
     duration: isRetrograde ? transitRangeLabel ?? undefined : articleMode === "current"
       ? effectiveTransitRangeLabel ?? undefined
@@ -11202,6 +11202,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     && personalTransitResolvedIdentity !== personalTransitIdentity ? "loading" : personalTransitLoadStatus;
   const retryPersonalTransitSources = () => setPersonalTransitRetry(value => value + 1);
   const [skyDetailReadError, setSkyDetailReadError] = useState<string | null>(null);
+  const [skyDetailUnavailableRoute, setSkyDetailUnavailableRoute] = useState<string | null>(null);
   const [skyDetailRetry, setSkyDetailRetry] = useState(0);
   const [skyDetailResolvedIdentity, setSkyDetailResolvedIdentity] = useState<string | null>(null);
   const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
@@ -12276,7 +12277,13 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       setSkyDetailResolvedIdentity(skyPlacementPublicationIdentity(placementSelection || undefined));
       setSelectedSkyDetail(detail);
     };
+    const commitUnavailableSkyDetail = () => {
+      if (skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
+      commitResolvedSkyDetail(null);
+      setSkyDetailUnavailableRoute(skyDetailRoutePath);
+    };
     setSkyDetailReadError(null);
+    setSkyDetailUnavailableRoute(null);
     // Start the article astronomy immediately. Overlay rows still have to
     // resolve before a first paint that would otherwise show bundled copy
     // and then replace it. In-sign Studio keys join that same commit so the
@@ -12334,19 +12341,21 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         const article=await reader.loadDatedLunationArticle(sky.location,routePlanet,routeSign,
           availableDetailContent,loadLiveGeneratedContentForKeys,skyRoutePartMatches);
         if(cancelled||skyDetailRoutePath!==skyDetailRoutePathFromUrl())return;
-        if(!article){commitResolvedSkyDetail(null);return;}
+        if(!article){commitUnavailableSkyDetail();return;}
         const {event,eventSky,content}=article;
         selectedSkyDetailContentRef.current=content;
         selectedSkyDetailRefreshKeyRef.current=refreshKey;
         selectedSkyDetailRefreshContentRef.current=skyGeneratedContent;
         selectedSkyDetailRefreshSkyKeyRef.current=skyArticleIdentityKey;
         commitResolvedSkyDetail({...currentSkyV4LunationDetailArticle({event,sky:eventSky,generatedContent:content}),routePath:skyDetailRoutePath});
-      }).catch(error=>{if(!cancelled){console.warn('Dated lunar article failed to load.',error);setSkyDetailReadError(skyDetailRoutePath);}});
+      }).catch(error=>{if(!cancelled&&skyDetailRoutePath===skyDetailRoutePathFromUrl()){console.warn('Dated lunar article failed to load.',error);setSkyDetailReadError(skyDetailRoutePath);}});
       return ()=>{cancelled=true;};
     }
     if (!calendarEvent && encodedExactAt && baseRoute.startsWith("sky/aspect/")) {
-      const exactAt = decodeURIComponent(encodedExactAt);
-      if (Number.isNaN(Date.parse(exactAt))) { commitResolvedSkyDetail(null); return; }
+      let exactAt: string;
+      try { exactAt = decodeURIComponent(encodedExactAt); }
+      catch { commitUnavailableSkyDetail(); return; }
+      if (Number.isNaN(Date.parse(exactAt))) { commitUnavailableSkyDetail(); return; }
       let cancelled = false;
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
       // Recompute the dated event on reload; never borrow today's motion or signs.
@@ -12355,20 +12364,19 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           selectedSkyDetailContentRef.current = detailContent;
           const detail = skyDetailFromRoutePath(baseRoute, eventSky, detailContent, openSkyDetail);
+          if (!detail) { commitUnavailableSkyDetail(); return; }
           if (complete) {
             selectedSkyDetailRefreshKeyRef.current = refreshKey;
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
             selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
           }
-          commitResolvedSkyDetail(detail
-            ? skyDetailRoutePath.includes("/at/")
-              ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC")
-              : { ...detail, routePath: skyDetailRoutePath }
-            : null);
+          commitResolvedSkyDetail(skyDetailRoutePath.includes("/at/")
+            ? datedSkyAspectDetail(detail, exactAt, sky.location.timeZone || "UTC")
+            : { ...detail, routePath: skyDetailRoutePath });
         };
         renderAspect(await loadSkyDetailContent(eventSky, availableDetailContent,
           skyDetailRequiredAspectKeys(eventSky, routePlanet, routeSign, routeOther), loadLiveGeneratedContentForKeys), true);
-      }).catch(error => { if (!cancelled) { console.warn("Dated aspect calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
+      }).catch(error => { if (!cancelled && skyDetailRoutePath === skyDetailRoutePathFromUrl()) { console.warn("Dated aspect calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }
     let cancelled = false;
@@ -14805,7 +14813,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
-      {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
+      {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : skyDetailRoutePath && skyDetailUnavailableRoute === skyDetailRoutePath ? <ReaderUnavailable kind="sky-event" /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
         || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity)
         && (!selectedDetailNeedsPersonalTransitSources || personalTransitSourceStatus === "ready") ? (
         <>

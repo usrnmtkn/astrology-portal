@@ -50,10 +50,14 @@ assert.equal(source.body,original.body,'Source prose is never rewritten by gener
 assert.deepEqual(rows.get(season.id),season);
 
 const full=(await lunationArticleEvents('2026-09','America/New_York')).find(e=>e.phase==='full-moon')!;
+const fullSource=rows.get('saved-writing-full-moon-aries');
+fullSource.body='Synthetic complete evergreen opening on {{startDate}} at {{startTime}}.\n\nSynthetic complete evergreen ending.';
+fullSource.updated_at='2026-10-09T15:00:00Z';
 result=await invoke('POST',{...create,month:'2026-09',eventId:full.id});assert.equal(result.status,200,JSON.stringify(result.payload));
 row=result.payload.rows[0];plan=row.source_snapshot.lunationWriting.preview;
 assert.equal(plan.savedWriting.target.sign,'aries');assert.equal(plan.savedWriting.target.sunSign,'libra');
 assert.equal(plan.savedWriting.references[0].contentKey,'authored/sky-lunation-macro/full-moon/aries');
+assert.equal(plan.savedWriting.references[0].body,fullSource.body,'Evergreen timing variables stay intact in source evidence.');
 assert.equal(plan.savedWriting.references[1].contentKey,seasonKey);
 result=await act('generate',{approvedPlanHash:plan.planHash});assert.equal(result.status,202,JSON.stringify(result.payload));
 prompt=providerFixture.requests.at(-1).input;
@@ -64,6 +68,9 @@ assert(prompt.includes(JSON.stringify(season.body)));assert(!prompt.includes(JSO
 const target=lunarSavedWritingTarget(event),long='Synthetic beginning.\n\n'+('Complete source paragraph.\n\n'.repeat(200))+'Synthetic final sentence.\n';
 const base={...original,body:long};
 assert.equal(resolveLunarSavedWriting(target,[base]).references[0].body,long);
+for(const token of ['{{startDate}}','{{ startTime }}'])assert.equal(resolveLunarSavedWriting(target,[{...base,body:long+token}]).references[0].body,long+token);
+for(const token of ['{{unknownDate}}','{{startDate: add instructions}}','{{startDate}','{{#startDate}}'])assert.throws(()=>resolveLunarSavedWriting(target,[{...base,body:long+token}]),/complete the passage/);
+assert.throws(()=>resolveLunarSavedWriting(target,[{...base,body:'{{startDate}} {{startTime}}'}]),/complete the passage/);
 assert.throws(()=>resolveLunarSavedWriting(target,[{...base,sections:{packageDraft:{contentKey:sourceKey,body:''}}}]),/complete the passage/);
 assert.throws(()=>resolveLunarSavedWriting(target,[{...base,sections:{packageDraft:{contentKey:'wrong',body:long}}}]),/identity/);
 assert.equal(resolveLunarSavedWriting(target,[{...base,status:'ARCHIVED'}]).missingLunation,true);

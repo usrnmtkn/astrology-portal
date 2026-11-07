@@ -43,7 +43,10 @@ for(const period of ['daily','weekly','monthly','seasonal'] as const){
  const repeated=await action('prepare');assert.equal(repeated.status,200);assert.equal(repeated.payload.rows[0].updated_at,row.updated_at,'No write when already current');
  const started=await action('generate',{sign,approvedPlanHash:refreshed.payload.plan.planHash});assert.equal(started.status,202,JSON.stringify(started.payload));row=started.payload.rows[0];
  const active=structuredClone(row.source_snapshot.horoscopeGeneration.active);
- const actualDraft=(period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId)).input;
+ const actualRequest=period==='monthly'?active.draftRequest:period==='seasonal'?editorialFixtureRows.get(active.id).state.input.template:writerFixture.requests.get(active.responseId);
+ const actualDraft=actualRequest.input;
+ for(const direction of ['No separate concluding paragraph is required in a horoscope.','a meaningful new implication, a sharper contrast, or something the reader can recognize in their own life','makes older wrap-up paragraph instructions optional'])
+  assert(actualRequest.instructions.includes(direction),`${period} must receive the complete current ending rule at its provider boundary`);
  const style=JSON.parse(actualDraft.match(/OWNER-APPROVED STYLE REFERENCE\n([^\n]+)/u)![1]);
  assert.equal(style.reference.ownerAuthored,false);assert.equal(style.reference.ownerApproved,true);
  assert.equal(style.reference.textSha256,'bd9e64d07024c4899150056265b4f7a22afd074a4c9eb94b1b126319d6994fca');

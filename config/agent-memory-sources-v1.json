@@ -3,7 +3,7 @@
   "authorityIndex": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md",
   "sources": [
     {"path": "docs/content-management/SKY_INGRESS_ESSAYS.md", "kind": "note", "role": "October 9 dated ingress format, API evidence and Studio-to-reader integration; not wording approval"},
-    {"path": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "kind": "rule", "role": "October 6 and 9 owner amendments: contextual AI-pattern blockers, review-only lexical signals and source preservation"},
+    {"path": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "kind": "rule", "role": "October 6, October 9 and November 6 owner amendments: contextual rhetoric protections, review-only aphorisms, consistent metaphorical images, earned horoscope endings and source preservation"},
     { "path": "AGENTS.md", "kind": "rule", "role": "Project instructions" },
     {"path": "skills/tldr-astro-writer/SKILL.md", "kind": "rule", "role": "October 11 shared governance; authority and approval, not a universal drafting workflow"},
     {"path": "skills/tldr-astro-personal-transit/SKILL.md", "kind": "rule", "role": "Single-contact Personal Transit workflow; four contacts, readerMeaning, owner review; no article pipeline or model judge"},

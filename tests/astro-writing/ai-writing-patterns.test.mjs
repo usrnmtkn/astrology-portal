@@ -4,6 +4,7 @@ import * as canonical from '../../src/astro-writing/canonicalInstructions.mjs';
 import {RHETORICAL_LABELS,RHETORICAL_WRITER_POLICY,RHETORICAL_JUDGE_POLICY,rhetoricalSignals,rhetoricalDecision,validateRhetoricalReview} from '../../src/astro-writing/rhetoricalPatterns.mjs';
 import {runRhetoricalCalibration} from '../../src/astro-writing/rhetoricalCalibration.mjs';
 import {aiWritingPatternCases} from './fixtures/ai-writing-patterns.mjs';
+import './aphorism-review.test.mjs';
 import {HOROSCOPE_RHETORICAL_REVIEW,LEGACY_HOROSCOPE_RHETORICAL_REVIEW,horoscopeReviewPolicy,supportedHoroscopeReview} from '../../src/astro-writing/horoscopeRhetoricalReview.mjs';
 const require=createRequire(import.meta.url);
 const responses=require('../../src/astro-writing/openAIResponses.cjs');

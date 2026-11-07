@@ -65,7 +65,7 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     await expect(page.locator("#sky-detail-title")).toHaveText("Neptune Rx in Aries");
     const headerDates = page.locator(".sky-detail-id .article-duration");
     await expect(headerDates.first()).toHaveText(/Jul 7, 2026 - Dec 12, 2026/);
-    await expect(headerDates.nth(1)).toHaveText(/Neptune in Aries March 30, 2025 to March 23, 2039/);
+    await expect(headerDates.nth(1)).toHaveText(/Full residency in Aries: March 30, 2025 to March 23, 2039/);
     await expect(page.locator(".article-body-inner p").first()).toHaveText(modifier("Neptune"));
     // Preserve both the opening and final sentence of the owner-authored base unit.
     await expect(page.locator(".sky-detail-article")).toContainText("Neptune in Aries makes a new dream feel urgent before its shape is fully clear.");
@@ -259,7 +259,7 @@ for (const width of [390, 1440]) test(`Saturn date windows stay visible through 
   const dates = page.locator(".sky-detail-id .article-duration");
   await expect(dates).toHaveText([
     "Saturn Rx Jul 26, 2026 - Dec 10, 2026",
-    "Saturn in Aries May 24, 2025 to April 12, 2028"
+    "Full residency in Aries: May 24, 2025 to April 12, 2028"
   ], { timeout: 60_000 });
   await page.evaluate(() => document.fonts.ready);
   // The article can finish its own exact placement calculation before the
