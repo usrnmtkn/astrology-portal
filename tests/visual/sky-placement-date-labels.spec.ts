@@ -35,7 +35,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Sky plac
   await page.goto('/?date=2026-10-02#sky/placement/venus/scorpio');
   await expect(page.locator('#sky-detail-title')).toHaveText('Venus Rx in Scorpio 2026',{timeout:60_000});
   const dates=page.locator('.sky-detail-id .article-duration');
-  const expected=['Venus Rx September 10 to October 25, 2026','Venus in Scorpio September 10, 2026 to January 7, 2027'];
+  const expected=['Venus Rx September 10 to October 25, 2026','Full residency in Scorpio: September 10, 2026 to January 7, 2027'];
   await expect(dates).toHaveText(expected);
   const paragraphs=page.locator('.article-body-inner').first();
   await expect(paragraphs).toContainText('Complete fixture opening.');await expect(paragraphs).toContainText('Complete fixture final sentence.');
@@ -48,7 +48,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Sky plac
   await page.goto('/?date=2026-10-24#sky/placement/mercury/scorpio');
   await expect(page.locator('#sky-detail-title')).toHaveText('Mercury Rx in Scorpio',{timeout:60_000});
   await expect(dates.first()).toHaveText(/^Mercury Rx Oct 24, 2026 - Nov 13, 2026$/u);
-  await expect(dates.nth(1)).toContainText('Mercury in Scorpio');
+  await expect(dates.nth(1)).toContainText('Full residency in Scorpio:');
   await page.goto('/?date=2026-10-02#sky/placement/sun/libra');
   await expect(dates.first()).toHaveText('September 22 to October 23, 2026',{timeout:60_000});
   await expect(dates.first()).not.toContainText('Rx');
