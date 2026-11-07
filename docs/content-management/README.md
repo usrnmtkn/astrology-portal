@@ -14,6 +14,9 @@ The short version:
 
 ## Read these before changing content
 
+- [Interactive wheel tooltips](./WHEEL_TOOLTIPS.md): shared hover and house-ruler
+  wording, calculated variables, draft/publication behavior and safe preview access.
+
 - [Connection transit detail](./connection-transits.md): separate personal transit,
   exact activation and editable bridge sources, without borrowing bond openings.
 - [Reader-facing content contract](../../CONTENT-CONTRACT.md): the governing

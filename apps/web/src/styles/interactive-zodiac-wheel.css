@@ -1,0 +1,145 @@
+.interactive-zodiac-wheel {
+  display: grid;
+  justify-items: center;
+  gap: var(--lunar-space-14);
+  width: 100%;
+  max-width: var(--chart-interactive-max);
+  min-width: 0;
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+
+.chart-shell:has(.interactive-zodiac-wheel),
+.chart-frame:has(.interactive-zodiac-wheel) {
+  height: auto;
+  aspect-ratio: auto;
+}
+
+.sky-page > .sky-chart-column:has(.interactive-zodiac-wheel),
+.sky-page .sky-chart-shell:has(.interactive-zodiac-wheel) {
+  height: auto;
+  aspect-ratio: auto;
+}
+
+.sky-page > .sky-chart-column:has(.interactive-zodiac-wheel) > .sky-chart-expand {
+  top: 0;
+  bottom: auto;
+}
+
+.interactive-zodiac-wheel__drawing { position: relative; width: 100%; min-width: 0; }
+.interactive-zodiac-wheel__svg { display: block; width: 100%; height: auto; user-select: none; overflow: visible; }
+.interactive-zodiac-wheel__svg text { text-anchor: middle; dominant-baseline: central; }
+.interactive-wheel-paper { fill: var(--surface); stroke: var(--chart-inspection-line); stroke-width: var(--chart-inspection-stroke); }
+.interactive-wheel-sector { cursor: pointer; }
+.interactive-wheel-sector[aria-hidden] { cursor: default; }
+.interactive-wheel-sector path { stroke: var(--chart-inspection-line); stroke-width: var(--border-width-thin); }
+.interactive-wheel-sector__wedge { fill: var(--chart-inspection-wedge); }
+.interactive-wheel-sector__band { fill: var(--chart-inspection-band); }
+.interactive-wheel-sector__sign { fill: var(--surface); }
+.interactive-wheel-sector[data-selected] .interactive-wheel-sector__wedge { fill: var(--chart-inspection-selected); }
+.interactive-wheel-sector[data-selected] .interactive-wheel-sector__band { fill: var(--surface); }
+.interactive-zodiac-wheel :is([data-dimmed], .interactive-wheel-sector path) { transition: opacity var(--chart-inspection-duration) ease, fill var(--chart-inspection-duration) ease; }
+.interactive-zodiac-wheel [data-dimmed="true"] { opacity: var(--chart-inspection-dim); }
+.interactive-wheel-labels { pointer-events: none; fill: var(--ink); }
+.interactive-wheel-sign { font-family: var(--font-ui); font-size: var(--type-table-value-size); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-compact-label); }
+.interactive-wheel-house { fill: var(--ink-2); font-size: var(--text-row-title-size); font-weight: var(--weight-semibold); }
+.interactive-wheel-aspects { pointer-events: none; }
+.interactive-wheel-aspects > g { opacity: var(--chart-relation-default-opacity); }
+.interactive-wheel-aspects [data-active] { opacity: 1; }
+.interactive-wheel-aspects [data-close="false"] { opacity: var(--chart-relation-wide-opacity); }
+.interactive-wheel-aspects circle { fill: var(--muted); }
+.interactive-wheel-aspect-line { stroke: var(--chart-relation-union); stroke-width: var(--chart-relation-stroke); stroke-linecap: round; }
+[data-aspect="sextile"] .interactive-wheel-aspect-line { stroke-dasharray: 4 6; }
+[data-aspect="sextile"] .interactive-wheel-aspect-line,
+[data-aspect="trine"] .interactive-wheel-aspect-line { stroke: var(--chart-relation-flow); }
+[data-aspect="square"] .interactive-wheel-aspect-line,
+[data-aspect="opposition"] .interactive-wheel-aspect-line { stroke: var(--chart-relation-hard); }
+[data-active] .interactive-wheel-aspect-line { stroke-width: var(--chart-relation-close-stroke); }
+[data-close="false"] .interactive-wheel-aspect-line { stroke-width: var(--chart-relation-wide-stroke); }
+.interactive-wheel-aspect-halo { stroke: var(--surface); stroke-width: var(--chart-relation-halo-stroke); }
+.interactive-wheel-axis { stroke: var(--faint); stroke-width: var(--chart-inspection-stroke); stroke-dasharray: 6 8; pointer-events: none; }
+.interactive-wheel-tick { stroke: var(--muted); stroke-width: var(--chart-placement-stroke); }
+.interactive-wheel-planet-button { cursor: pointer; }
+.interactive-wheel-hit { fill: transparent; stroke: none; }
+.interactive-wheel-selected-disc { fill: var(--ink); stroke: var(--surface); stroke-width: var(--border-width-medium); }
+.interactive-wheel-glyph { font-family: var(--font-glyph); font-size: var(--chart-planet-glyph-size); fill: var(--ink); }
+.interactive-wheel-planet-button[data-selected] .interactive-wheel-glyph { font-size: var(--text-glyph); fill: var(--surface); }
+.interactive-wheel-rx { font-family: var(--font-ui); font-size: var(--type-hint-size); font-weight: var(--weight-semibold); fill: var(--ink); }
+.interactive-wheel-planet-button[data-selected] .interactive-wheel-rx { fill: var(--surface); font-size: var(--type-pill-size); }
+.interactive-wheel-degree { font-family: var(--font-ui); font-size: var(--text-row-value); font-weight: var(--weight-medium); fill: var(--muted); pointer-events: none; }
+.interactive-wheel-selection-ring { fill: var(--chart-soft); stroke: var(--ink); stroke-width: var(--chart-inspection-stroke); }
+.interactive-wheel-angle { cursor: pointer; }
+.interactive-wheel-angle rect { fill: var(--ink); stroke: var(--surface); stroke-width: var(--border-width-thick); }
+.interactive-wheel-angle text { fill: var(--surface); font-family: var(--font-mono); font-size: var(--type-meta-size); font-weight: var(--weight-semibold); }
+.interactive-zodiac-wheel__svg [role="button"]:focus { outline: none; }
+.interactive-zodiac-wheel [role="button"]:focus-visible { outline: var(--border-width-medium) solid var(--accent); outline-offset: var(--space-1); }
+.interactive-zodiac-wheel :is(.interactive-wheel-sector, .interactive-wheel-planet-button, .interactive-wheel-angle):focus-visible { outline: none; }
+.interactive-wheel-sector:focus-visible path { stroke: var(--accent); stroke-width: var(--border-width-medium); }
+.interactive-wheel-planet-button:focus-visible .interactive-wheel-hit,
+.interactive-wheel-angle:focus-visible rect { stroke: var(--accent); stroke-width: var(--border-width-medium); }
+.interactive-zodiac-wheel__caption { color: var(--faint); font-family: var(--font-ui); font-size: var(--type-hint-size); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-label); line-height: var(--leading-label); }
+.interactive-wheel-tooltip.floating-tooltip { display: grid; gap: var(--space-1); max-width: var(--chart-tooltip-width); padding: var(--space-2) var(--space-3); border: 0; border-radius: var(--space-3); background: var(--color-black); color: var(--color-white); box-shadow: var(--chart-tooltip-shadow); font-family: var(--font-ui); }
+.interactive-wheel-tooltip strong { font-size: var(--type-label-size); font-weight: var(--weight-semibold); line-height: var(--leading-meta); }
+.interactive-wheel-tooltip span { font-size: var(--type-caption-size); line-height: var(--leading-meta); color: var(--chart-tooltip-ink); }
+.interactive-wheel-lord-connector { pointer-events: none; }
+.interactive-wheel-lord-connector > path { fill: none; stroke: var(--ink); stroke-width: var(--chart-relation-stroke); stroke-dasharray: 2 5; stroke-linecap: round; }
+.interactive-wheel-lord-connector circle { fill: var(--ink); }
+.interactive-wheel-lord-pill { pointer-events: all; cursor: help; }
+.interactive-wheel-lord-pill rect:not(.interactive-wheel-hit) { fill: var(--ink); }
+.interactive-wheel-lord-pill text { fill: var(--surface); font-family: var(--font-ui); font-size: var(--type-hint-size); font-weight: var(--weight-semibold); letter-spacing: var(--tracking-compact-label); pointer-events: none; }
+.interactive-wheel-lord-overlay { position: absolute; inset: var(--chart-ruler-overlay-top) 0 auto; display: grid; padding: 0 var(--space-5); pointer-events: none; }
+.interactive-wheel-lord-tooltip { position: relative; display: grid; gap: var(--space-2); padding: var(--space-5); border-radius: var(--radius-sm); color: var(--color-white); background: var(--color-black); box-shadow: var(--chart-tooltip-shadow); pointer-events: auto; }
+.interactive-wheel-lord-tooltip strong { padding-right: var(--space-5); font-family: var(--font-display); font-size: var(--text-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); }
+.interactive-wheel-lord-tooltip p { margin: 0; color: var(--chart-tooltip-ink); font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.interactive-wheel-lord-tooltip a { color: var(--color-white); text-decoration: underline; text-underline-offset: var(--border-width-thick); }
+.interactive-wheel-copy-target { cursor: pointer; }
+.interactive-wheel-copy-target:is(:hover, [data-selected="true"]) { text-decoration: underline; text-underline-offset: var(--space-1); }
+.interactive-wheel-lord-close { position: absolute; top: var(--space-2); right: var(--space-2); display: grid; place-items: center; width: var(--size-4); height: var(--size-4); padding: 0; border: 0; border-radius: var(--radius-pill); color: var(--color-white); background: transparent; cursor: pointer; }
+.interactive-zodiac-wheel :is(.interactive-wheel-lord-close, .interactive-wheel-detail__clear, .interactive-wheel-detail__open, .interactive-wheel-detail__lord-button) > svg { width: var(--size-2); height: var(--size-2); stroke: currentColor; }
+.interactive-wheel-detail { display: grid; gap: var(--space-2); width: 100%; max-width: var(--container-picker); min-width: 0; }
+.interactive-wheel-detail__header { display: grid; grid-template-columns: var(--chart-detail-icon-size) minmax(0, 1fr) var(--size-4); align-items: center; gap: var(--lunar-space-14); padding: var(--space-4); border-radius: var(--radius-card-compact); background: var(--surface); box-shadow: var(--chart-detail-shadow); }
+.interactive-wheel-detail__header--link { color: inherit; text-decoration: none; }
+.interactive-wheel-detail__header--link:hover { box-shadow: var(--card-hover-shadow); }
+.interactive-wheel-detail__icon { position: relative; display: grid; place-items: center; width: var(--chart-detail-icon-size); height: var(--chart-detail-icon-size); border-radius: var(--radius-pill); background: var(--surface-2); font-family: var(--font-glyph); font-size: var(--text-glyph); }
+.interactive-wheel-detail__icon--label { font-family: var(--font-ui); font-size: var(--type-table-value-size); font-weight: var(--weight-semibold); }
+.interactive-wheel-detail__sign { position: absolute; right: var(--chart-detail-sign-offset); bottom: var(--chart-detail-sign-offset); display: grid; place-items: center; width: var(--glyph-badge-size); height: var(--glyph-badge-size); border: var(--border-width-thick) solid var(--surface); border-radius: var(--radius-pill); background: var(--ink-2); color: var(--surface); font-family: var(--font-glyph); font-size: var(--type-meta-size); font-weight: var(--weight-regular); }
+.interactive-wheel-detail__heading { display: grid; gap: var(--lunar-space-2); min-width: 0; }
+.interactive-wheel-detail__heading > strong { font-family: var(--font-ui); font-size: var(--text-row-title-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); }
+.interactive-wheel-detail__heading > span { font-size: var(--type-meta-size); line-height: var(--leading-meta); color: var(--muted); }
+.interactive-wheel-detail__clear,
+.interactive-wheel-detail__open { display: grid; place-items: center; width: var(--size-4); height: var(--size-4); padding: 0; border: 0; border-radius: var(--radius-pill); background: var(--surface-2); color: var(--ink); cursor: pointer; }
+.interactive-wheel-detail__heading > .interactive-wheel-detail__conditions { font-size: var(--type-hint-size); }
+.interactive-wheel-detail--planet .interactive-wheel-detail__header { grid-template-columns: minmax(0, 1fr) var(--size-4); padding: var(--space-1) var(--space-2); border-radius: 0; background: transparent; box-shadow: none; }
+.interactive-wheel-detail--planet .interactive-wheel-detail__heading > strong { font-family: var(--font-display); font-size: var(--text-description); line-height: var(--leading-tight); }
+.interactive-wheel-detail--planet .interactive-wheel-detail__header--link:hover .interactive-wheel-detail__heading > strong { text-decoration: underline; text-underline-offset: var(--border-width-thick); }
+.interactive-wheel-detail--planet .interactive-wheel-detail__open { background: transparent; color: var(--muted); }
+.interactive-wheel-detail__group { display: grid; gap: var(--space-2); min-width: 0; }
+.interactive-wheel-detail__group-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2); padding: var(--space-1); font-size: var(--text-row-value); line-height: var(--leading-meta); }
+.interactive-wheel-detail__group-label strong { font-weight: var(--weight-semibold); }
+.interactive-wheel-detail__group-label > span { font-size: var(--type-label-size); color: var(--muted); }
+.interactive-wheel-detail--planet .interactive-wheel-detail__group-label { justify-content: flex-end; padding: 0 var(--space-2); font-size: var(--type-label-size); letter-spacing: var(--tracking-label); text-transform: uppercase; }
+.interactive-wheel-detail__row { display: grid; grid-template-columns: var(--chart-detail-symbol-size) minmax(0, 1fr) max-content; gap: var(--space-2); align-items: center; min-width: 0; min-height: var(--size-7); padding: var(--space-2) var(--space-3); border: 0; border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); box-shadow: var(--chart-detail-shadow); font-family: var(--font-ui); text-align: left; cursor: pointer; transition: box-shadow var(--chart-inspection-duration) ease; }
+.interactive-wheel-detail__row:hover { box-shadow: var(--card-hover-shadow); }
+.interactive-wheel-detail__aspect,
+.interactive-wheel-detail__aspect:hover { grid-template-columns: var(--size-5) minmax(0, 1fr) max-content; min-height: var(--size-4); padding: var(--space-1) var(--space-2); border-radius: 0; background: transparent; box-shadow: none; color: var(--muted); font-family: var(--font-body); font-size: var(--text-description); font-weight: var(--weight-regular); line-height: var(--leading-meta); letter-spacing: var(--tracking-normal); }
+.interactive-wheel-detail__aspect .interactive-wheel-detail__swatch { width: var(--size-5); height: var(--space-2); aspect-ratio: auto; }
+.interactive-wheel-detail__aspect[data-close="false"] .interactive-wheel-detail__swatch { opacity: var(--chart-relation-wide-opacity); }
+.interactive-wheel-detail__aspect-copy { min-width: 0; }
+.interactive-wheel-detail__aspect-copy strong { color: var(--ink); font-weight: var(--weight-semibold); }
+.interactive-wheel-detail__orb { font-family: var(--font-mono); font-size: var(--text-eyebrow); white-space: nowrap; }
+.interactive-wheel-detail__symbol { display: grid; place-items: center; width: var(--chart-detail-symbol-size); height: var(--chart-detail-symbol-size); border-radius: var(--radius-pill); background: var(--surface-2); font-family: var(--font-glyph); font-size: var(--type-table-value-size); }
+.interactive-wheel-detail__symbol--angle { font-family: var(--font-ui); font-size: var(--type-hint-size); font-weight: var(--weight-semibold); }
+.interactive-wheel-detail__row-copy { display: grid; gap: var(--lunar-space-2); min-width: 0; font-size: var(--type-label-size); line-height: var(--leading-meta); color: var(--muted); }
+.interactive-wheel-detail__row-copy > span { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-1); }
+.interactive-wheel-detail__row-copy strong { color: var(--ink); font-size: var(--text-row-value); font-weight: var(--weight-semibold); }
+.interactive-wheel-detail__empty { margin: 0; padding: 0 var(--space-1); color: var(--muted); font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.interactive-wheel-detail__lord-button { justify-self: start; display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--size-4); padding: 0 var(--space-3); border: 0; border-radius: var(--radius-pill); background: var(--ink); color: var(--surface); font-family: var(--font-ui); font-size: var(--type-label-size); font-weight: var(--weight-semibold); cursor: pointer; }
+
+@media (hover: hover) {
+  .interactive-wheel-sector:not([data-selected]):hover .interactive-wheel-sector__wedge { fill: var(--chart-inspection-hover); }
+  .interactive-wheel-sector:not([data-selected]):hover .interactive-wheel-sector__band { fill: var(--chart-inspection-band-hover); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive-zodiac-wheel *, .interactive-zodiac-wheel *::before, .interactive-zodiac-wheel *::after { transition: none; }
+}

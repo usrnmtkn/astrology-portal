@@ -197,6 +197,8 @@ for (const choice of ['On', 'Off', 'System'] as const) {
     await controls.getByRole('button', { name: choice, exact: true }).click();
     await expect(controls.getByRole('button', { name: choice, exact: true })).toHaveAttribute('aria-pressed', 'true');
     await expect.poll(() => page.evaluate(() => localStorage.getItem('tldrastro:pageAnimations'))).toBe(choice.toLowerCase());
+    // Finish the fixture profile read before replacing its document.
+    await page.waitForLoadState("networkidle");
     await page.reload();
     await expect(controls.getByRole('button', { name: choice, exact: true })).toHaveAttribute('aria-pressed', 'true');
     const blocked = hold();

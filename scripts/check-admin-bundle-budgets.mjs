@@ -34,6 +34,7 @@ if (!fs.existsSync(manifestPath)) {
 }
 
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+await import("./test-wheel-tooltip-preview-boundary.mjs");
 const budgets = JSON.parse(fs.readFileSync(budgetsPath, "utf8"));
 const entry = Object.values(manifest).find((item) => item?.isEntry);
 if (!entry?.file) {

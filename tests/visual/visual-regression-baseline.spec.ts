@@ -254,7 +254,7 @@ test.describe("visual regression baseline", () => {
       await expect(page.getByRole("heading", { name: "Sky", exact:true })).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
-      await expect(page.getByText("Houses: Whole Sign", { exact: true })).toBeVisible({
+      await expect(page.getByText(/^Houses: Whole Sign$/i)).toBeVisible({
         timeout: routeReadyTimeoutMs
       });
       // The faster first paint contains core positions before the worker adds

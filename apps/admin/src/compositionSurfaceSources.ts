@@ -25,6 +25,7 @@ export const compositionSurfaceFamilies: Record<string, RegExp> = {
   "sky-calendar-day-cards": /^(?:cms\/calendar-day|cms\/sky-daily-summary\/(?:sun|moon)\/|authored\/sky-lunation-macro\/|fallback-hook\/(?:moon-|season-marker|sky-event))/,
   "sky-horoscopes": /^(?:house-horoscope-core\/|authored\/(?:book-ritual-and-the-moon\/lunation-horoscope\/(?:new-moon|full-moon)\/|lunation-eclipse-|weekly-transit-aspect\/|station\/|week-opener\/)|cms\/weekly-horoscope|fallback-template\/(?:lunation|sky[.]horoscope)|fallback-hook\/(?:sky-horoscope|lunation-))/,
   "chart-placement-row-microcopy": /^(?:cms\/chart-placement-row|fallback-hook\/(?:planet-intro|placement-sentence|dignity-line))/,
+  "interactive-wheel-tooltips": /^cms\/wheel-tooltip\//,
   "natal-empty-house": /^(?:cms\/natal-empty-house|fallback-template\/(?:empty-house|natal[.]empty-house)|fallback-vocab\/empty-house-|fallback-hook\/(?:empty-house|house-cusp|house-glossary|ruler-method))/,
   "personal-transit-house": /^(?:authored\/transit-house(?:\/|-intro\/|-sign\/)|cms\/personal-transit-house|fallback-template\/transit[.]house|fallback-hook\/(?:transit-house|transit-effect-house|house-meaning))/,
   "generated-reports": /^(?:report\/|fallback-template\/(?:career|profection|circle)|fallback-hook\/(?:career-|profection-|circle-))/,

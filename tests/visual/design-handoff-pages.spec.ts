@@ -489,7 +489,7 @@ for(const width of [320,390,960,1440]) for(const theme of ['light','dark']) {
       await menu.getByRole('menuitemradio',{name:new RegExp(`^${name}`)}).click();
     }
     await expect(tab).toHaveAttribute('aria-selected','true');
-    await expect(profile.locator('.friend-detail-chart-rail .sky-wheel')).toBeVisible({timeout:60_000});
+    await expect(profile.locator('.friend-detail-chart-rail').locator(name==='Natal' ? '.interactive-zodiac-wheel__svg' : '.sky-wheel')).toBeVisible({timeout:60_000});
     if(name==='Natal') {
       const chart=(await profile.locator('.friend-detail-chart-rail').boundingBox())!;
       const placements=(await profile.locator('.natal-placement-sections').boundingBox())!;
@@ -519,7 +519,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   });
   await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-event&view=natal');
   let profile=page.getByRole('region',{name:'Fixture Event chart profile',exact:true});
-  await expect(profile.locator('h1')).toHaveText('Fixture Event');await expect(profile.locator('.friend-detail-chart-rail .sky-wheel')).toBeVisible({timeout:60_000});
+  await expect(profile.locator('h1')).toHaveText('Fixture Event');await expect(profile.locator('.friend-detail-chart-rail .interactive-zodiac-wheel__svg')).toBeVisible({timeout:60_000});
   await expect(profile.getByRole('tablist',{name:'Chart profile sections',exact:true})).toHaveCount(0);
   const chart=(await profile.locator('.friend-detail-chart-rail').boundingBox())!;
   const placements=(await profile.locator('.natal-placement-sections').boundingBox())!;
@@ -548,7 +548,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   await page.getByRole('link',{name:"Open Connected Friend's chart",exact:true}).click();
   profile=page.getByRole('region',{name:'Connected Friend chart profile',exact:true});
   await expect(profile.locator('h1')).toHaveText('Connected Friend');await expect(profile.locator('.friend-kebab')).toHaveCount(0);
-  await expect(profile.locator('.friend-detail-chart-rail .sky-wheel')).toBeVisible({timeout:60_000});
+  await expect(profile.locator('.friend-detail-chart-rail').locator('.sky-wheel, .interactive-zodiac-wheel__svg')).toBeVisible({timeout:60_000});
   box=(await profile.boundingBox())!;expect(box.width).toBeLessThanOrEqual(1053);
   const tabs=(await profile.getByRole('tablist',{name:'Chart profile sections',exact:true}).boundingBox())!;expect(tabs.x+tabs.width).toBeLessThanOrEqual(box.x+box.width);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -615,7 +615,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   }
   await expectRenderedTextContrast(page,'.sky-angle-group .placement-table-row__title, .sky-angle-group .placement-table-row__meta',4.5);
   await expect(page.locator('.sky-angle-group a, .sky-angle-group .card-read-more, .sky-angle-group .placement-table-row__description')).toHaveCount(0);
-  await expect(page.locator('.sky-page .zodiac-wheel__angle-badge')).toHaveCount(4);
+  await expect(page.locator('.sky-page .interactive-wheel-angle')).toHaveCount(4);
   await expect(page.locator('.sky-placement-group .planet-placement-row')).toHaveCount(14);
   await expect(page.locator('.placement-progress')).toHaveCount(14);
   await expect(page.getByRole('region',{name:'Points',exact:true}).locator('.planet-placement-row__title')).toHaveText([/North Node/,/South Node/,/Lilith/,/Chiron/]);
@@ -628,7 +628,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   await expect(page.locator('.sky-placement-group .planet-placement-row')).toHaveCount(14);
   await expect(page.locator('.sky-page .sky-placement-group > h3')).toHaveText(['Planets','Points','Angles']);
   await expect(page.locator('.sky-page a[href^="/learn/points/"]')).toHaveCount(0);
-  await expect(page.locator('.sky-page .zodiac-wheel__angle-badge')).toHaveCount(4);
+  await expect(page.locator('.sky-page .interactive-wheel-angle')).toHaveCount(4);
   for (const card of await angleCards.all()) await expect(card).toBeDisabled();
   await page.goto('/#you?tab=chart');
   await expect(page.getByRole('region',{name:'You',exact:true}).getByRole('heading',{level:1})).toHaveText('Fixture Reader');
@@ -647,13 +647,13 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   expect(chartBox.y).toBeGreaterThanOrEqual(headingBox.y+headingBox.height);
   if(width>800) expect(bigBox.x).toBeGreaterThan(chartBox.x);else expect(bigBox.y).toBeGreaterThan(chartBox.y);
   await profile.getByRole('tab',{name:'Table',exact:true}).click();await expect(profile.locator('table')).toBeVisible();
-  await profile.getByRole('tab',{name:'Circle',exact:true}).click();await expect(profile.locator('.sky-wheel--handoff')).toBeVisible();
+  await profile.getByRole('tab',{name:'Circle',exact:true}).click();await expect(profile.locator('.interactive-zodiac-wheel__svg')).toBeVisible();
   await profile.getByRole('button',{name:'Open full natal chart',exact:true}).click();
-  await expect(page.getByRole('dialog').locator('.sky-wheel--handoff')).toBeVisible();
+  await expect(page.getByRole('dialog').locator('.interactive-zodiac-wheel__svg')).toBeVisible();
   await page.keyboard.press('Escape');await expect(profile.getByRole('button',{name:'Open full natal chart',exact:true})).toBeFocused();
   for (const section of await profile.locator('.natal-placement-section').all()) { await section.scrollIntoViewIfNeeded(); await expect(section.locator('.placement-table-row').first()).toBeVisible(); }
   await page.evaluate(()=>scrollTo(0,0));
-  await expectReadableTheme(page, '.zodiac-wheel__angle-badge text');
+  await expectReadableTheme(page, '.interactive-wheel-angle text');
   await expectReadableTheme(page, '.you-chart-page h1, .you-profile-monogram, .placement-table-row__title, .placement-table-row__description, .placement-table-row__meta');
   const glyph = profile.locator('.natal-traditional .placement-glyph-svg').first();
   if (theme === 'dark') await expect(glyph).toHaveCSS('filter', await page.locator('.natal-traditional .placement-sign-glyph-svg').first().evaluate(node => getComputedStyle(node).filter));

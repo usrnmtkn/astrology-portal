@@ -413,15 +413,16 @@ export const SkyWheel = memo(function SkyWheel({
       const width = svg.getBoundingClientRect().width;
       const styles = getComputedStyle(svg);
       const compactWidth = Number.parseFloat(styles.getPropertyValue("--container-chart-mobile"));
-      if (!width || !Number.isFinite(compactWidth) || width > compactWidth) {
+      if (!width || !Number.isFinite(compactWidth)) {
         setTransitLabelSizes(null);
         return;
       }
       // Convert the shared screen typography into SVG units without resizing the wheel.
       const scale = svg.viewBox.baseVal.width / width;
       const halfBand = (radius.transitBandOuter - radius.outer) / 2 - 4.25;
+      const glyphRole = width <= compactWidth ? "--text-glyph" : "--chart-planet-glyph-size";
       const sizes = {
-        glyph: Math.min(Number.parseFloat(styles.getPropertyValue("--text-glyph")) * scale, halfBand * Math.SQRT2),
+        glyph: Math.min(Number.parseFloat(styles.getPropertyValue(glyphRole)) * scale, halfBand * Math.SQRT2),
         degree: Math.min(Number.parseFloat(styles.getPropertyValue("--text-placement-degree")) * scale, halfBand / Math.hypot(0.95, 0.65)),
         gap: Number.parseFloat(styles.getPropertyValue("--space-1")) * scale
       };

@@ -23,6 +23,7 @@ export { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArch
 export { skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
 export { skyDebilityTemplateErrors } from "../../apps/web/src/content/skyDebilityCatalog.ts";
 export { frictionFlowField, frictionFlowTemplateErrors } from "../../apps/web/src/content/frictionFlowCatalog.js";
+export { wheelTooltipField, wheelTooltipTemplateErrors } from "../../apps/web/src/content/wheelTooltipCatalog.js";
 export { isSkyPlacementVariableField, skyPlacementVariableIssues } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementVariables.mjs";
 export {
   isSkyPlacementArticleField,

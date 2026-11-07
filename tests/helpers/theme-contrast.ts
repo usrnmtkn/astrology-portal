@@ -22,7 +22,7 @@ export async function expectReadableTheme(page: Page, selectors: string, minimum
       for (let current: Element | null = node; current; current = current.parentElement) ancestors.unshift(current);
       let background = rgba(getComputedStyle(document.documentElement).getPropertyValue('--bg'));
       for (const ancestor of ancestors) background = over(rgba(getComputedStyle(ancestor).backgroundColor), background);
-      const angleRect = node.closest('.zodiac-wheel__angle-badge')?.querySelector('rect');
+      const angleRect = node.closest('.zodiac-wheel__angle-badge, .interactive-wheel-angle')?.querySelector('rect');
       if (angleRect) background = rgba(getComputedStyle(angleRect).fill);
       const fg = luminance(over(rgba(node instanceof SVGTextElement ? style.fill : style.color), background));
       const bg = luminance(background);

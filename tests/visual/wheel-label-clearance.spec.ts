@@ -1,4 +1,5 @@
-import { expect, test, type Locator } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { expectTransitContainment } from '../helpers/transit-wheel-containment';
 import { build } from 'esbuild';
 import { readFileSync } from 'node:fs';
 
@@ -28,73 +29,6 @@ test.beforeAll(async () => {
   script = output.outputFiles[0].text;
 });
 
-async function expectTransitContainment(svg: Locator) {
-  const compact = await svg.evaluate(root => root.getBoundingClientRect().width
-    <= Number.parseFloat(getComputedStyle(root).getPropertyValue('--container-chart-mobile')));
-  await expect(svg.locator('.transit-planet-labels')).toHaveAttribute('data-transit-label-layout', compact ? 'paired' : 'radial');
-  const geometry = await svg.evaluate(root => {
-    const svg = root as SVGSVGElement;
-    const inner = Number(root.querySelector('.transit-planet-band-outline--inner')!.getAttribute('r'));
-    const outer = Number(root.querySelector('.transit-planet-band-outline--outer')!.getAttribute('r'));
-    const inverse = svg.getScreenCTM()!.inverse();
-    const viewport = svg.getBoundingClientRect();
-    const labels = [...root.querySelectorAll<SVGGraphicsElement>('.transit-planet-labels .wheel-placement__glyph, .transit-planet-degree')].map(node => {
-      const box = node.getBoundingClientRect();
-      const corners = [[box.left, box.top], [box.right, box.top], [box.right, box.bottom], [box.left, box.bottom]]
-        .map(([x, y]) => new DOMPoint(x, y).matrixTransform(inverse));
-      const left = Math.min(...corners.map(point => point.x)), right = Math.max(...corners.map(point => point.x));
-      const top = Math.min(...corners.map(point => point.y)), bottom = Math.max(...corners.map(point => point.y));
-      return {
-        planet: node.closest('[data-inspector-point-id]')!.getAttribute('data-inspector-point-id'),
-        kind: node.classList.contains('transit-planet-degree') ? 'degree' : 'glyph including Rx',
-        innerPadding: Math.hypot(Math.max(left, Math.min(300, right)) - 300, Math.max(top, Math.min(300, bottom)) - 300) - inner,
-        outerPadding: outer - Math.max(...corners.map(point => Math.hypot(point.x - 300, point.y - 300))),
-        clipped: box.left < viewport.left || box.right > viewport.right || box.top < viewport.top || box.bottom > viewport.bottom,
-        box: { left, right, top, bottom }
-      };
-    });
-    const overlaps = labels.flatMap((a, index) => labels.slice(index + 1).flatMap(b =>
-      Math.min(a.box.right, b.box.right) > Math.max(a.box.left, b.box.left)
-      && Math.min(a.box.bottom, b.box.bottom) > Math.max(a.box.top, b.box.top) ? [{ a, b }] : []));
-    const band = root.querySelector('.transit-planet-band')!;
-    const middle = Number(band.getAttribute('r')), thickness = Number(getComputedStyle(band).strokeWidth.replace('px', ''));
-    const styles = getComputedStyle(root);
-    const scale = Math.hypot(svg.getScreenCTM()!.a, svg.getScreenCTM()!.b);
-    const degree = getComputedStyle(root.querySelector('.transit-planet-degree')!);
-    const normalizeFamily = (value: string) => value.replace(/["'\s]/g, '').toLowerCase();
-    const fontProbe = document.createElement('span');
-    fontProbe.style.fontFamily = styles.getPropertyValue('--font-ui');
-    document.body.append(fontProbe);
-    const targetDegreeFamily = normalizeFamily(getComputedStyle(fontProbe).fontFamily);
-    fontProbe.remove();
-    return { labels, overlaps, inner, outer, bandInner: middle - thickness / 2, bandOuter: middle + thickness / 2,
-      renderedDegreeSize: Number.parseFloat(degree.fontSize) * scale,
-      renderedGlyphSize: root.querySelector('.transit-planet-labels .wheel-placement__glyph')!.getBoundingClientRect().width,
-      targetDegreeSize: Number.parseFloat(styles.getPropertyValue('--text-placement-degree')),
-      targetGlyphSize: Number.parseFloat(styles.getPropertyValue('--text-glyph')),
-      degreeFamily: normalizeFamily(degree.fontFamily), targetDegreeFamily,
-      degreeWeight: degree.fontWeight, targetDegreeWeight: styles.getPropertyValue('--weight-semibold').trim(),
-      degreeTracking: degree.letterSpacing, degreeLeading: degree.lineHeight };
-  });
-  expect(geometry.bandInner).toBe(geometry.inner);
-  expect(geometry.bandOuter).toBe(geometry.outer);
-  expect(geometry.inner).toBe(284);
-  expect(geometry.labels).toHaveLength(28);
-  expect(geometry.labels.filter(label => label.innerPadding < 4 || label.outerPadding < 4 || label.clipped),
-    'Every complete transit glyph, Rx asset and degree label has padding inside the band and SVG').toEqual([]);
-  expect(geometry.overlaps, 'Crowded transit glyphs and degrees remain separate').toEqual([]);
-  expect(geometry.degreeFamily).toBe(geometry.targetDegreeFamily);
-  expect(geometry.degreeWeight).toBe(geometry.targetDegreeWeight);
-  expect(['normal', '0px']).toContain(geometry.degreeTracking);
-  if (compact) {
-    expect(geometry.renderedDegreeSize, 'Mobile degree text keeps its shared readable screen size').toBeCloseTo(geometry.targetDegreeSize, 1);
-    expect(geometry.renderedGlyphSize, 'Mobile glyphs keep their shared readable screen size').toBeCloseTo(geometry.targetGlyphSize, 1);
-  }
-  await expect(svg).toHaveAttribute('viewBox', '-76 -76 752 752');
-  expect(await svg.locator('.wheel-surfaces circle').evaluateAll(nodes => nodes.map(node => Number(node.getAttribute('r')))))
-    .toEqual([284, 240, 132, 96]);
-  return geometry;
-}
 
 for (const theme of ['light', 'dark']) {
   test(`transit readability survives mobile and desktop resizing ${theme}`, async ({ page }) => {
@@ -112,7 +46,7 @@ for (const theme of ['light', 'dark']) {
     const captureNatal = () => natalNodes.evaluateAll(nodes => nodes.map(node => ['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'transform'].map(attribute => node.getAttribute(attribute))));
     const natal = await captureNatal();
     const typography = [];
-    for (const width of [390, 320, 1440, 390]) {
+    for (const width of [390, 320, 1280, 1440, 1920, 390]) {
       await page.setViewportSize({ width, height: 1000 });
       const geometry = await expectTransitContainment(svg);
       expect(await captureNatal(), 'Resizing only changes transit labels').toEqual(natal);
@@ -194,7 +128,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
   });
 }
 
-for (const width of [320, 390, 1440]) for (const theme of ['light', 'dark']) {
+for (const width of [320, 390, 1280, 1440, 1920]) for (const theme of ['light', 'dark']) {
   test(`transit band contains crowded labels around the full circle ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width, height: 1000 });

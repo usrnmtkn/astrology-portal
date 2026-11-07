@@ -12,6 +12,8 @@ import {
   studioInventoryRequestPath
 } from "../apps/admin/src/studioSectionInventory.ts";
 
+assert.deepEqual(studioInventoryQuery({ page: "wheelTooltips" }).prefixes, ["cms/wheel-tooltip/"]);
+
 const astro101 = studioInventoryQuery({ page: "astro101" });
 assert.deepEqual(astro101.prefixes, [...STUDIO_ASTRO_101_PREFIXES]);
 assert.equal(astro101.catalog, false);

@@ -22,6 +22,7 @@ import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { AspectBadge } from "../../components/charts/AspectBadge";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
+import { InteractiveZodiacWheel } from "../../components/charts/LazyInteractiveZodiacWheel";
 import type { SkySnapshot } from "../../types";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
@@ -36,7 +37,6 @@ import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import { articleAspectGlyphPartsFromHeading } from "../../utils/articleAspects";
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
-import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
 import { YouReportActions, type YouAccountRecovery } from "./YouReportActions";
 
@@ -1311,21 +1311,10 @@ export function YouPage({
     setProfileTab(nextTab);
     updateYouTabUrl(nextTab);
   };
-  const natalOnlyAspects = canonicalNatalAspectsForSnapshot(natalSky);
   const natalChart = natalSky ? (
     <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
       <div className="chart-frame">
-        <SkyWheel
-          positions={natalSky.positions}
-          aspects={natalOnlyAspects}
-          ascendant={natalSky.ascendant}
-          ascendantLongitude={natalSky.ascendantLongitude}
-          midheavenLongitude={natalSky.midheavenLongitude}
-          showHouses
-          houseSignLabelStyle={houseSignLabelStyle}
-          variant="natal"
-          aspectInspector
-        />
+        <InteractiveZodiacWheel snapshot={natalSky} mode="natal" />
       </div>
     </div>
   ) : null;

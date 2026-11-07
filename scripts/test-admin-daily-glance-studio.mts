@@ -123,6 +123,7 @@ function navigationFixture(confirm = false) {
     draftFromRow: () => { throw new Error("Unexpected draft read"); },
     transitExactDismissedKeysRef: { current: new Set() }, houseTransitEditorDrafts: { current: new Map() },
     editorLoadRef: { current: null }, editorReturnFocusRef: { current: null }, dailyGlanceLoadingRequestRef: { current: null },
+    wheelTooltipEditorRef: { current: null },
     editorBaselineRef: { current: null }, editorSavedInputRef: { current: null }, natalUnsavedSourcesRef: { current: new Set() },
     handledHashRef: { current: "#fallback-hooks" }, acceptedHashRef: { current: "#fallback-hooks" },
     window: { confirm: () => { calls.push("confirm"); return confirm; }, requestAnimationFrame: (fn: () => void) => fn(), scrollTo() {},
@@ -135,7 +136,7 @@ function navigationFixture(confirm = false) {
   };
   for (const ref of ["subscriptionEventDirtyRef", "lunationWritingDirtyRef", "moonHoroscopesDirtyRef", "dailyWritingDirtyRef", "skyPlacementWorkspaceDirtyRef",
     "skyPlacementWorkspaceBusyRef", "aspectPatternDirtyRef", "aspectPatternBusyRef", "customVariableDirtyRef", "customVariableBusyRef"]) scope[ref] = { current: false };
-  for (const ref of ["sourceOpenRequestRef", "houseTransitOpenRequest", "editorSessionRef", "skyArticleAutosaveSequenceRef", "skyArticleWorkspaceAutosaveSequenceRef"]) scope[ref] = { current: 0 };
+  for (const ref of ["sourceOpenRequestRef", "wheelTooltipSourceRequestRef", "houseTransitOpenRequest", "editorSessionRef", "skyArticleAutosaveSequenceRef", "skyArticleWorkspaceAutosaveSequenceRef"]) scope[ref] = { current: 0 };
   for (const setter of new Set(dashboardText.match(/\bset[A-Z]\w+/gu))) scope[setter] = () => calls.push(setter);
   scope.setIsLoading = (value: boolean) => { scope.isLoading = value; calls.push("setIsLoading"); };
   scope.setDailyGlancePairSelector = (value: string | null) => { scope.dailyGlancePairSelector = value; calls.push("setDailyGlancePairSelector"); };
@@ -168,6 +169,29 @@ for (const [dirty, busy] of [[true, false], [false, true], [true, true]]) {
   assert.equal(scope.navigateAdminPage("surfaceMap"), false, "An independently dirty Moon editor must still block navigation.");
   assert(calls.includes("confirm"));
   assert(!calls.some(call => call.startsWith("route:")));
+}
+{
+  const { scope, calls } = navigationFixture();
+  const retainedWheelDrafts = { hasUnsavedExcept: () => true };
+  scope.wheelTooltipEditorRef.current = retainedWheelDrafts;
+  let prevented = false;
+  scope.warnBeforeUnload({ preventDefault: () => { prevented = true; } });
+  assert(prevented, "Retained wheel wording must keep its unload protection alongside Daily.");
+  assert.equal(scope.navigateAdminPage("surfaceMap"), false, "An independently dirty wheel session must block discarded navigation.");
+  assert.equal(scope.wheelTooltipEditorRef.current, retainedWheelDrafts);
+  assert.equal(scope.wheelTooltipSourceRequestRef.current, 0, "Cancelled navigation cannot invalidate the retained wheel session.");
+  assert(calls.includes("confirm"));
+  assert(!calls.some(call => call.startsWith("route:")));
+}
+{
+  const { scope } = navigationFixture(true);
+  scope.wheelTooltipEditorRef.current = { hasUnsavedExcept: () => true };
+  scope.wheelTooltipSourceRequestRef.current = 4;
+  assert.equal(scope.navigateAdminPage("surfaceMap"), true);
+  assert.equal(scope.wheelTooltipEditorRef.current, null, "Accepted discard closes the retained wheel session.");
+  assert.equal(scope.wheelTooltipSourceRequestRef.current, 5, "Accepted navigation invalidates the wheel's own pending read.");
+  assert.equal(scope.sourceOpenRequestRef.current, 1, "The generic source request owner stays independent of the wheel sequence.");
+  assert.equal(scope.dailyGlancePairSelector, null, "Accepted navigation still closes the Daily editor.");
 }
 for (const dirty of [true, false]) {
   const { scope } = navigationFixture(true);

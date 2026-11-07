@@ -184,6 +184,13 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => {
     : [];
 });
 
+const wheelEntries = Object.values(manifest).filter(item => item.name === "InteractiveZodiacWheel");
+const wheelEntry = wheelEntries[0];
+if (wheelEntries.length !== 1 || !wheelEntry?.isDynamicEntry) failures.push("Interactive wheel must remain an on-demand chart entry.");
+else if ([wheelEntry.file, ...(wheelEntry.css ?? [])].some(file => bootFiles.has(file) || readerStyleFiles.has(file))) {
+  failures.push("Interactive wheel drawing and inspection styles must stay outside reader startup.");
+}
+
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
 if (!deferredCalendarItem || bootFiles.has(deferredCalendarItem.file)) {
   failures.push("Calendar copy must remain in its own on-demand chunk outside reader startup.");

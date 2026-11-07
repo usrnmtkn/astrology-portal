@@ -1,7 +1,7 @@
 import { openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
 import { studioApiStore } from "../helpers/studio-api-store";
 import { skyMoonWriteupKeys } from "../../apps/admin/src/skyMoonWriteup";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page, type Locator } from "@playwright/test";
 import { skyPlacementSourceRecords, skyPlacementSourceCorpus } from "../../api/_lib/sky-placement-sources";
 import { contentLiveStatuses, servingPackageRecords } from "../../api/_lib/content-live-status";
 import { skyPlacementAssembly, skyPlacementAssemblyFields } from "../../apps/admin/src/skyPlacementAssembly";
@@ -17,6 +17,25 @@ async function publishFixture(rows: any[], input: Record<string, unknown>) {
   expect(result.payload.publicationReceipt).toBeTruthy();
   return result.payload;
  } finally { store.close(); }
+}
+/** Wait for the actual publication receipt before inspecting its saved result. */
+async function saveAndPublishFixture(page: Page, editor: Locator, id: string) {
+ const completed = page.waitForResponse(response => {
+  if (new URL(response.url()).pathname !== "/api/admin/generated-content" || response.request().method() !== "PATCH") return false;
+  try {
+   const input = response.request().postDataJSON();
+   return input.ownerAction === "approve-package-revision" && input.id === id;
+  } catch { return false; }
+ });
+ void completed.catch(() => {});
+ await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+ const response = await completed;
+ expect(response.status()).toBe(200);
+ expect(await response.finished()).toBeNull();
+ const payload = await response.json();
+ expect(payload.publicationReceipt).toBeTruthy();
+ expect(payload.rows[0].id).toBe(id);
+ await expect(editor).toHaveAttribute("aria-busy", "false");
 }
 const requestedKeys = (url: URL) => [...url.searchParams.getAll("contentKeys").flatMap(value => value.split(",")), url.searchParams.get("contentKey") ?? ""].filter(Boolean);
 const virtual = (key: string) => {
@@ -307,7 +326,7 @@ test("retrograde editor saves two revisions to its own source and preserves the 
  const body = editor.getByRole("textbox", { name: "Fallback field Retrograde body", exact: true });
  for (const revision of ["First saved test revision.", "Second saved test revision."]) {
   await body.fill(revision);
-  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await saveAndPublishFixture(page, editor, "saved-saturn-retrograde");
   await expect.poll(() => saved?.sections.packageRecord.Body).toBe(revision);
   await expect(body).toHaveValue(revision);
   expect(saved.sections.packageRecord.CanonicalShort).toBe(skyPlacementSourceRecords.get(key)!.CanonicalShort);
@@ -379,12 +398,12 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await editor.getByLabel("Writing section", { exact: true }).selectOption("fallback.lived");
   await editor.getByRole("textbox", { name: "Fallback field Fallback: how it shows up", exact: true }).fill("");
   await expect(order.locator("li").filter({ hasText: "Fallback: how it shows up" })).toContainText("Empty · skipped");
-  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await saveAndPublishFixture(page, editor, "saved-evergreen");
   await expect.poll(() => saved?.sections.packageRecord?.fallback?.sections?.[0]?.label).toBe("Additional passage");
   expect(saved.sections.packageRecord.fallback.lived).toBe("");
   await editor.getByRole("button", { name: "Additional passage Has writing · retrograde", exact: true }).click();
   await body.fill("During this transit, fixture additional paragraph two.");
-  await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
+  await saveAndPublishFixture(page, editor, "saved-evergreen");
   await expect.poll(() => saved?.sections.packageRecord?.fallback?.sections?.[0]?.body).toBe("During this transit, fixture additional paragraph two.");
   const typography = (el: Element) => { const s = getComputedStyle(el); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
   for (const paragraph of await editor.locator(".admin-evergreen-sections > p").all()) expect(await paragraph.evaluate(typography)).toEqual(await editor.getByLabel("Placement writing context").locator("p").evaluate(typography));

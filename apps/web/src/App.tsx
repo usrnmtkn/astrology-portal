@@ -115,7 +115,8 @@ import {
   zodiacAssetHref,
   zodiacSignIconFiles,
 } from "./components/charts/chartAssets";
-import { SkyWheel, type InterChartAspectLine } from "./components/charts/Wheels";
+import { type InterChartAspectLine } from "./components/charts/Wheels";
+import { InteractiveZodiacWheel, InteractiveWheelLoading } from "./components/charts/LazyInteractiveZodiacWheel";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
@@ -14847,19 +14848,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Current sky">
                 <div className="chart-shell sky-chart-shell">
                   <div className="chart-frame">
-                    <SkyWheel
-                      positions={sky.positions}
-                      aspects={sky.aspects}
-                      ascendant={sky.ascendant}
-                      ascendantLongitude={sky.ascendantLongitude}
-                      midheavenLongitude={sky.midheavenLongitude}
-                      houseSignLabelStyle={activeHouseSignLabelStyle}
-                      variant="zodiac"
-                      aspectInspector
-                    />
+                    <InteractiveZodiacWheel snapshot={sky} />
                   </div>
                 </div>
-                <button type="button" className="sky-chart-expand" aria-label="Open full current sky chart" onClick={() => {
+                <button id={`${skyFullChartTitleId}-open`} type="button" className="sky-chart-expand" aria-label="Open full current sky chart" onClick={() => {
                                                 setCityPickerOpen(false);
                           setCityPickerOpenedFromMobileControls(false);
                           setMobileSkyControlsOpen(false);
@@ -14869,7 +14861,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             )}
             {!isSignupMode && !usesFullPageLayout && isSkyLoading && (
               <section className="sky-panel sky-chart-column chart-layout__visual" aria-label="Loading current sky chart">
-                <PageLoading layout="wheel" message="Loading the sky chart…" />
+                <InteractiveWheelLoading message="Loading the sky chart…" />
               </section>
             )}
             <section className={isCalendarMode ? "detail-panel calendar-content-column" : isLearnMode ? "detail-panel learn-content-column" : "detail-panel sky-content-column chart-layout__content"} aria-label="Portal details">
@@ -15228,6 +15220,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
               className="sky-full-chart-modal-root"
               panelClassName="sky-full-chart-panel"
               titleId={skyFullChartTitleId}
+              restoreFocusId={`${skyFullChartTitleId}-open`}
               width="100vw"
               onClose={() => setSkyFullChartOpen(false)}
             >
@@ -15243,16 +15236,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
                   <h2 className="sr-only" id={skyFullChartTitleId}>Full sky chart</h2>
                   <div className="sky-full-chart-shell">
                     <div className="wheel natal-wheel chart-frame" aria-label={`Full sky chart for ${skyFullChartMeta}`}>
-                      <SkyWheel
-                        positions={sky.positions}
-                        aspects={sky.aspects}
-                        ascendant={sky.ascendant}
-                        ascendantLongitude={sky.ascendantLongitude}
-                        midheavenLongitude={sky.midheavenLongitude}
-                        houseSignLabelStyle={activeHouseSignLabelStyle}
-                        variant="zodiac"
-                        aspectInspector
-                      />
+                      <InteractiveZodiacWheel snapshot={sky} />
                     </div>
                   </div>
                 </div>

@@ -224,7 +224,7 @@ function assertValidCmsTemplate({
 }) {
   const snapshot = isRecord(sourceSnapshot) ? sourceSnapshot : {};
   if (!contentKey?.startsWith("cms/") && snapshot.contentSystem !== "cms-surface-override") return;
-  const allowedSlots = libs().frictionFlowField(contentKey ?? "")?.allowedSlots ?? (Array.isArray(snapshot.allowedSlots)
+  const allowedSlots = libs().wheelTooltipField(contentKey ?? "")?.allowedSlots ?? libs().frictionFlowField(contentKey ?? "")?.allowedSlots ?? (Array.isArray(snapshot.allowedSlots)
     ? snapshot.allowedSlots.filter((slot): slot is string => typeof slot === "string")
     : []);
   const validation = libs().validateCmsTemplate({
@@ -236,6 +236,7 @@ function assertValidCmsTemplate({
   validation.errors.push(...libs().skySummaryTemplateErrors(contentKey ?? "", body ?? ""));
   validation.errors.push(...libs().skyDebilityTemplateErrors(contentKey ?? "", body ?? "", headline ?? ""));
   validation.errors.push(...libs().frictionFlowTemplateErrors(contentKey ?? "", body ?? ""));
+  validation.errors.push(...libs().wheelTooltipTemplateErrors(contentKey ?? "", body ?? ""));
   if (validation.errors.length > 0) {
     throw new Error(`CMS template cannot be published: ${validation.errors.join(" ")}`);
   }

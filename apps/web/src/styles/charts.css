@@ -1221,3 +1221,8 @@
 .sky-wheel--handoff .synastry-outer-house-labels text { font-family: var(--font-ui); font-size: var(--chart-house-label-size); font-weight: var(--weight-semibold); fill: var(--ink-2); }
 
 .chart-fullscreen-close > svg { width: var(--size-2); height: var(--size-2); flex: none; }
+
+/* Reserve the drawing and house-caption geometry before the lazy wheel arrives. */
+.wheel-loading { display: grid; width: 100%; gap: var(--lunar-space-14); }
+.wheel-loading .loading-pattern--wheel { aspect-ratio: 1; }
+.wheel-loading > span { height: var(--type-hint-size); }

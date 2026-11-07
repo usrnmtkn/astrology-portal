@@ -16,10 +16,10 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(.admin-page-heading h1,.admin-nav button,.admin-dashboard-header button) { overflow-wrap: normal; }
 #root .admin-dashboard :is(h1,h2) { font-size: var(--type-large-title-size); font-weight: var(--weight-medium); line-height: var(--leading-title); }
 #root .admin-dashboard :is(h3,h4,h5,h6) { font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-body); }
-#root .admin-dashboard :is(strong,b) { font-weight: var(--weight-regular); }
+#root .admin-dashboard :is(strong,b):not(:where(.interactive-zodiac-wheel *)) { font-weight: var(--weight-regular); }
 #root .admin-dashboard :is(h1,h2,h3,h4,h5,h6) :is(strong,b) { font-weight: inherit; }
 #root .admin-dashboard :where(p,li,dd,blockquote) { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); overflow-wrap: anywhere; }
-#root .admin-dashboard a { color: var(--workspace-primary); text-underline-offset: var(--space-1); overflow-wrap: anywhere; }
+#root .admin-dashboard a:not(:where(.interactive-zodiac-wheel *)) { color: var(--workspace-primary); text-underline-offset: var(--space-1); overflow-wrap: anywhere; }
 #root .admin-dashboard :is(small,.admin-field-hint:not(p),.admin-content-type-label,.admin-eyebrow,.admin-breadcrumb,.admin-editor-details-summary,.admin-textarea-counter,.admin-text-counter,.admin-unresolved-total,.admin-unresolved-owner,.admin-sidebar-status,.admin-editor-context-line,.admin-editor-save-state,.admin-table-tag,.admin-composition-detail-meta) { font-family: var(--font-label); font-size: var(--type-meta-size); line-height: var(--leading-meta); font-weight: var(--weight-regular); color: var(--workspace-muted); letter-spacing: var(--tracking-body); text-transform: none; }
 #root .admin-dashboard p.admin-field-hint { color: var(--workspace-muted); }
 #root .admin-dashboard :is(summary,label,legend,dt,th,.admin-page-link,.memory-site-back) { font-family: var(--font-label); font-size: var(--type-label-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); text-transform: none; }
@@ -28,7 +28,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard pre { padding: var(--workspace-panel-inset); background: var(--workspace-raised); border-radius: var(--workspace-control-radius); overflow: auto; }
 #root .admin-dashboard hr { width: 100%; border: 0; border-top: var(--border-width-thin) solid var(--workspace-line); margin: var(--workspace-panel-inset) 0; }
 #root .admin-dashboard svg { flex-shrink: 0; vertical-align: middle; }
-#root .admin-dashboard :focus-visible { outline: var(--border-width-medium) solid var(--workspace-primary); outline-offset: var(--space-1); }
+#root .admin-dashboard :focus-visible:not(:where(.interactive-zodiac-wheel *)) { outline: var(--border-width-medium) solid var(--workspace-primary); outline-offset: var(--space-1); }
 
 /* Issue workflow labels share their treatment with the explanatory key. */
 /* Offline CSV previews retain complete passages and the shared body typography. */
@@ -58,8 +58,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-unresolved-filters > button { align-self: end; margin-block-end: var(--workspace-field-gap); }
 
 /* Buttons: filled, tonal, outlined and text. */
-#root .admin-dashboard :where(button,.admin-create-button,.admin-page-error-actions a) { display: inline-flex; align-items: center; justify-content: center; gap: var(--workspace-field-gap); min-height: var(--studio-button-height); max-width: 100%; width: fit-content; align-self: center; justify-self: start; padding: var(--space-2) var(--workspace-card-padding); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--radius-pill); background: transparent; color: var(--workspace-primary); font-family: var(--font-label); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); text-decoration: none; white-space: normal; overflow-wrap: anywhere; text-align: center; cursor: pointer; }
-#root .admin-dashboard button:where(:not(:disabled):not([aria-pressed="true"]):not([aria-current="page"]):not(.admin-secondary-button):not(.admin-create-button):not(.admin-primary-button):not(.admin-publish-button):not([data-variable-color])):hover { background: var(--workspace-hover); }
+#root .admin-dashboard :where(button,.admin-create-button,.admin-page-error-actions a):not(:where(.interactive-zodiac-wheel *)) { display: inline-flex; align-items: center; justify-content: center; gap: var(--workspace-field-gap); min-height: var(--studio-button-height); max-width: 100%; width: fit-content; align-self: center; justify-self: start; padding: var(--space-2) var(--workspace-card-padding); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--radius-pill); background: transparent; color: var(--workspace-primary); font-family: var(--font-label); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); text-decoration: none; white-space: normal; overflow-wrap: anywhere; text-align: center; cursor: pointer; }
+#root .admin-dashboard button:where(:not(:disabled):not([aria-pressed="true"]):not([aria-current="page"]):not(.admin-secondary-button):not(.admin-create-button):not(.admin-primary-button):not(.admin-publish-button):not([data-variable-color])):not(:where(.interactive-zodiac-wheel *)):hover { background: var(--workspace-hover); }
 #root .admin-dashboard :is(.admin-create-button,.admin-primary-button,.admin-publish-button) { background: var(--workspace-primary); border-color: transparent; color: var(--workspace-on-primary); }
 #root .admin-dashboard :is(.admin-create-button,.admin-primary-button,.admin-publish-button):not(:disabled):not(.admin-secondary-button):hover { background: var(--workspace-primary-hover); }
 #root .admin-dashboard :is(.admin-secondary-button,[aria-pressed="true"]) { background: var(--workspace-selected); color: var(--workspace-on-selected); border-color: transparent; }
@@ -756,6 +756,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-horoscope-actions .admin-danger-button:not(:disabled) { background: var(--studio-error-container); color: var(--studio-on-error-container); border-color: var(--workspace-danger); }
 #root .admin-dashboard .admin-horoscope-wizard progress { width: 100%; accent-color: var(--workspace-primary); }
 @media (min-width: 721px) {
+  #root .admin-dashboard .admin-wheel-preview-canvas { position: sticky; top: 0; }
   #root .admin-dashboard .admin-sky-writeups > .studio-tabs > [role="tablist"] { grid-auto-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-sky-writeups > .studio-tabs > [role="tablist"] > [role="tab"] { align-self: stretch; white-space: normal; }
 }
