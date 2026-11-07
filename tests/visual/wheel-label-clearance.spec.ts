@@ -31,7 +31,7 @@ test.beforeAll(async () => {
 
 
 for (const theme of ['light', 'dark']) {
-  test(`transit readability survives mobile and desktop resizing ${theme}`, async ({ page }) => {
+  test(`transit original placement survives mobile and desktop resizing ${theme}`, async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 1000 });
     const dist = process.env.PLAYWRIGHT_DIST_ROOT ?? 'apps/web/dist';
     const manifest = JSON.parse(readFileSync(`${dist}/.vite/manifest.json`, 'utf8'));
@@ -45,11 +45,15 @@ for (const theme of ['light', 'dark']) {
     const natalNodes = svg.locator('.wheel-surfaces circle, .wheel-sectors line, .sign-band-dividers line, .house-labels text, .planet-labels:not(.transit-planet-labels) .planet-label-group');
     const captureNatal = () => natalNodes.evaluateAll(nodes => nodes.map(node => ['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'transform'].map(attribute => node.getAttribute(attribute))));
     const natal = await captureNatal();
+    const captureTransits = () => svg.locator('.transit-planet-labels .planet-label-group, .transit-planet-degree')
+      .evaluateAll(nodes => nodes.map(node => ['transform', 'x', 'y', 'text-anchor'].map(attribute => node.getAttribute(attribute))));
+    const originalTransits = await captureTransits();
     const typography = [];
     for (const width of [390, 320, 1280, 1440, 1920, 390]) {
       await page.setViewportSize({ width, height: 1000 });
       const geometry = await expectTransitContainment(svg);
-      expect(await captureNatal(), 'Resizing only changes transit labels').toEqual(natal);
+      expect(await captureNatal(), 'Natal geometry is unchanged by resizing').toEqual(natal);
+      expect(await captureTransits(), 'Original glyph and degree placement stays fixed across widths').toEqual(originalTransits);
       const natalGlyphSize = await svg.evaluate(root => {
         const matrix = (root as SVGSVGElement).getScreenCTM()!;
         return root.querySelector('.planet-labels:not(.transit-planet-labels) .wheel-placement__glyph')!.getBoundingClientRect().width / Math.hypot(matrix.a, matrix.b);
