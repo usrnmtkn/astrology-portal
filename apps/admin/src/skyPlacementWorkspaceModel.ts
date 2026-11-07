@@ -1,4 +1,4 @@
-import type { WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes';
+import type { WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes.js';
 import type { CompositionMapRow } from './compositionMap';
 import type { ArticleEventFacts } from './skyArticleRelatedContent';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';

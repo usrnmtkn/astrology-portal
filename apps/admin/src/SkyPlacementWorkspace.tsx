@@ -1,5 +1,5 @@
-import { writeupHoroscopesReady } from '../../../src/shared/skyWriteupHoroscopes';
-import type { WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes';
+import { writeupHoroscopesReady } from '../../../src/shared/skyWriteupHoroscopes.js';
+import type { WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes.js';
 import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { studioLazy as lazy } from './studioLazy';
 import { AdminDisclosureSummary, AdminSelect } from './AdminNativeControls';

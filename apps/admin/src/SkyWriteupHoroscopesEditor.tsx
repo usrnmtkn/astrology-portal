@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import StudioSidePanel from './StudioSidePanel';
 import { StudioButton, StudioTextarea } from './StudioControls';
-import { WRITEUP_HOROSCOPE_SIGNS, type WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes';
+import { WRITEUP_HOROSCOPE_SIGNS, type WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes.js';
 
 type Props = {
   passages?: WriteupHoroscope[]; period: string; busy: boolean; canSave: boolean; articleReady: boolean;

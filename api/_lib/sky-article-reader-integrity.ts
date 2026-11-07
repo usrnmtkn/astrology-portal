@@ -1,4 +1,4 @@
-import { writeupHoroscopes } from '../../src/shared/skyWriteupHoroscopes';
+import { writeupHoroscopes } from '../../src/shared/skyWriteupHoroscopes.js';
 import { createHash } from 'node:crypto';
 
 /** Existing compiler hashes include JSON property order. JSONB changes that

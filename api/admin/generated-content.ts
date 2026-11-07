@@ -1,4 +1,4 @@
-import { writeupHoroscopesReady } from '../../src/shared/skyWriteupHoroscopes';
+import { writeupHoroscopesReady } from '../../src/shared/skyWriteupHoroscopes.js';
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared/lunationTimingVariables.js';
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';

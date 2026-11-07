@@ -1,4 +1,4 @@
-import { writeupHoroscopesReady } from '../../../../src/shared/skyWriteupHoroscopes';
+import { writeupHoroscopesReady } from '../../../../src/shared/skyWriteupHoroscopes.js';
 import { assertCompiledSkyArticleEdition, hasExactSkyArticleOwnerApproval, skyArticleEditionContentKey, skyArticleReaderCopyIsConsistent } from './skyArticleTemplateCompiler.js';
 import { isSkyIngressEssay } from './skyIngressEssay.mjs';
 

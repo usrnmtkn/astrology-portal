@@ -1,4 +1,4 @@
-import { writeupRisingHoroscopes } from '../../../../src/shared/skyWriteupHoroscopes';
+import { writeupRisingHoroscopes } from '../../../../src/shared/skyWriteupHoroscopes.js';
 import { approvedSkySeasonFallback } from "./skySeasonFallback.js";
 import { assertCompiledSkyArticleEdition, selectActiveSkyArticleEdition, skyArticleEditionRecord, skyArticleReaderHoroscopeIntroduction, type SkyArticleEditionCandidate } from "./skyArticleTemplateCompiler.js";
 import { isSkyIngressEssay } from "./skyIngressEssay.mjs";
