@@ -108,7 +108,8 @@ try {
   await cancelled;assert.equal(calls.length,1);assert.equal(workerStarts,0);
   calls.length=0;
   const initial=startInitialSkyLoad()!;assert(initial);
-  const resolved=assert.rejects(initial.resolve(),{name:'AbortError'});
+  const resolved=assert.rejects(initial.resolve(),(error: any)=>error===initial.cancelled&&error.name==='AbortError',
+    'Initial selection preserves the original navigation cancellation reason.');
   page.dispatchEvent(new Event('beforeunload'));rejectTransport(new TypeError('Synthetic native navigation rejection'));
   assert.equal(await initial.result,null);await resolved;
   assert.equal(initial.matches(initial.day,initial.location,initial.detail),null);
