@@ -5332,21 +5332,18 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect(editor.getByLabel("Passage · Friend")).toHaveValue(friendPassage);
     };
     const cancelReload = async () => {
-      const browserPage = await page.context().newCDPSession(page);
+      const originalDocument = await page.evaluateHandle(() => document);
       try {
-        const before = (await browserPage.send("Page.getFrameTree")).frameTree.frame.loaderId;
-        expect(before).toEqual(expect.any(String));
-        expect(before).not.toBe("");
-        const prompt = page.waitForEvent("dialog", { timeout: 5_000 });
-        // Issue the real reload without waiting for a new document that cancellation prevents.
-        const reload = browserPage.send("Page.reload");
-        const dialog = await prompt;
-        expect(dialog.type()).toBe("beforeunload");
-        await dialog.dismiss();
-        await reload;
-        expect((await browserPage.send("Page.getFrameTree")).frameTree.frame.loaderId).toBe(before);
+        expect(await originalDocument.evaluate(value => value instanceof Document)).toBe(true);
+        const dismissed = page.waitForEvent("dialog", { timeout: 5_000 }).then(async dialog => {
+          expect(dialog.type()).toBe("beforeunload");
+          await dialog.dismiss();
+        });
+        // Settle both the real reload dispatch and dismissal before checking retained edits.
+        await Promise.all([dismissed, page.evaluate(() => window.location.reload())]);
+        expect(await originalDocument.evaluate(value => value === document)).toBe(true);
         await expectCompleteWriting();
-      } finally { await browserPage.detach(); }
+      } finally { await originalDocument.dispose(); }
     };
     if (scenario === "cancel navigation") {
       await cancelReload();
