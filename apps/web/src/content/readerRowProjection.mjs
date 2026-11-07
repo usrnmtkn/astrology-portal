@@ -38,7 +38,7 @@ const packageRecord = {
     exact_text_sha256 body_you_sha256 body_they_sha256 body_you_review_status body_they_review_status
     body_you_authorship body_they_authorship body_you_sourceMechanism body_they_sourceMechanism
     sourceMechanism directionality_mode authoring_name_variable body_they_name_variable
-    placementArticle placementArticleDirect placementArticleRetrograde tldrWhat tldrTakeaway
+    placementArticle placementArticleDirect placementArticleRetrograde tldrWhat tldrTakeaway TLDR_What TLDR_Takeaway
     energy intention ritual focus strategy completion mainEvent weekStart weekEnd weeklyHeadline weeklyOverview
     title tagline preview_note core_theme sign_jurisdiction lived_experience rulership_twist history_echo closing_charge
     reader_content_type content_type`),

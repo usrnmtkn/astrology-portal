@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import { Bold as BoldExtension } from '@tiptap/extension-bold';
 import { Document } from '@tiptap/extension-document';
@@ -13,12 +13,13 @@ import { Bold, Italic, List, ListOrdered, Undo2, Redo2 } from 'lucide-react';
 import { writingDocument, preserveWritingVariables } from '../../web/src/content/formattedText';
 import { StudioButton } from './StudioControls';
 
-export default function StudioFormattingEditor({ value, label, maxLength, onChange, onDone }: {
-  value: string; label: string; maxLength?: number; onChange: (value: string) => void; onDone: () => void;
+export default function StudioFormattingEditor({ value, label, maxLength, onChange, onDone, readOnly = false }: {
+  value: string; label: string; maxLength?: number; readOnly?: boolean; onChange: (value: string) => void; onDone: () => void;
 }) {
   const [error, setError] = useState('');
   const [initialContent] = useState(() => writingDocument(value));
   const lastValue = useRef(value);
+  const locked = useRef(readOnly);
   const editor = useEditor({
     // Keep the same enabled StarterKit extensions and their ordering without
     // shipping the disabled heading, code, link and other editor features.
@@ -26,15 +27,21 @@ export default function StudioFormattingEditor({ value, label, maxLength, onChan
       HardBreak, UndoRedo, ItalicExtension, ListItem, ListKeymap, OrderedList,
       Paragraph, Text, Markdown],
     content: initialContent,
+    editable: !readOnly,
     autofocus: 'start',
-    editorProps: { attributes: { role: 'textbox', 'aria-label': `${label} formatted text`, 'aria-multiline': 'true', class: 'studio-formatted-writing' } },
+    editorProps: { attributes: { role: 'textbox', 'aria-label': `${label} formatted text`, 'aria-multiline': 'true', 'aria-readonly': String(readOnly), class: 'studio-formatted-writing' } },
     onUpdate: ({ editor: writing }) => {
+      if (locked.current) return;
       const next = preserveWritingVariables(writing.getMarkdown());
       setError(maxLength !== undefined && next.length > maxLength ? `This field allows ${maxLength} characters, including formatting. Shorten it before saving.` : '');
       lastValue.current = next;
       onChange(next);
     }
   });
+  useLayoutEffect(() => {
+    locked.current = readOnly;
+    editor?.setEditable(!readOnly, false);
+  }, [editor, readOnly]);
   useEffect(() => {
     if (editor && value !== lastValue.current) {
       lastValue.current = value;
@@ -49,12 +56,12 @@ export default function StudioFormattingEditor({ value, label, maxLength, onChan
   if (!editor) return null;
   return <span className="studio-formatting-editor" role="group" aria-label={`Format ${label}`}>
     <span className="studio-formatting-toolbar" role="group" aria-label="Text formatting">
-      <StudioButton aria-label="Bold" title="Bold (⌘/Ctrl+B)" aria-pressed={active?.bold} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleBold().run()}><Bold size={16} /></StudioButton>
-      <StudioButton aria-label="Italic" title="Italic (⌘/Ctrl+I)" aria-pressed={active?.italic} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic size={16} /></StudioButton>
-      <StudioButton aria-label="Bulleted list" title="Bulleted list" aria-pressed={active?.bullet} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleBulletList().run()}><List size={16} /></StudioButton>
-      <StudioButton aria-label="Numbered list" title="Numbered list" aria-pressed={active?.ordered} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered size={16} /></StudioButton>
-      <StudioButton aria-label="Undo formatting" title="Undo" disabled={!active?.undo} onClick={() => editor.chain().focus().undo().run()}><Undo2 size={16} /></StudioButton>
-      <StudioButton aria-label="Redo formatting" title="Redo" disabled={!active?.redo} onClick={() => editor.chain().focus().redo().run()}><Redo2 size={16} /></StudioButton>
+      <StudioButton aria-label="Bold" disabled={readOnly} title="Bold (⌘/Ctrl+B)" aria-pressed={active?.bold} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleBold().run()}><Bold size={16} /></StudioButton>
+      <StudioButton aria-label="Italic" disabled={readOnly} title="Italic (⌘/Ctrl+I)" aria-pressed={active?.italic} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic size={16} /></StudioButton>
+      <StudioButton aria-label="Bulleted list" disabled={readOnly} title="Bulleted list" aria-pressed={active?.bullet} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleBulletList().run()}><List size={16} /></StudioButton>
+      <StudioButton aria-label="Numbered list" disabled={readOnly} title="Numbered list" aria-pressed={active?.ordered} onMouseDown={event => event.preventDefault()} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered size={16} /></StudioButton>
+      <StudioButton aria-label="Undo formatting" title="Undo" disabled={readOnly || !active?.undo} onClick={() => editor.chain().focus().undo().run()}><Undo2 size={16} /></StudioButton>
+      <StudioButton aria-label="Redo formatting" title="Redo" disabled={readOnly || !active?.redo} onClick={() => editor.chain().focus().redo().run()}><Redo2 size={16} /></StudioButton>
     </span>
     <EditorContent editor={editor} />
     {error && <span role="alert">{error}</span>}

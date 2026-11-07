@@ -2,7 +2,7 @@ import { studioLazy as lazy } from "./studioLazy";
 import { StudioButton, StudioIconButton, StudioInput } from "./StudioControls";
 import { AdminDisclosureSummary } from "./AdminNativeControls";
 import { Stack, Text } from "./studio-ds/primitives";
-import { ChevronRight, CircleHelp, Search, X } from "lucide-react";
+import { ChevronRight, Search, X } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { CompositionMapRow, CompositionPreviewOptions } from "./compositionMap";
@@ -119,28 +119,6 @@ export default function TemplateVariablesRail({
           <h2>{selected ? <code>{`{{${selected.name}}}`}</code> : `${references.length} in this row`}</h2>
         </Stack>
         <div className="admin-variables-rail-actions">
-          <details className="admin-help-popover">
-            <AdminDisclosureSummary showChevron={false} className="admin-disclosure-icon" aria-label="Template syntax help" title="Template syntax help">
-              <CircleHelp size={16} aria-hidden="true" />
-            </AdminDisclosureSummary>
-            <div role="region" aria-label="Template syntax guide">
-              <Text size="meta" tone="secondary">Template syntax</Text>
-              <dl className="admin-hook-pattern-list">
-                <div>
-                  <dt><code>{"{{planetTitle}}"}</code></dt>
-                  <dd>Inserts one value, such as <em>Jupiter</em>.</dd>
-                </div>
-                <div>
-                  <dt><code>{"{{#planetIntro}}…{{/planetIntro}}"}</code></dt>
-                  <dd>Includes the block only when that optional copy is available.</dd>
-                </div>
-                <div>
-                  <dt><code>{"{{.}}"}</code></dt>
-                  <dd>Inserts the current sentence while the app moves through a list.</dd>
-                </div>
-              </dl>
-            </div>
-          </details>
           <StudioIconButton type="button" className="admin-variables-rail-close" onClick={onClose} aria-label="Close variables" title="Close variables">
             <X size={16} aria-hidden="true" />
           </StudioIconButton>
@@ -148,11 +126,33 @@ export default function TemplateVariablesRail({
       </header>
 
       <div className="admin-variables-rail-body">
+        <details className="admin-workspace-details">
+          <AdminDisclosureSummary aria-label="Template syntax help">
+            Template syntax help
+          </AdminDisclosureSummary>
+          <div role="region" aria-label="Template syntax guide">
+            <Stack as="dl" gap="md">
+              <Stack gap="sm">
+                <dt><code>{"{{planetTitle}}"}</code></dt>
+                <dd><Text as="span">Inserts one value, such as <em>Jupiter</em>.</Text></dd>
+              </Stack>
+              <Stack gap="sm">
+                <dt><code>{"{{#planetIntro}}…{{/planetIntro}}"}</code></dt>
+                <dd><Text as="span">Includes the block only when that optional copy is available.</Text></dd>
+              </Stack>
+              <Stack gap="sm">
+                <dt><code>{"{{.}}"}</code></dt>
+                <dd><Text as="span">Inserts the current sentence while the app moves through a list.</Text></dd>
+              </Stack>
+            </Stack>
+          </div>
+        </details>
         {sourceState === "loading" && <PageLoading compact message="Loading template sources…" />}
         {sourceState === "error" && <div role="alert">Template sources could not load. <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry source loading</StudioButton></div>}
         {selected ? (
           <TemplateVariableReviewPanels
             references={references}
+            factExamples={factExamples}
             rows={rows}
             templateContentKey={templateContentKey}
             templateRow={reviewTemplateRow}

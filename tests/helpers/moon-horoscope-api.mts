@@ -2,7 +2,7 @@ import {Readable} from 'node:stream';
 import {fileURLToPath} from 'node:url';
 import {createApiStore} from './calendar-review-api.mjs';
 import {readerRouteResponse} from './content-reader-route.mjs';
-export const store=await createApiStore([]);
+export const store=await createApiStore([],{sqlMoonLifecycle:true});
 export async function invoke(method:string,body?:any,url='/api/admin/generated-content'){
   if(method==='rows')return [...store.rows.values()];
   if(method==='reader'){const response=(await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}))!;return {status:response.status,payload:await response.json()};}

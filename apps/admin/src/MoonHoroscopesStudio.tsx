@@ -26,6 +26,7 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
   const [opening,setOpening]=useState(Boolean(requestedDraftId));
   const editor=useRef<HTMLHeadingElement>(null);
   const pendingPaste=Boolean(paste.trim());
+  const archived=saved?.status==='ARCHIVED';
   const dirty=Boolean(pendingPaste||section&&JSON.stringify(section)!==JSON.stringify(saved?.sections?.articleHoroscopes));
   useEffect(()=>{dirtyRef.current=dirty||busy;return()=>{dirtyRef.current=false;};},[dirty,busy,dirtyRef]);
   useEffect(()=>{
@@ -59,8 +60,9 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
   }
   async function open(event:MoonEvent){
     const data=await request(secret,`${endpoint}?${new URLSearchParams({contentKeys:moonHoroscopeKey(event),status:'all',visibility:'all',limit:'20'})}`);
-    const rows=data.rows.filter((row:any)=>row.content_key===moonHoroscopeKey(event)&&row.status!=='ARCHIVED');
-    const row=rows.find((row:any)=>row.mode==='studio-draft'&&row.status==='DRAFT')??rows.find((row:any)=>row.mode==='article');
+    const rows=data.rows.filter((row:any)=>row.content_key===moonHoroscopeKey(event));
+    const canonical=rows.find((row:any)=>row.mode==='article');
+    const row=canonical?.status==='ARCHIVED'?canonical:rows.find((row:any)=>row.mode==='studio-draft'&&row.status==='DRAFT')??canonical;
     if(row)accept(row);else{setSaved(null);setOpened(event);setSection(null);setPaste('');setOriginalSource(null);setApproved(false);}
     setSign('aries');requestAnimationFrame(()=>editor.current?.focus());
   }
@@ -95,6 +97,14 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
     if(!data.rows?.[0])throw new Error('The revision was archived. Reopen the Moon event to load its current readings.');
     accept(data.rows[0]);setMessage('Draft revision archived. The current published readings are open.');
   }
+  async function lifecycle(){
+    const previous=saved,action=archived?'restore':'archive';
+    const data=await request(secret,endpoint,{id:previous.id,expectedUpdatedAt:previous.updated_at,sourceLifecycleAction:action},'PATCH');
+    const row=data.rows?.[0];
+    if(row?.id!==previous.id||row.status!==(action==='archive'?'ARCHIVED':'DRAFT')||row.body!==previous.body)throw new Error('The saved state was not confirmed. Reload the saved version before retrying.');
+    accept(row);announceContentUpdate({contentKey:row.content_key,published:false,updatedAt:row.updated_at});
+    setMessage(action==='archive'?'Moon horoscopes archived. These readings are no longer published.':'Moon horoscopes restored as a draft. Review and publish when ready.');
+  }
   const selected=events.find(event=>event.id===eventId),passage=section?.passages.find(p=>p.risingSign===sign);
   return <section className="admin-template-page" aria-label="Dated Moon horoscopes">
     <header className="admin-composition-detail-header"><div><h2 ref={editor} tabIndex={-1}>{opened?'Review your Moon horoscopes':'Choose a Moon event'}</h2><p>Paste all twelve sign readings for one dated Moon event, then review and publish them.</p></div></header>
@@ -109,10 +119,11 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
         </>:<><p>No events could be loaded for this month.</p><StudioButton disabled={busy} onClick={()=>setRetry(value=>value+1)}>Reload events</StudioButton></>}
       </Stack></section>:<>
         <section className="studio-surface studio-section" aria-label="Selected Moon event"><Stack gap="sm"><p>{eventLabel(opened)} · {opened.timeZone}</p>
-          <p>{saved?.status==='LIVE'&&!dirty?'Published':saved?.mode==='studio-draft'?'Draft revision · published readings remain available':saved?'Draft':'No saved readings yet'}</p>
+          <p>{archived?'Archived · Complete readings preserved':saved?.status==='LIVE'&&!dirty?'Published':saved?.mode==='studio-draft'?'Draft revision · published readings remain available':saved?'Draft':'No saved readings yet'}</p>
           <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={()=>{if(dirty&&!window.confirm('Leave these unsaved horoscope changes?'))return;setOpened(null);setSaved(null);setSection(null);setPaste('');setApproved(false);setError('');setMessage('');window.history.replaceState(null,'',`${window.location.pathname}${window.location.search}#moon-horoscopes`);}}>Choose another Moon</StudioButton>
             <StudioButton disabled={busy} onClick={()=>{if(dirty&&!window.confirm('Replace your unsaved edits with the saved version?'))return;void run(()=>open(opened));}}>Reload saved version</StudioButton></div>
           {saved?.event_type==='horoscope-edition-revision'&&<StudioButton disabled={busy||dirty} onClick={()=>{if(window.confirm('Archive this saved draft revision and open the current published readings?'))void run(archiveRevision);}}>Archive draft revision</StudioButton>}
+          {saved?.mode==='article'&&<StudioButton className={archived?undefined:'admin-danger-button'} disabled={busy||dirty} onClick={()=>{if(!archived&&!window.confirm('Archive these twelve saved Moon readings and remove them from readers? The complete writing will be preserved.'))return;void run(lifecycle);}}>{archived?'Restore as draft':'Archive Moon horoscopes'}</StudioButton>}
         </Stack></section>
         {!section?<section className="studio-surface studio-section" aria-label="Paste Moon horoscopes"><Stack gap="md">
           <label><span>All twelve horoscopes</span><StudioTextarea formatting={false} rows={16} maxLength={240000} disabled={busy} value={paste} onChange={e=>setPaste(e.target.value)} placeholder={'Aries / Aries Rising\nYour complete reading…\n\nTaurus / Taurus Rising\nYour complete reading…'}/></label>
@@ -122,12 +133,12 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
           <p>12/12 signs matched · Houses are calculated from this Moon’s sign.</p>
           <div className="admin-horoscope-signs" role="group" aria-label="Moon readings by sign">{MOON_HOROSCOPE_SIGNS.map(value=><StudioButton key={value} disabled={busy} aria-pressed={sign===value} onClick={()=>setSign(value)}>{label(value)}</StudioButton>)}</div>
           {passage&&<><h3>{label(sign)} / {label(sign)} Rising · House {passage.house}</h3>
-            <label className="admin-review-copy-editor"><span>Sign heading</span><StudioInput value={passage.heading} disabled={busy} maxLength={200} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,heading:e.target.value}:p)});setApproved(false);}}/></label>
-            <label className="admin-review-copy-editor"><span>Complete horoscope</span><StudioTextarea rows={14} value={passage.body} disabled={busy} maxLength={20000} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label></>}
+            <label className="admin-review-copy-editor"><span>Sign heading</span><StudioInput value={passage.heading} disabled={busy||archived} maxLength={200} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,heading:e.target.value}:p)});setApproved(false);}}/></label>
+            <label className="admin-review-copy-editor"><span>Complete horoscope</span><StudioTextarea rows={14} value={passage.body} disabled={busy||archived} maxLength={20000} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label></>}
           {pendingPaste&&<p id="moon-horoscope-save-guidance">{pendingPasteMessage}</p>}
-          <div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" aria-describedby={pendingPaste?'moon-horoscope-save-guidance':undefined} disabled={busy||pendingPaste||!dirty} onClick={()=>void run(save)}>Save 12 horoscopes as draft</StudioButton></div>
-          <details className="admin-workspace-details"><AdminDisclosureSummary>Replace from a new paste</AdminDisclosureSummary><label><span>Replacement twelve horoscopes</span><StudioTextarea formatting={false} rows={10} value={paste} disabled={busy} maxLength={240000} onChange={e=>{setPaste(e.target.value);setApproved(false);}}/></label><div className="admin-toolbar-actions"><StudioButton disabled={busy||!pendingPaste} onClick={review}>Match and review replacement</StudioButton><StudioButton disabled={busy||!pendingPaste} onClick={()=>{setPaste('');setApproved(false);setError('');setMessage('');}}>Clear replacement paste</StudioButton></div></details>
-          {saved&&saved.status!=='LIVE'&&<><label><input type="checkbox" checked={approved} disabled={busy||dirty} onChange={e=>setApproved(e.target.checked)}/> I approve the complete wording of all twelve saved readings for this Moon event.</label>
+          <div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" aria-describedby={pendingPaste?'moon-horoscope-save-guidance':undefined} disabled={busy||archived||pendingPaste||!dirty} onClick={()=>void run(save)}>Save 12 horoscopes as draft</StudioButton></div>
+          {!archived&&<details className="admin-workspace-details"><AdminDisclosureSummary>Replace from a new paste</AdminDisclosureSummary><label><span>Replacement twelve horoscopes</span><StudioTextarea formatting={false} rows={10} value={paste} disabled={busy} maxLength={240000} onChange={e=>{setPaste(e.target.value);setApproved(false);}}/></label><div className="admin-toolbar-actions"><StudioButton disabled={busy||!pendingPaste} onClick={review}>Match and review replacement</StudioButton><StudioButton disabled={busy||!pendingPaste} onClick={()=>{setPaste('');setApproved(false);setError('');setMessage('');}}>Clear replacement paste</StudioButton></div></details>}
+          {saved&&saved.status!=='LIVE'&&!archived&&<><label><input type="checkbox" checked={approved} disabled={busy||dirty} onChange={e=>setApproved(e.target.checked)}/> I approve the complete wording of all twelve saved readings for this Moon event.</label>
             <StudioButton className="admin-primary-button" disabled={busy||dirty||!approved} onClick={()=>void run(publish)}>Publish Moon horoscopes</StudioButton></>}
         </Stack></section>}
       </>}

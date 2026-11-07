@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import ts from "typescript";
 
 import {
   dailyGlanceContextSearchParams,
@@ -96,4 +97,120 @@ assert.match(apiSource, /selectDailyGlanceCivilDayDriver\(/u, "Content Studio mu
 assert.match(apiSource, /skyForDate\(date, timeZone\)/u, "The current Moon must be calculated at the requested local day boundary.");
 assert.match(apiSource, /localCalculationTime: "12:00"/u, "The local civil-day calculation time should remain explicit in provenance.");
 
-console.log("Admin Daily At-a-Glance paired editor checks passed.");
+// Exercise the actual parent navigation functions, including their hash/popstate path.
+const dashboardText = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
+const dashboard = ts.createSourceFile("Dashboard.tsx", dashboardText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+function nodeNamed(name: string, declaration = false): ts.Node {
+  const matches: ts.Node[] = [];
+  function visit(node: ts.Node) {
+    if (declaration ? ts.isVariableDeclaration(node) && node.name.getText(dashboard) === name
+      : ts.isFunctionDeclaration(node) && node.name?.text === name) matches.push(node);
+    ts.forEachChild(node, visit);
+  }
+  visit(dashboard); assert.equal(matches.length, 1, name); return matches[0];
+}
+function actual(node: ts.Node, scope: Record<string, any>): any {
+  const js = ts.transpileModule(`const value = (${node.getText(dashboard)});`, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022 }
+  }).outputText;
+  return new Function("scope", `with (scope) { ${js}; return value; }`)(scope);
+}
+function navigationFixture(confirm = false) {
+  const calls: string[] = [];
+  const scope: Record<string, any> = {
+    draft: null, selectedRow: null, compositionEditorContext: null, skyArticleEditor: null, skyArticleEditionForm: null,
+    dailyGlancePairSelector: "soft/mars", dailyGlanceNavigationStateRef: { current: 0 }, csvBusy: false, houseTransitEditor: null, isLoading: false,
+    draftFromRow: () => { throw new Error("Unexpected draft read"); },
+    transitExactDismissedKeysRef: { current: new Set() }, houseTransitEditorDrafts: { current: new Map() },
+    editorLoadRef: { current: null }, editorReturnFocusRef: { current: null }, dailyGlanceLoadingRequestRef: { current: null },
+    wheelTooltipEditorRef: { current: null },
+    editorBaselineRef: { current: null }, editorSavedInputRef: { current: null }, natalUnsavedSourcesRef: { current: new Set() },
+    handledHashRef: { current: "#fallback-hooks" }, acceptedHashRef: { current: "#fallback-hooks" },
+    window: { confirm: () => { calls.push("confirm"); return confirm; }, requestAnimationFrame: (fn: () => void) => fn(), scrollTo() {},
+      location: { hash: "#surface-map", pathname: "/admin/content", search: "" },
+      history: { replaceState: (_: unknown, __: unknown, url: string) => calls.push(`restore:${url}`) } },
+    parseAdminHash: () => ({ page: "surfaceMap", params: new URLSearchParams() }),
+    canonicalAdminRoute: (page: string, params: URLSearchParams) => ({ page, params }),
+    applyAdminRouteState: (page: string) => calls.push(`route:${page}`),
+    adminHashForPage: (page: string) => `#${page}`,
+  };
+  for (const ref of ["subscriptionEventDirtyRef", "lunationWritingDirtyRef", "moonHoroscopesDirtyRef", "dailyWritingDirtyRef", "skyPlacementWorkspaceDirtyRef",
+    "skyPlacementWorkspaceBusyRef", "aspectPatternDirtyRef", "aspectPatternBusyRef", "customVariableDirtyRef", "customVariableBusyRef"]) scope[ref] = { current: false };
+  for (const ref of ["sourceOpenRequestRef", "wheelTooltipSourceRequestRef", "houseTransitOpenRequest", "editorSessionRef", "skyArticleAutosaveSequenceRef", "skyArticleWorkspaceAutosaveSequenceRef"]) scope[ref] = { current: 0 };
+  for (const setter of new Set(dashboardText.match(/\bset[A-Z]\w+/gu))) scope[setter] = () => calls.push(setter);
+  scope.setIsLoading = (value: boolean) => { scope.isLoading = value; calls.push("setIsLoading"); };
+  scope.setDailyGlancePairSelector = (value: string | null) => { scope.dailyGlancePairSelector = value; calls.push("setDailyGlancePairSelector"); };
+  for (const name of ["hasChangedSavedDraft", "hasPendingArticleChanges", "confirmDiscardEditorChanges", "confirmNatalNavigation", "closeEditor", "navigateAdminPage", "applyHash"]) scope[name] = actual(nodeNamed(name), scope);
+  scope.routeNavigationGuardRef = { current: () => scope.confirmNatalNavigation() && scope.closeEditor() };
+  const initializer = (nodeNamed("trackDailyGlanceDraft", true) as ts.VariableDeclaration).initializer as ts.CallExpression;
+  scope.report = actual(initializer.arguments[0], scope);
+  scope.warnBeforeUnload = actual((nodeNamed("warnBeforeUnload", true) as ts.VariableDeclaration).initializer!, scope);
+  return { scope, calls };
+}
+for (const [dirty, busy] of [[true, false], [false, true], [true, true]]) {
+  const { scope, calls } = navigationFixture();
+  scope.report(dirty, busy);
+  let prevented = false;
+  scope.warnBeforeUnload({ preventDefault: () => { prevented = true; }, returnValue: undefined });
+  assert(prevented, "Unsaved or in-flight paired writing must warn before unload.");
+  assert.equal(scope.navigateAdminPage("surfaceMap"), false);
+  scope.applyHash();
+  assert.equal(scope.dailyGlancePairSelector, "soft/mars", "Cancelled navigation retains the paired editor.");
+  assert(!calls.some(call => call.startsWith("route:")));
+  assert(calls.includes("restore:/admin/content#fallback-hooks"), "Hash/popstate navigation restores the accepted route.");
+  assert.equal(calls.filter(call => call === "confirm").length, busy ? 0 : 2, "Saving blocks navigation before a discard prompt.");
+}
+{
+  const { scope, calls } = navigationFixture();
+  scope.moonHoroscopesDirtyRef.current = true;
+  let prevented = false;
+  scope.warnBeforeUnload({ preventDefault: () => { prevented = true; } });
+  assert(prevented, "Integrating Daily guards must preserve the dated Moon editor's unload protection.");
+  assert.equal(scope.navigateAdminPage("surfaceMap"), false, "An independently dirty Moon editor must still block navigation.");
+  assert(calls.includes("confirm"));
+  assert(!calls.some(call => call.startsWith("route:")));
+}
+{
+  const { scope, calls } = navigationFixture();
+  const retainedWheelDrafts = { hasUnsavedExcept: () => true };
+  scope.wheelTooltipEditorRef.current = retainedWheelDrafts;
+  let prevented = false;
+  scope.warnBeforeUnload({ preventDefault: () => { prevented = true; } });
+  assert(prevented, "Retained wheel wording must keep its unload protection alongside Daily.");
+  assert.equal(scope.navigateAdminPage("surfaceMap"), false, "An independently dirty wheel session must block discarded navigation.");
+  assert.equal(scope.wheelTooltipEditorRef.current, retainedWheelDrafts);
+  assert.equal(scope.wheelTooltipSourceRequestRef.current, 0, "Cancelled navigation cannot invalidate the retained wheel session.");
+  assert(calls.includes("confirm"));
+  assert(!calls.some(call => call.startsWith("route:")));
+}
+{
+  const { scope } = navigationFixture(true);
+  scope.wheelTooltipEditorRef.current = { hasUnsavedExcept: () => true };
+  scope.wheelTooltipSourceRequestRef.current = 4;
+  assert.equal(scope.navigateAdminPage("surfaceMap"), true);
+  assert.equal(scope.wheelTooltipEditorRef.current, null, "Accepted discard closes the retained wheel session.");
+  assert.equal(scope.wheelTooltipSourceRequestRef.current, 5, "Accepted navigation invalidates the wheel's own pending read.");
+  assert.equal(scope.sourceOpenRequestRef.current, 1, "The generic source request owner stays independent of the wheel sequence.");
+  assert.equal(scope.dailyGlancePairSelector, null, "Accepted navigation still closes the Daily editor.");
+}
+for (const dirty of [true, false]) {
+  const { scope } = navigationFixture(true);
+  scope.report(dirty, false);
+  assert.equal(scope.navigateAdminPage("surfaceMap"), true);
+  assert.equal(scope.dailyGlancePairSelector, null, "Accepted navigation closes the paired editor.");
+  scope.report(false, false);
+  let prevented = false;
+  scope.warnBeforeUnload({ preventDefault: () => { prevented = true; } });
+  assert.equal(prevented, false, "An unmounted clean paired editor must not leave a stale unload warning.");
+}
+for (const ownsLoading of [true, false]) {
+  const { scope } = navigationFixture(true);
+  scope.dailyGlancePairSelector = null;
+  scope.isLoading = true;
+  scope.sourceOpenRequestRef.current = 3;
+  scope.dailyGlanceLoadingRequestRef.current = ownsLoading ? 3 : 2;
+  assert.equal(scope.navigateAdminPage("surfaceMap"), true);
+  assert.equal(scope.isLoading, !ownsLoading, "Leaving a Daily source load releases only its own loading state.");
+  if (ownsLoading) assert.equal(scope.dailyGlanceLoadingRequestRef.current, null);
+}
+console.log("Admin Daily At-a-Glance paired editor and parent navigation checks passed.");

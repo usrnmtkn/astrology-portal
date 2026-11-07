@@ -432,3 +432,37 @@ explicit readiness check. The final local unfiltered API attempt again stops
 only at the same three unavailable private ingress-reference fixtures; the
 complete CI API suite is green at the source-identical `04c10e685` revision.
 The final pushed head must pass the full unfiltered CI suite again.
+
+## Final integration preparation — runtime acceptance pending
+
+The source-only review integrates main `7fb2c20d3c10ee1bf8e9cd2fd78b0c4af6bb9571`
+and provisional Daily `949b56fa998b81a5b24568b4222f8fc7a5ab0985` with the wheel
+changes. Both editors keep their draft/discard protections and independent
+request ownership. The Daily actual-function fixture supplies the wheel session
+and request counter and checks both cancelled navigation and accepted discard.
+Eight additional browser cases cover late completed Daily/wheel reads and dirty
+or saving Daily navigation to Tooltips. All earlier assertions remain in place.
+
+The owner-approved desktop transit adjustment extends the existing paired-label
+screen-size calculation to wide charts. It uses the existing 28px chart glyph
+role on desktop, keeps mobile glyphs at 22px and degree text at 13px, and changes
+no radii, viewBox, coordinates, CSS or design tokens. Its product source matches
+the reviewed patch hash `5b6fa8f88fccb287359f4e24a12b4ea2a34bb961e28133db86e29ce47e3ab6fe`.
+The shared containment helper retains the previous complete-label, Rx, padding,
+overlap, typography and natal-geometry checks and now checks every one of the
+fourteen rendered degrees and glyphs at its screen size. Resizing and crowded
+rotations include 1280px and 1920px. Ten actual-app cases visit Natal before
+returning to Transits and exercising fullscreen at 320/390/1280/1440/1920px in
+both themes. Chromium and WebKit are required for these pending cases.
+
+These preparation changes have not run. The old hosted/local passes above do
+not qualify this integrated source. The separately recorded human approval
+covers this release's full unfiltered API/content checks, including final
+integration/rebase, using the reviewed memory-only boundary. The final clean
+source and its own locked dependencies must be pinned before execution. Web and
+Admin measurements must share the exact frozen baseline, Node/zlib, knowledge
+and public-input profile, with each artifact built once. Historical budget
+rationales remain intact; provisional allowances are not added together. Final
+local gates, exact-head hosted checks, normal main deployment and rendered live
+app/editor verification remain required. No content publication follows from
+this preparation or from a test pass.

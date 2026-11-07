@@ -1,8 +1,9 @@
+import { useLayoutEffect, useRef } from "react";
 import { FormattedText } from "../FormattedProse";
 import { AspectBadge } from "./AspectBadge";
 import { planetSignDignity, type EssentialDignity } from "../../services/planetSignDignity.mjs";
 import { CardReadMore } from "../CardReadMore";
-import { LoadingStatus, SkeletonBar } from "../CardSkeleton";
+import { SkeletonBar } from "../CardSkeleton";
 import type { PlanetPosition } from "../../types";
 import { SKY_BODY_ORDER, normalizeSkyBodyName } from "../../astrologyConfig";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
@@ -523,6 +524,39 @@ export function PlacementRowSkeleton({ interactive = true }: { interactive?: boo
     : <article className={className} aria-hidden="true">{content}</article>;
 }
 
+function SkyPlacementDescription({ description, interactive, loading }: { description?: string | null; interactive: boolean; loading: boolean }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const geometry = useRef<{ width: number; height: number } | null>(null);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    // Retain geometry only. A withdrawn publication must leave no old prose.
+    const saved = geometry.current;
+    if (loading && saved && element.getBoundingClientRect().width === saved.width) {
+      element.style.blockSize = `${saved.height}px`;
+    } else {
+      element.style.removeProperty("block-size");
+    }
+    const measure = () => {
+      const rect = element.getBoundingClientRect();
+      if (!loading) geometry.current = { width: rect.width, height: rect.height };
+      else if (geometry.current && rect.width !== geometry.current.width) {
+        geometry.current = null;
+        element.style.removeProperty("block-size");
+      }
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [description, loading]);
+  // Let the card own input in both states. Changing the pressed text's hit
+  // target during loading can suppress WebKit's click on mouse release.
+  return <span ref={ref} aria-hidden={loading || undefined} className={`planet-placement-row__description${loading ? " loading-lines card-skeleton" : ""}`} style={interactive ? { pointerEvents: "none" } : undefined}>
+    {loading ? <><SkeletonBar /><SkeletonBar /><SkeletonBar short /></> : <FormattedText text={description ?? ""} />}
+  </span>;
+}
+
 export function PlanetPlacementRow({
   ariaLabel,
   degree,
@@ -584,8 +618,6 @@ export function PlanetPlacementRow({
     );
   }
 
-  if (descriptionLoading) return <><LoadingStatus>Loading description</LoadingStatus><PlacementRowSkeleton interactive={Boolean(onClick || href)} /></>;
-
   const progressValue = Number.isFinite(progress) ? Math.max(0, Math.min(1, progress!)) : null;
   const rowClassName = [
     "sky-card",
@@ -614,8 +646,8 @@ export function PlanetPlacementRow({
           <span className="planet-placement-row__title">{title}</span>
           <span className="planet-placement-row__degree placement-row__degree">{degree}</span>
         </span>
-        {description ? (
-          <span className="planet-placement-row__description"><FormattedText text={description} /></span>
+        {description || descriptionLoading ? (
+          <SkyPlacementDescription description={description} interactive={Boolean(onClick || href)} loading={descriptionLoading} />
         ) : null}
       </span>
       {progressValue !== null ? <span className="placement-progress">

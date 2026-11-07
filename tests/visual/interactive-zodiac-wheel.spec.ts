@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { build } from "esbuild";
 import { readFileSync } from "node:fs";
+import { watchBrowserErrors } from "./qaRuntimeGuards";
 
 let script = "";
 test.beforeAll(async () => {
@@ -330,6 +331,167 @@ test('Studio wheel tooltip source loading and read failure preserve saved wordin
     await guard.finishStaticFonts();expect(guard.unhandledExternal).toEqual([]);
   } finally {release();store.close();}
 });
+
+for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) {
+  for (const scenario of ['late Daily read', 'late wheel read', 'dirty Daily navigation', 'busy Daily navigation'] as const) {
+    test(`wheel and Daily editors retain independent navigation and loading ownership: ${scenario} ${width} ${theme}`, async ({ page, context }, info) => {
+      test.setTimeout(90_000);
+      const { studioApiStore } = await import('../helpers/studio-api-store');
+      const { routeStudioInventoryApi } = await import('../helpers/studio-inventory-route');
+      const { installSyntheticNetworkGuard } = await import('../helpers/synthetic-network-guard');
+      const { wheelTooltipSourceDraft } = await import('../../apps/admin/src/wheelTooltipSources');
+      const network = await installSyntheticNetworkGuard(context, new URL(info.project.use.baseURL as string).origin);
+      const assertNoErrors = watchBrowserErrors(page);
+      const now = '2026-11-06T12:00:00.000Z';
+      const dailyRows = ['headline', 'body'].map((kind, index) => {
+        const key = `fallback-hook/daily-${kind}/soft/mars`;
+        const you = `Synthetic Daily ${kind}. Complete You ending.`;
+        const they = `Synthetic Friend ${kind}. Complete Friend ending.`;
+        return {
+          id: `32000000-0000-4000-8000-00000000000${index + 1}`, content_key: key,
+          surface: 'you', mode: 'feed', status: 'DRAFT', event_type: 'fallback-hook', target_date: null,
+          headline: key, summary: 'Synthetic Daily navigation fixture.', body: you,
+          sections: { packageRecord: { content_role: 'fallback_hook', contentKey: key, review_status: 'approved', body_you: you, body_they: they } },
+          block_type: 'fallback_hook', lane: 'reference', review_state: null,
+          facts: { fallbackArchitectureV3: true, review_status: 'approved' }, knowledge_ids: [],
+          source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', review_status: 'approved' },
+          reviewer_notes: null, prompt_version: 'qa-daily-navigation', provider: 'fallback-architecture-v3', model: null,
+          reviewed_at: now, published_at: null, updated_at: now, created_at: now
+        };
+      });
+      const store = await studioApiStore(dailyRows, { uuidIds: true, publicationDb: true });
+      const deferred = () => { let release!: () => void; const promise = new Promise<void>(resolve => { release = resolve; }); return { promise, release }; };
+      const dailyGate = deferred(), wheelGate = deferred(), prefetchGate = deferred(), saveGate = deferred();
+      const late = scenario === 'late Daily read' || scenario === 'late wheel read';
+      let dailyReads = 0, wheelReads = 0, saves = 0;
+      const completed: Array<{ key: string; status: number; body: string }> = [];
+      try {
+        const { id: _id, ...starter } = wheelTooltipSourceDraft('cms/wheel-tooltip/ruler/title');
+        const wheelBody = 'Synthetic wheel opening. ' + starter.body + ' Complete wheel ending.';
+        const created = await store.call({ method: 'POST', body: { ...starter, body: wheelBody, eventType: 'cms-surface-override' } });
+        expect(created.status).toBe(200);
+        const original = await store.call({ method: 'rows' });
+        await page.route('**/rest/v1/**', route => route.fulfill({ json: [] }));
+        await routeStudioInventoryApi(page, { actualDocumentRoute: true, call: async message => {
+          const url = new URL(message.url ?? '/', 'http://fixture.test');
+          const keys = url.searchParams.getAll('contentKeys');
+          if (late && message.method === 'GET' && !url.searchParams.has('id') && dailyRows.every(row => keys.includes(row.content_key))) await prefetchGate.promise;
+          if (late && message.method === 'GET' && dailyRows.some(row => row.id === url.searchParams.get('id')) && dailyReads < 2) {
+            dailyReads++; await dailyGate.promise;
+          }
+          if (late && message.method === 'GET' && url.searchParams.get('contentKey') === starter.contentKey && wheelReads < 1) {
+            wheelReads++; await wheelGate.promise;
+          }
+          if (scenario === 'busy Daily navigation' && message.method === 'PATCH' && (message.body as { id?: string })?.id === dailyRows[0].id) {
+            saves++; await saveGate.promise;
+          }
+          return store.call(message);
+        } });
+        await page.addInitScript(theme => {
+          localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+          localStorage.setItem('tldrastro:studio-theme', theme);
+        }, theme);
+        await page.setViewportSize({ width, height: 1000 });
+        const dailyHash = '#fallback-hooks?section=daily';
+        const wheelHash = '#wheel-tooltips';
+        const navigate = (hash: string) => page.evaluate(value => { window.location.hash = value; }, hash);
+        const dailyStudio = page.getByRole('region', { name: 'Daily At-a-Glance editor', exact: true });
+        const dailyOpen = dailyStudio.getByRole('button', { name: 'Edit write-up', exact: true });
+        const wheelOpen = page.getByRole('button', { name: 'Edit tooltip wording', exact: true });
+        const dailyEditor = page.getByRole('dialog', { name: 'Daily At-a-Glance paired editor', exact: true });
+        const wheelEditor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+        const finishRead = async (request: import('@playwright/test').Request, expected: Array<{ content_key: string; body: string }>) => {
+          const [response] = await Promise.all([page.waitForResponse(response => response.request() === request), page.waitForEvent('requestfinished', finished => finished === request)]);
+          expect(response.status()).toBe(200); expect(await response.finished()).toBeNull(); expect(request.failure()).toBeNull();
+          const payload = await response.json(); expect(payload.ok).toBe(true); expect(payload.rows).toHaveLength(expected.length);
+          for (const row of expected) {
+            expect(payload.rows.find((entry: { content_key: string }) => entry.content_key === row.content_key)?.body).toBe(row.body);
+            completed.push({ key: row.content_key, status: response.status(), body: row.body });
+          }
+        };
+        const waitDaily = () => dailyRows.map(row => page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).searchParams.get('id') === row.id));
+        const waitWheel = () => page.waitForRequest(request => request.method() === 'GET' && new URL(request.url()).searchParams.get('contentKey') === starter.contentKey);
+        const prefetch = late ? page.waitForRequest(request => {
+          const url = new URL(request.url()), keys = url.searchParams.getAll('contentKeys');
+          return request.method() === 'GET' && !url.searchParams.has('id') && dailyRows.every(row => keys.includes(row.content_key));
+        }) : null;
+        if (late) {
+          const wheelFirst = scenario === 'late wheel read';
+          await page.goto('/admin/content' + (wheelFirst ? wheelHash : dailyHash));
+          let wheelRequest: import('@playwright/test').Request;
+          let dailyRequests: import('@playwright/test').Request[];
+          if (wheelFirst) {
+            const pendingWheel = waitWheel(); await wheelOpen.click();
+            wheelRequest = await pendingWheel; await expect.poll(() => wheelReads).toBe(1);
+            await navigate(dailyHash); await expect(dailyOpen).toBeEnabled();
+            const pendingDaily = waitDaily(); await dailyOpen.click();
+            dailyRequests = await Promise.all(pendingDaily); await expect.poll(() => dailyReads).toBe(2);
+          } else {
+            const pendingDaily = waitDaily(); await dailyOpen.click();
+            dailyRequests = await Promise.all(pendingDaily); await expect.poll(() => dailyReads).toBe(2);
+            await navigate(wheelHash); await expect(wheelOpen).toBeEnabled();
+            const pendingWheel = waitWheel(); await wheelOpen.click();
+            wheelRequest = await pendingWheel; await expect.poll(() => wheelReads).toBe(1);
+          }
+          const prefetchCompleted = finishRead(await prefetch!, dailyRows);
+          prefetchGate.release(); await prefetchCompleted;
+          const completeDaily = () => {
+            const reads = dailyRequests.map((request, index) => finishRead(request, [dailyRows[index]]));
+            dailyGate.release(); return Promise.all(reads);
+          };
+          const completeWheel = () => {
+            const read = finishRead(wheelRequest, [{ content_key: starter.contentKey, body: wheelBody }]);
+            wheelGate.release(); return read;
+          };
+          if (wheelFirst) {
+            await completeWheel();
+            await expect(wheelEditor).toHaveCount(0);
+            await expect(dailyEditor, 'A stale wheel source cannot replace the pending Daily selection').toHaveCount(0);
+            await completeDaily(); await expect(dailyEditor.getByLabel('Headline · You')).toHaveValue(dailyRows[0].body);
+            await expect(dailyEditor.getByLabel('Passage · You')).toHaveValue(dailyRows[1].body);
+            await expect(dailyEditor.getByLabel('Headline · Friend')).toHaveValue(dailyRows[0].sections.packageRecord.body_they);
+            await expect(dailyEditor.getByLabel('Passage · Friend')).toHaveValue(dailyRows[1].sections.packageRecord.body_they);
+          } else {
+            await completeDaily(); await expect(wheelOpen, 'An old Daily completion cannot release the newer wheel loading owner').toBeDisabled();
+            await expect(dailyEditor).toHaveCount(0);
+            await completeWheel(); await expect(wheelEditor.getByRole('textbox', { name: 'Tooltip wording', exact: true })).toHaveValue(wheelBody);
+          }
+          expect(completed).toHaveLength(5);
+          expect(await store.call({ method: 'rows' })).toEqual(original);
+        } else {
+          await page.goto('/admin/content' + dailyHash); await dailyOpen.click();
+          const writing = { 'Headline · You': 'Synthetic unsaved headline.', 'Passage · You': 'Synthetic unsaved passage. Complete ending.', 'Headline · Friend': 'Synthetic unsaved Friend headline.', 'Passage · Friend': 'Synthetic unsaved Friend passage. Complete ending.' };
+          for (const [label, value] of Object.entries(writing)) await dailyEditor.getByLabel(label).fill(value);
+          if (scenario === 'busy Daily navigation') {
+            await dailyEditor.getByRole('button', { name: 'Save draft', exact: true }).click(); await expect.poll(() => saves).toBe(1);
+            await navigate(wheelHash); await expect(page).toHaveURL(new RegExp(dailyHash.replace('?', '\\?') + '$'));
+            await expect(page.getByText('Finish the current editor operation before leaving this section.', { exact: true })).toBeVisible();
+            for (const [label, value] of Object.entries(writing)) await expect(dailyEditor.getByLabel(label)).toHaveValue(value);
+            saveGate.release(); await expect(dailyEditor).toContainText('No unsaved changes');
+          } else {
+            const confirmation = page.waitForEvent('dialog').then(async dialog => {
+              expect(dialog.message()).toContain('Discard the unsaved changes'); await dialog.dismiss();
+            });
+            await navigate(wheelHash); await confirmation;
+            await expect(page).toHaveURL(new RegExp(dailyHash.replace('?', '\\?') + '$'));
+            for (const [label, value] of Object.entries(writing)) await expect(dailyEditor.getByLabel(label)).toHaveValue(value);
+            expect(await store.call({ method: 'rows' })).toEqual(original);
+          }
+          await expect(page.getByRole('heading', { name: 'Zodiac Wheel tooltips', exact: true })).toHaveCount(0);
+        }
+        assertNoErrors();
+      } finally {
+        dailyGate.release(); wheelGate.release(); prefetchGate.release(); saveGate.release();
+        try { await page.waitForLoadState('networkidle', { timeout: 5000 }); await network.finishStaticFonts(); }
+        finally {
+          await page.close(); store.close();
+          await info.attach('completed-cross-editor-reads', { contentType: 'application/json', body: JSON.stringify(completed) });
+          expect(network.unhandledExternal).toEqual([]);
+        }
+      }
+    });
+  }
+}
 
 for (const [width,theme] of [[390,'light'],[1440,'dark']] as const) {
   test(`Studio variable wording changes the calculated ruler tooltip ${width} ${theme}`,async({page,context},info)=>{

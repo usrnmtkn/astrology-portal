@@ -6,6 +6,7 @@ import { readerResponse } from '../helpers/reader-response';
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { installSyntheticNetworkGuard } from "../helpers/synthetic-network-guard";
+import { expectTransitContainment } from "../helpers/transit-wheel-containment";
 import { expectPersonalizedPlacementPresentation } from "../helpers/sky-personalized-presentation";
 import { observeArticleTransitions, expectAnimatedArticleNavigation } from "./qaArticleTransitions";
 import { readFileSync } from "node:fs";
@@ -6716,6 +6717,58 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await friend.locator('[data-planet="Moon"] [role="button"]').click();
     await expect(friend.locator(".interactive-wheel-detail__heading")).toContainText("Moon");
     await expectNoHorizontalOverflow(page, "Interactive Friend chart");
+    await assertNoClientErrors();
+  });
+}
+
+for (const width of [320, 390, 1280, 1440, 1920]) for (const theme of ["light", "dark"] as const) {
+  wheelJourneyTest(`lazy natal styles preserve You and Friend transit containment and fullscreen ${width} ${theme}`, async ({ page }, info) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const assertNoClientErrors = await expectNoClientErrors(page);
+    await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
+    await routeWheelSavedCharts(page);
+    const geometry = (svg: Locator) => svg.locator('.wheel-surfaces circle, .wheel-sectors line, .sign-band-dividers line, .house-labels text, .planet-labels:not(.transit-planet-labels) .planet-label-group')
+      .evaluateAll(nodes => nodes.map(node => ['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'transform'].map(attribute => node.getAttribute(attribute))));
+    for (const owner of ["you", "friend"] as const) {
+      await page.waitForLoadState("networkidle");
+      await expectClientRouteLoads(page, owner === "you" ? "/#you?tab=chart" : "/#friends?tab=charts&chart=friend-nikki&view=natal");
+      if (owner === "you") await selectYouNatalTab(page);
+      else await selectFriendDetailTab(page, "Natal");
+      const natal = page.locator(owner === "you" ? '#wheel-natal .interactive-zodiac-wheel' : '[aria-label="Nikki natal chart wheel"] .interactive-zodiac-wheel');
+      await expect(natal.locator('.interactive-zodiac-wheel__svg')).toBeVisible();
+      await expect(natal.locator('.interactive-zodiac-wheel__svg')).toHaveAttribute('viewBox', '0 0 600 600');
+      const openNatal = page.getByRole('button', { name: 'Open full natal chart', exact: true });
+      await openNatal.click();
+      const fullscreen = page.getByRole('dialog', { name: 'Natal chart', exact: true });
+      await expect(fullscreen.locator('.interactive-zodiac-wheel__svg')).toBeVisible();
+      await fullscreen.getByRole('button', { name: 'Close full-screen chart', exact: true }).click();
+      await expect(openNatal).toBeFocused();
+      if (owner === "you") await page.getByRole('tab', { name: 'Transits', exact: true }).click();
+      else await selectFriendDetailTab(page, "Transits");
+      const transit = page.getByLabel(owner === "you" ? 'Transit chart wheel' : 'Nikki transit chart wheel', { exact: true }).locator('svg.sky-wheel');
+      await expect(transit.locator('.planet-marker-transit')).toHaveCount(14);
+      await page.evaluate(() => document.fonts.ready);
+      const originalNatal = await geometry(transit);
+      await expectTransitContainment(transit);
+      if (owner === "you") {
+        const openTransit = page.getByRole('button', { name: 'Open full transit chart', exact: true });
+        await openTransit.click();
+        const expanded = page.getByRole('dialog', { name: 'Transit chart', exact: true });
+        await expectTransitContainment(expanded.locator('svg.sky-wheel'));
+        await expanded.getByRole('button', { name: 'Close full-screen chart', exact: true }).click();
+        await expect(openTransit).toBeFocused();
+        await expectTransitContainment(transit);
+      }
+      expect(await geometry(transit), 'Lazy natal styles and fullscreen retain the legacy inner natal geometry').toEqual(originalNatal);
+      const natalGlyphSize = await transit.evaluate(root => {
+        const matrix = (root as SVGSVGElement).getScreenCTM()!;
+        return root.querySelector('.planet-labels:not(.transit-planet-labels) .wheel-placement__glyph')!.getBoundingClientRect().width / Math.hypot(matrix.a, matrix.b);
+      });
+      expect(natalGlyphSize).toBeCloseTo(24, 2);
+      await expectNoHorizontalOverflow(page, `${owner} transit after lazy natal ${width} ${theme}`);
+      await transit.screenshot({ path: info.outputPath(`after-natal-${owner}-transits-${width}-${theme}.png`) });
+    }
     await assertNoClientErrors();
   });
 }

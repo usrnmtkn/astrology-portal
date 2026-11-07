@@ -170,6 +170,7 @@ type DailyGlancePairEditorProps = {
   context: DailyGlanceContext | null;
   isSaving: boolean;
   onClose: () => void;
+  onDirty: (dirty: boolean, busy: boolean) => void;
   onSave: (pair: DailyGlancePair, edits: DailyGlancePairEdits) => Promise<DailyGlancePair>;
   onPublish: (pair: DailyGlancePair, edits: DailyGlancePairEdits) => Promise<DailyGlancePair>;
   publicationPending: boolean;
@@ -238,7 +239,7 @@ export async function saveDailyGlancePair(
   }
 }
 
-export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, onPublish, pair, publicationPending, onCheckPublication }: DailyGlancePairEditorProps) {
+export function DailyGlancePairEditor({ context, isSaving, onClose, onDirty, onSave, onPublish, pair, publicationPending, onCheckPublication }: DailyGlancePairEditorProps) {
   const matchingContext = context?.selector === pair.selector ? context : null;
   // Keep the opened versions for CAS checks. Background inventory refreshes
   // must not silently rebase local writing onto somebody else's newer edit.
@@ -259,6 +260,8 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, onPu
   const dirty = JSON.stringify(edits) !== JSON.stringify(initial);
   const busy = isSaving || submitting;
   const blocked = busy || publicationPending;
+  useEffect(() => onDirty(dirty, busy), [dirty, busy, onDirty]);
+  useEffect(() => () => onDirty(false, false), [onDirty]);
   const complete = Object.values(edits).every(value => value.trim());
   const submit = async (publish: boolean) => {
     if (blocked) return;
