@@ -1,4 +1,4 @@
-import { writeupHoroscopes, writeupHoroscopeMarkdown, type WriteupHoroscope } from '../../../../src/shared/skyWriteupHoroscopes';
+import { writeupHoroscopes, writeupHoroscopeMarkdown, type WriteupHoroscope } from '../../../../src/shared/skyWriteupHoroscopes.js';
 import { isSkyIngressEssay, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
 import { resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../../../src/shared/skyArticleVariableDraft.js';
 import { skyMoonDatedDayBounds } from '../../../../src/shared/skyMoonDatedScope.js';
