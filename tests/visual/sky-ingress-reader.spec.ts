@@ -129,7 +129,7 @@ for (const [width, delivery] of [[390, 'late'], [1440, 'completed']] as const) {
    await expect(article.locator('.article-duration').first()).toHaveText('Jun 29, 2026 - Jul 23, 2026');
    await expect(article).toContainText(fixture.extension.body.split('\n\n')[0]);
    await expect(article).toContainText(fixture.extension.body.split('\n\n')[1]);
-   await expect(article.getByRole('link', { name: 'Horoscopes', exact: true })).toHaveAttribute('href', `#horoscopes?at=${encodeURIComponent(fixture.start)}`);
+   await expect(article.getByRole('link', { name: 'Horoscopes', exact: true })).toHaveCount(0);
    const expectedDates = [...new Set(fixture.events.map(event => new Date(event.occursAt).toISOString()))].sort();
    await expect.poll(() => article.locator('.sky-placement-key-dates li').evaluateAll(items =>
     [...new Set(items.filter(item => /Mercury (conjunction|opposition|square|trine|sextile)/u.test(item.textContent ?? ''))

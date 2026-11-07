@@ -646,9 +646,6 @@ export function SkyDetailArticle({
               </div>
             ) : null}
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
-            {placementPage && <nav aria-label="Article links">
-              <a className="learn-jump__link" href={`#horoscopes${detail.articlePeriod?.startsAt || detail.placementContext?.referenceDate ? `?at=${encodeURIComponent(detail.articlePeriod?.startsAt ?? detail.placementContext!.referenceDate)}` : ''}`}>Horoscopes</a>
-            </nav>}
           </header>
 
           {hasReadableBody && !placementPage && !personalArticle ? <hr className="article-rule" /> : null}
