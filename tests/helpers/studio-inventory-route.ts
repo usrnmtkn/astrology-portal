@@ -7,11 +7,20 @@ import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-list
 // older path, so every list came back empty as soon as the Studio moved to the inventory endpoint.
 type StudioApiCall = (message: { method: string; body?: unknown; url?: string }) => Promise<any>;
 
+export function isBaselineRecoveryPreview(body: any): boolean {
+  const sources = body?.sources;
+  return !!body && Object.keys(body).sort().join(",") === "action,sources" && body.action === "preview"
+    && Array.isArray(sources) && sources.length >= 1 && sources.length <= 2
+    && sources.every((source: any) => source && Object.keys(source).sort().join(",") === "contentKey,expectedUpdatedAt,id"
+      && [source.id, source.contentKey, source.expectedUpdatedAt].every(value => typeof value === "string" && !!value));
+}
+
 export async function routeStudioInventoryApi(page: Pick<Page, "route">, options: {
   call: StudioApiCall;
   listRows?: (rows: any[]) => any[];
   onWrite?: (write: { body: any; result: any }) => void;
   actualDocumentRoute?: boolean;
+  actualBaselineRecovery?: boolean;
   // Answers a fixture's own endpoints, such as reader status. Return false to take the empty reply.
   answer?: (route: Parameters<Parameters<Page["route"]>[1]>[0], url: URL) => Promise<boolean>;
 }) {
@@ -34,6 +43,16 @@ export async function routeStudioInventoryApi(page: Pick<Page, "route">, options
       const rows = (options.listRows ? options.listRows(saved) : saved)
         .map((row: any) => studioListingRow(row, studioListingFacts(row)));
       return route.fulfill({ json: { ok: true, rows, nextCursor: null } });
+    }
+    // Most inventory fixtures have no installed baseline. Answer only the read-only
+    // capability preview; unexpected recovery writes must still fail the fixture.
+    // The recovery suite opts into its real API/SQL handler instead.
+    if (url.pathname === "/api/admin/content-baseline-recovery" && !options.actualBaselineRecovery) {
+      const body = request.method() === "POST" ? request.postDataJSON() : undefined;
+      if (!isBaselineRecoveryPreview(body)) {
+        throw new Error("Unexpected baseline recovery operation in inventory fixture");
+      }
+      return route.fulfill({ json: { ok: false, supported: false } });
     }
     if (options.answer && await options.answer(route, url)) return;
     if (url.pathname === "/api/admin/package-source") {

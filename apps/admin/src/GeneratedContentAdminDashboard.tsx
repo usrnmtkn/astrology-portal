@@ -24,6 +24,7 @@ import { MetricCard } from "./studio-ds/patterns";
 import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { containedDisclosure, metricGrid, surfaceSection } from "./studio-ds/recipes";
 import { StudioTabs, StudioButton, StudioIconButton, StudioInput, StudioTextarea } from "./StudioControls";
+import { ApprovedSourceRecovery, PendingApprovedSourceRecovery, type RecoveredSource } from "./ApprovedSourceRecovery";
 import type { CsvContentRow, CsvRecord } from './studioCsv';
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { getStudioPalette, getStudioTheme, saveStudioPalette, saveStudioTheme, studioShellAttributes } from "./studioTheme";
@@ -3304,7 +3305,9 @@ export function GeneratedContentAdminDashboard() {
   const dailyWritingDirtyRef = useRef(false);
   // Navigation needs clean (0), dirty (1), or busy (2); the child owns the writing.
   const dailyGlanceNavigationStateRef = useRef<0 | 1 | 2>(0);
+  const dailyGlanceDirtyRef = useRef(false);
   const trackDailyGlanceDraft = useCallback((dirty: boolean, busy: boolean) => {
+    dailyGlanceDirtyRef.current = dirty;
     dailyGlanceNavigationStateRef.current = busy ? 2 : dirty ? 1 : 0;
   }, []);
   const skyPlacementWorkspaceDirtyRef = useRef(false);
@@ -5751,6 +5754,26 @@ export function GeneratedContentAdminDashboard() {
     finally { setIsLoading(false); }
   }
 
+  function acceptApprovedSourceRecovery(recovered: RecoveredSource[]) {
+    for (const source of recovered) {
+      installContentPublications([source.publication]);
+      announceContentUpdate({contentKey: source.contentKey, published: true, updatedAt: source.publication.updated_at});
+    }
+    setRows(previous => previous.map(row => {
+      const restored = recovered.find(source => source.id === row.id);
+      return restored ? {...row, status: "ARCHIVED", updated_at: restored.updatedAt} : row;
+    }));
+    if (draft?.id && recovered.some(source => source.id === draft.id)
+      && [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(draft))) {
+      setSelectedRowId(null); setDraft(null);
+    }
+    if (!dailyGlanceDirtyRef.current && selectedDailyGlancePair
+      && [selectedDailyGlancePair.headlineRow.id, selectedDailyGlancePair.passageRow.id].every(id => recovered.some(source => source.id === id))) setDailyGlancePairSelector(null);
+    setMessage("Approved source restored for readers. Your saved writing remains in source history.");
+  }
+
+  const requestApprovedSourceRecovery = (body: unknown) => adminJsonRequest<any>("/api/admin/content-baseline-recovery", secret, {method: "POST", body: JSON.stringify(body)});
+
   async function publishOwnerDraft(activeDraft: AdminDraft) {
     if (pendingPublication) return;
     const saved = activeDraft.id ? { id: activeDraft.id, content_key: activeDraft.contentKey,
@@ -7543,6 +7566,8 @@ export function GeneratedContentAdminDashboard() {
           />
         )}
         {hasLoadFailure && renderLoadFailure()}
+        <PendingApprovedSourceRecovery disabled={isLoading || hasAccessIssue} request={requestApprovedSourceRecovery}
+          onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} onSettled={setMessage} />
         {pendingPublication && !draft && !selectedRow && (
           <div className="admin-inline-warning" role="status">
             <span>A publication is awaiting confirmation. Its saved revision is retained.</span>
@@ -9987,6 +10012,12 @@ export function GeneratedContentAdminDashboard() {
         <StudioButton type="button" onClick={() => setSelectedIds(new Set())} disabled={selectedIds.size === 0 || isLoading}>
           Clear
         </StudioButton>
+        {activePage === "content" && selectedSavedRows.length > 0 && selectedSavedRows.length <= 2
+          && selectedSavedRows.every(row => !row.target_date && row.updated_at) && !draft && !selectedRow && (
+          <ApprovedSourceRecovery sources={selectedSavedRows.map(row => ({id:row.id,contentKey:row.content_key,expectedUpdatedAt:row.updated_at!}))}
+            disabled={isLoading || Boolean(pendingPublication)} request={requestApprovedSourceRecovery}
+            onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} />
+        )}
         <StudioButton type="button" className="admin-danger-button" onClick={() => void deleteSelectedDrafts()} disabled={selectedSavedRows.length === 0 || isLoading}>
           <Trash2 size={15} aria-hidden="true" />
           Delete drafts
@@ -10476,6 +10507,9 @@ export function GeneratedContentAdminDashboard() {
             onPublish={(pair, edits) => saveDailyGlancePairEdits(pair, edits, true)}
             publicationPending={Boolean(pendingPublication)}
             onCheckPublication={checkPendingPublication}
+            recoveryControl={(pair, disabled) => <ApprovedSourceRecovery
+              sources={[pair.headlineRow, pair.passageRow].filter(row => !row.id.startsWith("package:") && row.updated_at).map(row => ({id:row.id,contentKey:row.content_key,expectedUpdatedAt:row.updated_at!}))}
+              disabled={disabled} request={requestApprovedSourceRecovery} onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} />}
           />
         </Suspense>
       );
@@ -13023,6 +13057,11 @@ export function GeneratedContentAdminDashboard() {
             <StudioButton type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
             </StudioButton>
+          )}
+          {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
+            <ApprovedSourceRecovery sources={[{id:currentDraft.id, contentKey:currentDraft.contentKey, expectedUpdatedAt:currentDraft.updatedAt!}]}
+              disabled={isLoading || draftHasUnsavedChanges || Boolean(pendingPublication) || publicationRefresh.state !== "idle"}
+              request={requestApprovedSourceRecovery} onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} />
           )}
           {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
             <StudioButton type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges || publicationRefresh.state !== "idle"}

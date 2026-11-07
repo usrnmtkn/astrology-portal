@@ -2,6 +2,7 @@ import { StudioButton, StudioInput, StudioTextarea } from "./StudioControls";
 import { containedDisclosure, surfaceSection } from "./studio-ds/recipes";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
 import { useEffect, useMemo, useState } from "react";
+import type {ReactNode} from "react";
 import { Save, X } from "lucide-react";
 
 import {
@@ -167,6 +168,7 @@ export function DailyGlanceStudio({
 }
 
 type DailyGlancePairEditorProps = {
+  recoveryControl?: (pair:DailyGlancePair, disabled:boolean)=>ReactNode;
   context: DailyGlanceContext | null;
   isSaving: boolean;
   onClose: () => void;
@@ -239,7 +241,7 @@ export async function saveDailyGlancePair(
   }
 }
 
-export function DailyGlancePairEditor({ context, isSaving, onClose, onDirty, onSave, onPublish, pair, publicationPending, onCheckPublication }: DailyGlancePairEditorProps) {
+export function DailyGlancePairEditor({ context, isSaving, onClose, onDirty, onSave, onPublish, pair, publicationPending, onCheckPublication, recoveryControl }: DailyGlancePairEditorProps) {
   const matchingContext = context?.selector === pair.selector ? context : null;
   // Keep the opened versions for CAS checks. Background inventory refreshes
   // must not silently rebase local writing onto somebody else's newer edit.
@@ -330,6 +332,7 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onDirty, onS
           </div>
         </div>
 
+        {recoveryControl?.(baselinePair,blocked||dirty)}
         <section className="admin-post-editor">
           {matchingContext && (
             <div className="admin-daily-glance-current-facts" aria-label="Current calculated context">
