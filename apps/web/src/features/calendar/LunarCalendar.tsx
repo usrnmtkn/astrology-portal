@@ -2793,8 +2793,18 @@ export function LunarCalendar({
     : null;
   const seasonDaysLeft = seasonDaysAway == null ? null : Math.max(0, seasonDaysAway);
   const openEventReading = (event: LunarCalendarEvent) => {
+    if (event.type === "aspect" && onOpenTransit) {
+      setReadingEvent(null);
+      setDaySlideoutOpen(false);
+      onOpenTransit(event);
+      return;
+    }
     setReadingEvent(event);
     setDaySlideoutOpen(false);
+  };
+  const openDayGroupEvent = (event: LunarCalendarEvent, dateKey: string) => {
+    handleSelectDate(dateKey);
+    if (event.type === "aspect" && onOpenTransit) openEventReading(event);
   };
   const openSeasonReading = () => {
     const seasonEvent = arcEvents.find((event) => (
@@ -3027,7 +3037,7 @@ export function LunarCalendar({
                   key={day.dateKey}
                   number={formatDayNumber(day, zone)}
                   numberClass={monthDiscClassName(phase, day.dateKey === currentDateKey, false, isExactQuarterMoonDay(day), day.dateKey === selectedDateKey, isEclipseDay(day))}
-                  onOpenEvent={() => handleSelectDate(day.dateKey)}
+                  onOpenEvent={(event) => openDayGroupEvent(event, day.dateKey)}
                   onSelectDay={() => handleSelectDate(day.dateKey)}
                   paragraphs={weeklyDayParagraphs?.get(day.dateKey) ?? assembledPassages.daily.get(day.dateKey)?.paragraphs ?? copy.paragraphs}
                   prompt={weeklyDayParagraphs?.has(day.dateKey) || assembledPassages.daily.has(day.dateKey) ? undefined : copy.prompt}
@@ -3287,7 +3297,7 @@ export function LunarCalendar({
                     key={day.dateKey}
                     number={formatDayNumber(day, zone)}
                     numberClass={monthDiscClassName(phase, day.dateKey === currentDateKey, false, isExactQuarterMoonDay(day), day.dateKey === selectedDateKey, isEclipseDay(day))}
-                    onOpenEvent={() => handleSelectDate(day.dateKey)}
+                    onOpenEvent={(event) => openDayGroupEvent(event, day.dateKey)}
                     onSelectDay={() => handleSelectDate(day.dateKey)}
                     paragraphs={assembledPassages.daily.get(day.dateKey)?.paragraphs ?? copy.paragraphs}
                     prompt={assembledPassages.daily.has(day.dateKey) ? undefined : copy.prompt}

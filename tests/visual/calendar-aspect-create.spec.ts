@@ -224,7 +224,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(card).toContainText('Complete synthetic final sentence.');
       await expect(card).not.toContainText(generic.body);
       await card.click();
-      const detail = page.getByRole('dialog', { name: 'Event detail' });
+      const detail = page.locator('.sky-detail-article');
       await expect(detail).toContainText('Complete synthetic opening.');
       await expect(detail).toContainText('Complete synthetic final sentence.');
       expect(errors).toEqual([]);

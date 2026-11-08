@@ -48,10 +48,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(calendarVersions).toContain("calendar-exact-aspects-v5");
     expect(await page.evaluate(() => Object.keys(localStorage).some(key => key.startsWith("tldr-lunar-calendar|v14|")))).toBe(true);
     await venus.click();
-    const detail = page.getByRole("dialog", { name: "Event detail", exact: true });
-    await expect(detail).toContainText("Moon opposes Venus Rx");
-    await expect(detail.locator(".calendar-reading__body")).not.toBeEmpty();
-    await detail.getByRole("button", { name: "Close", exact: true }).click();
+    const detail = page.locator('.sky-detail-article');
+    await expect(detail.locator('#sky-detail-title')).toHaveText(/Moon.*Opposition.*Venus/i);
+    await expect(detail.locator('.article-body-inner p').first()).not.toBeEmpty();
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
 
     await page.goto("/?date=2026-10-26#sky/lunation/2026-10-26/taurus");
     const verifyFullMoon = async () => {

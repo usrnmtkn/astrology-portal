@@ -78,17 +78,13 @@ for (const width of [390, 1440]) {
     await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'false', { timeout: 60_000 });
     const card = day.getByRole('button', { name: 'Mercury squares Mars', exact: true });
     await expect(card).toBeVisible();
-    await card.click();
-    const dialog = page.getByRole('dialog', { name: 'Event detail' });
-    await expect(dialog).toBeVisible();
-    const before = await dialog.innerText();
+    const before = await day.innerText();
     const beforeRequests = requests;
     await page.evaluate(() => {
       const panel = document.querySelector('[aria-label="Selected lunar day"]')!;
-      const dialog = document.querySelector('[role="dialog"]')!;
-      (window as any).__calendarStability = { panel, dialog, flashes: 0, scroll: window.scrollY };
+      (window as any).__calendarStability = { panel, flashes: 0, scroll: window.scrollY };
       new MutationObserver(() => {
-        if (!panel.isConnected || !dialog.isConnected || panel.querySelector('.card-skeleton, [aria-busy="true"]')) {
+        if (!panel.isConnected || panel.querySelector('.card-skeleton, [aria-busy="true"]')) {
           (window as any).__calendarStability.flashes++;
         }
       }).observe(document.querySelector('#root')!, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-busy'] });
@@ -102,14 +98,26 @@ for (const width of [390, 1440]) {
       await page.clock.fastForward(301_000);
       await page.evaluate(() => { window.dispatchEvent(new Event('focus')); document.dispatchEvent(new Event('visibilitychange')); });
       await page.clock.runFor(1000);
-      await expect(dialog).toHaveText(before, { useInnerText: true });
+      await expect(day).toHaveText(before, { useInnerText: true });
       const stability = await page.evaluate(() => {
         const state = (window as any).__calendarStability;
-        return { flashes: state.flashes, samePanel: state.panel.isConnected, sameDialog: state.dialog.isConnected, scroll: window.scrollY - state.scroll };
+        return { flashes: state.flashes, samePanel: state.panel.isConnected, scroll: window.scrollY - state.scroll };
       });
-      expect(stability).toEqual({ flashes: 0, samePanel: true, sameDialog: true, scroll: 0 });
+      expect(stability).toEqual({ flashes: 0, samePanel: true, scroll: 0 });
     }
-    await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+    await card.click();
+    const article = page.locator('.sky-detail-article');
+    await expect(article.locator('#sky-detail-title')).toBeVisible();
+    const fullReading = await article.innerText();
+    await page.evaluate(() => {
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+      window.dispatchEvent(new Event('focus'));
+    });
+    await page.clock.runFor(1000);
+    await expect(article).toHaveText(fullReading, { useInnerText: true });
+    await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+    await expect(day).toHaveAttribute('data-calendar-date', '2026-10-02');
     await page.getByRole('button', { name: 'Next day', exact: true }).click();
     await expect(day).toHaveAttribute('data-calendar-date', '2026-10-03');
     await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'false');

@@ -45,9 +45,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.goto(`/?date=${date}#calendar?view=day&date=${date}`);
     const card = page.locator('.calendar-day-events .calendar-stoic-card').filter({ hasText: /Moon sextiles Neptune/ });
     await expect(card).toContainText(original, { timeout: 60_000 });
-    await card.click();
-    const detail = page.getByRole('dialog', { name: 'Event detail' });
-    await expect(detail).toContainText(original);
     const refresh = async (minute: number) => {
       gate = new Promise<void>(resolve => { release = resolve; });
       held = 0;
@@ -59,15 +56,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect.poll(() => held).toBeGreaterThan(0);
       // The network is held: these checks cannot pass by waiting for a refetch.
       await expect(card).toContainText(body!, { timeout: 1500 });
-      await expect(detail).toContainText(body!, { timeout: 1500 });
     };
     try {
       await refresh(1);
       body = revised;
       release(); gate = null;
-      await expect(detail).toContainText(revised);
       await expect(card).toContainText(revised);
-      await detail.getByRole('button', { name: 'Close', exact: true }).click();
       gate = new Promise<void>(resolve => { release = resolve; });
       held = 0;
       await page.evaluate(() => { window.location.hash = 'sky'; });
@@ -76,20 +70,20 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(card).toContainText(revised);
       expect(held).toBe(0); // Returning to the same Calendar uses its loaded keys.
       release(); gate = null;
-      await card.click();
-      await expect(detail).toContainText(revised);
       await refresh(2);
       failed = true;
       release(); gate = null;
       await expect.poll(() => refreshFailures).toBeGreaterThan(0);
-      await expect(detail).toContainText(revised);
       await expect(card).toContainText(revised);
       failed = false;
       await refresh(3);
       body = null; // A successful empty response withdraws the cached source.
       release(); gate = null;
-      await expect(detail).not.toContainText(revised);
       await expect(card).not.toContainText(revised);
+      await card.click();
+      const detail = page.locator('.sky-detail-article');
+      await expect(detail.locator('#sky-detail-title')).toBeVisible();
+      await expect(detail).not.toContainText(revised);
       expect(errors).toEqual([]);
     } finally { release(); }
   });
