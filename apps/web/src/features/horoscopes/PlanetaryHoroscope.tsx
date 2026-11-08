@@ -6,14 +6,15 @@ import {FormattedProse} from '../../components/FormattedProse';
 import {PageLoading,PageLoadState} from '../../components/PageLoading';
 import {pointGlyph,zodiacAssetHref,zodiacSignIconFiles} from '../../components/charts/chartAssets';
 import {horoscopeSignLabel} from '../../content/horoscopeEditions.mjs';
-import {planetarySlug,planetaryHoroscopeBody,planetaryHoroscopeWindow,usePlanetaryHoroscopeSources} from './usePlanetaryHoroscopeSources';
+import {planetarySlug,planetaryHoroscopeReading,planetaryHoroscopeWindow,usePlanetaryHoroscopeSources} from './usePlanetaryHoroscopeSources';
 
 export default function PlanetaryHoroscope({position,generatedAt,sign,timeZone,previous,next,onBack,onPlanet}:{position:PlanetPosition;generatedAt:string;sign:string;timeZone:string;previous?:PlanetPosition;next?:PlanetPosition;onBack:()=>void;onPlanet:(position:PlanetPosition)=>void}) {
-  const {ready,error,refresh}=usePlanetaryHoroscopeSources(`article:${planetarySlug(position.planet)}/${planetarySlug(position.sign)}`);
+  const {ready,error,refresh,rows}=usePlanetaryHoroscopeSources(`article:${planetarySlug(position.planet)}/${planetarySlug(position.sign)}`);
   const holding=useMinimumLoading(!ready);
-  const body=ready?planetaryHoroscopeBody(position,sign):'';
+  const reading=ready?planetaryHoroscopeReading(position,sign,generatedAt,rows):null;
+  const body=reading?.body??'';
   const rx=isDisplayRetrograde(position);
-  const window=planetaryHoroscopeWindow(position,generatedAt);
+  const window=reading?reading.window:planetaryHoroscopeWindow(position,generatedAt);
   const dateFormat=new Intl.DateTimeFormat('en-US',{month:'long',day:'numeric',year:'numeric',timeZone});
   const dateLine=window?dateFormat.formatRange(window.start,window.end):null;
   const signName=horoscopeSignLabel(sign);

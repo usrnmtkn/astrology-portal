@@ -48,6 +48,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [busy, setBusy] = useState(false);
   const [horoscopeEditor, setHoroscopeEditor] = useState({ dirty: false, busy: false });
   const [writeupHoroscopesOpen, setWriteupHoroscopesOpen] = useState(false);
+  const [writeupAiDirty,setWriteupAiDirty]=useState(false);
   const [facts, setFacts] = useState<PlacementVisitFacts | null>(null);
   const [factsReferenceDate, setFactsReferenceDate] = useState('');
   const [generationOpen, setGenerationOpen] = useState(false);
@@ -63,7 +64,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [statusError, setStatusError] = useState('');
   const mounted = useRef(true);
   const passageDirty = JSON.stringify(fields) !== JSON.stringify(baseline);
-  const dirty = passageDirty || generationDirty || horoscopeEditor.dirty;
+  const dirty = passageDirty || generationDirty || horoscopeEditor.dirty || writeupAiDirty;
   useEffect(() => { latest.current.onDirty(dirty, busy || horoscopeEditor.busy); }, [dirty, busy, horoscopeEditor.busy]);
   useEffect(() => {
     if (!editorOpenRequest) return;
@@ -243,7 +244,7 @@ export default function SkyPlacementWorkspace(props: Props) {
     <SkyArticleHoroscopes window={period && articleWindow ? articleWindow : undefined} buttonLabel={period ? 'Related horoscope editions' : undefined} placement={selection} rows={props.rows} credential={props.credential}
       request={props.request} onLoadRow={props.onLoadRow} onEditRow={props.onEditRow} onEditorState={setHoroscopeEditor} />
   </Suspense>;
-  const canSave = !busy && !generationOpen && Boolean(fields.headline.trim() && fields.summary.trim() && fields.body.trim()) && (editing === null || passageDirty);
+  const canSave = !busy && !generationOpen && !writeupAiDirty && Boolean(fields.headline.trim() && fields.summary.trim() && fields.body.trim()) && (editing === null || passageDirty);
   const publicationControls = editing ? <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}
     publicationBlocked={writeupHoroscopesReady(fields.writeupHoroscopes) ? undefined : 'Complete all 12 sign readings before publishing these write-up horoscopes. You can keep saving the draft.'}
     onSaved={saved => { setEditing(saved); setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]); }} />
@@ -332,6 +333,7 @@ export default function SkyPlacementWorkspace(props: Props) {
               <Suspense fallback={<p role="status">Loading write-up horoscopes…</p>}>
                 <SkyWriteupHoroscopesEditor passages={fields.writeupHoroscopes} period={facts?.slotValues.when ?? openedEdition?.slotValues.when ?? ''}
                   open={writeupHoroscopesOpen} onOpenChange={setWriteupHoroscopesOpen} publicationControls={publicationControls}
+                  row={editing} request={latest.current.request} onBusyChange={setBusy} aiDirty={writeupAiDirty} onAiDirtyChange={setWriteupAiDirty}
                   busy={busy} canSave={canSave} articleReady={Boolean(fields.headline.trim() && fields.body.trim() && fields.summary.trim())} message={message} error={error} onSave={() => void save()}
                   onChange={writeupHoroscopes => setFields(current => ({ ...current, writeupHoroscopes }))} />
               </Suspense>

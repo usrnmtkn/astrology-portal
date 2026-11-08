@@ -527,7 +527,7 @@ function siblingFields(contact: PersonalTransitContact) {
     .filter((row) => isDynamicTransitNatalExactKey(row.contentKey) && (row.you.trim() || row.friend.trim()));
 }
 
-async function personalTransitWritingMemory(contact: PersonalTransitContact) {
+export async function personalTransitWritingMemory(contact: PersonalTransitContact) {
   const key = contact.contentKey;
   const feedback = studioFeedbackEnabled()
     ? selectStudioFeedback(await activeStudioFeedback(), key)

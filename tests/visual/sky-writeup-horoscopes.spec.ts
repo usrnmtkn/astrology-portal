@@ -5,6 +5,35 @@ import { workspaceVisitFacts } from '../helpers/sky-placement-workspace-fixtures
 import { placementVisitDraft } from '../../apps/admin/src/skyPlacementWorkspaceModel';
 import { WRITEUP_HOROSCOPE_SIGNS } from '../../src/shared/skyWriteupHoroscopes';
 
+for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`AI sign draft requires review before saving and publishing ${width} ${theme}`,async({page})=>{
+ const readings=WRITEUP_HOROSCOPE_SIGNS.map(sign=>({sign,body:`Synthetic saved ${sign} reading.`}));
+ const draft=await placementVisitDraft(workspaceVisitFacts('mercury','scorpio','2026-10-24','2026-11-13'),{headline:'Synthetic Mercury article',summary:'Synthetic summary.',body:'Synthetic complete article.',writeupHoroscopes:readings});
+ const initial={id:'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',content_key:draft.contentKey,status:'DRAFT',surface:'sky',mode:'article',lane:'reference',review_state:'owner-review-required',event_type:draft.eventType,block_type:'sky_article',headline:draft.headline,summary:draft.summary,body:draft.body,sections:draft.sections,source_snapshot:draft.sourceSnapshot,updated_at:'2026-10-30T12:00:00Z'};
+ const store=await studioApiStore([initial]);let calls=0,previews=0;
+ await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme)},theme);
+ await routeStudioInventoryApi(page,{call:store.call,actualDocumentRoute:true});
+ const generated='Synthetic generated opening.\n\nSynthetic generated complete final sentence.';
+ await page.route('**/api/admin/sky-article-template-slots',async route=>{
+  const body=route.request().postDataJSON();expect(body.writeupHoroscope.sign).toBe('gemini');expect(body.writeupHoroscope.currentText).toBe(readings[2].body);
+  if(body.preview){previews++;const text='Synthetic complete writing plan.';return route.fulfill({json:{ok:true,writingExport:{schema:'studio-writing-export/v1',title:'Synthetic plan',text,requestCount:1,introLength:0,units:[{label:'Gemini',start:0,end:text.length}]}}});}
+  calls++;return route.fulfill({json:{ok:true,body:generated,source:{id:initial.id,updatedAt:initial.updated_at,sign:'gemini',compiledHash:draft.sections.skyArticleEdition.compiledHash,startsAt:draft.sections.skyArticleEdition.transitStartInstant,endsAt:draft.sections.skyArticleEdition.transitEndInstant},generation:{provider:'synthetic',model:'synthetic-model',responseId:'synthetic-response'},saved:false,published:false}});
+ });
+ try{
+  await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY==='1'?'/admin/content':'/'}#sky-writeups?planet=mercury&sign=scorpio`);
+  const workspace=page.getByRole('region',{name:'Mercury in Scorpio workspace',exact:true});await workspace.getByRole('button',{name:'Edit',exact:true}).click();await workspace.getByRole('button',{name:'Horoscopes',exact:true}).click();
+  const panel=page.getByRole('dialog',{name:'Horoscopes for this write-up',exact:true});await panel.getByRole('group',{name:'Write-up horoscope signs'}).getByRole('button',{name:'Gemini ✓',exact:true}).click();await panel.getByRole('button',{name:'Write with AI',exact:true}).click();
+  await panel.getByLabel('Horoscope draft direction').fill('Synthetic owner direction.');
+  await panel.getByText('Complete writing plan · copy or download',{exact:true}).click();await panel.getByRole('button',{name:'Load complete writing plan',exact:true}).click();await expect(panel.getByLabel('Complete writing plan')).toHaveValue('Synthetic complete writing plan.');expect(calls).toBe(0);expect(previews).toBe(1);
+  await panel.getByRole('button',{name:'Generate draft',exact:true}).click();await expect(panel.getByLabel('Generated horoscope draft')).toHaveValue(generated);
+  await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(readings[2].body);await expect(panel.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
+  page.once('dialog',dialog=>dialog.dismiss());await panel.getByRole('button',{name:'Back to write-up',exact:true}).click();await expect(panel.getByLabel('Generated horoscope draft')).toHaveValue(generated);
+  await panel.getByRole('button',{name:'Use this draft',exact:true}).click();await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(generated);await panel.getByRole('button',{name:'Save draft',exact:true}).click();await expect(panel.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
+  let saved=(await store.call({method:'rows'})).find((r:any)=>r.id===initial.id);expect(saved.status).toBe('DRAFT');expect(saved.body).toBe(initial.body);expect(saved.sections.skyArticleEdition.writeupHoroscopes).toEqual(readings.map(p=>p.sign==='gemini'?{...p,body:generated}:p));
+  await panel.getByRole('button',{name:'Approve & publish',exact:true}).click();await expect(panel.getByText('Article published with the selected publication date.',{exact:true})).toBeVisible();
+  saved=(await store.call({method:'rows'})).find((r:any)=>r.id===initial.id);expect(saved.status).toBe('LIVE');expect(calls).toBe(1);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ }finally{store.close();}
+});
+
 for (const width of [1440, 390]) for (const theme of ['light', 'dark']) {
   test(`write-up sign horoscopes save and reopen ${width} ${theme}`, async ({ page }) => {
     const facts = workspaceVisitFacts('mercury', 'scorpio', '2026-10-24', '2026-11-13');

@@ -28,6 +28,39 @@ async function seed(page:Page,theme:string){
  },{location,theme});
 }
 
+for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`Published write-up readings appear in planetary cards and detail ${width} ${theme}`,async({page})=>{
+ test.setTimeout(120000);await page.setViewportSize({width,height:1000});await seed(page,theme);
+ const {placementVisitDraft}=await import('../../apps/admin/src/skyPlacementWorkspaceModel');
+ const {workspaceVisitFacts}=await import('../helpers/sky-placement-workspace-fixtures');
+ const {WRITEUP_HOROSCOPE_SIGNS}=await import('../../src/shared/skyWriteupHoroscopes');
+ const readings=WRITEUP_HOROSCOPE_SIGNS.map(sign=>({sign,body:`Synthetic ${sign} published opening.\n\nSynthetic ${sign} published final sentence.`}));
+ const draft=await placementVisitDraft(workspaceVisitFacts('mercury','scorpio','2026-10-24','2026-11-13'),{headline:'Synthetic Mercury retrograde article',summary:'Synthetic summary.',body:'Synthetic article opening. Synthetic article ending.',writeupHoroscopes:readings});
+ const edition=draft.sections.skyArticleEdition;const updated='2026-10-24T12:00:00Z';
+ const row={id:'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',content_key:draft.contentKey,status:'LIVE',lane:'serving',review_state:null,surface:'sky',mode:'article',event_type:'sky-article-edition',block_type:'sky_article',headline:edition.headline,summary:edition.tldr,body:edition.body,sections:draft.sections,updated_at:updated,
+  source_snapshot:{ownerApproval:{approved:true,action:'approve-sky-article-edition',contentKey:edition.contentKey,templateKey:edition.templateKey,templateHash:edition.templateHash,fixedProseHash:edition.fixedProseHash,compiledHash:edition.compiledHash}}};
+ let retired=false,unavailable=false;
+ const publications=()=>[{content_key:row.content_key,state:retired?'retired':'live',revision:retired?2:1,row_id:row.id,row_updated_at:updated,updated_at:updated}];
+ await page.route('**/api/content-publications*',route=>route.fulfill({json:{schema:'tldr-publications/v1',publications:publications()}}));
+ await page.route('**/rest/v1/**',route=>route.fulfill({json:new URL(route.request().url()).pathname.endsWith('/content_publications')?publications():[]}));
+ await page.route('**/api/sky-reader?**',route=>route.fulfill({status:404,json:{error:'Isolated fixture ledger.'}}));
+ await page.route('**/api/content-reader',route=>unavailable?route.fulfill({status:503,json:{error:'Synthetic outage'}}):route.fulfill({json:readerResponse(retired?[]:[row],publications())}));
+ await page.goto(list);
+ const card=page.getByRole('link',{name:'Mercury Rx in Scorpio · Read horoscope',exact:true});
+ await expect(card.locator('.planet-placement-row__description')).toHaveText(readings[2].body,{timeout:60000});
+ await expect(card.locator('.planet-placement-row__timing')).toContainText(/Oct 24.*Nov 13, 2026/u);
+ await card.click();const article=page.getByRole('article',{name:'Mercury in Scorpio horoscope',exact:true});
+ await expect(article.locator('.horoscope-prose')).toHaveText(readings[2].body,{timeout:60000});
+ await expect(article.locator('.horoscope-date')).toHaveText(/October 24.*November 13, 2026/u);
+ await page.getByRole('button',{name:'Aries & Aries Rising',exact:true}).click();await expect(article.locator('.horoscope-prose')).toHaveText(readings[0].body);
+ await page.reload();await expect(article.locator('.horoscope-prose')).toHaveText(readings[0].body,{timeout:60000});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.screenshot({path:test.info().outputPath('published-planetary-reading.png')});
+ unavailable=true;await page.reload();await expect(page.getByRole('alert')).toContainText('could not load',{timeout:60000});
+ await expect(article.locator('.horoscope-prose')).toHaveCount(0);
+ unavailable=false;await page.getByRole('button',{name:'Try again',exact:true}).click();await expect(article.locator('.horoscope-prose')).toHaveText(readings[0].body,{timeout:60000});
+ retired=true;await page.reload();await expect(article.locator('.horoscope-prose')).toHaveText(houses.hookRows.find(r=>r.contentKey==='house-horoscope-core/mercury/scorpio/house-8')!.body_you,{timeout:60000});
+});
+
 for(const entry of ['list','detail'])test(`Planetary ${entry} loads the exact publication, retries failures and respects retirement`,async({page})=>{
  test.setTimeout(120_000);await seed(page,'light');
  const base=houses.hookRows.find(row=>row.contentKey==='house-horoscope-core/sun/scorpio/house-6')!;
