@@ -1,4 +1,5 @@
 import { articleTemplateWithHoroscopes } from "../../apps/web/src/content/skyArticleHoroscopes.mjs";
+import {writeSkyWriteupHoroscope} from '../_lib/sky-writeup-horoscope-writing.js';
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { AdminHttpError, adminErrorStatus, adminFetchJson, adminStorageRows, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { requireContentAdmin } from "../_lib/admin-auth.js";
@@ -36,6 +37,7 @@ type TemplateRow = {
 };
 
 type RequestBody = {
+  writeupHoroscope?: unknown;
   preview?: boolean;
   expectedModel?: string;
   includeRetrogradeHistory?: boolean;
@@ -152,6 +154,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     const body = await readAdminJsonBody<RequestBody>(req, 256_000);
     if(body.preview!==undefined&&typeof body.preview!=='boolean')throw new AdminHttpError(400,'preview must be a boolean.');
+    if(body.writeupHoroscope!==undefined)return sendAdminJson(res,200,await writeSkyWriteupHoroscope(body));
     if (body.format === undefined) throw new AdminHttpError(400, "Choose an explicit ingress or saved-guide format before generation.");
     if (body.expectedModel !== undefined) {
       if (typeof body.expectedModel !== 'string' || !body.expectedModel.trim()

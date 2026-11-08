@@ -5474,9 +5474,13 @@ export function GeneratedContentAdminDashboard() {
         return null;
       }
     }
-    setIsLoading(true);
     const draftForSave = { ...astro101Draft, status };
     const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
+    if (status === "LIVE" && !isPackageDraft && draftForSave.contentKey.startsWith("sky-lilith/article/")) {
+      await publishOwnerDraft(draftForSave);
+      return null;
+    }
+    setIsLoading(true);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === draftForSave.contentKey;
     const persistedRow = draftForSave.id ? rows.find((row) => row.id === draftForSave.id) : null;
     const expectedUpdatedAt = draftForSave.updatedAt ?? persistedRow?.updated_at ?? undefined;
