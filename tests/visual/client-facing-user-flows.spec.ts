@@ -5511,7 +5511,7 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   await expect(page.locator(".article-related-aspect-row").getByRole("heading").filter({ hasText: /Mercury|Jupiter/ })).toHaveCount(0);
   const datedLink = page.getByRole("link", { name: /^Read more about Lilith(?: Rx)? Square Sun(?: Rx)?$/ });
   const datedHref = await datedLink.getAttribute("href");
-  expect(datedHref).toContain("/at/");
+  expect(datedHref).toBe("#sky/aspect/sun/square/lilith/on/2026-09-18T14%3A03%3A00.000Z");
   // Preserve complete-copy coverage for sampled links outside that snapshot.
   // Direct Swiss calculations put both Chiron trine Lilith and Neptune square
   // Lilith in this snapshot; neither is active on the original September 8 date.

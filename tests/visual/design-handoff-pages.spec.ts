@@ -49,7 +49,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         return Math.abs(glyph.x + glyph.width / 2 - circle.x - circle.width / 2);
       });
       expect(align).toBeLessThan(1);
-      await expect(row).toHaveCSS('padding', width < 800 ? '16px 0px' : '24px 0px');
+      await expect(row).toHaveCSS('padding', width < 800 ? '16px 0px' : '16px 12px');
       await expect(row.locator('.aspect-row-timing').first()).toHaveCSS('font-family', /system-ui/);
       await expect(row.locator('.aspect-row-timing').first()).toHaveCSS('font-size', '14px');
       const narrative = row.locator('p').first();
