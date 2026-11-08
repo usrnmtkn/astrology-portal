@@ -27,6 +27,7 @@ const handlers = {
  '/api/admin/generated-content-inventory': (await import('../../api/admin/generated-content-inventory.ts')).default,
  '/api/admin/content-live-status': (await import('../../api/admin/content-live-status.ts')).default,
  '/api/admin/content-history': (await import('../../api/admin/content-history.ts')).default,
+ '/api/admin/package-source': (await import('../../api/admin/package-source.ts')).default,
  '/api/admin/content-publication': (await import('../../api/admin/content-publication.ts')).default,
  '/api/content-publications': (await import('../../api/content-publications.ts')).default,
  '/api/content-reader': (await import('../../api/content-reader.ts')).default

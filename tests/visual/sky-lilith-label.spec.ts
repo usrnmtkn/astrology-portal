@@ -1,3 +1,6 @@
+import {studioApiStore} from "../helpers/studio-api-store";
+import {routeStudioInventoryApi} from "../helpers/studio-inventory-route";
+import {studioOwnerApproval} from "../../api/_lib/studio-owner-publication";
 import { expect, test } from '@playwright/test';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { execFileSync } from 'node:child_process';
@@ -147,3 +150,56 @@ test('original fast Lilith reader navigation preserves labels without pageerrors
  const article=page.getByRole('article',{name:'True Black Moon Lilith in Sagittarius horoscope',exact:true});await expect(article.locator('.horoscope-reading-date')).toHaveText('True Black Moon Lilith in Sagittarius');await page.getByRole('button',{name:'Previous Chiron Rx in Aries',exact:true}).click();await page.getByRole('button',{name:'Next True Black Moon Lilith in Sagittarius',exact:true}).click();await page.reload();await expect(article.locator('.horoscope-reading-date')).toHaveText('True Black Moon Lilith in Sagittarius');await expect(page.locator('html')).toHaveAttribute('data-theme','light');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await finishStaticFonts();expect(unhandledExternal).toEqual([]);expect(denied).toEqual([]);expect(errors).toEqual([]);await page.screenshot({path:info.outputPath('live-lilith-label.png')});writeFileSync(info.outputPath('original-fast-local-evidence.json'),JSON.stringify({sourceSha,scope:'fresh local App; real Swiss Sky handler and bundled synthetic reader transport',snapshots,denied,errors},null,2));
 });
+
+for (const width of [390,1440]) for (const status of ['DRAFT','ARCHIVED'] as const) {
+  test(`Native Lilith Publish control reaches the reader ${width} ${status}`, async ({page}) => {
+    test.setTimeout(120_000);
+    const key='sky-lilith/article/sagittarius';
+    const passage='Synthetic native-button owner opening.\n\nSynthetic native-button complete final paragraph.';
+    const row:any={id:'10000000-0000-4000-8000-000000000099',content_key:key,surface:'sky',mode:'in_depth',status,
+      lane:'serving',review_state:null,target_date:null,provider:'manual-admin',event_type:'manual-content',block_type:'essay',
+      headline:'Synthetic native-button Lilith source',summary:'',body:passage,sections:{},facts:{},
+      source_snapshot:{contentType:'essay',content_role:'authored-content',contentSystem:'authored',authoringSource:'admin-dashboard'},
+      updated_at:'2026-11-04T12:00:00.000Z',created_at:'2026-11-03T12:00:00.000Z',flags:[]};
+    if(status==='ARCHIVED')row.source_snapshot={...row.source_snapshot,review_status:'approved',
+      studioOwnerApproval:studioOwnerApproval({...row,updated_at:'2026-11-03T12:00:00.000Z'},'2026-11-03T13:00:00.000Z')};
+    const store=await studioApiStore([row],{publicationDb:true});
+    try {
+      await page.setViewportSize({width,height:1000});
+      await page.addInitScript(()=>{
+        localStorage.setItem('tldrastro:contentAdminSecret','qa-secret');
+        localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'}));
+      });
+      await page.route('**/rest/v1/**',async route=>{
+        const url=new URL(route.request().url());
+        if(url.pathname==='/rest/v1/content_publications'){
+          const result=await store.call({method:'publication-page',url:url.pathname+url.search});
+          return route.fulfill({status:result.status,json:result.payload});
+        }
+        return route.fulfill({json:url.pathname.endsWith('/content_runtime_revision')?'2026-11-04T12:00:00.000Z':[]});
+      });
+      await routeStudioInventoryApi(page,{actualDocumentRoute:true,call:store.call,answer:async(route,url)=>{
+        if(url.pathname==='/api/sky'){
+          const response:any={statusCode:200,setHeader(){},end(body:string){void route.fulfill({status:this.statusCode,contentType:'application/json',body});}};
+          await skyHandler({method:'GET',url:route.request().url()} as IncomingMessage,response as ServerResponse);return true;
+        }
+        if(!['/api/admin/content-live-status','/api/content-publications','/api/admin/content-history','/api/content-reader'].includes(url.pathname))return false;
+        const request=route.request();const result=await store.call({method:request.method(),url:url.pathname+url.search,
+          ...(request.method()==='GET'?{}:{body:request.postDataJSON()})});
+        await route.fulfill({status:result.status,json:result.payload});return true;
+      }});
+      await page.goto('/admin/content#sky-writeups?view=catalog&date=2026-11-07&timeZone=America%2FNew_York&editSource='+encodeURIComponent(key)+'&from=library');
+      const editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await editor.getByRole('button',{name:'Publish to app',exact:true}).click();
+      await expect.poll(async()=>{
+        const saved=(await store.call({method:'rows'})).find((r:any)=>r.id===row.id);
+        return saved?.sections?.packageRecord?.LilithArticle;
+      }).toBe(passage);
+      const saved=(await store.call({method:'rows'})).find((r:any)=>r.id===row.id);
+      expect(saved.status).toBe('LIVE');expect(saved.body).toBe(passage);
+      await page.goto('/?date=2026-11-04#sky/placement/lilith/sagittarius');
+      await expect(page.locator('#sky-detail-title')).toHaveText('True Black Moon Lilith in Sagittarius');
+      await expect.poll(()=>page.locator('.article-body-inner').first().innerText()).toBe(passage);
+    } finally {store.close();}
+  });
+}
