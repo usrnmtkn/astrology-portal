@@ -6,6 +6,75 @@ import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { skyPlacementSourceFixture } from '../helpers/sky-placement-source-fixture.mts';
 
 for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1440, 'dark']] as const) {
+  test(`Moon fallback source titles identify each editable section at ${width} ${theme}`, async ({ page, context }) => {
+    test.setTimeout(180_000);
+    await page.clock.install({ time: new Date('2026-11-08T17:00:00Z') });
+    const store = await studioApiStore([], { uuidIds: true });
+    const writes: unknown[] = [], errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    const titles = ['Moon · Scorpio · Sky Placement Hook', 'Moon · Scorpio · Sky Placement Lived Experience', 'Moon · Scorpio · Sky Placement Turn'];
+    try {
+      for (const slot of ['hook', 'lived', 'turn']) {
+        const key = `fallback-hook/sky-placement-${slot}/moon/scorpio`;
+        const record = (await store.call({ method: 'GET', url: '/api/admin/package-source?' + new URLSearchParams({ contentKey: key }) })).payload.packageSource;
+        const body = `Synthetic complete ${slot} opening.\n\nSynthetic complete ${slot} ending.`;
+        const result = await store.call({ method: 'POST', body: { contentKey: key, surface: 'sky', mode: 'in_depth', eventType: 'fallback-hook', blockType: 'fallback_hook', status: 'DRAFT', lane: 'reference', headline: 'Scorpio', body,
+          facts: { fallbackArchitectureV3: true }, provider: 'tldrastro-fallback-architecture-v3', sections: { packageRecord: record, packageDraft: { ...record, body, body_you: body } },
+          sourceSnapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'full_copy', review_status: 'needs_review' } } });
+        expect(result.status).toBe(200);
+      }
+      const before = await store.call({ method: 'rows' }), publicationsBefore = await store.call({ method: 'publications' });
+      await page.setViewportSize({ width, height: 1000 });
+      await context.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeStudioInventoryApi(context, { call: store.call, actualDocumentRoute: true, onWrite: write => writes.push(write), answer: async (route, url) => {
+        if (url.pathname === '/api/calendar') { await route.fulfill({ json: { ok: true, calendar: { days: [] } } }); return true; }
+        if (url.pathname === '/api/content-publications') {
+          const publications = canonicalPublicationLedger(await store.call({ method: 'publications' }));
+          await route.fulfill({ headers: { etag: await publicationLedgerTag(publications) }, json: { schema: 'tldr-publications/v1', publications } }); return true;
+        }
+        if (!['/api/content-reader', '/api/admin/content-live-status'].includes(url.pathname)) return false;
+        const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+        await route.fulfill({ status: result.status, json: result.payload }); return true;
+      } });
+      await context.route('**/content-studio-last-known-good.json', route => route.fulfill({ json: { schema: 'content-studio-last-known-good-v2', rows: [], publications: [], rowCount: 0 } }));
+      await context.route('**/rest/v1/**', async route => route.fulfill({ json: new URL(route.request().url()).pathname.endsWith('/content_publications') ? await store.call({ method: 'publications' }) : [] }));
+      const entry = process.env.STUDIO_PRODUCTION_ENTRY === '1' ? '/admin/content' : '/';
+      await page.goto(`${entry}#sky-writeups?planet=moon&sign=scorpio`);
+      await openSkyPlacementChooser(page);
+      const summary = await openSkyPlacementReaderSources(page);
+      const fallbacks = summary.getByLabel('Shared fallback', { exact: true });
+      const labels = fallbacks.locator(':scope > div > p');
+      await expect(labels).toHaveText(titles);
+      await expect(summary.getByRole('heading')).toHaveText(['Reader sources']);
+      const typography = (element: HTMLElement) => {
+        const style = getComputedStyle(element);
+        return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.margin, style.textTransform, style.textAlign];
+      };
+      expect(await labels.first().evaluate(typography)).toEqual(await summary.locator(':scope > p').first().evaluate(typography));
+      for (const [index, slot] of ['hook', 'lived', 'turn'].entries()) {
+        const row = fallbacks.locator(':scope > div').filter({ has: page.getByText(titles[index], { exact: true }) });
+        await row.getByRole('button', { name: 'Edit shared fallback', exact: true }).click();
+        const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+        await expect(editor.getByRole('heading', { level: 2 })).toHaveText(`Edit ${titles[index]}`);
+        await expect(editor.getByRole('textbox', { name: 'Reader phrase · You', exact: true })).toHaveValue(`Synthetic complete ${slot} opening.\n\nSynthetic complete ${slot} ending.`);
+        await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      }
+      await page.reload();
+      await openSkyPlacementChooser(page);
+      await openSkyPlacementReaderSources(page);
+      await expect(labels).toHaveText(titles);
+      await fallbacks.screenshot({ path: `test-results/sky-fallback-source-titles-${width}-${theme}.png` });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      expect(writes).toEqual([]);
+      expect(await store.call({ method: 'rows' })).toEqual(before);
+      expect(await store.call({ method: 'publications' })).toEqual(publicationsBefore);
+      expect(errors).toEqual([]);
+    } finally { store.close(); }
+  });
+
   test(`Placement reader sources preserve draft isolation and open Sky at ${width} ${theme}`, async ({ page, context }) => {
     await page.clock.install({ time: new Date('2026-10-21T12:00:00Z') });
     test.setTimeout(180_000);
