@@ -371,12 +371,21 @@ export function validateSwissEphemerisReturnFlag(
   }
 }
 
+// The shipped *_18.se1 files and calculation API cover 1800 through 2399.
+// Optional history can exhaust that coverage without invalidating current facts.
+const swissEphemerisStartJd = Date.UTC(1800, 0, 1) / 86_400_000 + 2_440_587.5;
+const swissEphemerisEndJd = Date.UTC(2400, 0, 1) / 86_400_000 + 2_440_587.5;
+class SwissEphemerisCoverageError extends Error {}
+
 const calculateSwissUt = memoizeSwissCalculation(function calculateSwissUt(
   swe: SwissEphInstance,
   julianDay: number,
   body: number,
   flags: number
 ): SwissCalculation {
+  if (julianDay < swissEphemerisStartJd || julianDay >= swissEphemerisEndJd) {
+    throw new SwissEphemerisCoverageError("Calculation exceeds the packaged Swiss Ephemeris date range.");
+  }
   const resultPointer = swe.SweModule._malloc(6 * Float64Array.BYTES_PER_ELEMENT);
   const errorPointer = swe.SweModule._malloc(256);
 
@@ -685,7 +694,15 @@ function previousSameSignResidencyFor(
     // fall back to Moshier or to guess a historical window.
     if (sample.getUTCFullYear() < 1800) return null;
     if (exactPlanetSign(swe, planetId, sample, longitudeOffset) === sign) {
-      const previousWindow = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
+      let previousWindow: SignTransitWindow;
+      try {
+        previousWindow = signResidencyWindowFor(swe, planet, planetId, sample, sign, longitudeOffset);
+      } catch (error) {
+        // A sample inside coverage can belong to a residency whose earlier
+        // passes cross its boundary. That complete history is unverified.
+        if (error instanceof SwissEphemerisCoverageError) return null;
+        throw error;
+      }
       if (
         previousWindow.transitStart
         && previousWindow.transitEnd
