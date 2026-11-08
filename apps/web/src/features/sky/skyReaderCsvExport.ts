@@ -32,7 +32,10 @@ export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href
       const links = [...passage.querySelectorAll<HTMLAnchorElement>('a[href]')].map(link => new URL(link.getAttribute('href')!, url.href).href);
       return [...text, ...links].join('\n\n');
     });
-    const rows = [...group.querySelectorAll<HTMLElement>('.aspect-row')].map(row => row.innerText.trim());
+    const rows = [...group.querySelectorAll<HTMLElement>('.aspect-row')].map(row => {
+      const anchors = [...(row.matches('a[href]') ? [row as HTMLAnchorElement] : []), ...row.querySelectorAll<HTMLAnchorElement>('a[href]')];
+      return [row.innerText.trim(), ...anchors.map(link => new URL(link.getAttribute('href')!, url.href).href)].join('\n\n');
+    });
     return [heading, ...passages, ...rows].filter(Boolean).join('\n\n');
   }).join('\n\n');
   const edition = source.rows.map(row => (row.sections as { skyArticleEdition?: { validFrom?: string; validTo?: string } } | undefined)?.skyArticleEdition).find(Boolean);

@@ -34,11 +34,11 @@ test("Chiron Rx Key dates and Gifts follow the retrograde window", async ({ page
   expect(rows.some((row) => /stations Retrograde/u.test(row.label))).toBe(true);
   expect(rows.some((row) => /enters Aries/u.test(row.label))).toBe(false);
   expect(rows.some((row) => /completes its passage/u.test(row.label))).toBe(false);
-  const giftDates = page.locator(".article-related-aspects__date");
+  const giftDates = page.locator(".aspect-row-narrative-timing");
   await expect(giftDates.first()).toBeVisible();
   const giftDateText = await giftDates.allTextContents();
   expect(giftDateText.join(" ")).not.toMatch(/2018/);
-  expect(giftDateText.join(" ")).toMatch(/2026|2027/);
+  expect(giftDateText.join(" ")).toMatch(/Building|Exact|Fading/);
 });
 
 test("Sun in Virgo still shows the complete short-visit Key dates", async ({ page }) => {

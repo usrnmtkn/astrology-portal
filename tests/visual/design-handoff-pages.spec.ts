@@ -41,7 +41,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(summary).toHaveCSS('line-height', '29.9px');
       await expect(summary).toHaveCSS('align-items', 'center');
       await expect(page.locator('.sky-placement-key-dates')).not.toHaveAttribute('open', '');
-      const row = first.locator('.article-related-aspects__copy').first();
+      const row = first.locator('.article-related-aspect-row').first();
       const badge = row.locator('.aspect-badge').first();
       const align = await badge.evaluate(node => {
         const r = document.createRange(); r.selectNodeContents(node);
@@ -49,28 +49,28 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
         return Math.abs(glyph.x + glyph.width / 2 - circle.x - circle.width / 2);
       });
       expect(align).toBeLessThan(1);
-      await expect(row).toHaveCSS('padding', '0px');
-      await expect(row.locator('.article-related-aspects__date').first()).toHaveCSS('font-family', /system-ui/);
-      await expect(row.locator('.article-related-aspects__date').first()).toHaveCSS('font-size', '14px');
-      const narrative = row.locator('p:not(.article-related-aspects__date)').first();
+      await expect(row).toHaveCSS('padding', width < 800 ? '16px 0px' : '16px 12px');
+      await expect(row.locator('.aspect-row-timing').first()).toHaveCSS('font-family', /system-ui/);
+      await expect(row.locator('.aspect-row-timing').first()).toHaveCSS('font-size', '14px');
+      const narrative = row.locator('p').first();
       await expect(narrative).toHaveCSS('font-family', /Newsreader/);
       await expect(narrative).toHaveCSS('font-size', '19px');
       await expect(narrative).toHaveCSS('line-height', '28.5px');
       const paragraphs = await first.locator('p').allTextContents();
-      const outline = await page.locator('.article-related-aspects__label--outside, .article-related-aspects__copy h4').allTextContents();
+      const outline = await page.locator('.article-related-aspects__label--outside, .article-related-aspect-row h4').allTextContents();
       expect(outline[0]).toBe('Gifts');
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-      await expectReadableTheme(page, '.article-related-aspects__label, .article-related-aspects__copy h4, .article-related-aspects__copy p');
+      await expectReadableTheme(page, '.article-related-aspects__label, .article-related-aspect-row h4, .article-related-aspect-row p');
       await label.scrollIntoViewIfNeeded();
       await page.screenshot({ path: `test-results/placement-polish-${placement.split('/')[0]}-${width}-${theme}.png` });
-      await row.getByRole('link').first().click();
+      await row.click();
       await expect(page.locator('.article-id > .aspect-badge')).toBeVisible();
       await page.getByRole('button', { name: 'Close detail', exact: true }).click();
       await expect(page).toHaveURL(new RegExp(`#sky/placement/${placement}$`));
       await expect(first.locator('p')).toHaveText(paragraphs);
       await page.reload();
       await expect(first.locator('p')).toHaveText(paragraphs);
-      await expect(page.locator('.article-related-aspects__label--outside, .article-related-aspects__copy h4')).toHaveText(outline);
+      await expect(page.locator('.article-related-aspects__label--outside, .article-related-aspect-row h4')).toHaveText(outline);
     }
   });
 }
@@ -122,10 +122,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await related.first().click();
     await expect(page.locator('.article-id > .aspect-badge')).toHaveCount(1);
     await page.goto('/?date=2026-10-13#sky/placement/venus/scorpio');
-    const collective = page.locator('.article-related-aspects__copy-heading .aspect-badge');
+    const collective = page.locator('.article-related-aspect-row .aspect-badge');
     await expect(collective.first()).toBeVisible({ timeout: 60_000 });
     await expect(collective.first()).toHaveCSS('width', '48px');
-    await expect(page.locator('.article-related-aspects__copy-heading .inline-glyph-icon')).toHaveCount(0);
+    await expect(page.locator('.article-related-aspect-row .inline-glyph-icon')).toHaveCount(0);
     expect(errors).toEqual([]);
   });
 }

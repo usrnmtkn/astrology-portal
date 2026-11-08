@@ -214,6 +214,7 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
     skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [dated], contentPublicationRecords: () => [], normalizeContentIdPart: (x: string) => x,
     filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
     skyPlacementInSignAspectContentKeys: () => scenario === 'all-unused' ? [] : scenario === 'required-node-missing' ? nodeKeys : [selected, 'synthetic/noncandidate-aspect'],
     loadLiveGeneratedContentForKeys: async (keys: string[]) => {
       requests.push({ kind: 'normal', keys });
@@ -221,7 +222,7 @@ for (const scenario of ['overlap', 'late-auth', 'retirement', 'revision', 'trans
     }
   });
   vm.runInContext(transpile(prepare.getText(ast)), context);
-  const snapshot = { positions: [{ planet: 'Sun' }], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
+  const snapshot = { positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
   let early: any, cancelled = false, detached = false;
   const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
   let settled = false;
@@ -304,6 +305,7 @@ for (const scenario of ['completed-before-facts', 'complete-after-facts', 'parti
     skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [], contentPublicationRecords: () => [], normalizeContentIdPart: (value: string) => value,
     filterPlacementTimelineEvents: (events: any[]) => events, skyPlacementArticleTimelineWindow: () => null,
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
     skyPlacementInSignAspectContentKeys: () => [selected, unused],
     loadLiveGeneratedContentForKeys: async () => {
       normalRequests++;
@@ -312,7 +314,7 @@ for (const scenario of ['completed-before-facts', 'complete-after-facts', 'parti
     }
   });
   vm.runInContext(transpile(prepare.getText(ast)), context);
-  const snapshot = { positions: [{ planet: 'Sun' }], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
+  const snapshot = { positions: [{ planet: 'Sun' }], aspects: [], generatedAt: stamp, placementAspectFacts: { inSign: [] } };
   const pending = context.prepareSkyPlacementArticleContent(facts.promise, 'sun', 'libra', new Map(), () => early);
   void pending.then(() => { settled = true; });
   early = qa.prefetchSkyPlacementAspectContent('sun', new Map(), publications.promise, facts.promise,
@@ -401,6 +403,7 @@ for (const changed of approved && prewarmed ? ['none', 'newer', 'retired'] : ['n
     publicationRestoresBaseline: qa.publicationRestoresBaseline, skyRoutePartMatches: (a: string, b: string) => a.toLowerCase() === b.toLowerCase(),
     skyIngressEssayPublicationKeys: () => [article.contentKey], contentPublicationRecords: () => [], normalizeContentIdPart: (value: string) => value.toLowerCase(),
     filterPlacementTimelineEvents: (items: any[]) => items.filter(event => event.id === 'initial-chapter'), skyPlacementArticleTimelineWindow: () => null,
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
     skyPlacementInSignAspectContentKeys: qa.skyPlacementInSignAspectContentKeys,
     loadLiveGeneratedContentForKeys: async (keys: string[]) => {
       requests.push(keys);
@@ -422,6 +425,38 @@ for (const changed of approved && prewarmed ? ['none', 'newer', 'retired'] : ['n
   }
   if (approved && changed !== 'retired') assert.equal(result.content.get(unused)?.body, available.get(unused)?.body, 'Earlier exact writing retains its complete current passage.');
   if (changed === 'newer') assert.equal(result.content.get(unused)?.updatedAt, newerStamp, 'A microsecond revision invalidates the completed candidate.');
+}
+// Active copy may be needed even when its exact pass is outside Key dates.
+{
+  const [activeKey] = qa.contentStudioExactSkyAspectKeys('Sun', 'sextile', 'Mercury');
+  const [unrelatedKey] = qa.contentStudioExactSkyAspectKeys('Venus', 'square', 'Mars');
+  publish([activeKey, unrelatedKey]);
+  const requests: string[][] = [];
+  const snapshot = { generatedAt: stamp, positions: [{ planet: 'Sun', sign: 'Libra' }, { planet: 'Mercury', sign: 'Leo' }],
+    aspects: [
+      { from: 'Sun', to: 'Mercury', type: 'sextile', fromSign: 'Libra', toSign: 'Leo' },
+      { from: 'Venus', to: 'Mars', type: 'square', fromSign: 'Aries', toSign: 'Cancer' }
+    ], placementAspectFacts: { inSign: [] } };
+  const context = vm.createContext({ Map, Set, Promise,
+    loadContentRegistry: async () => {}, refreshContentPublications: async () => {},
+    eligibleSkyDetailContent: qa.eligibleSkyDetailContent, loadSkyDetailContent: qa.loadSkyDetailContent,
+    skyIngressEssayReaderSection: () => undefined, skyIngressEssayPublicationKeys: () => [], contentPublicationRecords: () => [],
+    contentPublication: qa.contentPublication, publicationRestoresBaseline: qa.publicationRestoresBaseline,
+    normalizeContentIdPart: (value: string) => value.toLowerCase(),
+    skyRoutePartMatches: (first: string, second: string) => first.toLowerCase() === second.toLowerCase(),
+    skyPlacementArticleTimelineWindow: () => null, filterPlacementTimelineEvents: () => [],
+    skySnapshotAspectContentKeys: qa.skySnapshotAspectContentKeys,
+    skyPlacementInSignAspectContentKeys: qa.skyPlacementInSignAspectContentKeys,
+    loadLiveGeneratedContentForKeys: async (keys: string[]) => {
+      requests.push(keys);
+      return new Map(keys.includes(activeKey) ? [[activeKey, row(activeKey)]] : []);
+    }
+  });
+  vm.runInContext(transpile(prepare.getText(ast)), context);
+  const result = await context.prepareSkyPlacementArticleContent(Promise.resolve(snapshot), 'sun', 'libra', new Map(), () => undefined);
+  assert.equal(result.content.get(activeKey)?.body, row(activeKey).body, 'The complete published active contact loads without an in-window exact event.');
+  assert(requests.some(keys => keys.includes(activeKey)));
+  assert(!requests.some(keys => keys.includes(unrelatedKey)), 'Other placements do not widen this current-contact request.');
 }
 if (oldNavigator) Object.defineProperty(globalThis, 'navigator', oldNavigator);
 else Reflect.deleteProperty(globalThis, 'navigator');

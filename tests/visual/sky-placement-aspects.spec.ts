@@ -16,24 +16,22 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(page.locator('.aspect-section')).toHaveCount(0);
     await expect(page.locator('.deferred-render-placeholder--aspects')).toHaveCount(0);
     await page.getByLabel('Daily sky summary').getByRole('link', {name:'Read about Neptune in Aries',exact:true}).click();
-    // The opening write-up remains usable while the complete placement timeline
-    // arrives. Its interim current-aspect cards are not the final dated list.
+    // Completing the timeline must retain the selected date's active contacts.
     await expect(page.locator('.sky-detail-article')).toHaveAttribute('aria-busy', 'false', {timeout:60000});
     await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
     const card = page.getByRole('region', { name: 'Gifts', exact: true })
-      .getByRole('link', {name:'Read more about Neptune Sextile Pluto', exact:true});
+      .getByRole('link', {name:/^Read more about Neptune(?: Rx)? Sextile Pluto(?: Rx)?$/});
     await expect(card).toBeVisible({timeout:60000});
     const section = card.locator('..');
-    await expect(section).toContainText('Exact · July 25 and September 15, 2026');
+    await expect(section).toContainText('Building through September 15.');
+    await expect(section).not.toContainText('July 25');
     await expect(section).toContainText('Strong feeling can become more trustworthy');
     await expect(section).toContainText('the story that was easiest to sell.');
     const destination = (await card.getAttribute('href'))!;
     const prefix = '#sky/aspect/neptune/sextile/pluto/at/';
     expect(destination).toMatch(/^#sky\/aspect\/neptune\/sextile\/pluto\/at\//);
-    // The numerical solver resolves the same pass to adjacent milliseconds
-    // across WASM platforms; preserve the identity and verified UTC second.
     const exactAt = Date.parse(decodeURIComponent(destination.slice(prefix.length)));
-    expect(Math.abs(exactAt - Date.parse('2026-07-25T05:26:38.000Z'))).toBeLessThanOrEqual(1);
+    expect(new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(exactAt))).toBe('2026-09-15');
     await expect(card.locator('h4')).toHaveCount(1);
     expect(await card.evaluate(el => getComputedStyle(el).textDecorationLine)).toBe('none');
     await card.scrollIntoViewIfNeeded();
