@@ -217,6 +217,7 @@ for (const [width,theme,dropInitialReady] of [[1440,'light',false],[390,'dark',f
       expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(pubs);
       await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(await body.inputValue()).toContain(opening);expect(await body.inputValue()).toContain(final);expect(writes).toEqual([]);
       if(dropInitialReady){await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(writes).toEqual([]);}
+      expect(factsCalls).toBe(dropInitialReady ? 3 : 2);
       const edited=expected+'\n\nSynthetic private edit final sentence.';
       await body.fill(edited);await form.getByLabel('Visit article summary').fill('Synthetic explicit owner summary.');
       await form.getByRole('button',{name:'Save draft',exact:true}).click();
