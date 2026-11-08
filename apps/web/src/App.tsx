@@ -304,7 +304,7 @@ import {
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
 import { isSkyAspectRetired, resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, resolveSkyAspectOwnerAuthoredSigned, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
-import { eligibleSkyDetailContent, loadSkyDetailContent, prefetchSkyPlacementAspectContent, skyDetailRequiredAspectKeys, type ColdSkyAspectRead } from "./services/skyDetailContent";
+import { eligibleSkyDetailContent, loadSkyDetailContent, prefetchSkyPlacementAspectContent, skyDetailRequiredAspectKeys, skySnapshotAspectContentKeys, type ColdSkyAspectRead } from "./services/skyDetailContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   selectSkyAspectCopyByPrecedence
@@ -10882,7 +10882,9 @@ async function prepareSkyPlacementArticleContent(
   }) : [];
   const events = filterPlacementTimelineEvents(placementSky.placementAspectFacts?.inSign ?? [],
     position ? skyPlacementArticleTimelineWindow(position, placementSky.generatedAt, "current") : null);
-  const aspectKeys = skyPlacementInSignAspectContentKeys(events);
+  const activeAspectKeys = skySnapshotAspectContentKeys({ ...placementSky, aspects: placementSky.aspects.filter(aspect =>
+    skyRoutePartMatches(aspect.from, planet) || skyRoutePartMatches(aspect.to, planet)) });
+  const aspectKeys = [...new Set([...skyPlacementInSignAspectContentKeys(events), ...activeAspectKeys])];
   const required = new Set([...ingressKeys, ...aspectKeys]);
   const early = readEarly();
   const handoff = early?.handoff();
@@ -10919,7 +10921,7 @@ async function prepareSkyPlacementArticleContent(
   if (savedPeriod) {
     const fullEvents = (placementSky.placementAspectFacts?.inSign ?? []).filter(event =>
       Date.parse(event.occursAt) >= Date.parse(savedPeriod.startsAt) && Date.parse(event.occursAt) < Date.parse(savedPeriod.endsAt));
-    const fullKeys = skyPlacementInSignAspectContentKeys(fullEvents);
+    const fullKeys = [...new Set([...skyPlacementInSignAspectContentKeys(fullEvents), ...activeAspectKeys])];
     if (fullKeys.some(key => !required.has(key))) {
       const fullRequired = new Set([...ingressKeys, ...fullKeys]);
       const retained = [...eligibleSkyDetailContent(completedCandidates)].filter(([key]) => fullRequired.has(key));

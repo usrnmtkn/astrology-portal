@@ -4934,7 +4934,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article).not.toContainText("Aspects shaping this transit");
     await expect(article.getByRole("heading", { name: "Gifts" })).toBeVisible();
     await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
-    await expect(article).toContainText("Sun Trine Lilith");
+    await expect(article.locator('.article-related-aspect-row').filter({ hasText: 'Sun Trine Lilith' })).toHaveCount(0);
     const mercuryCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-conjunction-mercury.json"), "utf8"));
     expect(mercuryCopy.status).toBe("LIVE");
     await expect(article).toContainText(mercuryCopy.readerCopy.body);
@@ -4951,14 +4951,13 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    // In-sign aspects are shown in Gifts and Lessons rather than a separate aspect list; the
-    // approved write-up must still arrive complete, not shortened to fit the section.
+    // Selected-date aspects retain their complete approved write-ups.
     const gifts = article.getByRole("region", { name: "Gifts" });
     await expect(gifts.getByRole("heading", { name: "Sun Trine Lilith", level: 4 })).toBeVisible();
     const lilithCopy = JSON.parse(readFileSync(path.resolve("packages/astro-knowledge/data/transits/sun-trine-lilith.json"), "utf8"));
     expect(lilithCopy.status).toBe("LIVE");
     await expect(gifts).toContainText(lilithCopy.readerCopy.body);
-    await expect(gifts).toContainText("Exact · September 2 and September 10, 2026");
+    await expect(gifts).toContainText("Exact September 2.");
     await assertNoClientErrors();
   });
 
@@ -5502,17 +5501,18 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
     await route.fulfill({ json: readerResponse(snapshot.rows.filter((row: any) => keys.includes(row.content_key))) });
   });
   await expectClientRouteLoads(page, "/?date=2026-09-08#sky/placement/lilith/sagittarius");
-  // Placement cards now follow the displayed motion chapter, not the full residency.
-  const ids = ["mercury-sextile-lilith", "jupiter-trine-lilith", "sun-square-lilith"];
+  // Placement cards follow active contacts in the displayed snapshot.
+  const ids = ["chiron-trine-lilith", "neptune-square-lilith", "sun-square-lilith"];
   for (const id of ids) {
     const row = publishedAspect(id);
     await expectPublishedBody(row.body);
     expect(requested.has(row.contentKey)).toBe(true);
   }
-  const datedLink = page.getByRole("link", { name: "Read more about Lilith Square Sun", exact: true });
+  await expect(page.locator(".article-related-aspect-row").getByRole("heading").filter({ hasText: /Mercury|Jupiter/ })).toHaveCount(0);
+  const datedLink = page.getByRole("link", { name: /^Read more about Lilith(?: Rx)? Square Sun(?: Rx)?$/ });
   const datedHref = await datedLink.getAttribute("href");
   expect(datedHref).toContain("/at/");
-  // Preserve complete-copy coverage for sampled links outside that shorter chapter.
+  // Preserve complete-copy coverage for sampled links outside that snapshot.
   // Direct Swiss calculations put both Chiron trine Lilith and Neptune square
   // Lilith in this snapshot; neither is active on the original September 8 date.
   const sampleInstant = encodeURIComponent("2026-08-01T12:00:00.000Z");

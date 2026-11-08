@@ -545,6 +545,10 @@
   box-shadow: var(--shadow-flat);
 }
 
+.article-related-aspects .article-related-aspect-row :is(.aspect-row-timing, .aspect-row-narrative-timing) {
+  font-family: var(--font-ui);
+}
+
 .article-related-aspects .aspect-row.article-related-aspect-row:last-child {
   border-bottom: 0;
 }
