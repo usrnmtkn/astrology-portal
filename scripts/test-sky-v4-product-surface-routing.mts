@@ -87,7 +87,7 @@ const app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url),
 assert.match(app, /event\.type === "lunation"[\s\S]{0,120}currentSkyV4LunationDetailArticle/u);
 // Aspects are a separate reader section; evergreen/article prose stays in its own section.
 assert.match(app, /sections:\s*\[\.\.\.displayArticleSections,\s*\.\.\.inSignAspectSections\],/u);
-assert.match(app, /relatedAspects:\s*\{\s*heading: "Aspects",\s*rows: savedArticlePeriod \|\| inSignAspectSections\.length\s*\? \[\]\s*: relatedAspectRows\.filter/u);
+assert.match(app, /relatedAspects:\s*\{\s*heading: "Aspects",\s*rows: articleMode === "current"\s*\? relatedAspectRows\.filter\([^\n]+\)\s*:\s*\[\]/u);
 assert.match(app, /grouping: "event"/u);
 assert.match(app, /skyV4PlacementContexts/u);
 assert.match(app, /skyV4StationSupported/u);

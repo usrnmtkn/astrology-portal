@@ -19,7 +19,9 @@ async function createSavedPeriodFixture() {
  expect(chapter).not.toBeNull();
  const events = sky.placementAspectFacts!.inSign.filter(event => Date.parse(event.occursAt) >= Date.parse(start) && Date.parse(event.occursAt) < Date.parse(end));
  const chapterKeys = new Set(skyPlacementInSignAspectContentKeys(filterPlacementTimelineEvents(events, chapter)));
- const extensionKey = skyPlacementInSignAspectContentKeys(events).find(key => !chapterKeys.has(key));
+ const activeKeys = new Set(sky.aspects.filter(aspect => aspect.from === 'Mercury' || aspect.to === 'Mercury')
+  .flatMap(aspect => contentStudioExactSkyAspectKeys(aspect.from, aspect.type, aspect.to)));
+ const extensionKey = skyPlacementInSignAspectContentKeys(events).find(key => !chapterKeys.has(key) && !activeKeys.has(key));
  expect(extensionKey, 'The real saved visit must need writing outside its selected retrograde chapter').toBeTruthy();
  const edition = await compileSkyArticleEdition({ format: 'ingress-essay-v3', planet: 'mercury', sign: 'cancer', entryYear: 2026,
   validFrom: start.slice(0, 10), validTo: end.slice(0, 10), transitStartInstant: start, transitEndInstant: end,
@@ -127,8 +129,9 @@ for (const [width, delivery] of [[390, 'late'], [1440, 'completed']] as const) {
    const openingMs = Date.now() - started;
    await expect(opening).toContainText('Synthetic saved-visit final sentence.');
    await expect(article.locator('.article-duration').first()).toHaveText('Jun 29, 2026 - Jul 23, 2026');
-   await expect(article).toContainText(fixture.extension.body.split('\n\n')[0]);
-   await expect(article).toContainText(fixture.extension.body.split('\n\n')[1]);
+   const activeCards = article.locator('.article-related-aspect-row');
+   await expect(activeCards.first()).toBeVisible();
+   await expect(activeCards.filter({ hasText: fixture.extension.body.split('\n\n')[0] })).toHaveCount(0);
    await expect(article.getByRole('link', { name: 'Horoscopes', exact: true })).toHaveCount(0);
    const expectedDates = [...new Set(fixture.events.map(event => new Date(event.occursAt).toISOString()))].sort();
    await expect.poll(() => article.locator('.sky-placement-key-dates li').evaluateAll(items =>
@@ -137,7 +140,7 @@ for (const [width, delivery] of [[390, 'late'], [1440, 'completed']] as const) {
    await article.locator('.sky-placement-key-dates > summary').click();
    await expect(article.getByText('Article coverage: June 1, 2026 to August 9, 2026.', { exact: true })).toBeVisible();
    await expectReadableTheme(page, '.sky-placement-key-dates > .sky-placement-key-dates__meta');
-   const aspectLinks = await article.locator('.article-related-aspects__copy-link').evaluateAll(links =>
+   const aspectLinks = await article.locator('.sky-placement-key-dates a[href]').evaluateAll(links =>
     links.map(link => (link as HTMLAnchorElement).hash));
    expect(aspectLinks.some(link => link.includes(`/at/${encodeURIComponent(fixture.events.find(event => contentStudioExactSkyAspectKeys(event.planet, event.aspect, event.otherPlanet).includes(fixture.extensionKey))!.occursAt)}`))).toBe(true);
    await page.screenshot({ path: test.info().outputPath('saved-period-reader.png'), fullPage: true });
@@ -148,12 +151,20 @@ for (const [width, delivery] of [[390, 'late'], [1440, 'completed']] as const) {
    const reopenStarted = Date.now();
    await page.getByRole('button', { name: 'Read more about Mercury Rx in Cancer', exact: true }).click();
    await expect(opening).toContainText('Synthetic saved-visit final sentence.', { timeout: 60_000 });
-   await expect(article).toContainText(fixture.extension.body.split('\n\n')[1]);
+   await expect(activeCards.filter({ hasText: fixture.extension.body.split('\n\n')[1] })).toHaveCount(0);
    const reopenMs = Date.now() - reopenStarted;
    expect(requests.filter(request => request.keys.includes(fixture.extensionKey)).length).toBe(beforeReopen);
    const paints = await page.evaluate(() => (window as any).__savedVisitPaints as string[]);
    expect(paints.length).toBeGreaterThan(0);
    expect(paints.every(text => text.includes('Synthetic saved-visit opening.') && text.includes('Synthetic saved-visit final sentence.'))).toBe(true);
+   const event = fixture.events.find(event => contentStudioExactSkyAspectKeys(event.planet, event.aspect, event.otherPlanet).includes(fixture.extensionKey))!;
+   if (await article.locator('.sky-placement-key-dates').getAttribute('open') === null) await article.locator('.sky-placement-key-dates > summary').click();
+   await article.locator('.sky-placement-key-dates a[href]').filter({ has: page.locator(`time[datetime="${event.occursAt}"]`) }).click();
+   await expect(article).toContainText(fixture.extension.body.split('\n\n')[0]);
+   await expect(article).toContainText(fixture.extension.body.split('\n\n')[1]);
+   await page.getByRole('button', { name: 'Close detail', exact: true }).click();
+   await expect(opening).toContainText('Synthetic saved-visit final sentence.');
+   await expect(activeCards.filter({ hasText: fixture.extension.body.split('\n\n')[1] })).toHaveCount(0);
    expect(errors).toEqual([]);
    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
    const timing = { width, theme, delivery, openingMs, reopenMs, extensionKey: fixture.extensionKey,

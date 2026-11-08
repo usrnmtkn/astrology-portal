@@ -116,16 +116,17 @@ for (const { width, hasEdition, account, flow } of cases) {
       await calculationGate;
       await route.continue();
     });
-    const aspectKey = 'sky.aspect.sun.trine.pluto';
+    // This contact is active in the actual October 12–13 placement snapshots.
+    const aspectKey = 'sky.aspect.sun.sextile.jupiter';
     const exactAspectRequests: Request[] = []; let exactAspectFinished = 0;
     let failAspect = flow === 'aspect-error', aspectRequests = 0, holdAspect = false, aspectHeld = false;
     let releaseAspect!: () => void; const aspectGate = new Promise<void>(resolve => { releaseAspect = resolve; });
     if (flow === 'aspect-control' || flow === 'aspect-error' || flow === 'aspect-revision' || handoffFlow) rows.push({
       id: 'cccccccc-cccc-4ccc-accc-cccccccccccc', content_key: aspectKey, surface: 'sky', mode: 'feed', status: 'LIVE', lane: 'serving',
       review_state: null, target_date: null, event_type: 'sky-aspect-owner-approved-exact', block_type: 'sky_aspect', provider: 'manual-admin',
-      updated_at: stamp, headline: 'Synthetic Sun Trine Pluto', summary: null,
+      updated_at: stamp, headline: 'Synthetic Sun Sextile Jupiter', summary: null,
       body: 'Synthetic required aspect exact opening. Synthetic required aspect exact ending.', sections: {},
-      source_snapshot: { contentStudioExactAspect: true, review_status: 'approved', exactSkyAspectIdentity: { a: 'sun', b: 'pluto', aspect: 'trine' } }
+      source_snapshot: { contentStudioExactAspect: true, review_status: 'approved', exactSkyAspectIdentity: { a: 'sun', b: 'jupiter', aspect: 'sextile' } }
     });
     const edition = await syntheticLibrarySkyArticle(); edition.updated_at = stamp;
     let editionRetired = !hasEdition, failEdition = flow === 'edition-error', holdEdition = false, editionHeld = false, editionFinished = 0;
@@ -221,11 +222,13 @@ for (const { width, hasEdition, account, flow } of cases) {
     let lastSky: any, newSkyUrl = ''; 
     await page.route('**/api/sky?**', async route => {
       if (holdNewSky) { newSkyUrl = route.request().url(); newSkyHeld = true; await newSkyGate; }
+      let responseReady = Promise.resolve();
       const res = { statusCode: 200, setHeader() {}, end(body: string) {
         lastSky = JSON.parse(body).sky;
-        void route.fulfill({ status: this.statusCode, contentType: 'application/json', body });
+        responseReady = route.fulfill({ status: this.statusCode, contentType: 'application/json', body });
       } };
       await skyHandler({ method: 'GET', url: route.request().url() } as any, res as any);
+      await responseReady;
     });
     await page.route('**/api/calendar?**', route => route.fulfill({ json: { ok: true, calendar: { days: [] } } }));
     const advancingFullSky = advancing ? page.waitForResponse(response => {
@@ -550,13 +553,13 @@ for (const { width, hasEdition, account, flow } of cases) {
           // Authored strings intentionally cannot supply HTML/Markdown links.
           // Exercise delegation through an actual related-aspect anchor.
           await expect(page.locator('html')).not.toHaveAttribute('data-page-transition', 'active');
-          const related = article.getByRole('link', { name: 'Read more about Sun Trine Pluto', exact: true });
+          const related = article.getByRole('link', { name: 'Read more about Sun Sextile Jupiter', exact: true });
           const destination = (await related.getAttribute('href'))!;
-          const expectedAspectCopy = await related.locator('..').locator('p:not(.article-related-aspects__date)').allTextContents();
+          const expectedAspectCopy = await related.locator('p').allTextContents();
           expect(expectedAspectCopy.length).toBeGreaterThan(0);
           await related.click();
           await expect(page).toHaveURL(url => url.hash === destination);
-          await expect(article.locator('#sky-detail-title')).toHaveText(/Sun.*Trine.*Pluto/i);
+          await expect(article.locator('#sky-detail-title')).toHaveText(/Sun.*Sextile.*Jupiter/i);
           for (const paragraph of expectedAspectCopy) await expect(body).toContainText(paragraph);
           await page.getByRole('button', { name: 'Close detail', exact: true }).click();
           await expect(page).toHaveURL(url => url.hash === '#sky/placement/sun/libra');

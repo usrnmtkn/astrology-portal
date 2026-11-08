@@ -59,11 +59,11 @@ for (const [width, theme, dated, planet, sign] of [
       expect(exported.summary).toBe(await summary.count() ? await summary.innerText() : '');
       const visibleParagraphs = await article.locator('.sky-detail-body p').allInnerTexts();
       for (const paragraph of visibleParagraphs.filter(Boolean)) expect(exported.body).toContain(paragraph.trim());
-      const aspectPassages = article.locator('.article-related-aspects__copy');
+      const aspectPassages = article.locator('.article-related-aspect-row');
       if (planet === 'sun') await expect(aspectPassages).toHaveCount(6);
       for (const passage of await aspectPassages.all()) {
         for (const text of await passage.locator('h4, p').allTextContents()) expect(exported.aspect_details).toContain(text.trim());
-        const href = await passage.locator('a[href]').first().getAttribute('href');
+        const href = await passage.getAttribute('href');
         expect(exported.aspect_details).toContain(new URL(href!, exported.reader_url).href);
       }
       for (const label of await article.locator('.article-related-aspects__label--outside').allTextContents()) expect(exported.aspect_details).toContain(label.trim());
