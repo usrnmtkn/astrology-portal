@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StudioButton } from './StudioControls';
 import { getInitialLocation } from '../../web/src/services/skySelection';
 import { skyPassageEditPlacement, type StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
@@ -18,6 +18,7 @@ export default function SkyReaderArticleEntry({ context, request, onOpen, onRelo
   const channel = useMemo(() => { void attempt; return crypto.randomUUID(); }, [attempt]);
   const url = useMemo(() => skyReaderPreviewFrameUrl(window.location.origin, channel), [channel]);
   const origin = new URL(url).origin;
+  const connect = useCallback(() => frame.current?.contentWindow?.postMessage({ protocol: skyReaderPreviewProtocol, channel, type: 'ready-request' }, origin), [channel, origin]);
   // Saved dated articles are opened by the workspace inventory. Never turn an absent/archived identity into a new fallback draft.
   const unavailable = context.sourceKey.startsWith('sky-article/');
   useEffect(() => {
@@ -61,11 +62,12 @@ export default function SkyReaderArticleEntry({ context, request, onOpen, onRelo
       })().catch(reason => { if (!cancelled) { clearTimeout(timer); setError(reason instanceof Error ? reason.message : 'The reader article could not be opened.'); } });
     };
     window.addEventListener('message', receive);
+    connect();
     return () => { cancelled = true; clearTimeout(timer); controller.abort(); window.removeEventListener('message', receive); };
-  }, [channel, origin, context.sourceKey, context.date, context.timeZone, context.instant, unavailable]);
+  }, [channel, origin, connect, context.sourceKey, context.date, context.timeZone, context.instant, unavailable]);
   return <div aria-label="Passage opened from reader">
     {error ? <><p role="alert">{error}</p><StudioButton type="button" onClick={() => unavailable ? onReload() : setAttempt(value => value + 1)}>Retry opening passage</StudioButton></>
       : <p role="status">Loading the complete published wording and calculated article period…</p>}
-    {!unavailable && <iframe hidden ref={frame} key={channel} src={url} title="Published article copy" sandbox="allow-scripts allow-same-origin" referrerPolicy="no-referrer" />}
+    {!unavailable && <iframe hidden ref={frame} key={channel} src={url} onLoad={connect} title="Published article copy" sandbox="allow-scripts allow-same-origin" referrerPolicy="no-referrer" />}
   </div>;
 }
