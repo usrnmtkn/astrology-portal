@@ -71,3 +71,68 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     assertNoErrors();
   });
 }
+
+for (const sample of [
+  { date: '2026-04-07', first: 'Sun', second: 'Moon', aspect: 'trine', title: 'Sun trines Moon', key: 'sky.aspect.sun.trine.moon' },
+  { date: '2039-06-26', first: 'Jupiter', second: 'Lilith', aspect: 'sextile', title: 'Jupiter sextiles Lilith', key: 'sky.aspect.jupiter.sextile.lilith' }
+]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Calendar ${sample.title} retains its full reading when unrelated writing fails ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const assertNoErrors = watchBrowserErrors(page);
+    const passage = `Synthetic complete ${sample.title} reading. The opened aspect keeps its own published writing.\n\nThis middle paragraph belongs to the same approved source unit.\n\nThe complete final paragraph survives an unrelated source failure and a dated reload.`;
+    const event = (await getLunarCalendarMonth(defaultLocation, new Date(`${sample.date}T16:00:00Z`))).events
+      .find(e => e.dateKey === sample.date && e.type === 'aspect' && e.aspect === sample.aspect && e.planets?.includes(sample.first) && e.planets.includes(sample.second))!;
+    expect(event).toBeDefined();
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: theme });
+    await page.addInitScript(({ theme, location }) => {
+      localStorage.setItem('tldrastro:theme', theme);
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+    }, { theme, location: defaultLocation });
+    await bundledPublications(page);
+    let unavailableReads = 0;
+    let focusedReads = 0;
+    await page.route('**/api/content-reader', route => {
+      const keys: string[] = route.request().postDataJSON().keys ?? [];
+      const ownIdentity = (key: string) => [sample.first.toLowerCase(), sample.second.toLowerCase(), sample.aspect].every(part => key.includes(part));
+      // A healthy exact source must not share a request/deadline with unrelated
+      // aspect writing or the broad dashboard inventory.
+      if (!keys.length || keys.some(key => !ownIdentity(key))) {
+        unavailableReads++;
+        return route.fulfill({ status: 503, json: { error: 'Synthetic unrelated writing unavailable' } });
+      }
+      focusedReads++;
+      return route.fulfill({ json: readerResponse(keys.includes(sample.key) ? [{
+        id: `synthetic-focused-${sample.aspect}`, content_key: sample.key, body: passage, summary: null, headline: sample.title,
+        surface: 'sky', mode: 'feed', block_type: 'sky_aspect', event_type: 'sky-aspect-owner-approved-exact',
+        status: 'LIVE', lane: 'serving', review_state: null, provider: 'manual-admin', updated_at: '2026-11-08T06:00:00Z',
+        source_snapshot: { contentStudioExactAspect: true, exactSkyAspectIdentity: {
+          a: sample.first.toLowerCase(), b: sample.second.toLowerCase(), aspect: sample.aspect
+        } }
+      }] : []) });
+    });
+    await page.route(/\/api\/(calendar|sky)\?/, async route => {
+      const url = new URL(route.request().url());
+      const response = { statusCode: 200, body: '', setHeader() {}, end(body: string) { this.body = body; } };
+      await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+        { method: 'GET', url: url.href } as IncomingMessage, response as unknown as ServerResponse);
+      expect(response.statusCode).toBe(200);
+      await route.fulfill({ status: response.statusCode, contentType: 'application/json', body: response.body });
+    });
+    await page.goto(`/?date=${sample.date}#calendar?view=day&date=${sample.date}`);
+    const card = page.locator('.calendar-day-events').getByRole('button', {
+      name: new RegExp(`^${sample.first}(?: Rx)? ${sample.title.split(' ')[1]} ${sample.second}(?: Rx)?$`)
+    });
+    await expect(card).toBeVisible({ timeout: 60_000 });
+    await card.click();
+    await expect(page).toHaveURL(new RegExp(`/at/${encodeURIComponent(event.startsAt)}$`));
+    await expectSkyAspectBody(page, passage);
+    await page.reload();
+    await expectSkyAspectBody(page, passage);
+    expect(focusedReads).toBeGreaterThanOrEqual(2);
+    expect(unavailableReads).toBeGreaterThan(0);
+    await page.goBack();
+    await expect(page).toHaveURL(new RegExp(`#calendar\\?view=day&date=${sample.date}$`));
+    assertNoErrors();
+  });
+}
