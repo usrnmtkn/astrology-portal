@@ -56,3 +56,32 @@ persisted generation-history schema or automatic prose approval.
 Release additionally requires exact-head content/API and hosted gates, bundle
 budgets, privacy/CSS/type checks and deployed-main verification. Synthetic tests
 make no paid calls or production editorial writes.
+
+## Combined Publish-button repair and bundle measurement
+
+The combined release includes the verified native Lilith Publish-button repair
+from source commit `5b20ff85161ac4905b92d5ec2a115537d3ad1db1`. Manual Lilith
+LIVE intent now enters the existing version-checked owner publication action
+after the existing governance and education guards. Ordinary saves and other
+source families retain their paths. The repair owner's fresh actual-button
+regression reproduced the missing canonical record before the change, then
+passed twelve browser cases, including new draft and archived source publication
+at mobile and desktop widths. This evidence is distinct from final combined
+release gates and the subsequent authorized neutral live lifecycle.
+
+Matched accepted main `bb4943a0635fd76f635ccc9b0f1de7c13ef45b18` and combined
+source `a57a3b6b5ab17f15065dc2ffa65b13d61eb117bb` use their own locked
+dependencies and native ARM Node 22.20.0. Complete normal prerequisites precede
+normalization of only validated top-level knowledge timestamps. All normalized
+knowledge files match. Standard standalone Admin and standard/native-public-reader
+Web profiles use unchanged build bodies and identical sanitized settings.
+
+The maximum measured aggregate increase is 2,648 Web gzip bytes and 1,702 Admin
+gzip bytes. Admin entry raw/gzip and largest raw increases are 67/30/67 bytes.
+The affected limits add only this measured cost once, retaining accepted main's
+headroom and every prior rationale. All baseline guards pass. Candidate strict
+aggregate failures before allocation remain recorded; no individual Web chunk,
+lazy boundary, copy, privacy, dependency or runtime guard is removed. These are
+feature costs, not performance improvements. A failed preliminary control install
+was a prerequisite failure and was replaced by a successful own-dependency install
+before the accepted comparison.
