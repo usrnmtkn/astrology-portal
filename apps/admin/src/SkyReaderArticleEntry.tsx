@@ -8,17 +8,20 @@ import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssa
 import { assertPlacementVisit, type PlacementVisitFacts } from './skyPlacementWorkspaceModel';
 
 type Props = { context: StudioPassageEdit; request: <T>(path: string, options?: RequestInit) => Promise<T>;
-  onOpen: (copy: SkyReaderArticleCopy, facts: PlacementVisitFacts) => void };
+  onOpen: (copy: SkyReaderArticleCopy, facts: PlacementVisitFacts) => void; onReload: () => void };
 
 /** Resolve the published reader in its existing isolated frame. Opening is read-only. */
-export default function SkyReaderArticleEntry({ context, request, onOpen }: Props) {
+export default function SkyReaderArticleEntry({ context, request, onOpen, onReload }: Props) {
   const [attempt, setAttempt] = useState(0), [error, setError] = useState('');
   const frame = useRef<HTMLIFrameElement>(null);
   const latest = useRef({ request, onOpen }); latest.current = { request, onOpen };
   const channel = useMemo(() => { void attempt; return crypto.randomUUID(); }, [attempt]);
   const url = useMemo(() => skyReaderPreviewFrameUrl(window.location.origin, channel), [channel]);
   const origin = new URL(url).origin;
+  // Saved dated articles are opened by the workspace inventory. Never turn an absent/archived identity into a new fallback draft.
+  const unavailable = context.sourceKey.startsWith('sky-article/');
   useEffect(() => {
+    if (unavailable) { setError('This source is no longer available. Open Content Library to inspect or restore its saved writing.'); return; }
     let cancelled = false, requested = false, received = false;
     const controller = new AbortController();
     setError('');
@@ -59,10 +62,10 @@ export default function SkyReaderArticleEntry({ context, request, onOpen }: Prop
     };
     window.addEventListener('message', receive);
     return () => { cancelled = true; clearTimeout(timer); controller.abort(); window.removeEventListener('message', receive); };
-  }, [channel, origin, context.sourceKey, context.date, context.timeZone, context.instant]);
+  }, [channel, origin, context.sourceKey, context.date, context.timeZone, context.instant, unavailable]);
   return <div aria-label="Passage opened from reader">
-    {error ? <><p role="alert">{error}</p><StudioButton onClick={() => setAttempt(value => value + 1)}>Retry opening passage</StudioButton></>
+    {error ? <><p role="alert">{error}</p><StudioButton type="button" onClick={() => unavailable ? onReload() : setAttempt(value => value + 1)}>Retry opening passage</StudioButton></>
       : <p role="status">Loading the complete published wording and calculated article period…</p>}
-    <iframe hidden ref={frame} key={channel} src={url} title="Published article copy" sandbox="allow-scripts allow-same-origin" referrerPolicy="no-referrer" />
+    {!unavailable && <iframe hidden ref={frame} key={channel} src={url} title="Published article copy" sandbox="allow-scripts allow-same-origin" referrerPolicy="no-referrer" />}
   </div>;
 }

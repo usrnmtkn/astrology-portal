@@ -8044,7 +8044,8 @@ export function GeneratedContentAdminDashboard() {
                 {publishedButUnwiredSkyRows.length > 0 && (
                   <Suspense fallback={null}><SkyPlacementUnwiredNotice rows={publishedButUnwiredSkyRows} statusLabel="Not live" /></Suspense>
                 )}
-                {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all" && (
+                {secret.trim() && !hasAccessIssue && skyPlacementBody !== "all" && skyPlacementSign !== "all"
+                  && !(readerEntry?.surface === 'sky' && parseAdminHash().params.get('from') === 'library') && (
                   <Suspense fallback={<PageLoading message="Loading planet and sign writing…" />}>
                     <SkyPlacementWorkspace key={`${skyPlacementBody}/${skyPlacementSign}`} rows={compositionRows} credential={secret}
                       date={skyReaderDate} onDateChange={setSkyReaderDate}
