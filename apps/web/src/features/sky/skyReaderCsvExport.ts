@@ -11,11 +11,12 @@ export function exportStatus(article: HTMLElement | null, detail: SkyDetail, asp
 }
 
 /** Export the resolved public article after the reader has rendered it. */
-export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href: string) {
+export function skyReaderCsvRecord(article: HTMLElement, detail: SkyDetail, href: string, options: { generalArticleOnly?: boolean } = {}) {
   const source = detail.readerExport;
   if (!source || detail.placementFactsPending) throw new Error('Wait for the complete Sky article to load.');
   const body = [...article.querySelectorAll<HTMLElement>('.sky-detail-body h2, .sky-detail-body h3, .sky-detail-body p, .sky-detail-body li, .sky-detail-body dt, .sky-detail-body dd')]
     .filter(node => !node.closest('#sky-personalized-placement, button, details') && !node.parentElement?.closest('li'))
+    .filter(node => !options.generalArticleOnly || !node.closest('.sky-detail-rising-horoscopes-card'))
     .map(node => node.innerText.trim()).filter(Boolean).join('\n\n');
   if (!body) throw new Error('The complete Sky article could not be exported.');
   const url = new URL(href);

@@ -25,6 +25,14 @@ for (const planet of skyPlacementBodies) for (const sign of skyPlacementSigns) {
 }
 assert.throws(() => assertPlacementVisit(workspaceVisitFacts('sun', 'libra'), 'sun', 'scorpio'), /Choose a date/);
 assert.throws(() => assertPlacementVisit({ ...workspaceVisitFacts(), transitEndInstant: 'invalid' }, 'sun', 'scorpio'), /incomplete/);
+const originalReader = { title: 'Synthetic Mercury Rx article', summary: '', body: 'Synthetic exact opening.\n\nSynthetic middle.\n\nSynthetic exact ending.',
+  sourceKeys: ['sky-placement/article/mercury/scorpio'], versions: ['synthetic version'], instant: '2026-11-07T17:00:00.000Z', timeZone: 'America/New_York', readerUrl: 'https://example.test/?date=2026-11-07#/sky/placement/mercury/scorpio' };
+const importedDraft = await placementVisitDraft(workspaceVisitFacts('mercury','scorpio','2026-10-24','2026-11-13'),
+  { headline: originalReader.title, summary: 'Synthetic explicitly entered summary.', body: originalReader.body }, undefined, { readerImport: originalReader });
+assert.equal(importedDraft.body, originalReader.body);
+assert.deepEqual(JSON.parse(importedDraft.sourceSnapshot.editorialImport!.originalSource), originalReader);
+assert.equal(importedDraft.sourceSnapshot.editorialImport!.imported?.summary, '');
+assert.match(importedDraft.sourceSnapshot.editorialImport!.originalSourceSha256!, /^[a-f0-9]{64}$/u);
 assert.ok(placementTemplateKeys('north-node', 'aquarius').includes('sky/article-template/nodes'));
 
 const initial = await workspaceFixtureRows();

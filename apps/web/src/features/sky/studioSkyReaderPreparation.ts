@@ -16,11 +16,13 @@ import { contentPublicationRecords } from '../../content/contentPublicationState
 import { skyPreviewReferenceDate } from '../../../../../src/shared/skyReaderPreview';
 
 /** The isolated Studio page uses the same facts, admitted sources and article builder as Sky. */
-export async function prepareStudioSkyPlacementReader(input: { planet: string; sign: string; date: string; location: LocationInput }) {
+export async function prepareStudioSkyPlacementReader(input: { planet: string; sign: string; date: string; location: LocationInput; instant?: string }) {
   await refreshContentPublications(true);
   if (!contentPublicationsAvailableOnline()) throw new Error('Current Sky publication state could not be verified. Retry the preview.');
   const location = withTimeZone(input.location);
-  const reference = skyDateTimeFromInput(input.date, location, true);
+  const reference = input.instant ? new Date(input.instant) : skyDateTimeFromInput(input.date, location, true);
+  if (!Number.isFinite(reference.getTime()) || skyPreviewReferenceDate(reference.toISOString(), location.timeZone!) !== input.date)
+    throw new Error('The reader instant does not match the selected local date.');
   const sky = await getAstrodienstSkyOffMainThread(location, reference, { includeDailyEvents: false, includeTransitWindows: false });
   const position = skyNodeDisplayPositions(sky.positions).find(candidate => candidate.planet.toLowerCase().replaceAll(' ', '-') === input.planet);
   if (!position) throw new Error('This planet or point is not available on the selected date.');

@@ -4487,7 +4487,7 @@ export function GeneratedContentAdminDashboard() {
       setSkyWriteupMotionFilter("all");
       setSkyWriteupDestinationFilter("all");
     }
-    if (page === "skyWriteups" && search === null && (!view || view === "catalog")) {
+    if (page === "skyWriteups" && search === null && (!view || view === "catalog") && entry?.surface !== 'sky') {
       const planet = params.get("planet");
       const sign = params.get("sign");
       setSkyPlacementBody(planet && skyPlacementBodies.includes(planet as typeof skyPlacementBodies[number]) ? planet : "all");
@@ -7905,7 +7905,7 @@ export function GeneratedContentAdminDashboard() {
                 }
                 navigateAdminPage("skyWriteups", params);
               }}>
-            {readerEntry?.surface === 'sky' && <Suspense fallback={<PageLoading message="Opening the reader passage…" />}><ReaderPassageEntry context={readerEntry} fromLibrary={parseAdminHash().params.get('from') === 'library'} secret={loadState === 'loaded' ? secret : ''} onOpen={row => openRow(row as AdminGeneratedContentRow)} /></Suspense>}
+            {readerEntry?.surface === 'sky' && parseAdminHash().params.get('from') === 'library' && <Suspense fallback={<PageLoading message="Opening the reader passage…" />}><ReaderPassageEntry context={readerEntry} fromLibrary secret={loadState === 'loaded' ? secret : ''} onOpen={row => openRow(row as AdminGeneratedContentRow)} /></Suspense>}
             {skyWriteupWorkspaceView === "ingress-preview" ? (
               <Suspense fallback={<PageLoading message="Loading unsaved preview…" />}><UnsavedIngressPreview /></Suspense>
             ) : isSkySummaryWorkspace ? (
@@ -8048,6 +8048,7 @@ export function GeneratedContentAdminDashboard() {
                   <Suspense fallback={<PageLoading message="Loading planet and sign writing…" />}>
                     <SkyPlacementWorkspace key={`${skyPlacementBody}/${skyPlacementSign}`} rows={compositionRows} credential={secret}
                       date={skyReaderDate} onDateChange={setSkyReaderDate}
+                      readerEntry={readerEntry?.surface === 'sky' && parseAdminHash().params.get('from') !== 'library' ? readerEntry : null}
                       selection={{ planet: skyPlacementBody, sign: skyPlacementSign, motion: skyWriteupMotionFilter }}
                       readerSources={!draft ? renderPlacementSources(skyPlacementBody, skyPlacementSign) : null}
                       request={(path, options) => adminJsonRequest(path, secret, options)}

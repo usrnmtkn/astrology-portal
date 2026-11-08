@@ -1,4 +1,5 @@
 import type { WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes.js';
+import type { SkyReaderArticleCopy } from '../../../src/shared/skyReaderPreview';
 import type { CompositionMapRow } from './compositionMap';
 import type { ArticleEventFacts } from './skyArticleRelatedContent';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
@@ -52,7 +53,7 @@ export function assertPlacementVisit(facts: PlacementVisitFacts, planet: string,
 }
 
 /** Only the dated draft is written. No default, source template or authoring workspace is updated. */
-export async function placementVisitDraft(facts: PlacementVisitFacts, fields: { headline: string; summary: string; body: string; writeupHoroscopes?: WriteupHoroscope[] }, template?: PlacementWorkspaceRow, options: { generated?: PlacementGeneratedArticle | null } = {}) {
+export async function placementVisitDraft(facts: PlacementVisitFacts, fields: { headline: string; summary: string; body: string; writeupHoroscopes?: WriteupHoroscope[] }, template?: PlacementWorkspaceRow, options: { generated?: PlacementGeneratedArticle | null; readerImport?: SkyReaderArticleCopy | null } = {}) {
   if (!options || typeof options !== 'object' || Array.isArray(options)) throw new Error('Use named draft options; article creation always covers the full calculated visit.');
   if (Object.hasOwn(facts, 'scope')) throw new Error('New articles use the full calculated visit. Open a saved day article to edit its existing date and scope.');
   const generated = options.generated;
@@ -61,12 +62,16 @@ export async function placementVisitDraft(facts: PlacementVisitFacts, fields: { 
   if (generated && (generated.edition.planet !== facts.planet || generated.edition.sign !== facts.sign
     || generated.edition.transitStartInstant !== facts.transitStartInstant || generated.edition.transitEndInstant !== facts.transitEndInstant))
     throw new Error('The generated article belongs to a different visit. Your writing has not been changed.');
-  const edition = generated ? await reviseSkyArticleEdition(generated.edition, { ...skyArticleEditableFields(generated.edition), headline: fields.headline, tldr: fields.summary, body: fields.body, writeupHoroscopes: fields.writeupHoroscopes }) : await compileSkyArticleEdition({
+  let edition = generated ? await reviseSkyArticleEdition(generated.edition, { ...skyArticleEditableFields(generated.edition), headline: fields.headline, tldr: fields.summary, body: fields.body, writeupHoroscopes: fields.writeupHoroscopes }) : await compileSkyArticleEdition({
     ...facts, format: SKY_INGRESS_ARTICLE_FORMAT,
     templateBody: template?.body ?? '', templateKey: template?.content_key ?? 'sky/article-template/ingress-layout/v3',
     tldr: fields.summary, housePassages: [], aspectPassages: [], writeupHoroscopes: fields.writeupHoroscopes,
     slotValues: { ...facts.slotValues, articleTitle: fields.headline, articleBody: fields.body }
   });
+  // The resolved reader already contains its complete body. Do not wrap it in a second date/overview block.
+  if (options.readerImport) edition = await reviseSkyArticleEdition(edition, { ...skyArticleEditableFields(edition), body: fields.body });
+  const originalSource = options.readerImport ? JSON.stringify(options.readerImport) : null;
+  const originalSourceSha256 = originalSource === null ? null : [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(originalSource)))].map(byte => byte.toString(16).padStart(2, '0')).join('');
   return {
     contentKey: edition.contentKey, surface: 'sky', mode: 'article', status: 'DRAFT',
     eventType: 'sky-article-edition', headline: edition.headline, summary: edition.tldr, body: edition.body,
@@ -76,6 +81,8 @@ export async function placementVisitDraft(facts: PlacementVisitFacts, fields: { 
     sourceSnapshot: { contentType: 'compiled-sky-article-edition', content_role: 'authored_card', review_status: 'needs_review',
       templateKey: edition.templateKey, templateHash: edition.templateHash, fixedProseHash: edition.fixedProseHash,
       compiledHash: edition.compiledHash, engineFacts: facts, templateOrigin: generated ? 'standard-ingress-layout' : template ? 'saved-source' : 'built-in-ingress-layout',
+      ...(originalSource ? { editorialImport: { schema: 'sky-published-reader-import/v1', originalSource, originalSourceSha256,
+        readerFields: ['headline', 'summary', 'body'], imported: options.readerImport } } : {}),
       ...(generated ? { slotGeneration: generated.generation } : {}) },
     lane: 'reference', reviewState: 'owner-review-required', blockType: 'sky_article',
     promptVersion: SKY_ARTICLE_COMPILER_VERSION, provider: 'owner-compiled-sky-article', model: 'deterministic-template-compiler'

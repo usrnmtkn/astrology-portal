@@ -10,6 +10,10 @@ import SkyArticlePublication from './SkyArticlePublication';
 const SkyArticleAspects = lazy(() => import('./SkyArticleAspects'));
 const SkyArticleHoroscopes = lazy(() => import('./SkyArticleHoroscopes'));
 const SkyWriteupHoroscopesEditor = lazy(() => import('./SkyWriteupHoroscopesEditor'));
+const SkyReaderArticleEntry = lazy(() => import('./SkyReaderArticleEntry'));
+import type { StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
+import type { SkyReaderArticleCopy } from '../../../src/shared/skyReaderPreview';
+import { skyArticleVariableDraftRecord } from '../../../src/shared/skyArticleVariableDraft';
 import { skyPublicationScheduled } from './skyArticlePublicationState';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
 import { reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
@@ -22,6 +26,7 @@ type Request = <T>(path: string, options?: RequestInit) => Promise<T>;
 type Props = {
   rows: Row[]; selection: SkyPlacementSelection; request: Request; credential: string;
   date: string | null; onDateChange: (date: string) => void;
+  readerEntry?: StudioPassageEdit | null;
   readerSources: ReactNode;
   onRows: (rows: Row[]) => void; onDirty: (dirty: boolean, busy: boolean) => void;
   onEditRow: (row: Row) => void; onEditField: (row: Row, path: string, selection: SkyPlacementSelection) => void;
@@ -59,6 +64,9 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [editing, setEditing] = useState<Row | null>(null);
   const [fields, setFields] = useState(empty);
   const [baseline, setBaseline] = useState(empty);
+  const [readerImport, setReaderImport] = useState<SkyReaderArticleCopy | null>(null);
+  const [readerOpening, setReaderOpening] = useState(false);
+  const readerOpened = useRef('');
   const [message, setMessage] = useState('');
   const [statuses, setStatuses] = useState<LiveStatus[] | null>(null);
   const [statusError, setStatusError] = useState('');
@@ -135,13 +143,25 @@ export default function SkyPlacementWorkspace(props: Props) {
   const refreshedEditing = editing ? allRows.find(row => row.id === editing.id) : null;
   useEffect(() => {
     if (busy || dirty || !refreshedEditing || refreshedEditing.updated_at === editing?.updated_at) return;
-    if (openVariableArticle(refreshedEditing)) return;
+    if (!latest.current.readerEntry && openVariableArticle(refreshedEditing)) return;
     const edition = placementEdition(refreshedEditing);
     if (!edition) return;
     const next = { headline: edition.headline, summary: edition.tldr, body: edition.body, ...(edition.writeupHoroscopes ? { writeupHoroscopes: edition.writeupHoroscopes } : {}) };
     setEditing(refreshedEditing); setFields(next); setBaseline(next);
   }, [refreshedEditing, editing?.updated_at, dirty, busy]);
   const visits = placementVisitRows(allRows, selection.planet, selection.sign);
+  const readerIdentity = JSON.stringify(props.readerEntry ?? null);
+  useEffect(() => {
+    const entry = latest.current.readerEntry;
+    if (!ready || !entry || readerOpened.current === readerIdentity) return;
+    readerOpened.current = readerIdentity;
+    const saved = visits.filter(row => placementEdition(row)?.contentKey === entry.sourceKey)
+      .sort((a, b) => Number(b.status === 'DRAFT') - Number(a.status === 'DRAFT') || (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))[0];
+    if (saved) {
+      edit(saved, true);
+      setMessage(saved.status === 'DRAFT' ? 'Opened your saved draft. Its complete wording and saved period are preserved.' : 'Opened the saved article. Edit its complete wording, then Save draft.');
+    } else setReaderOpening(true);
+  }, [ready, readerIdentity]);
   const setupRows = templates.flatMap(key => {
     const row = allRows.find(row => row.content_key === key && row.status !== 'ARCHIVED');
     return row ? [row] : [];
@@ -155,20 +175,37 @@ export default function SkyPlacementWorkspace(props: Props) {
     latest.current.onEditRow(row);
     return true;
   }
-  function edit(row: Row) {
+  function edit(row: Row, fromReader = false) {
     if (busy || !discard()) return;
-    if (openVariableArticle(row)) return;
+    if (!fromReader && openVariableArticle(row)) return;
     const edition = placementEdition(row);
     if (!edition) return;
     const next = { headline: edition.headline, summary: edition.tldr, body: edition.body, ...(edition.writeupHoroscopes ? { writeupHoroscopes: edition.writeupHoroscopes } : {}) };
-    setEditing(row); setFields(next); setBaseline(next); setFacts(null); setError(''); setMessage('');
+    setReaderImport(null); setReaderOpening(false); setEditing(row); setFields(next); setBaseline(next); setFacts(null); setError(''); setMessage('');
     setComposing(true);
     setGenerationOpen(false); setGenerationDirty(false); setGenerated(null);
     setEditorOpenRequest(value => value + 1);
   }
+  function openReaderArticle(copy: SkyReaderArticleCopy, calculated: PlacementVisitFacts) {
+    const key = skyArticleEditionContentKey({ ...calculated, format: SKY_INGRESS_ARTICLE_FORMAT });
+    const saved = visits.filter(row => placementEdition(row)?.contentKey === key)
+      .sort((a, b) => Number(b.status === 'DRAFT') - Number(a.status === 'DRAFT') || (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))[0];
+    if (saved) {
+      edit(saved, true);
+      setMessage('Opened your existing article draft. Its complete wording and saved period have been preserved.');
+      return;
+    }
+    const next = { headline: copy.title, summary: copy.summary, body: copy.body };
+    setEditing(null); setFields(next); setBaseline(next); setReaderImport(copy); setReaderOpening(false);
+    setFacts(calculated); setFactsReferenceDate(props.readerEntry!.date); setArticlePeriod('current');
+    setGenerated(null); setGenerationOpen(false); setGenerationDirty(false); setComposing(true); setTab('visit');
+    setEditorOpenRequest(value => value + 1);
+    setMessage('The complete published wording is loaded for this calculated period. Nothing has been saved or published.');
+  }
   async function loadVisit(generate = false) {
     if (busy || !discard()) return;
     setBusy(true); setError(''); setMessage(''); setComposing(true);
+    setReaderImport(null);
     try {
       const payload = await latest.current.request<{ ok: boolean; facts: PlacementVisitFacts }>(`/api/admin/sky-article-facts?${new URLSearchParams({ planet: selection.planet, date, period: articlePeriod, format: SKY_INGRESS_ARTICLE_FORMAT })}`);
       if (payload.ok !== true || !payload.facts) throw new Error('The calculated dates could not be loaded.');
@@ -202,15 +239,17 @@ export default function SkyPlacementWorkspace(props: Props) {
       let payload: { ok: boolean; rows: Row[]; skippedLiveRows?: unknown[] };
       const base = editing && placementEdition(editing);
       if (editing && base) {
-        if ((editing.sections as Record<string, unknown> | null)?.skyArticleVariableDraft) throw new Error('Open this article in its passage workspace to preserve its variables before saving.');
         if (!editing.updated_at) throw new Error('Reload this saved article to get its current version before saving.');
-        const revised = await reviseSkyArticleEdition(base, { ...skyArticleEditableFields(base), headline: fields.headline, tldr: fields.summary, body: fields.body, writeupHoroscopes: fields.writeupHoroscopes });
+        const updated = { ...skyArticleEditableFields(base), headline: fields.headline, tldr: fields.summary, body: fields.body, writeupHoroscopes: fields.writeupHoroscopes };
+        const variables = skyArticleVariableDraftRecord((editing.sections as Record<string, unknown> | null)?.skyArticleVariableDraft);
+        const revised = await reviseSkyArticleEdition(base, updated);
         payload = await latest.current.request('/api/admin/generated-content', { method: 'PATCH', body: JSON.stringify({
-          id: editing.id, expectedUpdatedAt: editing.updated_at, ownerAction: 'save-sky-article-edition-revision', sections: { skyArticleEdition: revised }
+          id: editing.id, expectedUpdatedAt: editing.updated_at, ownerAction: 'save-sky-article-edition-revision', sections: { skyArticleEdition: revised,
+            ...(variables ? { skyArticleVariableDraft: { ...variables, templates: { headline: updated.headline, tldr: updated.tldr, body: updated.body } } } : {}) }
         }) });
       } else {
         if (!facts) throw new Error('Load calculated dates before saving this visit.');
-        const row = await placementVisitDraft(facts, fields, setupRows[0], { generated });
+        const row = await placementVisitDraft(facts, fields, setupRows[0], { generated, readerImport });
         // Re-read exact identity before creating. Existing drafts are opened, never bulk-replaced.
         const current = await latest.current.request<{ ok: boolean; rows: Row[] }>(`/api/admin/generated-content-inventory?${new URLSearchParams({ contentKey: row.contentKey, status: 'all', visibility: 'all', limit: '2' })}`);
         if (current.ok !== true || !Array.isArray(current.rows)) throw new Error('The existing draft could not be checked. Your writing is still here.');
@@ -251,7 +290,7 @@ export default function SkyPlacementWorkspace(props: Props) {
     : <p>Save the write-up draft to set its publication date and publish these readings.</p>;
   function backToArticles() {
     if (busy || !discard()) return;
-    setComposing(false); setWriteupHoroscopesOpen(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
+    setComposing(false); setReaderImport(null); setReaderOpening(false); setWriteupHoroscopesOpen(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
     setGenerationOpen(false); setGenerationDirty(false); setGenerated(null); setMessage(''); setError('');
   }
   const periodFinder = <div className="studio-section">
@@ -269,7 +308,10 @@ export default function SkyPlacementWorkspace(props: Props) {
     <StudioTabs label="Planet and sign writing" tabs={placementWorkspaceTabs} value={tab} onValueChange={value => setTab(value)}>
       {tab === 'visit' ? <section className="admin-workspace" aria-label="Dated visit articles" aria-busy={busy}>
         {!ready && !error && <p role="status">Loading saved writing…</p>}
-        {ready && !composing && <section className="studio-section" aria-label="Saved visits">
+        {ready && readerOpening && props.readerEntry && <Suspense fallback={<p role="status">Opening the reader article…</p>}>
+          <SkyReaderArticleEntry context={props.readerEntry} request={props.request} onOpen={openReaderArticle} />
+        </Suspense>}
+        {ready && !composing && !readerOpening && <section className="studio-section" aria-label="Saved visits">
           <header className="studio-section-header">
             <h3>Articles</h3>
             <StudioButton className="admin-primary-button" disabled={busy} onClick={() => { setComposing(true); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty); }}>New article</StudioButton>

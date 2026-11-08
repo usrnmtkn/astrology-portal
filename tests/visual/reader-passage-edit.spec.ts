@@ -5,7 +5,7 @@ import { skyPlacementSourceFixture } from '../helpers/sky-placement-source-fixtu
 import { getLunarCalendarMonth } from '../../apps/web/src/services/ephemeris';
 import { calendarPassageRecord } from '../../src/shared/features/calendar/calendarPassageTemplates';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
-import { studioPassageEditHref } from '../../src/shared/studioPassageEdit';
+import { parseStudioPassageEdit, studioPassageEditHref } from '../../src/shared/studioPassageEdit';
 
 const date='2026-10-21', timeZone='America/New_York';
 const location={label:'QA reference',latitude:0,longitude:0,timeZone};
@@ -30,6 +30,9 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
     test.setTimeout(180_000);
     const sky=await skyPlacementSourceFixture('sun','libra');
     const fallback=await skyPlacementSourceFixture('sun','scorpio');
+    const variableSource={schema:'sky-article-variable-draft-v1',templates:{headline:sky.pending.headline,tldr:sky.pending.summary,body:'{{completeCopy}}'},
+      values:{completeCopy:{text:sky.pending.body,kind:'manual',source:'synthetic-saved-private-source'}}};
+    Object.assign(sky.pending.sections,{skyArticleVariableDraft:variableSource,skyArticleVariableBase:null});
     const store=await studioApiStore([sky.active,sky.pending],{uuidIds:true});
     const calendar=await getLunarCalendarMonth(location,new Date(`${date}T16:00:00Z`));
     const datedBody='Synthetic saved date-only opening: {{moonSign}}.\n\nSynthetic complete dated ending.';
@@ -69,7 +72,7 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       // A document outage during handoff must be retryable without opening another source.
       await context.route('**/api/admin/generated-content-inventory?**',async route=>{
         const url=new URL(route.request().url());
-        if(failEntry&&url.searchParams.getAll('contentKeys').includes(sky.active.content_key)){await route.fulfill({status:503,json:{ok:false,error:'Synthetic passage lookup unavailable.'}});return;}
+        if(failEntry&&url.searchParams.get('contentKeyPrefix')===`sky-article/sun/libra/`){await route.fulfill({status:503,json:{ok:false,error:'Synthetic passage lookup unavailable.'}});return;}
         await route.fallback();
       });
       await page.setViewportSize({width,height:1000});
@@ -108,27 +111,34 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await page.goto(`/?date=${date}#sky/placement/sun/libra`);
       const article=page.locator('.sky-detail-article');
       const skyLink=article.getByRole('link',{name:'Edit this passage',exact:true});
-      await expect(skyLink).toHaveAttribute('href',studioPassageEditHref({surface:'sky',date,timeZone,sourceKey:sky.active.content_key})!,{timeout:60000});
+      await expect(skyLink).toBeVisible({timeout:60000});
+      expect(parseStudioPassageEdit(new URL((await skyLink.getAttribute('href'))!,'https://example.test').hash)).toMatchObject({surface:'sky',date,timeZone,sourceKey:sky.active.content_key});
+      const datedSkyHref=(await skyLink.getAttribute('href'))!;
       await expectEditLinkStyle(skyLink);
       failEntry=true;
       const openSky=context.waitForEvent('page');await skyLink.click();const skyEditor=await openSky;
-      await expect(skyEditor.getByLabel('Passage opened from reader')).toContainText('Synthetic passage lookup unavailable.',{timeout:60000});
+      await expect(skyEditor.getByRole('alert')).toContainText('Saved visits could not be loaded.',{timeout:60000});
       await expect(skyEditor.getByRole('dialog')).toHaveCount(0);
       failEntry=false;
-      await skyEditor.getByRole('button',{name:'Retry opening passage',exact:true}).click();
-      await expect(skyEditor.getByRole('dialog').getByLabel('Sky article general copy',{exact:true})).toHaveValue(sky.pending.body,{timeout:60000});
-      await expect(skyEditor.getByRole('dialog').getByLabel('Sky reader date',{exact:true})).toHaveValue(date);
-      await skyEditor.getByRole('dialog').getByText('Reader source details',{exact:true}).click();
-      await expect(skyEditor.getByRole('dialog').getByRole('region',{name:'Sky reader preview',exact:true}).getByText(/^Reference:.*America\/New_York/u)).toBeVisible({timeout:60000});
-      await expect(skyEditor.getByLabel('Passage opened from reader')).toContainText(timeZone);
-      await expect(skyEditor.getByLabel('Passage opened from reader')).toContainText('Opened your saved draft.');
+      await skyEditor.getByRole('button',{name:'Reload saved writing',exact:true}).click();
+      const newForm=skyEditor.getByRole('region',{name:'Article for this visit',exact:true});
+      await expect(newForm.getByLabel('Visit article body',{exact:true})).toHaveValue(sky.pending.body,{timeout:60000});
+      await expect(skyEditor.getByRole('dialog')).toHaveCount(0);
+      await expect(skyEditor.getByText('Opened your saved draft. Its complete wording and saved period are preserved.',{exact:true})).toBeVisible();
       await skyEditor.reload();
-      await expect(skyEditor.getByRole('dialog').getByLabel('Sky article general copy',{exact:true})).toHaveValue(sky.pending.body,{timeout:60000});
+      await expect(newForm.getByLabel('Visit article body',{exact:true})).toHaveValue(sky.pending.body,{timeout:60000});
       await skyEditor.close();
       await page.goto('/?date=2026-10-24#sky/placement/sun/scorpio');
-      await expect(article.getByRole('link',{name:'Edit this passage',exact:true})).toHaveAttribute('href',studioPassageEditHref({surface:'sky',date:'2026-10-24',timeZone,sourceKey:fallback.fallback.content_key})!,{timeout:60000});
-      const openFallback=context.waitForEvent('page');await article.getByRole('link',{name:'Edit this passage',exact:true}).click();const fallbackEditor=await openFallback;
-      await expect(fallbackEditor.getByRole('dialog').locator('textarea[data-sky-field="placementArticle"]')).toHaveValue(fallbackSource.placementArticle,{timeout:60000});
+      await expect(article.getByRole('link',{name:'Edit this passage',exact:true})).toBeVisible({timeout:60000});
+      // Full public copy is compared in the Mercury regression below; this old link remains compatible.
+      const oldHref=studioPassageEditHref({surface:'sky',date:'2026-10-24',timeZone,sourceKey:fallback.fallback.content_key})!;
+      await context.route('**/api/admin/sky-article-facts?**',async route=>{
+        const { workspaceVisitFacts }=await import('../helpers/sky-placement-workspace-fixtures');
+        await route.fulfill({json:{ok:true,facts:{...workspaceVisitFacts('sun','scorpio','2026-10-23','2026-11-22'),generatedAt:new URL(route.request().url()).searchParams.get('instant'),articlePeriod:'current'}}});
+      });
+      const fallbackEditor=await context.newPage();await fallbackEditor.goto(oldHref);
+      await expect(fallbackEditor.getByLabel('Visit article body',{exact:true})).not.toHaveValue('',{timeout:60000});
+      await expect(fallbackEditor.getByRole('dialog')).toHaveCount(0);
       await fallbackEditor.close();
       expect(writes).toEqual([]);
       expect(await store.call({method:'rows'})).toEqual(before);
@@ -136,6 +146,79 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await article.screenshot({path:`test-results/reader-passage-edit-${width}-${theme}.png`});
       expect(errors).toEqual([]);
+      if(width===1440&&theme==='light') {
+        const reentry=await context.newPage();await reentry.goto(datedSkyHref);
+        const form=reentry.getByRole('region',{name:'Article for this visit',exact:true});
+        const revised=sky.pending.body+'\n\nSynthetic explicit private revision.';
+        await form.getByLabel('Visit article body').fill(revised);
+        await form.getByRole('button',{name:'Save draft',exact:true}).click();
+        await expect(reentry.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
+        const saved=(await store.call({method:'rows'})).find((row:any)=>row.id===sky.pending.id);
+        expect(saved.body).toBe(revised);expect(saved.sections.skyArticleVariableDraft.values).toEqual(variableSource.values);
+        expect(saved.sections.skyArticleVariableDraft.templates.body).toBe(revised);
+        expect((await store.call({method:'rows'})).find((row:any)=>row.id===sky.active.id)).toEqual(before.find((row:any)=>row.id===sky.active.id));
+        expect(await store.call({method:'publications'})).toEqual(publicationsBefore);
+        await reentry.reload();await expect(form.getByLabel('Visit article body')).toHaveValue(revised,{timeout:60000});
+        await reentry.close();
+      }
+    } finally {store.close();}
+  });
+}
+
+for (const [width,theme] of [[1440,'light'],[390,'dark']] as const) {
+  test(`Mercury Rx reader Edit loads complete wording, preserves drafts and saves privately ${width} ${theme}`,async({page,context})=>{
+    test.setTimeout(180_000);
+    const fallbackKey='sky-placement/article/mercury/scorpio';
+    const store=await studioApiStore([],{uuidIds:true});
+    const writes:any[]=[],generation:string[]=[],errors:string[]=[];
+    const { workspaceVisitFacts }=await import('../helpers/sky-placement-workspace-fixtures');
+    const facts={...workspaceVisitFacts('mercury','scorpio','2026-10-24','2026-11-13'),articlePeriod:'current',motion:'retrograde',periodLabel:'Retrograde in this sign',
+      transitStartInstant:'2026-10-24T07:12:00.000Z',transitEndInstant:'2026-11-13T15:53:00.000Z',
+      slotValues:{when:'October 24, 2026 at 3:12 AM ET to November 13, 2026 at 10:53 AM ET'}};
+    context.on('page',popup=>{void popup.setViewportSize({width,height:1000});});
+    page.on('pageerror',error=>errors.push(error.message));
+    await context.addInitScript(({theme,location})=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));localStorage.setItem('tldrastro:studio-theme',theme);},{theme,location});
+    await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v2',rows:[],publications:[],rowCount:0}}));
+    await context.route('**/rest/v1/**',async route=>route.fulfill({json:new URL(route.request().url()).pathname.endsWith('/content_publications')?await store.call({method:'publications'}):[]}));
+    let factsCalls=0;
+    await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
+      if(url.pathname==='/api/content-publications'){const publications=canonicalPublicationLedger(await store.call({method:'publications'}));await route.fulfill({headers:{etag:await publicationLedgerTag(publications)},json:{schema:'tldr-publications/v1',publications}});return true;}
+      if(url.pathname==='/api/content-reader'||url.pathname==='/api/admin/content-live-status') {const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
+      if(url.pathname==='/api/admin/sky-article-facts'){if(url.searchParams.has('instant')){factsCalls++;expect(url.searchParams.get('period')).toBe('current');expect(url.searchParams.get('timeZone')).toBe(timeZone);}await route.fulfill({json:{ok:true,facts:{...facts,generatedAt:url.searchParams.get('instant')??facts.generatedAt}}});return true;}
+      if(url.pathname==='/api/admin/sky-article-template-slots'){generation.push(url.pathname);await route.abort();return true;}
+      return false;
+    }});
+    try {
+      const before=await store.call({method:'rows'}),pubs=await store.call({method:'publications'});
+      await page.setViewportSize({width,height:1000});await page.goto('/?date=2026-11-07#sky/placement/mercury/scorpio');
+      const article=page.locator('.sky-detail-article');
+      await expect(article.locator('.sky-detail-body p').first()).toBeVisible({timeout:60000});
+      // This is the same complete public-body boundary used by the CSV export and edit handoff.
+      const expected=await article.evaluate(node=>[...node.querySelectorAll<HTMLElement>('.sky-detail-body h2,.sky-detail-body h3,.sky-detail-body p,.sky-detail-body li,.sky-detail-body dt,.sky-detail-body dd')].filter(n=>!n.closest('#sky-personalized-placement,.sky-detail-rising-horoscopes-card,button,details')&&!n.parentElement?.closest('li')).map(n=>n.innerText.trim()).filter(Boolean).join('\n\n'));
+      expect(expected.length).toBeGreaterThan(500);
+      const opening=expected.split('\n\n')[0],final=expected.split('\n\n').at(-1)!;
+      const open=context.waitForEvent('page');await article.getByRole('link',{name:'Edit this passage',exact:true}).click();const editor=await open;
+      const form=editor.getByRole('region',{name:'Article for this visit',exact:true}),body=form.getByLabel('Visit article body',{exact:true});
+      await expect(body).toHaveValue(expected,{timeout:60000});expect(await body.inputValue()).toContain(opening);expect(await body.inputValue()).toContain(final);
+      await expect(form.getByLabel('Visit article title')).toHaveValue('Mercury Rx in Scorpio');
+      await expect(form.getByRole('complementary',{name:'Article settings'})).toContainText('Retrograde in this sign');
+      await expect(form).toContainText('October 24, 2026');await expect(form).toContainText('November 13, 2026');
+      await expect(editor.getByRole('dialog')).toHaveCount(0);expect(writes).toEqual([]);expect(generation).toEqual([]);
+      expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(pubs);
+      await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(await body.inputValue()).toContain(opening);expect(await body.inputValue()).toContain(final);expect(writes).toEqual([]);
+      const edited=expected+'\n\nSynthetic private edit final sentence.';
+      await body.fill(edited);await form.getByLabel('Visit article summary').fill('Synthetic explicit owner summary.');
+      await form.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(editor.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
+      const rows=await store.call({method:'rows'}),saved=rows.find((row:any)=>row.content_key==='sky-article/mercury/scorpio/2026/2026-10-24');
+      expect(saved.status).toBe('DRAFT');expect(saved.lane).toBe('reference');expect(saved.body).toContain(edited);
+      expect(saved.sections.skyArticleEdition.transitStartInstant).toBe(facts.transitStartInstant);expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(facts.transitEndInstant);
+      const imported=saved.source_snapshot.editorialImport;
+      expect(imported.imported.body).toBe(expected);expect(JSON.parse(imported.originalSource)).toEqual(imported.imported);expect(imported.originalSourceSha256).toMatch(/^[a-f0-9]{64}$/u);expect(imported.imported.sourceKeys).toContain(fallbackKey);
+      await editor.reload();await expect(body).toHaveValue(saved.body,{timeout:60000});
+      const after=await store.call({method:'rows'});for(const row of before)expect(after.find((value:any)=>value.id===row.id)).toEqual(row);
+      expect(await store.call({method:'publications'})).toEqual(pubs);expect(generation).toEqual([]);expect(factsCalls).toBeGreaterThan(1);
+      await editor.close();expect(errors).toEqual([]);
     } finally {store.close();}
   });
 }
