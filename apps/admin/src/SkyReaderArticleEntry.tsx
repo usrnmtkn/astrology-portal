@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { StudioButton } from './StudioControls';
 import { getInitialLocation } from '../../web/src/services/skySelection';
 import { skyPassageEditPlacement, type StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
@@ -18,6 +18,7 @@ export default function SkyReaderArticleEntry({ context, request, onOpen, onRelo
   const channel = useMemo(() => { void attempt; return crypto.randomUUID(); }, [attempt]);
   const url = useMemo(() => skyReaderPreviewFrameUrl(window.location.origin, channel), [channel]);
   const origin = new URL(url).origin;
+  const connect = useCallback(() => frame.current?.contentWindow?.postMessage({ protocol: skyReaderPreviewProtocol, channel, type: 'ready-request' }, origin), [channel, origin]);
   // Saved dated articles are opened by the workspace inventory. Never turn an absent/archived identity into a new fallback draft.
   const unavailable = context.sourceKey.startsWith('sky-article/');
   useEffect(() => {
@@ -25,13 +26,14 @@ export default function SkyReaderArticleEntry({ context, request, onOpen, onRelo
     let cancelled = false, requested = false, received = false;
     const controller = new AbortController();
     setError('');
-    const timer = window.setTimeout(() => { cancelled = true; controller.abort(); setError('The complete reader article did not finish loading. Retry opening it.'); }, 60_000);
+    const connectionTimer = window.setInterval(connect, 500);
+    const timer = window.setTimeout(() => { cancelled = true; clearInterval(connectionTimer); controller.abort(); setError('The complete reader article did not finish loading. Retry opening it.'); }, 60_000);
     const receive = (event: MessageEvent) => {
       const data = event.data;
       if (cancelled || event.source !== frame.current?.contentWindow || event.origin !== origin
         || data?.protocol !== skyReaderPreviewProtocol || data.channel !== channel) return;
       if (data.type === 'ready' && !requested) {
-        requested = true;
+        requested = true; clearInterval(connectionTimer);
         const placement = skyPassageEditPlacement(context.sourceKey);
         const input: SkyReaderPreviewRequest = { protocol: skyReaderPreviewProtocol, channel, type: 'render', requestId: 1,
           ...placement, date: context.date, instant: context.instant, captureArticle: true,
@@ -61,8 +63,9 @@ export default function SkyReaderArticleEntry({ context, request, onOpen, onRelo
       })().catch(reason => { if (!cancelled) { clearTimeout(timer); setError(reason instanceof Error ? reason.message : 'The reader article could not be opened.'); } });
     };
     window.addEventListener('message', receive);
-    return () => { cancelled = true; clearTimeout(timer); controller.abort(); window.removeEventListener('message', receive); };
-  }, [channel, origin, context.sourceKey, context.date, context.timeZone, context.instant, unavailable]);
+    connect();
+    return () => { cancelled = true; clearInterval(connectionTimer); clearTimeout(timer); controller.abort(); window.removeEventListener('message', receive); };
+  }, [channel, origin, connect, context.sourceKey, context.date, context.timeZone, context.instant, unavailable]);
   return <div aria-label="Passage opened from reader">
     {error ? <><p role="alert">{error}</p><StudioButton type="button" onClick={() => unavailable ? onReload() : setAttempt(value => value + 1)}>Retry opening passage</StudioButton></>
       : <p role="status">Loading the complete published wording and calculated article period…</p>}

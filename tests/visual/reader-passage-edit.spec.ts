@@ -165,8 +165,8 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
   });
 }
 
-for (const [width,theme] of [[1440,'light'],[390,'dark']] as const) {
-  test(`Mercury Rx reader Edit loads complete wording, preserves drafts and saves privately ${width} ${theme}`,async({page,context})=>{
+for (const [width,theme,dropInitialReady] of [[1440,'light',false],[390,'dark',false],[1440,'light',true]] as const) {
+  test(`Mercury Rx reader Edit loads complete wording, preserves drafts and saves privately ${width} ${theme}${dropInitialReady ? ' after missed initial ready' : ''}`,async({page,context})=>{
     test.setTimeout(180_000);
     const fallbackKey='sky-placement/article/mercury/scorpio';
     const store=await studioApiStore([],{uuidIds:true});
@@ -177,6 +177,15 @@ for (const [width,theme] of [[1440,'light'],[390,'dark']] as const) {
       slotValues:{when:'October 24, 2026 at 3:12 AM ET to November 13, 2026 at 10:53 AM ET'}};
     context.on('page',popup=>{void popup.setViewportSize({width,height:1000});});
     page.on('pageerror',error=>errors.push(error.message));
+    if(dropInitialReady) await context.addInitScript(()=>{
+      const dropped=new Set<string>();
+      window.addEventListener('message',event=>{
+        const message=event.data;
+        if(message?.protocol!=='studio-sky-reader-preview/v1'||message.type!=='ready'||dropped.has(message.channel))return;
+        dropped.add(message.channel);event.stopImmediatePropagation();
+        document.documentElement.dataset.missedInitialPreviewReady='true';
+      },true);
+    });
     await context.addInitScript(({theme,location})=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));localStorage.setItem('tldrastro:studio-theme',theme);},{theme,location});
     await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v2',rows:[],publications:[],rowCount:0}}));
     await context.route('**/rest/v1/**',async route=>route.fulfill({json:new URL(route.request().url()).pathname.endsWith('/content_publications')?await store.call({method:'publications'}):[]}));
@@ -200,12 +209,15 @@ for (const [width,theme] of [[1440,'light'],[390,'dark']] as const) {
       const open=context.waitForEvent('page');await article.getByRole('link',{name:'Edit this passage',exact:true}).click();const editor=await open;
       const form=editor.getByRole('region',{name:'Article for this visit',exact:true}),body=form.getByLabel('Visit article body',{exact:true});
       await expect(body).toHaveValue(expected,{timeout:60000});expect(await body.inputValue()).toContain(opening);expect(await body.inputValue()).toContain(final);
+      if(dropInitialReady)expect(await editor.locator('html').getAttribute('data-missed-initial-preview-ready')).toBe('true');
       await expect(form.getByLabel('Visit article title')).toHaveValue('Mercury Rx in Scorpio');
       await expect(form.getByRole('complementary',{name:'Article settings'})).toContainText('Retrograde in this sign');
       await expect(form).toContainText('October 24, 2026');await expect(form).toContainText('November 13, 2026');
       await expect(editor.getByRole('dialog')).toHaveCount(0);expect(writes).toEqual([]);expect(generation).toEqual([]);
       expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(pubs);
       await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(await body.inputValue()).toContain(opening);expect(await body.inputValue()).toContain(final);expect(writes).toEqual([]);
+      if(dropInitialReady){await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(writes).toEqual([]);}
+      expect(factsCalls).toBe(dropInitialReady ? 3 : 2);
       const edited=expected+'\n\nSynthetic private edit final sentence.';
       await body.fill(edited);await form.getByLabel('Visit article summary').fill('Synthetic explicit owner summary.');
       await form.getByRole('button',{name:'Save draft',exact:true}).click();

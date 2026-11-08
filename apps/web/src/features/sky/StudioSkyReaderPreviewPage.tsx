@@ -37,7 +37,9 @@ export default function StudioSkyReaderPreviewPage() {
     const send = (data: Record<string, unknown>) => window.parent.postMessage({ protocol: skyReaderPreviewProtocol, channel, ...data }, parentOrigin);
     const receive = (event: MessageEvent) => {
       const input = event.data as SkyReaderPreviewRequest;
-      if (event.source !== window.parent || event.origin !== parentOrigin || input?.protocol !== skyReaderPreviewProtocol || input.channel !== channel || input.type !== 'render') return;
+      if (event.source !== window.parent || event.origin !== parentOrigin || input?.protocol !== skyReaderPreviewProtocol || input.channel !== channel) return;
+      if (event.data.type === 'ready-request') { send({ type: 'ready' }); return; }
+      if (input.type !== 'render') return;
       const sequence = ++latest;
       setDetail(null); setCapture(null); setError('');
       void (async () => {
