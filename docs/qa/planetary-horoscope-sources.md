@@ -27,6 +27,11 @@ substituting evergreen text. Reader wording is neither shortened nor rewritten.
 
 AI drafting uses the existing governed transit-house writer, canonical
 `transit-house/{planet}/{house}` meaning source and current writing memory.
+Canonical node identifiers use underscores. For this server-built horoscope
+schema only, transit-house sources enter as mechanism references. Doctrine-only
+sources retain that restriction, cannot supply reusable prose or framing, and
+receive no wider surface permission. Other writing requests keep their existing
+usage. Free-preview checks cover all fourteen supported planets and points.
 Only the saved planet, sign, calculated window and selected sign's whole-sign
 house become facts. Caller-supplied astrology, stale versions and invalid saved
 compilations fail before dispatch. Model output remains for owner review.

@@ -6,6 +6,7 @@ import {WRITEUP_HOROSCOPE_SIGNS} from '../../src/shared/skyWriteupHoroscopes.js'
 import {generateSkyArticleTemplateSlots,skyArticleTemplateSlotsExport,type GenerateSkyArticleTemplateSlotsInput} from './content-generation.js';
 import {personalTransitWritingMemory} from './personal-transit-writing.js';
 import {isSkyIngressEssay} from '../../apps/web/src/content/skyIngressEssay.mjs';
+import {canonicalBody} from '../../src/astro-writing/productionEvidenceAdapter.cjs';
 
 /** Draft one saved write-up field through the existing governed house writer.
  * The caller supplies direction, never replacement astrology or publication. */
@@ -44,7 +45,7 @@ export async function writeSkyWriteupHoroscope(body:Record<string,any>) {
       placementScope:`One current-sky planetary horoscope for ${input.sign} Sun or Rising: ${edition.planet} in ${edition.sign}, whole-sign house ${house}. Use only the saved calculated coverage. No natal planets, personal chart or aspect hits were supplied.`,
       housesExcluded:false,signsExcluded:false,contentKey:contact.contentKey},
     requestedSlots:[{name:'horoscopeBody',description:`Write one complete second-person planetary horoscope for ${input.sign} Sun or Rising, for the supplied planet, sign, whole-sign house and calculated period. Develop only source-supported transit meaning. Treat current text as revision context; do not change any other sign or the article. Return reader prose only, without a heading or drafting notes.`}],
-    knowledgeIds:[`transit-house/${edition.planet}/${house}`],
+    knowledgeIds:[`transit-house/${canonicalBody(edition.planet)}/${house}`],
     writingMemory:await personalTransitWritingMemory(contact),provider:body.provider,voiceNotes:body.voiceNotes
   };
   if(body.preview)return {ok:true,writingExport:await skyArticleTemplateSlotsExport(generationInput),source,saved:false,published:false};

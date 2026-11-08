@@ -16,7 +16,8 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`AI sign 
  await page.route('**/api/admin/sky-article-template-slots',async route=>{
   const body=route.request().postDataJSON();expect(body.writeupHoroscope.sign).toBe('gemini');expect(body.writeupHoroscope.currentText).toBe(readings[2].body);
   if(body.preview){previews++;const text='Synthetic complete writing plan.';return route.fulfill({json:{ok:true,writingExport:{schema:'studio-writing-export/v1',title:'Synthetic plan',text,requestCount:1,introLength:0,units:[{label:'Gemini',start:0,end:text.length}]}}});}
-  calls++;return route.fulfill({json:{ok:true,body:generated,source:{id:initial.id,updatedAt:initial.updated_at,sign:'gemini',compiledHash:draft.sections.skyArticleEdition.compiledHash,startsAt:draft.sections.skyArticleEdition.transitStartInstant,endsAt:draft.sections.skyArticleEdition.transitEndInstant},generation:{provider:'synthetic',model:'synthetic-model',responseId:'synthetic-response'},saved:false,published:false}});
+  calls++;if(calls===1)return route.fulfill({status:503,json:{ok:false,error:'Synthetic provider outage.'}});
+  return route.fulfill({json:{ok:true,body:generated,source:{id:initial.id,updatedAt:initial.updated_at,sign:'gemini',compiledHash:draft.sections.skyArticleEdition.compiledHash,startsAt:draft.sections.skyArticleEdition.transitStartInstant,endsAt:draft.sections.skyArticleEdition.transitEndInstant},generation:{provider:'synthetic',model:'synthetic-model',responseId:'synthetic-response'},saved:false,published:false}});
  });
  try{
   await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY==='1'?'/admin/content':'/'}#sky-writeups?planet=mercury&sign=scorpio`);
@@ -24,13 +25,15 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`AI sign 
   const panel=page.getByRole('dialog',{name:'Horoscopes for this write-up',exact:true});await panel.getByRole('group',{name:'Write-up horoscope signs'}).getByRole('button',{name:'Gemini ✓',exact:true}).click();await panel.getByRole('button',{name:'Write with AI',exact:true}).click();
   await panel.getByLabel('Horoscope draft direction').fill('Synthetic owner direction.');
   await panel.getByText('Complete writing plan · copy or download',{exact:true}).click();await panel.getByRole('button',{name:'Load complete writing plan',exact:true}).click();await expect(panel.getByLabel('Complete writing plan')).toHaveValue('Synthetic complete writing plan.');expect(calls).toBe(0);expect(previews).toBe(1);
+  await panel.getByRole('button',{name:'Generate draft',exact:true}).click();await expect(panel.getByRole('alert')).toContainText('Synthetic provider outage.');await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(readings[2].body);expect(calls).toBe(1);
   await panel.getByRole('button',{name:'Generate draft',exact:true}).click();await expect(panel.getByLabel('Generated horoscope draft')).toHaveValue(generated);
   await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(readings[2].body);await expect(panel.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
   page.once('dialog',dialog=>dialog.dismiss());await panel.getByRole('button',{name:'Back to write-up',exact:true}).click();await expect(panel.getByLabel('Generated horoscope draft')).toHaveValue(generated);
+  await page.screenshot({path:test.info().outputPath('review-ai-horoscope-draft.png')});
   await panel.getByRole('button',{name:'Use this draft',exact:true}).click();await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(generated);await panel.getByRole('button',{name:'Save draft',exact:true}).click();await expect(panel.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
   let saved=(await store.call({method:'rows'})).find((r:any)=>r.id===initial.id);expect(saved.status).toBe('DRAFT');expect(saved.body).toBe(initial.body);expect(saved.sections.skyArticleEdition.writeupHoroscopes).toEqual(readings.map(p=>p.sign==='gemini'?{...p,body:generated}:p));
   await panel.getByRole('button',{name:'Approve & publish',exact:true}).click();await expect(panel.getByText('Article published with the selected publication date.',{exact:true})).toBeVisible();
-  saved=(await store.call({method:'rows'})).find((r:any)=>r.id===initial.id);expect(saved.status).toBe('LIVE');expect(calls).toBe(1);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  saved=(await store.call({method:'rows'})).find((r:any)=>r.id===initial.id);expect(saved.status).toBe('LIVE');expect(calls).toBe(2);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  }finally{store.close();}
 });
 

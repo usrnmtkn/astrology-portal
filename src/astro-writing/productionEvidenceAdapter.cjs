@@ -224,10 +224,14 @@ function mapLegacyIdentifier(legacyIdentifier, context = {}) {
   if (canonicalCandidate.includes("/") && indexIds().has(canonicalCandidate)) {
     const bondMechanism = context.surface === "friends" && slug(context.eventType) === "bond-effect"
       && /^(?:body|aspect)\//u.test(canonicalCandidate);
+    // A sign horoscope uses transit-house doctrine as meaning, never as
+    // reusable owner prose. Retain doctrine-only permissions and framing.
+    const planetaryHouseMechanism = context.surface === "you" && context.eventType === "transit-house"
+      && context.writingSchema === "planetary-horoscope-writing/v1" && /^transit-house\//u.test(canonicalCandidate);
     return {
       legacyIdentifier,
       canonicalIds: [canonicalCandidate],
-      targetUsages: [bondMechanism ? "mechanism-reference" : "primary"],
+      targetUsages: [bondMechanism || planetaryHouseMechanism ? "mechanism-reference" : "primary"],
       mappingBasis: "already-canonical"
     };
   }
@@ -596,7 +600,8 @@ function mapProductionInput(input) {
   const mappings = legacyIdentifiers.map((id) => mapLegacyIdentifier(id, {
     surface: input.surface,
     eventType: input.eventType,
-    evidenceSurface
+    evidenceSurface,
+    writingSchema: input.facts?.schema
   }));
   const canonicalIds = [];
   const targetUsages = [];

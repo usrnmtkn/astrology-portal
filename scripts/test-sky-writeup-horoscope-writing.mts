@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {Readable} from 'node:stream';
 import {createApiStore} from '../tests/helpers/calendar-review-api.mjs';
 import {skyPlacementSourceFixture} from '../tests/helpers/sky-placement-source-fixture.mts';
+import {mapLegacyIdentifier} from '../src/astro-writing/productionEvidenceAdapter.cjs';
 
 const fixture=await skyPlacementSourceFixture('mercury','scorpio');
 const row={...fixture.active,status:'DRAFT',lane:'reference',review_state:'owner-review-required',source_snapshot:{engineFacts:{articlePeriod:'current',motion:'retrograde'}}};
@@ -25,6 +26,10 @@ globalThis.fetch=async(url:any,init:any={})=>{
 const {default:handler}=await import('../api/admin/sky-article-template-slots');
 async function invoke(body:any,authorized=true){const req:any=Object.assign(Readable.from([JSON.stringify(body)]),{method:'POST',url:'/api/admin/sky-article-template-slots',headers:authorized?{'x-content-generation-secret':'calendar-api-fixture'}:{}});const res:any={statusCode:0,setHeader(){},end(s:string){this.payload=JSON.parse(s)}};await handler(req,res);return {status:res.statusCode,...res.payload};}
 const body={writeupHoroscope:{id:row.id,expectedUpdatedAt:row.updated_at,sign:'gemini',currentText:''},voiceNotes:'Use the supplied transit meaning.'};
+const context={surface:'you',eventType:'transit-house',evidenceSurface:'you-transit'};
+assert.deepEqual(mapLegacyIdentifier('transit-house/south_node/6',context).targetUsages,['primary']);
+assert.deepEqual(mapLegacyIdentifier('transit-house/south_node/6',{...context,writingSchema:'planetary-horoscope-writing/v1'}).targetUsages,['mechanism-reference']);
+assert.deepEqual(mapLegacyIdentifier('body/south_node',{...context,writingSchema:'planetary-horoscope-writing/v1'}).targetUsages,['primary']);
 const before=JSON.stringify([...store.rows]);
 try{
  assert.equal((await invoke(body,false)).status,401);
@@ -33,6 +38,12 @@ try{
  for(const patch of [{status:'ARCHIVED'},{body:'Tampered body.'},{sections:{}},{sections:{skyArticleEdition:{...fixture.edition,compiledHash:'0'.repeat(64)}}}]){
   store.rows.set(row.id,{...row,...patch});
   assert.equal((await invoke(body)).status,409,'Invalid saved sources fail before provider dispatch.');assert.equal(calls,0);
+ }
+ store.rows.set(row.id,structuredClone(row));
+ for(const planet of ['sun','moon','mercury','venus','mars','jupiter','saturn','uranus','neptune','pluto','chiron','lilith','north-node','south-node']){
+  const supported=await skyPlacementSourceFixture(planet,'scorpio');
+  store.rows.set(row.id,{...row,...supported.active,status:'DRAFT',lane:'reference',review_state:'owner-review-required'});
+  const result=await invoke({...body,preview:true});assert.equal(result.status,200,`${planet}: ${result.error}`);assert.equal(calls,0);
  }
  store.rows.set(row.id,structuredClone(row));
  const preview=await invoke({...body,preview:true,provider:'openai'});assert.equal(preview.status,200,preview.error);assert.equal(calls,0);assert(preview.writingExport.text.includes(fixture.edition.transitEndInstant));
