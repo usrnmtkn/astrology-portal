@@ -413,8 +413,10 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   await expect(profile.locator('h1')).toHaveText('Fixture Reader With A Longer Display Name');
   await expect(profile.getByRole('region',{name:'In-depth transit reports',exact:true})).toHaveCount(0);
   await expect(profile.locator('.you-transit-group')).toHaveCount(0);
-  const wheel=(await profile.locator('.chart-layout__visual').boundingBox())!, message=(await prompt.boundingBox())!;
-  if(width>800)expect(message.x).toBeGreaterThanOrEqual(wheel.x+wheel.width);else expect(message.y).toBeGreaterThanOrEqual(wheel.y+wheel.height);
+  await expect.poll(async () => {
+   const wheel=(await profile.locator('.chart-layout__visual').boundingBox())!, message=(await prompt.boundingBox())!;
+   return width>800 ? message.x-wheel.x-wheel.width : message.y-wheel.y-wheel.height;
+  }).toBeGreaterThanOrEqual(0);
   await expectReadableTheme(page,'.you-chart-page h1, .you-transit-overview h3, .you-transit-overview p');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:`test-results/design-you-transits-empty-${width}-${theme}.png`});
