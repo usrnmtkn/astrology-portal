@@ -1,3 +1,4 @@
+import { writeupHoroscopes, writeupHoroscopeMarkdown, type WriteupHoroscope } from '../../../../src/shared/skyWriteupHoroscopes.js';
 import { isSkyIngressEssay, skyIngressTemplateForFormat, type SkyArticleFormat } from "./skyIngressEssay.mjs";
 import { resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../../../src/shared/skyArticleVariableDraft.js';
 import { skyMoonDatedDayBounds } from '../../../../src/shared/skyMoonDatedScope.js';
@@ -37,6 +38,7 @@ export type CompileSkyArticleEditionInput = {
   aspectPassages?: SkyArticleAspectPassage[];
   entryYear: number;
   housePassages: SkyArticleHousePassage[];
+  writeupHoroscopes?: WriteupHoroscope[];
   planet: string;
   sign: string;
   slotValues: Record<string, string>;
@@ -63,6 +65,7 @@ export type CompiledSkyArticleEdition = {
   fixedProseHash: string;
   headline: string;
   housePassages: SkyArticleHousePassage[];
+  writeupHoroscopes?: WriteupHoroscope[];
   planet: string;
   schema: typeof SKY_ARTICLE_EDITION_SCHEMA;
   sign: string;
@@ -85,6 +88,7 @@ export type SkyArticleEditableFields = {
   body: string;
   headline: string;
   housePassages: SkyArticleHousePassage[];
+  writeupHoroscopes?: WriteupHoroscope[];
   tldr: string;
 };
 
@@ -253,6 +257,12 @@ export function skyArticleReaderCopyIsConsistent(edition: CompiledSkyArticleEdit
     (section.heading !== edition.articleSections[index].heading
       && !(index === 0 && section.heading === '' && edition.articleSections[index].heading === 'Overview'))
     || section.body !== edition.articleSections[index].body)) return false;
+  if (edition.writeupHoroscopes) {
+    if (edition.housePassages.length) return false;
+    const expected = compactBlankLines(writeupHoroscopeMarkdown(edition.writeupHoroscopes));
+    const start = edition.compiledMarkdown.search(/^## [^\n]*\bHoroscopes\b[^\n]*$/imu);
+    return expected ? start >= 0 && edition.compiledMarkdown.slice(start).trim() === expected.trim() : start < 0;
+  }
   if (!edition.housePassages.length) return true;
   const section = readerHoroscopeBlocks(edition);
   const seen = new Set();
@@ -269,7 +279,8 @@ export function skyArticleEditableFields(edition: CompiledSkyArticleEdition): Sk
     tldr: edition.tldr,
     body: edition.body,
     housePassages: edition.housePassages.map((passage) => ({ ...passage })),
-    aspectPassages: edition.aspectPassages.map((passage) => ({ ...passage }))
+    aspectPassages: edition.aspectPassages.map((passage) => ({ ...passage })),
+    ...(edition.writeupHoroscopes ? { writeupHoroscopes: writeupHoroscopes(edition.writeupHoroscopes) } : {})
   };
 }
 
@@ -286,6 +297,9 @@ export function skyArticleEditionFieldChanges(
   add("tldr", "TL;DR", base.tldr, fields.tldr);
   add("body", "General article", base.body, fields.body);
 
+  for (const passage of writeupHoroscopes(fields.writeupHoroscopes) ?? []) {
+    add(`writeup:${passage.sign}`, `${titleCaseToken(passage.sign)} horoscope`, base.writeupHoroscopes?.find(old => old.sign === passage.sign)?.body ?? '', passage.body);
+  }
   base.housePassages.forEach((passage) => {
     const revised = fields.housePassages.find((candidate) => candidate.contentKey === passage.contentKey);
     add(`house:${passage.house}`, `House ${passage.house}`, passage.body, revised?.body ?? "");
@@ -335,14 +349,17 @@ export async function reviseSkyArticleEdition(
   const body = compactBlankLines(fields.body);
   const housePassages = fields.housePassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
   const aspectPassages = fields.aspectPassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
-  const changes = skyArticleEditionFieldChanges(base, { headline, tldr, body, housePassages, aspectPassages });
+  const manualHoroscopes = writeupHoroscopes(fields.writeupHoroscopes);
+  const changes = skyArticleEditionFieldChanges(base, { headline, tldr, body, housePassages, aspectPassages, writeupHoroscopes: manualHoroscopes });
   const horoscopeSection = readerHoroscopeBlocks(base);
   const compiledMarkdown = compactBlankLines([
     `# ${headline}`,
     body,
-    ...(housePassages.length ? [`## ${horoscopeSection?.heading ?? 'Horoscopes'}`, horoscopeSection?.introduction ?? '', passageMarkdown({ housePassages })] : [])
+    ...(housePassages.length ? [`## ${horoscopeSection?.heading ?? 'Horoscopes'}`, horoscopeSection?.introduction ?? '', passageMarkdown({ housePassages })] : []),
+    writeupHoroscopeMarkdown(manualHoroscopes)
   ].join("\n\n"));
-  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
+  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}) }));
 
   return {
     ...base,
@@ -352,6 +369,7 @@ export async function reviseSkyArticleEdition(
     articleSections: markdownSections(body),
     housePassages,
     aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}),
     compiledMarkdown,
     compiledHash,
     revision: {
@@ -479,7 +497,8 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
   const tldr = compactBlankLines(replaceTemplateTokens(normalizeNewlines(input.tldr), slotValues));
   if (!tldr) throw new Error("Sky article editions require an explicitly written TL;DR.");
 
-  const compiledMarkdown = compactBlankLines(replaceTemplateTokens(templateBody, slotValues));
+  const manualHoroscopes = writeupHoroscopes(input.writeupHoroscopes);
+  const compiledMarkdown = compactBlankLines([replaceTemplateTokens(templateBody, slotValues), writeupHoroscopeMarkdown(manualHoroscopes)].filter(Boolean).join('\n\n'));
   const unresolved = balancedMustacheTokens(compiledMarkdown).map((token) => placeholderFromToken(token).name);
   if (unresolved.length) {
     throw new Error(`Sky article edition still contains unresolved placeholders: ${unresolved.join(", ")}.`);
@@ -492,7 +511,8 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
   if (input.housePassages.some(passage => balancedMustacheTokens(passage.body).length)) throw new Error("Sky article horoscopes contain unresolved placeholders.");
   const housePassages = uniqueByContentKey(input.housePassages).sort((left, right) => left.house - right.house);
   const aspectPassages = uniqueByContentKey(input.aspectPassages ?? []);
-  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
+  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}) }));
 
   return {
     schema: SKY_ARTICLE_EDITION_SCHEMA,
@@ -516,6 +536,7 @@ export async function compileSkyArticleEdition(input: CompileSkyArticleEditionIn
     articleSections: markdownSections(generalMarkdown),
     housePassages,
     aspectPassages,
+    ...(manualHoroscopes ? { writeupHoroscopes: manualHoroscopes } : {}),
     slotValues,
     compiledMarkdown
   };
@@ -578,6 +599,8 @@ export function assertCompiledSkyArticleEdition(value: unknown) {
   } else if (edition.scope !== undefined) {
     throw new Error("Unknown Sky article coverage.");
   }
+  writeupHoroscopes(edition.writeupHoroscopes);
+  if (edition.writeupHoroscopes && (!isSkyIngressEssay(edition.format) || edition.housePassages.length)) throw new Error('Manual write-up horoscopes belong to an ingress article and cannot replace saved companion passages.');
   if (isSkyIngressEssay(edition.format) && (edition.housePassages.length || edition.aspectPassages.length)) {
     throw new Error("Ingress essay companions must remain separate from the article.");
   }

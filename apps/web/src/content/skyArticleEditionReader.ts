@@ -1,3 +1,4 @@
+import { writeupHoroscopesReady } from '../../../../src/shared/skyWriteupHoroscopes.js';
 import { assertCompiledSkyArticleEdition, hasExactSkyArticleOwnerApproval, skyArticleEditionContentKey, skyArticleReaderCopyIsConsistent } from './skyArticleTemplateCompiler.js';
 import { isSkyIngressEssay } from './skyIngressEssay.mjs';
 
@@ -19,6 +20,7 @@ export function approvedSkyArticleReaderEdition(row: ReaderEditionRow) {
       || typeof edition.compiledMarkdown !== 'string' || !edition.compiledMarkdown.trim()
       || edition.compiledMarkdown.match(/^#\s+(.+)$/mu)?.[1]?.trim() !== edition.headline
       || !skyArticleReaderCopyIsConsistent(edition)
+      || !writeupHoroscopesReady(edition.writeupHoroscopes)
       || !isSkyIngressEssay(edition.format) && (edition.housePassages.length !== 12
         || edition.housePassages.some(passage => typeof passage.body !== 'string' || !passage.body.trim()))) return null;
     return edition;

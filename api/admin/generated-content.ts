@@ -1,3 +1,4 @@
+import { writeupHoroscopesReady } from '../../src/shared/skyWriteupHoroscopes.js';
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared/lunationTimingVariables.js';
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
@@ -1449,6 +1450,9 @@ function assertReaderEligiblePublication(row: Record<string, any>) {
   catch(error) { throw new GeneratedContentRequestError((error as Error).message,422); }
   if (row.status !== "LIVE") return;
   if(String(row.content_key??'').startsWith('cms/lunation-horoscopes/')&&!hasExactStudioOwnerApproval(row))throw new GeneratedContentRequestError('Save these Moon horoscopes as a draft, then approve and publish the saved wording.',409);
+  if (row.event_type === 'sky-article-edition' && !writeupHoroscopesReady(row.sections?.skyArticleEdition?.writeupHoroscopes)) {
+    throw new GeneratedContentRequestError('Complete all 12 sign readings before publishing these write-up horoscopes. Save a draft to keep partial readings.', 409);
+  }
   if (row.event_type === 'sky-article-edition' && (!skyArticleCompiledHashMatches(row.sections?.skyArticleEdition)
     || !libs().approvedSkyArticleReaderEdition(row as ExistingGeneratedContentRow))) {
     throw new GeneratedContentRequestError('The compiled article no longer matches its approved reader copy. Recompile the complete edition before publishing.', 409);

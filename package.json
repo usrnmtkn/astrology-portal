@@ -233,7 +233,7 @@
     "test:browser-balance": "node scripts/balanced-browser-tests.mjs --config playwright.horoscope-reader.config.ts 1/3 --plan",
     "test:moon-transit-routing": "node --import tsx scripts/test-moon-transit-routing.mts",
     "test:connection-transits": "node --import tsx scripts/test-connection-transit-separation.mts && node --import tsx scripts/test-connection-transit-publication.mts",
-    "test:sky-placement-workspace": "node --import tsx scripts/test-sky-article-related-content.mts && node --import tsx scripts/test-sky-related-horoscope-inventory.mts && node --import tsx scripts/test-sky-placement-workspace.mts && node --import tsx scripts/test-sky-article-period-api.mts && node --import tsx scripts/test-sky-article-publication.mts",
+    "test:sky-placement-workspace": "node --import tsx scripts/test-sky-article-related-content.mts && node --import tsx scripts/test-sky-related-horoscope-inventory.mts && node --import tsx scripts/test-sky-placement-workspace.mts && node --import tsx scripts/test-sky-article-period-api.mts && node --import tsx scripts/test-sky-article-publication.mts && node --import tsx scripts/test-sky-writeup-horoscopes.mts",
     "test:studio-reader-edit": "node --import tsx --test scripts/test-studio-reader-edit.mts scripts/test-studio-reader-edit-access.mts",
     "test:studio-library": "node --import tsx scripts/test-content-library-navigation.mts && node --import tsx --test scripts/test-studio-publication-refresh.mts",
     "build:initial-sky-reader": "node scripts/build-initial-sky-reader.mjs",

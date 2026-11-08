@@ -91,6 +91,7 @@ const edition = {
   ...strings('schema format scope body compiledHash compiledMarkdown contentKey fixedProseHash headline planet sign templateHash templateKey tldr transitEndInstant transitStartInstant validFrom validTo'),
   ...numbers('entryYear'), articleSections: [section],
   housePassages: [{ ...strings('body contentKey risingSign'), ...numbers('house') }],
+  writeupHoroscopes: [strings('sign body')],
   aspectPassages: [strings('aspect body contentKey natalPoint')]
 };
 const relationshipVariant = value => typeof value === 'string' ? value

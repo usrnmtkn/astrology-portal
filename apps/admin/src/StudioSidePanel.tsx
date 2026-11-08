@@ -2,8 +2,8 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { StudioButton } from './StudioControls';
 
 /** Keep retained editors mounted while their native dialog presentation closes. */
-export default function StudioSidePanel({ title, children, onClose, onMinimize, busy = false, open = true, modal = true }: {
-  title: string; children: ReactNode; onClose: () => void; onMinimize?: () => void; busy?: boolean; open?: boolean; modal?: boolean;
+export default function StudioSidePanel({ title, children, onClose, onMinimize, busy = false, open = true, modal = true, className = '' }: {
+  title: string; children: ReactNode; onClose: () => void; onMinimize?: () => void; busy?: boolean; open?: boolean; modal?: boolean; className?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useId();
@@ -19,7 +19,7 @@ export default function StudioSidePanel({ title, children, onClose, onMinimize, 
       if (previous instanceof HTMLElement && previous.isConnected) previous.focus({ preventScroll: true });
     };
   }, [open, modal]);
-  return <dialog ref={dialog} className="studio-side-panel" aria-labelledby={heading} aria-busy={busy}
+  return <dialog ref={dialog} className={`studio-side-panel ${className}`} aria-labelledby={heading} aria-busy={busy}
     onKeyDown={event => {
       event.stopPropagation();
       if (!modal && event.key === 'Escape') { event.preventDefault(); if (!busy) onClose(); }

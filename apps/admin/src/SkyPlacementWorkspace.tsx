@@ -1,3 +1,5 @@
+import { writeupHoroscopesReady } from '../../../src/shared/skyWriteupHoroscopes.js';
+import type { WriteupHoroscope } from '../../../src/shared/skyWriteupHoroscopes.js';
 import { Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { studioLazy as lazy } from './studioLazy';
 import { AdminDisclosureSummary, AdminSelect } from './AdminNativeControls';
@@ -7,6 +9,7 @@ import SkyVisitArticleWriter from './SkyVisitArticleWriter';
 import SkyArticlePublication from './SkyArticlePublication';
 const SkyArticleAspects = lazy(() => import('./SkyArticleAspects'));
 const SkyArticleHoroscopes = lazy(() => import('./SkyArticleHoroscopes'));
+const SkyWriteupHoroscopesEditor = lazy(() => import('./SkyWriteupHoroscopesEditor'));
 import { skyPublicationScheduled } from './skyArticlePublicationState';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
 import { reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionContentKey } from '../../web/src/content/skyArticleTemplateCompiler';
@@ -26,7 +29,7 @@ type Props = {
 };
 const title = (value: string) => value.split('-').map(word => word[0].toUpperCase() + word.slice(1)).join(' ');
 const today = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-const empty = { headline: '', summary: '', body: '' };
+const empty: { headline: string; summary: string; body: string; writeupHoroscopes?: WriteupHoroscope[] } = { headline: '', summary: '', body: '' };
 
 export default function SkyPlacementWorkspace(props: Props) {
   const { selection } = props;
@@ -44,6 +47,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [horoscopeEditor, setHoroscopeEditor] = useState({ dirty: false, busy: false });
+  const [writeupHoroscopesOpen, setWriteupHoroscopesOpen] = useState(false);
   const [facts, setFacts] = useState<PlacementVisitFacts | null>(null);
   const [factsReferenceDate, setFactsReferenceDate] = useState('');
   const [generationOpen, setGenerationOpen] = useState(false);
@@ -133,7 +137,7 @@ export default function SkyPlacementWorkspace(props: Props) {
     if (openVariableArticle(refreshedEditing)) return;
     const edition = placementEdition(refreshedEditing);
     if (!edition) return;
-    const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
+    const next = { headline: edition.headline, summary: edition.tldr, body: edition.body, ...(edition.writeupHoroscopes ? { writeupHoroscopes: edition.writeupHoroscopes } : {}) };
     setEditing(refreshedEditing); setFields(next); setBaseline(next);
   }, [refreshedEditing, editing?.updated_at, dirty, busy]);
   const visits = placementVisitRows(allRows, selection.planet, selection.sign);
@@ -155,7 +159,7 @@ export default function SkyPlacementWorkspace(props: Props) {
     if (openVariableArticle(row)) return;
     const edition = placementEdition(row);
     if (!edition) return;
-    const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
+    const next = { headline: edition.headline, summary: edition.tldr, body: edition.body, ...(edition.writeupHoroscopes ? { writeupHoroscopes: edition.writeupHoroscopes } : {}) };
     setEditing(row); setFields(next); setBaseline(next); setFacts(null); setError(''); setMessage('');
     setComposing(true);
     setGenerationOpen(false); setGenerationDirty(false); setGenerated(null);
@@ -178,7 +182,7 @@ export default function SkyPlacementWorkspace(props: Props) {
           throw new Error('An article already uses this start date with different coverage. Open it from Articles to keep its saved period.');
         if (openVariableArticle(saved)) return;
         const edition = placementEdition(saved)!;
-        const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
+        const next = { headline: edition.headline, summary: edition.tldr, body: edition.body, ...(edition.writeupHoroscopes ? { writeupHoroscopes: edition.writeupHoroscopes } : {}) };
         setEditing(saved); setFields(next); setBaseline(next);
       }
       else { setEditing(null); setFields({ ...empty, headline: payload.facts.slotValues.articleTitle ?? '' }); setBaseline({ ...empty, headline: payload.facts.slotValues.articleTitle ?? '' }); }
@@ -199,7 +203,7 @@ export default function SkyPlacementWorkspace(props: Props) {
       if (editing && base) {
         if ((editing.sections as Record<string, unknown> | null)?.skyArticleVariableDraft) throw new Error('Open this article in its passage workspace to preserve its variables before saving.');
         if (!editing.updated_at) throw new Error('Reload this saved article to get its current version before saving.');
-        const revised = await reviseSkyArticleEdition(base, { ...skyArticleEditableFields(base), headline: fields.headline, tldr: fields.summary, body: fields.body });
+        const revised = await reviseSkyArticleEdition(base, { ...skyArticleEditableFields(base), headline: fields.headline, tldr: fields.summary, body: fields.body, writeupHoroscopes: fields.writeupHoroscopes });
         payload = await latest.current.request('/api/admin/generated-content', { method: 'PATCH', body: JSON.stringify({
           id: editing.id, expectedUpdatedAt: editing.updated_at, ownerAction: 'save-sky-article-edition-revision', sections: { skyArticleEdition: revised }
         }) });
@@ -218,7 +222,7 @@ export default function SkyPlacementWorkspace(props: Props) {
       setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]);
       const edition = placementEdition(saved);
       if (!edition) throw new Error('The saved draft is missing its article record.');
-      const next = { headline: edition.headline, summary: edition.tldr, body: edition.body };
+      const next = { headline: edition.headline, summary: edition.tldr, body: edition.body, ...(edition.writeupHoroscopes ? { writeupHoroscopes: edition.writeupHoroscopes } : {}) };
       setEditing(saved); setFields(next); setBaseline(next); setGenerated(null); setMessage('Draft saved. Nothing was published.');
     } catch (reason) { if (mounted.current) {
       const status = (reason as { status?: number } | null)?.status;
@@ -236,13 +240,17 @@ export default function SkyPlacementWorkspace(props: Props) {
   const openedFacts = facts ?? (editing?.source_snapshot as { engineFacts?: PlacementVisitFacts } | null)?.engineFacts;
   const articleWindow = openedEdition ?? facts;
   const horoscopes = (period = false) => <Suspense fallback={<p role="status">Loading linked horoscopes…</p>}>
-    <SkyArticleHoroscopes window={period && articleWindow ? articleWindow : undefined} placement={selection} rows={props.rows} credential={props.credential}
+    <SkyArticleHoroscopes window={period && articleWindow ? articleWindow : undefined} buttonLabel={period ? 'Related horoscope editions' : undefined} placement={selection} rows={props.rows} credential={props.credential}
       request={props.request} onLoadRow={props.onLoadRow} onEditRow={props.onEditRow} onEditorState={setHoroscopeEditor} />
   </Suspense>;
   const canSave = !busy && !generationOpen && Boolean(fields.headline.trim() && fields.summary.trim() && fields.body.trim()) && (editing === null || passageDirty);
+  const publicationControls = editing ? <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}
+    publicationBlocked={writeupHoroscopesReady(fields.writeupHoroscopes) ? undefined : 'Complete all 12 sign readings before publishing these write-up horoscopes. You can keep saving the draft.'}
+    onSaved={saved => { setEditing(saved); setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]); }} />
+    : <p>Save the write-up draft to set its publication date and publish these readings.</p>;
   function backToArticles() {
     if (busy || !discard()) return;
-    setComposing(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
+    setComposing(false); setWriteupHoroscopesOpen(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
     setGenerationOpen(false); setGenerationDirty(false); setGenerated(null); setMessage(''); setError('');
   }
   const periodFinder = <div className="studio-section">
@@ -321,6 +329,12 @@ export default function SkyPlacementWorkspace(props: Props) {
             </div>
             <aside className="studio-sky-editor-settings studio-section studio-workspace-pane" aria-label="Article settings">
               <h3>Article settings</h3>
+              <Suspense fallback={<p role="status">Loading write-up horoscopes…</p>}>
+                <SkyWriteupHoroscopesEditor passages={fields.writeupHoroscopes} period={facts?.slotValues.when ?? openedEdition?.slotValues.when ?? ''}
+                  open={writeupHoroscopesOpen} onOpenChange={setWriteupHoroscopesOpen} publicationControls={publicationControls}
+                  busy={busy} canSave={canSave} articleReady={Boolean(fields.headline.trim() && fields.body.trim() && fields.summary.trim())} message={message} error={error} onSave={() => void save()}
+                  onChange={writeupHoroscopes => setFields(current => ({ ...current, writeupHoroscopes }))} />
+              </Suspense>
               {horoscopes(true)}
               <dl className="studio-detail-list">
                 <div><dt>Status</dt><dd>{skyPublicationScheduled(editing) ? 'Scheduled' : editing?.status === 'LIVE' ? 'Editing a new draft of a published article' : 'Draft'}</dd></div>
@@ -328,8 +342,7 @@ export default function SkyPlacementWorkspace(props: Props) {
                 <div><dt>Article period</dt><dd>{facts?.slotValues.when ?? openedEdition?.slotValues.when}</dd></div>
                 <div><dt>Coverage</dt><dd>{openedEdition?.scope === 'day' ? 'Saved day article' : openedFacts?.periodLabel ?? 'Full sign visit'}</dd></div>
               </dl>
-              {editing && <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}
-                onSaved={saved => { setEditing(saved); setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]); }} />}
+              {!writeupHoroscopesOpen && editing && publicationControls}
               {!editing && <details className="studio-contained-disclosure"><AdminDisclosureSummary>Choose another period</AdminDisclosureSummary>{periodFinder}</details>}
               {editing && <StudioButton disabled={busy || dirty} onClick={() => latest.current.onEditRow(editing)}>History & article actions</StudioButton>}
             </aside>

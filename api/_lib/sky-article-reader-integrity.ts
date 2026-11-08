@@ -1,3 +1,4 @@
+import { writeupHoroscopes } from '../../src/shared/skyWriteupHoroscopes.js';
 import { createHash } from 'node:crypto';
 
 /** Existing compiler hashes include JSON property order. JSONB changes that
@@ -26,9 +27,11 @@ export function skyArticleCompiledHashMatches(value: unknown) {
     || typeof edition.tldr !== 'string' || typeof edition.compiledMarkdown !== 'string'
     || !Array.isArray(edition.housePassages) || !Array.isArray(edition.aspectPassages)
     || [...edition.housePassages, ...edition.aspectPassages].some(passage => !passage || typeof passage !== 'object' || Array.isArray(passage))) return false;
+  let manual;
+  try { manual = writeupHoroscopes(edition.writeupHoroscopes); } catch { return false; }
   for (const houses of houseOrders) for (const aspects of aspectOrders) {
     const payload = { tldr: edition.tldr, compiledMarkdown: edition.compiledMarkdown,
-      housePassages: orderedPassages(edition.housePassages, houses), aspectPassages: orderedPassages(edition.aspectPassages, aspects) };
+      housePassages: orderedPassages(edition.housePassages, houses), aspectPassages: orderedPassages(edition.aspectPassages, aspects), ...(manual ? { writeupHoroscopes: manual } : {}) };
     if (createHash('sha256').update(JSON.stringify(payload)).digest('hex') === edition.compiledHash) return true;
   }
   return false;
