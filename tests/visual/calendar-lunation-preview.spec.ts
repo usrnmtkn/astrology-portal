@@ -147,12 +147,12 @@ for (const scenario of scenarios) {
       const detail = page.getByRole('dialog', {name: 'Event detail', exact: true});
       await expect(detail).toContainText(scenario.opening);
       await detail.getByRole('button', {name: 'Read article', exact: true}).click();
-      await expect(page.getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
-      await expect(page.getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
+      await expect(page.locator('.sky-detail-article').getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
+      await expect(page.locator('.sky-detail-article').getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
       await finishAssetReads();
       await assertNoErrors.reload();
-      await expect(page.getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
-      await expect(page.getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
+      await expect(page.locator('.sky-detail-article').getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
+      await expect(page.locator('.sky-detail-article').getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
     }
     if('dated' in scenario){
       const eventCard = page.getByRole('button', {name: 'Full Moon in Aries', exact: true});

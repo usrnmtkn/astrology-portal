@@ -170,10 +170,11 @@ for (const [theme, width] of [["light", 1440], ["dark", 390]] as const) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.screenshot({ path: `test-results/sky-retrograde/calendar-${theme}-${width}.png`, fullPage: true });
     await title.click();
-    const reading = page.getByRole("dialog", { name: "Event detail" });
-    await expect(reading).toBeVisible();
-    await expect(reading).toContainText(/Mercury(?: Rx)? trines Pluto(?: Rx)?/i);
+    const reading = page.locator(".sky-detail-article");
+    await expect(reading.locator("#sky-detail-title")).toHaveText(/Mercury(?: Rx)? Trine Pluto(?: Rx)?/i);
     await page.reload();
+    await expect(reading.locator("#sky-detail-title")).toHaveText(/Mercury(?: Rx)? Trine Pluto(?: Rx)?/i, { timeout: 60_000 });
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
     await expect(page.locator(".calendar-day-events").getByRole("button", { name: /Mercury(?: Rx)? trines Pluto(?: Rx)?/i })).toBeVisible({ timeout: 60_000 });
   });
 }

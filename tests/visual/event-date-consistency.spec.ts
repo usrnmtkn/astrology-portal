@@ -70,7 +70,8 @@ for (const scenario of [
   const movement = page.getByLabel("Selected lunar day").getByRole("button", { name: "Sun sextiles Mars", exact: true });
   await expect(movement).toContainText(scenario.exactTime.replace(" AM", "a").replace(" PM", "p"), { timeout: 60_000 });
   await movement.click();
-  await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText(scenario.exactTime, { timeout: 60_000 });
-  await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText(`Sep ${exactDay.endsWith("15") ? "15" : "14"}`);
+  const exactArticle = page.locator(".sky-detail-article .sky-detail-id .article-duration").first();
+  await expect(exactArticle).toContainText(scenario.exactTime, { timeout: 60_000 });
+  await expect(exactArticle).toContainText(`September ${exactDay.endsWith("15") ? "15" : "14"}`);
   expect(errors).toEqual([]);
 });

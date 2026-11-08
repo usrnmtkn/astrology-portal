@@ -1,3 +1,4 @@
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
 import { readerResponse } from '../helpers/reader-response';
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
@@ -71,10 +72,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const trigger = card.locator('.calendar-day-events').getByRole('button', { name: title });
       await expect(trigger).toHaveCount(1);
       await trigger.click();
-      const reading = page.getByRole('dialog', { name: 'Event detail', exact: true });
       const copy = JSON.parse(readFileSync(`packages/astro-knowledge/data/transits/${from.toLowerCase()}-${event.aspect}-${to.toLowerCase()}.json`, 'utf8')).readerCopy;
-      await expect(reading).toContainText(copy.body);
-      await reading.getByRole('button', { name: 'Close', exact: true }).click();
+      await expectSkyAspectBody(page, copy.body);
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
     }
     expect(await card.locator('.calendar-sky-card__body').evaluate(el => [...el.querySelectorAll('section')].map(child => child.getAttribute('aria-label') || child.getAttribute('aria-labelledby'))))
       .toEqual(expect.arrayContaining(['Sun in season']));
