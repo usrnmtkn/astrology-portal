@@ -1,3 +1,5 @@
+import {packageFallbackArchitectureV3CoreRows} from "../apps/web/src/services/fallbackArchitectureV3CorePackaging.js";
+import {servingPackageRecords} from "../api/_lib/serving-package-records.js";
 import {publishSavedOwnerContent, ownerPublicationStatusPath} from '../apps/admin/src/ownerPublication.js';
 import assert from 'node:assert/strict';
 import {contentLiveStatuses} from '../api/_lib/content-live-status.js';
@@ -148,3 +150,42 @@ try {
   'The SQL retirement must advance the already-observed fixture ledger revision.');
   console.log('PASS lunar owner publication: actual publish/read/retire handlers, exact copy, technical lint labels, unsafe metadata and approval boundaries.');
 } finally {await lunar.close();}
+
+// Regression for the production generic-row publication that committed but was absent from readers.
+for (const sign of ["libra", "sagittarius"]) {
+const key=`sky-lilith/article/${sign}`;
+const installedBefore=structuredClone(servingPackageRecords.get(key));
+const body='Synthetic owner opening remains complete.\n\nSynthetic owner final paragraph stays intact.';
+const row={id:'10000000-0000-4000-8000-000000000099',content_key:key,surface:'sky',mode:'in_depth',status:'DRAFT',lane:'serving',review_state:'EDITORIAL_REVIEW_REQUIRED',target_date:null,provider:'manual-admin',event_type:'manual-content',block_type:'essay',headline:'Synthetic owner source',body,summary:'',sections:{},facts:{},source_snapshot:{contentType:'essay',content_role:'authored-content',contentSystem:'authored',authoringSource:'admin-dashboard'},updated_at:'2030-01-01T00:00:00.000Z',created_at:'2030-01-01T00:00:00.000Z',flags:[]};
+const store=await createApiStore([row]);
+try{
+ const denied=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'},'/api/admin/generated-content','not-owner');
+ assert.equal(denied.status,401);assert.deepEqual(store.rows.get(row.id),row);
+ const stale=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:'2000-01-01T00:00:00Z',ownerAction:'publish-owner-content'});assert.equal(stale.status,409);
+ const published=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:sign==='sagittarius'?'save-and-publish-owner-content':'publish-owner-content',...(sign==='sagittarius'?{body,headline:row.headline,summary:'',sections:{}}:{})});
+ assert.equal(published.status,200,JSON.stringify(published.payload));
+ const reader=await store.invoke('POST',{keys:[key]},'/api/content-reader');
+ assert.equal(reader.status,200);assert.equal(reader.payload.rows.length,1);
+ const bundle=packageFallbackArchitectureV3CoreRows(reader.payload.rows,{keys:['authored:'+key]},()=>true,{includeSkyPlacement:true});
+ assert(bundle,'Published owner source must reach real package transport');
+ const records=[...(bundle.transitLib?.authoredCards??[]),...(bundle.rowsFile?.hookRows??[])];
+ const record=records.find(r=>r.contentKey===key);
+ assert(record,'Reader transport must retain this known source');
+ assert.equal(record.LilithArticle,body,'Canonical Lilith reader field must receive complete owner passage');
+ assert.equal(record.body_you,body);assert.equal(published.payload.rows[0].body,body);
+ assert(hasExactStudioOwnerApproval(published.payload.rows[0]));
+ assert.deepEqual(servingPackageRecords.get(key),installedBefore,'Installed approved source remains unchanged');
+ const live=published.payload.rows[0];
+ const nextBody=body+'\n\nSynthetic private revision ending.';
+ const savedRevision=await store.invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,reviewStatus:'needs_review',sections:{...live.sections,packageDraft:{LilithArticle:nextBody}}});
+ assert.equal(savedRevision.status,200,JSON.stringify(savedRevision.payload));
+ const draft=savedRevision.payload.rows[0];assert.equal(draft.status,'DRAFT');assert.notEqual(draft.id,live.id);
+ const stillLive=await store.invoke('POST',{keys:[key]},'/api/content-reader');assert.equal(stillLive.payload.rows[0].body,body);
+ const republished=await store.invoke('PATCH',{id:draft.id,expectedUpdatedAt:draft.updated_at,ownerAction:'approve-package-revision'});
+ assert.equal(republished.status,200,JSON.stringify(republished.payload));
+ const reread=await store.invoke('POST',{keys:[key]},'/api/content-reader');assert.equal(reread.payload.rows[0].sections.packageRecord.LilithArticle,nextBody);assert.equal(reread.payload.rows[0].body,nextBody);
+ assert.deepEqual(servingPackageRecords.get(key),installedBefore,'Publication revisions preserve installed source');
+ console.log('PASS actual owner handler → anonymous reader → real package transport: complete manual Lilith source');
+}finally{await store.close();}
+
+}

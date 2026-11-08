@@ -4,9 +4,8 @@ import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import skyHandler from '../../api/sky';
 import { bundledPublications } from '../helpers/bundled-publications';
-import { readerResponse } from '../helpers/reader-response';
+import { createApiStore } from '../helpers/calendar-review-api.mjs';
 import { installSyntheticNetworkGuard } from '../helpers/synthetic-network-guard';
-import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const published of [false, true]) {
   test(`True Black Moon Lilith label ${width} ${theme} ${published ? 'published' : 'bundled'}`, async ({ page }) => {
@@ -19,20 +18,28 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     const takeaway = 'Published label fixture complete TLDR takeaway.';
     if (published) {
       const key = 'sky-lilith/article/sagittarius';
-      const source = { ...skyPlacementSourceRecords.get(key)!, LilithArticle: passage, TLDR_What: what, TLDR_Takeaway: takeaway,
-        body_you: passage, studio_version_status: 'approved-serving-revision' };
-      const updatedAt = '2026-11-04T12:00:00.000Z';
-      const row = { id: 'qa-lilith-label-publication', content_key: key, surface: 'sky', mode: 'in_depth',
-        status: 'LIVE', lane: 'serving', review_state: null, provider: 'tldrastro-fallback-architecture-v3',
-        updated_at: updatedAt, headline: 'Lilith in Sagittarius', body: passage, summary: source.summary,
-        sections: { packageRecord: source }, facts: { fallbackArchitectureV3: true },
-        source_snapshot: { sourcePackage: source.source_package, content_role: source.content_role },
-        block_type: 'fallback_hook', event_type: 'fallback-hook' };
-      const publication = { content_key: key, state: 'live', revision: 1, row_id: row.id,
-        row_updated_at: updatedAt, updated_at: updatedAt };
-      await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse([row], [publication]) }));
+      const store = await createApiStore([]);
+      let readerPayload: any;
+      try {
+        const saved = await store.invoke('POST', { contentKey: key, surface: 'sky', mode: 'in_depth',
+          status: 'DRAFT', lane: 'serving', reviewState: 'EDITORIAL_REVIEW_REQUIRED',
+          provider: 'manual-admin', eventType: 'manual-content', blockType: 'essay',
+          headline: 'Synthetic owner Lilith source', body: passage, summary: `${what}\n\n${takeaway}`,
+          sections: {}, facts: {}, sourceSnapshot: { contentType: 'essay', content_role: 'authored-content',
+            contentSystem: 'authored', authoringSource: 'admin-dashboard' } });
+        expect(saved.status).toBe(200);
+        const draft = saved.payload.rows[0];
+        const publication = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at,
+          ownerAction: 'publish-owner-content' });
+        expect(publication.status).toBe(200);
+        const read = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+        expect(read.status).toBe(200);
+        expect(read.payload.rows[0].body).toBe(passage);
+        readerPayload = read.payload;
+      } finally { await store.close(); }
+      await page.route('**/api/content-reader', route => route.fulfill({ json: readerPayload }));
       await page.route('**/rest/v1/**', route => route.fulfill({ json: new URL(route.request().url()).pathname.endsWith('/content_runtime_revision')
-        ? updatedAt : [publication] }));
+        ? readerPayload.rows[0].updated_at : readerPayload.publications }));
     }
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
