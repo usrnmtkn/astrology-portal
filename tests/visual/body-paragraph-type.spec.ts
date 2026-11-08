@@ -157,7 +157,7 @@ test.describe("body paragraph type", () => {
     for (const width of [390, 1280]) {
       await page.setViewportSize({ width, height: 900 });
       for (const route of [
-        { name: "sky", path: routes[0].path, selectors: [".article-body-inner > .article-section p, .article-body-inner > .sky-detail-section p", ".article-related-aspects__copy p"] },
+        { name: "sky", path: routes[0].path, selectors: [".article-body-inner > .article-section p, .article-body-inner > .sky-detail-section p", ".article-related-aspect-row p"] },
         { name: "calendar-day", path: routes[1].path, selectors: [".calendar-sky-card__body p", ".calendar-stoic-card__excerpt"] },
         { name: "calendar-week", path: routes[2].path, selectors: [".calendar-day-group__excerpt, .calendar-day-group__blurb p"] }
       ]) {

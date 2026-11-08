@@ -70,11 +70,10 @@ for (const theme of ["light", "dark"]) for (const width of [390, 1440]) {
     // Preserve both the opening and final sentence of the owner-authored base unit.
     await expect(page.locator(".sky-detail-article")).toContainText("Neptune in Aries makes a new dream feel urgent before its shape is fully clear.");
     await expect(page.locator(".sky-detail-article")).toContainText("Let imagination lead without asking it to prove that every impulse is destiny.");
-    // The complete article now commits its residency timeline on first paint,
-    // rather than briefly showing the current-sky card before replacing it.
-    const plutoAspect = page.locator(".article-related-aspects__copy").filter({ has: page.getByRole("heading", { name: "Neptune Sextile Pluto", exact: true }) });
+    // Current cards retain the selected-date contact after the timeline loads.
+    const plutoAspect = page.locator(".article-related-aspect-row").filter({ has: page.getByRole("heading", { name: /Neptune(?: Rx)? Sextile Pluto(?: Rx)?/, exact: true }) });
     await expect(plutoAspect).toBeVisible();
-    await expect(plutoAspect).toContainText("July 25 and September 15, 2026");
+    await expect(plutoAspect).toContainText("Building through September 15.");
     await expect(plutoAspect).toContainText("Strong feeling can become more trustworthy when curiosity reaches the motive, history, or power underneath the first version of the story.");
     await expect(plutoAspect).toContainText("Care becomes more useful when it is attached to the thing actually happening rather than the story that was easiest to sell.");
     await expectSeparateHoroscopesAfterAspects(page);
