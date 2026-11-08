@@ -122,10 +122,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await related.first().click();
     await expect(page.locator('.article-id > .aspect-badge')).toHaveCount(1);
     await page.goto('/?date=2026-10-13#sky/placement/venus/scorpio');
-    const collective = page.locator('.article-related-aspects__copy-heading .aspect-badge');
+    const collective = page.locator('.article-related-aspect-row .aspect-badge');
     await expect(collective.first()).toBeVisible({ timeout: 60_000 });
     await expect(collective.first()).toHaveCSS('width', '48px');
-    await expect(page.locator('.article-related-aspects__copy-heading .inline-glyph-icon')).toHaveCount(0);
+    await expect(page.locator('.article-related-aspect-row .inline-glyph-icon')).toHaveCount(0);
     expect(errors).toEqual([]);
   });
 }
