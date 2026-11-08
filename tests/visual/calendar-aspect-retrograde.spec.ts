@@ -88,10 +88,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(card).toContainText('Synthetic retrograde final sentence.');
       await expect(card).not.toContainText('Synthetic default opening.');
       await card.click();
-      const detail = page.getByRole('dialog', { name: 'Event detail' });
+      const detail = page.locator('.sky-detail-article');
       await expect(detail).toContainText('Synthetic retrograde opening.');
       await expect(detail).toContainText('Synthetic retrograde final sentence.');
       await page.reload();
+      await expect(detail).toContainText('Synthetic retrograde opening.', { timeout: 60000 });
+      await expect(detail).toContainText('Synthetic retrograde final sentence.');
+      await page.getByRole('button', { name: 'Close detail', exact: true }).click();
       await expect(card).toContainText('Synthetic retrograde final sentence.', { timeout: 60000 });
       expect(errors).toEqual([]);
     } finally { store.close(); }

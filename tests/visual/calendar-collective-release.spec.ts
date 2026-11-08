@@ -1,3 +1,4 @@
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { readerResponse } from '../helpers/reader-response';
 import fs from "node:fs";
@@ -7,9 +8,8 @@ async function expectCalendarEventBody(page: import("@playwright/test").Page, ti
   const card = page.locator(".calendar-day-events").getByRole("button", { name: title });
   await expect(card).toBeVisible({ timeout: 60_000 });
   await card.click();
-  const reading = page.getByRole("dialog", { name: "Event detail" });
-  await expect(reading.getByText(body, { exact: true })).toBeVisible({ timeout: 60_000 });
-  await reading.getByRole("button", { name: "Close", exact: true }).click();
+  const reading = await expectSkyAspectBody(page, body);
+  await page.getByRole("button", { name: "Close detail", exact: true }).click();
   await expect(reading).toHaveCount(0);
 }
 

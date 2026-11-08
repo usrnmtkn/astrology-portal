@@ -168,6 +168,14 @@ boundary.
 
 ### Calendar exact-copy parity and intentional gaps
 
+Owner navigation amendment, 2026-11-08. Source:
+`thread:01a1b937-73a7-7560-894a-8eaeff06686e`.
+Clicking a Calendar aspect opens its full dated Sky reading. This applies to
+Day cards, Week event rows, and Month cards or agenda rows. The Calendar date
+and view remain available on Back, and the Sky reading retains the complete
+published passage after reload. Existing Calendar event coverage is unchanged
+at the owner's explicit direction.
+
 Current Sky and Calendar must use the same precedence selector and the same
 approved exact-aspect lookup. The Calendar parity gate runs all 215
 reader-eligible exact records in both planet orders. It fails if any of those

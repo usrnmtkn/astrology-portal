@@ -13,6 +13,7 @@ export default defineConfig({
     'calendar-pressure-release.spec.ts',
     'calendar-month-overview.spec.ts',
     'calendar-moon-ui.spec.ts',
+    'calendar-aspect-sky-navigation.spec.ts',
     'calendar-lunation-preview.spec.ts',
     'calendar-lunation-aspects.spec.ts',
     'sky-aspect-timing-accuracy.spec.ts',

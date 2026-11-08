@@ -1,3 +1,4 @@
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
 import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
 import { moonRoutingRecords, moonReaderCompetingRecords } from '../helpers/moon-routing-fixtures';
 import { personalTransitCopySeed, personalTransitId } from '../../apps/web/src/services/personalDailyTransits';
@@ -2513,7 +2514,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("calendar keeps complete aspect writing in the drawer and links separate placement articles", async ({ page }) => {
+  test("calendar opens aspect readings in Sky and links separate placement articles", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
     const cases = [
       { date: "2026-07-09", title: "Venus enters Virgo", hasArticle: true },
@@ -2535,9 +2536,8 @@ test.describe("client-facing user flow case studies", () => {
       await eventButton.click();
       const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
       if (!eventCase.hasArticle) {
-        await expect(reading.locator(".calendar-reading__body")).not.toBeEmpty();
-        await expect(reading.getByRole("button", { name: "Read article" })).toHaveCount(0);
-        await expect(page).toHaveURL(new RegExp(`#calendar\\?view=week&date=${eventCase.date}$`, "u"));
+        const body = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-uranus.json", "utf8")).readerCopy.body;
+        await expectSkyAspectBody(page, body);
         continue;
       }
       await reading.getByRole("button", { name: "Read article" }).click();
@@ -2590,12 +2590,9 @@ test.describe("client-facing user flow case studies", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await expectNoHorizontalOverflow(page, "Mobile Week");
     await expect(days).toHaveCount(7);
-    // Week events open the selected day, then its Event detail with complete copy.
     await days.getByRole("button", { name: /^Venus squares Mars / }).click();
-    const dayDialog = page.getByRole("dialog", { name: "Day slideout", exact: true });
-    await dayDialog.getByRole("button", { name: "Venus squares Mars", exact: true }).click();
     const exactBody = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-mars.json", "utf8")).readerCopy.body;
-    await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toContainText(exactBody);
+    await expectSkyAspectBody(page, exactBody);
     await assertNoClientErrors();
   });
 
@@ -2841,10 +2838,9 @@ test.describe("client-facing user flow case studies", () => {
     await aspectDay.click();
     await expect(selectedDay.getByRole("button", { name: "Venus squares Mars" })).toBeVisible({ timeout: 15_000 });
     await selectedDay.getByRole("button", { name: "Venus squares Mars" }).click();
-    const reading = page.getByRole("dialog", { name: "Event detail" });
-    await expect(reading.getByText(exactBody, { exact: true })).toBeVisible();
+    const reading = await expectSkyAspectBody(page, exactBody);
     await expect(reading).not.toContainText(signSpecificBody);
-    await reading.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
 
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
@@ -2853,11 +2849,9 @@ test.describe("client-facing user flow case studies", () => {
     const monthDay = page.getByLabel("Selected lunar day");
     await expect(monthDay).toBeVisible({ timeout: 15_000 });
     await monthDay.getByRole("button", { name: "Venus squares Mars" }).click();
-    await expect(page.getByRole("dialog", { name: "Event detail" }).getByText(exactBody, { exact: true })).toBeVisible({
-      timeout: 15_000
-    });
-    await expect(page.getByRole("dialog", { name: "Event detail" })).not.toContainText(signSpecificBody);
-    await expect(page.getByRole("dialog", { name: "Event detail" })).not.toContainText("and for the collective");
+    await expectSkyAspectBody(page, exactBody);
+    await expect(reading).not.toContainText(signSpecificBody);
+    await expect(reading).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
 

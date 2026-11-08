@@ -1,3 +1,4 @@
+import { expectSkyAspectBody } from "../helpers/sky-aspect-reading";
 import { expect, test } from "../helpers/polish-test";
 import { mkdir } from "node:fs/promises";
 import { readFileSync } from "node:fs";
@@ -79,7 +80,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [390, 1440])
 const jupiterLilithBody = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/jupiter-trine-lilith.json", "utf8")).readerCopy.body as string;
 
 for (const theme of ["light", "dark"] as const) for (const width of [390, 1440]) {
-  test(`Calendar aspect keeps its complete passage without a duplicate article link ${theme} ${width}`, async ({ page }) => {
+  test(`Calendar aspect opens its complete passage in Sky ${theme} ${width}`, async ({ page }) => {
     test.setTimeout(90_000);
     const assertNoErrors = watchBrowserErrors(page);
     await page.setViewportSize({ width, height: 1000 });
@@ -95,16 +96,12 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await page.goto("/#calendar?view=day&date=2026-09-24");
     const aspect = page.getByRole("button", { name: "Jupiter trines Lilith", exact: true });
     await aspect.click();
-    const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
-    await expect(reading.getByRole("heading", { name: "Jupiter trines Lilith", exact: true })).toBeVisible();
-    await expect(reading.locator(".calendar-reading__body")).toHaveText(jupiterLilithBody);
-    await expect(reading.getByRole("button", { name: "Read article" })).toHaveCount(0);
-    await expect(reading.locator(".calendar-reading__article-card")).toHaveCount(0);
-    await expect(page).toHaveURL(/#calendar\?view=day&date=2026-09-24$/u);
+    const reading = await expectSkyAspectBody(page, jupiterLilithBody);
+    await expect(page).toHaveURL(/#sky\/aspect\/jupiter\/trine\/lilith\/at\//u);
     expect(await reading.evaluate(panel => panel.scrollWidth <= panel.clientWidth + 1)).toBe(true);
     await mkdir(output, { recursive: true });
     await page.screenshot({ path: `${output}/aspect-article-link-${theme}-${width}.png` });
-    await reading.getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Close detail", exact: true }).click();
     await expect(reading).toHaveCount(0);
     await expect(aspect).toBeVisible();
     assertNoErrors();
