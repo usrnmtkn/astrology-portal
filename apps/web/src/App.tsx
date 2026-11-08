@@ -4721,7 +4721,7 @@ function skyPlacementKeyDates(
   const timelineWindow = options?.timelineWindow ?? (options?.generatedAt
     ? skyPlacementArticleTimelineWindow(position, options.generatedAt, options.articleMode)
     : null);
-  const candidates: { value?: string | null; endValue?: string; label: string }[] = sourceDates?.map(item => ({
+  const candidates: { value?: string | null; endValue?: string; label: string; href?: string }[] = sourceDates?.map(item => ({
     value: item.date, endValue: item.endDate, label: item.label
   })) ?? [
     { value: position.transitStart, label: `${planet} enters ${sign}` },
@@ -4733,11 +4733,12 @@ function skyPlacementKeyDates(
   ];
   if (aspectFacts && normalizeContentIdPart(aspectFacts.planet) === normalizeContentIdPart(position.planet)
     && normalizeContentIdPart(aspectFacts.sign) === normalizeContentIdPart(sign)) {
-    candidates.push(...filterPlacementTimelineEvents(
+    candidates.unshift(...filterPlacementTimelineEvents(
       aspectFacts.inSign.filter(event => normalizeContentIdPart(event.planet) === normalizeContentIdPart(position.planet)),
       timelineWindow
     ).filter(event => !options?.endExclusiveAspects || !timelineWindow || Date.parse(event.occursAt) < timelineWindow.end.getTime())
-      .map(event => ({ value: event.occursAt, label: `${planet} ${event.aspect} ${skyDisplayPlanetName(event.otherPlanet)}` })));
+      .map(event => ({ value: event.occursAt, label: `${planet} ${event.aspect} ${skyDisplayPlanetName(event.otherPlanet)}`,
+        href: `#${skyAspectRoutePath({ from: event.planet, type: event.aspect, to: event.otherPlanet })}/at/${encodeURIComponent(event.occursAt)}` })));
   }
   const formatter = new Intl.DateTimeFormat("en-US", {
     month: "long",
@@ -4748,7 +4749,7 @@ function skyPlacementKeyDates(
   const seen = new Set<string>();
 
   return candidates
-    .flatMap(({ value, endValue, label }) => {
+    .flatMap(({ value, endValue, label, href }) => {
       if (!value) {
         return [];
       }
@@ -4771,10 +4772,10 @@ function skyPlacementKeyDates(
       }
 
       seen.add(key);
-      return [{ date: end ? `${formatter.format(date)} - ${formatter.format(end)}` : formatter.format(date), label, occursAt: date.toISOString(), endsAt: end?.toISOString(), time: date.getTime() }];
+      return [{ date: end ? `${formatter.format(date)} - ${formatter.format(end)}` : formatter.format(date), label, occursAt: date.toISOString(), endsAt: end?.toISOString(), ...(href ? { href } : {}), time: date.getTime() }];
     })
     .sort((first, second) => first.time - second.time)
-    .map(({ date, label, occursAt, endsAt }) => ({ date, label, occursAt, endsAt }));
+    .map(({ time: _time, ...entry }) => entry);
 }
 
 function skyPlacementArticleAspects(
@@ -5308,7 +5309,7 @@ function currentSkyPlacementDetailArticle({
     ? filterPlacementTimelineEvents(matchingAspectFacts.inSign, timelineWindow)
       .filter(event => !savedArticlePeriod || Date.parse(event.occursAt) < Date.parse(savedArticlePeriod.endsAt))
     : [];
-  const inSignAspectSections = matchingAspectFacts
+  const inSignAspectSections = articleMode === "archive" && matchingAspectFacts
     ? skyPlacementInSignAspectSections(
       timelineAspectEvents,
       matchingAspectFacts.timeZone,
@@ -5381,17 +5382,6 @@ function currentSkyPlacementDetailArticle({
     closingCharge: placementSection?.closingCharge,
     tldr: placementSection?.tldr,
     risingHoroscopes: placementSection?.risingHoroscopes,
-    placementResidencyContext: articleMode === "current"
-      && !savedArticlePeriod
-      && normalizeContentIdPart(position.planet) === "sun"
-      && inSignAspectSections.length === 0
-      ? {
-          planet: position.planet,
-          sign: position.sign,
-          referenceDate: generatedAt,
-          timeZone: locationTimeZone || position.transitTimeZone || "UTC"
-        }
-      : undefined,
     retrogradeHistoryContext: articleMode === "current" && isRetrograde ? {
       planet: position.planet, sign: position.sign, referenceDate: generatedAt,
       timeZone: locationTimeZone || position.transitTimeZone || "UTC"
@@ -5404,9 +5394,9 @@ function currentSkyPlacementDetailArticle({
     sections: [...displayArticleSections, ...inSignAspectSections],
     relatedAspects: {
       heading: "Aspects",
-      rows: savedArticlePeriod || inSignAspectSections.length
-        ? []
-        : relatedAspectRows.filter((row): row is SkyDetailRelatedAspectRow => row !== null)
+      rows: articleMode === "current"
+        ? relatedAspectRows.filter((row): row is SkyDetailRelatedAspectRow => row !== null)
+        : []
     },
     astrologyDrilldown: null
   };

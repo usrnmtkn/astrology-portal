@@ -28,14 +28,27 @@ scope. This is a selection window, not a collapsed disclosure. Writing
 variables `aspectsInSign` and `aspectsWhileRetrograde` remain full calculated
 lists for authors.
 
+## Owner placement update: November 7, 2026
+
+Current placement Gifts/Lessons use the calculated active aspects for the
+selected reader date, including their current timing and complete approved copy.
+Loading a placement's full event list or a saved article period must not replace
+those cards with every exact hit during the visit or residency. An empty current
+aspect list stays empty. Historical article aspect sections retain their existing
+scope. Key dates retain the article timeline; an aspect date opens that exact
+pass's dated Sky aspect article. Other event dates retain their Calendar links.
+
+Authority: the owner's request in
+`thread:01a1b937-73a7-7560-894a-8eaeff06686e`.
+
 ## Product contract
 
 The Sky aspect section is an editorial reading surface, not a calculation
 debugger.
 
-- Every calculated aspect in the article's timeline window appears in the
-  normal aspect-card list with its engine facts. Placement articles do not
-  dump the full multi-year residency.
+- Current placement aspect cards follow the selected date's active aspects.
+  Key dates list the article's calculated timeline. Placement articles do not
+  dump the full multi-year residency into Gifts/Lessons.
 - Every visible aspect card is clickable and opens its detail page. An
   interpretation appears only when approved reader copy exists.
 - Aspects keep the established Gifts/Lessons grouping and card treatment.

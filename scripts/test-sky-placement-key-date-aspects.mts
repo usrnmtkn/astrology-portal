@@ -51,6 +51,14 @@ try {
     const detail = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects, aspectFacts: facts, generatedAt: sky.generatedAt, generatedContent: new Map() });
     assert.deepEqual(detail.keyDates.filter((entry: any) => timelineExpected.some(event => event.label === entry.label)).map(({ date, label }: any) => ({ date, label })), timelineExpected,
       `${item.planet}: real app article receives every exact aspect in the article window`);
+    for (const event of events.filter(event => timestampInInclusiveWindow(event.occursAt, timelineWindow))) {
+      const entry = detail.keyDates.find((entry: any) => entry.occursAt === new Date(event.occursAt).toISOString()
+        && entry.label === `${readerBodyName(item.planet)} ${event.aspect} ${readerBodyName(event.otherPlanet)}`);
+      assert(entry?.href?.startsWith('#sky/aspect/'), `${item.planet}: exact Key date opens an aspect article`);
+      assert.equal(Date.parse(decodeURIComponent(entry.href.split('/at/')[1])), Date.parse(event.occursAt), 'Each repeat pass keeps its exact event instant');
+    }
+    assert(!detail.sections.some((section: any) => section.role === 'aspect'), 'Current Gifts/Lessons must not render the complete visit list.');
+    assert.equal(detail.placementResidencyContext, undefined, 'Current Gifts/Lessons must not start a full-residency fallback scan.');
     if (item.planet === 'Mercury' && item.date.getUTCMonth() === 6) {
       const start = position.transitStart, end = position.transitEnd;
       assert(start && end);
@@ -67,15 +75,14 @@ try {
       const fullDetail = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects, aspectFacts: facts,
         generatedAt: sky.generatedAt, generatedContent: new Map([[edition.contentKey, row]]) });
       assert.deepEqual(fullDetail.articlePeriod, { startsAt: start, endsAt: end });
-      assert.deepEqual(fullDetail.relatedAspects.rows, [], 'A saved-period article must not append the selected day\'s unrelated aspect rows.');
-      assert(fullDetail.sections.some((section: any) => section.role === 'aspect'), 'The saved-period fixture must contain calculated aspect sections.');
+      assert.deepEqual(fullDetail.relatedAspects.rows.map((entry: any) => entry.key), detail.relatedAspects.rows.map((entry: any) => entry.key), 'Saved-period and ordinary current articles use the same selected-day aspects.');
+      assert(!fullDetail.sections.some((section: any) => section.role === 'aspect'), 'A saved article period does not widen current Gifts/Lessons.');
       const withoutTimeline = { ...facts, inSign: [] };
       const fullWithoutTimeline = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects,
         aspectFacts: withoutTimeline, generatedAt: sky.generatedAt, generatedContent: new Map([[edition.contentKey, row]]) });
       assert(!fullWithoutTimeline.sections.some((section: any) => section.role === 'aspect'));
-      assert.deepEqual(fullWithoutTimeline.relatedAspects.rows, [], 'Missing saved-period facts must not fall back to selected-day aspects.');
-      assert(detail.sections.some((section: any) => section.role === 'aspect'), 'The ordinary article fixture must contain calculated aspect sections.');
-      assert.deepEqual(detail.relatedAspects.rows, [], 'Ordinary timeline sections must suppress duplicate current-aspect rows.');
+      assert.deepEqual(fullWithoutTimeline.relatedAspects.rows.map((entry: any) => entry.key), fullDetail.relatedAspects.rows.map((entry: any) => entry.key), 'Residency facts cannot change selected-day Gifts/Lessons.');
+      assert(detail.relatedAspects.rows.length > 0, 'The ordinary fixture contains active selected-day aspects.');
       const ordinaryWithoutTimeline = app.currentSkyPlacementDetailArticle({ position, positions: sky.positions, aspects: sky.aspects,
         aspectFacts: withoutTimeline, generatedAt: sky.generatedAt, generatedContent: new Map() });
       assert(!ordinaryWithoutTimeline.sections.some((section: any) => section.role === 'aspect'));

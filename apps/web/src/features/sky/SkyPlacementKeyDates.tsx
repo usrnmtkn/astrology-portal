@@ -37,6 +37,7 @@ export function SkyPlacementKeyDates({ dates, intro, context, articlePeriod, tim
       {dates.length ? <ol>{dates.map((entry, index) => {
         const instant = entry.occursAt;
         const key = instant ? calendarKey(instant) : null;
+        const href = entry.href ?? (key ? `/?date=${key}#calendar?view=day&date=${key}` : null);
         const date = instant ? format(instant, { month: "short", day: "numeric" }) : entry.date;
         const weekday = instant ? format(instant, { weekday: "short" }) : "";
         const meta = instant ? `${format(instant, { hour: "numeric", minute: "2-digit", timeZoneName: "short" })}${entry.endsAt ? ` · until ${format(entry.endsAt, { month: "short", day: "numeric", year: "numeric" })}` : ""}` : entry.date;
@@ -45,10 +46,10 @@ export function SkyPlacementKeyDates({ dates, intro, context, articlePeriod, tim
           <time className="sky-placement-key-dates__date" dateTime={instant} aria-label={entry.date}><strong>{date}</strong><span>{weekday}</span></time>
           <span className={`sky-placement-key-dates__glyph sky-placement-key-dates__glyph--${glyph.tone}`} aria-hidden="true">{glyph.text}</span>
           <span className="sky-placement-key-dates__copy"><span className="sky-placement-key-dates__title"><strong>{entry.label}</strong>{index === next && <span className="sky-placement-key-dates__next">Next</span>}</span><span className="sky-placement-key-dates__meta"><span className="sky-placement-key-dates__mobile-date">{weekday}, {date} · </span>{meta}</span></span>
-          {key && <span className="sky-placement-key-dates__arrow"><ChevronRight aria-hidden="true" /></span>}
+          {href && <span className="sky-placement-key-dates__arrow"><ChevronRight aria-hidden="true" /></span>}
         </>;
         return <li key={`${entry.date}-${entry.label}`} className={instant && Date.parse(instant) < reference ? "is-past" : undefined}>
-          {key ? <a href={`/?date=${key}#calendar?view=day&date=${key}`}>{content}</a> : <div className="sky-placement-key-dates__row">{content}</div>}
+          {href ? <a href={href}>{content}</a> : <div className="sky-placement-key-dates__row">{content}</div>}
         </li>;
       })}</ol> : <p>No key dates in this placement’s calculated window.</p>}
     </>}

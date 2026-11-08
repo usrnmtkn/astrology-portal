@@ -75,6 +75,7 @@ export type SkyDetailKeyDate = {
   label: string;
   occursAt?: string;
   endsAt?: string;
+  href?: string;
 };
 
 export type SkyHistoricalLookback = {

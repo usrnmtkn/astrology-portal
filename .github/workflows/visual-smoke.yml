@@ -374,7 +374,7 @@ jobs:
           VITE_MAPBOX_ACCESS_TOKEN: pk.location-fixture
         run: |
           node --import tsx scripts/test-qa-runtime-guards.mts
-          npx playwright test -c playwright.config.ts --workers=1 --output=test-results/sky-summary/reader tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts
+          npx playwright test -c playwright.config.ts --workers=1 --output=test-results/sky-summary/reader tests/visual/sky-early-loading.spec.ts tests/visual/sky-direct-preparation-navigation.spec.ts tests/visual/sky-compiled-guest-readiness.spec.ts tests/visual/sky-source-recovery.spec.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-live-clock.spec.ts tests/visual/sky-placement-aspects.spec.ts tests/visual/sky-placement-selected-aspects.spec.ts tests/visual/sky-refresh-performance.spec.ts
       - name: Verify daily Sky summary reader
         if: matrix.phase == 'reader-summary'
         run: npx playwright test -c playwright.config.ts --workers=1 --output=test-results/sky-summary/summary tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-paragraphs.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts tests/visual/sun-season-variants.spec.ts tests/visual/calendar-summary-studio.spec.ts
