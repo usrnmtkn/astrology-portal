@@ -281,7 +281,8 @@ export default function SkyPlacementWorkspace(props: Props) {
   const articleWindow = openedEdition ?? facts;
   const horoscopes = (period = false) => <Suspense fallback={<p role="status">Loading linked horoscopes…</p>}>
     <SkyArticleHoroscopes window={period && articleWindow ? articleWindow : undefined} buttonLabel={period ? 'Related horoscope editions' : undefined} placement={selection} rows={props.rows} credential={props.credential}
-      request={props.request} onLoadRow={props.onLoadRow} onEditRow={props.onEditRow} onEditorState={setHoroscopeEditor} />
+      request={props.request} onLoadRow={props.onLoadRow} onEditRow={props.onEditRow} onEditorState={setHoroscopeEditor}
+      onWritePlanetaryHoroscopes={period ? () => setWriteupHoroscopesOpen(true) : undefined} />
   </Suspense>;
   const canSave = !busy && !generationOpen && !writeupAiDirty && Boolean(fields.headline.trim() && fields.summary.trim() && fields.body.trim()) && (editing === null || passageDirty);
   const publicationControls = editing ? <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}

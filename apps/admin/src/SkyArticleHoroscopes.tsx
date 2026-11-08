@@ -16,6 +16,7 @@ type Props = {
   request: <T>(path: string, options?: RequestInit) => Promise<T>;
   onLoadRow: (row: CompositionMapRow) => Promise<unknown>; onEditRow: (row: CompositionMapRow) => void;
   onEditorState: (state: HoroscopeEditorState) => void;
+  onWritePlanetaryHoroscopes?: () => void;
 };
 
 export default function SkyArticleHoroscopes(props: Props) {
@@ -74,6 +75,13 @@ export default function SkyArticleHoroscopes(props: Props) {
   return <>
     <StudioButton disabled={!props.credential.trim()} onClick={() => { setTab(props.window ? 'dated' : 'evergreen'); setOpen(true); }}>{props.buttonLabel ?? 'Horoscopes'}</StudioButton>
     {open && <StudioSidePanel title="Horoscopes" busy={editor.busy} onClose={() => { if (leaveEdition()) setOpen(false); }}>
+      {props.window && props.onWritePlanetaryHoroscopes && <>
+        <div className="admin-toolbar-actions"><StudioButton type="button" disabled={editor.busy} onClick={() => {
+          if (!leaveEdition()) return;
+          setOpen(false); props.onWritePlanetaryHoroscopes?.();
+        }}>Write planetary horoscopes</StudioButton></div>
+        <p>Write a reading for each sign for this write-up’s full period.</p>
+      </>}
       <StudioTabs label="Linked horoscopes" tabs={[{ value: 'dated', label: 'Dated editions' }, { value: 'evergreen', label: 'Evergreen' }]} value={tab}
         onValueChange={value => { if (value !== tab && leaveEdition()) setTab(value); }}>
         {tab === 'dated' ? <>
