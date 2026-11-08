@@ -24,7 +24,15 @@ export default function SkyWriteupHoroscopeWriter(props:Props) {
       if(!mounted.current)return;
       if(!result.ok||!result.body?.trim()||result.source?.id!==props.row?.id||result.source?.updatedAt!==props.row?.updated_at||result.source?.sign!==props.sign)throw new Error('The returned draft does not match this saved write-up and sign. Your writing is unchanged.');
       setDraft(result);
-    }catch(reason){if(mounted.current)setError(reason instanceof Error?reason.message:'Generation failed. Existing writing is unchanged.');}
+    }catch(reason){
+      if(mounted.current){
+        const status=(reason as {status?:number}|null)?.status;
+        setError(status===409?'Reopen the saved write-up before generating again. Your writing is unchanged.'
+          :status===401?'Sign in to Content Studio again. Your writing is unchanged.'
+          :reason instanceof Error&&reason.message.startsWith('The returned draft')?reason.message
+          :'The horoscope draft could not be generated. Your writing is unchanged. Try again.');
+      }
+    }
     finally{request.current=null;if(mounted.current){setBusy(false);props.onBusyChange(false);}}
   }
   return <section className="studio-section" aria-label="AI horoscope draft">
