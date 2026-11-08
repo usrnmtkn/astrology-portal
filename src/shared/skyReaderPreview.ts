@@ -11,6 +11,8 @@ export type SkyReaderPreviewRequest = {
   planet: string;
   sign: string;
   date: string;
+  instant?: string;
+  captureArticle?: boolean;
   location: LocationInput;
   mode: 'published' | 'draft';
   theme: 'light' | 'dark';
@@ -33,6 +35,12 @@ export type SkyReaderPreviewResult = {
   displayed: SkyReaderPreviewSource;
   draftSelected: boolean;
   draftError: string | null;
+  article?: SkyReaderArticleCopy;
+};
+
+export type SkyReaderArticleCopy = {
+  title: string; summary: string; body: string;
+  sourceKeys: string[]; versions: string[]; instant: string; timeZone: string; readerUrl: string;
 };
 
 export function isSkyReaderPreviewDate(value: string) {

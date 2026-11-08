@@ -412,7 +412,7 @@ export function SkyDetailArticle({
   const editSource = detail.readerExport && skyPassageEditSource(detail.readerExport.keys);
   const editHref = editSource && detail.readerExport && !detail.placementFactsPending && !detail.previewLabel
     ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
-      date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone) }) : null;
+      date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone), instant: detail.readerExport.instant }) : null;
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [detail.routePath ?? detail.title]);

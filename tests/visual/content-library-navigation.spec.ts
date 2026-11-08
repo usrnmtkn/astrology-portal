@@ -99,6 +99,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    await page.goto(readerUrl.toString());
    await expect(page.getByLabel('Passage opened from reader',{exact:true}).getByRole('alert')).toContainText('This source is no longer available');
    await expect(editor).toHaveCount(0);expect(writes).toEqual([]);
+   await page.reload();
+   await expect(page.getByLabel('Passage opened from reader',{exact:true}).getByRole('alert')).toContainText('This source is no longer available');
+   await expect(editor).toHaveCount(0);expect(writes).toEqual([]);
    await page.goto(libraryUrl);await expect(copy).toHaveValue(/Synthetic published final sentence/u);
    await page.reload();await expect(copy).toHaveValue(/Synthetic published final sentence/u);
    await expectAnchoredEditor();

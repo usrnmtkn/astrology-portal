@@ -12,7 +12,7 @@ for (const format of ['ingress-essay-v2', 'ingress-essay-v3']) for (const [width
  const fields = narrative ? ingressArticleFields() : skyIngressEssayFields;
  const finalField = narrative ? 'articleBody' : 'closingBody';
  test(`Ingress essay draft saves, reopens and compiles without a horoscope companion at ${width} ${theme} ${format}`, async ({ page }) => {
-  await page.clock.install();
+  await page.clock.install({ time: new Date('2026-10-09T11:00:00Z') });
   const temporary = mkdtempSync(path.join(tmpdir(), 'ingress-browser-'));
   const fixture = path.join(temporary, 'rows.json');
   writeFileSync(fixture, JSON.stringify([{ id: 'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa', content_key: 'sky/article-template/sun/libra',
@@ -89,7 +89,8 @@ for (const format of ['ingress-essay-v2', 'ingress-essay-v3']) for (const [width
    if (!narrative) await editor.getByLabel('Sky article format').selectOption(format);
    const loadFacts = editor.getByRole('button', { name: 'Load calculated facts', exact: true });
    await expect(loadFacts).toBeEnabled();
-   await page.clock.pauseAt(await page.evaluate(() => Date.now() + 100));
+   // Use a deterministic future point; an RPC round trip can exceed a 100 ms offset.
+   await page.clock.pauseAt(new Date('2026-10-09T12:00:00Z'));
    await loadFacts.click();
    const loadedNotice = editor.getByRole('status').filter({hasText: /^Loaded the calculated/});
    await expect(loadedNotice).toBeVisible();

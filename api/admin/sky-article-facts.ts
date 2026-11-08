@@ -5,6 +5,7 @@ import { AdminHttpError, adminErrorMessage, adminErrorStatus, sendAdminJson, sen
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts, skyArticlePeriod } from "../_lib/sky-article-facts.js";
 import { isSkyIngressEssay } from "../../apps/web/src/content/skyIngressEssay.mjs";
+import { skyPreviewReferenceDate } from "../../src/shared/skyReaderPreview.js";
 
 loadLocalWebEnv();
 
@@ -33,7 +34,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const planet = normalizeToken(requestUrl.searchParams.get("planet") ?? "");
     const referenceDate = requestUrl.searchParams.get("date") ?? new Date().toISOString().slice(0, 10);
     if (!planet) throw new AdminHttpError(400, "planet is required.");
-    const referenceInstant = validReferenceDate(referenceDate);
+    let referenceInstant = validReferenceDate(referenceDate);
+    const instant = requestUrl.searchParams.get('instant');
+    if (instant) {
+      const zone = requestUrl.searchParams.get('timeZone') ?? 'America/New_York';
+      if (!/^\d{4}-\d{2}-\d{2}T[\d:.]+Z$/u.test(instant) || !Number.isFinite(Date.parse(instant))) throw new AdminHttpError(400, 'Choose a valid reader instant.');
+      try { if (skyPreviewReferenceDate(instant, zone) !== referenceDate) throw new Error(); }
+      catch { throw new AdminHttpError(400, 'The reader instant must match its local date and time zone.'); }
+      referenceInstant = new Date(instant);
+    }
     const format = requestUrl.searchParams.get("format") ?? "saved-template";
     if (format !== "saved-template" && !isSkyIngressEssay(format)) throw new AdminHttpError(400, "Unsupported article format.");
     let period;
