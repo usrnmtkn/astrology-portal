@@ -1,5 +1,8 @@
 import type { Page } from '@playwright/test';
 import { readerResponse } from './reader-response';
+import { publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+
+const emptyPublicationTag = publicationLedgerTag([]);
 
 const emptySnapshot = {
   schema: 'content-studio-last-known-good-v2',
@@ -21,7 +24,8 @@ export async function bundledPublications(page: Page) {
   await page.route('**/api/sky-reader?**', route => route.fulfill({
     status: 503, json: { error: 'Bundled fixture uses the calculation fallback.' }
   }));
-  await page.route(/\/api\/content-publications(?:\?|$)/, route => route.fulfill({
+  await page.route(/\/api\/content-publications(?:\?|$)/, async route => route.fulfill({
+    headers: { etag: await emptyPublicationTag },
     json: {
       schema: new URL(route.request().url()).searchParams.get('scope') === 'sky-list'
         ? 'tldr-sky-list-publications/v1' : 'tldr-publications/v1',
