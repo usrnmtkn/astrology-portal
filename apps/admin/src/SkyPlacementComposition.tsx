@@ -186,7 +186,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
           const row = await loadRowRef.current?.({ id: `package:${key}`, content_key: key, inventory_only: true } as CompositionMapRow) as CompositionMapRow | undefined;
           return row ? effectivePackageRecord(row.sections) : undefined;
         }} /> : <>
-      <p>{current.planet === "moon" ? "The Moon write-up joins Opening, How it shows up, and Challenge and response in that order. Select a passage to edit its writing." : selectedWriting === "fallback" ? "These evergreen sections work for any occurrence of this placement. On canonical placement pages, they supply the body when neither a complete article nor an eligible placement composition is available. Only blocks matching the selected motion are included. Open a section to add writing or change the section order." : "This is the complete authored passage for the selected motion, or the shared passage when no motion-specific article is saved. It can be evergreen writing; it is not necessarily a dated article edition. Complete articles take priority over sentence composition and fallback sections."} This preview uses saved sources, including saved drafts. Dates, event additions, aspects, and horoscopes are added on the reader page.</p>
+      <p>Select a section to edit its writing.</p>
       {selectedWriting === "fallback" && <StudioButton type="button" onClick={() => openContextualReaderHref(`/?skyPlacementPreview=fallback#sky/placement/${current.planet}/${current.sign}`)}>Preview evergreen in app</StudioButton>}
       <StudioTabs label="Sky placement composition views" value={view} onValueChange={setView}
         hidden={defaultReadingOnly}
@@ -248,7 +248,7 @@ export default function SkyPlacementComposition({ rows, selection, onEditRow, on
             },
             onEdit: sourceId => onEditField ? onEditField(ingressRow, `ingress.sources.${sourceId}`, current) : onEditRow(ingressRow)
           } : undefined} />
-          <p>{selectedWriting === "fallback" ? "You can add and reorder evergreen sections in the linked editor. Empty sections are skipped." : "The app owns the article order. Edit the linked fields to change the wording."} The short retrograde copy is managed under Assembly and is not part of this article.</p>
+
         </div>}
         {view === "assembly" && availableRows.map(row => {
           const fields = skyPlacementAssemblyFields(row);

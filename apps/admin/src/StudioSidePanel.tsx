@@ -2,8 +2,8 @@ import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { StudioButton } from './StudioControls';
 
 /** Keep retained editors mounted while their native dialog presentation closes. */
-export default function StudioSidePanel({ title, children, onClose, onMinimize, busy = false, open = true, modal = true, className = '' }: {
-  title: string; children: ReactNode; onClose: () => void; onMinimize?: () => void; busy?: boolean; open?: boolean; modal?: boolean; className?: string;
+export default function StudioSidePanel({ title, children, actions, onClose, onMinimize, busy = false, open = true, modal = true, className = '' }: {
+  title: string; children: ReactNode; actions?: ReactNode; onClose: () => void; onMinimize?: () => void; busy?: boolean; open?: boolean; modal?: boolean; className?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const heading = useId();
@@ -28,6 +28,7 @@ export default function StudioSidePanel({ title, children, onClose, onMinimize, 
     <header className="studio-section-header">
       <h2 id={heading}>{title}</h2>
       <div className="admin-toolbar-actions">
+        {actions}
         {onMinimize && <StudioButton onClick={onMinimize}>Minimize</StudioButton>}
         <StudioButton disabled={busy} onClick={onClose} aria-label={`Close ${title}`}>Close</StudioButton>
       </div>

@@ -55,6 +55,8 @@ for (const width of [390, 730, 1440]) for (const theme of ["light", "dark"]) {
   await writing.evaluate((el: HTMLTextAreaElement) => el.setSelectionRange(7, 13));
   const variableKey = editor.locator(".admin-sky-variable-key").filter({ has: page.getByText("Calculated Sky variables", { exact: true }) });
   const openVariableKey = async () => {
+    const tools = editor.getByLabel('Variables and preview', {exact:true});
+    if (await tools.count() && !await tools.evaluate(el => el.hasAttribute('open'))) await tools.locator(':scope > summary').click();
     const articlePicker = editor.locator("[data-sky-article-variable-picker]");
     if (await articlePicker.count() && !(await articlePicker.evaluate(el => el.hasAttribute("open")))) await articlePicker.locator(":scope > summary").click();
     if (!(await variableKey.evaluate(el => el.hasAttribute("open")))) await variableKey.locator(":scope > summary").click();
@@ -185,6 +187,8 @@ for (const width of [390, 730, 1440]) for (const theme of ["light", "dark"]) {
   await openVariableKey();
   await writing.fill("Fixture {{planetTitle}} {{motion}} article.");
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("Fixture Saturn retrograde article.");
+  const advanced = editor.getByLabel('Advanced writing tools',{exact:true});
+  if (!await advanced.evaluate(el => el.hasAttribute('open'))) await advanced.locator(':scope > summary').click();
   const sections = editor.locator(".admin-evergreen-sections");
   if (!(await sections.evaluate(el => el.hasAttribute("open")))) await sections.locator("summary").click();
   await editor.getByRole("button", { name: "Add section", exact: true }).click();
@@ -241,6 +245,9 @@ for (const width of [390, 730, 1440]) for (const theme of ["light", "dark"]) {
   await second.getByLabel("Phrase text 1", { exact: true }).fill("Fixture closing paragraph.");
   await expect(editor.locator(".admin-sky-writing-preview")).toHaveText("During this transit, fixture Saturn.\n\nFixture closing paragraph.");
   await page.screenshot({ path: `test-results/sky-paragraphs-${width}-${theme}.png` });
+  if (!await advanced.evaluate(el => el.hasAttribute('open'))) await advanced.locator(':scope > summary').click();
+  const order = editor.locator('.admin-evergreen-sections');
+  if (!await order.evaluate(el => el.hasAttribute('open'))) await order.locator(':scope > summary').click();
   await editor.getByLabel("Article structure", { exact: true }).selectOption("body");
   await editor.getByRole("button", { name: "Add article outline", exact: true }).click();
   await expect(editor.getByLabel("Section name", { exact: true })).toHaveValue("Main placement");

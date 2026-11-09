@@ -5,7 +5,7 @@ import type { ArticleEventFacts } from './skyArticleRelatedContent';
 import { SKY_INGRESS_ARTICLE_FORMAT } from '../../web/src/content/skyIngressEssay.mjs';
 import { compileSkyArticleEdition, reviseSkyArticleEdition, skyArticleEditableFields, skyArticleEditionRecord, SKY_ARTICLE_COMPILER_VERSION, type CompiledSkyArticleEdition } from '../../web/src/content/skyArticleTemplateCompiler';
 
-export type PlacementWorkspaceRow = CompositionMapRow & { event_type?: string | null; facts?: Record<string, unknown> | null };
+export type PlacementWorkspaceRow = CompositionMapRow & { event_type?: string | null; facts?: Record<string, unknown> | null; lane?: string | null };
 export type PlacementVisitFacts = ArticleEventFacts & {
   planet: string; sign: string; entryYear: number; validFrom: string; validTo: string;
   transitStartInstant: string; transitEndInstant: string; referenceTimeZone: string;

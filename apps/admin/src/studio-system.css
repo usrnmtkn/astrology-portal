@@ -282,22 +282,35 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-col-content { width: auto; }
 
 /* Sky articles use the content-first editor and separate settings column. */
-#root .admin-dashboard .studio-sky-editor-toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .studio-sky-editor-toolbar { position: sticky; top: 0; z-index: var(--z-picker); background: var(--workspace-surface); padding-block: var(--workspace-panel-inset); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .studio-sky-editor-layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: var(--workspace-block-gap); align-items: start; }
 #root .admin-dashboard .studio-sky-editor-settings .studio-detail-list > div { grid-template-columns: minmax(0,1fr); gap: var(--workspace-field-gap); }
 /* Contextual editors share a sheet; retained workspaces keep navigation available. */
 #root .admin-dashboard .studio-side-panel { position: fixed; inset: 0 0 0 auto; margin: 0; width: var(--container-dialog-wide); max-width: 100%; height: 100dvh; max-height: 100dvh; padding: var(--workspace-card-padding); border: 0; border-inline-start: var(--border-width-thin) solid var(--workspace-line); background: var(--workspace-surface); color: var(--workspace-ink); box-shadow: var(--shadow-overlay); overflow: auto; font: inherit; z-index: var(--z-modal); }
 #root .admin-dashboard .studio-side-panel::backdrop { background: var(--modal-overlay-bg); }
 #root .admin-dashboard .studio-side-panel > .studio-section-header { position: sticky; top: 0; background: var(--workspace-surface); padding-block-end: var(--workspace-panel-inset); border-block-end: var(--border-width-thin) solid var(--workspace-line); z-index: var(--z-picker); }
+#root .admin-dashboard .studio-side-panel > .studio-section-header > .admin-toolbar-actions { display: flex; justify-content: flex-end; }
 #root .admin-dashboard .studio-side-panel-content { display: grid; gap: var(--workspace-block-gap); padding-block-start: var(--workspace-block-gap); }
 #root .admin-dashboard .studio-writeup-horoscopes-panel { display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
 #root .admin-dashboard .studio-writeup-horoscopes-panel > .studio-side-panel-content { overflow: auto; }
+#root .admin-dashboard .studio-editor-context { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--workspace-field-gap); color: var(--workspace-muted); font-family: var(--font-label); font-size: var(--type-ui-size); line-height: var(--leading-label); }
+#root .admin-dashboard .studio-entry-editor { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,3fr); gap: var(--workspace-panel-inset); align-items: start; }
+#root .admin-dashboard :is(.studio-entry-navigation,.studio-entry-writing) { display: grid; min-width: 0; gap: var(--workspace-field-gap); }
+#root .admin-dashboard .studio-entry-navigation button { border: 0; border-radius: var(--workspace-control-radius); text-align: start; justify-content: start; width: 100%; }
+#root .admin-dashboard .studio-entry-navigation button[aria-pressed="true"] { background: var(--workspace-hover); }
+#root .admin-dashboard .studio-entry-select { display: none; }
+#root .admin-dashboard textarea.studio-sky-summary { min-height: var(--studio-field-height); }
 #root .admin-dashboard .admin-editor-panel.studio-horoscope-editor:not(.has-variables-rail) { width: var(--container-dialog-wide); }
 #root .admin-dashboard .studio-article-events { list-style: none; display: grid; gap: var(--workspace-panel-inset); margin: 0; padding: 0; }
 #root .admin-dashboard .studio-article-events > li { display: grid; gap: var(--workspace-field-gap); padding-block-end: var(--workspace-panel-inset); border-block-end: var(--border-width-thin) solid var(--workspace-line); }
 #root .admin-dashboard .studio-article-events > li > button { justify-self: start; }
 @media (max-width: 900px) {
   #root .admin-dashboard .studio-sky-editor-layout { grid-template-columns: minmax(0,1fr); }
+  #root .admin-dashboard .studio-entry-editor { grid-template-columns: minmax(0,1fr); }
+  #root .admin-dashboard .studio-entry-navigation { display: none; }
+  #root .admin-dashboard .studio-entry-select { display: grid; gap: var(--workspace-field-gap); }
+  #root .admin-dashboard .studio-writeup-horoscopes-panel > header { align-items: start; }
+  #root .admin-dashboard .studio-writeup-horoscopes-panel > header > .admin-toolbar-actions { width: 100%; }
 }
 #root .admin-dashboard .admin-col-destination { width: 25%; }
 #root .admin-dashboard .admin-content-location small { display: block; margin-top: var(--workspace-field-gap); }

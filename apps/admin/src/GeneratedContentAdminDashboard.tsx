@@ -11503,6 +11503,9 @@ export function GeneratedContentAdminDashboard() {
                   const articlePicker = editorRef.current?.querySelector<HTMLDetailsElement>("[data-sky-article-variable-picker]");
                   if (articlePicker) {
                     setTemplateVariableReferenceOpen(false);
+                    for (let parent = articlePicker.parentElement; parent && parent !== editorRef.current; parent = parent.parentElement) {
+                      if (parent instanceof HTMLDetailsElement) parent.open = true;
+                    }
                     articlePicker.open = true;
                     articlePicker.scrollIntoView({ block: "start", behavior: "smooth" });
                     articlePicker.querySelector<HTMLElement>("summary")?.focus({ preventScroll: true });
@@ -11525,7 +11528,7 @@ export function GeneratedContentAdminDashboard() {
         <section className="admin-post-editor" id={!hasSkyEditorNavigation || skyEditorSection === "article" ? "sky-placement-editor-content" : undefined} hidden={hasSkyEditorNavigation && skyEditorSection !== "article"}>
 
           {skySourceContext?.sign && !skyLunationContext && skyFallbackEditor
-            && renderPlacementSources(skySourceContext.planet, skySourceContext.sign, true)}
+            && <details className="admin-workspace-details"><AdminDisclosureSummary>Reader sources</AdminDisclosureSummary>{renderPlacementSources(skySourceContext.planet, skySourceContext.sign, true)}</details>}
 
           {isPackageDraft && !skyFallbackEditor && <Suspense fallback={<PageLoading message="Loading variables…" />}><StudioVariableInsert variables={customVariableLibrary.variables} context={effectiveSkyFallback} disabled={isLoading} loading={customVariableLibrary.loading} error={customVariableLibrary.error} onRetry={customVariableLibrary.reload} onInsert={insertDraftToken} /></Suspense>}
 
@@ -13064,6 +13067,7 @@ export function GeneratedContentAdminDashboard() {
               Revert to package original
             </StudioButton>
           )}
+          <details className="admin-editor-more-actions"><AdminDisclosureSummary>More actions</AdminDisclosureSummary>
           {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
             <ApprovedSourceRecovery sources={[{id:currentDraft.id, contentKey:currentDraft.contentKey, expectedUpdatedAt:currentDraft.updatedAt!}]}
               disabled={isLoading || draftHasUnsavedChanges || Boolean(pendingPublication) || publicationRefresh.state !== "idle"}
@@ -13087,6 +13091,7 @@ export function GeneratedContentAdminDashboard() {
               {sourceIsArchived ? "Restore as draft" : "Archive source"}
             </StudioButton>
           )}
+          </details>
           {selectedRow && selectedRow.status !== "LIVE" && lunarWorkspaceActive && (
             <StudioButton type="button" className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
               Delete draft

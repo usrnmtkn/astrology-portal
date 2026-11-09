@@ -132,7 +132,7 @@ function actualFunction(file: string, name: string) {
   }).outputText;
 }
 
-await test('actual Sky normalization retains one complete approved edition and still protects ordinary fallbacks', () => {
+await test('actual Sky normalization retains one complete approved edition and still protects ordinary fallbacks', async () => {
   const protectedMap = new Map(edition.housePassages.map(passage => ['house-horoscope-core/sun/scorpio/house-' + passage.house,
     { body_you: 'Synthetic protected fallback ' + passage.house, contentKey: 'synthetic/protected/' + passage.house }]));
   const protect = new Function('protectedPassagesByKey', 'return ' + actualFunction('../apps/web/src/content/protectedOwnerSkyPlacementPassages.ts', 'preserveProtectedOwnerSkyPlacementPassage'))(protectedMap);
@@ -146,6 +146,15 @@ await test('actual Sky normalization retains one complete approved edition and s
   const compiled = normalize({ planet: 'Sun', sign: 'Scorpio' }, null, new Map([[saved.content_key, compiledReaderCandidate(saved)]]), [], context.activeInstant, {});
   assert.deepEqual(compiled.sections[0].risingHoroscopes, edition.housePassages);
   assert.equal(compiled.sections[0].body, edition.body);
+  const articleOnly = await compiledReaderFixture({ format: SKY_INGRESS_ARTICLE_FORMAT });
+  const articleOnlyRow = compiledReaderRow(articleOnly);
+  const withFallback = normalize({ planet: 'Sun', sign: 'Scorpio' }, null, new Map([[articleOnlyRow.content_key, compiledReaderCandidate(articleOnlyRow)]]), [], context.activeInstant, {});
+  assert.equal(withFallback.sections[0].body, articleOnly.body, 'A general article keeps its exact approved body.');
+  assert.equal(withFallback.sections[0].risingHoroscopes.length, 12, 'Publishing general copy cannot suppress the existing sign readings.');
+  for (const [index, passage] of withFallback.sections[0].risingHoroscopes.entries()) {
+    assert.equal(passage.body, 'Synthetic protected fallback ' + (index + 1));
+    assert.equal(passage.contentKey, 'synthetic/protected/' + (index + 1));
+  }
   const ordinary = normalize({ planet: 'Sun', sign: 'Scorpio' }, null, new Map(), [], context.activeInstant, {});
   for (const [index, passage] of ordinary.sections[0].risingHoroscopes.entries()) {
     assert.equal(passage.body, 'Synthetic protected fallback ' + (index + 1));

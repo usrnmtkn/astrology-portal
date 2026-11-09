@@ -8,6 +8,8 @@ import { SKY_INGRESS_ARTICLE_FORMAT } from '../apps/web/src/content/skyIngressEs
 import { skyMoonDatedDayBounds } from '../src/shared/skyMoonDatedScope';
 import { workspaceFixtureRows, workspaceVisitFacts } from '../tests/helpers/sky-placement-workspace-fixtures';
 import { studioApiStore } from '../tests/helpers/studio-api-store';
+import { isGeneratedContentReaderBoundaryAllowed } from '../apps/web/src/content/generatedContentEligibility';
+import { placementWritingDraft, placementWritingDraftPayload } from '../apps/admin/src/skyPlacementWritingDraft';
 
 let combinations = 0;
 for (const planet of skyPlacementBodies) for (const sign of skyPlacementSigns) {
@@ -144,6 +146,42 @@ try {
   for (const row of before) assert.deepEqual(after.find((candidate: any) => candidate.id === row.id), row);
   assert.deepEqual(await liveStore.call({ method: 'publications' }), publications);
 } finally { liveStore.close(); }
+const incompleteStore = await studioApiStore([], { uuidIds: true });
+try {
+  const publicationBefore = await incompleteStore.call({ method: 'publications' });
+  const facts = workspaceVisitFacts('mercury', 'scorpio', '2026-10-24', '2026-11-13');
+  const fields = { headline: 'Synthetic unfinished article', summary: '', body: 'Synthetic complete opening.\n\nSynthetic unfinished ending: {{entryDate}}.',
+    writeupHoroscopes: [{ sign: 'aries', body: 'Synthetic unfinished Aries reading.' }] };
+  const payload = placementWritingDraftPayload(facts, fields, originalReader);
+  const created = await incompleteStore.call({ method: 'POST', body: payload });
+  assert.equal(created.status, 200, JSON.stringify(created.payload));
+  let row = created.payload.rows[0];
+  assert.equal(row.status, 'DRAFT'); assert.equal(row.lane, 'reference');
+  assert.deepEqual(placementWritingDraft(row)?.fields, fields);
+  assert.equal(placementEdition(row), null);
+  assert.equal(isGeneratedContentReaderBoundaryAllowed({...row,status:'LIVE',lane:'serving',review_state:null,source_snapshot:{contentType:'sky-article-edition-workspace',review_status:'approved'}}),false,'Even a forced LIVE workspace is not reader copy.');
+  const reopened = await incompleteStore.call({ method: 'GET', url: '/api/admin/generated-content-inventory?' + new URLSearchParams({ id: row.id, status: 'all', visibility: 'all', limit: '1' }) });
+  assert.deepEqual(placementWritingDraft(reopened.payload.rows[0])?.fields, fields);
+  assert.deepEqual(placementWritingDraft(reopened.payload.rows[0])?.readerImport, originalReader);
+  const emptyFields = { headline: '', summary: '', body: '', writeupHoroscopes: [{ sign: 'aries', body: '' }] };
+  const cleared = await incompleteStore.call({ method: 'PATCH', body: { ...placementWritingDraftPayload(facts, emptyFields, null, null, row), id: row.id, expectedUpdatedAt: row.updated_at } });
+  assert.equal(cleared.status, 200, JSON.stringify(cleared.payload));
+  row = cleared.payload.rows[0];
+  assert.deepEqual(placementWritingDraft(row)?.fields, emptyFields, 'Explicit clears persist without inventing copy.');
+  const restored = await incompleteStore.call({ method: 'PATCH', body: { ...payload, id: row.id, expectedUpdatedAt: row.updated_at } });
+  assert.equal(restored.status, 200, JSON.stringify(restored.payload)); row = restored.payload.rows[0];
+  const stale = await incompleteStore.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: '2000-01-01T00:00:00Z', body: 'Synthetic stale overwrite.' } });
+  assert.equal(stale.status, 409);
+  const publish = await incompleteStore.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: row.updated_at, status: 'LIVE', lane: 'serving' } });
+  assert.ok(publish.status >= 400, 'An incomplete reference workspace must not become reader copy.');
+  for (const ownerAction of ['approve-sky-article-edition', 'publish-sky-article-edition-revision', 'set-sky-article-publication-date']) {
+    const denied = await incompleteStore.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: row.updated_at, ownerAction, skyPublicationAt: '2030-01-01T00:00:00Z' } });
+    assert.ok(denied.status >= 400, ownerAction + ' cannot publish an uncompiled workspace.');
+  }
+  assert.deepEqual(await incompleteStore.call({ method: 'publications' }), publicationBefore);
+  const after = (await incompleteStore.call({ method: 'rows' })).find((saved: any) => saved.id === row.id);
+  assert.deepEqual(placementWritingDraft(after)?.fields, fields); assert.equal(after.status, 'DRAFT');
+} finally { incompleteStore.close(); }
 const ui = readFileSync('apps/admin/src/SkyPlacementWorkspace.tsx', 'utf8');
 assert.doesNotMatch(ui, /sky-article-template-slots|generateUnsavedIngress|save-and-publish|approve-sky-article-edition['"]/);
 assert.doesNotMatch(ui, /localStorage|sessionStorage/);

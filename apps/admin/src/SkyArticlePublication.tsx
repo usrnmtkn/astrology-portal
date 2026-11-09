@@ -48,16 +48,14 @@ export default function SkyArticlePublication<T extends PublicationRow>({ row, r
   }
   return <div className="studio-section" aria-label="Publication settings" aria-busy={busy}>
     <strong className="admin-field-label">Publication</strong>
-    {row.status === 'LIVE' ? <p>{row.published_at ? `Published ${new Date(row.published_at).toLocaleString()}. ` : 'Published. '}Save your changes as a draft to schedule a replacement.</p> : <>
-      <p>{scheduled ? 'Scheduled. This draft is private until its release time.' : skyPublicationState(row) === 'needs_attention'
-        ? 'Publication needs attention. Review the saved article and current sources before scheduling again.' : 'Save privately, publish now, or choose a future or previous publication date.'}</p>
-    </>}
+    <p className="admin-field-hint">{row.status === 'LIVE' ? `Published${row.published_at ? ` · ${new Date(row.published_at).toLocaleString()}` : ''}`
+      : scheduled ? 'Scheduled' : skyPublicationState(row) === 'needs_attention' ? 'Needs review' : 'Private draft'}</p>
       <label>Publication date and time<StudioInput type="datetime-local" value={value} disabled={disabled || busy}
         onChange={event => setValue(event.target.value)} /></label>
-      <small>Time zone: {Intl.DateTimeFormat().resolvedOptions().timeZone}. {row.status === 'LIVE' ? 'Choose a previous date and time.' : 'Leave blank to publish now.'} Astrology coverage stays unchanged.</small>
+      <small>{Intl.DateTimeFormat().resolvedOptions().timeZone} · {row.status === 'LIVE' ? 'Backdate publication' : 'Leave blank to publish now'}</small>
       <div className="admin-toolbar-actions">
         <StudioButton disabled={disabled || busy || localValue(savedAt) === value} onClick={() => void submit('save')}>Save publication date</StudioButton>
-        {row.status !== 'LIVE' && <StudioButton disabled={disabled || busy || Boolean(publicationBlocked) || scheduled && localValue(savedAt) === value} onClick={() => void submit('publish')}>{future ? 'Approve & schedule' : 'Approve & publish'}</StudioButton>}
+        {row.status !== 'LIVE' && <StudioButton className="admin-primary-button" data-publish-action disabled={disabled || busy || Boolean(publicationBlocked) || scheduled && localValue(savedAt) === value} onClick={() => void submit('publish')}>{future ? 'Approve & schedule' : 'Approve & publish'}</StudioButton>}
         {scheduled && <StudioButton disabled={disabled || busy} onClick={() => void submit('cancel')}>Cancel schedule</StudioButton>}
       </div>
     {publicationBlocked && <p>{publicationBlocked}</p>}
