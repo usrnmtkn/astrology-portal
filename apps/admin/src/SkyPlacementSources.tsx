@@ -12,6 +12,7 @@ import { getInitialLocation } from '../../web/src/services/skySelection';
 import { isSkyReaderPreviewDate, skyPreviewReferenceDate, skyReaderDateHref } from '../../../src/shared/skyReaderPreview';
 import { Stack, Text } from "./studio-ds/primitives";
 import { surfaceSection } from "./studio-ds/recipes";
+import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
 export { default as ReaderPassageEntry } from './ReaderPassageEntry';
 
 type Props = {
@@ -136,7 +137,7 @@ export default function SkyPlacementSources(props: Props) {
   const readerHref = reading && validDate ? skyReaderDateHref(window.location.origin, planet, reading.placement.signKey, date) : '';
   const exportHref = reading && validDate ? skyReaderDateHref(window.location.origin, planet, reading.placement.signKey, date, true) : '';
   const source = (row: PlacementSourceRow, label: string) => <div key={row.id}>
-    <Text>{row.headline || row.content_key}</Text>
+    <Text>{fallbackHookDisplayTitle(row.content_key) || row.headline || row.content_key}</Text>
     <div className="admin-surface-actions">
       <ContentLiveStatusBadge row={row} />
       <StudioButton type="button" onClick={() => latest.current.onOpen(row)}>{label}</StudioButton>
