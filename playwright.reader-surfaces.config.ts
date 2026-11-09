@@ -7,6 +7,7 @@ export default defineConfig({
   ...base,
   testMatch: [
     'astro-101-learn.spec.ts',
+    'learn-article-discovery.spec.ts',
     'fallback-cache-self-heal.spec.ts',
     'calendar-release.spec.ts',
     'calendar-collective-release.spec.ts',
