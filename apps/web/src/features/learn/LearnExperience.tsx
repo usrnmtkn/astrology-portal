@@ -42,20 +42,6 @@ type LearnExperienceProps = {
   onOpenPath: (path: string) => void;
 };
 
-function LearnBackButton({ onOpenPath }: { onOpenPath: (path: string) => void }) {
-  return (
-    <button
-      aria-label="Back to Astro 101"
-      className="sky-detail-back floating-back-button"
-      type="button"
-      onClick={() => onOpenPath("/learn")}
-    >
-      <ChevronLeft size={18} aria-hidden="true" />
-      <span>Back</span>
-    </button>
-  );
-}
-
 function BlockLists({ lists }: { lists: Astro101Page["blocks"][number]["list"] }) {
   if (!lists?.length) return null;
   return lists.map((list, index) => {
@@ -133,19 +119,9 @@ function LearnArticle({ page, onOpenPath }: { page: Astro101Page; onOpenPath: (p
   const signMeta = signCatalog(signKeyFromContentKey(page.contentKey));
   const source = page.intro || (page.blocks.length === 0 ? page.body : "");
   const intro = splitIntroParagraphs(source);
-  const kicker = houseMeta
-    ? `Astro 101 / ${houseMeta.ordinal}`
-    : signMeta
-      ? `Astro 101 / ${signMeta.name}`
-      : page.kind === "chapter"
-        ? "Astro 101 / Chapter"
-        : page.kind === "point"
-          ? "Astro 101 / Points"
-          : page.kind === "retrograde"
-            ? "Astro 101 / Retrogrades"
-            : page.kind === "phase"
-              ? "Astro 101 / Moon"
-              : "Astro 101";
+  const category = houseMeta?.ordinal ?? signMeta?.name ??
+    ({ chapter: "Chapter", point: "Points", retrograde: "Retrogrades", phase: "Moon" } as Partial<Record<Astro101Page["kind"], string>>)[page.kind];
+  const kicker = category ? `Astro 101 / ${category}` : "Astro 101";
 
   return (
     <article className="learn-sheet learn-sheet--article">
@@ -221,7 +197,6 @@ function LearnIndexCard({
   trail,
   title,
   detail,
-  pair,
   element,
   elementEmoji,
   onOpen
@@ -231,14 +206,13 @@ function LearnIndexCard({
   trail?: string;
   title: string;
   detail: string;
-  pair?: boolean;
   element?: LearnElement;
   elementEmoji?: string;
   onOpen: () => void;
 }) {
   return (
     <button type="button" className="learn-index-card" onClick={onOpen}>
-        <span className={`learn-index-card__top${pair ? " learn-index-card__top--pair" : ""}`}>
+      <span className="learn-index-card__top">
         <span className="learn-index-card__lead">
           <span>{lead}</span>
           {leadExtra ? <span>{leadExtra}</span> : null}
@@ -258,51 +232,6 @@ function LearnIndexCard({
       </span>
       <ChevronRight className="learn-index-card__chevron" size={18} aria-hidden="true" />
     </button>
-  );
-}
-
-function LearnHouseCard({
-  roman,
-  glyph,
-  name,
-  ruler,
-  href,
-  onOpen
-}: {
-  roman: string;
-  glyph: string;
-  name: string;
-  ruler: string;
-  href: string;
-  onOpen: () => void;
-}) {
-  return (
-    <a
-      className="learn-house-card"
-      href={href}
-      onClick={(event) => {
-        event.preventDefault();
-        onOpen();
-      }}
-    >
-      <span className="learn-house-card__top">
-        <span className="learn-house-card__mark">{roman}</span>
-        <span className="learn-house-card__mark" aria-hidden="true">{glyph}</span>
-      </span>
-      <span className="learn-house-card__foot">
-        <span className="learn-house-card__name">{name}</span>
-        <span className="learn-house-card__meta">Ruled by {ruler}</span>
-      </span>
-      <svg className="learn-house-card__chevron" viewBox="0 0 10 18" fill="none" aria-hidden="true">
-        <path
-          d="M1.5 1.5 8.5 9l-7 7.5"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </a>
   );
 }
 
@@ -328,6 +257,15 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
     const page = pageByContentKey(pages, `education/astro-101/${kind}/${id}`);
     if (page) onOpenPath(page.slug);
   };
+  const referenceGrid = (
+    items: readonly { id: string; glyph: string; name: string; detail: string; meta: string }[],
+    kind: string,
+    showMeta = true
+  ) => <LearnIndexGrid>{items.map((item) => (
+    <li key={item.id}>
+      <LearnIndexCard detail={item.detail} lead={item.glyph} title={item.name} trail={showMeta ? item.meta : undefined} onOpen={() => openKey(kind, item.id)} />
+    </li>
+  ))}</LearnIndexGrid>;
 
   return (
     <div className="learn-hub">
@@ -380,14 +318,32 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
               ?? astro101ReaderPath("house", String(Number(house.id)));
             return (
               <li key={house.id}>
-                <LearnHouseCard
-                  glyph={house.glyph}
+                <a
+                  className="learn-house-card"
                   href={href}
-                  name={house.name}
-                  onOpen={() => onOpenPath(href)}
-                  roman={house.roman}
-                  ruler={house.ruler}
-                />
+                  onClick={(event) => {
+                    event.preventDefault();
+                    onOpenPath(href);
+                  }}
+                >
+                  <span className="learn-house-card__top">
+                    <span className="learn-house-card__mark">{house.roman}</span>
+                    <span className="learn-house-card__mark" aria-hidden="true">{house.glyph}</span>
+                  </span>
+                  <span className="learn-house-card__foot">
+                    <span className="learn-house-card__name">{house.name}</span>
+                    <span className="learn-house-card__meta">Ruled by {house.ruler}</span>
+                  </span>
+                  <svg className="learn-house-card__chevron" viewBox="0 0 10 18" fill="none" aria-hidden="true">
+                    <path
+                      d="M1.5 1.5 8.5 9l-7 7.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </a>
               </li>
             );
           })}
@@ -433,19 +389,7 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
 
       <section className="learn-index-section" id="learn-points" aria-labelledby="learn-points-title">
         <LearnSectionHeading id="learn-points-title">Angles, points and asteroids</LearnSectionHeading>
-        <LearnIndexGrid>
-          {LEARN_POINT_INDEX.map((point) => (
-            <li key={point.id}>
-              <LearnIndexCard
-                detail={point.detail}
-                lead={point.glyph}
-                onOpen={() => openKey("point", point.id)}
-                title={point.name}
-                trail={point.meta}
-              />
-            </li>
-          ))}
-        </LearnIndexGrid>
+        {referenceGrid(LEARN_POINT_INDEX, "point")}
       </section>
 
       <section className="learn-index-section" id="learn-aspects" aria-labelledby="learn-aspects-title">
@@ -468,63 +412,16 @@ function LearnHub({ pages, onOpenPath }: { pages: Astro101Page[]; onOpenPath: (p
       <section className="learn-index-section" id="learn-retrogrades" aria-labelledby="learn-retrogrades-title">
         <LearnSectionHeading id="learn-retrogrades-title">The Retrogrades</LearnSectionHeading>
         <h3 className="learn-index-kicker">In the sky · transits</h3>
-        <LearnIndexGrid>
-          {LEARN_RETROGRADE_SKY_INDEX.map((item) => (
-            <li key={item.id}>
-              <LearnIndexCard
-                detail={item.detail}
-                lead={item.glyph}
-                onOpen={() => openKey("retrograde", item.id)}
-                title={item.name}
-              />
-            </li>
-          ))}
-        </LearnIndexGrid>
+        {referenceGrid(LEARN_RETROGRADE_SKY_INDEX, "retrograde", false)}
         <h3 className="learn-index-kicker">In the natal chart</h3>
-        <LearnIndexGrid>
-          {LEARN_RETROGRADE_NATAL_INDEX.map((item) => (
-            <li key={item.id}>
-              <LearnIndexCard
-                detail={item.detail}
-                lead={item.glyph}
-                onOpen={() => openKey("retrograde", item.id)}
-                title={item.name}
-                trail={item.meta}
-              />
-            </li>
-          ))}
-        </LearnIndexGrid>
+        {referenceGrid(LEARN_RETROGRADE_NATAL_INDEX, "retrograde")}
       </section>
 
       <section className="learn-index-section" id="learn-moon" aria-labelledby="learn-moon-title">
         <LearnSectionHeading id="learn-moon-title">The Lunar Phases</LearnSectionHeading>
-        <LearnIndexGrid>
-          {LEARN_PHASE_INDEX.map((item) => (
-            <li key={item.id}>
-              <LearnIndexCard
-                detail={item.detail}
-                lead={item.glyph}
-                onOpen={() => openKey("phase", item.id)}
-                title={item.name}
-                trail={item.meta}
-              />
-            </li>
-          ))}
-        </LearnIndexGrid>
+        {referenceGrid(LEARN_PHASE_INDEX, "phase")}
         <h3 className="learn-index-kicker">Eclipses</h3>
-        <LearnIndexGrid>
-          {LEARN_ECLIPSE_INDEX.map((item) => (
-            <li key={item.id}>
-              <LearnIndexCard
-                detail={item.detail}
-                lead={item.glyph}
-                onOpen={() => openKey("phase", item.id)}
-                title={item.name}
-                trail={item.meta}
-              />
-            </li>
-          ))}
-        </LearnIndexGrid>
+        {referenceGrid(LEARN_ECLIPSE_INDEX, "phase")}
       </section>
     </div>
   );
@@ -573,7 +470,17 @@ export function LearnExperience({ pathname, onOpenPath }: LearnExperienceProps) 
       aria-label="Astro 101"
       aria-labelledby={labelledBy}
     >
-      {showBack ? <LearnBackButton onOpenPath={onOpenPath} /> : null}
+      {showBack ? (
+        <button
+          aria-label="Back to Astro 101"
+          className="sky-detail-back floating-back-button"
+          type="button"
+          onClick={() => onOpenPath("/learn")}
+        >
+          <ChevronLeft size={18} aria-hidden="true" />
+          <span>Back</span>
+        </button>
+      ) : null}
       {(failed || !pages) && <header className="learn-article-header"><p className="learn-kicker">Learn</p><h1 className="article-title" id="learn-hub-title">Astro 101</h1></header>}
       <PageLoadState scope="page" what="Astro 101" cause={failure} failed={failed} pending={pending} onRetry={() => setAttempt(value => value + 1)}>
       {!pages ? <PageLoading message="Loading Astro 101…" /> : location && !location.hub && !page ? (
