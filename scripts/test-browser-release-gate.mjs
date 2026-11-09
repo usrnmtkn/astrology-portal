@@ -12,4 +12,11 @@ for (const state of ['failure', 'cancelled', 'skipped']) {
 }
 assert.throws(() => checkBrowserReleaseGate({}));
 assert.throws(() => checkBrowserReleaseGate({ scope: result('success') }));
+const readerScope = { ...result('success'), outputs: { reader: 'true' } };
+checkBrowserReleaseGate({ scope: readerScope, 'reader-surface-suites': result('success'), 'reader-overlays': result('success') });
+for (const state of ['failure', 'cancelled', 'skipped', 'pending', undefined]) {
+  assert.throws(() => checkBrowserReleaseGate({ scope: readerScope, 'reader-surface-suites': result('success'), 'reader-overlays': result(state) }));
+}
+assert.throws(() => checkBrowserReleaseGate({ scope: readerScope, 'reader-surface-suites': result('success') }));
+checkBrowserReleaseGate({ scope: { ...result('success'), outputs: { reader: 'false' } }, 'reader-overlays': result('skipped') });
 console.log('PASS browser aggregate rejects failed/cancelled jobs and failed scope; accepts intentional scope skips');

@@ -4,6 +4,9 @@ import { pathToFileURL } from 'node:url';
 export function checkBrowserReleaseGate(needs) {
   assert.equal(needs.scope?.result, 'success', 'Browser scope must succeed');
   assert(Object.keys(needs).length > 1, 'Browser gate must include its test jobs');
+  if (needs.scope.outputs?.reader === 'true') {
+    assert.equal(needs['reader-overlays']?.result, 'success', 'Reader overlays must succeed');
+  }
   for (const [job, value] of Object.entries(needs)) {
     assert(['success', 'skipped'].includes(value.result), `${job}: ${value.result}`);
   }

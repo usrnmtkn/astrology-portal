@@ -526,17 +526,47 @@ jobs:
       - run: bash scripts/ci-install-playwright.sh
       - name: Run Calendar, learning, and date consistency screens
         run: node scripts/balanced-browser-tests.mjs --config playwright.reader-surfaces.config.ts ${{ matrix.shard }}/3
+      - name: Upload reader surface artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: reader-surface-suite-results-${{ matrix.shard }}
+          path: test-results/
+          if-no-files-found: ignore
+
+  # Overlay coverage runs in parallel so the reader shards retain their full job budget.
+  reader-overlays:
+    needs: scope
+    if: needs.scope.outputs.reader == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:knowledge
+      - run: bash scripts/ci-install-playwright.sh
       - name: Verify modals, menus, and populated city dropdowns
         env:
           VITE_MAPBOX_ACCESS_TOKEN: viewport-synthetic-token
         run: >-
           npx playwright test -c playwright.config.ts --workers=1
           --shard=${{ matrix.shard }}/3 tests/visual/overlay-viewport.spec.ts
-      - name: Upload reader surface artifacts
+      - name: Upload overlay artifacts
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: reader-surface-suite-results-${{ matrix.shard }}
+          name: reader-overlay-results-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
 
@@ -645,7 +675,7 @@ jobs:
           if-no-files-found: ignore
 
   browser-release-gate:
-    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, lunation-source-wiring, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, key-dates-disclosures, design-handoff, mobile-parity]
+    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, lunation-source-wiring, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, reader-overlays, key-dates-disclosures, design-handoff, mobile-parity]
     # Still inspect failed dependencies, but let a superseded workflow cancel.
     # An always() gate can remain queued and block the next revision's run.
     if: ${{ !cancelled() }}
