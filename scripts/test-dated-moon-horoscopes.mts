@@ -6,6 +6,7 @@ import {pathToFileURL} from 'node:url';
 import {invoke,store} from '../tests/helpers/moon-horoscope-api.mts';
 import {MOON_HOROSCOPE_SIGNS,moonHoroscopeHouse,moonHoroscopeKey,moonHoroscopeBody,parseMoonHoroscopes} from '../src/shared/datedLunationHoroscopes.mjs';
 import {isReaderServableGeneratedContentRow} from '../apps/web/src/content/generatedContentEligibility';
+import {emptyMoonHoroscopes,moonWritingDraft,moonWritingDraftPayload} from '../apps/admin/src/moonHoroscopeDraft';
 
 mkdirSync('test-results',{recursive:true});
 const directory=mkdtempSync(join(process.cwd(),'test-results/dated-moon-test-'));
@@ -27,6 +28,24 @@ try{
       const phase=event.phase==='new-moon'?'New':'Full';
       const source=MOON_HOROSCOPE_SIGNS.map(sign=>`${sign[0].toUpperCase()+sign.slice(1)} / ${sign[0].toUpperCase()+sign.slice(1)} Rising\n${phase} Moon in Your ${moonHoroscopeHouse(event.sign,sign)}th House\n${sign} exact opening — punctuation stays.\n\n${sign} exact final sentence.`).join('\n\n');
       const section=parseMoonHoroscopes(source,event);
+      if(month==='2026-11'&&event.phase==='new-moon'){
+        const partial=emptyMoonHoroscopes(event);partial.passages[0].body='  Exact unfinished opening.\n\nExact unfinished ending.  ';
+        const rawBody=moonWritingDraftPayload(event,partial,null,null,null);
+        let rawResult=await invoke('POST',rawBody);assert.equal(rawResult.status,200,JSON.stringify(rawResult.payload));
+        let raw=rawResult.payload.rows[0];assert.deepEqual(moonWritingDraft(raw)?.section,partial);
+        const malformed=structuredClone(raw);malformed.sections.moonWritingDraft.section.passages[0]=null;assert.equal(moonWritingDraft(malformed),null,'Malformed drafts fail closed without crashing.');
+        const independent=await invoke('POST',moonWritingDraftPayload(event,partial,null,null,null));assert.equal(independent.status,200);assert.notEqual(independent.payload.rows[0].content_key,raw.content_key);
+        assert.equal(isReaderServableGeneratedContentRow({...raw,status:'LIVE',lane:'serving',review_state:null}),false,'Even forced-LIVE raw writing is excluded from readers.');
+        for(const action of [{status:'LIVE'},{ownerAction:'publish-owner-content'},{ownerAction:'publish-sky-article-edition'},{ownerAction:'publish-horoscope-edition-revision'}]){
+          assert.notEqual((await invoke('PATCH',{id:raw.id,expectedUpdatedAt:raw.updated_at,...action})).status,200,'Reference drafts cannot publish.');
+        }
+        partial.passages[0].body='';
+        rawResult=await invoke('PATCH',{...moonWritingDraftPayload(event,partial,null,null,raw),id:raw.id,expectedUpdatedAt:raw.updated_at});assert.equal(rawResult.status,200,JSON.stringify(rawResult.payload));
+        const cleared=rawResult.payload.rows[0];assert.deepEqual(moonWritingDraft(cleared)?.section,partial,'Explicit empty fields survive draft saving.');
+        assert.equal((await invoke('PATCH',{...rawBody,id:raw.id,expectedUpdatedAt:raw.updated_at})).status,409,'A stale draft cannot overwrite its saved version.');
+        const loaded=await invoke('GET',undefined,`/api/admin/generated-content?id=${cleared.id}&status=all&visibility=all`);assert.deepEqual(moonWritingDraft(loaded.payload.rows[0])?.section,partial);
+        assert.equal((await invoke('reader',{keys:[cleared.content_key]})).payload.rows.length,0);
+      }
       assert.equal(section.passages.length,12);assert.equal(section.passages[0].body.split('\n').at(-1),'aries exact final sentence.');
       for(const malformed of [source.replace('Pisces / Pisces Rising','Aries / Aries Rising'),source.slice(0,source.indexOf('Pisces / Pisces Rising')),`Editor notes: private\n${source}`,source.replace('aries exact final sentence.','Editorial notes: private')])assert.throws(()=>parseMoonHoroscopes(malformed,event));
       assert.throws(()=>parseMoonHoroscopes(source,{...event,phase:event.phase==='new-moon'?'full-moon':'new-moon'}),/heading/);
@@ -38,6 +57,15 @@ try{
       const duplicate=await invoke('POST',body);assert.notEqual(duplicate.status,200);assert.equal(store.rows.size,count);
       result=await invoke('GET',undefined,`/api/admin/generated-content?contentKeys=${encodeURIComponent(row.content_key)}&status=all&visibility=all`);
       assert.deepEqual(result.payload.rows[0].sections.articleHoroscopes,section);
+      if(month==='2026-11'&&event.phase==='new-moon'){
+        const partial=emptyMoonHoroscopes(event);partial.passages[0].body='Exact private target draft.';
+        const recovery=await invoke('POST',moonWritingDraftPayload(event,partial,null,row,null));assert.equal(recovery.status,200);
+        const raw=recovery.payload.rows[0],openedVersion=row.updated_at;
+        const advanced=await invoke('PATCH',{id:row.id,expectedUpdatedAt:openedVersion,reviewerNotes:'Synthetic concurrent metadata.'});assert.equal(advanced.status,200);row=advanced.payload.rows[0];
+        assert.equal(moonWritingDraft(raw)?.target?.updatedAt,openedVersion,'Reopening keeps the original target version pin.');
+        assert.equal((await invoke('PATCH',{id:row.id,expectedUpdatedAt:moonWritingDraft(raw)!.target!.updatedAt,body:row.body})).status,409,'A recovered draft cannot overwrite an advanced target.');
+        assert.deepEqual(moonWritingDraft(store.rows.get(raw.id))?.section,partial);assert.equal(store.rows.get(row.id).reviewer_notes,'Synthetic concurrent metadata.');
+      }
       const version=row.updated_at;
       const wrong=structuredClone(section);wrong.passages[0].house=wrong.passages[0].house%12+1;
       result=await invoke('PATCH',{id:row.id,expectedUpdatedAt:version,sections:{articleHoroscopes:wrong}});assert.equal(result.status,422);

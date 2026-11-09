@@ -177,7 +177,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     <div className="admin-sky-writing-context" aria-label="Phrase variable editing context">
       <p className="admin-eyebrow">Editable phrase variable</p>
       <h3>{initialLibraryField?.label ?? title(initialLibrarySourceId)} <code>{`{{${initialLibrarySourceId}}}`}</code></h3>
-      <p>One phrase for {title(planet)} in {title(sign)}. Other phrases and placement composition stay closed. Nothing is published until you use Save &amp; publish.</p>
+      <p>Saved as a draft until published.</p>
     </div>
     {libraryError && <p role="alert">{libraryError}</p>}
     {!libraryReady || !activeLibrary ? <PageLoading compact message={installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`} />
@@ -197,7 +197,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
         />
         <details className="admin-workspace-details" open={showComposition} onToggle={event => setShowComposition(event.currentTarget.open)}>
           <AdminDisclosureSummary>Placement composition</AdminDisclosureSummary>
-          <p>Section templates, motion, and aspect modules. Open this only when you need to assemble the placement, not to edit this phrase.</p>
+          <p>Arrange sections and their motion settings.</p>
           {showComposition && <SkyIngressComposer source={{ ...(source ?? {}), contentKey, ingress: activeLibrary }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
             hideLibrary initialField={initialField} onChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
         </details>
