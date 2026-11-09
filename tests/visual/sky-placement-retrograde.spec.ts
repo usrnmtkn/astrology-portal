@@ -10,6 +10,7 @@ const normalize = (value: string) => value.replace(/\s+/gu, " ").trim();
 async function expectSeparateHoroscopesAfterAspects(page: Page) {
   const card = page.locator(".sky-detail-rising-horoscopes-card");
   await expect(card).toBeVisible();
+  await expect(card.getByRole("heading", { level: 2, name: "Horoscopes", exact: true })).toBeVisible();
   await expect(card.locator("#sky-rising-horoscopes")).toHaveCount(1);
   await expect(page.locator(".sky-detail-card #sky-rising-horoscopes")).toHaveCount(0);
   await expect(page.locator(".article-related-aspects-card").first()).toBeVisible({ timeout: 60_000 });
@@ -26,10 +27,14 @@ async function expectSeparateHoroscopesAfterAspects(page: Page) {
       belowAspects: aspects.every(aspect => aspect.getBoundingClientRect().bottom < element.getBoundingClientRect().top),
       heading: typography(element.querySelector("h2")!),
       establishedHeading: typography(document.querySelector(".sky-placement-key-dates > summary h2")!),
+      signHeading: typography(element.querySelector("h3")!),
+      headingOrder: [...element.querySelectorAll("h2, h3")].map(heading => heading.tagName),
     };
   });
   expect(layout.separate).toBe(true);
   expect(layout.belowAspects).toBe(true);
+  expect(layout.heading).toEqual(layout.signHeading);
+  expect(layout.headingOrder).toEqual(["H2", ...Array(12).fill("H3")]);
   for (const heading of [layout.heading, layout.establishedHeading]) { expect(heading[0]).toContain("Newsreader"); expect(heading[2]).toBe("400"); }
   await card.evaluate(element => window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - 240));
   const title = (await page.locator("#sky-detail-title").innerText()).replace(/\s+/gu, "-").toLowerCase();

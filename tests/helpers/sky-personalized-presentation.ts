@@ -3,8 +3,8 @@ import { expectReadableTheme } from "./theme-contrast";
 
 export async function expectPersonalizedPlacementPresentation(page: Page, width: number) {
   const compact = width <= 800;
-  const heading = page.getByRole("heading", { level: 2, name: "Where it lands for you", exact: true });
-  const card = page.getByRole("region", { name: "Where it lands for you", exact: true });
+  const heading = page.getByRole("heading", { level: 2, name: "How this affects you", exact: true });
+  const card = page.getByRole("region", { name: "How this affects you", exact: true });
   await expect(heading).toBeVisible();
   await expect(heading).toHaveCSS("font-size", compact ? "20px" : "22px");
   await expect(heading).toHaveCSS("font-weight", "600");
@@ -12,6 +12,8 @@ export async function expectPersonalizedPlacementPresentation(page: Page, width:
   await expect(heading).toHaveCSS("line-height", compact ? "25px" : "27.5px");
   await expect(heading).toHaveCSS("text-transform", "none");
   await expect(heading).toHaveCSS("margin", "0px");
+  await expect(heading).toHaveCSS("letter-spacing", "normal");
+  await expect(heading).toHaveCSS("text-align", "start");
   await expect(card.locator("h2")).toHaveCount(0);
   await expect(card).toHaveCSS("padding", compact ? "28px 24px 32px" : "40px");
   await expect(card).toHaveCSS("border-radius", compact ? "28px" : "32px");
