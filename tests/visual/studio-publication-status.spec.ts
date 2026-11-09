@@ -1,3 +1,4 @@
+import {openEditorMoreActions} from '../helpers/studio-editor-actions';
 import { expect, test, type Browser, type Page, type TestInfo, type Request } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
@@ -94,6 +95,7 @@ async function fixture(page:Page,browser:Browser,info:TestInfo,options:{pendingO
   const hydration=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/admin/generated-content-inventory'&&new URL(r.url()).searchParams.get('id')===row.id);
   await exact.getByRole('button',{name:'Edit',exact:true}).click();const r=await hydration;expect(r.status()).toBe(200);expect(await r.finished()).toBeNull();expect(r.request().failure()).toBeNull();await expect(editor(page)).toBeVisible();
   const advice=editor(page).locator('details[aria-label="Optional writing suggestions"]');await expect(advice).toBeVisible();await advice.locator('summary').click();await expect(advice).toContainText('do not prevent saving or publishing');
+  await openEditorMoreActions(editor(page));
  }
  async function action(label:string,status:string){
   const done=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/admin/generated-content'&&r.request().method()==='PATCH');

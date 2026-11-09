@@ -182,12 +182,12 @@ for (const [failure, width, theme] of [
     await expect(library(page)).toContainText('1 sources');
     await library(page).getByLabel('Search fallback horoscopes', { exact: true }).fill('synthetic-no-matching-source');
     await expect(library(page)).toContainText('0 sources');
-    await expect(library(page).getByLabel('Selected fallback horoscope', { exact: true })).toBeDisabled();
+    await expect(library(page).getByRole('table', { name: 'Fallback horoscopes', exact: true }).locator('tbody tr')).toHaveCount(0);
     await expect(library(page)).toContainText('No saved fallback matches these filters.');
     await library(page).getByLabel('Search fallback horoscopes', { exact: true }).fill('Synthetic Aries fallback');
     await expect(library(page)).toContainText('Complete synthetic catalog final sentence.');
     expect(catalogReads).toBe(2);
-    await library(page).getByRole('button', { name: 'Edit horoscope', exact: true }).click();
+    await library(page).getByRole('article', { name: 'Selected fallback horoscope passage', exact: true }).getByRole('button', { name: 'Edit', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('textbox', { name: 'Full lunar passage', exact: true })).toHaveValue(copy);
     await page.getByRole('dialog', { name: 'Generated content editor' }).getByRole('button', { name: 'Close', exact: true }).click();
     await page.reload();

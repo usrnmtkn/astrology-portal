@@ -3,6 +3,8 @@ import {fork} from 'node:child_process';
 import path from 'node:path';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {syntheticPublicationPage} from '../helpers/synthetic-publication-page';
+import {openEditorMoreActions} from '../helpers/studio-editor-actions';
+import {canonicalPublicationLedger,publicationLedgerTag} from '../../apps/web/src/services/publicationLedgerTransport';
 for(const width of [390,1440])for(const theme of ['light','dark'] as const){
   test(`Approved source recovery preserves writing and resolves lost acknowledgement ${width} ${theme}`,async({page})=>{
     test.setTimeout(90000);
@@ -21,7 +23,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
         await route.fulfill({json:syntheticPublicationPage(await call({method:'publications'}),url.searchParams)});
       });
       await routeStudioInventoryApi(page,{actualBaselineRecovery:true,call,listRows:rows=>rows.filter(row=>row.status!=='ARCHIVED'),answer:async(route,url)=>{
-        if(url.pathname==='/api/content-publications'){await route.fulfill({json:{schema:'tldr-publications/v1',publications:await call({method:'publications'})}});return true;}
+        if(url.pathname==='/api/content-publications'){const publications=canonicalPublicationLedger(await call({method:'publications'}));await route.fulfill({headers:{etag:await publicationLedgerTag(publications)},json:{schema:'tldr-publications/v1',publications}});return true;}
         if(url.pathname!=='/api/admin/content-baseline-recovery')return false;
         const body=route.request().postDataJSON(),result=await call({method:'recovery',body});
         if(body.action==='restore'){writes++;expect(result.status).toBe(200);await route.fulfill({status:503,json:{ok:false,error:'Synthetic acknowledgement loss after commit.'}});}
@@ -31,6 +33,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       const sourceRow=page.getByRole('row').filter({hasText:'fallback-hook/placement-sentence/moon/scorpio'});
       await expect(sourceRow).toBeVisible();await sourceRow.getByRole('button',{name:'Edit',exact:true}).click();
       const editor=page.getByRole('dialog');const recovery=editor.getByRole('button',{name:'Use approved source',exact:true});
+      await openEditorMoreActions(editor);
       await expect(recovery).toBeEnabled();await recovery.click();
       await expect(editor.getByText(/saved writing stays recoverable/)).toBeVisible();
       await editor.getByRole('button',{name:'Cancel',exact:true}).click();expect((await call({method:'counts'})).receipts).toBe(0);

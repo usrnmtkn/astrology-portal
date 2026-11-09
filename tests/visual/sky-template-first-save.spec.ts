@@ -1,3 +1,4 @@
+import {openEditorMoreActions} from '../helpers/studio-editor-actions';
 import { expect, test as base, type Page, type TestInfo, type Request } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi, isBaselineRecoveryPreview } from '../helpers/studio-inventory-route';
@@ -225,6 +226,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved', { timeout: 10_000 });
       await expect(editor(page).getByText('Save did not return the saved row.', { exact: true })).toHaveCount(0);
       await expect(editor(page).getByLabel('Article body', { exact: true })).toHaveValue(templateOpening);
+      await openEditorMoreActions(editor(page));
       await expect(editor(page).getByRole('button', { name: 'Archive source', exact: true })).toBeEnabled();
       await reopenSavedTemplate(page);
       await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
@@ -246,9 +248,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await reopenSavedTemplate(page);
       await expect(editor(page).getByLabel('Article body', { exact: true })).toHaveValue(revisedOpening);
       await expect(editor(page).locator('.admin-editor-save-state')).toHaveText('All changes saved');
+      await openEditorMoreActions(editor(page));
       const archived = await f.save('Archive source', 'PATCH');
       expect(archived.id).toBe(saved.id); expect(archived.status).toBe('ARCHIVED');
       expect(articleTemplateWithHoroscopes(archived.body, archived.sections)).toBe(reassembled);
+      await openEditorMoreActions(editor(page));
       await expect(editor(page).getByRole('button', { name: 'Restore as draft', exact: true })).toBeEnabled();
       expect((await f.api.call({ method: 'publications' })).filter((row: any) => row.content_key !== '__content-publication-ledger/v1')).toEqual([]);
     } finally { await f.clean(); }

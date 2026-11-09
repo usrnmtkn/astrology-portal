@@ -278,7 +278,7 @@ test("Daily Sky Summary keeps assembly flat and uses the shared canvas for neste
   await expect(assembly).toBeVisible();
   expect(await assembly.evaluate(element => element.classList.contains("studio-surface"))).toBe(false);
   expect(await assembly.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
-  const writing = studio.locator("details").filter({ has: page.locator("summary", { hasText: "Writing system" }) });
+  const writing = studio.getByLabel("Daily Sky summary system details", { exact: true });
   await expect(writing).toBeVisible();
   const canvas = await page.locator("main.admin-dashboard").evaluate(element => getComputedStyle(element).backgroundColor);
   expect(await writing.evaluate(element => getComputedStyle(element).backgroundColor)).toBe(canvas);

@@ -177,7 +177,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     <div className="admin-sky-writing-context" aria-label="Phrase variable editing context">
       <p className="admin-eyebrow">Editable phrase variable</p>
       <h3>{initialLibraryField?.label ?? title(initialLibrarySourceId)} <code>{`{{${initialLibrarySourceId}}}`}</code></h3>
-      <p>Saved as a draft until published.</p>
+      <p>{title(planet)} in {title(sign)}</p>
     </div>
     {libraryError && <p role="alert">{libraryError}</p>}
     {!libraryReady || !activeLibrary ? <PageLoading compact message={installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`} />
