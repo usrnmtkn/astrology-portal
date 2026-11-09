@@ -2017,12 +2017,12 @@ for(const audience of ['you','they']) test(`Sect page unavailable writing and ne
  mode='ready';await page.getByRole('button',{name:'Try again',exact:true}).click();await expect(page.locator('.natal-sect-article')).toContainText('The recovered complete sect paragraph.');
 });
 
-for(const width of [390,1440])for(const theme of ['light','dark']){
-  syntheticMemberTest(`Populated member source contracts ${width} ${theme}`,async({page})=>{
+for(const width of [390,1440])for(const theme of ['light','dark'])for(const audience of ['you','they']){
+  // Each direct-load contract gets a fresh browser context and its own pending reads.
+  syntheticMemberTest(`Populated member source contracts ${width} ${theme} ${audience}`,async({page})=>{
     test.setTimeout(120000);await page.setViewportSize({width,height:1100});
     const assertClean=await inspectMemberSourceFailures(page);
     const fixture=await patternInsightFixtures(page,theme,{cachedSources:true});
-    for(const audience of ['you','they']){
       const route=audience==='you'?'/#you?tab=chart':'/#friends?tab=charts&chart=fixture-friend&view=natal';
       const reads:ReadonlyArray<readonly [string,string]>=[['GET','/rest/v1/social_profiles'],['POST','/rest/v1/rpc/list_social_friend_requests'],...(audience==='they'?[['POST','/rest/v1/rpc/list_social_friends']] as const:[])];
       await withFinishedSocialReads(page,`${audience}-initial`,()=>page.goto(route),reads);
@@ -2050,7 +2050,6 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
           [['POST','/rest/v1/rpc/list_social_friend_requests']]);
       }
       await assertClean();
-    }
     expect(fixture.memberSourceRequests().profileReads).toBeGreaterThan(0);
     expect(fixture.memberSourceRequests().profileSyncs).toBeGreaterThan(0);
     expect(fixture.memberSourceRequests().manualInserts).toBe(0);
