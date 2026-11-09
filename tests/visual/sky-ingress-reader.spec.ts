@@ -361,7 +361,7 @@ for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) {
   await page.route('**/api/content-reader', route => route.fulfill({ json: readerResponse(route.request().postDataJSON().keys?.includes(row.content_key) ? [row] : [], publications) }));
   await page.goto('/?date=2026-10-10#sky/placement/mercury/scorpio');
   const article = page.locator('.sky-detail-article').first();
-  await expect(article.getByRole('heading', { name:'Horoscopes by rising sign', exact:true })).toBeVisible({ timeout:60000 });
+  await expect(article.getByRole('heading', { name:'Horoscopes', exact:true })).toBeVisible({ timeout:60000 });
   for (const reading of readings) await expect(article).toContainText(reading.body.split('\n\n')[1]);
   await expect(article.locator('.sky-rising-horoscope')).toHaveCount(12);
   await expect(article.getByRole('link', { name:'Horoscopes',exact:true })).toHaveCount(0);

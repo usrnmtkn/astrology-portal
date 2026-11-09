@@ -87,7 +87,7 @@ export type SkyHistoricalLookback = {
 export type SkyPersonalizedPlacement = {
   body: string;
   contentKey: string;
-  heading: "Where it lands for you";
+  heading: "How this affects you";
   natalAspects: Array<{
     key: string;
     heading: string;
@@ -580,7 +580,7 @@ export function SkyDetailArticle({
       aria-labelledby="sky-rising-horoscopes-title"
     >
       <div className="article-related-aspects__copy-list">
-        <h2 id="sky-rising-horoscopes-title">Horoscopes by rising sign</h2>
+        <h2 id="sky-rising-horoscopes-title">Horoscopes</h2>
         {detail.risingHoroscopes.map((entry) => {
           const sign = zodiacSigns.find(sign => sign.toLowerCase() === entry.risingSign?.toLowerCase()) ?? entry.risingSign;
           return (

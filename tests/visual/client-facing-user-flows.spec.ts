@@ -5113,7 +5113,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
@@ -5141,11 +5141,11 @@ test.describe("client-facing user flow case studies", () => {
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-    const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
+    const personalizedSection = page.getByRole("region", { name: "How this affects you" });
     await expect(personalizedSection).toBeVisible();
     await expect(personalizedSection).toContainText("5th house");
-    await expect(page.getByRole("heading", { level: 2, name: "Where it lands for you" })).toBeVisible();
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(page.getByRole("heading", { level: 2, name: "How this affects you" })).toBeVisible();
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
@@ -5164,7 +5164,7 @@ test.describe("client-facing user flow case studies", () => {
   });
 
   for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [390, "dark"]] as const) {
-    test(`Where it lands for you matches the Venus handoff ${width} ${theme}`, async ({ page }) => {
+    test(`How this affects you matches the Venus handoff ${width} ${theme}`, async ({ page }) => {
       const noErrors = await expectNoClientErrors(page);
       await page.setViewportSize({ width, height: 1000 });
       await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-10-02T16:00:00.000Z", theme });
@@ -5185,14 +5185,14 @@ test.describe("client-facing user flow case studies", () => {
       await noErrors();
     });
 
-    test(`Where it lands for you retains the house card without active aspects ${width} ${theme}`, async ({ page }) => {
+    test(`How this affects you retains the house card without active aspects ${width} ${theme}`, async ({ page }) => {
       const noErrors = await expectNoClientErrors(page);
       await page.setViewportSize({ width, height: 1000 });
       // Venus is in Libra on this day; the Scorpio reading has no current
       // Venus-in-Scorpio natal contacts, but its house passage still applies.
       await seedClientState(page, { profile: true, preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z", theme });
       await expectClientRouteLoads(page, "/?date=2026-08-22#sky/placement/venus/scorpio");
-      const card = page.getByRole("region", { name: "Where it lands for you", exact: true });
+      const card = page.getByRole("region", { name: "How this affects you", exact: true });
       await expect(card).toContainText("8th house");
       await expect(card.locator(".sky-detail-personalized-aspect")).toHaveCount(0);
       await expectPersonalizedPlacementPresentation(page, width);
@@ -5211,7 +5211,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/jupiter/leo");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     const ariesHeading = horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" });
     await expect(ariesHeading).toBeVisible();
@@ -5234,11 +5234,11 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky/placement/venus/libra");
 
     await expect(page.getByRole("heading", { name: "Venus in Libra" })).toBeVisible();
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Libra & Libra Rising" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "How this affects you" })).toHaveCount(0);
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText([
       "August 6 to September 10, 2026",
@@ -5269,11 +5269,11 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#sky/placement/moon/sagittarius");
 
     await expect(page.getByRole("heading", { name: "The Moon in Sagittarius" })).toBeVisible();
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Sagittarius & Sagittarius Rising" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "How this affects you" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
     await assertNoClientErrors();
@@ -5285,7 +5285,7 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/uranus/gemini");
 
-    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
     await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
@@ -5306,7 +5306,7 @@ test.describe("client-facing user flow case studies", () => {
     });
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
 
-    const personalizedSection = page.getByRole("region", { name: "Where it lands for you" });
+    const personalizedSection = page.getByRole("region", { name: "How this affects you" });
     await expect(personalizedSection).toBeVisible();
     await expect(personalizedSection.getByRole("heading", { name: "Aspects to the natal chart" })).toHaveCount(0);
     await expect(personalizedSection.getByRole("heading", { level: 3 }).first()).toBeVisible({ timeout: 20_000 });
@@ -5870,7 +5870,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     });
     const errors = watchBrowserErrors(page);
     await expectClientRouteLoads(page, "/#sky/placement/sun/leo");
-    const personalized = page.getByRole("region", { name: "Where it lands for you" });
+    const personalized = page.getByRole("region", { name: "How this affects you" });
     await expect(personalized).toContainText("QA published solar return opening.", { timeout: 30_000 });
     await expect(personalized).toContainText("QA published solar return final sentence.");
     await expect(personalized).not.toContainText("{{");
@@ -5914,7 +5914,7 @@ test('published personal transit failure retries and retirement clears an open Y
   });
   await page.goto('/#sky/placement/sun/leo');
   await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toHaveCount(0);
+  await expect(page.getByRole('region', { name: 'How this affects you' })).toHaveCount(0);
   await page.evaluate(() => { window.location.hash = 'you'; });
   await expect(page.getByRole('region', { name: 'In-depth transit reports' })).toBeVisible();
   await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
@@ -5928,7 +5928,7 @@ test('published personal transit failure retries and retirement clears an open Y
   await expect(page.getByText('The transit readings could not load. Please try again.')).toBeVisible();
   fail = false;
   await page.getByRole('button', { name: 'Try again', exact: true }).click();
-  await expect(page.getByRole('region', { name: 'Where it lands for you' })).toContainText('QA retry solar return final sentence.', { timeout: 30_000 });
+  await expect(page.getByRole('region', { name: 'How this affects you' })).toContainText('QA retry solar return final sentence.', { timeout: 30_000 });
   await page.evaluate(() => { window.location.hash = 'you'; });
   const personal = page.locator('button.updates-aspect-row').filter({ hasText: 'QA retry solar return opening.' });
   await expect(personal).toBeVisible({ timeout: 30_000 }); await personal.click();
@@ -5954,7 +5954,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
     await page.route('**/api/content-reader', route => route.request().postDataJSON().scope
       ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
     await expectClientRouteLoads(page, '/#sky/placement/moon/taurus');
-    const section = page.getByRole('region', { name: 'Where it lands for you' });
+    const section = page.getByRole('region', { name: 'How this affects you' });
     for (const [index, title] of ['Moon square your Sun', 'Moon sextile your Jupiter'].entries()) {
       const article = section.locator('.sky-detail-personalized-aspect').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
       const candidates = records.filter((row: any) => new RegExp(`^authored/transit-aspect/moon/${index ? '(?:jupiter|j)' : '(?:sun|s)'}/`).test(row.contentKey));
@@ -5990,7 +5990,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
       return route.fallback();
     });
     await page.goto('/#sky/placement/sun/leo');
-    const personal = page.getByRole('region', { name: 'Where it lands for you' });
+    const personal = page.getByRole('region', { name: 'How this affects you' });
     await expect(personal).toContainText('QA recovered return opening.', { timeout: 30_000 });
     await expect(personal).toContainText('QA recovered return final sentence.');
     await expect(page.getByText('The transit readings could not load. Please try again.')).toHaveCount(0);
@@ -6190,7 +6190,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
     ? route.fulfill({ json: readerResponse([]) }) : route.fallback());
   const errors = watchBrowserErrors(page);
   await expectClientRouteLoads(page, '/#sky/placement/moon/taurus');
-  const section = page.getByRole('region', { name: 'Where it lands for you' });
+  const section = page.getByRole('region', { name: 'How this affects you' });
   const article = section.locator('.sky-detail-personalized-aspect').filter({ hasText: 'Primary You source' }).first();
   await expect(article).toBeVisible();
   const body = (await article.locator('p').allTextContents()).join('\n\n');

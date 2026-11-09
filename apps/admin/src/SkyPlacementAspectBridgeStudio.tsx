@@ -13,7 +13,7 @@ export default function SkyPlacementAspectBridgeStudio({ onEdit, busy }: { onEdi
   return <section className="studio-surface studio-section" aria-label="House × aspect bridges">
     <header className="admin-section-heading-row"><div>
       <h2>House × aspect bridges</h2>
-      <p>Connect the house reading to an aspect in “Where it lands for you.”</p>
+      <p>Connect the house reading to an aspect in “How this affects you.”</p>
     </div></header>
     <p>Each reading uses its timing, your published bridge, and the complete existing aspect passage. Write only the connecting passage here; the reader supplies timing once.</p>
     <div className="admin-review-filter-grid admin-filter-form">

@@ -68,7 +68,7 @@ for (const [width, theme, dated, planet, sign] of [
       }
       for (const label of await article.locator('.article-related-aspects__label--outside').allTextContents()) expect(exported.aspect_details).toContain(label.trim());
       expect(exported.aspect_details).not.toContain('studioExport');
-      expect(exported.aspect_details).not.toContain('Where it lands for you');
+      expect(exported.aspect_details).not.toContain('How this affects you');
       expect(exported.publication_status).toBe(dated ? 'Live' : 'Bundled fallback');
       expect(exported.source_role).toBe(dated ? 'Active dated article' : 'Shared fallback');
       expect(exported.reader_url).toContain(`#sky/placement/${planet}/${sign}`);
