@@ -662,16 +662,23 @@ function signResidencyWindowFor(
   currentSign: string,
   longitudeOffset = 0
 ): SignTransitWindow {
-  if (["Sun", "Moon"].includes(planet)) {
-    const pass = signTransitWindowFor(swe, planet, planetId, date, currentSign, longitudeOffset);
-    return pass.transitStart && pass.transitEnd
-      ? { ...pass, residencyPasses: [{ entryDate: pass.transitStart, exitDate: pass.transitEnd,
-        entryMotion: exactPlanetSpeed(swe, planetId, new Date(pass.transitStart)) < 0 ? "retrograde" : "direct",
-        previousSign: exactPlanetSign(swe, planetId, new Date(Date.parse(pass.transitStart) - 300000), longitudeOffset)
-      }] }
-      : pass;
+  try {
+    if (["Sun", "Moon"].includes(planet)) {
+      const pass = signTransitWindowFor(swe, planet, planetId, date, currentSign, longitudeOffset);
+      return pass.transitStart && pass.transitEnd
+        ? { ...pass, residencyPasses: [{ entryDate: pass.transitStart, exitDate: pass.transitEnd,
+          entryMotion: exactPlanetSpeed(swe, planetId, new Date(pass.transitStart)) < 0 ? "retrograde" : "direct",
+          previousSign: exactPlanetSign(swe, planetId, new Date(Date.parse(pass.transitStart) - 300000), longitudeOffset)
+        }] }
+        : pass;
+    }
+    return multiPassSignResidencyFor(swe, planet, planetId, date, currentSign, longitudeOffset);
+  } catch (error) {
+    // A valid instant can belong to a residency extending beyond the shipped
+    // ephemeris. Keep its calculated positions/aspects; never clip the residency.
+    if (error instanceof SwissEphemerisCoverageError) return {};
+    throw error;
   }
-  return multiPassSignResidencyFor(swe, planet, planetId, date, currentSign, longitudeOffset);
 }
 
 function previousSameSignResidencyFor(

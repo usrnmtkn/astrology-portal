@@ -74,7 +74,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
 
 for (const sample of [
   { date: '2026-04-07', first: 'Sun', second: 'Moon', aspect: 'trine', title: 'Sun trines Moon', key: 'sky.aspect.sun.trine.moon' },
-  { date: '2039-06-26', first: 'Jupiter', second: 'Lilith', aspect: 'sextile', title: 'Jupiter sextiles Lilith', key: 'sky.aspect.jupiter.sextile.lilith' }
+  { date: '2039-06-26', first: 'Jupiter', second: 'Lilith', aspect: 'sextile', title: 'Jupiter sextiles Lilith', key: 'sky.aspect.jupiter.sextile.lilith' },
+  { date: '2385-05-20', first: 'Neptune', second: 'Pluto', aspect: 'conjunction', title: 'Neptune conjoins Pluto', key: 'sky.aspect.neptune.conjunction.pluto' },
+  { date: '1820-08-26', first: 'Neptune', second: 'Pluto', aspect: 'square', title: 'Neptune squares Pluto', key: 'sky.aspect.neptune.square.pluto' }
 ]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
   test(`Calendar ${sample.title} retains its full reading when unrelated writing fails ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(120_000);
