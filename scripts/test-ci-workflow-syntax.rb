@@ -32,6 +32,15 @@ files.each do |file|
     gate = jobs.fetch('browser-release-gate')
     raise 'Browser gate must depend on every job, including matrices' unless gate.fetch('needs').sort == (jobs.keys - ['browser-release-gate']).sort
     raise 'Browser gate must inspect failures without blocking workflow cancellation' unless gate.fetch('if') == '${{ !cancelled() }}'
+    reader = jobs.fetch('reader-surface-suites')
+    overlays = jobs.fetch('reader-overlays')
+    [reader, overlays].each do |job|
+      raise 'Reader and overlay coverage must retain all three shards' unless job.fetch('strategy').fetch('matrix').fetch('shard') == [1, 2, 3]
+      raise 'Reader job budgets must remain bounded' unless job.fetch('timeout-minutes') == 30
+    end
+    overlay_command = 'tests/visual/overlay-viewport.spec.ts'
+    raise 'Overlay checks must run independently of reader shards' if reader.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) }
+    raise 'Overlay job must execute its full viewport suite' unless overlays.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) && step['run'].include?('--shard=${{ matrix.shard }}/3') }
     triggers = workflow['on'] || workflow[true] # YAML 1.1 parses on as true.
     raise 'Required browser gate must report on every pull request' unless triggers.key?('pull_request') && triggers['pull_request'].nil?
   end
