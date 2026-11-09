@@ -7,7 +7,7 @@ import { calendarPassageReviewParams } from './calendarPassageReviewRoute';
 import type {AdminHookCatalogDomain} from "./adminHookCatalogData";
 import type { WheelTooltipEditorSession } from "./wheelTooltipEditorSession";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
-import { articleLibraryKind, articleReaderHref, articleRevisionTarget, standaloneArticleKind, articlePublicationIsDue, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
+import { articleLibraryKind, articleReaderHref, standaloneArticleKind, articlePublicationIsDue, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
@@ -5545,7 +5545,7 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       const savedDraft = saved ? draftFromRow(saved) : null;
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
-        (draftForSave.id && saved.id !== draftForSave.id && !(articleRevisionTarget({ content_key: draftForSave.contentKey, mode: draftForSave.mode, surface: draftForSave.surface })
+        (draftForSave.id && saved.id !== draftForSave.id && !((standaloneArticleKind(draftForSave.contentKey) || draftForSave.contentKey.startsWith("education/astro-101/"))
           && status === "DRAFT" && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
           && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
@@ -12502,10 +12502,10 @@ export function GeneratedContentAdminDashboard() {
               }}
               onBlocksChange={(blocks) => {
                 const sections = { ...(currentDraft.sections ?? {}), blocks };
-                setDraft(isAstro101Draft ? { ...currentDraft, sections, body: astro101BodyFromSections(sections) } : {
+                setDraft({
                   ...currentDraft,
                   sections,
-                  body: blocks.map((block) => [block.heading, block.body].filter(Boolean).join("\n")).join("\n\n")
+                  body: isAstro101Draft ? astro101BodyFromSections(sections) : blocks.map((block) => [block.heading, block.body].filter(Boolean).join("\n")).join("\n\n")
                 });
               }}
               onIntroChange={(value) => {
