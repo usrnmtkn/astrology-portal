@@ -64,6 +64,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   await map.getByRole('button', { name: 'Set up placement composition' }).click();
   const editor = page.getByRole('dialog');
   await expect(editor).toBeVisible();
+  await editor.getByLabel('Advanced writing tools', { exact: true }).locator('summary').filter({ hasText: /^Advanced$/u }).click();
   await editor.locator('summary').filter({ hasText: /^Writing library & placement composition$/u }).click();
   await editor.getByRole('button', { name: 'Add prefilled placement composition' }).click();
   const composer = editor.getByRole('region', { name: 'Placement composition' });
