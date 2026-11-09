@@ -112,10 +112,11 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       expect(writes[0].result.status).toBe(200);
       await panel.getByRole('button', { name: 'Back to horoscope editions', exact: true }).click();
       await panel.getByRole('tab', { name: 'Evergreen', exact: true }).click();
+      await panel.getByRole('button', { name: 'Synthetic evergreen Mercury horoscope', exact: true }).click();
       await expect(panel).toContainText('Synthetic evergreen opening.');
       await expect(panel).toContainText('Synthetic evergreen final sentence.');
       await expect(panel.getByRole('combobox', { name: 'Horoscope planet or point' })).toHaveCount(0);
-      await panel.getByRole('button', { name: 'Edit horoscope', exact: true }).click();
+      await panel.getByRole('article', { name: 'Selected fallback horoscope passage', exact: true }).getByRole('button', { name: 'Edit', exact: true }).click();
       const evergreenEditor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
       await expect(evergreenEditor).toBeVisible();
       expect((await evergreenEditor.boundingBox())!.width).toBeLessThanOrEqual(640);

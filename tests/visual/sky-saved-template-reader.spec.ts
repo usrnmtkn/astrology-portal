@@ -93,7 +93,11 @@ for (const legacy of [false, true]) for (const width of [390, 1440]) for (const 
         await expect(article.getByText('Synthetic complete companion introduction.', { exact: true })).toHaveCount(legacy ? 0 : 1);
         await expect(article.getByRole('heading', { name: edition.headline, exact: true })).toHaveCount(1);
         const houses = standalone ? article.locator('.learn-article-body > h3') : article.locator('.sky-rising-horoscope');
-        await expect(houses).toHaveCount(edition.housePassages.length);
+        await expect(houses).toHaveCount(legacy && !standalone ? 12 : edition.housePassages.length);
+        if (legacy && !standalone) {
+          await expect(houses.locator('h3')).toHaveText(['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'].map(sign => `${sign} & ${sign} Rising`));
+          for (const reading of await houses.all()) await expect(reading.locator('p').first()).not.toBeEmpty();
+        }
         for (const [index, passage] of edition.housePassages.entries()) {
           if (!standalone) {
             const sign = passage.risingSign![0].toUpperCase() + passage.risingSign!.slice(1);

@@ -37,7 +37,7 @@ export default function SkyWriteupHoroscopeWriter(props:Props) {
   }
   return <section className="studio-section" aria-label="AI horoscope draft">
     <h3>AI draft for this sign</h3>
-    <p>Uses the existing governed transit-house writer for this sign and the write-up’s saved period. Generate draft starts a paid request. Review the result before using it; nothing is saved or published automatically.</p>
+    <p className="admin-field-hint">Paid generation · Review before using</p>
     {!props.row?.updated_at&&<p>Save the write-up draft before generating horoscopes.</p>}
     <label className="admin-review-copy-editor"><span>Optional direction</span><StudioTextarea aria-label="Horoscope draft direction" rows={3} maxLength={6000} value={direction} disabled={disabled||busy} onChange={e=>setDirection(e.target.value)}/></label>
     <WritingPlanExport request={props.request} endpoint="/api/admin/sky-article-template-slots" body={{...body,preview:true}} disabled={disabled||busy}/>

@@ -377,6 +377,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await expect(map.getByRole("button", { name: "Preview evergreen in app" })).toBeVisible();
   await map.getByRole("button", { name: "Edit fallback opening", exact: true }).click();
   const editor = page.getByRole("dialog");
+  await editor.getByLabel("Advanced writing tools", { exact: true }).locator("summary").filter({ hasText: /^Advanced$/u }).click();
   const order = editor.getByRole("list", { name: "Evergreen section order" });
   await expect(order.locator("li")).toHaveCount(3);
   await editor.getByRole("button", { name: "Add section", exact: true }).click();
@@ -412,6 +413,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   await page.screenshot({ path: `test-results/evergreen-sections-${width}-${theme}.png` });
   await editor.getByRole("button", { name: "Close", exact: true }).click();
   await map.getByRole("button", { name: "Edit additional passage", exact: true }).click();
+  await editor.getByLabel("Advanced writing tools", { exact: true }).locator("summary").filter({ hasText: /^Advanced$/u }).click();
   await expect(body).toHaveValue("During this transit, fixture additional paragraph two.");
   await expect(order.locator("li").first()).toContainText("Additional passage");
   await editor.getByRole("button", { name: "Add section", exact: true }).click();

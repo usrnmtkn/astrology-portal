@@ -81,6 +81,7 @@ for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
       await expect(editor.getByLabel('Visit article title', { exact: true })).toHaveValue('Synthetic revised Mercury article');
       await expect(body).toHaveValue(initial.body);
       await expect(settings).toContainText('November 13, 2026');
+      await expect(editor.getByRole('button', {name:'Horoscopes',exact:true})).toBeVisible();
       await editor.scrollIntoViewIfNeeded();
       await page.screenshot({ path: `test-results/sky-cms/after-editor-${theme}-${width}.png` });
       await editor.getByRole('button', { name: 'Back to articles', exact: true }).click();
@@ -167,7 +168,7 @@ for (const [width, theme] of [[1440, 'dark'], [390, 'light']] as const) {
       await expect(editor.getByLabel('Visit article body', { exact: true })).toHaveValue(saved.body);
       await expect(editor.getByRole('complementary', { name: 'Article settings' })).toContainText('Retrograde in this sign');
       const publication = editor.getByLabel('Publication settings', { exact: true });
-      await expect(publication).toContainText('Leave blank to publish now.');
+      await expect(publication).toContainText('Leave blank to publish now');
       await publication.getByLabel('Publication date and time').fill('2099-01-15T09:30');
       await publication.getByRole('button', { name: 'Save publication date', exact: true }).click();
       await expect(publication.getByRole('button', { name: 'Save publication date', exact: true })).toBeDisabled();
@@ -200,8 +201,8 @@ for (const [width, theme] of [[1440, 'dark'], [390, 'light']] as const) {
       await workspace.getByLabel('Article status', { exact: true }).selectOption('LIVE');
       await expect(workspace.getByRole('table', { name: 'Saved articles' })).toContainText('Published');
       await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
-      await expect(publication).toContainText('Choose a previous date and time.');
-      await expect(publication).not.toContainText('Leave blank to publish now.');
+      await expect(publication).toContainText('Backdate publication');
+      await expect(publication).not.toContainText('Leave blank to publish now');
       await publication.getByLabel('Publication date and time').fill('2026-09-19T09:30');
       await publication.getByRole('button', { name: 'Save publication date', exact: true }).click();
       await expect(publication.getByRole('status')).toHaveText('Publication date updated.');

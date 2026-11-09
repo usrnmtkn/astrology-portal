@@ -177,7 +177,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
     <div className="admin-sky-writing-context" aria-label="Phrase variable editing context">
       <p className="admin-eyebrow">Editable phrase variable</p>
       <h3>{initialLibraryField?.label ?? title(initialLibrarySourceId)} <code>{`{{${initialLibrarySourceId}}}`}</code></h3>
-      <p>One phrase for {title(planet)} in {title(sign)}. Other phrases and placement composition stay closed. Nothing is published until you use Save &amp; publish.</p>
+      <p>{title(planet)} in {title(sign)}</p>
     </div>
     {libraryError && <p role="alert">{libraryError}</p>}
     {!libraryReady || !activeLibrary ? <PageLoading compact message={installingLibrary ? `Loading ${initialLibraryField?.label ?? initialLibrarySourceId} for ${title(planet)} in ${title(sign)}…` : `Preparing ${initialLibraryField?.label ?? initialLibrarySourceId}…`} />
@@ -197,7 +197,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
         />
         <details className="admin-workspace-details" open={showComposition} onToggle={event => setShowComposition(event.currentTarget.open)}>
           <AdminDisclosureSummary>Placement composition</AdminDisclosureSummary>
-          <p>Section templates, motion, and aspect modules. Open this only when you need to assemble the placement, not to edit this phrase.</p>
+          <p>Arrange sections and their motion settings.</p>
           {showComposition && <SkyIngressComposer source={{ ...(source ?? {}), contentKey, ingress: activeLibrary }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
             hideLibrary initialField={initialField} onChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
         </details>
@@ -209,9 +209,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
   return <section className={`${surfaceSection} admin-sky-writing-editor`} aria-label="Writing editor">
     {planet && <div className="admin-sky-writing-context" aria-label="Placement writing context">
       <strong>{title(planet)}{rxContext ? " Rx" : ""}{hasSign ? ` in ${title(sign)}` : " · all signs"}</strong>
-      <p>{retrograde
-        ? `This is the retrograde opening. It appears before the shared placement writing and is reused for ${title(planet)} retrograde in every sign.`
-        : skyRetrogradeBodies.has(planet) ? `Choose a shared article or a motion-specific article for ${title(planet)} in ${title(sign)}. Each fallback block can also target direct or retrograde motion.` : `The placement article and fallback hooks describe ${title(planet)} in ${title(sign)}.`}</p>
+
       <div className="admin-sky-writing-source-actions" role="group" aria-label="Choose writing source">
         {retrograde
           ? <><span className="ui-pill">Editing retrograde writing</span>{hasSign && <StudioButton type="button" disabled={disabled} onClick={() => onOpenSource(`sky-placement/article/${planet}/${sign}`, "placementArticle")}>Edit shared placement writing</StudioButton>}</>
@@ -247,7 +245,7 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
       {selectedSection && (selectedSection.paragraphs || selectedSection.items) ? <SkySectionPacketEditor section={selectedSection} disabled={disabled} facts={variableFacts} onChange={changeSection} /> : selectedSection?.phrases ? <SkyPhraseCompositionEditor phrases={selectedSection.phrases} disabled={disabled} facts={variableFacts} onChange={phrases => changeSection({ phrases })} /> : <label className="admin-review-copy-editor">
         <span>{field.label}</span>
         {retrograde && <small className="admin-field-hint">{field.key === "Body" ? "The full opening paragraph on the retrograde detail page." : "The short version used by retrograde cards. It does not replace the detail-page opening."}</small>}
-        {field.key.startsWith("fallback.") && <small className="admin-field-hint">Legacy fallback field. It remains available for existing serving copy, but new reusable writing belongs in the Writing library below.</small>}
+        {field.key.startsWith("fallback.") && <small className="admin-field-hint">Evergreen fallback</small>}
         <StudioTextarea ref={textarea} className="admin-copy-field-body" aria-label={`Fallback field ${field.label}`} data-sky-field={field.key}
           value={field.value} disabled={disabled} aria-invalid={variableIssues.length > 0 || undefined} onChange={event => changeWriting(event.target.value)} />
       </label>}
@@ -256,6 +254,8 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
         && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items
         && <SkyArticleAiWriter planet={planet} sign={sign} field={field.key} currentText={field.value} disabled={disabled} onUse={changeWriting}
           onOpenDatedArticle={onOpenDatedArticle} />}
+      {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
+      <details className="admin-workspace-details" aria-label="Variables and preview"><AdminDisclosureSummary>Variables & preview</AdminDisclosureSummary>
       {supportsVariables && !selectedSection?.phrases && !selectedSection?.paragraphs && !selectedSection?.items && (supportsArticlePhrases
         ? <SkyPlacementArticleVariables key={contentKey} contentKey={contentKey} planet={planet} sign={sign} motion={rxContext ? "retrograde" : "direct"}
           fieldPath={field.key} value={field.value} source={activeLibrary ? { ...source, ingress: activeLibrary } : source} disabled={disabled} onInsert={insertVariable}
@@ -272,22 +272,23 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           onReplaceBody={changeWriting}
           onCompositionChange={value => { setPreparedLibrary(value); onChange("ingress", value); }} />
         : <SkyPlacementVariableKey usedNames={[...field.value.matchAll(/\{\{\s*(\w+)\s*\}\}/gu)].map(match => match[1])} facts={variableFacts} onInsert={insertVariable} disabled={disabled} />)}
-      {variableIssues.length > 0 && <div role="alert">{variableIssues.map(issue => <p key={issue}>{issue}</p>)}</div>}
       {!supportsArticlePhrases && <details className="admin-workspace-details">
         <AdminDisclosureSummary>Preview this section</AdminDisclosureSummary>
         <p className="admin-sky-writing-preview">{field.value ? supportsVariables ? <SkyVariableText value={field.value} facts={variableFacts} /> : field.value : "No writing saved for this section."}</p>
       </details>}
+      </details>
     </> : <p>No editable writing fields are available for this source.</p>}
-    {placement && <SkyWritingSystemDetails system="placement" />}
+    {placement && <details className="admin-workspace-details" aria-label="Advanced writing tools"><AdminDisclosureSummary>Advanced</AdminDisclosureSummary>
+    <SkyWritingSystemDetails system="placement" />
     {placement && <details className="admin-workspace-details" open={showLibraryComposer} onToggle={event => setShowLibraryComposer(event.currentTarget.open)}>
       <AdminDisclosureSummary>Writing library & placement composition</AdminDisclosureSummary>
-      <p>Edit reusable planet language, zodiac-sign lore, planet × sign synthesis, experience hooks, aspect writing, and optional context here. Open this only when you need the library or to assemble sections.</p>
+
       {showLibraryComposer && <SkyIngressComposer source={{ ...source, contentKey }} motion={rxContext ? "retrograde" : "direct"} disabled={disabled}
         initialField={initialField} onChange={value => onChange("ingress", value)} onOpenSource={onOpenSource} onLoadSource={onLoadSource} />}
     </details>}
     {placement && <details className="admin-workspace-details admin-evergreen-sections" open={field?.key.startsWith("fallback.") || undefined}>
-      <AdminDisclosureSummary>Legacy evergreen sections</AdminDisclosureSummary>
-      <p>These blocks remain editable so existing serving fallbacks can be reviewed or repaired without losing history. For new reusable placement writing, use the Writing library above. Complete placement articles and eligible placement composition still keep their existing resolver priority.</p>
+      <AdminDisclosureSummary>Sections & order</AdminDisclosureSummary>
+
       <ol aria-label="Evergreen section order">
         {evergreen.map((section, index) => {
           const path = section.source ? `fallback.${section.source}` : `${SKY_EVERGREEN_SECTIONS_PATH}.${section.id}`;
@@ -322,12 +323,13 @@ export default function SkyFallbackFieldsEditor({ contentKey, kind, fields: sour
           {SKY_ARTICLE_OUTLINES.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}
         </AdminSelect>
       </label>
-      <p>Add an empty editorial outline after your existing sections. Choose a structure appropriate to this source. It supplies paragraph jobs, not writing or additional calculated facts. The existing article, date, and personal-horoscope sections keep their current behavior.</p>
+      <small>Adds empty sections after your existing writing.</small>
       <StudioButton type="button" disabled={disabled || evergreen.length + (SKY_ARTICLE_OUTLINES.find(item => item.id === outline)?.sections.length ?? 0) > 24} onClick={() => {
         const additions = makeSkyArticleOutline(outline, rxContext ? "retrograde" : "direct");
         onChange(SKY_EVERGREEN_SECTIONS_PATH, [...evergreen, ...additions]);
         if (additions[0]) setSelectedField(`${SKY_EVERGREEN_SECTIONS_PATH}.${additions[0].id}`);
       }}>Add article outline</StudioButton>
+    </details>}
     </details>}
 
   </section>;

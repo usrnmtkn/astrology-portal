@@ -1,9 +1,16 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { workspaceVisitFacts } from '../helpers/sky-placement-workspace-fixtures';
 import { placementVisitDraft } from '../../apps/admin/src/skyPlacementWorkspaceModel';
+import { placementWritingDraftPayload } from '../../apps/admin/src/skyPlacementWritingDraft';
 import { WRITEUP_HOROSCOPE_SIGNS } from '../../src/shared/skyWriteupHoroscopes';
+
+async function chooseSign(panel: Locator, sign: string) {
+  const select = panel.getByLabel('Horoscope sign', {exact:true});
+  if (await select.isVisible()) await select.selectOption(sign);
+  else await panel.getByRole('navigation', {name:'Write-up horoscope signs'}).getByRole('button', {name:new RegExp('^'+sign[0].toUpperCase()+sign.slice(1)+'(?: ✓)?$')}).click();
+}
 
 for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`AI sign draft requires review before saving and publishing ${width} ${theme}`,async({page})=>{
  const readings=WRITEUP_HOROSCOPE_SIGNS.map(sign=>({sign,body:`Synthetic saved ${sign} reading.`}));
@@ -22,13 +29,13 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`AI sign 
  try{
   await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY==='1'?'/admin/content':'/'}#sky-writeups?planet=mercury&sign=scorpio`);
   const workspace=page.getByRole('region',{name:'Mercury in Scorpio workspace',exact:true});await workspace.getByRole('button',{name:'Edit',exact:true}).click();await workspace.getByRole('button',{name:'Related horoscope editions',exact:true}).click();await page.getByRole('dialog',{name:'Horoscopes',exact:true}).getByRole('button',{name:'Write planetary horoscopes',exact:true}).click();
-  const panel=page.getByRole('dialog',{name:'Horoscopes for this write-up',exact:true});await panel.getByRole('group',{name:'Write-up horoscope signs'}).getByRole('button',{name:'Gemini ✓',exact:true}).click();await panel.getByRole('button',{name:'Write with AI',exact:true}).click();
+  const panel=page.getByRole('dialog',{name:'Planetary horoscopes',exact:true});await chooseSign(panel,'gemini');await panel.getByRole('button',{name:'Write with AI',exact:true}).click();
   await panel.getByLabel('Horoscope draft direction').fill('Synthetic owner direction.');
   await panel.getByText('Complete writing plan · copy or download',{exact:true}).click();await panel.getByRole('button',{name:'Load complete writing plan',exact:true}).click();await expect(panel.getByLabel('Complete writing plan')).toHaveValue('Synthetic complete writing plan.');expect(calls).toBe(0);expect(previews).toBe(1);
   await panel.getByRole('button',{name:'Generate draft',exact:true}).click();await expect(panel.getByRole('alert')).toHaveText('The horoscope draft could not be generated. Your writing is unchanged. Try again.');await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(readings[2].body);expect(calls).toBe(1);
   await panel.getByRole('button',{name:'Generate draft',exact:true}).click();await expect(panel.getByLabel('Generated horoscope draft')).toHaveValue(generated);
   await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(readings[2].body);await expect(panel.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
-  page.once('dialog',dialog=>dialog.dismiss());await panel.getByRole('button',{name:'Back to write-up',exact:true}).click();await expect(panel.getByLabel('Generated horoscope draft')).toHaveValue(generated);
+  page.once('dialog',dialog=>dialog.dismiss());await panel.getByRole('button',{name:'Close Planetary horoscopes',exact:true}).click();await expect(panel.getByLabel('Generated horoscope draft')).toHaveValue(generated);
   await page.screenshot({path:test.info().outputPath('review-ai-horoscope-draft.png')});
   await panel.getByRole('button',{name:'Use this draft',exact:true}).click();await expect(panel.getByLabel('Gemini write-up horoscope',{exact:true})).toHaveValue(generated);await panel.getByRole('button',{name:'Save draft',exact:true}).click();await expect(panel.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
   let saved=(await store.call({method:'rows'})).find((r:any)=>r.id===initial.id);expect(saved.status).toBe('DRAFT');expect(saved.body).toBe(initial.body);expect(saved.sections.skyArticleEdition.writeupHoroscopes).toEqual(readings.map(p=>p.sign==='gemini'?{...p,body:generated}:p));
@@ -57,38 +64,39 @@ for (const width of [1440, 390]) for (const theme of ['light', 'dark']) {
       await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       await workspace.getByRole('button', { name: 'Related horoscope editions', exact: true }).click();
       await page.getByRole('dialog', { name: 'Horoscopes', exact: true }).getByRole('button', { name: 'Write planetary horoscopes', exact: true }).click();
-      const panel = page.getByRole('dialog', { name: 'Horoscopes for this write-up', exact: true });
+      const panel = page.getByRole('dialog', { name: 'Planetary horoscopes', exact: true });
       await expect(panel).toHaveClass(/studio-writeup-horoscopes-panel/u);
       await expect(panel).toHaveCSS('overflow-y', 'hidden');
       await expect(panel.locator('.studio-side-panel-content')).toHaveCSS('overflow-y', 'auto');
-      await expect(panel.getByRole('group', { name: 'Write-up horoscope signs' }).getByRole('button')).toHaveCount(12);
-      await expect(panel.getByText(/0 of 12 signs entered/u)).toBeVisible();
+      await expect(panel.locator('.studio-entry-navigation button')).toHaveCount(12);
+      if (width === 390) await expect(panel.getByLabel('Horoscope sign',{exact:true})).toBeVisible();
+      await expect(panel.getByText(/0\/12 complete/u)).toBeVisible();
       await expect(panel).toContainText('2026');
       await panel.getByLabel('Aries write-up horoscope', { exact: true }).fill(passage('aries'));
       await panel.getByRole('button', { name: 'Save draft', exact: true }).click();
       await expect(panel.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
       await expect(panel.getByRole('button', { name: 'Approve & publish', exact: true })).toBeDisabled();
-      await panel.getByRole('button', { name: 'Back to write-up', exact: true }).click();
+      await panel.getByRole('button', { name: 'Close Planetary horoscopes', exact: true }).click();
       await expect(workspace.getByRole('button', { name: 'Approve & publish', exact: true })).toBeDisabled();
       await expect(workspace.getByLabel('Visit article body', { exact: true })).toHaveValue(initial.body);
       await page.reload(); await workspace.getByRole('button', { name: 'Edit', exact: true }).click();
       await workspace.getByRole('button', { name: 'Horoscopes', exact: true }).click();
       await expect(panel.getByLabel('Aries write-up horoscope', { exact: true })).toHaveValue(passage('aries'));
       for (const sign of WRITEUP_HOROSCOPE_SIGNS.slice(1)) {
-        await panel.getByRole('group', { name: 'Write-up horoscope signs' }).getByRole('button', { name: title(sign), exact: true }).click();
+        await chooseSign(panel,sign);
         await panel.getByLabel(`${title(sign)} write-up horoscope`, { exact: true }).fill(passage(sign));
       }
-      await expect(panel.getByText(/12 of 12 signs entered/u)).toBeVisible();
-      await panel.getByRole('button', { name: 'Close Horoscopes for this write-up', exact: true }).click();
+      await expect(panel.getByText(/12\/12 complete/u)).toBeVisible();
+      await panel.getByRole('button', { name: 'Close Planetary horoscopes', exact: true }).click();
       await workspace.getByRole('button', { name: 'Horoscopes', exact: true }).click();
       await expect(panel.getByLabel('Pisces write-up horoscope', { exact: true })).toHaveValue(passage('pisces'));
       await panel.getByRole('button', { name: 'Save draft', exact: true }).click();
       await expect(panel.getByText('Draft saved. Nothing was published.', { exact: true })).toBeVisible();
       await expect(panel.getByRole('button', { name: 'Approve & publish', exact: true })).toBeEnabled();
-      await expect(panel).toContainText('These readings publish with the write-up in its Horoscopes by rising sign section.');
-      await expect(panel.getByRole('heading', { name: 'Horoscopes for this write-up' })).toHaveCSS('font-family', /system-ui/);
+      await expect(panel.getByRole('button', {name:'Publish',exact:true})).toBeEnabled();
+      await expect(panel.getByRole('heading', { name: 'Planetary horoscopes' })).toHaveCSS('font-family', /system-ui/);
       await panel.getByLabel('Pisces write-up horoscope', { exact: true }).scrollIntoViewIfNeeded();
-      const header = await panel.getByRole('heading', { name: 'Horoscopes for this write-up' }).boundingBox();
+      const header = await panel.getByRole('heading', { name: 'Planetary horoscopes' }).boundingBox();
       const field = await panel.getByLabel('Pisces write-up horoscope', { exact: true }).boundingBox();
       expect(field!.y).toBeGreaterThan(header!.y + header!.height);
       const content = await panel.locator('.studio-side-panel-content').boundingBox();
@@ -132,14 +140,14 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`Related 
   await workspace.getByLabel('Visit reference date',{exact:true}).fill('2026-11-07');await workspace.getByRole('button',{name:'Write article',exact:true}).click();
   await expect(workspace.getByLabel('Visit article body')).toHaveValue('');
   const openWriter=async()=>{await workspace.getByRole('button',{name:'Related horoscope editions',exact:true}).click();await page.getByRole('dialog',{name:'Horoscopes',exact:true}).getByRole('button',{name:'Write planetary horoscopes',exact:true}).click();};
-  await openWriter();const panel=page.getByRole('dialog',{name:'Horoscopes for this write-up',exact:true});
+  await openWriter();const panel=page.getByRole('dialog',{name:'Planetary horoscopes',exact:true});
   await expect(page.getByRole('dialog')).toHaveCount(1);await expect(panel).toContainText(facts.slotValues.when);
-  await expect(panel.getByRole('group',{name:'Write-up horoscope signs'}).getByRole('button')).toHaveCount(12);
+  await expect(panel.locator('.studio-entry-navigation button')).toHaveCount(12);
   expect(writes).toEqual([]);expect(await store.call({method:'rows'})).toEqual(before);
   const text='Synthetic complete Aries planetary opening.\n\nSynthetic complete Aries planetary final sentence.';
-  await panel.getByLabel('Aries write-up horoscope',{exact:true}).fill(text);await panel.getByRole('button',{name:'Close Horoscopes for this write-up',exact:true}).click();
+  await panel.getByLabel('Aries write-up horoscope',{exact:true}).fill(text);await panel.getByRole('button',{name:'Close Planetary horoscopes',exact:true}).click();
   await openWriter();await expect(panel.getByLabel('Aries write-up horoscope',{exact:true})).toHaveValue(text);
-  await panel.getByRole('button',{name:'Close Horoscopes for this write-up',exact:true}).click();
+  await panel.getByRole('button',{name:'Close Planetary horoscopes',exact:true}).click();
   await expect(workspace.getByLabel('Visit article body')).toHaveValue('');
   await workspace.getByLabel('Visit article body').fill('Synthetic complete general write-up.');await workspace.getByLabel('Visit article summary').fill('Synthetic explicit summary.');
   await workspace.getByRole('button',{name:'Save draft',exact:true}).click();await expect(workspace.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
@@ -148,5 +156,74 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const)test(`Related 
   expect(saved.sections.skyArticleEdition.writeupHoroscopes.find((row:any)=>row.sign==='aries').body).toBe(text);
   await page.reload();await workspace.getByRole('button',{name:'Edit',exact:true}).click();await openWriter();await expect(panel.getByLabel('Aries write-up horoscope',{exact:true})).toHaveValue(text);
   await expect(panel.getByRole('button',{name:'Approve & publish',exact:true})).toBeDisabled();expect(await store.call({method:'publications'})).toEqual(publications);
+ }finally{store.close();}
+});
+
+for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) test(`incomplete writing saves exact text, clears and reopens ${width} ${theme}`, async ({ page }) => {
+  const facts = workspaceVisitFacts('mercury', 'scorpio', '2026-10-24', '2026-11-13');
+  const store = await studioApiStore([], {uuidIds:true});
+  const exact = 'Synthetic complete opening.\n\nSynthetic exact final sentence with {{entryDate}}.';
+  const publications = await store.call({method:'publications'});
+  await page.setViewportSize({width,height:1000});
+  await page.addInitScript(theme => {localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',theme);},theme);
+  await routeStudioInventoryApi(page,{call:store.call,actualDocumentRoute:true,answer:async(route,url)=>{
+    if(url.pathname==='/api/admin/sky-article-facts'){await route.fulfill({json:{ok:true,facts}});return true;}return false;
+  }});
+  try {
+    await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY==='1'?'/admin/content':'/'}#sky-writeups?planet=mercury&sign=scorpio`);
+    const workspace=page.getByRole('region',{name:'Mercury in Scorpio workspace',exact:true});
+    await workspace.getByRole('button',{name:'New article',exact:true}).click();
+    await workspace.getByRole('button',{name:'Write article',exact:true}).click();
+    await workspace.getByLabel('Visit article body').fill(exact);
+    await expect(workspace.getByRole('button',{name:'Publish',exact:true})).toBeDisabled();
+    await expect(workspace.getByRole('button',{name:'Save draft',exact:true})).toBeEnabled();
+    await workspace.getByRole('button',{name:'Save draft',exact:true}).click();
+    await expect(workspace.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
+    await page.reload();await workspace.getByRole('button',{name:'Edit',exact:true}).click();
+    await expect(workspace.getByLabel('Visit article body')).toHaveValue(exact);
+    await expect(workspace.getByLabel('Visit article summary')).toHaveValue('');
+    await workspace.getByLabel('Visit article title').fill('');await workspace.getByLabel('Visit article body').fill('');
+    await workspace.getByRole('button',{name:'Save draft',exact:true}).click();
+    await expect(workspace.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
+    await page.reload();await workspace.getByRole('button',{name:'Edit',exact:true}).click();
+    await expect(workspace.getByLabel('Visit article title')).toHaveValue('');await expect(workspace.getByLabel('Visit article body')).toHaveValue('');
+    await workspace.getByLabel('Visit article title').fill('Synthetic complete article');
+    await workspace.getByLabel('Visit article body').fill('Synthetic complete opening.\n\nSynthetic exact ending.');
+    await workspace.getByLabel('Visit article summary').fill('Synthetic explicit summary.');
+    await workspace.getByRole('button',{name:'Publish',exact:true}).click();
+    await expect(workspace.getByRole('button',{name:'Approve & publish',exact:true})).toBeVisible();
+    expect(await store.call({method:'publications'})).toEqual(publications);
+    const rows=await store.call({method:'rows'});
+    expect(rows.some((row:any)=>row.sections?.skyPlacementWritingDraft?.compiledDraft)).toBe(true);
+    expect(rows.some((row:any)=>row.sections?.skyArticleEdition)).toBe(true);
+    await page.screenshot({path:test.info().outputPath('article-editor-ready.png')});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  } finally {store.close();}
+});
+
+
+test('recovered raw writing and version pin survive a newer target', async ({page}) => {
+ const facts=workspaceVisitFacts('mercury','scorpio','2026-10-24','2026-11-13');
+ const article=await placementVisitDraft(facts,{headline:'Synthetic target',summary:'Synthetic target summary.',body:'Synthetic newer target body.'});
+ const target={id:'aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa',content_key:article.contentKey,status:'DRAFT',surface:'sky',mode:'article',lane:'reference',event_type:article.eventType,block_type:'sky_article',headline:article.headline,summary:article.summary,body:article.body,sections:article.sections,source_snapshot:article.sourceSnapshot,updated_at:'2030-11-08T12:00:00Z'};
+ const raw={headline:'Synthetic recovered draft',summary:'',body:'Synthetic exact recovered opening.\n\nSynthetic exact recovered ending.'};
+ const payload=placementWritingDraftPayload(facts,raw,null,{...target,updated_at:'2026-11-07T12:00:00Z'} as any);
+ const store=await studioApiStore([target],{uuidIds:true});
+ try {
+  const created=await store.call({method:'POST',body:payload});expect(created.status).toBe(200);
+  const before=await store.call({method:'rows'}),publications=await store.call({method:'publications'});
+  await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
+  await routeStudioInventoryApi(page,{call:store.call,actualDocumentRoute:true});
+  await page.goto(`${process.env.STUDIO_PRODUCTION_ENTRY==='1'?'/admin/content':'/'}#sky-writeups?planet=mercury&sign=scorpio`);
+  const workspace=page.getByRole('region',{name:'Mercury in Scorpio workspace',exact:true});
+  await workspace.getByRole('button',{name:'Edit',exact:true}).click();
+  await expect(workspace.getByLabel('Visit article body')).toHaveValue(raw.body);
+  await expect(workspace.getByLabel('Visit article summary')).toHaveValue('');
+  await workspace.getByLabel('Visit article summary').fill('Synthetic completed recovered summary.');
+  await workspace.getByRole('button',{name:'Publish',exact:true}).click();
+  await expect(workspace.getByRole('alert')).toContainText('changed in another editor');
+  await expect(workspace.getByLabel('Visit article body')).toHaveValue(raw.body);
+  expect(await store.call({method:'rows'})).toEqual(before);
+  expect(await store.call({method:'publications'})).toEqual(publications);
  }finally{store.close();}
 });

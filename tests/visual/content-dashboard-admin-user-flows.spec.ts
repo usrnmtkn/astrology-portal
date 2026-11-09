@@ -1,3 +1,4 @@
+import {openEditorMoreActions} from '../helpers/studio-editor-actions';
 import { routeStudioInventoryApi } from "../helpers/studio-inventory-route";
 import { installSyntheticNetworkGuard } from "../helpers/synthetic-network-guard";
 import { approvedNatalPilotBody } from "../helpers/natal-approved-pilot.mts";
@@ -578,6 +579,10 @@ async function seedAdminApi(
   const publicationResults = new Map<string, any>();
   let losePublicationResponse = options.loseFirstPublicationResponse ?? false;
   await page.route("**/rest/v1/content_publications*", (route) => route.fulfill({ json: [...publications.values()] }));
+  await page.route("**/api/content-publications*", async route => {
+    const ledger = canonicalPublicationLedger([...publications.values()]);
+    await route.fulfill({ headers: { etag: await publicationLedgerTag(ledger) }, json: { schema: 'tldr-publications/v1', publications: ledger } });
+  });
   let generatedContentFailuresRemaining = options.generatedContentFailuresBeforeSuccess ?? 0;
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
@@ -1521,12 +1526,14 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("tab", { name: "Write-ups", exact: true }).click();
     await detail.getByRole("button", { name: "Edit passage", exact: true }).click();
     await expect(editor.getByLabel("Full lunar passage")).toHaveValue(record.body + "\nQA revision.");
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Archive source" }).click();
     await expect.poll(() => writes.length).toBe(2);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
     await page.getByLabel("Publication", { exact: true }).selectOption("archived");
     await expect(browse.getByRole("button", { name: /^Moon in Cancer/ })).toBeVisible();
     await detail.getByRole("button", { name: "Edit passage", exact: true }).click();
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Restore as draft" }).click();
     await expect.poll(() => writes.length).toBe(3);
     await editor.getByRole("button", { name: "Close", exact: true }).click();
@@ -2582,19 +2589,24 @@ test.describe("content dashboard admin user flow case studies", () => {
     const row = page.locator(".admin-content-row", { hasText: contentKey });
     await row.getByRole("button", { name: "Edit", exact: true }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Retire everywhere", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Publish again", exact: true })).toBeEnabled();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Inactive");
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tldrastro:content-publications:v1") ?? "[]"));
     expect(stored.find((record: any) => record.content_key === contentKey).state).toBe("retired");
     await page.reload();
     await row.getByRole("button", { name: "Edit", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Publish again", exact: true })).toBeEnabled();
     await page.setViewportSize({ width: 390, height: 844 });
     await expectNoHorizontalOverflow(page, "Retirement mobile editor");
     await mkdir(adminScreenshotDir, { recursive: true });
     await page.screenshot({ path: path.join(adminScreenshotDir, "retire-everywhere-mobile.png") });
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Publish again", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Retire everywhere", exact: true })).toBeEnabled();
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await assertNoBrowserErrors();
@@ -4943,7 +4955,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByRole("region", { name: "Rendered fallback preview" })).toContainText("Jupiter enters Leo");
     await expect(editor.getByLabel("Fallback field Opening paragraphs")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
     const calculatedFacts = editor.getByRole("region", { name: "Calculated facts" });
-    await expect(calculatedFacts).toContainText("These tokens are the only variables");
+    await expect(calculatedFacts).toContainText("Insert calculated values into your writing.");
     await expect(calculatedFacts).toContainText("{{exitDate}}");
     await expect(editor.getByLabel("Calculated fact target field")).toHaveValue("fact_line");
     await expect(editor.getByText("Package renderer")).toHaveCount(0);
@@ -5699,7 +5711,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sentenceContext).toContainText("Closing card · Passage");
     await expect(sentenceContext).toContainText("Leo and Aquarius can return to this:");
     await expect(sentenceContext.locator("mark")).toHaveText("The connection works best when both people say what they need directly.");
-    await expect(sentenceContext).toContainText("The highlighted words are the source you are editing.");
+    await expect(sentenceContext).toContainText("Highlighted text is the source being edited.");
     await editor.getByLabel("Reader copy").fill("Both people do better when they say what they need directly.");
     await expect(sentenceContext.locator("mark")).toHaveText("Both people do better when they say what they need directly.");
     page.once("dialog", async (dialog) => {
@@ -6838,9 +6850,13 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect(summary).toHaveValue(copy);
       expect(await page.evaluate(() => window.dispatchEvent(new Event("beforeunload", { cancelable: true })))).toBe(true);
     }
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Archive source", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Restore as draft", exact: true })).toBeVisible();
+    await openEditorMoreActions(editor);
     await editor.getByRole("button", { name: "Restore as draft", exact: true }).click();
+    await openEditorMoreActions(editor);
     await expect(editor.getByRole("button", { name: "Archive source", exact: true })).toBeVisible();
     await summary.fill("QA final copy after restore.");
     await editor.getByRole("button", { name: "Save", exact: true }).click();
@@ -7088,7 +7104,9 @@ test("Natal Empty Houses opens exact sources and supports repeated edits and ret
     await expect(editor.getByRole("button",{name:/^Save(?: draft)?$/})).toBeDisabled();
   }
   expect(writes).toHaveLength(2);
+  await openEditorMoreActions(editor);
   await editor.getByRole("button",{name:"Retire everywhere",exact:true}).click();
+  await openEditorMoreActions(editor);
   await expect(editor.getByRole("button",{name:"Publish again",exact:true})).toBeVisible();
   await editor.getByRole("button",{name:"Close",exact:true}).click();
   await page.reload();
@@ -8649,11 +8667,13 @@ for (const theme of ['dark','light']) for (const width of [1440,390]) {
       const footer=editor.locator('.admin-editor-savebar');
       await expect(footer).toHaveCSS('display','grid');
       const save=(await footer.getByRole('button',{name:'Save',exact:true}).boundingBox())!;
-      const retire=(await footer.getByRole('button',{name:'Retire everywhere',exact:true}).boundingBox())!;
-      expect(Math.abs(save.width-retire.width)).toBeLessThan(1);
-      expect(Math.abs(save.y-retire.y)).toBeLessThan(1);
+      const more = footer.getByText('More actions', { exact: true });
+      await expect(more).toBeVisible();
+      await expect(footer.getByRole('button',{name:'Retire everywhere',exact:true})).toBeHidden();
       const publish=(await footer.getByRole('button',{name:'Publish to app',exact:true}).boundingBox())!;
-      expect(publish.width).toBeGreaterThan(save.width*2);
+      expect(publish.width).toBeGreaterThanOrEqual(save.width);
+      await openEditorMoreActions(editor);
+      await expect(footer.getByRole('button',{name:'Retire everywhere',exact:true})).toBeVisible();
     }
     await editor.screenshot({path:`outputs/studio-style/fallback-editor-cards-${theme}-${width}.png`});
     const body=editor.locator('.admin-copy-field-body');
@@ -9847,7 +9867,7 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     const workspace = page.getByRole('region', { name: 'Moon in Gemini workspace', exact: true });
     await workspace.getByRole('button', { name: 'New article', exact: true }).click();
     await workspace.getByLabel('Visit reference date', { exact: true }).fill('2026-10-28');
-    await expect(workspace).toContainText('The lookup date finds the complete calculated period.');
+    await expect(workspace.getByLabel('Visit reference date', { exact: true })).toHaveValue('2026-10-28');
     await workspace.getByRole('button', { name: 'Write article', exact: true }).click();
     expect(providerRequests).toBe(0); expect(writes).toHaveLength(0);
     const editor = workspace.getByRole('region', { name: 'Article for this visit', exact: true });
@@ -9934,7 +9954,6 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
 
     await tabs.getByRole('tab', { name: 'Evergreen reading', exact: true }).press('Enter');
     await expect(tabs.getByRole('tab', { name: 'Evergreen reading', exact: true })).toHaveAttribute('aria-selected', 'true');
-    await expect(workspace.getByText('This reusable reading supplies content', { exact: false })).toBeVisible();
     await expect(workspace.getByText('Synthetic year-neutral default remains intact.', { exact: true })).toBeVisible();
     const establishedHeadingTypography = await workspace.getByRole('heading', { name: 'Sun in Scorpio', exact: true }).evaluate(node => {
       const style = getComputedStyle(node); const shell = getComputedStyle(node.closest('.admin-dashboard')!);
@@ -10053,8 +10072,8 @@ test('Sky planet and sign workspace covers every selector and preserves publishe
   await expect(current.getByLabel('Active dated article')).toContainText('Synthetic Scorpio 2026 draft');
   await current.getByRole('button', { name: 'Preview reader', exact: true }).click();
   const reader = current.frameLocator('iframe');
-  await expect(reader.locator('.sky-detail-body')).toContainText('Synthetic approved opening kept exactly.');
-  await expect(reader.locator('.sky-detail-body')).toContainText('Synthetic final sentence kept exactly.');
+  await expect(reader.locator('.sky-detail-body').first()).toContainText('Synthetic approved opening kept exactly.');
+  await expect(reader.locator('.sky-detail-body').first()).toContainText('Synthetic final sentence kept exactly.');
   await current.getByRole('button', { name: 'Edit active article', exact: true }).click();
   const editor = page.getByRole('dialog');
   await expect(editor.getByRole('textbox', { name: 'Sky article general copy', exact: true })).toHaveValue(live.body!);

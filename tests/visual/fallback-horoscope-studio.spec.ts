@@ -61,15 +61,16 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await expect(library.getByRole('heading', { level: 2 })).toHaveClass('sr-only');
       await library.getByLabel('Horoscope type', { exact: true }).selectOption('placement');
       await expect(library.locator('p[role="status"]')).toContainText('984 sources');
+      await library.getByText('Filters',{exact:true}).click();
       await library.getByLabel('Horoscope planet or point', { exact: true }).selectOption('moon');
       await library.getByLabel('Horoscope sign', { exact: true }).selectOption('sagittarius');
-      await library.getByLabel('Selected fallback horoscope', { exact: true }).selectOption(coreKey);
+      await library.getByRole('table',{name:'Fallback horoscopes',exact:true}).getByRole('button',{name:'Moon in Sagittarius · Sagittarius Rising',exact:true}).click();
       const original = servingPackageRecords.get(coreKey)!;
       const source = library.getByRole('article', { name: 'Selected fallback horoscope passage' });
       await expect(source).toContainText(original.body_you.slice(0, 80));
       await expect(source).toContainText(original.body_you.slice(-100));
       const proseStyle = (element: HTMLElement) => { const s = getComputedStyle(element); return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing]; };
-      expect(await source.locator('.admin-copy-preview p').first().evaluate(proseStyle)).toEqual(await library.locator(':scope > p').first().evaluate(proseStyle));
+      expect(await source.locator('.admin-copy-preview p').first().evaluate(proseStyle)).toEqual(await library.locator('p').first().evaluate(proseStyle));
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
       await page.screenshot({ path: `test-results/fallback-populated-${width}-${theme}.png` });
       await expect(library.getByRole('button', { name: 'Open Sky Placement horoscopes', exact: true })).toBeVisible();
@@ -84,7 +85,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await page.getByRole('button', { name: 'Retry horoscope', exact: true }).click();
       await expect(source).toContainText(servingPackageRecords.get(lunarKey)!.body.slice(-100));
       await expect(source).not.toContainText('publish your rewrite after removing them');
-      await library.getByRole('button', { name: 'Edit horoscope', exact: true }).click();
+      await source.getByRole('button', { name: 'Edit', exact: true }).click();
       const editor = page.getByRole('dialog', { name: 'Generated content editor' });
       const field = editor.locator('textarea[data-sky-field="body"]');
       await expect(field).toHaveValue(servingPackageRecords.get(lunarKey)!.body);
@@ -93,8 +94,8 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       await editor.getByRole('button', { name: /^Save(?: draft)?$/, exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' })).find((row: any) => row.content_key === lunarKey)?.sections.packageDraft.body).toBe(tarot);
       await page.reload();
-      await expect(library.getByLabel('Selected fallback horoscope', { exact: true })).toHaveValue(lunarKey);
-      await library.getByRole('button', { name: 'Edit horoscope', exact: true }).click();
+      await expect(source).toContainText('Taurus Full Moon for Taurus Rising');
+      await source.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(field).toHaveValue(tarot);
       await editor.getByRole('button', { name: 'Save & publish', exact: true }).click();
       await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
@@ -105,7 +106,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       expect(await editor.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
       await page.screenshot({ path: `test-results/fallback-published-${width}-${theme}.png` });
       await page.reload();
-      await library.getByRole('button', { name: 'Edit horoscope', exact: true }).click();
+      await source.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(field).toHaveValue(tarot);
       await expect(editor.getByLabel('Reader status', { exact: true })).toHaveText('Live');
       await page.goto('/?date=2026-10-26#sky/lunation/2026-10-26/taurus');
@@ -135,7 +136,8 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       } });
       await page.goto(`/admin/content#horoscope-fallbacks?${new URLSearchParams({ source: coreKey })}`);
       const library = page.getByRole('region', { name: 'Fallback horoscope library' });
-      await library.getByRole('button', { name: 'Edit horoscope', exact: true }).click();
+      const source = library.getByRole('article', { name: 'Selected fallback horoscope passage' });
+      await source.getByRole('button', { name: 'Edit', exact: true }).click();
       const editor = page.getByRole('dialog', { name: 'Generated content editor' });
       const field = editor.locator('textarea[data-sky-field="body_you"]');
       await expect(field).toHaveValue(servingPackageRecords.get(coreKey)!.body_you);
@@ -161,7 +163,7 @@ for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'light'], [1
       expect((await store.call({ method: 'rows' })).filter((row: any) => row.content_key === coreKey)).toHaveLength(1);
       await page.reload();
       await page.goto(`/admin/content#horoscope-fallbacks?${new URLSearchParams({ source: coreKey })}`);
-      await library.getByRole('button', { name: 'Edit horoscope', exact: true }).click();
+      await source.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(field).toHaveValue(body);
       expect(await editor.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
     } finally { store.close(); }

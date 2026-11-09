@@ -219,7 +219,20 @@ for (const [width,theme,dropInitialReady] of [[1440,'light',false],[390,'dark',f
       if(dropInitialReady){await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(writes).toEqual([]);}
       expect(factsCalls).toBe(dropInitialReady ? 3 : 2);
       const edited=expected+'\n\nSynthetic private edit final sentence.';
-      await body.fill(edited);await form.getByLabel('Visit article summary').fill('Synthetic explicit owner summary.');
+      await expect(form.getByLabel('Visit article summary')).toHaveValue('');
+      await body.fill(edited);
+      await expect(form.getByRole('button',{name:'Save draft',exact:true})).toBeEnabled();
+      await expect(form.getByRole('button',{name:'Publish',exact:true})).toBeDisabled();
+      await form.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(editor.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
+      const raw=(await store.call({method:'rows'})).find((row:any)=>row.sections?.skyPlacementWritingDraft);
+      expect(raw.status).toBe('DRAFT');expect(raw.lane).toBe('reference');
+      expect(raw.sections.skyPlacementWritingDraft.fields).toEqual({headline:'Mercury Rx in Scorpio',summary:'',body:edited});
+      expect(raw.sections.skyPlacementWritingDraft.readerImport.body).toBe(expected);
+      expect(await store.call({method:'publications'})).toEqual(pubs);
+      await editor.reload();await expect(body).toHaveValue(edited,{timeout:60000});
+      await expect(form.getByLabel('Visit article summary')).toHaveValue('');
+      await form.getByLabel('Visit article summary').fill('Synthetic explicit owner summary.');
       await form.getByRole('button',{name:'Save draft',exact:true}).click();
       await expect(editor.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
       const rows=await store.call({method:'rows'}),saved=rows.find((row:any)=>row.content_key==='sky-article/mercury/scorpio/2026/2026-10-24');

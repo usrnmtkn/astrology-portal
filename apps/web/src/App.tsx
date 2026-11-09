@@ -5161,7 +5161,9 @@ function normalizeSkyPlacementSurface(
     ? skyIngressEssayReaderSection(generatedContent?.values() ?? [], {
       activeInstant: generatedAt, planet: normalizeContentIdPart(position.planet), sign: normalizeContentIdPart(position.sign)
     }) : null;
-  const fallbackSection = ingressSection ?? skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
+  const fallbackSection = ingressSection?.risingHoroscopes?.length ? ingressSection
+    : ingressSection ? { ...ingressSection, risingHoroscopes: skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions)?.risingHoroscopes }
+    : skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
   const sections = fallbackSection ? [fallbackSection] : [];
   const protectedSections = sections.map((section) => {
     if (section === ingressSection || !section.risingHoroscopes?.length) return section;
