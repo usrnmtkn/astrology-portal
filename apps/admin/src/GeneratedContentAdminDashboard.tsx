@@ -11808,13 +11808,13 @@ export function GeneratedContentAdminDashboard() {
               {isAuthoredPackageCard && (
                 <div className="admin-editor-guidance" aria-label="Reader source guidance">
                   <strong>Edit the exact source shown in Reader Preview</strong>
-                  <p>The article headline and body below are the saved fields used by the selected template. Saving updates this source row and the Composition Map preview together.</p>
+                  <p>Edit the saved headline and body.</p>
                 </div>
               )}
               {isTemplateDraft && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
                 <div className="admin-editor-guidance" aria-label="Template source guidance">
                   <strong>Assembly pattern, not final prose</strong>
-                  <p>The template pattern combines fixed words, <code>{"{{variables}}"}</code>, and reviewed source phrases. Use Reader Preview to check the complete result before publishing the pattern.</p>
+                  <p>Insert <code>{"{{variables}}"}</code> for calculated values. Preview before publishing.</p>
                 </div>
               )}
               </div>
@@ -11832,7 +11832,7 @@ export function GeneratedContentAdminDashboard() {
                   {compositionEditorContext.after}
                 </q>
               </div>
-              <p>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</p>
+              <p>Highlighted text is the source being edited.</p>
             </section>
           )}
           {skyFallbackEditor && (
@@ -11841,7 +11841,7 @@ export function GeneratedContentAdminDashboard() {
                 {!isSkyPlacementSource && <div>
                   <p className="admin-eyebrow">Reader source workspace</p>
                   <h3>{skyFallbackContentIdentity?.title ?? skyFallbackEditor.title}</h3>
-                  <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> Save & publish makes this exact revision live. Save draft keeps unfinished changes for later.</p>
+                  <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> Drafts stay private until published.</p>
                 </div>}
                 <details className="admin-workspace-details">
                   <AdminDisclosureSummary>Source details</AdminDisclosureSummary>
@@ -11851,7 +11851,7 @@ export function GeneratedContentAdminDashboard() {
                     <div><dt>Current approval</dt><dd>{String(packageRecord.review_status ?? packageReviewStatus)}</dd></div>
                     <div><dt>Proposal</dt><dd>{skyFallbackChanges.length ? `${skyFallbackChanges.length} changed field${skyFallbackChanges.length === 1 ? "" : "s"}` : "No changes"}</dd></div>
                   </dl>
-                  <p className={fieldHintClassName} role="note"><strong>Safe editing boundary:</strong> Save draft keeps your changes Not live. Save &amp; publish approves and publishes the current revision; the original approved source remains in version history.</p>
+                  <p className={fieldHintClassName} role="note">Save draft keeps changes private. Save &amp; publish approves this revision.</p>
                 </details>
               </header>
 
@@ -11909,7 +11909,7 @@ export function GeneratedContentAdminDashboard() {
                   <div>
                     <p className="admin-eyebrow">Engine-supplied values</p>
                     <h3>Calculated facts</h3>
-                    <p>These tokens are the only variables. The article fields below are complete reader paragraphs.</p>
+                    <p>Insert calculated values into your writing.</p>
                   </div>
                   <label className="admin-field-wide">
                     <span>Insert into article field</span>

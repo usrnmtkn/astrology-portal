@@ -9,7 +9,7 @@ import { skyMoonDatedDayBounds } from '../src/shared/skyMoonDatedScope';
 import { workspaceFixtureRows, workspaceVisitFacts } from '../tests/helpers/sky-placement-workspace-fixtures';
 import { studioApiStore } from '../tests/helpers/studio-api-store';
 import { isGeneratedContentReaderBoundaryAllowed } from '../apps/web/src/content/generatedContentEligibility';
-import { placementWritingDraft, placementWritingDraftPayload } from '../apps/admin/src/skyPlacementWritingDraft';
+import { placementWritingDraft, placementWritingDraftPayload, placementWritingFacts } from '../apps/admin/src/skyPlacementWritingDraft';
 
 let combinations = 0;
 for (const planet of skyPlacementBodies) for (const sign of skyPlacementSigns) {
@@ -103,6 +103,13 @@ try {
     sourceSnapshot: { contentType: 'compiled-sky-article-edition', review_status: 'needs_review' } }] } });
   assert.equal(daySaved.status, 200);
   const dayRow = daySaved.payload.rows[0];
+  const dayWorking = await store.call({method:'POST',body:placementWritingDraftPayload(placementWritingFacts(dayRow)!,
+    {headline:'',summary:'',body:dayEdition.body},null,dayRow)});
+  assert.equal(dayWorking.status,200,JSON.stringify(dayWorking.payload));
+  const dayRecovery=placementWritingDraft(dayWorking.payload.rows[0])!;
+  assert.equal(dayRecovery.targetContentKey,dayEdition.contentKey);
+  assert.equal(dayRecovery.facts.transitStartInstant,dayEdition.transitStartInstant);
+  assert.equal(dayRecovery.facts.transitEndInstant,dayEdition.transitEndInstant);
   const dayRevision = await reviseSkyArticleEdition(dayEdition, { ...skyArticleEditableFields(dayEdition), body: dayEdition.body + '\n\nSynthetic saved day edit.' });
   const dayEdit = await store.call({ method: 'PATCH', body: { id: dayRow.id, expectedUpdatedAt: dayRow.updated_at,
     ownerAction: 'save-sky-article-edition-revision', sections: { skyArticleEdition: dayRevision } } });
@@ -159,6 +166,11 @@ try {
   assert.equal(row.status, 'DRAFT'); assert.equal(row.lane, 'reference');
   assert.deepEqual(placementWritingDraft(row)?.fields, fields);
   assert.equal(placementEdition(row), null);
+  const independentPayload=placementWritingDraftPayload(facts,{...fields,body:'Synthetic independent tab writing.'},null);
+  assert.notEqual(independentPayload.contentKey,payload.contentKey);
+  const independent=await incompleteStore.call({method:'POST',body:independentPayload});
+  assert.equal(independent.status,200);
+  assert.deepEqual(placementWritingDraft((await incompleteStore.call({method:'rows'})).find((candidate:any)=>candidate.id===row.id))?.fields,fields,'A concurrent first save cannot overwrite another working copy.');
   assert.equal(isGeneratedContentReaderBoundaryAllowed({...row,status:'LIVE',lane:'serving',review_state:null,source_snapshot:{contentType:'sky-article-edition-workspace',review_status:'approved'}}),false,'Even a forced LIVE workspace is not reader copy.');
   const reopened = await incompleteStore.call({ method: 'GET', url: '/api/admin/generated-content-inventory?' + new URLSearchParams({ id: row.id, status: 'all', visibility: 'all', limit: '1' }) });
   assert.deepEqual(placementWritingDraft(reopened.payload.rows[0])?.fields, fields);
