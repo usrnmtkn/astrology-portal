@@ -124,6 +124,11 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       return Response.json([created]);
     }
     if (method === "PATCH") {
+      if (storeOptions.sqlArticleLifecycle && found.every(row => row.content_key.startsWith('education/astro-101/'))) {
+        const updated = await publication.patchArticleRows(found, patch, options.headers);
+        for (const row of updated) rows.set(row.id, row);
+        return Response.json(updated);
+      }
       if (storeOptions.sqlMoonLifecycle && found.every(row => row.content_key.startsWith('cms/lunation-horoscopes/') && row.mode === 'article')) {
         const updated = await publication.patchMoonRows(found,patch,options.headers);
         for (const row of updated) rows.set(row.id,row);
@@ -150,7 +155,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
 }
 
 if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {
-  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true", projectSelect: process.env.STUDIO_PROJECT_SELECT === "true"});
+  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true", projectSelect: process.env.STUDIO_PROJECT_SELECT === "true", sqlArticleLifecycle: process.env.STUDIO_ARTICLE_SQL_LIFECYCLE === "true"});
   const { contentLiveStatuses } = await import("../../api/_lib/content-live-status.ts");
   process.on("message", async ({ id, method, body, url, key }) => {
     try {

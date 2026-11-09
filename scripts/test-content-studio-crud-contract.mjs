@@ -362,14 +362,28 @@ await test('Calendar composition source edits preserve adjacent phrases and reje
   }
 });
 
-await test('Astro 101 articles and chapters move live to draft and back without losing formatted copy', async () => {
+await test('Astro 101 draft edits preserve live formatted copy; archive and restore are explicit', async () => {
   for (const kind of ['chapter', 'article']) {
     const sections = { kind, intro: '**QA opening**', blocks: [{ heading: 'QA section', body: '- *QA first*\n- QA final' }] };
     reset([{ ...baseline, status: 'LIVE', surface: 'education', mode: 'all', content_key: `education/astro-101/${kind}/qa`, facts: { slug: '/learn/astro-101/qa' }, sections }]);
-    const demoted = await invoke('PATCH', { id: baseline.id, expectedUpdatedAt: baseline.updated_at, status: 'DRAFT' });
-    assert.equal(demoted.status, 200, JSON.stringify(demoted));
-    assert.equal(rows.get(baseline.id).status, 'DRAFT');
-    assert.deepEqual(rows.get(baseline.id).sections, sections);
+    const live = structuredClone(rows.get(baseline.id));
+    const before = publications.records();
+    const saved = await invoke('PATCH', { id: live.id, expectedUpdatedAt: live.updated_at, status: 'DRAFT', body: '**QA private edit**' });
+    assert.equal(saved.status, 200, JSON.stringify(saved));
+    const proposal = saved.rows[0];
+    assert.notEqual(proposal.id, live.id);
+    assert.equal(proposal.status, 'DRAFT');
+    assert.equal(proposal.mode, 'studio-draft');
+    assert.equal(proposal.body, '**QA private edit**');
+    assert.deepEqual(proposal.sections, sections);
+    assert.deepEqual(rows.get(live.id), live);
+    assert.deepEqual(publications.records(), before);
+    assert.equal((await invoke('PATCH', { id: proposal.id, status: 'LIVE' })).status, 409);
+    assert.equal((await invoke('PATCH', { id: live.id, status: 'LIVE' })).status, 409);
+    const archived = await invoke('PATCH', { id: live.id, status: 'ARCHIVED', sourceLifecycleAction: 'archive' });
+    assert.equal(archived.status, 200, JSON.stringify(archived));
+    const restored = await invoke('PATCH', { id: live.id, status: 'DRAFT', sourceLifecycleAction: 'restore' });
+    assert.equal(restored.status, 200, JSON.stringify(restored));
     const draftVersion = rows.get(baseline.id).updated_at;
     assert.equal((await invoke('PATCH', { id: baseline.id, expectedUpdatedAt: baseline.updated_at, status: 'LIVE' })).status, 409);
     const published = await invoke('PATCH', { id: baseline.id, expectedUpdatedAt: draftVersion, status: 'LIVE', lane: 'serving', reviewState: null });

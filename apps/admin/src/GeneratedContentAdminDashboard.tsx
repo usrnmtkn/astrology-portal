@@ -1409,7 +1409,7 @@ function withAstro101Placement(draft: AdminDraft, next: {
   return {
     ...draft,
     surface: "education",
-    mode: "article",
+    mode: draft.id ? draft.mode : "article",
     contentKey: draft.id ? draft.contentKey : astro101ContentKey(kind, slugTail),
     sections,
     facts: { ...(objectRecord(draft.facts) ?? {}), slug: readerPath },
@@ -5530,7 +5530,7 @@ export function GeneratedContentAdminDashboard() {
             reviewState: status === "LIVE" || status === "REVIEWED" ? null : draftForSave.reviewState || null,
             blockType: draftForSave.blockType || null,
             promptVersion: draftForSave.promptVersion || "manual-admin",
-            eventType: persistedRow?.event_type ?? draftEventType(draftForSave),
+            eventType: persistedRow ? persistedRow.event_type ?? undefined : draftEventType(draftForSave),
             sections: expectedDraft.sections ?? {},
             facts: draftForSave.facts ?? {},
             reviewerNotes: draftForSave.reviewerNotes,
@@ -5545,7 +5545,7 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       const savedDraft = saved ? draftFromRow(saved) : null;
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
-        (draftForSave.id && saved.id !== draftForSave.id && !(standaloneArticleKind(draftForSave.contentKey)
+        (draftForSave.id && saved.id !== draftForSave.id && !((standaloneArticleKind(draftForSave.contentKey) || draftForSave.contentKey.startsWith("education/astro-101/"))
           && status === "DRAFT" && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
           && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
@@ -10126,7 +10126,7 @@ export function GeneratedContentAdminDashboard() {
     if (row.block_type === 'sky_placement') throw new Error('This source requires its dedicated package review and release.');
     try {
       const isPackage = rowIsFallbackArchitectureV3(row);
-      const result = row.event_type === standaloneRevisionEvent && standaloneArticleKind(row.content_key)
+      const result = row.event_type === standaloneRevisionEvent
         ? await submitSavedPublication(row, standaloneRevisionPublicationAction)
         : isPackage && objectRecord(objectRecord(row.sections)?.packageDraft)
         ? await submitSavedPublication(row, packageRevisionPublicationAction)
@@ -11493,7 +11493,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-editor-context-line">
               <ContentLiveStatusBadge label="Reader status" row={editorStatusRow} unsaved={skyArticleEditor ? skyArticleEditor.saveState !== "saved" : !isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} />
               <span className={aspectContext ? "admin-aspect-context-pill" : undefined} title={aspectContext?.detail}>{editorUseLabel}</span>
-              {isAstro101Draft && <span>{selectedRow && astro101IsLiveOnLearn(selectedRow) ? "Visible in app" : "Hidden from app"}</span>}
+              {isAstro101Draft && <span>{selectedRow?.event_type === standaloneRevisionEvent ? "Private revision" : selectedRow && astro101IsLiveOnLearn(selectedRow) ? "Visible in app" : "Hidden from app"}</span>}
               {editorReaderDestination && editorReaderDestination !== editorUseLabel && <span className="admin-editor-reader-destination">{editorReaderDestination}</span>}
             </div>
             <div className="admin-editor-toolbar-actions">
@@ -12502,15 +12502,15 @@ export function GeneratedContentAdminDashboard() {
               }}
               onBlocksChange={(blocks) => {
                 const sections = { ...(currentDraft.sections ?? {}), blocks };
-                setDraft(isAstro101Draft ? { ...currentDraft, sections } : {
+                setDraft({
                   ...currentDraft,
                   sections,
-                  body: blocks.map((block) => [block.heading, block.body].filter(Boolean).join("\n")).join("\n\n")
+                  body: isAstro101Draft ? astro101BodyFromSections(sections) : blocks.map((block) => [block.heading, block.body].filter(Boolean).join("\n")).join("\n\n")
                 });
               }}
               onIntroChange={(value) => {
                 const sections = { ...(currentDraft.sections ?? {}), intro: value };
-                setDraft({ ...currentDraft, sections });
+                setDraft({ ...currentDraft, sections, body: astro101BodyFromSections(sections) });
               }}
             />
           </Suspense>}
@@ -13022,7 +13022,7 @@ export function GeneratedContentAdminDashboard() {
               } else if (packageOwnerCanPublish) {
                 await publishPackageDraft(currentDraft);
               } else {
-                await saveDraft(isSkyArticleTemplate ? "DRAFT" : directReaderDraft ? "LIVE" : isAstro101Draft && currentDraft.status !== "LIVE" ? "DRAFT" : undefined);
+                await saveDraft(isSkyArticleTemplate || isAstro101Draft ? "DRAFT" : directReaderDraft ? "LIVE" : undefined);
               }
             })()}
             disabled={isLoading || (unchangedSkySource && !packageOwnerCanPublish) || (isStandaloneArticleDraft && (!currentDraft.headline.trim() || !currentDraft.body.trim())) || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (isManualCalendarEventDraft && !currentDraft.body.trim()) || (isCmsSurfaceDraft && (!cmsCanSignOff || !publishReady)) || (packageOwnerCanPublish && packageCopyMissing) || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave && !packageOwnerCanPublish && !((directReaderDraft) && currentDraft.status !== "LIVE"))}
@@ -13030,7 +13030,7 @@ export function GeneratedContentAdminDashboard() {
           >
             <Save size={16} aria-hidden="true" />
             {packageOwnerCanPublish && isPersonalTransitExactDraft ? "Approve & publish" : isSkyArticleTemplate ? "Save template" : isAstro101Draft
-              ? currentDraft.status === "LIVE" ? "Save changes" : "Save draft"
+              ? "Save draft"
               : isGuidedHeldReview && !packageOwnerCanPublish
               ? "Save held draft"
               : isScheduledStandaloneArticle
@@ -13119,12 +13119,8 @@ export function GeneratedContentAdminDashboard() {
                 }}>Complete edition</StudioButton>
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className={fieldHintClassName}>Source material cannot be published.</small>
-              ) : isAstro101Draft && currentDraft.status === "LIVE" ? (
-                <StudioButton type="button" onClick={() => void saveDraft("DRAFT")} disabled={isLoading} title="Save your changes and hide this page from the app. You can publish it again later.">
-                  Move to draft
-                </StudioButton>
               ) : (
-                <StudioButton className="admin-publish-button" type="button" onClick={() => void (isStandaloneArticleDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                <StudioButton className="admin-publish-button" type="button" onClick={() => void (isStandaloneArticleDraft || isAstro101Draft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady || (isAstro101Draft && currentDraft.status === "LIVE" && !draftHasUnsavedChanges)} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
                   {isScheduledStandaloneArticle ? "Schedule release" : "Publish to app"}
                 </StudioButton>

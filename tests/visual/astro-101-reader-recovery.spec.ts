@@ -2,6 +2,111 @@ import { expect, test } from '@playwright/test';
 import { educationReaderResponse, lessonRows, privateCanary } from '../helpers/astro101-reader-fixture';
 import { fixturePublications } from '../helpers/content-reader-route.mjs';
 import { readerResponse } from '../helpers/reader-response';
+import { astro101RevisionFixture } from '../helpers/astro101-revision-fixture';
+import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { bundledPublications } from '../helpers/bundled-publications';
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const kind of ['chapter', 'house'] as const) {
+  test(`Learn ${kind} edits remain private until explicit publication ${width} ${theme}`, async ({ page }, testInfo) => {
+    test.setTimeout(120_000);
+    const initial = astro101RevisionFixture(kind, width === 390 ? 'all' : 'article');
+    const unrelated = { ...astro101RevisionFixture(kind === 'chapter' ? 'article' : 'chapter'), status: 'LIVE' };
+    const store = await studioApiStore([initial, unrelated], { uuidIds: true, projectSelect: true, sqlArticleLifecycle: true });
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    let failSave = false;
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:theme', theme);
+        localStorage.setItem('tldrastro:studio-theme', theme);
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+      }, theme);
+      await bundledPublications(page);
+      await routeStudioInventoryApi(page, { actualDocumentRoute: true, call: async request => {
+        if (failSave && request.method === 'PATCH' && (request.body as any)?.status === 'DRAFT') {
+          failSave = false;
+          return { status: 503, payload: { ok: false, error: 'Synthetic save unavailable. Your changes are intact.' } };
+        }
+        return store.call(request);
+      }, answer: async (route, url) => {
+        if (url.pathname === '/api/content-reader' || url.pathname === '/api/admin/content-publication') {
+          const result = await store.call({ method: 'POST', url: url.pathname, body: route.request().postDataJSON() });
+          await route.fulfill({ status: result.status, json: result.payload }); return true;
+        }
+        if (url.pathname === '/api/content-publications') {
+          await route.fulfill({ json: { schema: 'tldr-publications/v1', publications: await store.call({ method: 'publications' }) } }); return true;
+        }
+        if (url.pathname === '/api/admin/content-live-status') {
+          await route.fulfill({ json: { ok: true, statuses: await store.call({ method: 'statuses', body: route.request().postDataJSON() }) } }); return true;
+        }
+        return false;
+      } });
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      const openRow = async (title: string) => {
+        await page.goto('/admin/content#astro-101');
+        await page.getByRole('row').filter({ hasText: title }).getByRole('button', { name: 'Edit', exact: true }).click();
+        await expect(editor.getByLabel('Card title', { exact: true })).toHaveValue(title);
+      };
+      const readLive = async (opening: string, ending: string) => {
+        await page.goto('/learn');
+        if (kind === 'chapter') await expect(page.getByText(initial.headline, { exact: true }).first()).toBeVisible();
+        else await expect(page.locator(`a[href="${initial.facts.slug}"]`).first()).toBeVisible();
+        await page.goto(initial.facts.slug);
+        await expect(page.getByText(opening, { exact: true })).toBeVisible();
+        await expect(page.getByText(ending, { exact: true })).toBeVisible();
+        await page.reload();
+        await expect(page.getByText(ending, { exact: true })).toBeVisible();
+      };
+      await openRow(initial.headline);
+      await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
+      await expect(editor).toContainText('Visible in app');
+      let rows = await store.call({ method: 'rows' });
+      const live = rows.find((row: any) => row.id === initial.id);
+      failSave = true;
+      await expect(editor.getByRole('button', { name: 'Save changes', exact: true })).toHaveCount(0);
+      await expect(editor.getByRole('button', { name: 'Move to draft', exact: true })).toHaveCount(0);
+      await editor.getByLabel('Article intro', { exact: true }).fill('Synthetic private opening.');
+      await editor.getByLabel('Section 1 body', { exact: true }).fill('Synthetic private final sentence.');
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor).toContainText('Synthetic save unavailable.');
+      await expect(editor.getByLabel('Article intro', { exact: true })).toHaveValue('Synthetic private opening.');
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor).toContainText('Private revision');
+      rows = await store.call({ method: 'rows' });
+      const revision = rows.find((row: any) => row.event_type === 'standalone-article-revision');
+      expect(revision).toBeTruthy();
+      expect(rows.find((row: any) => row.id === live.id)).toEqual(live);
+      expect(rows.find((row: any) => row.id === unrelated.id)).toEqual(unrelated);
+      await readLive(initial.sections.intro, initial.sections.blocks[0].body);
+      await page.goto('/admin/content#astro-101');
+      // Source keys have a published row and a private proposal. Select the draft explicitly.
+      if (await editor.isVisible()) await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      const draftRow = page.getByRole('row').filter({ hasText: initial.headline }).filter({ hasText: 'Draft' });
+      await draftRow.getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(editor).toContainText('Private revision');
+      await expect(editor.getByLabel('Article intro', { exact: true })).toHaveValue('Synthetic private opening.');
+      await expect(editor.getByLabel('Section 1 body', { exact: true })).toHaveValue('Synthetic private final sentence.');
+      await editor.getByLabel('Section 1 heading', { exact: true }).fill('Synthetic reviewed section');
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor.getByRole('button', { name: 'Save draft', exact: true })).toBeDisabled();
+      expect((await store.call({ method: 'rows' })).find((row: any) => row.id === initial.id)).toEqual(live);
+      await page.screenshot({ path: testInfo.outputPath(`private-${kind}-${width}-${theme}.png`), fullPage: true });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
+      await expect(editor).toContainText('Visible in app');
+      rows = await store.call({ method: 'rows' });
+      const published = rows.find((row: any) => row.id === initial.id);
+      expect(published.mode).toBe(initial.mode);
+      expect(published.sections.blocks[0].heading).toBe('Synthetic reviewed section');
+      expect(rows.find((row: any) => row.id === revision.id).status).toBe('ARCHIVED');
+      expect(rows.find((row: any) => row.id === unrelated.id)).toEqual(unrelated);
+      await readLive('Synthetic private opening.', 'Synthetic private final sentence.');
+      expect(errors).toEqual([]);
+    } finally { await page.unrouteAll({ behavior: 'ignoreErrors' }); store.close(); }
+  });
+}
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Learn keeps its shell in place while code and content load at ${width}px ${theme}`, async ({ page }) => {

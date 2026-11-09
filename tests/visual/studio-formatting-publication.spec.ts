@@ -1,3 +1,4 @@
+import { openEditorMoreActions } from '../helpers/studio-editor-actions';
 import { readerResponse } from '../helpers/reader-response';
 import { test, expect, type Request } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
@@ -20,9 +21,9 @@ const rows = ['chapter', 'article'].map(kind => ({
 }));
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
-  test(`Studio formatting, save, live → draft → live at ${width} ${theme}`, async ({ page, context }) => {
+  test(`Studio formatting, private draft and explicit publication at ${width} ${theme}`, async ({ page, context }) => {
     test.setTimeout(120_000);
-    const store = await studioApiStore(rows);
+    const store = await studioApiStore(rows, { sqlArticleLifecycle: true });
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
     try {
@@ -80,7 +81,12 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await editor.getByRole('button', { name: 'Done formatting', exact: true }).click();
       const formatted = await body.inputValue();
       expect(formatted).not.toBe(original);
-      await editor.getByRole('button', { name: 'Save changes', exact: true }).click();
+      await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+      await expect(editor).toContainText('Private revision');
+      expect((await store.call({ method: 'rows' }))[0].sections.blocks[0].body).toBe(original);
+      await reader.reload();
+      await expect(reader.locator('.learn-article-body ol > li')).toHaveCount(0);
+      await editor.getByRole('button', { name: 'Publish to app', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' }))[0].sections.blocks[0].body).toBe(formatted);
       await refreshSeparateReader();
       await expect(reader.locator('.learn-article-body ol > li')).toHaveCount(2);
@@ -88,7 +94,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(reader.locator('.learn-article-body em')).toHaveCount(2);
       await expect(reader.locator('.learn-article-body')).toContainText('Final line.');
       await reader.screenshot({ path: `test-results/studio-formatted-reader-${width}-${theme}.png`, fullPage: true });
-      await editor.getByRole('button', { name: 'Move to draft', exact: true }).click();
+      await openEditorMoreActions(editor);
+      await editor.getByRole('button', { name: 'Archive source', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('ARCHIVED');
+      await editor.getByRole('button', { name: 'Restore as draft', exact: true }).click();
       await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('DRAFT');
       await expect(editor.locator('.admin-editor-context-line')).toContainText('Hidden from app');
       await refreshSeparateReader();
@@ -112,8 +121,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(editor.locator('.admin-editor-context-line')).toContainText('Astro 101 · Article');
       await reader.goto(readerHref('/learn/astro-101/format-article'));
       await expect(reader.getByRole('heading', { name: rows[1].headline, exact: true })).toBeVisible();
-      await editor.getByRole('button', { name: 'Move to draft', exact: true }).click();
-      await expect.poll(async () => (await store.call({ method: 'rows' }))[1].status).toBe('DRAFT');
+      await openEditorMoreActions(editor);
+      await editor.getByRole('button', { name: 'Archive source', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[1].status).toBe('ARCHIVED');
       await refreshSeparateReader();
       await expect(reader.getByRole('heading', { name: 'Page not found', exact: true })).toBeVisible();
       expect((await store.call({ method: 'rows' }))[1].sections).toEqual(rows[1].sections);
@@ -169,8 +179,8 @@ test('Held article style module finishes after close without reopening or saving
     await expect(styles).toBeVisible();
     await expect(editor.getByRole('textbox',{name:'Section 1 body',exact:true})).toHaveValue(rows[0].sections.blocks[0].body);
     await editor.getByRole('textbox',{name:'Card title',exact:true}).fill('Saved after actual style module load');
-    await editor.getByRole('button',{name:'Save changes',exact:true}).click();
-    await expect.poll(async()=>{const row=(await store.call({method:'rows'}))[0];return {headline:row.headline,body:row.sections.blocks[0].body};}).toEqual({headline:'Saved after actual style module load',body:rows[0].sections.blocks[0].body});
+    await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+    await expect.poll(async()=>{const row=(await store.call({method:'rows'})).find((row:any)=>row.event_type==='standalone-article-revision');return row?{headline:row.headline,body:row.sections.blocks[0].body}:null;}).toEqual({headline:'Saved after actual style module load',body:rows[0].sections.blocks[0].body});
     await page.reload();await page.getByText('Saved after actual style module load',{exact:true}).click();
     await expect(editor.getByRole('textbox',{name:'Section 1 body',exact:true})).toHaveValue(rows[0].sections.blocks[0].body);
   }finally{release?.();await store.close();}

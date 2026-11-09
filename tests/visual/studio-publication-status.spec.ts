@@ -98,7 +98,7 @@ async function fixture(page:Page,browser:Browser,info:TestInfo,options:{pendingO
   await openEditorMoreActions(editor(page));
  }
  async function action(label:string,status:string){
-  const done=page.waitForResponse(r=>new URL(r.url()).pathname==='/api/admin/generated-content'&&r.request().method()==='PATCH');
+  const done=page.waitForResponse(async r=>new URL(r.url()).pathname==='/api/admin/generated-content'&&r.request().method()==='PATCH'&&r.status()===200&&(await r.json()).rows?.[0]?.status===status);
   await editor(page).getByRole('button',{name:label,exact:true}).click();const r=await done;expect(r.status()).toBe(200);expect(await r.finished()).toBeNull();expect(r.request().failure()).toBeNull();expect((await r.json()).rows[0].status).toBe(status);
  }
  async function clean(){
@@ -118,8 +118,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
   expect(await editor(page).evaluate(element=>element.scrollWidth<=element.clientWidth+1)).toBe(true);
   await page.screenshot({path:`test-results/studio-owner-advisory-${width}-${theme}.png`});
   const revision=body+'\n\nComplete synthetic live revision ending.';await editor(page).getByRole('textbox',{name:'Article body',exact:true}).fill(revision);
-  await f.action('Save changes','LIVE');await f.proof('live-save','live',revision);await expect(header(page)).toHaveText('Live');await expect(footer(page)).toHaveText('All changes saved');
-  await f.action('Move to draft','DRAFT');await f.proof('withdrawn','retired',null);await f.action('Archive source','ARCHIVED');await f.proof('archived-again','retired',null);
+  await f.action('Save draft','DRAFT');await f.proof('private-revision','live',body);await expect(editor(page)).toContainText('Private revision');await f.action('Publish to app','LIVE');await f.proof('published-revision','live',revision);await expect(header(page)).toHaveText('Live');await expect(footer(page)).toHaveText('All changes saved');
+  await f.action('Archive source','ARCHIVED');await f.proof('archived-again','retired',null);
  }finally{await f.clean();}
 });
 
@@ -131,7 +131,7 @@ test('pre-edit pending ledger cannot finish as the final publication status',asy
   f.releaseFresh();await expect(footer(page)).toHaveText('All changes saved');await f.proof('fresh-after-old-completion','live',body);
   expect(f.evidence.ledger.some((r:any)=>r.scope==='admin'&&r.held==='pre-edit'&&r.state==='retired'&&r.completed)).toBe(true);
   expect(f.evidence.ledger.some((r:any)=>r.scope==='admin'&&r.held==='fresh'&&r.state==='live'&&r.completed)).toBe(true);
-  await f.action('Move to draft','DRAFT');await f.proof('withdrawn','retired',null);
+  await f.action('Archive source','ARCHIVED');await f.proof('withdrawn','retired',null);
  }finally{await f.clean();}
 });
 
@@ -139,10 +139,10 @@ test('ledger failure preserves saved live copy and recovers only on manual retry
  const f=await fixture(page,browser,info);try{
   await f.open();await expect(footer(page)).toHaveText('Retired everywhere');await f.action('Restore as draft','DRAFT');await expect(footer(page)).toHaveText('Retired everywhere');
   f.fail(true);await f.action('Publish to app','LIVE');await f.proof('published-during-verification-outage','live',body);await expect(header(page)).toHaveText('Live');await expect(footer(page)).toHaveText('Saved · Publication status unavailable');
-  await expect(editor(page).getByRole('textbox',{name:'Article body',exact:true})).toBeEnabled();await expect(editor(page).getByRole('button',{name:'Move to draft',exact:true})).toBeEnabled();
+  await expect(editor(page).getByRole('textbox',{name:'Article body',exact:true})).toBeEnabled();await expect(editor(page).getByRole('button',{name:'Archive source',exact:true})).toBeEnabled();
   const count=f.evidence.ledger.length;await page.waitForLoadState('networkidle',{timeout:5000});expect(f.evidence.ledger.length).toBe(count);
   f.fail(false);await editor(page).getByRole('button',{name:'Refresh publication status',exact:true}).click();await expect(footer(page)).toHaveText('All changes saved');await expect(editor(page).getByRole('button',{name:'Refresh publication status',exact:true})).toHaveCount(0);await f.proof('verified-after-explicit-retry','live',body);
-  await f.action('Move to draft','DRAFT');await f.proof('withdrawn','retired',null);
+  await f.action('Archive source','ARCHIVED');await f.proof('withdrawn','retired',null);
  }finally{await f.clean();}
 });
 
