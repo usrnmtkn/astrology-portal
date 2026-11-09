@@ -17,7 +17,7 @@ try {
     define: { 'import.meta.env': '{}' }, logLevel: 'silent',
     plugins: [{ name: 'actual-history-test-access', setup(builder) {
       builder.onLoad({ filter: /\/services\/ephemeris\.ts$/ }, args => ({ loader: 'ts',
-        contents: readFileSync(args.path, 'utf8') + '\nexport {calculateSwissUt, previousSameSignResidencyFor, SwissEphemerisCoverageError};',
+        contents: readFileSync(args.path, 'utf8') + '\nexport {calculateSwissUt, previousSameSignResidencyFor, SwissEphemerisCoverageError, signResidencyWindowFor};',
         resolveDir: path.dirname(args.path) }));
     } }]
   });
@@ -30,7 +30,7 @@ try {
   const norm = (value: number) => (value % 360 + 360) % 360;
   const julianDay = (date: Date) => swiss.julday(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(),
     date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600);
-  for (const at of ['2026-11-04T17:00:00Z', '2044-08-12T16:00:00Z', '2044-08-13T16:00:00Z', '2044-08-14T16:00:00Z', '2045-08-13T16:00:00Z']) {
+  for (const at of ['2026-11-04T17:00:00Z', '2044-08-12T16:00:00Z', '2044-08-13T16:00:00Z', '2044-08-14T16:00:00Z', '2045-08-13T16:00:00Z', '2385-05-20T16:00:00Z', '2385-05-21T16:00:00Z', '1820-08-26T16:00:00Z', '1820-08-27T16:00:00Z']) {
     const response = { statusCode: 0, body: '', setHeader() {}, end(body: string) { this.body = body; } };
     await actual.handler({ method: 'GET', url: `/api/sky?${new URLSearchParams({ at, lat: String(location.latitude), lon: String(location.longitude), timeZone: location.timeZone, version: 'tldrastro-calculation-v4', detail: 'full' })}` }, response);
     assert.equal(response.statusCode, 200, `${at}: actual full Sky handler must succeed`);
@@ -55,6 +55,18 @@ try {
       const neptune = sky.positions.find((p: any) => p.planet === 'Neptune');
       assert(neptune.previousSignResidencyStart && neptune.previousSignResidencyEnd, 'Complete in-range historical evidence remains available.');
     }
+    if (at.startsWith('2385') || at.startsWith('1820')) {
+      const pluto = sky.positions.find((p: any) => p.planet === 'Pluto');
+      assert.equal(pluto.transitStart, undefined);
+      assert.equal(pluto.transitEnd, undefined, 'A residency crossing packaged coverage must be unavailable, never clipped.');
+      assert.equal(pluto.residencyPasses, undefined, 'Do not publish an incomplete pass list.');
+      const sun = sky.positions.find((p: any) => p.planet === 'Sun');
+      assert(sun.transitStart && sun.transitEnd, 'Complete in-range residencies remain available.');
+      if (at.startsWith('2385-05-20')) assert(sky.dailyEvents.some((e: any) => e.type === 'aspect'
+        && e.aspect === 'conjunction' && e.planets.includes('Neptune') && e.planets.includes('Pluto')));
+    }
+    if (at.startsWith('1820-08-26')) assert(sky.dailyEvents.some((e: any) => e.type === 'aspect'
+      && e.aspect === 'square' && e.planets.includes('Neptune') && e.planets.includes('Pluto')));
     if (at === '2044-08-13T16:00:00Z') assert(sky.dailyEvents.some((e: any) => e.type === 'aspect' && e.aspect === 'conjunction' && e.planets.includes('Jupiter') && e.planets.includes('Lilith')));
   }
 
@@ -82,10 +94,12 @@ try {
   assert.throws(() => actual.previousSameSignResidencyFor(faultEngine, 'Pluto', 9, 'Pisces', new Date('2043-01-01T00:00:00Z')), error => error === sentinel,
     'Optional history must not swallow a genuine in-range calculation error.');
   assert(faulted);
+  assert.throws(() => actual.signResidencyWindowFor(faultEngine, 'Pluto', 9, new Date('2385-05-20T16:00:00Z'), 'Gemini'), error => error === sentinel,
+    'Current residency coverage handling must not swallow genuine in-range errors.');
   const beforeCoverageChecks = nativeCalculations;
   for (const at of ['1799-12-31T23:59:59Z', '2400-01-01T00:00:00Z']) {
     assert.throws(() => actual.calculateSwissUt(faultEngine, julianDay(new Date(at)), 9, swiss.SEFLG_SWIEPH), actual.SwissEphemerisCoverageError);
   }
   assert.equal(nativeCalculations, beforeCoverageChecks, 'Out-of-coverage probes must not invoke native calculation or Moshier.');
 } finally { await rm(directory, { recursive: true, force: true }); }
-console.log('PASS: full Sky handler across five dates, all direct-Swiss positions/motions, complete current windows, bounded optional history, and preserved real-error/provenance boundaries.');
+console.log('PASS: full Sky handler across nine dates, all direct-Swiss positions/motions, complete available windows, bounded residencies/history, and preserved real-error/provenance boundaries.');
