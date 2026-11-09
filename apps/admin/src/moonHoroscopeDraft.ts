@@ -30,5 +30,5 @@ export function moonWritingDraftPayload(event: MoonEvent, section: MoonHoroscope
   return { contentKey: working?.content_key ?? moonDraftPrefix(event) + crypto.randomUUID(), surface: 'sky', mode: 'article',
     eventType: 'moon-horoscope-writing-draft', status: 'DRAFT', lane: 'reference', reviewState: 'owner-review-required',
     headline: `${event.title} horoscopes`, summary: '', body: '', sections: { moonWritingDraft: draft },
-    sourceSnapshot: { content_role: 'source_material', contentType: 'moon-horoscope-writing-draft', review_status: 'needs_review' }, provider: 'manual-admin' };
+    sourceSnapshot: { ...working?.source_snapshot, content_role: 'source_material', contentType: 'moon-horoscope-writing-draft', review_status: 'needs_review' }, provider: 'manual-admin' };
 }
