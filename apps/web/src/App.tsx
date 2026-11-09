@@ -12369,7 +12369,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             : { ...detail, routePath: skyDetailRoutePath });
         };
         renderAspect(await loadSkyDetailContent(eventSky, availableDetailContent,
-          skyDetailRequiredAspectKeys(eventSky, routePlanet, routeSign, routeOther), loadLiveGeneratedContentForKeys), true);
+          skyDetailRequiredAspectKeys(eventSky, routePlanet, routeSign, routeOther), loadLiveGeneratedContentForKeys, []), true);
       }).catch(error => { if (!cancelled && skyDetailRoutePath === skyDetailRoutePathFromUrl()) { console.warn("Dated aspect calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }
@@ -12407,7 +12407,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         [...(calendarEvent ? calendarTransitDetailContentKeys(calendarEvent.event)
           : routeType === "aspect" ? skyDetailRequiredAspectKeys(detailSky, routePlanet, routeSign, routeOther) : []),
           ...lunarKeys],
-        loadLiveGeneratedContentForKeys);
+        loadLiveGeneratedContentForKeys, routeType === "aspect" ? [] : undefined);
       renderDetail(detailSky, content, true);
     }).catch(error => { if (!cancelled) { console.warn("Sky detail failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
     return () => { cancelled = true; };
