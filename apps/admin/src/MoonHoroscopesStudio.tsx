@@ -13,7 +13,8 @@ const pendingPasteMessage='Import or clear the pasted readings before saving.';
 const label=(value:string)=>value[0].toUpperCase()+value.slice(1);
 const eventLabel=(event:MoonEvent)=>`${event.title} · ${new Intl.DateTimeFormat('en-US',{timeZone:event.timeZone,dateStyle:'long',timeStyle:'short'}).format(new Date(event.startsAt))}`;
 async function request(secret:string,url:string,body?:unknown,method='GET',signal?:AbortSignal){
-  const response=await fetchWithOwnerSession(url,secret,{method,headers:{'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(60000)]):AbortSignal.timeout(60000),...(body?{body:JSON.stringify(body)}:{})});
+  const timeout=AbortSignal.timeout(url==='/api/admin/sky-article-template-slots'?300000:60000);
+  const response=await fetchWithOwnerSession(url,secret,{method,headers:{'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body?{body:JSON.stringify(body)}:{})});
   const data=await response.json().catch(()=>({error:'The server response could not be read.'}));
   if(!response.ok||data.ok!==true)throw new Error(data.error??'The Moon horoscopes could not be loaded.');
   return data;
@@ -27,10 +28,13 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
   const [busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState(''),[approved,setApproved]=useState(false);
   const [opening,setOpening]=useState(Boolean(requestedDraftId));
   const editor=useRef<HTMLHeadingElement>(null),publication=useRef<HTMLDivElement>(null);
+  const running=useRef(false);
   const pendingPaste=Boolean(paste.trim());
   const archived=saved?.status==='ARCHIVED';
+  const generationPending=working?.source_snapshot?.moonHoroscopeGeneration?.status==='running';
+  const locked=busy||generationPending;
   const dirty=Boolean(pendingPaste||section&&JSON.stringify(section)!==baseline);
-  useEffect(()=>{dirtyRef.current=dirty||busy;return()=>{dirtyRef.current=false;};},[dirty,busy,dirtyRef]);
+  useEffect(()=>{dirtyRef.current=dirty||locked;return()=>{dirtyRef.current=false;};},[dirty,locked,dirtyRef]);
   useEffect(()=>{
     if(!requestedDraftId)return;
     const abort=new AbortController();setOpening(true);
@@ -41,10 +45,10 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
     return()=>abort.abort();
   },[secret,requestedDraftId]);
   useEffect(()=>{
-    if(!dirty)return;
+    if(!dirty&&!generationPending)return;
     const warn=(event:BeforeUnloadEvent)=>event.preventDefault();
     window.addEventListener('beforeunload',warn);return()=>window.removeEventListener('beforeunload',warn);
-  },[dirty]);
+  },[dirty,generationPending]);
   useEffect(()=>{
     const abort=new AbortController();setLoading(true);setError('');setEvents([]);
     request(secret,`/api/admin/lunation-writing?${new URLSearchParams({month,timeZone:zone})}`,undefined,'GET',abort.signal)
@@ -53,7 +57,7 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
       .finally(()=>{if(!abort.signal.aborted)setLoading(false);});
     return()=>abort.abort();
   },[secret,month,zone,retry]);
-  async function run(action:()=>Promise<unknown>){setBusy(true);setError('');setMessage('');try{await action();}catch(reason){setError((reason as Error).message);}finally{setBusy(false);}}
+  async function run(action:()=>Promise<unknown>){if(running.current)return;running.current=true;setBusy(true);setError('');setMessage('');try{await action();}catch(reason){setError((reason as Error).message);}finally{running.current=false;setBusy(false);}}
   function accept(row:any){
     if(!row.content_key?.startsWith('cms/lunation-horoscopes/'))throw new Error('This is not a dated Moon horoscope set.');
     assertMoonHoroscopeRow(row);setWorking(null);setSaved(row);setOpened(row.facts.lunationHoroscopes.event);setSection(row.sections.articleHoroscopes);setBaseline(JSON.stringify(row.sections.articleHoroscopes));
@@ -102,17 +106,17 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
       const body=moonWritingDraftPayload(opened,section,originalSource,saved,working);
       const result=await request(secret,endpoint,working?{...body,id:working.id,expectedUpdatedAt:working.updated_at}:body,working?'PATCH':'POST');
       const row=result.rows?.[0],draft=moonWritingDraft(row);
-      if(!draft||JSON.stringify(draft.section)!==JSON.stringify(section))throw new Error('Draft save was not confirmed. Your writing is still here.');
+      if(!draft||JSON.stringify(draft.section)!==JSON.stringify(section))throw new Error('Save not confirmed. Your writing is preserved.');
       setWorking(row);setBaseline(JSON.stringify(section));setApproved(false);
       window.history.replaceState(null,'',`${window.location.pathname}${window.location.search}#moon-horoscopes?${new URLSearchParams({draft:row.id})}`);
       setMessage('Draft saved.');return row;
     }
-    const sourceSnapshot={...saved?.source_snapshot,...(originalSource!==null?{editorialImport:{schema:'moon-horoscope-import/v1',originalSource,importedAt:saved?.source_snapshot?.editorialImport?.originalSource===originalSource?saved.source_snapshot.editorialImport.importedAt:new Date().toISOString(),readerFields:['sections.articleHoroscopes.passages[].heading','sections.articleHoroscopes.passages[].body']}}:{})};
+    const sourceSnapshot={...saved?.source_snapshot,...(working?.source_snapshot?.moonHoroscopeGeneration?{moonHoroscopeGeneration:working.source_snapshot.moonHoroscopeGeneration}:{}),...(originalSource!==null?{editorialImport:{schema:'moon-horoscope-import/v1',originalSource,importedAt:saved?.source_snapshot?.editorialImport?.originalSource===originalSource?saved.source_snapshot.editorialImport.importedAt:new Date().toISOString(),readerFields:['sections.articleHoroscopes.passages[].heading','sections.articleHoroscopes.passages[].body']}}:{})};
     const body={...(saved?{id:saved.id,expectedUpdatedAt:saved.updated_at}:{contentKey:moonHoroscopeKey(opened),surface:'sky',mode:'article',eventType:'lunation-horoscopes',targetDate:null,provider:'manual-admin'}),
       status:'DRAFT',lane:saved?.mode==='studio-draft'?'reference':'serving',reviewState:null,headline:`${opened.title} horoscopes`,summary:'',body:moonHoroscopeBody(section),sections:{articleHoroscopes:section},facts:{lunationHoroscopes:{event:opened}},sourceSnapshot};
     const result=await request(secret,endpoint,body,saved?'PATCH':'POST');
     const row=result.rows?.[0];
-    if(!row||row.content_key!==moonHoroscopeKey(opened)||JSON.stringify(row.sections?.articleHoroscopes?.passages.map((p:any)=>[p.risingSign,p.house,p.heading,p.body]))!==JSON.stringify(section.passages.map(p=>[p.risingSign,p.house,p.heading,p.body])))throw new Error('Storage did not confirm your complete readings. Reload the saved version before retrying.');
+    if(!row||row.content_key!==moonHoroscopeKey(opened)||JSON.stringify(row.sections?.articleHoroscopes?.passages.map((p:any)=>[p.risingSign,p.house,p.heading,p.body]))!==JSON.stringify(section.passages.map(p=>[p.risingSign,p.house,p.heading,p.body])))throw new Error('Save not confirmed. Your writing is preserved.');
     if(working){
       try{await request(secret,endpoint,{id:working.id,expectedUpdatedAt:working.updated_at,sections:{moonWritingDraft:{...moonWritingDraft(working),compiledDraft:{id:row.id,updatedAt:row.updated_at}}}},'PATCH');}
       catch{/* Keep the exact recovery copy if its completion marker cannot be saved. */}
@@ -123,30 +127,50 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
     if(!saved||dirty||!approved)return;
     const result=await request(secret,endpoint,{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:saved.event_type==='horoscope-edition-revision'?'publish-horoscope-edition-revision':'publish-owner-content'},'PATCH');
     const row=result.rows?.[0];
-    if(!row||row.status!=='LIVE'||row.content_key!==saved.content_key||row.body!==saved.body)throw new Error('Publication was not confirmed. Reload the saved version to check its status.');
-    accept(row);announceContentUpdate({contentKey:row.content_key,published:true,updatedAt:row.updated_at});setMessage('Published. These twelve readings are connected to this Moon event in the app.');
+    if(!row||row.status!=='LIVE'||row.content_key!==saved.content_key||row.body!==saved.body)throw new Error('Publication not confirmed. Reload to check its status.');
+    accept(row);announceContentUpdate({contentKey:row.content_key,published:true,updatedAt:row.updated_at});setMessage('Published.');
   }
   async function archiveRevision(){
     const targetId=saved.source_snapshot.targetRowId;
     await request(secret,endpoint,{id:saved.id,expectedUpdatedAt:saved.updated_at,status:'ARCHIVED'},'PATCH');
     const data=await request(secret,`${endpoint}?${new URLSearchParams({id:targetId,status:'all',visibility:'all'})}`);
     if(!data.rows?.[0])throw new Error('The revision was archived. Reopen the Moon event to load its current readings.');
-    accept(data.rows[0]);setMessage('Draft revision archived. The current published readings are open.');
+    accept(data.rows[0]);setMessage('Revision archived. Published readings loaded.');
   }
   async function lifecycle(){
     const previous=saved,action=archived?'restore':'archive';
     const data=await request(secret,endpoint,{id:previous.id,expectedUpdatedAt:previous.updated_at,sourceLifecycleAction:action},'PATCH');
     const row=data.rows?.[0];
-    if(row?.id!==previous.id||row.status!==(action==='archive'?'ARCHIVED':'DRAFT')||row.body!==previous.body)throw new Error('The saved state was not confirmed. Reload the saved version before retrying.');
+    if(row?.id!==previous.id||row.status!==(action==='archive'?'ARCHIVED':'DRAFT')||row.body!==previous.body)throw new Error('Save not confirmed. Your writing is preserved.');
     accept(row);announceContentUpdate({contentKey:row.content_key,published:false,updatedAt:row.updated_at});
-    setMessage(action==='archive'?'Moon horoscopes archived. These readings are no longer published.':'Moon horoscopes restored as a draft. Review and publish when ready.');
+    setMessage(action==='archive'?'Archived. Readings are no longer published.':'Restored as a private draft.');
   }
   const selected=events.find(event=>event.id===eventId),passage=section?.passages.find(p=>p.risingSign===sign);
   const complete=section?.passages.filter(p=>p.body.trim()).length??0;
   let publicationError='';
   if(section&&opened&&complete===12){try{assertMoonHoroscopeSection(section,opened);}catch(reason){publicationError=(reason as Error).message;}}
-  const canSave=Boolean(section&&dirty&&!busy&&!archived&&!pendingPaste);
-  const canPublish=Boolean(section&&complete===12&&!publicationError&&!busy&&!archived&&!pendingPaste&&(working||dirty||saved?.status!=='LIVE'));
+  const canSave=Boolean(section&&dirty&&!locked&&!archived&&!pendingPaste);
+  const canPublish=Boolean(section&&complete===12&&!publicationError&&!locked&&!archived&&!pendingPaste&&(working||dirty||saved?.status!=='LIVE'));
+  async function checkGeneration(action='status',row=working){
+    if(!row)return;
+    const result=await request(secret,'/api/admin/sky-article-template-slots',{moonHoroscopes:{id:row.id,expectedUpdatedAt:row.updated_at,action,...(action==='release'?{acknowledgeUnknownOutcome:true}:{})}},'POST');
+    await loadSaved(result.rows[0]);
+    setMessage(action==='release'?'Request released.':'Draft loaded.');
+  }
+  async function generate(){
+    if(locked||archived||pendingPaste||complete===12)return;
+    const row=await save();
+    if(!row||!moonWritingDraft(row))throw new Error('Save a private draft first.');
+    try{
+      const result=await request(secret,'/api/admin/sky-article-template-slots',{moonHoroscopes:{id:row.id,expectedUpdatedAt:row.updated_at,action:'generate'}},'POST');
+      await loadSaved(result.rows[0]);setMessage('AI drafts saved for review.');
+    }catch(error){
+      // A lost response must not expose a second paid dispatch. Read the durable
+      // recovery row before enabling any further generation or editing.
+      try{await checkGeneration('status',row);}catch{setWorking({...row,source_snapshot:{...row.source_snapshot,moonHoroscopeGeneration:{status:'running'}}});}
+      throw error;
+    }
+  }
   async function preparePublication(){
     if(!canPublish)return;
     if((!saved||dirty||working)&&!await save(true))return;
@@ -157,7 +181,7 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
     setOpened(null);setWorking(null);setSaved(null);setSection(null);setBaseline('');setPaste('');setApproved(false);setError('');setMessage('');
     window.history.replaceState(null,'',`${window.location.pathname}${window.location.search}#moon-horoscopes`);
   }
-  return <section className="admin-template-page" aria-label="Dated Moon horoscopes">
+  return <section className="admin-template-page studio-moon-horoscopes" aria-label="Dated Moon horoscopes">
     <header className="studio-sky-editor-toolbar">
       <div className="admin-toolbar-actions"><h2 ref={editor} tabIndex={-1}>{opened?opened.title:'Choose a Moon event'}</h2>{opened&&<span className="admin-editor-save-state">{busy?'Working…':dirty?'Unsaved changes':working?'Draft saved':saved?.status==='LIVE'?'Published':saved?'Draft saved':'Not saved'}</span>}</div>
       {opened&&<div className="admin-toolbar-actions"><StudioButton disabled={!canSave} onClick={()=>void run(()=>save())}>Save draft</StudioButton><StudioButton className="admin-primary-button" disabled={!canPublish} onClick={()=>void run(preparePublication)}>Publish</StudioButton></div>}
@@ -174,16 +198,19 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
       </Stack></section>:section&&<div className="studio-sky-editor-layout">
         <section className="studio-surface studio-section" aria-label="Moon horoscope editor"><Stack gap="md">
           <div className="studio-editor-context"><span>{eventLabel(opened)} · {opened.timeZone}</span><span>{complete}/12 complete</span></div>
+          {!archived&&<div className="admin-toolbar-actions">
+            {generationPending?<><span role="status">AI request awaiting confirmation</span><StudioButton disabled={busy} onClick={()=>void run(()=>checkGeneration())}>Check generation</StudioButton><StudioButton disabled={busy} onClick={()=>{if(window.confirm('Release this request? It may still incur a charge. A late result will not replace your writing.'))void run(()=>checkGeneration('release'));}}>Release request</StudioButton></>:<><StudioButton disabled={locked||pendingPaste||complete===12} onClick={()=>void run(generate)}>{busy?'Working…':complete===0?'Generate all 12':complete===12?'12 readings complete':`Generate ${12-complete} missing`}</StudioButton>{complete<12&&<span className="admin-field-hint">Paid AI · fills empty signs</span>}</>}
+          </div>}
           <div className="studio-entry-editor">
             <label className="studio-entry-select"><span>Sign</span><AdminSelect aria-label="Moon horoscope sign" value={sign} disabled={busy} onChange={e=>setSign(e.target.value)}>{section.passages.map(p=><option key={p.risingSign} value={p.risingSign}>{label(p.risingSign)}{p.body.trim()?' ✓':''}</option>)}</AdminSelect></label>
             <nav className="studio-entry-navigation" aria-label="Moon readings by sign">{section.passages.map(p=><StudioButton key={p.risingSign} disabled={busy} aria-pressed={sign===p.risingSign} onClick={()=>setSign(p.risingSign)}>{label(p.risingSign)}{p.body.trim()?' ✓':''}</StudioButton>)}</nav>
             <div className="studio-entry-writing">{passage&&<>
               <h3>{label(sign)} / {label(sign)} Rising · House {passage.house}</h3>
-              <label className="admin-review-copy-editor"><span>Complete horoscope</span><StudioTextarea rows={12} value={passage.body} disabled={busy||archived} maxLength={20000} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label>
-              <details className="studio-contained-disclosure"><AdminDisclosureSummary>Heading</AdminDisclosureSummary><label><span>Sign heading</span><StudioInput value={passage.heading} disabled={busy||archived} maxLength={200} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,heading:e.target.value}:p)});setApproved(false);}}/></label></details>
+              <label><span>Sign heading</span><StudioInput value={passage.heading} disabled={locked||archived} maxLength={200} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,heading:e.target.value}:p)});setApproved(false);}}/></label>
+              <label className="admin-review-copy-editor"><span>Complete horoscope</span><StudioTextarea rows={8} value={passage.body} disabled={locked||archived} maxLength={20000} onChange={e=>{setSection({...section,passages:section.passages.map(p=>p.risingSign===sign?{...p,body:e.target.value}:p)});setApproved(false);}}/></label>
             </>}</div>
           </div>
-          {!archived&&<details className="studio-contained-disclosure"><AdminDisclosureSummary>Import 12 readings</AdminDisclosureSummary><label><span>All twelve horoscopes</span><StudioTextarea formatting={false} rows={8} value={paste} disabled={busy} maxLength={240000} onChange={e=>{setPaste(e.target.value);setApproved(false);}}/></label><div className="admin-toolbar-actions"><StudioButton disabled={busy||!pendingPaste} onClick={review}>Import readings</StudioButton><StudioButton disabled={busy||!pendingPaste} onClick={()=>{setPaste('');setApproved(false);setError('');setMessage('');}}>Clear paste</StudioButton></div>{pendingPaste&&<span className="admin-field-hint">{pendingPasteMessage}</span>}</details>}
+          {!archived&&<details className="studio-contained-disclosure"><AdminDisclosureSummary>Import 12 readings</AdminDisclosureSummary><label><span>All twelve horoscopes</span><StudioTextarea formatting={false} rows={8} value={paste} disabled={locked} maxLength={240000} onChange={e=>{setPaste(e.target.value);setApproved(false);}}/></label><div className="admin-toolbar-actions"><StudioButton disabled={locked||!pendingPaste} onClick={review}>Import readings</StudioButton><StudioButton disabled={locked||!pendingPaste} onClick={()=>{setPaste('');setApproved(false);setError('');setMessage('');}}>Clear paste</StudioButton></div>{pendingPaste&&<span className="admin-field-hint">{pendingPasteMessage}</span>}</details>}
         </Stack></section>
         <aside className="studio-surface studio-section" aria-label="Moon horoscope settings"><Stack gap="md">
           <div ref={publication} tabIndex={-1} aria-label="Moon publication"><Stack gap="md"><h3>Publication</h3><span className="admin-editor-save-state">{archived?'Archived':working||saved?.status!=='LIVE'?'Private draft':'Published'}</span>

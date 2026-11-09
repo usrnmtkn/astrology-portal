@@ -228,10 +228,12 @@ function mapLegacyIdentifier(legacyIdentifier, context = {}) {
     // reusable owner prose. Retain doctrine-only permissions and framing.
     const planetaryHouseMechanism = context.surface === "you" && context.eventType === "transit-house"
       && context.writingSchema === "planetary-horoscope-writing/v1" && /^transit-house\//u.test(canonicalCandidate);
+    const moonHouseMechanism = context.surface === 'sky' && ['new-moon','full-moon'].includes(context.eventType)
+      && context.writingSchema === 'moon-horoscope-writing/v1' && /^house\/(?:[1-9]|1[0-2])$/u.test(canonicalCandidate);
     return {
       legacyIdentifier,
       canonicalIds: [canonicalCandidate],
-      targetUsages: [bondMechanism || planetaryHouseMechanism ? "mechanism-reference" : "primary"],
+      targetUsages: [bondMechanism || planetaryHouseMechanism || moonHouseMechanism ? "mechanism-reference" : "primary"],
       mappingBasis: "already-canonical"
     };
   }

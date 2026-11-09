@@ -39,6 +39,9 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await expect(studio.getByLabel('Moon event',{exact:true})).toContainText(event.title);
     await studio.getByLabel('Moon event',{exact:true}).selectOption(event.id);
     await studio.getByRole('button',{name:'Open Moon horoscopes',exact:true}).click();
+    await expect(studio.getByRole('button',{name:'Generate all 12',exact:true})).toBeEnabled();
+    const headingBox=await studio.getByLabel('Sign heading',{exact:true}).boundingBox(),bodyBox=await studio.getByLabel('Complete horoscope',{exact:true}).boundingBox();
+    expect(headingBox!.y+headingBox!.height).toBeLessThan(bodyBox!.y);
     expect(await studio.getByRole('heading',{level:2,name:event.title,exact:true}).evaluate(el=>{const s=getComputedStyle(el);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.marginTop,s.marginBottom,s.textTransform,s.textAlign];})).toEqual(titleStyle);
     const chooseSign=async(value:string)=>{if(width<900)await studio.getByLabel('Moon horoscope sign',{exact:true}).selectOption(value);else await studio.getByRole('navigation',{name:'Moon readings by sign'}).getByRole('button',{name:new RegExp(`^${value[0].toUpperCase()+value.slice(1)}(?: ✓)?$`)}).click();};
     const more=async()=>{const details=studio.getByLabel('Moon horoscope actions',{exact:true});if(await details.getAttribute('open')===null)await details.locator('summary').click();};
@@ -113,7 +116,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await studio.getByRole('button',{name:'Publish',exact:true}).click();
     await expect(studio.getByRole('checkbox')).toBeInViewport();
     await studio.getByRole('checkbox').check();await studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true}).click();
-    await expect(studio.getByRole('status')).toContainText('Published. These twelve readings');
+    await expect(studio.getByRole('status')).toContainText('Published.');
     rows=await stored();const published=rows[0];expect(published.status).toBe('LIVE');
     const publicResult=await call({method:'reader',body:{keys:[published.content_key]}});expect(publicResult.payload.rows[0].sections.articleHoroscopes.passages).toEqual(published.sections.articleHoroscopes.passages);expect(JSON.stringify(publicResult.payload)).not.toContain('originalSource');
     await page.screenshot({path:`test-results/dated-moon-horoscopes-${width}-${theme}.png`,fullPage:true});
@@ -124,14 +127,14 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await expect(studio.getByRole('status')).toHaveText('Draft saved.');
     rows=await stored();expect(rows.find((row:any)=>row.id===published.id).body).toBe(published.body);expect(rows.find((row:any)=>row.mode==='studio-draft').sections.articleHoroscopes.passages[11].body).toBe(exact);
     await studio.getByRole('checkbox').check();await studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true}).click();
-    await expect(studio.getByRole('status')).toContainText('Published. These twelve readings');
+    await expect(studio.getByRole('status')).toContainText('Published.');
     rows=await stored();expect(rows.find((row:any)=>row.id===published.id).sections.articleHoroscopes.passages[11].body).toBe(exact);
     if(width===1440&&theme==='light'){
       await studio.getByLabel('Complete horoscope',{exact:true}).fill(exact+'\n\nAnother private revision.');
       await studio.getByRole('button',{name:'Save draft',exact:true}).click();
       await expect(studio.getByRole('status')).toHaveText('Draft saved.');
       await more();page.once('dialog',dialog=>dialog.accept());await studio.getByRole('button',{name:'Archive draft revision',exact:true}).click();
-      await expect(studio.getByRole('status')).toHaveText('Draft revision archived. The current published readings are open.');
+      await expect(studio.getByRole('status')).toHaveText('Revision archived. Published readings loaded.');
       await chooseSign('pisces');
       await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(exact);
     }
@@ -143,7 +146,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await studio.getByLabel('Complete horoscope',{exact:true}).fill(exact);
     await expect(archive).toBeEnabled();
     page.once('dialog',dialog=>dialog.accept());await archive.click();
-    await expect(studio.getByRole('status')).toHaveText('Moon horoscopes archived. These readings are no longer published.');
+    await expect(studio.getByRole('status')).toHaveText('Archived. Readings are no longer published.');
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toBeDisabled();
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(exact);
     await expect(studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true})).toHaveCount(0);
@@ -162,17 +165,17 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await studio.getByRole('button',{name:'Open Moon horoscopes',exact:true}).click();
     await more();await expect(studio.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
     await studio.getByRole('button',{name:'Restore as draft',exact:true}).click();
-    await expect(studio.getByRole('status')).toHaveText('Moon horoscopes restored as a draft. Review and publish when ready.');
+    await expect(studio.getByRole('status')).toHaveText('Restored as a private draft.');
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toBeEnabled();
     expect((await call({method:'reader',body:{keys:[published.content_key]}})).payload.rows).toHaveLength(0);
     await page.reload();
     await studio.getByRole('checkbox').check();
     await studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true}).click();
-    await expect(studio.getByRole('status')).toContainText('Published. These twelve readings');
+    await expect(studio.getByRole('status')).toContainText('Published.');
     const republished=(await call({method:'reader',body:{keys:[published.content_key]}})).payload.rows[0];
     expect(republished.sections.articleHoroscopes.passages).toEqual(beforeArchive.sections.articleHoroscopes.passages);
     await more();page.once('dialog',dialog=>dialog.accept());await studio.getByRole('button',{name:'Archive Moon horoscopes',exact:true}).click();
-    await expect(studio.getByRole('status')).toHaveText('Moon horoscopes archived. These readings are no longer published.');
+    await expect(studio.getByRole('status')).toHaveText('Archived. Readings are no longer published.');
     expect((await call({method:'reader',body:{keys:[published.content_key]}})).payload.rows).toHaveLength(0);
   }finally{child.kill();}
 });

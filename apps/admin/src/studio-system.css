@@ -298,6 +298,7 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard :is(.studio-entry-navigation,.studio-entry-writing) { display: grid; min-width: 0; gap: var(--workspace-field-gap); }
 #root .admin-dashboard .studio-entry-navigation button { border: 0; border-radius: var(--workspace-control-radius); text-align: start; justify-content: start; width: 100%; }
 #root .admin-dashboard .studio-entry-navigation button[aria-pressed="true"] { background: var(--workspace-hover); }
+#root .admin-dashboard .studio-moon-horoscopes .studio-entry-navigation { gap: 0; }
 #root .admin-dashboard .studio-entry-select { display: none; }
 #root .admin-dashboard textarea.studio-sky-summary { min-height: var(--studio-field-height); }
 #root .admin-dashboard .admin-editor-panel.studio-horoscope-editor:not(.has-variables-rail) { width: var(--container-dialog-wide); }
