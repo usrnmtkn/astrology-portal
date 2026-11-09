@@ -6,6 +6,12 @@ export function standaloneArticleKind(key: string): "article" | "guide" | null {
   if (/^article\/guide\/[^/]+$/u.test(key)) return "guide";
   return null;
 }
+/** Revision eligibility is separate from library placement and release scheduling. */
+export function articleRevisionTarget(row: { content_key: string; mode?: string | null; surface?: string | null }) {
+  return Boolean(standaloneArticleKind(row.content_key) && row.mode === "article")
+    || row.content_key.startsWith("education/astro-101/") && row.surface === "education"
+      && ["article", "all"].includes(row.mode ?? "");
+}
 export function articleLibraryKind(row: { content_key: string; event_type?: string | null }): ArticleLibraryKind | null {
   return standaloneArticleKind(row.content_key)
     ?? (row.event_type === "sky-article-edition" || /^(?:sky\/article-template\/|sky-article-template\/|sky-article\/)/u.test(row.content_key) ? "sky" : null);

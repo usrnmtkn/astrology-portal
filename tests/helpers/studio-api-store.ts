@@ -4,12 +4,12 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 /** Runs the actual Studio API handler with a private, isolated in-memory PostgREST store. */
-export async function studioApiStore(rows: unknown[], options: { writing?: boolean; realRecheck?: boolean; lunationWriting?: boolean; personalTransitWriting?: boolean; uuidIds?: boolean; publicationDb?: boolean; projectSelect?: boolean } = {}) {
+export async function studioApiStore(rows: unknown[], options: { writing?: boolean; realRecheck?: boolean; lunationWriting?: boolean; personalTransitWriting?: boolean; uuidIds?: boolean; publicationDb?: boolean; projectSelect?: boolean; sqlArticleLifecycle?: boolean } = {}) {
   const directory = mkdtempSync(path.join(tmpdir(), 'studio-formatting-'));
   const fixturePath = path.join(directory, 'rows.json');
   writeFileSync(fixturePath, JSON.stringify(rows));
   const child = fork(path.resolve(options.publicationDb ? 'tests/helpers/studio-status-api.mts' : options.personalTransitWriting ? 'tests/helpers/personal-transit-writing-api.mts' : options.lunationWriting ? 'tests/helpers/lunation-writing-api.mts' : options.writing ? 'tests/helpers/sky-review-workflow-api.mjs' : 'tests/helpers/calendar-review-api.mjs'), ['--ipc'], {
-    env: { ...process.env, CALENDAR_REVIEW_FIXTURE: fixturePath, STUDIO_REAL_RECHECK: String(Boolean(options.realRecheck)), STUDIO_UUID_IDS: String(Boolean(options.uuidIds)), STUDIO_PROJECT_SELECT: String(Boolean(options.projectSelect)) }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc']
+    env: { ...process.env, CALENDAR_REVIEW_FIXTURE: fixturePath, STUDIO_REAL_RECHECK: String(Boolean(options.realRecheck)), STUDIO_UUID_IDS: String(Boolean(options.uuidIds)), STUDIO_PROJECT_SELECT: String(Boolean(options.projectSelect)), STUDIO_ARTICLE_SQL_LIFECYCLE: String(Boolean(options.sqlArticleLifecycle)) }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc']
   });
   let sequence = 0;
   const pending = new Map<number, { resolve: (value: any) => void; reject: (error: Error) => void }>();

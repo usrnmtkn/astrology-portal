@@ -84,15 +84,15 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
   };
   fixture.prepare = () => initializing ??= createPublicationDb().then(database => { db = database; });
   fixture.publications = async () => db ? (await db.query('select to_jsonb(p) as row from content_publications p')).rows.map(item => mapIds(item.row,true)) : [];
-  // Opt-in Moon fixtures must run ordinary row updates through the same real
+  // Opt-in lifecycle fixtures must run ordinary row updates through the same real
   // publication trigger as RPC writes. A Map-only LIVE update cannot reopen a
   // retired SQL ledger and would falsely fail owner republication confirmation.
-  fixture.patchMoonRows = async (rows, patch, headers) => {
+  const patchRows = async (rows, patch, headers, inScope) => {
     if (!rows.length) return [];
-    if (!rows.every(row => row.content_key.startsWith('cms/lunation-horoscopes/') && row.mode === 'article')) throw Error('Moon SQL fixture scope');
+    if (!rows.every(inScope)) throw Error('SQL lifecycle fixture scope');
     await fixture.prepare();
     const columns = new Set(['content_key','updated_at','status','lane','review_state','headline','summary','body','sections','facts','source_snapshot','mode','event_type','target_date','surface','provider','prompt_version','model','block_type','reviewed_at','published_at','judge_score','judge_gate','judge_verdict','judge_why','reviewer_notes','flags','knowledge_ids','created_at','evergreen','evergreen_at','evergreen_by']);
-    if (Object.keys(patch).some(key => !columns.has(key))) throw Error('Unmodeled Moon SQL patch');
+    if (Object.keys(patch).some(key => !columns.has(key))) throw Error('Unmodeled SQL lifecycle patch');
     const previous = (await db.query("select current_setting('request.headers',true) as value")).rows[0].value;
     const requestHeaders = new Headers(headers);
     const updateHeaders = JSON.stringify({'x-content-publication-action':requestHeaders.get('x-content-publication-action') ?? ''});
@@ -121,6 +121,11 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
       await db.query("select set_config('request.headers',$1,false)",[previous ?? '{}']);
     }
   };
+  fixture.patchMoonRows = (rows, patch, headers) => patchRows(rows, patch, headers,
+    row => row.content_key.startsWith('cms/lunation-horoscopes/') && row.mode === 'article');
+  fixture.patchArticleRows = (rows, patch, headers) => patchRows(rows, patch, headers,
+    row => row.content_key.startsWith('education/astro-101/') && row.surface === 'education'
+      && (['article','all'].includes(row.mode) || row.mode === 'studio-draft' && row.event_type === 'standalone-article-revision'));
   fixture.close=async()=>{await initializing;await db?.close();};
   return fixture;
 }

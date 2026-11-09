@@ -37,6 +37,8 @@ export function retainPendingPublicationCopy(submitted: AdminDraft, current: Adm
     }
   }
   if (Object.keys(sections).length) result.sections = { ...published.sections, ...sections };
+  const facts = contentStudioCopyChanges(submitted.facts ?? {}, current.facts ?? {});
+  if (Object.keys(facts).length) result.facts = { ...published.facts, ...facts };
   return result;
 }
 

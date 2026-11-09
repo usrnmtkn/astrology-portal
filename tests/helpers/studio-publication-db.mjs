@@ -8,7 +8,8 @@ export const publicationMigrations = [
   '20260922003250_content_studio_publication_receipts.sql',
   '20261025203653_standalone_article_revision_publication.sql',
   '20261027071000_horoscope_revision_publication.sql',
-  '20261105195706_dated_moon_horoscope_revision_publication.sql'
+  '20261105195706_dated_moon_horoscope_revision_publication.sql',
+  '20261109083214_astro101_private_revision_publication.sql'
 ];
 export const publicationTestSchema = `create role anon; create role authenticated; create role service_role bypassrls;
 create table public.generated_interpretations (

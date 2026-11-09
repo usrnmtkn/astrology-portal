@@ -4,7 +4,7 @@ import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared
 import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import { skyArticleCompiledHashMatches } from '../_lib/sky-article-reader-integrity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
-import {standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
+import {articleRevisionTarget, standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
 import {studioOwnerApproval, hasExactStudioOwnerApproval, stampStudioPackageOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
@@ -2804,6 +2804,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
   };
 
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
+  const articleRevision = existing.event_type === "standalone-article-revision";
+  const educationSource = existing.content_key.startsWith("education/astro-101/");
+  if (educationSource && body.sourceLifecycleAction
+    && (body.sourceLifecycleAction === "archive" ? body.status !== "ARCHIVED" : existing.status !== "ARCHIVED" || body.status !== "DRAFT")) {
+    throw new GeneratedContentRequestError("Archive the saved Learn page or restore an archived page as a draft.", 409);
+  }
+  if (educationSource && existing.status === "LIVE"
+    && (body.ownerAction || !["DRAFT", "ARCHIVED"].includes(body.status ?? ""))) {
+    throw new GeneratedContentRequestError("Save a private draft before publishing changes to this Learn page.", 409);
+  }
   const horoscopeRevision = existing.event_type === 'horoscope-edition-revision';
   if (horoscopeRevision && (ownerPublication || body.status === 'LIVE')) {
     throw new GeneratedContentRequestError('Save this horoscope revision, then publish its saved changes.', 409);
@@ -2837,26 +2847,32 @@ async function updateGeneratedContent(req: IncomingMessage) {
     publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
     return publishRevisionAtomically(body,existing,target,editionPatch);
   }
-  if (existing.event_type === "standalone-article-revision" && (ownerPublication || body.status === "LIVE")) {
+  if (articleRevision && (ownerPublication || body.status === "LIVE")) {
     throw new GeneratedContentRequestError("Save this article revision, then publish its saved changes.", 409);
   }
   if (body.ownerAction === "publish-standalone-article-revision") {
-    const target = existing.event_type === "standalone-article-revision" && existing.mode === "studio-draft"
-      && existing.status === "DRAFT" && standaloneArticleKind(existing.content_key)
+    if (Object.keys(body).some(key => !["id", "expectedUpdatedAt", "ownerAction"].includes(key))) {
+      throw new GeneratedContentRequestError("Publish the saved article revision; save other changes first.", 409);
+    }
+    const target = articleRevision && existing.mode === "studio-draft" && existing.status === "DRAFT"
       ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
-    if (!target || target.content_key !== existing.content_key || !standaloneArticleKind(target.content_key)
-      || target.mode !== "article" || target.status !== "LIVE"
+    if (!target || target.content_key !== existing.content_key || !articleRevisionTarget(target)
+      || target.surface !== existing.surface || target.status !== "LIVE"
+      || existing.source_snapshot?.targetContentKey !== target.content_key
       || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
       throw new GeneratedContentRequestError("The published article changed. Reopen its current source before publishing this revision.", 409);
     }
     if (!existing.headline?.trim() || !existing.body?.trim()) throw new GeneratedContentRequestError("Complete the article title and body before publishing.");
     await assertVersionedStudioVariablePublication(v3PackageRecord(existing));
     const now = nextGeneratedContentVersion(target.updated_at);
-    const approved = { ...target, headline: existing.headline, summary: existing.summary, body: existing.body, sections: existing.sections };
-    approved.sections = standalonePublicationSections(approved, now, target);
+    const education = target.content_key.startsWith("education/astro-101/");
+    const approved = { ...target, headline: existing.headline, summary: existing.summary, body: existing.body, sections: existing.sections,
+      facts: education ? existing.facts : target.facts };
+    if (!education) approved.sections = standalonePublicationSections(approved, now, target);
     publicationContext.getStore()!.targetPublication = await currentPublication(target.content_key);
     const articlePatch = {
       headline: existing.headline, summary: existing.summary, body: existing.body, sections: approved.sections,
+      ...(education ? { facts: approved.facts } : {}),
       source_snapshot: { ...target.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, now) },
       status: "LIVE", lane: "serving", review_state: null, updated_at: now, reviewed_at: now, published_at: now
     };
@@ -3622,6 +3638,26 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
+  if (articleRevision || articleRevisionTarget(existing) && existing.status === "LIVE" && body.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction) {
+    for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
+      if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
+        throw new GeneratedContentRequestError("An article revision must keep its saved source identity.", 409);
+      }
+    }
+  }
+  if (articleRevision) {
+    const snapshot = isRecord(patch.source_snapshot) ? patch.source_snapshot : {};
+    for (const field of ["targetRowId", "targetRowUpdatedAt", "targetContentKey"]) {
+      if (snapshot[field] !== undefined && snapshot[field] !== existing.source_snapshot?.[field]) {
+        throw new GeneratedContentRequestError("The revision target cannot be changed. Reopen the published source.", 409);
+      }
+    }
+    patch.lane = "reference";
+    patch.review_state = "owner-review-required";
+    patch.source_snapshot = { ...existing.source_snapshot, ...snapshot,
+      targetRowId: existing.source_snapshot?.targetRowId, targetRowUpdatedAt: existing.source_snapshot?.targetRowUpdatedAt,
+      targetContentKey: existing.source_snapshot?.targetContentKey };
+  }
   if (horoscopeRevision) {
     if (['contentKey','surface','mode','eventType','targetDate'].some(key => body[key] !== undefined)) {
       throw new GeneratedContentRequestError('A horoscope revision must keep its published edition identity.', 409);
@@ -3641,7 +3677,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     assertHoroscopeRow(revision,{previous:existing});
     return upsertGeneratedContentRow(revision);
   }
-  if (standaloneArticleKind(existing.content_key) && existing.mode === "article" && existing.status === "LIVE"
+  if (articleRevisionTarget(existing) && existing.status === "LIVE"
     && body.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction) {
     return upsertGeneratedContentRow({
       ...existing, ...patch, id: undefined, mode: "studio-draft", event_type: "standalone-article-revision",
