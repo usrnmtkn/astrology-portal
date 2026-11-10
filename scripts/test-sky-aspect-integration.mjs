@@ -27,12 +27,12 @@ const brokenSunJupiter = [
   "Belief can make the room move. Overreach just makes it empty faster."
 ].join("\n\n");
 const brokenSunJupiterLint = lintCard(brokenSunJupiter);
-assert.equal(brokenSunJupiterLint.score, 1);
+assert.equal(brokenSunJupiterLint.score, 3, "Paragraph and closing-shape preferences are advisory under the current owner standard.");
 assert.ok(brokenSunJupiterLint.findings.some((finding) => (
-  finding.severity === "fail" && finding.term === "paragraph-count"
+  finding.severity === "note" && finding.term === "paragraph-count"
 )));
 assert.ok(brokenSunJupiterLint.findings.some((finding) => (
-  finding.severity === "warn" && finding.term === "double-closing-pair"
+  finding.severity === "note" && finding.term === "double-closing-pair"
 )));
 
 const repairedExample = examples.find((entry) => (
@@ -77,10 +77,11 @@ const generationPrompt = generator.buildPrompt({
   signB: "gemini"
 });
 
-assert.match(generationPrompt, /RANGE OF GOOD CLOSES/);
+assert.doesNotMatch(generationPrompt, /RANGE OF GOOD CLOSES/);
 assert.match(generationPrompt, /OWNER FOUNDATION LINES/);
-assert.match(generationPrompt, /Adapt one of these into the card/);
-assert.match(generationPrompt, /warmth beat is exactly one sentence/);
+assert.doesNotMatch(generationPrompt, /Adapt one of these into the card/);
+assert.doesNotMatch(generationPrompt, /warmth beat is exactly one sentence/);
+assert.match(generationPrompt, /optional voice evidence, never required sentences or a closing formula/);
 assert.doesNotMatch(generationPrompt, /Standing out is real currency/);
 assert.doesNotMatch(generationPrompt, /a friend's big-hearted gesture/);
 
@@ -122,8 +123,8 @@ const warmthJudgePrompt = buildJudgePrompt(cleanExample, {
   tier: "luminary",
   foundationLines: [{ sourceArticleId: "sky-sun-opposition-pluto", originalLine: cleanExample }]
 });
-assert.match(warmthJudgePrompt, /turn toward the reader must trace to the supplied owner foundation lines/);
-assert.match(warmthJudgePrompt, /SUPPLIED OWNER FOUNDATION LINES/);
+assert.doesNotMatch(warmthJudgePrompt, /turn toward the reader must trace to the supplied owner foundation lines/);
+assert.match(warmthJudgePrompt, /OPTIONAL COMPLETE OWNER FOUNDATION LINES/);
 
 const canonicalCloses = new Set(
   examples
@@ -226,10 +227,10 @@ const retried = await generator.generateCard({
   generateFn: async (prompt) => {
     calls += 1;
     if (calls === 2) {
-      assert.match(prompt, /LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE\(S\)/);
+      assert.match(prompt, /The previous draft used these existing banned terms/);
       assert.match(prompt, /"degree\/orb mechanics"/);
-      assert.match(prompt, /"paragraph-count"/);
-      assert.match(prompt, /Do not use "gift" or "shadow" as labels/);
+      assert.doesNotMatch(prompt, /"paragraph-count"/);
+      assert.match(prompt, /the gift is/);
     }
     return calls === 1 ? "You can read the 2° orb in the draft." : cleanExample;
   }
@@ -242,8 +243,7 @@ assert.equal(retried.lint.fails, 0);
 assert.equal(retried.warmthHarvest.status, "ready");
 assert.equal(retried.harvest_mode, warmthHarvest.harvest_mode);
 assert.deepEqual(retried.lintRetryAvoidTerms, [[
-  "degree/orb mechanics",
-  "paragraph-count"
+  "degree/orb mechanics"
 ]]);
 
 let seamCalls = 0;

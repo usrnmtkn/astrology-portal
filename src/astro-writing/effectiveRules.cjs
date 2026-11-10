@@ -117,7 +117,10 @@ function renderEffectiveRulesForPrompt(input = {}) {
   // a later generic rule must not reinstate a mandatory next move.
   const datedIngress = input.surface === 'sky' && input.family === 'sky-ingress-essay';
   const synastry = surface === 'synastry';
-  const render = (entries) => entries.map((rule) => `- ${rule.id}: ${datedIngress && rule.id === 'lived-cause-consequence-v2'
+  const skyAspect = ['sky', 'card'].includes(input.surface) && input.family === 'sky-aspect';
+  const render = (entries) => entries.map((rule) => `- ${rule.id}: ${skyAspect && rule.id === 'lived-cause-consequence-v2'
+    ? 'Explain the supplied collective aspect through recognizable human experience and supported consequences. The opening stands alone as a preview. A scene, difficulty, practical move or advice ending is not compulsory; stop when the aspect is understood.'
+    : datedIngress && rule.id === 'lived-cause-consequence-v2'
     ? 'Use supported human experience, direct consequences and enough personality to sound written rather than generated. A useful next move belongs when it develops the thought or is required by the field; it is not a default paragraph ending. Concrete means an observable action, decision, exchange or consequence, not a decorative prop or an unsupported life domain.'
     : synastry && rule.id === 'lived-cause-consequence-v2'
     ? 'Develop the supported relationship experience in ordinary language. An observable action, exchange or consequence can clarify it; no scene or consequence is compulsory. Advice is opt-in for the requested field. End when the observation is complete, without adding a remedy or a useful next move by default.'

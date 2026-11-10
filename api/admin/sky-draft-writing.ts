@@ -5,6 +5,7 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { adminFetchJson, adminStorageRows, AdminHttpError, adminErrorStatus, adminErrorMessage, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { approvedStudioPairSources, studioStorage } from "../_lib/sky-studio-sources.js";
 import { runStudioSkyWriting, studioSkyIdentity } from "../_lib/sky-studio-writing.js";
+import { SKY_ASPECT_EDITORIAL_VERSION, SKY_ASPECT_STANDARD_SHA256 } from "../../src/astro-writing/skyAspectEditorialAuthority.cjs";
 import { skyWritingIssues } from "../../apps/web/src/content/contentReviewReadiness.js";
 loadLocalWebEnv();
 export const maxDuration = 300;
@@ -77,6 +78,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             const prefix = identity.kind === "aspect" ? "skyAspect" : "skyPlacement";
             const text = input.action === "recheck" ? row.body : result.text;
             const sourceSnapshot = { ...row.source_snapshot, studioWritingOperation: null, studioWritingError: null,
+                ...(input.action === 'generate' && identity.kind === 'aspect' ? { skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 } } : {}),
                 ...(input.action === "generate" ? { studioWritingMemory: result.memoryReceipt ?? null } : {}),
                 [`${prefix}VoiceLint`]: result.lint, [`${prefix}Judge`]: result.judge,
                 ...(identity.kind === "aspect" ? { cardFacts: identity.args, pairKey: pair, pairSource: input.action === "generate" ? result.facts?.pairSource ?? source?.path ?? "content-studio/manual" : row.source_snapshot?.pairSource ?? "content-studio/manual" } : {}),
@@ -85,7 +87,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             const patch = { status: "DRAFT", review_state: "sky-owner-approval-required", source_snapshot: sourceSnapshot,
                 judge_score: result.judge?.score ?? null, judge_gate: "human-review", judge_verdict: result.lint?.score === 3 && result.lint?.fails === 0 ? "owner-review-pending" : "lint-failed",
                 judge_why: "Automatic checks do not approve prose. Review the complete writing before publication.",
-                ...(input.action === "generate" ? { body: text, provider: result.provider ?? "configured-writer", model: result.model ?? null } : {}) };
+                ...(input.action === "generate" ? { body: text, provider: result.provider ?? "configured-writer", model: result.model ?? null,
+                    ...(identity.kind === 'aspect' ? { prompt_version: SKY_ASPECT_EDITORIAL_VERSION } : {}) } : {}) };
             const issues = skyWritingIssues({ ...row, ...patch, content_key: input.contentKey, body: text });
             if (issues.length)
                 patch.review_state = "sky-voice-needs-review";
