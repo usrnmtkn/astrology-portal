@@ -44,12 +44,13 @@ try{
   assert.deepEqual(reader.resolveLunationArticleHoroscopes(event,staleMap),[],'Archive continues to suppress dated and reusable readings');
   const sources=[{id:row.id,contentKey,expectedUpdatedAt:row.updated_at}];
   const forbidden=await store.invoke('POST',{recoveryKind:'moon-reusable',action:'preview',sources},endpoint,'wrong-secret');assert.equal(forbidden.status,401);
-  let metadataReads=0,rpcWrites=0;
+  let metadataReads=0,rpcWrites=0,sourceUnavailable=false;
   const previousFetch=globalThis.fetch;
   globalThis.fetch=async(input:any,init:any={})=>{
     const url=new URL(String(input));
     if(url.pathname.endsWith('/generated_interpretations')&&url.searchParams.get('select')?.startsWith('id,content_key,updated_at,status,surface,mode,event_type,target_date,facts')){
       metadataReads++;assert(!/body|sections|source_snapshot/u.test(url.searchParams.get('select')!),'Preview/status must not request saved passages');
+      if(sourceUnavailable)return Response.json({code:'synthetic-storage-unavailable'},{status:503});
     }
     if(url.pathname.endsWith('/rpc/restore_moon_reusable_readings'))rpcWrites++;
     return previousFetch(input,init);
@@ -59,6 +60,7 @@ try{
     assert.equal(preview.status,200,JSON.stringify(preview.payload));assert.equal(rpcWrites,0);assert.equal(preview.payload.sources[0].fallbacks.length,12);
     assert(!JSON.stringify(preview.payload).includes('Never include'));assert(!JSON.stringify(preview.payload).includes('dated test opening'));
     const planned=preview.payload.sources;
+    assert.equal((await recover({action:'preview',sources:[{...sources[0],expectedUpdatedAt:123}]})).status,400,'Malformed timestamp types fail before exact timestamp comparison');
     for(const patch of [{baselineSHA256:'f'.repeat(64)},{expectedPublicationRevision:0},{fallbacks:[]},{expectedUpdatedAt:'2000-01-01T00:00:00Z'}]){
       const stale=await recover({action:'restore',operationId:randomUUID(),sources:[{...planned[0],...patch}]});assert.equal(stale.status,409,JSON.stringify(stale.payload));
     }
@@ -80,6 +82,17 @@ try{
     assert.equal((await invoke('reader',{keys:[contentKey]})).payload.rows.length,0,'Archived dated writing stays outside the actual reader API');
     const replay=await recover({action:'restore',operationId,sources:JSON.parse(JSON.stringify(planned))});assert.equal(replay.status,200);assert.equal(replay.payload.state,'restored');assert.equal(rpcWrites,1,'Same operation checks its receipt without replaying a write');
     const checked=await recover({action:'status',operationId});assert.equal(checked.payload.state,'restored');assert.equal(rpcWrites,1);
+    sourceUnavailable=true;const unavailable=await recover({action:'status',operationId});assert.equal(unavailable.status,503);assert.notEqual(unavailable.payload.state,'changed','Transient storage failure must not clear an unconfirmed operation');sourceUnavailable=false;
+    const preciseVersion=new Date(original.updated_at).toISOString().replace(/(\.\d{3})Z$/u,(_,fraction)=>`${fraction}001Z`);
+    assert.equal(Date.parse(preciseVersion),Date.parse(original.updated_at));
+    store.rows.set(row.id,{...original,updated_at:preciseVersion});
+    assert.equal((await recover({action:'status',operationId})).payload.state,'changed','Microsecond source edits cannot be reported restored');
+    assert.equal((await recover({action:'restore',operationId,sources:planned})).payload.state,'changed','Receipt replay retains exact source-version precision');
+    assert.equal((await recover({action:'preview',sources})).status,409,'Preview rejects same-millisecond different-microsecond versions');
+    store.rows.delete(row.id);
+    for(const action of ['status','cancel']){const missing=await recover({action,operationId});assert.equal(missing.status,200);assert.equal(missing.payload.state,'changed','A validated committed receipt with a missing source clears pending without reporting restored');}
+    assert.equal(rpcWrites,1,'Missing source/version checks never replay the recovery write');
+    store.rows.set(row.id,structuredClone(original));
     assert.equal((await recover({action:'restore',operationId,sources:[{...planned[0],baselineSHA256:'e'.repeat(64)}]})).status,409);
     const unknown=randomUUID();assert.equal((await recover({action:'status',operationId:unknown})).payload.state,'unconfirmed');
     const cancelled=await recover({action:'cancel',operationId:unknown});assert.equal(cancelled.payload.state,'cancelled');

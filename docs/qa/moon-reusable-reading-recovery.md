@@ -19,11 +19,15 @@ can check its result or cancel an unconfirmed operation without replaying it.
 - Actual owner handler and PGlite migrations: authorization, source/package and
   publication CAS, complete archived-row equality, idempotency, receipts,
   cancellation, stale cached/date rejection and independent retirement guards.
-- Four fresh Web browser cases: mobile/desktop, light/dark, explicit confirmation,
+- Six fresh Web browser cases: mobile/desktop, light/dark, explicit confirmation,
   cancellation, lost response and reload. Each compares the complete restored
   general article and three independently available reusable passages with the
   baseline in memory, including a second reload. The other nine synthetic
   reusable identities remain retired. No production account or content is used.
+  Two additional lost-response cases remove the synthetic archived source before
+  checking or stopping recovery: pending navigation clears, no write replays, and
+  the unavailable source is never reported restored. Transient status-read errors
+  retain the pending operation until a successful status check.
 - Eight existing manual Moon editor cases, four synthetic AI editor cases and
   four existing approved-source recovery cases pass. The latter initially failed
   because the shared fixture applied its recovery migration twice; removing the
@@ -45,14 +49,33 @@ An intermediate eager hook exceeded the raw startup ceiling and was discarded;
 the observer stays in the lazy Moon editor. A concurrent local knowledge rebuild
 interrupted one Web build prerequisite; the sequential rerun is the evidence.
 
-Matched independent locked-dependency builds use ARM64 Node22.20.0,
-zlib1.3.1-470d3a2, identical normalized complete knowledge and standard CI public
-Supabase placeholders. Main/candidate Admin entry raw is 840825/841172, entry
-gzip 244299/244415 and total gzip 921945/922450 bytes. Web total gzip is
-3759778/3760482. Allocate only +116 Admin entry gzip, +505 Admin total gzip and
-+704 Web total gzip, retaining existing headroom and all other guards. Earlier
-strict failures remain recorded. Both final bundle guards pass locally. This is
-measured feature cost, not a performance improvement or hosted acceptance.
+Matched independent locked-dependency attribution builds use ARM64 Node22.20.0,
+zlib1.3.1-470d3a2 and standard CI public Supabase placeholders. After complete
+ordinary prerequisites, only top-level generatedAt metadata was normalized;
+complete recursive knowledge artifact bytes then matched. Unchanged build bodies
+measure main/candidate Admin entry raw 840825/841174, entry gzip244299/244450 and
+total gzip921945/922472 bytes. Web total gzip is3759759/3760557. Allocate only
++151 Admin entry gzip, +527 Admin total gzip and +798 Web total gzip, replacing
+the earlier provisional allocations and retaining existing headroom and all
+other guards. Earlier strict failures remain recorded. Attribution builds are
+not release acceptance: ordinary unmodified knowledge prerequisites/builds and
+all final-head hosted guards must pass independently. This records feature cost,
+not a performance improvement.
+
+The corrected candidate also passes ordinary unmodified Admin and Web builds
+and both bundle guards independently of the attribution run. A full privacy scan
+initially stopped because archive inspection was unavailable; its subsequent
+quiet rerun passed all11883 files. The initial scan is not counted as a pass.
+
+Review regressions preserve PostgreSQL microseconds for preview, returned source
+versions, status and replay. A same-millisecond/different-microsecond source is
+changed, never restored. A validated completed receipt with a missing source also
+returns changed; transient storage failures remain unconfirmed. Existing changed
+status copy no longer assumes a newer source still exists. SQL evidence covers
+sequential stale-CAS, rollback and idempotency; multi-session concurrency is not
+claimed. Retained production metadata does not classify the three missing
+passages as installed baselines versus exact LIVE independent Studio rows. The
+complete original-baseline RAM comparison remains the native acceptance gate.
 
 Full required exact-head API/content gates, hosted CI, schema rollout and actual
 signed-in production recovery remain pending. This document does not claim that

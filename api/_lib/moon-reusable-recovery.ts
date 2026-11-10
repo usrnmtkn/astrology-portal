@@ -4,7 +4,7 @@ import {approvedSourceBaseline} from './approved-source-recovery.js';
 import {lunationArticleEvents} from './lunation-article-facts.js';
 import {moonHoroscopeKey} from '../../src/shared/datedMoonIdentity.mjs';
 import {lunationHoroscopeIdentities} from '../../src/shared/lunationHoroscopeIdentities.js';
-import {validContentPublication,publicationRestoresBaseline} from '../../apps/web/src/content/contentPublicationState.js';
+import {validContentPublication,publicationRestoresBaseline,publicationTimestamp} from '../../apps/web/src/content/contentPublicationState.js';
 
 const uuid=/^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/iu;
 const kind='moon-reusable';
@@ -21,9 +21,10 @@ function storage(){
   };
 }
 type Store=ReturnType<typeof storage>;
-async function sourceRow(get:Store,id:string){
+async function sourceRow(get:Store,id:string,allowMissing=false){
   const rows=await get(`generated_interpretations?${new URLSearchParams({id:`eq.${id}`,select:'id,content_key,updated_at,status,surface,mode,event_type,target_date,facts'})}`);
-  if(!Array.isArray(rows)||rows.length!==1)throw new AdminHttpError(409,'The archived Moon readings could not be verified.');
+  if(!Array.isArray(rows)||rows.length>1)throw new AdminHttpError(503,'The archived Moon readings could not be verified.');
+  if(!rows.length){if(allowMissing)return null;throw new AdminHttpError(409,'The archived Moon readings could not be verified.');}
   return {...rows[0],event:rows[0].facts?.lunationHoroscopes?.event};
 }
 async function baseline(row:any){
@@ -60,8 +61,8 @@ async function status(get:Store,stored:any){
   if(stored.request?.kind!==kind||!planned||!Array.isArray(stored.result)||stored.result.length!==1||!uuid.test(item?.id)
     ||!validContentPublication(item.publication)||!publicationRestoresBaseline(item.publication))
     throw new AdminHttpError(409,'This operation is not a Moon reusable-reading recovery.');
-  const row=await sourceRow(get,item.id);
-  if(row.status!=='ARCHIVED'||Date.parse(row.updated_at)!==Date.parse(item.updatedAt))return {ok:true,state:'changed'};
+  const row=await sourceRow(get,item.id,true);
+  if(!row||row.status!=='ARCHIVED'||publicationTimestamp(row.updated_at)!==publicationTimestamp(item.updatedAt))return {ok:true,state:'changed'};
   const current=await baseline(row),ledger=await publications(get,[row.content_key,...current.keys]);
   if(current.baselineSHA256!==planned.baselineSHA256||ledger.get(row.content_key)?.revision!==item.publication.revision
     ||planned.fallbacks.some((source:any)=>(ledger.get(source.contentKey)?.revision??null)!==source.expectedPublicationRevision))return {ok:true,state:'changed'};
@@ -77,7 +78,7 @@ export async function recoverReusableMoonReadings(body:any){
     if(body.action==='cancel')await get('rpc/cancel_content_source_recovery',{p_operation_id:body.operationId});
     return status(get,await receipt(get,body.operationId));
   }
-  if(!Array.isArray(body.sources)||body.sources.length!==1||!uuid.test(body.sources[0]?.id)||typeof body.sources[0].contentKey!=='string'
+  if(!Array.isArray(body.sources)||body.sources.length!==1||!uuid.test(body.sources[0]?.id)||typeof body.sources[0].contentKey!=='string'||typeof body.sources[0].expectedUpdatedAt!=='string'
     ||!Number.isFinite(Date.parse(body.sources[0].expectedUpdatedAt)))throw new AdminHttpError(400,'Select the archived readings and their saved version.');
   const input=body.sources[0];
   if(body.action==='restore'){
@@ -89,7 +90,7 @@ export async function recoverReusableMoonReadings(body:any){
     }
   }
   const row=await sourceRow(get,input.id);
-  if(row.content_key!==input.contentKey||Date.parse(row.updated_at)!==Date.parse(input.expectedUpdatedAt))throw new AdminHttpError(409,'These Moon readings changed. Reload before recovery.');
+  if(row.content_key!==input.contentKey||publicationTimestamp(row.updated_at)!==publicationTimestamp(input.expectedUpdatedAt))throw new AdminHttpError(409,'These Moon readings changed. Reload before recovery.');
   const installed=await baseline(row),ledger=await publications(get,[row.content_key,...installed.keys]),publication=ledger.get(row.content_key);
   if(!publication||publication.state!=='retired'||publication.row_id&&publication.row_id!==row.id)throw new AdminHttpError(409,'The dated Moon publication changed. Reload before recovery.');
   if(!installed.approved.some(source=>!ledger.has(source.contentKey)||publicationRestoresBaseline(ledger.get(source.contentKey))))
@@ -100,7 +101,7 @@ export async function recoverReusableMoonReadings(body:any){
   if(digest(plan)!==digest(input))throw new AdminHttpError(409,'The reusable readings or publication changed. Review recovery again.');
   const result=await get('rpc/restore_moon_reusable_readings',{p_operation_id:body.operationId,p_source:plan});
   if(!Array.isArray(result)||result.length!==1||result[0].id!==row.id||result[0].contentKey!==row.content_key||result[0].baselineSHA256!==plan.baselineSHA256
-    ||Date.parse(result[0].updatedAt)!==Date.parse(row.updated_at)||!validContentPublication(result[0].publication)||!publicationRestoresBaseline(result[0].publication))
+    ||publicationTimestamp(result[0].updatedAt)!==publicationTimestamp(row.updated_at)||!validContentPublication(result[0].publication)||!publicationRestoresBaseline(result[0].publication))
     throw new AdminHttpError(503,'Recovery was not confirmed. Check its saved status.');
   return {ok:true,recovered:result,savedWritingRetained:true};
 }

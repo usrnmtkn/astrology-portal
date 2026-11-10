@@ -7,7 +7,9 @@ import {canonicalPublicationLedger,publicationLedgerTag} from '../../apps/web/sr
 import {MOON_HOROSCOPE_SIGNS,moonHoroscopeKey,moonHoroscopeBody,parseMoonHoroscopes} from '../../src/shared/datedLunationHoroscopes.mjs';
 import skyHandler from '../../api/sky';
 
-for(const width of [390,1440])for(const theme of ['light','dark'])test(`Explicit Moon reusable recovery and exact reader restoration ${width} ${theme}`,async({page,context,baseURL})=>{
+const cases=[390,1440].flatMap(width=>['light','dark'].map(theme=>({width,theme,afterCommit:'retain'}))).concat([
+  {width:390,theme:'dark',afterCommit:'missing-check'},{width:1440,theme:'dark',afterCommit:'missing-cancel'}]);
+for(const {width,theme,afterCommit} of cases)test(`Explicit Moon reusable recovery and exact reader restoration ${width} ${theme} ${afterCommit}`,async({page,context,baseURL})=>{
   test.setTimeout(120000);
   const child=fork(path.resolve('tests/helpers/moon-horoscope-api.mts'),['--ipc'],{execArgv:['--import','tsx'],stdio:['ignore','ignore','pipe','ipc']});
   let sequence=0,stderr='';const pending=new Map<number,{resolve:(value:any)=>void;reject:(error:Error)=>void}>();
@@ -70,9 +72,17 @@ for(const width of [390,1440])for(const theme of ['light','dark'])test(`Explicit
     await use.click();await expect(recovery).toContainText('Your dated readings stay archived and unchanged.');await use.click();
     if(theme==='dark'){
       await expect(page.getByRole('button',{name:'Check recovery',exact:true})).toBeEnabled();await expect(studio.getByRole('button',{name:'Restore as draft',exact:true})).toBeDisabled();
-      await page.reload();await page.getByRole('button',{name:'Check recovery',exact:true}).click();await expect(page.getByRole('button',{name:'Check recovery',exact:true})).toHaveCount(0);
+      await page.reload();await expect(studio.locator('.admin-editor-save-state').first()).toHaveText('Archived');
+      if(afterCommit==='retain'){
+        await call({method:'source-read-failure',body:{enabled:true}});await page.getByRole('button',{name:'Check recovery',exact:true}).click();
+        await expect(page.getByRole('alert')).toContainText('Moon recovery was not confirmed.');await expect(page.getByRole('button',{name:'Check recovery',exact:true})).toBeEnabled();
+        await expect(studio.getByRole('button',{name:'Choose another Moon',exact:true})).toBeDisabled();await call({method:'source-read-failure',body:{enabled:false}});
+      }
+      if(afterCommit!=='retain')expect(await call({method:'remove-source',body:{id:saved.id}})).toEqual({removed:true});
+      await page.getByRole('button',{name:afterCommit==='missing-cancel'?'Stop unconfirmed recovery':'Check recovery',exact:true}).click();await expect(page.getByRole('button',{name:'Check recovery',exact:true})).toHaveCount(0);
+      if(afterCommit!=='retain')await expect(page.getByText('This source changed after recovery. Reload to see its current state. This check did not change saved writing.',{exact:true})).toBeVisible();
     }else await expect(studio.getByRole('status')).toContainText('Reusable Moon readings restored.');
-    expect(writes).toBe(1);expect((await call({method:'rows'})).find((row:any)=>row.id===saved.id)).toEqual(original);expect(await call({method:'generation-calls'})).toBe(0);
+    expect(writes).toBe(1);expect((await call({method:'rows'})).find((row:any)=>row.id===saved.id)).toEqual(afterCommit==='retain'?original:undefined);expect(await call({method:'generation-calls'})).toBe(0);
     await expect(studio.getByRole('button',{name:'Choose another Moon',exact:true})).toBeEnabled();
     await expect(studio.locator('.admin-editor-save-state').first()).toHaveText('Archived');
     await expect(studio.getByRole('textbox',{name:'Sign heading',exact:true})).toBeDisabled();

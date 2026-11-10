@@ -8,8 +8,9 @@ export const store=await createApiStore([],{sqlMoonLifecycle:true,uuidIds:true})
 const storeFetch=globalThis.fetch;
 process.env.OPENAI_API_KEY='synthetic-moon-browser-key';
 process.env.CONTENT_GENERATION_PROVIDER_SKY_ARTICLE='openai';
-let generationCalls=0;
+let generationCalls=0,failSourceReads=false;
 globalThis.fetch=async(url:any,init:any={})=>{
+  if(failSourceReads&&String(url).includes('/generated_interpretations?')&&new URL(String(url)).searchParams.get('select')?.startsWith('id,content_key,updated_at,status,surface,mode,event_type,target_date,facts'))return Response.json({code:'synthetic-storage-unavailable'},{status:503});
   if(String(url).includes('/rpc/studio_memory_active_snapshot'))return Response.json([{snapshot:{rows:[],writingFeedback:[]}}]);
   if(String(url).includes('studio_writing_feedback'))return Response.json([]);
   if(String(url)==='https://api.openai.com/v1/responses'){
@@ -24,6 +25,8 @@ export async function invoke(method:string,body?:any,url='/api/admin/generated-c
   if(method==='rows')return [...store.rows.values()];
   if(method==='publications')return store.publication.publications();
   if(method==='close')return store.close();
+  if(method==='remove-source')return {removed:store.rows.delete(body.id)};
+  if(method==='source-read-failure'){failSourceReads=Boolean(body.enabled);return {enabled:failSourceReads};}
   if(method==='limit-reusable-baseline'){
     let retired=0;
     for(const source of lunationHoroscopeIdentities(body.event.phase,body.event.sign).filter(source=>!body.keepSigns.includes(source.risingSign))){

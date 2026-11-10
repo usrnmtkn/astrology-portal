@@ -44,7 +44,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.reload();await expect(page.getByRole('dialog')).toHaveCount(0);
       const check=page.getByRole('button',{name:'Check recovery',exact:true});await expect(check).toBeVisible();await check.click();
       await expect(check).toHaveCount(0);
-      await expect(page.getByText(theme==='dark'?'This source changed after recovery. The newer saved version has been kept. Reload to see its current state.':'Approved source restored for readers. Your saved writing remains in source history.',{exact:true})).toBeVisible();
+      await expect(page.getByText(theme==='dark'?'This source changed after recovery. Reload to see its current state. This check did not change saved writing.':'Approved source restored for readers. Your saved writing remains in source history.',{exact:true})).toBeVisible();
       const rows=await call({method:'rows'});expect(rows[0].body).toBe('Neutral complete source opening. Neutral complete source ending.');
       expect(writes).toBe(1);expect(errors).toEqual([]);
       await page.screenshot({path:`test-results/approved-source-recovery-${width}-${theme}.png`,fullPage:true});

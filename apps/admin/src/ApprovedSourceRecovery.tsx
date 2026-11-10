@@ -48,7 +48,7 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
       const result=await call(checkOnly?{action:cancel?'cancel':'status',operationId}:{action:'restore',operationId,sources:plan!.sources});
       if(result.state==='cancelled'){clearPending();setPending(null);setError('');latest.current.onSettled?.('Unconfirmed recovery stopped. Saved writing has not changed.');return;}
       if(result.state==='unconfirmed')throw new Error('Recovery is not confirmed. Check again before making another change.');
-      if(result.state==='changed'){clearPending();setPending(null);latest.current.onSettled?.('This source changed after recovery. The newer saved version has been kept. Reload to see its current state.');return;}
+      if(result.state==='changed'){clearPending();setPending(null);latest.current.onSettled?.('This source changed after recovery. Reload to see its current state. This check did not change saved writing.');return;}
       if(!result.ok||!Array.isArray(result.recovered)||!result.recovered.length)throw new Error('Recovery is not confirmed. Check the saved result before continuing.');
       clearPending();setPending(null);latest.current.onRecovered(result.recovered);
     }catch(failure){
