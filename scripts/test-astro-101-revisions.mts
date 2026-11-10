@@ -116,7 +116,10 @@ for (const row of [{ content_key: "education/astro-101/chapter/test", surface: "
 const db = new PGlite();
 try {
   await db.exec(publicationTestSchema);
-  for (const name of publicationMigrations.slice(0, -1)) await db.exec(readFileSync(new URL(`../apps/web/supabase/migrations/${name}`, import.meta.url), "utf8"));
+  const migrationName = '20261109083214_astro101_private_revision_publication.sql';
+  const migrationIndex = publicationMigrations.indexOf(migrationName);
+  assert(migrationIndex >= 0, 'The targeted Astro 101 migration remains registered');
+  for (const name of publicationMigrations.slice(0, migrationIndex)) await db.exec(readFileSync(new URL(`../apps/web/supabase/migrations/${name}`, import.meta.url), "utf8"));
   await db.exec("select set_config('request.jwt.claims','{\"role\":\"service_role\"}',false),set_config('request.headers','{\"x-content-publication-action\":\"publish\"}',false)");
   const target = { ...astro101RevisionFixture("chapter", "all"), status: "LIVE" };
   const proposal = { ...target, id: "cccccccc-cccc-4ccc-8ccc-cccccccccccc", status: "DRAFT", lane: "reference", mode: "studio-draft",
@@ -126,7 +129,7 @@ try {
     ledger: (await db.query("select to_jsonb(p) as row from content_publications p order by content_key")).rows,
     permissions: (await db.query("select prosecdef,proconfig,proacl from pg_proc where oid='public.content_studio_publish_revision(text,text,text,text,uuid,timestamptz,uuid,timestamptz,jsonb,jsonb,jsonb)'::regprocedure")).rows });
   const before = await snapshot();
-  const migration = readFileSync(new URL(`../apps/web/supabase/migrations/${publicationMigrations.at(-1)}`, import.meta.url), "utf8");
+  const migration = readFileSync(new URL(`../apps/web/supabase/migrations/${migrationName}`, import.meta.url), "utf8");
   await db.exec(migration);
   assert.deepEqual(await snapshot(), before, "Migration changes no writing, publication state, or function privileges");
   const rights: any = (await db.query("select has_function_privilege('anon','public.content_studio_publish_revision(text,text,text,text,uuid,timestamptz,uuid,timestamptz,jsonb,jsonb,jsonb)','EXECUTE') as anon, has_function_privilege('authenticated','public.content_studio_publish_revision(text,text,text,text,uuid,timestamptz,uuid,timestamptz,jsonb,jsonb,jsonb)','EXECUTE') as authenticated, has_function_privilege('service_role','public.content_studio_publish_revision(text,text,text,text,uuid,timestamptz,uuid,timestamptz,jsonb,jsonb,jsonb)','EXECUTE') as service")).rows[0];

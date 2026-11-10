@@ -67,6 +67,13 @@ and both bundle guards independently of the attribution run. A full privacy scan
 initially stopped because archive inspection was unavailable; its subsequent
 quiet rerun passed all11883 files. The initial scan is not counted as a pass.
 
+Hosted API CI exposed a pre-existing test assumption: the Astro 101 migration
+drift test selected the final entry in the shared migration list. Adding Moon
+recovery made it replay the Moon function instead. The test now selects its
+named Astro 101 migration and only earlier prerequisites. Its actual handler/SQL
+lifecycle regression passes; the production migrations were not relaxed. The
+failed hosted run remains failure evidence until the corrected head passes.
+
 Review regressions preserve PostgreSQL microseconds for preview, returned source
 versions, status and replay. A same-millisecond/different-microsecond source is
 changed, never restored. A validated completed receipt with a missing source also
