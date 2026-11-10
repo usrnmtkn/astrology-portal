@@ -69,8 +69,11 @@ export default function MemoryGraphDashboard() {
 
   function readMemory(params: string, signal: AbortSignal) {
     return readMemoryGraph(params, credential, signal).catch(error => {
-      if ((error as { status?: number }).status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
-      throw error;
+      if (!signal.aborted) {
+        if ((error as { status?: number }).status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
+        setError(error.message);
+      }
+      return null;
     });
   }
   useEffect(() => {
@@ -79,13 +82,13 @@ export default function MemoryGraphDashboard() {
     const controller = new AbortController();
     setError('');
     void readMemory('mode=visual', controller.signal).then(body => {
+      if (!body) return;
       setDocuments(body.documents);
       setCheckedAt(body.freshness?.checkedAt ?? '');
       if (emergencyCredential.current === credential) {
         try { window.localStorage.setItem(adminSecretStorageKey, credential); } catch { /* Keep access usable when storage is unavailable. */ }
       }
-    })
-      .catch(error => { if (!controller.signal.aborted) setError(error.message); });
+    });
     return () => controller.abort();
   }, [credential, refresh]);
   useEffect(() => {
@@ -98,7 +101,7 @@ export default function MemoryGraphDashboard() {
     const controller = new AbortController();
     setLoading(true); setError('');
     void readMemory(new URLSearchParams({ q: search, match: 'phrase', offset: String(offset) }).toString(), controller.signal)
-      .then(body => setPayload(body)).catch(error => { if (!controller.signal.aborted) setError(error.message); })
+      .then(body => { if (body) setPayload(body); })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [credential, search, offset, refresh]);
@@ -107,7 +110,7 @@ export default function MemoryGraphDashboard() {
     if (!selectedId || !credential) return;
     const controller = new AbortController();
     void readMemory(`mode=detail&id=${encodeURIComponent(selectedId)}`, controller.signal)
-      .then(body => setDetail(body.record)).catch(error => { if (!controller.signal.aborted) setError(error.message); });
+      .then(body => { if (body) setDetail(body.record); });
     return () => controller.abort();
   }, [credential, selectedId]);
   useEffect(() => {
