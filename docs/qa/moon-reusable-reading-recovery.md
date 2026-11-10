@@ -74,6 +74,22 @@ named Astro 101 migration and only earlier prerequisites. Its actual handler/SQL
 lifecycle regression passes; the production migrations were not relaxed. The
 failed hosted run remains failure evidence until the corrected head passes.
 
+Full unfiltered API and content suites passed on1554d41 (896.303s/407.052s
+inner), with normal prerequisites, stable source/dependencies/runtime and cleanup.
+The subsequent hosted Sky Moon reader failure exposed an invalid browser ledger
+fixture: missing API ETag/scoped routing and false successful-empty anonymous
+ledger responses despite stored publications. The fixture now serves canonical
+API schemas/ETags and actual stored rows under the anonymous range protocol.
+All four mobile/desktop light/dark cases pass with the original publication and
+retirement assertions intact, verified cached retirement, and real503 outage
+responses that cannot resurrect the reading. No production reader code changed.
+An API-only fixture correction still failed while anonymous reads falsely
+returned empty success; that intermediate failure is retained. A temporary
+requirement to refetch all keys after learning retirement was removed because
+cached retirement can correctly stop those fetches first. Normal hydration's
+retired-source key request was observed in the bounded diagnostic control.
+The required final-head API/hosted gates remain mandatory after this correction.
+
 Review regressions preserve PostgreSQL microseconds for preview, returned source
 versions, status and replay. A same-millisecond/different-microsecond source is
 changed, never restored. A validated completed receipt with a missing source also
