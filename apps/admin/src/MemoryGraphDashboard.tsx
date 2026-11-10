@@ -7,7 +7,7 @@ import { AdminAccessGate } from './AdminStudioPrimitives';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
-import { readMemoryGraph } from './memoryGraphRequest';
+import { readMemoryGraph } from './ownerSessionRequest';
 
 type Kind = 'rule' | 'correction' | 'example' | 'navigation' | 'note';
 type MemoryRecord = { id: string; kind: Kind; status: string; title: string; path: string; line: number; sourceId: string; family: string; register: string; role: string; contentKey: string; bodySha256: string };

@@ -7,7 +7,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const dir = await mkdtemp(path.join(tmpdir(), 'memory-request-'));
-await build({ entryPoints: ['apps/admin/src/memoryGraphRequest.ts'], bundle: true, format: 'esm',
+await build({ entryPoints: ['apps/admin/src/ownerSessionRequest.ts'], bundle: true, format: 'esm',
   outfile: path.join(dir, 'client.mjs'), define: { 'import.meta.env': JSON.stringify({
     VITE_SUPABASE_URL: 'https://memory-session.invalid', VITE_SUPABASE_PUBLISHABLE_KEY: 'fixture'
   }) } });
