@@ -49,7 +49,9 @@ try {
   };
   const before = await invoke(reader as any, 'POST', { keys: [key] });
   assert.equal(before.rows.length, 0, 'Unpublished drafts cannot serve');
-  assert.equal(lintModule.lintCard(body).score, 2, 'Generated drafts retain their existing warning score');
+  assert.equal(lintModule.lintCard(body).score, 3, 'Aspect closing-shape notes do not impose a sentence formula');
+  assert.equal(lintModule.lintCard(body, { mode: 'collective-placement-card' }).score, 2,
+    'The aspect standard must preserve placement closing-shape warnings');
   assert.equal((await invoke(handler, 'PATCH', { id: row.id, expectedUpdatedAt: opened.updated_at,
     ownerAction: 'approve-and-schedule' })).status, 409, 'Unchecked writing still requires a current check');
   const checked = await invoke(writing as any, 'POST', { contentKey: key, expectedUpdatedAt: opened.updated_at, action: 'recheck' });
@@ -57,7 +59,9 @@ try {
   const ready = checked.rows[0];
   assert.equal(ready.body, body, 'The real saved-text checker must preserve the full passage');
   assert.equal(ready.source_snapshot.skyAspectVoiceLint.fails, 0);
-  assert.ok(ready.source_snapshot.skyAspectVoiceLint.warns > 0, 'The synthetic short ending must retain its editorial warnings');
+  assert.ok(ready.source_snapshot.skyAspectVoiceLint.findings.some((finding: any) =>
+    finding.term === 'stacked-ending' && finding.severity === 'note'),
+  'The saved aspect checker retains closing-shape advice without imposing a sentence formula');
   assert.deepEqual(checked.issues, [], 'Editorial warnings must not block the owner from reviewing saved copy');
   assert.equal((await invoke(handler, 'PATCH', { id: row.id, expectedUpdatedAt: row.updated_at,
     ownerAction: 'approve-and-schedule' }, 'wrong')).status, 401);
