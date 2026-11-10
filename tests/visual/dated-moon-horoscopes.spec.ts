@@ -27,6 +27,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     if(width===390)await page.getByRole('button',{name:'Open Content Studio navigation',exact:true}).click();
     await page.getByRole('navigation',{name:'Content operations'}).getByRole('button',{name:'New & Full Moon horoscopes',exact:true}).click();
     const studio=page.getByRole('region',{name:'Dated Moon horoscopes',exact:true});
+    const headerStatus=studio.locator('.studio-sky-editor-toolbar .admin-editor-save-state');
     if(width===1440&&theme==='light'){
       await expect(studio.getByRole('alert')).toHaveText('Synthetic event lookup unavailable.');
       await studio.getByRole('button',{name:'Reload events',exact:true}).click();
@@ -69,6 +70,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await studio.getByRole('button',{name:'Save draft',exact:true}).click();
     await expect(studio.getByRole('status')).toHaveText('Draft saved.');
     let rows=await stored();expect(rows).toHaveLength(1);expect(rows[0].source_snapshot.editorialImport.originalSource).toBe(source);
+    await expect(headerStatus).toHaveText('Draft saved');
     const beforeReplacement=structuredClone(rows),reviewedBody=rows[0].sections.articleHoroscopes.passages[0].body,writesBeforeReplacement=writes.length;
     const replacement=source.replaceAll('complete synthetic','replacement synthetic');
     const save=studio.getByRole('button',{name:'Save draft',exact:true});
@@ -118,6 +120,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await studio.getByRole('checkbox').check();await studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Published.');
     rows=await stored();const published=rows[0];expect(published.status).toBe('LIVE');
+    await expect(headerStatus).toHaveText('Published');
     const publicResult=await call({method:'reader',body:{keys:[published.content_key]}});expect(publicResult.payload.rows[0].sections.articleHoroscopes.passages).toEqual(published.sections.articleHoroscopes.passages);expect(JSON.stringify(publicResult.payload)).not.toContain('originalSource');
     await page.screenshot({path:`test-results/dated-moon-horoscopes-${width}-${theme}.png`,fullPage:true});
     const publishPosition=await studio.getByRole('button',{name:'Publish',exact:true}).boundingBox();expect(publishPosition!.y).toBeGreaterThanOrEqual(0);expect(publishPosition!.y).toBeLessThan(1000);
@@ -147,6 +150,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await expect(archive).toBeEnabled();
     page.once('dialog',dialog=>dialog.accept());await archive.click();
     await expect(studio.getByRole('status')).toHaveText('Archived. Readings are no longer published.');
+    await expect(headerStatus).toHaveText('Archived');
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toBeDisabled();
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(exact);
     await expect(studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true})).toHaveCount(0);
@@ -156,6 +160,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     expect((await call({method:'reader',body:{keys:[published.content_key]}})).payload.rows).toHaveLength(0);
     await page.reload();
     await more();await expect(studio.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
+    await expect(headerStatus).toHaveText('Archived');
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toBeDisabled();
     await chooseSign('aries');
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(beforeArchive.sections.articleHoroscopes.passages[0].body);
@@ -166,10 +171,12 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await more();await expect(studio.getByRole('button',{name:'Restore as draft',exact:true})).toBeVisible();
     await studio.getByRole('button',{name:'Restore as draft',exact:true}).click();
     await expect(studio.getByRole('status')).toHaveText('Restored as a private draft.');
+    await expect(headerStatus).toHaveText('Draft saved');
     await expect(studio.getByLabel('Complete horoscope',{exact:true})).toBeEnabled();
     expect((await call({method:'reader',body:{keys:[published.content_key]}})).payload.rows).toHaveLength(0);
     await page.reload();
     await studio.getByRole('checkbox').check();
+    await expect(headerStatus).toHaveText('Draft saved');
     await studio.getByRole('button',{name:'Publish Moon horoscopes',exact:true}).click();
     await expect(studio.getByRole('status')).toContainText('Published.');
     const republished=(await call({method:'reader',body:{keys:[published.content_key]}})).payload.rows[0];
