@@ -21,7 +21,7 @@ const old = token('old'), fresh = token('fresh');
 const seed = (access = old) => storage.set('sb-memory-session-auth-token', JSON.stringify({
   access_token: access, refresh_token: 'synthetic-refresh', expires_at: Date.now() / 1000 + 3600
 }));
-const unavailable = () => Response.json({ ok: false, authFailure: 'verification_unavailable',
+const unavailable = () => Response.json({ ok: false, authFailure: 'temporary',
   error: 'Verification unavailable' }, { status: 503 });
 const read = (credential = 'synthetic-emergency', signal = new AbortController().signal) => readMemoryGraph('mode=visual', credential, signal);
 try {

@@ -44,7 +44,7 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
         : 'The emergency key was not accepted. Use the current Content Studio key or sign in as owner.' }); return;
     }
   } catch {
-    send(res, 503, { ok: false, authFailure: 'verification_unavailable', error: 'Content Studio access verification is temporarily unavailable. Please retry.' }); return;
+    send(res, 503, { ok: false, authFailure: 'temporary', error: 'Content Studio access verification is temporarily unavailable. Please retry.' }); return;
   }
   try {
     const url = new URL(req.url ?? '/', 'http://localhost');

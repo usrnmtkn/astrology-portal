@@ -39,8 +39,8 @@ export async function readMemoryGraph(params: string, credential: string, signal
       { signal, cache: 'no-store' }, false);
     const body = await response.json();
     signal.throwIfAborted();
-    if (retry && response.status === 503 && body.authFailure === 'verification_unavailable') continue;
-    if (!response.ok || !body.ok) failRequest(response.status, body.error || 'Memory unavailable.');
+    if (retry && response.status === 503 && body.authFailure === 'temporary') continue;
+    if (!response.ok || !body.ok) failRequest(response.status, body.error || 'Memory could not be loaded.');
     return body;
   }
 }
