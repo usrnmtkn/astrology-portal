@@ -90,6 +90,25 @@ cached retirement can correctly stop those fetches first. Normal hydration's
 retired-source key request was observed in the bounded diagnostic control.
 The required final-head API/hosted gates remain mandatory after this correction.
 
+## Accepted-main integration
+
+The 283b266 candidate passed fresh full API/content and all 66 hosted checks
+(four conditional skips), but the final-main guard found that main had advanced
+to 183083036. No DDL, merge or content write occurred. The rebase retains both
+the new main's Memory Graph tests and the Moon recovery suite. On that base,
+12 standalone Moon cases and 26 Web recovery/publication cases pass, along with
+types, CSS, reader-copy boundary and focused actual handler/SQL regressions.
+
+Matched attribution against 183083036 uses the same runtime, locked dependencies,
+CI placeholders and validated metadata-only knowledge normalization described
+above. Control/candidate Admin raw entry is 840746/841095, entry gzip 244282/244418
+and total gzip 921532/921942. Web total gzip is 3758253/3759038. Replace the earlier
+allowances with only +136 Admin entry gzip, +410 Admin total gzip and +785 Web
+total gzip. This preserves current control headroom and counts none of the
+Memory Graph release cost again. Other prior allowance history and every other
+guard remain unchanged. Ordinary unmodified builds/guards and all required
+post-integration exact-head gates remain separate release requirements.
+
 Review regressions preserve PostgreSQL microseconds for preview, returned source
 versions, status and replay. A same-millisecond/different-microsecond source is
 changed, never restored. A validated completed receipt with a missing source also
