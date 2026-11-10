@@ -20,6 +20,7 @@ for (const width of [1167, 390]) for (const theme of ['light', 'dark'] as const)
     const faults = new Set(['visual', 'search', 'detail']);
     const injected: string[] = [];
     await page.route('**/api/admin/memory-graph?**', async route => {
+      expect(route.request().method()).toBe('GET');
       const url = new URL(route.request().url());
       const phase = url.searchParams.get('mode') === 'visual' ? 'visual'
         : url.searchParams.get('mode') === 'detail' ? 'detail' : 'search';

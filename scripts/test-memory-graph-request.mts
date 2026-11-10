@@ -35,7 +35,8 @@ try {
     assert.equal(calls.length, 2);
     for (const call of calls) {
       assert.equal(call.url, '/api/admin/memory-graph?mode=visual');
-      assert.equal(call.init.method, 'GET'); assert.equal(call.init.cache, 'no-store');
+      assert.equal(new Request(new URL(call.url, 'https://memory.invalid'), call.init).method, 'GET');
+      assert.equal(call.init.cache, 'no-store');
       assert.equal(call.init.headers['x-content-generation-secret'], 'synthetic-emergency');
       assert.equal(call.init.body, undefined);
     }

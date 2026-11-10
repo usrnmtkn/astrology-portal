@@ -34,7 +34,7 @@ export async function readMemoryGraph(params: string, credential: string, signal
     signal.throwIfAborted();
     // Preserve the graph's existing inline denial text for emergency keys.
     const response = await fetchWithOwnerSession(`/api/admin/memory-graph?${params}`, credential,
-      { method: 'GET', signal, cache: 'no-store' }, false);
+      { signal, cache: 'no-store' }, false);
     const body = await response.json();
     signal.throwIfAborted();
     if (attempt === 0 && response.status === 503 && body.authFailure === 'content_admin_verification_unavailable') continue;

@@ -67,13 +67,11 @@ export default function MemoryGraphDashboard() {
   }, []);
 
 
-  async function readMemory(params: string, signal: AbortSignal) {
-    try {
-      return await readMemoryGraph(params, credential, signal);
-    } catch (error) {
+  function readMemory(params: string, signal: AbortSignal) {
+    return readMemoryGraph(params, credential, signal).catch(error => {
       if ((error as { status?: number }).status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
       throw error;
-    }
+    });
   }
   useEffect(() => {
     setDocuments(null); setPayload(null); setDetail(null); setSelectedId('');
