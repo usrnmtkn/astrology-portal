@@ -269,6 +269,9 @@ export default defineConfig(({ mode }) => {
         },
         output: {
           manualChunks(id) {
+            // Memory and Studio share this small authentication transport. Keep
+            // it with auth instead of borrowing a deferred article editor chunk.
+            if (id.endsWith('/apps/admin/src/ownerSessionRequest.ts')) return "auth";
             // The reader shares this pure field contract with Studio. Keep it
             // separate so a Sky visit does not download the editor workspace.
             if (id.endsWith("/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs")) return "sky";
