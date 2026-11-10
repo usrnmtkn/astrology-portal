@@ -7,7 +7,7 @@ import { AdminAccessGate } from './AdminStudioPrimitives';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
-import { readMemoryGraph } from './ownerSessionRequest';
+import { fetchWithOwnerSession } from './ownerSessionRequest';
 
 type Kind = 'rule' | 'correction' | 'example' | 'navigation' | 'note';
 type MemoryRecord = { id: string; kind: Kind; status: string; title: string; path: string; line: number; sourceId: string; family: string; register: string; role: string; contentKey: string; bodySha256: string };
@@ -67,14 +67,20 @@ export default function MemoryGraphDashboard() {
   }, []);
 
 
-  function readMemory(params: string, signal: AbortSignal) {
-    return readMemoryGraph(params, credential, signal).catch(error => {
+  async function readMemory(params: string, signal: AbortSignal) {
+    try {
+      const response = await fetchWithOwnerSession(`/api/admin/memory-graph?${params}`, credential, { signal, cache: 'no-store' }, false);
+      const body = await response.json();
+      signal.throwIfAborted();
+      if (!response.ok || !body.ok) throw Object.assign(new Error(body.error || 'Memory could not be loaded.'), {status: response.status});
+      return body;
+    } catch (error) {
       if (!signal.aborted) {
         if ((error as { status?: number }).status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
-        setError(error.message);
+        setError((error as Error).message);
       }
       return null;
-    });
+    }
   }
   useEffect(() => {
     setDocuments(null); setPayload(null); setDetail(null); setSelectedId('');

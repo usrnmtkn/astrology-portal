@@ -11,7 +11,7 @@ await build({ entryPoints: ['apps/admin/src/ownerSessionRequest.ts'], bundle: tr
   outfile: path.join(dir, 'client.mjs'), define: { 'import.meta.env': JSON.stringify({
     VITE_SUPABASE_URL: 'https://memory-session.invalid', VITE_SUPABASE_PUBLISHABLE_KEY: 'fixture'
   }) } });
-const { readMemoryGraph } = await import(pathToFileURL(path.join(dir, 'client.mjs')).href);
+const { fetchWithOwnerSession } = await import(pathToFileURL(path.join(dir, 'client.mjs')).href);
 const originalFetch = globalThis.fetch, originalWindow = globalThis.window;
 const storage = new Map<string, string>();
 globalThis.window = { localStorage: { getItem: (key: string) => storage.get(key) ?? null,
@@ -23,7 +23,7 @@ const seed = (access = old) => storage.set('sb-memory-session-auth-token', JSON.
 }));
 const unavailable = () => Response.json({ ok: false, authFailure: 'temporary',
   error: 'Verification unavailable' }, { status: 503 });
-const read = (credential = 'synthetic-emergency', signal = new AbortController().signal) => readMemoryGraph('mode=visual', credential, signal);
+const read = (credential = 'synthetic-emergency', signal = new AbortController().signal) => fetchWithOwnerSession('/api/admin/memory-graph?mode=visual', credential, {signal, cache: 'no-store'}, false);
 try {
   await test('one confirmed temporary verification error retries only the same graph GET', async () => {
     const calls: any[] = [];
@@ -31,7 +31,7 @@ try {
       calls.push({ url, init });
       return calls.length === 1 ? unavailable() : Response.json({ ok: true, documents: ['complete fixture'] });
     };
-    assert.deepEqual(await read(), { ok: true, documents: ['complete fixture'] });
+    assert.deepEqual(await (await read()).json(), { ok: true, documents: ['complete fixture'] });
     assert.equal(calls.length, 2);
     for (const call of calls) {
       assert.equal(call.url, '/api/admin/memory-graph?mode=visual');
@@ -44,13 +44,19 @@ try {
   await test('persistent verification failure stops after two requests and preserves the session', async () => {
     seed(); const before = storage.get('sb-memory-session-auth-token'); let calls = 0;
     globalThis.fetch = async () => { calls++; return unavailable(); };
-    await assert.rejects(read(old), error => error.status === 503);
+    assert.equal((await read(old)).status, 503);
     assert.equal(calls, 2); assert.equal(storage.get('sb-memory-session-auth-token'), before);
   });
   for (const status of [401, 403, 409, 503]) await test(`unmarked HTTP ${status} is never retried`, async () => {
     let calls = 0;
     globalThis.fetch = async () => { calls++; return Response.json({ ok: false, error: 'Denied fixture' }, { status }); };
-    await assert.rejects(read(), error => error.status === status); assert.equal(calls, 1);
+    assert.equal((await read()).status, status); assert.equal(calls, 1);
+  });
+  for (const [url, method] of [['/api/admin/memory-graph?mode=visual', 'POST'], ['/api/admin/other?mode=visual', 'GET']]) await test(`temporary auth failure never replays ${method} ${url}`, async () => {
+    let calls = 0;
+    globalThis.fetch = async () => { calls++; return unavailable(); };
+    assert.equal((await fetchWithOwnerSession(url, 'synthetic-emergency', {method}, false)).status, 503);
+    assert.equal(calls, 1);
   });
   await test('graph reads replace a captured token with the current same-owner token', async () => {
     seed(fresh); let calls = 0;
