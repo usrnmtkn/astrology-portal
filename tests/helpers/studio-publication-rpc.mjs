@@ -20,14 +20,18 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
   const fixture = async (input, init={}) => {
     const url = new URL(String(input), 'http://fixture.invalid');
     const name = url.pathname.split('/').at(-1);
-    if (!['content_studio_publication_receipt','content_studio_publish_revision','content_studio_row_history','retire_content_everywhere','publish_content_publication'].includes(name)) return null;
+    if(name==='content_baseline_recoveries'&&(!init.method||init.method==='GET')){
+      await fixture.prepare();
+      return Response.json(mapIds((await db.query('select request,result from content_baseline_recoveries where operation_id=$1',[url.searchParams.get('operation_id')?.slice(3)])).rows,true));
+    }
+    if (!['content_studio_publication_receipt','content_studio_publish_revision','content_studio_row_history','retire_content_everywhere','publish_content_publication','restore_moon_reusable_readings','cancel_content_source_recovery'].includes(name)) return null;
     const args = JSON.parse(String(init.body));
     if (!db && name === 'content_studio_publication_receipt') return Response.json(null);
     await fixture.prepare();
     try {
       if (name !== 'content_studio_publication_receipt') {
         const rows=getRows();
-        const needed = new Set(name === 'content_studio_publish_revision' ? [args.p_proposal_id,args.p_target_id,...args.p_dependencies.map(item=>item.id)] : [args.p_row_id]);
+        const needed = new Set(name === 'content_studio_publish_revision' ? [args.p_proposal_id,args.p_target_id,...args.p_dependencies.map(item=>item.id)] : [args.p_source?.id??args.p_row_id]);
         for (const row of rows.filter(row=>needed.has(row.id))) {
           const serialized=JSON.stringify(row); if (seeded.get(row.id)===serialized) continue;
           const mapped = mapIds(row);
@@ -68,6 +72,10 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
       const mappedArgs = mapIds(args);
       const receipt = name === 'content_studio_row_history'
         ? (await db.query('select public.content_studio_row_history($1,$2) as receipt',[mappedArgs.p_row_id,mappedArgs.p_before])).rows[0].receipt
+        : name === 'restore_moon_reusable_readings'
+        ? (await db.query('select public.restore_moon_reusable_readings($1,$2::jsonb) as receipt',[mappedArgs.p_operation_id,mappedArgs.p_source])).rows[0].receipt
+        : name === 'cancel_content_source_recovery'
+        ? (await db.query('select public.cancel_content_source_recovery($1) as receipt',[mappedArgs.p_operation_id])).rows[0].receipt
         : name === 'retire_content_everywhere'
         ? (await db.query('select to_jsonb(public.retire_content_everywhere($1,$2,$3)) as receipt',[mappedArgs.p_content_key,mappedArgs.p_row_id,mappedArgs.p_expected_updated_at])).rows[0].receipt
         : name === 'publish_content_publication'

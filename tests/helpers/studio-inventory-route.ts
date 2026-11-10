@@ -9,7 +9,7 @@ type StudioApiCall = (message: { method: string; body?: unknown; url?: string })
 
 export function isBaselineRecoveryPreview(body: any): boolean {
   const sources = body?.sources;
-  return !!body && Object.keys(body).sort().join(",") === "action,sources" && body.action === "preview"
+  return !!body && Object.keys(body).sort().join(",") === (body.recoveryKind==='moon-reusable'?"action,recoveryKind,sources":"action,sources") && body.action === "preview"
     && Array.isArray(sources) && sources.length >= 1 && sources.length <= 2
     && sources.every((source: any) => source && Object.keys(source).sort().join(",") === "contentKey,expectedUpdatedAt,id"
       && [source.id, source.contentKey, source.expectedUpdatedAt].every(value => typeof value === "string" && !!value));
