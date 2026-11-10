@@ -243,6 +243,7 @@ import {
   formatPlanetDegree,
   natalPlacementTitle,
   placementStatuses,
+  skyAspectAtEventTime,
   skyNodeDisplayPositions,
   solarPhaseStatusFor,
   wholeDegreeOrb
@@ -11686,10 +11687,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, detailSky.positions, detailSky.location.timeZone),
         event.startsAt, detailSky.location.timeZone || "UTC"
       );
-      const calculatedAspect = Date.parse(detailSky.generatedAt) === Date.parse(event.startsAt)
-        ? detailSky.aspects.find(aspect => aspect.type === event.aspect
-          && ((aspect.from === planetA && aspect.to === planetB) || (aspect.from === planetB && aspect.to === planetA)))
-        : undefined;
+      const calculatedAspect = skyAspectAtEventTime(detailSky, event);
       // The initial Calendar snapshot belongs to the selected day. Only the
       // event-time calculation can supply this dated article's position caption.
       detail.mechanicsCaption = calculatedAspect

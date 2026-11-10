@@ -1,4 +1,5 @@
-import type { PlanetPosition } from "../../types";
+import type { PlanetPosition, SkySnapshot } from "../../types";
+import type { LunarCalendarEvent } from "../../services/ephemeris";
 import { houseGlyph, pointGlyph, signGlyph } from "../../components/charts/chartAssets";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 
@@ -16,6 +17,13 @@ const zodiacSigns = [
   "Aquarius",
   "Pisces"
 ];
+
+export function skyAspectAtEventTime(sky: SkySnapshot, event: Pick<LunarCalendarEvent, "startsAt" | "planets" | "aspect">) {
+  if (Date.parse(sky.generatedAt) !== Date.parse(event.startsAt) || !event.planets || !event.aspect) return undefined;
+  const [first, second] = event.planets;
+  return sky.aspects.find(aspect => aspect.type === event.aspect
+    && ((aspect.from === first && aspect.to === second) || (aspect.from === second && aspect.to === first)));
+}
 
 function normalizedAngle(value: number) {
   return ((value % 360) + 360) % 360;
