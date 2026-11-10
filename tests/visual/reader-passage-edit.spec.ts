@@ -6,11 +6,66 @@ import { getLunarCalendarMonth } from '../../apps/web/src/services/ephemeris';
 import { calendarPassageRecord } from '../../src/shared/features/calendar/calendarPassageTemplates';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { parseStudioPassageEdit, studioPassageEditHref } from '../../src/shared/studioPassageEdit';
+import nodeArticleFactsHandler from '../../api/admin/sky-article-facts';
 
 const date='2026-10-21', timeZone='America/New_York';
 const location={label:'QA reference',latitude:0,longitude:0,timeZone};
 const datedKey=`calendar-passage/daily/${date}/America%2FNew_York`;
 const moonKey='authored/calendar-moon-transition/aquarius/pisces';
+
+for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) for (const [width,theme] of [[1440,'light'],[390,'dark']] as const) {
+  test(`Lunar node reader Edit resolves actual article facts ${planet} ${width} ${theme}`,async({page,context})=>{
+    test.setTimeout(120_000);
+    const store=await studioApiStore([],{uuidIds:true}),writes:any[]=[],errors:string[]=[];
+    let factsCalls=0;
+    context.on('page',popup=>popup.on('pageerror',error=>errors.push(error.message)));
+    page.on('pageerror',error=>errors.push(error.message));
+    try {
+      const before=await store.call({method:'rows'}),publications=await store.call({method:'publications'});
+      await context.addInitScript(({theme,location})=>{
+        if(window.location.origin==='null')return;
+        localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+        localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));
+        localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:studio-theme',theme);
+      },{theme,location});
+      await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v2',rows:[],publications:[],rowCount:0}}));
+      await context.route('**/rest/v1/**',async route=>route.fulfill({json:new URL(route.request().url()).pathname.endsWith('/content_publications')?await store.call({method:'publications'}):[]}));
+      await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
+        if(url.pathname==='/api/content-publications'){await route.fulfill({json:{schema:'tldr-publications/v1',publications:await store.call({method:'publications'})}});return true;}
+        if(url.pathname==='/api/content-reader'||url.pathname==='/api/admin/content-live-status'){
+          const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;
+        }
+        if(url.pathname==='/api/admin/sky-article-facts'){
+          factsCalls++;expect(url.searchParams.get('planet')).toBe(planet);expect(url.searchParams.get('format')).toBe('ingress-essay-v3');
+          process.env.CONTENT_GENERATION_SECRET='calendar-api-fixture';
+          const result={statusCode:0,payload:{} as any,setHeader(){},end(body:string){this.payload=JSON.parse(body);}};
+          await nodeArticleFactsHandler({method:'GET',url:url.pathname+url.search,headers:{'x-content-generation-secret':'calendar-api-fixture'}} as any,result as any);
+          expect(result.statusCode,JSON.stringify(result.payload)).toBe(200);
+          await route.fulfill({status:result.statusCode,json:result.payload});return true;
+        }
+        if(url.pathname==='/api/admin/sky-article-template-slots')throw new Error('Opening a node article must not generate writing.');
+        return false;
+      }});
+      await page.setViewportSize({width,height:1000});await page.goto(`/?date=2026-11-09#sky/placement/${planet}/${sign}`);
+      const article=page.locator('.sky-detail-article');await expect(article.locator('.sky-detail-body p').first()).toBeVisible({timeout:60000});
+      const title=await article.locator('h1').innerText();
+      const expected=await article.evaluate(node=>[...node.querySelectorAll<HTMLElement>('.sky-detail-body h2,.sky-detail-body h3,.sky-detail-body p,.sky-detail-body li,.sky-detail-body dt,.sky-detail-body dd')].filter(n=>!n.closest('#sky-personalized-placement,.sky-detail-rising-horoscopes-card,button,details')&&!n.parentElement?.closest('li')).map(n=>n.innerText.trim()).filter(Boolean).join('\n\n'));
+      expect(expected.length).toBeGreaterThan(500);
+      const opened=context.waitForEvent('page');await article.getByRole('link',{name:'Edit this passage',exact:true}).click();const editor=await opened;
+      await editor.setViewportSize({width,height:1000});
+      const form=editor.getByRole('region',{name:'Article for this visit',exact:true});
+      await expect(form.getByLabel('Visit article title')).toHaveValue(title,{timeout:60000});
+      await expect(form.getByLabel('Visit article body')).toHaveValue(expected);
+      await expect(form.getByRole('complementary',{name:'Article settings'})).toContainText('Full sign visit');
+      await expect(editor.getByRole('alert')).toHaveCount(0);expect(factsCalls).toBeGreaterThan(0);
+      expect(writes).toEqual([]);expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(publications);
+      expect(await editor.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      await editor.screenshot({path:test.info().outputPath(`node-editor-${planet}-${width}-${theme}.png`)});
+      await editor.close();expect(errors).toEqual([]);
+    } finally {store.close();}
+  });
+}
+
 async function expectEditLinkStyle(link: import('@playwright/test').Locator) {
   const style=await link.evaluate(node=>{
     const css=getComputedStyle(node),probe=document.createElement('span');

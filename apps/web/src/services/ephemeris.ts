@@ -3560,7 +3560,7 @@ export type SkyPlacementTransitFacts = {
 };
 
 function placementPlanet(swe: SwissEphInstance, requestedPlanet: string) {
-  const key = requestedPlanet.trim().toLowerCase();
+  const key = requestedPlanet.trim().toLowerCase().replace(/[_\s]+/gu, "-");
   const supported = [
     ["sun", "Sun", swe.SE_SUN],
     ["moon", "Moon", swe.SE_MOON],
