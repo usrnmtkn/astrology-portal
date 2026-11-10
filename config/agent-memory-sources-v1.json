@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "authorityIndex": "tldr-astro-phrasebank/TLDR-WRITING-AUTHORITY-INDEX.md",
   "sources": [
+    {"path": "docs/writing/SKY_CALENDAR_ASPECT_STANDARD.md", "kind": "rule", "role": "TLDR Astro: Planetary Aspect Writing Standard — Sky and Calendar collective aspect drafts only; no generated wording/publication approval"},
     {"path": "docs/content-management/SKY_INGRESS_ESSAYS.md", "kind": "note", "role": "October 9 dated ingress format, API evidence and Studio-to-reader integration; not wording approval"},
     {"path": "docs/writing/RHETORICAL_PATTERN_PROTECTIONS.md", "kind": "rule", "role": "October 6, October 9 and November 6 owner amendments: contextual rhetoric protections, review-only aphorisms, consistent metaphorical images, earned horoscope endings and source preservation"},
     { "path": "AGENTS.md", "kind": "rule", "role": "Project instructions" },

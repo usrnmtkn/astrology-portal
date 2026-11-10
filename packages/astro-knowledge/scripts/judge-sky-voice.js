@@ -92,6 +92,17 @@ function goldStandard(tier, n = 2, mode = "collective-aspect-card") {
 // weak drafts, so the judge knows exactly what to catch.
 function buildJudgePrompt(card, options = {}) {
   const { tier = "", mode = "collective-aspect-card", foundationLines = [] } = options;
+  if (mode === 'collective-aspect-card') return [
+    'SURFACE\nsky', 'CONTENT FAMILY\nsky-aspect',
+    'Review this collective Sky/Calendar aspect against the complete current owner standard in the system instructions. Keep the existing score and owner-final review policy. Evaluate the exact aspect, both planets, clear opening, recognizable experience, ordinary voice, variation, balance and meaningful ending. A supportive contact needs no invented conflict. No paragraph count, truth-plus-catch close, mandatory warmth line or advice is required. Examples supply voice only, never the current astrology or a required structure.',
+    'COMPLETE REGISTER EXAMPLES', ...goldStandard(tier, 2, mode),
+    'Retain the existing precise self-reduction distinctions instead of vague shrink/shrinking shorthand:',
+    ...SELF_REDUCTION_FAMILIES.map(([key, meaning]) => `${key} = ${meaning}.`),
+    'Retain the existing outside-writer construction review in voice/banned-constructions.json. Shared astrology terminology is not evidence of borrowed voice; preserve complete owner source wording.',
+    'OPTIONAL COMPLETE OWNER FOUNDATION LINES', JSON.stringify(foundationLines, null, 2),
+    'CARD TO SCORE', card,
+    'Return ONLY strict JSON: {"score": 1|2|3, "verdict": "in-voice"|"borderline"|"off-voice", "weakest": "the single weakest sentence, quoted", "why": "one short reason"}. A model score is not prose approval or publication authority.'
+  ].join('\n\n');
   const placement = mode === PLACEMENT_MODE || mode === PLACEMENT_WITH_TOPPER_MODE;
   const placementWithTopper = mode === PLACEMENT_WITH_TOPPER_MODE;
   const tierHint = placement ? PLACEMENT_TIER_HINT[tier] : TIER_HINT[tier];

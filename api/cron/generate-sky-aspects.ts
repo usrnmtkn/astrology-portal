@@ -1,4 +1,5 @@
 import {approvedVoiceStyleReference,approvedVoiceStylePrompt} from '../../src/astro-writing/approvedVoiceStyle.mjs';
+import { SKY_ASPECT_EDITORIAL_VERSION, SKY_ASPECT_STANDARD_SHA256 } from '../../src/astro-writing/skyAspectEditorialAuthority.cjs';
 import { approvedStudioPairSources } from "../_lib/sky-studio-sources.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
@@ -208,6 +209,7 @@ export function skyAspectKernel(args: {
   const gate = prepareProductionPreCallGate(input);
   const config = generationConfig("sky-exact-aspect");
   const generationMetadata = {
+    skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 },
     provider: config.provider,
     model: config.model,
     temperature: config.temperature,
@@ -443,7 +445,7 @@ async function saveRoutedCard({
         judge_verdict: judgeVerdict,
         judge_gate: gate,
         judge_why: judgeWhy,
-        prompt_version: "sky-aspect-card-v1",
+        prompt_version: SKY_ASPECT_EDITORIAL_VERSION,
         provider: result.provider,
         model: result.model,
         headline: `${first.planet} ${aspect.type} ${second.planet}`,

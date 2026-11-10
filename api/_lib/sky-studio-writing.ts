@@ -20,7 +20,8 @@ export async function runStudioSkyWriting(key: string, action: "generate" | "rec
         return { text: body, lint, judge: null };
     // Read live corrections before any paid work. Failure is explicit, never an empty-success fallback.
     const feedback = studioFeedbackEnabled() ? selectStudioFeedback(await activeStudioFeedback(), key) : null;
-    const memory = buildSkyWritingMemory(identity, { studioCorrections: feedback?.corrections ?? [] });
+    // The aspect provider boundary owns the one scoped effective-rule layer.
+    const memory = buildSkyWritingMemory(identity, { studioCorrections: feedback?.corrections ?? [], includeEffectiveRules: identity.kind !== 'aspect' });
     const explicit = await loadExplicitWritingFeedback({contentKey:key,surface:'sky'});
     if (feedback) (memory.receipt as any).studioFeedback = {
         ...feedback.receipt,

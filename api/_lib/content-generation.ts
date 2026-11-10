@@ -19,6 +19,7 @@ import { generatedReportWritingContract } from "./transit-reading-writing-contra
 import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
 import { GHOSTWRITING_SKILL_INSTRUCTIONS, withGhostwritingSkill } from "../../src/astro-writing/ghostwritingSkill.mjs";
 import { SYNASTRY_EDITORIAL_VERSION, synastryInstructionsForRole } from "../../src/astro-writing/synastryEditorialAuthority.cjs";
+import { SKY_ASPECT_EDITORIAL_VERSION, SKY_ASPECT_STANDARD_SHA256, isCollectiveSkyAspectInput } from "../../src/astro-writing/skyAspectEditorialAuthority.cjs";
 import { prepareSynastrySourceInput, synastryContactOwnership, validateSynastryMeaningPlan, synastrySourceReceipt, synastryMeaningPlanSchema, designatedSynastryVoiceReferences } from "../../src/astro-writing/synastrySourceContext.cjs";
 import { loadExplicitWritingFeedback, ingressWritingFeedbackTarget } from "./studio-explicit-writing-feedback.js";
 import { RHETORICAL_LABELS, RHETORICAL_WRITER_POLICY, rhetoricalReviewContract, validateRhetoricalReview, rhetoricalDecision } from '../../src/astro-writing/rhetoricalPatterns.mjs';
@@ -2629,7 +2630,8 @@ function isSynastryAspectInput(input: GenerateContentInput) {
     );
 }
 
-function synastryInstructionContext(input: GenerateContentInput) {
+function editorialInstructionContext(input: GenerateContentInput) {
+  if (isCollectiveSkyAspectInput(input)) return { surface: 'sky', family: 'sky-aspect' };
   return isSynastryAspectInput(input) ? { surface: "synastry", family: "synastry-aspect" } : {};
 }
 
@@ -4656,6 +4658,26 @@ function buildSynastryPrompt(input: GenerateContentInput, approvedExamples: Appr
   ].filter(Boolean).join("\n\n");
 }
 
+function buildSkyAspectPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[], qualityFeedback: string) {
+  const styleGuide = readTextFile('packages/astro-knowledge/voice/tldr-astro/style-guide.md');
+  return [
+    synastrySharedStyleGuide(styleGuide).replace('# TLDR Astro shared rules for synastry', '# TLDR Astro shared rules for Sky/Calendar aspects'),
+    'SURFACE\nsky', 'CONTENT FAMILY\nsky-aspect',
+    `EDITORIAL STANDARD ${SKY_ASPECT_EDITORIAL_VERSION}; complete owner standard is supplied in the system instructions.`,
+    'Write one shared collective Sky/Calendar aspect interpretation. Preserve the supplied aspect and each planet or point. Use only supplied signs, timing and calculation method; leave missing facts unknown. This is not natal or personalized transit writing.',
+    `OUTPUT FIELD CONTRACT\n${factualHeadlineFor(input) ? `Use exact headline ${JSON.stringify(factualHeadlineFor(input))}.` : 'Use a factual aspect headline.'} Return all existing JSON schema fields. summary and tldr preview the meaning without depending on later paragraphs. body contains the full interpretation, usually about 100–150 words when appropriate, without a fixed paragraph or sentence formula. action may be empty; no advice is required. timing and timingNote may be empty when calculated timing is absent. sections may be empty. sceneLock records the possible experience, not a required scene or an asserted event. astrologyDrilldown explains only supplied facts, including both planets; do not invent factors to fill a field.`,
+    'ASTROLOGY FACTS', JSON.stringify(input.facts, null, 2),
+    'TARGET DATE', input.targetDate ?? 'not supplied',
+    'SOURCE SNAPSHOT', JSON.stringify(input.sourceSnapshot ?? {}, null, 2),
+    'ASTROLOGY SOURCE MATERIAL — meaning evidence; its advice or structure is not a required ending', sourceBackedRevisionPrompt(input), v4ExamplesPrompt(input),
+    hellenisticMeaningPrompt({facts:input.facts,surface:input.surface,family:'sky-aspect'}),
+    approvedVoiceStylePrompt({surface:input.surface,family:'sky-aspect'}),
+    'COMPLETE APPROVED OWNER EXAMPLES — voice evidence only; retain their complete text without transferring their facts, scenes or structure', approvedExamplesPrompt(approvedExamples),
+    'EXTRA VOICE NOTES', input.voiceNotes ?? 'None.',
+    qualityFeedback ? `QUALITY FEEDBACK FROM PRIOR DRAFT\n${qualityFeedback}` : ''
+  ].filter(Boolean).join('\n\n');
+}
+
 function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = [], qualityFeedback = "") {
   if (isFriendTransitReadingInput(input)) {
     const brief = friendTransitReadingBriefFromFacts(input.facts);
@@ -4676,6 +4698,7 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
   }
 
   if (isSynastryAspectInput(input)) return buildSynastryPrompt(input, approvedExamples, qualityFeedback);
+  if (isCollectiveSkyAspectInput(input)) return buildSkyAspectPrompt(input, approvedExamples, qualityFeedback);
 
   const styleGuide = readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md");
   const lockedHeadline = factualHeadlineFor(input);
@@ -5412,7 +5435,7 @@ async function reviewGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     taskInstructions: rhetoricalReviewContract(deterministicReaderCopy(draft)),
     request: {
       model,
@@ -5490,7 +5513,7 @@ async function planGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "MEANING_PLANNER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     taskInstructions: "Astrology first. Return only the governed structured meaning plan. Do not draft prose.",
     request: {
       model,
@@ -5560,7 +5583,7 @@ async function reviseGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVISER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5610,6 +5633,7 @@ async function reviseGeneratedContentWithOpenAI({
     generation_metadata: writeGenerationMetadata({ role: "REVISER", model, reasoningEffort,
       ...((writingFeedback?.receipt.selected.length || isSynastryAspectInput(input)) ? { evidencePacket: {
         ...(writingFeedback && (isSynastryAspectInput(input) || writingFeedback.receipt.selected.length) ? { writingFeedback: writingFeedback.receipt } : {}),
+        ...(isCollectiveSkyAspectInput(input) ? { skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 } } : {}),
         ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {})
       } } : {}) })
   };
@@ -5652,7 +5676,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "WRITER",
-    ...synastryInstructionContext(input),
+    ...editorialInstructionContext(input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5689,6 +5713,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
       reasoningEffort,
       sourceIds: approvedExamples.map((example) => example.contentKey),
       evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
+        ...(isCollectiveSkyAspectInput(input) ? { skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 } } : {}),
         ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
         ...(writingFeedback && (isSynastryAspectInput(input) || writingFeedback.receipt.selected.length)?{writingFeedback:writingFeedback.receipt}:{})}
     })
@@ -5755,7 +5780,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const legacyPrompt = isSynastryAspectInput(input)
+    const legacyPrompt = isSynastryAspectInput(input) || isCollectiveSkyAspectInput(input)
       ? buildPrompt(input, approvedExamples, qualityFeedback)
       : `${buildPrompt(input, approvedExamples, qualityFeedback)}\n\n${RHETORICAL_WRITER_POLICY}`;
     const publicWriterPrompt = productionGate.governedPromptEnabled
@@ -5775,7 +5800,9 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
         model,
         max_tokens: 5000,
         system: isSynastryAspectInput(input)
-          ? effectiveRulePrompt(withGhostwritingSkill(synastryInstructionsForRole("WRITER")), synastryInstructionContext(input))
+          ? effectiveRulePrompt(withGhostwritingSkill(synastryInstructionsForRole("WRITER")), editorialInstructionContext(input))
+          : isCollectiveSkyAspectInput(input)
+          ? governedInstructionsForRole('WRITER', editorialInstructionContext(input))
           : GHOSTWRITING_SKILL_INSTRUCTIONS,
         messages: [
           {
@@ -5834,7 +5861,8 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
           model,
           sourceIds: approvedExamples.map((example) => example.contentKey),
           evidencePacket: {approvedVoiceStyle: !input.reportPayload&&!isFriendTransitReadingInput(input)?approvedVoiceStyleReference({surface:input.surface,family:input.eventType})?.receipt??null:null,
-            ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
+            ...(isCollectiveSkyAspectInput(input) ? { skyAspectWritingStandard: { version: SKY_ASPECT_EDITORIAL_VERSION, sourceSha256: SKY_ASPECT_STANDARD_SHA256 } } : {}),
+        ...(isSynastryAspectInput(input) ? { synastrySourceContext: { editorialVersion: SYNASTRY_EDITORIAL_VERSION, ...synastrySourceReceipt(input) } } : {}),
             ...(writingFeedback && (isSynastryAspectInput(input) || writingFeedback.receipt.selected.length)?{writingFeedback:writingFeedback.receipt}:{})}
         })
       };

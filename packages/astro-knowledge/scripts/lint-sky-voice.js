@@ -88,6 +88,8 @@ function closerSentenceCount(sentences) {
 }
 
 function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisory = false, warningsAdvisory = false } = {}) {
+  const currentAspect = mode === "collective-aspect-card";
+  paragraphCountAdvisory ||= currentAspect;
   const findings = [];
   const sentences = (text.match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());
   const placementCloserCount = mode === PLACEMENT_MODE ? closerSentenceCount(sentences) : 0;
@@ -277,6 +279,12 @@ function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisor
     });
   }
 
+  if (currentAspect) {
+    for (const finding of findings) if (finding.source === 'shape') {
+      finding.severity = 'note';
+      finding.reason = 'Review the complete thought; this aspect standard has no paragraph or closing-sentence formula.';
+    }
+  }
   const fails = findings.filter((f) => f.severity === "fail").length;
   const warns = findings.filter((f) => f.severity === "warn").length;
   // score is driven by rule violations only; structural notes are advisory

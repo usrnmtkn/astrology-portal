@@ -395,7 +395,7 @@ function matchingWarmthSentences(draftText, foundationLines) {
   });
 }
 
-function lintAspectWarmthUsage(draftText, harvest) {
+function lintAspectWarmthUsage(draftText, harvest, { freeStructure = false } = {}) {
   const sentences = sentenceSegments(draftText);
   const matches = matchingWarmthSentences(draftText, harvest?.ownerFoundationLines || []);
   const findings = [];
@@ -406,7 +406,7 @@ function lintAspectWarmthUsage(draftText, harvest) {
     if (matches.length > 1) {
       findings.push({ severity: "fail", field: "body", reason: `expected at most one warmth beat; found ${matches.length}` });
     }
-    if (matches.length === 1 && matches[0].index < sentences.length - 2) {
+    if (!freeStructure && matches.length === 1 && matches[0].index < sentences.length - 2) {
       findings.push({ severity: "fail", field: "body", reason: "warmth beat must be the final or penultimate sentence" });
     }
   }

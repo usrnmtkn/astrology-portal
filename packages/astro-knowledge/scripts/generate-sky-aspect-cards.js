@@ -23,7 +23,7 @@ const {
   canonicalAstrologyReviewInstructions,
   canonicalAstrologyWritingInstructions
 } = require("../../../src/astro-writing/canonicalInstructions.cjs");
-const { callOpenAIResponses } = require("../../../src/astro-writing/openAIResponses.cjs");
+const { callOpenAIResponses, governedInstructionsForRole, inferredPromptContext } = require("../../../src/astro-writing/openAIResponses.cjs");
 const {
   annotateCandidateWithWarmth,
   buildAspectWarmthHarvest,
@@ -656,83 +656,26 @@ function buildPrompt({ a, b, aspect, signA, signB }, { avoidTerms = [], allowRev
   const exact = normalized.exactAspect;
   const field = ASPECT_FIELD[normalized.aspect];
   const meaning = { blend: pair.blend, active: pair[field], harmonious: pair.harmonious, hard: pair.hard, traditional: pair.traditional };
-  const elements = [normalized.a, normalized.b, normalized.signA, normalized.signB].map((t) => `${cap(t)}=${elementOf(t) || "-"}`).join(", ");
-  const failList = [...spec.outputBans.fail.map((x) => x.term)].join(", ");
-  const retryAvoidance = [...new Set(avoidTerms.map((term) => String(term ?? "").trim()).filter(Boolean))];
-
+  const failList = spec.outputBans.fail.map(x => x.term).join(", ");
+  const retryAvoidance = [...new Set(avoidTerms.map(String).filter(Boolean))];
   return [
-    `Write ONE collective sky-aspect card for ${TITLE[normalized.a]} in ${cap(normalized.signA)} ${normalized.aspect} ${TITLE[normalized.b]} in ${cap(normalized.signB)}.`,
-    ``,
-    `VOICE: ${spec.voiceDescription}`,
-    `PERSON: ${spec.personNote}`,
+    'SURFACE\nsky', 'CONTENT FAMILY\nsky-aspect',
+    `Write one shared Sky/Calendar interpretation for ${TITLE[normalized.a]} in ${cap(normalized.signA)} ${normalized.aspect} ${TITLE[normalized.b]} in ${cap(normalized.signB)}.`,
+    'Follow the complete current planetary aspect standard in the system instructions. This is a collective sky-to-sky contact, not a natal reading. No exact date, degree, applying/separating or waxing/waning phase is supplied here; source descriptions of a phase do not establish that phase for this contact.',
     buildOwnerVocabularyPrompt({ surface: "sky-aspect-card", maxCore: 12, maxShared: 8, maxAcShared: 6, maxSdAdditions: 5 }),
-    ``,
-    `EXACT ASPECT SOURCE (primary; preserve this aspect's distinctions and do not flatten it into the pair group):`,
-    `  source: ${normalized.exactAspectSource ?? "No exact source exists; use the pair source only."}`,
-    `  modern: ${exact?.modern ?? exact?.base ?? ""}`,
-    `  cyclic phase: ${exact?.cyclic?.phase ?? ""}`,
-    `  cyclic meaning: ${exact?.cyclic?.meaning ?? ""}`,
-    `  waxing: ${exact?.cyclic?.waxing ?? ""}`,
-    `  waning: ${exact?.cyclic?.waning ?? ""}`,
-    `  business: ${exact?.business ?? ""}`,
-    `  shadow: ${exact?.shadow ?? ""}`,
-    `  applying arc: ${exact?.arcApplying ?? ""}`,
-    `  separating arc: ${exact?.arcSeparating ?? ""}`,
-    ``,
-    `PAIR SOURCE (secondary context only):`,
-    `  pair essence (blend): ${meaning.blend ?? meaning.NOTE}`,
-    `  this aspect (${field}): ${meaning.active ?? ""}`,
-    `  gift face (harmonious): ${meaning.harmonious ?? ""}`,
-    `  shadow face (hard): ${meaning.hard ?? ""}`,
-    ``,
-    foundationPromptBlock(warmthHarvest),
-    ``,
-    `SHAPE — hit all 8 beats across two short paragraphs:`,
-    ...spec.shape.beats.map((x) => `  ${x.n}. ${x.beat}: ${x.does}  [source: ${x.source}]`),
-    ``,
-    `PHRASE BANK (draw from these; they are the approved register):`,
-    `  planet verbs: ${spec.useWords.planetVerbs.join(", ")}`,
-    `  collective subjects: ${spec.useWords.collectiveSubjects.join(", ")}`,
-    `  modern objects: ${spec.useWords.modernObjects.join(", ")}`,
-    `  mood cues: ${spec.useWords.moodCues.join(", ")}`,
-    ``,
-    `RULES:`,
-    `  - Never use these words/phrases: ${failList}.`,
-    `  - "steady" only if stable/strong/solid precedes it. Bare "loop" -> use "cycle".`,
-    `  - Em dash is banned; use a spaced hyphen " - " instead.`,
-    `  - Keep absolute dates, degrees, orb, and detailed space mechanics out of the card body; the app renders those separately from facts.`,
-    `  - Metaphors: elemental imagery is allowed only when it matches an element in play here (${elements}). Do NOT name the element or the mechanics ("air-fire sextile", "this trine links two air signs", "fire ignites water") - the element is felt, never labeled.`,
-    ``,
-    `ANTI-PATTERNS (these are why weak drafts fail - avoid every one):`,
-    `  - End on one concrete truth, then a catch that turns on it.`,
-    `  - Keep the three-example beat terse and fragmentary, with no named actors or mini-stories.`,
-    `  - Do NOT write "The gift is X; the shadow is Y." Weave both faces into the actual situation.`,
-    `  - Do NOT explain the astrology or name the aspect geometry in the body.`,
-    `  - Avoid "viral", and avoid motivational-poster lines ("adapt or get left behind", "power without purpose is chaos", "leaves ash"). Be specific and grounded instead.`,
-    `  - Vary the verb for each planet; do not lean on "demands" every time.`,
-    `  - Show both faces, but as one flowing observation, not a labeled list.`,
-    ...(warmthHarvest.harvest_mode === "matched"
-      ? [`  - The warmth beat is exactly one sentence after the shadow or cost is named, as the final or penultimate sentence. Never add a second warmth beat or a second conclusion.`]
-      : [`  - No owner warmth line was found. Do not invent a permission, reassurance, benediction, or turn-toward-the-reader sentence.`]),
-    ``,
-    `IN-VOICE EXEMPLARS (match this register, do not copy):`,
-    ...fewShot().map((b, i) => `  [${i + 1}] ${b}`),
-    ``,
-    `RANGE OF GOOD CLOSES (real approved closes; learn the range, do not copy):`,
-    ...closeBank().map((close, i) => `  [${i + 1}] ${close}`),
-    ...(retryAvoidance.length
-      ? [
-          ``,
-          `LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE(S): ${retryAvoidance.map((term) => JSON.stringify(term)).join(", ")}.`,
-          `Do not use those terms again. Do not use "gift" or "shadow" as labels.`
-        ]
-      : []),
-    ``,
-    `OUT OF VOICE (a weak draft - do NOT write like this: stacked endings, named mechanics, "gift is/shadow is", generic):`,
-    `  We are caught in a quick current of change that feels electric and deep at once. This trine links two air signs, making adaptation fast and clear. The gift is sharp, effective change; the shadow is upheaval so fast it risks breaking before it builds. Change will not wait for comfort or consent. Adapt quickly or get left behind. Change is here. Change demands speed.`,
-    ``,
-    `Return only the card text.`,
-  ].join("\n");
+    'EXACT ASPECT SOURCE (primary meaning; distinguish this exact aspect from the secondary pair group):',
+    `Source: ${normalized.exactAspectSource ?? 'No exact source exists; use the pair meaning only.'}`,
+    JSON.stringify(exact ?? {}, null, 2),
+    'PAIR SOURCE (secondary meaning only; supportive contacts need no invented shadow):',
+    JSON.stringify(meaning, null, 2),
+    'COMPLETE OWNER FOUNDATION LINES (optional voice evidence, never required sentences or a closing formula):',
+    ...warmthHarvest.ownerFoundationLines.map(entry => `[${entry.sourceArticleId}] ${entry.suppliedLine}`),
+    'COMPLETE IN-VOICE EXEMPLARS (learn voice; retain their complete text, but do not copy their astrology, events or structure):',
+    ...fewShot().map((body, i) => `[${i + 1}] ${body}`),
+    `Existing output vocabulary bans remain: ${failList}.`,
+    'Keep absolute dates, degrees, orb and detailed mechanics in the separate calculated caption. Keep a literal metaphor image consistent; use plain language when it does not hold together. The opening must stand alone as the Calendar preview. Return the full shared interpretation only, without internal notes. No fixed paragraph count, example sequence, advice or concluding maxim is required.',
+    ...(retryAvoidance.length ? [`The previous draft used these existing banned terms: ${retryAvoidance.map(term => JSON.stringify(term)).join(', ')}. Correct those terms without inventing facts or a new ending.`] : [])
+  ].join("\n\n");
 }
 
 function unquoteEnvValue(value) {
@@ -978,9 +921,11 @@ function cleanCardText(value) {
 function buildRepairPrompt(text, reason, { warmthHarvest = null } = {}) {
   return [
     `A careful editor flagged this card: ${JSON.stringify(String(reason ?? "").trim())}.`,
-    `Fix ONLY what the note describes. End on one concrete truth and the catch that turns on it - no second aphorism, no advice.`,
+    warmthHarvest
+      ? `Fix ONLY what the note describes. End when the aspect is understood; no advice, maxim or catch is required.`
+      : `Fix ONLY what the note describes. End on one concrete truth and the catch that turns on it - no second aphorism, no advice.`,
     `Change nothing else: do not reword the rest, do not add length. Return only the corrected card.`,
-    ...(warmthHarvest?.generationAllowed ? [``, foundationPromptBlock(warmthHarvest)] : []),
+    ...(warmthHarvest?.generationAllowed ? ['SURFACE\nsky', 'CONTENT FAMILY\nsky-aspect', 'Optional complete owner voice lines, not a required ending:', ...warmthHarvest.ownerFoundationLines.map(entry => entry.suppliedLine)] : []),
     ``,
     `CARD`,
     text
@@ -991,6 +936,8 @@ function buildRepairPrompt(text, reason, { warmthHarvest = null } = {}) {
 // and mechanics are deliberately not accepted here.
 async function generateWithConfig(prompt, config, { temperature, beforeProviderCall } = {}) {
   const temp = temperature ?? config.temperature;
+  const context = inferredPromptContext({ input: prompt });
+  const currentAspect = context.surface === "sky" && context.family === "sky-aspect";
 
   if (beforeProviderCall != null && typeof beforeProviderCall !== "function") {
     throw new Error("Sky Aspect beforeProviderCall must be a function.");
@@ -1014,7 +961,8 @@ async function generateWithConfig(prompt, config, { temperature, beforeProviderC
         model: config.model,
         max_tokens: 1500,
         temperature: temp,
-        messages: [{ role: "user", content: `${prompt}\n\n${config.role === "judge" ? RHETORICAL_JUDGE_POLICY : RHETORICAL_WRITER_POLICY}` }]
+        ...(currentAspect ? { system: governedInstructionsForRole(config.role === "judge" ? "REVIEWER" : "WRITER", context) } : {}),
+        messages: [{ role: "user", content: currentAspect ? prompt : `${prompt}\n\n${config.role === "judge" ? RHETORICAL_JUDGE_POLICY : RHETORICAL_WRITER_POLICY}` }]
       })
     });
     const payload = await response.json();
@@ -1031,6 +979,7 @@ async function generateWithConfig(prompt, config, { temperature, beforeProviderC
   const { response, payload } = await callOpenAIResponses({
     apiKey: config.apiKey,
     role: config.role === "judge" ? "REVIEWER" : "WRITER",
+    ...context,
     request: {
       model: config.model,
       input: prompt,
@@ -1122,7 +1071,7 @@ async function runCardPipeline({
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const text = cleanCardText(await generateFn(prompt));
     const cardLint = lintCard(text, { mode: lintMode });
-    const warmthLint = warmthHarvest ? lintAspectWarmthUsage(text, warmthHarvest) : null;
+    const warmthLint = warmthHarvest ? lintAspectWarmthUsage(text, warmthHarvest, { freeStructure: lintMode === "collective-aspect-card" }) : null;
     const lint = warmthLint
       ? {
           ...cardLint,
@@ -1186,7 +1135,7 @@ async function runCardPipeline({
                 : await repairCard(text, reason, { generateFn, warmthHarvest })
             );
             const repairedCardLint = lintCard(repairedText, { mode: lintMode });
-            const repairedWarmthLint = warmthHarvest ? lintAspectWarmthUsage(repairedText, warmthHarvest) : null;
+            const repairedWarmthLint = warmthHarvest ? lintAspectWarmthUsage(repairedText, warmthHarvest, { freeStructure: lintMode === "collective-aspect-card" }) : null;
             const repairedLint = repairedWarmthLint
               ? {
                   ...repairedCardLint,
@@ -1242,6 +1191,7 @@ async function runCardPipeline({
     }
     const avoidTerms = [...new Set(
       lint.findings
+        .filter((finding) => lintMode !== 'collective-aspect-card' || finding.severity !== 'note')
         .map((finding) => String(finding.retryInstruction ?? finding.term ?? "").trim())
         .filter(Boolean)
     )];
