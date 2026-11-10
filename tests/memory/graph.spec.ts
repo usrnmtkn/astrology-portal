@@ -107,7 +107,8 @@ test('owner access leads to a configured sign-in screen and preserves the memory
   await expect(page.getByText('Add VITE_SUPABASE_URL and a Supabase publishable key to enable live sign-on.')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Continue with Google', exact: true })).toBeEnabled();
   await expect(page.getByLabel('Email', { exact: true })).toBeEnabled();
-  await expect(page.getByRole('textbox', { name: 'Password Show password', exact: true })).toBeEnabled();
+  await expect(page.getByLabel('Password', { exact: true })).toBeEnabled();
+  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute('type', 'password');
 });
 
 

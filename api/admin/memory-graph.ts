@@ -39,12 +39,12 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
     if (!hasCredential || !await authorize(req)) {
       const hasSession = Boolean(String(req.headers['x-content-admin-session'] ?? '').trim());
-      send(res, 401, { ok: false, error: hasSession
+      send(res, 401, { ok: false, authFailure: 'content_admin_unauthorized', error: hasSession
         ? 'This signed-in account does not have Content Studio access. Sign in with the owner account or use the emergency key.'
         : 'The emergency key was not accepted. Use the current Content Studio key or sign in as owner.' }); return;
     }
   } catch {
-    send(res, 503, { ok: false, error: 'Content Studio access verification is temporarily unavailable. Please retry.' }); return;
+    send(res, 503, { ok: false, authFailure: 'temporary', error: 'Content Studio access verification is temporarily unavailable. Please retry.' }); return;
   }
   try {
     const url = new URL(req.url ?? '/', 'http://localhost');

@@ -2,6 +2,12 @@
 
 The Memory graph is at `/admin/content/memory`, linked from Content Studio’s Operations navigation. It reuses verified Content Studio owner sessions and emergency admin access. The read-only API verifies access before reading source data, and sends private, no-store responses. The canvas loads complete text for a bounded sample after authorization; search details load on demand. Memory source data is never imported into browser assets.
 
+Graph requests use Studio's existing session-renewal path. A confirmed temporary
+owner-verification failure permits one additional graph GET; it does not discard
+the credential or cache a successful authorization. Persistent failures retain
+the existing Try again control. Rejected credentials still fail closed. Graph,
+search and detail requests share this bounded recovery, including after reload.
+
 The canvas connects repository sources to their records and draws documented qualifications and literal repository citations. Supersessions are retained in the index; hidden historical endpoints are not drawn. Dashed shared-term links are separately labeled suggestions: a deterministic TF-IDF overlap calculation requires at least three specific shared terms and a 0.28 cosine score, then keeps at most two suggestions per memory across different sources. Each suggestion exposes its matching words. It does not establish semantic truth, supersession, approval, or writing authority. Search remains lexical and conversations are not ingested automatically. The authenticated viewer follows the owner-requested heyhaigh.ai memory-graph controls: a full-screen canvas, floating search and results, a legend, and zoom controls. It uses a self-hosted Geist Mono font (SIL OFL included), 280 × 38 px search field with 13 px text, 12 px result chips with 6 × 12 px padding, 164 px legend with a 49 px header, and 64 × 36 px Fit control. These measured values are shared graph tokens in theme.css. The large page title remains available to screen readers. The access gate continues to use Content Studio authentication.
 
 `config/agent-memory-sources-v1.json` defines the curated source list and relationships. The active authority index contributes its live document links. Examples preserve complete source text; source and body hashes identify the exact evidence. Historical and rejected examples are excluded by default. Later owner qualifications accompany every recall. Empty example records are reported and omitted.
