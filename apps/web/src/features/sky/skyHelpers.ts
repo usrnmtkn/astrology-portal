@@ -19,10 +19,9 @@ const zodiacSigns = [
 ];
 
 export function skyAspectAtEventTime(sky: SkySnapshot, event: Pick<LunarCalendarEvent, "startsAt" | "planets" | "aspect">) {
-  if (Date.parse(sky.generatedAt) !== Date.parse(event.startsAt) || !event.planets || !event.aspect) return undefined;
-  const [first, second] = event.planets;
+  if (Date.parse(sky.generatedAt) !== Date.parse(event.startsAt)) return undefined;
   return sky.aspects.find(aspect => aspect.type === event.aspect
-    && ((aspect.from === first && aspect.to === second) || (aspect.from === second && aspect.to === first)));
+    && event.planets?.includes(aspect.from) && event.planets.includes(aspect.to));
 }
 
 function normalizedAngle(value: number) {
