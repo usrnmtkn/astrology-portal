@@ -166,7 +166,9 @@ async function request(url = '', headers = {}, method = 'GET') {
   return response;
 }
 test('actual handler blocks anonymous and non-admin identities, with no data in denial', async () => {
-  assert.equal((await request()).statusCode, 401);
+  const anonymous = await request();
+  assert.equal(anonymous.statusCode, 401);
+  assert.equal(anonymous.body.authFailure, 'content_admin_unauthorized');
   const originalFetch = globalThis.fetch;
   try {
     globalThis.fetch = async input => {
@@ -175,6 +177,7 @@ test('actual handler blocks anonymous and non-admin identities, with no data in 
     };
     const denied = await request('', { 'x-content-admin-session': 'reader-token' });
     assert.equal(denied.statusCode, 401); assert(!denied.body.records);
+    assert.equal(denied.body.authFailure, 'content_admin_unauthorized');
     globalThis.fetch = async () => Response.json({ email: 'owner@example.invalid', app_metadata: {} });
     const allowed = await request('?limit=2', { 'x-content-admin-session': 'owner-token' });
     assert.equal(allowed.statusCode, 200); assert.equal(allowed.body.records.length, 2);
@@ -278,6 +281,7 @@ test('preview access fails closed on upstream errors and does not turn a public 
   const res = { statusCode:0,setHeader(){},end(value){this.body=JSON.parse(value);} };
   await h({method:'GET',url:'/api/admin/memory-graph',headers:{'x-content-admin-session':'token'}},res);
   assert.equal(res.statusCode,503); assert.equal(res.body.ok,false); assert.equal(res.body.records,undefined);
+  assert.equal(res.body.authFailure,'content_admin_verification_unavailable');
 });
 
 

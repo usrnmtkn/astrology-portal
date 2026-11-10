@@ -5,8 +5,9 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { MemoryGraph, type DocumentWithMemories } from '@supermemory/memory-graph';
 import { AdminAccessGate } from './AdminStudioPrimitives';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
-import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
+import { adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
+import { readMemoryGraph } from './memoryGraphRequest';
 
 type Kind = 'rule' | 'correction' | 'example' | 'navigation' | 'note';
 type MemoryRecord = { id: string; kind: Kind; status: string; title: string; path: string; line: number; sourceId: string; family: string; register: string; role: string; contentKey: string; bodySha256: string };
@@ -67,14 +68,12 @@ export default function MemoryGraphDashboard() {
 
 
   async function readMemory(params: string, signal: AbortSignal) {
-    const response = await fetch(`/api/admin/memory-graph?${params}`, { headers: adminCredentialHeaders(credential), signal, cache: 'no-store' });
-    const body = await response.json();
-    signal.throwIfAborted();
-    if (!response.ok || !body.ok) {
-      if (response.status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
-      throw new Error(body.error || 'Memory could not be loaded.');
+    try {
+      return await readMemoryGraph(params, credential, signal);
+    } catch (error) {
+      if ((error as { status?: number }).status === 401) { rejectedCredential.current = credential; emergencyCredential.current = ''; setCredential(''); }
+      throw error;
     }
-    return body;
   }
   useEffect(() => {
     setDocuments(null); setPayload(null); setDetail(null); setSelectedId('');
