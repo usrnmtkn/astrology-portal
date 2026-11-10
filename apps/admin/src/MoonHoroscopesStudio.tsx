@@ -183,7 +183,7 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
   }
   return <section className="admin-template-page studio-moon-horoscopes" aria-label="Dated Moon horoscopes">
     <header className="studio-sky-editor-toolbar">
-      <div className="admin-toolbar-actions"><h2 ref={editor} tabIndex={-1}>{opened?opened.title:'Choose a Moon event'}</h2>{opened&&<span className="admin-editor-save-state">{busy?'Working…':archived?'Archived':dirty?'Unsaved changes':working?'Draft saved':saved?.status==='LIVE'?'Published':saved?'Draft saved':'Not saved'}</span>}</div>
+      <div className="admin-toolbar-actions"><h2 ref={editor} tabIndex={-1}>{opened?opened.title:'Choose a Moon event'}</h2>{opened&&<span className="admin-editor-save-state">{busy?'Working…':archived?'Archived':dirty?'Unsaved changes':!working&&saved?.status==='LIVE'?'Published':working||saved?'Draft saved':'Not saved'}</span>}</div>
       {opened&&<div className="admin-toolbar-actions"><StudioButton disabled={!canSave} onClick={()=>void run(()=>save())}>Save draft</StudioButton><StudioButton className="admin-primary-button" disabled={!canPublish} onClick={()=>void run(preparePublication)}>Publish</StudioButton></div>}
     </header>
     <Stack gap="lg">

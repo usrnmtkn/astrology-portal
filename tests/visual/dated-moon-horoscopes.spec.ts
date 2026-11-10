@@ -52,6 +52,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const phas
     await chooseSign('taurus');await studio.getByLabel('Complete horoscope',{exact:true}).fill('Taurus private writing.');
     await chooseSign('aries');await expect(studio.getByLabel('Complete horoscope',{exact:true})).toHaveValue(manual);
     await studio.getByRole('button',{name:'Save draft',exact:true}).click();await expect(studio.getByRole('status')).toHaveText('Draft saved.');
+    await expect(headerStatus).toHaveText('Draft saved');
     await expect(studio.getByRole('button',{name:'Publish',exact:true})).toBeDisabled();
     const raw=(await call({method:'rows'})).find((row:any)=>row.sections?.moonWritingDraft);expect(raw.lane).toBe('reference');expect(raw.sections.moonWritingDraft.section.passages[0].body).toBe(manual);
     expect((await call({method:'reader',body:{keys:[raw.content_key]}})).payload.rows).toHaveLength(0);
