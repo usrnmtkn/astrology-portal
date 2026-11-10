@@ -282,7 +282,9 @@ function lintCard(text, { mode = "collective-aspect-card", paragraphCountAdvisor
   if (currentAspect) {
     for (const finding of findings) if (finding.source === 'shape') {
       finding.severity = 'note';
-      finding.reason = 'Review the complete thought; this aspect standard has no paragraph or closing-sentence formula.';
+      finding.reason = finding.term === 'paragraph-count'
+        ? 'Paragraph breaks are your editorial choice.'
+        : 'Review the complete thought; this aspect standard has no paragraph or closing-sentence formula.';
     }
   }
   const fails = findings.filter((f) => f.severity === "fail").length;

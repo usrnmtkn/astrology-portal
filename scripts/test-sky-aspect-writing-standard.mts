@@ -93,6 +93,8 @@ try {
   const one=lintCard(body);assert.equal(one.fails,0,'A complete single paragraph has no shape failure.');
   const three=lintCard(['People compare the information.','A question adds context.','They understand the answer.'].join('\n\n'));
   assert.equal(three.fails,0,'No paragraph quota.');
+  assert.equal(three.findings.find((finding: any)=>finding.term==='paragraph-count')?.reason,
+    'Paragraph breaks are your editorial choice.','Keep the saved-editor paragraph advice without suggesting a quota.');
   assert.equal(lintCard(body,{mode:'collective-placement-card'}).fails>0,true,'Existing placement shape stays scoped.');
   const candidate=await generator.generateCard({a:'sun',b:'pluto',aspect:'opposition',signA:'leo',signB:'aquarius'},{maxRetries:1,generateFn:async()=>body});
   assert.equal(candidate.text,body);assert.equal(candidate.attempts,1);
