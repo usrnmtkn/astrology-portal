@@ -33,13 +33,8 @@ for (const sample of [
     const longitudes = [swe.SE_MOON, sample.second === 'Venus' ? swe.SE_VENUS : swe.SE_MERCURY]
       .map(id => swe.calc_ut(jd, id, swe.SEFLG_SWIEPH | swe.SEFLG_SPEED)[0]);
     const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
-    const placement = (longitude: number) => {
-      const minutes = Math.round((longitude % 30) * 60);
-      return `${Math.floor(minutes / 60)}°${String(minutes % 60).padStart(2, '0')}' ${signs[Math.floor(longitude / 30)]}`;
-    };
     const separation = Math.abs(((longitudes[0] - longitudes[1] + 540) % 360) - 180);
     expect(Math.abs(separation - 90)).toBeLessThan(0.001);
-    const expectedFacts = `Moon is at ${placement(longitudes[0])}; ${sample.second} is at ${placement(longitudes[1])}. They form a square (${separation.toFixed(1)}° apart).`;
     await page.setViewportSize({ width, height: 1000 });
     await page.clock.setFixedTime(new Date(`${sample.date}T16:00:00Z`));
     await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: theme });
@@ -83,10 +78,18 @@ for (const sample of [
       const caption = article.locator('.sky-aspect-mechanics p');
       await expect(caption).toHaveCount(0);
       await page.evaluate(() => (window as any).releaseCaptionEvent());
-      await expect(caption).toContainText(expectedFacts, { timeout: 60_000 });
-      const completeCaption = await caption.textContent();
+      await expect(caption).toContainText(`They form a square (${separation.toFixed(1)}° apart).`, { timeout: 60_000 });
+      const completeCaption = (await caption.textContent())!;
+      const placements = [...completeCaption.matchAll(/is at (\d+)°(\d+)' (\w+)/g)];
+      expect(placements).toHaveLength(2);
+      for (const [index, match] of placements.entries()) {
+        const displayed = signs.indexOf(match[3]) * 30 + Number(match[1]) + Number(match[2]) / 60;
+        const error = Math.abs(((displayed - longitudes[index] + 540) % 360) - 180);
+        // The snapshot retains hundredths of a degree; the caption shows minutes.
+        expect(error).toBeLessThan(1 / 60);
+      }
       await page.reload();
-      await expect(caption).toHaveText(completeCaption!, { timeout: 60_000 });
+      await expect(caption).toHaveText(completeCaption, { timeout: 60_000 });
       assertNoErrors();
     } finally { await page.evaluate(() => (window as any).releaseCaptionEvent()); }
   });
