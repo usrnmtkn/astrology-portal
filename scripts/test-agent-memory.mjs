@@ -281,7 +281,7 @@ test('preview access fails closed on upstream errors and does not turn a public 
   const res = { statusCode:0,setHeader(){},end(value){this.body=JSON.parse(value);} };
   await h({method:'GET',url:'/api/admin/memory-graph',headers:{'x-content-admin-session':'token'}},res);
   assert.equal(res.statusCode,503); assert.equal(res.body.ok,false); assert.equal(res.body.records,undefined);
-  assert.equal(res.body.authFailure,'content_admin_verification_unavailable');
+  assert.equal(res.body.authFailure,'verification_unavailable');
 });
 
 

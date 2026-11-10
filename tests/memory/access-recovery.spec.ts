@@ -8,7 +8,7 @@ const sourceHash = createHash('sha256').update(fs.readFileSync(standardPath)).di
 const index = buildMemoryIndex({ root: process.cwd() });
 const sections = index.records.filter(record => record.path === standardPath)
   .map(record => memoryDetail(index, record.id));
-const unavailable = { ok: false, authFailure: 'content_admin_verification_unavailable',
+const unavailable = { ok: false, authFailure: 'verification_unavailable',
   error: 'Content Studio access verification is temporarily unavailable. Please retry.' };
 
 for (const width of [1167, 390]) for (const theme of ['light', 'dark'] as const) {
