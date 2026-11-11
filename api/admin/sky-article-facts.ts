@@ -6,8 +6,6 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts, skyArticlePeriod } from "../_lib/sky-article-facts.js";
 import { isSkyIngressEssay } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { skyPreviewReferenceDate } from "../../src/shared/skyReaderPreview.js";
-import { getSkyPlacementSnapshot } from "../../apps/web/src/services/ephemeris.js";
-import { factsFromSkySnapshot } from "../../apps/web/src/services/astrologyFacts.js";
 
 loadLocalWebEnv();
 
@@ -64,6 +62,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const facts = await calculateSkyArticleEditionFacts(referenceInstant, planet, format, period);
     if (!readerSign) { sendAdminJson(res, 200, { ok: true, facts }); return; }
     if (readerSign !== facts.sign) throw new AdminHttpError(400, 'The reader placement does not match this instant.');
+    const [{ getSkyPlacementSnapshot }, { factsFromSkySnapshot }] = await Promise.all([
+      import('../../apps/web/src/services/ephemeris.js'), import('../../apps/web/src/services/astrologyFacts.js')
+    ]);
     const readerSky = await getSkyPlacementSnapshot({ label: 'Selected location', latitude, longitude, timeZone },
       planet, readerSign, referenceInstant, true, 'placement');
     readerSky.calculationProvenance = { ...readerSky.calculationProvenance!, source: 'server-swisseph-wasm' };
