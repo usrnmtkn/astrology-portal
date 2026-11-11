@@ -4,11 +4,21 @@ on:
 permissions:
   contents: read
 jobs:
+  host-font-metadata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          fc-match system-ui
+          fc-match sans-serif
+          dpkg-query -W fonts-dejavu-core
   compare:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     container:
       image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
     strategy:
       fail-fast: false
       matrix:
@@ -43,6 +53,9 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: source/package-lock.json
+      - run: |
+          fc-cache -f
+          fc-match system-ui
       - run: npm ci
       - run: npm run build:knowledge
       - run: |

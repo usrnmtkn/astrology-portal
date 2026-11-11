@@ -33,6 +33,7 @@ async function captureAdminControl(page: Page, name: string) {
   await page.screenshot({path:output+'.png',animations:'disabled',fullPage:false});
   const {writeFile}=await import('node:fs/promises');
   await writeFile(output+'.json',JSON.stringify({viewport:page.viewportSize(),typography,resolvedFonts},null,2));
+  await expect.soft(page).toHaveScreenshot(name+'.png', screenshotOptions);
 }
 `;
 fs.writeFileSync(file,source);
