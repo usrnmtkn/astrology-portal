@@ -85,3 +85,30 @@ test('article facts HTTP handler retains exact reader instants and rejects misma
     assert.equal((await invoke('date=2026-11-07')).payload.facts.referenceInstant,'2026-11-07T12:00:00.000Z','Older date-only links remain supported.');
   } finally {if(secret===undefined)delete process.env.CONTENT_GENERATION_SECRET;else process.env.CONTENT_GENERATION_SECRET=secret;await rm(directory,{recursive:true,force:true});}
 });
+
+test('reader snapshots require owner access and bind complete Swiss facts to the exact location and instant', async () => {
+  const {default:handler}=await import('../api/admin/sky-article-facts');
+  const {isVerifiedSkySnapshot}=await import('../apps/web/src/services/verifiedSkyCache');
+  const secret=process.env.CONTENT_GENERATION_SECRET;
+  process.env.CONTENT_GENERATION_SECRET='synthetic-reader-snapshot-owner';
+  const base={planet:'south-node',date:'2026-11-09',instant:'2026-11-09T17:00:00.000Z',timeZone:'America/New_York',
+    period:'current',format:'ingress-essay-v3',readerSign:'leo',lat:'0',lon:'0'};
+  const invoke=async(changes:Record<string,string>={},authorized=true)=>{
+    const result={statusCode:200,payload:null as any,setHeader(){},end(body:string){this.payload=JSON.parse(body);}};
+    await handler({method:'GET',url:'/api/admin/sky-article-facts?'+new URLSearchParams({...base,...changes}),
+      headers:authorized?{'x-content-generation-secret':'synthetic-reader-snapshot-owner'}:{}} as any,result as any);
+    return result;
+  };
+  try {
+    assert.equal((await invoke({},false)).statusCode,401);
+    const result=await invoke();assert.equal(result.statusCode,200);assert.equal(result.payload.ok,true);
+    const sky=result.payload.readerSky;assert.ok(isVerifiedSkySnapshot(sky));
+    assert.equal(sky.generatedAt,base.instant);assert.equal(result.payload.facts.generatedAt,base.instant);
+    assert.equal(sky.positions.length,14);assert.equal(sky.calculationProvenance.source,'server-swisseph-wasm');
+    assert.equal(sky.location.latitude,0);assert.equal(sky.location.longitude,0);assert.equal(sky.location.timeZone,base.timeZone);
+    assert.equal(sky.placementAspectFacts.planet,'South Node');assert.equal(sky.placementAspectFacts.sign.toLowerCase(),'leo');
+    assert.ok(sky.placementAspectFacts.inSign.length>0);
+    for(const invalid of [{readerSign:'aquarius'},{lat:''},{lat:'91'},{lon:'-181'},{timeZone:'bad-zone'},
+      {period:'visit'},{format:'saved-template'}])assert.equal((await invoke(invalid)).statusCode,400,JSON.stringify(invalid));
+  } finally {if(secret===undefined)delete process.env.CONTENT_GENERATION_SECRET;else process.env.CONTENT_GENERATION_SECRET=secret;}
+});

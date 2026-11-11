@@ -46,10 +46,11 @@ export default function StudioSkyReaderPreviewPage() {
         if (!Number.isInteger(input.requestId) || !isSkyReaderPreviewDate(input.date) || !['published', 'draft'].includes(input.mode)
           || !/^[a-z-]+$/u.test(input.planet) || !/^[a-z-]+$/u.test(input.sign)) throw new Error('Choose a valid placement and preview date.');
         if (input.captureArticle && (input.mode !== 'published' || input.draft)) throw new Error('Open the published article before editing its wording.');
+        if (input.readerSky && !input.captureArticle) throw new Error('A supplied calculation is only available when opening published wording.');
         const nextTheme = input.theme === 'dark' ? 'dark' : 'light';
         document.documentElement.dataset.theme = nextTheme; setTheme(nextTheme);
         const key = JSON.stringify([input.planet, input.sign, input.date, input.location, input.instant]);
-        if (context?.key !== key) {
+        if (context?.key !== key || input.readerSky) {
           const { prepareStudioSkyPlacementReader } = await import('./studioSkyReaderPreparation');
           context = { key, request: prepareStudioSkyPlacementReader(input) };
         }

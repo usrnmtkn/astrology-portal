@@ -14,14 +14,21 @@ const location={label:'QA reference',latitude:0,longitude:0,timeZone};
 const datedKey=`calendar-passage/daily/${date}/America%2FNew_York`;
 const moonKey='authored/calendar-moon-transition/aquarius/pisces';
 
-for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) for (const [width,theme,copyMode] of [[1440,'light','normal'],[390,'dark','normal'],[1440,'light','delayed'],[390,'dark','delayed'],[1440,'light','stalled-once'],[390,'dark','stalled-always']] as const) {
+async function actualReaderFacts(url: URL) {
+  process.env.CONTENT_GENERATION_SECRET='calendar-api-fixture';
+  const result={statusCode:0,payload:{} as any,setHeader(){},end(body:string){this.payload=JSON.parse(body);}};
+  await nodeArticleFactsHandler({method:'GET',url:url.pathname+url.search,headers:{'x-content-generation-secret':'calendar-api-fixture'}} as any,result as any);
+  return result;
+}
+
+for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) for (const [width,theme,copyMode] of [[1440,'light','normal'],[390,'dark','normal'],[1440,'light','delayed'],[390,'dark','delayed'],[1440,'light','stalled-once'],[390,'dark','stalled-always'],[1440,'light','paused-worker']] as const) {
   if(planet!=='south-node'&&copyMode.startsWith('stalled'))continue;
-  const delayedCopy=copyMode!=='normal';
-  test(`Lunar node reader Edit resolves actual article facts ${planet} ${width} ${theme}${delayedCopy ? ` with ${copyMode} complete copy` : ''}`,async({page,context})=>{
+  if(planet!=='south-node'&&copyMode==='paused-worker')continue;
+  const pausedWorker=copyMode==='paused-worker',delayedCopy=copyMode!=='normal'&&!pausedWorker;
+  test(`Lunar node reader Edit resolves actual article facts ${planet} ${width} ${theme}${pausedWorker ? ' with paused worker' : delayedCopy ? ` with ${copyMode} complete copy` : ''}`,async({page,context})=>{
     test.setTimeout(120_000);
     const store=await studioApiStore([],{uuidIds:true}),writes:any[]=[],errors:string[]=[];
-    let factsCalls=0,failFacts=false,releaseFacts=()=>{},releaseFailure=()=>{};
-    const factsResponse=delayedCopy ? new Promise<void>(resolve=>{releaseFacts=resolve;}) : Promise.resolve();
+    let factsCalls=0,failFacts=false,corruptSnapshot=false,releaseFailure=()=>{};
     const failureResponse=new Promise<void>(resolve=>{releaseFailure=resolve;});
     context.on('page',popup=>popup.on('pageerror',error=>errors.push(error.message)));
     page.on('pageerror',error=>errors.push(error.message));
@@ -58,11 +65,9 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
         if(url.pathname==='/api/admin/sky-article-facts'){
           factsCalls++;expect(url.searchParams.get('planet')).toBe(planet);expect(url.searchParams.get('format')).toBe('ingress-essay-v3');
           if(failFacts){await failureResponse;await route.fulfill({status:503,json:{ok:false,error:'Synthetic calculated facts unavailable.'}});return true;}
-          process.env.CONTENT_GENERATION_SECRET='calendar-api-fixture';
-          const result={statusCode:0,payload:{} as any,setHeader(){},end(body:string){this.payload=JSON.parse(body);}};
-          await nodeArticleFactsHandler({method:'GET',url:url.pathname+url.search,headers:{'x-content-generation-secret':'calendar-api-fixture'}} as any,result as any);
+          const result=await actualReaderFacts(url);
           expect(result.statusCode,JSON.stringify(result.payload)).toBe(200);
-          await factsResponse;
+          if(corruptSnapshot)result.payload.readerSky.location.longitude=1;
           await route.fulfill({status:result.statusCode,json:result.payload});return true;
         }
         if(url.pathname==='/api/admin/sky-article-template-slots')throw new Error('Opening a node article must not generate writing.');
@@ -75,12 +80,21 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
       expect(expected.length).toBeGreaterThan(500);
       const edit=article.getByRole('link',{name:'Edit this passage',exact:true});
       let editor=page;
-      if(delayedCopy){
+      if(pausedWorker){
+        await context.route('**/studio/sky-reader-preview?**', route=>route.abort());
+        const debuggerSession=await context.newCDPSession(page);
+        debuggerSession.on('Target.attachedToTarget',event=>{
+          if(event.targetInfo.type==='worker')console.log('Held calculation worker before startup.');
+        });
+        await debuggerSession.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true,
+          filter:[{type:'worker',exclude:false},{exclude:true}]});
+        await page.goto((await edit.getAttribute('href'))!);
+      }else if(delayedCopy){
         const href=(await edit.getAttribute('href'))!;
         await page.clock.install();await page.goto(href);
         if(copyMode.startsWith('stalled')){
           await expect(page.locator('html')).toHaveAttribute('data-reader-copy-missed','1',{timeout:60000});
-          expect(factsCalls).toBe(1);releaseFacts();
+          expect(factsCalls).toBe(1);
           await page.clock.fastForward(60_000);
           if(copyMode==='stalled-always'){
             await expect(page.locator('html')).toHaveAttribute('data-reader-copy-missed','2',{timeout:60000});
@@ -94,7 +108,7 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
         }
         await expect(page.locator('html')).toHaveAttribute('data-reader-copy-pending','true',{timeout:60000});
         expect(factsCalls,'Facts must start while the complete reader copy is pending.').toBe(copyMode==='stalled-once' ? 2 : 1);
-        releaseFacts();await page.clock.fastForward(35_000);
+        await page.clock.fastForward(35_000);
       }else{
         const opened=context.waitForEvent('page');await edit.click();editor=await opened;
       }
@@ -104,6 +118,15 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
       await expect(form.getByLabel('Visit article body')).toHaveValue(expected);
       await expect(form.getByRole('complementary',{name:'Article settings'})).toContainText('Full sign visit');
       await expect(editor.getByRole('alert')).toHaveCount(0);expect(factsCalls).toBeGreaterThan(0);
+      if(pausedWorker){
+        await expect(editor.locator('iframe[title="Published article copy"]')).toHaveCount(0);
+        await expect(editor.locator('body > .sr-only')).toHaveCount(0);
+        await editor.reload();
+        await expect(form.getByLabel('Visit article body')).toHaveValue(expected,{timeout:60000});
+        corruptSnapshot=true;await editor.reload();
+        await expect(editor.getByRole('alert')).toContainText('The reader calculation does not match this article.');
+        await expect(form).toHaveCount(0);
+      }
       if(delayedCopy){
         await expect(editor.getByRole('button',{name:'Retry opening passage',exact:true})).toHaveCount(0);
         await editor.reload();
@@ -117,9 +140,8 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
         await expect(editor.getByRole('alert')).toHaveCount(0);expect(factsCalls).toBe(copyMode==='stalled-once' ? 4 : 2);
       }
       if(planet==='south-node'&&width===390&&copyMode==='delayed'){
-        failFacts=true;await editor.reload();
-        await expect(editor.locator('html')).toHaveAttribute('data-reader-copy-pending','true',{timeout:60000});
-        releaseFailure();await expect(editor.getByRole('alert')).toContainText('failed with HTTP 503.');
+        failFacts=true;releaseFailure();await editor.reload();
+        await expect(editor.getByRole('alert')).toContainText('failed with HTTP 503.');
         await editor.clock.fastForward(120_000);
         await expect(form).toHaveCount(0);await expect(editor.getByRole('alert')).toContainText('failed with HTTP 503.');
         expect(factsCalls).toBe(3);
@@ -128,7 +150,7 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
       expect(await editor.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await editor.screenshot({path:test.info().outputPath(`node-editor-${planet}-${width}-${theme}.png`)});
       await editor.close();expect(errors).toEqual([]);
-    } finally {releaseFacts();releaseFailure();store.close();}
+    } finally {releaseFailure();store.close();}
   });
 }
 
@@ -258,6 +280,7 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       // Full public copy is compared in the Mercury regression below; this old link remains compatible.
       const oldHref=studioPassageEditHref({surface:'sky',date:'2026-10-24',timeZone,sourceKey:fallback.fallback.content_key})!;
       await context.route('**/api/admin/sky-article-facts?**',async route=>{
+        if(new URL(route.request().url()).searchParams.has('readerSign')){const result=await actualReaderFacts(new URL(route.request().url()));await route.fulfill({status:result.statusCode,json:result.payload});return;}
         const { workspaceVisitFacts }=await import('../helpers/sky-placement-workspace-fixtures');
         await route.fulfill({json:{ok:true,facts:{...workspaceVisitFacts('sun','scorpio','2026-10-23','2026-11-22'),generatedAt:new URL(route.request().url()).searchParams.get('instant'),articlePeriod:'current'}}});
       });
@@ -290,8 +313,8 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
   });
 }
 
-for (const [width,theme,palette,dropInitialReady] of [[1440,'light','green',false],[390,'dark','neutral',false],[1440,'dark','green',false],[390,'light','neutral',false],[1440,'light','green',true]] as const) {
-  test(`Mercury Rx reader Edit loads complete wording, preserves drafts and saves privately ${width} ${theme} ${palette}${dropInitialReady ? ' after missed initial ready' : ''}`,async({page,context})=>{
+for (const [width,theme,palette,blockPreviewHandshake] of [[1440,'light','green',false],[390,'dark','neutral',false],[1440,'dark','green',false],[390,'light','neutral',false],[1440,'light','green',true]] as const) {
+  test(`Mercury Rx reader Edit loads complete wording, preserves drafts and saves privately ${width} ${theme} ${palette}${blockPreviewHandshake ? ' without preview handshake' : ''}`,async({page,context})=>{
     test.setTimeout(180_000);
     const fallbackKey='sky-placement/article/mercury/scorpio';
     const store=await studioApiStore([],{uuidIds:true});
@@ -302,23 +325,22 @@ for (const [width,theme,palette,dropInitialReady] of [[1440,'light','green',fals
       slotValues:{when:'October 24, 2026 at 3:12 AM ET to November 13, 2026 at 10:53 AM ET'}};
     context.on('page',popup=>{void popup.setViewportSize({width,height:1000});});
     page.on('pageerror',error=>errors.push(error.message));
-    if(dropInitialReady) await context.addInitScript(()=>{
-      const dropped=new Set<string>();
+    if(blockPreviewHandshake) await context.addInitScript(()=>{
       window.addEventListener('message',event=>{
         const message=event.data;
-        if(message?.protocol!=='studio-sky-reader-preview/v1'||message.type!=='ready'||dropped.has(message.channel))return;
-        dropped.add(message.channel);event.stopImmediatePropagation();
+        if(message?.protocol!=='studio-sky-reader-preview/v1'||message.type!=='ready')return;
+        event.stopImmediatePropagation();
         document.documentElement.dataset.missedInitialPreviewReady='true';
       },true);
     });
     await context.addInitScript(({theme,palette,location})=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:studio-palette',palette);},{theme,palette,location});
     await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v2',rows:[],publications:[],rowCount:0}}));
     await context.route('**/rest/v1/**',async route=>route.fulfill({json:new URL(route.request().url()).pathname.endsWith('/content_publications')?await store.call({method:'publications'}):[]}));
-    let factsCalls=0;
+    let factsCalls=0,readerFacts: typeof facts | undefined;
     await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
       if(url.pathname==='/api/content-publications'){const publications=canonicalPublicationLedger(await store.call({method:'publications'}));await route.fulfill({headers:{etag:await publicationLedgerTag(publications)},json:{schema:'tldr-publications/v1',publications}});return true;}
       if(url.pathname==='/api/content-reader'||url.pathname==='/api/admin/content-live-status') {const result=await store.call({method:'POST',url:url.pathname,body:route.request().postDataJSON()});await route.fulfill({status:result.status,json:result.payload});return true;}
-      if(url.pathname==='/api/admin/sky-article-facts'){if(url.searchParams.has('instant')){factsCalls++;expect(url.searchParams.get('period')).toBe('current');expect(url.searchParams.get('timeZone')).toBe(timeZone);}await route.fulfill({json:{ok:true,facts:{...facts,generatedAt:url.searchParams.get('instant')??facts.generatedAt}}});return true;}
+      if(url.pathname==='/api/admin/sky-article-facts'){if(url.searchParams.has('instant')){factsCalls++;expect(url.searchParams.get('period')).toBe('current');expect(url.searchParams.get('timeZone')).toBe(timeZone);}if(url.searchParams.has('readerSign')){const result=await actualReaderFacts(url);readerFacts=result.payload.facts;await route.fulfill({status:result.statusCode,json:result.payload});return true;}await route.fulfill({json:{ok:true,facts:{...facts,generatedAt:url.searchParams.get('instant')??facts.generatedAt}}});return true;}
       if(url.pathname==='/api/admin/sky-article-template-slots'){generation.push(url.pathname);await route.abort();return true;}
       return false;
     }});
@@ -334,15 +356,15 @@ for (const [width,theme,palette,dropInitialReady] of [[1440,'light','green',fals
       const open=context.waitForEvent('page');await article.getByRole('link',{name:'Edit this passage',exact:true}).click();const editor=await open;
       const form=editor.getByRole('region',{name:'Article for this visit',exact:true}),body=form.getByLabel('Visit article body',{exact:true});
       await expect(body).toHaveValue(expected,{timeout:60000});expect(await body.inputValue()).toContain(opening);expect(await body.inputValue()).toContain(final);
-      if(dropInitialReady)expect(await editor.locator('html').getAttribute('data-missed-initial-preview-ready')).toBe('true');
+      if(blockPreviewHandshake){await expect(editor.locator('iframe[title="Published article copy"]')).toHaveCount(0);expect(await editor.locator('html').getAttribute('data-missed-initial-preview-ready')).toBeNull();}
       await expect(form.getByLabel('Visit article title')).toHaveValue('Mercury Rx in Scorpio');
       await expect(form.getByRole('complementary',{name:'Article settings'})).toContainText('Retrograde in this sign');
       await expect(form).toContainText('October 24, 2026');await expect(form).toContainText('November 13, 2026');
       await expect(editor.getByRole('dialog')).toHaveCount(0);expect(writes).toEqual([]);expect(generation).toEqual([]);
       expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(pubs);
       await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(await body.inputValue()).toContain(opening);expect(await body.inputValue()).toContain(final);expect(writes).toEqual([]);
-      if(dropInitialReady){await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(writes).toEqual([]);}
-      expect(factsCalls).toBe(dropInitialReady ? 3 : 2);
+      if(blockPreviewHandshake){await editor.reload();await expect(body).toHaveValue(expected,{timeout:60000});expect(writes).toEqual([]);}
+      expect(factsCalls).toBe(blockPreviewHandshake ? 3 : 2);
       const edited=expected+'\n\nSynthetic private edit final sentence.';
       await expect(form.getByLabel('Visit article summary')).toHaveValue('');
       const publish=form.getByRole('button',{name:'Publish',exact:true});
@@ -391,7 +413,7 @@ for (const [width,theme,palette,dropInitialReady] of [[1440,'light','green',fals
       await expect(editor.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
       const rows=await store.call({method:'rows'}),saved=rows.find((row:any)=>row.content_key==='sky-article/mercury/scorpio/2026/2026-10-24');
       expect(saved.status).toBe('DRAFT');expect(saved.lane).toBe('reference');expect(saved.body).toContain(edited);
-      expect(saved.sections.skyArticleEdition.transitStartInstant).toBe(facts.transitStartInstant);expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(facts.transitEndInstant);
+      expect(readerFacts).toBeDefined();expect(saved.sections.skyArticleEdition.transitStartInstant).toBe(readerFacts!.transitStartInstant);expect(saved.sections.skyArticleEdition.transitEndInstant).toBe(readerFacts!.transitEndInstant);
       const imported=saved.source_snapshot.editorialImport;
       expect(imported.imported.body).toBe(expected);expect(JSON.parse(imported.originalSource)).toEqual(imported.imported);expect(imported.originalSourceSha256).toMatch(/^[a-f0-9]{64}$/u);expect(imported.imported.sourceKeys).toContain(fallbackKey);
       await editor.reload();await expect(body).toHaveValue(saved.body,{timeout:60000});

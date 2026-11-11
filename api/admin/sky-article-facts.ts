@@ -6,6 +6,8 @@ import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { calculateSkyArticleEditionFacts, skyArticlePeriod } from "../_lib/sky-article-facts.js";
 import { isSkyIngressEssay } from "../../apps/web/src/content/skyIngressEssay.mjs";
 import { skyPreviewReferenceDate } from "../../src/shared/skyReaderPreview.js";
+import { getSkyPlacementSnapshot } from "../../apps/web/src/services/ephemeris.js";
+import { factsFromSkySnapshot } from "../../apps/web/src/services/astrologyFacts.js";
 
 loadLocalWebEnv();
 
@@ -48,7 +50,25 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     let period;
     try { period = skyArticlePeriod(requestUrl.searchParams.get('period')); }
     catch (error) { throw new AdminHttpError(400, (error as Error).message); }
-    sendAdminJson(res, 200, { ok: true, facts: await calculateSkyArticleEditionFacts(referenceInstant, planet, format, period) });
+    const readerSign = requestUrl.searchParams.get('readerSign');
+    const latitude = Number(requestUrl.searchParams.get('lat')?.trim() || NaN);
+    const longitude = Number(requestUrl.searchParams.get('lon')?.trim() || NaN);
+    const timeZone = requestUrl.searchParams.get('timeZone') ?? 'America/New_York';
+    if (readerSign) {
+      if (period !== 'current' || !isSkyIngressEssay(format) || !Number.isFinite(latitude) || Math.abs(latitude) > 90
+        || !Number.isFinite(longitude) || Math.abs(longitude) > 180 || referenceInstant.getUTCFullYear() < 1800
+        || referenceInstant.getUTCFullYear() > 2399) throw new AdminHttpError(400, 'Choose valid reader calculation inputs.');
+      try { new Intl.DateTimeFormat('en', { timeZone }).format(referenceInstant); }
+      catch { throw new AdminHttpError(400, 'Choose a valid reader time zone.'); }
+    }
+    const facts = await calculateSkyArticleEditionFacts(referenceInstant, planet, format, period);
+    if (!readerSign) { sendAdminJson(res, 200, { ok: true, facts }); return; }
+    if (readerSign !== facts.sign) throw new AdminHttpError(400, 'The reader placement does not match this instant.');
+    const readerSky = await getSkyPlacementSnapshot({ label: 'Selected location', latitude, longitude, timeZone },
+      planet, readerSign, referenceInstant, true, 'placement');
+    readerSky.calculationProvenance = { ...readerSky.calculationProvenance!, source: 'server-swisseph-wasm' };
+    readerSky.facts = factsFromSkySnapshot(readerSky);
+    sendAdminJson(res, 200, { ok: true, facts, readerSky });
   } catch (error) {
     sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
