@@ -1,16 +1,15 @@
 import { studioShellAttributes } from "./studioTheme";
 import "./studio-system.css";
 import { StudioButton, StudioInput } from "./StudioControls";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { MemoryGraph, type DocumentWithMemories } from '@supermemory/memory-graph';
 import { AdminAccessGate } from './AdminStudioPrimitives';
 import { PageLoading } from '../../../src/shared/components/PageLoading';
 import { adminSecretStorageKey, normalizeAdminSecret } from './adminSecret';
 import { loadOwnerSessionAccessToken, ownerSessionStorageKey } from './ownerSession';
 import { readMemoryGraph } from './ownerSessionRequest';
-import type { WritingStandard } from './WritingStandardDocument';
+import StandardDocument, { type WritingStandard } from './WritingStandardDocument';
 
-const StandardDocument = lazy(() => import('./WritingStandardDocument'));
 const standardView = new URLSearchParams(window.location.search).get('view') === 'writing-standard';
 
 type Kind = 'rule' | 'correction' | 'example' | 'navigation' | 'note';
@@ -146,7 +145,7 @@ export default function MemoryGraphDashboard() {
   if (standardView) return <main className="admin-dashboard studio-standalone writing-standard-page" {...studioShellAttributes()}><div className="admin-main">
     <nav className="admin-toolbar-actions" aria-label="Writing standard navigation">{back}<a className="admin-page-link" href="/admin/content/memory">Memory graph</a></nav>
     {error && <div role="alert"><p>{error}</p><StudioButton onClick={() => setRefresh(value => value + 1)}>Try again</StudioButton></div>}
-    {standard ? <Suspense fallback={<PageLoading message="Loading writing standard…" />}><StandardDocument standard={standard} /></Suspense> : <><h1>Writing standard</h1>{!error && <PageLoading message="Loading writing standard…" />}</>}
+    {standard ? <StandardDocument standard={standard} /> : <><h1>Writing standard</h1>{!error && <PageLoading message="Loading writing standard…" />}</>}
   </div></main>;
   return <main className="admin-dashboard memory-is-open studio-standalone" {...studioShellAttributes()}>
     <h1 className="memory-sr-only">Memory graph</h1>

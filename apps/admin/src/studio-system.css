@@ -564,7 +564,7 @@ body:has(.admin-dashboard) { margin: 0; }
 
 /* Standalone operational pages keep the Studio shell and component contract. */
 #root .admin-dashboard.studio-standalone { grid-template-columns: minmax(0,1fr); }
-#root .admin-dashboard .writing-standard-document { display: grid; gap: var(--workspace-block-gap); max-width: var(--prose-measure); width: 100%; margin-inline: auto; }
+#root .admin-dashboard .writing-standard-document { display: grid; gap: var(--workspace-block-gap); max-width: var(--prose-measure); margin-inline: auto; }
 #root .admin-dashboard.studio-standalone .admin-main { max-width: var(--workspace-max-width); margin-inline: auto; }
 #root .admin-dashboard.writing-standard-page .admin-main { max-width: var(--layout-reading-width); }
 #root .admin-dashboard.studio-standalone .admin-main > header > div:first-child { display: grid; gap: var(--workspace-field-gap); }
