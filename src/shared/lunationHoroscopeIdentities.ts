@@ -1,4 +1,4 @@
-import { lunationRisingSigns } from './lunationHoroscopeIdentity';
+import { lunationRisingSigns } from './lunationHoroscopeIdentity.js';
 
 /** The twelve passage identities load with the article or Studio source panel. */
 export function lunationHoroscopeIdentities(kind: string, sign: string) {
