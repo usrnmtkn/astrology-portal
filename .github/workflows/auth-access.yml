@@ -12,9 +12,20 @@ concurrency:
 jobs:
   auth-access:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -24,10 +35,8 @@ jobs:
       - run: npm run test:auth-access
       - run: node scripts/test-you-report-session.mjs
       - run: npm run test:account-view
-      - name: Install Chromium and WebKit with the shared Ubuntu mirror recovery
-        run: |
-          bash scripts/ci-install-playwright.sh
-          npx playwright install --with-deps webkit
+      - name: Validate locked Chromium, WebKit, fonts and native image dependencies
+        run: node scripts/ci-validate-playwright-image.mjs
       - run: npm run qa:auth-access
       - run: npm run qa:bundle
       - uses: actions/upload-artifact@v6

@@ -6,6 +6,7 @@ import {emptyHoroscopeEdition,horoscopeEditionBody,horoscopeEditionKey} from '..
 for(const width of [390,1440]){
   test(`Content Library opens and saves the selected horoscope edition ${width}`,async({page})=>{
     const store=await studioApiStore([]);
+    let drainRoutes: (()=>Promise<void>)|undefined;
     try{
       const facts=await store.call({method:'GET',url:'/api/admin/generated-content?horoscopeBrief=true&period=monthly&date=2026-10-02&timeZone=America%2FNew_York'});
       expect(facts.status).toBe(200);
@@ -13,7 +14,7 @@ for(const width of [390,1440]){
       edition.passages.forEach(p=>{p.headline=`Synthetic ${p.sign} reading`;p.body=`Saved ${p.sign} opening.\n\nSaved ${p.sign} conclusion.`;});
       const created=await store.call({method:'POST',body:{contentKey:horoscopeEditionKey(edition.window),surface:'sky',mode:'article',eventType:'horoscope-edition',provider:'manual-admin',targetDate:null,status:'DRAFT',lane:'serving',reviewState:null,headline:'Synthetic monthly edition',body:horoscopeEditionBody(edition),sections:{horoscopeEdition:edition},facts:{horoscopeBrief:{brief:facts.payload.brief,signature:facts.payload.signature}},sourceSnapshot:{horoscopeOutlines:{}}}});
       expect(created.status).toBe(200);const id=created.payload.rows[0].id;
-      await routeStudioInventoryApi(page,{call:store.call});
+      drainRoutes=await routeStudioInventoryApi(page,{call:store.call});
       await page.addInitScript(()=>localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture'));
       await page.setViewportSize({width,height:1000});
       await page.goto('/admin/content#exact-content');
@@ -33,12 +34,13 @@ for(const width of [390,1440]){
       expect(saved.status).toBe('DRAFT');
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
     }finally{
-      try{await page.unrouteAll({behavior:'wait'});}finally{store.close();}
+      try{await page.goto('about:blank');await drainRoutes?.();await page.unrouteAll({behavior:'wait'});}finally{store.close();}
     }
   });
 
   test(`Content Library opens and saves the selected dated lunar draft ${width}`,async({page})=>{
     const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});
+    let drainRoutes: (()=>Promise<void>)|undefined;
     try{
       const events=await writer.call({method:'GET',url:'/api/admin/lunation-writing?month=2026-09&timeZone=America%2FNew_York'});
       expect(events.status).toBe(200);
@@ -48,7 +50,7 @@ for(const width of [390,1440]){
       expect(saved.status).toBe(200);row=saved.payload.rows[0];
       const unrelated=await writer.call({method:'POST',body:{action:'prepare',month:'2026-09',timeZone:'America/New_York',eventId:events.payload.events[1].id,direction:''}});
       expect(unrelated.status).toBe(200);
-      await routeStudioInventoryApi(page,{call:async message=>message.method==='rows'?(await writer.call(message)).filter((r:any)=>r.content_key.startsWith('studio-lunation/')):inventory.call(message),answer:async(route,url)=>{
+      drainRoutes=await routeStudioInventoryApi(page,{call:async message=>message.method==='rows'?(await writer.call(message)).filter((r:any)=>r.content_key.startsWith('studio-lunation/')):inventory.call(message),answer:async(route,url)=>{
         if(url.pathname!=='/api/admin/lunation-writing')return false;
         const request=route.request();const result=await writer.call({method:request.method(),url:url.pathname+url.search,...(request.method()==='POST'?{body:request.postDataJSON()}:{})});
         await route.fulfill({status:result.status,json:result.payload});return true;
@@ -72,7 +74,35 @@ for(const width of [390,1440]){
       expect((await writer.call({method:'provider'})).calls).toBe(0);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
     }finally{
-      try{await page.unrouteAll({behavior:'wait'});}finally{inventory.close();writer.close();}
+      try{await page.goto('about:blank');await drainRoutes?.();await page.unrouteAll({behavior:'wait'});}finally{inventory.close();writer.close();}
     }
   });
 }
+
+test('inventory fixture drains every pending document response before removing routes',async({page})=>{
+  function deferred(){let resolve!:()=>void;const promise=new Promise<void>(done=>resolve=done);return {promise,resolve};}
+  const both=deferred(),fast=deferred(),slow=deferred();let entered=0,drained=false;
+  const completed:string[]=[];
+  await page.route('**/route-teardown-neutral',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>Neutral route fixture</title>'}));
+  const drainRoutes=await routeStudioInventoryApi(page,{call:async message=>{
+    const id=new URL(message.url!,'http://fixture.invalid').searchParams.get('id')!;
+    if(++entered===2)both.resolve();
+    await(id==='fast'?fast.promise:slow.promise);
+    completed.push(id);return {status:200,payload:{ok:true,rows:[]}};
+  }});
+  try{
+    await page.goto('/route-teardown-neutral');
+    await page.evaluate(()=>{for(const id of ['fast','slow'])void fetch('/api/admin/generated-content?id='+id).catch(()=>{});});
+    await both.promise;
+    await page.goto('about:blank');
+    const draining=drainRoutes().then(()=>{drained=true;});
+    fast.resolve();
+    await expect.poll(()=>completed).toEqual(['fast']);
+    expect(drained).toBe(false);
+    slow.resolve();await draining;
+    expect(completed).toEqual(['fast','slow']);
+    await page.unrouteAll({behavior:'wait'});
+  }finally{
+    fast.resolve();slow.resolve();await drainRoutes();await page.unrouteAll({behavior:'wait'});
+  }
+});

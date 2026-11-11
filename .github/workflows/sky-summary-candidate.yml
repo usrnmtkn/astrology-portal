@@ -29,15 +29,26 @@ jobs:
     # https://github.com/usrnmtkn/astrology-portal/actions/runs/42109877466
     # https://github.com/usrnmtkn/astrology-portal/actions/runs/42119649830
     runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+      volumes:
+        - /usr/share/fonts:/usr/share/fonts/runner:ro
+    defaults:
+      run:
+        shell: bash
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         shard: [1, 2]
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -46,7 +57,7 @@ jobs:
       - run: npm run build:knowledge
       - run: npm run typecheck
       - name: Install Chromium with shared Ubuntu mirror recovery
-        run: bash scripts/ci-install-playwright.sh
+        run: node scripts/ci-validate-playwright-image.mjs
       - name: Verify cold load, warm refresh, publication replacement, retirement, retry and initial loading budget
         run: npx playwright test -c playwright.config.ts tests/visual/sky-loading-layout.spec.ts tests/visual/sky-summary-cold-hydration.spec.ts tests/visual/sky-placement-publication-hydration.spec.ts tests/visual/sky-refresh-performance.spec.ts tests/visual/sky-daily-summary.spec.ts tests/visual/sky-summary-supplied-copy.spec.ts --workers=1 --shard=${{ matrix.shard }}/2
       - uses: actions/upload-artifact@v6

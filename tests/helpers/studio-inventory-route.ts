@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Page, Route } from "@playwright/test";
 import { studioListingFacts, studioListingRow } from "../../api/_lib/studio-listing-facts";
 
 // The Studio reads its lists and its documents from the inventory endpoint. A request naming rows
@@ -24,7 +24,8 @@ export async function routeStudioInventoryApi(page: Pick<Page, "route">, options
   // Answers a fixture's own endpoints, such as reader status. Return false to take the empty reply.
   answer?: (route: Parameters<Parameters<Page["route"]>[1]>[0], url: URL) => Promise<boolean>;
 }) {
-  await page.route("**/api/**", async (route) => {
+  const pending = new Set<Promise<void>>();
+  const answerRoute = async (route: Route) => {
     const request = route.request();
     const url = new URL(request.url());
     if (url.pathname === "/api/admin/generated-content" || url.pathname === "/api/admin/generated-content-inventory") {
@@ -60,5 +61,16 @@ export async function routeStudioInventoryApi(page: Pick<Page, "route">, options
       return route.fulfill({ status: result.status, json: result.payload });
     }
     return route.fulfill({ json: { ok: true, rows: [], statuses: [], records: [], nextCursor: null } });
+  };
+  await page.route("**/api/**", (route) => {
+    const task = answerRoute(route);
+    pending.add(task);
+    task.then(() => pending.delete(task), () => pending.delete(task));
+    return task;
   });
+  // Stop the page's request producer before draining. Removing interception
+  // while callbacks await storage can continue those requests behind them.
+  return async () => {
+    while (pending.size) await Promise.all([...pending]);
+  };
 }
