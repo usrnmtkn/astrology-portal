@@ -11682,10 +11682,16 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         orb: 0
       };
 
+      const calculatedDetail = Date.parse(detailSky.generatedAt) === Date.parse(event.startsAt)
+        ? skyDetailFromRoutePath(skyAspectRoutePath(detailAspect), detailSky, generatedContent, openSkyDetail)
+        : null;
       const detail = datedSkyAspectDetail(
-        currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, detailSky.positions, detailSky.location.timeZone),
+        calculatedDetail ?? currentSkyAspectDetailArticle(detailAspect, generatedAt, generatedContent, detailSky.positions, detailSky.location.timeZone),
         event.startsAt, detailSky.location.timeZone || "UTC"
       );
+      // The initial Calendar snapshot belongs to the selected day. Only the
+      // event-time calculation can supply this dated article's position caption.
+      if (!calculatedDetail) detail.mechanicsCaption = null;
       const eventBody = calendarEventDetailBody(event, generatedContent, description);
       const hasAspectBody = skyDetailHasReaderFacingMainBody(detail);
 

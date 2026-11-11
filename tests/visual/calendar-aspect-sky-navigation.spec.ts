@@ -7,10 +7,93 @@ import { bundledPublications } from '../helpers/bundled-publications';
 import { readerResponse } from '../helpers/reader-response';
 import { expectSkyAspectBody } from '../helpers/sky-aspect-reading';
 import { watchBrowserErrors } from './qaRuntimeGuards';
+import SwissEph from 'swisseph-wasm';
+import { bundledSkyPublications } from '../helpers/bundled-publications';
 
 const date = '2026-04-07';
 const key = 'sky.aspect.moon.square.mercury';
 const body = 'Synthetic updated Moon square Mercury opening. The full published passage belongs in Sky.\n\nA separate complete final paragraph must survive navigation, Back, and reload.';
+
+for (const sample of [
+  { date: '2026-04-07', second: 'Mercury' },
+  { date: '2026-09-22', second: 'Venus' }
+]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Calendar caption uses exact-event positions before and after reload ${sample.date} ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(120_000);
+    const assertNoErrors = watchBrowserErrors(page);
+    const event = (await getLunarCalendarMonth(defaultLocation, new Date(`${sample.date}T16:00:00Z`))).events
+      .find(e => e.dateKey === sample.date && e.type === 'aspect' && e.aspect === 'square'
+        && e.planets?.includes('Moon') && e.planets.includes(sample.second))!;
+    expect(event).toBeDefined();
+    const swe = new SwissEph();
+    await swe.initSwissEph();
+    const instant = new Date(event.startsAt);
+    const jd = swe.julday(instant.getUTCFullYear(), instant.getUTCMonth() + 1, instant.getUTCDate(),
+      instant.getUTCHours() + instant.getUTCMinutes() / 60 + (instant.getUTCSeconds() + instant.getUTCMilliseconds() / 1000) / 3600);
+    const longitudes = [swe.SE_MOON, sample.second === 'Venus' ? swe.SE_VENUS : swe.SE_MERCURY]
+      .map(id => swe.calc_ut(jd, id, swe.SEFLG_SWIEPH | swe.SEFLG_SPEED)[0]);
+    const signs = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
+    const separation = Math.abs(((longitudes[0] - longitudes[1] + 540) % 360) - 180);
+    expect(Math.abs(separation - 90)).toBeLessThan(0.001);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.clock.setFixedTime(new Date(`${sample.date}T16:00:00Z`));
+    await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: theme });
+    await page.addInitScript(({ theme, location, exactAt }) => {
+      localStorage.setItem('tldrastro:theme', theme);
+      localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(location));
+      const state = window as typeof window & { captionEventRequests: number; releaseCaptionEvent: () => void };
+      state.captionEventRequests = 0;
+      let holdEvent = !sessionStorage.getItem('caption-event-released');
+      const pending: Array<() => void> = [];
+      state.releaseCaptionEvent = () => {
+        holdEvent = false;
+        sessionStorage.setItem('caption-event-released', 'true');
+        pending.splice(0).forEach(send => send());
+      };
+      const NativeWorker = window.Worker;
+      window.Worker = class extends NativeWorker {
+        postMessage(message: any, options?: any) {
+          if (holdEvent && message.kind === 'sky' && Date.parse(message.date) === Date.parse(exactAt)) {
+            state.captionEventRequests++;
+            pending.push(() => super.postMessage(message, options));
+          } else super.postMessage(message, options);
+        }
+      };
+    }, { theme, location: defaultLocation, exactAt: event.startsAt });
+    await bundledSkyPublications(page);
+    await page.route(/\/api\/(calendar|sky)\?/, async route => {
+      const url = new URL(route.request().url());
+      const response = { statusCode: 200, body: '', setHeader() {}, end(body: string) { this.body = body; } };
+      await (url.pathname === '/api/calendar' ? calendarHandler : skyHandler)(
+        { method: 'GET', url: url.href } as IncomingMessage, response as unknown as ServerResponse);
+      expect(response.statusCode).toBe(200);
+      await route.fulfill({ status: response.statusCode, contentType: 'application/json', body: response.body });
+    });
+    try {
+      await page.goto(`/?date=${sample.date}#calendar?view=day&date=${sample.date}`);
+      await page.locator('.calendar-day-events').getByRole('button', { name: `Moon squares ${sample.second}`, exact: true }).click();
+      const article = page.locator('.sky-detail-article');
+      await expect(article.locator('h1')).toContainText(`Moon Square ${sample.second}`);
+      await expect.poll(() => page.evaluate(() => (window as any).captionEventRequests)).toBeGreaterThan(0);
+      const caption = article.locator('.sky-aspect-mechanics p');
+      await expect(caption).toHaveCount(0);
+      await page.evaluate(() => (window as any).releaseCaptionEvent());
+      await expect(caption).toContainText(`They form a square (${separation.toFixed(1)}° apart).`, { timeout: 60_000 });
+      const completeCaption = (await caption.textContent())!;
+      const placements = [...completeCaption.matchAll(/is at (\d+)°(\d+)' (\w+)/g)];
+      expect(placements).toHaveLength(2);
+      for (const [index, match] of placements.entries()) {
+        const displayed = signs.indexOf(match[3]) * 30 + Number(match[1]) + Number(match[2]) / 60;
+        const error = Math.abs(((displayed - longitudes[index] + 540) % 360) - 180);
+        // The snapshot retains hundredths of a degree; the caption shows minutes.
+        expect(error).toBeLessThan(1 / 60);
+      }
+      await page.reload();
+      await expect(caption).toHaveText(completeCaption, { timeout: 60_000 });
+      assertNoErrors();
+    } finally { await page.evaluate(() => (window as any).releaseCaptionEvent()); }
+  });
+}
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) for (const view of ['day', 'week', 'month']) {
   test(`Calendar ${view} opens the complete published Moon reading in Sky ${width} ${theme}`, async ({ page }) => {
