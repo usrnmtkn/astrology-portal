@@ -377,7 +377,7 @@ export default function SkyPlacementWorkspace(props: Props) {
       {tab === 'visit' ? <section className="admin-workspace" aria-label="Dated visit articles" aria-busy={busy}>
         {!ready && !error && <p role="status">Loading saved writing…</p>}
         {ready && readerOpening && props.readerEntry && <Suspense fallback={<p role="status">Opening the reader article…</p>}>
-          <SkyReaderArticleEntry context={props.readerEntry} request={props.request} onOpen={openReaderArticle}
+          <SkyReaderArticleEntry key={JSON.stringify(props.readerEntry)} context={props.readerEntry} request={props.request} onOpen={openReaderArticle}
             onReload={() => { readerOpened.current = ''; setReaderOpening(false); setRetry(value => value + 1); }} />
         </Suspense>}
         {ready && !composing && !readerOpening && <section className="studio-section" aria-label="Saved visits">
