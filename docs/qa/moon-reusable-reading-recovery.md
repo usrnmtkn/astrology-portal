@@ -159,3 +159,24 @@ No production content, retired independent sources or protected originals were
 changed during this investigation. Native restoration still requires its normal
 preview, a fresh preservation check, explicit confirmation and exact reader
 comparison after reload.
+
+## Native function import correction
+
+On combined main 83c77bcf, the isolated recovery preview still returned an unreadable
+response. An unauthenticated GET confirmed HTTP 500 / text/plain /
+FUNCTION_INVOCATION_FAILED, while generated-content and lunation-writing reached
+their normal 401 JSON authentication boundary. The connector's log search and
+trace lookup yielded no diagnostic. The existing authenticated Vercel CLI with an
+exact requestPath filter did: four recovery startup errors reported
+ERR_MODULE_NOT_FOUND for `/var/task/src/shared/lunationHoroscopeIdentity`.
+
+The newly server-imported shared identities module used an extensionless relative
+import that the browser and TSX test loader resolved. Native emitted ESM did not.
+Use its `.js` specifier, preserving all identity and calculation logic. The API
+regression now emits the actual two shared TypeScript modules into an isolated
+module package and imports them in a native Node child without TSX, NODE_OPTIONS
+or inherited private environment. The unchanged production source fails that
+reproduction; the corrected source imports and returns all twelve identities.
+A deployed preview must reach ordinary authentication as JSON before production
+promotion. Actual owner recovery, reload comparison and original51 preservation
+remain separate native acceptance requirements.

@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {build} from 'esbuild';
-import {mkdtempSync,rmSync,mkdirSync,readFileSync,globSync} from 'node:fs';
+import {mkdtempSync,rmSync,mkdirSync,readFileSync,writeFileSync,globSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import ts from 'typescript';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {invoke,store} from '../tests/helpers/moon-horoscope-api.mts';
@@ -22,6 +24,17 @@ for(const file of ephemerisFiles)assert(recoveryFiles.has(file),`Recovery functi
 for(const file of ['api/_lib/moon-reusable-recovery.ts','api/_lib/lunation-article-facts.ts','apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js'])assert(recoveryFiles.has(file),`Recovery function is missing ${file}`);
 mkdirSync('test-results',{recursive:true});
 const directory=mkdtempSync(join(process.cwd(),'test-results/moon-recovery-'));
+// This shared module also loads in the native Node function. TSX and browser
+// resolvers accept extensionless imports and cannot prove emitted ESM can boot.
+const nativeDirectory=join(directory,'native');mkdirSync(nativeDirectory);
+try{
+  writeFileSync(join(nativeDirectory,'package.json'),JSON.stringify({type:'module'}));
+  for(const name of ['lunationHoroscopeIdentity','lunationHoroscopeIdentities'])writeFileSync(join(nativeDirectory,`${name}.js`),ts.transpileModule(readFileSync(`src/shared/${name}.ts`,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText);
+  const native=spawnSync(process.execPath,['--input-type=module','--eval',`try{const m=await import(${JSON.stringify(pathToFileURL(join(nativeDirectory,'lunationHoroscopeIdentities.js')).href)});if(m.lunationHoroscopeIdentities('full-moon','Scorpio').length!==12)throw new Error('Missing identities');console.log('native-module-ok');}catch(error){console.log(JSON.stringify({code:error.code,name:error.name}));process.exitCode=1;}`],{cwd:nativeDirectory,env:{NODE_ENV:'production'},encoding:'utf8',timeout:10000,maxBuffer:65536});
+  assert.equal(native.status,0,`Emitted Moon identities must boot without TSX or browser resolution: ${native.stdout}`);
+  assert.equal(native.stdout.trim(),'native-module-ok');
+}catch(error){rmSync(directory,{recursive:true,force:true});throw error;}
+finally{rmSync(nativeDirectory,{recursive:true,force:true});}
 const db=await createPublicationDb();
 try{
   const bundle=join(directory,'reader.mjs');
