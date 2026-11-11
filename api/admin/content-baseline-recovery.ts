@@ -3,6 +3,7 @@ import {loadLocalWebEnv} from '../_lib/local-env.js';
 import {requireContentAdmin} from '../_lib/admin-auth.js';
 import {AdminHttpError,adminFetchJson,adminErrorStatus,adminErrorMessage,readAdminJsonBody,sendAdminJson} from '../_lib/admin-http.js';
 import {approvedSourceBaseline} from '../_lib/approved-source-recovery.js';
+import {recoverReusableMoonReadings} from '../_lib/moon-reusable-recovery.js';
 import {validContentPublication,publicationRestoresBaseline} from '../../apps/web/src/content/contentPublicationState.js';
 loadLocalWebEnv();
 const uuid=/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/iu;
@@ -12,6 +13,8 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
   if(req.method!=='POST')return sendAdminJson(res,405,{ok:false,error:'Use POST.'});
   try {
     const body=await readAdminJsonBody<any>(req);
+    if(body?.recoveryKind==='moon-reusable')return sendAdminJson(res,200,await recoverReusableMoonReadings(body));
+    if(body?.recoveryKind!==undefined)throw new AdminHttpError(400,'Unsupported recovery kind.');
     if(body?.action==='status'||body?.action==='cancel') {
       if(!uuid.test(body.operationId))throw new AdminHttpError(400,'Select a recovery operation.');
       const base=process.env.SUPABASE_URL||process.env.VITE_SUPABASE_URL,key=process.env.SUPABASE_SERVICE_ROLE_KEY;

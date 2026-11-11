@@ -1,12 +1,10 @@
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
 import {Readable} from 'node:stream';
 import {createPublicationDb,seedPublicationRow} from './studio-publication-db.mjs';
 import {servingPackageRecords} from '../../api/_lib/serving-package-records.js';
 const env={NODE_ENV:'production',CONTENT_GENERATION_SECRET:'baseline-recovery-fixture',SUPABASE_URL:'https://baseline-recovery.invalid',SUPABASE_SERVICE_ROLE_KEY:'synthetic-only'};
 Object.assign(process.env,env);
 const db=await createPublicationDb();
-await db.exec(readFileSync(new URL('../../apps/web/supabase/migrations/20261107123057_studio_approved_source_recovery.sql',import.meta.url),'utf8'));
 await db.query("insert into content_publications(content_key,state) values('__content-publication-ledger/v1','live')");
 const key='fallback-hook/placement-sentence/moon/scorpio';
 const record={...servingPackageRecords.get(key),body_you:'Neutral complete source opening. Neutral complete source ending.',body_they:'Neutral complete Friend opening. Neutral complete Friend ending.'};

@@ -1,6 +1,8 @@
-import {useEffect,useRef,useState} from 'react';
+import {useEffect,useRef,useState,useSyncExternalStore} from 'react';
 import {AdminSelect,AdminDisclosureSummary} from './AdminNativeControls';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
+import {ApprovedSourceRecovery,readPending as readPendingRecovery,pendingEvent as recoveryPendingEvent} from './ApprovedSourceRecovery';
+import {installContentPublications,contentPublication,publicationRestoresBaseline,subscribeToContentPublications} from '../../web/src/content/contentPublicationState';
 import {Stack} from './studio-ds/primitives';
 import {fetchWithOwnerSession} from './ownerSessionRequest';
 import {browserTimeZone} from '../../web/src/services/timezones';
@@ -16,7 +18,7 @@ async function request(secret:string,url:string,body?:unknown,method='GET',signa
   const timeout=AbortSignal.timeout(url==='/api/admin/sky-article-template-slots'?300000:60000);
   const response=await fetchWithOwnerSession(url,secret,{method,headers:{'content-type':'application/json'},cache:'no-store',signal:signal?AbortSignal.any([signal,timeout]):timeout,...(body?{body:JSON.stringify(body)}:{})});
   const data=await response.json().catch(()=>({error:'The server response could not be read.'}));
-  if(!response.ok||data.ok!==true)throw new Error(data.error??'The Moon horoscopes could not be loaded.');
+  if(!response.ok||data.ok!==true)throw Object.assign(new Error(data.error??'The Moon horoscopes could not be loaded.'),{status:response.status});
   return data;
 }
 export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:{secret:string;dirtyRef:{current:boolean};requestedDraftId?:string|null}){
@@ -27,12 +29,18 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
   const [paste,setPaste]=useState(''),[originalSource,setOriginalSource]=useState<string|null>(null),[sign,setSign]=useState('aries');
   const [busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState(''),[approved,setApproved]=useState(false);
   const [opening,setOpening]=useState(Boolean(requestedDraftId));
+  const [recoveryPending,setRecoveryPending]=useState(false);
+  const recoveryIdentity=JSON.stringify(saved?[{id:saved.id,contentKey:saved.content_key,expectedUpdatedAt:saved.updated_at}]:[]);
+  useEffect(()=>{const update=()=>{const pending=readPendingRecovery();setRecoveryPending(pending?.kind==='moon-reusable'&&pending.identity===recoveryIdentity);};update();window.addEventListener(recoveryPendingEvent,update);return()=>window.removeEventListener(recoveryPendingEvent,update);},[recoveryIdentity]);
   const editor=useRef<HTMLHeadingElement>(null),publication=useRef<HTMLDivElement>(null);
   const running=useRef(false);
   const pendingPaste=Boolean(paste.trim());
   const archived=saved?.status==='ARCHIVED';
+  const reusableRecovered=useSyncExternalStore(subscribeToContentPublications,()=>{
+    const publication=saved&&contentPublication(saved.content_key);return Boolean(publication&&publicationRestoresBaseline(publication));
+  },()=>false);
   const generationPending=working?.source_snapshot?.moonHoroscopeGeneration?.status==='running';
-  const locked=busy||generationPending;
+  const locked=busy||generationPending||recoveryPending;
   const dirty=Boolean(pendingPaste||section&&JSON.stringify(section)!==baseline);
   useEffect(()=>{dirtyRef.current=dirty||locked;return()=>{dirtyRef.current=false;};},[dirty,locked,dirtyRef]);
   useEffect(()=>{
@@ -214,14 +222,18 @@ export default function MoonHoroscopesStudio({secret,dirtyRef,requestedDraftId}:
         </Stack></section>
         <aside className="studio-surface studio-section" aria-label="Moon horoscope settings"><Stack gap="md">
           <div ref={publication} tabIndex={-1} aria-label="Moon publication"><Stack gap="md"><h3>Publication</h3><span className="admin-editor-save-state">{archived?'Archived':working||saved?.status!=='LIVE'?'Private draft':'Published'}</span>
+            {archived&&reusableRecovered&&<span>Reusable Moon readings are active. Your dated readings remain archived.</span>}
             {complete<12?<span className="admin-field-hint">Complete 12 signs to publish.</span>:publicationError?<p role="alert">{publicationError}</p>:null}
             {saved&&saved.status!=='LIVE'&&!working&&!archived&&<><label><input type="checkbox" checked={approved} disabled={busy||dirty} onChange={e=>setApproved(e.target.checked)}/> I approve all 12 saved readings.</label><StudioButton className="admin-primary-button" disabled={busy||dirty||!approved} onClick={()=>void run(publish)}>Publish Moon horoscopes</StudioButton></>}
           </Stack></div>
-          <StudioButton disabled={busy} onClick={leave}>Choose another Moon</StudioButton>
+          <StudioButton disabled={busy||recoveryPending} onClick={leave}>Choose another Moon</StudioButton>
           <details className="studio-contained-disclosure" aria-label="Moon horoscope actions"><AdminDisclosureSummary>More actions</AdminDisclosureSummary><Stack gap="sm">
-            <StudioButton disabled={busy} onClick={()=>{if(dirty&&!window.confirm('Replace your unsaved edits with the saved version?'))return;void run(()=>open(opened));}}>Reload saved version</StudioButton>
+            <StudioButton disabled={busy||recoveryPending} onClick={()=>{if(dirty&&!window.confirm('Replace your unsaved edits with the saved version?'))return;void run(()=>open(opened));}}>Reload saved version</StudioButton>
             {saved?.event_type==='horoscope-edition-revision'&&<StudioButton disabled={busy||dirty||!!working} onClick={()=>{if(window.confirm('Archive this saved draft revision and open the current published readings?'))void run(archiveRevision);}}>Archive draft revision</StudioButton>}
-            {saved?.mode==='article'&&<StudioButton className={archived?undefined:'admin-danger-button'} disabled={busy||dirty||!!working} onClick={()=>{if(!archived&&!window.confirm('Archive these twelve saved Moon readings and remove them from readers? The complete writing will be preserved.'))return;void run(lifecycle);}}>{archived?'Restore as draft':'Archive Moon horoscopes'}</StudioButton>}
+            {saved?.mode==='article'&&<StudioButton className={archived?undefined:'admin-danger-button'} disabled={busy||dirty||!!working||recoveryPending} onClick={()=>{if(!archived&&!window.confirm('Archive these twelve saved Moon readings and remove them from readers? The complete writing will be preserved.'))return;void run(lifecycle);}}>{archived?'Restore as draft':'Archive Moon horoscopes'}</StudioButton>}
+            {archived&&!reusableRecovered&&saved?.mode==='article'&&<ApprovedSourceRecovery kind="moon-reusable" sources={[{id:saved.id,contentKey:saved.content_key,expectedUpdatedAt:saved.updated_at}]}
+              disabled={busy||dirty||!!working} request={body=>request(secret,'/api/admin/content-baseline-recovery',body,'POST')} onBusy={setBusy}
+              onRecovered={rows=>{for(const row of rows){installContentPublications([row.publication]);announceContentUpdate({contentKey:row.contentKey,published:true,updatedAt:row.publication.updated_at});}setMessage('Reusable Moon readings restored. Your dated readings remain archived.');}} onSettled={setMessage}/>}
           </Stack></details>
         </Stack></aside>
       </div>}
