@@ -1,15 +1,17 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 import { isContentAdminAuthorized, contentAdminVerificationUnavailable } from '../_lib/admin-auth.js';
 import { loadLocalWebEnv } from '../_lib/local-env.js';
 import { activeStudioFeedback, studioFeedbackEnabled } from '../_lib/studio-memory-feedback.js';
 import { withStudioFeedback } from '../_lib/studio-memory-graph.js';
 // @ts-ignore Shared dependency-free server and CLI module.
-import { buildMemoryIndex, queryMemory, memoryDetail, recallMemory, visualMemoryGraph } from '../_lib/agent-memory.mjs';
+import { buildMemoryIndex, queryMemory, memoryDetail, recallMemory, visualMemoryGraph, sha256 } from '../_lib/agent-memory.mjs';
 
 loadLocalWebEnv();
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const writingStandardPath = 'docs/writing/SKY_CALENDAR_ASPECT_STANDARD.md';
 let cached: ReturnType<typeof buildMemoryIndex> | null = null;
 
 function send(res: ServerResponse, status: number, body: unknown) {
@@ -29,7 +31,8 @@ export async function authorizeMemoryRequest(req: IncomingMessage) {
   return allowed;
 }
 
-export function createMemoryGraphHandler(authorize = authorizeMemoryRequest) {
+export function createMemoryGraphHandler(authorize = authorizeMemoryRequest,
+  readStandard = () => readFileSync(path.join(root, writingStandardPath), 'utf8')) {
 return async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== 'GET') { res.setHeader('Allow', 'GET'); send(res, 405, { ok: false, error: 'Use GET.' }); return; }
   const hasCredential = ['authorization', 'x-content-admin-session', 'x-content-generation-secret'].some(name => {
@@ -49,8 +52,18 @@ return async function handler(req: IncomingMessage, res: ServerResponse) {
   try {
     const url = new URL(req.url ?? '/', 'http://localhost');
     const mode = url.searchParams.get('mode') ?? 'graph';
-    if (!['graph', 'detail', 'recall', 'visual'].includes(mode)) { send(res, 400, { ok: false, error: 'Unknown memory request.' }); return; }
+    if (!['graph', 'detail', 'recall', 'visual', 'standard'].includes(mode)) { send(res, 400, { ok: false, error: 'Unknown memory request.' }); return; }
     if (!cached || process.env.NODE_ENV !== 'production') cached = buildMemoryIndex({ root, revision: process.env.VERCEL_GIT_COMMIT_SHA ?? null });
+    if (mode === 'standard') {
+      // This is one fixed, packaged repository document, never a requested file path
+      // or a projection of private feedback. Authorize before reading it.
+      const source = cached.sources.find((item: { path: string }) => item.path === writingStandardPath);
+      const body = readStandard();
+      if (!source || !body.trim() || sha256(body) !== source.sha256) throw new Error('Writing standard integrity check failed');
+      send(res, 200, { ok: true, standard: { body, bodySha256: source.sha256, sourceSha256: source.sha256,
+        sourceUrl: cached.revision && /^[a-f0-9]{40}$/u.test(cached.revision) ? `https://github.com/usrnmtkn/astrology-portal/blob/${cached.revision}/${writingStandardPath}` : null,
+        revision: cached.revision } }); return;
+    }
     const live = studioFeedbackEnabled();
     const index = live ? withStudioFeedback(cached, await activeStudioFeedback()) : cached;
     const freshness = { repositoryRevision: index.revision, studioFeedback: live ? 'current' : 'not-enabled', checkedAt: new Date().toISOString() };

@@ -135,6 +135,12 @@ test('Content Studio Operations opens the graph using the existing admin credent
   await page.goto('/admin/content');
   const operations = page.locator('details').filter({has:page.locator('summary', {hasText:'Operations'})});
   if (!await operations.evaluate(element => (element as HTMLDetailsElement).open)) await operations.locator('summary').click();
+  await operations.getByRole('button',{name:'Writing standard',exact:true}).click();
+  await expect(page).toHaveURL(/\/admin\/content\/memory\?view=writing-standard$/);
+  await expect(page.getByRole('article',{name:'Writing standard'}).getByRole('heading',{level:1})).toHaveText('TLDR Astro: Planetary Aspect Writing Standard');
+  await expect(page.getByRole('article').getByText('And if the reader has to work to understand what a sentence means, rewrite the sentence.',{exact:true})).toBeVisible();
+  await page.getByRole('link',{name:'Back to Content Studio',exact:true}).click();
+  if (!await operations.evaluate(element => (element as HTMLDetailsElement).open)) await operations.locator('summary').click();
   await operations.getByRole('button',{name:'Memory graph',exact:true}).click();
   await expect(page).toHaveURL(/\/admin\/content\/memory$/);
   await expect(page.getByRole('button',{name:'Fit',exact:true})).toBeVisible();
