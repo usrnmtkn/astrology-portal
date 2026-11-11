@@ -1,44 +1,58 @@
-name: Auth and feature access
+name: Diagnostic admin baseline control
 on:
-  pull_request:
-  push:
-    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
-concurrency:
-  group: auth-access-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 jobs:
-  auth-access:
+  compare:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     container:
       image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+    strategy:
+      fail-fast: false
+      matrix:
+        source:
+          - da33275eb019731ccaf946b6e1fbeb9e35896cd3
+          - 750bac580695214d734d72a41d5ab96bb089b6dc
     defaults:
       run:
         shell: bash
+        working-directory: source
     env:
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
-    timeout-minutes: 20
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+      EXPECTED_SOURCE: ${{ matrix.source }}
     steps:
       - uses: actions/checkout@v6
-      - name: Verify exact container checkout
-        run: bash scripts/ci-prepare-playwright-workspace.sh
+        with:
+          ref: ${{ matrix.source }}
+          path: source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          path: harness
+          persist-credentials: false
+      - run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE/source"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE"
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: source/package-lock.json
       - run: npm ci
       - run: npm run build:knowledge
-      - run: npm run test:auth-access
-      - run: node scripts/test-you-report-session.mjs
-      - run: npm run test:account-view
-      - name: Validate locked Chromium, WebKit, fonts and native image dependencies
-        run: node scripts/ci-validate-playwright-image.mjs
-      - run: npm run qa:auth-access
-      - run: npm run qa:bundle
+      - run: |
+          cp ../harness/scripts/ci-validate-playwright-image.mjs scripts/qa-ci-validate-playwright-image.mjs
+          node scripts/qa-ci-validate-playwright-image.mjs
+      - run: node ../harness/scripts/qa-admin-baseline-control.mjs
+      - name: Capture existing admin case only
+        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts --grep 'admin dashboard surfaces match baseline' --workers=1
       - uses: actions/upload-artifact@v6
-        if: failure()
+        if: always()
         with:
-          name: auth-access-failures
-          path: test-results/
+          name: admin-control-${{ matrix.source }}
+          path: source/test-results/playwright/**/admin-*
