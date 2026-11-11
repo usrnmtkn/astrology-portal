@@ -134,3 +134,28 @@ inside a stable release slot with a fresh before/after preservation pair for the
 51 originals. Compare the complete restored public passages and general article
 to the retained pre-test baseline in memory. Do not reset that baseline, restore
 the dated QA set to LIVE, or relax other retirements to obtain a passing result.
+
+## Live preview follow-up
+
+On the canonical #1447 deployment, the isolated signed-in archived editor showed
+no reusable recovery action. No restoration was attempted. The exact owned source
+metadata and aggregate independent publication counts matched the expected
+archived set; the native preview HTTP response remained unobserved. Scoped
+runtime logs/errors provided no matching diagnostic, so they establish no cause.
+
+The recovery component swallowed preview failures. Moon preview failures now
+show the server's safe message and offer a read-only retry; no recovery write is
+offered until a valid plan arrives. The shared generic unsupported-source behavior
+stays unchanged. All six Moon browser variants exercise an initial preview outage,
+visible error, retry without a write, then the complete recovery/reader lifecycle.
+
+The new calculated-event dependency also lacked an explicit Vercel function rule.
+The accepted catch-all contains no installed Swiss WASM asset. Add those assets
+and the normal 60-second calculated-event duration explicitly. The actual handler
+suite verifies the deployment glob covers every installed ephemeris asset and the
+recovery/calculation/baseline modules. This closes a concrete configuration gap;
+automatic tracing and the original production HTTP cause remain unverified.
+No production content, retired independent sources or protected originals were
+changed during this investigation. Native restoration still requires its normal
+preview, a fresh preservation check, explicit confirmation and exact reader
+comparison after reload.

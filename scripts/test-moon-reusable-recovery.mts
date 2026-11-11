@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {build} from 'esbuild';
-import {mkdtempSync,rmSync,mkdirSync} from 'node:fs';
+import {mkdtempSync,rmSync,mkdirSync,readFileSync,globSync} from 'node:fs';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {invoke,store} from '../tests/helpers/moon-horoscope-api.mts';
@@ -10,6 +10,16 @@ import {MOON_HOROSCOPE_SIGNS,moonHoroscopeKey,moonHoroscopeBody,parseMoonHorosco
 
 const endpoint='/api/admin/content-baseline-recovery';
 const recover=(body:any)=>invoke('POST',{recoveryKind:'moon-reusable',...body},endpoint);
+const deployment=JSON.parse(readFileSync('vercel.json','utf8'));
+const recoveryFunction=deployment.functions['api/admin/content-baseline-recovery.ts'];
+assert(recoveryFunction?.includeFiles,'Moon recovery calculates its event and needs an explicit deployment asset rule');
+assert(recoveryFunction.includeFiles.length<=256,'Keep the deployment asset pattern within Vercel limits');
+assert.equal(recoveryFunction.maxDuration,60,'Allow the same calculated-event runtime as generated-content');
+const recoveryFiles=new Set(globSync(recoveryFunction.includeFiles));
+const ephemerisFiles=globSync('node_modules/swisseph-wasm/wasm/*');
+assert(ephemerisFiles.some(file=>file.endsWith('.wasm')),'The actual calculation engine must be installed');
+for(const file of ephemerisFiles)assert(recoveryFiles.has(file),`Recovery function is missing ephemeris asset ${file}`);
+for(const file of ['api/_lib/moon-reusable-recovery.ts','api/_lib/lunation-article-facts.ts','apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js'])assert(recoveryFiles.has(file),`Recovery function is missing ${file}`);
 mkdirSync('test-results',{recursive:true});
 const directory=mkdtempSync(join(process.cwd(),'test-results/moon-recovery-'));
 const db=await createPublicationDb();
