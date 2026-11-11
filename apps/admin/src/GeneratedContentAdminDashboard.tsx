@@ -7434,6 +7434,10 @@ export function GeneratedContentAdminDashboard() {
         >
           <AdminDisclosureSummary className="admin-eyebrow">Operations</AdminDisclosureSummary>
           <section className="admin-nav-section" aria-label="Operations and advanced tools">
+            <StudioButton type="button" onClick={() => { window.location.href = "/admin/content/memory?view=writing-standard"; }}>
+              <BookOpen size={16} aria-hidden="true" />
+              <span>Writing standard</span>
+            </StudioButton>
             <StudioButton type="button" onClick={() => { window.location.href = "/admin/content/memory"; }}>
               <Orbit size={16} aria-hidden="true" />
               <span>Memory graph</span>

@@ -169,6 +169,8 @@ test('actual handler blocks anonymous and non-admin identities, with no data in 
   const anonymous = await request();
   assert.equal(anonymous.statusCode, 401);
   assert.equal(anonymous.body.authFailure, 'content_admin_unauthorized');
+  const anonymousStandard = await request('?mode=standard');
+  assert.equal(anonymousStandard.statusCode, 401); assert(!anonymousStandard.body.standard);
   const originalFetch = globalThis.fetch;
   try {
     globalThis.fetch = async input => {
@@ -178,6 +180,8 @@ test('actual handler blocks anonymous and non-admin identities, with no data in 
     const denied = await request('', { 'x-content-admin-session': 'reader-token' });
     assert.equal(denied.statusCode, 401); assert(!denied.body.records);
     assert.equal(denied.body.authFailure, 'content_admin_unauthorized');
+    const deniedStandard = await request('?mode=standard', { 'x-content-admin-session': 'reader-token' });
+    assert.equal(deniedStandard.statusCode, 401); assert(!deniedStandard.body.standard);
     globalThis.fetch = async () => Response.json({ email: 'owner@example.invalid', app_metadata: {} });
     const allowed = await request('?limit=2', { 'x-content-admin-session': 'owner-token' });
     assert.equal(allowed.statusCode, 200); assert.equal(allowed.body.records.length, 2);
@@ -195,6 +199,42 @@ test('actual handler serves complete detail and rejects invalid methods and inpu
   assert.equal((await request('?limit=nan', headers)).statusCode, 400);
   assert.equal((await request('', headers, 'POST')).statusCode, 405);
 });
+test('actual handler serves the complete fixed standard with exact source hashes, not twenty excerpts', async () => {
+  const headers = { 'x-content-generation-secret': 'memory-test-secret' };
+  const body = fs.readFileSync('docs/writing/SKY_CALENDAR_ASPECT_STANDARD.md', 'utf8');
+  const response = await request('?mode=standard', headers);
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.standard.body, body);
+  assert.equal(response.body.standard.bodySha256, sha256(body));
+  assert.equal(response.body.standard.sourceSha256, sha256(body));
+  assert.equal(response.headers['cache-control'], 'private, no-store');
+  assert.equal((await request('?mode=standard&source=../../private-document', headers)).body.standard.body, body);
+  assert.equal((await request('?mode=standard', headers, 'POST')).statusCode, 405);
+});
+test('full standard does not depend on loading private feedback or expose a changed source', async () => {
+  const oldFlag = process.env.STUDIO_MEMORY_FEEDBACK_ENABLED, fetch = globalThis.fetch;
+  try {
+    process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = 'true';
+    globalThis.fetch = async () => { throw new Error('Private feedback must not be read for a repository document'); };
+    const response = await request('?mode=standard', { 'x-content-generation-secret': 'memory-test-secret' });
+    assert.equal(response.statusCode, 200);
+  } finally {
+    globalThis.fetch = fetch;
+    if (oldFlag === undefined) delete process.env.STUDIO_MEMORY_FEEDBACK_ENABLED; else process.env.STUDIO_MEMORY_FEEDBACK_ENABLED = oldFlag;
+  }
+  const { createMemoryGraphHandler } = await import('../api/admin/memory-graph.ts');
+  let reads = 0;
+  const handler = createMemoryGraphHandler(async () => true, () => { reads++; return 'Changed document'; });
+  const invoke = async headers => {
+    const response = { statusCode: 0, setHeader() {}, end(value) { this.body = JSON.parse(value); } };
+    await handler({ method: 'GET', url: '/api/admin/memory-graph?mode=standard', headers }, response);
+    return response;
+  };
+  assert.equal((await invoke({})).statusCode, 401); assert.equal(reads, 0);
+  const changed = await invoke({ 'x-content-generation-secret': 'fixture' });
+  assert.equal(changed.statusCode, 500); assert.equal(reads, 1); assert(!changed.body.standard);
+});
+
 test('local development never grants anonymous or arbitrary-secret memory access', async () => {
   const oldEnv = process.env.NODE_ENV, oldSecret = process.env.CONTENT_GENERATION_SECRET;
   try {
