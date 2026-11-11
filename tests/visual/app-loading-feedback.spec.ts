@@ -93,7 +93,7 @@ test("Calendar Day waits for full event facts before selecting leftover Moon wri
       if (key.startsWith("tldr-lunar-calendar|")) localStorage.removeItem(key);
     }
     // Current-version entries without a full-detail marker must also be ignored.
-    localStorage.setItem("tldr-lunar-calendar|v14|week|2026-08-02|40.7128|-74.0060|America/New_York",
+    localStorage.setItem("tldr-lunar-calendar|v15|week|2026-08-02|40.7128|-74.0060|America/New_York",
       JSON.stringify({ savedAt: Date.now(), calendar: basic }));
   }, basic);
   holdFull = true;
@@ -174,9 +174,11 @@ for (const leaveCalendar of [false, true]) test(`Calendar pending event ${leaveC
     return;
   }
   await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
-  const reading = page.getByRole("dialog", { name: "Event detail" });
-  await expect(reading).toBeVisible({ timeout: 30_000 });
-  await expect(reading).toContainText("Venus enters Scorpio");
+  const reading = page.locator('.sky-detail-article');
+  await expect(page).toHaveURL(/#sky\/event\/ingress\/venus\/scorpio\/at\//);
+  await expect(reading.locator('#sky-detail-title')).toHaveText('Venus in Scorpio', { timeout: 30_000 });
+  await expect(reading.locator('.article-body-inner p').first()).not.toBeEmpty();
+  await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
 });
 
 for (const view of ["weekly", "week"]) test(`Calendar ${view} waits for authored Moon content before choosing copy`, async ({ page }) => {

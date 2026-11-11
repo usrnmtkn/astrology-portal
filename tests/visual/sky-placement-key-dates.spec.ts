@@ -97,7 +97,8 @@ test("Calendar ingress opens the complete placement Key dates", async ({ page })
   await page.goto("/?date=2026-08-22#calendar");
   await page.getByRole("button", { name: /^Saturday, August 22\./ }).click();
   await page.getByRole("button", { name: "Sun enters Virgo", exact: true }).first().click();
-  await page.getByRole("dialog", { name: "Event detail", exact: true }).getByRole("button", { name: "Read article", exact: true }).click();
+  await expect(page).toHaveURL(/#sky\/event\/ingress\/sun\/virgo\/at\//);
+  await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toHaveCount(0);
   await expect(page.locator("#sky-detail-title")).toHaveText("Sun in Virgo", { timeout: 60_000 });
   const panel = page.locator('.sky-placement-key-dates');
   await expect(panel).not.toHaveAttribute('open');

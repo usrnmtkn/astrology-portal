@@ -1,5 +1,6 @@
 import type { LunarCalendarEvent } from "../../services/ephemeris";
 import type { PlanetPosition, SkySnapshot } from "../../types";
+import { lunationNodeRelation } from "../../services/lunationEphemerisFacts";
 
 function normalized(value: unknown) {
   return String(value ?? "").trim().toLowerCase().replace(/\s+/gu, "-");
@@ -148,13 +149,9 @@ export function skyV4LunationContexts(event: LunarCalendarEvent, positions: Plan
 }
 
 export function skyV4LunationRoute(event: LunarCalendarEvent, positions: PlanetPosition[]) {
+  if (!event.eclipseType && !/new moon|full moon/iu.test(event.title)) return null;
   const sign = event.sign ?? "";
-  const axis = skyV4NodeAxis(positions);
-  const nodeRelation = sign && sign === axis.northSign
-    ? "north-node"
-    : sign && sign === axis.southSign
-      ? "south-node"
-      : "";
+  const nodeRelation = lunationNodeRelation(positions) ?? "";
   if (event.eclipseType) {
     const eclipseType = `${event.eclipseType}-eclipse`;
     return {

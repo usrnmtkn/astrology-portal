@@ -2534,13 +2534,13 @@ test.describe("client-facing user flow case studies", () => {
       await expect(eventButton, `${eventCase.title} has one Calendar detail trigger`).toHaveCount(1);
       await expect(eventButton.locator(".calendar-stoic-card__excerpt")).toBeVisible();
       await eventButton.click();
-      const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
+      await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toHaveCount(0);
       if (!eventCase.hasArticle) {
         const body = JSON.parse(readFileSync("packages/astro-knowledge/data/transits/venus-square-uranus.json", "utf8")).readerCopy.body;
         await expectSkyAspectBody(page, body);
         continue;
       }
-      await reading.getByRole("button", { name: "Read article" }).click();
+      await expect(page).toHaveURL(/#sky\/event\/(?:ingress|station)\//);
       await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
       const detailParagraphs = page.locator(".app-shell.mode-detail article p");
 
@@ -2870,7 +2870,10 @@ test.describe("client-facing user flow case studies", () => {
       await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
       await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
       await selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Aquarius.*Full Moon|Full Moon.*Aquarius/u }).click();
-      await expect(page.getByRole("dialog", { name: "Event detail" }).locator(".calendar-reading__meta")).toContainText("Jul 29 · 10:35 AM");
+      await expect(page.locator('#sky-detail-title')).toHaveText('Full Moon in Aquarius', { timeout: 60_000 });
+      await expect(page.locator('.sky-detail-id .article-duration').first()).toContainText('July 29, 2026');
+      const instant = decodeURIComponent(new URL(page.url()).hash.split('/at/')[1]);
+      expect(new Date(instant).toISOString()).toMatch(/^2026-07-29T14:35:/);
       await assertNoClientErrors();
     });
 
@@ -2882,12 +2885,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-29");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Aquarius.*Full Moon|Full Moon.*Aquarius/u });
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expectBundledLunationBody(article, "full-moon", "aquarius");
@@ -2902,12 +2906,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-07-14T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-14");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events").getByRole("button", { name: /Cancer.*New Moon|New Moon.*Cancer/u });
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expectBundledLunationBody(article, "new-moon", "cancer");
@@ -2922,12 +2927,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2025-09-21T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2025-09-21");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events .calendar-stoic-card:has(.calendar-kind--lunation, .calendar-kind--eclipse)");
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     // This fixture has no dated CMS row; the current shared reader selects the
@@ -2942,12 +2948,13 @@ test.describe("client-facing user flow case studies", () => {
     await seedClientState(page, { now: "2026-08-12T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-08-12");
     const selectedDay = page.getByLabel("Selected lunar day");
-    // Studio owns the visible title; target the existing lunation card role.
+    // Target the calculated lunation card and retain the full approved source assertion.
     const eventButton = selectedDay.locator(".calendar-day-events .calendar-stoic-card:has(.calendar-kind--lunation, .calendar-kind--eclipse)");
 
     await expect(eventButton).toBeVisible({ timeout: 15_000 });
     await eventButton.click();
-    await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+    await expect(page).toHaveURL(/#sky\/event\//);
+    await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
     const article = page.locator(".app-shell.mode-detail .sky-detail-article");
     await expect(article).toBeVisible();
     await expectBundledLunationBody(article, "new-moon", "leo");
@@ -5533,10 +5540,24 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
   await page.evaluate(() => { window.location.hash = "calendar"; });
   await page.getByRole("button", { name: /^Thursday, September 10\./ }).click();
   await page.getByRole("button", { name: "Venus enters Scorpio", exact: true }).click();
-  await page.getByRole("dialog", { name: "Event detail" }).getByRole("button", { name: "Read article" }).click();
+  await expect(page).toHaveURL(/#sky\/event\//);
+  await expect(page.getByRole("dialog", { name: "Event detail" })).toHaveCount(0);
   const venus = publishedAspect("venus-square-pluto");
-  await expectPublishedBody(venus.body);
   await expect(page.locator('.sky-detail-article h1')).toContainText("Venus in Scorpio");
+  const placementParagraphs = page.locator('.sky-detail-article .article-body-inner').first().locator('p');
+  await expect(placementParagraphs.first()).not.toBeEmpty();
+  const placementBody = await placementParagraphs.allTextContents();
+  await page.reload();
+  await expect(placementParagraphs).toHaveText(placementBody, { timeout: 60_000 });
+  await expect(page.locator('#sky-detail-title')).toHaveText('Venus in Scorpio');
+  const keyDates = page.locator('.sky-placement-key-dates');
+  await keyDates.locator(':scope > summary').click();
+  const plutoDate = keyDates.getByRole('link', { name: /Venus.*square.*Pluto/iu }).first();
+  await expect(plutoDate).toHaveAttribute('href', /^#sky\/aspect\//);
+  await plutoDate.click();
+  await expectPublishedBody(venus.body);
+  await page.reload();
+  await expectPublishedBody(venus.body);
 });
 
 for (const theme of ["light", "dark"] as const) {

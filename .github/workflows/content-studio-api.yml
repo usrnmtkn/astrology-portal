@@ -14,12 +14,16 @@ permissions:
 # Keep runs independent so a newer check-in cannot cancel earlier API QA.
 
 jobs:
-  content-studio-api:
+  content-studio-api-contracts:
     # Validate the actual main revision too. A merge message is not test evidence.
     runs-on: ubuntu-latest
     # The full suite plus PostgreSQL has taken 24m10s on a passing runner.
     # Keep every check and allow runner variance without repeating the full job.
     timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -27,6 +31,7 @@ jobs:
       # Both public registries can throttle shared runners. Starting the same
       # official PostgreSQL image here lets us fall back before running tests.
       - name: Start PostgreSQL with registry fallback
+        if: matrix.shard == 1
         shell: bash
         run: |
           image=public.ecr.aws/docker/library/postgres:17.6
@@ -57,21 +62,37 @@ jobs:
         run: npm run build:knowledge && npm run typecheck:server && npm run test:deployment-env && node scripts/test-browser-balance.mjs
       - name: Verify Studio and shared module boundaries
         run: npm run qa:admin-boundary
+      - name: Verify complete API shard coverage and failure propagation
+        run: ruby scripts/test-ci-workflow-syntax.rb && node scripts/test-content-studio-api-shards.mjs
       - name: Verify CRUD, publication, storage and actual reader contracts
-        run: npm run test:content-studio-api
+        run: npm run pretest:content-studio-api && node scripts/run-content-studio-api-shard.mjs --shard ${{ matrix.shard }}
       - name: Verify publication races with distinct PostgreSQL sessions
+        if: matrix.shard == 1
         run: node scripts/test-content-studio-publication-concurrency.mjs
         env:
           PGPASSWORD: local-test-only
       - name: Verify Weekly checkpoint compression on native PostgreSQL
+        if: matrix.shard == 1
         run: node scripts/test-weekly-checkpoint-postgres.mjs
         env:
           PGPASSWORD: local-test-only
       - name: Verify Studio variable directory contracts
+        if: matrix.shard == 1
         run: npm run test:studio-variables
       - name: Remove isolated PostgreSQL container
-        if: always()
+        if: always() && matrix.shard == 1
         run: docker rm --force studio-postgres >/dev/null 2>&1 || true
+
+  content-studio-api:
+    needs: content-studio-api-contracts
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every API shard and database check to pass
+        env:
+          API_CONTRACT_RESULT: ${{ needs.content-studio-api-contracts.result }}
+        run: test "$API_CONTRACT_RESULT" = success
 
 env:
   PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

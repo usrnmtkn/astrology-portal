@@ -40,9 +40,9 @@ for (const scenario of [
   const season = page.getByRole("button", { name: `Virgo season · ${daysLeft}${scenario.width < 600 ? "D" : " days"} left`, exact: true });
   await expect(season).toBeVisible({ timeout: 60_000 });
   await season.click();
-  const reading = page.getByRole("dialog", { name: "Event detail" });
-  await expect(reading.locator(".calendar-reading__meta")).toContainText(scenario.start);
-  await reading.getByRole("button", { name: "Close", exact: true }).click();
+  const reading = page.locator(".sky-detail-article");
+  await expect(reading.locator(".sky-detail-id .article-duration").first()).toHaveText(scenario.article, { timeout: 60_000 });
+  await page.getByRole("button", { name: "Close detail", exact: true }).click();
   await page.getByRole("tab", { name: "Week", exact: true }).click();
   await expect(page.locator(".calendar-day-group").first()).toBeVisible();
   await expect(season).toBeVisible();
@@ -53,14 +53,19 @@ for (const scenario of [
   await page.reload();
   await expect(season).toBeVisible({ timeout: 60_000 });
   await season.click();
-  await expect(reading.locator(".calendar-reading__meta")).toContainText(scenario.start);
-  await reading.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(reading.locator(".sky-detail-id .article-duration").first()).toHaveText(scenario.article, { timeout: 60_000 });
+  await page.getByRole("button", { name: "Close detail", exact: true }).click();
 
   // The former season arc is now reached through dated Day event readings.
   // Retain the independently calculated full-Moon date and exact-time check.
   await page.goto("/?date=2026-08-28#calendar?view=day&date=2026-08-28");
   await page.locator(".calendar-day-events").getByRole("button", { name: /Full Moon|Lunar Eclipse/i }).first().click();
-  await expect(reading.locator(".calendar-reading__meta")).toContainText(scenario.fullMoon.replace(", ", " · "));
+  await expect(reading.locator('.sky-detail-id .article-duration').first()).toContainText('August 28, 2026', { timeout: 60_000 });
+  const instant = new Date(decodeURIComponent(new URL(page.url()).hash.split('/at/')[1]));
+  const civilDay = new Intl.DateTimeFormat('en-US', { timeZone: scenario.timeZone, month: 'short', day: 'numeric' }).format(instant);
+  const civilTime = new Intl.DateTimeFormat('en-US', { timeZone: scenario.timeZone, hour: 'numeric', minute: '2-digit' }).format(instant);
+  expect(`${civilDay}, ${civilTime}`).toBe(scenario.fullMoon);
+  await expect(reading.locator('.article-body-inner p').first()).not.toBeEmpty();
   await reading.screenshot({ path: `test-results/season-${scenario.timeZone.replaceAll("/", "-")}.png` });
 
   // The same exact event has a different civil date in Tokyo. Calendar's row

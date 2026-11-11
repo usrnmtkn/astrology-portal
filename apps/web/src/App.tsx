@@ -131,6 +131,7 @@ import {
   loadDeferredFallbackArchitectureV3Bundle,
   loadEmptyHouseFallbackArchitectureV3Bundle,
   loadLunationBookFallbackArchitectureV3Bundle,
+  loadCalendarFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   loadInitialSkyListFallbackArchitectureV3Bundle,
@@ -216,6 +217,8 @@ import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent, MatchingNewMoonFact } from "./services/ephemeris";
+import { calendarSkyEventRoute } from "./services/calendarSkyEventIdentity";
+import type { CalendarSkyEventPublicationStamp } from "./services/calendarSkyEventReading";
 
 import {
   calendarEventGeneratedContentKeys,
@@ -5216,6 +5219,7 @@ function currentSkyPlacementDetailArticle({
   articleKey,
   articleMode = "current",
   generatedAt,
+  historyReferenceDate,
   generatedContent,
   locationLatitude,
   locationTimeZone,
@@ -5229,6 +5233,7 @@ function currentSkyPlacementDetailArticle({
   articleKey?: string | null;
   articleMode?: "current" | "archive";
   generatedAt: string;
+  historyReferenceDate?: string;
   generatedContent: GeneratedContentMap;
   onOpenDetail?: (detail: SkyDetail) => void;
   position: PlanetPosition;
@@ -5385,7 +5390,7 @@ function currentSkyPlacementDetailArticle({
     tldr: placementSection?.tldr,
     risingHoroscopes: placementSection?.risingHoroscopes,
     retrogradeHistoryContext: articleMode === "current" && isRetrograde ? {
-      planet: position.planet, sign: position.sign, referenceDate: generatedAt,
+      planet: position.planet, sign: position.sign, referenceDate: historyReferenceDate ?? generatedAt,
       timeZone: locationTimeZone || position.transitTimeZone || "UTC"
     } : undefined,
     retrograde: isRetrograde,
@@ -5405,6 +5410,14 @@ function currentSkyPlacementDetailArticle({
 }
 
 let lunationArticleHoroscopeReader: typeof import("./content/lunationArticleHoroscopes") | null = null;
+let calendarSkyEventReader: typeof import("./services/calendarSkyEventReading") | null = null;
+async function loadCalendarSkyEventReader() {
+  const [reader] = await Promise.all([
+    import("./services/calendarSkyEventReading"), loadCalendarFallbackArchitectureV3Bundle()
+  ]);
+  calendarSkyEventReader = reader;
+  return reader;
+}
 async function loadLunationArticleHoroscopes() {
   const [reader] = await Promise.all([
     import("./content/lunationArticleHoroscopes"), loadLunationBookFallbackArchitectureV3Bundle()
@@ -5432,7 +5445,11 @@ function currentSkyV4LunationDetailArticle({
   const routeInput = skyV4LunationRoute(event, skyNodeDisplayPositions(sky.positions));
   let readerParts: string[] = [];
   let resolution = "facts-only";
-  try {
+  if (!routeInput) {
+    const phaseBody = calendarSkyEventReader?.calendarSpecialEventReading(event, generatedContent);
+    readerParts = phaseBody ? phaseBody.split(/\n\s*\n/u) : [];
+    resolution = phaseBody ? "approved-lunar-article" : "facts-only";
+  } else try {
     const rendered = skyV4ReaderRenderer.renderRoute({
       ...routeInput,
       dateLine,
@@ -11196,6 +11213,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     && personalTransitResolvedIdentity !== personalTransitIdentity ? "loading" : personalTransitLoadStatus;
   const retryPersonalTransitSources = () => setPersonalTransitRetry(value => value + 1);
   const [skyDetailReadError, setSkyDetailReadError] = useState<string | null>(null);
+  const calendarEventPublicationRef = useRef<CalendarSkyEventPublicationStamp | null>(null);
   const [skyDetailUnavailableRoute, setSkyDetailUnavailableRoute] = useState<string | null>(null);
   const [skyDetailRetry, setSkyDetailRetry] = useState(0);
   const [skyDetailResolvedIdentity, setSkyDetailResolvedIdentity] = useState<string | null>(null);
@@ -11533,6 +11551,18 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }
 
   function openCalendarTransitDetail(event: LunarCalendarEvent, description?: string) {
+    const eventRoute = calendarSkyEventRoute(event);
+    if (eventRoute) {
+      pendingCalendarTransitRef.current = null;
+      selectedCalendarTransitEventRef.current = null;
+      selectedSkyDetailRefreshKeyRef.current = "";
+      transitionPage(() => {
+        updateSkyDetailRouteUrl(eventRoute);
+        setSelectedSkyDetail(null);
+        setSkyDetailRoutePath(eventRoute);
+      });
+      return;
+    }
     pendingCalendarTransitRef.current = event;
     const contentKeys = calendarTransitDetailContentKeys(event);
     const missingKeys = contentKeys.filter((key) => !skyGeneratedContent.has(key));
@@ -11621,7 +11651,9 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     event: LunarCalendarEvent,
     generatedContent: GeneratedContentMap,
     description?: string,
-    detailSky: SkySnapshot | null = sky
+    detailSky: SkySnapshot | null = sky,
+    articlePosition?: PlanetPosition,
+    allowPreviewFallback = true
   ): SkyDetail | null {
     if (!detailSky) {
       return null;
@@ -11631,7 +11663,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       return currentSkyV4LunationDetailArticle({ event, sky: detailSky, generatedContent });
     }
 
-    const generatedAt = event.startsAt || detailSky.generatedAt;
+    const special = calendarSkyEventReader?.calendarSpecialEventDetail(event, generatedContent, detailSky.location.timeZone || "UTC");
+    if (special !== undefined) return special;
+
+    const generatedAt = event.phase === "retrograde-passage" ? detailSky.generatedAt : event.startsAt || detailSky.generatedAt;
 
     if (event.type === "aspect" && event.planets && event.aspect) {
       const [planetA, planetB] = event.planets;
@@ -11667,7 +11702,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       return null;
     }
 
-    const position = detailSky.positions.find((candidate) => candidate.planet === event.planet);
+    const position = articlePosition ?? detailSky.positions.find((candidate) => candidate.planet === event.planet);
 
     if (!position) {
       return null;
@@ -11697,8 +11732,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       aspects: detailSky.aspects,
       aspectFacts: detailSky.placementAspectFacts,
       generatedAt,
+      historyReferenceDate: event.type === "station" && event.phase === "station-retrograde"
+        ? new Date(Date.parse(event.startsAt) + 60_000).toISOString() : undefined,
       generatedContent,
       locationLatitude: detailSky.location.latitude,
+      locationTimeZone: detailSky.location.timeZone,
       moonEvent: detailSky.moonEvent,
       onOpenDetail: openSkyDetail,
       position: eventPosition,
@@ -11707,7 +11745,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const eventBody = calendarEventDetailBody(event, generatedContent, description);
     const hasPlacementBody = skyDetailHasReaderFacingMainBody(detail);
 
-    return eventBody.length > 0 && !hasPlacementBody
+    return allowPreviewFallback && eventBody.length > 0 && !hasPlacementBody
       ? {
           ...detail,
           body: eventBody,
@@ -12193,11 +12231,11 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const [baseRoute, encodedExactAt] = skyDetailRoutePath.split(/\/(?:at|on)\//u);
     const routeParts = decodeSkyRouteParts(baseRoute);
     const [, routeType, routePlanet, routeSign, routeOther] = routeParts;
-    const articleLocation = sky?.location ?? withTimeZone(location);
+    const articleLocation = routeType === "event" ? withTimeZone(location) : sky?.location ?? withTimeZone(location);
     const initial = sky ? null : initialSkyLoadRef.current?.matches(skyDate, articleLocation);
     const skyArticleIdentityKey = `${skyDate}:${articleLocation.latitude}:${articleLocation.longitude}:${articleLocation.timeZone}`;
     const preparationKey = `${skyDetailRoutePath}:${skyArticleIdentityKey}:${sky?.generatedAt ?? initial?.date.toISOString()}:${skyDetailRetry}`;
-    if (!sky && (!initial || !isTodayMode
+    if (routeType !== "event" && !sky && (!initial || !isTodayMode
       || initialSkyRefreshKey.current !== skyRefreshKey || routeParts.length !== 4 || encodedExactAt
       || !skyPlacementPlanetOrder.some(point => skyRoutePartMatches(point, routePlanet)))) return;
 
@@ -12208,12 +12246,50 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     const refreshKey = `${skyDetailRoutePath}:${contentRefreshVersion}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
 
     if (
-      sky && selectedSkyDetail?.routePath === skyDetailRoutePath
+      (sky || routeType === "event") && selectedSkyDetail?.routePath === skyDetailRoutePath
       && selectedSkyDetailRefreshKeyRef.current === refreshKey
       && selectedSkyDetailRefreshContentRef.current === skyGeneratedContent
       && selectedSkyDetailRefreshSkyKeyRef.current === skyArticleIdentityKey
     ) {
       return;
+    }
+
+    if (routeType === "event") {
+      let cancelled = false;
+      setSkyDetailReadError(null);
+      setSkyDetailUnavailableRoute(null);
+      if (selectedSkyDetail?.routePath !== skyDetailRoutePath) setSelectedSkyDetail(null);
+      void (async () => {
+        const { getCalendarSkyEventSnapshotOffMainThread } = await import("./services/skyCalculationClient");
+        const [calculated, reader] = await Promise.all([
+          getCalendarSkyEventSnapshotOffMainThread(articleLocation, skyDetailRoutePath),
+          loadCalendarSkyEventReader(),
+          loadSkyPlacementFallbackArchitectureV3Bundle(false), loadContentRegistry("sky"), refreshContentPublications()
+        ]);
+        if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
+        if (!calculated) { setSelectedSkyDetail(null); setSkyDetailUnavailableRoute(skyDetailRoutePath); return; }
+        const { event, sky: eventSky, eventPosition } = calculated;
+        const { content, publication, ...sources } = await reader.prepareCalendarSkyEventContent(calculated,
+          availableDetailContent, loadLiveGeneratedContentForKeys, loadLunationArticleHoroscopes);
+        if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
+        if (sources.coreBundle !== undefined) installSkyCoreFallbackArchitectureV3Bundle(sources.coreBundle);
+        if (sources.placementBundle) installSkyPlacementFallbackArchitectureV3Bundle(sources.placementBundle);
+        const detail = calendarTransitDetailWithContent(event, content, undefined, eventSky, eventPosition, false);
+        selectedSkyDetailContentRef.current = content;
+        selectedSkyDetailRefreshKeyRef.current = refreshKey;
+        selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
+        selectedSkyDetailRefreshSkyKeyRef.current = skyArticleIdentityKey;
+        calendarEventPublicationRef.current = { ...publication, routePath: skyDetailRoutePath };
+        if (!detail || !skyDetailHasReaderFacingMainBody(detail)) { setSelectedSkyDetail(null); setSkyDetailUnavailableRoute(skyDetailRoutePath); return; }
+        setSelectedSkyDetail(personalizedSkyPlacementDetail({ ...detail, routePath: skyDetailRoutePath },
+          profileNatalSky?.ascendant ?? userProfile?.rising, skyPlacementPersonalizationTransits, skyDate));
+      })().catch(error => {
+        if (!cancelled && skyDetailRoutePath === skyDetailRoutePathFromUrl()) {
+          console.warn("Dated Calendar article failed to load.", error);
+          setSelectedSkyDetail(null); setSkyDetailReadError(skyDetailRoutePath);
+        }
+      });
+      return () => { cancelled = true; };
     }
 
     const storedCalendarEvent = selectedCalendarTransitEventRef.current;
@@ -12331,7 +12407,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     if (!sky) return;
     if (!calendarEvent && routeType === 'lunation' && routePlanet && routeSign) {
       let cancelled=false;
-      void loadLunationArticleHoroscopes().then(async reader=>{
+      void Promise.all([loadLunationArticleHoroscopes(), loadCalendarSkyEventReader()]).then(async ([reader])=>{
         const article=await reader.loadDatedLunationArticle(sky.location,routePlanet,routeSign,
           availableDetailContent,loadLiveGeneratedContentForKeys,skyRoutePartMatches);
         if(cancelled||skyDetailRoutePath!==skyDetailRoutePathFromUrl())return;
@@ -14809,6 +14885,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : skyDetailRoutePath && skyDetailUnavailableRoute === skyDetailRoutePath ? <ReaderUnavailable kind="sky-event" /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")
         || skyPlacementFallbackStatus === "ready" && skyDetailResolvedIdentity === skyPlacementResolvedIdentity)
+        && (!skyDetailRoutePath?.startsWith("sky/event/") || calendarSkyEventReader?.calendarSkyEventDetailIsCurrent(calendarEventPublicationRef.current, skyDetailRoutePath))
         && (!selectedDetailNeedsPersonalTransitSources || personalTransitSourceStatus === "ready") ? (
         <>
           {detailArticle}

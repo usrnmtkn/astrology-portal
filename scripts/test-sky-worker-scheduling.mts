@@ -5,7 +5,7 @@ import { build } from "esbuild";
 // Execute the real worker transport with explicit calculation fixtures. Holding
 // one job reproduces background enrichment queued before a route change.
 const names = ["getAstrodienstSky", "getSkyPlacementSnapshot", "getSkyPlacementTransitFacts",
-  "getRetrogradeHistory",
+  "getRetrogradeHistory", "getCalendarSkyEventSnapshot",
   "getLunarCalendarMonth", "getLunarCalendarRangeEvents", "getLunarCalendarWeek",
   "getMatchingNewMoonForFullMoon", "natalTransitTimingFor", "natalDailyTransitPeaksFor", "relationshipForecastDayFor", "preloadSwissEphemeris"];
 const output = await build({
@@ -77,4 +77,11 @@ receive!({ data: { id: 13, kind: "lunar-calendar-week", args: ["2026-10-15", "Am
 while (scheduled.length) await scheduled.shift()!();
 assert.deepEqual(replies.slice(-2).map(reply => reply.id), [13, 12], "Visible Calendar facts precede optional relationship forecast work.");
 assert.equal(replies.at(-1)?.value, JSON.stringify({ name: "relationshipForecastDayFor", args: forecastArgs }));
+const articleLocation = { label: "Synthetic observer", latitude: 0, longitude: 0, timeZone: "UTC" };
+receive!({ data: { id: 14, kind: "natal-transit-timing", args: ["optional-series"] } });
+receive!({ data: { id: 15, kind: "calendar-event-article", location: articleLocation, route: "synthetic-dated-reading" } });
+receive!({ data: { id: 16, kind: "lunar-calendar-week", args: ["2026-10-15", "UTC"] } });
+while (scheduled.length) await scheduled.shift()!();
+assert.deepEqual(replies.slice(-3).map(reply => reply.id), [16, 15, 14], "Visible Calendar facts precede the full dated reading, which precedes optional timing.");
+assert.equal(replies.at(-2)?.value, JSON.stringify({ name: "getCalendarSkyEventSnapshot", args: [articleLocation, "synthetic-dated-reading"] }));
 console.log("PASS: Calendar facts precede full Sky details, optional natal timing and retrograde history; request identity, inputs, serial execution and recovery are preserved.");

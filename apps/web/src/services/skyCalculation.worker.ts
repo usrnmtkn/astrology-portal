@@ -2,6 +2,7 @@ import type { SkyCalculationOptions } from "./ephemeris.js";
 import type { LocationInput } from "../types.js";
 import {
   getAstrodienstSky,
+  getCalendarSkyEventSnapshot,
   getSkyPlacementSnapshot,
   getSkyPlacementTransitFacts,
   getRetrogradeHistory,
@@ -24,6 +25,7 @@ type SkyCalculationRequest =
       options?: SkyCalculationOptions;
     }
   | { id: number; kind: "lunar-calendar-range"; args: Parameters<typeof getLunarCalendarRangeEvents> }
+  | { id: number; kind: "calendar-event-article"; location: LocationInput; route: string }
   | { id: number; kind: "lunar-calendar-month"; args: Parameters<typeof getLunarCalendarMonth> }
   | { id: number; kind: "lunar-calendar-week"; args: Parameters<typeof getLunarCalendarWeek> }
   | { id: number; kind: "matching-new-moon"; args: Parameters<typeof getMatchingNewMoonForFullMoon> }
@@ -46,6 +48,8 @@ let draining = false;
 
 async function calculate(request: SkyCalculationRequest) {
   switch (request.kind) {
+    case "calendar-event-article":
+      return getCalendarSkyEventSnapshot(request.location, request.route);
     case "retrograde-history":
       return getRetrogradeHistory({ planet: request.planet, sign: request.sign, referenceDate: new Date(request.date) });
     case "sky":
@@ -102,7 +106,7 @@ async function drainCalculations() {
 self.addEventListener("message", (event: MessageEvent<SkyCalculationRequest>) => {
   const request = event.data;
   const queue = request.kind === "natal-transit-timing" || request.kind === "retrograde-history" || request.kind === "relationship-forecast-day" ? backgroundQueue
-    : request.kind === "sky" && request.options?.includeTransitWindows ? detailQueue
+    : request.kind === "calendar-event-article" || request.kind === "sky" && request.options?.includeTransitWindows ? detailQueue
     : foregroundQueue;
   queue.push(request);
   if (!draining) {

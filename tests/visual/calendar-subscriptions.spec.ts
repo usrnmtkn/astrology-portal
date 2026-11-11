@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { calendarSubscriptionFixture } from "../helpers/calendar-subscription-fixture";
 import { bundledPublications } from "../helpers/bundled-publications";
 import { calendarReadingUrl } from "../../apps/web/src/features/calendar/calendarFeedPreview";
+import { moonSignTransitionForPair } from "../../src/shared/features/calendar/moonSignTransitions";
 let fixture: Awaited<ReturnType<typeof calendarSubscriptionFixture>>;
 test.beforeEach(async ({ page }) => {
   fixture = await calendarSubscriptionFixture();
@@ -121,18 +122,23 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`fe
   await dialog.getByRole("button", { name: "Close", exact: true }).click();
   await expect(dialog).toHaveCount(0); expect(page.url()).not.toContain("&event=");
   await page.getByRole("button", { name: "Moon enters Aquarius", exact: true }).click();
-  const ordinaryTitle = page.locator("#calendar-reading-title");
-  await expect(ordinaryTitle).toBeVisible();
-  expect(await ordinaryTitle.evaluate(node => {
-    const style = getComputedStyle(node);
-    return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "margin", "textTransform", "textAlign"].map(key => [key, style[key as any]]));
-  })).toEqual(typography);
-  await page.getByRole("dialog").getByRole("button", { name: "Close", exact: true }).click();
+  await expect(page).toHaveURL(/#sky\/event\/ingress\/moon\/aquarius\/at\//);
+  const ordinary = page.locator(".sky-detail-article");
+  await expect(ordinary.locator("#sky-detail-title")).toHaveText("Moon enters Aquarius");
+  const moonBody = moonSignTransitionForPair("Capricorn", "Aquarius");
+  expect(moonBody).toBeTruthy();
+  await expect(ordinary.locator(".article-body-inner").first().locator("p")).toHaveText(moonBody!.split(/\n\s*\n/u));
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.getByRole("button", { name: "Close detail", exact: true }).click();
   const weekly = new URL(calendarReadingUrl("https://example.com", "2026-09-21", "week-2026-09-21", "America/New_York"));
   await page.goto(weekly.pathname + weekly.search + weekly.hash);
   const weekDialog = page.getByRole("dialog", { name: "Weekly emotional forecast" });
   await expect(weekDialog).toContainText("A Full Moon in Aries arrives this week,");
   await expect(weekDialog).toContainText("before turning one intense moment into a final verdict.");
+  expect(await weekDialog.getByRole("heading", { name: "Weekly emotional forecast", level: 2, exact: true }).evaluate(node => {
+    const style = getComputedStyle(node);
+    return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "margin", "textTransform", "textAlign"].map(key => [key, style[key as any]]));
+  })).toEqual(typography);
   await page.goBack(); await expect(dialog).toHaveCount(0);
   expect(errors).toEqual([]);
 });

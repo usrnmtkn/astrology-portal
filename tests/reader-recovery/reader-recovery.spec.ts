@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { readerResponse } from '../helpers/reader-response';
-import { getAstrodienstSky, natalDailyTransitPeaksFor } from "../../apps/web/src/services/ephemeris";
+import { getAstrodienstSky, getLunarCalendarDayEvents, natalDailyTransitPeaksFor } from "../../apps/web/src/services/ephemeris";
 import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEMA } from "../../apps/web/src/services/verifiedSkyCache";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
@@ -152,17 +152,21 @@ test("You keeps calculated planet and house transits visible while saved content
 
 test("Calendar honors the shared date and finishes skeletons on a stalled content request", async ({ page }) => {
   const state = await prepare(page, { slowContent: true });
-  const date = "2026-11-27";
-  // Synthetic station facts test loading without publishing any interpretation.
-  const event = { id: "qa-station", type: "station", glyph: "⚸", planet: "Lilith", sign: "Capricorn", direction: "retrograde", primary: true, title: "Lilith stations retrograde in Capricorn", startsAt: `${date}T12:00:00Z`, dateKey: date };
+  const date = "2026-01-26";
+  // A dated reader reconstructs its native event. Use a genuine station while
+  // keeping every remote interpretation request withheld until teardown.
+  const events = await getLunarCalendarDayEvents(location, new Date(`${date}T12:00:00Z`));
+  const station = events.find(event => event.type === "station" && event.planet === "Lilith" && event.direction === "retrograde");
+  expect(station).toBeTruthy();
+  const event = { ...station!, id: "qa-station", primary: true };
   const ingress = { ...event, id: "qa-ingress", type: "ingress", planet: "Venus", sign: "Scorpio", toSign: "Scorpio", direction: undefined, title: "Venus enters Scorpio", startsAt: `${date}T13:00:00Z` };
-  const moon = { id: "qa-lunation", type: "lunation", title: "New Moon", sign: "Sagittarius", startsAt: "2026-11-29T12:00:00Z", dateKey: "2026-11-29" };
+  const moon = { id: "qa-lunation", type: "lunation", title: "New Moon", sign: "Sagittarius", startsAt: "2026-01-28T12:00:00Z", dateKey: "2026-01-28" };
   await page.route("**/api/calendar?**", route => route.fulfill({ json: { ok: true, calendar: {
-    month: "2026-11", timeZone: location.timeZone, location,
-    days: Array.from({ length: 7 }, (_, i) => { const key = `2026-11-${23+i}`; return { date: `${key}T12:00:00Z`, dateKey: key, inMonth: true, moonSign: "Leo", moonSignGlyph: "♌", moonPhase: "Waning Gibbous", illumination: 70, phaseAngle: 240, activeAspects: [], events: key === date ? [event, ingress] : key === "2026-11-28" ? [{ ...event, id: "qa-station-boundary-repeat" }] : [] }; }), events: [event, ingress, moon]
+    month: "2026-01", timeZone: location.timeZone, location,
+    days: Array.from({ length: 7 }, (_, i) => { const key = new Date(Date.UTC(2026, 0, 26 + i)).toISOString().slice(0, 10); return { date: `${key}T12:00:00Z`, dateKey: key, inMonth: true, moonSign: "Leo", moonSignGlyph: "♌", moonPhase: "Waning Gibbous", illumination: 70, phaseAngle: 240, activeAspects: [], events: key === date ? [event, ingress] : key === "2026-01-27" ? [{ ...event, id: "qa-station-boundary-repeat" }] : [] }; }), events: [event, ingress, moon]
   } } }));
   await page.goto(`/?date=${date}#calendar?view=day`);
-  await expect(page.getByLabel("Selected lunar day")).toContainText(/Fri.*November 27/, { timeout: 30_000 });
+  await expect(page.getByLabel("Selected lunar day")).toContainText(/Mon.*January 26/, { timeout: 30_000 });
   await expect.poll(() => state.contentRequests).toBeGreaterThan(0);
   // Installing the offline publication snapshot may revalidate the targeted
   // content after its first eight-second deadline. The complete reading must
@@ -173,21 +177,28 @@ test("Calendar honors the shared date and finishes skeletons on a stalled conten
   const card = page.locator(".calendar-stoic-card").filter({ hasText: event.title });
   await expect(card).toBeVisible();
   await card.click();
-  const reading = page.getByRole("dialog").filter({ hasText: event.title });
+  await expect(page).toHaveURL(url => url.hash === `#sky/event/station/lilith/station-retrograde/at/${encodeURIComponent(event.startsAt)}`);
+  const reading = page.locator(".sky-detail-article");
   await expect(reading).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Event detail", exact: true })).toHaveCount(0);
   await expect(reading.getByLabel("Loading interpretation")).toHaveCount(0);
   await expect(reading).toContainText("Black Moon Lilith stations, and a preference, refusal, or old point of anger");
   await expect(reading).toContainText("It is to stop pretending the preference does not exist.");
+  const paragraphs = reading.locator(".article-body-inner").first().locator("p");
+  const body = await paragraphs.allTextContents();
+  await page.reload();
+  await expect(paragraphs).toHaveText(body, { timeout: 25_000 });
+  expect(state.contentResponses).toBe(0);
   await expect(page.locator(".lunar-milestones")).toHaveCount(0);
   await page.screenshot({ path: "test-results/reader-recovery/calendar-finished.png", fullPage: true });
-  await reading.getByRole("button", { name: "Close", exact: true }).click();
-  await page.locator(".lunar-week-day[data-calendar-date='2026-11-28']").click();
-  expect(`${page.url()}`).toMatch(/2026-11-28/);
+  await page.getByRole("button", { name: "Close detail", exact: true }).click();
+  await page.locator(".lunar-week-day[data-calendar-date='2026-01-27']").click();
+  expect(`${page.url()}`).toMatch(/2026-01-27/);
   await expect(page.locator(".lunar-milestones")).toHaveCount(0);
   await page.getByRole("tab", { name: "Month", exact: true }).click();
-  await expect(page.locator(".lunar-calendar-day[data-calendar-date='2026-11-27']")).toBeVisible();
+  await expect(page.locator(".lunar-calendar-day[data-calendar-date='2026-01-26']")).toBeVisible();
   await page.getByRole("button", { name: "Your profile", exact: true }).click();
-  await expect(page.getByRole("button", { name: /Nov 28/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Jan 27/ })).toBeVisible();
 });
 
 

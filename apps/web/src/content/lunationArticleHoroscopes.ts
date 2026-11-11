@@ -41,12 +41,12 @@ export async function loadDatedLunationArticle(location: LocationInput, datePart
   const date = new Date(`${datePart}T00:00:00Z`);
   if (!Number.isFinite(+date)) return null;
   const events = await getLunarCalendarRangeEventsOffMainThread(location, date, new Date(+date + 86400000));
-  const event = events.find(item => item.type === 'lunation' && item.primary
+  const event = events.find(item => item.type === 'lunation'
     && item.startsAt.slice(0, 10) === datePart && matches(item.sign ?? '', sign));
   if (!event) return null;
   const eventSky = await getAstrodienstSkyOffMainThread(location, new Date(event.startsAt),
     { includeTransitWindows: true, transitWindowPlanets: [] });
-  const content = await loadSkyDetailContent(eventSky, existing, lunationArticleContentKeys(event), load);
+  const content = await loadSkyDetailContent(eventSky, existing, lunationArticleContentKeys(event), load, []);
   return { event, eventSky, content };
 }
 

@@ -108,11 +108,6 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
   });
 }
 
-const virgoBlocks = JSON.parse(readFileSync("apps/web/src/features/calendar/data/lunar-journal.entries.json", "utf8"))
-  .entries.find((entry: { type: string; sign: string }) => entry.type === "season" && entry.sign === "Virgo").blocks as Array<{
-    type: string; text?: string; label?: string; items?: string[];
-  }>;
-
 for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 430, 678, 768, 1440]) {
   test(`Calendar controls and reading spacing ${theme} ${width}`, async ({ page }) => {
     test.setTimeout(90_000);
@@ -207,37 +202,21 @@ for (const theme of ["light", "dark"] as const) for (const width of [320, 390, 4
     await page.getByRole("tab", { name: "Day", exact: true }).click();
     await page.locator('.lunar-week-day[data-calendar-date="2026-09-21"]').click();
     await page.locator(width < 720 ? ".calendar-season-pill" : ".calendar-header-season").click();
-    const reading = page.getByRole("dialog", { name: "Event detail", exact: true });
-    await expect(reading.getByRole("heading", { level: 2, name: /Virgo/ })).toBeVisible();
-    const body = reading.locator(".calendar-reading__body");
-    for (const block of virgoBlocks) {
-      if (block.text) await expect(body).toContainText(block.text);
-      for (const item of block.items ?? []) await expect(body).toContainText(item);
-    }
-    await expect(reading.locator(".calendar-reading__mark")).toHaveCount(0);
-    const spacing = await reading.locator(".calendar-reading__card").evaluateAll(cards => cards.flatMap(card => {
-      const children = Array.from(card.children);
-      return children.slice(1).map((child, i) => child.getBoundingClientRect().top - children[i].getBoundingClientRect().bottom);
-    }));
-    for (const gap of spacing) expect(gap).toBeGreaterThanOrEqual(8);
-    const bodyStyles = await body.locator("p, li").evaluateAll(nodes => nodes.map(node => {
+    const reading = page.locator('.sky-detail-article');
+    await expect(reading.locator('#sky-detail-title')).toHaveText('Sun in Virgo');
+    await expect(page.getByRole('dialog', { name: 'Event detail', exact: true })).toHaveCount(0);
+    const body = reading.locator('.sky-detail-body .article-body-inner').first();
+    await expect(body.locator('p').first()).not.toBeEmpty();
+    const paragraphs = await body.locator('p').allTextContents();
+    await page.reload();
+    await expect(body.locator('p')).toHaveText(paragraphs, { timeout: 60000 });
+    const bodyStyles = await body.locator('p:not(aside p), li:not(aside li)').evaluateAll(nodes => nodes.map(node => {
       const style = getComputedStyle(node);
       return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing];
     }));
     expect(new Set(bodyStyles.map(style => JSON.stringify(style))).size).toBe(1);
-    const prompt = reading.locator(".calendar-reading__card").filter({ hasText: "Journal prompt" });
-    await prompt.scrollIntoViewIfNeeded();
-    if (width < 720) await expect(reading.getByRole("button", { name: "Close", exact: true })).toBeInViewport();
-    await page.screenshot({ path: `${output}/mobile-${theme}-${width}-prompts.png` });
-    if (width >= 430) {
-      const write = reading.getByRole("button", { name: "Write about this" });
-      expect((await write.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-      await write.click();
-      const checkIn = page.getByRole("dialog", { name: "Check-in", exact: true });
-      await expect(checkIn).toBeVisible();
-      await expect(checkIn.getByRole("heading", { name: virgoBlocks.find(block => block.type === "prompt")!.text!, exact: true })).toBeVisible();
-      await expect(checkIn.locator("textarea")).toBeEditable();
-    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+    await page.screenshot({ path: `${output}/mobile-${theme}-${width}-full-sky-season.png` });
     assertNoErrors();
   });
 }

@@ -15,6 +15,7 @@ export default defineConfig({
     'calendar-month-overview.spec.ts',
     'calendar-moon-ui.spec.ts',
     'calendar-aspect-sky-navigation.spec.ts',
+    'calendar-event-sky-navigation.spec.ts',
     'calendar-sky-history-coverage.spec.ts',
     'calendar-lunation-preview.spec.ts',
     'calendar-lunation-aspects.spec.ts',

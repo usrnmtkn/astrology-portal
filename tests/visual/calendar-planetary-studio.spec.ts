@@ -125,8 +125,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
         const card = page.locator('.calendar-day-events .calendar-stoic-card').filter({ hasText: item.title });
         await expect(card).toContainText(`Synthetic ${item.view} opening.`, { timeout: 45_000 });
         await card.click();
-        const detail = page.getByRole('dialog', { name: 'Event detail' });
-        await expect(detail).toContainText(`Complete synthetic ${item.view} final sentence.`);
+        const detail = page.locator('.sky-detail-article');
+        await expect(detail.locator('#sky-detail-title')).toContainText(item.planet === 'venus' ? 'Venus' : 'Mercury');
+        const body = detail.locator('.sky-detail-body .article-body-inner').first();
+        await expect(body.locator('p').first()).not.toBeEmpty();
+        await expect(page.getByRole('dialog', { name: 'Event detail', exact: true })).toHaveCount(0);
+        const paragraphs = await body.locator('p').allTextContents();
+        await page.reload();
+        await expect(body.locator('p')).toHaveText(paragraphs, { timeout: 60000 });
       }
       expect(errors).toEqual([]);
     } finally { await page.unrouteAll({ behavior: 'wait' }); await page.close(); store.close(); }

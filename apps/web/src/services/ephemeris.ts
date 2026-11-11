@@ -15,6 +15,7 @@ import {
 import { debugInfoForZonedDateTime } from "./timezones.js";
 import { assertCanonicalSkyPoints } from "./canonicalSkyAspectProfile.js";
 import { memoizeSwissCalculation } from "./swissCalculationCache.js";
+import { calendarSkyEventMatches, parseCalendarSkyEventRoute } from "./calendarSkyEventIdentity.js";
 import { traditionalSignRulers } from "../content/skySunSeason.js";
 import { SKY_PLACEMENT_ASPECT_TARGETS, transitAspectDefinitions } from "../astrologyConfig.js";
 import { PERSONAL_DAILY_ORB, personalDayBounds, personalTransitId, type PersonalDailyPeak } from "./personalDailyTransits.js";
@@ -1545,18 +1546,69 @@ function eclipseTypeForLunation(
     return null;
   }
 
-  const nodeLongitude = exactPlanetLongitude(swe, swe.SE_TRUE_NODE, date);
-  const lunationLongitude = exactPlanetLongitude(
-    swe,
-    targetPhase === 0 ? swe.SE_SUN : swe.SE_MOON,
-    date
-  );
-  const nearestNodeDistance = Math.min(
-    angularSeparation(lunationLongitude, nodeLongitude),
-    angularSeparation(lunationLongitude, normalizeDegrees(nodeLongitude + 180))
-  );
-
-  return nearestNodeDistance <= 17.5 ? targetPhase === 0 ? "solar" : "lunar" : null;
+  const jd = swe.julday(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), utcHour(date));
+  const flags = swe.SEFLG_SWIEPH;
+  const module = swe.SweModule;
+  const geography = module._malloc(10 * Float64Array.BYTES_PER_ELEMENT);
+  const attributes = module._malloc(20 * Float64Array.BYTES_PER_ELEMENT);
+  const error = module._malloc(256);
+  try {
+    const at = (instant: number) => {
+      // Eclipse masks do not expose ephemeris provenance. Validate each
+      // bounded instant before invoking the native shadow calculation.
+      calculateSwissUt(swe, instant, swe.SE_SUN, flags);
+      calculateSwissUt(swe, instant, swe.SE_MOON, flags);
+      new Float64Array(module.HEAPF64.buffer, geography, 10).fill(0);
+      new Float64Array(module.HEAPF64.buffer, attributes, 20).fill(0);
+      new Uint8Array(module.HEAPF64.buffer, error, 256).fill(0);
+      let result = module.ccall(
+        targetPhase === 0 ? "swe_sol_eclipse_where" : "swe_lun_eclipse_how",
+        "number",
+        ["number", "number", "pointer", "pointer", "pointer"],
+        // A null lunar observer requests the global shadow, without a horizon.
+        [instant, flags, targetPhase === 0 ? geography : 0, attributes, error]
+      );
+      if (targetPhase === 0 && result === 0 && new Float64Array(module.HEAPF64.buffer, attributes, 20)[0] > 0) {
+        // Swiss' global search also confirms a grazing overlap at the maximum
+        // location when the shadow-location mask itself is still zero.
+        new Float64Array(module.HEAPF64.buffer, geography, 10)[2] = 0;
+        result = module.ccall("swe_sol_eclipse_how", "number",
+          ["number", "number", "pointer", "pointer", "pointer"], [instant, flags, geography, attributes, error]);
+      }
+      const message = module.UTF8ToString(error).trim();
+      if (!Number.isFinite(result) || result < 0) {
+        throw new Error(`Swiss eclipse calculation failed${message ? `: ${message}` : "."}`);
+      }
+      if (/moshier/iu.test(message)) throw new Error("Swiss eclipse calculation provenance mismatch.");
+      return { result, magnitude: new Float64Array(module.HEAPF64.buffer, attributes, 20)[targetPhase === 0 ? 0 : 1] };
+    };
+    const exact = at(jd);
+    if (exact.result > 0) return targetPhase === 0 ? "solar" : "lunar";
+    const kind = targetPhase === 0 ? "solar" : "lunar";
+    // A grazing eclipse can peak away from the geocentric New or Full Moon.
+    // Maximize the native magnitude within this same syzygy, never
+    // search another eclipse or run beyond the packaged ephemeris interval.
+    let left = Math.max(swissEphemerisStartJd, jd - 0.5);
+    let right = Math.min(swissEphemerisEndJd - 1 / 86400000, jd + 0.5);
+    const ratio = (Math.sqrt(5) - 1) / 2;
+    let a = right - ratio * (right - left), b = left + ratio * (right - left);
+    let first = at(a), second = at(b);
+    for (let index = 0; index < 32; index += 1) {
+      if (first.result > 0 || second.result > 0) return kind;
+      if (first.magnitude > second.magnitude) {
+        right = b; b = a; second = first;
+        a = right - ratio * (right - left); first = at(a);
+      } else {
+        left = a; a = b; first = second;
+        b = left + ratio * (right - left); second = at(b);
+      }
+    }
+    return first.result > 0 || second.result > 0 ? kind : null;
+  } finally {
+    module._free(geography);
+    module._free(attributes);
+    module._free(error);
+  }
 }
 
 function lunationTitle(name: string, sign: string, eclipseType: LunarCalendarEclipseType | null) {
@@ -3116,6 +3168,66 @@ export async function getLunarCalendarDayEvents(location: LocationInput, anchor:
   }
   const dayKey = localDateKey(anchor, timeZone);
   return (await pending).filter(event => event.dateKey === dayKey);
+}
+
+export type CalendarSkyEventSnapshot = {
+  event: LunarCalendarEvent;
+  sky: SkySnapshot;
+  eventPosition?: PlanetPosition;
+};
+
+/** Reconstruct dated article facts from the same Calendar engine on reload. */
+export async function getCalendarSkyEventSnapshot(location: LocationInput, route: string): Promise<CalendarSkyEventSnapshot | null> {
+  const identity = parseCalendarSkyEventRoute(route);
+  if (!identity) return null;
+  const matches = (await getLunarCalendarDayEvents(location, identity.date))
+    .filter(event => calendarSkyEventMatches(identity.variant === "retrograde-passage" && event.phase === "retrograde-passage"
+      // An ongoing entry belongs to the requested local civil day. Its midnight
+      // changes with the selected zone; exact physical events retain their instant.
+      ? { ...identity, date: new Date(event.startsAt) } : identity, event));
+  if (matches.length !== 1) return null;
+  const event = matches[0];
+  const instant = event.phase === "retrograde-passage"
+    ? localNoon(new Date(event.startsAt), location.timeZone || "UTC") : new Date(event.startsAt);
+  const sign = event.toSign ?? event.sign;
+  const placement = event.planet && event.planet !== "Moon"
+    && !(event.planet === "Lilith" && /^station-/u.test(event.phase ?? ""));
+  const sky = placement && sign
+    ? await getSkyPlacementSnapshot(location, event.planet!, sign, instant, true, "placement")
+    : await getAstrodienstSky(location, instant, { includeTransitWindows: event.type === "lunation", transitWindowPlanets: [], includeDailyEvents: false });
+  const position = sky.positions.find(value => value.planet === event.planet);
+  if (!position) return { event, sky };
+  if (sign && position.sign !== sign) throw new Error("Calendar article placement does not match its calculated event.");
+  let eventPosition = { ...position };
+  if (event.direction === "retrograde" && event.planet !== "Lilith") {
+    if (event.phase === "station-retrograde" || event.type === "ingress") {
+      const swe = await getSwissEph();
+      const planetId = skyPointPlanetId(swe, event.planet!);
+      if (planetId === null) throw new Error("Unsupported Calendar station point.");
+      // Station direction is calculated just after the zero-speed instant.
+      // Use that same side to obtain its cycle, retaining event-time positions.
+      const cycle = retrogradeCycleFactsFor(swe, event.planet!, planetId,
+        event.phase === "station-retrograde" ? addDays(instant, 1) : instant, event.direction);
+      if (!cycle.retrogradeStart || !cycle.retrogradeEnd
+        || event.phase === "station-retrograde" && Math.abs(Date.parse(cycle.retrogradeStart) - +instant) > 2000) {
+        throw new Error("The dated Calendar station cycle is unavailable.");
+      }
+      eventPosition = { ...eventPosition, retrogradeStart: cycle.retrogradeStart, retrogradeEnd: cycle.retrogradeEnd,
+        retrogradeWindowSource: cycle.retrogradeWindowSource, retrogradePhase: cycle.retrogradePhase,
+        retrogradeShadowStart: cycle.retrogradeShadowStart, retrogradeShadowEnd: cycle.retrogradeShadowEnd };
+      if (sky.placementAspectFacts) sky.placementAspectFacts = { ...sky.placementAspectFacts,
+        retrogradeStart: cycle.retrogradeStart, retrogradeEnd: cycle.retrogradeEnd,
+        retrograde: rankPlacementEvents(findSkyPlacementResidencyAspects(swe, new Date(cycle.retrogradeStart),
+          new Date(cycle.retrogradeEnd), location.timeZone || "UTC", event.planet!), event.planet!) };
+    }
+  }
+  if (event.type === "station") {
+    eventPosition = { ...eventPosition, motion: event.direction ?? position.motion,
+      retrogradeStart: event.retrogradeStart ?? eventPosition.retrogradeStart,
+      retrogradeEnd: event.retrogradeEnd ?? eventPosition.retrogradeEnd,
+      cazimi: event.cazimi ?? eventPosition.cazimi, cazimiOrb: event.cazimiOrb ?? eventPosition.cazimiOrb };
+  }
+  return { event, sky, eventPosition };
 }
 
 function buildLunarCalendarRange(

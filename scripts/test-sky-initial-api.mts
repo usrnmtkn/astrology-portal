@@ -20,7 +20,7 @@ async function invoke(url: string, method = 'GET') {
 let first: any;
 for(const fixture of fixtures) {
   const {at,...coordinates}=fixture; const location={...coordinates,label:'Synthetic location'};
-  const params=new URLSearchParams({at,lat:String(location.latitude),lon:String(location.longitude),timeZone:location.timeZone,version:'tldrastro-calculation-v4'});
+  const params=new URLSearchParams({at,lat:String(location.latitude),lon:String(location.longitude),timeZone:location.timeZone,version:'tldrastro-calculation-v5'});
   const result=await invoke(`/api/sky?${params}`);assert.equal(result.status,200);
   const sky=result.payload.sky;first ??= {sky,location,date:new Date(at)};
   const direct=await getAstrodienstSky(location,new Date(at),{includeTransitWindows:true});
@@ -56,8 +56,8 @@ for(const fixture of fixtures) {
   assert.equal(readCachedSkySnapshot(key,{storage})?.calculationDetail,'full');
   assert.equal(result.headers['cache-control'],'private, no-store');
 }
-for(const query of ['','at=invalid','at=2026-09-21T16:00:00Z&lat=91&lon=0&version=tldrastro-calculation-v4',
- 'at=2026-09-21T16:00:00Z&lat=0&lon=0&timeZone=invalid&version=tldrastro-calculation-v4']) {
+for(const query of ['','at=invalid','at=2026-09-21T16:00:00Z&lat=91&lon=0&version=tldrastro-calculation-v5',
+ 'at=2026-09-21T16:00:00Z&lat=0&lon=0&timeZone=invalid&version=tldrastro-calculation-v5']) {
  assert.equal((await invoke(`/api/sky?${query}`)).status,400);
 }
 assert.equal((await invoke('/api/sky','POST')).status,405);
@@ -116,7 +116,7 @@ try {
   assert.equal(calls.length,1);assert.equal(workerStarts,0,'Cancelled initial reads cannot start a local fallback.');
   calls.length=0;
   const key=new URLSearchParams({at:first.date.toISOString(),lat:String(first.location.latitude),lon:String(first.location.longitude),
-    timeZone:first.location.timeZone,version:'tldrastro-calculation-v4',detail:'placements'}).toString();
+    timeZone:first.location.timeZone,version:'tldrastro-calculation-v5',detail:'placements'}).toString();
   const aborted=Promise.reject(new DOMException('Synthetic cancelled priming','AbortError'));void aborted.catch(()=>{});
   Object.assign(page,{__tldrInitialSkyTransport:{key,startedAt:performance.now(),request:aborted}});
   await assert.rejects(getSkyFromApi(first.location,first.date,'placements'),{name:'AbortError'});

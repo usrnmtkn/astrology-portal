@@ -14,7 +14,8 @@ const positions = [
   { planet: "Venus", sign: "Aries", motion: "retrograde" },
   { planet: "Mercury", sign: "Aries", motion: "retrograde" },
   { planet: "Neptune", sign: "Pisces", motion: "direct" },
-  { planet: "North Node", sign: "Aries", motion: "retrograde" },
+  { planet: "Moon", sign: "Aries", longitude: 14, motion: "direct" },
+  { planet: "North Node", sign: "Aries", longitude: 20, motion: "retrograde" },
   { planet: "South Node", sign: "Libra", motion: "retrograde" }
 ] as any[];
 
@@ -82,6 +83,9 @@ assert.deepEqual(skyV4LunationRoute(exactEclipse, positions), {
   eclipseSign: "Aries",
   nodeRelation: "north-node"
 });
+assert.equal(skyV4LunationRoute(exactEclipse, positions.map(position => position.planet === 'North Node'
+  ? { ...position, sign: 'Pisces', longitude: 359 } : position))?.nodeRelation, 'north-node', 'Use calculated angular distance across a sign boundary.');
+assert.equal(skyV4LunationRoute(exactEclipse, positions.filter(position => position.planet !== 'Moon'))?.nodeRelation, '', 'Missing event coordinates must not become a sign-based guess.');
 
 const app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 assert.match(app, /event\.type === "lunation"[\s\S]{0,120}currentSkyV4LunationDetailArticle/u);
