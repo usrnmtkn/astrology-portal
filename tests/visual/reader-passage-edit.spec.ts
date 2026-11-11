@@ -14,11 +14,15 @@ const location={label:'QA reference',latitude:0,longitude:0,timeZone};
 const datedKey=`calendar-passage/daily/${date}/America%2FNew_York`;
 const moonKey='authored/calendar-moon-transition/aquarius/pisces';
 
-for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) for (const [width,theme] of [[1440,'light'],[390,'dark']] as const) {
-  test(`Lunar node reader Edit resolves actual article facts ${planet} ${width} ${theme}`,async({page,context})=>{
+for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) for (const [width,theme,copyMode] of [[1440,'light','normal'],[390,'dark','normal'],[1440,'light','delayed'],[390,'dark','delayed'],[1440,'light','stalled-once'],[390,'dark','stalled-always']] as const) {
+  if(planet!=='south-node'&&copyMode.startsWith('stalled'))continue;
+  const delayedCopy=copyMode!=='normal';
+  test(`Lunar node reader Edit resolves actual article facts ${planet} ${width} ${theme}${delayedCopy ? ` with ${copyMode} complete copy` : ''}`,async({page,context})=>{
     test.setTimeout(120_000);
     const store=await studioApiStore([],{uuidIds:true}),writes:any[]=[],errors:string[]=[];
-    let factsCalls=0;
+    let factsCalls=0,failFacts=false,releaseFacts=()=>{},releaseFailure=()=>{};
+    const factsResponse=delayedCopy ? new Promise<void>(resolve=>{releaseFacts=resolve;}) : Promise.resolve();
+    const failureResponse=new Promise<void>(resolve=>{releaseFailure=resolve;});
     context.on('page',popup=>popup.on('pageerror',error=>errors.push(error.message)));
     page.on('pageerror',error=>errors.push(error.message));
     try {
@@ -29,6 +33,21 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
         localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));
         localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:studio-theme',theme);
       },{theme,location});
+      if(delayedCopy) await context.addInitScript(copyMode=>{
+        if(!window.location.pathname.startsWith('/admin/content'))return;
+        const held=new Set<string>();
+        let missed=0;
+        window.addEventListener('message',event=>{
+          const data=event.data,key=`${data?.channel}:${data?.requestId}`;
+          if(data?.protocol!=='studio-sky-reader-preview/v1'||data.type!=='result'||held.has(key))return;
+          held.add(key);event.stopImmediatePropagation();
+          if(copyMode.startsWith('stalled')&&(copyMode==='stalled-always'||!missed)){
+            document.documentElement.dataset.readerCopyMissed=String(++missed);return;
+          }
+          document.documentElement.dataset.readerCopyPending='true';
+          window.setTimeout(()=>window.dispatchEvent(new MessageEvent('message',{data,origin:event.origin,source:event.source})),35_000);
+        },true);
+      },copyMode);
       await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v2',rows:[],publications:[],rowCount:0}}));
       await context.route('**/rest/v1/**',async route=>route.fulfill({json:new URL(route.request().url()).pathname.endsWith('/content_publications')?await store.call({method:'publications'}):[]}));
       await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,onWrite:write=>writes.push(write),answer:async(route,url)=>{
@@ -38,10 +57,12 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
         }
         if(url.pathname==='/api/admin/sky-article-facts'){
           factsCalls++;expect(url.searchParams.get('planet')).toBe(planet);expect(url.searchParams.get('format')).toBe('ingress-essay-v3');
+          if(failFacts){await failureResponse;await route.fulfill({status:503,json:{ok:false,error:'Synthetic calculated facts unavailable.'}});return true;}
           process.env.CONTENT_GENERATION_SECRET='calendar-api-fixture';
           const result={statusCode:0,payload:{} as any,setHeader(){},end(body:string){this.payload=JSON.parse(body);}};
           await nodeArticleFactsHandler({method:'GET',url:url.pathname+url.search,headers:{'x-content-generation-secret':'calendar-api-fixture'}} as any,result as any);
           expect(result.statusCode,JSON.stringify(result.payload)).toBe(200);
+          await factsResponse;
           await route.fulfill({status:result.statusCode,json:result.payload});return true;
         }
         if(url.pathname==='/api/admin/sky-article-template-slots')throw new Error('Opening a node article must not generate writing.');
@@ -52,18 +73,62 @@ for (const [planet, sign] of [['north-node','aquarius'],['south-node','leo']]) f
       const title=await article.locator('h1').innerText();
       const expected=await article.evaluate(node=>[...node.querySelectorAll<HTMLElement>('.sky-detail-body h2,.sky-detail-body h3,.sky-detail-body p,.sky-detail-body li,.sky-detail-body dt,.sky-detail-body dd')].filter(n=>!n.closest('#sky-personalized-placement,.sky-detail-rising-horoscopes-card,button,details')&&!n.parentElement?.closest('li')).map(n=>n.innerText.trim()).filter(Boolean).join('\n\n'));
       expect(expected.length).toBeGreaterThan(500);
-      const opened=context.waitForEvent('page');await article.getByRole('link',{name:'Edit this passage',exact:true}).click();const editor=await opened;
+      const edit=article.getByRole('link',{name:'Edit this passage',exact:true});
+      let editor=page;
+      if(delayedCopy){
+        const href=(await edit.getAttribute('href'))!;
+        await page.clock.install();await page.goto(href);
+        if(copyMode.startsWith('stalled')){
+          await expect(page.locator('html')).toHaveAttribute('data-reader-copy-missed','1',{timeout:60000});
+          expect(factsCalls).toBe(1);releaseFacts();
+          await page.clock.fastForward(60_000);
+          if(copyMode==='stalled-always'){
+            await expect(page.locator('html')).toHaveAttribute('data-reader-copy-missed','2',{timeout:60000});
+            await page.clock.fastForward(60_000);
+            await expect(page.getByRole('alert')).toContainText('The complete reader article did not finish loading.');
+            await expect(page.getByRole('button',{name:'Retry opening passage',exact:true})).toBeVisible();
+            await expect(page.getByLabel('Visit article body')).toHaveCount(0);expect(factsCalls).toBe(2);
+            expect(writes).toEqual([]);expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(publications);
+            return;
+          }
+        }
+        await expect(page.locator('html')).toHaveAttribute('data-reader-copy-pending','true',{timeout:60000});
+        expect(factsCalls,'Facts must start while the complete reader copy is pending.').toBe(copyMode==='stalled-once' ? 2 : 1);
+        releaseFacts();await page.clock.fastForward(35_000);
+      }else{
+        const opened=context.waitForEvent('page');await edit.click();editor=await opened;
+      }
       await editor.setViewportSize({width,height:1000});
       const form=editor.getByRole('region',{name:'Article for this visit',exact:true});
       await expect(form.getByLabel('Visit article title')).toHaveValue(title,{timeout:60000});
       await expect(form.getByLabel('Visit article body')).toHaveValue(expected);
       await expect(form.getByRole('complementary',{name:'Article settings'})).toContainText('Full sign visit');
       await expect(editor.getByRole('alert')).toHaveCount(0);expect(factsCalls).toBeGreaterThan(0);
+      if(delayedCopy){
+        await expect(editor.getByRole('button',{name:'Retry opening passage',exact:true})).toHaveCount(0);
+        await editor.reload();
+        if(copyMode==='stalled-once'){
+          await expect(editor.locator('html')).toHaveAttribute('data-reader-copy-missed','1',{timeout:60000});
+          await editor.clock.fastForward(60_000);
+        }
+        await expect(editor.locator('html')).toHaveAttribute('data-reader-copy-pending','true',{timeout:60000});
+        await editor.clock.fastForward(35_000);
+        await expect(form.getByLabel('Visit article body')).toHaveValue(expected);
+        await expect(editor.getByRole('alert')).toHaveCount(0);expect(factsCalls).toBe(copyMode==='stalled-once' ? 4 : 2);
+      }
+      if(planet==='south-node'&&width===390&&copyMode==='delayed'){
+        failFacts=true;await editor.reload();
+        await expect(editor.locator('html')).toHaveAttribute('data-reader-copy-pending','true',{timeout:60000});
+        releaseFailure();await expect(editor.getByRole('alert')).toContainText('failed with HTTP 503.');
+        await editor.clock.fastForward(120_000);
+        await expect(form).toHaveCount(0);await expect(editor.getByRole('alert')).toContainText('failed with HTTP 503.');
+        expect(factsCalls).toBe(3);
+      }
       expect(writes).toEqual([]);expect(await store.call({method:'rows'})).toEqual(before);expect(await store.call({method:'publications'})).toEqual(publications);
       expect(await editor.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await editor.screenshot({path:test.info().outputPath(`node-editor-${planet}-${width}-${theme}.png`)});
       await editor.close();expect(errors).toEqual([]);
-    } finally {store.close();}
+    } finally {releaseFacts();releaseFailure();store.close();}
   });
 }
 
