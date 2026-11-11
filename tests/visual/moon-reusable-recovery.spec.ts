@@ -16,7 +16,7 @@ for(const {width,theme,afterCommit} of cases)test(`Explicit Moon reusable recove
   child.stderr?.on('data',value=>stderr+=value);
   const ready=new Promise<void>((resolve,reject)=>{child.on('message',(message:any)=>{if(message.ready)return resolve();const task=pending.get(message.id);if(task){pending.delete(message.id);message.error?task.reject(new Error(message.error)):task.resolve(message.result);}});child.on('exit',code=>{const error=new Error(`Moon recovery fixture exited ${code}: ${stderr}`);reject(error);pending.forEach(task=>task.reject(error));});});
   const call=(message:any)=>new Promise<any>((resolve,reject)=>{const id=++sequence;pending.set(id,{resolve,reject});child.send({...message,id});});
-  let writes=0,recoveryRequests=0;const errors:string[]=[];context.on('page',tab=>tab.on('pageerror',error=>errors.push(error.message)));
+  let writes=0,recoveryRequests=0,failedPreview=false;const errors:string[]=[];context.on('page',tab=>tab.on('pageerror',error=>errors.push(error.message)));
   page.on('pageerror',error=>errors.push(error.message));
   let reader:Awaited<ReturnType<typeof context.newPage>>|undefined;
   try{
@@ -43,7 +43,9 @@ for(const {width,theme,afterCommit} of cases)test(`Explicit Moon reusable recove
       }
       if(!['/api/admin/lunation-writing','/api/admin/content-baseline-recovery'].includes(url.pathname))return false;
       if(url.pathname.endsWith('content-baseline-recovery'))recoveryRequests++;
-      const body=route.request().postData()?route.request().postDataJSON():undefined,result=await call({method:route.request().method(),body,url:url.pathname+url.search});
+      const body=route.request().postData()?route.request().postDataJSON():undefined;
+      if(url.pathname.endsWith('content-baseline-recovery')&&body?.action==='preview'&&!failedPreview){failedPreview=true;await route.fulfill({status:503,json:{ok:false,error:'Reusable Moon readings are temporarily unavailable.'}});return true;}
+      const result=await call({method:route.request().method(),body,url:url.pathname+url.search});
       if(url.pathname.endsWith('content-baseline-recovery')&&body.action==='restore'){
         writes++;expect(result.status).toBe(200);
         if(theme==='dark'){await route.fulfill({status:503,json:{ok:false,error:'Synthetic acknowledgement loss after committed recovery.'}});return true;}
@@ -67,7 +69,9 @@ for(const {width,theme,afterCommit} of cases)test(`Explicit Moon reusable recove
     await page.goto(`/admin/content#moon-horoscopes?draft=${saved.id}`);
     const studio=page.getByRole('region',{name:'Dated Moon horoscopes',exact:true});await expect(studio.locator('.admin-editor-save-state').first()).toHaveText('Archived');
     const more=studio.getByLabel('Moon horoscope actions',{exact:true});await more.locator('summary').click();
-    const recovery=studio.getByLabel('Moon reading recovery',{exact:true});const use=recovery.getByRole('button',{name:'Use reusable Moon readings',exact:true});await expect(use).toBeEnabled();await use.click();
+    const recovery=studio.getByLabel('Moon reading recovery',{exact:true});const use=recovery.getByRole('button',{name:'Use reusable Moon readings',exact:true});
+    await expect(recovery.getByRole('alert')).toHaveText('Reusable Moon readings are temporarily unavailable.');await expect(use).toHaveCount(0);expect(writes).toBe(0);
+    await recovery.getByRole('button',{name:'Check reusable Moon readings',exact:true}).click();await expect(use).toBeEnabled();await expect(recovery.getByRole('alert')).toHaveCount(0);expect(writes).toBe(0);await use.click();
     await expect(recovery).toContainText('Your dated readings stay archived and unchanged.');await recovery.getByRole('button',{name:'Cancel',exact:true}).click();expect(writes).toBe(0);
     await use.click();await expect(recovery).toContainText('Your dated readings stay archived and unchanged.');await use.click();
     if(theme==='dark'){
