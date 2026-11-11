@@ -7,6 +7,7 @@ import { calendarPassageRecord } from '../../src/shared/features/calendar/calend
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { parseStudioPassageEdit, studioPassageEditHref } from '../../src/shared/studioPassageEdit';
 import nodeArticleFactsHandler from '../../api/admin/sky-article-facts';
+import { expectRenderedTextContrast } from '../helpers/theme-contrast';
 
 const date='2026-10-21', timeZone='America/New_York';
 const location={label:'QA reference',latitude:0,longitude:0,timeZone};
@@ -224,8 +225,8 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
   });
 }
 
-for (const [width,theme,dropInitialReady] of [[1440,'light',false],[390,'dark',false],[1440,'light',true]] as const) {
-  test(`Mercury Rx reader Edit loads complete wording, preserves drafts and saves privately ${width} ${theme}${dropInitialReady ? ' after missed initial ready' : ''}`,async({page,context})=>{
+for (const [width,theme,palette,dropInitialReady] of [[1440,'light','green',false],[390,'dark','neutral',false],[1440,'dark','green',false],[390,'light','neutral',false],[1440,'light','green',true]] as const) {
+  test(`Mercury Rx reader Edit loads complete wording, preserves drafts and saves privately ${width} ${theme} ${palette}${dropInitialReady ? ' after missed initial ready' : ''}`,async({page,context})=>{
     test.setTimeout(180_000);
     const fallbackKey='sky-placement/article/mercury/scorpio';
     const store=await studioApiStore([],{uuidIds:true});
@@ -245,7 +246,7 @@ for (const [width,theme,dropInitialReady] of [[1440,'light',false],[390,'dark',f
         document.documentElement.dataset.missedInitialPreviewReady='true';
       },true);
     });
-    await context.addInitScript(({theme,location})=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));localStorage.setItem('tldrastro:studio-theme',theme);},{theme,location});
+    await context.addInitScript(({theme,palette,location})=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));localStorage.setItem('tldrastro:studio-theme',theme);localStorage.setItem('tldrastro:studio-palette',palette);},{theme,palette,location});
     await context.route('**/content-studio-last-known-good.json',route=>route.fulfill({json:{schema:'content-studio-last-known-good-v2',rows:[],publications:[],rowCount:0}}));
     await context.route('**/rest/v1/**',async route=>route.fulfill({json:new URL(route.request().url()).pathname.endsWith('/content_publications')?await store.call({method:'publications'}):[]}));
     let factsCalls=0;
@@ -279,6 +280,18 @@ for (const [width,theme,dropInitialReady] of [[1440,'light',false],[390,'dark',f
       expect(factsCalls).toBe(dropInitialReady ? 3 : 2);
       const edited=expected+'\n\nSynthetic private edit final sentence.';
       await expect(form.getByLabel('Visit article summary')).toHaveValue('');
+      const publish=form.getByRole('button',{name:'Publish',exact:true});
+      await expect(publish).toBeDisabled();
+      await expect(publish).toHaveAccessibleDescription('Required: Summary.');
+      await expect(publish).toHaveCSS('opacity','1');
+      await expect(publish).not.toHaveCSS('border-top-color','rgba(0, 0, 0, 0)');
+      await expectRenderedTextContrast(editor,'.studio-publish,.studio-sky-editor-toolbar .studio-stack [role=status]',4.5);
+      await editor.screenshot({path:`test-results/mercury-publish-disabled-${width}-${theme}-${palette}.png`});
+      expect(await editor.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      await form.getByLabel('Visit article title').fill('');await body.fill('');
+      await expect(publish).toHaveAccessibleDescription('Required: Title, Summary, Content.');
+      await expect(publish).toBeDisabled();
+      await form.getByLabel('Visit article title').fill('Mercury Rx in Scorpio');
       await body.fill(edited);
       await expect(form.getByRole('button',{name:'Save draft',exact:true})).toBeEnabled();
       await expect(form.getByRole('button',{name:'Publish',exact:true})).toBeDisabled();
@@ -292,6 +305,23 @@ for (const [width,theme,dropInitialReady] of [[1440,'light',false],[390,'dark',f
       await editor.reload();await expect(body).toHaveValue(edited,{timeout:60000});
       await expect(form.getByLabel('Visit article summary')).toHaveValue('');
       await form.getByLabel('Visit article summary').fill('Synthetic explicit owner summary.');
+      await expect(publish).toBeEnabled();
+      await expect(publish).toHaveAccessibleDescription('Ready to publish.');
+      await expect(form.getByLabel('Article publication')).toHaveText('Ready to publish.');
+      await expectRenderedTextContrast(editor,'.studio-publish,.studio-sky-editor-toolbar .studio-stack [role=status]',4.5);
+      await editor.screenshot({path:`test-results/mercury-publish-ready-${width}-${theme}-${palette}.png`});
+      const horoscopeButton=form.getByRole('complementary',{name:'Article settings'}).getByRole('button',{name:'Horoscopes',exact:true});
+      await horoscopeButton.click();
+      const horoscopeEditor=editor.getByRole('dialog',{name:'Planetary horoscopes',exact:true});
+      await horoscopeEditor.getByLabel('Aries write-up horoscope').fill('Synthetic incomplete horoscope reading.');
+      await horoscopeEditor.getByRole('button',{name:'Close Planetary horoscopes',exact:true}).click();
+      await expect(publish).toBeDisabled();
+      await expect(publish).toHaveAccessibleDescription('Complete all 12 horoscopes.');
+      await horoscopeButton.click();
+      await horoscopeEditor.getByLabel('Aries write-up horoscope').fill('');
+      await horoscopeEditor.getByRole('button',{name:'Close Planetary horoscopes',exact:true}).click();
+      await expect(publish).toBeEnabled();
+      await expect(publish).toHaveAccessibleDescription('Ready to publish.');
       await form.getByRole('button',{name:'Save draft',exact:true}).click();
       await expect(editor.getByText('Draft saved. Nothing was published.',{exact:true})).toBeVisible();
       const rows=await store.call({method:'rows'}),saved=rows.find((row:any)=>row.content_key==='sky-article/mercury/scorpio/2026/2026-10-24');

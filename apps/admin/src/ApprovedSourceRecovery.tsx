@@ -24,6 +24,7 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
   const call=(body:Record<string,unknown>)=>latest.current.request({...body,...(kind?{recoveryKind:kind}:{})});
   const [plan,setPlan]=useState<{sources:PlannedSource[];packageVersion:string}|null>(null);
   const [expanded,setExpanded]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  const [previewAttempt,setPreviewAttempt]=useState(0);
   const [pending,setPending]=useState<string|null>(null);
   useEffect(()=>{const update=()=>{const saved=readPending(),active=saved?.identity===identity&&saved?.kind===kind;setPending(active?saved.operationId:null);};update();window.addEventListener(pendingEvent,update);return()=>window.removeEventListener(pendingEvent,update);},[identity,kind]);
   useEffect(()=>{
@@ -32,9 +33,9 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
     if(statusOnly||!sources.length)return;
     call({action:'preview',sources:JSON.parse(identity)}).then(result=>{
       if(!cancelled&&result.ok&&Array.isArray(result.sources))setPlan(result);
-    }).catch(()=>{/* Unsupported or unavailable recovery must not offer a write action. */});
+    }).catch(error=>{if(!cancelled&&kind)setError(error instanceof Error?error.message:'Could not check Moon readings.');});
     return()=>{cancelled=true;};
-  },[identity,kind,statusOnly]);
+  },[identity,kind,statusOnly,previewAttempt]);
   const run=async(checkOnly=false,cancel=false)=>{
     if(disabled||busy||(!pending&&!plan))return;
     setBusy(true);latest.current.onBusy?.(true);setError('');
@@ -58,9 +59,9 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
     }
     finally{setBusy(false);latest.current.onBusy?.(false);}
   };
-  if(!plan&&!pending||pending&&!statusOnly)return null;
+  if(!plan&&!pending&&(!kind||!error)||pending&&!statusOnly)return null;
   return <div className="admin-savebar-next-step" aria-label={kind?'Moon reading recovery':'Approved source recovery'}>
-    {!expanded?<StudioButton type="button" className="admin-secondary-button" disabled={disabled||busy} onClick={()=>setExpanded(true)}>{kind?'Use reusable Moon readings':'Use approved source'}</StudioButton>:<>
+    {!plan&&!pending?<><p role="alert">{error}</p><StudioButton disabled={disabled||busy} onClick={()=>setPreviewAttempt(value=>value+1)}>Check reusable Moon readings</StudioButton></>:!expanded?<StudioButton type="button" className="admin-secondary-button" disabled={disabled||busy} onClick={()=>setExpanded(true)}>{kind?'Use reusable Moon readings':'Use approved source'}</StudioButton>:<>
       <p>{kind?'Readers will receive the available approved reusable Moon readings. Your dated readings stay archived and unchanged.':'Readers will receive the installed approved source. Your saved writing stays recoverable in source history.'}</p>
       {plan&&<p>Installed version: {plan.packageVersion}</p>}
       {pending?<>

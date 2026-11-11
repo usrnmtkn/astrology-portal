@@ -339,8 +339,15 @@ export default function SkyPlacementWorkspace(props: Props) {
   </Suspense>;
   const canSave = !busy && !generationOpen && !writeupAiDirty && (editing || writingDraft ? passageDirty : Boolean(fields.headline || fields.summary || fields.body || fields.writeupHoroscopes?.some(passage => passage.body)));
   const missingFields = [['Title', fields.headline], ['Summary', fields.summary], ['Content', fields.body]].filter(([, value]) => !value.trim()).map(([label]) => label);
-  const publishDisabled = busy || generationOpen || writeupAiDirty || horoscopeEditor.dirty || missingFields.length > 0
-    || !writeupHoroscopesReady(fields.writeupHoroscopes) || Boolean(editing?.status === 'LIVE' && !passageDirty && !writingDraft);
+  const publishRequirements = [
+    missingFields.length && `Required: ${missingFields.join(', ')}.`,
+    !writeupHoroscopesReady(fields.writeupHoroscopes) && 'Complete all 12 horoscopes.',
+    writeupAiDirty && 'Use or discard AI draft.',
+    horoscopeEditor.dirty && 'Save related horoscopes.',
+    editing?.status === 'LIVE' && !passageDirty && !writingDraft && 'Edit before publishing.'
+  ].filter(Boolean).join(' ');
+  const publishDisabled = busy || generationOpen || Boolean(publishRequirements);
+  const publishStatus = busy ? 'Working…' : publishRequirements || 'Ready to publish.';
   async function openPublication() {
     if (publishDisabled) return;
     if ((!editing || passageDirty || writingDraft) && !await save(true)) return;
@@ -349,7 +356,7 @@ export default function SkyPlacementWorkspace(props: Props) {
   const publicationControls = <div ref={publicationPanel} tabIndex={-1} aria-label="Article publication">{editing ? <SkyArticlePublication row={editing} request={latest.current.request} disabled={busy || dirty} onBusyChange={setBusy}
     publicationBlocked={writeupHoroscopesReady(fields.writeupHoroscopes) ? undefined : 'Complete all 12 sign readings before publishing these write-up horoscopes. You can keep saving the draft.'}
     onSaved={saved => { setEditing(saved); setDocuments(rows => [...rows.filter(row => row.id !== saved.id), saved]); latest.current.onRows([saved]); }} />
-    : <p className="admin-field-hint">{writingDraft ? `To publish: ${missingFields.join(', ')}` : 'Save a draft to choose its publication date.'}</p>}</div>;
+    : <p className="admin-field-hint">{publishStatus}</p>}</div>;
   function backToArticles() {
     if (busy || !discard()) return;
     setComposing(false); setWritingDraft(null); setReaderImport(null); setReaderOpening(false); setWriteupHoroscopesOpen(false); setEditing(null); setFacts(null); setFields(empty); setBaseline(empty);
@@ -416,13 +423,15 @@ export default function SkyPlacementWorkspace(props: Props) {
           }}>Write article instead</StudioButton>
         </section>}
         {composing && (editing || facts) && !generationOpen && <section ref={articlePanel} tabIndex={-1} className="admin-workspace" aria-label="Article for this visit">
-          <header className="studio-sky-editor-toolbar">
+          <header className="studio-sky-editor-toolbar admin-review-status-bar">
             <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={backToArticles}>Back to articles</StudioButton><span className="admin-editor-save-state" role="status">{busy ? 'Working…' : passageDirty ? 'Unsaved changes' : editing || writingDraft ? 'Saved' : 'Not saved'}</span></div>
-            <div className="admin-toolbar-actions">
-              <StudioButton disabled={!canSave} onClick={() => void save()}>Save draft</StudioButton>
-              <StudioButton className="admin-primary-button" disabled={publishDisabled} onClick={() => void openPublication()}>Publish</StudioButton>
+            <div className="studio-stack" data-gap="sm">
+              <div className="admin-toolbar-actions">
+                <StudioButton disabled={!canSave} onClick={() => void save()}>Save draft</StudioButton>
+                <StudioButton className="admin-primary-button studio-publish" disabled={publishDisabled} aria-describedby="sky-publish-help" onClick={() => void openPublication()}>Publish</StudioButton>
+              </div>
+              <p id="sky-publish-help" role="status">{publishStatus}</p>
             </div>
-            {missingFields.length > 0 && <span className="admin-field-hint" role="status">To publish: {missingFields.join(', ')}</span>}
             {error && <p role="alert">{error}</p>}
           </header>
           <div className="studio-sky-editor-layout">
