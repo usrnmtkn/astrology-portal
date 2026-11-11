@@ -12023,7 +12023,7 @@ export function GeneratedContentAdminDashboard() {
                   />
                   <small className={fieldHintClassName}>The ephemeris uses this date to identify the active sign and complete residency window.</small>
                 </label>
-                <StudioButton type="button" onClick={() => void loadSkyArticleEditionFacts(selectedRow)} disabled={isLoading}>
+                <StudioButton onClick={() => void loadSkyArticleEditionFacts(selectedRow)} disabled={isLoading}>
                   <RefreshCw size={16} aria-hidden="true" />
                   Load calculated facts
                 </StudioButton>
@@ -12080,7 +12080,6 @@ export function GeneratedContentAdminDashboard() {
                   </label>
                   <div className="admin-toolbar-actions">
                     <StudioButton
-                      type="button"
                       onClick={() => void generateSkyArticleEditionSlots(selectedRow)}
                       disabled={isLoading || skyArticleEditionForm.format === SKY_INGRESS_ESSAY_FORMAT}
                     >
@@ -12150,7 +12149,7 @@ export function GeneratedContentAdminDashboard() {
                           />
                           {placeholder.description && <small className={fieldHintClassName}>{placeholder.description}</small>}
                           {!engineOwned && (skyArticleNeedsHouses || ["priorOccurrenceSection", "otherDatesSection"].includes(placeholder.name)) && skyArticleEditionForm.slotValues[placeholder.name] === undefined && (
-                            <StudioButton type="button" onClick={() => setSkyArticleEditionForm({
+                            <StudioButton onClick={() => setSkyArticleEditionForm({
                               ...skyArticleEditionForm,
                               slotValues: { ...skyArticleEditionForm.slotValues, [placeholder.name]: "" },
                               saveState: "unsaved"
@@ -12165,7 +12164,6 @@ export function GeneratedContentAdminDashboard() {
                   <div className="admin-toolbar-actions">
                     <StudioButton
                       className="admin-primary-button"
-                      type="button"
                       onClick={() => void createSkyArticleEdition(selectedRow)}
                       disabled={isLoading || skyArticleEditionForm.saveState !== "saved" || (skyArticleNeedsHouses && skyArticleEditionHouseCoverage < 12) || !skyArticleEditionForm.tldr.trim() || skyArticleEditionMissingTemplateFields.length > 0}
                       title={skyArticleNeedsHouses && skyArticleEditionHouseCoverage < 12
@@ -12206,7 +12204,7 @@ export function GeneratedContentAdminDashboard() {
                   </header>
                   {skyArticleEditor.error && <div>
                     <p className="admin-inline-error" role="alert">{skyArticleEditor.error}</p>
-                    <StudioButton type="button" onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>
+                    <StudioButton onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>
                   </div>}
 
                   {renderPlacementSources(compiledSkyArticleEdition.planet, compiledSkyArticleEdition.sign, true, {
@@ -12562,10 +12560,10 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Allowed slots:</strong> {cmsAllowedSlots.length > 0 ? cmsAllowedSlots.map((slot) => isSkySummaryDraft ? `{${slot}}` : `{{${slot}}}`).join(", ") : "This row has no calculated slots."}</p>
               {wheelTooltipHouseVariable(currentDraft.contentKey) && <p>Use {"{{house}}"} for the calculated house number or {"{{houseOrdinal}}"} for its ordinal. Keep at least one; you can add wording around it.</p>}
               {isWheelTooltipDraft && <div role="group" aria-label="Insert tooltip variable">
-                {cmsAllowedSlots.map(slot => <StudioButton key={slot} type="button" disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{{${slot}}}`)}>Insert {slot}</StudioButton>)}
+                {cmsAllowedSlots.map(slot => <StudioButton key={slot} disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{{${slot}}}`)}>Insert {slot}</StudioButton>)}
               </div>}
               {currentDraft.contentKey.startsWith("cms/sky-daily-summary/sun/") && <div role="group" aria-label="Insert Sun passage variable">
-                {cmsAllowedSlots.map(slot => <StudioButton key={slot} type="button" disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{${slot}}`)}>Insert {slot === "sunPlacement" ? "Sun placement" : "ruler name"}</StudioButton>)}
+                {cmsAllowedSlots.map(slot => <StudioButton key={slot} disabled={isLoading} onMouseDown={event => event.preventDefault()} onClick={() => insertDraftToken(`{${slot}}`)}>Insert {slot === "sunPlacement" ? "Sun placement" : "ruler name"}</StudioButton>)}
               </div>}
               <p>{ownerPublishHint}</p>
               <p><strong>Reader status:</strong> <ContentLiveStatusBadge row={editorStatusRow} unsaved={!isAstro101Draft && draftHasUnsavedChanges && !(!currentDraft.id && matchesBuiltinSummary)} /></p>
@@ -12912,7 +12910,7 @@ export function GeneratedContentAdminDashboard() {
                 <StudioInput aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value, ...(isPackageDraft ? { sections: { ...currentDraft.sections, packageRecord: { ...draftPackageRecord(currentDraft), contentKey: event.target.value }, ...(draftPackageProposal(currentDraft) ? { packageDraft: { ...draftPackageProposal(currentDraft), contentKey: event.target.value } } : {}) } } : {}) })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || (isPackageDraft && !lunarWorkspaceActive)} />
                 {isVocabularyDraft && <small className={fieldHintClassName}>{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
               </label>
-              <StudioButton type="button" className="admin-editor-key-copy" onClick={() => void copyContentKey(currentDraft.contentKey)} aria-label={`Copy key ${currentDraft.contentKey}`} title={currentDraft.contentKey}>
+              <StudioButton className="admin-editor-key-copy" onClick={() => void copyContentKey(currentDraft.contentKey)} aria-label={`Copy key ${currentDraft.contentKey}`} title={currentDraft.contentKey}>
                 <Copy size={14} aria-hidden="true" />Copy key
               </StudioButton>
               {isVocabularyDraft && isPackageDraft && <p className={fieldHintClassName}>Package role: <code>{packageRole || "vocabulary"}</code></p>}
@@ -12970,11 +12968,11 @@ export function GeneratedContentAdminDashboard() {
                   : sourceIsArchived ? "Archived · Saved article preserved" : currentDraft.status === "LIVE" ? "Published copy is unchanged." : "Draft saved · Awaiting publication"}
           </span>
           {skyArticleEditor.saveState === "error" && <StudioButton disabled={isLoading} onClick={() => updateSkyArticleFields({})}>Retry save</StudioButton>}
-          {sourceIsArchived ? null : skyArticleChanges.length > 0 && skyArticleEditor.reviewOpen ? <StudioButton className="admin-primary-button" type="button"
+          {sourceIsArchived ? null : skyArticleChanges.length > 0 && skyArticleEditor.reviewOpen ? <StudioButton className="admin-primary-button"
             disabled={isLoading || skyArticleEditor.saveState !== "saved"}
             onClick={() => void publishSkyArticleChanges()}
             title={skyArticleEditor.saveState !== "saved" ? "Wait for autosave to finish before publishing." : "Publish the complete validated article revision."}
-          >{skyPublicationIsFuture(selectedRow) ? 'Approve & schedule changes' : 'Publish changes'}</StudioButton> : skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading} onClick={() => {
+          >{skyPublicationIsFuture(selectedRow) ? 'Approve & schedule changes' : 'Publish changes'}</StudioButton> : skyArticleChanges.length > 0 ? <StudioButton className="admin-primary-button" disabled={isLoading} onClick={() => {
             setSkyEditorSection("article");
             setSkyArticleEditor(current => current ? { ...current, reviewOpen: true } : current);
             window.requestAnimationFrame(() => {
@@ -12982,13 +12980,13 @@ export function GeneratedContentAdminDashboard() {
               review?.scrollIntoView({ block: "start" });
               review?.focus({ preventScroll: true });
             });
-          }}>Review &amp; publish</StudioButton> : selectedRow && currentDraft.status !== "LIVE" ? <StudioButton className="admin-primary-button" type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => void approveSkyArticleEdition(selectedRow)}>{skyPublicationIsFuture(selectedRow) ? 'Approve & schedule complete edition' : 'Approve & publish complete edition'}</StudioButton>
+          }}>Review &amp; publish</StudioButton> : selectedRow && currentDraft.status !== "LIVE" ? <StudioButton className="admin-primary-button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => void approveSkyArticleEdition(selectedRow)}>{skyPublicationIsFuture(selectedRow) ? 'Approve & schedule complete edition' : 'Approve & publish complete edition'}</StudioButton>
             : <a className="admin-source-action" href={articleReaderHref(currentDraft.contentKey)} target="_blank" rel="noreferrer">Read published article</a>}
-          <StudioButton type="button" className={sourceIsArchived ? undefined : "admin-danger-button"}
+          <StudioButton className={sourceIsArchived ? undefined : "admin-danger-button"}
             disabled={isLoading || skyArticleEditor.saveState !== "saved" || skyArticleChanges.length > 0 || Boolean(editorSaveError)}
             onClick={() => void updateSourceLifecycle()}>{sourceIsArchived ? "Restore as draft" : "Archive article"}</StudioButton>
-          {editorSaveError && selectedRow && <StudioButton type="button" disabled={isLoading} onClick={() => void openFromEditor(selectedRow.content_key, () => openRow(selectedRow))}>Reload saved article</StudioButton>}
-          <StudioButton type="button" disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => closeEditor()}>Done</StudioButton>
+          {editorSaveError && selectedRow && <StudioButton disabled={isLoading} onClick={() => void openFromEditor(selectedRow.content_key, () => openRow(selectedRow))}>Reload saved article</StudioButton>}
+          <StudioButton disabled={isLoading || skyArticleEditor.saveState !== "saved"} onClick={() => closeEditor()}>Done</StudioButton>
         </div>}
         {renderNotification()}
         {editorSaveError && <div className="admin-inline-warning" role="alert">{editorSaveError}</div>}
@@ -13014,10 +13012,9 @@ export function GeneratedContentAdminDashboard() {
                       : publicationRefresh.state === "error" ? "Saved · Publication status unavailable"
                       : isContentRetired(currentDraft.contentKey) ? "Retired everywhere" : "All changes saved"}
           </span>
-          {publicationRefresh.state === "error" && <StudioButton type="button" onClick={publicationRefresh.retry}>Refresh publication status</StudioButton>}
+          {publicationRefresh.state === "error" && <StudioButton onClick={publicationRefresh.retry}>Refresh publication status</StudioButton>}
           {!(isStandaloneArticleDraft && isNewDraft) && <StudioButton
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
-            type="button"
             onClick={() => void (async () => {
               if (isStandaloneArticleDraft) {
                 await publishStandaloneArticle(currentDraft);
@@ -13050,7 +13047,6 @@ export function GeneratedContentAdminDashboard() {
           {(directReaderDraft || packageOwnerCanPublish || unchangedSkySource) && (
             <StudioButton
               className={isStandaloneArticleDraft && isNewDraft ? "admin-primary-button" : "admin-secondary-button"}
-              type="button"
               onClick={() => void saveDraft("DRAFT")}
               disabled={isLoading || unchangedSkySource || (!isNewDraft && !draftHasUnsavedChanges)}
               title="Keep this revision as a Draft."
@@ -13059,7 +13055,7 @@ export function GeneratedContentAdminDashboard() {
               {isGuidedHeldReview ? "Save held draft" : isNewDraft && isPersonalTransitExactDraft ? "Save" : "Save draft"}
             </StudioButton>
           )}
-          {!isPackageDraft && isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button" type="button"
+          {!isPackageDraft && isGovernedSkyDraft && currentDraft.blockType === "sky_aspect" && <StudioButton className="admin-publish-button"
             disabled={isLoading || Boolean(pendingPublication) || !currentDraft.body.trim()} onClick={() => void publishOwnerDraft(currentDraft)}>
             Save &amp; publish
           </StudioButton>}
@@ -13067,7 +13063,7 @@ export function GeneratedContentAdminDashboard() {
             <p className="admin-savebar-next-step">Source material needs its owning reader editor before publication.</p>
           )}
           {isPackageDraft && !isNewDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
-            <StudioButton type="button" className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
+            <StudioButton className="admin-secondary-button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
             </StudioButton>
           )}
@@ -13078,7 +13074,7 @@ export function GeneratedContentAdminDashboard() {
               request={requestApprovedSourceRecovery} onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} />
           )}
           {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
-            <StudioButton type="button" className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges || publicationRefresh.state !== "idle"}
+            <StudioButton className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges || publicationRefresh.state !== "idle"}
               onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
               title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
               {isContentRetired(currentDraft.contentKey) ? "Publish again" : "Retire everywhere"}
@@ -13087,7 +13083,6 @@ export function GeneratedContentAdminDashboard() {
           {currentDraft.id && (
             <StudioButton
               className={sourceIsArchived ? undefined : "admin-danger-button"}
-              type="button"
               onClick={() => void updateSourceLifecycle()}
               disabled={isLoading || draftHasUnsavedChanges}
               title={draftHasUnsavedChanges ? "Save or revert your changes before changing this source's lifecycle." : undefined}
@@ -13097,7 +13092,7 @@ export function GeneratedContentAdminDashboard() {
           )}
           </details>
           {selectedRow && selectedRow.status !== "LIVE" && lunarWorkspaceActive && (
-            <StudioButton type="button" className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
+            <StudioButton className="admin-danger-button" disabled={isLoading || draftHasUnsavedChanges} onClick={() => void deleteSelectedDrafts([selectedRow])}>
               Delete draft
             </StudioButton>
           )}
@@ -13106,17 +13101,17 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!isPackageDraft && !isCmsSurfaceDraft && !isNewDraft && (
             <>
-              {!isAstro101Draft && !isGovernedSkyDraft && <StudioButton className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
+              {!isAstro101Draft && !isGovernedSkyDraft && <StudioButton className="admin-review-button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady || reviewComplete}>
                 <Check size={16} aria-hidden="true" />
                 {reviewComplete ? "Reviewed" : "Mark reviewed"}
               </StudioButton>}
               {isGovernedSkyDraft && currentDraft.blockType === "sky_placement" && selectedRow ? (
-                <StudioButton className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : "Approve this copy for governed package import. This does not publish it."}>
+                <StudioButton className="admin-publish-button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy || skyWritingIssues(selectedRow).length > 0} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : "Approve this copy for governed package import. This does not publish it."}>
                   <Check size={16} aria-hidden="true" />
                   Approve for package
                 </StudioButton>
               ) : isGovernedSkyDraft ? null : isSkyArticleTemplate ? (
-                <StudioButton type="button" className="admin-primary-button" onClick={() => {
+                <StudioButton className="admin-primary-button" onClick={() => {
                   const builder = editorRef.current?.querySelector<HTMLElement>(".admin-sky-edition-builder");
                   builder?.scrollIntoView({ block: "start" });
                   builder?.querySelector<HTMLInputElement>("input")?.focus({ preventScroll: true });
@@ -13124,7 +13119,7 @@ export function GeneratedContentAdminDashboard() {
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className={fieldHintClassName}>Source material cannot be published.</small>
               ) : (
-                <StudioButton className="admin-publish-button" type="button" onClick={() => void (isStandaloneArticleDraft || isAstro101Draft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady || (isAstro101Draft && currentDraft.status === "LIVE" && !draftHasUnsavedChanges)} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                <StudioButton className="admin-publish-button" onClick={() => void (isStandaloneArticleDraft || isAstro101Draft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady || (isAstro101Draft && currentDraft.status === "LIVE" && !draftHasUnsavedChanges)} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
                   {isScheduledStandaloneArticle ? "Schedule release" : "Publish to app"}
                 </StudioButton>
