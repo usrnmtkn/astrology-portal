@@ -20,6 +20,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Verify signed-mirror fallback and installer failure propagation
+        run: node scripts/test-ci-install-playwright.mjs
       - run: npm run build:knowledge
       - run: npm run test:auth-access
       - run: node scripts/test-you-report-session.mjs
