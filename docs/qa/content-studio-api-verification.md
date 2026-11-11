@@ -92,6 +92,25 @@ and the PR integration revision; it does not run for each unpushed local commit
 or each intermediate commit in a multi-commit push. Local commits retain the
 privacy hook, and the full API command above remains required before merging.
 
+### Complete CI partitions
+
+The Calendar candidate's hosted API job exceeded its existing 35-minute limit
+while still making progress; that run remains failed. CI now executes the exact
+`test:content-studio-api` command list in three isolated jobs. Each installs its
+own dependencies and runs the complete knowledge prerequisite. The runner reads
+the package script directly, preserves command order within each partition, and
+rejects unsupported shell syntax. No command is selected out, and newly added
+commands automatically join the complete partition. The full local npm command
+is unchanged.
+
+The required `content-studio-api` check passes only after all three jobs succeed.
+Peers continue when one fails. The existing PostgreSQL session/concurrency and
+checkpoint checks still run, in the first job. Each job keeps the 35-minute cap;
+no assertion, reference input, timeout contract or approval rule is relaxed.
+`node scripts/test-content-studio-api-shards.mjs` verifies actual child execution,
+complete command coverage, invalid-selector refusal and failure propagation;
+the workflow syntax guard also verifies the required aggregate and matrix.
+
 ## What the gate verifies
 
 - Actual authenticated handler: create, read/reopen, repeated edits, review,

@@ -32,7 +32,7 @@ try {
     date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600);
   for (const at of ['2026-11-04T17:00:00Z', '2044-08-12T16:00:00Z', '2044-08-13T16:00:00Z', '2044-08-14T16:00:00Z', '2045-08-13T16:00:00Z', '2385-05-20T16:00:00Z', '2385-05-21T16:00:00Z', '1820-08-26T16:00:00Z', '1820-08-27T16:00:00Z']) {
     const response = { statusCode: 0, body: '', setHeader() {}, end(body: string) { this.body = body; } };
-    await actual.handler({ method: 'GET', url: `/api/sky?${new URLSearchParams({ at, lat: String(location.latitude), lon: String(location.longitude), timeZone: location.timeZone, version: 'tldrastro-calculation-v4', detail: 'full' })}` }, response);
+    await actual.handler({ method: 'GET', url: `/api/sky?${new URLSearchParams({ at, lat: String(location.latitude), lon: String(location.longitude), timeZone: location.timeZone, version: 'tldrastro-calculation-v5', detail: 'full' })}` }, response);
     assert.equal(response.statusCode, 200, `${at}: actual full Sky handler must succeed`);
     const { sky } = JSON.parse(response.body);
     assert.equal(sky.calculationProvenance.actualEphemeris, 'swiss');

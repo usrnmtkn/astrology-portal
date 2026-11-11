@@ -101,6 +101,7 @@ export type SkyDetail = {
   aspectType?: string;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   previewLabel?: string;
+  passageEditHref?: string | null;
   readerExport?: { keys: string[]; instant: string; timeZone: string; rows: Array<{ id?: string; contentKey: string; updatedAt?: string; status?: string; sections?: unknown }> };
   retrogradeHistoryContext?: RetrogradeHistoryContext;
   placementFactsPending?: boolean;
@@ -404,15 +405,18 @@ export function SkyDetailArticle({
   onClose: () => void;
   placementNavigation?: { previous?: { title: string; href: string }; next?: { title: string; href: string } };
 }) {
-  const placementPage = /^sky\/placement\//u.test(detail.routePath ?? "");
+  const placementPage = /^sky\/placement\//u.test(detail.routePath ?? "")
+    || (Boolean(detail.placementContext) && /^sky\/event\/(?:ingress|station)\//u.test(detail.routePath ?? ""));
   // Friends handle routes carry calculated transit context without compactHeader.
   const personalArticle = Boolean(detail.compactHeader || detail.transitDescription);
   const articleRef = useRef<HTMLElement>(null);
   const [csvExportRoute] = useState(() => new URL(window.location.href).searchParams.get("studioExport") === "sky-article-csv" ? detail.routePath : null);
   const editSource = detail.readerExport && skyPassageEditSource(detail.readerExport.keys);
-  const editHref = editSource && detail.readerExport && !detail.placementFactsPending && !detail.previewLabel
-    ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
-      date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone), instant: detail.readerExport.instant }) : null;
+  const editHref = !detail.placementFactsPending && !detail.previewLabel
+    ? detail.passageEditHref ?? (editSource && detail.readerExport
+      ? studioPassageEditHref({ surface: 'sky', sourceKey: editSource, timeZone: detail.readerExport.timeZone,
+        date: skyPreviewReferenceDate(detail.readerExport.instant, detail.readerExport.timeZone), instant: detail.readerExport.instant }) : null)
+    : null;
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [detail.routePath ?? detail.title]);
@@ -463,7 +467,7 @@ export function SkyDetailArticle({
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
   ).map((section) => ({
     ...section,
-    heading: /^sky\/(?:placement|archive)\//u.test(detail.routePath ?? "") && /^overview:?$/iu.test(section.heading.trim())
+    heading: (placementPage || /^sky\/archive\//u.test(detail.routePath ?? "")) && /^overview:?$/iu.test(section.heading.trim())
       ? ""
       : cleanGeneratedSectionHeading(section.heading)
   })).map((section) => ({

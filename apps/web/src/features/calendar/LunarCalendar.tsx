@@ -27,6 +27,7 @@ import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
 import { PageLoadError, PageLoading, PageLoadState } from "../../components/PageLoading";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
+import { calendarSkyEventRoute } from "../../services/calendarSkyEventIdentity";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { CalendarCheck, CalendarDays, CalendarPlus, ChevronDown, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -193,9 +194,9 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
   { value: "month", label: "Month" }
 ];
 
-// v14 includes exact conjunctions and oppositions alongside the v13 ingress facts.
-// Earlier cached calendars omit these events and must be recalculated.
-const calendarStorageVersion = "v14";
+// v15 uses native eclipse classification alongside the complete exact events.
+// Earlier cached calendars can retain incorrect eclipse labels.
+const calendarStorageVersion = "v15";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -1593,6 +1594,7 @@ function calendarEventEditorialContent(
 
 function calendarEventTitle(event: LunarCalendarEvent, content: LiveGeneratedContent | null) {
   if (event.type === "aspect") return calendarMotionTitle(event);
+  if (event.type === "lunation") return event.title;
   return content?.headline?.trim() || event.title;
 }
 
@@ -2793,7 +2795,7 @@ export function LunarCalendar({
     : null;
   const seasonDaysLeft = seasonDaysAway == null ? null : Math.max(0, seasonDaysAway);
   const openEventReading = (event: LunarCalendarEvent) => {
-    if (event.type === "aspect" && onOpenTransit) {
+    if (onOpenTransit && (event.type === "aspect" || calendarSkyEventRoute(event))) {
       setReadingEvent(null);
       setDaySlideoutOpen(false);
       onOpenTransit(event);
@@ -2804,7 +2806,7 @@ export function LunarCalendar({
   };
   const openDayGroupEvent = (event: LunarCalendarEvent, dateKey: string) => {
     handleSelectDate(dateKey);
-    if (event.type === "aspect" && onOpenTransit) openEventReading(event);
+    if (onOpenTransit) openEventReading(event);
   };
   const openSeasonReading = () => {
     const seasonEvent = arcEvents.find((event) => (
@@ -2813,7 +2815,8 @@ export function LunarCalendar({
     if (seasonEvent) openEventReading(seasonEvent);
   };
   const selectedDaySkyParagraphs = selectedDayBodyPresentation.main;
-  const selectedDaySkyTitle = selectedDayJournal?.headline
+  const selectedDaySkyTitle = selectedPrimaryLunation?.title
+    ?? selectedDayJournal?.headline
     ?? selectedPackagePhase?.headline
     ?? (selectedDayPhase
       ? calculatedPhaseTitle(selectedDayPhase, selectedDayPhaseSign)

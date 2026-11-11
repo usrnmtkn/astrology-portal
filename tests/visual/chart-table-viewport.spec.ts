@@ -87,7 +87,11 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
     if(family==='Calendar comparison') {
      await page.goto('/?date=2026-10-03#calendar?view=day&date=2026-10-03');
      await page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:'Venus stations retrograde'}).click({timeout:30000});
-     const panel=page.getByRole('dialog',{name:'Event detail'});
+     const panel=page.locator('.sky-detail-article');
+     await expect(panel.locator('.retrograde-cycles__section')).toHaveCount(2, { timeout: 30000 });
+     for (const section of await panel.locator('.retrograde-cycles__section').all()) {
+      if (await section.getAttribute('open') === null) await section.locator(':scope > summary').click();
+     }
      const cycleCopy=panel.locator('.retrograde-cycles p:visible').first();
      await expect(cycleCopy).toBeVisible();
      await expect(cycleCopy).toHaveCSS('font-family',/Newsreader/);
@@ -112,7 +116,7 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      expect(lastBounds!.x+lastBounds!.width).toBeLessThanOrEqual(bounds!.x+bounds!.width+1);
      const panelWidth=await panel.evaluate(el=>({scroll:el.scrollWidth,client:el.clientWidth}));
      expect(panelWidth.scroll,JSON.stringify(panelWidth)).toBeLessThanOrEqual(panelWidth.client+1);
-     await panel.getByRole('button',{name:'Close',exact:true}).click();
+     await page.getByRole('button',{name:'Close detail',exact:true}).click();
      await expect(panel).toBeHidden();
      return;
     }

@@ -88,6 +88,17 @@ export function eligibleSkyDetailContent(existing: Map<string, LiveGeneratedCont
     publicationAllowsContent(row.contentKey, row.id, row.updatedAt, row.targetDate)));
 }
 
+export function assertRequiredSkyDetailContent(content: Map<string, LiveGeneratedContent>, requiredKeys: string[]) {
+  const unresolved = requiredKeys.filter(key => {
+    const publication = contentPublication(key);
+    if (publication?.state !== "live" || publicationRestoresBaseline(publication)) return false;
+    const row = content.get(key);
+    return !row || !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate);
+  });
+  if (unresolved.length) throw new Error("The current article publication could not load.");
+  return content;
+}
+
 export async function loadSkyDetailContent(
   snapshot: SkySnapshot,
   existing: Map<string, LiveGeneratedContent>,
@@ -98,16 +109,7 @@ export async function loadSkyDetailContent(
   const keys = Array.from(new Set([...(relatedKeys ?? [...skySnapshotAspectContentKeys(snapshot), ...(snapshot.moonEvent ? lunationReaderContentKeys({startsAt:snapshot.moonEvent.occursAt,sign:snapshot.moonEvent.sign,title:snapshot.moonEvent.name}) : [])]), ...extraKeys]));
   const retained = eligibleSkyDetailContent(existing);
   const missing = keys.filter(key => !retained.has(key));
-  const complete = (content: Map<string, LiveGeneratedContent>) => {
-    const unresolved = extraKeys.filter(key => {
-      const publication = contentPublication(key);
-      if (publication?.state !== "live" || publicationRestoresBaseline(publication)) return false;
-      const row = content.get(key);
-      return !row || !publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate);
-    });
-    if (unresolved.length) throw new Error("The current article publication could not load.");
-    return content;
-  };
+  const complete = (content: Map<string, LiveGeneratedContent>) => assertRequiredSkyDetailContent(content, extraKeys);
   if (!missing.length) return complete(retained.size === existing.size ? existing : retained);
   try {
     const incoming = await load(missing);

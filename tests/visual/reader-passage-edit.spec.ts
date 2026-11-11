@@ -153,7 +153,11 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await expect(editor.getByRole('textbox',{name:'Complete passage wording',exact:true})).toHaveValue(datedBody,{timeout:60000});
       await overview.close();
       await page.getByRole('button',{name:'Moon enters Pisces',exact:true}).click();
-      const event=page.getByRole('dialog',{name:'Event detail',exact:true});
+      const event=page.locator('.sky-detail-article');
+      await expect(event.locator('#sky-detail-title')).toHaveText('Moon enters Pisces', { timeout: 60000 });
+      await expect(event.locator('.article-body-inner p').first()).not.toBeEmpty();
+      await expect(event).not.toContainText(moonBody);
+      await expect(page.getByRole('dialog', { name: 'Event detail', exact: true })).toHaveCount(0);
       await expect(event.getByRole('link',{name:'Edit this passage',exact:true})).toHaveAttribute('href',studioPassageEditHref({surface:'calendar',date,timeZone,sourceKey:moonKey})!);
       const openMoon=context.waitForEvent('page');await event.getByRole('link',{name:'Edit this passage',exact:true}).click();const shared=await openMoon;
       const sharedEditor=shared.getByRole('region',{name:'Assembled Calendar passage',exact:true});

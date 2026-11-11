@@ -1,5 +1,11 @@
 import type { LocationInput, SkySnapshot } from "../types.js";
 import type { RetrogradeHistory } from "./retrogradeHistory.js";
+import type { CalendarSkyEventSnapshot } from "./ephemeris.js";
+
+export function getCalendarSkyEventSnapshotOffMainThread(location: LocationInput, route: string): Promise<CalendarSkyEventSnapshot | null> {
+  if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(module => module.getCalendarSkyEventSnapshot(location, route));
+  return requestCalculation({ kind: "calendar-event-article", location, route });
+}
 
 export function getRetrogradeHistoryOffMainThread(planet: string, sign: string, referenceDate: Date): Promise<RetrogradeHistory> {
   if (typeof Worker === "undefined") return loadEphemerisForNonBrowserRuntime().then(({ getRetrogradeHistory }) => getRetrogradeHistory({ planet, sign, referenceDate }));

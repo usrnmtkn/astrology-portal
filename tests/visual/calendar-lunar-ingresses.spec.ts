@@ -108,7 +108,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const card = page.locator('.calendar-stoic-card').filter({ has: page.getByText('Moon enters Pisces', { exact: true }) });
       for (const paragraph of revision.split('\n\n')) await expect(card).toContainText(paragraph, { timeout: 30_000 });
       await card.click();
-      const drawer = page.getByRole('dialog');
+      const drawer = page.locator('.sky-detail-article');
+      await expect(drawer.locator('#sky-detail-title')).toHaveText('Moon enters Pisces');
+      await expect(page.getByRole('dialog', { name: 'Event detail', exact: true })).toHaveCount(0);
+      for (const paragraph of revision.split('\n\n')) await expect(drawer).toContainText(paragraph);
+      await page.reload();
       for (const paragraph of revision.split('\n\n')) await expect(drawer).toContainText(paragraph);
       await page.screenshot({ path: `test-results/lunar-ingress-reader-${width}-${theme}.png`, fullPage: true });
       expect(errors).toEqual([]);

@@ -16,7 +16,7 @@ try {
     plugins: [{ name: 'isolated-calculation', setup(builder) {
       builder.onResolve({ filter: /\/(ephemeris|astrologyFacts)\.js$/ }, args => ({ path: args.path.endsWith('/astrologyFacts.js') ? 'astrologyFacts' : 'ephemeris', namespace: 'fixture' }));
       builder.onLoad({ filter: /.*/, namespace: 'fixture' }, args => ({ contents: args.path.includes('astrologyFacts') ? `
-        export const ASTROLOGY_CALCULATION_CONTRACT = { calculationVersion: 'tldrastro-calculation-v4' };
+        export const ASTROLOGY_CALCULATION_CONTRACT = { calculationVersion: 'tldrastro-calculation-v5' };
         export const factsFromSkySnapshot = () => [];
       ` : `
         export const calls = [];
@@ -32,7 +32,7 @@ try {
     } }]
   });
   const { handler, calls, setFailure } = await import(pathToFileURL(outfile).href);
-  const base = { at: '2026-10-14T12:00:00Z', lat: '40.7128', lon: '-74.006', timeZone: 'America/New_York', version: 'tldrastro-calculation-v4', detail: 'core' };
+  const base = { at: '2026-10-14T12:00:00Z', lat: '40.7128', lon: '-74.006', timeZone: 'America/New_York', version: 'tldrastro-calculation-v5', detail: 'core' };
   async function invoke(overrides = {}, method = 'GET') {
     const response = { statusCode: 0, headers: {} as Record<string, string>, payload: {} as any,
       setHeader(name: string, value: string) { this.headers[name.toLowerCase()] = value; },

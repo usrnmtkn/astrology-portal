@@ -27,6 +27,25 @@ files.each do |file|
   workflow = YAML.safe_load(File.read(file), permitted_classes: [Date, Time], aliases: true)
   raise "#{file}: expected workflow mapping" unless workflow.is_a?(Hash)
   validate(workflow, file)
+  if file.end_with?('/content-studio-api.yml')
+    jobs = workflow.fetch('jobs')
+    matrix = jobs.fetch('content-studio-api-contracts')
+    gate = jobs.fetch('content-studio-api')
+    triggers = workflow['on'] || workflow[true]
+    raise 'API coverage must stay unfiltered on every pull request' unless triggers.key?('pull_request') && triggers['pull_request'].nil?
+    raise 'No API shard may be optional' if matrix.key?('if') || matrix.key?('continue-on-error')
+    raise 'API matrix must retain all three complete shards' unless matrix.fetch('strategy').fetch('matrix').fetch('shard') == [1, 2, 3]
+    raise 'A failing API shard must not cancel peer evidence' unless matrix.fetch('strategy')['fail-fast'] == false
+    raise 'API matrix must keep its existing bounded timeout' unless matrix.fetch('timeout-minutes') == 35
+    raise 'Required API gate must depend on every contract shard' unless gate.fetch('needs') == 'content-studio-api-contracts'
+    raise 'Required API gate must inspect failed peers' unless gate.fetch('if') == '${{ !cancelled() }}'
+    raise 'Required API gate cannot admit a failed or skipped shard' unless gate.fetch('steps').any? { |step| step['run'] == 'test "$API_CONTRACT_RESULT" = success' && step.fetch('env', {})['API_CONTRACT_RESULT'] == '${{ needs.content-studio-api-contracts.result }}' }
+    raise 'Every API shard must run its full knowledge prerequisite' unless matrix.fetch('steps').any? { |step| step['run'] == 'npm run pretest:content-studio-api && node scripts/run-content-studio-api-shard.mjs --shard ${{ matrix.shard }}' && !step.key?('if') }
+    raise 'Every API shard must test the exact PR head' unless matrix.fetch('steps').any? { |step| step['uses'] == 'actions/checkout@v6' && step.fetch('with', {})['ref'] == '${{ github.event.pull_request.head.sha || github.sha }}' }
+    ['node scripts/test-content-studio-publication-concurrency.mjs', 'node scripts/test-weekly-checkpoint-postgres.mjs', 'npm run test:studio-variables'].each do |command|
+      raise 'Existing database and variable contracts must remain required' unless matrix.fetch('steps').any? { |step| step['run'] == command && step['if'] == 'matrix.shard == 1' && !step.key?('continue-on-error') }
+    end
+  end
   if file.end_with?('/visual-smoke.yml')
     jobs = workflow.fetch('jobs')
     gate = jobs.fetch('browser-release-gate')

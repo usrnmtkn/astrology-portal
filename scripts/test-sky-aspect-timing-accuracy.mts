@@ -88,7 +88,7 @@ try {
   assert.equal(dates.skyAspectDateRange({ timing: { timeZone: "America/New_York" } }, new Date(timing.engagementStart), new Date(end)), "Jun 25 - Nov 9, 2026");
   const { default: handler } = await vite.ssrLoadModule(`${process.cwd()}/api/sky.ts`);
   const response = { statusCode: 0, body: "", setHeader() {}, end(body: string) { this.body = body; } };
-  await handler({ method: "GET", url: "/api/sky?at=2026-01-03T06:00:00Z&lat=0&lon=0&timeZone=UTC&version=tldrastro-calculation-v4&detail=core" }, response);
+  await handler({ method: "GET", url: "/api/sky?at=2026-01-03T06:00:00Z&lat=0&lon=0&timeZone=UTC&version=tldrastro-calculation-v5&detail=core" }, response);
   assert.equal(response.statusCode, 200);
   const apiSky = JSON.parse(response.body).sky;
   assert.equal(apiSky.aspects.find((aspect: { from: string; to: string }) => aspect.from === "Moon" && aspect.to === "Venus").applying, true,
@@ -96,7 +96,7 @@ try {
   assert.equal(apiSky.facts.find((fact: { kind: string; planetOrPointId: string; targetId: string; aspectType: string }) =>
     fact.kind === "aspect" && fact.planetOrPointId === "moon" && fact.targetId === "venus" && fact.aspectType === "opposition")?.applyingSeparating,
     "applying", "The API fact envelope must preserve the corrected phase");
-  assert.equal(apiSky.calculationProvenance.calculationVersion, "tldrastro-calculation-v4");
+  assert.equal(apiSky.calculationProvenance.calculationVersion, "tldrastro-calculation-v5");
   console.log("Sky timing accuracy: current motion, all aspect branches, shared Natal behavior, exhausted search and verified slow end date passed.");
 } finally {
   await vite.close();

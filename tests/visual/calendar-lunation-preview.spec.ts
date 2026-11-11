@@ -141,12 +141,11 @@ for (const scenario of scenarios) {
     expect(await card.evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
     await card.locator(".calendar-sky-card").screenshot({ path: `test-results/lunation-preview-${scenario.kind}-${scenario.theme}-${scenario.width}-${scenario.remainder.length}.png` });
     if ('timingTemplate' in scenario) {
-      const eventCard = page.getByRole('button', {name: 'Lunation fixture', exact: true});
+      const title = `${scenario.kind === 'full-moon' ? 'Full Moon' : 'New Moon'} in ${scenario.sign.charAt(0).toUpperCase()}${scenario.sign.slice(1)}`;
+      const eventCard = page.getByRole('button', {name: title, exact: true});
       await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);
       await eventCard.click();
-      const detail = page.getByRole('dialog', {name: 'Event detail', exact: true});
-      await expect(detail).toContainText(scenario.opening);
-      await detail.getByRole('button', {name: 'Read article', exact: true}).click();
+      await expect(page.getByRole('dialog', {name: 'Event detail', exact: true})).toHaveCount(0);
       await expect(page.locator('.sky-detail-article').getByText(scenario.opening, {exact: true})).toBeVisible({timeout: 60_000});
       await expect(page.locator('.sky-detail-article').getByText(remainder.at(-1)!, {exact: true})).toBeVisible();
       await finishAssetReads();
@@ -158,11 +157,9 @@ for (const scenario of scenarios) {
       const eventCard = page.getByRole('button', {name: 'Full Moon in Aries', exact: true});
       await expect(eventCard.locator('.calendar-stoic-card__excerpt')).toHaveText(scenario.opening);
       await eventCard.click();
-      const detail = page.getByRole('dialog', {name: 'Event detail', exact: true});
-      await expect(detail).toContainText(scenario.opening);
-      await expect(detail.getByRole('heading', {name: 'Full Moon in Aries', exact: true})).toBeVisible();
-      await detail.getByRole('button', {name: 'Read article', exact: true}).click();
-      await expect(page).toHaveURL(new RegExp(`#sky/lunation/${scenario.date}/${scenario.sign}$`));
+      await expect(page.getByRole('dialog', {name: 'Event detail', exact: true})).toHaveCount(0);
+      await expect(page).toHaveURL(/#sky\/event\/lunation\/full-moon\/aries\/at\//);
+      await expect(page.locator('#sky-detail-title')).toHaveText('Full Moon in Aries');
       await expect(page.getByText(scenario.opening,{exact:true})).toBeVisible({timeout:60000});
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toBeVisible();
       await finishAssetReads();
@@ -181,7 +178,7 @@ for (const scenario of scenarios) {
       });
       await assertNoErrors.reload();
       expect(await (await retirementRead).finished()).toBeNull();
-      await expect(page.locator('#sky-detail-title')).toHaveText('Full Moon in Aries');
+      await expect(page.getByRole('heading', { name: 'Sky event unavailable', exact: true })).toBeVisible({ timeout: 60000 });
       await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
       await expect(page.getByText(scenario.opening,{exact:true})).toHaveCount(0);
       await expect(page.getByText(remainder.at(-1)!,{exact:true})).toHaveCount(0);
