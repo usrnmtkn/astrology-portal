@@ -282,8 +282,8 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-col-content { width: auto; }
 
 /* Sky articles use the content-first editor and separate settings column. */
-#root .admin-dashboard .studio-sky-editor-toolbar { position: sticky; top: 0; z-index: var(--z-picker); background: var(--workspace-surface); padding-block: var(--workspace-panel-inset); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--workspace-panel-inset); }
-#root .admin-dashboard .studio-publish-button:disabled { border-color: currentColor; color: var(--workspace-ink); opacity: initial; }
+#root .admin-dashboard .studio-sky-editor-toolbar { position: sticky; top: 0; z-index: var(--z-picker); background: var(--workspace-surface); padding-block: var(--workspace-panel-inset); justify-content: space-between; }
+#root .admin-dashboard .studio-publish-button:disabled { border-color: currentColor; color: var(--workspace-ink); opacity: 1; }
 #root .admin-dashboard .studio-sky-editor-layout { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: var(--workspace-block-gap); align-items: start; }
 #root .admin-dashboard .studio-sky-editor-settings .studio-detail-list > div { grid-template-columns: minmax(0,1fr); gap: var(--workspace-field-gap); }
 /* Contextual editors share a sheet; retained workspaces keep navigation available. */

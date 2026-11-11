@@ -423,7 +423,7 @@ export default function SkyPlacementWorkspace(props: Props) {
           }}>Write article instead</StudioButton>
         </section>}
         {composing && (editing || facts) && !generationOpen && <section ref={articlePanel} tabIndex={-1} className="admin-workspace" aria-label="Article for this visit">
-          <header className="studio-sky-editor-toolbar">
+          <header className="studio-sky-editor-toolbar admin-toolbar-actions">
             <div className="admin-toolbar-actions"><StudioButton disabled={busy} onClick={backToArticles}>Back to articles</StudioButton><span className="admin-editor-save-state" role="status">{busy ? 'Working…' : passageDirty ? 'Unsaved changes' : editing || writingDraft ? 'Saved' : 'Not saved'}</span></div>
             <div className="studio-stack" data-gap="sm">
               <div className="admin-toolbar-actions">
