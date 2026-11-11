@@ -285,7 +285,7 @@ for (const [width,theme,palette,dropInitialReady] of [[1440,'light','green',fals
       await expect(publish).toHaveAccessibleDescription('Required: Summary.');
       await expect(publish).toHaveCSS('opacity','1');
       await expect(publish).not.toHaveCSS('border-top-color','rgba(0, 0, 0, 0)');
-      await expectRenderedTextContrast(editor,'.studio-publish-button,.studio-sky-editor-toolbar .studio-stack [role=status]',4.5);
+      await expectRenderedTextContrast(editor,'.studio-publish,.studio-sky-editor-toolbar .studio-stack [role=status]',4.5);
       await editor.screenshot({path:`test-results/mercury-publish-disabled-${width}-${theme}-${palette}.png`});
       expect(await editor.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await form.getByLabel('Visit article title').fill('');await body.fill('');
@@ -308,7 +308,7 @@ for (const [width,theme,palette,dropInitialReady] of [[1440,'light','green',fals
       await expect(publish).toBeEnabled();
       await expect(publish).toHaveAccessibleDescription('Ready to publish.');
       await expect(form.getByLabel('Article publication')).toHaveText('Ready to publish.');
-      await expectRenderedTextContrast(editor,'.studio-publish-button,.studio-sky-editor-toolbar .studio-stack [role=status]',4.5);
+      await expectRenderedTextContrast(editor,'.studio-publish,.studio-sky-editor-toolbar .studio-stack [role=status]',4.5);
       await editor.screenshot({path:`test-results/mercury-publish-ready-${width}-${theme}-${palette}.png`});
       const horoscopeButton=form.getByRole('complementary',{name:'Article settings'}).getByRole('button',{name:'Horoscopes',exact:true});
       await horoscopeButton.click();
