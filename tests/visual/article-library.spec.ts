@@ -620,3 +620,57 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     } finally { await testInfo.attach('publication-requests', { body: JSON.stringify({ raceVariable, publicationEvidence }), contentType: 'application/json' }); await page.unrouteAll({ behavior: 'ignoreErrors' }); store.close(); }
   });
 }
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Archived Guide and Article discovery preserves complete writing ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const makeRow = (kind: string, status: string) => ({
+      id: `${kind === 'guide' ? '11111111' : '22222222'}-1111-4111-8111-${status === 'ARCHIVED' ? '111111111111' : '222222222222'}`,
+      content_key: `article/${kind}/synthetic-${status.toLowerCase()}`,
+      headline: `Synthetic ${status.toLowerCase()} ${kind}`, surface: 'sky', mode: 'article',
+      event_type: 'sky_article', status, lane: 'serving', review_state: null,
+      body: `Synthetic ${kind} complete opening.\n\nA saved paragraph remains intact.\n\nSynthetic ${kind} complete final sentence.`,
+      summary: '', sections: {}, source_snapshot: {}, facts: {}, updated_at: '2026-10-15T12:00:00.000Z'
+    });
+    const archived = [makeRow('guide', 'ARCHIVED'), makeRow('manual', 'ARCHIVED')];
+    const active = [makeRow('guide', 'DRAFT'), makeRow('manual', 'DRAFT')];
+    const store = await studioApiStore([...archived, ...active]);
+    try {
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      await page.goto('/admin/content#articles-guides');
+      const rows = page.locator('tr.admin-content-row');
+      for (const row of active) await expect(rows.filter({ hasText: row.content_key })).toBeVisible();
+      for (const row of archived) await expect(rows.filter({ hasText: row.content_key })).toHaveCount(0);
+      const filters = page.getByRole('button', { name: 'Filters', exact: true });
+      if (await filters.isVisible()) await filters.click();
+      await page.getByLabel('Article status', { exact: true }).selectOption('ARCHIVED');
+      for (const row of archived) {
+        await page.getByLabel('Article or guide type', { exact: true }).selectOption(row.content_key.startsWith('article/guide/') ? 'guide' : 'article');
+        await page.getByLabel('Search articles', { exact: true }).fill(row.content_key);
+        const result = rows.filter({ hasText: row.content_key });
+        await expect(result).toBeVisible();
+        await result.getByRole('button', { name: 'Edit', exact: true }).click();
+        const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+        await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(row.body);
+        await editor.locator('summary').filter({ hasText: 'More actions' }).click();
+        await expect(editor.getByRole('button', { name: 'Restore as draft', exact: true })).toBeEnabled();
+        await editor.getByRole('button', { name: 'Restore as draft', exact: true }).click();
+        await expect.poll(async () => (await store.call({ method: 'rows' })).find((saved: any) => saved.id === row.id)?.status).toBe('DRAFT');
+        const saved = (await store.call({ method: 'rows' })).find((saved: any) => saved.id === row.id);
+        expect(saved.body).toBe(row.body);
+        expect(saved.headline).toBe(row.headline);
+        const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } });
+        expect(reader.status).toBe(200);
+        expect(reader.payload.rows).toEqual([]);
+        await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      }
+    } finally {
+      await page.unrouteAll({ behavior: 'wait' });
+      store.close();
+    }
+  });
+}

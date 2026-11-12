@@ -1337,8 +1337,9 @@ function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
   );
 }
 
-function isArticleLibraryRow(row: AdminGeneratedContentRow) {
-  return Boolean(articleLibraryKind(row)) && !isAstro101ContentRow(row) && !isRetiredAdminRow(row);
+function isArticleLibraryRow(row: AdminGeneratedContentRow, includeArchived = false) {
+  return Boolean(articleLibraryKind(row)) && !isAstro101ContentRow(row)
+    && (!isRetiredAdminRow(row) || (includeArchived && row.status === "ARCHIVED"));
 }
 
 function isAstro101LibraryRow(row: AdminGeneratedContentRow) {
@@ -3527,12 +3528,13 @@ export function GeneratedContentAdminDashboard() {
       || (showRetiredRows && isRetiredAdminRow(row))
       || isCompositionPage(activePage)
       || (activePage === "skyWriteups" && isSkyWriteupLibraryRow(row))
-      || (activePage === "articles" && isArticleLibraryRow(row))
+      || (activePage === "articles" && isArticleLibraryRow(row, articleStatusFilter === "ARCHIVED"))
       || !isPassiveReferenceAdminRow(row))
     && !row.id.startsWith("package:")
     && !row.content_key.startsWith("studio-variable/")
-    && (showRetiredRows || !isRetiredAdminRow(row))
-  )), [rows, activePage, categoryFilter, showReferenceRows, showRetiredRows]);
+    && (showRetiredRows || !isRetiredAdminRow(row)
+      || (activePage === "articles" && articleStatusFilter === "ARCHIVED" && isArticleLibraryRow(row, true)))
+  )), [rows, activePage, articleStatusFilter, categoryFilter, showReferenceRows, showRetiredRows]);
   const savedFallbackRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook" || row.content_key.startsWith("authored/calendar-weekly-moon/")),
     [visibleRows]
@@ -3561,8 +3563,8 @@ export function GeneratedContentAdminDashboard() {
     [visibleRows]
   );
   const articleRows = useMemo(
-    () => visibleRows.filter(isArticleLibraryRow),
-    [visibleRows]
+    () => visibleRows.filter(row => isArticleLibraryRow(row, articleStatusFilter === "ARCHIVED")),
+    [visibleRows, articleStatusFilter]
   );
   const astro101Rows = useMemo(
     () => visibleRows.filter(isAstro101LibraryRow).sort((left, right) => left.content_key.localeCompare(right.content_key)),
