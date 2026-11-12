@@ -189,3 +189,48 @@ Admin boundary, YAML syntax and API shard coverage) pass locally. Two fresh
 original/pending/governed reader Edit browser cases pass after this correction.
 The final matched Web aggregate is 3,770,456 gzip bytes across 303 files, leaving
 77 bytes under the same 3,770,533 ceiling. Native Admin sizes remain unchanged.
+
+
+The hosted c0d7 Visual Smoke run passed the full API workflow but failed three
+separate browser gates: standard Web aggregate 3,770,626 (93 above the previous
+limit); Studio admin shard 1 reached 25m05s after 91/104 cases with no attributed
+application assertion; and reader recovery could not show the independent Lilith
+station while all remote interpretations were stalled. These failures remain
+recorded separately.
+
+Independent canonical recovery is restored only when failed discovery has no
+live exact publication or current date-bound source requiring refresh. Unverified
+exact rows are removed before that fallback. Actual Swiss/API controls retain
+failures for known dated and pinned units; the unchanged complete reader-recovery
+suite passes 25 cases, including both ends of the full canonical station reading
+and reload. Final exact-reader/Edit/date-bound browser coverage passes three
+additional cases with one canonical request per open and reload.
+
+The six Studio jobs now use the existing duration balancer. Of 619 discovered
+cases, 605 have timings from all six c0d7 jobs; 14 receive a conservative 60-second
+estimate. All 26 smaller files stay whole. The already-independent 383-case
+dashboard file may span bins, guarded by a TypeScript AST check against shared
+beforeAll/afterAll, serial/configured suites and fixture extension. Full Playwright
+resolution proves the exact union with no gaps or duplicates and retains serial
+fixture order. Estimated groups are 855.2, 666.1, 666.1, 665.6, 665.9 and 666.1
+seconds. Observed installation/build setup ranges from 115.5 to 153.4 seconds;
+the largest estimate plus maximum setup is 16m49s, or about 20m22s with 25% test
+runtime variance. All assertions, one-worker execution and the 25-minute deadline
+remain unchanged. These are planning estimates; final hosted gates remain required.
+
+Exact standard builds use the failing job's ordinary npm-run-build command and
+visual-smoke placeholders with the natal-pattern flag unset. Independent main and
+c0d7 standard profiles measure 3,768,157 and 3,770,542 gzip bytes. The hosted c0d7
+standard measurement differs by 84 bytes; its cause was not isolated. Final source
+standard/browser profiles measure 3,770,686 / 3,770,638; browser main is 3,768,228.
+A single further 512-byte aggregate allocation sets the Web ceiling to 3,771,045,
+leaving 359 standard and 407 browser bytes, or 275 after the observed hosted
+difference. Startup, individual chunks, CSS and native Admin ceilings remain
+unchanged. Native Admin remains 841,861 raw / 244,731 gzip startup and 925,968
+aggregate under 926,130. Earlier profiles and failures are retained.
+
+
+Final full-discovery/list planning takes 7.735 seconds locally. Adding it to the
+largest group and maximum observed setup yields 1,016.335 seconds (16m56s), or
+1,230.135 seconds (20m30s) with the stated 25% test-runtime variance, preserving
+about 4m30s of planning margin under the unchanged job deadline.

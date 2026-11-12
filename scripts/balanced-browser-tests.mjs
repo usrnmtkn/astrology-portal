@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import ts from 'typescript';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -21,18 +22,33 @@ export function balanceTests(tests, count, timings) {
 
 /** File grouping preserves serial suites and beforeAll/afterAll lifetimes.
  * Unknown test identities still contribute their full fallback estimate. */
-export function balanceTestFiles(tests, count, timings) {
+export function balanceTestFiles(tests, count, timings, independentFiles = []) {
   assert.equal(new Set(tests).size, tests.length, 'Duplicate test identities');
   const files = new Map();
   for (const name of tests) {
     const file = name.match(/tests\/visual\/[^›]+\.spec\.ts/u)?.[0];
     assert(file, 'Missing test file identity');
-    files.set(file, [...(files.get(file) ?? []), name]);
+    const group = independentFiles.includes(file) ? name : file;
+    files.set(group, [...(files.get(group) ?? []), name]);
   }
   const durations = Object.fromEntries([...files].map(([file, names]) => [file,
     names.reduce((sum, name) => sum + (timings.durations[name] ?? timings.fallbackSeconds), 0)]));
   return balanceTests([...files.keys()], count, { durations, fallbackSeconds: timings.fallbackSeconds })
     .map(bin => ({ seconds: bin.seconds, tests: bin.tests.flatMap(file => files.get(file)) }));
+}
+
+/** Only files already safe for independent cases may span timing bins. */
+export function assertIndependentBrowserFile(source, file) {
+  const ast = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  function visit(node) {
+    if (ts.isCallExpression(node)) {
+      const call = node.expression.getText(ast).replace(/\s/gu, '');
+      assert(!/^test\.(?:beforeAll|afterAll|extend|describe\.(?:serial|configure))$/u.test(call)
+        && !/^test\[/u.test(call), `${file} has a shared or configured fixture lifetime; keep its complete file together.`);
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(ast);
 }
 
 function identities(report) {
@@ -74,7 +90,8 @@ export function main(args) {
     'playwright.horoscope-reader.config.ts': 'config/browser-test-durations.json',
     'playwright.sky-placement-reader.config.ts': 'config/sky-reader-test-durations.json',
     'playwright.reader-surfaces.config.ts': 'config/reader-surface-test-durations.json',
-    'playwright.studio-ui.config.ts': 'config/studio-ui-test-durations.json'
+    'playwright.studio-ui.config.ts': 'config/studio-ui-test-durations.json',
+    'playwright.studio-admin-flows.config.ts': 'config/studio-admin-flow-test-durations.json'
   };
   assert(Object.hasOwn(durationFiles, config), 'Unknown balanced browser suite');
   assert(/^\d+\/\d+$/u.test(shard));
@@ -82,13 +99,16 @@ export function main(args) {
   const [index, count] = shard.split('/').map(Number);
   assert(index >= 1 && index <= count);
   const cli = 'node_modules/@playwright/test/cli.js';
-  const byFile = ['playwright.reader-surfaces.config.ts', 'playwright.studio-ui.config.ts'].includes(config);
+  const byFile = ['playwright.reader-surfaces.config.ts', 'playwright.studio-ui.config.ts', 'playwright.studio-admin-flows.config.ts'].includes(config);
   const base = ['test', '-c', config, ...(byFile ? [] : ['--fully-parallel']), '--workers=1'];
   const report = JSON.parse(execFileSync(process.execPath, [cli, ...base, '--list', '--reporter=json'], { encoding: 'utf8', maxBuffer: 10 * 1024 * 1024 }));
   assert.equal(report.errors.length, 0, 'Test discovery failed');
   const tests = identities(report);
   const timings = JSON.parse(readFileSync(durationFiles[config], 'utf8'));
-  const bins = (byFile ? balanceTestFiles : balanceTests)(tests, count, timings);
+  const independentFiles = config === 'playwright.studio-admin-flows.config.ts'
+    ? ['tests/visual/content-dashboard-admin-user-flows.spec.ts'] : [];
+  for (const file of independentFiles) assertIndependentBrowserFile(readFileSync(file, 'utf8'), file);
+  const bins = byFile ? balanceTestFiles(tests, count, timings, independentFiles) : balanceTests(tests, count, timings);
   return withShardLists(bins, files => {
     // Ask Playwright to resolve every generated list before running any tests.
     // A stale/ambiguous selector cannot silently drop or duplicate coverage.

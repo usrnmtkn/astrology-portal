@@ -1,3 +1,5 @@
+import {getCalendarSkyEventSnapshot} from '../apps/web/src/services/ephemeris.ts';
+import {calendarSkyEventRoute} from '../apps/web/src/services/calendarSkyEventIdentity.ts';
 import { calendarPlanetaryDraft } from "../apps/admin/src/calendarPlanetaryDraft.ts";
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
@@ -34,7 +36,7 @@ try {
       assert.equal(contentWiringStatus({content_key, status:'LIVE', lane:'serving'}).state, 'connected');
   `, pathToFileURL(join(emitted, 'apps/admin/src/contentWiringStatus.js')).href], { env: { ...process.env, NODE_OPTIONS: '' } });
   const bundle = join(directory, 'reader.mjs');
-  await build({ stdin: { contents: `export {loadLiveGeneratedContentForKeys} from './apps/web/src/services/generatedContent.ts'; export {normalizeCalendarEventSurface,liveCalendarEventContent} from './apps/web/src/features/calendar/LunarCalendar.tsx'; export {calendarEventGeneratedContentKeys} from './apps/web/src/features/calendar/calendarContentKeys.ts'; export {isReaderServableGeneratedContentRow} from './apps/web/src/content/generatedContentEligibility.ts'; export {resolveLunarJournal} from './apps/web/src/features/calendar/lunarJournal.ts'; export {calendarSpecialEventReading,calendarEventArticleSourceKeys,loadCalendarEventArticleContent} from './apps/web/src/services/calendarSkyEventReading.ts'; export {installContentPublications,contentPublication} from './apps/web/src/content/contentPublicationState.ts';`, resolveDir: process.cwd(), loader: 'ts' }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://calendar-api.invalid', VITE_SUPABASE_ANON_KEY: 'calendar-api-fixture-key' }) }, loader: { '.css': 'empty' }, logLevel: 'silent' });
+  await build({ stdin: { contents: `export {loadLiveGeneratedContentForKeys} from './apps/web/src/services/generatedContent.ts'; export {normalizeCalendarEventSurface,liveCalendarEventContent} from './apps/web/src/features/calendar/LunarCalendar.tsx'; export {calendarEventGeneratedContentKeys} from './apps/web/src/features/calendar/calendarContentKeys.ts'; export {isReaderServableGeneratedContentRow} from './apps/web/src/content/generatedContentEligibility.ts'; export {resolveLunarJournal} from './apps/web/src/features/calendar/lunarJournal.ts'; export {calendarSpecialEventReading,calendarEventArticleSourceKeys,loadCalendarEventArticleContent,prepareCalendarSkyEventContent} from './apps/web/src/services/calendarSkyEventReading.ts'; export {installContentPublications,contentPublication} from './apps/web/src/content/contentPublicationState.ts';`, resolveDir: process.cwd(), loader: 'ts' }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://calendar-api.invalid', VITE_SUPABASE_ANON_KEY: 'calendar-api-fixture-key' }) }, loader: { '.css': 'empty' }, logLevel: 'silent' });
   const reader = await import(pathToFileURL(bundle).href);
   for (const kind of ['ingress', 'station'] as const) for (const direction of (kind === 'ingress' ? ['direct'] : ['direct', 'retrograde']) as ('direct' | 'retrograde')[]) {
     const selection = { planet: 'mercury', sign: 'scorpio', direction };
@@ -163,6 +165,34 @@ try {
       assert.equal(reader.calendarSpecialEventReading(event,new Map([[draft.contentKey,summarized]])),body,'The detail retains the complete body when a separate summary exists');
     }finally{await legacyStore.close();globalThis.fetch=originalFetch;}
   }
+  const lilithFixture=JSON.parse(readFileSync('tests/fixtures/calendar-sky-event-cases.json','utf8')).find((sample:any)=>sample.key==='station/Lilith/retrograde').event;
+  const calculated=await getCalendarSkyEventSnapshot({label:'Synthetic reference',latitude:40.7128,longitude:-74.006,timeZone:'America/New_York'},calendarSkyEventRoute(lilithFixture));
+  assert(calculated,'The independent station recovery uses a genuinely calculated event.');
+  const failure=async()=>{throw Error('Synthetic canonical discovery outage');};
+  const unrelatedLunations=async()=>{throw Error('An independent station must not load unrelated lunations');};
+  const floor=await reader.prepareCalendarSkyEventContent(calculated,new Map(),failure,unrelatedLunations);
+  assert.equal(floor.content.size,0,'Independent discovery recovers without admitting any unverified event row; the browser verifies its canonical full body.');
+  const specialStore=await createApiStore([],{uuidIds:true,sqlCalendarLifecycle:true});
+  try{
+    const selection={planet:'lilith',sign:calculated.event.sign.toLowerCase(),direction:'retrograde' as const};
+    const {id:_,...draft}=calendarPlanetaryDraft('station',selection)!;
+    const body='Synthetic exact Lilith station opening.\n\nComplete synthetic station final paragraph.';
+    let created=await specialStore.invoke('POST',{...draft,eventType:'calendar_event',targetDate:calculated.event.dateKey,body});
+    assert.equal(created.status,200,JSON.stringify(created.payload));let row=created.payload.rows[0];
+    let published=await specialStore.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
+    assert.equal(published.status,200,JSON.stringify(published.payload));
+    let response=await specialStore.invoke('POST',{keys:[draft.contentKey]},'/api/content-reader');reader.installContentPublications(response.payload.publications);
+    const existing=await reader.loadLiveGeneratedContentForKeys([draft.contentKey],{requireFresh:true});
+    await assert.rejects(()=>reader.prepareCalendarSkyEventContent(calculated,existing,failure,unrelatedLunations),/Synthetic canonical discovery outage/,'A known date-bound source cannot be replaced by the independent floor.');
+    const exact=await reader.prepareCalendarSkyEventContent(calculated,new Map(),reader.loadLiveGeneratedContentForKeys,unrelatedLunations);
+    assert.equal(reader.calendarSpecialEventReading(calculated.event,exact.content),body);
+    created=await specialStore.invoke('POST',{...draft,eventType:'calendar_event',targetDate:null,body});
+    assert.equal(created.status,200,JSON.stringify(created.payload));row=created.payload.rows[0];
+    published=await specialStore.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
+    assert.equal(published.status,200,JSON.stringify(published.payload));
+    response=await specialStore.invoke('POST',{keys:[draft.contentKey]},'/api/content-reader');reader.installContentPublications(response.payload.publications);
+    await assert.rejects(()=>reader.prepareCalendarSkyEventContent(calculated,new Map(),failure,unrelatedLunations),/Synthetic canonical discovery outage/,'A pinned source remains required even when it has not finished loading.');
+  }finally{await specialStore.close();globalThis.fetch=originalFetch;}
   const datedStore=await createApiStore([],{uuidIds:true,sqlCalendarLifecycle:true});
   try{
     for(const [kind,direction] of [['ingress','direct'],['station','direct'],['station','retrograde']] as const){

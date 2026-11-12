@@ -91,8 +91,23 @@ export async function prepareCalendarSkyEventContent(calculated: CalendarSkyEven
   const eventKeys = calendarEventArticleSourceKeys(event);
   const keys = [...new Set([...eventKeys, ...(placement ? ingressKeys : event.type === "lunation" ? [...lunarKeys, ...specialKeys]
     : event.planet === "Moon" ? calendarTransitDetailContentKeys(event) : specialKeys)])];
-  const content = eventKeys.length ? await loadCalendarEventArticleContent(event, existing, keys, load)
-    : await loadSkyDetailContent(sky, eligibleSkyDetailContent(existing), keys, load, []);
+  let content: Map<string, LiveGeneratedContent>;
+  try {
+    content = eventKeys.length ? await loadCalendarEventArticleContent(event, existing, keys, load)
+      : await loadSkyDetailContent(sky, eligibleSkyDetailContent(existing), keys, load, []);
+  } catch (error) {
+    const required = eventKeys.some(key => {
+      const row = existing.get(key), publication = contentPublication(key);
+      return publication?.state === "live" && (publication.row_id || publication.row_updated_at)
+        || row?.targetDate && row.contentKey === key && contentMatchesCalendarEventFacts(event, row)
+          && publicationAllowsContent(key, row.id, row.updatedAt, row.targetDate);
+    });
+    if (!independent || required) throw error;
+    content = eligibleSkyDetailContent(existing);
+    // An independent canonical unit may recover without remote discovery;
+    // no unverified exact event row is allowed to supply that fallback.
+    for (const key of eventKeys) content.delete(key);
+  }
   assertRequiredSkyDetailContent(content, keys);
   if ("identity" in sources && sources.identity !== skyPlacementPublicationIdentity(selection)) {
     throw new Error("Sky publications changed during loading.");
