@@ -9,6 +9,7 @@ import type { WheelTooltipEditorSession } from "./wheelTooltipEditorSession";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
 import { articleLibraryKind, articleReaderHref, standaloneArticleKind, articlePublicationIsDue, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
+import { isReusableCompositeSourceKey } from "../../../src/shared/compositeSourceIdentity";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { seasonArticleKey } from "../../../src/shared/seasonArticle";
@@ -1337,8 +1338,9 @@ function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
   );
 }
 
-function isArticleLibraryRow(row: AdminGeneratedContentRow) {
-  return Boolean(articleLibraryKind(row)) && !isAstro101ContentRow(row) && !isRetiredAdminRow(row);
+function isArticleLibraryRow(row: AdminGeneratedContentRow, includeArchived = false) {
+  return Boolean(articleLibraryKind(row)) && !isAstro101ContentRow(row)
+    && ((includeArchived && row.status === "ARCHIVED") || !isRetiredAdminRow(row));
 }
 
 function isAstro101LibraryRow(row: AdminGeneratedContentRow) {
@@ -3560,10 +3562,11 @@ export function GeneratedContentAdminDashboard() {
     () => visibleRows.filter((row) => contentClassForRow(row) === "phrasebank"),
     [visibleRows]
   );
-  const articleRows = useMemo(
-    () => visibleRows.filter(isArticleLibraryRow),
-    [visibleRows]
-  );
+  const articleRows = useMemo(() => {
+    if (activePage !== "articles") return [];
+    return rows.filter(row => !row.id.startsWith("package:") && !row.content_key.startsWith("studio-variable/")
+      && isArticleLibraryRow(row, articleStatusFilter === "ARCHIVED"));
+  }, [activePage, rows, articleStatusFilter]);
   const astro101Rows = useMemo(
     () => visibleRows.filter(isAstro101LibraryRow).sort((left, right) => left.content_key.localeCompare(right.content_key)),
     [visibleRows]
@@ -5805,7 +5808,9 @@ export function GeneratedContentAdminDashboard() {
 
   async function publishPackageDraft(activeDraft: AdminDraft) {
     if (pendingPublication) { setEditorSaveError(pendingPublicationMessage); return; }
-    const personalCopy = writesPersonalTransitExactCopy(activeDraft) || (!activeDraft.id && activeDraft.contentKey.startsWith("authored/transit-aspect/"));
+    const existing = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id);
+    const personalCopy = existing?.event_type !== "studio-package-source-draft"
+      && (writesPersonalTransitExactCopy(activeDraft) || (!activeDraft.id && activeDraft.contentKey.startsWith("authored/transit-aspect/")));
     if (personalCopy && draftHasPackageProposal(activeDraft)) activeDraft = { ...activeDraft,
       sections: { ...activeDraft.sections, packageRecord: draftEditablePackageRecord(activeDraft), packageDraft: undefined } };
     const proposal = personalCopy
@@ -5814,7 +5819,6 @@ export function GeneratedContentAdminDashboard() {
         ...activeDraft,
         sections: { ...activeDraft.sections, packageDraft: structuredClone(draftPackageRecord(activeDraft)) }
       };
-    const existing = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id);
     const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
     const saved = existing && unchanged && !personalCopy && draftHasPackageProposal(activeDraft) ? existing : await saveDraft(undefined, proposal);
     if (saved && !personalCopy) await publishSavedRevision(saved);
@@ -9512,9 +9516,9 @@ export function GeneratedContentAdminDashboard() {
     if (publish && !draftHasPackageProposal(revised)) {
       revised = setPackageSectionField(revised, captured.kind === "legacy" ? "body" : "body_you", edits.body_you);
     }
+    const { matchesHouseTransitSave } = await import("./HouseTransitWriteupEditor");
     const acknowledge = (saved: AdminGeneratedContentRow | null) => {
-      if (!saved || saved.content_key !== key || saved.inventory_only || !saved.updated_at
-        || (baseline.id && (saved.id !== baseline.id || saved.updated_at === baseline.updatedAt))) return false;
+      if (!matchesHouseTransitSave(saved, key, baseline)) return false;
       const savedDraft = draftFromRow(saved);
       const fields = houseTransitEditableFields(savedDraft, captured.kind, saved.body);
       if (fields.body_you !== edits.body_you || fields.body_they !== edits.body_they) return false;
@@ -9531,10 +9535,10 @@ export function GeneratedContentAdminDashboard() {
         // conflicting local version with a newer version from another editor.
         let recovered = false;
         if (error instanceof AdminRequestError && [408, 504].includes(error.status)) {
-          const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(key), secret);
-          const saved = payload.rows?.find(row => row.content_key === key) ?? null;
-          recovered = acknowledge(saved);
-          if (recovered) setRows(current => mergeContentInventory(current, [saved!]));
+          const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(key, { status: "DRAFT", limit: 10 }), secret);
+          const saved = payload.rows.find(acknowledge);
+          recovered = Boolean(saved);
+          if (saved) setRows(current => mergeContentInventory(current, [saved]));
         }
         if (!recovered) throw new Error(dashboardErrorMessage(error));
       }
@@ -10534,6 +10538,10 @@ export function GeneratedContentAdminDashboard() {
 
     const currentDraft = draft ?? (selectedRow ? draftFromRow(selectedRow) : null);
     if (!currentDraft) return null;
+    const compositeGlobalPublicationBlocked = currentDraft.surface === "composite" && (
+      !isReusableCompositeSourceKey(currentDraft.contentKey)
+      || Boolean(currentDraft.facts?.sampleOnly || currentDraft.sourceSnapshot?.sampleOnly)
+    );
 
     const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(currentDraft.contentKey);
     const aspectContext = aspectContextForDraft(currentDraft);
@@ -12850,7 +12858,7 @@ export function GeneratedContentAdminDashboard() {
                       </span>
                     ) : (
                       <AdminSelect aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition) || isGovernedSkyDraft}>
-                        {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+                        {contentStatuses.map((status) => <option key={status} value={status} disabled={compositeGlobalPublicationBlocked && status === "LIVE"}>{contentStatusLabel(status)}</option>)}
                       </AdminSelect>
                     )}
                     <small className={fieldHintClassName}>
@@ -13079,7 +13087,7 @@ export function GeneratedContentAdminDashboard() {
               disabled={isLoading || draftHasUnsavedChanges || Boolean(pendingPublication) || publicationRefresh.state !== "idle"}
               request={requestApprovedSourceRecovery} onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} />
           )}
-          {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
+          {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (!compositeGlobalPublicationBlocked || !isContentRetired(currentDraft.contentKey)) && (
             <StudioButton className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges || publicationRefresh.state !== "idle"}
               onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
               title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
@@ -13124,6 +13132,8 @@ export function GeneratedContentAdminDashboard() {
                 }}>Complete edition</StudioButton>
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className={fieldHintClassName}>Source material cannot be published.</small>
+              ) : compositeGlobalPublicationBlocked ? (
+                <small className={fieldHintClassName}>This personalized reading cannot be published for everyone. Publish shared writing from a reusable Composite source.</small>
               ) : (
                 <StudioButton className="admin-publish-button" onClick={() => void (isStandaloneArticleDraft || isAstro101Draft || isCalendarRevisionDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady || (isAstro101Draft && currentDraft.status === "LIVE" && !draftHasUnsavedChanges)} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />

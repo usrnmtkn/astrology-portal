@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { createApiStore } from '../helpers/calendar-review-api.mjs';
+import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 
 for (const theme of ['light', 'dark']) for (const width of [1440, 390]) {
   test(`Composite Review loads complete saved writing ${theme} ${width}`, async ({ page }) => {
@@ -107,3 +109,71 @@ test('loading composite documents preserves inventory order and the selected pag
     await expect(pagination).toContainText('Showing 11–12 of 12');
   } finally { store.close(); }
 });
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const scope of ['personalized', 'shared', 'sample'] as const) {
+  test(`Composite publication respects ${scope} scope ${width} ${theme}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    const row = { id: '11111111-1111-4111-8111-111111111111',
+      content_key: scope === 'personalized' ? 'composite-mars-trine-pluto' : 'composite.aspect.mars.trine.pluto',
+      surface: 'composite', mode: 'feed', status: 'DRAFT', lane: 'serving', review_state: null,
+      headline: 'Synthetic Composite scope', summary: '', body: 'Synthetic complete opening.\n\nSynthetic complete final sentence.',
+      sections: { byRelationshipType: { friendship: { body: 'Complete synthetic friendship passage.' } } },
+      facts: scope === 'sample' ? { sampleOnly: true } : {}, source_snapshot: {},
+      updated_at: '2026-10-15T12:00:00.000Z', provider: 'manual-admin' };
+    const store = await studioApiStore([row]);
+    try {
+      await page.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret', 'calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme', theme);
+      }, theme);
+      await routeStudioInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      await page.goto('/admin/content#composite-review');
+      const card = page.locator('.admin-template-card').filter({ has: page.getByRole('heading', { name: row.headline, exact: true }) });
+      await card.getByRole('button', { name: 'Edit', exact: true }).click();
+      const editor = page.getByRole('dialog', { name: 'Generated content editor', exact: true });
+      const body = editor.getByRole('textbox', { name: 'Full passage / body', exact: true });
+      const complete = row.body + '\n\nA complete manually saved addition.';
+      await body.fill(complete);
+      await editor.getByRole('button', { name: 'Save', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].body).toBe(complete);
+      await editor.getByRole('button', { name: 'Close', exact: true }).click();
+      await page.reload();
+      await card.getByRole('button', { name: 'Edit', exact: true }).click();
+      await expect(body).toHaveValue(complete);
+      await editor.getByRole('button', { name: 'Mark reviewed', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('REVIEWED');
+      const publish = editor.getByRole('button', { name: 'Publish to app', exact: true });
+      if (scope === 'shared') {
+        await expect(publish).toBeEnabled();
+        await publish.click();
+        await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('LIVE');
+        const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } });
+        expect(reader.status).toBe(200);
+        expect(reader.payload.rows[0].body).toBe(complete);
+        expect(reader.payload.rows[0].sections.byRelationshipType).toEqual(row.sections.byRelationshipType);
+      } else {
+        await expect(publish).toHaveCount(0);
+        await expect(editor.getByText('This personalized reading cannot be published for everyone.', { exact: false })).toBeVisible();
+        await expect(editor.getByLabel('Status', { exact: true }).locator('option[value="LIVE"]')).toHaveAttribute('disabled', '');
+        const saved = (await store.call({ method: 'rows' }))[0];
+        const refused = await store.call({ method: 'PATCH', body: { id: row.id, expectedUpdatedAt: saved.updated_at, status: 'LIVE' } });
+        expect(refused.status).toBe(400);
+        expect(refused.payload.error).toMatch(/Personalized content test rows cannot be published globally/);
+        expect((await store.call({ method: 'rows' }))[0]).toEqual(saved);
+      }
+      await editor.locator('summary').filter({ hasText: 'More actions' }).click();
+      await editor.getByRole('button', { name: 'Archive source', exact: true }).click();
+      await expect.poll(async () => (await store.call({ method: 'rows' }))[0].status).toBe('ARCHIVED');
+      const archived = (await store.call({ method: 'rows' }))[0];
+      expect(archived.body).toBe(complete);
+      expect(archived.sections.byRelationshipType).toEqual(row.sections.byRelationshipType);
+      const reader = await store.call({ method: 'POST', url: '/api/content-reader', body: { ids: [row.id] } });
+      expect(reader.status).toBe(200);
+      expect(reader.payload.rows).toEqual([]);
+      if (scope !== 'shared') await expect(editor.getByRole('button', { name: 'Publish again', exact: true })).toHaveCount(0);
+    } finally {
+      await page.unrouteAll({ behavior: 'wait' });
+      store.close();
+    }
+  });
+}

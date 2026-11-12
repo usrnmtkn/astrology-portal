@@ -5257,6 +5257,18 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const api = await studioApiStore(generatedRows);
     const originalStoredRows = await api.call({ method: "rows" });
+    const assertPrivateRevisions = async () => {
+      const sources = await api.call({ method: "rows" });
+      const published = sources.filter((row: any) => row.status === "LIVE");
+      expect(published).toEqual(originalStoredRows);
+      const drafts = sources.filter((row: any) => row.status === "DRAFT");
+      expect(drafts).toHaveLength(2);
+      for (const source of originalStoredRows) {
+        const revision = drafts.find((row: any) => row.content_key === source.content_key);
+        expect(revision?.source_snapshot).toMatchObject({ targetRowId: source.id, targetRowUpdatedAt: source.updated_at });
+      }
+    };
+    let passageRevisionId: string | undefined;
     let interrupt = scenario !== "publish";
     let releaseSave: (() => void) | undefined;
     const heldSave = scenario === "saving navigation" ? new Promise<void>(resolve => { releaseSave = resolve; }) : null;
@@ -5266,13 +5278,15 @@ test.describe("content dashboard admin user flow case studies", () => {
       const body = method === "GET" ? undefined : route.request().postDataJSON();
       if (body) writes.push({ method, payload: body });
       if (heldSave && body?.id === "qa-daily-headline") await heldSave;
-      if (interrupt && scenario === "partial refusal" && body?.id === "qa-daily-passage" && body?.ownerAction === "approve-package-revision") {
+      if (interrupt && scenario === "partial refusal" && passageRevisionId && body?.id === passageRevisionId && body?.ownerAction === "approve-package-revision") {
         interrupt = false;
         await route.fulfill({ status: 409, json: { ok: false, error: "Synthetic passage publication refused; retained writing must be retryable." } });
         return;
       }
       const url = new URL(route.request().url());
       const result = await api.call({ method, body, url: url.pathname + url.search });
+      const saved = result.payload?.rows?.[0];
+      if (method === "PATCH" && saved?.status === "DRAFT" && saved.source_snapshot?.targetRowId === "qa-daily-passage") passageRevisionId = saved.id;
       if (interrupt && scenario === "lost receipt" && body?.ownerAction === "approve-package-revision" && result.status === 200) {
         interrupt = false;
         await route.fulfill({ json: { ok: true, rows: [] } });
@@ -5406,7 +5420,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect.poll(() => writes.length).toBe(2);
       await expect(editor).toContainText("No unsaved changes");
       await expectCompleteWriting();
-      expect((await api.call({ method: "rows" })).every((row: any) => row.status === "DRAFT")).toBe(true);
+      await assertPrivateRevisions();
       await page.evaluate(() => { window.location.hash = "#surface-map"; });
       await expect(editor).toHaveCount(0);
       await page.evaluate(() => { window.location.hash = "#fallback-hooks?section=daily&q=daily"; });
@@ -5433,7 +5447,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes.length).toBe(2);
     await expect(editor).toContainText("No unsaved changes");
-    expect((await api.call({ method: "rows" })).every((row: any) => row.status === "DRAFT")).toBe(true);
+    await assertPrivateRevisions();
     await publish.click();
     if (scenario === "partial refusal") {
       await expect(editor.getByRole("alert")).toContainText("Headline published. Passage:");

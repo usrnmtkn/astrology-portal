@@ -1,3 +1,4 @@
+import { isPendingPackageRevision } from "./generatedContentClient";
 import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -28,6 +29,7 @@ import { Grid, Stack, Text } from "./studio-ds/primitives";
 import { metricGrid } from "./studio-ds/recipes";
 
 type PreviewRow = {
+  event_type?: string | null;
   id?: string | null;
   inventory_only?: boolean;
   updated_at?: string | null;
@@ -38,6 +40,11 @@ type PreviewRow = {
   status: string;
   summary: string | null;
 };
+
+function editableSource(rows: PreviewRow[], key: string) {
+  const candidates = rows.filter(row => row.content_key === key);
+  return candidates.find(isPendingPackageRevision) ?? candidates.find(row => row.status !== "ARCHIVED") ?? candidates[0];
+}
 
 type Props = {
   house: NatalPlacementHouse | "";
@@ -198,7 +205,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
       if (!rows.some((row) => row.content_key === source.key) && rows.some((row) => row.content_key === preferredKey)) source = { ...source, key: preferredKey };
       if (!rows.some((row) => row.content_key === source.key)) return null;
     }
-    const savedRow = rows.find((row) => row.content_key === source.key);
+    const savedRow = editableSource(rows, source.key);
     const isOptionalExactOverride = source.key.startsWith("fallback-hook/natal-you-placement-complete-final/") || source.key.startsWith("fallback-hook/natal-you-placement-sign-final/");
     const preview = previewFromRow(savedRow, source.key);
     return (
@@ -228,7 +235,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
   };
 
   const renderEmptyHouseSource = (contentKey: string) => {
-    const savedRow = rows.find((row) => row.content_key === contentKey);
+    const savedRow = editableSource(rows, contentKey);
     const label = emptyHouseSourceLabel(contentKey, emptyHouse, emptyHouseSign, emptyHouseRuler, emptyHouseRulerHouse);
     const preview = previewFromRow(savedRow, contentKey);
     return (

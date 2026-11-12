@@ -1,6 +1,9 @@
+import { isPendingPackageRevision } from "./generatedContentClient";
+
 export type DailyGlanceAdminRow = {
   id: string;
   content_key: string;
+  event_type?: string | null;
   headline: string | null;
   summary: string | null;
   body: string | null;
@@ -88,8 +91,8 @@ export function dailyGlancePairs(rows: DailyGlanceAdminRow[]) {
     const selector = dailyGlanceSelector(row.content_key);
     if (!selector) return;
     const entry = bySelector.get(selector) ?? {};
-    if (row.content_key.startsWith(dailyHeadlinePrefix)) entry.headlineRow = row;
-    if (row.content_key.startsWith(dailyPassagePrefix)) entry.passageRow = row;
+    const field = row.content_key.startsWith(dailyHeadlinePrefix) ? "headlineRow" : "passageRow";
+    if (!isPendingPackageRevision(entry[field]) && (row.status !== "ARCHIVED" || !entry[field])) entry[field] = row;
     bySelector.set(selector, entry);
   });
 

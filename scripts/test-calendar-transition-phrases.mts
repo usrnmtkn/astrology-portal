@@ -56,7 +56,13 @@ try {
     const revision = await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: row.updated_at, sections: { ...row.sections, packageDraft: { body: body + '\n\nSynthetic second revision.' } }, reviewStatus: 'needs_review' });
     assert.equal(revision.status, 200, JSON.stringify(revision.payload));
     const readBack = await inventory(new URLSearchParams({ contentKey: key }));
-    assert.equal(readBack.payload.rows.length, 1, 'One editable source per phrase after editing a publication.');
+    assert.equal(readBack.payload.rows.length, 2, 'A published phrase and its private revision should both remain discoverable.');
+    const proposal = revision.payload.rows[0];
+    assert.notEqual(proposal.id, row.id);
+    assert.ok(readBack.payload.rows.some((item: any) => item.id === proposal.id && item.status === 'DRAFT'));
+    assert.ok(readBack.payload.rows.some((item: any) => item.id === row.id && item.status === 'LIVE'));
+    assert.equal(proposal.sections.packageDraft.body, body + '\n\nSynthetic second revision.');
+    assert.equal((await reader.loadLiveGeneratedContentForKeys([key])).get(key)?.body, body);
   }
   assert.equal(calendarTransitionPhraseRecordForKey('authored/calendar-moon-context/unknown'), null);
   const denied = await store.invoke('GET', undefined, '/api/admin/generated-content-inventory?contentKeyPrefix=authored/calendar-moon-context/', 'invalid');

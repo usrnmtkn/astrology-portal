@@ -66,6 +66,10 @@ function rowsFromPayload(payload: Record<string, unknown>): GeneratedContentEdit
   return payload.rows as GeneratedContentEditorRow[];
 }
 
+export function isPendingPackageRevision(row: { status?: string; event_type?: string | null } | undefined) {
+  return row?.status === "DRAFT" && row.event_type === "studio-package-source-draft";
+}
+
 export function studioInventoryDocumentPath(contentKey: string, extras: { status?: string; limit?: number } = {}) {
   const params = new URLSearchParams({
     contentKey,

@@ -272,7 +272,14 @@ try {
     const body=`${revision} complete authored season paragraph.\n\nExact final sentence.`;
     const draft=await store.invoke('PATCH',{id:journal.id,expectedUpdatedAt:journal.updated_at,sections:{...journal.sections,packageDraft:{...journal.sections.packageRecord,body}},reviewStatus:'needs_review'});
     assert.equal(draft.status,200,JSON.stringify(draft));
-    const published=await store.invoke('PATCH',{id:journal.id,expectedUpdatedAt:draft.payload.rows[0].updated_at,ownerAction:'approve-package-revision'});
+    const saved = draft.payload.rows[0];
+    if (journal.status === 'LIVE') {
+      assert.notEqual(saved.id, journal.id);
+      assert.equal(saved.source_snapshot.targetRowId, journal.id);
+      const beforePublish = await reader.loadLiveGeneratedContentForKeys([journalKey], {requireFresh:true});
+      assert.equal(beforePublish.get(journalKey)?.body, journal.body);
+    }
+    const published=await store.invoke('PATCH',{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'approve-package-revision'});
     assert.equal(published.status,200,JSON.stringify(published));journal=published.payload.rows[0];
     assert.equal(journal.body,body);
     assert.equal(contentLiveStatuses([journal],[journal])[0].live,true);

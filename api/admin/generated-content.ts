@@ -1,3 +1,4 @@
+import { isReusableCompositeSourceKey } from "../../src/shared/compositeSourceIdentity.js";
 import { writeupHoroscopesReady } from '../../src/shared/skyWriteupHoroscopes.js';
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared/lunationTimingVariables.js';
@@ -277,17 +278,12 @@ let contentRoleContractCache: {
   };
 } | null = null;
 
-const compositeSourceBody = "(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north_node|south_node|ascendant|descendant|midheaven|imum_coeli)";
-const compositeSourceKey = new RegExp(`^composite\\.(?:${compositeSourceBody}|house\\.${compositeSourceBody}\\.house_(?:[1-9]|1[0-2])|aspect\\.${compositeSourceBody}\\.(?:conjunction|sextile|square|trine|opposition)\\.${compositeSourceBody})$`, "u");
-const compositeSignSourceKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-in-(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$`, "u");
-
-const compositeHouseAliasKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-house-?(?:[1-9]|1[0-2])$`, "u");
 const natalEditorialSourceKey = /^cms\/(?:natal-twelfth-ruler\/(?:you|they)\/(?:introduction|ruler-house\/(?:[1-9]|1[0-2]))|natal-chart-context\/(?:you|they)\/sect\/(?:day|night)|natal-planet-sect\/(?:you|they)\/(?:jupiter|venus|mars|saturn)\/(?:day|night))$/u;
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string, metadata?: { facts?: unknown; sourceSnapshot?: unknown }) {
   if (contentKey?.startsWith("sample-") || isRecord(metadata?.facts) && metadata.facts.sampleOnly || isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.sampleOnly) return true;
   // These are reusable reader-bank identities, not generated personal reports.
-  const reusableComposite = surface === "composite" && Boolean(contentKey && (compositeSourceKey.test(contentKey) || compositeSignSourceKey.test(contentKey) || compositeHouseAliasKey.test(contentKey)));
+  const reusableComposite = surface === "composite" && isReusableCompositeSourceKey(contentKey);
   const placement = contentKey ? parseNatalSectPlacementKey(contentKey) : null;
   const facts = isRecord(metadata?.facts) ? metadata.facts : {};
   const reusablePlacement = placement && facts.planet === placement.planet && facts.sign === placement.sign
@@ -864,6 +860,14 @@ function assertFallbackArchitectureV3StructureLocked(row: ExistingGeneratedConte
   }
 }
 
+function retainedTransitAlternate(row: ExistingGeneratedContentRow) {
+  const record = v3PackageRecord(row);
+  const sections = isRecord(row.sections) ? row.sections : {};
+  return libs().retainPersonalTransitAlternate({
+    ...record, body_you: record.body_you ?? sections.body_you ?? row.body, body_they: record.body_they ?? sections.body_they
+  }, row.updated_at);
+}
+
 function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow, body: GeneratedContentRequestBody, patch: Record<string, unknown>) {
   const storedSections = isRecord(row.sections) ? row.sections : {};
   const sections = { ...storedSections, ...(isRecord(body.sections) ? body.sections : {}) };
@@ -875,7 +879,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const record = { ...v3PackageRecord(row) };
   if (body.preserveCurrentTransitAsAlternate) {
     if (row.status !== "LIVE" && !record.alternate_copy_sha256) throw new GeneratedContentRequestError("Only the current live wording can be retained as an alternate.", 409);
-    Object.assign(record, libs().retainPersonalTransitAlternate({ ...record, body_you: record.body_you ?? storedSections.body_you ?? row.body, body_they: record.body_they ?? storedSections.body_they }, row.updated_at));
+    Object.assign(record, retainedTransitAlternate(row));
   }
   const incomingRecord = isRecord(sections.packageRecord) ? sections.packageRecord : {};
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
@@ -2618,7 +2622,7 @@ async function recoverPublishedSkyRevision(existing: ExistingGeneratedContentRow
   const sections = isRecord(body.sections) ? body.sections : {};
   const proposal = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   if (existing.status !== "ARCHIVED" || existing.review_state !== "published-revision"
-    || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
+    || !["sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft", "studio-package-source-draft"].includes(existing.event_type ?? "") || body.ownerAction || body.sourceLifecycleAction || !proposal) return existing;
   validateFallbackArchitectureV3Copy(existing, { sections: body.sections }, body.ownerAuthoredWording === true);
   const targetId = stringFrom(existing.source_snapshot?.targetRowId);
   const target = targetId ? await fetchExistingRowById(targetId) : null;
@@ -2956,7 +2960,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
     }
 
-    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft", "calendar-moon-transition-draft"].includes(existing.event_type ?? "");
+    const isVersionedReaderDraft = ["sky-v4-governed-aspect-draft", "sky-v4-reader-copy-draft", "shared-sign-prose-draft", "calendar-passage-draft", "calendar-moon-transition-draft", "studio-package-source-draft"].includes(existing.event_type ?? "");
     const targetRowId = isVersionedReaderDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
     if (!targetRowId) throw new Error("This governed revision is missing its live target row.");
     const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
@@ -3068,10 +3072,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const now = new Date().toISOString();
     try { await approveLunationStudioRevision(promotedRecord, targetRecord, now); }
     catch (error) { throw new GeneratedContentRequestError(error instanceof Error ? error.message : 'Could not verify the complete lunation revision.'); }
+    const privatePackageRevision = existing.event_type === "studio-package-source-draft";
+    const revisionRecord = v3PackageRecord(existing);
+    const csvImport = privatePackageRevision ? existing.source_snapshot?.editorialImport : null;
     const promotionPatch: Record<string, unknown> = { updated_at: now };
     applyFallbackArchitectureV3ReviewPatch(target, {
       id: target.id,
       ownerAuthoredWording: true,
+      // Derive retained writing from the version-checked live target again.
+      preserveCurrentTransitAsAlternate: privatePackageRevision && target.content_key.startsWith("authored/transit-aspect/")
+        && Boolean(revisionRecord.alternate_copy_sha256) && revisionRecord.alternate_source_version === target.updated_at,
       headline: stringFrom(promotedRecord.headline) || target.headline || "",
       summary: stringFrom(promotedRecord.summary) || target.summary || "",
       body: stringFrom(promotedRecord.body_you ?? promotedRecord.body ?? promotedRecord.text) || target.body || "",
@@ -3083,7 +3093,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
         packageDraft: null
       },
       facts: { ...(target.facts ?? {}), review_status: "approved" },
-      sourceSnapshot: { ...targetSnapshot, review_status: "approved" },
+      sourceSnapshot: { ...targetSnapshot, ...(isRecord(csvImport) ? { editorialImport: csvImport } : {}), review_status: "approved" },
       reviewStatus: calendarRevision ? "needs_review" : "approved"
     }, promotionPatch);
     const finalSections = isRecord(promotionPatch.sections) ? { ...promotionPatch.sections } : {};
@@ -3647,6 +3657,17 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
+  const packageSourceRevision = existing.mode === "studio-draft" && existing.event_type === "studio-package-source-draft";
+  const packageSourceSections = isRecord(patch.sections) ? patch.sections : {};
+  // Some source editors submit their changed copy as a record rather than a
+  // packageDraft. Keep both forms private without changing the live parent.
+  const packageSourceProposal = isRecord(packageSourceSections.packageDraft) ? packageSourceSections.packageDraft
+    : isRecord(body.sections) && (isRecord(body.sections.packageRecord) || isRecord(body.sections.packageDraft))
+      && isRecord(packageSourceSections.packageRecord)
+      ? { ...packageSourceSections.packageRecord, review_status: existingPackageRecord.review_status } : null;
+  if (packageSourceRevision && patch.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction && packageSourceProposal) {
+    patch.sections = { ...packageSourceSections, packageRecord: existingPackageRecord, packageDraft: packageSourceProposal };
+  }
   if (articleRevision || forksArticleDraft) {
     for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
       if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
@@ -3654,7 +3675,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
       }
     }
   }
-  if (articleRevision) {
+  if (packageSourceRevision) {
+    for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
+      if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
+        throw new GeneratedContentRequestError("A source revision must keep its saved source identity.", 409);
+      }
+    }
+  }
+  if (articleRevision || packageSourceRevision) {
     const snapshot = isRecord(patch.source_snapshot) ? patch.source_snapshot : {};
     for (const field of ["targetRowId", "targetRowUpdatedAt", "targetContentKey"]) {
       if (snapshot[field] !== undefined && snapshot[field] !== existing.source_snapshot?.[field]) {
@@ -3715,22 +3743,39 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
   const forksCalendarMoonDraft = Boolean(isPackageRow && existing?.status === "LIVE" && libs().isCalendarMoonIngressContentKey(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft));
-  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft || forksCalendarPassageDraft || forksCalendarMoonDraft) && existing) {
+  const forksPackageSourceDraft = Boolean(isPackageRow && existing.status === "LIVE"
+    && existing.mode !== "studio-draft" && existing.lane === "serving" && existing.review_state == null
+    && patch.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction
+    && packageSourceProposal !== null
+    && !forksGovernedAspectDraft && !forksSkyV4ServingDraft && !forksSharedSeasonDraft
+    && !forksCalendarPassageDraft && !forksCalendarMoonDraft);
+  if (forksPackageSourceDraft) {
+    for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
+      if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
+        throw new GeneratedContentRequestError("A source revision must keep its published source identity.", 409);
+      }
+    }
+  }
+  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft || forksSharedSeasonDraft || forksCalendarPassageDraft || forksCalendarMoonDraft || forksPackageSourceDraft) && existing) {
     const skyV4ReaderDraft = forksSkyV4ServingDraft && !forksGovernedAspectDraft;
     return upsertGeneratedContentRow({
       content_key: existing.content_key,
       surface: existing.surface,
       target_date: existing.target_date,
-      mode: "studio-draft",
-      event_type: forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       block_type: existing.block_type,
       provider: "owner-content-studio",
-      prompt_version: forksCalendarMoonDraft ? "calendar-moon-transition-draft-v1" : forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
-      reviewer_notes: forksCalendarMoonDraft ? "Shared Moon transition draft. The published overview and event source remain unchanged until this revision is published." : forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
+      prompt_version: forksPackageSourceDraft ? "studio-package-source-draft-v1" : forksCalendarMoonDraft ? "calendar-moon-transition-draft-v1" : forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
+      reviewer_notes: forksPackageSourceDraft ? "Private source revision. Published wording remains unchanged until this revision is published." : forksCalendarMoonDraft ? "Shared Moon transition draft. The published overview and event source remain unchanged until this revision is published." : forksSharedSeasonDraft ? "Shared sign prose draft. The published source remains unchanged until this revision is published." : skyV4ReaderDraft
         ? "Versioned reader-copy draft. The approved SKY V4 serving baseline remains LIVE and unchanged."
         : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
       knowledge_ids: [],
       ...patch,
+      mode: "studio-draft",
+      event_type: forksPackageSourceDraft ? "studio-package-source-draft" : forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
+      ...(forksPackageSourceDraft ? { sections: { ...packageSourceSections,
+        packageRecord: body.preserveCurrentTransitAsAlternate
+          ? { ...existingPackageRecord, ...retainedTransitAlternate(existing) } : existingPackageRecord,
+        packageDraft: packageSourceProposal } } : {}),
       source_snapshot: {
         ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : {}),
         targetRowId: existing.id,

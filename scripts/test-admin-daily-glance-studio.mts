@@ -119,7 +119,7 @@ function navigationFixture(confirm = false) {
   const calls: string[] = [];
   const scope: Record<string, any> = {
     draft: null, selectedRow: null, compositionEditorContext: null, skyArticleEditor: null, skyArticleEditionForm: null,
-    dailyGlancePairSelector: "soft/mars", dailyGlanceNavigationStateRef: { current: 0 }, csvBusy: false, houseTransitEditor: null, isLoading: false,
+    dailyGlancePairSelector: "soft/mars", dailyGlanceDirtyRef: { current: false }, dailyGlanceNavigationStateRef: { current: 0 }, csvBusy: false, houseTransitEditor: null, isLoading: false,
     draftFromRow: () => { throw new Error("Unexpected draft read"); },
     transitExactDismissedKeysRef: { current: new Set() }, houseTransitEditorDrafts: { current: new Map() },
     editorLoadRef: { current: null }, editorReturnFocusRef: { current: null }, dailyGlanceLoadingRequestRef: { current: null },
@@ -152,6 +152,7 @@ function navigationFixture(confirm = false) {
 for (const [dirty, busy] of [[true, false], [false, true], [true, true]]) {
   const { scope, calls } = navigationFixture();
   scope.report(dirty, busy);
+  assert.equal(scope.dailyGlanceDirtyRef.current, dirty);
   let prevented = false;
   scope.warnBeforeUnload({ preventDefault: () => { prevented = true; }, returnValue: undefined });
   assert(prevented, "Unsaved or in-flight paired writing must warn before unload.");
