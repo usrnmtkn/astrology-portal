@@ -386,7 +386,7 @@ for (const { malformed, width, theme } of [
   expect(errors).toEqual([]);
 });
 
-for (const initialPage of ["review-queue", "articles"]) {
+for (const [initialPage, inventoryScope] of [["review-queue", "all"], ["articles", "article-library"]] as const) {
   test(`invalid inventory pages retry automatically before completing from ${initialPage}`, async ({ page }) => {
     await mockStudio(page);
     const attempts: Record<string, number> = {};
@@ -394,7 +394,7 @@ for (const initialPage of ["review-queue", "articles"]) {
     const expectedAttempts = initialPage === "review-queue" ? { "0": 3, "1": 1, "2": 1 } : { section: 3 };
     await page.route("**/api/admin/generated-content**", async route => {
       const url = new URL(route.request().url());
-      if (url.searchParams.get("scope") === "all" && !url.searchParams.has("cursor")) {
+      if (url.searchParams.get("scope") === inventoryScope && !url.searchParams.has("cursor")) {
         const pass = url.searchParams.get("partition") ?? "section";
         attempts[pass] = (attempts[pass] ?? 0) + 1;
         if (pass === failingPass && attempts[pass] <= 2) {
@@ -418,7 +418,7 @@ for (const initialPage of ["review-queue", "articles"]) {
     const expectedPasses = initialPage === "review-queue" ? ["0", "1", "2"] : ["section"];
     await page.route("**/api/admin/generated-content**", async route => {
       const url = new URL(route.request().url());
-      if (invalid && url.searchParams.get("scope") === "all") {
+      if (invalid && url.searchParams.get("scope") === inventoryScope) {
         const pass = url.searchParams.get("partition") ?? "section";
         attempts[pass] = (attempts[pass] ?? 0) + 1;
         await route.fulfill({ json: null });

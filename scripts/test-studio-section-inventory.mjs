@@ -106,7 +106,8 @@ assert.deepEqual(reviewQueue.prefixes, []);
 assert.equal(reviewQueue.visibility, "all");
 
 const articles = studioInventoryQuery({ page: "articles" });
-assert.equal(articles.mode, "article");
+assert.equal(articles.scope, "article-library");
+assert.equal(articles.mode, null);
 assert.deepEqual(articles.prefixes, []);
 
 const astro101Path = studioInventoryRequestPath({ ...astro101, prefixes: ["education/astro-101/"] }, 400, null);

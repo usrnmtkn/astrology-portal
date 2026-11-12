@@ -41,6 +41,11 @@ export function isStudioCompositeRow(row: ScopeRow) {
   return row.surface === "composite" || row.content_key.includes("composite") || row.block_type === "composite_aspect";
 }
 export function studioScopeStorageFilter(scope: string) {
+  if (scope === "article-library") {
+    // Published targets use article mode. Saving a private revision of an
+    // Article or Guide creates a separate studio-draft that must survive reload.
+    return "(mode.eq.article,and(mode.eq.studio-draft,event_type.eq.standalone-article-revision,status.eq.DRAFT,or(content_key.like.article/manual/*,content_key.like.article/guide/*)))";
+  }
   if (scope === "sky-types") return metadataOutsidePrefixes(["block_type.eq.sky_placement", "block_type.eq.sky_article"], STUDIO_SKY_WRITEUP_PREFIXES);
   if (scope === "template-types") return metadataOutsidePrefixes(templateMetadata, STUDIO_TEMPLATE_PREFIXES);
   if (scope === "fallback-types") return metadataOutsidePrefixes(fallbackMetadata, STUDIO_FALLBACK_PREFIXES);

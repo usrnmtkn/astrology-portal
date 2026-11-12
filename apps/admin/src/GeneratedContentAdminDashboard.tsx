@@ -3594,14 +3594,20 @@ export function GeneratedContentAdminDashboard() {
     () => skyWriteupRows.filter(isPublishedButUnwired),
     [skyWriteupRows]
   );
-  const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
-    const status = row.status === "LIVE" && !articlePublicationIsDue(row) ? "scheduled" : row.status;
-    return (articleKindFilter === "all" || articleLibraryKind(row) === articleKindFilter)
-      && (articleStatusFilter === "all" || status === articleStatusFilter)
-      && (articlePointFilter === "all" || articlePointForRow(row) === articlePointFilter)
-      && (articleContentSystemFilter === "all" || contentSystemForRole(contentRoleForRecord(row)) === articleContentSystemFilter)
-      && matchesAdminSearch(visibleRowSearchText(row), articleQuery);
-  }), [articleRows, articleKindFilter, articleStatusFilter, articlePointFilter, articleContentSystemFilter, articleQuery]);
+  const filteredArticleRows = useMemo(() => {
+    const matches = articleRows.filter((row) => {
+      const status = row.status === "LIVE" && !articlePublicationIsDue(row) ? "scheduled" : row.status;
+      return (articleKindFilter === "all" || articleLibraryKind(row) === articleKindFilter)
+        && (articleStatusFilter === "all" || status === articleStatusFilter)
+        && (articlePointFilter === "all" || articlePointForRow(row) === articlePointFilter)
+        && (articleContentSystemFilter === "all" || contentSystemForRole(contentRoleForRecord(row)) === articleContentSystemFilter)
+        && matchesAdminSearch(visibleRowSearchText(row), articleQuery);
+    });
+    if (articleStatusFilter !== "all") return matches;
+    const drafts = new Map(articleRows.filter(row => row.status === "DRAFT" && row.event_type === standaloneRevisionEvent)
+      .map(row => [row.content_key, row]));
+    return [...new Set(matches.map(row => row.status === "LIVE" ? drafts.get(row.content_key) ?? row : row))];
+  }, [articleRows, articleKindFilter, articleStatusFilter, articlePointFilter, articleContentSystemFilter, articleQuery]);
   const filteredAstro101Rows = useMemo(() => astro101Rows.filter((row) => (
     matchesAdminSearch(visibleRowSearchText(row), astro101Query)
   )), [astro101Query, astro101Rows]);
@@ -8102,7 +8108,7 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar admin-collection-toolbar">
               <div>
-                <span className={fieldHintClassName}>{filteredArticleRows.length} of {articleRows.length} articles</span>
+                <span className={fieldHintClassName}>{filteredArticleRows.length} of {new Set(articleRows.map(row => row.content_key)).size} articles</span>
               </div>
               <div className="admin-surface-actions" aria-label="Article and guide tools">
                 <a className="admin-source-action" href="#articles-guides?q=sky%2Farticle-template%2F" onClick={event => {

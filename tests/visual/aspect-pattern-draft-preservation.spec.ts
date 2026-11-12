@@ -19,6 +19,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
     let holdNextSave = false, held = false, reads = 0, discard = false;
     let releaseSave = () => {};
     const heldResponse = new Promise<void>(resolve => { releaseSave = resolve; });
+    const delayedSession = width === 390 && theme === 'light';
+    let sessionRefreshes = 0;
     const dialogs: string[] = [], errors: string[] = [];
     const guard = await installSyntheticNetworkGuard(context, new URL(baseURL!).origin);
     globalThis.fetch = async (input, init = {}) => {
@@ -53,10 +55,21 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       return Response.json(updated);
     };
     try {
-      await context.addInitScript(({ theme, secret }) => {
-        localStorage.setItem('tldrastro:contentAdminSecret', secret);
+      await context.addInitScript(({ theme, secret, delayedSession }) => {
+        if (delayedSession) {
+          localStorage.setItem('sb-visual-smoke-auth-token', JSON.stringify({
+            access_token: 'expired-synthetic', refresh_token: 'synthetic-refresh', expires_at: 1
+          }));
+        } else localStorage.setItem('tldrastro:contentAdminSecret', secret);
         localStorage.setItem('tldrastro:studio-theme', theme);
-      }, { theme, secret: env.CONTENT_GENERATION_SECRET });
+      }, { theme, secret: env.CONTENT_GENERATION_SECRET, delayedSession });
+      if (delayedSession) await context.route('https://visual-smoke.supabase.test/auth/v1/token?*', async route => {
+        sessionRefreshes++;
+        await new Promise(resolve => setTimeout(resolve, 350));
+        await route.fulfill({ json: { access_token: env.CONTENT_GENERATION_SECRET, refresh_token: 'synthetic-refresh', expires_in: 3600 } });
+      });
+      if (delayedSession) await context.route('https://visual-smoke.supabase.test/auth/v1/user', route =>
+        route.fulfill({ json: { id: '00000000-0000-4000-8000-000000000001', aud: 'authenticated', role: 'authenticated' } }));
       page.on('pageerror', error => errors.push(error.message));
       page.on('dialog', async dialog => { dialogs.push(dialog.message()); await (discard ? dialog.accept() : dialog.dismiss()); });
       await context.route('**/rest/v1/content_publications?**', async route => {
@@ -91,6 +104,10 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       const overview = editor.getByRole('textbox', { name: 'Overview', exact: true });
       const save = editor.getByRole('button', { name: 'Save draft', exact: true });
       await expect(editor).toBeVisible();
+      if (delayedSession) {
+        expect(sessionRefreshes).toBeGreaterThan(0);
+        expect(reads).toBe(1);
+      }
       const beforeUnload = () => page.evaluate(() => {
         const event = new Event('beforeunload', { cancelable: true });
         window.dispatchEvent(event); return event.defaultPrevented;

@@ -1585,7 +1585,9 @@ async function readLiveGeneratedContentForSurfaces(
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows), previewMode);
 }
 
-export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: { requireFresh?: boolean; retryKey?: number } = {}) {
+type TargetedReadOptions = { requireFresh?: boolean; retryKey?: number; parallelBatches?: boolean };
+
+export async function loadLiveGeneratedContentForKeys(contentKeys: string[], options: TargetedReadOptions = {}) {
   await (skyListPublicationReadStarted() && contentKeys.every(isSkyListPublicationKey)
     ? refreshSkyListPublications() : refreshContentPublications());
   const keys = [...new Set(contentKeys.map((key) => key.trim()).filter(Boolean))].sort();
@@ -1602,7 +1604,7 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[], opt
     () => readLiveGeneratedContentForKeys(keys, options));
 }
 
-async function readLiveGeneratedContentForKeys(keys: string[], options: { requireFresh?: boolean }) {
+async function readLiveGeneratedContentForKeys(keys: string[], options: TargetedReadOptions) {
   const supabase = await publicReaderAvailable();
 
   if (!supabase) {
@@ -1614,18 +1616,22 @@ async function readLiveGeneratedContentForKeys(keys: string[], options: { requir
   const rows: GeneratedContentRow[] = [];
   const batchSize = 50;
 
-  for (let index = 0; index < keys.length; index += batchSize) {
-    const batch = keys.slice(index, index + batchSize);
-    const { data, error } = await loadReaderRows({ keys: batch }, requestSignal);
-
-    if (error) {
-      // A refresh must distinguish confirmed removals from an offline snapshot.
-      if (options.requireFresh) throw error;
-      console.warn("Targeted content read failed.", error);
-      return loadLastKnownGoodGeneratedContentForKeys(keys);
+  // A Calendar week spans several exact-key requests. Overlap two at a time
+  // under the same deadline, and wait for the whole selection before rendering.
+  const stride = options.parallelBatches ? batchSize * 2 : batchSize;
+  for (let index = 0; index < keys.length; index += stride) {
+    const requests = [];
+    for (let start = index; start < Math.min(index + stride, keys.length); start += batchSize) {
+      requests.push(loadReaderRows({ keys: keys.slice(start, start + batchSize) }, requestSignal));
     }
-
-    rows.push(...(data ?? []));
+    for (const { data, error } of await Promise.all(requests)) {
+      if (error) {
+        if (options.requireFresh) throw error;
+        console.warn("Targeted content read failed.", error);
+        return loadLastKnownGoodGeneratedContentForKeys(keys);
+      }
+      rows.push(...(data ?? []));
+    }
   }
 
   return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows));

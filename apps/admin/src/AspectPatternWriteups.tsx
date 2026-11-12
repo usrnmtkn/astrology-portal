@@ -6,6 +6,7 @@ import { metricGrid } from "./studio-ds/recipes";
 import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { requestStudioJson } from "./generatedContentClient";
+import { ownerCredentialIdentity } from "./ownerSession";
 import { sameAspectPatternContent } from "./aspectPatternSaveReceipt";
 
 type AspectPatternWriteupKind = "natal" | "activation";
@@ -197,6 +198,8 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "", dirt
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const activeFieldRef = useRef<string>("overview");
+  const listRequest = useRef<AbortController | null>(null);
+  const owner = ownerCredentialIdentity(secret);
 
   const rows = response?.rows ?? [];
   const selectedRow = rows.find((row) => row.key === selectedKey) ?? rows[0] ?? null;
@@ -222,10 +225,14 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "", dirt
   }), [contentLevelFilter, patternFilter, query, rows, statusFilter, validationFilter]);
 
   async function loadWriteups(nextKind = kind) {
+    listRequest.current?.abort();
+    if (!secret) return;
+    const signal = (listRequest.current = new AbortController()).signal;
     setIsLoading(true);
     setError("");
     try {
-      const json = await requestStudioJson(`/api/admin/aspect-pattern-writeups?kind=${nextKind}`, secret) as AspectPatternWriteupResponse;
+      const json = await requestStudioJson(`/api/admin/aspect-pattern-writeups?kind=${nextKind}`, secret, { signal }) as AspectPatternWriteupResponse;
+      if (signal.aborted) return;
       if (!Array.isArray(json.rows)) throw new Error("The write-up list could not be confirmed. Try loading it again.");
       setResponse(json);
       const firstRow = json.rows?.find((row) => row.key === selectedKey) ?? json.rows?.[0] ?? null;
@@ -234,15 +241,22 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "", dirt
       setDraftPreviews(firstRow?.previews ?? []);
       setMessage(`Loaded ${json.rows?.length ?? 0} ${nextKind === "activation" ? "Active Now" : "Natal"} write-ups.`);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Aspect-pattern write-ups failed.");
+      if (!signal.aborted) setError(caught instanceof Error ? caught.message : "Aspect-pattern write-ups failed.");
     } finally {
-      setIsLoading(false);
+      if (!signal.aborted) setIsLoading(false);
     }
   }
 
   useEffect(() => {
+    // Owner sign-in can finish after the editor mounts. A token refresh after
+    // records load must preserve the current editor and its unsaved changes.
+    setResponse(null);
+    setDraft(null);
+    setDraftPreviews([]);
+    setIsLoading(false);
     void loadWriteups(kind);
-  }, [kind]);
+    return () => listRequest.current?.abort();
+  }, [kind, owner]);
 
   useEffect(() => {
     if (dirtyRef) dirtyRef.current = dirty;

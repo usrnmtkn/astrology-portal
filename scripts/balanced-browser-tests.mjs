@@ -105,8 +105,10 @@ export function main(args) {
   assert.equal(report.errors.length, 0, 'Test discovery failed');
   const tests = identities(report);
   const timings = JSON.parse(readFileSync(durationFiles[config], 'utf8'));
-  const independentFiles = config === 'playwright.studio-admin-flows.config.ts'
-    ? ['tests/visual/content-dashboard-admin-user-flows.spec.ts'] : [];
+  const independentFiles = {
+    'playwright.reader-surfaces.config.ts': ['tests/visual/calendar-event-sky-navigation.spec.ts'],
+    'playwright.studio-admin-flows.config.ts': ['tests/visual/content-dashboard-admin-user-flows.spec.ts']
+  }[config] ?? [];
   for (const file of independentFiles) assertIndependentBrowserFile(readFileSync(file, 'utf8'), file);
   const bins = byFile ? balanceTestFiles(tests, count, timings, independentFiles) : balanceTests(tests, count, timings);
   return withShardLists(bins, files => {

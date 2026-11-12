@@ -167,6 +167,11 @@ try {
     let revisionRow = revision.payload.rows[0];
     assert.equal(revisionRow.status, 'DRAFT');
     assert.equal(revisionRow.body, revisionBody);
+    const libraryPath = studioInventoryRequestPath(studioInventoryQuery({ page: 'articles' }), 100);
+    const inventory = await store.invoke('GET', undefined, libraryPath);
+    assert.equal(inventory.status, 200);
+    assert.deepEqual(new Set(inventory.payload.rows.filter((row: any) => row.content_key === contentKey)
+      .map((row: any) => row.id)), new Set([saved.id, revisionRow.id]), 'Library reload includes both the live article and its private revision');
     const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${revisionRow.id}`);
     assert.equal(reopened.status, 200, JSON.stringify(reopened));
     const openedRevision = reopened.payload.rows[0];
@@ -191,6 +196,9 @@ try {
       ownerAction: 'publish-standalone-article-revision' });
     assert.equal(republished.status, 200, JSON.stringify(republished));
     saved = republished.payload.rows[0];
+    const afterPublish = await store.invoke('GET', undefined, libraryPath);
+    assert.deepEqual(afterPublish.payload.rows.filter((row: any) => row.content_key === contentKey)
+      .map((row: any) => row.id), [saved.id], 'The completed revision leaves the published target discoverable');
     assert.equal(saved.sections.articlePublication.publishAt, originalPublishAt, 'Ordinary revisions preserve the original publish date');
     assert.equal((await read()).payload.rows[0]?.body, revisionBody, 'Only explicit publication replaces the reader edition');
     const replayed = await publishRevision();
@@ -299,3 +307,4 @@ try {
     { code: '23514' }, 'An older server cannot publish a private revision as its own serving row');
   console.log('PASS standalone article revision SQL target boundaries and unchanged server-only grants.');
 } finally { await db.close(); }
+import { studioInventoryQuery, studioInventoryRequestPath } from '../apps/admin/src/studioSectionInventory.ts';
