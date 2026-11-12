@@ -7870,10 +7870,10 @@ export function GeneratedContentAdminDashboard() {
               }} /></Suspense>}
               {calendarWriteupWorkspaceView === "lunation-writing" && renderEditor()}
               {(calendarWriteupWorkspaceView === "planetary-ingresses" || calendarWriteupWorkspaceView === "planetary-stations") && <Suspense fallback={<PageLoading message="Loading planetary write-ups…" />}>
-                <CalendarPlanetaryWorkspace kind={calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress"} rows={rows}
+                <CalendarPlanetaryWorkspace secret={loadState === 'loaded' ? secret : ''} kind={calendarWriteupWorkspaceView === "planetary-stations" ? "station" : "ingress"} rows={rows}
                   selection={calendarPlanetarySelection} onSelection={setCalendarPlanetarySelection}
                   busy={isLoading || inventoryLoading || loadState !== "loaded"} onOpen={() => void openSelectedCalendarPlanetaryWriteup()}
-                  onEdit={row => void openRow(row, null, "body")} editor={renderEditor()} />
+                  onEdit={row => openRow(row, null, "body")} editor={renderEditor()} />
               </Suspense>}
               {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "weekly-sky" || calendarWriteupWorkspaceView === "monthly-sky") && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio secret={secret} period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft} readerEntry={readerEntry?.surface === 'calendar' ? readerEntry : undefined}

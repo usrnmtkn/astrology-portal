@@ -1,6 +1,15 @@
 import type { LunarCalendarEvent } from "../../services/ephemeris.js";
 import type { LiveGeneratedContent } from "../../services/generatedContent.js";
 import { slugContentPart } from "../../services/generatedContentKeys.js";
+import { calendarTransitDetailContentKeys } from "./calendarContentKeys.js";
+
+/** Exact Calendar write-ups are complete units; generic card fallbacks stay separate. */
+export function calendarEventArticleSourceKeys(event: LunarCalendarEvent) {
+  if (!(event.type === "ingress" && event.planet && !["Sun", "Moon"].includes(event.planet)
+    || event.type === "station" && /^station-(direct|retrograde)$/u.test(event.phase ?? ""))) return [];
+  return calendarTransitDetailContentKeys(event).filter(key => key.startsWith("sky.") || key.startsWith("sky-")
+    || key.startsWith("fallback-hook/sky.retrograde/"));
+}
 
 function normalizedContentSlots(content: LiveGeneratedContent | null) {
   const sections = content?.sections;
@@ -20,6 +29,9 @@ export function contentMatchesCalendarEventFacts(event: LunarCalendarEvent, cont
   if (!content) {
     return false;
   }
+
+  if (content.targetDate && calendarEventArticleSourceKeys(event).includes(content.contentKey)
+    && content.targetDate !== (event.dateKey || event.startsAt.slice(0, 10))) return false;
 
   const headline = content.headline?.trim() ?? "";
   const body = content.body.trim();

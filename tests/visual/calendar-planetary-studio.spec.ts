@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
+import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
 import { calendarPlanetaryDraft } from '../../apps/admin/src/calendarPlanetaryDraft';
+import { governedCalendarCases, publishGovernedCalendarFixture } from '../helpers/calendar-governed-fixtures';
 
 const cases = [
   { view: 'planetary-ingresses', label: 'Planetary ingresses', key: 'sky.ingress.mercury.scorpio', planet: 'mercury', field: 'Enters sign', sign: 'scorpio', direction: 'direct', date: '2026-09-30', title: 'Mercury enters Scorpio' },
@@ -16,9 +18,10 @@ const typography = (element: Element) => {
 };
 
 for (const legacy of [false,true]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
-  test(`Planetary workspaces save, reopen, publish and reach Calendar ${width} ${theme}${legacy?' legacy NULL block':''}`, async ({ page }) => {
+  test(`Planetary workspaces save, reopen, publish and reach Calendar ${width} ${theme}${legacy?' legacy NULL block':''}`, async ({ page, context }) => {
     test.setTimeout(150_000);
     const store = await studioApiStore([], { uuidIds: true, sqlCalendarLifecycle: true });
+    const targetedReads = new Map<string,number>();
     const publishedBodies = new Map<string,string>(cases.map(item => [item.key, passageFor(item)]));
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -90,7 +93,7 @@ for (const legacy of [false,true]) for (const width of [390, 1440]) for (const t
         }
         if (legacy) {
           const {id:_,...draft}=calendarPlanetaryDraft(item.view==='planetary-ingresses'?'ingress':'station',{planet:item.planet,sign:item.sign,direction:item.direction})!;
-          const created=await store.call({method:'POST',url:'/api/admin/generated-content',body:{...draft,blockType:null,eventType:'calendar_event'}});
+          const created=await store.call({method:'POST',url:'/api/admin/generated-content',body:{...draft,blockType:null,eventType:'calendar_event',...(width===390&&theme==='dark'?{targetDate:item.date}:{})}});
           expect(created.status).toBe(200);
         }
         await workspace.getByRole('button', { name: 'Open write-up', exact: true }).click();
@@ -177,19 +180,27 @@ for (const legacy of [false,true]) for (const width of [390, 1440]) for (const t
         await page.screenshot({ path: `test-results/${item.view}-saved-${width}-${theme}.png`, fullPage: true });
       }
 
+      await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,answer:async(route,url)=>{
+        if(url.pathname==='/api/content-publications'){await route.fulfill(await publicationsReply());return true;}
+        if(url.pathname==='/api/admin/content-live-status'){await route.fulfill({json:{ok:true,statuses:[]}});return true;}
+        return false;
+      }});
       const saved = (await store.call({ method: 'rows' })).filter((row: any) => row.status === 'LIVE');
       expect(saved).toHaveLength(cases.length);
       await page.unrouteAll({ behavior: 'wait' });
       await bundledPublications(page);
       await page.route('**/api/content-publications', async route => route.fulfill(await publicationsReply()));
       await page.route('**/api/content-reader', async route => {
-        const result = await store.call({method:'POST',url:'/api/content-reader',body:route.request().postDataJSON()});
+        const request=route.request().postDataJSON();
+        for(const key of request.keys??[])if(cases.some(item=>item.key===key))targetedReads.set(key,(targetedReads.get(key)??0)+1);
+        const result = await store.call({method:'POST',url:'/api/content-reader',body:request});
         return route.fulfill({status:result.status,json:result.payload});
       });
       for (const item of cases) {
         await page.goto(`/?date=${item.date}#calendar?view=day&date=${item.date}`);
         const card = page.locator('.calendar-day-events .calendar-stoic-card').filter({ hasText: item.title });
         await expect(card).toContainText(`Synthetic ${item.title} opening.`, { timeout: 45_000 });
+        const beforeOpen=targetedReads.get(item.key)??0,started=Date.now();
         await card.click();
         const detail = page.locator('.sky-detail-article');
         await expect(detail.locator('#sky-detail-title')).toContainText(item.planet === 'venus' ? 'Venus' : 'Mercury');
@@ -198,10 +209,107 @@ for (const legacy of [false,true]) for (const width of [390, 1440]) for (const t
         await expect(body.locator('p')).toHaveText(publishedBodies.get(item.key)!.split('\n\n'));
         await expect(page.getByRole('dialog', { name: 'Event detail', exact: true })).toHaveCount(0);
         const paragraphs = await body.locator('p').allTextContents();
+        const openedReads=(targetedReads.get(item.key)??0)-beforeOpen,openedMs=Date.now()-started;
+        const beforeReload=targetedReads.get(item.key)??0;
         await page.reload();
         await expect(body.locator('p')).toHaveText(paragraphs, { timeout: 60000 });
+        if(legacy&&width===390&&theme==='dark'){
+          const reloadReads=(targetedReads.get(item.key)??0)-beforeReload;
+          expect(openedReads).toBe(1);expect(reloadReads).toBe(1);
+          console.log(JSON.stringify({dateBoundEvent:item.direction+item.view,openCanonicalRequests:openedReads,reloadCanonicalRequests:reloadReads,openMs:openedMs}));
+        }
+
+        if(width===1440&&theme==='light'&&!legacy){
+          const assertEdit=async(expected:string)=>{
+            const opened=context.waitForEvent('page');await detail.getByRole('link',{name:'Edit this passage',exact:true}).click();
+            const popup=await opened;popup.on('pageerror',error=>errors.push(error.message));
+            const editor=popup.getByRole('dialog',{name:'Generated content editor'});
+            await expect(editor.getByLabel('Content key',{exact:true})).toHaveValue(item.key,{timeout:60000});
+            await expect(editor.getByLabel('Event write-up',{exact:true})).toHaveValue(expected);
+            await popup.reload();await expect(editor.getByLabel('Event write-up',{exact:true})).toHaveValue(expected,{timeout:60000});
+            await popup.close();
+          };
+          const published=publishedBodies.get(item.key)!;
+          await assertEdit(published);
+          const live=(await store.call({method:'rows'})).find((row:any)=>row.content_key===item.key&&row.status==='LIVE');
+          const pending=published+'\n\nSynthetic matching private revision final paragraph.';
+          const revised=await store.call({method:'PATCH',url:'/api/admin/generated-content',body:{id:live.id,expectedUpdatedAt:live.updated_at,status:'REVIEWED',body:pending}});
+          expect(revised.status).toBe(200);
+          const {id:_,...unrelated}=calendarPlanetaryDraft(item.view==='planetary-ingresses'?'ingress':'station',{planet:item.planet,sign:item.sign,direction:item.direction})!;
+          const other=await store.call({method:'POST',url:'/api/admin/generated-content',body:{...unrelated,eventType:'calendar_event',targetDate:'2027-01-01',body:'Synthetic unrelated draft opening.\n\nSynthetic unrelated draft must never open from this reader.'}});
+          expect(other.status,JSON.stringify(other.payload)).toBe(200);
+          await assertEdit(pending);
+          expect((await store.call({method:'POST',url:'/api/content-reader',body:{keys:[item.key]}})).payload.rows.map((row:any)=>row.body)).toEqual([published]);
+        }
+
       }
       expect(errors).toEqual([]);
     } finally { await page.unrouteAll({ behavior: 'wait' }); await page.close(); store.close(); }
+  });
+}
+
+const governedProfiles=[...[390,1440].flatMap(width=>(['light','dark'] as const).map(theme=>({width,theme,summary:''}))),
+  {width:1440,theme:'light' as const,summary:'Synthetic separately authored Calendar summary.'}];
+for(const {width,theme,summary} of governedProfiles){
+  test(`Governed Calendar imports preserve whole card and Sky units ${width} ${theme}${summary?' separate summary':''}`,async({page,context})=>{
+    test.setTimeout(150_000);
+    const store=await studioApiStore([],{uuidIds:true,sqlCalendarLifecycle:true});
+    const invoke=(method:string,body:unknown,url='/api/admin/generated-content')=>store.call({method,body,url});
+    const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+    try{
+      for(const sample of governedCalendarCases){
+        const published=await publishGovernedCalendarFixture(invoke,sample,summary);
+        const result=await invoke('POST',{keys:[sample.key]},'/api/content-reader');
+        expect(result.payload.rows[0].body).toBe(sample.body);
+        expect(result.payload.rows[0].summary).toBe(summary);
+        expect(result.payload.publications).toContainEqual(expect.objectContaining({content_key:sample.key,state:'live',row_id:published.id}));
+      }
+      await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme:theme});
+      await context.addInitScript(theme=>{
+        if(window.location.origin==='null')return;
+        localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme',theme);
+        localStorage.setItem('tldrastro:theme',theme);
+        localStorage.setItem('tldrastro:selectedLocation',JSON.stringify({label:'New York, NY',latitude:40.7128,longitude:-74.006,timeZone:'America/New_York'}));
+      },theme);
+      await routeStudioInventoryApi(context,{call:store.call,actualDocumentRoute:true,answer:async(route,url)=>{
+        if(url.pathname==='/api/admin/content-live-status'){await route.fulfill({json:{ok:true,statuses:[]}});return true;}
+        return false;
+      }});
+      await bundledPublications(page);
+      await page.route('**/api/content-publications',async route=>{
+        const publications=canonicalPublicationLedger(await store.call({method:'publications'}));
+        return route.fulfill({headers:{etag:await publicationLedgerTag(publications)},json:{schema:'tldr-publications/v1',publications}});
+      });
+      await page.route('**/api/content-reader',async route=>{
+        const result=await invoke('POST',route.request().postDataJSON(),'/api/content-reader');return route.fulfill({status:result.status,json:result.payload});
+      });
+      for(const sample of governedCalendarCases){
+        const date=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(sample.event.startsAt));
+        const paragraphs=sample.body.split('\n\n');
+        const card=page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:sample.event.title}).first();
+        for(let reload=0;reload<2;reload++){
+          if(reload)await page.reload();else await page.goto(`/?date=${date}#calendar?view=day&date=${date}`);
+          await expect(card.locator('.calendar-stoic-card__excerpt')).toHaveText(summary||sample.body,{useInnerText:true,timeout:60000});
+        }
+        await card.click();const body=page.locator('.sky-detail-body .article-body-inner').first();
+        await expect(body.locator('p')).toHaveText(paragraphs,{timeout:60000});
+        await page.reload();await expect(body.locator('p')).toHaveText(paragraphs,{timeout:60000});
+        if(!summary&&(width===1440&&theme==='light'||width===390&&theme==='dark')){
+          const opened=context.waitForEvent('page');await page.getByRole('link',{name:'Edit this passage',exact:true}).click();
+          const popup=await opened;popup.on('pageerror',error=>errors.push(error.message));
+          const editor=popup.getByRole('dialog',{name:'Generated content editor'});
+          await expect(editor.getByLabel('Content key',{exact:true})).toHaveValue(sample.key,{timeout:60000});
+          const full=()=>editor.locator('textarea').evaluateAll((fields,body)=>fields.some(field=>field.value===body),sample.body);
+          await expect.poll(full).toBe(true);
+          await expect(editor.getByRole('button',{name:'Approve',exact:true})).toHaveCount(0);
+          await popup.reload();await expect(editor.getByLabel('Content key',{exact:true})).toHaveValue(sample.key,{timeout:60000});
+          await expect.poll(full).toBe(true);await popup.close();
+        }
+
+        expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+      }
+      expect(errors).toEqual([]);
+    }finally{await page.unrouteAll({behavior:'wait'});await page.close();store.close();}
   });
 }

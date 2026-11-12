@@ -227,7 +227,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2, 3, 4, 5, 6]
     env:
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
@@ -244,7 +244,7 @@ jobs:
       - run: npm run build:knowledge
       - run: node scripts/ci-validate-playwright-image.mjs
       - name: Run Content Studio admin user flows
-        run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/4 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/studio-publication-recovery.spec.ts tests/visual/approved-source-recovery.spec.ts tests/visual/studio-publication-status.spec.ts tests/visual/sky-template-first-save.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/calendar-aspect-create.spec.ts tests/visual/compatibility-aspect-create.spec.ts tests/visual/calendar-aspect-retrograde.spec.ts tests/visual/calendar-planetary-studio.spec.ts tests/visual/studio-section-visibility.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-dedicated-editor-routing.spec.ts tests/visual/studio-inventory-loading.spec.ts tests/visual/studio-formatting-publication.spec.ts tests/visual/astro-101-reader-recovery.spec.ts tests/visual/calendar-subscriptions.spec.ts tests/visual/studio-csv.spec.ts tests/visual/studio-article-memory.spec.ts tests/visual/studio-owner-publishing.spec.ts tests/visual/natal-friend-publication.spec.ts tests/visual/personal-transit-copy-versions.spec.ts tests/visual/aspect-pattern-draft-preservation.spec.ts tests/visual/studio-variable-draft-preservation.spec.ts
+        run: npx playwright test -c playwright.config.ts --fully-parallel --workers=1 --shard=${{ matrix.shard }}/6 tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/calendar-review-queue-api.spec.ts tests/visual/studio-publication-recovery.spec.ts tests/visual/approved-source-recovery.spec.ts tests/visual/studio-publication-status.spec.ts tests/visual/sky-template-first-save.spec.ts tests/visual/review-queue-workflow.spec.ts tests/visual/calendar-aspect-create.spec.ts tests/visual/compatibility-aspect-create.spec.ts tests/visual/calendar-aspect-retrograde.spec.ts tests/visual/calendar-planetary-studio.spec.ts tests/visual/studio-section-visibility.spec.ts tests/visual/content-publication-offline.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts tests/visual/studio-dedicated-editor-routing.spec.ts tests/visual/studio-inventory-loading.spec.ts tests/visual/studio-formatting-publication.spec.ts tests/visual/astro-101-reader-recovery.spec.ts tests/visual/calendar-subscriptions.spec.ts tests/visual/studio-csv.spec.ts tests/visual/studio-article-memory.spec.ts tests/visual/studio-owner-publishing.spec.ts tests/visual/natal-friend-publication.spec.ts tests/visual/personal-transit-copy-versions.spec.ts tests/visual/aspect-pattern-draft-preservation.spec.ts tests/visual/studio-variable-draft-preservation.spec.ts
       - name: Upload Content Studio flow artifacts
         if: always()
         uses: actions/upload-artifact@v6

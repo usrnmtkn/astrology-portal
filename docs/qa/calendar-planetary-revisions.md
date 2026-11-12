@@ -17,8 +17,33 @@ change.
 The dated Sky event reads the same complete eligible event unit as its Calendar
 card. Dated ingress writing precedes reusable writing. The selected row must
 match the calculated event, source identity and current publication version.
-Retired or stale rows cannot supply a cached event reading. Independent Sky
+Retired or stale rows cannot supply a cached event reading. An explicitly dated
+exact ingress or station unit must match the requested occurrence on both the
+Calendar card and Sky detail. Legitimately undated reusable units remain reusable;
+other families retain their existing date rules. Independent Sky
 articles remain available when no exact Calendar unit is published.
+
+Exact governed imports can predate the manual `calendar_event` marker. Their
+Calendar cards also retain the complete source body when no separate summary
+exists. A separately authored summary remains its own card unit, while the Sky
+detail retains the complete body. Generic card fallbacks and other event families
+keep their existing selection behavior.
+
+Reader-originated Edit links name the selected exact source and event date/zone.
+They open complete saved ingress and station documents in their Calendar
+workspace, including after ordinary editor reload. A pending plain revision is
+selected only when its source key, target row and opened target version match
+the published source. An unrelated draft does not replace it. Governed sources
+retain the package editor and publication controls; missing or failed complete
+source loads keep the editor closed and offer retry.
+
+Pinless date-bound rows follow the canonical reader protocol only after a
+successful fresh exact-key response. Cached objects and offline/aborted reads
+cannot authorize them. The matching calculated date and event facts still gate
+selection; explicit retirement, reset and any mismatched publication pin remain
+authoritative. Each cold route batches and deduplicates all missing exact and
+companion keys once. Already-current pinned sources need no extra reader request.
+The focused browser case records canonical request counts and opening time.
 
 ## Migration and rollout
 
@@ -52,13 +77,25 @@ the previous API remains compatible with the extended guard.
   PostgreSQL session/concurrency checks.
 - `scripts/test-calendar-planetary-studio.mts` verifies actual publication and
   reader selection, full paragraphs, aliases, dated precedence, retirement,
-  restoration, wrong event facts and stale publication versions.
+  restoration, wrong event facts and stale publication versions. Same-key,
+  wrong-date controls fail before the shared exact-unit date guard and pass
+  afterward for ingress and both station directions, while undated reuse passes
+  on both readers.
 - `tests/visual/calendar-planetary-studio.spec.ts` exercises all three event types
   with both block variants on mobile and desktop in light and dark themes
   through actual isolated handlers/storage (eight cases). It opens saved
   revisions after reload and checks complete
   Calendar-to-Sky paragraphs before and after reload. It also covers reviewed
   revisions, both publish controls, lookup failure recovery and archive/restore.
+- Five additional browser cases publish synthetic governed imports through the
+  actual package handler and PostgreSQL transaction using registered source keys
+  and calculated event fixtures. They compare the whole card and Sky detail
+  before and after reload at both widths/themes, and check the separate-summary
+  branch. The same production-shaped flow clicks the actual reader Edit control
+  for ingress and station, compares the complete editor text, and repeats after
+  ordinary editor reload. Plain-source cases separately check matching reviewed
+  private revisions against a newer unrelated draft. The fixture contains no
+  owner source writing.
 - Existing Article/Guide and Astro 101 revision regressions must continue to pass.
   The extracted receipt/editor regression checks the production predicates,
   including exclusion of governed package controls and distinct feed/proposal
@@ -69,6 +106,16 @@ the previous API remains compatible with the extended guard.
 All writes in these tests use synthetic isolated storage. Passing them does not
 assert that an owner-bearing production restoration or another Studio editor
 family has been audited.
+
+## Browser CI sharding
+
+The previous candidate's Studio admin shard 1 reached the existing 25-minute job
+limit at 25m05s. Its log records cancellation without an application assertion
+failure; the required aggregate consequently failed. That failure remains
+recorded. The same selected files and assertions now run across six shards,
+with one worker per shard and the same deadline. Exact Playwright list comparison
+covers 619 tests, distributed 104/103/103/103/103/103, with no duplicate or missing
+test identities. The complete required browser aggregate still gates release.
 
 ## Measured bundle cost
 
@@ -96,3 +143,37 @@ headroom. The 925,106 aggregate limit and startup graph counting remain intact.
 The original failed builds remain recorded. This is the measured cost of
 preserving event units and published originals, with no dependency or reader
 prose change.
+
+
+The complete-card and reader Edit follow-up remains deferred. An initial shared
+parser added startup cost (842,512 raw / 244,940 gzip in native Admin) and failed
+its startup limits. Moving the exact event entry into the existing deferred
+Calendar workspace restores startup to 841,861 raw / 244,731 gzip, below the
+unchanged 841,885 / 244,817 ceilings. Its native aggregate is 925,968 gzip bytes,
+862 above the previous aggregate limit. The complete Web profile measures
+3,770,183 aggregate gzip bytes, 994 above its previous aggregate limit. A measured
+1,024-byte allocation in each aggregate sets ceilings of 926,130 and 3,770,213,
+leaving 162 and 30 bytes respectively. Startup, individual chunks, CSS, graph
+counting and payload guards retain their existing limits. The baseline,
+intermediate optimization and failed profiles remain recorded.
+
+
+On the completed source, the shared occurrence-currentness guard adds 55 Web
+aggregate gzip bytes to 3,770,238. It fails the intermediate 3,770,213 ceiling by
+25 bytes. A further measured 64-byte Web aggregate allocation sets the final
+ceiling to 3,770,277, leaving 39 bytes. Native Admin remains at 841,861 raw /
+244,731 gzip startup and 925,968 aggregate gzip, with its agreed ceilings
+unchanged. The date-bound legacy browser case uses a real isolated API-created
+row and retains all three event readings through publication and reload.
+
+
+Final fresh-response proof and batching measure 3,770,435 Web aggregate gzip
+bytes, 197 above the preceding source and 158 above its intermediate ceiling.
+A further measured 256-byte Web aggregate allocation sets the final limit to
+3,770,533, leaving 98 bytes. All other ceilings remain as reviewed. The complete
+pre-currentness editor/navigation suites passed 99 checks; five final-source
+browser cases then pass, including actual date-bound legacy publication/reload,
+one canonical request per open and reload, plain original/pending Edit and
+mobile/desktop governed Edit. Actual handler controls verify fresh-only proof,
+offline and aborted failures, current pinned reuse without extra requests,
+wrong dates, mismatched pins, retirement and explicit reset.

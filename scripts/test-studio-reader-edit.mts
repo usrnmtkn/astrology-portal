@@ -1,3 +1,4 @@
+import {calendarPlanetaryReaderEntry} from '../apps/admin/src/calendarPlanetaryReaderEntry';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseStudioPassageEdit, skyPassageEditPlacement, skyPassageEditSource, studioPassageEditHref } from '../src/shared/studioPassageEdit';
@@ -111,4 +112,17 @@ test('reader snapshots require owner access and bind complete Swiss facts to the
     for(const invalid of [{readerSign:'aquarius'},{lat:''},{lat:'91'},{lon:'-181'},{timeZone:'bad-zone'},
       {period:'visit'},{format:'saved-template'}])assert.equal((await invoke(invalid)).statusCode,400,JSON.stringify(invalid));
   } finally {if(secret===undefined)delete process.env.CONTENT_GENERATION_SECRET;else process.env.CONTENT_GENERATION_SECRET=secret;}
+});
+
+
+test('exact Calendar reader links validate source workspace, date and zone without entering a creation route',()=>{
+  for(const [key,view] of [['sky.ingress.mercury.scorpio','planetary-ingresses'],['sky.ingress.mercury.scorpio.2026-10-21','planetary-ingresses'],
+    ['sky-ingress-mercury-scorpio-2026-10-21','planetary-ingresses'],['sky.station.venus.scorpio.retrograde','planetary-stations'],
+    ['sky.retrograde.venus.libra.station_direct','planetary-stations'],['fallback-hook/sky.retrograde/venus/libra/station-direct','planetary-stations']]){
+    const params=new URLSearchParams({view,editEvent:key,date:'2026-10-21',timeZone:'America/New_York'});
+    assert.deepEqual(calendarPlanetaryReaderEntry(`#calendar-writeups?${params}`),{surface:'calendar',sourceKey:key,date:'2026-10-21',timeZone:'America/New_York'});
+    for(const [field,value] of [['view','daily-sky'],['date','2026-02-30'],['timeZone','bad-zone'],['editEvent','https://example.test']]){
+      const invalid=new URLSearchParams(params);invalid.set(field,value);assert.equal(calendarPlanetaryReaderEntry(`#calendar-writeups?${invalid}`),null);
+    }
+  }
 });

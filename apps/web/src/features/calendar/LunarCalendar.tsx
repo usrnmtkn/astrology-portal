@@ -28,7 +28,7 @@ import { CardReadMore } from "../../components/CardReadMore";
 import { PageLoadError, PageLoading, PageLoadState } from "../../components/PageLoading";
 import { calendarMotionTitle } from "../../content/skyMotionLabels";
 import { calendarSkyEventRoute } from "../../services/calendarSkyEventIdentity";
-import { contentMatchesCalendarEventFacts } from "./calendarEventContentIdentity";
+import { calendarEventArticleSourceKeys, contentMatchesCalendarEventFacts } from "./calendarEventContentIdentity";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { CalendarCheck, CalendarDays, CalendarPlus, ChevronDown, ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -1202,8 +1202,10 @@ export function normalizeCalendarEventSurface(
   }
   // Manually authored Calendar entries are complete event write-ups. Preserve
   // every paragraph in the card and slide-out, as we do for exact aspects.
-  const completeEventWriteup = event.type === "aspect" || content?.eventType === "calendar_event";
-  const generatedDescription = (content?.eventType === "calendar_event" ? fullDetailReaderFacingCopy : firstReaderFacingCopy)([
+  const wholeEventWriteup = content?.eventType === "calendar_event"
+    || !content?.summary?.trim() && calendarEventArticleSourceKeys(event).includes(content?.contentKey ?? "");
+  const completeEventWriteup = event.type === "aspect" || wholeEventWriteup;
+  const generatedDescription = (wholeEventWriteup ? fullDetailReaderFacingCopy : firstReaderFacingCopy)([
     ...(completeEventWriteup ? [] : [content?.summary]),
     ...(completeEventWriteup && content
       ? [generatedContentParagraphs(content).join("\n\n").trim()]
