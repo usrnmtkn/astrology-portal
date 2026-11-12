@@ -1,6 +1,5 @@
 import type { CompiledSkyArticleEdition } from '../../apps/web/src/content/skyArticleTemplateCompiler';
-import type { LocationInput } from './types';
-import type { SkySnapshot } from '../../apps/web/src/types';
+import type { LocationInput, SkySnapshot } from './types';
 
 export const skyReaderPreviewPath = '/studio/sky-reader-preview';
 export const skyReaderPreviewProtocol = 'studio-sky-reader-preview/v1';

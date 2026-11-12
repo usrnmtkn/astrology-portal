@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { skyReaderCapture } from '../../../src/shared/skyReaderCapture';
 import { StudioButton } from './StudioControls';
 import { getInitialLocation, skyDateTimeFromInput } from '../../web/src/services/skySelection';
-import type { SkySnapshot } from '../../web/src/types';
+import type { SkySnapshot } from '../../../src/shared/types';
 import { skyPassageEditPlacement, type StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
 import { skyPreviewReferenceDate, skyReaderPreviewFrameUrl, skyReaderPreviewProtocol,
   type SkyReaderArticleCopy, type SkyReaderPreviewRequest, type SkyReaderPreviewResult } from '../../../src/shared/skyReaderPreview';

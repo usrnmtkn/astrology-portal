@@ -258,6 +258,7 @@ for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'da
       await page.goto(`/?date=${date}#sky/placement/sun/libra`);
       const article=page.locator('.sky-detail-article');
       const skyLink=article.getByRole('link',{name:'Edit this passage',exact:true});
+      await expect(article.getByRole('heading',{level:1})).toHaveText(sky.active.headline,{timeout:60000});
       await expect(skyLink).toBeVisible({timeout:60000});
       expect(parseStudioPassageEdit(new URL((await skyLink.getAttribute('href'))!,'https://example.test').hash)).toMatchObject({surface:'sky',date,timeZone,sourceKey:sky.active.content_key});
       const datedSkyHref=(await skyLink.getAttribute('href'))!;
