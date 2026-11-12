@@ -39,7 +39,9 @@ function verify(selected: Record<string, string>) {
     assert.deepEqual(map.errors, []);
     countCoverage.add(snapshot.count);
     if (!copy.visible) { assert.equal(snapshot.count, 0); assert.deepEqual(copy.paragraphTemplates, []); continue; }
-    if (!headingOnlyCoverage.has(snapshot.count)) {
+    if (snapshot.count === 1) {
+      assert.equal(renderToStaticMarkup(createElement(SkyDebilityCard, { positions: skyPositions })), "", "A single planet in fall, detriment, or both must not render the dignity section");
+    } else if (!headingOnlyCoverage.has(snapshot.count)) {
       const markup = renderToStaticMarkup(createElement(SkyDebilityCard, { positions: skyPositions }));
       assert.equal(markup.match(/<header[^>]*>([\s\S]*?)<\/header>/u)?.[1], `<h3>${copy.openingHook}</h3>`);
       assert.equal((markup.match(/<p>/gu) ?? []).length, 2);
@@ -83,7 +85,7 @@ all(0, {});
 assert.equal(combinations, 6912);
 assert.equal(presentations, 13822);
 assert.deepEqual([...countCoverage].sort(), [0, 1, 2, 3, 4, 5, 6, 7]);
-assert.deepEqual([...headingOnlyCoverage].sort(), [1, 2, 3, 4, 5, 6, 7]);
+assert.deepEqual([...headingOnlyCoverage].sort(), [2, 3, 4, 5, 6, 7]);
 
 const original = positions({ Venus: "Scorpio", Mars: "Cancer", Saturn: "Aries" }).map(row => ({ ...row, motion: row.planet === "Saturn" ? "retrograde" as const : "direct" as const }));
 const snapshot = traditionalSkyDebilities(original), copy = assembleSkyDebilityCopy(snapshot);

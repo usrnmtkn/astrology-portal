@@ -27,6 +27,7 @@ export default defineConfig(base, {
     'reader-unavailable-design.spec.ts',
     'reports-handoff.spec.ts',
     'sky-placement-date-labels.spec.ts',
+    'sky-dignity-visibility.spec.ts',
     'wheel-label-clearance.spec.ts',
   ]
 });
