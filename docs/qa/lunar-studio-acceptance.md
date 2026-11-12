@@ -13,6 +13,7 @@ ready for review. Editorial approval of generated prose remains the owner's.
 | Opening an entry preserves the complete saved writing. | Compare the editor's full body with storage, including opening and final text, and confirm browsing makes no content mutation. |
 | Saved writing reaches New Moon and Full Moon requests. | The complete matching lunar passage and Sun-season writing appear before supporting examples in the plan and actual provider input. Test a Full Moon with opposing Sun/Moon signs, newer draft precedence, changed-source plan invalidation, complete text/hash preservation, empty/archived sources, storage failure before billing and immutable polling receipts. |
 | Editing an existing entry survives save and reload. | Actual-handler browser regression uses isolated storage and exact saved draft bytes. Opening a generation workspace does not replace a reader source. |
+| An author can write a dated article without preparing a writer request. | **Write manually** opens a blank reference draft for the calculated event. Create, save, reopen, archive and restore read no writing profiles, feedback or source passages and call no provider. Existing event workspaces are detected by identity only and never replaced. Review & publish stages only the saved article into the ordinary reader editor; a reader collision preserves its existing writing. |
 | Dated workspaces can be archived and restored. | The dedicated owner-authenticated endpoint conditionally changes only a reference workspace's DRAFT/ARCHIVED status. Complete copy, facts, sections, writing plan and rejection history survive. Active requests and stale versions are refused. Archived drafts are discoverable and read-only, and Restore returns a non-serving draft without a provider call or publication. |
 | A published dated article reaches its reader. | Publish through the actual handler with the current validation metadata, then verify the Calendar event card and detail select its title and opening before Calendar → Read article and a direct reader reload preserve the complete saved passage. Retirement must remove it without revealing an older event excerpt. The validator's exact `legacy` profile label at the two known lunar lint paths is technical metadata, not a retired-source flag; other unsafe metadata and publication checks still apply. |
 | Generation has a clear start and stable progress. | Calculated event → Create new draft → saved plan → explicit Create draft; one enabled primary action, no unrelated header Create menu, and no separate approval checkbox. Multiple pending polls leave Back to drafts available, and completion opens persisted text. |
@@ -26,6 +27,16 @@ reusable writer; `tests/visual/lunation-writing-studio.spec.ts` covers the dated
 writer. Both run through `playwright.lunation-studio.config.ts`. Write tests use
 isolated storage, including when verifying production assets. Do not rewrite,
 publish or generate real owner content merely to obtain acceptance evidence.
+
+`scripts/test-lunation-manual-draft.mts`, included by the dated writer API test,
+rejects guidance/source reads and provider calls throughout the manual lifecycle.
+It also covers stale saves, concurrent creation, malformed save receipts,
+identity-only workspace collisions, and the actual staged-reader publication,
+complete-copy read and retirement handlers. Manual drafts retain their own
+writing only; preparation, export and generation actions require the separate
+writer workflow and cannot implicitly prepare a manual draft.
+The workspace list uses metadata-only storage projection; full writing and
+plan snapshots load only when a saved document is explicitly opened by ID.
 
 `scripts/test-studio-owner-publication.mts` also checks dated lunar publication
 through the actual publish, reader and retirement handlers, including preserved
