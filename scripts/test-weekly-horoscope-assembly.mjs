@@ -685,7 +685,7 @@ try {
   assert.match(lunationSection, /weekly-horoscope__macro daily-horoscope-summary/u);
   assert.match(lunationSection, />The macro view</u);
   assert.match(lunationSection, /updates-aspect-list you-transit-grid lunation-transit__personal/u);
-  assert.match(youPage, /<LunationTransitSection assembly=\{weeklyHoroscopeAssembly\}>\{weeklyTransitRows\[0\] \? <LunationTransitCard/u);
+  assert.match(youPage, /<LunationTransitSection assembly=\{weeklyHoroscopeAssembly\}>\{lunationRow \? <LunationTransitCard/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__reading/u);

@@ -579,6 +579,8 @@ function YouUpdatesTab({
   weeklyTransitRows?: LunationTransitCardProps[];
   reportAvatar: ReactNode;
 }) {
+  const lunationRow = weeklyTransitRows.find(row => row.reading.source === "lunation");
+  const otherWeeklyRows = weeklyTransitRows.filter(row => row.reading.source !== "lunation");
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
   const dailyWriteup = dailyUpdateSummary?.writeup?.filter((section) => section.body.length > 0) ?? [];
@@ -684,14 +686,17 @@ function YouUpdatesTab({
       {hasSavedCurrentCity && backgroundAspectRows.length > 0 ? (
         <YouTransitGroup title="Long-term transits" label="Long-term transit cards" rows={backgroundAspectRows} />
       ) : null}
-      {hasSavedCurrentCity ? <LunationTransitSection assembly={weeklyHoroscopeAssembly}>{weeklyTransitRows[0] ? <LunationTransitCard {...weeklyTransitRows[0]} /> : null}</LunationTransitSection> : null}
+      {hasSavedCurrentCity && otherWeeklyRows.length > 0 ? <div className="updates-aspect-list you-transit-grid weekly-horoscope__transits" aria-label="Weekly transit cards">
+        {otherWeeklyRows.map(row => <LunationTransitCard key={row.reading.sourceUnits.join("-") || row.reading.headline} {...row} />)}
+      </div> : null}
+      {hasSavedCurrentCity ? <LunationTransitSection assembly={weeklyHoroscopeAssembly}>{lunationRow ? <LunationTransitCard {...lunationRow} /> : null}</LunationTransitSection> : null}
       {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
         <YouTransitGroup title="Planets moving through your houses" label="House transits" rows={standaloneTransitRows} />
       )}
       {hasSavedCurrentCity && natalAspectPatternItems && (
         <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
       )}
-      {hasSavedCurrentCity && !transitsLoading && !dailyAspectsLoading && dailyAspectsReady && !dailyAspectsError && aspectRows.length === 0 && backgroundAspectRows.length === 0 && standaloneTransitRows.length === 0 && (
+      {hasSavedCurrentCity && !transitsLoading && !dailyAspectsLoading && dailyAspectsReady && !dailyAspectsError && aspectRows.length === 0 && backgroundAspectRows.length === 0 && standaloneTransitRows.length === 0 && weeklyTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
           <span>Updates</span>
           <h3>No major updates are active for {transitDateLabel}.</h3>

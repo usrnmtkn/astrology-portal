@@ -17797,7 +17797,6 @@ function ProfileView({
   );
   const weeklyTransitRows = weeklyHoroscopeAssembly?.status === "ready"
     ? [weeklyHoroscopeAssembly.horoscope, ...weeklyHoroscopeAssembly.aspects]
-      .filter(reading => reading.source === "lunation")
       .filter((reading) => {
         const aspectParts = weeklyTransitAspectParts(reading.driverLabel);
 
@@ -17842,7 +17841,7 @@ function ProfileView({
           });
         };
 
-        return { reading, preview, house, onOpen: openArticle };
+        return { reading, preview, house, onOpen: openArticle, displayTitle, glyph: planet ? pointGlyph(planet) : "○", aspect: aspectParts?.aspect, timingLabel };
       })
     : [];
   const dailyDoDont = (() => {

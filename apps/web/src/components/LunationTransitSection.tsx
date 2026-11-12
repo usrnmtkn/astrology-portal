@@ -1,3 +1,4 @@
+import { AspectBadge } from "./charts/AspectBadge";
 import "../styles/lunation-transit.css";
 import "../styles/you-transits.css";
 import { useId, useState, type ReactNode } from "react";
@@ -33,17 +34,28 @@ export type LunationTransitCardProps = {
   preview: string;
   house?: number | null;
   onOpen: () => void;
+  displayTitle?: string;
+  glyph?: string;
+  aspect?: string;
+  timingLabel?: string;
 };
 
-export function LunationTransitCard({ reading, preview, house = reading.house, onOpen }: LunationTransitCardProps) {
-  return <button type="button" className="updates-aspect-row weekly-transit-row" onClick={onOpen} aria-label={`Open full entry for ${reading.headline}`}>
-    <span className="updates-aspect-row__glyphs" aria-hidden="true">
-      <span className="planet-glyph">○</span>
-      {house ? <span className="lunation-transit__house">{house}H</span> : null}
-    </span>
-    <span className="updates-aspect-row__title">{reading.headline}</span>
+export function LunationTransitCard({ reading, preview, house = reading.house, onOpen, displayTitle, glyph = "○", aspect, timingLabel }: LunationTransitCardProps) {
+  const isLunation = reading.source === "lunation";
+  const title = isLunation ? reading.headline : displayTitle || reading.headline;
+  return <button type="button" className="updates-aspect-row weekly-transit-row" onClick={onOpen} aria-label={`Open full entry for ${title}`}>
+    {aspect ? <AspectBadge aspect={aspect} className="updates-aspect-row__glyphs" /> : <span className="updates-aspect-row__glyphs" aria-hidden="true">
+      <span className="planet-glyph">{isLunation ? "○" : glyph}</span>
+      {isLunation && house ? <span className="lunation-transit__house">{house}H</span> : null}
+    </span>}
+    <span className="updates-aspect-row__title">{title}</span>
+    {!isLunation && timingLabel ? <span className="updates-aspect-row__meta-line">{timingLabel}</span> : null}
     {preview ? <span className="updates-aspect-row__description transit-card-preview">{preview}</span> : null}
     <CardReadMore appearance="icon" />
+    {!isLunation && (house || typeof reading.orb === "number") ? <span className="updates-aspect-row__meta">
+      <span className="updates-aspect-row__dot" aria-hidden="true" />
+      <span className="updates-aspect-row__orb">{house ?? `${Math.round(Math.max(0, reading.orb ?? 0))}°`}</span>
+    </span> : null}
   </button>;
 }
 
