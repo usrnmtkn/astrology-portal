@@ -1,4 +1,3 @@
-import { LunationTransitCard } from "./components/LunationTransitSection";
 import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
@@ -17843,7 +17842,7 @@ function ProfileView({
           });
         };
 
-        return <LunationTransitCard key={articleId} reading={reading} preview={preview} house={house} onOpen={openArticle} />;
+        return { reading, preview, house, onOpen: openArticle };
       })
     : [];
   const dailyDoDont = (() => {

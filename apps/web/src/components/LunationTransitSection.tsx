@@ -1,3 +1,4 @@
+import "../styles/lunation-transit.css";
 import "../styles/you-transits.css";
 import { useId, useState, type ReactNode } from "react";
 import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "../services/weeklyHoroscope";
@@ -27,12 +28,14 @@ function LunationMacroView({ body }: { body: string }) {
   );
 }
 
-export function LunationTransitCard({ reading, preview, house = reading.house, onOpen }: {
+export type LunationTransitCardProps = {
   reading: WeeklyHoroscopeReading;
   preview: string;
   house?: number | null;
   onOpen: () => void;
-}) {
+};
+
+export function LunationTransitCard({ reading, preview, house = reading.house, onOpen }: LunationTransitCardProps) {
   return <button type="button" className="updates-aspect-row weekly-transit-row" onClick={onOpen} aria-label={`Open full entry for ${reading.headline}`}>
     <span className="updates-aspect-row__glyphs" aria-hidden="true">
       <span className="planet-glyph">○</span>

@@ -1,4 +1,4 @@
-import { LunationTransitSection } from "../../components/LunationTransitSection";
+import { LunationTransitSection, LunationTransitCard, type LunationTransitCardProps } from "../../components/LunationTransitSection";
 import { NatalPatternsInsights } from "./NatalPatternsInsights";
 import { KeyDatesPanel } from "../../components/KeyDatesPanel";
 import "../../styles/profile-overview.css";
@@ -175,7 +175,7 @@ export type YouPageProps = {
   transitCopyLoading?: boolean;
   transitCopyError?: boolean;
   onRetryTransitCopy?: () => void;
-  weeklyTransitRows?: ReactNode[];
+  weeklyTransitRows?: LunationTransitCardProps[];
   transitArticle?: YouTransitArticle | null;
 };
 
@@ -576,7 +576,7 @@ function YouUpdatesTab({
   transitLoadingMessage?: string;
   transitsLoading?: boolean;
   transitSourceFeedback?: ReactNode;
-  weeklyTransitRows?: ReactNode[];
+  weeklyTransitRows?: LunationTransitCardProps[];
   reportAvatar: ReactNode;
 }) {
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
@@ -684,7 +684,7 @@ function YouUpdatesTab({
       {hasSavedCurrentCity && backgroundAspectRows.length > 0 ? (
         <YouTransitGroup title="Long-term transits" label="Long-term transit cards" rows={backgroundAspectRows} />
       ) : null}
-      {hasSavedCurrentCity ? <LunationTransitSection assembly={weeklyHoroscopeAssembly}>{weeklyTransitRows[0]}</LunationTransitSection> : null}
+      {hasSavedCurrentCity ? <LunationTransitSection assembly={weeklyHoroscopeAssembly}>{weeklyTransitRows[0] ? <LunationTransitCard {...weeklyTransitRows[0]} /> : null}</LunationTransitSection> : null}
       {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
         <YouTransitGroup title="Planets moving through your houses" label="House transits" rows={standaloneTransitRows} />
       )}
