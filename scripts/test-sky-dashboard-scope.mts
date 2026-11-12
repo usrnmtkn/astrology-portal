@@ -365,6 +365,18 @@ try {
     releases.forEach(release => release());
     await Promise.all([relaxed, fresh]);
     releases.length = 0;
+    const calendarKeys = [skyKey, personalKey, ...Array.from({ length: 105 }, (_, i) => `calendar/test/${i}`)];
+    const firstBatch = readerRequests.length;
+    const fullWeek = qa.loadLiveGeneratedContentForKeys(calendarKeys, { parallelBatches: true, requireFresh: true });
+    await untilHeld(2);
+    releases[1]();
+    releases[0]();
+    await untilHeld(3);
+    releases[2]();
+    const weekRows = await fullWeek;
+    assert(weekRows.has(skyKey) && weekRows.has(personalKey));
+    assert.deepEqual(readerRequests.slice(firstBatch).flatMap(query => query.keys), [...calendarKeys].sort());
+    releases.length = 0;
     const older = qa.loadFallbackArchitectureV3DashboardBundle('sky');
     await untilHeld(1);
     qa.clearCachedFallbackArchitectureV3Bundle('sky');

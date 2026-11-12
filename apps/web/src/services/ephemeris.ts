@@ -779,18 +779,22 @@ function moonSunPhaseAngle(swe: SwissEphInstance, date: Date) {
   );
 }
 
+// Week and month calculations format many instants in the same time zone.
+let calendarPartsFormatter: { zone: string; formatter: Intl.DateTimeFormat } | undefined;
+
+function zonedDateTimeParts(date: Date, timeZone: string) {
+  if (calendarPartsFormatter?.zone !== timeZone) {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", second: "2-digit"
+    });
+    calendarPartsFormatter = { zone: timeZone, formatter };
+  }
+  return Object.fromEntries(calendarPartsFormatter.formatter.formatToParts(date).map(part => [part.type, part.value]));
+}
+
 function timeZoneOffsetMs(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    hourCycle: "h23",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  const values = zonedDateTimeParts(date, timeZone);
   const asUtc = Date.UTC(
     Number(values.year),
     Number(values.month) - 1,
@@ -816,16 +820,7 @@ function zonedDateTimeToUtc(timeZone: string, year: number, month: number, day: 
 
 function localDayRange(date: Date, timeZone?: string) {
   const zone = timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: zone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  const year = Number(values.year);
-  const month = Number(values.month);
-  const day = Number(values.day);
+  const { year, month, day } = localDateParts(date, zone);
   const start = zonedDateTimeToUtc(zone, year, month, day);
   const end = zonedDateTimeToUtc(zone, year, month, day + 1);
 
@@ -1396,14 +1391,7 @@ export async function getInitialSkySourceSelection(location: LocationInput, date
 }
 
 function localDateParts(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-
+  const values = zonedDateTimeParts(date, timeZone);
   return {
     year: Number(values.year),
     month: Number(values.month),

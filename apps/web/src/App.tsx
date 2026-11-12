@@ -12739,7 +12739,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         };
       }
 
-      loadLiveGeneratedContentForKeys(missingKeys, { requireFresh: cached.content.size > 0 })
+      loadLiveGeneratedContentForKeys(missingKeys, { requireFresh: cached.content.size > 0, parallelBatches: true })
         .then((content) => {
           if (cancelled) return;
 

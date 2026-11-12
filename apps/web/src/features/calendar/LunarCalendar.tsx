@@ -99,6 +99,7 @@ import { calendarMoonTransitionReading } from '../../../../../src/shared/feature
 import { moonSignTransitionKey, nextZodiacSignName } from './moonSignTransitions';
 import type { SkyPlacementContentStatus } from "../sky/skyPlacementContentState";
 import {
+  calendarV9TransitFacts,
   resolveCalendarV9Transit,
   type CalendarV9TransitResolver
 } from "./calendarV9Transit";
@@ -2086,43 +2087,6 @@ export function LunarCalendar({
   }, [moonContentRetry, hasCalendarFacts]);
 
   useEffect(() => {
-    if (!hasCalendarFacts || !moonContentReady) return;
-    let active = true;
-
-    void loadKnowledgeMatrixV9Runtime()
-      .then((resolver) => {
-        if (active) setKnowledgeMatrixV9(resolver);
-      })
-      .catch((error) => {
-        console.warn("Calendar V9 transit copy could not load; keeping the existing package fallback.", error);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [hasCalendarFacts, moonContentReady]);
-
-  useEffect(() => {
-    if (!hasCalendarFacts || !moonContentReady) return;
-    let active = true;
-
-    void import("../../content/skyRegistry")
-      .then((registry) => {
-        if (active) {
-          setApprovedExactSkyAspectLookup(() => registry.approvedExactSkyAspectCopy);
-          setComposedSkyCalendarCardLookup(() => registry.skyCalendarComposedCard);
-        }
-      })
-      .catch((error) => {
-        console.warn("Calendar exact Sky aspect registry could not load; keeping the approved fallback tiers.", error);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [hasCalendarFacts, moonContentReady]);
-
-  useEffect(() => {
     let cancelled = false;
     const visibleAnchor = isWeekBasedView(viewMode)
       ? dateFromDateKey(visibleWeekDateKey, location.timeZone || "UTC")
@@ -2509,6 +2473,50 @@ export function LunarCalendar({
   const selectedDaySurfaceEvents = selectedDay
     ? daySurfaceEvents(selectedDay, previousSelectedDay)
     : [];
+  const editorialEvents = readingEvent ? [...selectedDaySurfaceEvents, readingEvent] : selectedDaySurfaceEvents;
+  // Moon ingresses and Lilith stations use their dedicated writing before the transit fallback.
+  const needsTransitMatrix = moonContentReady && editorialEvents.some(event =>
+    !(event.type === "ingress" && event.planet === "Moon") && !isLilithStationEvent(event) && calendarV9TransitFacts(event));
+  const needsAspectRegistry = moonContentReady && editorialEvents.some(event =>
+    event.type === "aspect" && event.planets && event.aspect);
+
+  useEffect(() => {
+    if (!needsTransitMatrix || knowledgeMatrixV9) return;
+    let active = true;
+
+    void loadKnowledgeMatrixV9Runtime()
+      .then((resolver) => {
+        if (active) setKnowledgeMatrixV9(resolver);
+      })
+      .catch((error) => {
+        console.warn("Calendar V9 transit copy could not load; keeping the existing package fallback.", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [needsTransitMatrix, knowledgeMatrixV9]);
+
+  useEffect(() => {
+    if (!needsAspectRegistry || approvedExactSkyAspectLookup) return;
+    let active = true;
+
+    void import("../../content/skyRegistry")
+      .then((registry) => {
+        if (active) {
+          setApprovedExactSkyAspectLookup(() => registry.approvedExactSkyAspectCopy);
+          setComposedSkyCalendarCardLookup(() => registry.skyCalendarComposedCard);
+        }
+      })
+      .catch((error) => {
+        console.warn("Calendar exact Sky aspect registry could not load; keeping the approved fallback tiers.", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [needsAspectRegistry, approvedExactSkyAspectLookup]);
+
   const selectedDayEventCards = selectedDaySurfaceEvents.map((event) => {
     const editorial = calendarEventEditorialContent(
       event,

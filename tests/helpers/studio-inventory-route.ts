@@ -20,6 +20,7 @@ export async function routeStudioInventoryApi(page: Pick<Page, "route">, options
   listRows?: (rows: any[]) => any[];
   onWrite?: (write: { body: any; result: any }) => void;
   actualDocumentRoute?: boolean;
+  actualInventoryList?: boolean;
   actualBaselineRecovery?: boolean;
   // Answers a fixture's own endpoints, such as reader status. Return false to take the empty reply.
   answer?: (route: Parameters<Parameters<Page["route"]>[1]>[0], url: URL) => Promise<boolean>;
@@ -30,12 +31,12 @@ export async function routeStudioInventoryApi(page: Pick<Page, "route">, options
     const url = new URL(request.url());
     if (url.pathname === "/api/admin/generated-content" || url.pathname === "/api/admin/generated-content-inventory") {
       const namesRows = ["id", "contentKey", "contentKeys", "variables", "writingProfiles", "horoscopeBrief", "horoscopeEditions"].some((key) => url.searchParams.has(key));
-      if (request.method() !== "GET" || namesRows) {
+      if (request.method() !== "GET" || namesRows || (options.actualInventoryList && url.pathname === "/api/admin/generated-content-inventory")) {
         const body = request.postData() ? request.postDataJSON() : undefined;
         const result = await options.call({
           method: request.method(),
           body,
-          url: `${options.actualDocumentRoute ? url.pathname : "/api/admin/generated-content"}${url.search}`
+          url: `${options.actualDocumentRoute || options.actualInventoryList ? url.pathname : "/api/admin/generated-content"}${url.search}`
         });
         if (body) options.onWrite?.({ body, result });
         return route.fulfill({ status: result.status, json: result.payload });

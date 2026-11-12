@@ -101,7 +101,7 @@ export const STUDIO_FRIENDS_SECTION_PREFIXES = [
 ] as const;
 
 export type StudioInventoryVisibility = "editorial" | "all";
-export type StudioInventoryScope = "all" | "compatibility" | "composite" | "sky-types" | "template-types" | "fallback-types" | "slot-types" | "vocabulary-types";
+export type StudioInventoryScope = "all" | "article-library" | "compatibility" | "composite" | "sky-types" | "template-types" | "fallback-types" | "slot-types" | "vocabulary-types";
 
 export type StudioInventoryQuery = {
   visibility: StudioInventoryVisibility;
@@ -163,7 +163,7 @@ export function studioInventoryQuery(route: StudioInventoryRoute): StudioInvento
   }
   if (route.page === "astro101") return prefixesQuery(STUDIO_ASTRO_101_PREFIXES);
   if (route.page === "articles") {
-    return { visibility: "all", scope: "all", prefixes: [], mode: "article", catalog: false };
+    return { visibility: "all", scope: "article-library", prefixes: [], mode: null, catalog: false };
   }
   if (route.page === "content" && route.categoryFilter === "Natal Chart") {
     return prefixesQuery(STUDIO_NATAL_CHART_PREFIXES);

@@ -445,7 +445,7 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /calendarContentRequest\.contentKeys\.filter[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys, \{ requireFresh: cached\.content\.size > 0 \}\)/u,
+  /calendarContentRequest\.contentKeys\.filter[\s\S]*?loadLiveGeneratedContentForKeys\(missingKeys, \{ requireFresh: cached\.content\.size > 0, parallelBatches: true \}\)/u,
   "Calendar must hydrate only missing exact keys."
 );
 assert.match(
@@ -639,7 +639,7 @@ assert.match(
   "Month and weekly day selection must open the day reading instead of a stacked side panel."
 );
 assert.match(
-  calendarSource,
+  read("apps/web/src/features/calendar/calendarEventContentIdentity.ts"),
   /containsEditorialMetadata[\s\S]*?return false/u,
   "Calendar must reject dashboard review metadata before rendering event prose."
 );

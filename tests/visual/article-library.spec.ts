@@ -439,7 +439,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
           await new Promise(resolve => setTimeout(resolve, 500));
         }
         return result;
-      }, actualDocumentRoute: true, answer: async (route, url) => {
+      }, actualDocumentRoute: true, actualInventoryList: true, answer: async (route, url) => {
         if (url.pathname === '/api/content-reader') {
           if (readerFailure) { await route.fulfill({ status: 503, json: { error: 'Synthetic read failure' } }); return true; }
           const result = await store.call({ method: 'POST', body: route.request().postDataJSON(), url: '/api/content-reader' });
@@ -561,8 +561,17 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
       await expect(editor.getByText('All changes saved', { exact: true })).toBeVisible();
       await page.reload();
-      await page.getByRole('row').filter({ hasText: saved.content_key }).filter({ hasText: 'Draft' })
-        .getByRole('button', { name: 'Edit', exact: true }).click();
+      await page.getByLabel('Search articles', { exact: true }).fill('Synthetic saved guide');
+      const searched = page.getByRole('row').filter({ hasText: saved.content_key });
+      await expect(searched).toHaveCount(1);
+      await expect(searched).toContainText('Draft');
+      const filters = page.getByRole('button', { name: 'Filters', exact: true });
+      if (await filters.isVisible()) await filters.click();
+      await page.getByLabel('Article status', { exact: true }).selectOption('LIVE');
+      await expect(searched).toHaveCount(1);
+      await expect(searched).not.toContainText('Draft');
+      await page.getByLabel('Article status', { exact: true }).selectOption('all');
+      await searched.getByRole('button', { name: 'Edit', exact: true }).click();
       await expect(editor.getByLabel('Article body', { exact: true })).toHaveValue(revisedTemplate);
       const resavedTemplate = `${revisedTemplate}\n\nSynthetic complete second saved ending.`;
       await editor.getByLabel('Article body', { exact: true }).fill(resavedTemplate);

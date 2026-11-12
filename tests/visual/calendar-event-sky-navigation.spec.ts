@@ -65,6 +65,30 @@ async function openEvent(page: Page, event: LunarCalendarEvent, view = 'day') {
 }
 
 test.afterEach(async ({ page }) => page.unrouteAll({ behavior: 'ignoreErrors' }));
+test('Calendar loads transit meanings when a newly selected day needs them', async ({ page }) => {
+  const ingress = cases.find(sample => sample.key === 'ingress/Venus/Pisces')!.event;
+  const matrixRows = '/knowledge-matrix-v9-owner-approved-rows.json';
+  const matrixRequests: string[] = [];
+  page.on('request', request => {
+    if (request.url().endsWith(matrixRows)) matrixRequests.push(request.url());
+  });
+  await page.addInitScript(value => localStorage.setItem('tldrastro:selectedLocation', JSON.stringify(value)), location);
+  await actualCalendarApi(page);
+  await page.goto('/?date=2026-09-20#calendar?view=day&date=2026-09-20');
+  const day = page.getByLabel('Selected lunar day', { exact: true });
+  await expect(day.locator('.calendar-sky-card__body')).toHaveAttribute('aria-busy', 'false');
+  expect(matrixRequests).toHaveLength(0);
+
+  const loaded = page.waitForResponse(response => response.url().endsWith(matrixRows) && response.status() === 200);
+  await page.evaluate(date => { window.location.hash = `calendar?view=day&date=${date}`; }, dayKey(ingress));
+  await loaded;
+  const event = day.getByRole('button', { name: ingress.title, exact: true });
+  await expect(event).toBeVisible();
+  await event.click();
+  await expect(page.locator('.sky-detail-article .article-body-inner p').first()).not.toBeEmpty();
+  expect(matrixRequests).toHaveLength(1);
+});
+
 for (const [index, sample] of samples.entries()) {
   const width = index % 2 ? 1440 : 390, theme = index % 4 < 2 ? 'light' : 'dark';
   test(`Calendar whole Sky reading ${sample.key} ${width} ${theme}`, async ({ page }) => {
