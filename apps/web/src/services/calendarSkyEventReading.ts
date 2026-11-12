@@ -9,6 +9,7 @@ import { calendarTransitDetailContentKeys } from "../../../../src/shared/feature
 import { skyIngressEssayPublicationKeys } from "../content/skyIngressEssayPublicationKeys.js";
 import { readerFacingParagraphs } from "../content/readerSafety.js";
 import { calendarSkyEventRoute } from "./calendarSkyEventIdentity.js";
+import { calendarEventPassageEditHref } from "../../../../src/shared/calendarEventPassageEdit.js";
 import { studioPassageEditHref } from "../../../../src/shared/studioPassageEdit.js";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./skyPlacementHydration.js";
 import { assertRequiredSkyDetailContent, eligibleSkyDetailContent, loadSkyDetailContent } from "./skyDetailContent.js";
@@ -109,9 +110,8 @@ export function calendarSpecialEventDetail(event: LunarCalendarEvent, content: M
   const exact = `Exact · ${new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric",
     hour: "numeric", minute: "2-digit", timeZone: timeZone || "UTC" }).format(new Date(event.startsAt))}`;
   return { routePath: calendarSkyEventRoute(event)!, glyph: event.glyph, kicker: "", title: event.title,
-    passageEditHref: eventKey ? `/admin/content#calendar-writeups?${new URLSearchParams({
-      view: event.type === "ingress" ? "planetary-ingresses" : "planetary-stations",
-      editEvent: eventKey, date: event.dateKey, timeZone: timeZone || "UTC" })}`
+    passageEditHref: eventKey ? calendarEventPassageEditHref({ kind: event.type === "ingress" ? "ingress" : "station",
+      sourceKey: eventKey, date: event.dateKey, timeZone: timeZone || "UTC" })
       : source ? studioPassageEditHref({ surface: "calendar", sourceKey: source.key,
         date: event.dateKey, timeZone: timeZone || "UTC" }) : undefined,
     meta: exact, duration: exact, suppressTldr: true, plainBody: true, body: readerFacingParagraphs(reading.split(/\n\s*\n/u)),

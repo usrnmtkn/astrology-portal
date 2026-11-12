@@ -177,3 +177,15 @@ one canonical request per open and reload, plain original/pending Edit and
 mobile/desktop governed Edit. Actual handler controls verify fresh-only proof,
 offline and aborted failures, current pinned reuse without extra requests,
 wrong dates, mismatched pins, retirement and explicit reset.
+
+
+The first frozen head's three hosted API shards stopped at the Admin/Web boundary
+prerequisite before running API assertions: the reader constructed a Studio URL
+inside public source. URL construction now lives in a pure shared Edit-route
+contract, with round-trip validation through the deferred editor. No boundary
+allowlist or guard changes. The actual nonprotected workflow prerequisites
+(knowledge build, server types, deployment safeguards, browser balance, complete
+Admin boundary, YAML syntax and API shard coverage) pass locally. Two fresh
+original/pending/governed reader Edit browser cases pass after this correction.
+The final matched Web aggregate is 3,770,456 gzip bytes across 303 files, leaving
+77 bytes under the same 3,770,533 ceiling. Native Admin sizes remain unchanged.
