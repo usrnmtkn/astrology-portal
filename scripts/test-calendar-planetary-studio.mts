@@ -18,7 +18,7 @@ assert.equal(eventTypes.size,priorTypes.size+1);
 for(const kind of ['ingress','station'] as const)assert(eventTypes.has(calendarPlanetaryDraft(kind,{planet:'mercury',sign:'capricorn',direction:'retrograde'})!.blockType),'Native Calendar drafts must use a deployed database block type.');
 
 const directory = mkdtempSync(join(tmpdir(), 'calendar-planetary-'));
-const store = await createApiStore([]);
+const store = await createApiStore([], {uuidIds: true, sqlCalendarLifecycle: true});
 const { contentLiveStatuses } = await import('../api/_lib/content-live-status.ts');
 try {
   // Vercel emits separate .js files. A TS loader or bundled fixture can hide
@@ -33,7 +33,7 @@ try {
       assert.equal(contentWiringStatus({content_key, status:'LIVE', lane:'serving'}).state, 'connected');
   `, pathToFileURL(join(emitted, 'apps/admin/src/contentWiringStatus.js')).href], { env: { ...process.env, NODE_OPTIONS: '' } });
   const bundle = join(directory, 'reader.mjs');
-  await build({ stdin: { contents: `export {loadLiveGeneratedContentForKeys} from './apps/web/src/services/generatedContent.ts'; export {normalizeCalendarEventSurface,liveCalendarEventContent} from './apps/web/src/features/calendar/LunarCalendar.tsx'; export {calendarEventGeneratedContentKeys} from './apps/web/src/features/calendar/calendarContentKeys.ts'; export {isReaderServableGeneratedContentRow} from './apps/web/src/content/generatedContentEligibility.ts'; export {resolveLunarJournal} from './apps/web/src/features/calendar/lunarJournal.ts';`, resolveDir: process.cwd(), loader: 'ts' }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://calendar-api.invalid', VITE_SUPABASE_ANON_KEY: 'calendar-api-fixture-key' }) }, loader: { '.css': 'empty' }, logLevel: 'silent' });
+  await build({ stdin: { contents: `export {loadLiveGeneratedContentForKeys} from './apps/web/src/services/generatedContent.ts'; export {normalizeCalendarEventSurface,liveCalendarEventContent} from './apps/web/src/features/calendar/LunarCalendar.tsx'; export {calendarEventGeneratedContentKeys} from './apps/web/src/features/calendar/calendarContentKeys.ts'; export {isReaderServableGeneratedContentRow} from './apps/web/src/content/generatedContentEligibility.ts'; export {resolveLunarJournal} from './apps/web/src/features/calendar/lunarJournal.ts'; export {calendarSpecialEventReading,calendarEventArticleSourceKeys} from './apps/web/src/services/calendarSkyEventReading.ts'; export {installContentPublications} from './apps/web/src/content/contentPublicationState.ts';`, resolveDir: process.cwd(), loader: 'ts' }, bundle: true, outfile: bundle, platform: 'node', format: 'esm', define: { 'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'https://calendar-api.invalid', VITE_SUPABASE_ANON_KEY: 'calendar-api-fixture-key' }) }, loader: { '.css': 'empty' }, logLevel: 'silent' });
   const reader = await import(pathToFileURL(bundle).href);
   for (const kind of ['ingress', 'station'] as const) for (const direction of (kind === 'ingress' ? ['direct'] : ['direct', 'retrograde']) as ('direct' | 'retrograde')[]) {
     const selection = { planet: 'mercury', sign: 'scorpio', direction };
@@ -71,6 +71,16 @@ try {
     assert.equal(contentLiveStatuses([row], [row])[0].live, true, 'Studio must agree with Calendar about publication');
     const content = await reader.loadLiveGeneratedContentForKeys(keys);
     assert.equal(content.get(draft.contentKey)?.body, body);
+    const publicRead = await store.invoke('POST', { keys: [draft.contentKey] }, '/api/content-reader');
+    assert.equal(publicRead.status, 200);
+    reader.installContentPublications(publicRead.payload.publications);
+    assert.equal(reader.calendarSpecialEventReading(event, content), body, 'The dated Sky event must retain the same complete published Calendar unit.');
+    assert(reader.calendarEventArticleSourceKeys(event).includes(draft.contentKey));
+    assert(reader.calendarEventArticleSourceKeys(event).every((key: string) => !key.startsWith('ms/') && !key.startsWith('fallback-hook/sky.station/')));
+    const current = content.get(draft.contentKey);
+    assert.equal(reader.calendarSpecialEventReading(event, new Map([[draft.contentKey, { ...current, targetDate: '2027-01-01' }]])), null, 'Another date cannot lend its wording.');
+    assert.equal(reader.calendarSpecialEventReading(event, new Map([[draft.contentKey, { ...current, contentKey: 'sky.ingress.venus.aries' }]])), null, 'The row must match its requested source identity.');
+    assert.equal(reader.calendarSpecialEventReading(event, new Map([[draft.contentKey, { ...current, updatedAt: '1900-01-01T00:00:00Z', targetDate: event.dateKey }]])), null, 'A dated cache entry cannot bypass the current published version.');
     const selected = reader.liveCalendarEventContent(content, event);
     assert.equal(selected?.body, body, `${draft.contentKey} must reach the event detail`);
     const rendered = reader.normalizeCalendarEventSurface(event, selected, 'Today', null, null, null, content);
@@ -82,6 +92,38 @@ try {
     assert.equal((await store.invoke('PATCH', { id: row.id, expectedUpdatedAt: draftVersion, body: 'Stale edit' })).status, 409);
     assert.equal((await store.invoke('PATCH', { id: row.id, body: 'Unauthorized edit' }, undefined, 'invalid')).status, 401);
     assert.equal(store.rows.get(row.id).body, body);
+    for (const key of reader.calendarEventArticleSourceKeys(event).filter((key: string) => key !== draft.contentKey)) {
+      const aliasBody = `Synthetic complete ${key} opening.\n\nExact alias final paragraph.`;
+      const aliasCreate = await store.invoke('POST', { ...input, contentKey: key, body: aliasBody, eventType: 'calendar_event' });
+      assert.equal(aliasCreate.status, 200, JSON.stringify(aliasCreate.payload));
+      const aliasDraft = aliasCreate.payload.rows[0];
+      const aliasPublish = await store.invoke('PATCH', { id: aliasDraft.id, expectedUpdatedAt: aliasDraft.updated_at, ownerAction: 'publish-owner-content' });
+      assert.equal(aliasPublish.status, 200, JSON.stringify(aliasPublish.payload));
+      const aliasRead = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+      reader.installContentPublications(aliasRead.payload.publications);
+      const loaded = await reader.loadLiveGeneratedContentForKeys([key], { requireFresh: true });
+      assert.equal(reader.calendarSpecialEventReading(event, loaded), aliasBody, 'Every supported exact legacy alias preserves its entire unit.');
+      const aliasRow = aliasPublish.payload.rows[0];
+      assert.equal((await store.invoke('PATCH', { id: aliasRow.id, expectedUpdatedAt: aliasRow.updated_at, status: 'ARCHIVED' })).status, 200);
+      // Explicit key retirement is the authoritative reader signal, including
+      // warm clients that retained an older complete row.
+      const retirement = await store.invoke('POST', { contentKey: key, action: 'retire', id: aliasRow.id, expectedUpdatedAt: store.rows.get(aliasRow.id).updated_at }, '/api/admin/content-publication');
+      assert.equal(retirement.status, 200, JSON.stringify(retirement.payload));
+      const retiredRead = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+      reader.installContentPublications(retiredRead.payload.publications);
+      assert.equal(reader.calendarSpecialEventReading(event, loaded), null, 'Retirement withdraws warm exact-event content.');
+    }
+    if (kind === 'ingress') {
+      const datedKey = reader.calendarEventArticleSourceKeys(event)[0];
+      // Restore only this version through the real explicit publication action.
+      const datedRow = [...store.rows.values()].find((value: any) => value.content_key === datedKey)!;
+      const restore = await store.invoke('PATCH', { id: datedRow.id, expectedUpdatedAt: datedRow.updated_at, ownerAction: 'publish-owner-content' });
+      assert.equal(restore.status, 200, JSON.stringify(restore.payload));
+      const restoredRead = await store.invoke('POST', { keys: [datedKey] }, '/api/content-reader');
+      reader.installContentPublications(restoredRead.payload.publications);
+      const dated = await reader.loadLiveGeneratedContentForKeys([datedKey], { requireFresh: true });
+      assert.equal(reader.calendarSpecialEventReading(event, new Map([...content, ...dated])), datedRow.body, 'The exact dated unit precedes the reusable unit after explicit restoration.');
+    }
   }
   const journalKey='authored/lunar-journal/season/aries/20250320t090100z';
   const original='Synthetic original season paragraph.';

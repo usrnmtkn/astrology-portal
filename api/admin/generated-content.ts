@@ -5,6 +5,7 @@ import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import { skyArticleCompiledHashMatches } from '../_lib/sky-article-reader-integrity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
 import {articleRevisionTarget, standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
+import {calendarPlanetaryRevisionTarget} from '../../apps/admin/src/calendarPlanetarySources.js';
 import {studioOwnerApproval, hasExactStudioOwnerApproval, stampStudioPackageOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
 import { csvChanges, csvDraftPatch, csvRecordForRow, type CsvRecord } from '../../apps/admin/src/studioCsv.js';
@@ -2805,6 +2806,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
   const articleRevision = existing.event_type === "standalone-article-revision";
+  const forksArticleDraft = (articleRevisionTarget(existing) && body.status === "DRAFT"
+    || !isPackageRow && calendarPlanetaryRevisionTarget(existing) && ["DRAFT", "REVIEWED"].includes(body.status ?? ""))
+    && existing.status === "LIVE" && !body.ownerAction && !body.sourceLifecycleAction;
   const educationSource = existing.content_key.startsWith("education/astro-101/");
   if (educationSource && body.sourceLifecycleAction
     && (body.sourceLifecycleAction === "archive" ? body.status !== "ARCHIVED" : existing.status !== "ARCHIVED" || body.status !== "DRAFT")) {
@@ -2856,11 +2860,14 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
     const target = articleRevision && existing.mode === "studio-draft" && existing.status === "DRAFT"
       ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
-    if (!target || target.content_key !== existing.content_key || !articleRevisionTarget(target)
+    if (!target || target.content_key !== existing.content_key || !(articleRevisionTarget(target) || calendarPlanetaryRevisionTarget(target))
       || target.surface !== existing.surface || target.status !== "LIVE"
       || existing.source_snapshot?.targetContentKey !== target.content_key
       || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
       throw new GeneratedContentRequestError("The published article changed. Reopen its current source before publishing this revision.", 409);
+    }
+    if (calendarPlanetaryRevisionTarget(target) && !isDeepStrictEqual(existing.sections?.slots, target.sections?.slots)) {
+      throw new GeneratedContentRequestError("The Calendar event facts changed. Reopen its current source before publishing this revision.", 409);
     }
     if (!existing.headline?.trim() || !existing.body?.trim()) throw new GeneratedContentRequestError("Complete the article title and body before publishing.");
     await assertVersionedStudioVariablePublication(v3PackageRecord(existing));
@@ -3638,7 +3645,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
-  if (articleRevision || articleRevisionTarget(existing) && existing.status === "LIVE" && body.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction) {
+  if (articleRevision || forksArticleDraft) {
     for (const field of ["content_key", "surface", "mode", "event_type", "target_date"] as const) {
       if (patch[field] !== undefined && !isDeepStrictEqual(patch[field], existing[field])) {
         throw new GeneratedContentRequestError("An article revision must keep its saved source identity.", 409);
@@ -3677,13 +3684,12 @@ async function updateGeneratedContent(req: IncomingMessage) {
     assertHoroscopeRow(revision,{previous:existing});
     return upsertGeneratedContentRow(revision);
   }
-  if (articleRevisionTarget(existing) && existing.status === "LIVE"
-    && body.status === "DRAFT" && !body.ownerAction && !body.sourceLifecycleAction) {
+  if (forksArticleDraft) {
     return upsertGeneratedContentRow({
       ...existing, ...patch, id: undefined, mode: "studio-draft", event_type: "standalone-article-revision",
       source_snapshot: { ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : existing.source_snapshot),
         targetRowId: existing.id, targetRowUpdatedAt: existing.updated_at, targetContentKey: existing.content_key },
-      status: "DRAFT", lane: "reference", review_state: "owner-review-required", published_at: null
+      status: body.status === "REVIEWED" ? "REVIEWED" : "DRAFT", lane: "reference", review_state: "owner-review-required", published_at: null
     });
   }
   const forksGovernedAspectDraft = Boolean(

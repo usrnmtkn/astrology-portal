@@ -1,5 +1,5 @@
 import type { CalendarSkyEventSnapshot, LunarCalendarEvent } from "./ephemeris.js";
-import { loadFallbackArchitectureV3DashboardBundle, type LiveGeneratedContent } from "./generatedContent.js";
+import { generatedContentParagraphs, loadFallbackArchitectureV3DashboardBundle, type LiveGeneratedContent } from "./generatedContent.js";
 import type { SkyDetail } from "../features/sky/SkyDetailArticle.js";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../content/cmsSurfaceOverrides.js";
 import { contentPublicationRecords, publicationAllowsContent, publicationTimestamp } from "../content/contentPublicationState.js";
@@ -12,6 +12,7 @@ import { calendarSkyEventRoute } from "./calendarSkyEventIdentity.js";
 import { studioPassageEditHref } from "../../../../src/shared/studioPassageEdit.js";
 import { prepareSkyPlacementSources, skyPlacementPublicationIdentity } from "./skyPlacementHydration.js";
 import { assertRequiredSkyDetailContent, eligibleSkyDetailContent, loadSkyDetailContent } from "./skyDetailContent.js";
+import { contentMatchesCalendarEventFacts } from "../features/calendar/calendarEventContentIdentity.js";
 
 type PublicationScope = { keys: string[]; selection?: string };
 export type CalendarSkyEventPublicationStamp = { routePath: string; scope: PublicationScope; identity: string };
@@ -26,6 +27,15 @@ function publicationIdentity(scope: PublicationScope) {
 
 export function calendarSkyEventDetailIsCurrent(stamp: CalendarSkyEventPublicationStamp | null, routePath: string) {
   return Boolean(stamp && stamp.routePath === routePath && stamp.identity === publicationIdentity(stamp.scope));
+}
+
+function eligibleCalendarContent(content: Map<string, LiveGeneratedContent>, eventKeys: string[]) {
+  const eligible = eligibleSkyDetailContent(content);
+  for (const key of eventKeys) {
+    const row = eligible.get(key);
+    if (row && !publicationAllowsContent(key, row.id, row.updatedAt)) eligible.delete(key);
+  }
+  return eligible;
 }
 
 /** Event source discovery stays off the initial App graph. */
@@ -49,9 +59,10 @@ export async function prepareCalendarSkyEventContent(calculated: CalendarSkyEven
   const ingressKeys = placement ? skyIngressEssayPublicationKeys(contentPublicationRecords(), {
     planet: slug(event.planet!), sign: slug(event.toSign ?? event.sign ?? "")
   }) : [];
-  const keys = placement ? ingressKeys : event.type === "lunation" ? [...lunarKeys, ...specialKeys]
-    : event.planet === "Moon" ? calendarTransitDetailContentKeys(event) : specialKeys;
-  const content = eligibleSkyDetailContent(await loadSkyDetailContent(sky, existing, keys, load, []));
+  const eventKeys = calendarEventArticleSourceKeys(event);
+  const keys = [...new Set([...eventKeys, ...(placement ? ingressKeys : event.type === "lunation" ? [...lunarKeys, ...specialKeys]
+    : event.planet === "Moon" ? calendarTransitDetailContentKeys(event) : specialKeys)])];
+  const content = eligibleCalendarContent(await loadSkyDetailContent(sky, eligibleCalendarContent(existing, eventKeys), keys, load, []), eventKeys);
   assertRequiredSkyDetailContent(content, keys);
   if ("identity" in sources && sources.identity !== skyPlacementPublicationIdentity(selection)) {
     throw new Error("Sky publications changed during loading.");
@@ -86,8 +97,23 @@ export function calendarSpecialEventSourceKeys(event: LunarCalendarEvent) {
     ? ["sky-lilith/station"] : [];
 }
 
+/** Exact Calendar write-ups are complete units; generic card fallbacks stay separate. */
+export function calendarEventArticleSourceKeys(event: LunarCalendarEvent) {
+  if (!(event.type === "ingress" && event.planet && !["Sun", "Moon"].includes(event.planet)
+    || event.type === "station" && /^station-(direct|retrograde)$/u.test(event.phase ?? ""))) return [];
+  return calendarTransitDetailContentKeys(event).filter(key => key.startsWith("sky.") || key.startsWith("sky-")
+    || key.startsWith("fallback-hook/sky.retrograde/"));
+}
+
 /** Preserve complete event-specific units instead of borrowing another event's article. */
 export function calendarSpecialEventReading(event: LunarCalendarEvent, content: Map<string, LiveGeneratedContent>) {
+  for (const key of calendarEventArticleSourceKeys(event)) {
+    const row = content.get(key);
+    if (row?.contentKey === key && (!row.targetDate || row.targetDate === (event.dateKey || event.startsAt.slice(0, 10)))
+      && publicationAllowsContent(key, row.id, row.updatedAt) && contentMatchesCalendarEventFacts(event, row)) {
+      return readerFacingParagraphs(generatedContentParagraphs(row)).join("\n\n");
+    }
+  }
   if (event.type === "ingress" && event.planet === "Moon") return calendarMoonTransitionReading(event, content)?.body ?? "";
   const phase = calendarQuarterPhase(event);
   if (phase) {
