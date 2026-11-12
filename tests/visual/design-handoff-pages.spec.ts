@@ -1594,10 +1594,16 @@ for (const width of [320, 390, 768, 820, 1024, 1440, 1920]) for (const theme of 
     test.setTimeout(90_000);
     await page.setViewportSize({ width, height: 1100 });
     await seed(page, theme);
-    for (const [date, count] of [['2026-10-26', 1], ['2026-10-13', 4]] as const) {
+    for (const [date, count] of [['2026-10-26', 0], ['2009-10-15', 2], ['2026-10-13', 4]] as const) {
       await page.goto(`/?date=${date}#sky`);
       const section = page.locator('.sky-debility-ledger');
       const cards = section.locator('.sky-debility-card');
+      if (count === 0) {
+        await expect(page.locator('.sky-placement-group .planet-placement-row')).toHaveCount(14, { timeout: 60_000 });
+        await expect(section).toHaveCount(0);
+        await expect(page.getByRole('button', { name: 'What is dignity?', exact: true })).toHaveCount(0);
+        continue;
+      }
       await expect(cards).toHaveCount(count, { timeout: 60_000 });
       await section.scrollIntoViewIfNeeded();
       await page.evaluate(() => document.fonts.ready);
