@@ -136,7 +136,7 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
     row => row.content_key.startsWith('education/astro-101/') && row.surface === 'education'
       && (['article','all'].includes(row.mode) || row.mode === 'studio-draft' && row.event_type === 'standalone-article-revision'));
   fixture.patchCalendarRows = (rows, patch, headers) => patchRows(rows, patch, headers,
-    row => row.surface === 'sky' && row.block_type === 'calendar_event' && Boolean(calendarPlanetaryIdentity(row.content_key)?.sign)
+    row => row.surface === 'sky' && (row.block_type == null || row.block_type === 'calendar_event') && Boolean(calendarPlanetaryIdentity(row.content_key)?.sign)
       && (row.mode === 'feed' || row.mode === 'studio-draft' && row.event_type === 'standalone-article-revision'));
   fixture.close=async()=>{await initializing;await db?.close();};
   return fixture;

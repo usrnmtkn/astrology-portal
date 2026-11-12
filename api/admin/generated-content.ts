@@ -2807,7 +2807,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
   const articleRevision = existing.event_type === "standalone-article-revision";
   const forksArticleDraft = (articleRevisionTarget(existing) && body.status === "DRAFT"
-    || !isPackageRow && calendarPlanetaryRevisionTarget(existing) && ["DRAFT", "REVIEWED"].includes(body.status ?? ""))
+    || !isPackageRow && calendarPlanetaryRevisionTarget(existing) && existing.lane === "serving" && !existing.review_state
+      && ["DRAFT", "REVIEWED"].includes(body.status ?? ""))
     && existing.status === "LIVE" && !body.ownerAction && !body.sourceLifecycleAction;
   const educationSource = existing.content_key.startsWith("education/astro-101/");
   if (educationSource && body.sourceLifecycleAction
@@ -2866,7 +2867,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
       || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
       throw new GeneratedContentRequestError("The published article changed. Reopen its current source before publishing this revision.", 409);
     }
-    if (calendarPlanetaryRevisionTarget(target) && !isDeepStrictEqual(existing.sections?.slots, target.sections?.slots)) {
+    if (calendarPlanetaryRevisionTarget(target) && (isFallbackArchitectureV3Row(target) || target.lane !== "serving" || target.review_state
+      || existing.block_type !== target.block_type || !isDeepStrictEqual(existing.sections?.slots, target.sections?.slots))) {
       throw new GeneratedContentRequestError("The Calendar event facts changed. Reopen its current source before publishing this revision.", 409);
     }
     if (!existing.headline?.trim() || !existing.body?.trim()) throw new GeneratedContentRequestError("Complete the article title and body before publishing.");

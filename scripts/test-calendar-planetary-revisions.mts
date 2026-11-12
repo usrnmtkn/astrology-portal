@@ -13,16 +13,17 @@ const reader = async (store: any,key: string) => {
   assert(!JSON.stringify(result.payload).includes('targetRowUpdatedAt'),'Private revision metadata cannot enter reader responses');
   return result.payload.rows;
 };
-for(const [kind,direction] of [['ingress','direct'],['station','direct'],['station','retrograde']] as const){
+for(const blockType of ['calendar_event',null] as const)for(const [kind,direction] of [['ingress','direct'],['station','direct'],['station','retrograde']] as const){
   const store=await createApiStore([],{uuidIds:true,sqlCalendarLifecycle:true});
   try{
     const {id:_,...draft}=calendarPlanetaryDraft(kind,{planet:'mercury',sign:'scorpio',direction})!;
     const body=`Synthetic ${kind} ${direction} original opening.\n\nComplete original final paragraph.`;
-    const created=await store.invoke('POST',{...draft,body,eventType:'calendar_event'});
+    const created=await store.invoke('POST',{...draft,blockType,body,eventType:'calendar_event'});
     assert.equal(created.status,200,JSON.stringify(created.payload));
     let source=created.payload.rows[0];
     const published=await store.invoke('PATCH',{id:source.id,expectedUpdatedAt:source.updated_at,ownerAction:'publish-owner-content'});
     assert.equal(published.status,200,JSON.stringify(published.payload));source=published.payload.rows[0];
+    assert.equal(source.block_type,blockType);
     const original=structuredClone(store.rows.get(source.id));
     const revised=body+'\n\nComplete private revision ending.';
     const saved=await store.invoke('PATCH',{id:source.id,expectedUpdatedAt:source.updated_at,status:'DRAFT',body:revised});
@@ -45,6 +46,11 @@ for(const [kind,direction] of [['ingress','direct'],['station','direct'],['stati
     assert.equal((await store.invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,ownerAction:'publish-standalone-article-revision'})).status,409,'A revision cannot change the event facts');
     const restoredFacts=await store.invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,status:'DRAFT',sections:{...proposal.sections,slots:source.sections.slots}});
     assert.equal(restoredFacts.status,200);proposal=restoredFacts.payload.rows[0];
+    const changedBlock=await store.invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,status:'DRAFT',blockType:blockType===null?'calendar_event':null});
+    assert.equal(changedBlock.status,200);proposal=changedBlock.payload.rows[0];
+    assert.equal((await store.invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,ownerAction:'publish-standalone-article-revision'})).status,409,'A revision keeps the original block identity, including NULL');
+    const restoredBlock=await store.invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,status:'DRAFT',blockType});
+    assert.equal(restoredBlock.status,200);proposal=restoredBlock.payload.rows[0];
     const reviewed=await store.invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,status:'REVIEWED'});
     assert.equal(reviewed.status,200);proposal=reviewed.payload.rows[0];
     assert.equal(proposal.status,'REVIEWED');assert.equal(proposal.review_state,'owner-review-required');assert.equal(proposal.lane,'reference');
@@ -86,6 +92,20 @@ for(const [kind,direction] of [['ingress','direct'],['station','direct'],['stati
   }finally{await store.close();}
 }
 
+for(const overrides of [{surface:'education'},{mode:'article'},{content_key:'sky.ingress.mercury.unknown'},
+  {block_type:'sky_placement'},{lane:'reference'},{review_state:'owner-review-required'},
+  {status:'DRAFT'},{status:'REVIEWED'},{status:'ARCHIVED'},
+  {provider:'tldrastro-fallback-architecture-v3'},{source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3'}},{facts:{fallbackArchitectureV3:true}}]){
+  const source={id:randomUUID(),content_key:'sky.ingress.mercury.scorpio',surface:'sky',mode:'feed',block_type:null,event_type:'calendar_event',status:'LIVE',lane:'serving',review_state:null,
+    headline:'Synthetic boundary source',body:'Complete synthetic boundary passage.',sections:{slots:{planet:'Mercury',sign:'Scorpio'}},facts:{},source_snapshot:{},provider:'manual-admin',updated_at:'2026-11-01T12:00:00.123456Z',...overrides};
+  const store=await createApiStore([source],{uuidIds:true});
+  try{
+    const result=await store.invoke('PATCH',{id:source.id,expectedUpdatedAt:source.updated_at,status:'DRAFT',body:'Synthetic changed boundary passage.'});
+    assert(!result.payload.rows?.some((row:any)=>row.event_type==='standalone-article-revision'),'Wrong identities, packages and non-serving originals do not acquire Calendar revision authority');
+    assert.equal(store.rows.size,1,'The Calendar path cannot create proposals for unsupported originals');
+  }finally{await store.close();}
+}
+
 const db=new PGlite();
 try{
   await db.exec(publicationTestSchema);
@@ -106,20 +126,31 @@ try{
   assert.deepEqual((await db.query('select has_function_privilege($1,$4,$5) as anon,has_function_privilege($2,$4,$5) as authenticated,has_function_privilege($3,$4,$5) as service',['anon','authenticated','service_role',signature,'EXECUTE'])).rows[0],{anon:false,authenticated:false,service:true});
   const positive=calendarPlanets.flatMap(planet=>[`sky.ingress.${planet}.scorpio`,`sky.station.${planet}.scorpio.direct`,`sky.station.${planet}.scorpio.retrograde`]);
   positive.push('sky.ingress.mercury.scorpio.2026-11-01','sky-ingress-mercury-scorpio-2026-11-01','sky-ingress-mercury-scorpio','sky-mercury-enters-scorpio','sky-mercury-in-scorpio','sky.retrograde.venus.scorpio.station_direct','fallback-hook/sky.retrograde/venus/scorpio/station-retrograde');
-  const negative=[{content_key:'sky.station.sun.aries.direct'},{content_key:'sky.ingress.mercury.unknown'},{content_key:'ms/ingress/mercury'},{content_key:'sky.retrograde.mercury.scorpio.retrograde_passage'},{mode:'article'},{surface:'education'},{block_type:'essay'}];
+  const negative=[{content_key:'sky.station.sun.aries.direct'},{content_key:'sky.ingress.mercury.unknown'},{content_key:'ms/ingress/mercury'},{content_key:'sky.retrograde.mercury.scorpio.retrograde_passage'},
+    {mode:'article'},{surface:'education'},{block_type:'essay'},{block_type:''},{lane:'reference'},{review_state:'owner-review-required'},
+    {status:'DRAFT'},{status:'REVIEWED'},{status:'ARCHIVED'},{provider:'tldrastro-fallback-architecture-v3'},
+    {source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3'}},{facts:{fallbackArchitectureV3:true}}];
   let count=0;
-  for(const entry of [...positive.map(content_key=>({content_key,valid:true})),...negative.map(value=>({...value,valid:false})),{content_key:positive[0],valid:false,badSlots:true},
+  for(const entry of [...positive.flatMap(content_key=>['calendar_event',null].map(block_type=>({content_key,block_type,valid:true}))),...negative.map(value=>({...value,valid:false})),{content_key:positive[0],valid:false,badSlots:true},
+    {content_key:positive[0],valid:false,proposalPatch:{block_type:null}}, {content_key:positive[0],block_type:null,valid:false,proposalPatch:{block_type:'calendar_event'}},
+    {content_key:positive[0],valid:false,proposalPatch:{surface:'education'}},{content_key:positive[0],valid:false,proposalPatch:{status:'REVIEWED'}},
+    {content_key:positive[0],valid:false,proposalPatch:{mode:'feed'}},
     {content_key:'article/manual/calendar-compatibility',mode:'article',valid:true},{content_key:'article/guide/calendar-compatibility',mode:'article',valid:true},
     {content_key:'education/astro-101/calendar-compatibility',surface:'education',mode:'all',valid:true}] as any[]){
-    const {valid,badSlots,...overrides}=entry;
+    const {valid,badSlots,proposalPatch,...overrides}=entry;
     const target={id:randomUUID(),content_key:positive[0],surface:'sky',mode:'feed',block_type:'calendar_event',event_type:'calendar_event',status:'LIVE',lane:'serving',review_state:null,
       body:'Synthetic complete original SQL passage.',headline:'Synthetic SQL event',sections:{slots:{planet:'Mercury',sign:'Scorpio'}},updated_at:'2026-11-01T12:00:00.123456Z',...overrides};
-    if(calendarPlanetaryIdentity(target.content_key))assert.equal(calendarPlanetaryRevisionTarget(target),Boolean(valid||badSlots),'The UI and API target scope stays narrow');
+    if(!valid&&!proposalPatch&&!badSlots&&['content_key','mode','surface','block_type'].some(key=>Object.hasOwn(overrides,key)))assert.equal(calendarPlanetaryRevisionTarget(target),false,'The UI and API target identity stays narrow');
     const proposal={...target,id:randomUUID(),mode:'studio-draft',event_type:'standalone-article-revision',status:'DRAFT',lane:'reference',review_state:'owner-review-required',
       body:'Synthetic complete revised SQL passage.',sections:badSlots?{slots:{planet:'Venus',sign:'Aries'}}:target.sections,
-      source_snapshot:{targetRowId:target.id,targetRowUpdatedAt:target.updated_at,targetContentKey:target.content_key}};
-    await seedPublicationRow(db,target);await seedPublicationRow(db,proposal);
-    const publication=(await db.query('select to_jsonb(p) as value from content_publications p where content_key=$1',[target.content_key])).rows[0].value;
+      source_snapshot:{targetRowId:target.id,targetRowUpdatedAt:target.updated_at,targetContentKey:target.content_key},...proposalPatch};
+    await seedPublicationRow(db,target);
+    if(proposalPatch?.mode&&proposalPatch.mode!=='studio-draft'){
+      await assert.rejects(seedPublicationRow(db,proposal),{code:'23514'},'The existing private-proposal database constraint rejects another mode');
+      continue;
+    }
+    await seedPublicationRow(db,proposal);
+    const publication=(await db.query('select to_jsonb(p) as value from content_publications p where content_key=$1',[target.content_key])).rows[0]?.value??null;
     const args={p_operation_id:randomBytes(32).toString('hex'),p_actor:'synthetic-calendar-owner',p_request_sha256:'b'.repeat(64),p_action:'publish-standalone-article-revision',p_proposal_id:proposal.id,p_proposal_version:proposal.updated_at,
       p_target_id:target.id,p_target_version:target.updated_at,p_patch:{body:proposal.body,sections:proposal.sections,status:'LIVE',lane:'serving',review_state:null},p_validation_context:{targetPublication:publication},p_dependencies:[]};
     if(!valid){await assert.rejects(callPublicationRpc(db,'content_studio_publish_revision',args),{code:'22023'});assert.equal((await db.query('select body from generated_interpretations where id=$1',[target.id])).rows[0].body,target.body);continue;}

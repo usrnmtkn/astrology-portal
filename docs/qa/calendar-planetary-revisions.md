@@ -8,7 +8,9 @@ publication and retains the pending writing.
 
 This applies to the existing sign-specific planetary Calendar identities:
 canonical and dated ingresses, their legacy aliases, and direct or retrograde
-stations. Generic cards, ongoing retrograde passages, Moon transitions and Sun
+stations, including saved legacy rows with a null block type. Other block types,
+packages and non-serving originals do not gain revision publication authority.
+Generic cards, ongoing retrograde passages, Moon transitions and Sun
 seasons retain their separate workflows. No source writing or event calculations
 change.
 
@@ -22,8 +24,10 @@ articles remain available when no exact Calendar unit is published.
 
 `20261112020848_calendar_event_private_revisions.sql` extends only the target
 guard in the existing server-only revision publication function. It admits
-`sky` / `feed` / `calendar_event` targets with supported exact keys and matching
-proposal surface, block type and event slots. The existing Article, Guide and
+`sky` / `feed` targets with supported exact keys and either `calendar_event` or
+the original legacy null block. It rejects packages, reference lanes and review
+holds, and requires matching proposal surface, block type and event slots.
+The existing Article, Guide and
 Astro 101 branches remain intact. The migration fails closed if its expected
 guard is missing or ambiguous.
 
@@ -37,10 +41,12 @@ the previous API remains compatible with the extended guard.
 
 - `scripts/test-calendar-planetary-revisions.mts` runs the actual handler and
   PostgreSQL publication/lifecycle functions for ingress and both station
-  directions. It checks source preservation, private reload, review, conflicts,
+  directions with current and legacy null blocks. It checks source preservation,
+  private reload, review, conflicts,
   publication, archive, draft restoration and explicit republication. Direct SQL
-  checks cover all ten supported planets, legacy and dated identities, retained
-  article targets, rejected targets, unchanged function privileges and body
+  checks cover 77 valid targets across all ten supported planets, both block
+  variants, legacy and dated identities and retained article targets. Rejected
+  targets, unchanged function privileges and body
   outside the guard, microsecond version checks and idempotent replay. PGlite
   cases are sequential; the existing full API gate retains its separate
   PostgreSQL session/concurrency checks.
@@ -48,8 +54,9 @@ the previous API remains compatible with the extended guard.
   reader selection, full paragraphs, aliases, dated precedence, retirement,
   restoration, wrong event facts and stale publication versions.
 - `tests/visual/calendar-planetary-studio.spec.ts` exercises all three event types
-  on mobile and desktop in light and dark themes through actual isolated
-  handlers/storage. It opens saved revisions after reload and checks complete
+  with both block variants on mobile and desktop in light and dark themes
+  through actual isolated handlers/storage (eight cases). It opens saved
+  revisions after reload and checks complete
   Calendar-to-Sky paragraphs before and after reload. It also covers reviewed
   revisions, both publish controls, lookup failure recovery and archive/restore.
 - Existing Article/Guide and Astro 101 revision regressions must continue to pass.
@@ -68,7 +75,8 @@ installs and identical visual-smoke environment, measured 3,768,176 aggregate
 JavaScript gzip bytes on main and 3,768,936 on the candidate: 760 additional
 bytes across one additional deferred shared module. The initial candidate failed
 the prior 3,768,677-byte ceiling by 259 bytes. A 512-byte aggregate allocation
-sets the ceiling to 3,769,189, leaving 253 measured bytes. Startup, individual
+sets the ceiling to 3,769,189. The final legacy-compatible candidate measures
+3,768,923 bytes (+747 against main), leaving 266 bytes. Startup, individual
 chunk, CSS and standalone Admin limits are unchanged; the normal Admin build
 passes its existing budget. This is the measured cost of preserving event units
 and published originals, with no dependency or reader prose change.

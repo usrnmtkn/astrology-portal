@@ -25,7 +25,11 @@ begin
     '|fallback-hook/sky\.retrograde/' || planets || '/' || signs || '/station-(direct|retrograde)' || ')$';
   extended_guard := replace(target_guard, E'\n    )', format($calendar$
       or (target.surface is not distinct from 'sky' and target.mode is not distinct from 'feed'
-        and target.block_type is not distinct from 'calendar_event' and coalesce(target.content_key,'') ~ %L
+        and (target.block_type is null or target.block_type='calendar_event') and coalesce(target.content_key,'') ~ %L
+        and target.lane is not distinct from 'serving' and coalesce(target.review_state,'')=''
+        and coalesce(target.provider,'')<>'tldrastro-fallback-architecture-v3'
+        and coalesce(target.source_snapshot->>'sourcePackage','')<>'tldrastro-fallback-architecture-v3'
+        and coalesce(target.facts->'fallbackArchitectureV3','null'::jsonb) in ('null'::jsonb,'false'::jsonb)
         and proposal.surface is not distinct from target.surface and proposal.block_type is not distinct from target.block_type
         and proposal.sections->'slots' is not distinct from target.sections->'slots')
     )$calendar$, calendar_keys));

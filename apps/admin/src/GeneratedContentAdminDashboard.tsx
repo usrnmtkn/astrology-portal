@@ -5545,10 +5545,10 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       const savedDraft = saved ? draftFromRow(saved) : null;
       const calendarPrivateRevision = saved?.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
-        && saved.surface === "sky" && saved.block_type === "calendar_event" && Boolean(calendarPlanetaryIdentity(saved.content_key)?.sign);
+        && saved.surface === "sky" && (saved.block_type == null || saved.block_type === "calendar_event") && Boolean(calendarPlanetaryIdentity(saved.content_key)?.sign);
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
         (draftForSave.id && saved.id !== draftForSave.id && !((standaloneArticleKind(draftForSave.contentKey) || draftForSave.contentKey.startsWith("education/astro-101/")
-          || calendarPlanetaryRevisionTarget({content_key:draftForSave.contentKey,mode:draftForSave.mode,surface:draftForSave.surface,block_type:draftForSave.blockType}))
+          || calendarPlanetaryRevisionTarget({content_key:draftForSave.contentKey,mode:draftForSave.mode,surface:draftForSave.surface,block_type:draftForSave.blockType || null}))
           && (status === "DRAFT" || status === "REVIEWED" && calendarPrivateRevision) && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
           && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
@@ -5795,7 +5795,7 @@ export function GeneratedContentAdminDashboard() {
     let saved = activeDraft.id && unchanged && !saveBeforePublishing
       ? editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id)
       : await saveDraft("DRAFT", activeDraft);
-    if (saved?.event_type === standaloneRevisionEvent && saved.status === "REVIEWED" && saved.block_type === "calendar_event"
+    if (saved?.event_type === standaloneRevisionEvent && saved.status === "REVIEWED" && (saved.block_type == null || saved.block_type === "calendar_event")
       && calendarPlanetaryIdentity(saved.content_key)?.sign) saved = await saveDraft("DRAFT", activeDraft);
     if (!saved) return;
     if (saved.event_type !== standaloneRevisionEvent) {
@@ -10602,7 +10602,7 @@ export function GeneratedContentAdminDashboard() {
     const placementArticleIdentity = currentDraft.contentKey.match(/^sky-placement\/article\/([^/]+)\/([^/]+)$/u);
     const datedArticleTemplateKey = placementArticleIdentity ? skyArticleTemplateKey(placementArticleIdentity[1], placementArticleIdentity[2],
       rows.filter(row => row.status !== "ARCHIVED" && isSkyArticleTemplateRow(row)).map(row => row.content_key)) : undefined;
-    const isManualCalendarEventDraft = currentDraft.blockType === "calendar_event" && Boolean(calendarPlanetaryIdentity(currentDraft.contentKey));
+    const isManualCalendarEventDraft = (currentDraft.blockType === "calendar_event" || !currentDraft.blockType) && Boolean(calendarPlanetaryIdentity(currentDraft.contentKey));
     const isCalendarRevisionDraft = isManualCalendarEventDraft && currentDraft.surface === "sky" && Boolean(calendarPlanetaryIdentity(currentDraft.contentKey)?.sign)
       && (currentDraft.mode === "feed" || currentDraft.mode === "studio-draft" && selectedRow?.event_type === standaloneRevisionEvent);
     const SkyRelatedContainer = isSkyPlacementSource ? "details" : "section";

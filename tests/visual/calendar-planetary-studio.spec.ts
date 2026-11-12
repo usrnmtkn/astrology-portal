@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { studioApiStore } from '../helpers/studio-api-store';
 import { bundledPublications } from '../helpers/bundled-publications';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import { calendarPlanetaryDraft } from '../../apps/admin/src/calendarPlanetaryDraft';
 
 const cases = [
   { view: 'planetary-ingresses', label: 'Planetary ingresses', key: 'sky.ingress.mercury.scorpio', planet: 'mercury', field: 'Enters sign', sign: 'scorpio', direction: 'direct', date: '2026-09-30', title: 'Mercury enters Scorpio' },
@@ -14,8 +15,8 @@ const typography = (element: Element) => {
   return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
 };
 
-for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
-  test(`Planetary workspaces save, reopen, publish and reach Calendar ${width} ${theme}`, async ({ page }) => {
+for (const legacy of [false,true]) for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const) {
+  test(`Planetary workspaces save, reopen, publish and reach Calendar ${width} ${theme}${legacy?' legacy NULL block':''}`, async ({ page }) => {
     test.setTimeout(150_000);
     const store = await studioApiStore([], { uuidIds: true, sqlCalendarLifecycle: true });
     const publishedBodies = new Map<string,string>(cases.map(item => [item.key, passageFor(item)]));
@@ -87,9 +88,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
           expect(await store.call({ method: 'rows' })).toEqual([]);
           failLookup = false;
         }
+        if (legacy) {
+          const {id:_,...draft}=calendarPlanetaryDraft(item.view==='planetary-ingresses'?'ingress':'station',{planet:item.planet,sign:item.sign,direction:item.direction})!;
+          const created=await store.call({method:'POST',url:'/api/admin/generated-content',body:{...draft,blockType:null,eventType:'calendar_event'}});
+          expect(created.status).toBe(200);
+        }
         await workspace.getByRole('button', { name: 'Open write-up', exact: true }).click();
         const editor = page.getByRole('dialog', { name: 'Generated content editor' });
-        await expect(editor.getByRole('heading', { level: 2 })).toContainText(`Write ${item.title}`);
+        await expect(editor.getByRole('heading', { level: 2 })).toContainText(`${legacy?'Edit':'Write'} ${item.title}`);
         await expect(editor.getByLabel('Content key', { exact: true })).toHaveValue(item.key);
         const body = editor.getByLabel('Event write-up', { exact: true });
         await expect(body).toHaveValue('');
@@ -125,6 +131,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
           expect(after.payload.rows.map((row: any) => row.body)).toEqual([passage]);
           const live = (await store.call({ method: 'rows' })).find((row: any) => row.id === before.payload.rows[0].id);
           expect(live.body).toBe(passage);expect(live.status).toBe('LIVE');
+          expect(live.block_type).toBe(legacy?null:'calendar_event');
           await editor.getByRole('button', { name: 'Close', exact: true }).click();await page.reload();
           await workspace.getByLabel('Planet or point', { exact: true }).selectOption(item.planet);
           await workspace.getByLabel(item.field, { exact: true }).selectOption(item.sign);

@@ -7,6 +7,7 @@ import { Readable } from "node:stream";
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { readFileSync } from "node:fs";
 import { calendarAspectStudioRecord } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs";
+import { calendarPlanetaryIdentity } from '../../apps/admin/src/calendarPlanetarySources.ts';
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
 const catalog = read("../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json");
 const composed = read("../../packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json");
@@ -124,7 +125,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       return Response.json([created]);
     }
     if (method === "PATCH") {
-      if (storeOptions.sqlCalendarLifecycle && found.every(row => row.block_type === 'calendar_event')) {
+      if (storeOptions.sqlCalendarLifecycle && found.every(row => row.block_type === 'calendar_event' || row.block_type == null && calendarPlanetaryIdentity(row.content_key)?.sign)) {
         const updated = await publication.patchCalendarRows(found, patch, options.headers);
         for (const row of updated) rows.set(row.id, row);
         return Response.json(updated);

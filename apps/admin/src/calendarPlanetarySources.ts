@@ -53,7 +53,7 @@ const validPlanet = (value: string) => (calendarPlanets as readonly string[]).in
 const validSign = (value: string) => (calendarPlanetarySigns as readonly string[]).includes(value);
 
 export function calendarPlanetaryRevisionTarget(row: { content_key: string; mode?: string | null; surface?: string | null; block_type?: string | null }) {
-  return row.surface === "sky" && row.mode === "feed" && row.block_type === "calendar_event"
+  return row.surface === "sky" && row.mode === "feed" && (row.block_type == null || row.block_type === "calendar_event")
     && Boolean(calendarPlanetaryIdentity(row.content_key)?.sign);
 }
 
