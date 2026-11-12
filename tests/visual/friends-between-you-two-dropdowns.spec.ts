@@ -350,7 +350,12 @@ test("The opening editor saves through the real handler and reloads the complete
     await friend.fill(updated);
     await editor.getByRole("button", { name: "Save draft", exact: true }).click();
     await expect.poll(() => writes).toEqual([200]);
-    const stored = (await store.call({ method: "rows" })).find((row: any) => row.content_key === initialRows[0].content_key);
+    const sources = await store.call({ method: "rows" });
+    const stored = sources.find((row: any) => row.content_key === initialRows[0].content_key && row.status === 'DRAFT');
+    expect(stored.source_snapshot.targetRowId).toBe(initialRows[0].id);
+    expect(sources.find((row: any) => row.id === initialRows[0].id)).toMatchObject({
+      status: 'LIVE', updated_at: initialRows[0].updated_at, sections: { packageRecord: initialRows[0].sections.packageRecord }
+    });
     expect(stored.sections.packageDraft.body_they).toBe(updated);
     expect(stored.sections.packageDraft.body_you).toBe("Chiron sextile fixture opening.");
     expect(stored.sections.packageRecord.body_you).toBe(initialRows[0].sections.packageRecord.body_you);

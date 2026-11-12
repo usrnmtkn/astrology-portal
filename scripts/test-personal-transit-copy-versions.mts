@@ -345,7 +345,12 @@ test('editorial notes remain editable, persist through reopen, and stay private'
       reviewStatus: 'needs_review', sections: { ...original.sections,
         packageDraft: { ...original.sections.packageRecord, editorial_notes: note } } });
     assert.equal(result.status, 200, JSON.stringify(result));
-    const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`);
+    const proposal = result.payload.rows[0];
+    assert.notEqual(proposal.id, original.id);
+    const live = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${original.id}`);
+    assert.equal(live.payload.rows[0].status, 'LIVE');
+    assert.equal(live.payload.rows[0].updated_at, original.updated_at);
+    const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${proposal.id}`);
     const draft = reopened.payload.rows[0];
     assert.equal(draft.sections.packageDraft.editorial_notes, note);
     const published = await store.invoke('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at,

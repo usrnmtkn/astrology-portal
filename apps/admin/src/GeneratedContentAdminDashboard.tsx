@@ -9516,9 +9516,9 @@ export function GeneratedContentAdminDashboard() {
     if (publish && !draftHasPackageProposal(revised)) {
       revised = setPackageSectionField(revised, captured.kind === "legacy" ? "body" : "body_you", edits.body_you);
     }
+    const { matchesHouseTransitSave } = await import("./HouseTransitWriteupEditor");
     const acknowledge = (saved: AdminGeneratedContentRow | null) => {
-      if (!saved || saved.content_key !== key || saved.inventory_only || !saved.updated_at
-        || (baseline.id && (saved.id !== baseline.id || saved.updated_at === baseline.updatedAt))) return false;
+      if (!matchesHouseTransitSave(saved, key, baseline)) return false;
       const savedDraft = draftFromRow(saved);
       const fields = houseTransitEditableFields(savedDraft, captured.kind, saved.body);
       if (fields.body_you !== edits.body_you || fields.body_they !== edits.body_they) return false;
@@ -9535,10 +9535,10 @@ export function GeneratedContentAdminDashboard() {
         // conflicting local version with a newer version from another editor.
         let recovered = false;
         if (error instanceof AdminRequestError && [408, 504].includes(error.status)) {
-          const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(key), secret);
-          const saved = payload.rows?.find(row => row.content_key === key) ?? null;
-          recovered = acknowledge(saved);
-          if (recovered) setRows(current => mergeContentInventory(current, [saved!]));
+          const payload = await adminJsonRequest<{ rows: AdminGeneratedContentRow[] }>(studioInventoryDocumentPath(key, { status: "DRAFT", limit: 10 }), secret);
+          const saved = payload.rows.find(acknowledge);
+          recovered = Boolean(saved);
+          if (saved) setRows(current => mergeContentInventory(current, [saved]));
         }
         if (!recovered) throw new Error(dashboardErrorMessage(error));
       }

@@ -860,6 +860,14 @@ function assertFallbackArchitectureV3StructureLocked(row: ExistingGeneratedConte
   }
 }
 
+function retainedTransitAlternate(row: ExistingGeneratedContentRow) {
+  const record = v3PackageRecord(row);
+  const sections = isRecord(row.sections) ? row.sections : {};
+  return libs().retainPersonalTransitAlternate({
+    ...record, body_you: record.body_you ?? sections.body_you ?? row.body, body_they: record.body_they ?? sections.body_they
+  }, row.updated_at);
+}
+
 function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow, body: GeneratedContentRequestBody, patch: Record<string, unknown>) {
   const storedSections = isRecord(row.sections) ? row.sections : {};
   const sections = { ...storedSections, ...(isRecord(body.sections) ? body.sections : {}) };
@@ -871,7 +879,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const record = { ...v3PackageRecord(row) };
   if (body.preserveCurrentTransitAsAlternate) {
     if (row.status !== "LIVE" && !record.alternate_copy_sha256) throw new GeneratedContentRequestError("Only the current live wording can be retained as an alternate.", 409);
-    Object.assign(record, libs().retainPersonalTransitAlternate({ ...record, body_you: record.body_you ?? storedSections.body_you ?? row.body, body_they: record.body_they ?? storedSections.body_they }, row.updated_at));
+    Object.assign(record, retainedTransitAlternate(row));
   }
   const incomingRecord = isRecord(sections.packageRecord) ? sections.packageRecord : {};
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
@@ -3064,10 +3072,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
     const now = new Date().toISOString();
     try { await approveLunationStudioRevision(promotedRecord, targetRecord, now); }
     catch (error) { throw new GeneratedContentRequestError(error instanceof Error ? error.message : 'Could not verify the complete lunation revision.'); }
+    const privatePackageRevision = existing.event_type === "studio-package-source-draft";
+    const revisionRecord = v3PackageRecord(existing);
+    const csvImport = privatePackageRevision ? existing.source_snapshot?.editorialImport : null;
     const promotionPatch: Record<string, unknown> = { updated_at: now };
     applyFallbackArchitectureV3ReviewPatch(target, {
       id: target.id,
       ownerAuthoredWording: true,
+      // Derive retained writing from the version-checked live target again.
+      preserveCurrentTransitAsAlternate: privatePackageRevision && target.content_key.startsWith("authored/transit-aspect/")
+        && Boolean(revisionRecord.alternate_copy_sha256) && revisionRecord.alternate_source_version === target.updated_at,
       headline: stringFrom(promotedRecord.headline) || target.headline || "",
       summary: stringFrom(promotedRecord.summary) || target.summary || "",
       body: stringFrom(promotedRecord.body_you ?? promotedRecord.body ?? promotedRecord.text) || target.body || "",
@@ -3079,7 +3093,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
         packageDraft: null
       },
       facts: { ...(target.facts ?? {}), review_status: "approved" },
-      sourceSnapshot: { ...targetSnapshot, review_status: "approved" },
+      sourceSnapshot: { ...targetSnapshot, ...(isRecord(csvImport) ? { editorialImport: csvImport } : {}), review_status: "approved" },
       reviewStatus: calendarRevision ? "needs_review" : "approved"
     }, promotionPatch);
     const finalSections = isRecord(promotionPatch.sections) ? { ...promotionPatch.sections } : {};
@@ -3759,7 +3773,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
       mode: "studio-draft",
       event_type: forksPackageSourceDraft ? "studio-package-source-draft" : forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       ...(forksPackageSourceDraft ? { sections: { ...packageSourceSections,
-        packageRecord: existingPackageRecord, packageDraft: packageSourceProposal } } : {}),
+        packageRecord: body.preserveCurrentTransitAsAlternate
+          ? { ...existingPackageRecord, ...retainedTransitAlternate(existing) } : existingPackageRecord,
+        packageDraft: packageSourceProposal } } : {}),
       source_snapshot: {
         ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : {}),
         targetRowId: existing.id,

@@ -41,10 +41,15 @@ for (const [planet,sign,house] of [['chiron','taurus',12],['lilith','virgo',4]] 
     assert.equal(draft.sections.packageDraft.body_they,friend);
     assert.equal(draft.sections.packageRecord.body,originalYou);
     assert.equal(draft.sections.packageRecord.body_they_approval,undefined);
-    const reopened = await store.call({method:'GET',url:`/api/admin/generated-content?id=${seed.id}`});
+    assert.notEqual(draft.id,seed.id);
+    const publicSource = await store.call({method:'GET',url:`/api/admin/generated-content?id=${seed.id}`});
+    assert.equal(publicSource.payload.rows[0].updated_at,stamp);
+    assert.equal(publicSource.payload.rows[0].status,'LIVE');
+    assert.equal(publicSource.payload.rows[0].sections.packageDraft,undefined);
+    const reopened = await store.call({method:'GET',url:`/api/admin/generated-content?id=${draft.id}`});
     assert.equal(reopened.payload.rows[0].sections.packageDraft.body_they,friend);
     assert.equal((await change({id:seed.id,expectedUpdatedAt:stamp,sections:{packageDraft:{body_they:'Stale replacement.'}}})).status,409);
-    const published = await change({id:seed.id,expectedUpdatedAt:draft.updated_at,ownerAction:'approve-package-revision'});
+    const published = await change({id:draft.id,expectedUpdatedAt:draft.updated_at,ownerAction:'approve-package-revision'});
     assert.equal(published.status,200,JSON.stringify(published.payload));
     const live = published.payload.rows[0];
     assert.equal(live.status,'LIVE'); assert.equal(live.review_state,null);
