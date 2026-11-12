@@ -51,6 +51,10 @@ files.each do |file|
     gate = jobs.fetch('browser-release-gate')
     raise 'Browser gate must depend on every job, including matrices' unless gate.fetch('needs').sort == (jobs.keys - ['browser-release-gate']).sort
     raise 'Browser gate must inspect failures without blocking workflow cancellation' unless gate.fetch('if') == '${{ !cancelled() }}'
+    admin = jobs.fetch('studio-admin-flows')
+    raise 'Studio admin coverage must retain all six shards' unless admin.fetch('strategy').fetch('matrix').fetch('shard') == [1, 2, 3, 4, 5, 6]
+    raise 'Studio admin deadline must remain bounded' unless admin.fetch('timeout-minutes') == 25
+    raise 'Studio admin must run one worker per complete shard' unless admin.fetch('steps').any? { |step| step.fetch('run', '') == 'node scripts/balanced-browser-tests.mjs --config playwright.studio-admin-flows.config.ts ${{ matrix.shard }}/6' }
     reader = jobs.fetch('reader-surface-suites')
     overlays = jobs.fetch('reader-overlays')
     [reader, overlays].each do |job|

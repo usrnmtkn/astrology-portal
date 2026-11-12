@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
 import { requestStudioJson, studioInventoryDocumentsPath, studioPackageSourcePath } from './generatedContentClient';
 import { StudioButton } from './StudioControls';
+import { calendarPlanetaryRevisionTarget } from './calendarPlanetarySources';
 import type { PlacementSourceRow } from './skyPlacementSourceSelection';
 
 export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrary = false }: {
@@ -21,11 +22,17 @@ export default function ReaderPassageEntry({ context, secret, onOpen, fromLibrar
       const rows = result.rows as PlacementSourceRow[];
       if (!Array.isArray(rows) || rows.some(row => !keys.includes(row.content_key) || row.inventory_only)) throw new Error('The complete editing source could not be verified.');
       const ordered = [...rows].sort((a, b) => (Date.parse(b.updated_at ?? '') || 0) - (Date.parse(a.updated_at ?? '') || 0));
-      let row = ordered.find(row => row.status === 'DRAFT' && !/^(package|builtin):/u.test(row.id))
+      const calendarEvent = context.surface === 'calendar';
+      const live = ordered.find(row => row.content_key === key && row.status === 'LIVE'
+        && calendarPlanetaryRevisionTarget(row as Parameters<typeof calendarPlanetaryRevisionTarget>[0]));
+      let row = calendarEvent ? live && (ordered.find(row => ['DRAFT', 'REVIEWED'].includes(row.status)
+        && calendarPlanetaryRevisionTarget(row as Parameters<typeof calendarPlanetaryRevisionTarget>[0], 'studio-draft')
+        && row.source_snapshot?.targetRowId === live.id && row.source_snapshot?.targetRowUpdatedAt === live.updated_at
+        && row.source_snapshot?.targetContentKey === key) ?? live) : ordered.find(row => row.status === 'DRAFT' && !/^(package|builtin):/u.test(row.id))
         ?? ordered.find(row => row.content_key === key && row.status === 'LIVE')
         ?? (fromLibrary && key.startsWith('sky-article/')
           ? ordered.find(row => row.content_key === key && row.status === 'ARCHIVED' && !/^(package|builtin):/u.test(row.id)) : undefined);
-      if (!row) {
+      if (!row && !calendarEvent) {
         const packaged = await requestStudioJson(studioPackageSourcePath(key), secret);
         if (!active) return;
         const source = packaged.packageSource as Record<string, unknown> | null;

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { balanceTests, balanceTestFiles, withShardLists } from './balanced-browser-tests.mjs';
+import { balanceTests, balanceTestFiles, assertIndependentBrowserFile, withShardLists } from './balanced-browser-tests.mjs';
 import { existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -25,6 +25,12 @@ assert.deepEqual(balanceTestFiles([...grouped].reverse(), 2, { durations: { [gro
   .map(bin => [...bin.tests].sort()), fileBins.map(bin => [...bin.tests].sort()));
 assert.throws(() => balanceTestFiles([grouped[0], grouped[0]], 1, timings));
 assert.throws(() => balanceTestFiles(['missing file'], 1, timings));
+const split = balanceTestFiles(grouped, 2, {durations:{[grouped[0]]:100,[grouped[1]]:200},fallbackSeconds:30}, ['tests/visual/a.spec.ts']);
+assert(split.every(bin=>bin.tests.filter(name=>name.includes('/a.spec.ts')).length===1), 'Only the explicitly independent file may span bins.');
+assertIndependentBrowserFile("test.beforeEach(()=>{});test('one',()=>{});test('two',()=>{});", 'independent.spec.ts');
+for(const source of ["test.beforeAll(()=>{});", "test.afterAll(()=>{});", "test.describe.serial('ordered',()=>{});", "test.describe.configure({mode:'serial'});", "test.extend({shared:{scope:'worker'}});", "test['beforeAll'](()=>{});"])
+  assert.throws(()=>assertIndependentBrowserFile(source,'shared.spec.ts'));
+
 
 // Listing alone misses Playwright's outputDir cleanup before real execution.
 const directory = realpathSync(mkdtempSync(join(tmpdir(), 'tldr-browser-balance-test-')));
@@ -90,7 +96,8 @@ for (const [config, shard] of [
   ['playwright.horoscope-reader.config.ts', '1/3'],
   ['playwright.sky-placement-reader.config.ts', '1/2'],
   ['playwright.reader-surfaces.config.ts', '1/3'],
-  ['playwright.studio-ui.config.ts', '1/2']
+  ['playwright.studio-ui.config.ts', '1/2'],
+  ['playwright.studio-admin-flows.config.ts', '1/6']
 ]) {
   const result = spawnSync(process.execPath, ['scripts/balanced-browser-tests.mjs', '--config', config, shard, '--plan'], { encoding: 'utf8' });
   assert.equal(result.status, 0, result.stdout + result.stderr);

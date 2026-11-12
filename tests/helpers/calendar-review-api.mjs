@@ -7,6 +7,7 @@ import { Readable } from "node:stream";
 import { readerRouteResponse, fixturePublications } from './content-reader-route.mjs';
 import { readFileSync } from "node:fs";
 import { calendarAspectStudioRecord } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs";
+import { calendarPlanetaryIdentity } from '../../apps/admin/src/calendarPlanetarySources.ts';
 const read = path => JSON.parse(readFileSync(new URL(path, import.meta.url), "utf8"));
 const catalog = read("../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json");
 const composed = read("../../packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json");
@@ -124,6 +125,11 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
       return Response.json([created]);
     }
     if (method === "PATCH") {
+      if (storeOptions.sqlCalendarLifecycle && found.every(row => row.block_type === 'calendar_event' || row.block_type == null && calendarPlanetaryIdentity(row.content_key)?.sign)) {
+        const updated = await publication.patchCalendarRows(found, patch, options.headers);
+        for (const row of updated) rows.set(row.id, row);
+        return Response.json(updated);
+      }
       if (storeOptions.sqlArticleLifecycle && found.every(row => row.content_key.startsWith('education/astro-101/'))) {
         const updated = await publication.patchArticleRows(found, patch, options.headers);
         for (const row of updated) rows.set(row.id, row);
@@ -155,7 +161,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
 }
 
 if (process.argv.includes("--ipc") && process.argv[1] === fileURLToPath(import.meta.url)) {
-  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true", projectSelect: process.env.STUDIO_PROJECT_SELECT === "true", sqlArticleLifecycle: process.env.STUDIO_ARTICLE_SQL_LIFECYCLE === "true"});
+  const store = await createApiStore(fixtures, {uuidIds: process.env.STUDIO_UUID_IDS === "true", projectSelect: process.env.STUDIO_PROJECT_SELECT === "true", sqlArticleLifecycle: process.env.STUDIO_ARTICLE_SQL_LIFECYCLE === "true", sqlCalendarLifecycle: process.env.STUDIO_CALENDAR_SQL_LIFECYCLE === "true"});
   const { contentLiveStatuses } = await import("../../api/_lib/content-live-status.ts");
   process.on("message", async ({ id, method, body, url, key }) => {
     try {

@@ -52,6 +52,14 @@ export function calendarPlanetaryIdentity(key: string): CalendarPlanetaryIdentit
 const validPlanet = (value: string) => (calendarPlanets as readonly string[]).includes(value);
 const validSign = (value: string) => (calendarPlanetarySigns as readonly string[]).includes(value);
 
+// Server targets use feed; editor receipts also validate saved private proposals.
+export function calendarPlanetaryRevisionTarget(row: { content_key?: string; contentKey?: string; mode?: string | null; surface?: string | null;
+  block_type?: string | null; blockType?: string | null; event_type?: string | null } | null | undefined, mode: "feed" | "studio-draft" = "feed") {
+  const block = row?.block_type ?? (row?.blockType || null);
+  return row?.surface === "sky" && row.mode === mode && (mode === "feed" || row.event_type === "standalone-article-revision")
+    && (block == null || block === "calendar_event") && Boolean(calendarPlanetaryIdentity(row.content_key ?? row.contentKey ?? "")?.sign);
+}
+
 export function calendarPlanetaryIdentityKeys(kind: CalendarPlanetaryKind, { planet, sign, direction }: CalendarPlanetarySelection) {
   if (!validPlanet(planet) || !validSign(sign) || !["direct", "retrograde"].includes(direction)) return [];
   return kind === "ingress" ? [

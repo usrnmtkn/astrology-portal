@@ -6,24 +6,35 @@ import { normalizedArticleTemplateDraft, articleTemplateCopyMatches, retainArtic
 import { articleTemplateWithHoroscopes } from '../apps/web/src/content/skyArticleHoroscopes.mjs';
 import { skyArticlePublicationStore } from '../tests/helpers/sky-article-publication-store.mts';
 import { standaloneArticleKind } from '../src/shared/articleLibrary';
+import { calendarPlanetaryIdentity, calendarPlanetaryRevisionTarget } from '../apps/admin/src/calendarPlanetarySources';
 
 const source = readFileSync(new URL('../apps/admin/src/GeneratedContentAdminDashboard.tsx', import.meta.url), 'utf8');
 const sf = ts.createSourceFile('Dashboard.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 const guards: ts.Expression[] = [];
+const calendarBindings: ts.Expression[] = [];
+const editorBindings = new Map<string,ts.Expression>();
 function visit(node: ts.Node) {
+  if (ts.isVariableDeclaration(node) && node.name.getText(sf) === 'calendarPrivateRevision' && node.initializer) calendarBindings.push(node.initializer);
+  if (ts.isVariableDeclaration(node) && ['isManualCalendarEventDraft','isCalendarRevisionDraft'].includes(node.name.getText(sf)) && node.initializer) editorBindings.set(node.name.getText(sf),node.initializer);
   if (ts.isIfStatement(node) && ts.isBlock(node.thenStatement) && node.thenStatement.statements.some(s =>
     ts.isThrowStatement(s) && s.expression?.getText(sf) === 'new Error("Save did not return the saved row.")')) guards.push(node.expression);
   ts.forEachChild(node, visit);
 }
 visit(sf); assert.equal(guards.length, 1);
+assert.equal(calendarBindings.length, 1);
+assert.equal(editorBindings.size,2);
 const guardExports: any = {};
 const guardScript = ts.transpileModule(`exports.rejects = (saved, submitted, expected) => {
   const savedDraft = saved ? {} : null, draftForSave = submitted, expectedDraft = expected;
   const templateReceipt = receipt, isPackageDraft = false, status = submitted.status, expectedUpdatedAt = submitted.updatedAt;
+  const calendarPrivateRevision = (${calendarBindings[0].getText(sf)});
   return (${guards[0].getText(sf)});
+};exports.calendarEditor = (currentDraft,selectedRow,isPackageDraft) => {
+  const isManualCalendarEventDraft = (${editorBindings.get('isManualCalendarEventDraft')!.getText(sf)});
+  return {manual:isManualCalendarEventDraft,revision:(${editorBindings.get('isCalendarRevisionDraft')!.getText(sf)})};
 };`, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText;
-new Function('exports', 'receipt', 'standaloneArticleKind', 'standaloneRevisionEvent', 'draftHasPackageProposal', 'writesPersonalTransitExactCopy', guardScript)
-  (guardExports, { matches: articleTemplateCopyMatches }, standaloneArticleKind, 'unused', () => false, () => false);
+new Function('exports', 'receipt', 'standaloneArticleKind', 'standaloneRevisionEvent', 'draftHasPackageProposal', 'writesPersonalTransitExactCopy', 'calendarPlanetaryIdentity', 'calendarPlanetaryRevisionTarget', guardScript)
+  (guardExports, { matches: articleTemplateCopyMatches }, standaloneArticleKind, 'standalone-article-revision', () => false, () => false, calendarPlanetaryIdentity, calendarPlanetaryRevisionTarget);
 
 const signs = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 const opening = '# Synthetic template\n\nTemplate opening.\n\nTemplate final paragraph.';
@@ -174,5 +185,19 @@ for (const authored of [false, true]) {
     controls += 8;
   } finally { await store.close(); }
 }
+for(const block_type of [null,'calendar_event'])for(const mode of ['feed','studio-draft']){
+  const row={content_key:'sky.ingress.mercury.scorpio',surface:'sky',mode,block_type,event_type:mode==='studio-draft'?'standalone-article-revision':'calendar_event'};
+  assert.equal(calendarPlanetaryRevisionTarget(row),mode==='feed','Server targets keep the feed-only boundary');
+  assert.equal(calendarPlanetaryRevisionTarget(row,'studio-draft'),mode==='studio-draft','Editor proposal checks require the private mode and event');
+  assert.deepEqual(guardExports.calendarEditor(draft(row),row,false),{manual:true,revision:true});
+  assert.deepEqual(guardExports.calendarEditor(draft(row),row,true),{manual:false,revision:false},'Governed package rows retain their existing editor and publishing path');
+  controls+=4;
+}
+for(const patch of [{mode:'article'},{surface:'education'},{content_key:'sky.ingress.mercury.unknown'},
+  {block_type:'sky_placement'},{mode:'studio-draft',event_type:'calendar_event'}]){
+  const row={content_key:'sky.ingress.mercury.scorpio',surface:'sky',mode:'feed',block_type:null,event_type:'calendar_event',...patch};
+  assert.equal(guardExports.calendarEditor(draft(row),row,false).revision,false,'Unsupported editor identities cannot enter Calendar revision publication');controls++;
+}
+assert.equal(calendarPlanetaryRevisionTarget({content_key:'sky.ingress.mercury.scorpio',surface:'sky',mode:'feed',block_type:''}),false,'A wrong stored block is not a legacy NULL');controls++;
 console.log(JSON.stringify({ passed: controls, failed: 0, storage: 'actual handlers and in-memory SQL',
   sourceTextPreserved: true, protectedReferenceReads: 0, private51Queries: 0, productionWrites: 0 }));
