@@ -22,8 +22,8 @@ Selection uses `source_snapshot.exactReadingScope`, validates the recorded
 placement tuple against the canonical exact key, and rejects duplicate matches.
 Mercury in Pisces contributes one planet with two conditions. A missing draft
 is reported as a gap. No smaller subset or different motion is substituted.
-Zero qualifying planets hides the reader section. Calculation or storage errors
-remain distinct from a genuine missing match.
+Fewer than two qualifying planets hide the reader section. Calculation or storage
+errors remain distinct from a genuine missing match.
 
 The complete current saved body is rendered with the production assembler and
 inline presentation. A reversible placement-list substitution must reproduce

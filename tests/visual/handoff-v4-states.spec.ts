@@ -25,10 +25,10 @@ async function componentHarness() {
       </section></SkyPlacementSection>
     </section></main>);
     window.renderMissingCopy=state=>{
-      const key=skyDebilityInterpretationKey(positions(1));
+      const key=skyDebilityInterpretationKey(positions(2));
       if(!key)throw new Error('The synthetic qualified positions need an exact interpretation key.');
       installContentPublications([{content_key:key,state,revision:++revision,row_id:state==='live'?'synthetic-missing-reading':null,row_updated_at:state==='live'?'2026-10-13T12:00:00Z':null,updated_at:'2026-10-13T12:00:00Z'}]);
-      window.renderCount(1);
+      window.renderCount(2);
     };
     window.renderAvatars=()=>root.render(<main className='app-shell friends-page'><div className='friends-timing-card'><span className='friends-timing-card__avatar'><ProfileAvatar name='Fixture Reader' email='' avatarUrl='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="52" height="52"%3E%3Crect width="52" height="52" fill="tan"/%3E%3C/svg%3E' aspect='square'/></span></div></main>);
     window.renderCount(0);
@@ -43,12 +43,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Ha
   await page.route('**/__dignity-handoff', route => route.fulfill({ contentType: 'text/html', body: `<html data-theme="${theme}"><head><meta name="viewport" content="width=device-width,initial-scale=1">${links}</head><body><div id="root"></div><script>${script}</script></body></html>` }));
   await page.goto('/__dignity-handoff'); await page.evaluate(() => document.fonts.ready);
   await expect(page.locator('.placements-heading h2')).toHaveText('Placements'); await expect(page.locator('.sky-debility-ledger')).toHaveCount(0);
-  for (let count = 1; count <= 7; count++) {
+  await page.evaluate(() => (window as any).renderCount(1));
+  await expect(page.locator('.sky-debility-ledger')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'What is dignity?', exact: true })).toHaveCount(0);
+  for (let count = 2; count <= 7; count++) {
     await page.evaluate(value => (window as any).renderCount(value), count);
     const effort = page.locator('.sky-debility-ledger'), cards = effort.locator('.sky-debility-card'); await expect(cards).toHaveCount(count);
     await expect(effort.locator('h3')).toHaveText('Things may take more effort right now');
     await expect(effort.locator('h3')).toHaveCSS('font-size', '36px');
-    await expect(effort.locator('.sky-today-ledger__copy p').last()).toContainText(count === 1 ? 'One of the seven classical planets is' : `${['','','Two','Three','Four','Five','Six','Seven'][count]} of the seven classical planets are`);
+    await expect(effort.locator('.sky-today-ledger__copy p').last()).toContainText(`${['','','Two','Three','Four','Five','Six','Seven'][count]} of the seven classical planets are`);
     for(const paragraph of await effort.locator('.sky-today-ledger__copy p').all()){await expect(paragraph).toHaveCSS('font-family',/Newsreader/);await expect(paragraph).toHaveCSS('font-size','19px');await expect(paragraph).toHaveCSS('line-height','28.5px');await expect(paragraph).toHaveCSS('font-weight','400');}
     await expect(effort.locator('mark')).toHaveCount(0); await expect(cards.locator('strong')).toHaveText(['Sun in Libra', 'Moon in Scorpio', 'Mercury Rx in Pisces', 'Venus Rx in Scorpio', 'Mars in Cancer', 'Jupiter in Gemini', 'Saturn Rx in Aries'].slice(0, count));
     if (count >= 3) await expect(cards.nth(2)).toContainText('Detriment and fall');
@@ -67,6 +70,9 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Ha
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
   await page.screenshot({ path: `test-results/handoff-v4-seven-${width}-${theme}.png`, fullPage: true });
+  await page.evaluate(() => (window as any).renderCount(1));
+  await expect(page.locator('.sky-debility-ledger')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'What is dignity?', exact: true })).toHaveCount(0);
 });
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Dignity missing copy preserves surrounding placements ${width} ${theme}`, async ({ page }) => {
