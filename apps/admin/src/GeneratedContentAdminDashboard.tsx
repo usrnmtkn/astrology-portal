@@ -9,6 +9,7 @@ import type { WheelTooltipEditorSession } from "./wheelTooltipEditorSession";
 import { skyPlacementBrowseIdentity } from "./skyPlacementBrowse";
 import { articleLibraryKind, articleReaderHref, standaloneArticleKind, articlePublicationIsDue, type ArticleLibraryKind } from "../../../src/shared/articleLibrary";
 import { isStudioCompatibilityRow, isStudioCompositeRow } from "./studioContentScope";
+import { isReusableCompositeSourceKey } from "../../../src/shared/compositeSourceIdentity";
 import { calendarAspectRetrogradeOptions } from "../../web/src/content/calendarAspectRetrograde";
 import { isSkyIngressEssay, SKY_INGRESS_ESSAY_FORMAT, SKY_INGRESS_ARTICLE_FORMAT, type SkyArticleFormat } from "../../web/src/content/skyIngressEssay.mjs";
 import { seasonArticleKey } from "../../../src/shared/seasonArticle";
@@ -10536,6 +10537,10 @@ export function GeneratedContentAdminDashboard() {
 
     const currentDraft = draft ?? (selectedRow ? draftFromRow(selectedRow) : null);
     if (!currentDraft) return null;
+    const compositeGlobalPublicationBlocked = currentDraft.surface === "composite" && (
+      !isReusableCompositeSourceKey(currentDraft.contentKey)
+      || Boolean(currentDraft.facts?.sampleOnly || currentDraft.sourceSnapshot?.sampleOnly)
+    );
 
     const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(currentDraft.contentKey);
     const aspectContext = aspectContextForDraft(currentDraft);
@@ -12852,7 +12857,7 @@ export function GeneratedContentAdminDashboard() {
                       </span>
                     ) : (
                       <AdminSelect aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition) || isGovernedSkyDraft}>
-                        {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+                        {contentStatuses.map((status) => <option key={status} value={status} disabled={compositeGlobalPublicationBlocked && status === "LIVE"}>{contentStatusLabel(status)}</option>)}
                       </AdminSelect>
                     )}
                     <small className={fieldHintClassName}>
@@ -13081,7 +13086,7 @@ export function GeneratedContentAdminDashboard() {
               disabled={isLoading || draftHasUnsavedChanges || Boolean(pendingPublication) || publicationRefresh.state !== "idle"}
               request={requestApprovedSourceRecovery} onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} />
           )}
-          {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
+          {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (!compositeGlobalPublicationBlocked || !isContentRetired(currentDraft.contentKey)) && (
             <StudioButton className={isContentRetired(currentDraft.contentKey) ? "admin-secondary-button" : "admin-danger-button"} disabled={isLoading || draftHasUnsavedChanges || publicationRefresh.state !== "idle"}
               onClick={() => void retireContentEverywhere(isContentRetired(currentDraft.contentKey) ? "publish" : "retire")}
               title={isContentRetired(currentDraft.contentKey) ? "Restore this saved version for readers." : "Retire this content key across Studio, bundled writing, and synced offline copies."}>
@@ -13126,6 +13131,8 @@ export function GeneratedContentAdminDashboard() {
                 }}>Complete edition</StudioButton>
               ) : isContentStudioReferenceSource(currentDraft.contentKey, currentDraft.sourceSnapshot ?? {}) ? (
                 <small className={fieldHintClassName}>Source material cannot be published.</small>
+              ) : compositeGlobalPublicationBlocked ? (
+                <small className={fieldHintClassName}>This personalized reading cannot be published for everyone. Publish shared writing from a reusable Composite source.</small>
               ) : (
                 <StudioButton className="admin-publish-button" onClick={() => void (isStandaloneArticleDraft || isAstro101Draft || isCalendarRevisionDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady || (isAstro101Draft && currentDraft.status === "LIVE" && !draftHasUnsavedChanges)} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />

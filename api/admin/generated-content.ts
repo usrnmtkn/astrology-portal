@@ -1,3 +1,4 @@
+import { isReusableCompositeSourceKey } from "../../src/shared/compositeSourceIdentity.js";
 import { writeupHoroscopesReady } from '../../src/shared/skyWriteupHoroscopes.js';
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared/lunationTimingVariables.js';
@@ -277,17 +278,12 @@ let contentRoleContractCache: {
   };
 } | null = null;
 
-const compositeSourceBody = "(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|north_node|south_node|ascendant|descendant|midheaven|imum_coeli)";
-const compositeSourceKey = new RegExp(`^composite\\.(?:${compositeSourceBody}|house\\.${compositeSourceBody}\\.house_(?:[1-9]|1[0-2])|aspect\\.${compositeSourceBody}\\.(?:conjunction|sextile|square|trine|opposition)\\.${compositeSourceBody})$`, "u");
-const compositeSignSourceKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-in-(?:aries|taurus|gemini|cancer|leo|virgo|libra|scorpio|sagittarius|capricorn|aquarius|pisces)$`, "u");
-
-const compositeHouseAliasKey = new RegExp(`^composite-${compositeSourceBody.replaceAll("_", "-")}-house-?(?:[1-9]|1[0-2])$`, "u");
 const natalEditorialSourceKey = /^cms\/(?:natal-twelfth-ruler\/(?:you|they)\/(?:introduction|ruler-house\/(?:[1-9]|1[0-2]))|natal-chart-context\/(?:you|they)\/sect\/(?:day|night)|natal-planet-sect\/(?:you|they)\/(?:jupiter|venus|mars|saturn)\/(?:day|night))$/u;
 
 function isSampleOnlyRow(surface?: GeneratedContentSurface, contentKey?: string, metadata?: { facts?: unknown; sourceSnapshot?: unknown }) {
   if (contentKey?.startsWith("sample-") || isRecord(metadata?.facts) && metadata.facts.sampleOnly || isRecord(metadata?.sourceSnapshot) && metadata.sourceSnapshot.sampleOnly) return true;
   // These are reusable reader-bank identities, not generated personal reports.
-  const reusableComposite = surface === "composite" && Boolean(contentKey && (compositeSourceKey.test(contentKey) || compositeSignSourceKey.test(contentKey) || compositeHouseAliasKey.test(contentKey)));
+  const reusableComposite = surface === "composite" && isReusableCompositeSourceKey(contentKey);
   const placement = contentKey ? parseNatalSectPlacementKey(contentKey) : null;
   const facts = isRecord(metadata?.facts) ? metadata.facts : {};
   const reusablePlacement = placement && facts.planet === placement.planet && facts.sign === placement.sign
