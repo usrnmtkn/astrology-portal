@@ -139,12 +139,12 @@ for (const key of [keys[5], keys[6]]) for (const width of [390,1440]) test(`Owne
   record.headline = 'Synthetic saved headline';
   record.summary = 'Synthetic saved summary';
   record.review_status = 'needs_review';
-  const row = {id:'pending-transit-save',content_key:key,headline:'Pending transit fixture',body:record.body ?? record.body_you,summary:'',
+  const row = {id:'11111111-1111-4111-8111-111111111111',content_key:key,headline:'Pending transit fixture',body:record.body ?? record.body_you,summary:'',
     surface:'sky',mode:'feed',status:'DRAFT',lane:'reference',review_state:'needs-review',target_date:null,
     provider:'tldrastro-fallback-architecture-v3',block_type:'fallback_hook',event_type:'fallback-hook',
     sections:{packageRecord:record},facts:{fallbackArchitectureV3:true},
     source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',contentSystem:'fallback',review_status:'needs_review'},updated_at:'2026-10-15T12:00:00Z'};
-  const store = await studioApiStore([row]);
+  const store = await studioApiStore([row], {uuidIds:true});
   let release!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
   let committed = false;
@@ -192,7 +192,8 @@ for (const key of [keys[5], keys[6]]) for (const width of [390,1440]) test(`Owne
     await expect(editor.locator('[data-sky-field="body_you"]')).toHaveValue(you);
     if (exact) await expect(editor.locator('[data-sky-field="body_they"]')).toHaveValue(they);
     // The pending copy must remain unsaved, and cannot leak into the earlier publication.
-    const earlier = (await store.call({method:'rows'}))[0].sections.packageRecord;
+    const target = (await store.call({method:'rows'})).find((r:any) => r.id === row.id);
+    const earlier = target.sections.packageRecord;
     expect(earlier.review_status).toBe('approved');
     for (const field of ['body','body_you','body_they']) if (typeof record[field] === 'string') expect(earlier[field]).toBe(record[field]);
     const draftReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
@@ -201,13 +202,21 @@ for (const key of [keys[5], keys[6]]) for (const width of [390,1440]) test(`Owne
     expect(draftResponse.status()).toBe(200);
     expect(await draftResponse.finished()).toBeNull();
     await expect(savebar).toHaveAttribute('aria-busy','false');
-    const saved = (await store.call({method:'rows'}))[0];
+    const rows = await store.call({method:'rows'});
+    expect(rows.find((r:any) => r.id === row.id)).toEqual(target);
+    const proposals = rows.filter((r:any) => r.content_key === key && r.status === 'DRAFT');
+    expect(proposals).toHaveLength(1);
+    const saved = proposals[0];
+    expect(saved).toMatchObject({event_type:'studio-package-source-draft',lane:'reference',
+      source_snapshot:{targetRowId:row.id,targetRowUpdatedAt:savedVersion}});
+    const duringDraft = await store.call({method:'POST',url:'/api/content-reader',body:{keys:[key]}});
+    expect(duringDraft.status).toBe(200);
+    expect(duringDraft.payload.rows).toHaveLength(1);
+    expect(duringDraft.payload.rows[0].sections.packageRecord.body_you).toBe(earlier.body_you);
     expect(writes[1].expectedUpdatedAt).toBe(savedVersion);
     expect(writes[1].sections.packageRecord.review_status).toBe('approved');
-    expect(saved.status).toBe('DRAFT');
-    expect(saved.sections.packageRecord).toMatchObject({headline:title,summary});
-    expect(saved.sections.packageRecord.body_you).toBe(you);
-    if (exact) expect(saved.sections.packageRecord.body_they).toBe(they);
+    expect(saved.sections.packageDraft).toMatchObject({headline:title,summary,body_you:you});
+    if (exact) expect(saved.sections.packageDraft.body_they).toBe(they);
     const publishedThey = they || 'Complete Friend copy restored after deliberately clearing the field.';
     if (exact && !they) await editor.locator('[data-sky-field="body_they"]').fill(publishedThey);
     const publishReply = page.waitForResponse(response => response.request().method() === 'PATCH' && response.url().endsWith('/api/admin/generated-content'));
@@ -421,26 +430,21 @@ for(const phase of ['publication','save-before-publication'] as const) for(const
       const completedDraft=await draftResponse;expect(completedDraft.status()).toBe(200);expect(await completedDraft.finished()).toBeNull();
       await expect(editor.getByRole('button',{name:'Close',exact:true})).toBeEnabled();
       await expect(input).toHaveValue(newer);
-      // A guided held-package save withdraws eligibility until explicit review;
-      // standalone article revisions retain their separately published target.
-      expect(await reader()).toBe(isArticle?submitted:undefined);
-      if(isArticle){
-        const rows=await store.call({method:'rows'});
-        const target=rows.find((row:any)=>row.id===source.id);
-        const proposal=rows.find((row:any)=>row.content_key===key&&row.status==='DRAFT'&&row.event_type==='standalone-article-revision');
-        expect(target.status).toBe('LIVE');expect(target.body).toBe(submitted);
-        expect(proposal?.body).toBe(newer);
-        expect(proposal?.source_snapshot.targetRowId).toBe(target.id);
-        expect(proposal?.source_snapshot.targetRowUpdatedAt).toBe(target.updated_at);
-      }else{
-        const saved=(await store.call({method:'rows'})).find((row:any)=>row.id===source.id);
-        expect(saved.sections.packageRecord.body_you).toBe(submitted);
-        expect(saved.sections.packageDraft.body_you).toBe(newer);
-      }
+      expect(await reader()).toBe(submitted);
+      const rows=await store.call({method:'rows'});
+      const target=rows.find((row:any)=>row.id===source.id);
+      const proposals=rows.filter((row:any)=>row.content_key===key&&row.status==='DRAFT');
+      expect(proposals).toHaveLength(1);
+      const proposal=proposals[0];
+      expect(target.status).toBe('LIVE');
+      expect(isArticle?target.body:target.sections.packageRecord.body_you).toBe(submitted);
+      expect(proposal).toMatchObject({event_type:isArticle?'standalone-article-revision':'studio-package-source-draft',
+        source_snapshot:{targetRowId:target.id,targetRowUpdatedAt:target.updated_at}});
+      expect(isArticle?proposal.body:proposal.sections.packageDraft.body_you).toBe(newer);
       await page.reload();
       if(isArticle)await page.getByRole('row').filter({hasText:key}).filter({hasText:'Draft'}).getByRole('button',{name:'Edit',exact:true}).click();
       await expect(editor).toBeVisible();
-      await expect(input).toHaveValue(newer);expect(await reader()).toBe(isArticle?submitted:undefined);
+      await expect(input).toHaveValue(newer);expect(await reader()).toBe(submitted);
       const publish=editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save & publish',exact:true});
       await expect(publish).toBeEnabled();
       const next=page.waitForResponse(response=>response.request().method()==='PATCH'&&['publish-standalone-article-revision','approve-package-revision','publish-owner-content'].includes(response.request().postDataJSON()?.ownerAction));
@@ -526,7 +530,7 @@ for (const key of [
   const b = 'Synthetic private source B.\n\nComplete final sentence B.';
   const record = {...structuredClone(servingPackageRecords.get(key)!), body_you:a, body_they:'Synthetic complete Friend source.', review_status:'needs_review'};
   const id = '11111111-1111-4111-8111-111111111111';
-  const store = await studioApiStore([{id, content_key:key, surface:'sky', mode:'feed', status:'DRAFT', lane:'reference', review_state:'needs-review', provider:'tldrastro-fallback-architecture-v3', headline:'Synthetic source', body:a, sections:{packageRecord:record}, facts:{fallbackArchitectureV3:true}, source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3', review_status:'needs_review'}, updated_at:'2026-10-15T12:00:00Z'}], {publicationDb:true});
+  const store = await studioApiStore([{id, content_key:key, surface:'sky', mode:'feed', event_type:'fallback-hook', status:'DRAFT', lane:'reference', review_state:'needs-review', provider:'tldrastro-fallback-architecture-v3', headline:'Synthetic source', body:a, sections:{packageRecord:record}, facts:{fallbackArchitectureV3:true}, source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3', review_status:'needs_review'}, updated_at:'2026-10-15T12:00:00Z'}], {publicationDb:true});
   const rows = () => store.call({method:'rows'});
   const get = async (target=id) => (await rows()).find((r:any)=>r.id===target);
   const patch = (body:unknown) => store.call({method:'PATCH',body});
@@ -539,7 +543,8 @@ for (const key of [
     const baseline = await get();
     const pin = (await store.call({method:'publications'})).find((p:any)=>p.content_key===key);
     expect((await save(baseline,b,{contentKey:'fallback-hook/empty-house/base/2'})).status).toBe(409);
-    const first = await save(baseline,b); expect(first.status).toBe(200);
+    // Full-form clients may echo the saved identity when submitting edits.
+    const first = await save(baseline,b,{mode:baseline.mode,eventType:baseline.event_type}); expect(first.status).toBe(200);
     let revision = (await rows()).find((r:any)=>r.mode==='studio-draft');
     expect(revision).toMatchObject({status:'DRAFT',lane:'reference',review_state:'owner-review-required',event_type:'studio-package-source-draft',source_snapshot:{targetRowId:id,targetRowUpdatedAt:baseline.updated_at,targetContentKey:key},sections:{packageDraft:{body_you:b}}});
     expect(await get()).toEqual(baseline);

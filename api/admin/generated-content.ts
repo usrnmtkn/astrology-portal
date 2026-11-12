@@ -3748,8 +3748,6 @@ async function updateGeneratedContent(req: IncomingMessage) {
       content_key: existing.content_key,
       surface: existing.surface,
       target_date: existing.target_date,
-      mode: "studio-draft",
-      event_type: forksPackageSourceDraft ? "studio-package-source-draft" : forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       block_type: existing.block_type,
       provider: "owner-content-studio",
       prompt_version: forksPackageSourceDraft ? "studio-package-source-draft-v1" : forksCalendarMoonDraft ? "calendar-moon-transition-draft-v1" : forksCalendarPassageDraft ? "calendar-passage-draft-v1" : forksSharedSeasonDraft ? "shared-sign-prose-draft-v1" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
@@ -3758,6 +3756,8 @@ async function updateGeneratedContent(req: IncomingMessage) {
         : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
       knowledge_ids: [],
       ...patch,
+      mode: "studio-draft",
+      event_type: forksPackageSourceDraft ? "studio-package-source-draft" : forksCalendarMoonDraft ? "calendar-moon-transition-draft" : forksCalendarPassageDraft ? "calendar-passage-draft" : forksSharedSeasonDraft ? "shared-sign-prose-draft" : skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       ...(forksPackageSourceDraft ? { sections: { ...packageSourceSections,
         packageRecord: existingPackageRecord, packageDraft: packageSourceProposal } } : {}),
       source_snapshot: {
