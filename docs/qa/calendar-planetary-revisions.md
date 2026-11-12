@@ -60,6 +60,9 @@ the previous API remains compatible with the extended guard.
   Calendar-to-Sky paragraphs before and after reload. It also covers reviewed
   revisions, both publish controls, lookup failure recovery and archive/restore.
 - Existing Article/Guide and Astro 101 revision regressions must continue to pass.
+  The extracted receipt/editor regression checks the production predicates,
+  including exclusion of governed package controls and distinct feed/proposal
+  modes, with 109 positive and negative controls.
   The complete unfiltered local API command and all required exact-head hosted
   checks remain release gates.
 
@@ -76,7 +79,20 @@ JavaScript gzip bytes on main and 3,768,936 on the candidate: 760 additional
 bytes across one additional deferred shared module. The initial candidate failed
 the prior 3,768,677-byte ceiling by 259 bytes. A 512-byte aggregate allocation
 sets the ceiling to 3,769,189. The final legacy-compatible candidate measures
-3,768,923 bytes (+747 against main), leaving 266 bytes. Startup, individual
-chunk, CSS and standalone Admin limits are unchanged; the normal Admin build
-passes its existing budget. This is the measured cost of preserving event units
-and published originals, with no dependency or reader prose change.
+3,768,923 bytes (+747 against main) before consolidating the editor predicates.
+After consolidation it measures 3,769,032 bytes (+856 against main), leaving
+157 bytes under the same 3,769,189 ceiling. Web startup, individual chunk and CSS
+limits remain unchanged.
+
+The native Admin profile uses the same CI Supabase placeholders on both builds.
+Main measures 841,198 raw / 244,507 gzip startup bytes and 924,882 aggregate gzip
+bytes. The initial candidate fails the prior limits at 841,967 / 244,753 startup
+and 925,135 aggregate. Sharing the receipt, publication and classification
+predicate reduces startup by 215 raw / 42 gzip bytes, to 841,752 / 244,711, and
+aggregate to 925,024. The remaining feature cost is 554 raw / 204 gzip startup
+bytes against main. A 512-byte raw and 256-byte gzip startup allocation, including
+the corresponding largest-chunk raw guard, leaves 133 raw / 106 gzip bytes of
+headroom. The 925,106 aggregate limit and startup graph counting remain intact.
+The original failed builds remain recorded. This is the measured cost of
+preserving event units and published originals, with no dependency or reader
+prose change.
