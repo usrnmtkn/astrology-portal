@@ -5808,7 +5808,9 @@ export function GeneratedContentAdminDashboard() {
 
   async function publishPackageDraft(activeDraft: AdminDraft) {
     if (pendingPublication) { setEditorSaveError(pendingPublicationMessage); return; }
-    const personalCopy = writesPersonalTransitExactCopy(activeDraft) || (!activeDraft.id && activeDraft.contentKey.startsWith("authored/transit-aspect/"));
+    const existing = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id);
+    const personalCopy = existing?.event_type !== "studio-package-source-draft"
+      && (writesPersonalTransitExactCopy(activeDraft) || (!activeDraft.id && activeDraft.contentKey.startsWith("authored/transit-aspect/")));
     if (personalCopy && draftHasPackageProposal(activeDraft)) activeDraft = { ...activeDraft,
       sections: { ...activeDraft.sections, packageRecord: draftEditablePackageRecord(activeDraft), packageDraft: undefined } };
     const proposal = personalCopy
@@ -5817,7 +5819,6 @@ export function GeneratedContentAdminDashboard() {
         ...activeDraft,
         sections: { ...activeDraft.sections, packageDraft: structuredClone(draftPackageRecord(activeDraft)) }
       };
-    const existing = editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id);
     const unchanged = [editorBaselineRef.current, editorSavedInputRef.current].includes(JSON.stringify(activeDraft));
     const saved = existing && unchanged && !personalCopy && draftHasPackageProposal(activeDraft) ? existing : await saveDraft(undefined, proposal);
     if (saved && !personalCopy) await publishSavedRevision(saved);
