@@ -9716,6 +9716,15 @@ export function GeneratedContentAdminDashboard() {
 
   function renderContentFilters() {
     const calendarAspectOptions = calendarAspectSelectionOptions(rows);
+    const renderCalendarAspectSign = (side: "first" | "second") => (
+      <label>
+        <span className="sr-only">{side === "first" ? "First planet or point in sign" : "Other planet or point in sign"}</span>
+        <AdminSelect aria-label={`Calendar aspect ${side} sign`} value={calendarAspectSelection[`${side}Sign`] ?? ""} onChange={(event) => updateCalendarAspectSelection({ [`${side}Sign`]: event.target.value })}>
+          <option value="">in any sign</option>
+          {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>in {titleFromKey(sign)}</option>)}
+        </AdminSelect>
+      </label>
+    );
     return (
       <AdminFilterBar
         activeFilterCount={[contentStatusFilter !== "all", categoryFilter !== "all" && !calendarAspectWorkspaceActive, contentClassFilter !== "all", tierFilter !== "all", showReferenceRows && !calendarAspectWorkspaceActive, showRetiredRows, calendarAspectWorkspaceActive && Boolean(calendarAspectFirst || calendarAspectName || calendarAspectSecond || calendarAspectFirstSign || calendarAspectSecondSign)].filter(Boolean).length}
@@ -9736,13 +9745,7 @@ export function GeneratedContentAdminDashboard() {
                 {calendarAspectOptions.first.map((item) => <option value={item} key={`calendar-first-${item}`}>{titleFromKey(item)}</option>)}
               </AdminSelect>
             </label>
-            <label>
-              <span className="sr-only">First planet or point in sign</span>
-              <AdminSelect aria-label="Calendar aspect first sign" value={calendarAspectFirstSign} onChange={(event) => updateCalendarAspectSelection({ firstSign: event.target.value })}>
-                <option value="">in any sign</option>
-                {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>in {titleFromKey(sign)}</option>)}
-              </AdminSelect>
-            </label>
+            {renderCalendarAspectSign("first")}
           </div>
           <label>
             <span className="sr-only">Aspect</span>
@@ -9759,13 +9762,7 @@ export function GeneratedContentAdminDashboard() {
                 {calendarAspectOptions.second.map((item) => <option value={item} key={`calendar-second-${item}`}>{titleFromKey(item)}</option>)}
               </AdminSelect>
             </label>
-            <label>
-              <span className="sr-only">Other planet or point in sign</span>
-              <AdminSelect aria-label="Calendar aspect second sign" value={calendarAspectSecondSign} onChange={(event) => updateCalendarAspectSelection({ secondSign: event.target.value })}>
-                <option value="">in any sign</option>
-                {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>in {titleFromKey(sign)}</option>)}
-              </AdminSelect>
-            </label>
+            {renderCalendarAspectSign("second")}
           </div>
         </div>
         </>
