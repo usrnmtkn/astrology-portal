@@ -144,6 +144,7 @@ export type WeeklyHoroscopeAssembly = {
   weekType: WeeklyHoroscopeWeekType;
   chip: string;
   macro?: {
+    dayLabel?: string;
     headline: string;
     body: string;
   };
@@ -1336,6 +1337,7 @@ export async function buildWeeklyHoroscope({
             dayLabel: eventDayLabel(event.dateKey),
             headline: rendered.headline,
             driverLabel: event.title,
+            house: wholeSignHouse(event.sign ?? "", risingSign) ?? undefined,
             body: weeklyVoice(rendered.body),
             tag: event.eclipseType ? `${title(event.eclipseType)} eclipse` : event.title,
             accented: false,
@@ -1530,6 +1532,7 @@ export async function buildWeeklyHoroscope({
   }
   sections = sections.filter((section) => section.body.trim());
   if (macro && !macro.body.trim()) macro = undefined;
+  if (macro && macroEvent) macro.dayLabel = eventDayLabel(macroEvent.dateKey);
   const horoscope = composeWeeklyReading(sections);
 
   return {

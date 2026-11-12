@@ -29,3 +29,15 @@
   border: 0;
   background: transparent;
 }
+
+.lunation-transit { grid-column: 1 / -1; min-width: 0; }
+.lunation-transit > .you-transit-group__header { flex-wrap: wrap; }
+.lunation-transit__date { padding: var(--space-2) var(--space-5); border-radius: var(--radius-pill); background: var(--surface-2); color: var(--ink); font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-medium); line-height: var(--leading-meta); }
+.lunation-transit__content { display: grid; gap: var(--space-6); min-width: 0; align-items: stretch; }
+.lunation-transit__content--paired { grid-template-columns: var(--layout-natal-columns); }
+.lunation-transit .weekly-horoscope__macro { align-content: start; min-width: 0; }
+.lunation-transit__personal.you-transit-grid { grid-template-columns: minmax(0, 1fr); }
+.lunation-transit__house { position: absolute; right: 0; bottom: 0; padding: var(--space-1) var(--space-2); border-radius: var(--radius-pill); background: var(--surface); color: var(--accent); font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-semibold); line-height: var(--leading-meta); }
+@media (max-width: 800px) {
+  .lunation-transit__content--paired { grid-template-columns: minmax(0, 1fr); }
+}

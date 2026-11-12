@@ -1,3 +1,4 @@
+import { LunationTransitSection } from "../../components/LunationTransitSection";
 import { NatalPatternsInsights } from "./NatalPatternsInsights";
 import { KeyDatesPanel } from "../../components/KeyDatesPanel";
 import "../../styles/profile-overview.css";
@@ -512,39 +513,6 @@ function YouNatalTab({
   );
 }
 
-function YouMacroView({ headline, body }: { headline: string; body: string }) {
-  const [expanded, setExpanded] = useState(false);
-  const bodyId = useId();
-  // Match the owner's requested preview length; the expanded passage stays intact.
-  const hasMore = body.length > 575;
-  const preview = hasMore
-    ? `${body.slice(0, 575).replace(/\s+\S*$/u, "").trimEnd()}…`
-    : body;
-
-  return (
-    <article className="weekly-horoscope__macro daily-horoscope-summary you-horoscope-card">
-      <span className="eyebrow section-label">The macro view</span>
-      <h3>{headline}</h3>
-      <div id={bodyId} className="weekly-horoscope__macro-body">
-        {(expanded ? body : preview)
-          .split(/\n{2,}/)
-          .map((paragraph, index) => <FormattedProse key={index} text={paragraph} />)}
-      </div>
-      {hasMore ? (
-        <button
-          type="button"
-          className="card-read-more weekly-horoscope__toggle"
-          aria-expanded={expanded}
-          aria-controls={bodyId}
-          onClick={() => setExpanded((current) => !current)}
-        >
-          {expanded ? "Read less" : "Read more"}
-        </button>
-      ) : null}
-    </article>
-  );
-}
-
 function YouTransitGroup({ title, label, rows }: { title: string; label: string; rows: ReactNode[] }) {
   const [expanded, setExpanded] = useState(false);
   const listId = useId();
@@ -622,33 +590,6 @@ function YouUpdatesTab({
   const visibleDailySpecialSections = weeklyLunationCardOwnsExactDay
     ? []
     : dailyHoroscopeAssembly?.specialSections ?? [];
-  const weeklyTransitSection = !hasSavedCurrentCity ? null : weeklyHoroscopeAssembly?.status === "error" ? (
-    <section className="you-empty-card" aria-label="Weekly transits unavailable">
-      <span>This week</span>
-      <h3>Your weekly transits are not available yet.</h3>
-      <p>We could not calculate this week. Try again in a moment.</p>
-    </section>
-  ) : !weeklyHoroscopeAssembly || weeklyHoroscopeAssembly.status === "loading" ? (
-    <section className="weekly-horoscope__loading you-horoscope-card" aria-label="Loading weekly transits">
-      <PageLoading compact message="Loading weekly transits…" />
-    </section>
-  ) : weeklyTransitRows.length === 0 && !weeklyHoroscopeAssembly.macro ? null : (
-    <section className="weekly-horoscope weekly-horoscope--embedded" aria-label="This week's transits">
-      {weeklyHoroscopeAssembly.macro ? (
-        <YouMacroView
-          key={`${weeklyHoroscopeAssembly.weekStart}:${weeklyHoroscopeAssembly.macro.body}`}
-          headline={weeklyHoroscopeAssembly.macro.headline}
-          body={weeklyHoroscopeAssembly.macro.body}
-        />
-      ) : null}
-      {weeklyTransitRows.length > 0 ? (
-        <div className="updates-aspect-list you-transit-grid weekly-horoscope__transits" aria-label="Weekly transit cards">
-          {weeklyTransitRows}
-        </div>
-      ) : null}
-    </section>
-  );
-
   return (
     <div className="subpane updates-section" id="sub-transits">
       <div className="you-transit-overview">
@@ -743,10 +684,10 @@ function YouUpdatesTab({
       {hasSavedCurrentCity && backgroundAspectRows.length > 0 ? (
         <YouTransitGroup title="Long-term transits" label="Long-term transit cards" rows={backgroundAspectRows} />
       ) : null}
+      {hasSavedCurrentCity ? <LunationTransitSection assembly={weeklyHoroscopeAssembly}>{weeklyTransitRows[0]}</LunationTransitSection> : null}
       {hasSavedCurrentCity && standaloneTransitRows.length > 0 && (
         <YouTransitGroup title="Planets moving through your houses" label="House transits" rows={standaloneTransitRows} />
       )}
-      {weeklyTransitSection}
       {hasSavedCurrentCity && natalAspectPatternItems && (
         <NatalAspectPatternActivationsSection items={natalAspectPatternItems} timingOverrides={natalAspectPatternTimingOverrides} />
       )}

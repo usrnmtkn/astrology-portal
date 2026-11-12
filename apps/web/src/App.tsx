@@ -1,3 +1,4 @@
+import { LunationTransitCard } from "./components/LunationTransitSection";
 import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
@@ -17797,6 +17798,7 @@ function ProfileView({
   );
   const weeklyTransitRows = weeklyHoroscopeAssembly?.status === "ready"
     ? [weeklyHoroscopeAssembly.horoscope, ...weeklyHoroscopeAssembly.aspects]
+      .filter(reading => reading.source === "lunation")
       .filter((reading) => {
         const aspectParts = weeklyTransitAspectParts(reading.driverLabel);
 
@@ -17841,37 +17843,7 @@ function ProfileView({
           });
         };
 
-        return (
-          <button
-            type="button"
-            className="updates-aspect-row weekly-transit-row"
-            key={articleId}
-            onClick={openArticle}
-          >
-            {aspectParts ? <AspectBadge aspect={aspectParts.aspect} className="updates-aspect-row__glyphs" /> : <span className="updates-aspect-row__glyphs" aria-hidden="true">
-                <span className="planet-glyph">{planet ? pointGlyph(planet) : "○"}</span>
-            </span>}
-            <span className="updates-aspect-row__content">
-              <span className="updates-aspect-row__title">{displayTitle}</span>
-              <span className="updates-aspect-row__meta-line">
-                {timingLabel ? <span>{timingLabel}</span> : null}
-              </span>
-              {preview ? <span className="updates-aspect-row__description transit-card-preview">{preview}</span> : null}
-              <CardReadMore appearance="icon" />
-            </span>
-            {house || typeof reading.orb === "number" ? (
-              <span
-                className="updates-aspect-row__meta"
-                aria-label={house ? `${ordinalHouse(house)} house` : `${wholeDegreeOrb(reading.orb ?? 0)} orb`}
-              >
-                <span className="updates-aspect-row__dot" aria-hidden="true" />
-                <span className="updates-aspect-row__orb">
-                  {house ?? wholeDegreeOrb(reading.orb ?? 0)}
-                </span>
-              </span>
-            ) : null}
-          </button>
-        );
+        return <LunationTransitCard key={articleId} reading={reading} preview={preview} house={house} onOpen={openArticle} />;
       })
     : [];
   const dailyDoDont = (() => {
