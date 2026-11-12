@@ -183,8 +183,11 @@ for(const mode of ['atomic','manual','csv'] as const) test(`Daily ${mode} owner 
     assert.equal(saved.status,200,JSON.stringify(saved.payload));const draft=saved.payload.rows[0];
     assert.equal(draft.status,'DRAFT');assert(!hasExactStudioOwnerApproval(draft));
     assert.deepEqual(draft.source_snapshot.studioOwnerApproval,approved.source_snapshot.studioOwnerApproval,'A normal save must not mint a new approval from inherited LIVE status.');
-    assert.equal((await store.invoke('POST',{keys:[approved.content_key]},'/api/content-reader')).payload.rows.length,0);
-    assert.equal((await store.invoke('PATCH',{id:bodyId,expectedUpdatedAt:approved.updated_at,ownerAction:'approve-package-revision'})).status,409);
+    assert.notEqual(draft.id,bodyId);
+    assert.equal(draft.source_snapshot.targetRowUpdatedAt,approved.updated_at);
+    assert.deepEqual(store.rows.get(bodyId),approved);
+    await assertDailyReaderParity((await store.invoke('POST',{keys:initial.map(row=>row.content_key)},'/api/content-reader')).payload);
+    assert.equal((await store.invoke('PATCH',{id:draft.id,expectedUpdatedAt:'2000-01-01T00:00:00.000Z',ownerAction:'approve-package-revision'})).status,409);
     // The actual editor already staged this exact revision. Its separate
     // approval action publishes it; re-importing unchanged CSV is not a save.
     const approval=await store.invoke('PATCH',{id:draft.id,expectedUpdatedAt:draft.updated_at,ownerAction:'approve-package-revision'});
@@ -273,7 +276,12 @@ test('Daily manual save without a publish review status cannot inherit LIVE appr
     assert.equal(saved.status,200,JSON.stringify(saved.payload));const draft=saved.payload.rows[0];
     assert.equal(draft.status,'DRAFT');assert(!hasExactStudioOwnerApproval(draft));
     assert.deepEqual(draft.source_snapshot.studioOwnerApproval,approved.source_snapshot.studioOwnerApproval);
-    assert.equal((await store.invoke('POST',{keys:[approved.content_key]},'/api/content-reader')).payload.rows.length,0);
+    assert.notEqual(draft.id,approved.id);
+    assert.deepEqual(store.rows.get(approved.id),approved);
+    const reader=await store.invoke('POST',{keys:[approved.content_key]},'/api/content-reader');
+    assert.equal(reader.status,200);
+    assert.deepEqual(reader.payload.rows.map((source:any)=>source.sections.packageRecord.body_they),[ownerPassage]);
+    assert.equal(draft.sections.packageDraft.body_they,ownerPassage+' Saved only.');
   } finally {await store.close();}
 });
 
