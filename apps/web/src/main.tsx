@@ -98,6 +98,11 @@ async function startApp() {
   }
 
   if (isAdminContentPath()) {
+    const { registerSkyReaderCapture } = await import('../../../src/shared/skyReaderCapture');
+    registerSkyReaderCapture(async (input, signal) => {
+      const { captureStudioSkyArticle } = await import('./features/sky/studioSkyArticleCapture');
+      return captureStudioSkyArticle(input, signal);
+    });
     await loadAdminPresentationStyles();
     const { AdminPageError, AdminPageLoading } = await import("../../admin/src/AdminPageError");
     const dashboard = isMemoryGraphPath()

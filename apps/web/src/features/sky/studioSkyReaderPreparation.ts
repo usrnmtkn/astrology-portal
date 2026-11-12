@@ -1,7 +1,7 @@
 import { requestSkyPlacementArticleSnapshot, prepareSkyPlacementArticleContent, loadContentRegistry, skyDetailFromRoutePath } from '../../App';
 import type { GeneratedContentMap } from '../../App';
 import type { LocationInput } from '../../types';
-import { validateAstrologyFacts } from '../../services/astrologyFacts';
+import { ASTROLOGY_CALCULATION_CONTRACT, validateAstrologyFacts } from '../../services/astrologyFacts';
 import { refreshContentPublications, contentPublicationsAvailableOnline } from '../../services/contentPublications';
 import { prepareSkyPlacementSources } from '../../services/skyPlacementHydration';
 import { installSkyCoreFallbackArchitectureV3Bundle, installSkyPlacementFallbackArchitectureV3Bundle } from '../../content/fallbackArchitectureV3Runtime';
@@ -14,21 +14,31 @@ import { skyNodeDisplayPositions } from './skyHelpers';
 import { skyIngressEssayPublicationKeys } from '../../content/skyIngressEssayReader';
 import { contentPublicationRecords } from '../../content/contentPublicationState';
 import { skyPreviewReferenceDate } from '../../../../../src/shared/skyReaderPreview';
+import { isVerifiedSkySnapshot } from '../../services/verifiedSkyCache';
+import type { SkySnapshot } from '../../types';
 
 /** The isolated Studio page uses the same facts, admitted sources and article builder as Sky. */
-export async function prepareStudioSkyPlacementReader(input: { planet: string; sign: string; date: string; location: LocationInput; instant?: string }) {
+export async function prepareStudioSkyPlacementReader(input: { planet: string; sign: string; date: string; location: LocationInput; instant?: string; readerSky?: SkySnapshot }) {
   await refreshContentPublications(true);
   if (!contentPublicationsAvailableOnline()) throw new Error('Current Sky publication state could not be verified. Retry the preview.');
   const location = withTimeZone(input.location);
   const reference = input.instant ? new Date(input.instant) : skyDateTimeFromInput(input.date, location, true);
   if (!Number.isFinite(reference.getTime()) || skyPreviewReferenceDate(reference.toISOString(), location.timeZone!) !== input.date)
     throw new Error('The reader instant does not match the selected local date.');
-  const sky = await getAstrodienstSkyOffMainThread(location, reference, { includeDailyEvents: false, includeTransitWindows: false });
+  if (input.readerSky && (!isVerifiedSkySnapshot(input.readerSky) || input.readerSky.positions.length !== 14
+    || input.readerSky.generatedAt !== reference.toISOString() || input.readerSky.location.latitude !== location.latitude
+    || input.readerSky.location.longitude !== location.longitude || input.readerSky.location.timeZone !== location.timeZone
+    || input.readerSky.calculationProvenance?.nodeType !== ASTROLOGY_CALCULATION_CONTRACT.nodeType
+    || input.readerSky.placementAspectFacts?.sign.toLowerCase() !== input.sign
+    || input.readerSky.placementAspectFacts?.planet.toLowerCase().replaceAll(' ', '-') !== input.planet)) throw new Error('The reader calculation does not match this article.');
+  const sky = input.readerSky ? { ...input.readerSky, location }
+    : await getAstrodienstSkyOffMainThread(location, reference, { includeDailyEvents: false, includeTransitWindows: false });
   const position = skyNodeDisplayPositions(sky.positions).find(candidate => candidate.planet.toLowerCase().replaceAll(' ', '-') === input.planet);
   if (!position) throw new Error('This planet or point is not available on the selected date.');
   const sign = position.sign.toLowerCase();
   const [prepared, sources, baseline] = await Promise.all([
-    prepareSkyPlacementArticleContent(requestSkyPlacementArticleSnapshot(location, input.planet, sign, input.date, reference),
+    prepareSkyPlacementArticleContent(input.readerSky ? Promise.resolve(sky)
+      : requestSkyPlacementArticleSnapshot(location, input.planet, sign, input.date, reference),
       input.planet, sign, new Map(), () => undefined),
     prepareSkyPlacementSources(`article:${input.planet}/${sign}`),
     // Keep the selected article's public baseline available for revision checks,
