@@ -9727,42 +9727,47 @@ export function GeneratedContentAdminDashboard() {
         tabs={<>
         {calendarAspectWorkspaceActive && (
         <>
-        <div className="admin-natal-placement-selectors admin-filter-form admin-filter-form--three" role="group" aria-label="Calendar aspect filters">
+        <div className="admin-calendar-aspect-filters" role="group" aria-label="Calendar aspect filters">
+          <div className="admin-calendar-aspect-placement" role="group" aria-label="First planet and sign">
+            <label>
+              <span className="sr-only">Planet or point</span>
+              <AdminSelect aria-label="Calendar aspect planet or point" value={calendarAspectFirst} onChange={(event) => updateCalendarAspectSelection({ first: event.target.value })}>
+                <option value="">Any planet or point</option>
+                {calendarAspectOptions.first.map((item) => <option value={item} key={`calendar-first-${item}`}>{titleFromKey(item)}</option>)}
+              </AdminSelect>
+            </label>
+            <label>
+              <span className="sr-only">First planet or point in sign</span>
+              <AdminSelect aria-label="Calendar aspect first sign" value={calendarAspectFirstSign} onChange={(event) => updateCalendarAspectSelection({ firstSign: event.target.value })}>
+                <option value="">in any sign</option>
+                {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>in {titleFromKey(sign)}</option>)}
+              </AdminSelect>
+            </label>
+          </div>
           <label>
-            <span>Planet or point</span>
-            <AdminSelect aria-label="Calendar aspect planet or point" value={calendarAspectFirst} onChange={(event) => updateCalendarAspectSelection({ first: event.target.value })}>
-              <option value="">Choose planet or point</option>
-              {calendarAspectOptions.first.map((item) => <option value={item} key={`calendar-first-${item}`}>{titleFromKey(item)}</option>)}
-            </AdminSelect>
-          </label>
-          <label>
-            <span>Aspect</span>
+            <span className="sr-only">Aspect</span>
             <AdminSelect aria-label="Calendar aspect type" value={calendarAspectName} onChange={(event) => updateCalendarAspectSelection({ aspect: event.target.value })}>
-              <option value="">Choose aspect</option>
+              <option value="">Any aspect</option>
               {calendarAspectOptions.aspects.map((item) => <option value={item} key={`calendar-aspect-${item}`}>{titleFromKey(item)}</option>)}
             </AdminSelect>
           </label>
-          <label>
-            <span>Other planet or point</span>
-            <AdminSelect aria-label="Other calendar aspect planet or point" value={calendarAspectSecond} onChange={(event) => updateCalendarAspectSelection({ second: event.target.value })}>
-              <option value="">Choose planet or point</option>
-              {calendarAspectOptions.second.map((item) => <option value={item} key={`calendar-second-${item}`}>{titleFromKey(item)}</option>)}
-            </AdminSelect>
-          </label>
-        </div>
-        <details className="admin-advanced" open={Boolean(calendarAspectFirstSign || calendarAspectSecondSign)}>
-          <AdminDisclosureSummary>Advanced signs{calendarAspectFirstSign || calendarAspectSecondSign ? " · Filtered" : ""}</AdminDisclosureSummary>
-          <p className={fieldHintClassName}>Filter by either planet’s sign. Every dropdown is optional.</p>
-          <div className="admin-filter-form" role="group" aria-label="Calendar aspect sign filters">
-            {(["first", "second"] as const).map((side) => <label key={side}>
-              <span>{calendarAspectSelection[side] ? titleFromKey(calendarAspectSelection[side]) : side === "first" ? "First planet or point" : "Other planet or point"} in sign</span>
-              <AdminSelect aria-label={`Calendar aspect ${side} sign`} value={calendarAspectSelection[`${side}Sign`] ?? ""} onChange={(event) => updateCalendarAspectSelection({ [`${side}Sign`]: event.target.value })}>
-                <option value="">Any sign</option>
-                {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
+          <div className="admin-calendar-aspect-placement" role="group" aria-label="Other planet and sign">
+            <label>
+              <span className="sr-only">Other planet or point</span>
+              <AdminSelect aria-label="Other calendar aspect planet or point" value={calendarAspectSecond} onChange={(event) => updateCalendarAspectSelection({ second: event.target.value })}>
+                <option value="">Any other planet or point</option>
+                {calendarAspectOptions.second.map((item) => <option value={item} key={`calendar-second-${item}`}>{titleFromKey(item)}</option>)}
               </AdminSelect>
-            </label>)}
+            </label>
+            <label>
+              <span className="sr-only">Other planet or point in sign</span>
+              <AdminSelect aria-label="Calendar aspect second sign" value={calendarAspectSecondSign} onChange={(event) => updateCalendarAspectSelection({ secondSign: event.target.value })}>
+                <option value="">in any sign</option>
+                {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>in {titleFromKey(sign)}</option>)}
+              </AdminSelect>
+            </label>
           </div>
-        </details>
+        </div>
         </>
         )}
         {!calendarAspectWorkspaceActive && (

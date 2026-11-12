@@ -1689,7 +1689,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   for (const theme of ["light", "dark"]) {
     for (const width of [1440, 390]) {
-      test(`Calendar Aspects signed titles and optional advanced filters ${theme} ${width}`, async ({ page }) => {
+      test(`Calendar Aspects signed titles and stacked optional filters ${theme} ${width}`, async ({ page }) => {
         const assertNoBrowserErrors = await expectNoBrowserErrors(page);
         await page.setViewportSize({ width, height: 900 });
         await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
@@ -1715,7 +1715,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         const row = (index: number) => rows.filter({ hasText: keys[index] }).filter({ has: page.getByText(keys[index], { exact: true }) });
         await expect(rows).toHaveCount(5);
         await expectAdminHeader(page, "Calendar Aspect Cards", "Admin / Write / Calendar aspects");
-        await expect(filters.getByLabel("Calendar aspect first sign")).toBeHidden();
+        await expect(filters.getByLabel("Calendar aspect first sign")).toBeVisible();
         const headingStyle = (element: Element) => {
           const style = getComputedStyle(element);
           return Object.fromEntries(["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing", "marginTop", "marginBottom", "textTransform", "textAlign"].map(key => [key, style[key as keyof CSSStyleDeclaration]]));
@@ -1746,7 +1746,6 @@ test.describe("content dashboard admin user flow case studies", () => {
           }
           await editor.getByRole("button", { name: "Close", exact: true }).click();
         }
-        await filters.getByText("Advanced signs", { exact: true }).click();
         const firstSign = filters.getByLabel("Calendar aspect first sign", { exact: true });
         const secondSign = filters.getByLabel("Calendar aspect second sign", { exact: true });
         const first = filters.getByLabel("Calendar aspect planet or point", { exact: true });
@@ -1779,7 +1778,6 @@ test.describe("content dashboard admin user flow case studies", () => {
         await expect(first).toHaveValue("");
         await expect(aspect).toHaveValue("");
         await expect(second).toHaveValue("");
-        await filters.getByText("Advanced signs", { exact: true }).click();
         await expect(firstSign).toHaveValue("");
         await expect(secondSign).toHaveValue("");
         await secondSign.selectOption("aquarius");
@@ -1788,8 +1786,35 @@ test.describe("content dashboard admin user flow case studies", () => {
         await firstSign.selectOption("aries");
         await second.selectOption("moon");
         await expect(rows).toHaveCount(3); // Reversed planet/sign pairs work.
-        await expect(filters.getByRole("group", { name: "Calendar aspect filters", exact: true }).locator("label > span:first-child")).toHaveText(["Planet or point", "Aspect", "Other planet or point"]);
-        await expect(filters.getByRole("group", { name: "Calendar aspect sign filters", exact: true }).locator("label > span:first-child")).toHaveText(["Neptune in sign", "Moon in sign"]);
+        const search = filters.getByRole("searchbox", { name: "Find an aspect", exact: true });
+        const controls = [first, firstSign, aspect, second, secondSign, search];
+        await first.focus();
+        for (const control of controls.slice(1)) {
+          await page.keyboard.press("Tab");
+          await expect(control).toBeFocused();
+        }
+        const boxes = await Promise.all(controls.map(control => control.boundingBox()));
+        const [firstBox, firstSignBox, aspectBox, secondBox, secondSignBox, searchBox] = boxes.map(box => box!);
+        expect(firstBox.y).toBe(firstSignBox.y);
+        expect(secondBox.y).toBe(secondSignBox.y);
+        expect(firstSignBox.x).toBeGreaterThan(firstBox.x);
+        expect(secondSignBox.x).toBeGreaterThan(secondBox.x);
+        expect(aspectBox.y).toBeGreaterThan(firstBox.y + firstBox.height);
+        expect(secondBox.y).toBeGreaterThan(aspectBox.y + aspectBox.height);
+        expect(searchBox.y).toBeGreaterThan(secondBox.y + secondBox.height);
+        const placementBox = (await filters.getByRole("group", { name: "First planet and sign", exact: true }).boundingBox())!;
+        expect(Math.abs(aspectBox.width - placementBox.width)).toBeLessThanOrEqual(1);
+        const searchRowBox = (await filters.locator(".admin-browse-search").boundingBox())!;
+        expect(Math.abs(aspectBox.width - searchRowBox.width)).toBeLessThanOrEqual(1);
+        await search.fill("unmatched aspect");
+        await expect(rows).toHaveCount(0);
+        await filters.getByRole("button", { name: "Clear filters", exact: true }).click();
+        await expect(rows).toHaveCount(5);
+        for (const control of controls) await expect(control).toHaveValue("");
+        expect(await filters.getByRole("combobox").evaluateAll(selects => selects.map(select => (select as HTMLSelectElement).selectedOptions[0].text))).toEqual([
+          "Any planet or point", "in any sign", "Any aspect", "Any other planet or point", "in any sign"
+        ]);
+        await expect(filters.getByText("Advanced signs", { exact: true })).toHaveCount(0);
         await expectNoHorizontalOverflow(page, "Calendar Aspect filters");
         await page.evaluate(() => window.scrollTo(0, 0));
         await page.screenshot({ path: path.join(adminScreenshotDir, `calendar-signed-filters-${theme}-${width}.png`), fullPage: true });

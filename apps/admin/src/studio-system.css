@@ -257,6 +257,13 @@ body:has(.admin-dashboard) { margin: 0; }
 #root .admin-dashboard .admin-browse-search { flex: 1; }
 #root .admin-dashboard .admin-browse-filter-fields { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); align-items: start; gap: var(--workspace-panel-inset); }
 #root .admin-dashboard .admin-browse-filter-toggle { display: none; }
+#root .admin-dashboard .admin-calendar-aspect-filters { display: grid; gap: var(--workspace-panel-inset); }
+#root .admin-dashboard .admin-calendar-aspect-placement { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); border: var(--border-width-thin) solid var(--workspace-line-strong); border-radius: var(--studio-field-radius); }
+#root .admin-dashboard .admin-calendar-aspect-placement > label { display: block; }
+#root .admin-dashboard .admin-calendar-aspect-placement > label:first-child { border-inline-end: var(--border-width-thin) solid var(--workspace-line-strong); }
+#root .admin-dashboard .admin-calendar-aspect-placement select { border: 0; border-radius: 0; background: transparent; }
+#root .admin-dashboard .admin-calendar-aspect-placement select:focus-visible { outline-offset: 0; }
+#root .admin-dashboard .admin-browse-filters:has(> .admin-calendar-aspect-filters) .admin-browse-search-row { display: grid; grid-template-columns: minmax(0,1fr); }
 #root .admin-dashboard table { width: 100%; border-collapse: collapse; table-layout: fixed; font-family: var(--font-label); font-size: var(--type-ui-size); font-weight: var(--weight-regular); line-height: var(--leading-label); letter-spacing: var(--tracking-body); }
 #root .admin-dashboard .admin-data-table--wide { table-layout: auto; min-width: var(--workspace-wide-table-min-width); }
 #root .admin-dashboard .admin-data-table--wide th { overflow-wrap: normal; }
@@ -832,6 +839,7 @@ body:has(.admin-dashboard) { margin: 0; }
   #root .admin-dashboard :is(.admin-composition-sources,.admin-composition-preview-sources) > button { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard :is(.admin-form-grid,.admin-metadata-fields,.admin-template-two-column,.admin-composition-source-tools,.admin-composition-template-tools,.admin-natal-placement-selectors,.admin-composition-surface-summary,.admin-composition-surface-limit,.admin-reader-safety-grid,.admin-review-filter-grid,.admin-status-grid,.admin-unresolved-filters,.admin-daily-glance-context-form,.admin-compatibility-identity-fields,.admin-fallback-diagnostic-grid,.admin-composition-template-items,.studio-grid) { grid-template-columns: minmax(0,1fr); }
   #root .admin-dashboard .admin-browse-search-row { display: grid; grid-template-columns: minmax(0,1fr); }
+  #root .admin-dashboard .admin-calendar-aspect-placement { grid-template-columns: repeat(2,minmax(0,1fr)); }
   #root .admin-dashboard .admin-browse-filter-toggle { display: inline-flex; }
   #root .admin-dashboard .admin-browse-filter-options[data-expanded="false"] { display: none; }
   #root .admin-dashboard .admin-browse-filter-fields { grid-template-columns: minmax(0,1fr); }

@@ -164,7 +164,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
       const editor = page.locator('.admin-editor-panel');
       const previousStyle = await editor.getByRole('heading', { level: 2 }).evaluate(headingStyle);
       await editor.getByRole('button', { name: 'Close', exact: true }).click();
-      await filters.getByText('Advanced signs', { exact: true }).click();
       await filters.getByLabel('Calendar aspect first sign', { exact: true }).selectOption('aquarius');
       await expect(page.locator('.admin-content-row')).toHaveCount(0);
       await expect(action.getByRole('button')).toHaveCount(0);
