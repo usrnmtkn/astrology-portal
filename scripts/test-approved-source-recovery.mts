@@ -97,6 +97,18 @@ try {
   assert.equal((await request({action:'cancel',operationId:lateOperation})).state,'cancelled');
   await assert.rejects(restore(lateOperation,sources),/identity changed/u,'A delayed write cannot commit after cancellation');
   assert.equal((await request({action:'cancel',operationId:pairOperation})).state,'restored','Cancel after a committed write reports its actual result');
+  const compositeID='77777777-7777-4777-8777-777777777777';
+  const compositeKey='composite-sun-in-leo';
+  await db.query("insert into generated_interpretations values($1,$2,'LIVE','serving',null,$3,$4,null,$5,$6)",
+    [compositeID,compositeKey,original.updatedAt,original.sections,original.snapshot,original.body]);
+  const compositePlan=await request({action:'preview',sources:[{id:compositeID,contentKey:compositeKey,expectedUpdatedAt:original.updatedAt}]});
+  assert.equal(compositePlan.code,200);assert.equal(compositePlan.sources[0].baselineSHA256,approvedSourceBaseline(compositeKey)?.sha256);
+  const compositeOperation='88888888-8888-4888-8888-888888888888';
+  const compositeResult=await request({action:'restore',operationId:compositeOperation,sources:compositePlan.sources});
+  assert.equal(compositeResult.code,200);
+  assert.equal((await request({action:'status',operationId:compositeOperation})).state,'restored');
+  const recoveredComposite=(await db.query<any>('select status,body,sections from generated_interpretations where id=$1',[compositeID])).rows[0];
+  assert.deepEqual(recoveredComposite,{status:'ARCHIVED',body:original.body,sections:original.sections});
 } finally {globalThis.fetch=previousFetch;}
 await db.close();
 console.log('PASS actual owner API + SQL recovery, role authorization, baseline pinning, CAS, atomic pair rollback, immutable complete history, idempotency and status-only lost-ack recovery; production writes 0');

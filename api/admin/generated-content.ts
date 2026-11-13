@@ -1,4 +1,4 @@
-import { isReusableCompositeSourceKey } from "../../src/shared/compositeSourceIdentity.js";
+import { compositeRevisionTarget, isReusableCompositeSourceKey } from "../../src/shared/compositeSourceIdentity.js";
 import { writeupHoroscopesReady } from '../../src/shared/skyWriteupHoroscopes.js';
 import { parseNatalSectPlacementKey } from "../../src/shared/natalSectPlacement.js";
 import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../src/shared/lunationTimingVariables.js';
@@ -2812,7 +2812,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
   const articleRevision = existing.event_type === "standalone-article-revision";
   const forksArticleDraft = (articleRevisionTarget(existing) && body.status === "DRAFT"
-    || !isPackageRow && (calendarPlanetaryRevisionTarget(existing) || natalEditorialRevisionTarget(existing)) && existing.lane === "serving" && !existing.review_state
+    || !isPackageRow && (calendarPlanetaryRevisionTarget(existing) || natalEditorialRevisionTarget(existing) || compositeRevisionTarget(existing)) && existing.lane === "serving" && !existing.review_state
       && ["DRAFT", "REVIEWED"].includes(body.status ?? ""))
     && existing.status === "LIVE" && !body.ownerAction && !body.sourceLifecycleAction;
   const educationSource = existing.content_key.startsWith("education/astro-101/");
@@ -2866,11 +2866,16 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
     const target = articleRevision && existing.mode === "studio-draft" && existing.status === "DRAFT"
       ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
-    if (!target || target.content_key !== existing.content_key || !(articleRevisionTarget(target) || calendarPlanetaryRevisionTarget(target) || natalEditorialRevisionTarget(target))
+    if (!target || target.content_key !== existing.content_key || !(articleRevisionTarget(target) || calendarPlanetaryRevisionTarget(target) || natalEditorialRevisionTarget(target) || compositeRevisionTarget(target))
       || target.surface !== existing.surface || target.status !== "LIVE"
       || existing.source_snapshot?.targetContentKey !== target.content_key
       || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
       throw new GeneratedContentRequestError("The published article changed. Reopen its current source before publishing this revision.", 409);
+    }
+    if (compositeRevisionTarget(target) && (!compositeRevisionTarget(existing, "studio-draft")
+      || isFallbackArchitectureV3Row(target) || target.lane !== "serving" || target.review_state
+      || existing.block_type !== target.block_type || !isDeepStrictEqual(existing.facts ?? {}, target.facts ?? {}))) {
+      throw new GeneratedContentRequestError("The shared Composite source changed. Reopen it before publishing this revision.", 409);
     }
     if (calendarPlanetaryRevisionTarget(target) && (isFallbackArchitectureV3Row(target) || target.lane !== "serving" || target.review_state
       || existing.block_type !== target.block_type || !isDeepStrictEqual(existing.sections?.slots, target.sections?.slots))) {
