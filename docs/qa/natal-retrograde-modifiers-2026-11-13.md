@@ -74,3 +74,7 @@ The comparison generator refreshed hash metadata with zero provider calls; the
 modifier identity now loads through the endpoint's existing lazy write library.
 The comparison, fast-inventory, natal publication and generated-report judge
 contracts passed locally after those corrections.
+
+API shard 1 then exposed a missing emitted dependency in the Calendar plain-Node
+fixture. Adding the shared modifier identity to its explicit entry-point list
+made the complete Calendar save/reopen/publication/reader contract pass locally.
