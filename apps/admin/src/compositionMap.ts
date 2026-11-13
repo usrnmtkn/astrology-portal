@@ -1,5 +1,5 @@
 import { zodiacSeasonVariableNames } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch.js";
+import { mergeStudioPackagePatch, studioPackageObject, studioPackageRecord as objectRecord } from "../../../src/shared/studioPackagePatch.js";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
 import {
@@ -107,12 +107,6 @@ export type CompositionMapTemplate = {
   slots: CompositionMapSlot[];
 };
 
-function objectRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
-
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -126,8 +120,8 @@ function humanize(value: string) {
 }
 
 function packageRecordForRow(row: CompositionMapRow) {
-  const sections = objectRecord(row.sections);
-  return mergeStudioPackagePatch(objectRecord(sections?.packageRecord) ?? {}, objectRecord(sections?.packageDraft) ?? {});
+  const sections = studioPackageObject(row.sections);
+  return mergeStudioPackagePatch(studioPackageObject(sections.packageRecord), studioPackageObject(sections.packageDraft));
 }
 
 function variableFieldsForRow(row: CompositionMapRow) {
