@@ -101,11 +101,19 @@ for(const width of [390,1440])for(const family of ['house','natal','natal-sign']
    await publish.click();
    const hasB=async()=>{const r=await read();const row=r.payload.rows?.find((row:any)=>row.content_key===keys[0]);return row?.sections.packageRecord[usesBody?'body':'body_you']===copy(family,0,'You','B')&&(usesBody||row?.sections.packageRecord.body_they===copy(family,0,'Friend','B'));};
    await expect.poll(hasB).toBe(true);
-   if(family==='house')await region.getByRole('button',{name:/^Close/}).click();
-   await page.goto(`/admin/content#exact-content?q=${encodeURIComponent(keys[0])}`);
-   const entry=page.getByRole('row').filter({has:page.getByText(keys[0],{exact:true})});
-   await entry.getByRole('button',{name:'Edit',exact:true}).click();
+   if(family==='house'){
+    await region.getByRole('button',{name:/^Close/}).click();
+    await page.goto(`/admin/content#exact-content?q=${encodeURIComponent(keys[0])}`);
+    const entry=page.getByRole('row').filter({has:page.getByText(keys[0],{exact:true})});
+    await entry.getByRole('button',{name:'Edit',exact:true}).click();
+   }else{
+    // Publication archives its private proposal after updating the canonical row.
+    // Reopening by source key must not select that newer archive instead.
+    await page.reload();await open();
+    await region.getByRole('button',{name:'Edit source',exact:true}).click();
+   }
    const editor=page.getByRole('dialog',{name:'Generated content editor',exact:true});
+   await expect(editor.locator('.admin-editor-metadata')).not.toContainText('studio-draft');
    await openEditorMoreActions(editor);
    await editor.getByRole('button',{name:'Archive source',exact:true}).click();
    await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.id===seed[0].id)?.status).toBe('ARCHIVED');
@@ -113,10 +121,19 @@ for(const width of [390,1440])for(const family of ['house','natal','natal-sign']
    await editor.getByRole('button',{name:'Restore as draft',exact:true}).click();
    await expect.poll(async()=>(await store.call({method:'rows'})).find((row:any)=>row.id===seed[0].id)?.status).toBe('DRAFT');
    expect((await read()).payload.rows.some((row:any)=>row.content_key===keys[0])).toBe(false);
+   const publicationResponse=page.waitForResponse(response=>response.url().endsWith('/api/admin/generated-content')
+    &&response.request().method()==='PATCH'&&response.request().postDataJSON()?.ownerAction==='approve-package-revision');
    await editor.locator('.admin-editor-savebar').getByRole('button',{name:/^(Save & publish|Approve & publish)$/}).click();
+   const response=await publicationResponse;expect(response.ok()).toBe(true);
+   const published=(await response.json()).rows[0];
+   expect(published.id).toBe(seed[0].id);expect(published.status).toBe('LIVE');
    await expect.poll(hasB).toBe(true);
+   await expect(editor.getByRole('alert')).toHaveCount(0);
+   await expect(editor.locator('.admin-editor-metadata')).not.toContainText('studio-draft');
    await openEditorMoreActions(editor);
+   const retireRequest=page.waitForRequest(request=>request.url().endsWith('/api/admin/content-publication')&&request.method()==='POST');
    await editor.getByRole('button',{name:'Retire everywhere',exact:true}).click();
+   expect((await retireRequest).postDataJSON()).toMatchObject({id:published.id,expectedUpdatedAt:published.updated_at});
    await expect.poll(async()=>(await store.call({method:'publications'})).find((row:any)=>row.content_key===keys[0])?.state).toBe('retired');
    await editor.getByRole('button',{name:'Publish again',exact:true}).click();
    await expect.poll(hasB).toBe(true);
