@@ -1,6 +1,7 @@
 import { StudioButton, StudioTextarea } from "./StudioControls";
 import { useEffect, useState } from "react";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
+import { isNatalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
 
 export type NatalSourceEdits = Record<string, string>;
 export type NatalEditableRow = { id?: string | null; content_key: string; body: string | null; sections: unknown; updated_at?: string | null; status?: string };
@@ -12,7 +13,7 @@ export function natalSourceFields(row: NatalEditableRow): NatalSourceEdits {
     if (typeof record[field] === "string") fields[field] = record[field];
   }
   if (!Object.keys(fields).length) fields.body = row.body ?? "";
-  if (row.content_key.startsWith("fallback-hook/natal-you-placement-complete-final/")) fields.body_they ??= "";
+  if (row.content_key.startsWith("fallback-hook/natal-you-placement-complete-final/") || isNatalRetrogradeModifierKey(row.content_key)) fields.body_they ??= "";
   return fields;
 }
 

@@ -69,12 +69,12 @@ const retrogradeInput = normalizeNatalPlacementPreviewInput({
 });
 assert.equal(retrogradeInput.motion, "retrograde");
 const retrogradePlacement = renderNatalPlacementPreview(retrogradeInput);
-assert.match(
+assert.doesNotMatch(
   retrogradePlacement.body,
   /retrograde in the birth chart/u,
-  "A retrograde preview must render the motion-specific passage."
+  "A missing planet-and-house modifier must not render the shared sentence."
 );
-assert.equal(retrogradePlacement.parts.length, 2, "The retrograde modifier is appended to the relevant sign or house paragraph.");
+assert.equal(retrogradePlacement.parts.length, 2, "The base sign and house paragraphs remain available without a published modifier.");
 
 const jupiterLeoRetrograde = renderNatalPlacementPreview(normalizeNatalPlacementPreviewInput({
   audience: "you",
@@ -87,7 +87,7 @@ const jupiterLeoRetrograde = renderNatalPlacementPreview(normalizeNatalPlacement
 assert.match(jupiterLeoRetrograde.body, /Jupiter is where you grow/u);
 assert.match(jupiterLeoRetrograde.body, /Warmth spills out of you/u);
 assert.match(jupiterLeoRetrograde.body, /Your Jupiter is in your 3rd house/u);
-assert.match(jupiterLeoRetrograde.body, /Jupiter is retrograde in the birth chart/u);
+assert.doesNotMatch(jupiterLeoRetrograde.body, /Jupiter is retrograde in the birth chart/u);
 assert.doesNotMatch(
   jupiterLeoRetrograde.body,
   /Leo wants people to see how much care went into the effort/u,

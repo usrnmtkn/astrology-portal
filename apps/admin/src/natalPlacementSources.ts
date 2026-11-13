@@ -1,3 +1,5 @@
+import { natalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
+
 export const natalPlacementPlanets = [
   "sun",
   "moon",
@@ -117,8 +119,8 @@ export function ordinalHouse(house: NatalPlacementHouse) {
   return `${house}th`;
 }
 
-export function natalPlacementLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign, house: NatalPlacementHouse) {
-  return `${natalPlacementPointLabel(planet)} in ${titleCase(sign)} in the ${ordinalHouse(house)} house`;
+export function natalPlacementLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign, house: NatalPlacementHouse, motion: NatalPlacementMotion = "direct") {
+  return `${natalPlacementPointLabel(planet)}${motion === "retrograde" ? " retrograde" : ""} in ${titleCase(sign)} in the ${ordinalHouse(house)} house`;
 }
 
 export function natalPlacementSignLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign) {
@@ -188,8 +190,9 @@ export function natalPlacementResolverDependencyKeys(
     keys.add(`fallback-vocab/node-direction/${oppositeSign[sign]}`);
   }
 
-  if (motion === "retrograde") {
-    keys.add("fallback-template/natal.modifier.retrograde");
+  const retrogradeKey = motion === "retrograde" ? natalRetrogradeModifierKey(planet, house) : null;
+  if (retrogradeKey) {
+    keys.add(retrogradeKey);
   }
 
   if (house) {
@@ -264,15 +267,18 @@ export function natalPlacementSourceGroups(
     ]
   });
 
-  const motionGroup: NatalPlacementSourceGroup | null = motion === "retrograde" ? {
+  const retrogradeKey = motion === "retrograde" ? natalRetrogradeModifierKey(planet, house) : null;
+  const motionGroup: NatalPlacementSourceGroup | null = motion === "retrograde" && !natalPlacementMotionIsFixed(planet) ? {
     key: "motion",
-    label: `${planetLabel} retrograde fallback`,
-    description: "This shared modifier is used only when the birth-chart calculation says the placement is retrograde and no approved retrograde-specific full write-up exists. Motion is a calculated fact, not an editorial setting.",
-    sources: [{
-      key: "fallback-template/natal.modifier.retrograde",
-      label: "Natal retrograde modifier",
-      scope: "Fallback wording appended to composed retrograde natal placements. An exact retrograde full-copy override is served verbatim and must include its own retrograde treatment."
-    }]
+    label: `${planetLabel} retrograde${house ? ` in the ${ordinalHouse(house)} house` : ""}`,
+    description: house
+      ? "Each planet and house has its own retrograde addition. Motion is a calculated fact."
+      : "Choose a house to edit its You and Friend retrograde additions.",
+    sources: retrogradeKey && house ? [{
+      key: retrogradeKey,
+      label: `${planetLabel} retrograde in the ${ordinalHouse(house)} house modifier`,
+      scope: `Retrograde ${planetLabel} in the ${ordinalHouse(house)} house, across every zodiac sign. Appended after the sign and house paragraphs.`
+    }] : []
   } : null;
 
   if (!house) return [signGroup, ...(motionGroup ? [motionGroup] : []), structureGroup(false)];
@@ -283,7 +289,7 @@ export function natalPlacementSourceGroups(
   return [
     {
       key: "exact",
-      label: `${planetLabel} in ${signLabel} in the ${houseLabel} house`,
+      label: natalPlacementLabel(planet, sign, house, motion),
       description: `Optional ${motionLabel}exact override. Direct and retrograde full write-ups are stored separately so changing motion cannot reuse the other motion's copy. If no approved ${motionLabel}full write-up exists, the app assembles the reader preview from the atomic sources shown here.`,
       sources: [
         {

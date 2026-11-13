@@ -1,4 +1,5 @@
 import { fullDetailReaderFacingCopy } from "./readerSafety";
+import { isNatalRetrogradeModifierKey } from './natalRetrogradeModifier.js';
 
 export function natalPlacementReaderSectionCopy(
   value: string | null | undefined,
@@ -10,6 +11,7 @@ export function natalPlacementReaderSectionCopy(
   // boundary: doing so silently discarded the remainder of approved
   // placement-sign, placement-house, and generic lived rows.
   const readerCopy = fullDetailReaderFacingCopy([value]);
+  if (partKey && isNatalRetrogradeModifierKey(partKey)) return readerCopy;
   if (preserveParagraphs && partKey?.startsWith("fallback-hook/natal-you-placement-complete-final/")) return readerCopy;
 
   // Source blocks retain their governed boundaries and hashes. The natal

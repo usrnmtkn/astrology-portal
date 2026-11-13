@@ -6380,7 +6380,9 @@ export function GeneratedContentAdminDashboard() {
     setSelectedRowId(null);
     setCompositionEditorContext(null);
     setDraft(natalPlacementOverrideDraft(contentKey, label, body));
-    setMessage(`Created a draft exact override for ${label}. It will not replace the composed reader copy until it is reviewed and published.`);
+    setMessage(contentKey.startsWith("fallback-hook/natal-retrograde-modifier/")
+      ? `Created a draft ${label}.`
+      : `Created a draft exact override for ${label}. It will not replace the composed reader copy until it is reviewed and published.`);
     scrollEditorToTop();
   }
 
@@ -10856,6 +10858,7 @@ export function GeneratedContentAdminDashboard() {
         || typeof editablePackageRecord.body_they === "string"
         || typeof objectRecord(currentDraft.sections)?.body_they === "string");
     const isYouOnlyNatalExactDraft = categoryFilter === "Natal Chart"
+      && !currentDraft.contentKey.startsWith("fallback-hook/natal-retrograde-modifier/")
       && packageRecord.reader_only === true
       && packageRecord.render_policy === "reader-only-exact-lived-v1";
     const showNatalFriendEditor = isYouOnlyNatalExactDraft

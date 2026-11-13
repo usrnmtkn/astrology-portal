@@ -122,6 +122,7 @@ function isKnownRenderedKey(contentKey: string) {
     || contentKey.startsWith("sky-article/")
     || contentKey.startsWith("house-horoscope-core/")
     || contentKey.startsWith("fallback-hook/natal-you-placement-complete-final/")
+    || contentKey.startsWith("fallback-hook/natal-retrograde-modifier/")
     || contentKey.startsWith("authored/sky-lunation-macro/");
 }
 
