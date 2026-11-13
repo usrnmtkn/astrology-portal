@@ -1,6 +1,6 @@
 /** Shared CSV contract. No browser, storage, or provider dependencies. */
 import { isDynamicTransitNatalLibraryKey } from "../../web/src/content/transitNatalIdentity.js";
-import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch.js";
+import { mergeStudioPackagePatch, studioPackageObject as object } from "../../../src/shared/studioPackagePatch.js";
 import { decodeCsvCell, quoteCsvCell } from '../../../src/shared/csvText.js';
 export type CsvContentRow = {
   id: string; content_key: string; updated_at?: string | null; event_type?: string | null;
@@ -30,7 +30,6 @@ export function csvWantsPublication(record: CsvRecord): boolean {
   return value === 'yes';
 }
 const copyFields = ['headline', 'summary', 'body', 'body_you', 'body_they', 'text', 'fact_line', 'opening', 'tension', 'development', 'close'];
-const object = (value: unknown): Record<string, any> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, any> : {};
 const safePath = (path: string) => path.split('.').every(part => /^[a-zA-Z0-9_-]+$/.test(part) && !['__proto__', 'prototype', 'constructor'].includes(part));
 const at = (value: unknown, path: string): unknown => path.split('.').reduce<any>((current, key) => current?.[key], value);
 function put(value: Record<string, any>, path: string, text: string) {

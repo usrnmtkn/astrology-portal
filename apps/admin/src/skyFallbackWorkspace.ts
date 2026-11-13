@@ -1,5 +1,5 @@
 import { memoByString } from "./derivedCache";
-import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch.js";
+import { mergeStudioPackagePatch, studioPackageObject as record } from "../../../src/shared/studioPackagePatch.js";
 import { isSkyPlanetLivedKey } from "./skyWriteupRelations";
 // @ts-ignore Shared canonical layout validation and ordered section fields.
 import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
@@ -300,12 +300,6 @@ function skyFallbackIdentityUncached(contentKey: string): SkyFallbackIdentity | 
   }
 
   return null;
-}
-
-function record(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
 }
 
 export function skyPlacementCompositionOptions(source: unknown): SkyPlacementCompositionOptions {

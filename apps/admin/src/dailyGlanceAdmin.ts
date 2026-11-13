@@ -1,4 +1,5 @@
 import { isPendingPackageRevision } from "./generatedContentClient";
+import { studioPackageRecord as objectRecord } from "../../../src/shared/studioPackagePatch.js";
 
 export type DailyGlanceAdminRow = {
   id: string;
@@ -29,12 +30,6 @@ export type DailyGlanceContextInput = {
 
 const dailyHeadlinePrefix = "fallback-hook/daily-headline/";
 const dailyPassagePrefix = "fallback-hook/daily-body/";
-
-function objectRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
 
 function words(value: string) {
   return value
