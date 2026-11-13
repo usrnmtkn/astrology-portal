@@ -10295,6 +10295,31 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
   failComparison = false;
   await workspace.getByRole("button", { name: "Retry comparison", exact: true }).click();
   await expect(workspace.getByLabel("Natal sect reading comparison")).toContainText("Avery existing sign opening.");
+  if (planet === "jupiter" && sect === "day" && theme === "light" && width === 390) {
+    await page.evaluate(() => {
+      const schedule=window.setTimeout.bind(window);
+      window.setTimeout=((handler,timeout,...args)=>schedule(handler,timeout===45_000?1_000:timeout,...args)) as typeof window.setTimeout;
+      const fetchRequest=window.fetch.bind(window);
+      window.fetch=(input,options)=>{
+        const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);
+        if (url.pathname===(window as any).__stalledComparisonPath) return new Promise<Response>((_resolve,reject)=>{
+          const abort=()=>reject(new DOMException('Synthetic stalled comparison was interrupted.','AbortError'));
+          if(options?.signal?.aborted)abort();else options?.signal?.addEventListener('abort',abort,{once:true});
+        });
+        return fetchRequest(input,options);
+      };
+    });
+    for (const [index,path] of ['/api/admin/natal-placement-preview','/api/content-reader'].entries()) {
+      await page.evaluate(path=>{(window as any).__stalledComparisonPath=path;},path);
+      await workspace.getByLabel("Friend’s name in preview").fill(`Retry${index}`);
+      const comparison=workspace.getByLabel("Natal sect reading comparison",{exact:true});
+      await expect(comparison.getByRole('alert')).toContainText('Loading content timed out. Try again; no changes were submitted.',{timeout:5_000});
+      await page.evaluate(()=>{(window as any).__stalledComparisonPath='';});
+      await comparison.getByRole('button',{name:'Retry comparison',exact:true}).click();
+      await expect(comparison.getByRole('article',{name:'Existing placement reading',exact:true}).locator('p')).toHaveText([`Retry${index} existing sign opening.`,`Complete house ${house} ending.`]);
+      await expect(comparison.getByRole('article',{name:'Published general sect passage',exact:true})).toContainText('General sect final sentence.');
+    }
+  }
   expect(writes.every(write => write.status === "DRAFT" && String(write.contentKey ?? "").endsWith(`/${suffix}`))).toBe(true);
   expect(previewInputs.every(input => input.motion === "direct" && [house, "4"].includes(String(input.house)))).toBe(true);
   if (!house) {

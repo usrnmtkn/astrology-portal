@@ -1,3 +1,4 @@
+export {natalEditorialRevisionTarget} from "../../../src/shared/natalEditorialRevisions";
 import { natalSectPlacementKey, parseNatalSectPlacementKey } from "../../../src/shared/natalSectPlacement";
 
 export const natalSectPlanets = ["jupiter", "venus", "mars", "saturn"] as const;

@@ -289,7 +289,7 @@
     "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter day dark 1440": 7.3,
     "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter day dark 390": 6.7,
     "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter day light 1440": 7.3,
-    "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter day light 390": 6.7,
+    "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter day light 390": 8.4,
     "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter night dark 1440": 6.5,
     "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter night dark 390": 7.1,
     "[chromium-desktop] › tests/visual/content-dashboard-admin-user-flows.spec.ts › Natal placement sect drafts compare and reopen independently jupiter night light 1440": 6.7,
@@ -617,6 +617,37 @@
     "[chromium-desktop] › tests/visual/studio-variable-draft-preservation.spec.ts › custom-variable pending saves and dirty navigation retain complete wording 1440 dark": 4.8,
     "[chromium-desktop] › tests/visual/studio-variable-draft-preservation.spec.ts › custom-variable pending saves and dirty navigation retain complete wording 1440 light": 4.7,
     "[chromium-desktop] › tests/visual/studio-variable-draft-preservation.spec.ts › custom-variable pending saves and dirty navigation retain complete wording 390 dark": 4.7,
-    "[chromium-desktop] › tests/visual/studio-variable-draft-preservation.spec.ts › custom-variable pending saves and dirty navigation retain complete wording 390 light": 4.6
-  }
+    "[chromium-desktop] › tests/visual/studio-variable-draft-preservation.spec.ts › custom-variable pending saves and dirty navigation retain complete wording 390 light": 4.6,
+    "[chromium-desktop] › tests/visual/house-natal-publication-lifecycle.spec.ts › house complete private publication, archive and restoration 1440": 5.2,
+    "[chromium-desktop] › tests/visual/house-natal-publication-lifecycle.spec.ts › house complete private publication, archive and restoration 390": 12.9,
+    "[chromium-desktop] › tests/visual/house-natal-publication-lifecycle.spec.ts › natal complete private publication, archive and restoration 1440": 2.9,
+    "[chromium-desktop] › tests/visual/house-natal-publication-lifecycle.spec.ts › natal complete private publication, archive and restoration 390": 2.9,
+    "[chromium-desktop] › tests/visual/house-natal-publication-lifecycle.spec.ts › natal-sign complete private publication, archive and restoration 1440": 2.9,
+    "[chromium-desktop] › tests/visual/house-natal-publication-lifecycle.spec.ts › natal-sign complete private publication, archive and restoration 390": 3,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-chart-context/you/sect/day 1440": 4.4,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-chart-context/you/sect/day 390": 3.9,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-planet-sect/they/saturn/aries/night 1440": 3.8,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-planet-sect/they/saturn/aries/night 390": 4,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-planet-sect/you/jupiter/day 1440": 3.5,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-planet-sect/you/jupiter/day 390": 3.8,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-twelfth-ruler/they/ruler-house/6 1440": 4,
+    "[chromium-desktop] › tests/visual/natal-editorial-publication.spec.ts › Natal editorial preserves public copy and reopens private revision cms/natal-twelfth-ruler/they/ruler-house/6 390": 3.4,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal empty-house reader preview recovers response without leaving the editor 1440": 1.4,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal empty-house reader preview recovers response without leaving the editor 390": 0.9,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal empty-house reader preview recovers stall without leaving the editor 1440": 2,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal empty-house reader preview recovers stall without leaving the editor 390": 2,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal placement reader preview recovers response without leaving the editor 1440": 1,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal placement reader preview recovers response without leaving the editor 390": 0.9,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal placement reader preview recovers stall without leaving the editor 1440": 2,
+    "[chromium-desktop] › tests/visual/natal-friend-publication.spec.ts › Natal placement reader preview recovers stall without leaving the editor 390": 1.9
+  },
+  "supplementalSources": [
+    {
+      "recordedAt": "2026-11-12",
+      "baseRevision": "988c17cf7dccad62c01180fd4273bd5c2caebe60",
+      "source": "Local fresh-build Chromium House/Natal candidate acceptance; 44 passing cases, worker1, no retry.",
+      "cases": 44,
+      "scope": "House/Natal lifecycle, editorial revisions, preview and sect recovery, approved-source lost acknowledgement, Friend publication. New identities plus relevant existing timings only; inherited hosted timings retained. Existing hosted estimates are retained when higher than the local timing."
+    }
+  ]
 }

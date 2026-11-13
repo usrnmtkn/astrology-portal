@@ -27,6 +27,8 @@ export default defineConfig({...base,
     "studio-article-memory.spec.ts",
     "studio-owner-publishing.spec.ts",
     "natal-friend-publication.spec.ts",
+    "house-natal-publication-lifecycle.spec.ts",
+    "natal-editorial-publication.spec.ts",
     "personal-transit-copy-versions.spec.ts",
     "aspect-pattern-draft-preservation.spec.ts",
     "studio-variable-draft-preservation.spec.ts"

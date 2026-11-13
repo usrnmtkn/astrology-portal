@@ -3693,6 +3693,7 @@ export function GeneratedContentAdminDashboard() {
     return result.statuses;
   }, secret);
   const contentLibraryBrowseActive = activePage === 'content' && !['Natal Chart', 'Natal Aspects', 'Calendar Aspects'].includes(categoryFilter);
+  const [natalEditorialTools, setNatalEditorialTools] = useState<typeof import('./natalEditorialLibrary') | null>(null);
   const [libraryTools, setLibraryTools] = useState<typeof import('./contentLibraryNavigation') | null>();
   useEffect(() => {
     if (!contentLibraryBrowseActive || libraryTools !== undefined) return;
@@ -5554,14 +5555,15 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       const savedDraft = saved ? draftFromRow(saved) : null;
       const calendarPrivateRevision = calendarPlanetaryRevisionTarget(saved, "studio-draft");
+      const natalPrivateRevision = natalEditorialTools?.natalEditorialRevisionTarget(saved, "studio-draft");
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
         (draftForSave.id && saved.id !== draftForSave.id && !((standaloneArticleKind(draftForSave.contentKey) || draftForSave.contentKey.startsWith("education/astro-101/")
-          || calendarPlanetaryRevisionTarget(draftForSave))
-          && (status === "DRAFT" || status === "REVIEWED" && calendarPrivateRevision) && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
+          || calendarPlanetaryRevisionTarget(draftForSave) || natalEditorialTools?.natalEditorialRevisionTarget(draftForSave))
+          && (status === "DRAFT" || status === "REVIEWED" && (calendarPrivateRevision || natalPrivateRevision)) && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
           && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))
         || (status === "LIVE" && saved.lane !== "serving")
         || (status === "LIVE" && saved.review_state)
-        || (status === "REVIEWED" && saved.review_state && !(calendarPrivateRevision && saved.review_state === "owner-review-required"))
+        || (status === "REVIEWED" && saved.review_state && !((calendarPrivateRevision || natalPrivateRevision) && saved.review_state === "owner-review-required"))
         || (["status", "headline", "summary", "body"] as const).some((field) => saved[field] !== expectedDraft[field])
         || (templateReceipt && !templateReceipt.matches(expectedDraft, saved))
       )) || (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft) && !writesPersonalTransitExactCopy(draftForSave))) {
@@ -6166,7 +6168,9 @@ export function GeneratedContentAdminDashboard() {
       setIsLoading(true);
       try {
         row = await hydrateGeneratedContentRow(row, true, Boolean(placementSelection), controller.signal);
+        const natalTools = row.content_key.startsWith("cms/natal-") ? await import("./natalEditorialLibrary") : null;
         if (controller.signal.aborted) return false;
+        if (natalTools) setNatalEditorialTools(natalTools);
       } catch (error) {
         if (controller.signal.aborted) return false;
         setEditorSaveError(dashboardErrorMessage(error));
@@ -6264,10 +6268,12 @@ export function GeneratedContentAdminDashboard() {
         return;
       }
       if (!row) {
-        const { natalEditorialDraftForKey } = await import("./natalEditorialLibrary");
-        const natalDraft = natalEditorialDraftForKey(contentKey);
+        const natalTools = await import("./natalEditorialLibrary");
+        if (requestId !== sourceOpenRequestRef.current || window.location.hash !== originatingHash) return;
+        const natalDraft = natalTools.natalEditorialDraftForKey(contentKey);
         if (natalDraft) {
           if (!confirmSkyEditorNavigation()) return;
+          setNatalEditorialTools(natalTools);
           setSelectedRowId(null); setEditorSourceRow(null); setCompositionEditorContext(null);
           setEditorSaveError(""); rememberSavedDraft(natalDraft);
           setMessage("Natal reading draft opened. Save your edits before reviewing it for publication.");
@@ -10617,6 +10623,8 @@ export function GeneratedContentAdminDashboard() {
     const isManualCalendarEventDraft = !isPackageDraft && (currentDraft.blockType === "calendar_event" || !currentDraft.blockType) && Boolean(calendarPlanetaryIdentity(currentDraft.contentKey));
     const isCalendarRevisionDraft = !isPackageDraft && (currentDraft.contentKey.startsWith('cms/lunation-article/') || calendarPlanetaryRevisionTarget({...currentDraft,event_type:selectedRow?.event_type},
       currentDraft.mode === "studio-draft" ? "studio-draft" : "feed"));
+    const isNatalEditorialDraft = !isPackageDraft && natalEditorialTools?.natalEditorialRevisionTarget({...currentDraft,event_type:selectedRow?.event_type},
+      currentDraft.mode === "studio-draft" ? "studio-draft" : "in_depth");
     const SkyRelatedContainer = isSkyPlacementSource ? "details" : "section";
     const SkyChangesContainer = isSkyPlacementSource ? "details" : "section";
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
@@ -11362,7 +11370,7 @@ export function GeneratedContentAdminDashboard() {
       && Boolean(currentDraft.headline.trim())
       && Boolean(astro101SlugFromFacts(currentDraft.facts) || astro101Slugify(currentDraft.headline));
     const publishReady = (isAstro101Draft ? astro101PublishReady : Boolean(currentDraft.body.trim())) && (!isNewDraft || isCmsSurfaceDraft);
-    const directReaderDraft = isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft;
+    const directReaderDraft = isCmsSurfaceDraft || isManualCalendarEventDraft || isStandaloneArticleDraft || isNatalEditorialDraft;
     const packageCopyMissing = compatibilityAspectMissingCopy || natalAspectMissingCopy || transitNatalMissingCopy
       || (isBondEffectDraft && !["body_you", "body_they"].every(field => packageFieldString(currentDraft, field).trim()));
     const reviewComplete = currentDraft.status === "REVIEWED" && !draftHasUnsavedChanges;
@@ -13036,7 +13044,7 @@ export function GeneratedContentAdminDashboard() {
           {!(isStandaloneArticleDraft && isNewDraft) && <StudioButton
             className={packageOwnerCanPublish ? "admin-publish-button" : "admin-primary-button"}
             onClick={() => void (async () => {
-              if (isStandaloneArticleDraft || isCalendarRevisionDraft) {
+              if (isStandaloneArticleDraft || isCalendarRevisionDraft || isNatalEditorialDraft) {
                 await publishStandaloneArticle(currentDraft);
               } else if (packageOwnerCanPublish) {
                 await publishPackageDraft(currentDraft);
@@ -13140,7 +13148,7 @@ export function GeneratedContentAdminDashboard() {
               ) : compositeGlobalPublicationBlocked ? (
                 <small className={fieldHintClassName}>This personalized reading cannot be published for everyone. Publish shared writing from a reusable Composite source.</small>
               ) : (
-                <StudioButton className="admin-publish-button" onClick={() => void (isStandaloneArticleDraft || isAstro101Draft || isCalendarRevisionDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady || (isAstro101Draft && currentDraft.status === "LIVE" && !draftHasUnsavedChanges)} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                <StudioButton className="admin-publish-button" onClick={() => void (isStandaloneArticleDraft || isAstro101Draft || isCalendarRevisionDraft || isNatalEditorialDraft ? publishStandaloneArticle(currentDraft, true) : saveDraft("LIVE"))} disabled={isLoading || !cmsCanSignOff || !publishReady || (isAstro101Draft && currentDraft.status === "LIVE" && !draftHasUnsavedChanges)} title={!publishReady ? (isAstro101Draft ? "Write the article before publishing." : "Add the required main copy before publishing.") : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                   <Check size={16} aria-hidden="true" />
                   {isScheduledStandaloneArticle ? "Schedule release" : "Publish to app"}
                 </StudioButton>

@@ -3,7 +3,7 @@ import { Stack, Text } from "./studio-ds/primitives";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { adminCredentialHeaders } from "./adminSecret";
+import { requestStudioJson } from "./generatedContentClient";
 import {
   isNatalPlacementAngle,
   natalPlacementExactKey,
@@ -157,6 +157,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
   const [publicationVersion, setPublicationVersion] = useState(0);
   useEffect(() => subscribeToContentPublications(() => setPublicationVersion((version) => version + 1)), []);
   const [audience, setAudience] = useState<"you" | "they">(initialAudience);
+  const [retry, setRetry] = useState(0);
   const [preview, setPreview] = useState<PreviewState>({
     appliedOverrideKeys: [],
     error: null,
@@ -198,19 +199,23 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
         }
       : { ...current, error: null, loading: false });
 
-    void fetch("/api/admin/natal-placement-preview", {
+    void requestStudioJson("/api/admin/natal-placement-preview", secret, {
       method: "POST",
-      headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
       body: JSON.stringify({ audience, ...(house ? { house } : {}), motion, overrides, planet, sign }),
-      signal: controller.signal
-    }).then(async (response) => {
-      const payload = await response.json().catch(() => null) as {
+      signal: controller.signal,
+      readOnly: true
+    }).then((response) => {
+      if (controller.signal.aborted) return;
+      const payload = response as {
         appliedOverrideKeys?: string[];
         error?: string;
         ignoredOverrides?: IgnoredPreviewOverride[];
         rendered?: NatalRender;
-      } | null;
-      if (!response.ok || !payload?.rendered) throw new Error(payload?.error ?? `Preview request failed with ${response.status}.`);
+      };
+      if (!payload.rendered || typeof payload.rendered.body !== "string" || typeof payload.rendered.headline !== "string"
+        || !Array.isArray(payload.rendered.parts) || payload.rendered.parts.some(part => typeof part !== "string")) {
+        throw new Error(payload.error ?? "The reader preview could not be assembled.");
+      }
       setPreview({
         appliedOverrideKeys: payload.appliedOverrideKeys ?? [],
         error: null,
@@ -231,7 +236,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           });
     });
     return () => controller.abort();
-  }, [audience, house, motion, overrideFingerprint, planet, previewContextKey, publicationVersion, secret, sign]);
+  }, [audience, house, motion, overrideFingerprint, planet, previewContextKey, publicationVersion, retry, secret, sign]);
 
   const exactKey = house ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
@@ -331,6 +336,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           <p>{preview.error}</p>
         </div>
       )}
+      {preview.error && <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry reader preview</StudioButton>}
     </section>
   );
 }

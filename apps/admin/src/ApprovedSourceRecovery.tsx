@@ -33,7 +33,7 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
     if(statusOnly||!sources.length)return;
     call({action:'preview',sources:JSON.parse(identity)}).then(result=>{
       if(!cancelled&&result.ok&&Array.isArray(result.sources))setPlan(result);
-    }).catch(error=>{if(!cancelled&&kind)setError((error as {details?:string})?.details||(error instanceof Error?error.message:'Could not check Moon readings.'));});
+    }).catch(error=>{if(!cancelled&&(kind||(error as {status?:number})?.status!==422))setError((error as {details?:string})?.details||(error instanceof Error?error.message:'Could not check the available source.'));});
     return()=>{cancelled=true;};
   },[identity,kind,statusOnly,previewAttempt]);
   const run=async(checkOnly=false,cancel=false)=>{
@@ -54,14 +54,14 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
       clearPending();setPending(null);latest.current.onRecovered(result.recovered);
     }catch(failure){
       const status=(failure as {status?:number})?.status;
-      if(!checkOnly&&status&&[400,401,409,422].includes(status)){clearPending();setPending(null);}
+      if(!checkOnly&&status&&[400,401,409,422].includes(status)){clearPending();setPending(null);setPlan(null);setExpanded(false);}
       setError((failure as {details?:string})?.details||(failure instanceof Error?failure.message:'Recovery is not confirmed. Check its status.'));
     }
     finally{setBusy(false);latest.current.onBusy?.(false);}
   };
-  if(!plan&&!pending&&(!kind||!error)||pending&&!statusOnly)return null;
+  if(!plan&&!pending&&!error||pending&&!statusOnly)return null;
   return <div className="admin-savebar-next-step" aria-label={kind?'Moon reading recovery':'Approved source recovery'}>
-    {!plan&&!pending?<><p role="alert">{error}</p><StudioButton disabled={disabled||busy} onClick={()=>setPreviewAttempt(value=>value+1)}>Check reusable Moon readings</StudioButton></>:!expanded?<StudioButton type="button" className="admin-secondary-button" disabled={disabled||busy} onClick={()=>setExpanded(true)}>{kind?'Use reusable Moon readings':'Use approved source'}</StudioButton>:<>
+    {!plan&&!pending?<><p role="alert">{error}</p><StudioButton type="button" disabled={disabled||busy} onClick={()=>setPreviewAttempt(value=>value+1)}>{kind?'Check reusable Moon readings':'Review recovery again'}</StudioButton></>:!expanded?<StudioButton type="button" className="admin-secondary-button" disabled={disabled||busy} onClick={()=>setExpanded(true)}>{kind?'Use reusable Moon readings':'Use approved source'}</StudioButton>:<>
       <p>{kind?'Readers will receive the available approved reusable Moon readings. Your dated readings stay archived and unchanged.':'Readers will receive the installed approved source. Your saved writing stays recoverable in source history.'}</p>
       {plan&&<p>Installed version: {plan.packageVersion}</p>}
       {pending?<>

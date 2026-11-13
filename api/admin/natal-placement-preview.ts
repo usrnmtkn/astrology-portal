@@ -1,6 +1,6 @@
 import { isNatalPlacementAngle, natalPlacementResolverDependencyKeys } from "../../apps/admin/src/natalPlacementSources.js";
 import { emptyHouseSourceKeys } from "../../apps/admin/src/emptyHouseSources.js";
-import { publicationLedgerKey, validContentPublication, publicationTimestamp, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
+import { publicationLedgerKey, validContentPublication, publicationTimestamp, publicationRestoresBaseline, type ContentPublication } from "../../apps/web/src/content/contentPublicationState.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 // The generated package bundle is the production renderer used by the reader app.
@@ -202,7 +202,8 @@ export function renderNatalPlacementPreviewState(input: ReturnType<typeof normal
       && publicationTimestamp(publication.row_updated_at) === publicationTimestamp(candidate.updatedAt);
   }));
   const applied = new Set(productionOverrides.appliedOverrideKeys);
-  const blockedContentKeys = publications.filter((publication) => publication.state === "retired" || !applied.has(publication.content_key)).map((publication) => publication.content_key);
+  const blockedContentKeys = publications.filter((publication) => !publicationRestoresBaseline(publication)
+    && (publication.state === "retired" || !applied.has(publication.content_key))).map((publication) => publication.content_key);
 
   productionOverrides.appliedRows.forEach((row) => {
     if (row.contentKey.startsWith("fallback-template/")) templates.set(row.contentKey, row);

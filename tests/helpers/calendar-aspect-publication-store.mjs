@@ -24,10 +24,19 @@ export async function createCalendarAspectPublicationStore(origin, initial = [])
       return Response.json((await db.query('select to_jsonb(public.retire_content_everywhere($1,$2,$3)) as row',
         [args.p_content_key, args.p_row_id, args.p_expected_updated_at])).rows[0].row);
     }
-    assert.ok(['generated_interpretations', 'studio_generated_content_listing', 'content_publications'].includes(table));
+    assert.ok(['generated_interpretations', 'studio_generated_content_listing', 'content_publications', 'content_baseline_recoveries'].includes(table));
     const stored = (await db.query(`select to_jsonb(g) as row from public.${table === 'studio_generated_content_listing' ? 'generated_interpretations' : table} g`)).rows.map(item => item.row);
     const found = stored.filter(candidate => matchesStoredInventory(candidate, url.searchParams));
     if (!init.method || init.method === 'GET') {
+      const order = (url.searchParams.get('order') ?? '').split(',').filter(Boolean);
+      found.sort((a, b) => {
+        for (const term of order) {
+          const [field, direction] = term.split('.');
+          const result = String(a[field] ?? '').localeCompare(String(b[field] ?? '')) * (direction === 'desc' ? -1 : 1);
+          if (result) return result;
+        }
+        return 0;
+      });
       const offset = Number(url.searchParams.get('offset') ?? 0);
       return Response.json(found.slice(offset, offset + Number(url.searchParams.get('limit') ?? found.length)),
         { headers: { 'content-range': `0-${Math.max(0,found.length-1)}/${found.length}` } });

@@ -13,6 +13,7 @@ export const publicationMigrations = [
   '20261109083214_astro101_private_revision_publication.sql',
   '20261110192807_moon_horoscope_reusable_recovery.sql',
   '20261112020848_calendar_event_private_revisions.sql',
+  '20261112205425_natal_editorial_private_revisions.sql',
   '20261113015845_dated_lunation_article_reusable_recovery.sql',
   '20261113022308_dated_lunation_article_private_revisions.sql'
 ];
