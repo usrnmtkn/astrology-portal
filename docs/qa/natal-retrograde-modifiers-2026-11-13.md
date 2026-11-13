@@ -67,3 +67,10 @@ The canonical generator refreshed 330 source hashes and their derived content
 hash without changing index records or prose. The previously failing generated-report judge contract
 then passed locally; the phrase index remained current. New exact-head release
 checks and production verification are required before reporting deployment.
+
+The next CI run exposed the corresponding stale deterministic Sky comparison
+artifact and the inventory endpoint's prohibition on direct web-library imports.
+The comparison generator refreshed hash metadata with zero provider calls; the
+modifier identity now loads through the endpoint's existing lazy write library.
+The comparison, fast-inventory, natal publication and generated-report judge
+contracts passed locally after those corrections.
