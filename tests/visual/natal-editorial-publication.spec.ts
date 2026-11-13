@@ -59,6 +59,9 @@ for(const width of [390,1440])for(const selection of selections){
    await field.fill(b);
    await editor.locator('.admin-editor-savebar').getByRole('button',{name:'Save draft',exact:true}).click();
    await expect.poll(async()=>(await store.call({method:'rows'})).filter((row:any)=>row.mode==='studio-draft'&&row.status==='DRAFT').length).toBe(1);
+   await expect(editor.getByText('All changes saved',{exact:true})).toBeVisible();
+   await expect(editor.getByRole('alert')).toHaveCount(0);
+   await expect(editor.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
    expect((await read()).payload.rows[0].body).toBe(a);
    expect((await store.call({method:'rows'})).find((row:any)=>row.id===seed.id)).toEqual(live);
    await editor.getByRole('button',{name:'Close',exact:true}).click();

@@ -115,3 +115,33 @@ selected x64 against the checkout's ARM64 esbuild installation. Direct native
 shell builds passed with the same locked dependencies; these setup failures
 remain recorded and are not application or passing-build evidence. No reinstall,
 dependency change, additional allowance or production action was needed.
+
+## Visible private-save receipts
+
+The integrated receipt predicate also accepts the existing dated-lunation
+family before its Calendar/Natal branches. All returned target IDs, expected
+versions, modes, event types and status checks remain enforced. The dated
+owner's three-file checkpoint `d959c9e767fff2ac2e180c6be82eb734d6b63a3a`
+provides this one-line correction, its visible-save regression, and route-drain
+teardown in the existing lunar workspace tests. The neighboring Natal
+eligibility branch is retained.
+
+House/Natal lifecycle and editorial tests now explicitly require the visible
+private-save acknowledgement and disabled Save draft control before closing or
+reloading, alongside absence of the false save error and complete public-A
+preservation. Successful persistence alone is not treated as a successful editor
+interaction. These final combined assertions remain pending on the frozen head.
+
+After the combined receipt change, both fresh native builds and budget guards
+pass again: Web 3,776,933 aggregate gzip bytes/307 files (660 bytes
+under the unchanged integrated limit); Admin 844,067 startup raw /
+245,447 startup gzip and 927,593 aggregate gzip bytes/81 files.
+The focused combined browser discovery contains 60 cases: the 44 House/Natal
+cases, four dated recovery variants and 12 lunar workspace cases. Both dated
+files were already in the 117-spec affected plan; API selection remains 102.
+
+The dated owner's source qualification on checkpoint `d959c9e7` passed its
+complete standalone lunar Studio job: 44 cases, zero retries, 4.8 minutes.
+Its visible Save assertion reproduced the deployed failure and passed all four
+fixed variants. This bounded source qualification is retained separately from
+the combined candidate's pending exact-head checks.

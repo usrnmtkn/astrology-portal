@@ -5558,6 +5558,7 @@ export function GeneratedContentAdminDashboard() {
       const natalPrivateRevision = natalEditorialTools?.natalEditorialRevisionTarget(saved, "studio-draft");
       if (!saved || !savedDraft || saved.content_key !== draftForSave.contentKey || (!isPackageDraft && (
         (draftForSave.id && saved.id !== draftForSave.id && !((standaloneArticleKind(draftForSave.contentKey) || draftForSave.contentKey.startsWith("education/astro-101/")
+          || draftForSave.contentKey.startsWith("cms/lunation-article/")
           || calendarPlanetaryRevisionTarget(draftForSave) || natalEditorialTools?.natalEditorialRevisionTarget(draftForSave))
           && (status === "DRAFT" || status === "REVIEWED" && (calendarPrivateRevision || natalPrivateRevision)) && saved.event_type === standaloneRevisionEvent && saved.mode === "studio-draft"
           && saved.source_snapshot?.targetRowId === draftForSave.id && saved.source_snapshot?.targetRowUpdatedAt === expectedUpdatedAt))

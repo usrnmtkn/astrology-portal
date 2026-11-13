@@ -73,6 +73,9 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await reader.reload();await expect.poll(capture).toContain('closes edition A.');expect((await capture()).replace(/\s+/gu,' ').trim()).toBe(copyA.replace(/\s+/gu,' '));
     await field.fill(copyB);await editor.getByRole('button',{name:'Save draft',exact:true}).click();
     await expect.poll(async()=>(await call({method:'rows'})).some((row:any)=>row.mode==='studio-draft'&&row.body===copyB)).toBe(true);
+    await expect(editor.getByText('All changes saved',{exact:true})).toBeVisible();
+    await expect(editor.getByRole('alert')).toHaveCount(0);
+    await expect(editor.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
     await reader.reload();await expect.poll(capture).toContain('closes edition A.');expect(await capture()).not.toContain('edition B');
     const privateDraft=(await call({method:'rows'})).find((row:any)=>row.mode==='studio-draft'&&row.body===copyB);
     const reviewed=await call({method:'PATCH',body:{id:privateDraft.id,expectedUpdatedAt:privateDraft.updated_at,status:'REVIEWED'}});expect(reviewed.status).toBe(200);

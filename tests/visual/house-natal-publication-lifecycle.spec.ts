@@ -85,6 +85,10 @@ for(const width of [390,1440])for(const family of ['house','natal','natal-sign']
    await fill('You','B');if(!usesBody)await fill('Friend','B');
    await region.getByRole('button',{name:'Save draft',exact:true}).click();
    await expect.poll(async()=>(await store.call({method:'rows'})).filter((r:any)=>r.mode==='studio-draft'&&r.status==='DRAFT').length).toBe(1);
+   await expect(region.getByText(family==='house'?'Changes saved as drafts. Publish when ready for readers.':'Draft saved.',{exact:true})).toBeVisible();
+   await expect(region.getByRole('button',{name:'Save draft',exact:true})).toBeDisabled();
+   await expect(page.getByText('Save did not return the saved row.',{exact:true})).toHaveCount(0);
+   await expect(region.getByText('Could not save. Your edits are still here; check the error notification for details.',{exact:true})).toHaveCount(0);
    expect((await read()).payload.rows).toEqual(a.payload.rows);
    await page.reload();await open();
    for(const audience of (usesBody?['You']:['You','Friend']) as Array<'You'|'Friend'>){
