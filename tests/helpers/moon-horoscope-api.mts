@@ -4,7 +4,7 @@ import {lunationHoroscopeIdentities} from '../../src/shared/lunationHoroscopeIde
 import {fileURLToPath} from 'node:url';
 import {createApiStore} from './calendar-review-api.mjs';
 import {readerRouteResponse} from './content-reader-route.mjs';
-export const store=await createApiStore([],{sqlMoonLifecycle:true,uuidIds:true});
+export const store=await createApiStore([],{sqlMoonLifecycle:true,uuidIds:true,projectSelect:true});
 const storeFetch=globalThis.fetch;
 process.env.OPENAI_API_KEY='synthetic-moon-browser-key';
 process.env.CONTENT_GENERATION_PROVIDER_SKY_ARTICLE='openai';
@@ -40,7 +40,7 @@ export async function invoke(method:string,body?:any,url='/api/admin/generated-c
   if(method==='reader'){const response=(await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}))!;return {status:response.status,payload:await response.json()};}
   const writing=url.startsWith('/api/admin/sky-article-template-slots');
   if(!writing&&!url.startsWith('/api/admin/lunation-writing'))return store.invoke(method,body,url);
-  if(!writing&&method!=='GET')throw new Error('This fixture must never generate collective lunar writing.');
+  if(!writing&&method!=='GET'&&!['create-manual','save','stage','archive','restore'].includes(body?.action))throw new Error('This fixture must never generate collective lunar writing.');
   if(writing){
     const event=store.rows.get(body?.moonHoroscopes?.id)?.sections?.moonWritingDraft?.event;
     if(event){const id=`synthetic-reference-${event.phase}`;store.rows.set(id,{id,content_key:`authored/sky-lunation-macro/${event.phase}/${event.sign.toLowerCase()}`,status:'DRAFT',updated_at:'2026-11-01T00:00:00.000Z',headline:'Synthetic lunar reference',body:'Complete synthetic lunar reference opening.\n\nComplete synthetic lunar reference ending.',sections:{},facts:{},source_snapshot:{}});}

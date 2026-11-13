@@ -2875,6 +2875,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
       || existing.block_type !== target.block_type || !isDeepStrictEqual(existing.sections?.slots, target.sections?.slots))) {
       throw new GeneratedContentRequestError("The Calendar event facts changed. Reopen its current source before publishing this revision.", 409);
     }
+    if (target.event_type==='lunation-article' && (existing.block_type!==target.block_type
+      || existing.target_date!==target.target_date || !isDeepStrictEqual(existing.facts,target.facts))) {
+      throw new GeneratedContentRequestError('The Moon event facts changed. Reopen its current source before publishing this revision.',409);
+    }
     if (!existing.headline?.trim() || !existing.body?.trim()) throw new GeneratedContentRequestError("Complete the article title and body before publishing.");
     await assertVersionedStudioVariablePublication(v3PackageRecord(existing));
     const now = nextGeneratedContentVersion(target.updated_at);
@@ -2889,6 +2893,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       source_snapshot: { ...target.source_snapshot, review_status: "approved", studioOwnerApproval: studioOwnerApproval(approved, now) },
       status: "LIVE", lane: "serving", review_state: null, updated_at: now, reviewed_at: now, published_at: now
     };
+    Object.assign(articlePatch,await validatedLunationPublication({...target,...articlePatch}));
     assertReaderEligiblePublication({ ...target, ...articlePatch });
     return publishRevisionAtomically(body, existing, target, articlePatch);
   }

@@ -33,7 +33,7 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
     if(statusOnly||!sources.length)return;
     call({action:'preview',sources:JSON.parse(identity)}).then(result=>{
       if(!cancelled&&result.ok&&Array.isArray(result.sources))setPlan(result);
-    }).catch(error=>{if(!cancelled&&kind)setError(error instanceof Error?error.message:'Could not check Moon readings.');});
+    }).catch(error=>{if(!cancelled&&kind)setError((error as {details?:string})?.details||(error instanceof Error?error.message:'Could not check Moon readings.'));});
     return()=>{cancelled=true;};
   },[identity,kind,statusOnly,previewAttempt]);
   const run=async(checkOnly=false,cancel=false)=>{

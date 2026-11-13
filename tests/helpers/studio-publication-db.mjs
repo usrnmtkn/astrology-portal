@@ -12,7 +12,9 @@ export const publicationMigrations = [
   '20261107123057_studio_approved_source_recovery.sql',
   '20261109083214_astro101_private_revision_publication.sql',
   '20261110192807_moon_horoscope_reusable_recovery.sql',
-  '20261112020848_calendar_event_private_revisions.sql'
+  '20261112020848_calendar_event_private_revisions.sql',
+  '20261113015845_dated_lunation_article_reusable_recovery.sql',
+  '20261113022308_dated_lunation_article_private_revisions.sql'
 ];
 export const publicationTestSchema = `create role anon; create role authenticated; create role service_role bypassrls;
 create table public.generated_interpretations (

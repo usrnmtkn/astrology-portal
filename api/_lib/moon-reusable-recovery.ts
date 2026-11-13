@@ -4,6 +4,7 @@ import {approvedSourceBaseline} from './approved-source-recovery.js';
 import {lunationArticleEvents} from './lunation-article-facts.js';
 import {moonHoroscopeKey} from '../../src/shared/datedMoonIdentity.mjs';
 import {lunationHoroscopeIdentities} from '../../src/shared/lunationHoroscopeIdentities.js';
+import {datedLunationContentKey,lunationReaderContentKeys} from '../../apps/web/src/content/lunationArticleIdentity.js';
 import {validContentPublication,publicationRestoresBaseline,publicationTimestamp} from '../../apps/web/src/content/contentPublicationState.js';
 
 const uuid=/^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/iu;
@@ -25,20 +26,23 @@ async function sourceRow(get:Store,id:string,allowMissing=false){
   const rows=await get(`generated_interpretations?${new URLSearchParams({id:`eq.${id}`,select:'id,content_key,updated_at,status,surface,mode,event_type,target_date,facts'})}`);
   if(!Array.isArray(rows)||rows.length>1)throw new AdminHttpError(503,'The archived Moon readings could not be verified.');
   if(!rows.length){if(allowMissing)return null;throw new AdminHttpError(409,'The archived Moon readings could not be verified.');}
-  return {...rows[0],event:rows[0].facts?.lunationHoroscopes?.event};
+  const row=rows[0];
+  return {...row,event:row.event_type==='lunation-article'?row.facts?.lunationArticle?.event:row.facts?.lunationHoroscopes?.event};
 }
 async function baseline(row:any){
-  const event=row.event;
-  if(row.status!=='ARCHIVED'||row.surface!=='sky'||row.mode!=='article'||row.event_type!=='lunation-horoscopes'||row.target_date!=null
-    ||!event||row.content_key!==moonHoroscopeKey(event)||event.eclipseType||typeof event.timeZone!=='string')
-    throw new AdminHttpError(422,'Select an archived dated Moon horoscope set with reusable readings.');
+  const event=row.event,article=row.event_type==='lunation-article';
+  const identity=article?datedLunationContentKey:moonHoroscopeKey;
+  if(row.status!=='ARCHIVED'||row.surface!=='sky'||row.mode!=='article'||!['lunation-horoscopes','lunation-article'].includes(row.event_type)||row.target_date!=null
+    ||!event||row.content_key!==identity(event)||!article&&event.eclipseType||typeof event.timeZone!=='string')
+    throw new AdminHttpError(422,'Select archived dated Moon writing with reusable readings.');
   let month:string;
   try{month=new Intl.DateTimeFormat('en-CA',{timeZone:event.timeZone,year:'numeric',month:'2-digit'}).format(new Date(event.startsAt));}
   catch{throw new AdminHttpError(422,'The saved Moon event is invalid.');}
-  const calculated=(await lunationArticleEvents(month,event.timeZone)).find(value=>moonHoroscopeKey(value)===row.content_key);
-  if(!calculated||Date.parse(calculated.startsAt)!==Date.parse(event.startsAt)||calculated.eclipseType)
+  const calculated=(await lunationArticleEvents(month,event.timeZone)).find(value=>identity(value)===row.content_key);
+  if(!calculated||Date.parse(calculated.startsAt)!==Date.parse(event.startsAt)||!article&&calculated.eclipseType)
     throw new AdminHttpError(422,'The saved readings do not match a calculated Moon event.');
-  const keys=lunationHoroscopeIdentities(calculated.phase,calculated.sign).map(value=>value.contentKey);
+  const keys=article?lunationReaderContentKeys(calculated).filter(key=>key.startsWith('authored/'))
+    :lunationHoroscopeIdentities(calculated.phase,calculated.sign).map(value=>value.contentKey);
   const approved=keys.map(approvedSourceBaseline).filter((value):value is NonNullable<typeof value>=>Boolean(value));
   if(!approved.length)throw new AdminHttpError(422,'No approved reusable readings are installed for this Moon.');
   return {keys,approved,packageVersion:approved[0].packageVersion,baselineSHA256:digest(approved)};

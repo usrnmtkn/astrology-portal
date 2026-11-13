@@ -131,7 +131,7 @@ export function publicationRpcFixture(getRows, saveRows, getPublications = () =>
     }
   };
   fixture.patchMoonRows = (rows, patch, headers) => patchRows(rows, patch, headers,
-    row => row.content_key.startsWith('cms/lunation-horoscopes/') && row.mode === 'article');
+    row => /^cms\/lunation-(?:horoscopes|article)\//u.test(row.content_key) && row.mode === 'article');
   fixture.patchArticleRows = (rows, patch, headers) => patchRows(rows, patch, headers,
     row => row.content_key.startsWith('education/astro-101/') && row.surface === 'education'
       && (['article','all'].includes(row.mode) || row.mode === 'studio-draft' && row.event_type === 'standalone-article-revision'));

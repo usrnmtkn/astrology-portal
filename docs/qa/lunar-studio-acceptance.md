@@ -16,11 +16,13 @@ ready for review. Editorial approval of generated prose remains the owner's.
 | An author can write a dated article without preparing a writer request. | **Write manually** opens a blank reference draft for the calculated event. Create, save, reopen, archive and restore read no writing profiles, feedback or source passages and call no provider. Existing event workspaces are detected by identity only and never replaced. Review & publish stages only the saved article into the ordinary reader editor; a reader collision preserves its existing writing. |
 | Dated workspaces can be archived and restored. | The dedicated owner-authenticated endpoint conditionally changes only a reference workspace's DRAFT/ARCHIVED status. Complete copy, facts, sections, writing plan and rejection history survive. Active requests and stale versions are refused. Archived drafts are discoverable and read-only, and Restore returns a non-serving draft without a provider call or publication. |
 | A published dated article reaches its reader. | Publish through the actual handler with the current validation metadata, then verify the Calendar event card and detail select its title and opening before Calendar → Read article and a direct reader reload preserve the complete saved passage. Retirement must remove it without revealing an older event excerpt. The validator's exact `legacy` profile label at the two known lunar lint paths is technical metadata, not a retired-source flag; other unsafe metadata and publication checks still apply. |
+| Private dated revisions preserve the published edition. | Save and reopen a complete private revision while the reader retains edition A. Publishing the revision atomically replaces A with complete edition B; changed event facts, stale versions and mismatched targets are rejected. Reviewed private revisions remain publishable through the same editor. |
+| An archived dated article can return to reusable reading inheritance. | After explicit retirement and archival, **Use reusable Moon readings** previews the calculated event’s available approved macro. Cancel makes no write; confirmation changes only the exact dated publication ledger, leaving archived writing and reusable sources unchanged. Failed preview can retry; a lost acknowledgement reloads into status checking without replay. The normal reader returns its complete prior reusable article after repeated reloads. |
 | Generation has a clear start and stable progress. | Calculated event → Create new draft → saved plan → explicit Create draft; one enabled primary action, no unrelated header Create menu, and no separate approval checkbox. Multiple pending polls leave Back to drafts available, and completion opens persisted text. |
 | Reloads and errors preserve the same request. | Test reload, transient retrieval failure, terminal failure and completion in another tab, with provider-call counts. |
 | Rejection preserves the draft and leads to an explicit replacement. | Reject & regenerate requires a reason and saved edits. Review replacement plan archives the exact title, body, facts, plan and request receipt in one conditional write. Regenerate draft explicitly approves the updated plan and starts one request. Test cancel, stale writes, failed refresh, history after reload, and no old text or saved-list controls while writing. Existing reader entries remain separate. |
 | Navigation, layout and empty states work. | Separate list/editor screens, focused Back to drafts return, settings disclosure, desktop/mobile, light/dark, direct link/reload, no-match/reset, accessible headings and shared typography, no horizontal page overflow. |
-| Release evidence matches the delivered revision. | Local full Content Studio API gate, exact-head hosted API success, fresh browser suite, CSS and bundle gates, READY main deployment, repeated deployed flow and read-only real saved-row checks. |
+| Release evidence matches the delivered revision. | Required exact-head affected API and browser gates under `docs/qa/affected-ci.md`, fresh browser suite, CSS and bundle gates, READY main deployment, repeated deployed flow and read-only real saved-row checks. |
 
 Regression: `tests/visual/lunation-studio.spec.ts` covers the saved library and
 reusable writer; `tests/visual/lunation-writing-studio.spec.ts` covers the dated
@@ -100,3 +102,12 @@ This is local evidence; the controls are not deployed.
   controls against the actual handlers and synthetic storage instead.
 - Hosted CI, deployment and the live owner workflow remain unverified. Existing
   reader entries retain their own text and publication state.
+
+`tests/visual/dated-lunation-recovery.spec.ts` covers manual authoring, actual
+reader publication, private saves, reviewed-revision reopening and republication,
+then retirement, archival and explicit reusable recovery at both widths and
+themes. `scripts/test-moon-reusable-recovery.mts --article` exercises the same
+actual handlers and native publication transaction, including source preservation,
+stale/version guards, role restrictions and recovery receipts. These use isolated
+fixtures; production acceptance requires separate signed-in temporary-content QA
+and aggregate preservation checks.

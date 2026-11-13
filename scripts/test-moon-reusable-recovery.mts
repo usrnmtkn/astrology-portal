@@ -9,8 +9,10 @@ import {pathToFileURL} from 'node:url';
 import {invoke,store} from '../tests/helpers/moon-horoscope-api.mts';
 import {createPublicationDb,seedPublicationRow} from '../tests/helpers/studio-publication-db.mjs';
 import {MOON_HOROSCOPE_SIGNS,moonHoroscopeKey,moonHoroscopeBody,parseMoonHoroscopes} from '../src/shared/datedLunationHoroscopes.mjs';
+import {datedLunationContentKey} from '../apps/web/src/content/lunationArticleIdentity.js';
 
 const endpoint='/api/admin/content-baseline-recovery';
+const article=process.argv.includes('--article');
 const recover=(body:any)=>invoke('POST',{recoveryKind:'moon-reusable',...body},endpoint);
 const deployment=JSON.parse(readFileSync('vercel.json','utf8'));
 const recoveryFunction=deployment.functions['api/admin/content-baseline-recovery.ts'];
@@ -50,21 +52,54 @@ try{
   await reader.loadLunationBookFallbackArchitectureV3Bundle();
   const events=await invoke('GET',undefined,'/api/admin/lunation-writing?month=2020-05&timeZone=America%2FNew_York');
   const event=events.payload.events.find((value:any)=>value.phase==='full-moon');assert(event);
-  const contentKey=moonHoroscopeKey(event),empty=new Map();
+  const contentKey=article?datedLunationContentKey(event):moonHoroscopeKey(event),empty=new Map();
   const baseline=reader.resolveLunationArticleHoroscopes(event,empty),general=reader.resolveLunationReaderSource(event,empty);
   assert(baseline.length>0,'Fixture must have complete independently approved reusable readings');
   assert(general?.body,'Fixture must have a complete general article');
   const paste=MOON_HOROSCOPE_SIGNS.map(sign=>`${sign}\n${sign} neutral dated test opening.\n\n${sign} exact dated test ending.`).join('\n\n');
   const section=parseMoonHoroscopes(paste,event);
-  let result=await invoke('POST',{contentKey,surface:'sky',mode:'article',eventType:'lunation-horoscopes',targetDate:null,provider:'manual-admin',status:'DRAFT',lane:'serving',body:moonHoroscopeBody(section),headline:'Temporary Moon recovery verification',summary:'',sections:{articleHoroscopes:section},facts:{lunationHoroscopes:{event}},sourceSnapshot:{editorialImport:{originalSource:paste}}});
+  const articleCopy='A neutral opening marks this temporary article.\n\nA complete final paragraph verifies that the saved article remains intact.';
+  let result;
+  if(article){
+    result=await invoke('POST',{action:'create-manual',month:'2020-05',timeZone:'America/New_York',eventId:event.id},'/api/admin/lunation-writing');assert.equal(result.status,200,JSON.stringify(result.payload));
+    let workspace=result.payload.rows[0];
+    result=await invoke('POST',{action:'save',id:workspace.id,expectedUpdatedAt:workspace.updated_at,headline:'Temporary Moon recovery verification',body:articleCopy},'/api/admin/lunation-writing');assert.equal(result.status,200,JSON.stringify(result.payload));workspace=result.payload.rows[0];
+    result=await invoke('POST',{action:'stage',id:workspace.id,expectedUpdatedAt:workspace.updated_at},'/api/admin/lunation-writing');assert.equal(result.status,200,JSON.stringify(result.payload));
+    result={status:200,payload:{rows:[(await invoke('rows')).find((value:any)=>value.content_key===contentKey)]}};
+  }else result=await invoke('POST',{contentKey,surface:'sky',mode:'article',eventType:'lunation-horoscopes',targetDate:null,provider:'manual-admin',status:'DRAFT',lane:'serving',
+    body:moonHoroscopeBody(section),headline:'Temporary Moon recovery verification',summary:'',
+    sections:{articleHoroscopes:section},facts:{lunationHoroscopes:{event}},sourceSnapshot:{editorialImport:{originalSource:paste}}});
   assert.equal(result.status,200,JSON.stringify(result.payload));let row=result.payload.rows[0];
   result=await invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});assert.equal(result.status,200,JSON.stringify(result.payload));
-  const live=result.payload.rows[0];
-  result=await invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,sourceLifecycleAction:'archive'});assert.equal(result.status,200,JSON.stringify(result.payload));
+  let live=result.payload.rows[0];
+  if(article){
+    const saved=await invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,status:'DRAFT',body:articleCopy+'\n\nA private revised ending remains unpublished.'});
+    assert.equal(saved.status,200,JSON.stringify(saved.payload));
+    const visible=await invoke('reader',{keys:[contentKey]});
+    assert(visible.payload.rows[0]?.body===articleCopy,'Saving private dated-article changes must retain the published complete article');
+    let proposal=saved.payload.rows[0];const revisionCopy=articleCopy+'\n\nA private revised ending remains unpublished.';
+    assert(proposal.id!==live.id&&proposal.mode==='studio-draft'&&proposal.lane==='reference','Private changes need a separate non-serving proposal');
+    const reviewed=await invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,status:'REVIEWED'});assert.equal(reviewed.status,200,JSON.stringify(reviewed.payload));
+    assert((await invoke('reader',{keys:[contentKey]})).payload.rows[0]?.body===articleCopy,'Reviewing a private revision must leave the published article unchanged');
+    const ready=await invoke('PATCH',{id:proposal.id,expectedUpdatedAt:reviewed.payload.rows[0].updated_at,status:'DRAFT'});assert.equal(ready.status,200,JSON.stringify(ready.payload));proposal=ready.payload.rows[0];
+    store.rows.set(proposal.id,{...proposal,facts:{...proposal.facts,lunationArticle:{...proposal.facts.lunationArticle,event:{...proposal.facts.lunationArticle.event,sign:'Aries'}}}});
+    const wrongFacts=await invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,ownerAction:'publish-standalone-article-revision'});
+    assert.equal(wrongFacts.status,409,'A private proposal cannot change calculated Moon facts');
+    store.rows.set(proposal.id,proposal);
+    const promoted=await invoke('PATCH',{id:proposal.id,expectedUpdatedAt:proposal.updated_at,ownerAction:'publish-standalone-article-revision'});
+    assert.equal(promoted.status,200,JSON.stringify(promoted.payload));
+    live=promoted.payload.rows.find((value:any)=>value.id===live.id);
+    assert(live?.status==='LIVE'&&live.body===revisionCopy,'Republish promotes the complete saved revision to the original reader identity');
+    assert((await invoke('reader',{keys:[contentKey]})).payload.rows[0]?.body===revisionCopy,'The ordinary reader receives the complete new edition');
+    assert.equal(store.rows.get(proposal.id).status,'ARCHIVED','The consumed private proposal stays recoverable');
+    result=await invoke('POST',{action:'retire',id:live.id,contentKey,expectedUpdatedAt:live.updated_at},'/api/admin/content-publication');
+    assert.equal(result.status,200,JSON.stringify(result.payload));
+  }
+  result=await invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,sourceLifecycleAction:'archive',...(article?{status:'ARCHIVED'}:{})});assert.equal(result.status,200,JSON.stringify(result.payload));
   row=result.payload.rows[0];const original=structuredClone(row);
   reader.installContentPublications(await store.publication.publications());
   const staleMap=reader.generatedContentMapFromRows([live]);
-  assert.deepEqual(reader.resolveLunationArticleHoroscopes(event,staleMap),[],'Archive continues to suppress dated and reusable readings');
+  assert(article?reader.resolveLunationReaderSource(event,staleMap)?.unavailable:reader.resolveLunationArticleHoroscopes(event,staleMap).length===0,'Retirement must suppress the original inherited reader before explicit recovery');
   const sources=[{id:row.id,contentKey,expectedUpdatedAt:row.updated_at}];
   const forbidden=await store.invoke('POST',{recoveryKind:'moon-reusable',action:'preview',sources},endpoint,'wrong-secret');assert.equal(forbidden.status,401);
   let metadataReads=0,rpcWrites=0,sourceUnavailable=false;
@@ -80,7 +115,7 @@ try{
   };
   try{
     const preview=await recover({action:'preview',sources:sources.map(source=>({...source,body:'Never include this in a receipt'}))});
-    assert.equal(preview.status,200,JSON.stringify(preview.payload));assert.equal(rpcWrites,0);assert.equal(preview.payload.sources[0].fallbacks.length,12);
+    assert.equal(preview.status,200,JSON.stringify(preview.payload));assert.equal(rpcWrites,0);assert.equal(preview.payload.sources[0].fallbacks.length,article?1:12);
     assert(!JSON.stringify(preview.payload).includes('Never include'));assert(!JSON.stringify(preview.payload).includes('dated test opening'));
     const planned=preview.payload.sources;
     assert.equal((await recover({action:'preview',sources:[{...sources[0],expectedUpdatedAt:123}]})).status,400,'Malformed timestamp types fail before exact timestamp comparison');
@@ -99,8 +134,8 @@ try{
       {content_key:'cms/personal-transit-aspect/you/template',state:'live',revision:999998,row_id:null,row_updated_at:null,updated_at:new Date().toISOString()}]);
     assert.equal(reader.publicationAllowsContent(unrelated),false,'Unrelated retirements remain blocked');
     assert.equal(reader.publicationAllowsContent('cms/personal-transit-aspect/you/template'),false,'Permanent retirement cannot be reset by a baseline identity');
-    assert.deepEqual(reader.resolveLunationArticleHoroscopes(event,staleMap),baseline,'Full reusable passages and order match the original baseline in RAM');
-    assert.deepEqual(reader.resolveLunationReaderSource(event,staleMap),general,'Complete general article is unchanged');
+    assert(JSON.stringify(reader.resolveLunationArticleHoroscopes(event,staleMap))===JSON.stringify(baseline),'Full reusable passages and order match the original baseline in RAM');
+    assert(JSON.stringify(reader.resolveLunationReaderSource(event,staleMap))===JSON.stringify(general),'Complete general article is unchanged');
     for(const id of [row.id,randomUUID()])assert.equal(reader.publicationAllowsContent(contentKey,id,live.updated_at,'2020-05-07'),false,'Cached LIVE rows, old revisions and target-date shortcuts stay unavailable');
     assert.equal((await invoke('reader',{keys:[contentKey]})).payload.rows.length,0,'Archived dated writing stays outside the actual reader API');
     const replay=await recover({action:'restore',operationId,sources:JSON.parse(JSON.stringify(planned))});assert.equal(replay.status,200);assert.equal(replay.payload.state,'restored');assert.equal(rpcWrites,1,'Same operation checks its receipt without replaying a write');
@@ -120,7 +155,7 @@ try{
     const unknown=randomUUID();assert.equal((await recover({action:'status',operationId:unknown})).payload.state,'unconfirmed');
     const cancelled=await recover({action:'cancel',operationId:unknown});assert.equal(cancelled.payload.state,'cancelled');
     assert.equal((await recover({action:'restore',operationId:unknown,sources:planned})).status,409,'A delayed request cannot commit after cancellation');
-    const draft=await invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceLifecycleAction:'restore'});assert.equal(draft.status,200);
+    const draft=await invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,sourceLifecycleAction:'restore',...(article?{status:'DRAFT'}:{})});assert.equal(draft.status,200);
     assert.equal((await recover({action:'status',operationId})).payload.state,'changed');
     assert.equal((await recover({action:'preview',sources:[{...sources[0],expectedUpdatedAt:draft.payload.rows[0].updated_at}]})).status,422,'Drafts cannot take the archived recovery path');
     assert(metadataReads>0);
@@ -143,4 +178,4 @@ try{
     assert.equal((await db.query('select * from content_baseline_recoveries')).rows.length,1);
   }finally{globalThis.fetch=previousFetch;}
 }finally{await db.close();await store.close();rmSync(directory,{recursive:true,force:true});}
-console.log('PASS Moon explicit reusable recovery: actual SQL/owner handler, complete baseline equality, archived-row preservation, stale cached/date rejection, CAS, roles, receipts/status/cancel; production actions 0');
+console.log(`PASS ${article?'Dated article':'Moon horoscope'} explicit reusable recovery: actual SQL/owner handler, complete baseline equality, archived-row preservation, stale cached/date rejection, CAS, roles, receipts/status/cancel; production actions 0`);
