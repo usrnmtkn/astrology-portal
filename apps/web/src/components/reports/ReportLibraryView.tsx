@@ -479,26 +479,24 @@ export function GeneratedReportArticle({
 
       <article className="article-shell sky-detail-article saved-generated-report__article">
         <div className="article-card sky-detail-card saved-generated-report__card">
-          <header className="article-id sky-detail-id saved-generated-report__header report-cover">
-            <div className="report-label" aria-label={`${surfaceLabel} ${reportLabel}`}>
+          <header className="article-id sky-detail-id">
+            <div className="article-eyebrow" aria-label={`${surfaceLabel} ${reportLabel}`}>
               <span>{surfaceLabel}</span>
               <span className="article-eyebrow__slash" aria-hidden="true">/</span>
               <span>{reportLabel}</span>
             </div>
             <h1 className="article-title" id="saved-generated-report-title">{report.headline ?? "Saved reading"}</h1>
-            {readingWindow ? <p className="report-cover__meta">{readingWindow}</p> : null}
+            {readingWindow ? <p className="article-duration">{readingWindow}</p> : null}
             {report.summary ? (
               <div className="article-tldr">
-                <FormattedProse className="report-cover__subtitle article-tldr__copy" text={report.summary} />
+                <FormattedProse className="article-sub article-tldr__copy" text={report.summary} />
               </div>
             ) : null}
           </header>
 
-          {paragraphs.length > 0 ? <hr className="article-rule" /> : null}
-
           {paragraphs.length > 0 ? (
-            <div className="report-chapter saved-generated-report__body">
-              <div className="article-body-inner report-chapter__copy">
+            <div className="article-body-card sky-detail-body saved-generated-report__body">
+              <div className="article-body-inner">
                 <section className="article-section sky-detail-section">
                   {paragraphs.map((paragraph, index) => (
                     isFriendsReading && isFriendRelationshipHeading(paragraph, report.subjectLabel)
