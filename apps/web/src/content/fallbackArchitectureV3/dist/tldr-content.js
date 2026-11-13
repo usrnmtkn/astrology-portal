@@ -1178,6 +1178,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const possessive = facts2.voice === "you" ? "Your" : `${facts2.voice}'s`;
     const ctx = {
       possessive,
+      ...house ? { houseOrdinal: ordinal(house) } : {},
       planetTitle: title6(planet),
       planetRef: needsArticle ? `the ${title6(planet)}` : title6(planet),
       planetRefCap: needsArticle ? `The ${title6(planet)}` : title6(planet),
@@ -6682,7 +6683,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-11-13-natal-retrograde-house";
+var PACKAGE_VERSION = "v3-2026-11-13-natal-vars-retro";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

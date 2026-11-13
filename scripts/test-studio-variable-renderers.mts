@@ -16,6 +16,10 @@ const binding = { id: 'fixture-variable', name: 'myOpening', updatedAt: '2026-09
 const template = '{{myOpening}}';
 const ingress = { version: 5, enabled: true, sources: {}, modules: [{ id: 'main', label: 'Main', template: '{{myOpening}}', required: true, enabled: true, motion: 'all', duration: 'all', timing: 'all' }] };
 const rowData = JSON.parse(fs.readFileSync(`${root}/source-rows/fallback-source-rows-v3.json`, 'utf8'));
+rowData.hookRows = rowData.hookRows.filter((row: any) => !row.contentKey.startsWith('fallback-hook/natal-you-placement-complete-final/'));
+const houseMeaning = rowData.hookRows.find((row: any) => row.contentKey === 'fallback-hook/house-meaning/4');
+houseMeaning.body_you = 'Fixture {{planetTitle}} in {{houseOrdinal}}: {{planetTopic}}.';
+houseMeaning.body_they = 'Friend fixture {{planetTitle}} in {{houseOrdinal}}: {{planetTopic}}.';
 const moon = rowData.hookRows.find((row: any) => row.contentKey === 'fallback-hook/moon-void');
 moon.body_you = template + ' Next sign: {{nextSign}}.'; moon._studioVariables = [binding];
 const templates = JSON.parse(fs.readFileSync(`${root}/templates/fallback-templates-v3.json`, 'utf8'));
@@ -42,6 +46,13 @@ try { nodeFallback = await import('../apps/web/src/content/fallbackArchitectureV
 finally { fs.readFileSync = originalRead; }
 const renderers = [{ natal: nodeFallback, transit: nodeTransit, sky: renderSkyV4ReaderRoute }, ...[browser, shipped].map(module => ({ natal: module.createFallbackRenderer(templates, rowData), transit: module.createTransitSynastryRenderer({ authoredCards: [] }, templates, rowData), sky: module.renderSkyV4ReaderRoute }))];
 for (const renderer of renderers) {
+  for (const [planet, topic] of [['saturn', 'structure and limits'], ['venus', 'love and what feels good']]) {
+    for (const voice of ['you', 'Fixture friend']) {
+      const house = renderer.natal.renderNatalPlacement({planet, sign:'virgo', house:4, voice});
+      assert(house.body.includes(`${planet[0].toUpperCase()+planet.slice(1)} in 4th: ${topic}.`), 'House hooks resolve planet wording and the calculated house before insertion');
+      assert(!house.body.includes('{{'), 'The reader must receive complete text');
+    }
+  }
   assert.equal(renderer.natal.renderNatalAngle({ angle: 'ascendant', sign: 'virgo', voice: 'you' }).body, 'Fixture Virgo value.');
   assert.equal(renderer.natal.renderNatalAngle({ angle: 'ascendant', sign: 'aries', voice: 'you' }).body, 'Fixture shared value.', 'No context leaks between renders');
   assert.equal(renderer.transit.renderCompat({ planet: 'sun', signA: 'virgo', signB: 'pisces', otherName: 'Fixture' }).body, 'Fixture Sun in Virgo value. Fixture.');

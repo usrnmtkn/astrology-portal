@@ -130,7 +130,7 @@ assert.equal(
 );
 assert.equal(approval.payload_sha256, friendReview.payload_sha256);
 assert.equal(approval.row_count, 541);
-assert.equal(PACKAGE_VERSION, promoted ? "v3-2026-11-13-natal-retrograde-house" : "v3-2026-08-10b");
+assert.equal(PACKAGE_VERSION, promoted ? "v3-2026-11-13-natal-vars-retro" : "v3-2026-08-10b");
 
 for (const entry of canonical.entries) {
   assert.equal(entry.owner_approved, true, `${entry.key}: V14 You copy must be owner-approved.`);

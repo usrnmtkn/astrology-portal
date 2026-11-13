@@ -5,7 +5,7 @@ import { Stack, Text } from "./studio-ds/primitives";
 import { ChevronRight, Search, X } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
-import type { CompositionMapRow, CompositionPreviewOptions } from "./compositionMap";
+import { compositionPreviewExampleValues, type CompositionMapRow, type CompositionPreviewOptions } from "./compositionMap";
 import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes } from "./templateVariableSources";
 import { TemplateVariableReviewPanels, readableCopy, type TemplateVariableSourceRow } from "./TemplateVariableReviewPanels";
@@ -62,7 +62,10 @@ function variableListPreview(
   // dictionary example names Saturn, which belongs to no particular transit and read as
   // another planet's write-up while editing Lilith.
   if (kind === "fact" || kind === "unmapped") return factExamples[reference.name]?.trim() || reference.example?.trim() || "";
-  const source = templateVariableSourceCandidates(reference, rows, templateContentKey)[0];
+  const sources = templateVariableSourceCandidates(reference, rows, templateContentKey);
+  const anchor = (reference.name.startsWith('planet') ? factExamples.planetTitle : reference.name.startsWith('sign') ? factExamples.signTitle : '')
+    ?.toLowerCase().replace(/\s+/gu, '-');
+  const source = sources.find(source => anchor && source.content_key.endsWith(`/${anchor}`)) ?? sources[0];
   return source ? (readableCopy(source)[0]?.[1] ?? "").trim() : "";
 }
 
@@ -85,6 +88,12 @@ export default function TemplateVariablesRail({
   reviewTemplateRow, previewOptions, factExamples = {}, selectedVariableName, selectedSourceId,
   onSelectVariable, onSelectSource, onEditSource, onClose, onKeyDown, onInsert, onLoadSourceDocuments, onLoadSourceInventory
 }: Props) {
+  factExamples = { ...compositionPreviewExampleValues(previewOptions), ...factExamples };
+  const [usedOnly, setUsedOnly] = useState(false);
+  const terms = query.toLocaleLowerCase().trim().split(/\s+/u).filter(Boolean);
+  const visibleReferences = references.filter(reference => (!usedOnly || reference.fields.some(field => field !== 'Available for insertion'))
+    && (filteredReferences.includes(reference) || terms.length > 0 && terms.every(term => variableListPreview(reference,
+      variableKind(reference, templateContentKey), rows, templateContentKey, factExamples).toLocaleLowerCase().includes(term))));
   const sourceKey = JSON.stringify([...new Set(references.flatMap(reference =>
     templateVariableSourceKeyPrefixes(reference, templateContentKey)))].sort());
   const [sourceState, setSourceState] = useState("loaded");
@@ -116,7 +125,7 @@ export default function TemplateVariablesRail({
       <header className="admin-variables-rail-header">
         <Stack gap="sm">
           <Text size="meta" tone="secondary">Variables</Text>
-          <h2>{selected ? <code>{`{{${selected.name}}}`}</code> : `${references.length} in this row`}</h2>
+          <h2>{selected ? <code>{`{{${selected.name}}}`}</code> : `${references.length} available in this row`}</h2>
         </Stack>
         <div className="admin-variables-rail-actions">
           <StudioIconButton type="button" className="admin-variables-rail-close" onClick={onClose} aria-label="Close variables" title="Close variables">
@@ -199,8 +208,10 @@ export default function TemplateVariablesRail({
               </div>
             </label>
 
-            <ul className="admin-variables-rail-list" aria-label="Variables used in this row">
-              {filteredReferences.map((reference) => {
+            <label><input type="checkbox" checked={usedOnly} onChange={event => setUsedOnly(event.target.checked)} /> Only variables used in this row</label>
+            <p className="admin-field-hint">These variables are supported here. Variables for other surfaces are listed in the Variables directory.</p>
+            <ul className="admin-variables-rail-list" aria-label="Variables available in this row">
+              {visibleReferences.map((reference) => {
                 const kind = variableKind(reference, templateContentKey);
                 const preview = variableListPreview(reference, kind, rows, templateContentKey, factExamples);
                 return (
@@ -227,16 +238,16 @@ export default function TemplateVariablesRail({
                 );
               })}
             </ul>
-            {filteredReferences.length === 0 && (
+            {visibleReferences.length === 0 && (
               <div className="admin-empty-state">
                 <strong>No matching variables</strong>
                 <p>Try a name such as <code>planetTitle</code>, or a meaning such as “sign”.</p>
               </div>
             )}
             <p className="admin-field-hint admin-variables-rail-count" aria-live="polite">
-              {filteredReferences.length === references.length
+              {visibleReferences.length === references.length
                 ? `${references.length} variable${references.length === 1 ? "" : "s"}`
-                : `${filteredReferences.length} of ${references.length} variables`}
+                : `${visibleReferences.length} of ${references.length} variables`}
             </p>
           </>
         )}

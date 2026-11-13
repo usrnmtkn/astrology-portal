@@ -278,6 +278,49 @@ reader wording. Existing conflict checks, publication review and history remain.
 
 ### Editing assembled sections
 
+**Variables** opens with all built-in variables visible. Search by token, meaning,
+planet, sign, or source; filter by library and surface. The directory includes
+Calendar conditions, chart-wheel tooltips, dignity summaries, and Friction and
+Flow as well as the shared phrase and placement libraries. Tokens retain their
+surface's syntax: some use single braces, others double braces, and Calendar
+conditions enclose wording in an opening/closing block.
+
+**Export all values** downloads CSV or JSON from authenticated, read-only pages.
+It includes complete packaged and current saved source fields, custom values and
+overrides, calculated examples, and explicit empty-field states. Saved draft and
+package values remain distinct; a saved row's status is not a claim that readers
+currently receive it. Calculated values depend on the selected chart/date.
+
+The page and export share one complete catalog. Hook-backed passages such as
+`houseMeaning`, `placementHouseSentences`, `modifierSentences`, `planetIntro`,
+and `natalCore` retain their actual source keys and individual reader fields.
+Each usage records its template fields; a resolver dependency without a direct
+insertion field is identified as such. Unmapped providers fail the catalog
+build. Coverage tests independently scan reader fields and declared slots.
+
+Shared planet/sign references export the hash-validated source text, with the
+reference in a separate column. Reference target revisions are read even across
+export pages. Field contracts are deduplicated in API responses and restored
+in full before CSV/JSON download. No saved source is changed by an export.
+
+The owner retained the approved legacy empty-house rows. `placementLine` and
+`rulerHouseJurisdiction` remain visible as retired variables; the current V14
+renderer consumes complete house/sign/ruler passages instead. This preserves
+the approved source wording and does not make those old slots active.
+After the scoped natal retrograde release, the former shared retrograde template
+is also listed as retired. It is not an active `modifierSentences` provider.
+The catalog records `ownerName` in the Friend field of exact natal passages and
+the planet/house retrograde additions; those raw passages do not acquire the
+House Meaning scalar-variable contract.
+
+The editor's Variables panel lists supported variables before they are used;
+**Only variables used in this row** narrows that list. The shared Natal House
+Meaning hook supports the scalar context supplied by the natal placement
+resolver, including `planetTopic`, `planetCore`, and `houseOrdinal`. The picker
+and save validation share that contract in `natalPlacementVariables.mjs`.
+Other source families retain their own runtime contracts. A token's existence
+elsewhere does not establish that the current renderer can resolve it.
+
 Variable controls use readable labels alongside the unchanged saved tokens.
 Sky supports search by name, meaning, token, or existing wording; type and
 availability filters; and an option to show only variables used in the active

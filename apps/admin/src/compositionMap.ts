@@ -78,8 +78,23 @@ export type CompositionPreviewOptions = {
   initialAudience?: "you" | "they";
   destination?: string;
   exampleValues?: Record<string, string>;
+  natalPlacement?: { planetTitle: string; signTitle: string; houseOrdinal?: string };
   includeOptionalSources?: boolean;
 };
+
+export function compositionPreviewExampleValues(options: CompositionPreviewOptions = {}): Record<string, string> {
+  const natal = options.natalPlacement;
+  if (!natal) return options.exampleValues ?? {};
+  const prefix = ["Sun", "Moon", "North Node", "South Node"].includes(natal.planetTitle);
+  return {
+    ...natal,
+    planetRef: `${prefix ? "the " : ""}${natal.planetTitle}`,
+    planetRefCap: `${prefix ? "The " : ""}${natal.planetTitle}`,
+    angleTitle: natal.planetTitle,
+    possessive: "Your", possessiveLow: "your",
+    ...options.exampleValues
+  };
+}
 
 export type CompositionMapTemplate = {
   destination: string;
@@ -325,6 +340,9 @@ function representativeSource(
     planetBest: ["planetTitle"],
     planetExcess: ["planetTitle"],
     planetFunction: ["planetTitle"],
+    planetTopic: ["planetTitle"],
+    planetCore: ["planetTitle"],
+    planetProductive: ["planetTitle"],
     planetVerb: ["planetTitle"],
     signAdverb: ["signTitle"],
     signNeed: ["signTitle"],
@@ -550,7 +568,7 @@ function buildCompositionPreview(
       ? ""
       : representativeExampleForRow(row, slot.name, slot.example));
   });
-  Object.entries(options.exampleValues ?? {}).forEach(([name, value]) => values.set(name, value));
+  Object.entries(compositionPreviewExampleValues(options)).forEach(([name, value]) => values.set(name, value));
   const sources: CompositionMapSource[] = [];
   const pendingSources: CompositionMapSource[] = [];
   const selectedSavedSlots = new Set<string>();
