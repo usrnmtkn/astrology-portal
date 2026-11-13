@@ -246,7 +246,7 @@ function containsSecondPerson(value) {
   return /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(String(value ?? ""));
 }
 
-function hasBanned(text, phrase) {
+export function hasBanned(text, phrase) {
   const value = String(phrase).toLowerCase();
   if (/^[a-z0-9'-]+$/u.test(value)) {
     const escaped = value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");

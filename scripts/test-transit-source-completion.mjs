@@ -116,6 +116,50 @@ for (const kind of ['day', 'week', 'friends']) for (const scenario of [
   console.log(`PASS reviewed delivery ${kind}: ${scenario}`);
   cases++;
 }
+// A weekly lexical-only failure spends its existing rewrite on the affected
+// paragraph. A bad patch, or a failed final fact/style check, still stops.
+for (const mode of ['fixed', 'term-retained', 'new-fact', 'wrong-shape', 'extra-field', 'multi-paragraph', 'mixed-initial']) {
+  const f = fixture('week', 'first-pass');
+  globalThis.reportDeliveryFixture = f;
+  const original = f.call.bind(f);
+  const paragraphs = f.output.body.split('\n\n');
+  const bad = ' You could decide whether to call.';
+  const candidate = paragraphs.join('\r\n\r\n') + bad;
+  let writers = 0;
+  f.call = async request => {
+    const result = await original(request);
+    if (request.schemaName.includes('judge')) {
+      assert(request.prompt.includes(JSON.stringify(paragraphs.join('\r\n\r\n'))));
+      return result;
+    }
+    if (++writers === 1) return { ...result, value: { ...result.value, body: candidate + (mode === 'mixed-initial' ? ' On February 5, 2027.' : '') } };
+    if (mode === 'mixed-initial') {
+      assert(!request.schema.properties.replacement);
+      return { ...result, value: { ...result.value, body: candidate } };
+    }
+    assert.deepEqual(request.schema.required, ['replacement']);
+    assert(request.prompt.includes(JSON.stringify(paragraphs[1] + bad)));
+    assert(request.prompt.includes('"forbiddenTerms":["whether"]'));
+    const value = mode === 'wrong-shape' ? { body: f.output.body } : {
+      replacement: paragraphs[1] + (mode === 'term-retained' ? bad : mode === 'new-fact' ? ' On February 5, 2027.' : mode === 'multi-paragraph' ? '\n\nAnother paragraph.' : ''),
+      ...(mode === 'extra-field' ? { summary: 'Unrequested' } : {})
+    };
+    return { ...result, value };
+  };
+  const queued = await api.requestYouReport({userId:f.client.userId,reportWindow:'week',brief:f.youBrief,admin:f.admin});
+  await api.runYouReportJobs({workerId:'test',jobId:queued.job.id,admin:f.admin});
+  const row = f.rows.user_generated_interpretations[0];
+  assert.deepEqual(f.calls, {writer:2,judge:mode === 'fixed' ? 1 : 0});
+  if (mode === 'fixed') {
+    assert.equal(row.body, paragraphs.join('\r\n\r\n'));
+    assert.equal(row.summary, f.output.tldr);
+    assert.equal(row.source_snapshot.generatedReportQualityGate.verdict, 'pass');
+  } else {
+    assert.equal(f.rows.you_report_jobs[0].state, 'failed');
+    assert.equal(row.body, '');
+  }
+  cases++;
+}
 // Account rejection is operational failure, not an exhausted quality review.
 // Exercise real checkpoint wrapping, persistence, library state and a manual
 // retry (including a worker handoff) without a provider/network call.

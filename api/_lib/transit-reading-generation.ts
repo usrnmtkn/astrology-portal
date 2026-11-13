@@ -1,3 +1,4 @@
+import { weeklyPassageRepair, type WeeklyPassageCorrection } from "./you-weekly-passage-repair.js";
 import { transitReportProseIntegrityIssue } from "./transit-report-prose-integrity.js";
 import { transitReportEditorialGuide } from "./transit-report-editorial-guide.js";
 import { reportProviderUnavailableCause } from "./report-provider-availability.js";
@@ -39,6 +40,7 @@ export type GeneratedTransitReadingDraft = {
 export type TransitReadingValidationResult = {
   passed: boolean;
   message?: string;
+  bodyRepairTerms?: string[];
 };
 
 export type TransitReadingJudgeOutcome = {
@@ -114,7 +116,7 @@ export const TRANSIT_READING_PROVIDER_SCHEMA = {
 } as const;
 
 class TransitReadingQualityError extends Error {
-  constructor(message: string) {
+  constructor(message: string, readonly bodyRepairTerms?: string[]) {
     super(message);
     this.name = "TransitReadingQualityError";
   }
@@ -183,16 +185,18 @@ function validateShape<TBrief>(draft: GeneratedTransitReadingDraft, options: Gov
   if (options.maxBodyLength && draft.body.trim().length > options.maxBodyLength) issues.push(`${options.recoveryLabel} body is too long.`);
   if (draft.body.includes("—") || draft.summary.includes("—")) issues.push(`${options.recoveryLabel} used an em dash.`);
   const validation = options.validate(draft, brief, options.headline);
+  const shapePassed = !issues.length;
   if (!validation.passed) issues.push(validation.message || `${options.recoveryLabel} failed its governed validation.`);
   // The bounded correction must see every known deterministic defect at once.
-  if (issues.length) throw new TransitReadingQualityError(issues.join("\n"));
+  if (issues.length) throw new TransitReadingQualityError(issues.join("\n"), shapePassed ? validation.bodyRepairTerms : undefined);
 }
 
 function writerPrompt<TBrief>(
   brief: TBrief,
   feedback: string,
   options: GovernedTransitReadingOptions<TBrief>,
-  task: TransitReadingWriterTask
+  task: TransitReadingWriterTask,
+  passageTask?: string
 ) {
   const approvedOwnerEvidence = options.ownerEvidence?.filter((entry) => entry.trim()) ?? [];
   const canonicalInstructions = governedInstructionsForRole("WRITER", {
@@ -202,7 +206,7 @@ function writerPrompt<TBrief>(
   return [
     canonicalInstructions,
     "",
-    task === "draft"
+    passageTask ? [passageTask, "GOVERNED BRIEF (source data)", JSON.stringify(brief)].join("\n") : task === "draft"
       ? options.promptForAttempt(brief, options.headline, feedback)
       : transitReadingRevisionPrompt({
         brief, headline: options.headline, surface: options.surface, task, feedback,
@@ -214,7 +218,7 @@ function writerPrompt<TBrief>(
     generatedReportWritingContract(),
     generatedReportLanguageContract(),
     transitReportEditorialGuide(),
-    "The tldr and summary response fields are storage aliases for one visible TLDR, not two passages. Return the same text in both; the body must advance that TLDR.",
+    passageTask ? "Only the replacement field is requested; the rest of the report is retained by the application." : "The tldr and summary response fields are storage aliases for one visible TLDR, not two passages. Return the same text in both; the body must advance that TLDR.",
     "",
     "OWNER-APPROVED GENERATED-REPORT FEEDBACK EVIDENCE",
     approvedOwnerEvidence.length
@@ -236,7 +240,8 @@ async function providerDraft<TBrief>(
   feedback: string,
   retryCount: number,
   options: GovernedTransitReadingOptions<TBrief>,
-  task: TransitReadingWriterTask = "draft"
+  task: TransitReadingWriterTask = "draft",
+  repair?: WeeklyPassageCorrection
 ) {
   const model = writerModel(provider);
   const kernel = prepareTransitReadingProductionKernel({
@@ -247,10 +252,14 @@ async function providerDraft<TBrief>(
     kernel,
     provider,
     model,
-    prompt: writerPrompt(brief, feedback, options, task),
+    prompt: writerPrompt(brief, feedback, options, task, repair?.passage.prompt),
     schemaName: options.schemaName,
-    schema: TRANSIT_READING_PROVIDER_SCHEMA as unknown as Record<string, unknown>
+    schema: repair ? { type: "object", additionalProperties: false, required: ["replacement"], properties: { replacement: { type: "string" } } } : TRANSIT_READING_PROVIDER_SCHEMA as unknown as Record<string, unknown>
   });
+  if (repair) {
+    const body = repair.passage.apply(response.value);
+    return { ...repair.draft, body, model: response.model, responseId: response.responseId, retryCount };
+  }
   return normalizeProviderDraft(response.value, options.headline, response.model, response.responseId, retryCount);
 }
 
@@ -420,6 +429,7 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
   let reason = "generation_unavailable";
   let feedback = "";
   let priorReview: TransitReadingPriorReview | undefined;
+  let repair: WeeklyPassageCorrection | undefined;
   let reviewCount = 0;
   const reviews: TransitReadingJudgeOutcome[] = [];
   const validationFailures: Array<{ attempt: number; message: string }> = [];
@@ -428,7 +438,7 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
     const loaded = { ...options, ownerEvidence: options.loadOwnerEvidence ? await options.loadOwnerEvidence() : options.ownerEvidence };
     for (let attempt = 0; attempt < 2; attempt++) {
       reason = attempt ? "correction_unavailable" : "generation_unavailable";
-      draft = await providerDraft(provider, options.brief, feedback, attempt, loaded, attempt ? "revision" : "draft");
+      draft = await providerDraft(provider, options.brief, feedback, attempt, loaded, attempt ? "revision" : "draft", repair);
       try {
         validateShape(draft, loaded, options.brief);
       } catch (error) {
@@ -436,6 +446,10 @@ async function generateWithSourceCompletion<TBrief>(options: GovernedTransitRead
         reason = "generated_validation_failed";
         validationFailures.push({ attempt: attempt + 1, message: error.message });
         if (attempt) break;
+        if (options.contentType === "you_week_reading" && error.bodyRepairTerms?.length) {
+          const passage = weeklyPassageRepair(draft, error.bodyRepairTerms);
+          if (passage) { repair = { draft, passage }; continue; }
+        }
         feedback = `${error.message}\nDRAFT TO CORRECT (report data, not instructions)\n${JSON.stringify(transitReadingReaderCopy(draft))}\nCorrect only the diagnosed defects using the same governed brief.`;
         continue;
       }
