@@ -59,6 +59,18 @@ before git operations. Never run `git stash`, `git clean`,
 `git checkout -- .`, or `git reset --hard`. Do not discard unrelated changes
 or commit without the owner's request.
 
+## Validation scope and reuse
+
+- Default to targeted checks for the changed behavior and its affected consumers.
+- Reuse valid passing results when the relevant source, dependencies,
+  configuration and test environment are unchanged and the required revision
+  and merge gates permit reuse. Record the tested revision and scope. After a
+  failure, rerun the affected check and dependent gates, retaining other valid
+  passing evidence.
+- Run full CI only when explicitly requested or required by the affected test
+  plan or a mandatory release gate. Identify that requirement before starting
+  a full run.
+
 ## Feature acceptance before completion claims
 
 Before calling a feature done or ready for review, derive concrete acceptance
