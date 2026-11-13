@@ -28,6 +28,10 @@ globalThis.fetch = async (input, init = {}) => {
     for (const [field, value] of p) {
       if (['select', 'order', 'limit'].includes(field)) continue;
       if (field === 'or') {
+        if (value === '(event_type.is.null,event_type.neq.studio-package-source-draft,status.neq.ARCHIVED)') {
+          if (!(row.event_type == null || row.event_type !== 'studio-package-source-draft' || row.status !== 'ARCHIVED')) return false;
+          continue;
+        }
         if (value === '(event_type.is.null,event_type.neq.standalone-article-revision,status.neq.ARCHIVED)') {
           if (!(row.event_type == null || row.event_type !== 'standalone-article-revision' || row.status !== 'ARCHIVED')) return false;
           continue;
@@ -149,9 +153,37 @@ test('revision exclusion composes with cursor, prefix and scope filters', async 
 });
 
 test('malformed revision exclusion fails before storage', async () => {
-  for (const value of ['false', '', 'TRUE', 'true,status.eq.LIVE']) {
+  for (const flag of ['excludeArchivedArticleRevisions', 'excludeArchivedPackageRevisions']) for (const value of ['false', '', 'TRUE', 'true,status.eq.LIVE']) {
     requests = [];
-    assert.equal((await invoke({ excludeArchivedArticleRevisions: value })).statusCode, 400);
+    assert.equal((await invoke({ [flag]: value })).statusCode, 400);
     assert.equal(requests.length, 0);
   }
+});
+
+test('source-card document reads skip archived private revisions but retain pending edits and original archives', async () => {
+  const { readStudioContentDocument } = await import('../apps/admin/src/generatedContentClient.ts');
+  const storageFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    if (String(input).startsWith('/api/admin/generated-content-inventory?')) {
+      const result = await invoke(Object.fromEntries(new URL(String(input), 'https://studio.invalid').searchParams));
+      return Response.json(result.payload, { status: result.statusCode });
+    }
+    return storageFetch(input, init);
+  };
+  try {
+    for (const [content_key, event_type] of [
+      ['fallback-hook/natal-you-placement-sign-final/uranus/scorpio', 'studio-package-source-draft'],
+      ['cms/natal-planet-sect/you/jupiter/day', 'standalone-article-revision']
+    ]) {
+      const target = { ...saved[0], content_key, event_type: null, status: 'LIVE', lane: 'serving' };
+      const revision = { ...target, id: 'private-revision', event_type, status: 'ARCHIVED', lane: 'reference', updated_at: '2026-10-06T12:00:00Z' };
+      storageRows = [target, revision];
+      assert.deepEqual((await readStudioContentDocument(content_key, env.CONTENT_GENERATION_SECRET)).rows.map(row => row.id), [target.id], 'Edit source must open its canonical saved row, not a newer archived private revision.');
+      storageRows = [target, { ...revision, status: 'DRAFT' }];
+      assert.deepEqual((await readStudioContentDocument(content_key, env.CONTENT_GENERATION_SECRET)).rows.map(row => row.id), [revision.id], 'An active private edit must still reopen.');
+      storageRows = [{ ...target, status: 'ARCHIVED' }, revision];
+      assert.deepEqual((await readStudioContentDocument(content_key, env.CONTENT_GENERATION_SECRET)).rows.map(row => row.id), [target.id], 'The original source archive remains available for restoration.');
+      assert.equal((await invoke({ id: revision.id })).payload.rows[0].id, revision.id, 'An explicit archive-history selection remains accessible.');
+    }
+  } finally { globalThis.fetch = storageFetch; }
 });

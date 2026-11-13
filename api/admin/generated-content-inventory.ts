@@ -115,6 +115,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (excludeArchivedArticleRevisions !== null && excludeArchivedArticleRevisions !== "true") {
       throw new AdminHttpError(400, "excludeArchivedArticleRevisions must be true when provided.");
     }
+    const excludeArchivedPackageRevisions = requestUrl.searchParams.get("excludeArchivedPackageRevisions");
+    if (excludeArchivedPackageRevisions !== null && excludeArchivedPackageRevisions !== "true") {
+      throw new AdminHttpError(400, "excludeArchivedPackageRevisions must be true when provided.");
+    }
     if (partition !== null && (!/^[0-2]$/u.test(partition) || !inventoryView || scope !== "all" || contentKeyPrefix || mode)) {
       throw new AdminHttpError(400, "partition is only supported for full inventory lists.");
     }
@@ -170,6 +174,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       // Filter before limit: a published revision must not hide its live target.
       // Original articles can have no event type and remain accessible when archived.
       params.append("or", "(event_type.is.null,event_type.neq.standalone-article-revision,status.neq.ARCHIVED)");
+    }
+    if (!id && excludeArchivedPackageRevisions === "true") {
+      params.append("or", "(event_type.is.null,event_type.neq.studio-package-source-draft,status.neq.ARCHIVED)");
     }
 
     const url = supabaseUrl();

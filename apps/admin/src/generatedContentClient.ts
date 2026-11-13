@@ -101,7 +101,10 @@ export async function readStudioContentDocument(
   secret: string,
   options: RequestInit = {}
 ): Promise<StudioContentDocument> {
-  const payload = await request(studioInventoryDocumentPath(contentKey), secret, options);
+  // Source cards resume pending edits, while completed/private archive history
+  // must not displace the canonical source in this one-row lookup.
+  const path = `${studioInventoryDocumentPath(contentKey)}&excludeArchivedArticleRevisions=true&excludeArchivedPackageRevisions=true`;
+  const payload = await request(path, secret, options);
   if (!Array.isArray(payload.rows) || payload.rows.some((row) => !isObject(row) || row.content_key !== contentKey)) {
     throw new Error("The selected source could not be verified.");
   }
