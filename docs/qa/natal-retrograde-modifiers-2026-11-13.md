@@ -60,3 +60,10 @@ Preserved failures and corrections:
 
 No commit, PR, exact-head CI gate, merge, production content write or deployment
 was performed. Production behavior remains unverified.
+
+Release follow-up: PR #1472 initially failed the social contract because the
+package version update made the tracked knowledge-index source hashes stale.
+The canonical generator refreshed 330 source hashes and their derived content
+hash without changing index records or prose. The previously failing generated-report judge contract
+then passed locally; the phrase index remained current. New exact-head release
+checks and production verification are required before reporting deployment.
