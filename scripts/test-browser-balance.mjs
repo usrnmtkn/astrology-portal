@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+// These fixtures verify the complete scheduler catalog. A job's application
+// selection is exercised separately by test-ci-affected-tests.mjs.
+delete process.env.CI_AFFECTED_TEST_PLAN;
 import { balanceTests, balanceTestFiles, assertIndependentBrowserFile, withShardLists } from './balanced-browser-tests.mjs';
 import { existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
