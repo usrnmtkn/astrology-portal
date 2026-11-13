@@ -22,7 +22,7 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
   const identity=JSON.stringify(sources);
   const latest=useRef({request,onRecovered,onBusy,onSettled});latest.current={request,onRecovered,onBusy,onSettled};
   const call=(body:Record<string,unknown>)=>latest.current.request({...body,...(kind?{recoveryKind:kind}:{})});
-  const [plan,setPlan]=useState<{sources:PlannedSource[];packageVersion:string}|null>(null);
+  const [plan,setPlan]=useState<{sources:PlannedSource[];packageVersion:string;inherited?:boolean}|null>(null);
   const [expanded,setExpanded]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
   const [previewAttempt,setPreviewAttempt]=useState(0);
   const [pending,setPending]=useState<string|null>(null);
@@ -60,15 +60,16 @@ export function ApprovedSourceRecovery({sources,disabled,request,onRecovered,onB
     finally{setBusy(false);latest.current.onBusy?.(false);}
   };
   if(!plan&&!pending&&!error||pending&&!statusOnly)return null;
+  const inheritedAction = plan?.inherited ? 'Restore inherited reading' : null;
   return <div className="admin-savebar-next-step" aria-label={kind?'Moon reading recovery':'Approved source recovery'}>
-    {!plan&&!pending?<><p role="alert">{error}</p><StudioButton type="button" disabled={disabled||busy} onClick={()=>setPreviewAttempt(value=>value+1)}>{kind?'Check reusable Moon readings':'Review recovery again'}</StudioButton></>:!expanded?<StudioButton type="button" className="admin-secondary-button" disabled={disabled||busy} onClick={()=>setExpanded(true)}>{kind?'Use reusable Moon readings':'Use approved source'}</StudioButton>:<>
+    {!plan&&!pending?<><p role="alert">{error}</p><StudioButton type="button" disabled={disabled||busy} onClick={()=>setPreviewAttempt(value=>value+1)}>{kind?'Check reusable Moon readings':'Review recovery again'}</StudioButton></>:!expanded?<StudioButton type="button" className="admin-secondary-button" disabled={disabled||busy} onClick={()=>setExpanded(true)}>{kind?'Use reusable Moon readings':inheritedAction ?? 'Use approved source'}</StudioButton>:<>
       <p>{kind?'Readers will receive the available approved reusable Moon readings. Your dated readings stay archived and unchanged.':'Readers will receive the installed approved source. Your saved writing stays recoverable in source history.'}</p>
       {plan&&<p>Installed version: {plan.packageVersion}</p>}
       {pending?<>
         <StudioButton type="button" disabled={disabled||busy} onClick={()=>void run(true)}>{busy?'Checking recovery…':'Check recovery'}</StudioButton>
         <StudioButton type="button" className="admin-secondary-button" disabled={disabled||busy} onClick={()=>void run(true,true)}>Stop unconfirmed recovery</StudioButton>
       </>:<>
-        <StudioButton type="button" disabled={disabled||busy} onClick={()=>void run()}>{kind?'Use reusable Moon readings':`Restore approved source${sources.length===2?' pair':''}`}</StudioButton>
+        <StudioButton type="button" disabled={disabled||busy} onClick={()=>void run()}>{kind?'Use reusable Moon readings':inheritedAction ?? `Restore approved source${sources.length===2?' pair':''}`}</StudioButton>
         <StudioButton type="button" className="admin-secondary-button" disabled={busy} onClick={()=>setExpanded(false)}>Cancel</StudioButton>
       </>}
       {error&&<p role="alert">{error}</p>}

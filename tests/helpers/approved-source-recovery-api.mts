@@ -6,11 +6,12 @@ const env={NODE_ENV:'production',CONTENT_GENERATION_SECRET:'baseline-recovery-fi
 Object.assign(process.env,env);
 const db=await createPublicationDb();
 await db.query("insert into content_publications(content_key,state) values('__content-publication-ledger/v1','live')");
-const key='fallback-hook/placement-sentence/moon/scorpio';
-const record={...servingPackageRecords.get(key),body_you:'Neutral complete source opening. Neutral complete source ending.',body_they:'Neutral complete Friend opening. Neutral complete Friend ending.'};
+const inherited=process.argv.includes('--inherited-pair');
+const key=inherited?'fallback-hook/synastry-pair/sun/moon/trine':'fallback-hook/placement-sentence/moon/scorpio';
+const record={...servingPackageRecords.get(inherited?'fallback-hook/synastry-pair/sun/moon/soft':key),contentKey:key,body_you:'Neutral complete source opening. Neutral complete source ending.',body_they:'Neutral complete Friend opening. Neutral complete Friend ending.'};
 await seedPublicationRow(db,{id:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',content_key:key,status:'DRAFT',lane:'serving',review_state:'EDITORIAL_REVIEW_REQUIRED',
   updated_at:'2026-11-07T12:00:00Z',created_at:'2026-11-07T12:00:00Z',headline:'Neutral recovery source',body:record.body_you,summary:'',
-  surface:'you',mode:'feed',provider:'tldrastro-fallback-architecture-v3',prompt_version:'synthetic-recovery',block_type:'fallback_hook',sections:{packageRecord:record,packageDraft:record},source_snapshot:{fixture:true},facts:{fallbackArchitectureV3:true}});
+  surface:inherited?'synastry':'you',mode:'feed',provider:'tldrastro-fallback-architecture-v3',prompt_version:'synthetic-recovery',block_type:'fallback_hook',sections:{packageRecord:record,packageDraft:record},source_snapshot:{fixture:true},facts:{fallbackArchitectureV3:true}});
 globalThis.fetch=async(input,init)=>{
   const url=new URL(String(input));assert.equal(url.origin,env.SUPABASE_URL,'Only synthetic SQL storage');
   const rpc=url.pathname.split('/rpc/')[1];

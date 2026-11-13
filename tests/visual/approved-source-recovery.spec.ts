@@ -5,10 +5,10 @@ import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {syntheticPublicationPage} from '../helpers/synthetic-publication-page';
 import {openEditorMoreActions} from '../helpers/studio-editor-actions';
 import {canonicalPublicationLedger,publicationLedgerTag} from '../../apps/web/src/services/publicationLedgerTransport';
-for(const width of [390,1440])for(const theme of ['light','dark'] as const){
-  test(`Approved source recovery preserves writing and resolves lost acknowledgement ${width} ${theme}`,async({page})=>{
+for(const width of [390,1440])for(const theme of ['light','dark'] as const)for(const inherited of [false,true]){
+  test(`${inherited ? 'Inherited Compatibility' : 'Approved source'} recovery preserves writing and resolves lost acknowledgement ${width} ${theme}`,async({page})=>{
     test.setTimeout(90000);
-    const child=fork(path.resolve('tests/helpers/approved-source-recovery-api.mts'),[],{execArgv:['--import','tsx'],stdio:['ignore','ignore','pipe','ipc']});
+    const child=fork(path.resolve('tests/helpers/approved-source-recovery-api.mts'),inherited?['--inherited-pair']:[],{execArgv:['--import','tsx'],stdio:['ignore','ignore','pipe','ipc']});
     let sequence=0,stderr='';const pending=new Map<number,{resolve:(value:any)=>void;reject:(error:Error)=>void}>();
     child.stderr?.on('data',data=>{stderr+=data;});
     const ready=new Promise<void>((resolve,reject)=>{child.on('message',(m:any)=>{if(m.ready)return resolve();const item=pending.get(m.id);if(item){pending.delete(m.id);m.error?item.reject(new Error(m.error)):item.resolve(m.result);}});child.on('exit',code=>{const error=new Error(`Recovery fixture exited ${code}: ${stderr}`);reject(error);for(const item of pending.values())item.reject(error);});});
@@ -29,15 +29,16 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
         if(body.action==='restore'){writes++;expect(result.status).toBe(200);await route.fulfill({status:503,json:{ok:false,error:'Synthetic acknowledgement loss after commit.'}});}
         else await route.fulfill({status:result.status,json:result.payload});return true;
       }});
-      await page.goto('/admin/content#exact-content');
-      const sourceRow=page.getByRole('row').filter({hasText:'fallback-hook/placement-sentence/moon/scorpio'});
+      await page.goto(inherited?'/admin/content#compatibility':'/admin/content#exact-content');
+      if(inherited)await page.getByRole('searchbox',{name:'Search compatibility'}).fill('Sun trine Moon');
+      const sourceRow=page.getByRole('row').filter({hasText:inherited?'fallback-hook/synastry-pair/sun/moon/trine':'fallback-hook/placement-sentence/moon/scorpio'});
       await expect(sourceRow).toBeVisible();await sourceRow.getByRole('button',{name:'Edit',exact:true}).click();
-      const editor=page.getByRole('dialog');const recovery=editor.getByRole('button',{name:'Use approved source',exact:true});
+      const editor=page.getByRole('dialog');const recovery=editor.getByRole('button',{name:inherited?'Restore inherited reading':'Use approved source',exact:true});
       await openEditorMoreActions(editor);
       await expect(recovery).toBeEnabled();await recovery.click();
       await expect(editor.getByText(/saved writing stays recoverable/)).toBeVisible();
       await editor.getByRole('button',{name:'Cancel',exact:true}).click();expect((await call({method:'counts'})).receipts).toBe(0);
-      await recovery.click();await editor.getByRole('button',{name:'Restore approved source',exact:true}).click();
+      await recovery.click();await editor.getByRole('button',{name:inherited?'Restore inherited reading':'Restore approved source',exact:true}).click();
       await expect(page.getByRole('button',{name:'Check recovery',exact:true})).toBeEnabled();
       expect((await call({method:'counts'})).archived).toBe(1);expect(writes).toBe(1);
       if(theme==='dark')await call({method:'advance-source'});
@@ -47,7 +48,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await expect(page.getByText(theme==='dark'?'This source changed after recovery. Reload to see its current state. This check did not change saved writing.':'Approved source restored for readers. Your saved writing remains in source history.',{exact:true})).toBeVisible();
       const rows=await call({method:'rows'});expect(rows[0].body).toBe('Neutral complete source opening. Neutral complete source ending.');
       expect(writes).toBe(1);expect(errors).toEqual([]);
-      await page.screenshot({path:`test-results/approved-source-recovery-${width}-${theme}.png`,fullPage:true});
+      await page.screenshot({path:`test-results/approved-source-recovery-${inherited?'inherited':'installed'}-${width}-${theme}.png`,fullPage:true});
     }finally{await call({method:'close'}).catch(()=>{});child.kill();}
   });
 }
