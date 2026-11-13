@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
 import {AdminSelect,AdminDisclosureSummary} from './AdminNativeControls';
-import {adminCredentialHeaders} from './adminSecret';
+import {writingRequest} from './writingRequest';
 import {Stack,Grid,Text} from './studio-ds/primitives';
 import WritingPlanExport from './WritingPlanExport';
 
@@ -12,8 +12,7 @@ class WritingRequestError extends Error {
 }
 const endpoint='/api/admin/lunation-writing';
 async function request(secret:string,body?:unknown,query='',signal?:AbortSignal) {
-  const response=await fetch(endpoint+query,{method:body?'POST':'GET',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},
-    cache:'no-store',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000),...(body?{body:JSON.stringify(body)}:{})});
+  const response=await writingRequest(secret,endpoint+query,body,signal,'no-store');
   const payload=await response.json().catch(()=>null);
   if(!response.ok||!payload?.ok)throw new WritingRequestError(payload?.error??'The lunation request could not be confirmed. Refresh saved drafts before retrying.',Array.isArray(payload?.rows)?payload.rows:[],payload?.code??'');
   return payload;
@@ -248,7 +247,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
               :<StudioButton className="admin-primary-button" disabled={busy||!row.body.trim()} onClick={()=>void run(stage)}>Review &amp; publish</StudioButton>}
             {!manual&&<StudioButton disabled={busy||dirty} onClick={()=>setRejecting(true)}>Reject &amp; regenerate</StudioButton>}
           </div>
-          {dirty&&<Text>Save your edits before rejecting so the complete draft is preserved.</Text>}
+          {dirty&&<Text>Save your edits before continuing.</Text>}
         </>}
         {!archived&&rejecting&&!writing.active&&<>
           <label><span>Reason for rejection</span><StudioTextarea formatting={false} autoFocus required value={rejectionReason} disabled={busy} rows={5} maxLength={6000} onChange={e=>setRejectionReason(e.target.value)} /></label>
