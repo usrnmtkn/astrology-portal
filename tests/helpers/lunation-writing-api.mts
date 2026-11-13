@@ -36,7 +36,14 @@ globalThis.fetch=async(input:any,options:any={})=>{
   if(url.origin!==env.SUPABASE_URL||url.pathname!=='/rest/v1/generated_interpretations')throw new Error(`External request refused: ${url.origin}${url.pathname}`);
   if(options.method==='PATCH'&&storageFixture.beforePatch){const beforePatch=storageFixture.beforePatch;storageFixture.beforePatch=null;beforePatch();}
   const found=[...rows.values()].filter(r=>matches(r,url.searchParams));
-  if(!options.method||options.method==='GET')return Response.json(found);
+  if(!options.method||options.method==='GET'){
+    const select=url.searchParams.get('select');
+    if(!select||select==='*')return Response.json(found);
+    return Response.json(found.map(row=>Object.fromEntries(select.split(',').map(field=>{
+      const [alias,path]=field.includes(':')?field.split(':'):[field,field];
+      return [alias,path.split(/->>?/).reduce((value:any,key)=>value?.[key],row)??null];
+    }))));
+  }
   // jsonb round-trips do not preserve object insertion order.
   const patch=JSON.parse(options.body,(_key,value)=>value&&typeof value==='object'&&!Array.isArray(value)
     ?Object.fromEntries(Object.keys(value).sort().map(key=>[key,value[key]])):value);

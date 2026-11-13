@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {StudioButton,StudioInput,StudioTextarea} from './StudioControls';
 import {AdminSelect,AdminDisclosureSummary} from './AdminNativeControls';
-import {adminCredentialHeaders} from './adminSecret';
+import {writingRequest} from './writingRequest';
 import {Stack,Grid,Text} from './studio-ds/primitives';
 import WritingPlanExport from './WritingPlanExport';
 
@@ -12,8 +12,7 @@ class WritingRequestError extends Error {
 }
 const endpoint='/api/admin/lunation-writing';
 async function request(secret:string,body?:unknown,query='',signal?:AbortSignal) {
-  const response=await fetch(endpoint+query,{method:body?'POST':'GET',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},
-    cache:'no-store',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000),...(body?{body:JSON.stringify(body)}:{})});
+  const response=await writingRequest(secret,endpoint+query,body,signal,'no-store');
   const payload=await response.json().catch(()=>null);
   if(!response.ok||!payload?.ok)throw new WritingRequestError(payload?.error??'The lunation request could not be confirmed. Refresh saved drafts before retrying.',Array.isArray(payload?.rows)?payload.rows:[],payload?.code??'');
   return payload;
@@ -61,9 +60,9 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
     try{await work();}catch(reason){if(reason instanceof WritingRequestError&&reason.code==='lunation_plan_changed')setPlanNeedsRefresh(true);setError((reason as Error).message);}finally{operation.current=false;setBusy(false);}
   }
   async function refresh() {
-    const result=await request(secret);setRows(result.rows);
+    const result=await request(secret,undefined,'?listing=true');setRows(result.rows);
     if(row&&!unsaved){
-      const saved=result.rows.find((r:Row)=>r.id===row.id);
+      const saved=(await request(secret,undefined,`?${new URLSearchParams({id:row.id})}`)).rows[0];
       if(saved){
         accept(saved);
         if(writing?.active&&!saved.source_snapshot.lunationWriting.active&&saved.body){
@@ -74,7 +73,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
   }
   useEffect(()=>{
     let cancelled=false;
-    void request(secret).then(result=>{if(!cancelled)setRows(result.rows);})
+    void request(secret,undefined,'?listing=true').then(result=>{if(!cancelled)setRows(result.rows);})
       .catch(reason=>{if(!cancelled)setError(reason.message);});
     return()=>{cancelled=true;};
   },[secret]);
@@ -164,6 +163,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
   const existingEvent=selectedEvent&&rows.some(saved=>saved.facts.lunationArticle.event.id===selectedEvent.id);
   const visibleRows=rows.filter(saved=>showArchived||saved.status!=='ARCHIVED');
   const plan=writing?.preview;
+  const manual=writing?.authoringSource==='manual';
   const notesChanged=!!row&&direction!==writing?.direction;
   async function stage() {
     if(!row)return;
@@ -195,11 +195,15 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
             {filteredEvents.map(event=><option key={event.id} value={event.id}>{event.title}</option>)}
           </AdminSelect></label>
           <Text size="meta">{displayTime(selectedEvent)} · {selectedEvent.timeZone}</Text>
-          <StudioButton className="admin-primary-button" disabled={busy} onClick={()=>void run(async()=>{
+          <div className="admin-toolbar-actions"><StudioButton className="admin-primary-button" disabled={busy} onClick={()=>void run(async()=>{
             const result=await request(secret,{action:'prepare',month,timeZone:zone,eventId:selectedEvent.id,direction:''});accept(result.rows[0]);
             setFocusDraft(value=>value+1);
           })}>{existingEvent?'Open saved draft':'Create new draft'}</StudioButton>
-          {!existingEvent&&<Text size="meta">First, review the writing plan. Generation starts only when you choose Create draft.</Text>}
+          {!existingEvent&&<StudioButton disabled={busy} onClick={()=>void run(async()=>{
+            const result=await request(secret,{action:'create-manual',month,timeZone:zone,eventId:selectedEvent.id});accept(result.rows[0]);
+            setFocusDraft(value=>value+1);
+          })}>Write manually</StudioButton>}</div>
+          {!existingEvent&&<Text size="meta">Write manually opens a blank article. Create new draft opens the writing plan; generation starts only when you choose Create draft.</Text>}
         </>}
         {!filteredEvents.length&&!eventsLoading&&!eventsError&&<Text>No matching events in this month. Choose another month or select All lunations.</Text>}
         </Stack>
@@ -210,7 +214,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
           {error&&<StudioButton disabled={busy} onClick={()=>void run(refresh)}>Try loading drafts again</StudioButton>}
           {!visibleRows.length&&<Text>{rows.length?'All saved drafts are archived. Show archived drafts to restore one.':'No drafts yet. Choose a Moon or eclipse above to get started.'}</Text>}
           {visibleRows.map(saved=><div className="admin-review-status-bar" key={saved.id}><StudioButton disabled={busy} onClick={()=>open(saved)}>{saved.headline}</StudioButton>
-            <Text size="meta">{displayTime(saved.facts.lunationArticle.event)} · {saved.status==='ARCHIVED'?'Archived':saved.source_snapshot.lunationWriting.active?'Writing in progress':saved.body?'Draft ready':saved.source_snapshot.lunationWriting.rejections?.length?'Ready to regenerate':'Plan ready'}</Text></div>)}
+            <Text size="meta">{displayTime(saved.facts.lunationArticle.event)} · {saved.status==='ARCHIVED'?'Archived':saved.source_snapshot.lunationWriting.active?'Writing in progress':saved.body?'Draft ready':saved.source_snapshot.lunationWriting.authoringSource==='manual'?'Manual draft':saved.source_snapshot.lunationWriting.listing?'Saved draft':saved.source_snapshot.lunationWriting.rejections?.length?'Ready to regenerate':'Plan ready'}</Text></div>)}
         </Stack>
       </section>
       <details className="admin-workspace-details"><AdminDisclosureSummary>Writing settings</AdminDisclosureSummary>
@@ -236,14 +240,14 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
             <label><span>Writing direction (optional)</span><StudioTextarea formatting={false} value={direction} disabled={busy} maxLength={6000} onChange={e=>setDirection(e.target.value)} placeholder="Describe the emphasis you want this article to explore." /></label>
           </details>
         </>}
-        {!archived&&row.body&&!writing.active&&!rejecting&&<>
-          <Text>Your draft is ready. Edit it below, or reject it and prepare a replacement.</Text>
+        {!archived&&(row.body||manual)&&!writing.active&&!rejecting&&<>
+          <Text>{manual?'Edit your article below, then review and publish when ready.':'Your draft is ready. Edit it below, or reject it and prepare a replacement.'}</Text>
           <div className="admin-toolbar-actions">
             {dirty?<StudioButton className="admin-primary-button" disabled={busy||notesChanged||!headline.trim()} onClick={()=>void run(()=>act('save',{headline,body}))}>Save draft</StudioButton>
               :<StudioButton className="admin-primary-button" disabled={busy||!row.body.trim()} onClick={()=>void run(stage)}>Review &amp; publish</StudioButton>}
-            <StudioButton disabled={busy||dirty} onClick={()=>setRejecting(true)}>Reject &amp; regenerate</StudioButton>
+            {!manual&&<StudioButton disabled={busy||dirty} onClick={()=>setRejecting(true)}>Reject &amp; regenerate</StudioButton>}
           </div>
-          {dirty&&<Text>Save your edits before rejecting so the complete draft is preserved.</Text>}
+          {dirty&&<Text>Save your edits before continuing.</Text>}
         </>}
         {!archived&&rejecting&&!writing.active&&<>
           <label><span>Reason for rejection</span><StudioTextarea formatting={false} autoFocus required value={rejectionReason} disabled={busy} rows={5} maxLength={6000} onChange={e=>setRejectionReason(e.target.value)} /></label>
@@ -263,7 +267,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
           if(window.confirm('The previous request may have been billed. Release it only if you accept that its outcome is unknown.'))void run(()=>act('release',{acknowledgeUnknownOutcome:true}));
         }}>Release interrupted request</StudioButton>}
       </Stack></div>}
-      {!archived&&!writing.active&&!rejecting&&<WritingPlanExport secret={secret} endpoint={endpoint} body={{action:'export',id:row.id,expectedUpdatedAt:row.updated_at}} disabled={busy||dirty}/>}
+      {!manual&&!archived&&!writing.active&&!rejecting&&<WritingPlanExport secret={secret} endpoint={endpoint} body={{action:'export',id:row.id,expectedUpdatedAt:row.updated_at}} disabled={busy||dirty}/>}
       {!archived&&plan&&!writing.active&&!rejecting&&<details className="admin-workspace-details" open={!row.body}>
         <AdminDisclosureSummary>Writing plan and sources</AdminDisclosureSummary>
         <Stack gap="sm">
@@ -278,7 +282,7 @@ export default function DatedLunationWritingStudio({secret,dirtyRef,onOpenConten
           <details><AdminDisclosureSummary>Your writing examples</AdminDisclosureSummary>{plan.voiceSources.map((source:any)=><blockquote key={source.id}><p>{source.text}</p><cite>{source.id}</cite></blockquote>)}</details>
         </Stack>
       </details>}
-        {archived?editor:!writing.active&&!rejecting&&(row.body?editor:<details className="admin-workspace-details">
+        {archived?editor:!writing.active&&!rejecting&&((row.body||manual)?editor:<details className="admin-workspace-details">
           <AdminDisclosureSummary>Write or paste a draft instead</AdminDisclosureSummary><Stack gap="md">{editor}
             <StudioButton className={proseChanged?'admin-primary-button':undefined} disabled={busy||!proseChanged||notesChanged||!headline.trim()} onClick={()=>void run(()=>act('save',{headline,body}))}>Save draft</StudioButton>
           </Stack></details>)}

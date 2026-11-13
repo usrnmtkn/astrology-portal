@@ -4,7 +4,7 @@ import {lunationHoroscopeIdentities} from '../../src/shared/lunationHoroscopeIde
 import {fileURLToPath} from 'node:url';
 import {createApiStore} from './calendar-review-api.mjs';
 import {readerRouteResponse} from './content-reader-route.mjs';
-export const store=await createApiStore([],{sqlMoonLifecycle:true,uuidIds:true});
+export const store=await createApiStore([],{sqlMoonLifecycle:true,uuidIds:true,projectSelect:true});
 const storeFetch=globalThis.fetch;
 process.env.OPENAI_API_KEY='synthetic-moon-browser-key';
 process.env.CONTENT_GENERATION_PROVIDER_SKY_ARTICLE='openai';
@@ -21,6 +21,14 @@ globalThis.fetch=async(url:any,init:any={})=>{
   return storeFetch(url,init);
 };
 export async function invoke(method:string,body?:any,url='/api/admin/generated-content'){
+  if(method==='seed-published-macro'){
+    const created=await store.invoke('POST',{contentKey:`authored/sky-lunation-macro/${body.event.phase}/${body.event.sign.toLowerCase()}`,surface:'sky',mode:'article',targetDate:null,eventType:'lunation-macro',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic published reusable article',body:'A distinct synthetic published reusable opening.\n\nThe complete distinct reusable final paragraph is preserved.',sections:{},facts:{}});
+    if(created.status!==200)throw new Error('Synthetic reusable creation failed: '+JSON.stringify(created.payload));
+    const row=created.payload.rows[0];
+    const published=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
+    if(published.status!==200)throw new Error('Synthetic reusable publication failed: '+JSON.stringify(published.payload));
+    return published.payload.rows[0];
+  }
   if(method==='generation-calls')return generationCalls;
   if(method==='rows')return [...store.rows.values()];
   if(method==='publications')return store.publication.publications();
@@ -40,7 +48,7 @@ export async function invoke(method:string,body?:any,url='/api/admin/generated-c
   if(method==='reader'){const response=(await readerRouteResponse('/api/content-reader',{method:'POST',body:JSON.stringify(body)}))!;return {status:response.status,payload:await response.json()};}
   const writing=url.startsWith('/api/admin/sky-article-template-slots');
   if(!writing&&!url.startsWith('/api/admin/lunation-writing'))return store.invoke(method,body,url);
-  if(!writing&&method!=='GET')throw new Error('This fixture must never generate collective lunar writing.');
+  if(!writing&&method!=='GET'&&!['create-manual','save','stage','archive','restore'].includes(body?.action))throw new Error('This fixture must never generate collective lunar writing.');
   if(writing){
     const event=store.rows.get(body?.moonHoroscopes?.id)?.sections?.moonWritingDraft?.event;
     if(event){const id=`synthetic-reference-${event.phase}`;store.rows.set(id,{id,content_key:`authored/sky-lunation-macro/${event.phase}/${event.sign.toLowerCase()}`,status:'DRAFT',updated_at:'2026-11-01T00:00:00.000Z',headline:'Synthetic lunar reference',body:'Complete synthetic lunar reference opening.\n\nComplete synthetic lunar reference ending.',sections:{},facts:{},source_snapshot:{}});}

@@ -8,6 +8,67 @@ const typography=(element:Element)=>{
   return Object.fromEntries(['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','marginTop','marginBottom','textTransform','textAlign'].map(key=>[key,style[key as keyof CSSStyleDeclaration]]));
 };
 for(const width of [390,1440])for(const theme of ['light','dark'] as const){
+  test(`Manual lunation draft avoids writer preparation at ${width} ${theme}`,async({page})=>{
+    const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});
+    const actions:string[]=[],listQueries:string[]=[];
+    try{
+      await page.context().route('**/*',route=>new URL(route.request().url()).pathname.startsWith('/api/')?route.abort():route.continue());
+      await routeStudioInventoryApi(page,{call:inventory.call,listRows:()=>[]});
+      await page.route('**/api/admin/calendar-feed-events',route=>route.fulfill({json:{ok:true,events:[]}}));
+      await page.route(/\/api\/admin\/(?:calendar-lunation-writing|lunation-writing)/,async route=>{
+        const req=route.request(),url=new URL(req.url()),body=req.method()==='POST'?req.postDataJSON():undefined;
+        if(body)actions.push(body.action);
+        if(req.method()==='GET'&&url.pathname==='/api/admin/lunation-writing'&&!url.searchParams.has('month')&&!url.searchParams.has('id'))listQueries.push(url.search);
+        const result=await writer.call({method:req.method(),url:url.pathname+url.search,...(body?{body}:{})});
+        await route.fulfill({status:result.status,contentType:'application/json',body:JSON.stringify(result.payload)});
+      });
+      await page.setViewportSize({width,height:1000});await page.emulateMedia({colorScheme:theme});
+      await page.addInitScript(value=>{localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');localStorage.setItem('tldrastro:studio-theme',value);},theme);
+      await page.goto('/admin/content#calendar-writeups?view=lunation-writing');
+      const workspace=page.getByRole('region',{name:'Lunation writing',exact:true});
+      await workspace.getByLabel('Month',{exact:true}).fill('2027-02');
+      await workspace.getByLabel('Time zone',{exact:true}).fill('UTC');
+      await expect(workspace.getByRole('button',{name:'Write manually',exact:true})).toBeEnabled();
+      await expect(workspace.getByText('Write manually opens a blank article.',{exact:false})).toBeVisible();
+      await page.screenshot({path:`test-results/lunation-manual-entry-${width}-${theme}.png`,fullPage:true});
+      await workspace.getByRole('button',{name:'Write manually',exact:true}).click();
+      const selected=workspace.getByRole('region',{name:'Selected lunation draft',exact:true});
+      await expect(selected).toBeFocused();
+      await expect(selected.getByLabel('Full article',{exact:true})).toBeVisible();
+      await expect(selected.getByRole('button',{name:'Create draft',exact:true})).toHaveCount(0);
+      await expect(selected.getByRole('button',{name:'Reject & regenerate',exact:true})).toHaveCount(0);
+      await expect(selected.getByText('Writing plan and sources',{exact:true})).toHaveCount(0);
+      const copy='Synthetic manual opening preserved in full.\n\nSynthetic final manual paragraph and ending.';
+      await selected.getByLabel('Article title',{exact:true}).fill('Synthetic manual Moon article');
+      await selected.getByLabel('Full article',{exact:true}).fill(copy);
+      await selected.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(selected.getByRole('status')).toHaveText('Draft saved.');
+      let row=(await writer.call({method:'rows'})).find((r:any)=>r.content_key.startsWith('studio-lunation/'));
+      expect(row.body).toBe(copy);expect(row.source_snapshot.lunationWriting.authoringSource).toBe('manual');
+      expect(row.source_snapshot.lunationWriting.preview).toBeUndefined();
+      await page.reload();
+      await workspace.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:'Synthetic manual Moon article',exact:true}).click();
+      await expect(selected.getByLabel('Full article',{exact:true})).toHaveValue(copy);
+      await expect(selected.getByRole('button',{name:'Review & publish',exact:true})).toBeEnabled();
+      await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
+      await expect(selected.getByRole('status')).toHaveText('Draft archived. Restore it to continue editing.');
+      await expect(selected.getByLabel('Full article',{exact:true})).toBeDisabled();
+      await workspace.getByRole('button',{name:'Restore draft',exact:true}).click();
+      await expect(selected.getByRole('status')).toHaveText('Draft restored. Review and publish when ready.');
+      await expect(selected.getByLabel('Full article',{exact:true})).toHaveValue(copy);
+      await expect(selected.getByLabel('Full article',{exact:true})).toBeEnabled();
+      expect(actions).toEqual(['create-manual','save','archive','restore']);
+      expect(listQueries.length).toBeGreaterThan(0);expect(listQueries.every(query=>new URLSearchParams(query).get('listing')==='true')).toBe(true);
+      expect((await writer.call({method:'provider'})).calls).toBe(0);
+      row=(await writer.call({method:'rows'})).find((r:any)=>r.id===row.id);
+      expect(row.status).toBe('DRAFT');expect(row.lane).toBe('reference');expect(row.body).toBe(copy);
+      expect(row.source_snapshot.lunationWriting.preview).toBeUndefined();
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      await page.screenshot({path:`test-results/lunation-manual-${width}-${theme}.png`,fullPage:true});
+    }finally{await writer.close();await inventory.close();}
+  });
+}
+for(const width of [390,1440])for(const theme of ['light','dark'] as const){
   test(`Lunation writer saves and recovers its draft at ${width} ${theme}`,async({page})=>{
     test.setTimeout(240000);
     const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});

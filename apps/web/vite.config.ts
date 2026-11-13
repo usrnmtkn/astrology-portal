@@ -281,6 +281,7 @@ export default defineConfig(({ mode }) => {
               || id.endsWith("/src/shared/lunationHoroscopeIdentity.ts")
               || id.endsWith("/src/shared/lunationTimingVariables.ts")
               || id.endsWith("/services/templateInterpolation.ts")
+              || id.endsWith("/services/generatedContentRendering.ts")
               || id.endsWith("/shared/components/formattedWritingLoader.ts")
               || id.endsWith("/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts")) return "reader-eligibility";
             // These shared readers already belong to boot. Keep them outside

@@ -1,7 +1,7 @@
 import {useEffect,useState} from 'react';
 import {StudioButton,StudioInput,StudioTabs,StudioTextarea} from './StudioControls';
 import {AdminDisclosureSummary,AdminSelect} from './AdminNativeControls';
-import {adminCredentialHeaders} from './adminSecret';
+import {writingRequest} from './writingRequest';
 import {PageLoading} from '../../../src/shared/components/PageLoading';
 import WritingPlanExport from './WritingPlanExport';
 import {LUNATION_SIGNS,LUNATION_PHASES,LUNATION_PROFILE_FIELDS,LUNATION_ARGUMENT_FIELDS,lunationContentKey} from '../../../src/astro-writing/lunationWritingIdentity.mjs';
@@ -11,7 +11,7 @@ const endpoint='/api/admin/calendar-lunation-writing';
 const labels:Record<string,string>={voiceGuidance:'Voice and clarity',phaseContext:'New & Full Moon context',scopeGuidance:'Reader and intention',factsAndLinks:'Dates, variables and links',thesis:'Central thought',phase_context:'Lunar phase context',sign_meaning:'Meaning of the sign',recognition:'What the reader might recognize',intention_or_reflection:'Intention or reflection',journal_focus:'Journal focus',scope_guard:'What this reading must not assume'};
 const title=(value:string)=>value.replace(/(^|-)([a-z])/gu,(_,prefix,letter)=>`${prefix?' ':''}${letter.toUpperCase()}`);
 async function request(secret:string,body:any,signal?:AbortSignal) {
-  const response=await fetch(endpoint,{method:'POST',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},body:JSON.stringify(body),cache:'no-store',signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000)});
+  const response=await writingRequest(secret,endpoint,body,signal,'no-store');
   let data;try{data=await response.json();}catch{throw new Error('Studio returned an unreadable response. Reload before retrying.');}
   if(!response.ok||data.ok!==true)throw new Error(data.error??'The lunar workspace could not be loaded.');
   return data;

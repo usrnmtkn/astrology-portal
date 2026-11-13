@@ -7,8 +7,12 @@ export function standaloneArticleKind(key: string): "article" | "guide" | null {
   return null;
 }
 /** Revision eligibility is separate from library placement and release scheduling. */
-export function articleRevisionTarget(row: { content_key: string; mode?: string | null; surface?: string | null }) {
+export function articleRevisionTarget(row: { content_key: string; mode?: string | null; surface?: string | null; event_type?: string | null; lane?: string | null; review_state?: string | null; provider?:string|null; source_snapshot?:Record<string,unknown>|null; facts?:Record<string,unknown>|null }) {
   return Boolean(standaloneArticleKind(row.content_key) && row.mode === "article")
+    || row.content_key.startsWith('cms/lunation-article/') && row.event_type==='lunation-article'
+      && row.mode==='article' && row.surface==='sky' && row.lane==='serving' && !row.review_state
+      && row.provider!=='tldrastro-fallback-architecture-v3' && row.source_snapshot?.sourcePackage!=='tldrastro-fallback-architecture-v3'
+      && (row.facts?.fallbackArchitectureV3==null || row.facts?.fallbackArchitectureV3===false)
     || row.content_key.startsWith("education/astro-101/") && row.surface === "education"
       && ["article", "all"].includes(row.mode ?? "");
 }

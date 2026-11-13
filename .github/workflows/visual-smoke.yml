@@ -585,7 +585,7 @@ jobs:
         run: node scripts/run-affected-playwright.mjs -c playwright.chart-table-studio.config.ts --workers=1
       - name: Verify explicit Moon recovery through the actual reader
         if: matrix.suite == 'lunation-studio'
-        run: node scripts/run-affected-playwright.mjs -c playwright.config.ts tests/visual/moon-reusable-recovery.spec.ts --workers=1 --timeout=120000
+        run: node scripts/run-affected-playwright.mjs -c playwright.config.ts tests/visual/moon-reusable-recovery.spec.ts tests/visual/dated-lunation-recovery.spec.ts --workers=1 --timeout=120000
       - name: Upload ${{ matrix.suite }} artifacts
         if: always()
         uses: actions/upload-artifact@v6

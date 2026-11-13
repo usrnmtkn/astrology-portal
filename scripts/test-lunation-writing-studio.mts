@@ -4,6 +4,7 @@ import {rows,invoke,providerFixture,feedbackFixture} from '../tests/helpers/luna
 import {calculateLunationArticleFacts,lunationArticleEvents,verifiedLunationEclipse} from '../api/_lib/lunation-article-facts';
 import {prepareLunationArticle,writeLunationArticle,lunationArticleHash} from '../src/astro-writing/lunationArticleWriting.mjs';
 
+await import('./test-lunation-manual-draft.mts');
 await import('./test-lunation-workspace-lifecycle.mts');
 
 assert.equal(lunationArticleHash({z:[{b:2,a:1}],a:null}),lunationArticleHash({a:null,z:[{a:1,b:2}]}));

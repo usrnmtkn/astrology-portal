@@ -5803,7 +5803,7 @@ export function GeneratedContentAdminDashboard() {
     let saved = activeDraft.id && unchanged && !saveBeforePublishing
       ? editorSourceRow?.id === activeDraft.id ? editorSourceRow : rows.find(row => row.id === activeDraft.id)
       : await saveDraft("DRAFT", activeDraft);
-    if (saved?.status === "REVIEWED" && calendarPlanetaryRevisionTarget(saved, "studio-draft")) saved = await saveDraft("DRAFT", activeDraft);
+    if (saved?.status === "REVIEWED" && saved.event_type === standaloneRevisionEvent) saved = await saveDraft("DRAFT", activeDraft);
     if (!saved) return;
     if (saved.event_type !== standaloneRevisionEvent) {
       await approveAndScheduleSkyRow(saved, true);
@@ -10615,8 +10615,8 @@ export function GeneratedContentAdminDashboard() {
     const datedArticleTemplateKey = placementArticleIdentity ? skyArticleTemplateKey(placementArticleIdentity[1], placementArticleIdentity[2],
       rows.filter(row => row.status !== "ARCHIVED" && isSkyArticleTemplateRow(row)).map(row => row.content_key)) : undefined;
     const isManualCalendarEventDraft = !isPackageDraft && (currentDraft.blockType === "calendar_event" || !currentDraft.blockType) && Boolean(calendarPlanetaryIdentity(currentDraft.contentKey));
-    const isCalendarRevisionDraft = !isPackageDraft && calendarPlanetaryRevisionTarget({...currentDraft,event_type:selectedRow?.event_type},
-      currentDraft.mode === "studio-draft" ? "studio-draft" : "feed");
+    const isCalendarRevisionDraft = !isPackageDraft && (currentDraft.contentKey.startsWith('cms/lunation-article/') || calendarPlanetaryRevisionTarget({...currentDraft,event_type:selectedRow?.event_type},
+      currentDraft.mode === "studio-draft" ? "studio-draft" : "feed"));
     const SkyRelatedContainer = isSkyPlacementSource ? "details" : "section";
     const SkyChangesContainer = isSkyPlacementSource ? "details" : "section";
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
@@ -13038,8 +13038,6 @@ export function GeneratedContentAdminDashboard() {
             onClick={() => void (async () => {
               if (isStandaloneArticleDraft || isCalendarRevisionDraft) {
                 await publishStandaloneArticle(currentDraft);
-              } else if (currentDraft.contentKey.startsWith("cms/lunation-article/")) {
-                await publishOwnerDraft(currentDraft);
               } else if (packageOwnerCanPublish) {
                 await publishPackageDraft(currentDraft);
               } else {
@@ -13090,6 +13088,7 @@ export function GeneratedContentAdminDashboard() {
           <details className="admin-editor-more-actions"><AdminDisclosureSummary>More actions</AdminDisclosureSummary>
           {!isAstro101Draft && !isSkyArticleTemplate && currentDraft.id && !currentDraft.id.startsWith("package:") && !rows.find((row) => row.id === currentDraft.id)?.target_date && (
             <ApprovedSourceRecovery sources={[{id:currentDraft.id, contentKey:currentDraft.contentKey, expectedUpdatedAt:currentDraft.updatedAt!}]}
+              kind={sourceIsArchived&&selectedRow?.event_type==='lunation-article'?'moon-reusable':undefined}
               disabled={isLoading || draftHasUnsavedChanges || Boolean(pendingPublication) || publicationRefresh.state !== "idle"}
               request={requestApprovedSourceRecovery} onRecovered={acceptApprovedSourceRecovery} onBusy={setIsLoading} />
           )}

@@ -1,9 +1,14 @@
 import {createHash} from 'node:crypto';
+import {Readable} from 'node:stream';
+import readerHandler from '../content-reader.js';
+import {renderAdmittedGeneratedContentRow,generatedContentParagraphs} from '../../apps/web/src/services/generatedContentRendering.js';
+import {lunationTimingValues,renderLunationTiming} from '../../src/shared/lunationTimingVariables.js';
 import {AdminHttpError,adminFetchJson} from './admin-http.js';
 import {approvedSourceBaseline} from './approved-source-recovery.js';
 import {lunationArticleEvents} from './lunation-article-facts.js';
 import {moonHoroscopeKey} from '../../src/shared/datedMoonIdentity.mjs';
 import {lunationHoroscopeIdentities} from '../../src/shared/lunationHoroscopeIdentities.js';
+import {datedLunationContentKey,lunationReaderContentKeys} from '../../apps/web/src/content/lunationArticleIdentity.js';
 import {validContentPublication,publicationRestoresBaseline,publicationTimestamp} from '../../apps/web/src/content/contentPublicationState.js';
 
 const uuid=/^[a-f\d]{8}(?:-[a-f\d]{4}){3}-[a-f\d]{12}$/iu;
@@ -25,23 +30,26 @@ async function sourceRow(get:Store,id:string,allowMissing=false){
   const rows=await get(`generated_interpretations?${new URLSearchParams({id:`eq.${id}`,select:'id,content_key,updated_at,status,surface,mode,event_type,target_date,facts'})}`);
   if(!Array.isArray(rows)||rows.length>1)throw new AdminHttpError(503,'The archived Moon readings could not be verified.');
   if(!rows.length){if(allowMissing)return null;throw new AdminHttpError(409,'The archived Moon readings could not be verified.');}
-  return {...rows[0],event:rows[0].facts?.lunationHoroscopes?.event};
+  const row=rows[0];
+  return {...row,event:row.event_type==='lunation-article'?row.facts?.lunationArticle?.event:row.facts?.lunationHoroscopes?.event};
 }
 async function baseline(row:any){
-  const event=row.event;
-  if(row.status!=='ARCHIVED'||row.surface!=='sky'||row.mode!=='article'||row.event_type!=='lunation-horoscopes'||row.target_date!=null
-    ||!event||row.content_key!==moonHoroscopeKey(event)||event.eclipseType||typeof event.timeZone!=='string')
-    throw new AdminHttpError(422,'Select an archived dated Moon horoscope set with reusable readings.');
+  const event=row.event,article=row.event_type==='lunation-article';
+  const identity=article?datedLunationContentKey:moonHoroscopeKey;
+  if(row.status!=='ARCHIVED'||row.surface!=='sky'||row.mode!=='article'||!['lunation-horoscopes','lunation-article'].includes(row.event_type)||row.target_date!=null
+    ||!event||row.content_key!==identity(event)||!article&&event.eclipseType||typeof event.timeZone!=='string')
+    throw new AdminHttpError(422,'Select archived dated Moon writing with reusable readings.');
   let month:string;
   try{month=new Intl.DateTimeFormat('en-CA',{timeZone:event.timeZone,year:'numeric',month:'2-digit'}).format(new Date(event.startsAt));}
   catch{throw new AdminHttpError(422,'The saved Moon event is invalid.');}
-  const calculated=(await lunationArticleEvents(month,event.timeZone)).find(value=>moonHoroscopeKey(value)===row.content_key);
-  if(!calculated||Date.parse(calculated.startsAt)!==Date.parse(event.startsAt)||calculated.eclipseType)
+  const calculated=(await lunationArticleEvents(month,event.timeZone)).find(value=>identity(value)===row.content_key);
+  if(!calculated||Date.parse(calculated.startsAt)!==Date.parse(event.startsAt)||!article&&calculated.eclipseType)
     throw new AdminHttpError(422,'The saved readings do not match a calculated Moon event.');
-  const keys=lunationHoroscopeIdentities(calculated.phase,calculated.sign).map(value=>value.contentKey);
+  const keys=article?lunationReaderContentKeys(calculated).filter(key=>key.startsWith('authored/'))
+    :lunationHoroscopeIdentities(calculated.phase,calculated.sign).map(value=>value.contentKey);
   const approved=keys.map(approvedSourceBaseline).filter((value):value is NonNullable<typeof value>=>Boolean(value));
   if(!approved.length)throw new AdminHttpError(422,'No approved reusable readings are installed for this Moon.');
-  return {keys,approved,packageVersion:approved[0].packageVersion,baselineSHA256:digest(approved)};
+  return {event:calculated,keys,approved,packageVersion:approved[0].packageVersion,baselineSHA256:digest(approved)};
 }
 async function publications(get:Store,keys:string[]){
   const rows=await get(`content_publications?${new URLSearchParams({content_key:`in.(${keys.map(key=>`"${key}"`).join(',')})`,select:'*'})}`);
@@ -49,6 +57,22 @@ async function publications(get:Store,keys:string[]){
     throw new AdminHttpError(503,'Moon publication could not be verified.');
   return new Map(rows.map(row=>[row.content_key,row]));
 }
+/** The normal public reader performs admission; only a boolean leaves this RAM-only check. */
+async function publishedMacroAvailable(installed:Awaited<ReturnType<typeof baseline>>,ledger:Awaited<ReturnType<typeof publications>>) {
+  const key=installed.keys[0],publication=ledger.get(key);
+  if(!publication||publication.state!=='live'||!publication.row_id||!publication.row_updated_at)return false;
+  const req=Object.assign(Readable.from([JSON.stringify({keys:[key]})]),{method:'POST',headers:{},url:'/api/content-reader'});
+  let payload:any;const res={statusCode:200,setHeader(){},end(text:string){payload=JSON.parse(text);}};
+  await readerHandler(req as any,res as any);
+  if(res.statusCode!==200||!Array.isArray(payload?.rows))throw new AdminHttpError(503,'Reusable reading availability could not be verified. Try checking again.');
+  const rows=payload.rows.filter((row:any)=>row.content_key===key&&row.id===publication.row_id
+    &&publicationTimestamp(row.updated_at)===publicationTimestamp(publication.row_updated_at!)&&row.target_date==null);
+  if(rows.length!==1)return false;
+  const values=lunationTimingValues(installed.event.startsAt,installed.event.timeZone);
+  const rendered=renderAdmittedGeneratedContentRow(rows[0],values,ledger);
+  return Boolean(rendered&&renderLunationTiming(generatedContentParagraphs(rendered).join('\n\n').trim(),values));
+}
+
 async function receipt(get:Store,operationId:string){
   const rows=await get(`content_baseline_recoveries?${new URLSearchParams({operation_id:`eq.${operationId}`,select:'request,result'})}`);
   if(!Array.isArray(rows)||rows.length>1)throw new AdminHttpError(503,'Recovery status is unavailable.');
@@ -65,11 +89,13 @@ async function status(get:Store,stored:any){
   if(!row||row.status!=='ARCHIVED'||publicationTimestamp(row.updated_at)!==publicationTimestamp(item.updatedAt))return {ok:true,state:'changed'};
   const current=await baseline(row),ledger=await publications(get,[row.content_key,...current.keys]);
   if(current.baselineSHA256!==planned.baselineSHA256||ledger.get(row.content_key)?.revision!==item.publication.revision
-    ||planned.fallbacks.some((source:any)=>(ledger.get(source.contentKey)?.revision??null)!==source.expectedPublicationRevision))return {ok:true,state:'changed'};
+    ||planned.fallbacks.some((source:any)=>{const publication=ledger.get(source.contentKey);return (publication?.revision??null)!==source.expectedPublicationRevision
+      ||source.expectedRowId&&(publication?.row_id!==source.expectedRowId||!publication?.row_updated_at||publicationTimestamp(publication.row_updated_at)!==publicationTimestamp(source.expectedRowUpdatedAt));})
+    ||row.event_type==='lunation-article'&&planned.fallbacks[0]?.expectedRowId&&!await publishedMacroAvailable(current,ledger))return {ok:true,state:'changed'};
   return {ok:true,state:'restored',recovered:stored.result,savedWritingRetained:true};
 }
 
-/** Metadata-only, explicit owner recovery. Never reads or edits archived passages. */
+/** Explicit owner recovery. Archived passages are never read or edited; admitted reusable copy stays in server memory. */
 export async function recoverReusableMoonReadings(body:any){
   if(!['preview','restore','status','cancel'].includes(body?.action))throw new AdminHttpError(400,'Select a Moon recovery action.');
   const get=storage();
@@ -93,10 +119,12 @@ export async function recoverReusableMoonReadings(body:any){
   if(row.content_key!==input.contentKey||publicationTimestamp(row.updated_at)!==publicationTimestamp(input.expectedUpdatedAt))throw new AdminHttpError(409,'These Moon readings changed. Reload before recovery.');
   const installed=await baseline(row),ledger=await publications(get,[row.content_key,...installed.keys]),publication=ledger.get(row.content_key);
   if(!publication||publication.state!=='retired'||publication.row_id&&publication.row_id!==row.id)throw new AdminHttpError(409,'The dated Moon publication changed. Reload before recovery.');
-  if(!installed.approved.some(source=>!ledger.has(source.contentKey)||publicationRestoresBaseline(ledger.get(source.contentKey))))
+  if(!installed.approved.some(source=>!ledger.has(source.contentKey)||publicationRestoresBaseline(ledger.get(source.contentKey)))
+    &&!(row.event_type==='lunation-article'&&await publishedMacroAvailable(installed,ledger)))
     throw new AdminHttpError(422,'No installed reusable readings are currently available. Their publication rules have not changed.');
   const plan={id:row.id,contentKey:row.content_key,expectedUpdatedAt:row.updated_at,baselineSHA256:installed.baselineSHA256,
-    expectedPublicationRevision:publication.revision,fallbacks:installed.keys.map(contentKey=>({contentKey,expectedPublicationRevision:ledger.get(contentKey)?.revision??null}))};
+    expectedPublicationRevision:publication.revision,fallbacks:installed.keys.map(contentKey=>{const fallback=ledger.get(contentKey);return {contentKey,expectedPublicationRevision:fallback?.revision??null,
+      ...(row.event_type==='lunation-article'&&fallback?.row_id?{expectedRowId:fallback.row_id,expectedRowUpdatedAt:fallback.row_updated_at}:{})};})};
   if(body.action==='preview')return {ok:true,sources:[plan],packageVersion:installed.packageVersion,savedWritingRetained:true};
   if(digest(plan)!==digest(input))throw new AdminHttpError(409,'The reusable readings or publication changed. Review recovery again.');
   const result=await get('rpc/restore_moon_reusable_readings',{p_operation_id:body.operationId,p_source:plan});

@@ -1,12 +1,12 @@
 import {useEffect,useState} from 'react';
 import {StudioButton,StudioInput,StudioTabs,StudioTextarea} from './StudioControls';
 import {AdminDisclosureSummary} from './AdminNativeControls';
-import {adminCredentialHeaders} from './adminSecret';
+import {writingRequest} from './writingRequest';
 import {PageLoading} from '../../../src/shared/components/PageLoading';
 import WritingPlanExport from './WritingPlanExport';
 const labels:Record<string,string>={instructions:'Writer instructions',calendarExamples:'Calendar references',bookExamples:'Book references',rejectedExamples:'Rejected writing and owner corrections',outputGuidance:'Length and output'};
 async function request(secret:string,body:any,signal?:AbortSignal){
-  const response=await fetch('/api/admin/calendar-daily-writing',{method:'POST',headers:{...adminCredentialHeaders(secret),'content-type':'application/json'},body:JSON.stringify(body),signal:signal?AbortSignal.any([signal,AbortSignal.timeout(90000)]):AbortSignal.timeout(90000)});
+  const response=await writingRequest(secret,'/api/admin/calendar-daily-writing',body,signal);
   const data=await response.json();
   if(!response.ok||data.ok!==true)throw new Error(data.error??'Daily writing could not be loaded.');
   return data;
