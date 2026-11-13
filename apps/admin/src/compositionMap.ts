@@ -1,4 +1,5 @@
 import { zodiacSeasonVariableNames } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
+import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
 import {
@@ -126,7 +127,7 @@ function humanize(value: string) {
 
 function packageRecordForRow(row: CompositionMapRow) {
   const sections = objectRecord(row.sections);
-  return { ...objectRecord(sections?.packageRecord), ...objectRecord(sections?.packageDraft) };
+  return mergeStudioPackagePatch(objectRecord(sections?.packageRecord) ?? {}, objectRecord(sections?.packageDraft) ?? {});
 }
 
 function variableFieldsForRow(row: CompositionMapRow) {

@@ -1,5 +1,6 @@
 /** Shared CSV contract. No browser, storage, or provider dependencies. */
 import { isDynamicTransitNatalLibraryKey } from "../../web/src/content/transitNatalIdentity.js";
+import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch";
 import { decodeCsvCell, quoteCsvCell } from '../../../src/shared/csvText.js';
 export type CsvContentRow = {
   id: string; content_key: string; updated_at?: string | null; event_type?: string | null;
@@ -54,7 +55,7 @@ type Field = { column: string; path: string; value: string; package: boolean; se
 export function csvTextFields(row: CsvContentRow): Field[] {
   const sections = object(row.sections);
   const base = object(sections.packageRecord);
-  const record = { ...base, ...object(sections.packageDraft) };
+  const record = mergeStudioPackagePatch(base, object(sections.packageDraft));
   if (Object.keys(base).length) {
     const declared = Array.isArray(base.studio_editable_fields) ? base.studio_editable_fields.map((field: any) => field?.path).filter((path: unknown): path is string => typeof path === 'string' && safePath(path)) : [];
     // Explicit Studio definitions take precedence over generated reader mirrors.
@@ -164,7 +165,7 @@ export function csvDraftPatch(row: CsvContentRow, imported: CsvRecord) {
   const patch: Record<string, any> = { status: 'DRAFT', ...(csvRetainsTransitAlternate(imported) ? { preserveCurrentTransitAsAlternate: true } : {}) };
   const sections = structuredClone(row.sections ?? {}) as Record<string, any>;
   if (changes.some(field => field.package)) {
-    const proposal = { ...structuredClone(object(sections.packageRecord)), ...structuredClone(object(sections.packageDraft)) };
+    const proposal = mergeStudioPackagePatch(object(sections.packageRecord), object(sections.packageDraft));
     for (const field of changes) put(proposal, field.path, field.after);
     sections.packageDraft = proposal;
     patch.reviewStatus = 'needs_review';
