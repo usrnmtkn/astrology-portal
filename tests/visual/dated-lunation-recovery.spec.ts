@@ -50,10 +50,15 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
       }
       await route.fulfill({status:result.status,json:result.payload});return true;
     }});
+    const events=await call({method:'GET',url:'/api/admin/lunation-writing?month=2020-05&timeZone=America%2FNew_York'});
+    const event=events.payload.events.find((event:any)=>event.phase==='full-moon');
+    const macro=await call({method:'seed-published-macro',body:{event}});
+    const macroBefore=(await call({method:'rows'})).find((row:any)=>row.id===macro.id);
+    const macroLedgerBefore=(await call({method:'publications'})).find((row:any)=>row.content_key===macro.content_key);
     reader=await context.newPage();reader.on('pageerror',error=>errors.push(error.message));await reader.setViewportSize({width,height:1000});await reader.clock.setFixedTime(new Date('2020-05-07T16:00:00Z'));
     await reader.goto(`${baseURL}/?date=2020-05-07#sky/lunation/2020-05-07/scorpio`);
     const capture=()=>reader!.evaluate(()=>{const article=Array.from(document.querySelectorAll<HTMLElement>('.sky-detail-article .article-body-inner')).find(node=>!node.querySelector('#sky-rising-horoscopes'));return Array.from(article?.children??[]).filter(node=>!node.classList.contains('sky-detail-end')).map(node=>(node as HTMLElement).innerText).filter(Boolean).join('\n\n');});
-    await expect.poll(capture,{timeout:60000}).not.toBe('');const baseline=await capture();
+    await expect.poll(capture,{timeout:60000}).not.toBe('');const baseline=await capture();expect(baseline).toContain('complete distinct reusable final paragraph');
     await page.goto('/admin/content#calendar-writeups?view=lunation-writing');
     const workspace=page.getByRole('region',{name:'Lunation writing',exact:true});
     await workspace.getByLabel('Month',{exact:true}).fill('2020-05');await workspace.getByLabel('Time zone',{exact:true}).fill('America/New_York');await workspace.getByRole('combobox',{name:'Event type',exact:true}).selectOption('full-moon');
@@ -88,7 +93,8 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
     await reader.reload();await expect.poll(capture).toBe(baseline);await reader.reload();await expect.poll(capture).toBe(baseline);
     await page.goto('/admin/content#calendar-writeups?view=lunation-writing');await page.reload();await workspace.getByRole('region',{name:'Saved lunation drafts',exact:true}).getByRole('button',{name:title,exact:true}).click();await workspace.getByRole('button',{name:'Archive draft',exact:true}).click();
     await expect(workspace.getByRole('status')).toHaveText('Draft archived. Restore it to continue editing.');
-    expect((await call({method:'rows'})).every((row:any)=>row.status==='ARCHIVED')).toBe(true);expect(await call({method:'generation-calls'})).toBe(0);expect(errors).toEqual([]);
+    const finalRows=await call({method:'rows'});expect(finalRows.filter((row:any)=>row.id!==macro.id).every((row:any)=>row.status==='ARCHIVED')).toBe(true);
+    expect(finalRows.find((row:any)=>row.id===macro.id)).toEqual(macroBefore);expect((await call({method:'publications'})).find((row:any)=>row.content_key===macro.content_key)).toEqual(macroLedgerBefore);expect(await call({method:'generation-calls'})).toBe(0);expect(errors).toEqual([]);
     await page.screenshot({path:`test-results/dated-lunation-recovery-${width}-${theme}.png`,fullPage:true});
   }finally{
     await reader?.close().catch(()=>{});await page.close().catch(()=>{});await context.unrouteAll({behavior:'wait'}).catch(()=>{});

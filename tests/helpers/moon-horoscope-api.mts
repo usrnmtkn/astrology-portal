@@ -21,6 +21,14 @@ globalThis.fetch=async(url:any,init:any={})=>{
   return storeFetch(url,init);
 };
 export async function invoke(method:string,body?:any,url='/api/admin/generated-content'){
+  if(method==='seed-published-macro'){
+    const created=await store.invoke('POST',{contentKey:`authored/sky-lunation-macro/${body.event.phase}/${body.event.sign.toLowerCase()}`,surface:'sky',mode:'article',targetDate:null,eventType:'lunation-macro',provider:'manual-admin',status:'DRAFT',lane:'serving',headline:'Synthetic published reusable article',body:'A distinct synthetic published reusable opening.\n\nThe complete distinct reusable final paragraph is preserved.',sections:{},facts:{}});
+    if(created.status!==200)throw new Error('Synthetic reusable creation failed: '+JSON.stringify(created.payload));
+    const row=created.payload.rows[0];
+    const published=await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:row.updated_at,ownerAction:'publish-owner-content'});
+    if(published.status!==200)throw new Error('Synthetic reusable publication failed: '+JSON.stringify(published.payload));
+    return published.payload.rows[0];
+  }
   if(method==='generation-calls')return generationCalls;
   if(method==='rows')return [...store.rows.values()];
   if(method==='publications')return store.publication.publications();

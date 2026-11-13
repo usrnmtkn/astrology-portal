@@ -135,7 +135,7 @@ export async function createApiStore(initial = fixtures, storeOptions = {}) {
         for (const row of updated) rows.set(row.id, row);
         return Response.json(updated);
       }
-      if (storeOptions.sqlMoonLifecycle && found.every(row => /^cms\/lunation-(?:horoscopes|article)\//u.test(row.content_key) && row.mode === 'article')) {
+      if (storeOptions.sqlMoonLifecycle && found.every(row => /^(?:cms\/lunation-(?:horoscopes|article)|authored\/sky-lunation-macro)\//u.test(row.content_key) && row.mode === 'article')) {
         const updated = await publication.patchMoonRows(found,patch,options.headers);
         for (const row of updated) rows.set(row.id,row);
         return Response.json(updated);

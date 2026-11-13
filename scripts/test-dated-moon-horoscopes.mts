@@ -91,12 +91,15 @@ try{
       assert.equal(result.status,200,JSON.stringify(result.payload));const revision=result.payload.rows[0];assert.equal(revision.mode,'studio-draft');assert.equal(store.rows.get(row.id).body,row.body,'Draft edits preserve the published reading.');
       result=await invoke('PATCH',{id:revision.id,expectedUpdatedAt:revision.updated_at,ownerAction:'publish-horoscope-edition-revision'});
       assert.equal(result.status,200,JSON.stringify(result.payload));assert.equal(result.payload.rows[0].id,row.id);assert.equal(result.payload.rows[0].sections.articleHoroscopes.passages[11].body,revised.passages[11].body);
-      const published=structuredClone(result.payload.rows[0]);
+      const published=structuredClone(store.rows.get(row.id));
       const copy=(value:any)=>Object.fromEntries(Object.entries(value).filter(([key])=>!['status','updated_at'].includes(key)));
       const lifecycle=(action:string,version=store.rows.get(row.id).updated_at,extra={})=>invoke('PATCH',{id:row.id,expectedUpdatedAt:version,sourceLifecycleAction:action,...extra});
+      const beforeStaleArchive=structuredClone(store.rows.get(row.id));
       assert.equal((await lifecycle('archive',version)).status,409,'A stale archive cannot overwrite newer publication.');
+      assert.deepEqual(store.rows.get(row.id),beforeStaleArchive,'A rejected stale archive preserves every persisted field.');
+      const beforeUnauthorizedArchive=structuredClone(store.rows.get(row.id));
       assert.equal((await store.invoke('PATCH',{id:row.id,expectedUpdatedAt:published.updated_at,sourceLifecycleAction:'archive'},undefined,'wrong-secret')).status,401);
-      assert.deepEqual(store.rows.get(row.id),published);
+      assert.deepEqual(store.rows.get(row.id),beforeUnauthorizedArchive,'An unauthorized archive preserves every persisted field.');
       result=await lifecycle('archive');assert.equal(result.status,200,'MOON_CANONICAL_ARCHIVE');
       const archived=structuredClone(result.payload.rows[0]);assert.equal(archived.status,'ARCHIVED');assert.deepEqual(copy(archived),copy(published));
       assert.equal((await invoke('PATCH',{id:revision.id,expectedUpdatedAt:store.rows.get(revision.id).updated_at,sourceLifecycleAction:'archive'})).status,409,'Canonical lifecycle cannot target a private revision.');

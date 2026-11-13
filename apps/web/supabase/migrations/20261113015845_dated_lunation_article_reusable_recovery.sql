@@ -3,7 +3,7 @@
 -- keys remain distinct. Archived writing and reusable publications stay unchanged.
 create or replace function public.restore_moon_reusable_readings(p_operation_id uuid, p_source jsonb)
 returns jsonb language plpgsql security invoker set search_path = '' as $$
-declare source public.generated_interpretations; publication public.content_publications;
+declare source public.generated_interpretations; reusable public.generated_interpretations; publication public.content_publications;
   previous public.content_baseline_recoveries; fallback jsonb; current_revision bigint;
   request jsonb := jsonb_build_object('kind','moon-reusable','source',p_source);
   result jsonb; saved jsonb; fallback_prefix text;
@@ -62,12 +62,34 @@ begin
       raise exception 'Select the matching independent reusable readings.' using errcode = '22023';
     end if;
   end if;
+  -- Published macro dependencies follow the same source-row-before-key lock order.
+  if source.event_type='lunation-article' then
+    fallback := p_source#>'{fallbacks,0}';
+    if fallback ? 'expectedRowId' then
+      select * into reusable from public.generated_interpretations where id=(fallback->>'expectedRowId')::uuid for update;
+      if reusable.id is null or reusable.content_key is distinct from fallback->>'contentKey'
+        or reusable.updated_at is distinct from (fallback->>'expectedRowUpdatedAt')::timestamptz
+        or reusable.status is distinct from 'LIVE' or reusable.lane is distinct from 'serving'
+        or reusable.review_state is not null or reusable.target_date is not null then
+        raise exception 'Reusable source changed.' using errcode='40001';
+      end if;
+    end if;
+  end if;
   -- Lock every dependent publication in deterministic order before checking CAS.
   for fallback in select value from jsonb_array_elements(p_source->'fallbacks') order by value->>'contentKey' loop
     perform pg_advisory_xact_lock(hashtextextended(fallback->>'contentKey',0));
     select revision into current_revision from public.content_publications where content_key=fallback->>'contentKey' for update;
     if current_revision is distinct from (fallback->>'expectedPublicationRevision')::bigint then
       raise exception 'Reusable publication changed.' using errcode = '40001';
+    end if;
+    if source.event_type='lunation-article' and exists(select 1 from public.content_publications p where p.content_key=fallback->>'contentKey' and (p.state<>'live' or p.row_id is not null and not (fallback ? 'expectedRowId'))) then
+      raise exception 'Reusable publication changed.' using errcode='40001';
+    end if;
+    if source.event_type='lunation-article' and fallback ? 'expectedRowId' and not exists(
+      select 1 from public.content_publications p where p.content_key=fallback->>'contentKey'
+      and p.state='live' and p.row_id=(fallback->>'expectedRowId')::uuid
+      and p.row_updated_at=(fallback->>'expectedRowUpdatedAt')::timestamptz) then
+      raise exception 'Reusable publication changed.' using errcode='40001';
     end if;
   end loop;
   perform pg_advisory_xact_lock(hashtextextended(source.content_key,0));

@@ -13,6 +13,8 @@ import {datedLunationContentKey} from '../apps/web/src/content/lunationArticleId
 
 const endpoint='/api/admin/content-baseline-recovery';
 const article=process.argv.includes('--article');
+const publishedMacro=process.argv.includes('--published-macro');
+assert(!publishedMacro||article);
 const recover=(body:any)=>invoke('POST',{recoveryKind:'moon-reusable',...body},endpoint);
 const deployment=JSON.parse(readFileSync('vercel.json','utf8'));
 const recoveryFunction=deployment.functions['api/admin/content-baseline-recovery.ts'];
@@ -53,7 +55,14 @@ try{
   const events=await invoke('GET',undefined,'/api/admin/lunation-writing?month=2020-05&timeZone=America%2FNew_York');
   const event=events.payload.events.find((value:any)=>value.phase==='full-moon');assert(event);
   const contentKey=article?datedLunationContentKey(event):moonHoroscopeKey(event),empty=new Map();
-  const baseline=reader.resolveLunationArticleHoroscopes(event,empty),general=reader.resolveLunationReaderSource(event,empty);
+  const macro=publishedMacro?await invoke('seed-published-macro',{event}):null;
+  const reusableBefore=macro?structuredClone(store.rows.get(macro.id)):null;
+  const reusableLedgerBefore=macro?(await invoke('publications')).find((p:any)=>p.content_key===macro.content_key):null;
+  reader.installContentPublications(await invoke('publications'));
+  const reusableRows=macro?(await invoke('reader',{keys:[macro.content_key]})).payload.rows:[];
+  const reusableMap=reader.generatedContentMapFromRows(reusableRows);
+  const baseline=reader.resolveLunationArticleHoroscopes(event,empty),general=reader.resolveLunationReaderSource(event,reusableMap);
+  if(macro)assert(general?.body.includes('complete distinct reusable final paragraph'),'Baseline uses the actual published macro, not installed package text');
   assert(baseline.length>0,'Fixture must have complete independently approved reusable readings');
   assert(general?.body,'Fixture must have a complete general article');
   const paste=MOON_HOROSCOPE_SIGNS.map(sign=>`${sign}\n${sign} neutral dated test opening.\n\n${sign} exact dated test ending.`).join('\n\n');
@@ -98,11 +107,11 @@ try{
   result=await invoke('PATCH',{id:live.id,expectedUpdatedAt:live.updated_at,sourceLifecycleAction:'archive',...(article?{status:'ARCHIVED'}:{})});assert.equal(result.status,200,JSON.stringify(result.payload));
   row=result.payload.rows[0];const original=structuredClone(row);
   reader.installContentPublications(await store.publication.publications());
-  const staleMap=reader.generatedContentMapFromRows([live]);
+  const staleMap=reader.generatedContentMapFromRows([live,...reusableRows]);
   assert(article?reader.resolveLunationReaderSource(event,staleMap)?.unavailable:reader.resolveLunationArticleHoroscopes(event,staleMap).length===0,'Retirement must suppress the original inherited reader before explicit recovery');
   const sources=[{id:row.id,contentKey,expectedUpdatedAt:row.updated_at}];
   const forbidden=await store.invoke('POST',{recoveryKind:'moon-reusable',action:'preview',sources},endpoint,'wrong-secret');assert.equal(forbidden.status,401);
-  let metadataReads=0,rpcWrites=0,sourceUnavailable=false;
+  let metadataReads=0,rpcWrites=0,sourceUnavailable=false,macroLedgerPatch:any=null;
   const previousFetch=globalThis.fetch;
   globalThis.fetch=async(input:any,init:any={})=>{
     const url=new URL(String(input));
@@ -110,6 +119,7 @@ try{
       metadataReads++;assert(!/body|sections|source_snapshot/u.test(url.searchParams.get('select')!),'Preview/status must not request saved passages');
       if(sourceUnavailable)return Response.json({code:'synthetic-storage-unavailable'},{status:503});
     }
+    if(macroLedgerPatch&&url.pathname.endsWith('/content_publications')){const response=await previousFetch(input,init);const rows=await response.json();return Response.json(rows.map((row:any)=>row.content_key===macro?.content_key?{...row,...macroLedgerPatch}:row),{status:response.status});}
     if(url.pathname.endsWith('/rpc/restore_moon_reusable_readings'))rpcWrites++;
     return previousFetch(input,init);
   };
@@ -117,7 +127,20 @@ try{
     const preview=await recover({action:'preview',sources:sources.map(source=>({...source,body:'Never include this in a receipt'}))});
     assert.equal(preview.status,200,JSON.stringify(preview.payload));assert.equal(rpcWrites,0);assert.equal(preview.payload.sources[0].fallbacks.length,article?1:12);
     assert(!JSON.stringify(preview.payload).includes('Never include'));assert(!JSON.stringify(preview.payload).includes('dated test opening'));
+    if(macro){
+      for(const replacement of [null,{...reusableBefore,updated_at:'2000-01-01T00:00:00Z'},{...reusableBefore,status:'DRAFT'},
+        {...reusableBefore,lane:'reference'},{...reusableBefore,review_state:'pending'},{...reusableBefore,body:''},
+        {...reusableBefore,flags:['REFERENCE_ONLY_NEVER_SERVE_VERBATIM']}]){
+        replacement?store.rows.set(macro.id,replacement):store.rows.delete(macro.id);
+        assert.equal((await recover({action:'preview',sources})).status,422,'An unavailable, mismatched or ineligible pinned macro cannot admit recovery');
+        assert.equal(rpcWrites,0);
+      }
+      store.rows.set(macro.id,structuredClone(reusableBefore));
+      for(const patch of [{state:'retired'},{row_id:randomUUID()},{row_updated_at:'2000-01-01T00:00:00Z'}]){macroLedgerPatch=patch;assert.equal((await recover({action:'preview',sources})).status,422);assert.equal(rpcWrites,0);}
+      macroLedgerPatch=null;
+    }
     const planned=preview.payload.sources;
+    if(macro){assert.equal(planned[0].fallbacks[0].expectedRowId,macro.id);assert.equal(planned[0].fallbacks[0].expectedRowUpdatedAt,macro.updated_at);}
     assert.equal((await recover({action:'preview',sources:[{...sources[0],expectedUpdatedAt:123}]})).status,400,'Malformed timestamp types fail before exact timestamp comparison');
     for(const patch of [{baselineSHA256:'f'.repeat(64)},{expectedPublicationRevision:0},{fallbacks:[]},{expectedUpdatedAt:'2000-01-01T00:00:00Z'}]){
       const stale=await recover({action:'restore',operationId:randomUUID(),sources:[{...planned[0],...patch}]});assert.equal(stale.status,409,JSON.stringify(stale.payload));
@@ -126,6 +149,7 @@ try{
     const operationId=randomUUID(),restored=await recover({action:'restore',operationId,sources:planned});
     assert.equal(restored.status,200,JSON.stringify(restored.payload));assert.equal(rpcWrites,1);
     assert.deepEqual(store.rows.get(row.id),original,'Recovery retains every archived row field, not only prose/counts');
+    if(macro){assert.deepEqual(store.rows.get(macro.id),reusableBefore,'Recovery does not edit the published reusable source');assert.deepEqual((await invoke('publications')).find((p:any)=>p.content_key===macro.content_key),reusableLedgerBefore,'Recovery does not edit reusable publication');}
     const publication=restored.payload.recovered[0].publication;
     assert.equal(publication.state,'live');assert.equal(publication.row_id,null);assert.equal(publication.row_updated_at,null);
     reader.installContentPublications(await store.publication.publications());
@@ -140,6 +164,7 @@ try{
     assert.equal((await invoke('reader',{keys:[contentKey]})).payload.rows.length,0,'Archived dated writing stays outside the actual reader API');
     const replay=await recover({action:'restore',operationId,sources:JSON.parse(JSON.stringify(planned))});assert.equal(replay.status,200);assert.equal(replay.payload.state,'restored');assert.equal(rpcWrites,1,'Same operation checks its receipt without replaying a write');
     const checked=await recover({action:'status',operationId});assert.equal(checked.payload.state,'restored');assert.equal(rpcWrites,1);
+    if(macro){store.rows.set(macro.id,{...reusableBefore,updated_at:'2000-01-01T00:00:00Z'});assert.equal((await recover({action:'status',operationId})).payload.state,'changed','Pinned macro drift cannot report restored');assert.equal((await recover({action:'restore',operationId,sources:planned})).payload.state,'changed');assert.equal(rpcWrites,1);store.rows.set(macro.id,structuredClone(reusableBefore));}
     sourceUnavailable=true;const unavailable=await recover({action:'status',operationId});assert.equal(unavailable.status,503);assert.notEqual(unavailable.payload.state,'changed','Transient storage failure must not clear an unconfirmed operation');sourceUnavailable=false;
     const preciseVersion=new Date(original.updated_at).toISOString().replace(/(\.\d{3})Z$/u,(_,fraction)=>`${fraction}001Z`);
     assert.equal(Date.parse(preciseVersion),Date.parse(original.updated_at));
@@ -161,20 +186,30 @@ try{
     assert(metadataReads>0);
     // Apply and exercise the same actual migration under each database role.
     await seedPublicationRow(db,{...original,id:randomUUID()});
-    const sqlRow=(await db.query<any>('select to_jsonb(g) row from generated_interpretations g')).rows[0].row;
+    if(macro)await seedPublicationRow(db,reusableBefore);
+    const sqlRow=(await db.query<any>('select to_jsonb(g) row from generated_interpretations g where content_key=$1',[contentKey])).rows[0].row;
     await db.query('select public.retire_content_everywhere($1,$2,$3)',[contentKey,sqlRow.id,sqlRow.updated_at]);
     const before=structuredClone(sqlRow),sqlPublication=(await db.query<any>('select * from content_publications where content_key=$1',[contentKey])).rows[0];
-    const sqlPlan={...planned[0],id:sqlRow.id,expectedUpdatedAt:sqlRow.updated_at,expectedPublicationRevision:sqlPublication.revision};
+    const sqlPlan={...planned[0],id:sqlRow.id,expectedUpdatedAt:sqlRow.updated_at,expectedPublicationRevision:sqlPublication.revision,
+      fallbacks:await Promise.all(planned[0].fallbacks.map(async(fallback:any)=>({...fallback,expectedPublicationRevision:(await db.query<any>('select revision from content_publications where content_key=$1',[fallback.contentKey])).rows[0]?.revision??null})))};
     for(const patch of [{expectedUpdatedAt:'2000-01-01T00:00:00Z'},{expectedPublicationRevision:0},
-      {fallbacks:sqlPlan.fallbacks.map((item:any,index:number)=>index?item:{...item,expectedPublicationRevision:1})}]){
+      {fallbacks:sqlPlan.fallbacks.map((item:any,index:number)=>index?item:{...item,expectedPublicationRevision:(item.expectedPublicationRevision??0)+1})}]){
       await assert.rejects(db.query('select public.restore_moon_reusable_readings($1,$2::jsonb)',[randomUUID(),{...sqlPlan,...patch}]),/changed/u);
       assert.equal((await db.query<any>('select state from content_publications where content_key=$1',[contentKey])).rows[0].state,'retired','Failed CAS cannot partially restore publication');
+    }
+    const sqlMacroBefore=macro?(await db.query<any>('select to_jsonb(g) row from generated_interpretations g where id=$1',[macro.id])).rows[0].row:null;
+    const sqlMacroLedgerBefore=macro?(await db.query<any>('select * from content_publications where content_key=$1',[macro.content_key])).rows[0]:null;
+    if(macro)for(const invalid of [{...sqlPlan,fallbacks:sqlPlan.fallbacks.map(({expectedRowId,expectedRowUpdatedAt,...fallback}:any)=>fallback)},
+      {...sqlPlan,fallbacks:sqlPlan.fallbacks.map((fallback:any)=>({...fallback,expectedRowId:randomUUID()}))},
+      {...sqlPlan,fallbacks:sqlPlan.fallbacks.map((fallback:any)=>({...fallback,expectedRowUpdatedAt:'2000-01-01T00:00:00Z'}))}]){
+      await assert.rejects(db.query('select public.restore_moon_reusable_readings($1,$2::jsonb)',[randomUUID(),invalid]),/changed/u);
     }
     const sqlOperation=randomUUID(),sql=()=>db.query<any>('select public.restore_moon_reusable_readings($1,$2::jsonb) result',[sqlOperation,sqlPlan]);
     for(const role of ['anon','authenticated']){await db.exec(`set role ${role}`);await assert.rejects(sql(),/permission denied/u);await db.exec('reset role');}
     await db.exec('set role service_role');const sqlResult=(await sql()).rows[0].result;
     assert.deepEqual((await sql()).rows[0].result,sqlResult,'Actual SQL replay is idempotent');await db.exec('reset role');
-    assert.deepEqual((await db.query<any>('select to_jsonb(g) row from generated_interpretations g')).rows[0].row,before,'Actual transaction leaves the entire archived row unchanged');
+    assert.deepEqual((await db.query<any>('select to_jsonb(g) row from generated_interpretations g where content_key=$1',[contentKey])).rows[0].row,before,'Actual transaction leaves the entire archived row unchanged');
+    if(macro){assert.deepEqual((await db.query<any>('select to_jsonb(g) row from generated_interpretations g where id=$1',[macro.id])).rows[0].row,sqlMacroBefore);assert.deepEqual((await db.query<any>('select * from content_publications where content_key=$1',[macro.content_key])).rows[0],sqlMacroLedgerBefore);}
     assert.equal((await db.query('select * from content_baseline_recoveries')).rows.length,1);
   }finally{globalThis.fetch=previousFetch;}
 }finally{await db.close();await store.close();rmSync(directory,{recursive:true,force:true});}
