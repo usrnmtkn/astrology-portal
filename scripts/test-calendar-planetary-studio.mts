@@ -27,7 +27,7 @@ try {
   // Vercel emits separate .js files. A TS loader or bundled fixture can hide
   // broken .ts imports, so import the emitted dependency chain in plain Node.
   const emitted = join(directory, 'server');
-  await build({ entryPoints: [...['contentWiringStatus', 'calendarPlanetarySources', 'natalPlacementSources'].map(name => `apps/admin/src/${name}.ts`), 'apps/web/src/content/natalRetrogradeModifier.js', 'src/shared/articleLibrary.ts', 'src/shared/lunationHoroscopeIdentity.ts'], outbase: '.', outdir: emitted, platform: 'node', format: 'esm', bundle: false, logLevel: 'silent' });
+  await build({ entryPoints: [...['contentWiringStatus', 'calendarPlanetarySources', 'natalPlacementSources'].map(name => `apps/admin/src/${name}.ts`), 'apps/web/src/content/natalRetrogradeModifier.js', 'src/shared/articleLibrary.ts', 'src/shared/lunationHoroscopeIdentity.ts', 'src/shared/studioPackagePatch.ts'], outbase: '.', outdir: emitted, platform: 'node', format: 'esm', bundle: false, logLevel: 'silent' });
   writeFileSync(join(emitted, 'package.json'), '{"type":"module"}');
   execFileSync(process.execPath, ['--input-type=module', '--eval', `
     import assert from 'node:assert/strict';
