@@ -145,3 +145,28 @@ complete standalone lunar Studio job: 44 cases, zero retries, 4.8 minutes.
 Its visible Save assertion reproduced the deployed failure and passed all four
 fixed variants. This bounded source qualification is retained separately from
 the combined candidate's pending exact-head checks.
+
+## Receipt-contract fixture correction
+
+Hosted API shard 2 on `1d47dcc6` failed the Article receipt contract fixture: its
+extracted real Dashboard guard referenced two new Natal bindings that the
+`new Function` fixture had not supplied. The unchanged source reproduced the
+`natalEditorialTools` ReferenceError at the wrong-ID negative control. The
+fixture now receives the real Natal helper and extracts the actual
+`natalPrivateRevision` initializer alongside the Calendar initializer. All
+existing wrong-ID, body, source/version and mutation assertions remain intact.
+The corrected public fixture passes all 109 actual-handler/in-memory-SQL
+controls; it reads no protected references and performs no production writes.
+
+The holder's prior local run passed pretest and 34-command shard 1; shard 2
+exited 1 after 76.189 seconds and shard 3 was not reached. Its 204.164-second
+run had stable source/dependencies and clean teardown. The local cause remains
+unassigned because its raw output was discarded; the hosted failure and public
+red/green reproduction establish the fixture defect separately. Hosted shards 1
+and 3 passed. Refreshed built-asset privacy passed.
+
+This correction changes only the API fixture and this record. The delta selector
+identifies that single API command and zero browser cases. Application source,
+build inputs and browser test inputs remain identical to the successful
+60-case frozen run. Reuse that success and the bundle evidence, with final-head
+required hosted gates and remaining selected API coverage still mandatory.
