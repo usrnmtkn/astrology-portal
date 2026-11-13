@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import { StudioButton } from "./StudioControls";
 import { natalEditorialIdentity, type NatalEditorialSelection } from "./natalEditorialLibrary";
+import { studioReadTimeoutMessage, studioRequestTimeoutMs } from "./studioRequestPolicy";
 
 export default function NatalSectPlacementComparison({ selection, secret, friendName, body, status, revision }: {
   selection: NatalEditorialSelection; secret: string; friendName: string; body: string; status: string; revision: string;
@@ -15,6 +16,9 @@ export default function NatalSectPlacementComparison({ selection, secret, friend
   const current = state?.key === requestKey ? state : null;
   useEffect(() => {
     const controller = new AbortController();
+    let active = true;
+    let timedOut = false;
+    const timeout = setTimeout(() => { timedOut = true; controller.abort(); }, studioRequestTimeoutMs("/api/admin/natal-placement-preview", "POST"));
     setState(null);
     async function load() {
       const [baseResponse, generalResponse] = await Promise.all([
@@ -30,8 +34,11 @@ export default function NatalSectPlacementComparison({ selection, secret, friend
       if (!row || typeof row.body !== "string" || !row.body.trim()) throw new Error("No published general sect passage is available for comparison.");
       if (!controller.signal.aborted) setState({ key: requestKey, base: base.rendered.body, general: row.body, error: "" });
     }
-    void load().catch(error => { if (!controller.signal.aborted) setState({ key: requestKey, base: "", general: "", error: error instanceof Error ? error.message : "The comparison could not be loaded." }); });
-    return () => controller.abort();
+    void load().catch(error => {
+      if (active && (!controller.signal.aborted || timedOut)) setState({ key: requestKey, base: "", general: "", error: timedOut
+        ? studioReadTimeoutMessage : error instanceof Error ? error.message : "The comparison could not be loaded." });
+    }).finally(() => clearTimeout(timeout));
+    return () => { active = false; clearTimeout(timeout); controller.abort(); };
   }, [passage, audience, sect, placement?.sign, placement?.house, secret, name, generalKey, revision, retry, requestKey]);
   const paragraphs = (text: string) => text.replace(/\{\{\s*ownerName\s*\}\}/gu, () => name).split(/\n\s*\n/u).map((paragraph, index) => <p key={index}>{paragraph}</p>);
   const panels = current ? [

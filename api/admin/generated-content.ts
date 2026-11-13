@@ -6,6 +6,7 @@ import {studioSkyIdentity} from '../_lib/sky-studio-identity.js';
 import { skyArticleCompiledHashMatches } from '../_lib/sky-article-reader-integrity.js';
 import { skyArticleVariableDraftRecord, resolveSkyArticleVariableFields, type SkyArticleVariableDraft } from '../../src/shared/skyArticleVariableDraft.js';
 import {articleRevisionTarget, standaloneArticleKind, validArticlePublishAt, validArticleTimeZone} from '../../src/shared/articleLibrary.js';
+import {natalEditorialRevisionTarget} from '../../src/shared/natalEditorialRevisions.js';
 import {calendarPlanetaryRevisionTarget} from '../../apps/admin/src/calendarPlanetarySources.js';
 import {studioOwnerApproval, hasExactStudioOwnerApproval, stampStudioPackageOwnerApproval} from '../_lib/studio-owner-publication.js';
 import {isDeepStrictEqual} from 'node:util';
@@ -2811,7 +2812,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
   const ownerPublication = body.ownerAction === "publish-owner-content" || body.ownerAction === "save-and-publish-owner-content";
   const articleRevision = existing.event_type === "standalone-article-revision";
   const forksArticleDraft = (articleRevisionTarget(existing) && body.status === "DRAFT"
-    || !isPackageRow && calendarPlanetaryRevisionTarget(existing) && existing.lane === "serving" && !existing.review_state
+    || !isPackageRow && (calendarPlanetaryRevisionTarget(existing) || natalEditorialRevisionTarget(existing)) && existing.lane === "serving" && !existing.review_state
       && ["DRAFT", "REVIEWED"].includes(body.status ?? ""))
     && existing.status === "LIVE" && !body.ownerAction && !body.sourceLifecycleAction;
   const educationSource = existing.content_key.startsWith("education/astro-101/");
@@ -2865,7 +2866,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     }
     const target = articleRevision && existing.mode === "studio-draft" && existing.status === "DRAFT"
       ? await fetchExistingRowById(stringFrom(existing.source_snapshot?.targetRowId)) : null;
-    if (!target || target.content_key !== existing.content_key || !(articleRevisionTarget(target) || calendarPlanetaryRevisionTarget(target))
+    if (!target || target.content_key !== existing.content_key || !(articleRevisionTarget(target) || calendarPlanetaryRevisionTarget(target) || natalEditorialRevisionTarget(target))
       || target.surface !== existing.surface || target.status !== "LIVE"
       || existing.source_snapshot?.targetContentKey !== target.content_key
       || target.updated_at !== existing.source_snapshot?.targetRowUpdatedAt) {
@@ -2878,6 +2879,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
     if (target.event_type==='lunation-article' && (existing.block_type!==target.block_type
       || existing.target_date!==target.target_date || !isDeepStrictEqual(existing.facts,target.facts))) {
       throw new GeneratedContentRequestError('The Moon event facts changed. Reopen its current source before publishing this revision.',409);
+    }
+    if (natalEditorialRevisionTarget(target) && (!natalEditorialRevisionTarget(existing, "studio-draft") || target.lane !== "serving" || target.review_state)) {
+      throw new GeneratedContentRequestError("The Natal reading identity changed. Reopen its current source before publishing this revision.", 409);
     }
     if (!existing.headline?.trim() || !existing.body?.trim()) throw new GeneratedContentRequestError("Complete the article title and body before publishing.");
     await assertVersionedStudioVariablePublication(v3PackageRecord(existing));

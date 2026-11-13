@@ -7,14 +7,17 @@ import { articleTemplateWithHoroscopes } from '../apps/web/src/content/skyArticl
 import { skyArticlePublicationStore } from '../tests/helpers/sky-article-publication-store.mts';
 import { standaloneArticleKind } from '../src/shared/articleLibrary';
 import { calendarPlanetaryIdentity, calendarPlanetaryRevisionTarget } from '../apps/admin/src/calendarPlanetarySources';
+import { natalEditorialRevisionTarget } from '../src/shared/natalEditorialRevisions';
 
 const source = readFileSync(new URL('../apps/admin/src/GeneratedContentAdminDashboard.tsx', import.meta.url), 'utf8');
 const sf = ts.createSourceFile('Dashboard.tsx', source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 const guards: ts.Expression[] = [];
 const calendarBindings: ts.Expression[] = [];
+const natalBindings: ts.Expression[] = [];
 const editorBindings = new Map<string,ts.Expression>();
 function visit(node: ts.Node) {
   if (ts.isVariableDeclaration(node) && node.name.getText(sf) === 'calendarPrivateRevision' && node.initializer) calendarBindings.push(node.initializer);
+  if (ts.isVariableDeclaration(node) && node.name.getText(sf) === 'natalPrivateRevision' && node.initializer) natalBindings.push(node.initializer);
   if (ts.isVariableDeclaration(node) && ['isManualCalendarEventDraft','isCalendarRevisionDraft'].includes(node.name.getText(sf)) && node.initializer) editorBindings.set(node.name.getText(sf),node.initializer);
   if (ts.isIfStatement(node) && ts.isBlock(node.thenStatement) && node.thenStatement.statements.some(s =>
     ts.isThrowStatement(s) && s.expression?.getText(sf) === 'new Error("Save did not return the saved row.")')) guards.push(node.expression);
@@ -22,19 +25,21 @@ function visit(node: ts.Node) {
 }
 visit(sf); assert.equal(guards.length, 1);
 assert.equal(calendarBindings.length, 1);
+assert.equal(natalBindings.length, 1);
 assert.equal(editorBindings.size,2);
 const guardExports: any = {};
 const guardScript = ts.transpileModule(`exports.rejects = (saved, submitted, expected) => {
   const savedDraft = saved ? {} : null, draftForSave = submitted, expectedDraft = expected;
   const templateReceipt = receipt, isPackageDraft = false, status = submitted.status, expectedUpdatedAt = submitted.updatedAt;
   const calendarPrivateRevision = (${calendarBindings[0].getText(sf)});
+  const natalPrivateRevision = (${natalBindings[0].getText(sf)});
   return (${guards[0].getText(sf)});
 };exports.calendarEditor = (currentDraft,selectedRow,isPackageDraft) => {
   const isManualCalendarEventDraft = (${editorBindings.get('isManualCalendarEventDraft')!.getText(sf)});
   return {manual:isManualCalendarEventDraft,revision:(${editorBindings.get('isCalendarRevisionDraft')!.getText(sf)})};
 };`, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } }).outputText;
-new Function('exports', 'receipt', 'standaloneArticleKind', 'standaloneRevisionEvent', 'draftHasPackageProposal', 'writesPersonalTransitExactCopy', 'calendarPlanetaryIdentity', 'calendarPlanetaryRevisionTarget', guardScript)
-  (guardExports, { matches: articleTemplateCopyMatches }, standaloneArticleKind, 'standalone-article-revision', () => false, () => false, calendarPlanetaryIdentity, calendarPlanetaryRevisionTarget);
+new Function('exports', 'receipt', 'standaloneArticleKind', 'standaloneRevisionEvent', 'draftHasPackageProposal', 'writesPersonalTransitExactCopy', 'calendarPlanetaryIdentity', 'calendarPlanetaryRevisionTarget', 'natalEditorialTools', guardScript)
+  (guardExports, { matches: articleTemplateCopyMatches }, standaloneArticleKind, 'standalone-article-revision', () => false, () => false, calendarPlanetaryIdentity, calendarPlanetaryRevisionTarget, {natalEditorialRevisionTarget});
 
 const signs = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 const opening = '# Synthetic template\n\nTemplate opening.\n\nTemplate final paragraph.';

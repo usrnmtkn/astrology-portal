@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import {servingPackageRecords} from "../api/_lib/serving-package-records.ts";
 import {
   normalizeNatalPlacementPreviewInput,
   renderNatalPlacementPreview,
@@ -6,6 +7,24 @@ import {
 } from "../api/admin/natal-placement-preview.ts";
 
 const fallbackProvider = "tldrastro-fallback-architecture-v3";
+
+for (const [planet,sign,key] of [
+  ['neptune','aquarius','fallback-hook/natal/planet-intro/neptune'],
+  ['uranus','scorpio','fallback-hook/natal-you-placement-sign-final/uranus/scorpio']
+]) for(const audience of ['you','they']){
+  const input=normalizeNatalPlacementPreviewInput({planet,sign,house:'12',audience,overrides:[]});
+  const baseline=renderNatalPlacementPreviewState(input).rendered;
+  const timestamp='2026-11-12T12:00:00Z';
+  const cached={id:'stale-source',status:'LIVE',lane:'serving',provider:fallbackProvider,updatedAt:timestamp,
+    packageRow:{...servingPackageRecords.get(key),body:'Synthetic cached copy.',body_you:'Synthetic cached You copy.',body_they:'Synthetic cached Friend copy.',review_status:'approved'}};
+  const withCached=normalizeNatalPlacementPreviewInput({planet,sign,house:'12',audience,overrides:[cached]});
+  const reset={content_key:key,state:'live',revision:20,row_id:null,row_updated_at:null,updated_at:timestamp};
+  const restored=renderNatalPlacementPreviewState(withCached,[reset]);
+  assert.equal(JSON.stringify(restored.rendered.parts)===JSON.stringify(baseline.parts),true,'Baseline recovery must restore every original paragraph, excluding cached Studio copy.');
+  assert.deepEqual(restored.appliedOverrideKeys,[]);
+  assert.throws(()=>renderNatalPlacementPreviewState(withCached,[{...reset,state:'retired'}]),/SOURCE_GAP/u);
+  assert.throws(()=>renderNatalPlacementPreviewState(withCached,[{...reset,row_id:cached.id,row_updated_at:'2026-11-13T12:00:00Z'}]),/SOURCE_GAP/u);
+}
 
 const signOnlyInput = normalizeNatalPlacementPreviewInput({
   audience: "you",

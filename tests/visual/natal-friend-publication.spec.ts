@@ -58,3 +58,66 @@ for(const width of [390,1440]) test(`Studio saves and publishes separate complet
     await page.screenshot({path:`test-results/studio-complete-friend-${width}.png`,fullPage:true});
   }finally{store.close();}
 });
+
+for (const width of [390,1440]) for (const kind of ['placement','empty-house'] as const) for (const failure of ['response','stall'] as const) {
+  test(`Natal ${kind} reader preview recovers ${failure} without leaving the editor ${width}`, async ({page}) => {
+    test.setTimeout(60_000);
+    const store=await studioApiStore([]);
+    let unavailable=failure==='response';
+    let expectedParts:string[]=[];
+    const errors:string[]=[];
+    page.on('pageerror',error=>errors.push(error.message));
+    try {
+      await page.setViewportSize({width,height:1000});
+      await page.addInitScript(stall=>{
+        localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+        const schedule=window.setTimeout.bind(window);
+        window.setTimeout=((handler,timeout,...args)=>schedule(handler,timeout===45_000?1_000:timeout,...args)) as typeof window.setTimeout;
+        (window as any).__stallNatalPreview=stall;
+        const fetchRequest=window.fetch.bind(window);
+        window.fetch=(input,options)=>{
+          const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);
+          if (url.pathname==='/api/admin/natal-placement-preview'&&(window as any).__stallNatalPreview) {
+            return new Promise<Response>((_resolve,reject)=>{
+              const abort=()=>reject(new DOMException('Synthetic stalled preview was interrupted.','AbortError'));
+              if(options?.signal?.aborted)abort();
+              else options?.signal?.addEventListener('abort',abort,{once:true});
+            });
+          }
+          return fetchRequest(input,options);
+        };
+      },failure==='stall');
+      await routeStudioInventoryApi(page,{call:store.call,answer:async(route,url)=>{
+        if(url.pathname!=='/api/admin/natal-placement-preview')return false;
+        if(unavailable){
+          await route.fulfill({status:503,json:{ok:false,error:'Synthetic reader preview unavailable.'}});
+        }else{
+          const input=route.request().postDataJSON();
+          const result=renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput(input),[]);
+          expectedParts=kind==='empty-house'?[result.rendered.body]:result.rendered.parts;
+          await route.fulfill({json:{ok:true,...result}});
+        }
+        return true;
+      }});
+      await page.goto(kind==='empty-house'
+        ?'/admin/content#exact-content?category=Natal+Chart&natalView=empty-houses'
+        :'/admin/content#exact-content?category=Natal+Chart&planet=neptune&sign=aquarius&house=12');
+      const preview=page.locator(kind==='empty-house'?'.admin-empty-house-preview':'.admin-natal-reader-preview');
+      const unavailableMessage=kind==='empty-house'?'Empty-house preview unavailable':'Reader preview unavailable';
+      await expect(preview.getByText(unavailableMessage,{exact:true})).toBeVisible({timeout:8_000});
+      if(failure==='stall')await expect(preview).toContainText('Loading content timed out. Try again; no changes were submitted.');
+      const retry=preview.getByRole('button',{name:kind==='empty-house'?'Retry empty-house preview':'Retry reader preview',exact:true});
+      await expect(retry).toBeVisible();
+      unavailable=false;
+      await page.evaluate(()=>{(window as any).__stallNatalPreview=false;});
+      await retry.click();
+      await expect.poll(async()=>{
+        const actual=await preview.locator(kind==='empty-house'?'.admin-empty-house-assembly-copy > p':'.admin-natal-reader-preview-part > p').allTextContents();
+        return expectedParts.length>0&&JSON.stringify(actual)===JSON.stringify(expectedParts);
+      }).toBe(true);
+      await expect(preview.getByText(unavailableMessage,{exact:true})).toBeHidden();
+      expect(errors).toEqual([]);
+      expect(await store.call({method:'rows'})).toEqual([]);
+    }finally{store.close();}
+  });
+}

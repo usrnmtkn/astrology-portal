@@ -65,7 +65,13 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       expect(row.source_snapshot.lunationWriting.preview).toBeUndefined();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await page.screenshot({path:`test-results/lunation-manual-${width}-${theme}.png`,fullPage:true});
-    }finally{await writer.close();await inventory.close();}
+    }finally{
+      try{
+        // The context API-deny route stays installed while page callbacks drain.
+        await page.unrouteAll({behavior:'wait'});
+        await page.close();
+      }finally{await writer.close();await inventory.close();}
+    }
   });
 }
 for(const width of [390,1440])for(const theme of ['light','dark'] as const){
@@ -272,7 +278,13 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       await page.getByRole('tab',{name:'Reusable sign readings',exact:true}).click();
       await expect(page.getByRole('textbox',{name:'Voice and clarity',exact:true})).toHaveValue(/Synthetic shared guidance marker/);
       expect(errors).toEqual([]);
-    }finally{inventory.close();writer.close();}
+    }finally{
+      try{
+        // The context API-deny route stays installed while page callbacks drain.
+        await page.unrouteAll({behavior:'wait'});
+        await page.close();
+      }finally{await writer.close();await inventory.close();}
+    }
   });
   test(`Lunation workspace archives and restores complete writing at ${width} ${theme}`,async({page})=>{
     const inventory=await studioApiStore([]),writer=await studioApiStore([],{lunationWriting:true});
@@ -376,6 +388,12 @@ for(const width of [390,1440])for(const theme of ['light','dark'] as const){
       expect((await writer.call({method:'provider'})).calls).toBe(0);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1)).toBe(true);
       expect(errors).toEqual([]);
-    }finally{inventory.close();writer.close();}
+    }finally{
+      try{
+        // The context API-deny route stays installed while page callbacks drain.
+        await page.unrouteAll({behavior:'wait'});
+        await page.close();
+      }finally{await writer.close();await inventory.close();}
+    }
   });
 }

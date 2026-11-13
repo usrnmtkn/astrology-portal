@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
-import { adminCredentialHeaders } from "./adminSecret";
+import { requestStudioJson } from "./generatedContentClient";
 import { Stack, Text } from "./studio-ds/primitives";
 
 type Audience = "you" | "they";
@@ -55,34 +55,40 @@ function sourceLabel(contentKey: string) {
 export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHouse, sign, secret }: Props) {
   const [audience, setAudience] = useState<Audience>("you");
   const [publicationVersion, setPublicationVersion] = useState(0);
+  const [retry, setRetry] = useState(0);
   const [preview, setPreview] = useState<PreviewState>({ error: null, loading: true, rendered: null });
+  const contextKey = `${audience}|${house}|${rulerHouse}|${sign}`;
+  const previewContext = useRef("");
 
   useEffect(() => subscribeToContentPublications(() => setPublicationVersion((version) => version + 1)), []);
 
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
-    setPreview((current) => ({ ...current, error: null, loading: true }));
-    void fetch("/api/admin/natal-placement-preview", {
-      method: "POST", headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
+    const contextChanged = previewContext.current !== contextKey;
+    previewContext.current = contextKey;
+    setPreview(current => ({ error: null, loading: contextChanged || !current.rendered, rendered: contextChanged ? null : current.rendered }));
+    void requestStudioJson("/api/admin/natal-placement-preview", secret, {
+      method: "POST", readOnly: true,
       body: JSON.stringify({ kind: "empty-house", house: String(house), sign, rulerHouse, audience, overrides: [] }),
       signal: controller.signal
-    }).then(async response => {
-        const payload = await response.json();
-        if (!response.ok || !payload?.rendered) throw new Error(payload?.error ?? "The empty-house assembly could not be rendered.");
+    }).then(payload => {
+        if (!payload.rendered || typeof (payload.rendered as EmptyHouseRender).body !== "string") {
+          throw new Error("The empty-house assembly could not be rendered.");
+        }
         const rendered = payload.rendered as EmptyHouseRender;
         if (active) setPreview({ error: null, loading: false, rendered });
       })
       .catch((reason) => {
         if (!active) return;
-        setPreview({
+        setPreview(current => ({
           error: reason instanceof Error ? reason.message : "The empty-house assembly could not be rendered.",
           loading: false,
-          rendered: null
-        });
+          rendered: current.rendered
+        }));
       });
     return () => { active = false; controller.abort(); };
-  }, [audience, house, rulerHouse, sign, secret, publicationVersion]);
+  }, [audience, contextKey, house, rulerHouse, sign, secret, publicationVersion, retry]);
 
   const contextLabel = `${ordinalHouseLabel(house)} in ${titleFromKey(sign)}`;
   const sourceKeys = preview.rendered?.sourceKeys ?? [];
@@ -126,6 +132,7 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
               </div>
             )}
           </div>
+          {preview.error && <p className="admin-field-hint" role="status">The last assembled preview is still shown. Refreshing it failed: {preview.error}</p>}
         </div>
       ) : (
         <div className="admin-empty-state" role="alert">
@@ -133,6 +140,7 @@ export default function EmptyHouseReaderPreview({ house, onOpenSource, rulerHous
           <p>{preview.error}</p>
         </div>
       )}
+      {preview.error && <StudioButton type="button" onClick={() => setRetry(value => value + 1)}>Retry empty-house preview</StudioButton>}
     </section>
   );
 }

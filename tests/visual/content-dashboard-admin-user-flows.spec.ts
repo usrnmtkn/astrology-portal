@@ -1071,6 +1071,10 @@ async function seedAdminApi(
     window.localStorage.setItem("tldrastro:contentAdminSecret", initialSecret);
     window.localStorage.setItem("tldrastro:slotDictionaryInfoDismissed", "true");
   }, { initialSecret: options.initialSecret ?? "qa-secret" });
+  return { readPublished: (keys: string[]) => {
+    if (!publicationStore) throw new Error("Reader proof requires a persistent publication fixture.");
+    return publicationStore.call({ method: "POST", url: "/api/content-reader", body: { keys } });
+  } };
 }
 
 async function expectNoBrowserErrors(page: Page) {
@@ -9744,7 +9748,7 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
   const writes: Record<string, unknown>[] = [];
   const approved = natalEditorialFixtures.map(row => ({ ...row, status: "REVIEWED", review_state: null,
     source_snapshot: { ...row.source_snapshot, review_status: "approved", ownerApproved: true } }));
-  await seedAdminApi(page, { generatedRows: approved, useGeneratedContentHandler: true,
+  const fixture = await seedAdminApi(page, { generatedRows: approved, useGeneratedContentHandler: true, warmPublicationFixture: true,
     onGeneratedContentWrite: write => { writes.push(write.payload); } });
   await page.setViewportSize({ width, height: 1000 });
   await page.addInitScript(value => localStorage.setItem("tldrastro:studio-theme", value), theme);
@@ -9765,12 +9769,24 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Full passage / body", { exact: true })).toHaveValue(saved.body);
     const completed = page.waitForResponse(response => new URL(response.url()).pathname === "/api/admin/generated-content"
-      && response.request().method() === "PATCH" && response.request().postDataJSON()?.status === "LIVE");
+      && response.request().method() === "PATCH" && response.request().postDataJSON()?.id === saved.id
+      && response.request().postDataJSON()?.ownerAction === "publish-owner-content");
     await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
     const response = await completed;
     expect(response.status()).toBe(200);
+    const submitted = response.request().postDataJSON();
+    expect(submitted).toMatchObject({ id: saved.id, ownerAction: "publish-owner-content" });
+    expect(Date.parse(submitted.expectedUpdatedAt)).toBe(Date.parse(String(saved.updated_at)));
     const published = (await response.json()).rows[0];
-    expect(published.status).toBe("LIVE");
+    expect(published).toMatchObject({ id: saved.id, content_key: identity.contentKey, status: "LIVE", lane: "serving", review_state: null });
+    expect(published.updated_at).not.toBe(saved.updated_at);
+    await expect(editor.getByText("The reviewed revision is published.", { exact: true })).toBeVisible();
+    await expect(editor.getByRole("alert")).toHaveCount(0);
+    const reader = await fixture.readPublished([identity.contentKey]);
+    expect(reader.status).toBe(200);
+    expect(reader.payload.rows).toHaveLength(1);
+    expect(reader.payload.rows[0]).toMatchObject({ id: published.id, content_key: identity.contentKey, body: saved.body });
+    expect(Date.parse(reader.payload.rows[0].updated_at)).toBe(Date.parse(published.updated_at));
     expect(published.body).toBe(saved.body);
     expect(published.facts).toEqual(saved.facts);
     expect(published.source_snapshot.contentSystem).toBe("editorial-library");
@@ -9783,7 +9799,7 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
     await closeGeneratedEditor(page);
   }
   expect(writes).toHaveLength(2);
-  expect(writes.every(write => write.status === "LIVE")).toBe(true);
+  expect(writes.every(write => write.ownerAction === "publish-owner-content")).toBe(true);
   await expectNoHorizontalOverflow(page, `Natal publication ${theme} ${width}`);
 });
 
@@ -10295,6 +10311,31 @@ for (const [theme, width] of [["light", 390], ["dark", 390], ["light", 1440], ["
   failComparison = false;
   await workspace.getByRole("button", { name: "Retry comparison", exact: true }).click();
   await expect(workspace.getByLabel("Natal sect reading comparison")).toContainText("Avery existing sign opening.");
+  if (planet === "jupiter" && sect === "day" && theme === "light" && width === 390) {
+    await page.evaluate(() => {
+      const schedule=window.setTimeout.bind(window);
+      window.setTimeout=((handler,timeout,...args)=>schedule(handler,timeout===45_000?1_000:timeout,...args)) as typeof window.setTimeout;
+      const fetchRequest=window.fetch.bind(window);
+      window.fetch=(input,options)=>{
+        const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url,location.href);
+        if (url.pathname===(window as any).__stalledComparisonPath) return new Promise<Response>((_resolve,reject)=>{
+          const abort=()=>reject(new DOMException('Synthetic stalled comparison was interrupted.','AbortError'));
+          if(options?.signal?.aborted)abort();else options?.signal?.addEventListener('abort',abort,{once:true});
+        });
+        return fetchRequest(input,options);
+      };
+    });
+    for (const [index,path] of ['/api/admin/natal-placement-preview','/api/content-reader'].entries()) {
+      await page.evaluate(path=>{(window as any).__stalledComparisonPath=path;},path);
+      await workspace.getByLabel("Friend’s name in preview").fill(`Retry${index}`);
+      const comparison=workspace.getByLabel("Natal sect reading comparison",{exact:true});
+      await expect(comparison.getByRole('alert')).toContainText('Loading content timed out. Try again; no changes were submitted.',{timeout:5_000});
+      await page.evaluate(()=>{(window as any).__stalledComparisonPath='';});
+      await comparison.getByRole('button',{name:'Retry comparison',exact:true}).click();
+      await expect(comparison.getByRole('article',{name:'Existing placement reading',exact:true}).locator('p')).toHaveText([`Retry${index} existing sign opening.`,`Complete house ${house} ending.`]);
+      await expect(comparison.getByRole('article',{name:'Published general sect passage',exact:true})).toContainText('General sect final sentence.');
+    }
+  }
   expect(writes.every(write => write.status === "DRAFT" && String(write.contentKey ?? "").endsWith(`/${suffix}`))).toBe(true);
   expect(previewInputs.every(input => input.motion === "direct" && [house, "4"].includes(String(input.house)))).toBe(true);
   if (!house) {
