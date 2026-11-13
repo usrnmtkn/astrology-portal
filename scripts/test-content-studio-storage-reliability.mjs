@@ -37,8 +37,10 @@ assert.equal(empty.statusCode, 200);
 assert.deepEqual(empty.payload.rows, [], 'A genuinely empty inventory remains a valid response');
 
 // Opening a document needs one indexed lookup, independent of listing metadata.
+// Keep this storage-parity fixture outside the installed package catalog;
+// source inheritance is covered by the inventory source-integrity contract.
 let detailReads = 0;
-const saved = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', content_key: 'fallback-hook/sky-placement-hook/moon/cancer', body: 'Synthetic opening.\n\nSynthetic ending.', updated_at: '2026-10-03T12:00:00Z', sections: { packageRecord: { body_you: 'Complete synthetic saved document.' } } };
+const saved = { id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', content_key: 'cms/synthetic/storage-reliability', body: 'Synthetic opening.\n\nSynthetic ending.', updated_at: '2026-10-03T12:00:00Z', sections: { packageRecord: { body_you: 'Complete synthetic saved document.' } } };
 globalThis.fetch = async input => {
   detailReads++;
   const query = new URL(String(input)).searchParams;
