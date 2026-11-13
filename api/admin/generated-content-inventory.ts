@@ -196,11 +196,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     if (!response.ok) {
       throw new AdminHttpError(502, "Content storage could not return the inventory list.");
     }
-    const rows: Array<Record<string, unknown>> = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => {
+    let rows: Array<Record<string, unknown>> = adminStorageRows<Record<string, unknown>>(response.payload).map((row) => {
       if (inventoryView) return inventoryRow(row);
       const { studio_facts: _listingFacts, ...document } = row;
       return { ...document, inventory_only: false };
     });
+    if (!inventoryView && rows.some(row => row.status !== "ARCHIVED" && String(row.content_key).startsWith("sky-placement/article/"))) {
+      const { skyPlacementStudioRecord } = await import("../_lib/sky-placement-sources.js");
+      rows = rows.map(row => {
+        if (row.status === "ARCHIVED" || !row.sections || typeof row.sections !== "object" || Array.isArray(row.sections)) return row;
+        const sections = row.sections as Record<string, unknown>;
+        if (!sections.packageRecord || typeof sections.packageRecord !== "object" || Array.isArray(sections.packageRecord)) return row;
+        return { ...row, sections: { ...sections,
+          packageRecord: skyPlacementStudioRecord(String(row.content_key), sections.packageRecord) } };
+      });
+    }
     const nextCursor = !id && rows.length === limit
       ? scopeFilter
         ? String(rows.at(-1)?.id ?? "")

@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import assert from "node:assert/strict";
 import { Readable } from "node:stream";
-import { skyPlacementSourceRecords } from "../api/_lib/sky-placement-sources";
+import { skyPlacementSourceRecords, skyPlacementStudioRecord } from "../api/_lib/sky-placement-sources";
 process.env.NODE_ENV = "test";
 const { default: handler } = await import("../api/admin/generated-content.ts");
 process.env.CONTENT_GENERATION_SECRET = "sky-studio-test";
@@ -459,6 +459,40 @@ console.log("PASS: an empty published evergreen layout survives reload without r
  const rendered = runtime.skyV4ReaderRenderer.renderRoute({ route: 'placement', planet: 'sun', sign: 'libra', isRetrograde: false, facts: { entryDate: 'September 22, 2026', exitDate: 'October 23, 2026' } });
  assert.equal(rendered.mainBody, copy.replace('{{entryDate}}', 'September 22, 2026').replace('{{exitDate}}', 'October 23, 2026'));
  console.log('PASS: legacy metadata-free placement draft, section guidance, exact publication and installed reader.');
+}
+
+// Inherited fallback editing uses the same field contract as document reads.
+{
+ const key = 'sky-placement/article/mercury/scorpio';
+ const baseline = skyPlacementSourceRecords.get(key)!;
+ const original = { contentKey: key, planet: 'mercury', sign: 'scorpio', studio_content_type: 'continuous-placement',
+  review_status: 'approved', owner_approved: false, serving_enabled: false };
+ const source = { id: 'sparse-mercury-scorpio', content_key: key, surface: 'sky', mode: 'in_depth', status: 'LIVE',
+  lane: 'serving', provider: 'tldrastro-fallback-architecture-v3', body: '', summary: '', headline: 'Mercury in Scorpio',
+  sections: { packageRecord: original }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3' }, updated_at: '2026-09-20T07:10:14.930Z' };
+ stored.push(source);
+ const unchanged = structuredClone(source);
+ const inherited = skyPlacementStudioRecord(key, original);
+ const copy = 'During this transit, synthetic edited Mercury fallback opening.';
+ const draft = (await request('PATCH', { id: source.id, expectedUpdatedAt: source.updated_at, reviewStatus: 'needs_review',
+  sections: { packageRecord: inherited, packageDraft: { ...inherited, fallback: { ...inherited.fallback, hook: copy } } } })).rows[0];
+ assert.deepEqual(stored.find(row => row.id === source.id), unchanged, 'A fallback draft never changes its live parent.');
+ assert.equal(draft.sections.packageDraft.fallback.hook, copy);
+ assert.equal(draft.sections.packageDraft.fallback.lived, baseline.fallback.lived);
+ assert.equal(draft.sections.packageDraft.fallback.turn, baseline.fallback.turn);
+ assert.deepEqual(draft.sections.packageOriginalRecord, original);
+ assert.equal(draft.sections.packageRecord.serving_enabled, false);
+ const invalid = await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at,
+  sections: { ...draft.sections, packageDraft: { ...draft.sections.packageDraft,
+   fallback: { ...draft.sections.packageDraft.fallback, lived: 'During this transit, synthetic leverage in newly edited copy.' } } } }, '', 400);
+ assert.match(invalid.error, /banned word/);
+ await request('PATCH', { id: draft.id, expectedUpdatedAt: '2026-01-01T00:00:00Z', sections: draft.sections }, '', 409);
+ const published = (await request('PATCH', { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' })).rows[0];
+ assert.equal(published.sections.packageRecord.fallback.hook, copy);
+ assert.equal(published.sections.packageRecord.fallback.lived, baseline.fallback.lived);
+ assert.equal(published.sections.packageRecord.fallback.turn, baseline.fallback.turn);
+ assert.deepEqual(published.sections.packageOriginalRecord, original);
+ console.log('PASS: sparse Mercury fallback edit, unchanged live parent, exact originals, stale-write protection and explicit publication.');
 }
 
 // Templates retain authored slots but cannot claim publication as an edition.

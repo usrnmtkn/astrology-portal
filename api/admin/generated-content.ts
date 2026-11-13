@@ -382,7 +382,8 @@ function v3PackageRecord(row: { sections?: unknown; content_key?: string; headli
   const sections = isRecord(row.sections) ? row.sections : {};
   if (standaloneArticleKind(row.content_key ?? '')) return { headline: row.headline, summary: row.summary, body: row.body,
     _studioVariables: isRecord(sections.standaloneArticle) ? sections.standaloneArticle._studioVariables : [], _standaloneArticle: true };
-  return isRecord(sections.packageRecord) ? sections.packageRecord : {};
+  const record = isRecord(sections.packageRecord) ? sections.packageRecord : {};
+  return contentLibraries?.skyPlacementStudioRecord(row.content_key ?? "", record) ?? record;
 }
 
 function isFallbackArchitectureV3Row(row: ExistingGeneratedContentRow | undefined) {
@@ -753,7 +754,9 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     }
     // Style is advisory for explicit owner writing. Identity, variables, and
     // factual context below still validate the exact submitted reader copy.
-    if (!ownerAuthoredWording && value.includes("—")) {
+    // Retaining an exact approved fallback must not require rewriting its words.
+    const approvedPlacementFallback = libs().isApprovedSkyPlacementFallback(row.content_key, field, value);
+    if (!ownerAuthoredWording && !approvedPlacementFallback && value.includes("—")) {
       throw new GeneratedContentRequestError(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
     }
 
@@ -763,7 +766,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
     });
-    if (banned && !ownerAuthoredWording) {
+    if (banned && !ownerAuthoredWording && !approvedPlacementFallback) {
       throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);
     }
 
@@ -885,7 +888,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const incomingRecord = isRecord(sections.packageRecord) ? sections.packageRecord : {};
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
     ? { ...storedSections.packageOriginalRecord }
-    : { ...record };
+    : libs().isSkyEvergreenSource(record) && isRecord(storedSections.packageRecord) ? { ...storedSections.packageRecord } : { ...record };
   const storedTransitProposal = isPersonalTransitSituationContentKey(row.content_key) && isRecord(sections.packageDraft);
   const hasPackageDraft = isRecord(sections.packageDraft) && !storedTransitProposal;
   const reviewStatus = body.sourceLifecycleAction === "archive"

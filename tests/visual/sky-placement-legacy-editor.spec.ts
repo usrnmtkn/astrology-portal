@@ -1,10 +1,11 @@
-import { openSkyPlacementChooser, openSkyPlacementSourceDetails } from '../helpers/sky-placement-workspace-navigation';
+import { openSkyPlacementChooser, openSkyPlacementSourceDetails, openSkyPlacementDefaultReading } from '../helpers/sky-placement-workspace-navigation';
 import { test, expect } from '@playwright/test';
 import { fork } from 'node:child_process';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { routeStudioInventoryApi } from '../helpers/studio-inventory-route';
+import { skyPlacementSourceRecords } from '../../api/_lib/sky-placement-sources';
 
 // Reproduce imported rows with the writing identity but no canonical metadata.
 const key = 'sky-placement/article/sun/libra';
@@ -12,12 +13,15 @@ const record = { contentKey: key, planet: 'sun', sign: 'libra', surface: 'sky', 
 const legacy = { id: 'legacy-libra', content_key: key, surface: 'sky', mode: 'in_depth', status: 'LIVE', lane: 'serving', review_state: null, provider: 'tldrastro-fallback-architecture-v3', event_type: 'sky-writeup-variable-import', block_type: 'fallback_hook', headline: 'Sun in Libra', summary: '', body: '', sections: { packageRecord: record }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3' }, updated_at: '2026-09-20T07:09:32.791Z' };
 const templateBody = 'Fixture template opening {{entryDate}}.\n\n{{aspectSections}}\n\n{{lunationSection}}\n\nFixture template ending {{exitDate}}.';
 const template = { ...legacy, id: 'libra-template', content_key: 'sky/article-template/sun/libra', provider: 'owner-resource-review', event_type: 'sky-article-template', block_type: 'article', headline: 'Sun Enters Libra', body: templateBody, sections: {}, source_snapshot: {} };
+const mercuryKey = 'sky-placement/article/mercury/scorpio';
+const mercury = { ...legacy, id: 'sparse-mercury', content_key: mercuryKey, headline: 'Mercury in Scorpio',
+ sections: { packageRecord: { ...record, contentKey: mercuryKey, planet: 'mercury', sign: 'scorpio' } } };
 
 for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
  test(`Legacy placement and template editing at ${width} ${theme}`, async ({ page }) => {
   test.setTimeout(90000);
   const directory = mkdtempSync(path.join(tmpdir(), 'sky-editor-'));
-  const fixture = path.join(directory, 'rows.json'); writeFileSync(fixture, JSON.stringify([legacy, template]));
+  const fixture = path.join(directory, 'rows.json'); writeFileSync(fixture, JSON.stringify([legacy, template, mercury]));
   const child = fork(path.resolve('tests/helpers/sky-article-save-api.mts'), [], { env: { ...process.env, SKY_SAVE_FIXTURE: fixture }, execArgv: ['--import', 'tsx'], stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
   let sequence = 0, stderr = '';
   const pending = new Map<number, { resolve: (value: any) => void; reject: (error: Error) => void }>();
@@ -90,6 +94,42 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) {
    expect(denied.status).toBe(409); expect(denied.payload.error).toContain('Complete edition');
    expect(writes.every(result => result.status === 200)).toBe(true); expect(errors).toEqual([]);
    await editor.screenshot({ path: `test-results/sky-placement-legacy-${width}-${theme}.png` });
+   await editor.getByRole('button', { name: 'Close', exact: true }).click();
+   const selectMercury = async () => {
+    await openSkyPlacementChooser(page);
+    await page.getByLabel('Sky placement planet or point').selectOption('mercury');
+    await page.getByLabel('Sky placement zodiac sign').selectOption('scorpio');
+    await openSkyPlacementDefaultReading(page);
+    for (const motion of ['direct', 'retrograde']) {
+     await page.getByLabel('Composition motion').selectOption(motion);
+     await expect(map).toContainText(skyPlacementSourceRecords.get(mercuryKey)!.fallback.turn);
+    }
+    await openSkyPlacementSourceDetails(page);
+    await page.getByLabel('Composition motion').selectOption('direct');
+    await page.getByLabel('Placement writing path').selectOption('fallback');
+   };
+   await selectMercury();
+   const fallback = skyPlacementSourceRecords.get(mercuryKey)!.fallback;
+   for (const value of Object.values(fallback)) await expect(map).toContainText(String(value));
+   await expect(map.getByText('No writing saved. Select to write this section.', { exact: true })).toHaveCount(0);
+   expect((await call({ method: 'rows' })).find((row: any) => row.id === mercury.id)).toEqual(mercury);
+   await map.getByRole('button', { name: 'Edit fallback opening', exact: true }).click();
+   const opening = editor.locator('textarea[data-sky-field="fallback.hook"]');
+   await expect(opening).toHaveValue(fallback.hook);
+   const edited = 'During this transit, synthetic saved Mercury opening. Complete synthetic final sentence.';
+   await opening.fill(edited);
+   await editor.getByRole('button', { name: 'Save draft', exact: true }).click();
+   await expect.poll(async () => (await call({ method: 'rows' })).some((row: any) => row.content_key === mercuryKey && row.status === 'DRAFT' && row.sections?.packageDraft?.fallback?.hook === edited)).toBe(true);
+   expect((await call({ method: 'rows' })).find((row: any) => row.id === mercury.id)).toEqual(mercury);
+   await editor.getByRole('button', { name: 'Close', exact: true }).click();
+   await page.reload(); await selectMercury();
+   await expect(map).toContainText(edited);
+   await expect(map).toContainText(fallback.lived);
+   await expect(map).toContainText(fallback.turn);
+   await map.screenshot({ path: `test-results/sky-placement-mercury-${width}-${theme}.png` });
+   await map.getByRole('button', { name: 'Edit fallback opening', exact: true }).click();
+   await expect(opening).toHaveValue(edited);
+   expect(errors).toEqual([]);
   } finally { child.kill(); rmSync(directory, { recursive: true, force: true }); }
  });
 }
