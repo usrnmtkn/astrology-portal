@@ -170,3 +170,28 @@ identifies that single API command and zero browser cases. Application source,
 build inputs and browser test inputs remain identical to the successful
 60-case frozen run. Reuse that success and the bundle evidence, with final-head
 required hosted gates and remaining selected API coverage still mandatory.
+
+## Governed Natal publication contract
+
+The selected browser gate on `23cb3a99` found four deterministic failures in
+the existing Natal editorial publication case (mobile/desktop, light/dark).
+Its response waiter and final write assertion required a direct PATCH with
+`status: LIVE`, while the editor correctly uses the governed
+`publish-owner-content` action for an unchanged reviewed source.
+
+The test now binds that action to the correct target ID and expected version,
+requires the visible published acknowledgement and no editor error, then reads
+through the actual reader handler backed by the persistent isolated SQL
+publication fixture. It checks the complete body and matching published
+identity/version, retaining facts, source identity, reload and overflow checks.
+All four corrected variants and the 16 related sect cases passed locally with
+zero retries. This is test-source qualification before the normal commit;
+final required hosted gates still must pass on the committed tree.
+
+Application and API inputs are unchanged. The official delta selects this one
+browser spec, zero API commands and no database contracts. Reuse the completed
+local API coverage, builds and unaffected browser evidence; the requalified
+20 cases cover the edited spec's four publication and 16 prior sect cases.
+The initial qualification attempt was stopped by the stale-plan head guard
+before a build or case ran; the regenerated current-head plan was used for
+the passing run. No application guard or assertion was weakened.
