@@ -72,7 +72,7 @@ export default async function handler(req:IncomingMessage,res:ServerResponse) {
       if(publication&&(!validContentPublication(publication)||publication.row_id&&publication.row_id!==s.id))throw new AdminHttpError(409,'Another source owns this publication. Reload before restoring it.');
       plan.push({id:s.id,contentKey:s.contentKey,expectedUpdatedAt:s.expectedUpdatedAt,baselineSHA256:baseline.sha256,expectedPublicationRevision:publication?.revision??null});
     }
-    if(body.action==='preview')return sendAdminJson(res,200,{ok:true,sources:plan,packageVersion:baselines[0]!.packageVersion,savedWritingRetained:true});
+    if(body.action==='preview')return sendAdminJson(res,200,{ok:true,sources:plan,inherited:baselines.some(b=>b?.inherited),packageVersion:baselines[0]!.packageVersion,savedWritingRetained:true});
     if(!uuid.test(body.operationId)||plan.some((s,i)=>s.baselineSHA256!==body.sources[i].baselineSHA256||s.expectedPublicationRevision!==body.sources[i].expectedPublicationRevision))
       throw new AdminHttpError(409,'The approved source or publication changed. Review it again before restoring.');
     const response=await adminFetchJson(`${base}/rest/v1/rpc/restore_approved_content_sources`,{method:'POST',headers:{...headers,'content-type':'application/json'},body:JSON.stringify({p_operation_id:body.operationId,p_sources:plan})});

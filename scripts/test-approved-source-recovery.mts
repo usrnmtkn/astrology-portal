@@ -3,6 +3,8 @@ import {readFileSync} from 'node:fs';
 import {PGlite} from '@electric-sql/pglite';
 import {Readable} from 'node:stream';
 import {publicationAllowsContent} from '../apps/web/src/content/contentPublicationState.js';
+import {servingPackageRecords} from '../api/_lib/serving-package-records.js';
+import {createTransitSynastryRenderer} from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
 import {approvedSourceBaseline} from '../api/_lib/approved-source-recovery.js';
 const db=new PGlite();
 await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;
@@ -109,6 +111,38 @@ try {
   assert.equal((await request({action:'status',operationId:compositeOperation})).state,'restored');
   const recoveredComposite=(await db.query<any>('select status,body,sections from generated_interpretations where id=$1',[compositeID])).rows[0];
   assert.deepEqual(recoveredComposite,{status:'ARCHIVED',body:original.body,sections:original.sections});
+  const pairKey='fallback-hook/synastry-pair/sun/moon/trine';
+  const groupedKey='fallback-hook/synastry-pair/sun/moon/soft';
+  const grouped=servingPackageRecords.get(groupedKey)!;
+  const baseline=approvedSourceBaseline(pairKey);
+  assert.equal(baseline?.inherited,true);
+  assert.equal(approvedSourceBaseline(groupedKey)?.inherited,false);
+  assert.equal(baseline?.sha256,approvedSourceBaseline(groupedKey)?.sha256);
+  for(const invalid of [pairKey+'/extra',pairKey.replace('/trine','/unknown'),pairKey.replace('/moon','/unknown')])assert.equal(approvedSourceBaseline(invalid),null);
+  const inheritedId='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',inheritedOperation='ffffffff-ffff-4fff-8fff-ffffffffffff';
+  const render=(blocked:string[])=>{
+    const read=(file:string)=>JSON.parse(readFileSync(new URL('../apps/web/src/content/fallbackArchitectureV3/'+file,import.meta.url),'utf8'));
+    const renderer=createTransitSynastryRenderer(read('source-rows/transit-synastry-rows-v1.json'),read('templates/fallback-templates-v3.json'),
+      {hookRows:[grouped],vocabularyRows:[]},{blockedContentKeys:blocked});
+    return ['sun','moon'].map((first,i)=>renderer.renderSynastryAspect({planetA:first,planetB:i?'sun':'moon',aspect:'trine',otherName:'Synthetic'}));
+  };
+  const inheritedBefore=render([]);
+  assert.throws(()=>render([pairKey]),(error:any)=>error.publicationBlocked===true);
+  await db.query("insert into generated_interpretations values($1,$2,'LIVE','serving',null,$3,$4,null,$5,$6)",
+    [inheritedId,pairKey,original.updatedAt,original.sections,original.snapshot,original.body]);
+  const source={id:inheritedId,contentKey:pairKey,expectedUpdatedAt:original.updatedAt};
+  const plan=await request({action:'preview',sources:[source]});
+  assert.equal(plan.code,200);assert.equal(plan.inherited,true);
+  const inheritedResult=await request({action:'restore',operationId:inheritedOperation,sources:plan.sources});
+  assert.equal(inheritedResult.code,200);
+  const marker=inheritedResult.recovered[0].publication;
+  const records=new Map([[pairKey,marker]]);
+  assert.equal(publicationAllowsContent(pairKey,inheritedId,original.updatedAt,undefined,records),false);
+  assert.equal(publicationAllowsContent(pairKey,null,null,undefined,records),true);
+  assert.deepEqual(render(publicationAllowsContent(pairKey,null,null,undefined,records)?[]:[pairKey]),inheritedBefore);
+  assert.equal((await request({action:'status',operationId:inheritedOperation})).state,'restored');
+  const savedPair=(await db.query<any>('select status,body from generated_interpretations where id=$1',[inheritedId])).rows[0];
+  assert.deepEqual(savedPair,{status:'ARCHIVED',body:original.body});
 } finally {globalThis.fetch=previousFetch;}
 await db.close();
 console.log('PASS actual owner API + SQL recovery, role authorization, baseline pinning, CAS, atomic pair rollback, immutable complete history, idempotency and status-only lost-ack recovery; production writes 0');
