@@ -1,5 +1,5 @@
 import { memoByString } from "./derivedCache";
-import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch";
+import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch.js";
 import { isSkyPlanetLivedKey } from "./skyWriteupRelations";
 // @ts-ignore Shared canonical layout validation and ordered section fields.
 import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";

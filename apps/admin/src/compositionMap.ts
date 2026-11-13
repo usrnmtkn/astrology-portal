@@ -1,5 +1,5 @@
 import { zodiacSeasonVariableNames } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
-import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch";
+import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch.js";
 import { lunarContentIdentity } from "./lunarCalendarContent";
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
 import {

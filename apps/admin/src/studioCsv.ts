@@ -1,6 +1,6 @@
 /** Shared CSV contract. No browser, storage, or provider dependencies. */
 import { isDynamicTransitNatalLibraryKey } from "../../web/src/content/transitNatalIdentity.js";
-import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch";
+import { mergeStudioPackagePatch } from "../../../src/shared/studioPackagePatch.js";
 import { decodeCsvCell, quoteCsvCell } from '../../../src/shared/csvText.js';
 export type CsvContentRow = {
   id: string; content_key: string; updated_at?: string | null; event_type?: string | null;
