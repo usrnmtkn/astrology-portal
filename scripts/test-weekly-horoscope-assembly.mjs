@@ -674,6 +674,7 @@ try {
 
   const youPage = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
   const app = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+  const lunationSection = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/LunationTransitSection.tsx"), "utf8");
   const weeklySource = fs.readFileSync(
     path.join(repoRoot, "apps/web/src/services/weeklyHoroscope.ts"),
     "utf8"
@@ -681,10 +682,10 @@ try {
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.cards\.map/u);
   assert.doesNotMatch(youPage, /weeklyHoroscopeAssembly\.sections\.map/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__background/u);
-  assert.match(youPage, /weekly-horoscope__macro daily-horoscope-summary/u);
-  assert.match(youPage, />The macro view</u);
-  assert.match(youPage, /updates-aspect-list you-transit-grid weekly-horoscope__transits/u);
-  assert.match(youPage, /\{weeklyTransitRows\}/u);
+  assert.match(lunationSection, /weekly-horoscope__macro daily-horoscope-summary/u);
+  assert.match(lunationSection, />The macro view</u);
+  assert.match(lunationSection, /updates-aspect-list you-transit-grid lunation-transit__personal/u);
+  assert.match(youPage, /<LunationTransitSection assembly=\{weeklyHoroscopeAssembly\}>\{lunationRow \? <LunationTransitCard/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__header/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__chip/u);
   assert.doesNotMatch(youPage, /weekly-horoscope__reading/u);
@@ -692,7 +693,7 @@ try {
   assert.doesNotMatch(youPage, />Aspect</u);
   assert.doesNotMatch(youPage, />Your horoscope</u);
   assert.doesNotMatch(youPage, />Current house pass</u);
-  assert.match(app, /className="updates-aspect-row weekly-transit-row"/u);
+  assert.match(lunationSection, /className="updates-aspect-row weekly-transit-row"/u);
   assert.match(app, /weeklyTransitDisplayTitle\(reading, house\)/u);
   assert.match(app, /title: displayTitle/u);
   assert.match(app, /activeTransitAspectIdentities/u);
@@ -887,7 +888,7 @@ try {
   assert.equal(realWeek.weekStart, "2026-07-27");
   assert.equal(realWeek.weekEnd, "2026-08-02");
   assert.equal(realWeek.weekType, "lunation");
-  assert.deepEqual(realWeek.macro, { headline: macroFixture.headline, body: macroFixture.body },
+  assert.deepEqual(realWeek.macro, { headline: macroFixture.headline, body: macroFixture.body, dayLabel: "Wednesday, Jul 29" },
     "Weekly macro must preserve the complete date-specific published lunation article.");
   assert.ok(realWeek.horoscope.headline.trim().length > 0);
   assert.notEqual(realWeek.horoscope.headline, "Full Moon week");

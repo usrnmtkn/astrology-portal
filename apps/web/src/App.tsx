@@ -17841,37 +17841,7 @@ function ProfileView({
           });
         };
 
-        return (
-          <button
-            type="button"
-            className="updates-aspect-row weekly-transit-row"
-            key={articleId}
-            onClick={openArticle}
-          >
-            {aspectParts ? <AspectBadge aspect={aspectParts.aspect} className="updates-aspect-row__glyphs" /> : <span className="updates-aspect-row__glyphs" aria-hidden="true">
-                <span className="planet-glyph">{planet ? pointGlyph(planet) : "○"}</span>
-            </span>}
-            <span className="updates-aspect-row__content">
-              <span className="updates-aspect-row__title">{displayTitle}</span>
-              <span className="updates-aspect-row__meta-line">
-                {timingLabel ? <span>{timingLabel}</span> : null}
-              </span>
-              {preview ? <span className="updates-aspect-row__description transit-card-preview">{preview}</span> : null}
-              <CardReadMore appearance="icon" />
-            </span>
-            {house || typeof reading.orb === "number" ? (
-              <span
-                className="updates-aspect-row__meta"
-                aria-label={house ? `${ordinalHouse(house)} house` : `${wholeDegreeOrb(reading.orb ?? 0)} orb`}
-              >
-                <span className="updates-aspect-row__dot" aria-hidden="true" />
-                <span className="updates-aspect-row__orb">
-                  {house ?? wholeDegreeOrb(reading.orb ?? 0)}
-                </span>
-              </span>
-            ) : null}
-          </button>
-        );
+        return { reading, preview, house, onOpen: openArticle, displayTitle, glyph: planet ? pointGlyph(planet) : "○", aspect: aspectParts?.aspect, timingLabel };
       })
     : [];
   const dailyDoDont = (() => {

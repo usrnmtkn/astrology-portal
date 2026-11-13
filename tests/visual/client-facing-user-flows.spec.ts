@@ -1776,10 +1776,10 @@ test.describe("client-facing user flow case studies", () => {
     });
     try {
       await expectClientRouteLoads(page, "/#you");
-      await expect(page.getByRole("button", { name: /^Virgo New Moon for Aries Rising/u })).toBeVisible({ timeout: routeReadyTimeoutMs });
+      await expect(page.getByRole("button", { name: /^Open full entry for Virgo New Moon for Aries Rising/u })).toBeVisible({ timeout: routeReadyTimeoutMs });
       const macro = page.locator(".weekly-horoscope__macro");
       await expect(macro).toHaveCount(0);
-      await expect(page.getByRole("region", { name: "This week's transits", exact: true })).toBeVisible({ timeout: routeReadyTimeoutMs });
+      await expect(page.locator(".lunation-transit")).toBeVisible({ timeout: routeReadyTimeoutMs });
       await expect(macro).toHaveCount(0);
       releaseCopy();
       await expect(macro).toContainText("You do not need another plan for becoming a better version of yourself.", { timeout: 15_000 });
@@ -1802,7 +1802,7 @@ test.describe("client-facing user flow case studies", () => {
     await expectClientRouteLoads(page, "/#you");
 
     const bookCard = page.getByRole("button", {
-      name: /^Aquarius Full Moon for Aries Rising/u
+      name: /^Open full entry for Aquarius Full Moon for Aries Rising/u
     });
     await expect(bookCard).toBeVisible({ timeout: 30_000 });
     await bookCard.click();
@@ -1844,7 +1844,7 @@ test.describe("client-facing user flow case studies", () => {
         await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
 
         const eclipseCard = page.getByRole("button", {
-          name: /^Pisces Lunar Eclipse Horoscope/u
+          name: /^Open full entry for Pisces Lunar Eclipse Horoscope/u
         });
         const eclipseTitle = eclipseCard.locator(".updates-aspect-row__title");
         await expect(eclipseCard).toBeVisible({ timeout: 30_000 });

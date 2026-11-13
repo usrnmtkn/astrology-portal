@@ -1,3 +1,5 @@
+import { LunationTransitCard, lunationTransitReading } from "../../components/LunationTransitSection";
+import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "../../services/weeklyHoroscope";
 import { returnToArticleParent } from "../../services/articleNavigation";
 import { skySnapshotDate } from "../../services/skySelection";
 import { compatibilityCardParagraphs } from "./compatibilityCardCopy";
@@ -1409,6 +1411,28 @@ export function ManualChartsPanel({
         )
       : null
   ), [currentSky, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart]);
+  const lunationSelectionKey = `${selectedChart?.id ?? ""}|${currentSky?.generatedAt ?? ""}|${selectedFriendReadyNatalChart?.generatedAt ?? ""}`;
+  const [friendLunation, setFriendLunation] = useState<{ key: string; assembly: WeeklyHoroscopeAssembly } | null>(null);
+  const friendLunationAssembly = friendLunation?.key === lunationSelectionKey ? friendLunation.assembly : null;
+  const friendLunationReading = lunationTransitReading(friendLunationAssembly);
+  useEffect(() => {
+    setFriendLunation(null);
+    if (!friendProfileWork.transits || !currentSky || currentSkyLoading || !selectedChart || selectedChartIsEvent
+      || !manualChartHasReliableBirthTime(selectedChart) || !selectedFriendReadyNatalChart?.ascendant) return;
+    let cancelled = false;
+    void import("../../services/weeklyHoroscope").then(({ buildWeeklyHoroscope }) => buildWeeklyHoroscope({
+      userId: selectedChart.id,
+      natalSky: selectedFriendReadyNatalChart,
+      risingSign: selectedFriendReadyNatalChart.ascendant!,
+      location: currentSky.location,
+      now: new Date(currentSky.generatedAt)
+    })).then(assembly => {
+      if (!cancelled) setFriendLunation({ key: lunationSelectionKey, assembly });
+    }).catch(error => {
+      if (!cancelled) console.warn("Friend lunation could not be loaded.", error);
+    });
+    return () => { cancelled = true; };
+  }, [friendProfileWork.transits, currentSky, currentSkyLoading, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart, lunationSelectionKey, fallbackArchitectureV3Version]);
   const selectedFriendDailyDoDont = useMemo(() => (
     currentSky && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? friendDailyDoDont(currentSky, selectedFriendReadyNatalChart, selectedFriendTransits)
@@ -2271,6 +2295,27 @@ export function ManualChartsPanel({
       }))
     });
   };
+  const openFriendLunation = (reading: WeeklyHoroscopeReading) => {
+    if (!selectedChart) return;
+    openFriendDetail({
+      routePath: friendDetailRoutePath(selectedChart.id, "transits", `lunation-${reading.dateKey}`),
+      glyph: "○",
+      kicker: "Transit",
+      title: reading.headline,
+      meta: reading.dayLabel,
+      body: [reading.body],
+      sections: []
+    });
+  };
+  useEffect(() => {
+    const route = friendsRouteStateFromUrl();
+    if (!friendLunationReading || route?.chartId !== selectedChart?.id || route?.view !== "transits"
+      || route.detail !== `lunation-${friendLunationReading.dateKey}`) return;
+    const refreshKey = `lunation:${connectionNavigation}:${lunationSelectionKey}:${fallbackArchitectureV3Version}`;
+    if (friendRouteDetailRefreshKeyRef.current === refreshKey) return;
+    friendRouteDetailRefreshKeyRef.current = refreshKey;
+    openFriendLunation(friendLunationReading);
+  }, [connectionNavigation, friendLunationReading, selectedChart?.id, lunationSelectionKey, fallbackArchitectureV3Version]);
   const openFriendHouseTransitById = (cardId: string) => {
     const card = selectedFriendHouseTransitCards.find((candidate) => candidate.contentKey === cardId);
 
@@ -3073,6 +3118,8 @@ export function ManualChartsPanel({
             ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={() => { feedDailyPeaks.retry(); selectedFriendTransitTiming.retry(); onRetryTransitCopy?.(); }} />
             : <FriendTransitsTab
               brief={selectedFriendTransitsBrief}
+              lunationAssembly={friendLunationAssembly}
+              lunationCard={friendLunationReading ? <LunationTransitCard reading={friendLunationReading} preview={transitCardPreview(friendLunationReading.body)} onOpen={() => openFriendLunation(friendLunationReading)} /> : null}
               isLoading={currentSkyLoading || transitCopyLoading || feedDailyPeaks.loading || selectedFriendTransitTiming.loading}
               onGenerateReading={generateSelectedFriendTransitReading}
               onOpenBondTransit={openBondTransitById}

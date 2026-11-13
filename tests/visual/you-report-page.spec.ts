@@ -1,9 +1,11 @@
+import { getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
 import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { emptyLastKnownGoodSnapshot } from "../helpers/bundled-publications";
 import { readerResponse } from "../helpers/reader-response";
 
 const sourceRows = JSON.parse(readFileSync(new URL("../../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json", import.meta.url), "utf8"));
+const macroHeadline: string = sourceRows.authoredCards.find((row: { contentKey: string }) => row.contentKey === "authored/sky-lunation-macro/new-moon/virgo").headline;
 const macroBody: string = sourceRows.authoredCards.find((row: { contentKey: string }) => row.contentKey === "authored/sky-lunation-macro/new-moon/virgo").body;
 
 const user = {
@@ -295,6 +297,18 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       const body = macro.locator(".weekly-horoscope__macro-body");
       const more = macro.getByRole("button", { name: "Read more", exact: true });
       await expect(more).toBeVisible();
+      const section = page.locator(".lunation-transit");
+      const houses = page.getByRole("region", { name: "Planets moving through your houses", exact: true });
+      await expect(section.getByRole("heading", { level: 2, name: macroHeadline, exact: true })).toBeVisible();
+      await expect(section.locator(".lunation-transit__date")).toHaveText("Thursday, Sep 10");
+      await expect(section.locator(".weekly-transit-row")).toHaveCount(1);
+      await expect(section.locator(".lunation-transit__house")).not.toBeEmpty();
+      const headerStyle = (element: Element) => { const s = getComputedStyle(element); return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing,s.marginTop,s.marginBottom,s.textTransform,s.textAlign]; };
+      expect(await section.locator("h2").evaluate(headerStyle)).toEqual(await houses.locator("h2").evaluate(headerStyle));
+      expect(await section.evaluate((el, house) => Boolean(el.compareDocumentPosition(house as Node) & Node.DOCUMENT_POSITION_FOLLOWING), await houses.elementHandle())).toBe(true);
+      const macroBox = await macro.boundingBox(), personalBox = await section.locator(".weekly-transit-row").boundingBox();
+      if (viewport.width > 800) { expect(Math.abs(macroBox!.y - personalBox!.y)).toBeLessThan(2); expect(macroBox!.width / personalBox!.width).toBeCloseTo(2, 1); }
+      else expect(macroBox!.y + macroBox!.height).toBeLessThan(personalBox!.y);
       await expect(more).toHaveAttribute("aria-expanded", "false");
       await expect(more).toHaveAttribute("aria-controls", await body.getAttribute("id") as string);
       // The owner's sample is the first two paragraphs of this full passage.
@@ -302,7 +316,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       expect((await body.locator("p").allTextContents()).join("\n\n")).toBe(preview);
       expect(preview.length).toBeLessThanOrEqual(576);
       await macro.scrollIntoViewIfNeeded();
-      await page.screenshot({ path: test.info().outputPath(`you-macro-${viewport.name}-${theme}.png`) });
+      await section.screenshot({ path: test.info().outputPath(`you-macro-${viewport.name}-${theme}.png`) });
       await more.focus();
       await page.keyboard.press("Enter");
       const less = macro.getByRole("button", { name: "Read less", exact: true });
@@ -313,6 +327,51 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       await less.click();
       await expect(more).toHaveAttribute("aria-expanded", "false");
       expect((await body.locator("p").allTextContents()).join("\n\n")).toBe(preview);
+    });
+
+    test(`You hides the lunation section in a week without a lunation on ${viewport.name} ${theme}`, async ({ page }) => {
+      test.setTimeout(60_000);
+      await page.setViewportSize(viewport);
+      await prepare(page, theme, true, "2026-09-20T16:00:00Z");
+      await page.goto("/?date=2026-09-20#you");
+      await expect(page.getByRole("button", { name: "Create week report", exact: true })).toBeEnabled({ timeout: 45_000 });
+      await expect(page.locator(".lunation-transit")).toHaveCount(0);
+      await expect(page.getByRole("region", { name: "Planets moving through your houses", exact: true })).toBeVisible();
+    });
+
+    test(`Friends lunation uses the shared layout above house transits on ${viewport.name} ${theme}`, async ({ page }) => {
+      test.setTimeout(90_000);
+      await page.setViewportSize(viewport);
+      await prepare(page, theme);
+      const natal = { ...await getAstrodienstSky(location, new Date("1990-01-01T17:00:00Z")), birthTimeKnown: true };
+      await page.addInitScript(({ natal, location, userId }) => {
+        const key = `tldrastro:manualCharts:${userId}`;
+        localStorage.setItem(key, JSON.stringify([{ id: "lunar-friend", ownerUserId: userId, chartType: "person", displayName: "Lunar Fixture", firstName: "Lunar", relationshipType: "friend", birthDate: "1990-01-01", birthTime: "12:00 PM", birthTimeUnknown: false, birthPlace: location.label, birthLocation: location, natalChart: natal, createdAt: "2026-09-01T12:00:00Z", updatedAt: "2026-09-01T12:00:00Z" }]));
+      }, { natal, location, userId: user.id });
+      await page.route("**/rest/v1/manual_charts*", route => route.fulfill({ status: 503, json: { message: "Synthetic offline chart sync" } }));
+      await page.goto("/#friends?tab=charts&chart=lunar-friend&view=transits");
+      const section = page.locator(".lunation-transit");
+      const houses = page.getByRole("region", { name: "House transits", exact: true });
+      await expect(section.getByRole("heading", { name: macroHeadline, level: 2, exact: true })).toBeVisible({ timeout: 60_000 });
+      await expect(section.locator(".lunation-transit__date")).toHaveText("Thursday, Sep 10");
+      await expect(section.locator(".lunation-transit__house")).not.toBeEmpty();
+      expect(await section.evaluate((el, house) => Boolean(el.compareDocumentPosition(house as Node) & Node.DOCUMENT_POSITION_FOLLOWING), await houses.elementHandle())).toBe(true);
+      const macroBox = await section.locator(".weekly-horoscope__macro").boundingBox(), personalBox = await section.locator(".weekly-transit-row").boundingBox();
+      if (viewport.width > 800) expect(Math.abs(macroBox!.y - personalBox!.y)).toBeLessThan(2);
+      else expect(macroBox!.y + macroBox!.height).toBeLessThan(personalBox!.y);
+      await section.getByRole("button", { name: "Read more", exact: true }).click();
+      expect((await section.locator(".weekly-horoscope__macro-body p").allTextContents()).join("\n\n")).toBe(macroBody);
+      await section.getByRole("button", { name: "Read less", exact: true }).click();
+      await section.screenshot({ path: test.info().outputPath(`friends-lunation-${viewport.name}-${theme}.png`) });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1)).toBe(false);
+      const title = await section.locator(".weekly-transit-row .updates-aspect-row__title").innerText();
+      await section.locator(".weekly-transit-row").click();
+      const article = page.locator(".sky-detail-article");
+      await expect(article.getByRole("heading", { level: 1, name: title, exact: true })).toBeVisible();
+      const fullReading = await article.innerText();
+      await page.reload();
+      await expect(article.getByRole("heading", { level: 1, name: title, exact: true })).toBeVisible({ timeout: 60_000 });
+      expect(await article.innerText()).toBe(fullReading);
     });
 
     test(`You loads the dated lunar article from the sky surface on ${viewport.name} ${theme}`, async ({ page }) => {
@@ -335,7 +394,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       });
       await page.goto("/#you");
       const macro = page.locator(".weekly-horoscope__macro");
-      await expect(macro).toContainText("Virgo New Moon fixture", { timeout: 45_000 });
+      await expect(page.locator(".lunation-transit > .you-transit-group__header")).toContainText("Virgo New Moon fixture", { timeout: 45_000 });
       expect((await macro.locator(".weekly-horoscope__macro-body p").allTextContents()).join("\n\n")).toBe(passage);
       expect(requestedKeys).toContain(key);
       expect(requestedKeys).toContain("authored/sky-lunation-macro/new-moon/virgo");

@@ -1,3 +1,6 @@
+import { LunationTransitSection } from "../../components/LunationTransitSection";
+import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
+import type { ReactNode } from "react";
 import { FormattedProse } from "../../components/FormattedProse";
 import { CardReadMore } from "../../components/CardReadMore";
 import { ReportGenerationBeam } from "../../components/reports/ReportGenerationBeam";
@@ -85,9 +88,13 @@ export function FriendTransitsTab({
   readingAvailable = false,
   readingSubjectId = "",
   readingTargetDate = "",
-  patternTimingOverrides
+  patternTimingOverrides,
+  lunationAssembly,
+  lunationCard
 }: {
   brief: FriendTransitsBrief;
+  lunationAssembly?: WeeklyHoroscopeAssembly | null;
+  lunationCard?: ReactNode;
   isLoading?: boolean;
   onGenerateReading?: () => void;
   onOpenBondTransit: (id: string) => void;
@@ -298,6 +305,7 @@ export function FriendTransitsTab({
             </div>
           </section>
         ) : null}
+        {!isLoading ? <LunationTransitSection assembly={lunationAssembly}>{lunationCard}</LunationTransitSection> : null}
         {!isLoading && houseContext.length > 0 && (
           <section className="friend-transit-group" aria-label="House transits">
             <span className="eyebrow section-label friend-section-label">Where it lands</span>
