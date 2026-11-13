@@ -68,48 +68,34 @@ reader, content package and dependency changes.
 1. Follow repository provenance instructions: fetch origin, inspect the remote,
    branch, clean/dirty status and divergence from main. Preserve owner work.
 2. In the isolated checkout, install its own dependencies with `npm ci`.
-3. Run `npm run test:content-studio-api`. Its lifecycle builds the local knowledge
-   package before tests. Do not run another knowledge rebuild concurrently.
-4. Require the `content-studio-api` check from the `Content Studio API contract`
-   workflow on the exact PR head. It intentionally runs without path filters on
-   all PRs and every branch push, including branches without a PR. Runs are
-   independent: a later push does not cancel an earlier revision's API QA.
-   It does not require production credentials.
-   The Calendar aspect lifecycle acceptance uses actual publication migrations
-   and handlers, including Studio status and cold/warm reader transport. It
-   must fail when the storage publication signal is withheld; LIVE metadata
-   or a fixture-generated publication record is not publication evidence.
-5. Include the tested SHA, command, outcome, and material limitations in the PR.
-   Do not remove a failed assertion or widen an approval rule to make CI pass.
+3. Use the revision-bound [affected CI plan](affected-ci.md). Run its selected
+   actual-handler contracts and relevant fresh-build browser flows. The selected
+   API jobs retain their local knowledge prerequisite; preserve isolated installs.
+4. Require `content-studio-api`, `browser-release-gate` and `project-privacy` on
+   the current candidate. Both aggregate workflows report on every PR and main
+   push. Their scope jobs validate the plan before accepting an empty selection.
+5. Record the tested SHA, selected commands/specs, outcomes and material limits in
+   the PR. Preserve failures and distinguish affected success from a full audit.
 
-GitHub's active `Content Studio API QA` ruleset requires `content-studio-api`
-from the GitHub Actions app before main can be updated, with the branch current
-against main and no bypass actors. Verify the live ruleset when changing release
-configuration; workflow YAML alone does not enforce a merge gate.
+GitHub's active `Content Studio API QA` ruleset retains all three required checks
+from GitHub Actions, strict current-base enforcement and no bypass actors. The
+owner changed routine execution to affected tests on 2026-11-12. The workflows
+select affected work rather than removing protection or posting substitute checks.
 
-Here, a check-in means a push to GitHub. The workflow tests the pushed revision
-and the PR integration revision; it does not run for each unpushed local commit
-or each intermediate commit in a multi-commit push. Local commits retain the
-privacy hook, and the full API command above remains required before merging.
+## API partitions
 
-### Complete CI partitions
+The command catalog and complete local `npm run test:content-studio-api` remain
+available for a requested manual audit. Routine CI partitions the selected
+commands into up to three isolated jobs; each selected job retains the bounded
+35-minute deadline and knowledge prerequisite. Selected database/concurrency and
+variable contracts remain required. The aggregate rejects failed, cancelled or
+skipped selected jobs; only a validated empty plan permits the matrix to skip.
 
-The Calendar candidate's hosted API job exceeded its existing 35-minute limit
-while still making progress; that run remains failed. CI now executes the exact
-`test:content-studio-api` command list in three isolated jobs. Each installs its
-own dependencies and runs the complete knowledge prerequisite. The runner reads
-the package script directly, preserves command order within each partition, and
-rejects unsupported shell syntax. No command is selected out, and newly added
-commands automatically join the complete partition. The full local npm command
-is unchanged.
-
-The required `content-studio-api` check passes only after all three jobs succeed.
-Peers continue when one fails. The existing PostgreSQL session/concurrency and
-checkpoint checks still run, in the first job. Each job keeps the 35-minute cap;
-no assertion, reference input, timeout contract or approval rule is relaxed.
-`node scripts/test-content-studio-api-shards.mjs` verifies actual child execution,
-complete command coverage, invalid-selector refusal and failure propagation;
-the workflow syntax guard also verifies the required aggregate and matrix.
+The selector, actual child execution, failure propagation, browser identities and
+coverage are verified by `node scripts/test-ci-affected-tests.mjs`,
+`node scripts/test-content-studio-api-shards.mjs`, the workflow syntax guard and
+the unchanged suite-coverage audit. See the affected runbook for diff provenance,
+shared-dependency behavior, local preview and release evidence.
 
 ## What the gate verifies
 

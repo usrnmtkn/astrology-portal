@@ -1,6 +1,6 @@
 name: Content Studio API contract
 
-# Every PR and actual main revision verifies the complete Content Studio contract.
+# Every PR and actual main revision reports the required affected-contract gate.
 # Feature-branch pushes are covered by their PR event without a duplicate full run.
 on:
   pull_request:
@@ -14,7 +14,39 @@ permissions:
 # Keep runs independent so a newer check-in cannot cancel earlier API QA.
 
 jobs:
+  scope:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      test_plan: ${{ steps.scope.outputs.test_plan }}
+      api_needed: ${{ steps.scope.outputs.api_needed }}
+      api_shards: ${{ steps.scope.outputs.api_shards }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify selection and required-gate contracts
+        run: ruby scripts/test-ci-workflow-syntax.rb && node scripts/test-ci-affected-tests.mjs && node scripts/test-content-studio-api-shards.mjs
+      - id: scope
+        name: Select affected API contracts
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node scripts/ci-affected-tests.mjs
+
   content-studio-api-contracts:
+    needs: scope
+    if: needs.scope.outputs.api_needed == 'true'
+    env:
+      CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
     # Validate the actual main revision too. A merge message is not test evidence.
     runs-on: ubuntu-latest
     # The full suite plus PostgreSQL has taken 24m10s on a passing runner.
@@ -23,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3]
+        shard: ${{ fromJSON(needs.scope.outputs.api_shards) }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -31,7 +63,7 @@ jobs:
       # Both public registries can throttle shared runners. Starting the same
       # official PostgreSQL image here lets us fall back before running tests.
       - name: Start PostgreSQL with registry fallback
-        if: matrix.shard == 1
+        if: matrix.shard == 1 && (fromJSON(needs.scope.outputs.test_plan).postgres || fromJSON(needs.scope.outputs.test_plan).weeklyPostgres)
         shell: bash
         run: |
           image=public.ecr.aws/docker/library/postgres:17.6
@@ -59,40 +91,48 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Verify server types and deployment safeguards
+        if: matrix.shard == fromJSON(needs.scope.outputs.api_shards)[0]
         run: npm run build:knowledge && npm run typecheck:server && npm run test:deployment-env && node scripts/test-browser-balance.mjs
       - name: Verify Studio and shared module boundaries
+        if: matrix.shard == fromJSON(needs.scope.outputs.api_shards)[0]
         run: npm run qa:admin-boundary
-      - name: Verify complete API shard coverage and failure propagation
-        run: ruby scripts/test-ci-workflow-syntax.rb && node scripts/test-content-studio-api-shards.mjs
       - name: Verify CRUD, publication, storage and actual reader contracts
         run: npm run pretest:content-studio-api && node scripts/run-content-studio-api-shard.mjs --shard ${{ matrix.shard }}
       - name: Verify publication races with distinct PostgreSQL sessions
-        if: matrix.shard == 1
+        if: matrix.shard == 1 && fromJSON(needs.scope.outputs.test_plan).postgres
         run: node scripts/test-content-studio-publication-concurrency.mjs
         env:
           PGPASSWORD: local-test-only
       - name: Verify Weekly checkpoint compression on native PostgreSQL
-        if: matrix.shard == 1
+        if: matrix.shard == 1 && fromJSON(needs.scope.outputs.test_plan).weeklyPostgres
         run: node scripts/test-weekly-checkpoint-postgres.mjs
         env:
           PGPASSWORD: local-test-only
       - name: Verify Studio variable directory contracts
-        if: matrix.shard == 1
+        if: matrix.shard == 1 && fromJSON(needs.scope.outputs.test_plan).variables
         run: npm run test:studio-variables
       - name: Remove isolated PostgreSQL container
-        if: always() && matrix.shard == 1
+        if: always() && matrix.shard == 1 && (fromJSON(needs.scope.outputs.test_plan).postgres || fromJSON(needs.scope.outputs.test_plan).weeklyPostgres)
         run: docker rm --force studio-postgres >/dev/null 2>&1 || true
 
   content-studio-api:
-    needs: content-studio-api-contracts
+    needs: [scope, content-studio-api-contracts]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Require every API shard and database check to pass
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Require every selected API shard and database check to pass
         env:
-          API_CONTRACT_RESULT: ${{ needs.content-studio-api-contracts.result }}
-        run: test "$API_CONTRACT_RESULT" = success
+          CI_AFFECTED_TEST_PLAN: ${{ needs.scope.outputs.test_plan }}
+          API_SCOPE_RESULT: ${{ needs.scope.result }}
+          API_MATRIX_RESULT: ${{ needs.content-studio-api-contracts.result }}
+        run: node scripts/check-affected-api-gate.mjs
 
 env:
   PRIVATE_REPORT_DOCUMENTS: ${{ secrets.PRIVATE_REPORT_DOCUMENTS }}

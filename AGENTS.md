@@ -423,12 +423,13 @@ See [date consistency QA](docs/qa/app-event-date-consistency.md) and
 
 ### Content Studio API verification on every repository update
 
-Before merging any repository update, run `npm run test:content-studio-api`
-from the current isolated checkout with its own `npm ci` dependencies. Its npm
-prerequisite builds the local knowledge package. The unfiltered
-`Content Studio API contract` workflow must pass on the exact PR head; do not
-skip it because a change appears unrelated to the API. Reader, package and
-dependency changes can also break CRUD.
+Before merging, run the affected API contracts and browser flows from the current
+isolated checkout with its own `npm ci` dependencies. Follow the
+[affected CI runbook](docs/qa/affected-ci.md) for selection, prerequisites and
+revision-bound evidence. Require `content-studio-api`, `browser-release-gate`
+and `project-privacy` on the current candidate. The owner changed routine
+validation to affected tests on 2026-11-12; the complete API command remains a
+manual audit, and shared changes may legitimately affect its complete selection.
 
 For changes to API/editor/publication behavior, add a regression against the
 actual handler and run the affected browser flow from a fresh build. Preserve

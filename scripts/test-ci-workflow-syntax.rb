@@ -33,17 +33,19 @@ files.each do |file|
     gate = jobs.fetch('content-studio-api')
     triggers = workflow['on'] || workflow[true]
     raise 'API coverage must stay unfiltered on every pull request' unless triggers.key?('pull_request') && triggers['pull_request'].nil?
-    raise 'No API shard may be optional' if matrix.key?('if') || matrix.key?('continue-on-error')
-    raise 'API matrix must retain all three complete shards' unless matrix.fetch('strategy').fetch('matrix').fetch('shard') == [1, 2, 3]
+    raise 'API selection must be required' unless jobs.fetch('scope').fetch('steps').any? { |step| step['run'] == 'node scripts/ci-affected-tests.mjs' }
+    raise 'API shards must be controlled by selection' unless matrix.fetch('needs') == 'scope' && matrix.fetch('if') == "needs.scope.outputs.api_needed == 'true'"
+    raise 'Selected API shards cannot ignore errors' if matrix.key?('continue-on-error')
+    raise 'API matrix must execute the complete selected shard set' unless matrix.fetch('strategy').fetch('matrix').fetch('shard') == '${{ fromJSON(needs.scope.outputs.api_shards) }}'
     raise 'A failing API shard must not cancel peer evidence' unless matrix.fetch('strategy')['fail-fast'] == false
     raise 'API matrix must keep its existing bounded timeout' unless matrix.fetch('timeout-minutes') == 35
-    raise 'Required API gate must depend on every contract shard' unless gate.fetch('needs') == 'content-studio-api-contracts'
+    raise 'Required API gate must depend on every contract shard' unless gate.fetch('needs') == ['scope', 'content-studio-api-contracts']
     raise 'Required API gate must inspect failed peers' unless gate.fetch('if') == '${{ !cancelled() }}'
-    raise 'Required API gate cannot admit a failed or skipped shard' unless gate.fetch('steps').any? { |step| step['run'] == 'test "$API_CONTRACT_RESULT" = success' && step.fetch('env', {})['API_CONTRACT_RESULT'] == '${{ needs.content-studio-api-contracts.result }}' }
+    raise 'Required API gate must validate selection and matrix result' unless gate.fetch('steps').any? { |step| step['run'] == 'node scripts/check-affected-api-gate.mjs' && step.fetch('env', {})['API_SCOPE_RESULT'] == '${{ needs.scope.result }}' && step.fetch('env', {})['API_MATRIX_RESULT'] == '${{ needs.content-studio-api-contracts.result }}' }
     raise 'Every API shard must run its full knowledge prerequisite' unless matrix.fetch('steps').any? { |step| step['run'] == 'npm run pretest:content-studio-api && node scripts/run-content-studio-api-shard.mjs --shard ${{ matrix.shard }}' && !step.key?('if') }
     raise 'Every API shard must test the exact PR head' unless matrix.fetch('steps').any? { |step| step['uses'] == 'actions/checkout@v6' && step.fetch('with', {})['ref'] == '${{ github.event.pull_request.head.sha || github.sha }}' }
-    ['node scripts/test-content-studio-publication-concurrency.mjs', 'node scripts/test-weekly-checkpoint-postgres.mjs', 'npm run test:studio-variables'].each do |command|
-      raise 'Existing database and variable contracts must remain required' unless matrix.fetch('steps').any? { |step| step['run'] == command && step['if'] == 'matrix.shard == 1' && !step.key?('continue-on-error') }
+    { 'node scripts/test-content-studio-publication-concurrency.mjs' => 'postgres', 'node scripts/test-weekly-checkpoint-postgres.mjs' => 'weeklyPostgres', 'npm run test:studio-variables' => 'variables' }.each do |command, flag|
+      raise 'Selected database and variable contracts must remain required' unless matrix.fetch('steps').any? { |step| step['run'] == command && step['if'] == "matrix.shard == 1 && fromJSON(needs.scope.outputs.test_plan).#{flag}" && !step.key?('continue-on-error') }
     end
   end
   if file.end_with?('/visual-smoke.yml')
@@ -64,6 +66,12 @@ files.each do |file|
     overlay_command = 'tests/visual/overlay-viewport.spec.ts'
     raise 'Overlay checks must run independently of reader shards' if reader.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) }
     raise 'Overlay job must execute its full viewport suite' unless overlays.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) && step['run'].include?('--shard=${{ matrix.shard }}/3') }
+    (jobs.keys - ['scope','browser-release-gate']).each do |name|
+      job=jobs.fetch(name)
+      raise "#{name}: affected selector missing" unless job.fetch('if') == "needs.scope.outputs.#{name.tr('-', '_')} == 'true'"
+      raise "#{name}: revision-bound plan missing" unless job.fetch('env', {})['CI_AFFECTED_TEST_PLAN'] == '${{ needs.scope.outputs.test_plan }}'
+      raise "#{name}: browser command bypasses affected selection" if job.fetch('steps').any? { |step| step.fetch('run', '').include?('npx playwright test') }
+    end
     triggers = workflow['on'] || workflow[true] # YAML 1.1 parses on as true.
     raise 'Required browser gate must report on every pull request' unless triggers.key?('pull_request') && triggers['pull_request'].nil?
   end

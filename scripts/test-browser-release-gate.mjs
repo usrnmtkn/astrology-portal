@@ -1,22 +1,17 @@
 import assert from 'node:assert/strict';
-import { checkBrowserReleaseGate } from './check-browser-release-gate.mjs';
-
-const result = value => ({ result: value });
-checkBrowserReleaseGate({ scope: result('success'), reader: result('success'), studio: result('skipped') });
-checkBrowserReleaseGate({ scope: result('success'), reader: result('skipped'), studio: result('skipped') });
-for (const state of ['failure', 'cancelled', 'pending', undefined]) {
-  assert.throws(() => checkBrowserReleaseGate({ scope: result('success'), reader: result(state) }));
-}
-for (const state of ['failure', 'cancelled', 'skipped']) {
-  assert.throws(() => checkBrowserReleaseGate({ scope: result(state), reader: result('skipped') }));
-}
-assert.throws(() => checkBrowserReleaseGate({}));
-assert.throws(() => checkBrowserReleaseGate({ scope: result('success') }));
-const readerScope = { ...result('success'), outputs: { reader: 'true' } };
-checkBrowserReleaseGate({ scope: readerScope, 'reader-surface-suites': result('success'), 'reader-overlays': result('success') });
-for (const state of ['failure', 'cancelled', 'skipped', 'pending', undefined]) {
-  assert.throws(() => checkBrowserReleaseGate({ scope: readerScope, 'reader-surface-suites': result('success'), 'reader-overlays': result(state) }));
-}
-assert.throws(() => checkBrowserReleaseGate({ scope: readerScope, 'reader-surface-suites': result('success') }));
-checkBrowserReleaseGate({ scope: { ...result('success'), outputs: { reader: 'false' } }, 'reader-overlays': result('skipped') });
-console.log('PASS browser aggregate rejects failed/cancelled jobs and failed scope; accepts intentional scope skips');
+import {checkBrowserReleaseGate} from './check-browser-release-gate.mjs';
+const plan={schema:'affected-tests/v1',head:'a'.repeat(40),files:[],apiCommands:[],apiShards:[],postgres:false,weeklyPostgres:false,variables:false,browserSpecs:[],browserJobs:['reader']};
+const result=value=>({result:value});
+const scope={result:'success',outputs:{test_plan:JSON.stringify(plan)}};
+checkBrowserReleaseGate({scope,reader:result('success'),studio:result('skipped')});
+checkBrowserReleaseGate({scope:{...scope,outputs:{test_plan:JSON.stringify({...plan,browserJobs:[]})}},reader:result('skipped')});
+for(const state of ['failure','cancelled','skipped','pending',undefined])assert.throws(()=>checkBrowserReleaseGate({scope,reader:result(state)}));
+for(const state of ['failure','cancelled','skipped'])assert.throws(()=>checkBrowserReleaseGate({scope:{...scope,result:state},reader:result('success')}));
+assert.throws(()=>checkBrowserReleaseGate({}));
+assert.throws(()=>checkBrowserReleaseGate({scope}));
+assert.throws(()=>checkBrowserReleaseGate({scope:result('success'),reader:result('success')}));
+assert.throws(()=>checkBrowserReleaseGate({scope,reader:result('success'),other:result('failure')}));
+const overlays={...plan,browserJobs:['reader-overlays']};
+for(const state of ['failure','cancelled','skipped','pending',undefined])assert.throws(()=>checkBrowserReleaseGate({scope,reader:result('success'),'reader-overlays':result(state)},overlays));
+checkBrowserReleaseGate({scope,'reader-overlays':result('success')},overlays);
+console.log('PASS browser gate rejects missing plans, failed selection, missing/failed/skipped selected jobs and unexpected failures; accepts proved non-applicable jobs.');

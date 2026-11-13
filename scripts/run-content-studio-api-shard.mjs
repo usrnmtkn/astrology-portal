@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { constants } from 'node:os';
 import { delimiter, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import {affectedTestPlan} from './ci-test-plan.mjs';
 
 export const apiShardCount = 3;
 
@@ -41,6 +42,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     process.exitCode = 1;
   } else {
     const { scripts } = JSON.parse(readFileSync('package.json', 'utf8'));
-    process.exitCode = runApiShard(scripts['test:content-studio-api'], Number(value));
+    const plan=affectedTestPlan();
+    if(plan) {
+      if(!plan.apiShards.includes(Number(value))) throw new Error('Unplanned API shard');
+      const selected=plan.apiCommands.length?apiCommandShards(plan.apiCommands.join(' && '))[Number(value)-1]:[];
+      if(selected.length)process.exitCode=runApiShard(plan.apiCommands.join(' && '),Number(value));
+      else console.log('This planned shard owns only the selected database/variable contracts.');
+    } else process.exitCode = runApiShard(scripts['test:content-studio-api'], Number(value));
   }
 }
