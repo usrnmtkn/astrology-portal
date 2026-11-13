@@ -1,4 +1,5 @@
 export { DAILY_GLANCE_PERSON_SLOT_KEYS } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/dailyGlanceVoice.mjs";
+export { skyPlacementStudioRecord, isApprovedSkyPlacementFallback } from "../_lib/sky-placement-sources.js";
 export { retainPersonalTransitAlternate } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/personalTransitCopyVersions.mjs";
 export { isConnectionSourceKey, connectionSourceSlots, connectionSourceErrors, CONNECTION_ACTIVATION_PREFIX, CONNECTION_BRIDGE_PREFIX } from '../../apps/web/src/content/connectionTransit.js';
 export { approvedSkySeasonFallback, SKY_SEASON_FALLBACK_PREFIX } from "../../apps/web/src/content/skySeasonFallback.js";

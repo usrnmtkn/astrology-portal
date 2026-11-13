@@ -6,6 +6,7 @@ const env = { NODE_ENV: 'test', CONTENT_GENERATION_SECRET: 'inventory-audit-fixt
 Object.assign(process.env, env);
 const { default: handler } = await import('../api/admin/generated-content-inventory.ts');
 const { calendarMoonIngressPackageRecords: records } = await import('../api/_lib/calendar-moon-ingress-sources.ts');
+const { skyPlacementSourceRecords } = await import('../api/_lib/sky-placement-sources.ts');
 Object.assign(process.env, env);
 const prefix = 'authored/calendar-moon-transition/';
 const saved = records.slice(0, 2).map((record, index) => ({
@@ -67,6 +68,56 @@ async function invoke(params: Record<string,string>) {
   assert.equal(res.headers['cache-control'], 'no-store');
   return res;
 }
+
+test('all canonical placement documents retain approved evergreen writing behind sparse saved records', async () => {
+  const sources = [...skyPlacementSourceRecords.values()].filter(source => source.studio_content_type === 'continuous-placement');
+  assert.equal(sources.length, 120);
+  for (const [index, source] of sources.entries()) {
+    const original = { contentKey: source.contentKey, planet: source.planet, sign: source.sign,
+      studio_content_type: 'continuous-placement', serving_enabled: false, owner_approved: false };
+    const row = { ...saved[0], id: `placement-${index}`, content_key: source.contentKey,
+      status: 'LIVE', body: '', sections: { packageRecord: original,
+        packageOriginalRecord: original, dashboardEditHistory: [{ versionId: 'retained-history' }] } };
+    storageRows = [row];
+    const unchanged = structuredClone(row);
+    for (const params of [{ contentKey: source.contentKey }, { id: row.id }]) {
+      const response = await invoke(params);
+      assert.equal(response.statusCode, 200);
+      const document = response.payload.rows[0];
+      assert.deepEqual(document.sections.packageRecord.fallback, source.fallback, source.contentKey);
+      assert.deepEqual(document.sections.packageRecord.studio_editable_fields, source.studio_editable_fields.filter(field => field.path.startsWith('fallback.')));
+      assert.equal(document.sections.packageRecord.serving_enabled, false);
+      assert.equal(document.sections.packageRecord.owner_approved, false);
+      assert.equal(document.sections.packageRecord.placementArticle, undefined, 'Fallback recovery does not install an article.');
+      assert.deepEqual(document.sections.packageOriginalRecord, original);
+      assert.deepEqual(document.sections.dashboardEditHistory, row.sections.dashboardEditHistory);
+      assert.equal(document.updated_at, row.updated_at);
+    }
+    assert.deepEqual(storageRows, [unchanged], 'Reading never changes saved writing or history.');
+  }
+});
+
+test('placement inheritance preserves explicit blanks, custom layouts, motion articles and pending edits', async () => {
+  const baseline = skyPlacementSourceRecords.get('sky-placement/article/mercury/scorpio')!;
+  for (const fallback of [{ hook: '' }, { hook: 'Synthetic saved opening.', sections: [] }, null]) {
+    const source = { contentKey: baseline.contentKey, planet: baseline.planet, sign: baseline.sign,
+      studio_content_type: 'continuous-placement', placementArticleDirect: 'Synthetic saved direct article.',
+      placementArticleRetrograde: 'Synthetic saved retrograde article.', serving_enabled: true, fallback };
+    const draft = { fallback: { lived: '' }, placementArticleDirect: 'Synthetic pending article.' };
+    const row = { ...saved[0], content_key: baseline.contentKey, sections: { packageRecord: source, packageDraft: draft } };
+    storageRows = [row];
+    const document = (await invoke({ id: row.id })).payload.rows[0];
+    assert.deepEqual(document.sections.packageRecord.fallback, fallback === null ? null : { ...baseline.fallback, ...fallback });
+    assert.equal(document.sections.packageRecord.placementArticleDirect, source.placementArticleDirect);
+    assert.equal(document.sections.packageRecord.placementArticleRetrograde, source.placementArticleRetrograde);
+    assert.equal(document.sections.packageRecord.serving_enabled, true);
+    assert.deepEqual(document.sections.packageDraft, draft);
+    storageRows = [{ ...row, status: 'ARCHIVED' }];
+    assert.deepEqual((await invoke({ id: row.id })).payload.rows[0].sections, row.sections, 'Archive detail remains exact saved history.');
+    storageRows = [{ ...row, sections: { packageRecord: { ...source, contentKey: 'sky-placement/article/mars/scorpio' } } }];
+    assert.deepEqual((await invoke({ id: row.id })).payload.rows[0].sections, storageRows[0].sections, 'Mismatched identity cannot inherit writing.');
+  }
+});
 
 test('malformed and unsafe cursors fail as input errors before storage', async () => {
   for (const value of ['not-base64-json', ...[null, {}, {id:'x',updatedAt:'not-a-date'}, {id:'x),status.eq.LIVE',updatedAt:'2026-10-05T00:00:00Z'}].map(x => Buffer.from(JSON.stringify(x)).toString('base64url'))]) {
