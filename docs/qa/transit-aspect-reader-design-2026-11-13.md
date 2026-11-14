@@ -46,6 +46,16 @@ guard or authentication behavior was relaxed. Both social-return cases passed
 after rerunning against that matched CI profile. The 26 shared/generic/Friends
 disclosure cases and four daily-aspect cases also passed their focused runs.
 
+On `a8f2e2c31`, CI passed the API, privacy, disclosure and auth/bundle gates.
+Client-facing job `132285135288` still required the previous countdown pill on
+You house articles. Mobile job `132285135131` repeatedly required the previous
+aspect divider and single-glyph badge, then reached its job time limit. The
+test-only correction requires the visible article timing, the divider-free
+aspect header and both supplied glyphs. Both client journeys and all eight
+mobile icon projects passed locally, including Chromium and WebKit. Runtime
+source, the shared primitive, and all network and publication guards remain
+unchanged. The final revision still requires its own release gates.
+
 ## Bundle measurements
 
 Main and candidate were built in separate worktrees, each with its own

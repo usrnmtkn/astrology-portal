@@ -186,9 +186,12 @@ test('Mobile parity: article aspect and lunar icons preserve supplied glyphs',as
   await expect(article.getByRole('heading',{level:1})).toHaveText(title);
   await expect(article).toContainText('Synthetic complete opening paragraph.');
   await expect(article).toContainText('Synthetic complete ending paragraph.');
-  await expect(article.locator('hr')).toHaveCount(1);
+  await expect(article.locator('hr')).toHaveCount(key==='aspect'?0:1);
   const cue=key==='aspect'?header.locator('.aspect-badge'):header.locator('.article-eyebrow__glyphs > span').first();
-  if(glyph)await expect(cue).toHaveText(glyph);
+  if(key==='aspect'){
+   expect(await cue.evaluate(node=>node.firstChild?.textContent)).toBe(glyph);
+   await expect(cue.locator('.aspect-badge__planet')).toHaveText('☉');
+  }else if(glyph)await expect(cue).toHaveText(glyph);
   else await expect(header.locator('.article-eyebrow__glyphs')).toHaveCount(0);
   if(key!=='aspect'&&key!=='empty')await expect(header.locator('.article-eyebrow__glyphs img')).toHaveAttribute('src',/\/zodiac\/libra\.svg/);
   if(key==='retrograde')await expect(header.locator('.article-eyebrow__glyphs')).toContainText('℞');
