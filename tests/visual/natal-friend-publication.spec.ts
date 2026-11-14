@@ -56,7 +56,9 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Plan
     await preview.getByRole('button',{name:'Create exact override',exact:true}).click();
     await expect(dialog.getByRole('heading',{level:2})).toHaveText('Create fallback passage');
     const existingTitleStyles=await titleStyles();
+    page.once('dialog',confirmation=>confirmation.accept());
     await dialog.getByRole('button',{name:'Close',exact:true}).click();
+    await expect(dialog).toBeHidden();
     await card.getByRole('button',{name:'Create retrograde modifier',exact:true}).click();
     await expect(dialog.getByRole('heading',{level:2})).toHaveText('Create Saturn retrograde in the 4th House · Retrograde modifier');
     expect(await titleStyles()).toEqual(existingTitleStyles);
