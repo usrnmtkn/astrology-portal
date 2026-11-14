@@ -1,6 +1,8 @@
 import type { StudioVariable } from './studioVariableCatalog';
 import type { CustomVariable } from './studioCustomVariableClient';
-import {quoteCsvCell} from '../../../src/shared/csvText';
+import {quoteCsvCell} from '../../../src/shared/csvText.js';
+import {mergeStudioPackagePatch, studioPackageObject} from '../../../src/shared/studioPackagePatch.js';
+import {studioPackageSourceDefaults} from '../../../src/shared/studioPackageSourceDefaults.js';
 // @ts-ignore Shared deterministic reference validation used by the actual reader.
 import {resolveIngressSource} from '../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs';
 
@@ -47,7 +49,8 @@ export function studioVariableExportRows(variables: StudioVariable[], records: M
     if (!row) return baseline;
     const mirrors = !row.sections?.packageRecord && !row.sections?.packageDraft
       ? Object.fromEntries(['headline', 'summary', 'body'].filter(field => typeof row[field] === 'string').map(field => [field, row[field]])) : {};
-    return {...baseline, ...mirrors, ...row.sections?.packageRecord, ...row.sections?.packageDraft};
+    const patches = [mirrors, studioPackageObject(row.sections?.packageRecord), studioPackageObject(row.sections?.packageDraft)];
+    return patches.reduce((record, patch) => mergeStudioPackagePatch(record, patch), studioPackageSourceDefaults(baseline ?? {}, ...patches));
   };
   const referenceRecords = new Map<string, any[]>();
   const recordsForVersion = (version: string) => {
@@ -80,7 +83,8 @@ export function studioVariableExportRows(variables: StudioVariable[], records: M
         if (value.legacyBody && source === variable.sources.find(item => item.key === source.key) && !fields.includes('body')
           && !variable.sources.some(item => item !== source && item.key === source.key && item.field === 'body')) fields.push('body');
         for (const field of fields) {
-          const raw = atPath(value.record, field) ?? (field === 'body_you' || field === 'body_they' ? value.record.body : undefined);
+          const direct = atPath(value.record, field);
+          const raw = direct === undefined && !Object.hasOwn(value.record, field) && (field === 'body_you' || field === 'body_they') ? value.record.body : direct;
           const resolved = raw?.reference && field.startsWith('ingress.sources.')
             ? resolveIngressSource(value.record, field.slice('ingress.sources.'.length), recordsForVersion(value.version)) : null;
           const content = resolved ? resolved.text ?? '' : typeof raw === 'string' ? raw : typeof raw?.text === 'string' ? raw.text : raw == null ? '' : JSON.stringify(raw);

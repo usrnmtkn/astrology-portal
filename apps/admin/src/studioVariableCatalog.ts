@@ -1,4 +1,4 @@
-import { variableLabel } from './variablePresentation';
+import { variableLabel } from './variablePresentation.js';
 export type StudioVariableSource = { key: string; label: string; field: string };
 export type StudioVariableUsage = { key: string; label: string; surface: string; fields?: string[]; dependency?: boolean; retired?: boolean };
 export type StudioVariable = {

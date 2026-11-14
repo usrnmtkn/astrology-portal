@@ -35,6 +35,24 @@ const { effectivePackageRecord } = await import('../apps/admin/src/skyFallbackWo
 const { mergeStudioPackagePatch } = await import('../src/shared/studioPackagePatch.ts');
 const { csvRecordForRow, csvDraftPatch } = await import('../apps/admin/src/studioCsv.ts');
 
+// Read the export through its authenticated handler, using raw sparse storage
+// rather than the inventory's hydrated projection.
+const exportKey = 'fallback-hook/house-meaning/4';
+for (const pending of [false, true]) for (const clear of [undefined, '', null]) {
+  const patch = { body: 'Exact synthetic primary edit.\n\nExact synthetic final sentence.', ...(clear === undefined ? {} : { body_you: clear, body_they: clear }) };
+  const source = { id: 'partial-export-fixture', content_key: exportKey, status: pending ? 'DRAFT' : 'LIVE', updated_at: '2026-10-01T12:00:00Z', sections: { packageRecord: pending ? {} : patch, ...(pending ? { packageDraft: patch } : {}) } };
+  const unchanged = structuredClone(source);
+  const store = await createApiStore([source]);
+  try {
+    const response = await store.invoke('GET', undefined, `/api/admin/generated-content?variables=export&sourceKey=${encodeURIComponent(exportKey)}`);
+    assert.equal(response.status, 200);
+    const rows = response.payload.rows.filter(row => row.token === '{{houseMeaning}}' && row.version === (pending ? 'Saved draft' : 'Saved live'));
+    assert.equal(rows.find(row => row.field === 'body_you')?.content, clear === undefined ? patch.body : '');
+    assert.equal(rows.find(row => row.field === 'body_they')?.content, clear === undefined ? servingPackageRecords.get(exportKey).body_they : '');
+    assert.deepEqual(store.rows.get(source.id), unchanged, 'Export must not write hydrated text into storage.');
+  } finally { await store.close(); }
+}
+
 // Both source-card reads and subsequent saves use actual authenticated handlers.
 // All requests below are isolated; the transport refuses an external destination.
 for (const [key, field] of [

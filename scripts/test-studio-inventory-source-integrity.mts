@@ -144,12 +144,27 @@ test('saved shared-copy aliases and pending edits cannot be shadowed by inherite
       for (const inherited of ['body', 'body_you', 'Body', 'text']) {
         if (inherited !== alias) assert.equal(result.packageRecord[inherited], undefined);
       }
-      if (alias !== 'body_you') assert.equal(result.packageRecord.body_they, undefined);
+      assert.equal(result.packageRecord.body_they, servingPackageRecords.get(key)!.body_they, 'Independent Friend copy still inherits.');
       assert.deepEqual(result.packageDraft, draft);
       if (!pending) assert.equal(result.packageRecord[alias], copy);
       assert.deepEqual(storageRows, [unchanged]);
     }
   }
+});
+
+test('editing primary copy preserves independently inherited Friend copy and explicit Friend clears', async () => {
+  const key = 'cms/synthetic/independent-audiences';
+  servingPackageRecords.set(key, { contentKey: key, body: 'Synthetic package primary.', body_you: 'Synthetic package You.', body_they: 'Synthetic package Friend.' });
+  try { for (const clear of [undefined, '', null]) {
+    const original = { contentKey: key, body: 'Exact synthetic saved primary.', ...(clear === undefined ? {} : { body_they: clear }) };
+    const row = { ...saved[0], content_key: key, sections: { packageRecord: original } };
+    storageRows = [row];
+    const document = (await invoke({ id: row.id })).payload.rows[0];
+    assert.equal(document.sections.packageRecord.body, original.body);
+    assert.equal(document.sections.packageRecord.body_you, undefined, 'Inherited alias cannot hide the saved primary.');
+    assert.equal(document.sections.packageRecord.body_they, clear === undefined ? 'Synthetic package Friend.' : clear);
+    assert.deepEqual(storageRows, [row]);
+  } } finally { servingPackageRecords.delete(key); }
 });
 
 test('registered future reader fields inherit without importing source approval or integrity metadata', async () => {
