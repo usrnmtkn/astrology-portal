@@ -13,7 +13,10 @@ const original=structuredClone(servingPackageRecords.get(key)!);
 for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Find, insert, save and export supported variables ${width} ${theme}`,async({page})=>{
   const fixture={...lunationPublicationDraft(),id:'house-variable-fixture',content_key:key,surface:'natal',block_type:'fallback_hook',
     event_type:'fallback-hook',body:original.body_you,sections:{packageRecord:original,packageOriginalRecord:original,packageDraft:original}};
-  const store=await studioApiStore([fixture,{...lunationPublicationDraft(),id:'legacy-variable-source-fixture',content_key:legacyKey,surface:'natal',block_type:'fallback_hook',body:legacyBody,sections:{}}]);
+  const sparseKey='fallback-hook/house-meaning/3', clearedKey='fallback-hook/house-meaning/12';
+  const sparse={...fixture,id:'partial-primary-export',content_key:sparseKey,sections:{packageRecord:{body:'Synthetic exact saved primary.\n\nSynthetic saved final sentence.'}}};
+  const cleared={...fixture,id:'partial-cleared-export',content_key:clearedKey,sections:{packageRecord:{body:'Synthetic retained raw alias.',body_you:null,body_they:''}}};
+  const store=await studioApiStore([fixture,sparse,cleared,{...lunationPublicationDraft(),id:'legacy-variable-source-fixture',content_key:legacyKey,surface:'natal',block_type:'fallback_hook',body:legacyBody,sections:{}}]);
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
   try{
     await page.setViewportSize({width,height:1000});
@@ -80,6 +83,15 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Find, 
     const houseRows=data.rows.filter((row:any)=>row.token==='{{houseMeaning}}');
     expect(new Set(houseRows.map((row:any)=>row.sourceKey)).size).toBe(12);
     expect(houseRows.some((row:any)=>row.sourceKey===key&&row.field==='body_you'&&row.version==='Saved draft'&&row.content===you)).toBe(true);
+    // These imported records have no draft: their exact saved version remains
+    // separate from both the packaged values and the row edited above.
+    const savedImport=(sourceKey:string,field:string)=>houseRows.find((row:any)=>row.sourceKey===sourceKey&&row.field===field&&row.version===`Saved ${sparse.status.toLowerCase()}`);
+    expect(savedImport(sparseKey,'body_you')?.content).toBe(sparse.sections.packageRecord.body);
+    expect(savedImport(sparseKey,'body_they')?.content).toBe(servingPackageRecords.get(sparseKey)!.body_they);
+    for(const field of ['body_you','body_they']) expect(savedImport(clearedKey,field)?.content).toBe('');
+    const stored=await store.call({method:'rows'});
+    expect(stored.find((row:any)=>row.id===sparse.id).sections).toEqual(sparse.sections);
+    expect(stored.find((row:any)=>row.id===cleared.id).sections).toEqual(cleared.sections);
     expect(houseRows.every((row:any)=>typeof row.allowedFields==='string'&&row.allowedFields.includes('fallback-template/natal.house-context'))).toBe(true);
     for(const token of ['{{placementHouseSentences}}','{{modifierSentences}}','{{planetIntro}}','{{natalCore}}']) expect(data.rows.some((row:any)=>row.token===token&&row.contentStatus==='Has content')).toBe(true);
     expect(data.rows.some((row:any)=>row.token==='{{planetIntro}}'&&row.sourceKey===legacyKey&&row.field==='body'&&row.content===legacyBody)).toBe(true);

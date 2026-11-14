@@ -1,4 +1,5 @@
 import { memoByString } from "./derivedCache";
+import { mergeStudioPackagePatch, studioPackageObject as record } from "../../../src/shared/studioPackagePatch.js";
 import { isSkyPlanetLivedKey } from "./skyWriteupRelations";
 // @ts-ignore Shared canonical layout validation and ordered section fields.
 import { isSkyEvergreenSource, skyEvergreenEditableFields, skyEvergreenFields, SKY_EVERGREEN_SECTIONS_PATH } from "../../web/src/content/fallbackArchitectureV3/resolver/skyEvergreenSections.mjs";
@@ -301,12 +302,6 @@ function skyFallbackIdentityUncached(contentKey: string): SkyFallbackIdentity | 
   return null;
 }
 
-function record(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
-}
-
 export function skyPlacementCompositionOptions(source: unknown): SkyPlacementCompositionOptions {
   const options = record(record(source).compositionOptions);
   return {
@@ -353,19 +348,9 @@ export function packageDraftForSections(sections: unknown) {
 
 // Drafts can contain a single nested field. An edit to fallback.hook must not
 // hide fallback.lived or fallback.turn in the editor and composition preview.
-function mergePackageDraft(base: Record<string, unknown>, draft: Record<string, unknown>): Record<string, unknown> {
-  const result = { ...base };
-  for (const [key, value] of Object.entries(draft)) {
-    if (key === "ingress") { result[key] = structuredClone(value); continue; }
-    result[key] = value && typeof value === "object" && !Array.isArray(value)
-      ? mergePackageDraft(record(base[key]), record(value)) : value;
-  }
-  return result;
-}
-
 export function effectivePackageRecord(sections: unknown) {
   const sectionRecord = record(sections);
-  return mergePackageDraft(record(sectionRecord.packageRecord), record(sectionRecord.packageDraft));
+  return mergeStudioPackagePatch(record(sectionRecord.packageRecord), record(sectionRecord.packageDraft));
 }
 
 export function placeholdersInPackage(source: Record<string, unknown>) {

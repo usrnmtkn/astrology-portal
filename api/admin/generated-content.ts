@@ -383,7 +383,7 @@ function v3PackageRecord(row: { sections?: unknown; content_key?: string; headli
   if (standaloneArticleKind(row.content_key ?? '')) return { headline: row.headline, summary: row.summary, body: row.body,
     _studioVariables: isRecord(sections.standaloneArticle) ? sections.standaloneArticle._studioVariables : [], _standaloneArticle: true };
   const record = isRecord(sections.packageRecord) ? sections.packageRecord : {};
-  return contentLibraries?.skyPlacementStudioRecord(row.content_key ?? "", record) ?? record;
+  return contentLibraries?.studioPackageSourceRecord(row.content_key ?? "", record, isRecord(sections.packageDraft) ? sections.packageDraft : {}) ?? record;
 }
 
 function isFallbackArchitectureV3Row(row: ExistingGeneratedContentRow | undefined) {
@@ -761,9 +761,9 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     }
     // Style is advisory for explicit owner writing. Identity, variables, and
     // factual context below still validate the exact submitted reader copy.
-    // Retaining an exact approved fallback must not require rewriting its words.
-    const approvedPlacementFallback = libs().isApprovedSkyPlacementFallback(row.content_key, field, value);
-    if (!ownerAuthoredWording && !approvedPlacementFallback && value.includes("—")) {
+    // Retaining exact approved package writing must not require rewriting it.
+    const approvedPackageField = libs().isApprovedStudioPackageField(row.content_key, field, value);
+    if (!ownerAuthoredWording && !approvedPackageField && value.includes("—")) {
       throw new GeneratedContentRequestError(`${field} contains an em dash. Use a comma, colon, or separate sentence instead.`);
     }
 
@@ -773,7 +773,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       return new RegExp(`(^|[^a-z])${escaped}([^a-z]|$)`, "i").test(lower);
     });
-    if (banned && !ownerAuthoredWording && !approvedPlacementFallback) {
+    if (banned && !ownerAuthoredWording && !approvedPackageField) {
       throw new GeneratedContentRequestError(`${field} contains banned word "${banned}".`);
     }
 
@@ -897,7 +897,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const incomingRecord = isRecord(sections.packageRecord) ? sections.packageRecord : {};
   const packageOriginalRecord = isRecord(storedSections.packageOriginalRecord)
     ? { ...storedSections.packageOriginalRecord }
-    : libs().isSkyEvergreenSource(record) && isRecord(storedSections.packageRecord) ? { ...storedSections.packageRecord } : { ...record };
+    : isRecord(storedSections.packageRecord) ? { ...storedSections.packageRecord } : { ...record };
   const storedTransitProposal = isPersonalTransitSituationContentKey(row.content_key) && isRecord(sections.packageDraft);
   const hasPackageDraft = isRecord(sections.packageDraft) && !storedTransitProposal;
   const reviewStatus = body.sourceLifecycleAction === "archive"

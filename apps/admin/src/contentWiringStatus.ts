@@ -1,4 +1,5 @@
 import { calendarPlanetaryIdentity } from "./calendarPlanetarySources.js";
+import { studioPackageObject as record } from "../../../src/shared/studioPackagePatch.js";
 import { standaloneArticleKind } from "../../../src/shared/articleLibrary.js";
 import { isLunationHoroscopeKey } from "../../../src/shared/lunationHoroscopeIdentity.js";
 
@@ -20,12 +21,6 @@ export type ContentWiringStatus = {
   reason: "connected" | "retired" | "source-material" | "unfinished" | "unknown";
   state: "connected" | "not-connected" | "not-serving" | "unknown";
 };
-
-function record(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
-}
 
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";

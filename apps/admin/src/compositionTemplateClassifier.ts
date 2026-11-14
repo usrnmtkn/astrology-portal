@@ -1,4 +1,5 @@
 import { lunarContentIdentity } from "./lunarCalendarContent";
+import { studioPackageRecord as objectRecord } from "../../../src/shared/studioPackagePatch.js";
 export type CompositionTemplateCandidateRow = {
   block_type?: string | null;
   content_key: string;
@@ -6,12 +7,6 @@ export type CompositionTemplateCandidateRow = {
   source_snapshot?: unknown;
   listing_facts?: { source?: Record<string, unknown>; packageRecord?: Record<string, unknown> } | null;
 };
-
-function objectRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
 
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
