@@ -14,7 +14,7 @@ function sectionPresentation(node: Element) {
 }
 
 async function verifySectionLabels(page: Page) {
-  const labels=await page.locator('.you-transit-group__header h2').allTextContents();
+  const labels=await page.locator('.you-transit-group:not(.lunation-transit) > .you-transit-group__header h2').allTextContents();
   expect(labels).toEqual(labels.includes('Short-term transits') ? ['Short-term transits','Long-term transits','Planets moving through your houses'] : ['Long-term transits','Planets moving through your houses']);
   const longTerm=await page.getByRole('heading',{name:'Long-term transits',exact:true}).evaluate(sectionPresentation);
   expect(longTerm).toEqual(await page.getByRole('heading',{name:'Planets moving through your houses',exact:true}).evaluate(sectionPresentation));
@@ -71,14 +71,17 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     const article = page.locator(".you-transit-article");
     await expect(article.getByRole("heading", { level: 1 })).toHaveText("Moon in Libra square your natal Jupiter");
     await expect(article.locator(".aspect-badge")).toHaveAttribute("data-aspect", "square");
-    await expect(article.locator(".aspect-badge")).toHaveText("□");
+    expect(await article.locator(".aspect-badge").evaluate(node => node.firstChild?.textContent)).toBe("□");
+    await expect(article.locator(".aspect-badge__planet")).toHaveText("☽");
     const keyDates = article.locator('.key-dates-panel');
-    await expect(keyDates).not.toHaveAttribute('open','');
-    await expectKeyDatesHeaderCentered(keyDates);
-    await keyDates.locator('summary').focus();await page.keyboard.press('Space');
     await expect(keyDates).toHaveAttribute('open','');
     await expectKeyDatesHeaderCentered(keyDates);
-    await expect(keyDates.locator('dd')).toHaveText(['Current contact','Pass 1','Full transit series']);
+    await keyDates.locator('summary').focus();await page.keyboard.press('Space');
+    await expect(keyDates).not.toHaveAttribute('open','');
+    await page.keyboard.press('Enter');
+    await expect(keyDates).toHaveAttribute('open','');
+    await expectKeyDatesHeaderCentered(keyDates);
+    await expect(keyDates.locator('.article-key-dates__label')).toContainText(['Current contact','Exact · Pass 1','Full transit series']);
     await expect(keyDates.locator('.key-dates-panel__count')).toHaveText('3');
     await expect(article).toContainText("Current contact");
     await expect(article).toContainText("Full transit series");
