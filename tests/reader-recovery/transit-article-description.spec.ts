@@ -76,7 +76,7 @@ async function verifyFooter(page: Page, footer: Locator, theme: string, surface:
   await expect(footer).toBeVisible();
   await expect(footer.locator("h1, h2, h3")).toHaveCount(0);
   await expect(page.locator(".transit-aspect-article-page .sky-detail-end")).toHaveCount(0);
-  await expect(page.locator(".article-id > .aspect-badge .aspect-badge__planet")).toHaveCount(1);
+  await expect(page.locator(".article-id > :is(.aspect-badge, .personal-transit-icon) :is(.aspect-badge__planet, .personal-transit-icon__planet)")).toHaveCount(1);
   const timeline = page.locator(".article-key-dates");
   if (await timeline.count()) {
     expect(await timeline.evaluate(element => element.parentElement?.classList.contains("article-shell"))).toBe(true);
@@ -119,9 +119,9 @@ for (const theme of ["light", "dark"]) {
     });
     for (const [index, date] of dates.entries()) {
       await page.goto(`/?date=${date}#you`);
-      const row = page.locator("button.updates-aspect-row--personal").first();
+      const row = page.locator("a.updates-aspect-row--personal").first();
       await expect(row).toBeVisible({ timeout: 45_000 });
-      const title = await row.locator(".updates-aspect-row__title").innerText();
+      const title = (await row.getAttribute("data-aspect-name"))!;
       expect(title).toMatch(/^.+ in [A-Z][a-z]+ (?:conjunct|opposite|square|trine|sextile) your natal .+$/);
       const expected = expectedIdentity(title, skies[index], natal);
       await expect(row).not.toContainText(expected);

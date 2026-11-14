@@ -214,7 +214,7 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       const errors: string[] = [];
       page.on("pageerror", error => errors.push(error.message));
       await page.goto("/#you");
-      const cards = page.locator('[aria-label="Areas of your life"] button');
+      const cards = page.locator('[aria-label="Areas of your life"] a.personal-transit-card');
       await expect(cards.first()).toBeVisible();
       const create = page.getByRole("button", { name: "Create day report", exact: true });
       await expect(create).toBeEnabled();

@@ -20,9 +20,9 @@
 .you-transit-details { grid-column: 1 / -1; display: grid; min-width: 0; gap: var(--space-7); }
 .you-transit-group { display: grid; gap: var(--space-4); min-width: 0; }
 .you-transit-group__header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
-.you-transit-group__header h2 { margin: 0; font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); }
+.you-transit-group__header h2 { margin: 0; font-family: var(--font-ui); font-size: var(--type-section-emphasis-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); }
 .you-transit-group__toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius-pill); background: var(--surface); color: var(--accent); font-family: var(--font-ui); font-size: var(--text-button-size); font-weight: var(--weight-semibold); line-height: var(--leading-label); }
-.you-transit-grid { grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
+.updates-aspect-list.you-transit-grid:not(.lunation-transit__personal) { grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
 .you-transit-group__item { display: grid; min-width: 0; }
 .you-transit-group__item[hidden] { display: none; }
 .you-transit-grid .updates-aspect-row { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); height: 100%; padding: var(--space-7) var(--space-6); border: 0; border-radius: var(--card-radius); background: var(--surface); color: var(--ink); text-align: center; box-shadow: var(--card-shadow); opacity: 1; }
@@ -35,11 +35,26 @@
 .you-transit-grid .updates-aspect-row__house { position: absolute; right: 0; bottom: 0; display: grid; place-items: center; width: var(--size-3); height: var(--size-3); border: var(--border-width-thin) solid var(--line); border-radius: var(--radius-circle); background: var(--surface); color: var(--ink); font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-semibold); }
 .you-transit-grid :is(.updates-aspect-row__identity, .updates-aspect-row__meta-line) { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-1); width: 100%; }
 .you-transit-grid :is(.updates-aspect-row__title, .updates-aspect-row__orb, .updates-aspect-row__meta-line) { min-height: 0; color: var(--muted); font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-medium); line-height: var(--leading-meta); letter-spacing: var(--tracking-body); }
-.you-transit-grid .updates-aspect-row__headline, .you-transit-grid .updates-aspect-row:not(:has(.updates-aspect-row__headline)) .updates-aspect-row__title { font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); letter-spacing: var(--tracking-title); color: var(--ink); }
+.you-transit-grid .updates-aspect-row__headline, .you-transit-grid .updates-aspect-row:not(.personal-transit-card):not(:has(.updates-aspect-row__headline)) .updates-aspect-row__title { font-family: var(--font-display); font-size: var(--text-card-title); font-weight: var(--weight-regular); line-height: var(--leading-title); letter-spacing: var(--tracking-title); color: var(--ink); }
 .you-transit-grid .updates-aspect-row__description { font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--ink-2); }
 .you-transit-grid .card-read-more { align-self: center; margin-top: auto; }
+/* Each personal card has one title, one timing line and one optional identity note. */
+.you-transit-grid .personal-transit-card { gap: var(--space-3); padding: var(--transit-card-padding); border-radius: var(--transit-card-radius); text-decoration: none; }
+.you-transit-grid .personal-transit-card .updates-aspect-row__title { margin: var(--space-2) 0 0; min-height: 0; font-family: var(--font-display); font-size: var(--type-story-title-size); font-weight: var(--weight-regular); line-height: var(--leading-title); letter-spacing: var(--tracking-title); color: var(--ink); text-wrap: balance; }
+.you-transit-grid .personal-transit-card :is(.updates-aspect-row__meta-line, .updates-aspect-row__orb) { display: inline; width: auto; color: var(--muted); font-family: var(--font-ui); font-size: var(--type-table-value-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); }
+.you-transit-grid .personal-transit-card .updates-aspect-row__orb { white-space: nowrap; }
+.you-transit-grid .personal-transit-card .updates-aspect-row__description { display: -webkit-box; margin-top: var(--space-2); -webkit-line-clamp: 3; color: var(--ink); }
+.you-transit-grid .personal-transit-card .personal-transit-card__aspect-name { margin-top: var(--space-1); color: var(--muted); font-family: var(--font-ui); font-size: var(--type-ui-copy-size); font-weight: var(--weight-regular); line-height: var(--leading-note); }
+.you-transit-grid .personal-transit-card .card-read-more { width: var(--size-7); height: var(--size-7); margin-top: var(--space-3); background: var(--transit-chevron-bg); color: var(--color-black); }
+.personal-transit-icon { position: relative; display: grid; place-items: center; flex: none; width: var(--transit-icon-size); height: var(--transit-icon-size); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); }
+.personal-transit-icon[data-aspect="trine"], .personal-transit-icon[data-aspect="sextile"] { background: var(--transit-icon-flow-bg); color: var(--transit-icon-flow-ink); }
+.personal-transit-icon[data-aspect="square"], .personal-transit-icon[data-aspect="opposition"] { background: var(--transit-icon-hard-bg); color: var(--transit-icon-hard-ink); }
+.personal-transit-icon[data-aspect="conjunction"] { background: var(--transit-icon-conjunction-bg); color: var(--transit-icon-conjunction-ink); }
+.personal-transit-icon > svg { width: var(--transit-icon-glyph-size); height: var(--transit-icon-glyph-size); }
+.personal-transit-icon__planet { position: absolute; right: var(--transit-icon-planet-right); bottom: var(--transit-icon-planet-bottom); display: grid; place-items: center; width: var(--transit-icon-planet-size); height: var(--transit-icon-planet-size); box-sizing: border-box; border: var(--border-width-medium) solid var(--color-white); border-radius: var(--radius-circle); background: currentColor; font-family: var(--font-glyph); font-size: var(--type-ui-copy-size); line-height: var(--leading-label); }
+.personal-transit-icon__planet > span { color: var(--color-white); }
 @media (max-width: 800px) {
   .you-transit-overview { grid-column: 1; grid-row: 3; padding-top: 0; }
   .you-chart-page[data-profile-view="transits"] .you-report-actions { grid-row: 4; }
-  .you-transit-grid { grid-template-columns: minmax(0, 1fr); }
+  .updates-aspect-list.you-transit-grid:not(.lunation-transit__personal) { grid-template-columns: minmax(0, 1fr); }
 }

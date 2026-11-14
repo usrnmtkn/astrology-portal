@@ -5466,12 +5466,13 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   });
   await expectClientRouteLoads(page, "/#you");
   await page.getByRole("tab", { name: /updates|transits/i }).click();
-  const card = page.getByRole("button", { name: /^Chiron in Aries square your natal Jupiter/ }).first();
+  const card = page.locator('a.personal-transit-card[data-aspect-name="Chiron in Aries square your natal Jupiter"]').first();
   await expect(card).toBeVisible({ timeout: 30_000 });
-  await expect(card).toContainText("Exact Oct 5, 2026");
+  await expect(card.locator(".updates-aspect-row__meta-line")).toHaveText(/^Exact \d+:\d{2} [AP]M EDT · (?:\d+° \d{2}′|<1′)$/);
   await card.click();
   const detail = page.getByRole("region", { name: "Chiron in Aries square your natal Jupiter", exact: true });
   await expect(detail).toBeVisible();
+  await expect(detail).toContainText("Exact Oct 5, 2026");
   releaseCopy();
   await expect(detail).toContainText("A moment of real growth can unexpectedly pull an old insecurity straight to the surface.");
   await expect(detail).toContainText("You do not have to make an opportunity harder on yourself to feel like you earned it.");
@@ -5904,7 +5905,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     // Navigate within the same session; the scoped Sky overlay must not wipe
     // personal sources, nor should the published Friend audience fall back to You.
     await page.evaluate(() => { window.location.hash = "you"; });
-    const personalRow = page.locator('button.updates-aspect-row').filter({ hasText: /QA published (?:transit|solar return) opening/ }).first();
+    const personalRow = page.locator('.updates-aspect-row:is(a,button)').filter({ hasText: /QA published (?:transit|solar return) opening/ }).first();
     await expect(personalRow).toBeVisible({ timeout: 30_000 });
     await personalRow.click();
     await expect(page.locator('.you-transit-article')).toContainText(/QA published (?:transit|solar return) final sentence/);
@@ -5952,7 +5953,7 @@ test('published personal transit failure retries and retirement clears an open Y
   await page.getByRole('button', { name: 'Try again', exact: true }).click();
   await expect(page.getByRole('region', { name: 'How this affects you' })).toContainText('QA retry solar return final sentence.', { timeout: 30_000 });
   await page.evaluate(() => { window.location.hash = 'you'; });
-  const personal = page.locator('button.updates-aspect-row').filter({ hasText: 'QA retry solar return opening.' });
+  const personal = page.locator('.updates-aspect-row:is(a,button)').filter({ hasText: 'QA retry solar return opening.' });
   await expect(personal).toBeVisible({ timeout: 30_000 }); await personal.click();
   await expect(page.locator('.you-transit-article')).toContainText('QA retry solar return final sentence.');
   const publication = { content_key: record.contentKey, state: 'retired', revision: 100_001,
@@ -6032,9 +6033,9 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"] as const)
     const assertNoClientErrors = await expectNoClientErrors(page);
     await seedClientState(page, { profile: true, friends: true, theme, preloadProfileNatalSky: true });
     await expectClientRouteLoads(page, "/#you");
-    const cards = page.locator("button.updates-aspect-row:has(.updates-aspect-row__orb)");
+    const cards = page.locator("a.updates-aspect-row:has(.updates-aspect-row__orb)");
     await expect(cards.first()).toBeVisible({ timeout: 60_000 });
-    const titles = await cards.locator(".updates-aspect-row__title").allTextContents();
+    const titles = await cards.evaluateAll(rows => rows.map(row => row.getAttribute("data-aspect-name")!));
     expect(titles.length).toBeGreaterThan(0);
     let titleStyle: Record<string, string> | undefined;
     for (const title of titles) {
@@ -6226,7 +6227,7 @@ for (const [width, theme] of [[390, 'light'], [1440, 'dark']] as const) test(`Mo
   await page.getByRole('tab', { name: 'Date', exact: true }).click();
   await page.getByRole('gridcell', { name: 'Monday, October 26, 2026' }).click();
   await page.getByRole('button', { name: 'Apply date', exact: true }).click();
-  const card = page.locator('button.updates-aspect-row').filter({ hasText: 'Primary You source' }).first();
+  const card = page.locator('.updates-aspect-row:is(a,button)').filter({ hasText: 'Primary You source' }).first();
   await expect(card).toBeVisible();
   await card.click();
   const detail = page.locator('.you-transit-article');

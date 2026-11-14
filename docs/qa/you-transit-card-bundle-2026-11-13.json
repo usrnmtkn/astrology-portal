@@ -1,0 +1,192 @@
+{
+  "schema": "web-bundle-change/v1",
+  "date": "2026-11-13",
+  "baseRevision": "b3bfc14ea76dfd261fc05d76ecf5c2da015a3cb9",
+  "runtimeCandidateRevision": "73d4574ac719231bed45147a66c63addb7dde96d",
+  "profile": "Separate worktrees, each with its own npm ci installation; native ARM64 Node 22.20.0; ordinary knowledge/build prerequisites; identical synthetic visual-smoke Supabase values and natal-pattern flag.",
+  "main": {
+    "readerInitialCssGzipBytes": 58675,
+    "totalCssGzipBytes": 148273,
+    "totalJavaScriptGzipBytes": 3777244,
+    "memoryGraphCssGzipBytes": 32856
+  },
+  "candidate": {
+    "readerInitialCssGzipBytes": 58785,
+    "totalCssGzipBytes": 148894,
+    "totalJavaScriptGzipBytes": 3778486,
+    "memoryGraphCssGzipBytes": 32961
+  },
+  "delta": {
+    "readerInitialCssGzipBytes": 110,
+    "totalCssGzipBytes": 621,
+    "totalJavaScriptGzipBytes": 1242,
+    "memoryGraphCssGzipBytes": 105
+  },
+  "previousLimits": {
+    "readerInitialCssGzipBytes": 58750,
+    "totalCssGzipBytes": 148382,
+    "totalJavaScriptGzipBytes": 3777593,
+    "memoryGraphCssGzipBytes": 32886
+  },
+  "allocations": {
+    "readerInitialCssGzipBytes": 128,
+    "totalCssGzipBytes": 768,
+    "totalJavaScriptGzipBytes": 1536,
+    "memoryGraphCssGzipBytes": 128
+  },
+  "newLimits": {
+    "readerInitialCssGzipBytes": 58878,
+    "totalCssGzipBytes": 149150,
+    "totalJavaScriptGzipBytes": 3779129,
+    "memoryGraphCssGzipBytes": 33014
+  },
+  "hostedFailure": {
+    "head": "73d4574ac719231bed45147a66c63addb7dde96d",
+    "check": "auth-access",
+    "url": "https://github.com/usrnmtkn/astrology-portal/actions/runs/43548320262/job/132304710048",
+    "measurements": {
+      "readerInitialCssGzipBytes": 58785,
+      "totalCssGzipBytes": 148894,
+      "totalJavaScriptGzipBytes": 3778608,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "overPreviousLimits": {
+      "readerInitialCssGzipBytes": 35,
+      "totalCssGzipBytes": 512,
+      "totalJavaScriptGzipBytes": 1015,
+      "memoryGraphCssGzipBytes": 75
+    },
+    "localHostedJavaScriptDifference": 122
+  },
+  "fileCounts": {
+    "mainJavaScript": 307,
+    "candidateJavaScript": 308,
+    "mainCss": 24,
+    "candidateCss": 24
+  },
+  "reason": "Record the bounded cost of the requested one-title personal transit cards, fixed timing/orb slot, SVG aspect/planet badge, matching detail icon and specified typography/layout. The extra shared component creates one shared JavaScript chunk. This records interface cost, not a performance improvement. Complete CMS bodies, source selection, ephemeris calculations and dependencies remain unchanged.",
+  "unchangedLimits": {
+    "appBootGzipBytes": 400000,
+    "appChunkGzipBytes": 91358,
+    "readerBootGzipBytes": 458250,
+    "largestJavaScriptGzipBytes": 520000,
+    "friendsWorkspaceChunkGzipBytes": 16500,
+    "skyDetailChunkGzipBytes": 6981,
+    "reportRouteChunkGzipBytes": 4500,
+    "skyPlacementFallbackChunkGzipBytes": 150000,
+    "lunationBookFallbackChunkGzipBytes": 215000,
+    "transitFallbackChunkGzipBytes": 390000,
+    "calendarFallbackChunkGzipBytes": 10000,
+    "relationshipFallbackChunkGzipBytes": 230000,
+    "signupChunkGzipBytes": 4325,
+    "memoryGraphJavaScriptGzipBytes": 64000,
+    "horoscopeReaderChunkGzipBytes": 5800,
+    "horoscopeEditorChunkGzipBytes": 16400,
+    "studioCsvChunkGzipBytes": 8200
+  },
+  "verification": "Main passes the original bundle limits. Candidate exceeds the four original limits by the recorded amounts. Require the revised bundle check plus every exact-head release gate; no failed run is waived. Retain existing passing API/browser evidence only where inputs are unchanged.",
+  "finalValidation": {
+    "basisCommit": "118419ba08e514b9c9a953a417365bde7609bf3a",
+    "sourceChanges": "Narrow the card grid selector to preserve the existing lunation sidecar and update the report-source handoff selector for full-card links.",
+    "publicSourceSha256": {
+      "apps/web/src/styles/you-transits.css": "abf3eef55f5d10523777c51c4be664d21945ad6c3a8b2594521a566181c771b1",
+      "tests/visual/you-report-page.spec.ts": "80bd4e31777b91c9ba545cb9a7cec030c66d8c64d5350858460b71eee282d364"
+    },
+    "measurements": {
+      "readerInitialCssGzipBytes": 58785,
+      "totalCssGzipBytes": 148899,
+      "totalJavaScriptGzipBytes": 3778586,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "checks": [
+      "30 focused browser cases passed from a fresh production build, including eight report-source handoffs and four complete lunation macro passages.",
+      "CSS/token audits passed.",
+      "Bundle budgets passed.",
+      "Built public asset privacy scan passed."
+    ],
+    "preservedReportBrowserFailure": "PR 1475 run 43548320390 job 132304710223 on 73d4574ac: eight report-source tests selected old button cards and two desktop macro cases exposed an overbroad three-column grid selector. Both are corrected; complete source and macro assertions remain intact.",
+    "localApiEvidence": "All 200 selected API commands passed on 73d4574ac. API implementation, dependencies and fixtures are unchanged by the budget, CSS selector and browser-selector corrections. Required remote checks still run on the final exact head."
+  },
+  "ownerPassageRegression": {
+    "date": "2026-11-14",
+    "headBeforeTestCorrection": "02143ab6d185c15725973b5f68a58be2e5a01490",
+    "preservedFailure": "https://github.com/usrnmtkn/astrology-portal/actions/runs/43552318222/job/132324517485",
+    "resultBeforeCorrection": "80 browser cases passed; one owner-passage case selected the former button and expected the date in the card line.",
+    "correction": "Select the full-card link by its calculated aspect identity; verify the time/orb card line; retain the exact Oct 5, 2026 assertion on the detail page together with the complete opening and ending assertions.",
+    "verification": "The corrected actual-reader browser case passed using a fresh preview of the unchanged verified build. No production code, content, dependency, calculation or bundle limit changed."
+  },
+  "currentMainIntegration": {
+    "date": "2026-11-14",
+    "baseRevision": "33192d954da0b4ea79da313db6a9655d5e68d615",
+    "runtimeCandidateRevision": "51a3746d3830d1fb8a867ed7f05002ff8cc59ae1",
+    "reason": "Required main-branch checks enforce an up-to-date head. Rebase preserves the independently merged natal retrograde modifiers and all transit card changes.",
+    "main": {
+      "readerInitialCssGzipBytes": 58675,
+      "totalCssGzipBytes": 148273,
+      "totalJavaScriptGzipBytes": 3777086,
+      "memoryGraphCssGzipBytes": 32856
+    },
+    "candidate": {
+      "readerInitialCssGzipBytes": 58785,
+      "totalCssGzipBytes": 148899,
+      "totalJavaScriptGzipBytes": 3778355,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "delta": {
+      "readerInitialCssGzipBytes": 110,
+      "totalCssGzipBytes": 626,
+      "totalJavaScriptGzipBytes": 1269,
+      "memoryGraphCssGzipBytes": 105
+    },
+    "budgetLimits": "Existing transit-card allocations retained; no additional increase.",
+    "validation": "All 200 selected API commands passed again on the integrated candidate with current prerequisites. All 31 focused browser cases passed from a fresh production build. CSS/token, bundle and public-asset privacy checks passed. Both worktrees retained their own unchanged-lockfile npm-ci installations. Required remote exact-head gates must run again."
+  },
+  "currentRelease": {
+    "date": "2026-11-14",
+    "baseRevision": "f4ea1bc68cb141ccc314a58d630781d17086660c",
+    "runtimeCandidateRevision": "56de3d1da2f52cd1783c975ad2c6177cec02b75b",
+    "integration": "Preserve the approved transit/aspect detail page from PR 1474, including its date subline, tags, chart-facts note and expanded separate Key dates container. Personal detail pages use the same 88px SVG aspect and planet badge as the new cards. Preserve all incoming bundle allocations and rationales, then apply the same previously measured card allowances.",
+    "main": {
+      "readerInitialCssGzipBytes": 59091,
+      "totalCssGzipBytes": 148689,
+      "totalJavaScriptGzipBytes": 3778098,
+      "memoryGraphCssGzipBytes": 32856
+    },
+    "candidate": {
+      "readerInitialCssGzipBytes": 59201,
+      "totalCssGzipBytes": 149315,
+      "totalJavaScriptGzipBytes": 3779315,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "delta": {
+      "readerInitialCssGzipBytes": 110,
+      "totalCssGzipBytes": 626,
+      "totalJavaScriptGzipBytes": 1217,
+      "memoryGraphCssGzipBytes": 105
+    },
+    "limits": {
+      "readerInitialCssGzipBytes": 59390,
+      "totalCssGzipBytes": 149662,
+      "totalJavaScriptGzipBytes": 3780153,
+      "memoryGraphCssGzipBytes": 33014
+    },
+    "api": {
+      "head": "56de3d1da2f52cd1783c975ad2c6177cec02b75b",
+      "commands": 200,
+      "allShardsPassed": true
+    },
+    "browser": {
+      "cardReportAndLunationCases": 31,
+      "approvedDetailAndCompleteOwnerPassageCases": 13,
+      "result": "Both fresh-build runs passed, with desktop/mobile and light/dark coverage."
+    },
+    "otherChecks": [
+      "CSS/token audits passed.",
+      "Bundle budgets passed.",
+      "Built public assets privacy scan passed.",
+      "Existing design-page, Key dates and complete reader-copy assertions preserved."
+    ],
+    "status": "Local integration verified. Required checks must run on the final up-to-date PR head before merge.",
+    "history": "Earlier sections retain the preceding source-pinned measurements and failures; this section describes the current integrated runtime."
+  }
+}

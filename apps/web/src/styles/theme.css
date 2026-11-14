@@ -42,6 +42,24 @@
   --sheet-content-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   --sheet-radius: 36px;
   --type-sheet-title-size: 30px;
+  /* Centered reading cards and their section labels, from the transit handoff. */
+  --type-story-title-size: 30px;
+  --type-section-emphasis-size: 28px;
+  --leading-note: 1.4;
+  --transit-card-radius: 36px;
+  --transit-card-padding: 36px var(--space-7);
+  --transit-icon-size: 88px;
+  --transit-icon-glyph-size: 34px;
+  --transit-icon-planet-size: 30px;
+  --transit-icon-planet-right: -4px;
+  --transit-icon-planet-bottom: -2px;
+  --transit-icon-flow-bg: var(--color-mint);
+  --transit-icon-flow-ink: var(--color-brand);
+  --transit-icon-hard-bg: #dce7f5;
+  --transit-icon-hard-ink: #2d4f80;
+  --transit-icon-conjunction-bg: #fbe9c6;
+  --transit-icon-conjunction-ink: #8a5a0b;
+  --transit-chevron-bg: #eef1f5;
   --control-primary-height: 52px;
   --cover-grid-min: 340px;
   --container-editorial: 1200px;
