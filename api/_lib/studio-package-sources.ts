@@ -46,7 +46,7 @@ function baselineFor(contentKey: string, record: Record<string, unknown>) {
   return servingPackageRecords.get(contentKey);
 }
 
-export function studioPackageSourceRecord(contentKey: string, record: Record<string, unknown>) {
+export function studioPackageSourceRecord(contentKey: string, record: Record<string, unknown>, draft: Record<string, unknown> = {}) {
   const baseline = baselineFor(contentKey, record);
   if (!baseline) return record;
   // Keep the existing placement policy: recover fallback, without installing
@@ -55,8 +55,16 @@ export function studioPackageSourceRecord(contentKey: string, record: Record<str
     contentKey, planet: baseline.planet, sign: baseline.sign, studio_content_type: baseline.studio_content_type, ...record
   });
   const paths = inheritedFields(baseline);
+  // Shared copy and You copy have legacy aliases. Filling a different alias
+  // must not make an installed passage outrank a saved edit or intentional blank.
+  const saved = { ...record, ...draft };
+  const aliases = ["body", "body_you", "Body", "text"];
+  const explicitAliases = aliases.filter(field => Object.hasOwn(saved, field));
   const defaults: Record<string, unknown> = {};
   for (const path of paths) {
+    const root = path.split(".")[0];
+    if (aliases.includes(root) && explicitAliases.some(field => field !== root)
+      || root === "body_they" && explicitAliases.some(field => field !== "body_you")) continue;
     const value = ownValue(baseline, path);
     if (value === undefined) continue;
     const parts = path.split(".");

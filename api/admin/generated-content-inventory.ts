@@ -209,7 +209,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const sections = row.sections as Record<string, unknown>;
         if (!sections.packageRecord || typeof sections.packageRecord !== "object" || Array.isArray(sections.packageRecord)) return row;
         return { ...row, sections: { ...sections,
-          packageRecord: studioPackageSourceRecord(String(row.content_key), sections.packageRecord as Record<string, unknown>) } };
+          packageRecord: studioPackageSourceRecord(String(row.content_key), sections.packageRecord as Record<string, unknown>,
+            sections.packageDraft && typeof sections.packageDraft === "object" && !Array.isArray(sections.packageDraft)
+              ? sections.packageDraft as Record<string, unknown> : {}) } };
       });
     }
     const nextCursor = !id && rows.length === limit

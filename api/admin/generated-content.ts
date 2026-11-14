@@ -383,7 +383,7 @@ function v3PackageRecord(row: { sections?: unknown; content_key?: string; headli
   if (standaloneArticleKind(row.content_key ?? '')) return { headline: row.headline, summary: row.summary, body: row.body,
     _studioVariables: isRecord(sections.standaloneArticle) ? sections.standaloneArticle._studioVariables : [], _standaloneArticle: true };
   const record = isRecord(sections.packageRecord) ? sections.packageRecord : {};
-  return contentLibraries?.studioPackageSourceRecord(row.content_key ?? "", record) ?? record;
+  return contentLibraries?.studioPackageSourceRecord(row.content_key ?? "", record, isRecord(sections.packageDraft) ? sections.packageDraft : {}) ?? record;
 }
 
 function isFallbackArchitectureV3Row(row: ExistingGeneratedContentRow | undefined) {
