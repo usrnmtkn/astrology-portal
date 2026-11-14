@@ -2067,3 +2067,52 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const audi
     await assertClean();
   });
 }
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Natal article dividers and wheel house clearance ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1100 });
+    await seed(page, theme);
+    await authenticate(page);
+    await page.goto('/?date=2026-10-13#you?tab=chart');
+    const wheel = page.locator('#wheel-natal .interactive-zodiac-wheel__svg');
+    await expect(wheel.locator('.interactive-wheel-house')).toHaveCount(12);
+    await wheel.locator('[data-planet="Sun"] [role="button"]').click();
+    const overflow = await wheel.evaluate(root => {
+      const boundary = Number(root.querySelector('.interactive-wheel-paper:last-of-type')!.getAttribute('r'));
+      return [...root.querySelectorAll<SVGCircleElement>('.interactive-wheel-aspects circle, .interactive-wheel-selection-ring')]
+        .map(node => Math.hypot(node.cx.baseVal.value - 300, node.cy.baseVal.value - 300) + node.r.baseVal.value - boundary);
+    });
+    expect(overflow.length).toBeGreaterThan(0);
+    expect(Math.max(...overflow), 'Aspect points and selection rings stay inside the house band').toBeLessThanOrEqual(-0.99);
+    await wheel.screenshot({ path: test.info().outputPath(`natal-wheel-${width}-${theme}.png`) });
+    await page.keyboard.press('Escape');
+    await page.locator('.natal-big-three .placement-table-row').first().click();
+    const article = page.locator('.you-transit-article');
+    await expect(article.locator('.article-related-aspect-row').first()).toBeVisible();
+    const checkDividers = async () => {
+      const borders = await article.locator('.article-related-aspects__list').evaluateAll(lists => lists.flatMap(list =>
+        [...list.children].slice(1).map(row => {
+          const style = getComputedStyle(row);
+          return { width: parseFloat(style.borderTopWidth), style: style.borderTopStyle, color: style.borderTopColor };
+        })));
+      expect(borders.length).toBeGreaterThan(0);
+      for (const border of borders) {
+        expect(border.width).toBeGreaterThanOrEqual(1);
+        expect(border.style).toBe('solid');
+        expect(border.color).not.toBe('rgba(0, 0, 0, 0)');
+      }
+    };
+    await checkDividers();
+    await article.screenshot({ path: test.info().outputPath(`natal-article-${width}-${theme}.png`) });
+    const title = await article.locator('h1').textContent();
+    await page.reload();
+    await expect(article.locator('h1')).toHaveText(title!);
+    await checkDividers();
+    await article.locator('.article-related-aspect-row').first().click();
+    await expect(article.locator('h1')).not.toHaveText(title!);
+    await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
+    await expect(article.locator('h1')).toHaveText(title!);
+    await checkDividers();
+  });
+}

@@ -539,7 +539,6 @@
   --aspect-row-padding: var(--space-6) 0;
 
   border: 0;
-  border-bottom: var(--border-width-thin) solid var(--line);
   border-radius: 0;
   background: transparent;
   box-shadow: var(--shadow-flat);
@@ -549,6 +548,6 @@
   font-family: var(--font-ui);
 }
 
-.article-related-aspects .aspect-row.article-related-aspect-row:last-child {
-  border-bottom: 0;
+.article-related-aspects .article-related-aspects__list > .article-related-aspect-row + .article-related-aspect-row {
+  border-top: var(--border-width-thin) solid var(--detail-table-rule);
 }

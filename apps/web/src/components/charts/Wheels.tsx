@@ -530,7 +530,7 @@ export const SkyWheel = memo(function SkyWheel({
   const signLabelPathPrefix = `${wheelClipId}-sign-label`;
   const hasTransitOverlay = transitPositions.length > 0;
   const angleAxisRadius = handoffLayout ? 225 : hasTransitOverlay ? radius.transitBandOuter + 16 : radius.outer + angleAxisOuterPadding;
-  const aspectRadius = refinedLayout ? Math.min(radius.aspect, ...[...planetLayouts.values()].map(layout => Math.hypot(layout.marker.x - center, layout.marker.y - center) - (planetDegreeOffset + 18))) : radius.aspect;
+  const aspectRadius = handoffLayout ? radius.aspect - 8 : refinedLayout ? Math.min(radius.aspect, ...[...planetLayouts.values()].map(layout => Math.hypot(layout.marker.x - center, layout.marker.y - center) - (planetDegreeOffset + 18))) : radius.aspect;
   const houseLabelRadius = handoffLayout ? 114 : refinedLayout ? Math.min(radius.house, aspectRadius * 0.57) : radius.house;
   const houseLabels = useMemo(() => chartHouseLabelGeometry({
     ascendant,
