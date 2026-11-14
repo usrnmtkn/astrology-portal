@@ -131,6 +131,27 @@ test('generic inheritance preserves saved edits, explicit blanks, nulls, arrays 
   } } finally { servingPackageRecords.delete(retired); }
 });
 
+test('saved shared-copy aliases and pending edits cannot be shadowed by inherited audience copy', async () => {
+  const key = 'fallback-hook/planet-best/sun';
+  for (const alias of ['body', 'body_you', 'Body', 'text']) for (const copy of ['Complete synthetic saved alias.', '', null]) {
+    for (const pending of [false, true]) {
+      const original = { contentKey: key, ...(pending ? {} : { [alias]: copy }) };
+      const draft = pending ? { [alias]: copy } : undefined;
+      const row = { ...saved[0], content_key: key, sections: { packageRecord: original, ...(draft ? { packageDraft: draft } : {}) } };
+      const unchanged = structuredClone(row);
+      storageRows = [row];
+      const result = (await invoke({ id: row.id })).payload.rows[0].sections;
+      for (const inherited of ['body', 'body_you', 'Body', 'text']) {
+        if (inherited !== alias) assert.equal(result.packageRecord[inherited], undefined);
+      }
+      if (alias !== 'body_you') assert.equal(result.packageRecord.body_they, undefined);
+      assert.deepEqual(result.packageDraft, draft);
+      if (!pending) assert.equal(result.packageRecord[alias], copy);
+      assert.deepEqual(storageRows, [unchanged]);
+    }
+  }
+});
+
 test('registered future reader fields inherit without importing source approval or integrity metadata', async () => {
   const key = 'cms/synthetic/registered-package';
   servingPackageRecords.set(key, { contentKey: key, customReading: { opening: 'Synthetic original opening.', ending: 'Synthetic original ending.', internalApproval: 'Do not inherit unregistered siblings.' },
