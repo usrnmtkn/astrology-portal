@@ -48,8 +48,25 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Plan
       return properties.map(name=>[name,actual[name],expected[name]]);
     });
     for(const [property,actual,expected] of metrics)expect(actual,property).toBe(expected);
-    await card.getByRole('button',{name:'Create retrograde modifier',exact:true}).click();
     const dialog=page.getByRole('dialog',{name:'Generated content editor'});
+    const titleStyles=()=>dialog.getByRole('heading',{level:2}).evaluate(element=>{
+      const style=getComputedStyle(element);
+      return Object.fromEntries(['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','marginTop','marginBottom','textTransform','textAlign'].map(name=>[name,style[name as keyof CSSStyleDeclaration]]));
+    });
+    await preview.getByRole('button',{name:'Create exact override',exact:true}).click();
+    await expect(dialog.getByRole('heading',{level:2})).toHaveText('Create fallback passage');
+    const existingTitleStyles=await titleStyles();
+    await dialog.getByRole('button',{name:'Close',exact:true}).click();
+    await card.getByRole('button',{name:'Create retrograde modifier',exact:true}).click();
+    await expect(dialog.getByRole('heading',{level:2})).toHaveText('Create Saturn retrograde in the 4th House · Retrograde modifier');
+    expect(await titleStyles()).toEqual(existingTitleStyles);
+    expect(await dialog.evaluate(element=>{
+      const heading=element.querySelector('.admin-editor-toolbar > h2')!;
+      const field=element.querySelector('input')!;
+      return Boolean(heading.compareDocumentPosition(field)&Node.DOCUMENT_POSITION_FOLLOWING)
+        && heading.getBoundingClientRect().top<field.getBoundingClientRect().top;
+    })).toBe(true);
+    await dialog.screenshot({path:`test-results/natal-retrograde-create-title-${width}-${theme}.png`});
     await expect(dialog).toContainText('Saturn retrograde in the 4th house modifier');
     await expect(dialog.getByText('This exact override is used only in You.',{exact:false})).toHaveCount(0);
     await dialog.locator('textarea[data-sky-field="body"]').fill(you);
@@ -63,6 +80,13 @@ for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Plan
     }
     await expect(card.getByRole('textbox',{name:/: You copy$/})).toHaveValue(you);
     await expect(card.getByRole('textbox',{name:/: Friend copy$/})).toHaveValue(they);
+    await card.getByRole('button',{name:'Edit source',exact:true}).click();
+    await expect(dialog.getByRole('heading',{level:2})).toHaveText('Edit Saturn retrograde in the 4th House · Retrograde modifier');
+    expect(await titleStyles()).toEqual(existingTitleStyles);
+    await expect(dialog.locator('textarea[data-sky-field="body"]')).toHaveValue(you);
+    await expect(dialog.locator('textarea[data-sky-field="body_they"]')).toHaveValue(they);
+    await dialog.screenshot({path:`test-results/natal-retrograde-edit-title-${width}-${theme}.png`});
+    await dialog.getByRole('button',{name:'Close',exact:true}).click();
     await expect(preview.locator('.admin-natal-reader-preview-part')).toHaveCount(2);
     await card.getByRole('button',{name:'Save & publish',exact:true}).click();
     await expect(card.getByRole('status')).toHaveText('Published. The reader preview will refresh.');
