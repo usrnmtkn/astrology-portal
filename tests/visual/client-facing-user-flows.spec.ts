@@ -6841,3 +6841,67 @@ wheelJourneyTest("interactive Friend wheel preserves an unknown birth time after
   await expect(wheel).toHaveAttribute("data-has-houses", "false");
   await expect(wheel.locator(".interactive-wheel-sector[role=button]")).toHaveCount(0);
 });
+
+for (const [width, theme] of [[390, 'dark'], [1440, 'light']] as const) for (const failure of ['none', 'response', 'stall'] as const) {
+  test(`Saturn natal reader loads its published sources independently and recovers ${width} ${theme} failure=${failure}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1000 });
+    const timestamp = '2026-11-14T12:00:00Z';
+    const texts = [
+      'Synthetic Saturn Virgo sign opening. Complete sign ending.',
+      'Synthetic Saturn fourth-house opening. Complete house ending.',
+      'Synthetic Saturn retrograde opening.\n\nComplete retrograde ending.'
+    ];
+    const keys = ['fallback-hook/placement-sentence/saturn/virgo', 'fallback-hook/placement-house-sentence/saturn/4', 'fallback-hook/natal-retrograde-modifier/saturn/4'];
+    const rows = keys.map((content_key, index) => ({
+      id: `fixture-saturn-source-${index}`, content_key, surface: 'natal', mode: 'in_depth', status: 'LIVE', lane: 'serving', review_state: null,
+      updated_at: timestamp, body: texts[index], headline: '', summary: '', provider: 'tldrastro-fallback-architecture-v3',
+      sections: { packageRecord: { contentKey: content_key, body: texts[index], body_you: texts[index], content_role: index === 2 ? 'full_copy' : 'fallback_hook', review_status: 'approved', reader_only: true, render_policy: 'reader-only-exact-lived-v1' } },
+      source_snapshot: { contentType: 'fallback-system', review_status: 'approved' }, facts: { fallbackArchitectureV3: true, review_status: 'approved' }
+    }));
+    const publications = rows.map(row => ({ content_key: row.content_key, state: 'live', revision: 1, row_id: row.id, row_updated_at: timestamp, updated_at: timestamp }));
+    await seedClientState(page, { profile: true, preloadProfileNatalSky: true, profileBirthDate: '1979-02-17', profileBirthTime: '11:00 AM', theme, contentPublications: publications });
+    let releaseInventory!: () => void, releaseArticle!: () => void;
+    const inventory = new Promise<void>(resolve => { releaseInventory = resolve; });
+    const article = new Promise<void>(resolve => { releaseArticle = resolve; });
+    let unavailable = failure;
+    if (failure === 'stall') await page.addInitScript(() => {
+      const schedule = window.setTimeout.bind(window);
+      window.setTimeout = ((handler, delay, ...args) => schedule(handler, delay === 20_000 ? 1_000 : delay, ...args)) as typeof window.setTimeout;
+    });
+    let targeted = 0;
+    await page.route('**/api/content-reader', async route => {
+      const query = route.request().postDataJSON();
+      if (query.provider && !query.keys && !query.latestVersion) await inventory;
+      if (query.keys?.some((key: string) => keys.includes(key))) {
+        targeted++;
+        if (unavailable === 'response') { await route.fulfill({ status: 503, json: { error: 'Synthetic natal read unavailable.' } }); return; }
+        await article;
+      }
+      await route.fulfill({ json: readerResponse(rows.filter(row => query.keys?.includes(row.content_key)), publications) });
+    });
+    try {
+      await page.goto('/#you/placement/saturn-virgo-4h');
+      await expect(page.locator('#you-transit-article-title')).toHaveText('Saturn Rx in Virgo in the 4th house');
+      await expect(page.getByText('Loading natal reading…', { exact: true })).toBeVisible();
+      if (failure !== 'none') {
+        await expect(page.getByText('The natal reading could not load. Please try again.', { exact: true })).toBeVisible();
+        unavailable = 'none';
+        releaseArticle();
+        await page.getByRole('button', { name: 'Try again', exact: true }).click();
+      } else releaseArticle();
+      const reading = page.locator('.you-transit-article-page');
+      for (const text of texts) for (const paragraph of text.split('\n\n')) await expect(reading).toContainText(paragraph);
+      expect(targeted).toBeGreaterThan(0);
+      await expect(page.getByText('Loading natal reading…', { exact: true })).toBeHidden();
+      await page.reload({ waitUntil: 'domcontentloaded' });
+      for (const text of texts) for (const paragraph of text.split('\n\n')) await expect(reading).toContainText(paragraph);
+      await page.screenshot({ path: `test-results/saturn-natal-reader-${width}-${theme}-${failure}.png`, fullPage: true });
+      await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
+      await selectYouNatalTab(page);
+      await page.getByRole('button', { name: 'Saturn Rx in Virgo', exact: true }).click();
+      await expect(reading).toContainText(texts[0]);
+      await expect(reading).toContainText('Complete retrograde ending.');
+    } finally { releaseArticle(); releaseInventory(); }
+  });
+}

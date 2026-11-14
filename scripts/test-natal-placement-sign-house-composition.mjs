@@ -737,7 +737,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /activePlacementRouteId,\s*fallbackArchitectureV3Version,\s*generatedContent,/u,
+  /activePlacementRouteId,\s*fallbackArchitectureV3Version,\s*natalPlacementSources\.status,\s*generatedContent,/u,
   "An open natal placement must refresh after its deferred exact-copy bundle loads."
 );
 

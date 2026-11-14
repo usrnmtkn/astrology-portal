@@ -269,6 +269,8 @@ export default defineConfig(({ mode }) => {
         },
         output: {
           manualChunks(id) {
+            // Natal source identities are shared with Studio but load on article intent.
+            if (id.endsWith('/content/natalPlacementSourceKeys.ts')) return 'natal-placement-keys';
             // Memory and Studio share this small authentication transport. Keep
             // it with auth instead of borrowing a deferred article editor chunk.
             if (id.endsWith('/apps/admin/src/ownerSessionRequest.ts')) return "auth";

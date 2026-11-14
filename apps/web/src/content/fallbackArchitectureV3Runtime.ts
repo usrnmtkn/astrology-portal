@@ -410,6 +410,7 @@ let localInitialSkyListReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let initialSkyListBundlePromise: Promise<boolean> | null = null;
 let lastKnownGoodReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let dashboardNatalPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardPersonalTransitReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
@@ -476,6 +477,7 @@ function recomposeReaderBundle() {
     localRelationshipReaderBundle,
     localLunationBookReaderBundle,
     dashboardCoreReaderBundle,
+    dashboardNatalPlacementReaderBundle,
     dashboardSkyCoreReaderBundle,
     dashboardPersonalTransitReaderBundle,
     dashboardCompatibilityReaderBundle,
@@ -487,6 +489,11 @@ function recomposeReaderBundle() {
 }
 
 subscribeToContentPublications(recomposeReaderBundle);
+
+export function installNatalPlacementFallbackArchitectureV3Bundle(bundle: FallbackArchitectureV3Bundle | null) {
+  dashboardNatalPlacementReaderBundle = bundle;
+  recomposeReaderBundle();
+}
 
 const signRulers: Record<string, string> = {
   aries: "Mars",
