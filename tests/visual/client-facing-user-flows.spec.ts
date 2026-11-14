@@ -5466,12 +5466,13 @@ test("Chiron Jupiter owner revision renders its complete opening and ending", as
   });
   await expectClientRouteLoads(page, "/#you");
   await page.getByRole("tab", { name: /updates|transits/i }).click();
-  const card = page.getByRole("button", { name: /^Chiron in Aries square your natal Jupiter/ }).first();
+  const card = page.locator('a.personal-transit-card[data-aspect-name="Chiron in Aries square your natal Jupiter"]').first();
   await expect(card).toBeVisible({ timeout: 30_000 });
-  await expect(card).toContainText("Exact Oct 5, 2026");
+  await expect(card.locator(".updates-aspect-row__meta-line")).toHaveText(/^Exact \d+:\d{2} [AP]M EDT · (?:\d+° \d{2}′|<1′)$/);
   await card.click();
   const detail = page.getByRole("region", { name: "Chiron in Aries square your natal Jupiter", exact: true });
   await expect(detail).toBeVisible();
+  await expect(detail).toContainText("Exact Oct 5, 2026");
   releaseCopy();
   await expect(detail).toContainText("A moment of real growth can unexpectedly pull an old insecurity straight to the surface.");
   await expect(detail).toContainText("You do not have to make an opportunity harder on yourself to feel like you earned it.");

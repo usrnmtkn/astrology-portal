@@ -106,5 +106,13 @@
     ],
     "preservedReportBrowserFailure": "PR 1475 run 43548320390 job 132304710223 on 73d4574ac: eight report-source tests selected old button cards and two desktop macro cases exposed an overbroad three-column grid selector. Both are corrected; complete source and macro assertions remain intact.",
     "localApiEvidence": "All 200 selected API commands passed on 73d4574ac. API implementation, dependencies and fixtures are unchanged by the budget, CSS selector and browser-selector corrections. Required remote checks still run on the final exact head."
+  },
+  "ownerPassageRegression": {
+    "date": "2026-11-14",
+    "headBeforeTestCorrection": "02143ab6d185c15725973b5f68a58be2e5a01490",
+    "preservedFailure": "https://github.com/usrnmtkn/astrology-portal/actions/runs/43552318222/job/132324517485",
+    "resultBeforeCorrection": "80 browser cases passed; one owner-passage case selected the former button and expected the date in the card line.",
+    "correction": "Select the full-card link by its calculated aspect identity; verify the time/orb card line; retain the exact Oct 5, 2026 assertion on the detail page together with the complete opening and ending assertions.",
+    "verification": "The corrected actual-reader browser case passed using a fresh preview of the unchanged verified build. No production code, content, dependency, calculation or bundle limit changed."
   }
 }
