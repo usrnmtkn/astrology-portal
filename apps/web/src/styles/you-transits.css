@@ -22,7 +22,7 @@
 .you-transit-group__header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
 .you-transit-group__header h2 { margin: 0; font-family: var(--font-ui); font-size: var(--type-section-emphasis-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); }
 .you-transit-group__toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius-pill); background: var(--surface); color: var(--accent); font-family: var(--font-ui); font-size: var(--text-button-size); font-weight: var(--weight-semibold); line-height: var(--leading-label); }
-.updates-aspect-list.you-transit-grid { grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
+.updates-aspect-list.you-transit-grid:not(.lunation-transit__personal) { grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
 .you-transit-group__item { display: grid; min-width: 0; }
 .you-transit-group__item[hidden] { display: none; }
 .you-transit-grid .updates-aspect-row { position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); height: 100%; padding: var(--space-7) var(--space-6); border: 0; border-radius: var(--card-radius); background: var(--surface); color: var(--ink); text-align: center; box-shadow: var(--card-shadow); opacity: 1; }
@@ -56,5 +56,5 @@
 @media (max-width: 800px) {
   .you-transit-overview { grid-column: 1; grid-row: 3; padding-top: 0; }
   .you-chart-page[data-profile-view="transits"] .you-report-actions { grid-row: 4; }
-  .updates-aspect-list.you-transit-grid { grid-template-columns: minmax(0, 1fr); }
+  .updates-aspect-list.you-transit-grid:not(.lunation-transit__personal) { grid-template-columns: minmax(0, 1fr); }
 }

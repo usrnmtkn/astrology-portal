@@ -84,5 +84,27 @@
     "horoscopeEditorChunkGzipBytes": 16400,
     "studioCsvChunkGzipBytes": 8200
   },
-  "verification": "Main passes the original bundle limits. Candidate exceeds the four original limits by the recorded amounts. Require the revised bundle check plus every exact-head release gate; no failed run is waived. Retain existing passing API/browser evidence only where inputs are unchanged."
+  "verification": "Main passes the original bundle limits. Candidate exceeds the four original limits by the recorded amounts. Require the revised bundle check plus every exact-head release gate; no failed run is waived. Retain existing passing API/browser evidence only where inputs are unchanged.",
+  "finalValidation": {
+    "basisCommit": "118419ba08e514b9c9a953a417365bde7609bf3a",
+    "sourceChanges": "Narrow the card grid selector to preserve the existing lunation sidecar and update the report-source handoff selector for full-card links.",
+    "publicSourceSha256": {
+      "apps/web/src/styles/you-transits.css": "abf3eef55f5d10523777c51c4be664d21945ad6c3a8b2594521a566181c771b1",
+      "tests/visual/you-report-page.spec.ts": "80bd4e31777b91c9ba545cb9a7cec030c66d8c64d5350858460b71eee282d364"
+    },
+    "measurements": {
+      "readerInitialCssGzipBytes": 58785,
+      "totalCssGzipBytes": 148899,
+      "totalJavaScriptGzipBytes": 3778586,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "checks": [
+      "30 focused browser cases passed from a fresh production build, including eight report-source handoffs and four complete lunation macro passages.",
+      "CSS/token audits passed.",
+      "Bundle budgets passed.",
+      "Built public asset privacy scan passed."
+    ],
+    "preservedReportBrowserFailure": "PR 1475 run 43548320390 job 132304710223 on 73d4574ac: eight report-source tests selected old button cards and two desktop macro cases exposed an overbroad three-column grid selector. Both are corrected; complete source and macro assertions remain intact.",
+    "localApiEvidence": "All 200 selected API commands passed on 73d4574ac. API implementation, dependencies and fixtures are unchanged by the budget, CSS selector and browser-selector corrections. Required remote checks still run on the final exact head."
+  }
 }
