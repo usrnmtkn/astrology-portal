@@ -64,6 +64,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
   const fan = useMemo(() => wheelFanLongitudes(facts.planets), [facts.planets]);
   const pointsByName = useMemo(() => new Map(facts.planets.map(point => [point.name, point])), [facts.planets]);
   const at = (longitude: number, radius: number) => wheelPointAt(longitude, radius, facts.ascendant);
+  const aspectRadius = radii.aspect - 8;
   const selectedPoint = selected?.type === "planet" ? pointsByName.get(selected.name) : undefined;
   const selectedAngle = selected?.type === "angle" ? facts.angles.find(angle => angle.key === selected.key) : undefined;
   const house = selected?.type === "house" ? selected.house : null;
@@ -169,7 +170,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
           </g>;
         })}</g>
         <g className="interactive-wheel-aspects" aria-hidden="true">{facts.aspects.map(aspect => {
-          const first = at(pointsByName.get(aspect.from)!.longitude, radii.aspect), second = at(pointsByName.get(aspect.to)!.longitude, radii.aspect);
+          const first = at(pointsByName.get(aspect.from)!.longitude, aspectRadius), second = at(pointsByName.get(aspect.to)!.longitude, aspectRadius);
           const active = selectedPoint && (aspect.from === selectedPoint.name || aspect.to === selectedPoint.name);
           const visible = selected ? active : aspect.close;
           if (!visible) return null;
@@ -198,7 +199,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
         {facts.planets.map(point => {
           const marker = at(fan.get(point.name)!, radii.planet), degree = at(fan.get(point.name)!, radii.planet - 38);
           const first = at(point.longitude, radii.sign - 12), second = at(point.longitude, radii.sign);
-          const endpoint = at(point.longitude, radii.aspect), active = selectedPoint?.name === point.name;
+          const endpoint = at(point.longitude, aspectRadius), active = selectedPoint?.name === point.name;
           return <g key={point.name} className="interactive-wheel-planet" data-planet={point.name} data-dimmed={dim(litPlanets.has(point.name))}>
             {active ? <circle className="interactive-wheel-selection-ring" cx={endpoint.x} cy={endpoint.y} r={7} /> : null}
             <line className="interactive-wheel-tick" x1={first.x} y1={first.y} x2={second.x} y2={second.y} />

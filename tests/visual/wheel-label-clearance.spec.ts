@@ -122,6 +122,15 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     const planet = svg.locator('.planet-marker').first();
     await planet.focus(); await page.keyboard.press('Enter');
     await expect(planet).toHaveClass(/aspect-inspector-point--selected/);
+    if (kind !== 'synastry') {
+      const overflows = await svg.evaluate(root => {
+        const boundary = Number(root.querySelector('.wheel-surfaces .wheel-surface--aspects')!.getAttribute('r'));
+        return [...root.querySelectorAll<SVGCircleElement>('.aspect-endpoint, .aspect-inspector-focus-ring')]
+          .map(node => Math.hypot(node.cx.baseVal.value - 300, node.cy.baseVal.value - 300) + node.r.baseVal.value - boundary);
+      });
+      expect(overflows.length).toBeGreaterThan(0);
+      expect(Math.max(...overflows), 'Aspect points and focus rings must clear the house-number band').toBeLessThanOrEqual(-0.99);
+    }
     await page.keyboard.press('Escape');
     const angle = svg.locator('.zodiac-wheel__angle-badge').first();
     await angle.click();
