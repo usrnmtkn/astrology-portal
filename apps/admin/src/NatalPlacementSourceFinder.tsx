@@ -223,7 +223,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           <p className="admin-natal-source-key"><span>Source key</span><code>{source.key}</code></p>
           {preview && (previewTemplate || savedRow?.inventory_only) && <blockquote>{preview}</blockquote>}
           {isOptionalExactOverride && !savedRow && <p className="admin-field-hint">No exact override is saved. The reader currently receives the composed preview shown above.</p>}
-          {isRetrogradeModifier && !savedRow && <p className="admin-field-hint">No modifier is saved. Write You and Friend copy, then publish.</p>}
+          {isRetrogradeModifier && !savedRow && <p className="admin-field-hint">No modifier is saved.</p>}
         </div>
         {savedRow && !savedRow.inventory_only && !previewTemplate && (
           <NatalPlacementSourceEditor row={savedRow} onDirtyChange={onDirtyChange} label={source.label} disabled={isLoading} onSave={onSaveSource} />

@@ -292,7 +292,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             </p>
           )}
           {motion === "retrograde" && exactServing && audience === "you" && (
-            <p className="admin-field-hint">This exact write-up includes its own retrograde treatment. No modifier is appended.</p>
+            <p className="admin-field-hint">Full write-ups include their own retrograde treatment.</p>
           )}
         </div>
       ) : (

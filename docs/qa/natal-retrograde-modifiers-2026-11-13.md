@@ -58,8 +58,8 @@ Preserved failures and corrections:
 - The first privacy invocation lacked a local policy. Verification was rerun with
   the existing protected policy; no policy contents were copied or logged.
 
-No commit, PR, exact-head CI gate, merge, production content write or deployment
-was performed. Production behavior remains unverified.
+The implementation-stage evidence above predates the release follow-up below.
+Production content was not changed; deployment verification remains pending.
 
 Release follow-up: PR #1472 initially failed the social contract because the
 package version update made the tracked knowledge-index source hashes stale.
@@ -78,3 +78,22 @@ contracts passed locally after those corrections.
 API shard 1 then exposed a missing emitted dependency in the Calendar plain-Node
 fixture. Adding the shared modifier identity to its explicit entry-point list
 made the complete Calendar save/reopen/publication/reader contract pass locally.
+
+The next full CI candidate passed all API/browser jobs except Sky Studio's admin
+build budget. Its synthetic-auth profile exceeded startup by 584 raw / 199 gzip
+bytes and aggregate JavaScript by 57 gzip bytes, before browser tests ran.
+Deferred regrouping increased aggregate cost and was discarded. The final
+correction keeps the existing graph, shortens repeated natal editor guidance,
+and derives the opposite sign from the existing zodiac order rather than a
+second lookup table. Source identities, authored reader copy, and budget ceilings
+remain unchanged. The natal source mapping, dependency, publication, introduction
+matrix and fresh-browser checks are rerun for the integrated candidate.
+
+Integrated candidate `48cef8f2515649f68218b66deb73ab48f044e28a` rebases onto
+main `b3bfc14ea` without conflicts. Its CI synthetic-auth build passes unchanged
+ceilings: startup 844,564 raw / 245,633 gzip bytes; aggregate 928,094 gzip bytes.
+All 14 fresh-browser natal publication/recovery cases pass, including all four
+modifier width/theme combinations; final screenshots were visually inspected.
+The source/dependency contracts, 144 modifier identities and publication flow,
+and 8,112-placement introduction matrix pass. This note-only amendment follows
+those checks; exact-head CI and production verification remain pending.

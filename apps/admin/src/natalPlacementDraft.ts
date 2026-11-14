@@ -9,7 +9,7 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
     mode: "in_depth" as const,
     status: "DRAFT" as const,
     headline: label,
-    summary: modifier ? "Retrograde addition for this planet and house, across every zodiac sign." : "Optional exact write-up for this planet, sign, house, and motion.",
+    summary: modifier ? "Retrograde addition for this planet and house." : "Optional exact write-up for this planet, sign, house, and motion.",
     body,
     lane: "serving",
     reviewState: "EDITORIAL_REVIEW_REQUIRED",
