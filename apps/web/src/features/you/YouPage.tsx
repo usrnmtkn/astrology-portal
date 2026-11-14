@@ -1,6 +1,6 @@
 import { LunationTransitSection, LunationTransitCard, type LunationTransitCardProps } from "../../components/LunationTransitSection";
 import { NatalPatternsInsights } from "./NatalPatternsInsights";
-import { KeyDatesPanel } from "../../components/KeyDatesPanel";
+import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
 import "../../styles/profile-overview.css";
 import "../../styles/you-transits.css";
 import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
@@ -89,6 +89,7 @@ export type YouTransitArticle = {
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
   transitDescription?: string;
+  keyDates?: ArticleKeyDate[];
   id: string;
   title: string;
   glyph?: string;
@@ -1015,16 +1016,18 @@ function YouTransitArticlePage({
   const eyebrowDescription = eyebrowAspect
     ? `${eyebrowAspect.from} ${eyebrowAspect.aspect} ${eyebrowAspect.to}`
     : eyebrowGlyphs.join(" ");
+  const readingPage = Boolean(eyebrowAspect || displayArticle.transitDescription || /transit/iu.test(displayArticle.id));
   const headerDateRange = cleanArticleText(
     displayArticle.meta.find((row) => {
       const label = row.label.trim().toLowerCase();
-      return label === "date range" || label === "duration";
-    })?.value
+      return label === "date range" || label === "duration" || readingPage && label === "timing";
+    })?.value || (readingPage ? displayArticle.pills?.durationLabel : "")
   );
+  const keyDates = displayArticle.keyDates ?? passKeyDates.map(row => ({ date: cleanArticleText(row.value), label: row.label }));
 
   return (
     <section
-      className="article-page sky-detail-page you-transit-article-page"
+      className={`article-page sky-detail-page you-transit-article-page${readingPage ? " transit-aspect-article-page" : ""}`}
       aria-label={`${displayArticle.title} article`}
       aria-labelledby="you-transit-article-title"
     >
@@ -1035,7 +1038,7 @@ function YouTransitArticlePage({
       <article className="article-shell sky-detail-article you-transit-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
-            {eyebrowAspect ? <AspectBadge aspect={eyebrowAspect.aspect} /> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
+            {eyebrowAspect ? <AspectBadge aspect={eyebrowAspect.aspect} planet={eyebrowAspect.from} /> : readingPage && displayArticle.glyph ? <span className="article-planet-badge" aria-hidden="true">{displayArticle.glyph}</span> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>
@@ -1050,7 +1053,7 @@ function YouTransitArticlePage({
             </div>}
             <h1 className="article-title" id="you-transit-article-title">{displayArticle.title}</h1>
             {headerDateRange ? <p className="article-duration">{headerDateRange}</p> : null}
-            <ArticlePills pills={displayArticle.pills} />
+            <ArticlePills pills={readingPage ? { ...displayArticle.pills, durationLabel: null } : displayArticle.pills} />
             {articleTldr ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
@@ -1095,18 +1098,6 @@ function YouTransitArticlePage({
                 );
               })}
               {displayArticle.natalPlanetReading ? <NatalChartReadings {...displayArticle.natalPlanetReading} /> : null}
-              {passKeyDates.length ? (
-                <KeyDatesPanel className="article-section sky-detail-section sky-placement-key-dates" titleId="you-transit-key-dates-title" count={passKeyDates.length}>
-                  <dl>
-                    {passKeyDates.map((row) => (
-                      <div key={`${row.label}-${row.value}`}>
-                        <dt>{cleanArticleText(row.value)}</dt>
-                        <dd>{row.label}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </KeyDatesPanel>
-              ) : null}
               {displayArticle.relatedAspects?.rows.length ? (
                 <section className="article-related-aspects" aria-label="Placement aspects">
                   <h2 className="sr-only">Placement aspects</h2>
@@ -1129,11 +1120,13 @@ function YouTransitArticlePage({
                 </section>
               ) : null}
               <TransitFacts description={displayArticle.transitDescription} />
-              <div className="sky-detail-end" aria-hidden="true">✦</div>
+              {!readingPage ? <div className="sky-detail-end" aria-hidden="true">✦</div> : null}
             </div>
           </div>
           ) : null}
         </div>
+
+        <ArticleKeyDates dates={keyDates} titleId="you-transit-key-dates-title" />
 
         {aspectGroups.length ? aspectGroups.map((group) => (
           <Fragment key={group.id}>

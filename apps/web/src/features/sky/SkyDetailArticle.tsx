@@ -1,5 +1,5 @@
 import { NatalChartReadings } from "../../components/NatalChartReadings";
-import { KeyDatesPanel } from "../../components/KeyDatesPanel";
+import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
 import { skyPlacementAspectParagraphs } from '../../content/skyPlacementAspectBridge';
 import { SeasonArticleLink } from "../../components/SeasonArticleLink";
 import { PreparedProse as FormattedProse } from "../../components/FormattedWritingContent";
@@ -70,12 +70,8 @@ export type SkyDetailSection = {
   group?: AspectToneBucket;
 };
 
-export type SkyDetailKeyDate = {
-  date: string;
-  label: string;
-  occursAt?: string;
+export type SkyDetailKeyDate = ArticleKeyDate & {
   endsAt?: string;
-  href?: string;
 };
 
 export type SkyHistoricalLookback = {
@@ -536,7 +532,9 @@ export function SkyDetailArticle({
   const retrogradeDateLabel = placementPage ? detail.title.match(/^(.+?\sRx)\b/u)?.[1] : undefined;
   const [bodyLede, ...bodySectionParagraphs] = fallbackParagraphs;
   const eyebrowLabel = articleEyebrowLabel(detail.title, detail.kicker);
-  const headerAspect = detail.aspectType ?? articleAspectGlyphPartsFromHeading(detail.title.split(" · ")[0])?.aspect;
+  const headerAspectParts = articleAspectGlyphPartsFromHeading(detail.title.split(" · ")[0]);
+  const headerAspect = detail.aspectType ?? headerAspectParts?.aspect;
+  const readingPage = !placementPage && Boolean(headerAspect || personalArticle || /transit/iu.test(detail.kicker ?? ""));
   const eyebrowGlyphs = articleEyebrowGlyphs({
     glyph: detail.glyph,
     meta: metaRows.map((row) => row.value).join(" "),
@@ -604,7 +602,7 @@ export function SkyDetailArticle({
 
   return (
     <section
-      className={`article-page sky-detail-page${placementPage ? " sky-placement-article-page" : ""}${personalArticle ? " you-transit-article-page" : ""}`}
+      className={`article-page sky-detail-page${placementPage ? " sky-placement-article-page" : ""}${personalArticle ? " you-transit-article-page" : ""}${readingPage ? " transit-aspect-article-page" : ""}`}
       aria-label={`${detail.title} field guide`}
       aria-labelledby="sky-detail-title"
     >
@@ -619,7 +617,7 @@ export function SkyDetailArticle({
           </Suspense>}
           <header className="article-id sky-detail-id">
             {detail.previewLabel && <p className="article-sub" role="status">{detail.previewLabel}</p>}
-            {placementPage ? <span className="sky-placement-article__glyph" aria-hidden="true">{pointGlyph(detail.placementContext?.planet ?? detail.routePath?.split("/")[2] ?? "")}</span> : headerAspect ? <AspectBadge aspect={headerAspect} /> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>
+            {placementPage ? <span className="sky-placement-article__glyph" aria-hidden="true">{pointGlyph(detail.placementContext?.planet ?? detail.routePath?.split("/")[2] ?? "")}</span> : headerAspect ? <AspectBadge aspect={headerAspect} planet={headerAspectParts?.from} /> : readingPage && detail.glyph ? <span className="article-planet-badge" aria-hidden="true">{detail.glyph}</span> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowGlyphs.map((glyph) => glyph.label).join(" ")}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>
@@ -653,7 +651,7 @@ export function SkyDetailArticle({
             {detail.seasonArticle && <SeasonArticleLink {...detail.seasonArticle} />}
           </header>
 
-          {hasReadableBody && !placementPage && !personalArticle ? <hr className="article-rule" /> : null}
+          {hasReadableBody && !placementPage && !readingPage ? <hr className="article-rule" /> : null}
 
           {hasReadableBody ? (
           <div className="article-body-card sky-detail-body">
@@ -718,19 +716,6 @@ export function SkyDetailArticle({
                 </>
               )}
               {detail.natalPlanetReading ? <NatalChartReadings {...detail.natalPlanetReading} /> : null}
-              {!placementPage && detail.keyDates?.length ? (
-                <KeyDatesPanel className="article-section sky-detail-section sky-placement-key-dates" titleId="sky-detail-key-dates-title" count={detail.keyDates.length}>
-                  {detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null}
-                  <dl>
-                    {detail.keyDates.map((keyDate) => (
-                      <div key={`${keyDate.date}-${keyDate.label}`}>
-                        <dt>{keyDate.date}</dt>
-                        {keyDate.label ? <dd>{keyDate.label}</dd> : null}
-                      </div>
-                    ))}
-                  </dl>
-                </KeyDatesPanel>
-              ) : null}
               {detail.closingCharge ? (
                 <section className="article-section sky-detail-section sky-placement-closing-charge">
                   <FormattedProse text={detail.closingCharge} />
@@ -741,7 +726,7 @@ export function SkyDetailArticle({
                   <FormattedProse text={detail.seriesLine} />
                 </aside>
               ) : null}
-              <SkyMechanics caption={detail.mechanicsCaption} />
+              <SkyMechanics caption={detail.mechanicsCaption} compact={readingPage} />
               {drilldown ? (
                 <details className="sky-detail-drilldown">
                   <summary>{drilldown.title || "Why this?"}</summary>
@@ -775,11 +760,13 @@ export function SkyDetailArticle({
                 </section>
               ) : null}
               <TransitFacts description={detail.transitDescription} />
-              {!placementPage && <div className="sky-detail-end" aria-hidden="true">✦</div>}
+              {!placementPage && !readingPage && <div className="sky-detail-end" aria-hidden="true">✦</div>}
             </div>
           </div>
           ) : null}
         </div>
+
+        {!placementPage ? <ArticleKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro ? <FormattedProse text={detail.keyDatesIntro} /> : null} titleId="sky-detail-key-dates-title" /> : null}
 
         {placementPage && <div className="sky-placement-article__sections" key={detail.routePath}>
           <Suspense fallback={<p className="sky-placement-article__status" role="status">Loading key dates…</p>}><SkyPlacementKeyDates dates={detail.keyDates ?? []} intro={detail.keyDatesIntro} context={detail.placementContext} articlePeriod={detail.articlePeriod} timeZone={detail.articleTimeZone} pending={detail.placementFactsPending} /></Suspense>

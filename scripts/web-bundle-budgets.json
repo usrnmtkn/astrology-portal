@@ -2,7 +2,7 @@
   "appBootGzipBytes": 400000,
   "appChunkGzipBytes": 91358,
   "readerBootGzipBytes": 458250,
-  "readerInitialCssGzipBytes": 58750,
+  "readerInitialCssGzipBytes": 59262,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 6981,
@@ -13,9 +13,37 @@
   "calendarFallbackChunkGzipBytes": 10000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
-  "totalCssGzipBytes": 148382,
-  "totalJavaScriptGzipBytes": 3777593,
+  "totalCssGzipBytes": 148894,
+  "totalJavaScriptGzipBytes": 3778617,
   "_rationale": {
+    "transitAspectReaderDesign20261113": {
+      "baseRevision": "61a60346e09b72ba6b70774740f238e2f402cd76",
+      "runtimeCandidateRevision": "7ce35cd01b84a6340dde998ed0efa832f56dee50",
+      "profile": "Separate npm-ci installs; native ARM64 Node 22.20.0; identical VITE_ENABLE_NATAL_ASPECT_PATTERNS=true and synthetic visual-smoke Supabase settings.",
+      "main": {
+        "readerInitialCssGzipBytes": 58675,
+        "totalCssGzipBytes": 148295,
+        "totalJavaScriptGzipBytes": 3777292
+      },
+      "candidate": {
+        "readerInitialCssGzipBytes": 59091,
+        "totalCssGzipBytes": 148711,
+        "totalJavaScriptGzipBytes": 3778219
+      },
+      "delta": {
+        "readerInitialCssGzipBytes": 416,
+        "totalCssGzipBytes": 416,
+        "totalJavaScriptGzipBytes": 927
+      },
+      "allocation": {
+        "readerInitialCssGzipBytes": 512,
+        "totalCssGzipBytes": 512,
+        "totalJavaScriptGzipBytes": 1024
+      },
+      "reason": "Account for the requested shared transit/aspect reader layout, separate complete Key dates timeline, selected-zone formatting and planet badges. This records interface cost, not a performance improvement. Both builds retain 307 JavaScript and 24 CSS files; all other startup, individual-chunk, lazy-loading, dependency, payload and standalone-admin limits remain unchanged.",
+      "preservedCiFailure": "PR 1474 auth-access job 132270766841 on 7ce35cd01: initial CSS 59091 exceeded 58750 by 341; aggregate CSS 148711 exceeded 148382 by 329; aggregate JavaScript 3778235 exceeded 3777593 by 642. Local matched JavaScript measurement differs by 16 bytes; require exact-head CI.",
+      "evidence": "docs/qa/transit-aspect-reader-design-2026-11-13.md"
+    },
     "calendarAspectFilterLayout20261112": "Matched independently npm-ci-installed main 365a0e376 and filter candidate ec5205dc9 builds use native ARM64 Node22.20.0 and identical visual-smoke Supabase and natal-pattern flags. The paired planet/sign rows, always-visible signs and full-width stacked search add98 gzip bytes to the canonical Studio stylesheet:32758 to32856. Aggregate CSS increases148033 to148131 across24 files. Preserve the original hosted visual-smoke and auth-access failures: memory CSS exceeded32758 by98 and aggregate CSS exceeded148054 by77. Allocate128 bytes to each affected CSS ceiling, leaving30 memory and51 aggregate bytes. All JavaScript, reader startup, individual chunk, Admin, dependency, payload and assertion limits remain unchanged. This records the requested interface cost, not a performance improvement. Require exact-head CI. Rebase onto ac7f26c68 retains the subsequent releases\u2019 budget values and rationales and applies the same128-byte CSS allocations on top of that main baseline. Integrated web and standalone measurements remain release gates.",
     "houseNatalPublishingRecovery20261112": {"baseRevision": "988c17cf7dccad62c01180fd4273bd5c2caebe60", "profile": "Matched separate npm-ci ordinary Web builds with identical native ARM64 Node and visual-smoke Supabase placeholders.", "controlAggregateGzipBytes": 3771607, "candidateAggregateGzipBytes": 3772405, "javaScriptFiles": 303, "oldLimit": 3771813, "allocatedAggregateBytes": 768, "newLimit": 3772581, "reason": "The measured798gzip-byte total increase includes the bounded Natal previews, explicit approved-source re-review and deferred strict reusable Natal revision controls. Preserve the old-cap failure by592bytes. Add768aggregate bytes, leaving176bytes of headroom; Web reader/startup/CSS, individual chunks, payloads and all boundary guards stay unchanged. No new dependency or file-count increase. See docs/qa/house-natal-publishing-recovery.md.", "integratedBaseRevision": "099957b198bff58c9bad5373f8c08089b5ae5f0d", "inheritedAggregateLimit": 3776825, "retainedAllocationBytes": 768, "integratedLimit": 3777593, "integratedMeasurement": "Native ARM64 Node22.20.0 ordinary build: 3776974 aggregate gzip bytes/307 JS files; 619 bytes below3777593. All dated/You-Friends allocations preserved; other guards unchanged.", "combinedAcknowledgementMeasurement": {"baseRevision": "099957b198bff58c9bad5373f8c08089b5ae5f0d", "aggregateGzipBytes": 3776933, "files": 307, "limit": 3777593, "headroom": 660, "profile": "Direct native ARM64 Node22.20.0 ordinary build with unchanged locked install and synthetic visual-smoke settings; no further allowance"}},
     "datedLunationPublishedMacroRecovery20261113": "The requested dated-article publishing repair must restore an already-published reusable article without changing its source or publication. A Node-safe shared renderer uses the same normal reader predicates and an explicit ledger snapshot; its 23 existing helper bodies remain unchanged and the browser compatibility exports remain available. The final repaired CI-profile build uses 3,772,085 aggregate JavaScript gzip bytes across the same 303 files, 272 bytes above the preceding 3,771,813 cap. Allocate 512 aggregate bytes to 3,772,325 and retain every startup, individual chunk, CSS, standalone-admin, lazy-loading and privacy limit. No dependency, prose payload or browser capability is added. The previous over-budget measurements remain failures; final exact-head checks and production reader restoration are required. Integration after #1460 retains its separate measured allocation and adds this same512bytes, for aggregate cap3776825. Final integrated measurements belong to the exact-head release receipt.",

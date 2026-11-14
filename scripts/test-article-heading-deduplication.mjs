@@ -66,6 +66,7 @@ for (const title of ["Mercury Rx in Capricorn in the 10th house", "Mercury retro
   const source = [{ heading: "Mercury in Capricorn", body: "Complete placement passage." }, { heading: "Mercury in Aquarius", body: "Another placement." }];
   assert.deepEqual(dedupeArticleSectionHeadings(source, title), [{ ...source[0], heading: "" }, source[1]]);
 }
+assert.equal(dedupeArticleSectionHeadings([{ heading: "Moon trine your Saturn", body: "Complete passage." }], "Moon in Capricorn trine your natal Saturn")[0].heading, "");
 assert.equal(dedupeArticleSectionHeadings([{ heading: "Moon in Cancer" }], "The Moon in Cancer")[0].heading, "");
 
 assert.equal(

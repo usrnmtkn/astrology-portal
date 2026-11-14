@@ -21,11 +21,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await card.click();
     const article = page.locator('.article-page');
     await expect(article.getByRole('heading', { level: 1 })).toHaveText(title);
-    // Friends supplies dated metadata, not a Key dates list. Shared styling must
-    // preserve that surface without inventing an empty disclosure or new facts.
-    await expect(article.locator('.key-dates-panel')).toHaveCount(0);
+    const timeline = article.locator('.article-key-dates');
+    await expect(timeline).toHaveAttribute('open', '');
+    expect(await timeline.evaluate(node => node.parentElement?.classList.contains('article-shell'))).toBe(true);
+    await expect(timeline.locator('.article-key-dates__label').first()).toContainText('Current contact');
+    await expect(timeline.locator('.article-key-dates__label').last()).toHaveText('Full transit series');
+    const timelineText = await timeline.innerText();
     const date = article.locator('.article-duration').first();
-    const duration = article.locator('.article-pills .planet-placement-row__duration');
+    const duration = article.locator('.article-pills .house-transit-term-tag');
     await expect(date).toBeVisible();
     await expect(duration).toBeVisible();
     const dateText = (await date.innerText()).trim();
@@ -36,16 +39,21 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     expect(paragraphs.length).toBeGreaterThan(0);
     expect(paragraphs[0].trim()).not.toBe('');
     expect(paragraphs.at(-1)!.trim()).not.toBe('');
-    for (const paragraph of await article.locator('.article-section p').all()) {
+    for (const paragraph of await article.locator('.article-section:not(.article-transit-description) p').all()) {
       await expect(paragraph).toHaveCSS('font-family', /Newsreader/);
       await expect(paragraph).toHaveCSS('font-size', '19px');
       await expect(paragraph).toHaveCSS('line-height', '28.5px');
     }
+    const facts = article.locator('.article-transit-description p');
+    await expect(facts).toHaveCSS('font-family', /system-ui/);
+    await expect(facts).toHaveCSS('font-size', '14px');
+    await expect(facts).toHaveCSS('line-height', '18.9px');
     await expectReadableTheme(page, '.article-title, .article-duration, .article-pills span, .article-section p');
     await article.screenshot({ path: test.info().outputPath('friends-transit-detail.png') });
     await page.reload();
     await expect(article.getByRole('heading', { level: 1 })).toHaveText(title);
-    await expect(article.locator('.key-dates-panel')).toHaveCount(0);
+    await expect(timeline).toHaveAttribute('open', '');
+    await expect(timeline).toHaveText(timelineText, { useInnerText: true });
     await expect(date).toHaveText(dateText);
     await expect(duration).toHaveText(durationText);
     await expect(article.locator('.article-section p')).toHaveText(paragraphs);

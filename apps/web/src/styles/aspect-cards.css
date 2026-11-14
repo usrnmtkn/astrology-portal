@@ -38,6 +38,9 @@
   letter-spacing: var(--tracking-normal);
 }
 .article-id > .aspect-badge { width: var(--size-8); height: var(--size-8); font-size: var(--chart-planet-glyph-size); }
+.article-planet-badge { display: grid; place-items: center; width: var(--size-8); height: var(--size-8); border-radius: var(--radius-circle); background: var(--surface-2); color: var(--accent); font-family: var(--font-glyph); font-size: var(--chart-planet-glyph-size); line-height: var(--leading-display); }
+.article-id > .aspect-badge:has(.aspect-badge__planet) { position: relative; }
+.aspect-badge__planet { position: absolute; right: var(--glyph-badge-compact-offset); bottom: var(--glyph-badge-compact-offset); display: grid; place-items: center; width: var(--glyph-badge-size); height: var(--glyph-badge-size); border: var(--border-width-medium) solid var(--surface); border-radius: var(--radius-circle); background: var(--color-brand); color: var(--color-white); font-size: var(--type-meta-size); line-height: var(--leading-display); }
 .reading-story-grid { display: grid; grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
 .reading-story-card.aspect-row,
 .reading-story-card.updates-aspect-row {

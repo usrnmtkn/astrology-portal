@@ -19,6 +19,27 @@
 .article-page .article-related-aspects__copy-list > .article-related-aspects__copy { margin: 0; padding: 0; border: 0; }
 .article-page .article-related-aspects__copy-heading { margin-bottom: var(--space-3); }
 .article-page .article-related-aspects__date { margin: 0 0 var(--space-4); color: var(--muted); font-family: var(--font-ui); font-size: var(--type-meta-size); font-weight: var(--weight-regular); line-height: var(--leading-meta); letter-spacing: var(--tracking-normal); }
+/* Transit and aspect readings share the centered header and separate timeline. */
+.article-page.transit-aspect-article-page .article-shell { gap: var(--space-2); }
+.article-page.transit-aspect-article-page .article-card.sky-detail-card { padding: var(--layout-reading-block-space) var(--layout-reading-padding); }
+.transit-aspect-article-page .article-id { gap: var(--space-4); }
+.article-page.transit-aspect-article-page .article-duration { margin: 0; color: var(--muted); font-family: var(--font-display); font-size: var(--type-row-title-size); font-weight: var(--weight-regular); line-height: var(--leading-row-title); letter-spacing: var(--tracking-normal); }
+.transit-aspect-article-page .article-pills { margin: 0; font-family: var(--font-ui); }
+.transit-aspect-article-page .article-pills .ui-pill { font-family: var(--font-ui); font-weight: var(--weight-medium); letter-spacing: var(--tracking-normal); }
+.transit-aspect-article-page .article-pills .house-transit-term-tag { background: var(--color-mint); color: var(--color-brand); }
+.transit-aspect-article-page .sky-detail-body { margin-top: var(--space-8); }
+.transit-aspect-article-page .article-section p { color: var(--ink); letter-spacing: var(--tracking-body); }
+.transit-aspect-article-page .article-section.article-transit-description { margin-top: var(--space-6); padding-top: 0; }
+.transit-aspect-article-page .article-transit-description p { color: var(--muted); font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-meta); }
+.article-key-dates__list { display: grid; gap: var(--space-6); margin: var(--space-6) 0 0; padding: 0; list-style: none; }
+.article-key-dates__row { display: grid; grid-template-columns: var(--cycle-mobile-label-width) minmax(0, 1fr); gap: var(--space-2); color: var(--ink); text-decoration: none; font-family: var(--font-ui); font-size: var(--type-ui-copy-size); line-height: var(--leading-meta); letter-spacing: var(--tracking-normal); }
+.article-key-dates__date, .article-key-dates__copy { display: grid; align-content: start; min-width: 0; }
+.article-key-dates__date time, .article-key-dates__label { font-weight: var(--weight-semibold); }
+.article-key-dates__date > span, .article-key-dates__detail { color: var(--muted); font-size: var(--type-meta-size); }
+.article-key-dates__label { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.article-key-dates .is-current time { color: var(--accent); }
+.article-key-dates .house-transit-term-tag { background: var(--color-mint); color: var(--color-brand); font-family: var(--font-ui); letter-spacing: var(--tracking-normal); }
+.article-key-dates a:hover { color: var(--accent); }
 @media (max-width: 800px) {
  .article-page .article-card { padding: var(--space-7) var(--space-5); }
  .article-page .article-related-aspects-card { padding: var(--space-7) var(--space-6) var(--lunar-space-28); }
@@ -28,4 +49,7 @@
  .article-page .article-body-inner { --text-body: var(--type-reading-compact-size); --leading-body: var(--leading-reading); }
  .article-page .article-section :is(h2, h3) { font-size: var(--type-large-title-size); }
  .article-page .article-related-aspects__copy-heading :is(h3, h4) { font-family: var(--font-ui); font-size: var(--type-compact-row-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); }
+ .article-page.transit-aspect-article-page .article-card.sky-detail-card { padding: var(--space-9) var(--space-6); }
+ .transit-aspect-article-page .sky-detail-body { margin-top: var(--space-7); }
+ .article-key-dates__row { grid-template-columns: var(--size-8) minmax(0, 1fr); gap: var(--space-3); }
 }

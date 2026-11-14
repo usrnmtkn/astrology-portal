@@ -40,7 +40,8 @@ async function expectBundledLunationBody(article: Locator, phase: string, sign: 
 
 async function expectHousePillsInArticle(page: Page) {
   const pills = page.locator(".article-id .article-pills");
-  await expect(pills.locator(".planet-placement-row__duration")).toHaveText(/^(?:TODAY|\d+D|\d+M|\d+Y(?: \d+M)?)(?:\s+left)?$/);
+  await expect(page.locator(".article-id .article-duration").first()).toBeVisible();
+  await expect(page.locator(".article-id .article-duration").first()).not.toHaveText("");
   await expect(pills.locator(".house-transit-term-tag")).toHaveText(/^(?:Short-term|Long-term)$/);
   await expect(pills.locator(".house-transit-term-tag")).toHaveCSS("border-top-width", "0px");
   const keywords = pills.locator(".ui-pill--muted");

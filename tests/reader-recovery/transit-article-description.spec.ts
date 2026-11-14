@@ -6,6 +6,7 @@ import { natalSkySnapshotCacheKey, skySnapshotCacheKey, VERIFIED_SKY_CACHE_SCHEM
 import type { SkySnapshot } from "../../apps/web/src/types";
 import { bundledPublications } from "../helpers/bundled-publications";
 import fs from "node:fs";
+import { articleHeadingComparisonKey } from "../../apps/web/src/utils/articleHeadings";
 
 const location = { label: "New York, NY", latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" };
 const birth = new Date("1978-09-01T16:00:00Z");
@@ -74,20 +75,35 @@ function expectedIdentity(title: string, sky: SkySnapshot, natalChart: SkySnapsh
 async function verifyFooter(page: Page, footer: Locator, theme: string, surface: string) {
   await expect(footer).toBeVisible();
   await expect(footer.locator("h1, h2, h3")).toHaveCount(0);
-  expect(await footer.evaluate(element => element.nextElementSibling?.classList.contains("sky-detail-end"))).toBe(true);
+  await expect(page.locator(".transit-aspect-article-page .sky-detail-end")).toHaveCount(0);
+  await expect(page.locator(".article-id > .aspect-badge .aspect-badge__planet")).toHaveCount(1);
+  const timeline = page.locator(".article-key-dates");
+  if (await timeline.count()) {
+    expect(await timeline.evaluate(element => element.parentElement?.classList.contains("article-shell"))).toBe(true);
+    await expect(timeline).toHaveAttribute("open", "");
+    await timeline.locator("summary").click();
+    await expect(timeline).not.toHaveAttribute("open");
+    await timeline.locator("summary").press("Enter");
+    await expect(timeline).toHaveAttribute("open", "");
+    await timeline.locator("summary").evaluate(element => (element as HTMLElement).blur());
+  }
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 844 });
-    await footer.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, 0));
     await page.evaluate(() => document.fonts.ready.then(() => undefined));
     const styles = await footer.evaluate(element => {
       const paragraph = element.querySelector("p")!;
-      const reference = element.parentElement!.querySelector(".article-section p")!;
+      const reference = document.createElement("span");
+      reference.style.cssText = "font-family:var(--font-ui);font-size:var(--type-meta-size);font-weight:var(--weight-regular);line-height:var(--leading-meta);letter-spacing:var(--tracking-body)";
+      document.body.append(reference);
       const pick = (node: Element) => { const s = getComputedStyle(node); return [s.fontFamily, s.fontSize, s.fontWeight, s.lineHeight, s.letterSpacing]; };
-      return { actual: pick(paragraph), reference: pick(reference) };
+      const styles = { actual: pick(paragraph), reference: pick(reference) };
+      reference.remove();
+      return styles;
     });
     expect(styles.actual).toEqual(styles.reference);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.screenshot({ path: `test-results/transit-facts/${surface}-${theme}-${width}.png` });
+    await page.screenshot({ path: `test-results/transit-facts/${surface}-${theme}-${width}.png`, fullPage: true });
   }
 }
 
@@ -112,6 +128,10 @@ for (const theme of ["light", "dark"]) {
       await expect(page.getByLabel("Transit details", { exact: true })).toHaveCount(0);
       await row.click();
       await expect(page.locator('.you-transit-article h1')).toHaveText(title);
+      await expect(page.locator(".you-transit-article .article-duration")).toBeVisible();
+      await expect(page.locator(".you-transit-article .article-pills")).not.toContainText("Exact");
+      const sectionHeadings = await page.locator(".you-transit-article .sky-detail-body h2").allTextContents();
+      expect(sectionHeadings.map(articleHeadingComparisonKey)).not.toContain(articleHeadingComparisonKey(title));
       const footer = page.getByLabel("Transit details", { exact: true });
       await expect(footer).toHaveText(expected);
       await verifyFooter(page, footer, theme, `you-${date}`);
@@ -178,7 +198,7 @@ for (const theme of ["light", "dark"]) {
       const column = reading.locator(".article-body-inner").first();
       const token = await page.evaluate(() => {
         const s = getComputedStyle(document.documentElement);
-        return { padding: s.getPropertyValue("--space-9").trim(), width: parseFloat(s.getPropertyValue("--container-prose")) };
+        return { padding: s.getPropertyValue("--layout-reading-block-space").trim(), width: parseFloat(s.getPropertyValue("--container-prose")) };
       });
       if (width > 720) await expect(card).toHaveCSS("padding-top", token.padding);
       expect((await column.boundingBox())!.width).toBeLessThanOrEqual(token.width);
@@ -218,6 +238,27 @@ for (const theme of ["light", "dark"]) {
   });
 }
 
+
+for (const theme of ["light", "dark"]) {
+  test(`House transit uses the shared reading layout (${theme})`, async ({ page }) => {
+    await prepare(page, theme);
+    await page.goto("/?date=2026-09-08#you");
+    const row = page.locator("button.updates-aspect-row--house").first();
+    await expect(row).toBeVisible({ timeout: 45_000 });
+    const title = await row.locator(".updates-aspect-row__title").innerText();
+    await row.click();
+    const article = page.locator(".transit-aspect-article-page");
+    await expect(article.locator("h1")).toHaveText(title);
+    await expect(article.locator(".article-planet-badge")).toBeVisible();
+    await expect(article.locator(".article-duration")).toBeVisible();
+    await expect(article.locator(".sky-detail-end")).toHaveCount(0);
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 1000 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ path: `test-results/transit-design/house-${theme}-${width}.png`, fullPage: true });
+    }
+  });
+}
 
 test("Unknown birth time keeps the article's signs without inventing houses", async ({ page }) => {
   test.setTimeout(90_000);
