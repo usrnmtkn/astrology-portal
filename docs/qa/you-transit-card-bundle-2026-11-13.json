@@ -188,5 +188,27 @@
     ],
     "status": "Local integration verified. Required checks must run on the final up-to-date PR head before merge.",
     "history": "Earlier sections retain the preceding source-pinned measurements and failures; this section describes the current integrated runtime."
+  },
+  "compositionHeadlineFollowup": {
+    "date": "2026-11-14",
+    "baseRevision": "91653f1e200bc32f43cc8cf940a24eb83d72eff3",
+    "observedIssue": "Deployed synthetic-reader screenshot showed a composed Lilith/Neptune reading using its generated aspect heading as a custom headline, causing an aspect footnote as well.",
+    "verifiedProvenance": {
+      "heading": "Lilith conjunction your Neptune",
+      "tier": "approved-transit-composition-v1",
+      "sourceKey": "fallback-template/transit.aspect"
+    },
+    "correction": "Composition headings are generated aspect labels, not custom reading headlines. Use the calculated full aspect identity as the card title with no repeated footnote. Preserve actual saved/authored CMS headlines and all body copy.",
+    "publicSourceSha256": {
+      "apps/web/src/App.tsx": "22c2f0560cfa68c27847950635abae1099edc18b7cf7a78ec5ee4475c24a615d",
+      "tests/visual/personal-daily-aspects.spec.ts": "2b9536d38af9099893841ecd0f38908178ea29251f165df63b4c9307de4f38c4"
+    },
+    "verification": [
+      "Six actual-reader browser cases passed from a fresh build; the composed-card title and absent footnote are asserted on desktop/mobile in light/dark.",
+      "Typecheck and existing card/source contract passed.",
+      "Bundle budgets passed without changing limits.",
+      "Built public assets privacy scan passed."
+    ],
+    "scope": "One UI headline-selection condition and its actual-reader regression; no content, calculation, dependency, API, or budget change. Require every exact-head remote gate and verify the resulting production rendering."
   }
 }

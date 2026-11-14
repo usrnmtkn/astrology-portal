@@ -56,6 +56,9 @@ for (const [width, theme] of [[1440, "light"], [1440, "dark"], [390, "light"], [
     ]);
     await expect(daily).toHaveCSS('gap', '24px');
     await expect(daily.locator(".updates-aspect-row__orb").first()).toHaveText(/\d+° \d{2}′|<1′/);
+    const composed = daily.locator('.personal-transit-card[data-aspect-name="Lilith in Capricorn conjunct your natal Neptune"]');
+    await expect(composed.getByRole('heading', {level: 3, includeHidden: true})).toHaveText('Lilith in Capricorn conjunct your natal Neptune');
+    await expect(composed.locator('.personal-transit-card__aspect-name')).toHaveCount(0);
     await expect(ongoing.locator(".updates-aspect-row:is(a,button)").first()).toBeVisible({ timeout: 60_000 });
     await expect(ongoing).not.toContainText("Current contact:");
     await expect(ongoing.locator(".updates-aspect-row__meta-line").first()).toContainText(/ – .* · /);
