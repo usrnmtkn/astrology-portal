@@ -1,4 +1,5 @@
 import { natalPlacementOwnerCopy } from "./natalPlacementVariables.mjs";
+import { natalRetrogradeModifierKey } from '../../natalRetrogradeModifier.js';
 import { bindStudioVariableRenderer } from "../../studioCustomVariables.mjs";
 import { assertPublicationKey, guardPublicationMap } from "./publicationGuard.mjs";
 import { zodiacSeasonTemplateContext, zodiacSeasonVariableNames } from "./zodiacSeasonVariables.mjs";
@@ -374,7 +375,6 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       if (specific) mods.push(specific);
       else mod(`fallback-template/natal.modifier.dignity-${facts.dignity}`);
     }
-    if (facts.isRetrograde) mod("fallback-template/natal.modifier.retrograde");
     if (facts.sect?.hasReliableSect && facts.sect.effect) {
       mod(`fallback-template/natal.modifier.sect-${facts.sect.isDayChart ? "day" : "night"}`, { sectEffect: facts.sect.effect });
     }
@@ -440,6 +440,13 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         headlineTemplate = houseTemplate;
         ctx.houseOrdinal = houseCtx.houseOrdinal;
       }
+    }
+
+    const retrogradeKey = facts.isRetrograde ? natalRetrogradeModifierKey(planet, house) : null;
+    const retrograde = retrogradeKey ? getReaderLivedRow(retrogradeKey, voice, opts) : null;
+    if (retrograde) {
+      parts.push(natalPlacementOwnerCopy(retrograde.body ?? "", facts.voice));
+      partKeys.push(retrogradeKey!);
     }
 
     return {

@@ -280,6 +280,7 @@ export default defineConfig(({ mode }) => {
             if (/\/content\/(?:bondEffectIdentity|transitWritingIdentity|skyPlacementAspectBridge|generatedContentEligibility|lunationStudioRevision)\.ts$/u.test(id)
               || id.endsWith("/src/shared/lunationHoroscopeIdentity.ts")
               || id.endsWith("/src/shared/lunationTimingVariables.ts")
+              || id.endsWith("/content/natalRetrogradeModifier.js")
               || id.endsWith("/services/templateInterpolation.ts")
               || id.endsWith("/services/generatedContentRendering.ts")
               || id.endsWith("/shared/components/formattedWritingLoader.ts")

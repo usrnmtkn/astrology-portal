@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { isDynamicNatalPlacementExactKey } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
+import { isNatalRetrogradeModifierKey } from '../../apps/web/src/content/natalRetrogradeModifier.js';
 
 /** Called only after an authenticated owner publishes the exact package revision. */
 export function approveStudioPackageWording(record: Record<string, unknown>, contentKey: string, approvedAt: string) {
@@ -14,7 +15,7 @@ export function approveStudioPackageWording(record: Record<string, unknown>, con
 // Called only for the authenticated owner's explicit publication action.
 // Plain saves and proposed revisions must never acquire an approval receipt.
 export function approveNatalAspectStudioCopy(record: Record<string, unknown>, contentKey: string) {
-  if (isDynamicNatalPlacementExactKey(contentKey)) {
+  if (isDynamicNatalPlacementExactKey(contentKey) || isNatalRetrogradeModifierKey(contentKey)) {
     if (typeof record.body_they === "string" && record.body_they.trim()) {
       const payloadSha256 = createHash("sha256").update(record.body_they).digest("hex");
       record.body_they_review_status = "approved";

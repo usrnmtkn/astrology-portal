@@ -71,7 +71,7 @@ assert.ok(signOnlyGroups.flatMap((group) => group.sources).every((source) => !so
 const retrogradeGroups = natalPlacementSourceGroups("mercury", "virgo", "6", "retrograde");
 const retrogradeSources = retrogradeGroups.flatMap((group) => group.sources);
 assert.deepEqual(retrogradeGroups.map((group) => group.key), ["exact", "sign", "motion", "house", "structure"]);
-assert.ok(retrogradeSources.some((source) => source.key === "fallback-template/natal.modifier.retrograde"));
+assert.ok(retrogradeSources.some((source) => source.key === "fallback-hook/natal-retrograde-modifier/mercury/6"));
 assert.ok(retrogradeSources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/mercury/virgo/6/retrograde"));
 assert.ok(!retrogradeSources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/mercury/virgo/6"));
 assert.match(retrogradeGroups.find((group) => group.key === "motion")?.description ?? "", /calculated fact/u);
@@ -169,10 +169,10 @@ const mercuryVirgoSixthRetrograde = renderNatalPlacement({
   voice: "you",
   isRetrograde: true
 });
-assert.match(
+assert.doesNotMatch(
   mercuryVirgoSixthRetrograde.body,
   /retrograde in the birth chart/u,
-  "Composed natal placements must retain the calculated retrograde modifier."
+  "Missing planet-and-house modifiers must not use the shared retrograde sentence."
 );
 
 assert.match(

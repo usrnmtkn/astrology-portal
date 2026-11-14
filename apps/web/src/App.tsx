@@ -1,5 +1,6 @@
 import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
+import { isNatalRetrogradeModifierKey } from './content/natalRetrogradeModifier.js';
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
 import { compositeReaderRelationshipCopy } from "./content/compositeRelationshipCopy";
@@ -15810,6 +15811,19 @@ function natalPlacementV3NormalizedSections(
           ? `${position.planet} in the ${ordinalHouse(position.house)} house`
           : `${position.planet} in ${position.sign} in the ${ordinalHouse(position.house)} house`,
         body: parts[1]
+      });
+    }
+
+    for (let index = 2; index < parts.length; index += 1) {
+      if (!position.house || !isNatalRetrogradeModifierKey(rendered.partKeys?.[index] ?? "")) continue;
+      sections.push({
+        slot: "retrograde",
+        required: false,
+        layer: "fallback",
+        tier: "fallback-architecture-v3",
+        sourceKeys: sourceKeysForPart(index),
+        heading: `${position.planet} retrograde in the ${ordinalHouse(position.house)} house`,
+        body: parts[index]
       });
     }
 

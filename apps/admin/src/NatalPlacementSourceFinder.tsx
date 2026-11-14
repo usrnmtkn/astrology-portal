@@ -1,4 +1,5 @@
 import { isPendingPackageRevision } from "./generatedContentClient";
+import { isNatalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
 import { useEffect, useRef, useState } from "react";
 import { StudioButton, StudioTabs } from "./StudioControls";
 import { AdminDisclosureSummary, AdminSelect } from "./AdminNativeControls";
@@ -206,6 +207,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
       if (!rows.some((row) => row.content_key === source.key)) return null;
     }
     const savedRow = editableSource(rows, source.key);
+    const isRetrogradeModifier = isNatalRetrogradeModifierKey(source.key);
     const isOptionalExactOverride = source.key.startsWith("fallback-hook/natal-you-placement-complete-final/") || source.key.startsWith("fallback-hook/natal-you-placement-sign-final/");
     const preview = previewFromRow(savedRow, source.key);
     return (
@@ -213,7 +215,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         <div className="admin-natal-source-card-copy">
           <div className="admin-natal-source-card-heading">
             <h4>{source.label}</h4>
-            {(!isOptionalExactOverride || savedRow) && (
+            {((!isOptionalExactOverride && !isRetrogradeModifier) || savedRow) && (
               <ContentLiveStatusBadge row={studioServingStatusRow(savedRow, source.key)} />
             )}
           </div>
@@ -221,11 +223,13 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           <p className="admin-natal-source-key"><span>Source key</span><code>{source.key}</code></p>
           {preview && (previewTemplate || savedRow?.inventory_only) && <blockquote>{preview}</blockquote>}
           {isOptionalExactOverride && !savedRow && <p className="admin-field-hint">No exact override is saved. The reader currently receives the composed preview shown above.</p>}
+          {isRetrogradeModifier && !savedRow && <p className="admin-field-hint">No modifier is saved.</p>}
         </div>
         {savedRow && !savedRow.inventory_only && !previewTemplate && (
           <NatalPlacementSourceEditor row={savedRow} onDirtyChange={onDirtyChange} label={source.label} disabled={isLoading} onSave={onSaveSource} />
         )}
-        {(!isOptionalExactOverride || savedRow) && (
+        {isRetrogradeModifier && !savedRow && <StudioButton type="button" disabled={isLoading} onClick={() => onCreateOverride(source.key, source.label, "")}>Create retrograde modifier</StudioButton>}
+        {((!isOptionalExactOverride && !isRetrogradeModifier) || savedRow) && (
           <StudioButton type="button" onClick={() => onOpenSource(source.key, source.label, previewTemplate)} disabled={isLoading}>
             {previewTemplate ? savedRow ? "Preview template" : "Load preview" : savedRow ? "Edit source" : "Load and edit"}
           </StudioButton>

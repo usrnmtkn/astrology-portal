@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-11-03-owner-wording",
+  "packageVersion": "v3-2026-11-13-natal-retrograde-house",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -24,7 +24,7 @@
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "c1aa77216c5e19d202e5a0743b3bca3c8c580da44e9e6c569ff67af5b6e29826",
+    "sha256": "d85b37e976b0355b10b09e868389743fa227758e908672a124f1d27267d67a3f",
     "count": 9826,
     "emissionCount": 9902,
     "exactSourceMatchCount": 7663
