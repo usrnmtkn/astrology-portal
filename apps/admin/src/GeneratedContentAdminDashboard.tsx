@@ -1,4 +1,5 @@
 import { skyPublicationScheduled, skyPublicationIsFuture, type SkyPublicationRow } from './skyArticlePublicationState';
+import { studioPackageRecord as objectRecord } from "../../../src/shared/studioPackagePatch.js";
 import { studioLazy as lazy, StudioPanelLoadError } from "./studioLazy";
 import { templateSavedWordingReferences } from "./templateSavedWordingReferences";
 import SkyFallbackPlainFields from "./SkyFallbackPlainFields";
@@ -1380,10 +1381,6 @@ function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminRevie
     updatedAt: row.updated_at,
     rawGlobalRow: row
   };
-}
-
-function objectRecord(value: unknown): Record<string, unknown> | null {
-  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
 
 function astro101KindForDraft(draft: Pick<AdminDraft, "contentKey" | "sections">): Astro101Kind {

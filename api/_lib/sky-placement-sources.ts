@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import { mergeStudioPackagePatch } from "../../src/shared/studioPackagePatch.js";
 // @ts-ignore The editor uses the same approved corpus and correction layer as the reader.
 import { applySkyV4ContinuousCorpusCorrection, skyV4ContentStudioRecords } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 
@@ -26,10 +27,11 @@ export function skyPlacementStudioRecord(contentKey: string, record: Record<stri
     || record.contentKey !== contentKey || record.studio_content_type !== "continuous-placement"
     || String(record.planet).toLowerCase() !== String(baseline.planet).toLowerCase()
     || String(record.sign).toLowerCase() !== String(baseline.sign).toLowerCase()) return record;
-  const fallback = Object.hasOwn(record, "fallback")
-    ? record.fallback && typeof record.fallback === "object" && !Array.isArray(record.fallback)
-      ? { ...structuredClone(baseline.fallback), ...record.fallback } : record.fallback
-    : structuredClone(baseline.fallback);
+  let fallback = record.fallback;
+  if (!Object.hasOwn(record, "fallback")) fallback = structuredClone(baseline.fallback);
+  else if (fallback && typeof fallback === "object" && !Array.isArray(fallback) && Object.keys(fallback).length) {
+    fallback = mergeStudioPackagePatch(baseline.fallback, fallback);
+  }
   return { ...record, fallback,
     ...(!Object.hasOwn(record, "studio_editable_fields")
       ? { studio_editable_fields: structuredClone(baseline.studio_editable_fields.filter((field: { path: string }) => field.path.startsWith("fallback."))) } : {}) };

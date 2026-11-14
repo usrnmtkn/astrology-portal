@@ -1,4 +1,5 @@
 import { seasonArticleIdentity } from "../../../src/shared/seasonArticle";
+import { studioPackageObject as record } from "../../../src/shared/studioPackagePatch.js";
 
 export type ContentMotion = "retrograde" | "direct" | "unspecified";
 export type ContentMotionFilter = "all" | ContentMotion;
@@ -16,10 +17,6 @@ type MotionInspectableRow = {
   updated_at?: string | null;
   published_at?: string | null;
 };
-
-function record(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
-}
 
 function explicitMotion(value: unknown): ContentMotion | null {
   if (typeof value === "boolean") return value ? "retrograde" : "direct";

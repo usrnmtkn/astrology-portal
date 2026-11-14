@@ -1,4 +1,5 @@
 import { articleLibraryPrefixes } from "../../../src/shared/articleLibrary";
+import { studioPackageObject as record } from "../../../src/shared/studioPackagePatch.js";
 import { astro101ResolvedReaderPath, isAstro101ContentKey } from "../../web/src/content/astro101";
 import { skyMoonWriteupSection } from "./skyMoonWriteup";
 import { isSkyPlanetLivedKey } from "./skyWriteupRelations";
@@ -12,12 +13,6 @@ export type ArticleWorkspaceRow = {
   source_snapshot?: unknown;
   status?: string | null;
 };
-
-function record(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
-}
 
 function text(value: unknown) {
   return typeof value === "string" ? value.trim() : "";

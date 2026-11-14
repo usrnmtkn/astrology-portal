@@ -58,6 +58,28 @@ const legacyRows=studioVariableExportRows(writing.filter(variable=>variable.name
 ]);
 assert.equal(legacyRows.filter(row=>row.sourceKey===legacyKey&&row.version==='Saved draft'&&row.field==='body'&&row.content===legacyText).length,1,'Legacy body-only saves export their actual complete field once');
 
+// A sparse import and a partial draft must use the same omission/clear rules
+// as the source editor, including independent audience copy.
+const partialKey = 'cms/synthetic/partial-export';
+const partialBaseline = { body: 'Package primary.', body_you: 'Package You.', body_they: 'Package Friend.', era_layer: { frame: 'Package frame.', handoff: 'Package final sentence.' } };
+const partialVariable = { ...writing[0], sources: ['body_you', 'body_they', 'era_layer.frame', 'era_layer.handoff'].map(field => ({ key: partialKey, field, label: field })) };
+for (const pending of [false, true]) for (const clear of ['', null, [], {}]) {
+  const patch = { body: 'Exact saved primary.\n\nExact saved final sentence.', era_layer: { frame: clear } };
+  const saved = { content_key: partialKey, status: pending ? 'DRAFT' : 'LIVE', sections: { packageRecord: pending ? {} : patch, ...(pending ? { packageDraft: patch } : {}) } };
+  const unchanged = structuredClone({ partialBaseline, saved });
+  const output = studioVariableExportRows([partialVariable], new Map([[partialKey, partialBaseline]]), [saved]).filter(row => row.version !== 'Package');
+  const field = (name: string) => output.find(row => row.field === name)!;
+  assert.equal(field('body_you').content, patch.body, 'Saved primary alias outranks inherited You copy.');
+  assert.equal(field('body_they').content, partialBaseline.body_they, 'Friend copy remains independent.');
+  assert.equal(field('era_layer.frame').content, clear == null ? '' : typeof clear === 'string' ? clear : JSON.stringify(clear));
+  assert.equal(field('era_layer.handoff').content, partialBaseline.era_layer.handoff, 'An omitted nested sibling inherits.');
+  assert.deepEqual({ partialBaseline, saved }, unchanged, 'Export is read-only.');
+}
+for (const clear of ['', null]) {
+  const output = studioVariableExportRows([partialVariable], new Map([[partialKey, partialBaseline]]), [{ content_key: partialKey, status: 'DRAFT', sections: { packageRecord: { body: 'Retained raw alias.' }, packageDraft: { body_you: clear, body_they: clear, era_layer: {} } } }]).filter(row => row.version === 'Saved draft');
+  for (const field of ['body_you', 'body_they', 'era_layer.frame', 'era_layer.handoff']) assert.equal(output.find(row => row.field === field)?.content, '', `${field}: explicit clear must not resurrect package or alias text`);
+}
+
 // A shared reference is text, not serialized source JSON. Resolve the pinned
 // target from the same version; stale hashes are explicit failures, not prose.
 const ownerKey = 'sky-placement/article/sun/virgo', targetKey = 'sky-placement/article/sun/aries';

@@ -201,14 +201,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       const { studio_facts: _listingFacts, ...document } = row;
       return { ...document, inventory_only: false };
     });
-    if (!inventoryView && rows.some(row => row.status !== "ARCHIVED" && String(row.content_key).startsWith("sky-placement/article/"))) {
-      const { skyPlacementStudioRecord } = await import("../_lib/sky-placement-sources.js");
+    if (!inventoryView && rows.some(row => row.status !== "ARCHIVED" && row.sections && typeof row.sections === "object"
+      && Object.hasOwn(row.sections, "packageRecord"))) {
+      const { studioPackageSourceRecord } = await import("../_lib/studio-package-sources.js");
       rows = rows.map(row => {
         if (row.status === "ARCHIVED" || !row.sections || typeof row.sections !== "object" || Array.isArray(row.sections)) return row;
         const sections = row.sections as Record<string, unknown>;
         if (!sections.packageRecord || typeof sections.packageRecord !== "object" || Array.isArray(sections.packageRecord)) return row;
         return { ...row, sections: { ...sections,
-          packageRecord: skyPlacementStudioRecord(String(row.content_key), sections.packageRecord) } };
+          packageRecord: studioPackageSourceRecord(String(row.content_key), sections.packageRecord as Record<string, unknown>,
+            sections.packageDraft && typeof sections.packageDraft === "object" && !Array.isArray(sections.packageDraft)
+              ? sections.packageDraft as Record<string, unknown> : {}) } };
       });
     }
     const nextCursor = !id && rows.length === limit
