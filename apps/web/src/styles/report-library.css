@@ -55,8 +55,7 @@
 :root[data-reduce-motion] .report-loading { animation: none; }
 .report-back.floating-back-button { top: var(--control-navigation-top); font-size: var(--text-button-size); }
 .report-back { min-height: var(--control-navigation-size); height: var(--control-navigation-size); }
-.saved-generated-report__article.article-shell { gap: var(--space-4); }
-.saved-generated-report__card.article-card { display: grid; gap: var(--space-4); padding: 0; background: transparent; box-shadow: none; border: 0; }
+.saved-generated-report__card.article-card { row-gap: var(--space-7); }
 .saved-generated-report__created { margin-top: var(--space-7); font-family: var(--font-ui); font-size: var(--type-meta-size); color: var(--muted); }
 @media (max-width: 800px) {
  .report-library-page { padding: var(--mobile-route-padding); }
