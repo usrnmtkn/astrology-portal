@@ -140,5 +140,53 @@
     },
     "budgetLimits": "Existing transit-card allocations retained; no additional increase.",
     "validation": "All 200 selected API commands passed again on the integrated candidate with current prerequisites. All 31 focused browser cases passed from a fresh production build. CSS/token, bundle and public-asset privacy checks passed. Both worktrees retained their own unchanged-lockfile npm-ci installations. Required remote exact-head gates must run again."
+  },
+  "currentRelease": {
+    "date": "2026-11-14",
+    "baseRevision": "f4ea1bc68cb141ccc314a58d630781d17086660c",
+    "runtimeCandidateRevision": "56de3d1da2f52cd1783c975ad2c6177cec02b75b",
+    "integration": "Preserve the approved transit/aspect detail page from PR 1474, including its date subline, tags, chart-facts note and expanded separate Key dates container. Personal detail pages use the same 88px SVG aspect and planet badge as the new cards. Preserve all incoming bundle allocations and rationales, then apply the same previously measured card allowances.",
+    "main": {
+      "readerInitialCssGzipBytes": 59091,
+      "totalCssGzipBytes": 148689,
+      "totalJavaScriptGzipBytes": 3778098,
+      "memoryGraphCssGzipBytes": 32856
+    },
+    "candidate": {
+      "readerInitialCssGzipBytes": 59201,
+      "totalCssGzipBytes": 149315,
+      "totalJavaScriptGzipBytes": 3779315,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "delta": {
+      "readerInitialCssGzipBytes": 110,
+      "totalCssGzipBytes": 626,
+      "totalJavaScriptGzipBytes": 1217,
+      "memoryGraphCssGzipBytes": 105
+    },
+    "limits": {
+      "readerInitialCssGzipBytes": 59390,
+      "totalCssGzipBytes": 149662,
+      "totalJavaScriptGzipBytes": 3780153,
+      "memoryGraphCssGzipBytes": 33014
+    },
+    "api": {
+      "head": "56de3d1da2f52cd1783c975ad2c6177cec02b75b",
+      "commands": 200,
+      "allShardsPassed": true
+    },
+    "browser": {
+      "cardReportAndLunationCases": 31,
+      "approvedDetailAndCompleteOwnerPassageCases": 13,
+      "result": "Both fresh-build runs passed, with desktop/mobile and light/dark coverage."
+    },
+    "otherChecks": [
+      "CSS/token audits passed.",
+      "Bundle budgets passed.",
+      "Built public assets privacy scan passed.",
+      "Existing design-page, Key dates and complete reader-copy assertions preserved."
+    ],
+    "status": "Local integration verified. Required checks must run on the final up-to-date PR head before merge.",
+    "history": "Earlier sections retain the preceding source-pinned measurements and failures; this section describes the current integrated runtime."
   }
 }
