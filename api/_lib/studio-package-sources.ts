@@ -1,6 +1,7 @@
 import { servingPackageRecords } from "./serving-package-records.js";
 import { skyPlacementStudioRecord } from "./sky-placement-sources.js";
 import { mergeStudioPackagePatch } from "../../src/shared/studioPackagePatch.js";
+import { studioPackageSourceDefaults } from "../../src/shared/studioPackageSourceDefaults.js";
 import { isRetiredCompositionKey } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/retiredCompositions.mjs";
 import { isGovernedReaderEligible } from "../../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.js";
 
@@ -55,16 +56,8 @@ export function studioPackageSourceRecord(contentKey: string, record: Record<str
     contentKey, planet: baseline.planet, sign: baseline.sign, studio_content_type: baseline.studio_content_type, ...record
   });
   const paths = inheritedFields(baseline);
-  // Shared copy and You copy have legacy aliases. Filling a different alias
-  // must not make an installed passage outrank a saved edit or intentional blank.
-  const saved = { ...record, ...draft };
-  const aliases = ["body", "body_you", "Body", "text"];
-  const explicitAliases = aliases.filter(field => Object.hasOwn(saved, field));
   const defaults: Record<string, unknown> = {};
   for (const path of paths) {
-    const root = path.split(".")[0];
-    if (aliases.includes(root) && explicitAliases.some(field => field !== root)
-      || root === "body_they" && explicitAliases.some(field => field !== "body_you")) continue;
     const value = ownValue(baseline, path);
     if (value === undefined) continue;
     const parts = path.split(".");
@@ -75,7 +68,7 @@ export function studioPackageSourceRecord(contentKey: string, record: Record<str
     }
     target[parts.at(-1)!] = structuredClone(value);
   }
-  return mergeStudioPackagePatch(defaults, record);
+  return mergeStudioPackagePatch(studioPackageSourceDefaults(defaults, record, draft), record);
 }
 
 export function isApprovedStudioPackageField(contentKey: string, path: string, value: string) {
