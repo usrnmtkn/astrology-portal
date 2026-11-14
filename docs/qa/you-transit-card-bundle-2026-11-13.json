@@ -114,5 +114,31 @@
     "resultBeforeCorrection": "80 browser cases passed; one owner-passage case selected the former button and expected the date in the card line.",
     "correction": "Select the full-card link by its calculated aspect identity; verify the time/orb card line; retain the exact Oct 5, 2026 assertion on the detail page together with the complete opening and ending assertions.",
     "verification": "The corrected actual-reader browser case passed using a fresh preview of the unchanged verified build. No production code, content, dependency, calculation or bundle limit changed."
+  },
+  "currentMainIntegration": {
+    "date": "2026-11-14",
+    "baseRevision": "33192d954da0b4ea79da313db6a9655d5e68d615",
+    "runtimeCandidateRevision": "51a3746d3830d1fb8a867ed7f05002ff8cc59ae1",
+    "reason": "Required main-branch checks enforce an up-to-date head. Rebase preserves the independently merged natal retrograde modifiers and all transit card changes.",
+    "main": {
+      "readerInitialCssGzipBytes": 58675,
+      "totalCssGzipBytes": 148273,
+      "totalJavaScriptGzipBytes": 3777086,
+      "memoryGraphCssGzipBytes": 32856
+    },
+    "candidate": {
+      "readerInitialCssGzipBytes": 58785,
+      "totalCssGzipBytes": 148899,
+      "totalJavaScriptGzipBytes": 3778355,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "delta": {
+      "readerInitialCssGzipBytes": 110,
+      "totalCssGzipBytes": 626,
+      "totalJavaScriptGzipBytes": 1269,
+      "memoryGraphCssGzipBytes": 105
+    },
+    "budgetLimits": "Existing transit-card allocations retained; no additional increase.",
+    "validation": "All 200 selected API commands passed again on the integrated candidate with current prerequisites. All 31 focused browser cases passed from a fresh production build. CSS/token, bundle and public-asset privacy checks passed. Both worktrees retained their own unchanged-lockfile npm-ci installations. Required remote exact-head gates must run again."
   }
 }
