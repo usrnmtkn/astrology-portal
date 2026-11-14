@@ -17429,7 +17429,7 @@ function ProfileView({
     const savedReading = group.length === 1 && hasReaderFacingGeneratedCopy(savedGeneratedContent) ? savedGeneratedContent : null;
     const headline = savedReading
       ? firstReaderFacingCopy([savedReading.headline]) || undefined
-      : reading?.heading !== personalTransitDisplayTitle(transit) ? reading?.heading : undefined;
+      : reading?.tier !== "approved-transit-composition-v1" && reading?.heading !== personalTransitDisplayTitle(transit) ? reading?.heading : undefined;
     const rowSummary = transit.timing
       ? savedReading
         ? generatedContentParagraphs(savedReading).join("\n\n") || generatedContentSections(savedReading).map(section => section.body).join("\n\n")
