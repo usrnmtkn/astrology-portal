@@ -140,6 +140,18 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark'] as const)
       await page.keyboard.press('Enter');
       await expect(page).toHaveURL(new RegExp(`#sky/aspect/moon/square/mercury/at/${encodeURIComponent(event.startsAt)}$`));
       await expectSkyAspectBody(page, body);
+      const article = page.locator(".transit-aspect-article-page");
+      await expect(article).toBeVisible();
+      await expect(article.locator(".article-id > .aspect-badge .aspect-badge__planet")).toHaveCount(1);
+      await expect(article.locator(".article-rule, .sky-detail-end")).toHaveCount(0);
+      await expect(article.locator(".sky-aspect-mechanics h2")).toHaveCount(0);
+      const timeline = article.locator(".article-key-dates");
+      if (await timeline.count()) expect(await timeline.evaluate(element => element.parentElement?.classList.contains("article-shell"))).toBe(true);
+      await page.evaluate(async () => {
+        await document.fonts.ready;
+        await Promise.all(document.getAnimations().filter(animation => animation.effect?.getComputedTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => undefined)));
+      });
+      await page.screenshot({ path: `test-results/transit-design/sky-${view}-${theme}-${width}.png`, fullPage: true, animations: "disabled" });
     };
     await openAspect();
     await page.goBack();

@@ -1,3 +1,4 @@
+import { articleTransitKeyDates } from "./services/articleTransitDates";
 import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
@@ -772,6 +773,7 @@ export type YouTransitArticle = {
   natalPlanetReading?: import("./content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
   transitDescription?: string;
+  keyDates?: ReturnType<typeof articleTransitKeyDates>;
   id: string;
   title: string;
   glyph?: string;
@@ -17451,6 +17453,7 @@ function ProfileView({
       sections: articleSections,
       generatedContent: group.length === 1 ? savedGeneratedContent : null,
       transitDescription: transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect)),
+      keyDates: articleTransitKeyDates(transit.timing, exactDateFromInput(targetDate, transitEventTimeZone(transit))?.toISOString() ?? targetDate, transitEventTimeZone(transit)),
       meta: [
         ...(peakLabel ? [{ label: "Timing", value: peakLabel }] : []),
         ...(currentRange ? [{ label: "Current contact", value: currentRange }] : []),
@@ -17656,6 +17659,7 @@ function ProfileView({
                     summary: "",
                     generatedContent: savedGeneratedContent,
                     transitDescription: transitArticleDescription(transit, natalSky, transitAspectTechnicalVerb(transit.aspect)),
+                    keyDates: articleTransitKeyDates(transit.timing, exactDateFromInput(targetDate, transitEventTimeZone(transit))?.toISOString() ?? targetDate, transitEventTimeZone(transit)),
                     sections: normalized.sections.map((section) => ({
                       heading: section.heading,
                       tldr: "",

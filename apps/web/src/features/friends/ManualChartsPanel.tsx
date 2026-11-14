@@ -1,3 +1,4 @@
+import { articleTransitKeyDates } from "../../services/articleTransitDates";
 import { LunationTransitCard, lunationTransitReading } from "../../components/LunationTransitSection";
 import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "../../services/weeklyHoroscope";
 import { returnToArticleParent } from "../../services/articleNavigation";
@@ -2481,8 +2482,12 @@ export function ManualChartsPanel({
       kicker: "Transit",
       aspectType: transit.aspect,
       title,
+      keyDates: articleTransitKeyDates(transit.timing, currentSky.generatedAt, transit.timeZone ?? transit.timing?.timeZone),
       duration: transit.dailyPeak?.exactToday.length ? personalDailyPeakLabel(transit.dailyPeak) : timing.rangeLabel,
-      pills: { durationLabel: timing.durationLabel },
+      pills: { labels: [
+        { label: transit.term === "long" ? "Long-term" : "Short-term", tone: "term" as const },
+        ...(transit.natalHouse ? houseLifeAreaKeywords(transit.natalHouse).map(label => ({ label, tone: "muted" as const })) : [])
+      ] },
       meta: [
         transit.dailyPeak?.exactToday.length ? personalDailyPeakLabel(transit.dailyPeak) : "",
         timing.rangeLabel,
