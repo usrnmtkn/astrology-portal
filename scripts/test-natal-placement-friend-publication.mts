@@ -94,3 +94,4 @@ for (const [planet,sign,house] of [['chiron','taurus',12],['lilith','virgo',4]] 
 }
 if (process.env.NATAL_FRIEND_SNAPSHOT_OUT) writeFileSync(process.env.NATAL_FRIEND_SNAPSHOT_OUT,JSON.stringify(snapshot,null,2),{mode:0o600});
 console.log('Complete natal Friend save/reopen, variable validation, stale-write refusal, explicit approval receipt, reader transport, browser/dist names, motion isolation and unchanged You passed.');
+await import('./test-natal-retrograde-modifiers.mts');

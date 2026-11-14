@@ -142,8 +142,12 @@ function fallbackHookDisplayTitleUncached(contentKey: string) {
     return `${words(args[0])} in the ${ordinalHouse(args[1])} · ${familyLabel(family)}${args.length > 2 ? ` · ${args.slice(2).map(variant).join(" · ")}` : ""}`;
   }
 
+  if (family === "natal-retrograde-modifier" && args.length === 2) {
+    return `${words(args[0])} retrograde in the ${ordinalHouse(args[1])} · Retrograde modifier`;
+  }
+
   if (family === "natal-you-placement-complete-final" && args.length >= 3) {
-    return `${words(args[0])} in ${words(args[1])} in the ${ordinalHouse(args[2])} · ${familyLabel(family)}`;
+    return `${words(args[0])}${args[3] === "retrograde" ? " retrograde" : ""} in ${words(args[1])} in the ${ordinalHouse(args[2])} · ${familyLabel(family)}`;
   }
 
   if (["placement-sentence", "placement-sign-lived", "natal-you-placement-sign-final"].includes(family) && args.length >= 2) {

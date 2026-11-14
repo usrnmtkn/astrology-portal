@@ -537,6 +537,13 @@ function applyPersonalTransitPackageDraft(record: Record<string, unknown>, secti
 }
 
 function validateAndApproveNatalAspectCopy(record: Record<string, unknown>, contentKey: string) {
+  if (libs().isNatalRetrogradeModifierKey(contentKey)) {
+    if (![record.body, record.body_they].every(value => typeof value === "string" && value.trim())) {
+      throw new GeneratedContentRequestError("Write both You and Friend retrograde modifiers before publishing. You can save an unfinished draft for later.", 400);
+    }
+    approveNatalAspectStudioCopy(record, contentKey);
+    return;
+  }
   if (/^fallback-hook\/natal-you-placement-complete-final\//u.test(contentKey)) {
     approveNatalAspectStudioCopy(record, contentKey);
     return;
@@ -797,7 +804,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     for (const slot of packagePlaceholders(value)) {
       if (isReusableLunationKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
         && LUNATION_TIMING_VARIABLES.some(name => slot === `{{${name}}}`)) continue;
-      if (/^fallback-hook\/natal-you-placement-complete-final\//u.test(row.content_key)
+      if ((/^fallback-hook\/natal-you-placement-complete-final\//u.test(row.content_key) || libs().isNatalRetrogradeModifierKey(row.content_key))
         && field.endsWith("body_they") && slot === "{{ownerName}}") continue;
       if (libs().isConnectionSourceKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
         && libs().connectionSourceSlots(row.content_key).includes(slot.slice(2, -2))) continue;

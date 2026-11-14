@@ -74,7 +74,15 @@ for(const width of [320,390,1440])for(const theme of ['light','dark'])test(`Repo
  await expect(page.locator('.report-library-row')).toHaveCount(1);await first.getByRole('button',{name:/More options/}).click();await page.getByRole('menuitem',{name:'Restore',exact:true}).click();
  await expect(page.getByRole('heading',{name:'Nothing archived',exact:true})).toBeVisible();await page.getByRole('tab',{name:'Reports 7',exact:true}).click();
  await page.locator('.report-library-row__open').first().click();await expect(page.getByRole('heading',{level:1,name:'A day with space to think',exact:true})).toBeVisible();
- await expect(page.locator('.saved-generated-report__body')).toContainText('The complete saved report ending.');await page.reload();
+ const card = page.locator('.saved-generated-report .article-card');
+ await expect(card).toHaveCount(1);
+ await expect(card.locator('hr, [role="separator"]')).toHaveCount(0);
+ await expect(card).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+ await expect(card.locator(':scope > header')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+ await expect(card.locator(':scope > .saved-generated-report__body')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+ await expect(card).toContainText('The complete saved report ending.');
+ await page.screenshot({path: test.info().outputPath('saved-report.png'), fullPage: true});
+ await page.reload();
  await expect(page.locator('.saved-generated-report__body').getByText('This paragraph repeats.',{exact:true})).toHaveCount(2);
  await page.getByRole('button',{name:'Back to Reports',exact:true}).click();await expect(page.locator('.report-library-row__unread')).toHaveCount(2);
  data.rows=[];await page.reload();await expect(page.getByRole('heading',{name:'No reports yet',exact:true})).toBeVisible();

@@ -2,6 +2,7 @@ import { StudioButton } from "./StudioControls";
 import { Stack, Text } from "./studio-ds/primitives";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { subscribeToContentPublications } from "../../web/src/content/contentPublicationState";
+import { isNatalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
 import { useEffect, useMemo, useRef, useState } from "react";
 import { requestStudioJson } from "./generatedContentClient";
 import {
@@ -102,7 +103,7 @@ function sourceLabel(contentKey: string) {
   if (contentKey.includes("planet-in-sign") || contentKey.includes("placement-sign-final")) return "Planet-in-sign section";
   if (contentKey.includes("angle-in-sign") || contentKey.includes("angle-sign")) return "Angle-in-sign section";
   if (contentKey.includes("house-context")) return "House section";
-  if (contentKey.includes("natal.modifier.retrograde")) return "Retrograde modifier";
+  if (isNatalRetrogradeModifierKey(contentKey)) return "Retrograde modifier";
   if (contentKey.includes("complete-final")) return "Exact full write-up";
   return "Reader section";
 }
@@ -115,43 +116,7 @@ function ignoredReasonLabel(reason: IgnoredPreviewOverride["reason"]) {
   return "not reader-approved";
 }
 
-export function natalPlacementOverrideDraft(contentKey: string, label: string, body: string) {
-  return {
-    id: null,
-    contentKey,
-    surface: "you" as const,
-    mode: "in_depth" as const,
-    status: "DRAFT" as const,
-    headline: label,
-    summary: "Optional exact write-up for this planet, sign, house, and motion.",
-    body,
-    lane: "serving",
-    reviewState: "EDITORIAL_REVIEW_REQUIRED",
-    blockType: "natal_placement",
-    promptVersion: "manual-admin",
-    sections: {
-      packageRecord: {
-        body,
-        contentKey,
-        content_role: "full_copy",
-        grammar_frame: "complete_sentence",
-        headline: label,
-        reader_only: true,
-        render_policy: "reader-only-exact-lived-v1",
-        review_status: "needs_review"
-      }
-    },
-    facts: { fallbackArchitectureV3: true },
-    reviewerNotes: "Created from the effective natal reader preview. Review the complete write-up before publishing.",
-    sourceSnapshot: {
-      contentType: "natal-placement-exact-override",
-      contentSystem: "fallback",
-      content_role: "full_copy",
-      review_status: "needs_review",
-      sourcePackage: "tldrastro-fallback-architecture-v3"
-    }
-  };
-}
+export { natalPlacementOverrideDraft } from "./natalPlacementDraft";
 
 export default function NatalPlacementReaderPreview({ house, initialAudience = "you", motion, onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
   const [publicationVersion, setPublicationVersion] = useState(0);
@@ -247,7 +212,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
   );
   const exactServingFromStudio = Boolean(exactServing && preview.appliedOverrideKeys.includes(exactKey));
   const usingLiveStudioSources = preview.appliedOverrideKeys.length > 0;
-  const label = house ? natalPlacementLabel(planet, sign, house) : natalPlacementSignLabel(planet, sign);
+  const label = house ? natalPlacementLabel(planet, sign, house, motion) : natalPlacementSignLabel(planet, sign);
 
   const provenanceLabel = audience === "they"
     ? exactServingFromStudio
@@ -327,7 +292,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             </p>
           )}
           {motion === "retrograde" && exactServing && audience === "you" && (
-            <p className="admin-field-hint">This exact retrograde override is served verbatim. It does not append the shared retrograde fallback; include the retrograde treatment in the exact write-up itself.</p>
+            <p className="admin-field-hint">Full write-ups include their own retrograde treatment.</p>
           )}
         </div>
       ) : (

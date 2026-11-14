@@ -995,6 +995,26 @@ function natalPlacementOwnerCopy(body, voice) {
   return voice === "you" ? body : body.split("{{ownerName}}").join(voice);
 }
 
+// apps/web/src/content/natalRetrogradeModifier.js
+var natalRetrogradeBodies = [
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto",
+  "chiron",
+  "lilith",
+  "north-node",
+  "south-node"
+];
+var NATAL_RETROGRADE_MODIFIER_PREFIX = "fallback-hook/natal-retrograde-modifier/";
+function natalRetrogradeModifierKey(planet, house) {
+  return natalRetrogradeBodies.includes(planet) && /^(?:[1-9]|1[0-2])$/u.test(String(house)) ? `${NATAL_RETROGRADE_MODIFIER_PREFIX}${planet}/${house}` : null;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/publicationGuard.mjs
 function assertPublicationKey(key, blockedKeys, SourceGapError2) {
   if (!isRetiredCompositionKey(key) && !blockedKeys.has(key)) return;
@@ -1188,7 +1208,6 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       if (specific) mods.push(specific);
       else mod(`fallback-template/natal.modifier.dignity-${facts2.dignity}`);
     }
-    if (facts2.isRetrograde) mod("fallback-template/natal.modifier.retrograde");
     if (facts2.sect?.hasReliableSect && facts2.sect.effect) {
       mod(`fallback-template/natal.modifier.sect-${facts2.sect.isDayChart ? "day" : "night"}`, { sectEffect: facts2.sect.effect });
     }
@@ -1250,6 +1269,12 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
         headlineTemplate = houseTemplate;
         ctx.houseOrdinal = houseCtx.houseOrdinal;
       }
+    }
+    const retrogradeKey = facts2.isRetrograde ? natalRetrogradeModifierKey(planet, house) : null;
+    const retrograde = retrogradeKey ? getReaderLivedRow(retrogradeKey, voice, opts2) : null;
+    if (retrograde) {
+      parts.push(natalPlacementOwnerCopy(retrograde.body ?? "", facts2.voice));
+      partKeys.push(retrogradeKey);
     }
     return {
       headline: exactHouseLived ? `${title6(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
@@ -6657,7 +6682,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-11-03-owner-wording";
+var PACKAGE_VERSION = "v3-2026-11-13-natal-retrograde-house";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
