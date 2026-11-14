@@ -1,0 +1,88 @@
+{
+  "schema": "web-bundle-change/v1",
+  "date": "2026-11-13",
+  "baseRevision": "b3bfc14ea76dfd261fc05d76ecf5c2da015a3cb9",
+  "runtimeCandidateRevision": "73d4574ac719231bed45147a66c63addb7dde96d",
+  "profile": "Separate worktrees, each with its own npm ci installation; native ARM64 Node 22.20.0; ordinary knowledge/build prerequisites; identical synthetic visual-smoke Supabase values and natal-pattern flag.",
+  "main": {
+    "readerInitialCssGzipBytes": 58675,
+    "totalCssGzipBytes": 148273,
+    "totalJavaScriptGzipBytes": 3777244,
+    "memoryGraphCssGzipBytes": 32856
+  },
+  "candidate": {
+    "readerInitialCssGzipBytes": 58785,
+    "totalCssGzipBytes": 148894,
+    "totalJavaScriptGzipBytes": 3778486,
+    "memoryGraphCssGzipBytes": 32961
+  },
+  "delta": {
+    "readerInitialCssGzipBytes": 110,
+    "totalCssGzipBytes": 621,
+    "totalJavaScriptGzipBytes": 1242,
+    "memoryGraphCssGzipBytes": 105
+  },
+  "previousLimits": {
+    "readerInitialCssGzipBytes": 58750,
+    "totalCssGzipBytes": 148382,
+    "totalJavaScriptGzipBytes": 3777593,
+    "memoryGraphCssGzipBytes": 32886
+  },
+  "allocations": {
+    "readerInitialCssGzipBytes": 128,
+    "totalCssGzipBytes": 768,
+    "totalJavaScriptGzipBytes": 1536,
+    "memoryGraphCssGzipBytes": 128
+  },
+  "newLimits": {
+    "readerInitialCssGzipBytes": 58878,
+    "totalCssGzipBytes": 149150,
+    "totalJavaScriptGzipBytes": 3779129,
+    "memoryGraphCssGzipBytes": 33014
+  },
+  "hostedFailure": {
+    "head": "73d4574ac719231bed45147a66c63addb7dde96d",
+    "check": "auth-access",
+    "url": "https://github.com/usrnmtkn/astrology-portal/actions/runs/43548320262/job/132304710048",
+    "measurements": {
+      "readerInitialCssGzipBytes": 58785,
+      "totalCssGzipBytes": 148894,
+      "totalJavaScriptGzipBytes": 3778608,
+      "memoryGraphCssGzipBytes": 32961
+    },
+    "overPreviousLimits": {
+      "readerInitialCssGzipBytes": 35,
+      "totalCssGzipBytes": 512,
+      "totalJavaScriptGzipBytes": 1015,
+      "memoryGraphCssGzipBytes": 75
+    },
+    "localHostedJavaScriptDifference": 122
+  },
+  "fileCounts": {
+    "mainJavaScript": 307,
+    "candidateJavaScript": 308,
+    "mainCss": 24,
+    "candidateCss": 24
+  },
+  "reason": "Record the bounded cost of the requested one-title personal transit cards, fixed timing/orb slot, SVG aspect/planet badge, matching detail icon and specified typography/layout. The extra shared component creates one shared JavaScript chunk. This records interface cost, not a performance improvement. Complete CMS bodies, source selection, ephemeris calculations and dependencies remain unchanged.",
+  "unchangedLimits": {
+    "appBootGzipBytes": 400000,
+    "appChunkGzipBytes": 91358,
+    "readerBootGzipBytes": 458250,
+    "largestJavaScriptGzipBytes": 520000,
+    "friendsWorkspaceChunkGzipBytes": 16500,
+    "skyDetailChunkGzipBytes": 6981,
+    "reportRouteChunkGzipBytes": 4500,
+    "skyPlacementFallbackChunkGzipBytes": 150000,
+    "lunationBookFallbackChunkGzipBytes": 215000,
+    "transitFallbackChunkGzipBytes": 390000,
+    "calendarFallbackChunkGzipBytes": 10000,
+    "relationshipFallbackChunkGzipBytes": 230000,
+    "signupChunkGzipBytes": 4325,
+    "memoryGraphJavaScriptGzipBytes": 64000,
+    "horoscopeReaderChunkGzipBytes": 5800,
+    "horoscopeEditorChunkGzipBytes": 16400,
+    "studioCsvChunkGzipBytes": 8200
+  },
+  "verification": "Main passes the original bundle limits. Candidate exceeds the four original limits by the recorded amounts. Require the revised bundle check plus every exact-head release gate; no failed run is waived. Retain existing passing API/browser evidence only where inputs are unchanged."
+}

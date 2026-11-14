@@ -2,7 +2,7 @@
   "appBootGzipBytes": 400000,
   "appChunkGzipBytes": 91358,
   "readerBootGzipBytes": 458250,
-  "readerInitialCssGzipBytes": 59262,
+  "readerInitialCssGzipBytes": 59390,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 6981,
@@ -13,9 +13,54 @@
   "calendarFallbackChunkGzipBytes": 10000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
-  "totalCssGzipBytes": 148894,
-  "totalJavaScriptGzipBytes": 3778617,
+  "totalCssGzipBytes": 149662,
+  "totalJavaScriptGzipBytes": 3780153,
   "_rationale": {
+    "youTransitCardLayout20261113": {
+      "baseRevision": "b3bfc14ea76dfd261fc05d76ecf5c2da015a3cb9",
+      "runtimeCandidateRevision": "73d4574ac719231bed45147a66c63addb7dde96d",
+      "main": {
+        "readerInitialCssGzipBytes": 58675,
+        "totalCssGzipBytes": 148273,
+        "totalJavaScriptGzipBytes": 3777244,
+        "memoryGraphCssGzipBytes": 32856
+      },
+      "candidate": {
+        "readerInitialCssGzipBytes": 58785,
+        "totalCssGzipBytes": 148894,
+        "totalJavaScriptGzipBytes": 3778486,
+        "memoryGraphCssGzipBytes": 32961
+      },
+      "delta": {
+        "readerInitialCssGzipBytes": 110,
+        "totalCssGzipBytes": 621,
+        "totalJavaScriptGzipBytes": 1242,
+        "memoryGraphCssGzipBytes": 105
+      },
+      "allocation": {
+        "readerInitialCssGzipBytes": 128,
+        "totalCssGzipBytes": 768,
+        "totalJavaScriptGzipBytes": 1536,
+        "memoryGraphCssGzipBytes": 128
+      },
+      "reason": "Record the bounded cost of the requested one-title personal transit cards, fixed timing/orb slot, SVG aspect/planet badge, matching detail icon and specified typography/layout. The extra shared component creates one shared JavaScript chunk. This records interface cost, not a performance improvement. Complete CMS bodies, source selection, ephemeris calculations and dependencies remain unchanged.",
+      "preservedCiFailure": "PR 1475 auth-access job 132304710048 on 73d4574ac exceeded initial CSS by 35 bytes, total CSS by 512, total JavaScript by 1015 and memory CSS by 75. Matched local JavaScript is 122 bytes below the hosted measurement; the bounded allowance retains headroom for that observed difference. Other numeric limits and prior rationales remain unchanged.",
+      "evidence": "docs/qa/you-transit-card-bundle-2026-11-13.json",
+      "integratedBaseRevision": "f4ea1bc68cb141ccc314a58d630781d17086660c",
+      "inheritedLimits": {
+        "readerInitialCssGzipBytes": 59262,
+        "totalCssGzipBytes": 148894,
+        "totalJavaScriptGzipBytes": 3778617,
+        "memoryGraphCssGzipBytes": 32886
+      },
+      "integratedLimits": {
+        "readerInitialCssGzipBytes": 59390,
+        "totalCssGzipBytes": 149662,
+        "totalJavaScriptGzipBytes": 3780153,
+        "memoryGraphCssGzipBytes": 33014
+      },
+      "integrationReason": "Preserve the separately merged approved transit/aspect reading design allocations from PR 1474 and apply the same bounded card-layout allowances on top. All other numeric limits and pre-existing rationales remain unchanged; the integrated candidate still requires measured verification and exact-head CI."
+    },
     "transitAspectReaderDesign20261113": {
       "baseRevision": "61a60346e09b72ba6b70774740f238e2f402cd76",
       "runtimeCandidateRevision": "7ce35cd01b84a6340dde998ed0efa832f56dee50",
@@ -348,7 +393,7 @@
     "lunationTransitLayout20261112": "Matched isolated npm-ci builds of main 988c17cf7dccad62c01180fd4273bd5c2caebe60 and PR #1460 use identical locked dependencies, Node v22.20.0 arm64, gzip level 9, and the same synthetic reader build inputs. Moving the shared lunation UI and its new stylesheet entirely into the deferred You/Friends pages preserves all startup caps; the shared reader stylesheet remains byte-identical at 38599 gzip bytes. Aggregate JavaScript measures 3771671 to 3775865 (+4194), aggregate CSS 148033 to 148197 (+164), and the existing HoroscopeReader chunk 5678 to 5759 (+81) from shared module extraction/import overhead. Allocate only 4500 aggregate JavaScript bytes, 200 aggregate CSS bytes and 100 HoroscopeReader bytes for this requested feature, with rounding headroom. All other numeric limits, startup boundaries, source guards, assertions and dependencies remain unchanged. Preserve the original failed budget results: initial reader CSS +1428 over limit before deferral, then aggregate JS +3458, CSS +143 and HoroscopeReader +48 over the previous ceilings after deferral. This is a measured UI feature cost, not a performance-improvement claim. The final comparison includes restored existing non-lunar weekly cards: hiding the lunar section must not suppress Solar Return or other weekly personal-transit readings."
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
-  "memoryGraphCssGzipBytes": 32886,
+  "memoryGraphCssGzipBytes": 33014,
   "horoscopeReaderChunkGzipBytes": 5800,
   "horoscopeEditorChunkGzipBytes": 16400,
   "studioCsvChunkGzipBytes": 8200
