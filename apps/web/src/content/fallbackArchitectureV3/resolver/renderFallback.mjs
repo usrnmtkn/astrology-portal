@@ -235,6 +235,7 @@ function renderNatalPlacementReference(facts, opts = {}) {
   const possessive = facts.voice === "you" ? "Your" : `${facts.voice}'s`;
   const ctx = {
     possessive,
+    ...(house ? { houseOrdinal: ordinal(house) } : {}),
     planetTitle: title(planet),
     planetRef: needsArticle ? `the ${title(planet)}` : title(planet),
     planetRefCap: needsArticle ? `The ${title(planet)}` : title(planet),

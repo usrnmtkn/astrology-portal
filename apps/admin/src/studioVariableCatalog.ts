@@ -1,6 +1,6 @@
 import { variableLabel } from './variablePresentation';
 export type StudioVariableSource = { key: string; label: string; field: string };
-export type StudioVariableUsage = { key: string; label: string; surface: string };
+export type StudioVariableUsage = { key: string; label: string; surface: string; fields?: string[]; dependency?: boolean; retired?: boolean };
 export type StudioVariable = {
   id: string;
   name: string;
@@ -8,8 +8,11 @@ export type StudioVariable = {
   kind: "editable" | "readonly" | "unmapped";
   description: string;
   source: string;
+  example?: string;
   usages: StudioVariableUsage[];
   sources: StudioVariableSource[];
+  retired?: boolean;
+  /** Used only inside its own template; listed in the export, not offered in the variable picker. */
 };
 export type StudioVariableCatalog = { schema: "studio-variables/v1"; variables: StudioVariable[] };
 

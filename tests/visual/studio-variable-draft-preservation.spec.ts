@@ -186,6 +186,8 @@ for (const [width, theme] of [[1440, 'light'], [390, 'dark']] as const) {
         await page.getByRole('menuitem', { name: /Create variable/u }).click();
         await expect(form).toBeVisible();
       };
+      await expect(library).toHaveValue('');
+      await library.selectOption('custom');
       await expect(page.getByRole('heading', { name: 'Create your first variable', exact: true })).toBeVisible();
       await create();
       await expect(form.getByLabel('Shared value', { exact: true })).toHaveValue('');

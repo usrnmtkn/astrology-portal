@@ -218,7 +218,7 @@
     "test:zodiac-season-variables": "node --import tsx scripts/test-zodiac-season-variables.mts && node --import tsx scripts/test-zodiac-season-renderers.mts",
     "test:event-dates": "node --import tsx scripts/test-app-event-date-consistency.mts",
     "test:lunation-timing-variables": "node --import tsx scripts/test-lunation-timing-variables.mts",
-    "test:studio-variables": "node --import tsx scripts/test-studio-variable-catalog.mts && node --import tsx scripts/test-studio-variable-renderers.mts",
+    "test:studio-variables": "node --import tsx scripts/test-studio-variable-catalog.mts && node --import tsx scripts/test-studio-variable-export-coverage.mts && node --import tsx scripts/test-studio-variable-availability.mts && node --import tsx scripts/test-studio-variable-renderers.mts",
     "pretest:calendar-subscriptions": "npm run prepare:app-test-dependencies",
     "test:calendar-subscriptions": "node --import tsx scripts/test-calendar-subscriptions.mts",
     "test:content-reader-privacy": "node --import tsx scripts/test-reader-content-pagination.mts && node --import tsx scripts/test-astro-101-reader.mts && node --import tsx scripts/test-astro-101-revisions.mts && node --import tsx scripts/test-article-library.mts && node --import tsx scripts/test-publication-recovery-status.mts && node --import tsx scripts/test-generated-row-writers.mts && node --import tsx scripts/test-content-reader-privacy.mts && node --import tsx scripts/test-content-studio-private-versions.mts && node scripts/test-content-studio-last-known-good.mjs && node --import tsx scripts/test-content-studio-publication-receipts.mts && node --import tsx scripts/test-reader-client-recovery.mts",

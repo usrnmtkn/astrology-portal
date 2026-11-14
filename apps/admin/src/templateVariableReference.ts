@@ -1,5 +1,6 @@
 import { ZODIAC_SEASON_VARIABLES, supportsZodiacSeasonVariables } from "../../web/src/content/fallbackArchitectureV3/resolver/zodiacSeasonVariables.mjs";
 import {isReusableLunationKey, LUNATION_TIMING_VARIABLES} from '../../../src/shared/lunationTimingVariables';
+import { natalPlacementVariableNames } from '../../web/src/content/fallbackArchitectureV3/resolver/natalPlacementVariables.mjs';
 export type TemplateVariableRequirement = "Required" | "Optional" | "Runtime";
 
 export type TemplateVariableReference = {
@@ -18,6 +19,56 @@ type VariableDefinition = Pick<TemplateVariableReference, "meaning" | "example" 
 };
 
 const variableDefinitions: Record<string, VariableDefinition> = {
+  ownerName: {meaning: "The selected chart owner's display name in a supported Friend passage.", example: "Alex", source: "Calculated selected chart owner", sourceKind: "runtime"},
+  ...Object.fromEntries([
+    ['priorSign', 'Previous calculated sign', 'Libra'],
+    ['priorSignEntryDate', 'Calculated entry into the previous sign', 'October 1'],
+    ['priorSignExitDate', 'Calculated exit from the previous sign', 'November 1'],
+    ['previousResidencyEntryDateWithYear', 'Previous calculated residency entry, including year', 'October 1, 2026'],
+    ['previousResidencyExitDateWithYear', 'Previous calculated residency exit, including year', 'November 1, 2026']
+  ].map(([name, meaning, example]) => [name, {meaning, example, source: 'Calculated continuous Sky placement', sourceKind: 'runtime'}])),
+  window: {meaning: "The event or cycle's supplied timing window.", example: "Through November 20", source: "Calculated event/cycle timing context", sourceKind: "runtime"},
+  rulerRef: {meaning: "The selected chart ruler formatted in a sentence, including the for the Sun or Moon.", example: "the Moon or Venus", source: "Calculated chart ruler", sourceKind: "runtime"},
+  nextMoonSignEntryTime: {meaning: "The next calculated Moon sign entry time in the selected location's time zone.", example: "4:30 PM EST", source: "Calculated Calendar passage context", sourceKind: "runtime"},
+  moonPhase: {meaning: "The calculated lunar phase for the selected Calendar period.", example: "Waxing crescent", source: "Calculated Calendar passage context", sourceKind: "runtime"},
+  seasonName: {meaning: "The calculated zodiac season name for the selected Calendar period.", example: "Scorpio season", source: "Calculated Calendar passage context", sourceKind: "runtime"},
+  ...Object.fromEntries([
+    ["aRef", "First event planet and sign", "Mercury in Virgo"],
+    ["bRef", "Second event planet and sign", "Saturn in Pisces"],
+    ["dateLine", "Calculated event date lead-in", "On November 13"],
+    ["dateLineLower", "Event date lead-in with a lowercase initial, supplied by LunarCalendar", "on November 13"],
+    ["houseAOrdinal", "First event's calculated house ordinal", "4th"],
+    ["houseBOrdinal", "Second event's calculated house ordinal", "10th"]
+  ].map(([name, meaning, example]) => [name, {meaning, example, source: "Calculated Sky event context", sourceKind: "runtime"}])),
+  ...Object.fromEntries([
+    ["allWord", "Both for two Circle members, all for three or more", "both"],
+    ["names", "Circle member names formatted for the start of a sentence", "You and Alex"],
+    ["namesMid", "Circle member names formatted for the middle of a sentence", "you and Alex"],
+    ["nameA", "First selected Circle synastry member's supplied name", "Alex"],
+    ["nameB", "Second selected Circle synastry member's supplied name", "Sam"],
+    ["lunationRef", "Calculated Circle lunation kind and sign", "The Full Moon in Taurus"],
+    ["retroRef", "Calculated Circle retrograde planet label", "Mercury retrograde"]
+  ].map(([name, meaning, example]) => [name, {meaning, example, source: "Calculated Friends Circle context", sourceKind: "runtime"}])),
+  ...Object.fromEntries([
+    ["personName", "Full display name", "Alex Example"], ["personNamePossessive", "Possessive full display name", "Alex Example's"],
+    ["personPreferredName", "Preferred name", "Alex"], ["personPreferredNamePossessive", "Possessive preferred name", "Alex's"],
+    ["personSubject", "Subject pronoun", "they"], ["personSubjectCapitalized", "Capitalized subject pronoun", "They"],
+    ["personObject", "Object pronoun", "them"], ["personObjectCapitalized", "Capitalized object pronoun", "Them"],
+    ["personPossessiveAdjective", "Possessive adjective", "their"], ["personPossessiveAdjectiveCapitalized", "Capitalized possessive adjective", "Their"],
+    ["personPossessivePronoun", "Possessive pronoun", "theirs"], ["personPossessivePronounCapitalized", "Capitalized possessive pronoun", "Theirs"],
+    ["personReflexive", "Reflexive pronoun", "themselves"], ["personReflexiveCapitalized", "Capitalized reflexive pronoun", "Themselves"],
+    ["personBePresent", "Present-tense be for the selected pronouns", "are"], ["personBePast", "Past-tense be for the selected pronouns", "were"],
+    ["personHavePresent", "Present-tense have for the selected pronouns", "have"], ["personVerbSuffix", "Present-tense verb suffix for the selected pronouns", ""]
+  ].map(([name, meaning, example]) => [name, {meaning, example, source: "Runtime Daily Friend names and pronouns", sourceKind: "runtime"}])),
+  aTopic: {meaning: "Saved topic of the first event planet.", example: "Selected planet-topic writing", source: "Planet vocabulary", sourceKind: "saved-copy"},
+  houseATopic: {meaning: "Saved topic of the first event house.", example: "Selected house-topic writing", source: "House vocabulary", sourceKind: "saved-copy"},
+  houseJurisdiction: {meaning: "Saved jurisdiction of the event house.", example: "Selected house-jurisdiction writing", source: "House jurisdiction vocabulary", sourceKind: "saved-copy"},
+  jurisdiction: {meaning: "Saved jurisdiction of the lunation horoscope house.", example: "Selected house-jurisdiction writing", source: "House jurisdiction vocabulary", sourceKind: "saved-copy"},
+  rulerHouseJurisdiction: {meaning: "Retired empty-house V2 slot for saved ruler-house jurisdiction. The active V14 renderer no longer consumes this approved legacy row.", example: "", source: "Retired empty-house V2 jurisdiction vocabulary", sourceKind: "saved-copy"},
+  placementLine: {meaning: "Retired assembled empty-house placement line. The approved legacy row is preserved; the V14 renderer reads complete house/sign/ruler passages instead.", example: "", source: "Retired empty-house placement context", sourceKind: "runtime"},
+  signTrap: {meaning: "Saved Sky sign-trap hook selected by the event sign.", example: "Selected sign-trap writing", source: "Reviewed Sky sign-trap hook", sourceKind: "saved-copy"},
+  pairEffect: {meaning: "Sky event effect assembled from the slower planet's saved transit-effect hook and the receiving planet or house topic.", example: "Assembled from the selected saved source fields", source: "Saved transit-effect and topic assembly", sourceKind: "saved-copy"},
+  pairEffectCap: {meaning: "The same saved Sky pair effect with its initial capitalized.", example: "Assembled from the selected saved source fields", source: "Saved transit-effect and topic assembly", sourceKind: "saved-copy"},
   zodiacSeason: { meaning: "Full editable season prose for the current sign. Compatibility uses the reader's first sign.", example: "The complete prose saved in that sign's Zodiac season source", source: "Shared sign season source", sourceKind: "saved-copy" },
   zodiacSeasonPolarAxis: { meaning: "Full editable prose about the current sign's season and its opposite sign. Compatibility uses the reader's first sign.", example: "The complete prose saved in that sign's Zodiac season polar axis source", source: "Shared sign season polar axis source", sourceKind: "saved-copy" },
   possessive: {
@@ -620,6 +671,9 @@ export function templateVariableReferences(
     if (!usages.has(field.id)) usages.set(field.id, { fields: new Set(["Available for insertion"]), conditional: true });
   }
   const transitExactKey = String(packageRecord.contentKey ?? "");
+  if (includeAvailable) for (const name of natalPlacementVariableNames(transitExactKey)) {
+    if (!usages.has(name)) usages.set(name, { fields: new Set(["Available for insertion"]), conditional: true });
+  }
   if (includeAvailable && isReusableLunationKey(transitExactKey)) {
     for (const name of LUNATION_TIMING_VARIABLES) {
       if (!usages.has(name)) usages.set(name, {fields: new Set(['Available for insertion']), conditional: true});

@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-lunation-eclipse-house-layers/v1",
-  "packageVersion": "v3-2026-11-13-natal-retrograde-house",
+  "packageVersion": "v3-2026-11-13-natal-vars-retro",
   "source": {
     "schema": "lunation-eclipse-house-layers/v1",
     "count": 12

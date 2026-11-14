@@ -802,6 +802,8 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
       ? packagePlaceholders(record.body_you)
       : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
+      if (/(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
+        && libs().natalPlacementVariableNames(row.content_key).includes(slot.slice(2, -2))) continue;
       if (isReusableLunationKey(row.content_key) && /(?:^|\.)(?:body|body_you|body_they)$/u.test(field)
         && LUNATION_TIMING_VARIABLES.some(name => slot === `{{${name}}}`)) continue;
       if ((/^fallback-hook\/natal-you-placement-complete-final\//u.test(row.content_key) || libs().isNatalRetrogradeModifierKey(row.content_key))
@@ -4028,6 +4030,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     if (new URL(req.url ?? "/", "http://localhost").searchParams.get("variables") === "true") {
       sendJson(res, 200, await handleStudioVariables(req, studioVariableStorage));
+      return;
+    }
+    if (new URL(req.url ?? "/", "http://localhost").searchParams.get("variables") === "export") {
+      if (req.method !== 'GET') throw new StudioVariableError('Use GET to export variables.', 405);
+      const { studioVariableExportPage } = await import('../_lib/studio-variable-export.js');
+      sendJson(res, 200, await studioVariableExportPage(studioVariableStorage,
+        new URL(req.url ?? '/', 'http://localhost').searchParams.get('cursor') ?? '0',
+        new URL(req.url ?? '/', 'http://localhost').searchParams.get('sourceKey') ?? undefined));
       return;
     }
     if (req.method === "GET") {
