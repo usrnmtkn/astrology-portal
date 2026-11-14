@@ -509,7 +509,11 @@ jobs:
         run: node scripts/run-affected-playwright.mjs -c playwright.config.ts --workers=1 --output=test-results/sky-summary/editor tests/visual/calendar-passage-editor.spec.ts tests/visual/retrograde-history.spec.ts tests/visual/article-library.spec.ts tests/visual/season-article.spec.ts tests/visual/app-cold-formatting.spec.ts
       - name: Enforce Content Studio bundle size and deferred editor boundaries
         if: matrix.phase == 'studio'
-        run: node scripts/check-admin-bundle-budgets.mjs
+        run: |
+          if [[ ! -f apps/admin/dist/.vite/manifest.json ]]; then
+            npm run build:admin
+          fi
+          node scripts/check-admin-bundle-budgets.mjs
       - name: Verify owner sign-in return and storage-timeout recovery
         if: matrix.phase == 'recovery'
         run: node scripts/run-affected-playwright.mjs -c playwright.studio-auth.config.ts --output=test-results/sky-summary/auth
