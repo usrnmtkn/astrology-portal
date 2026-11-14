@@ -13,7 +13,7 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
     body,
     lane: "serving",
     reviewState: "EDITORIAL_REVIEW_REQUIRED",
-    blockType: "natal_placement",
+    blockType: "fallback_hook",
     promptVersion: "manual-admin",
     sections: {
       packageRecord: {

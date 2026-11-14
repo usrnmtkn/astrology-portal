@@ -23,6 +23,15 @@ const key = natalRetrogradeModifierKey('saturn', 4)!;
 const you = 'Synthetic Saturn fourth-house modifier opening.\n\nComplete synthetic modifier ending.';
 const they = '{{ownerName}} synthetic Friend modifier opening.\n\nTheir complete synthetic modifier ending.';
 const draft = natalPlacementOverrideDraft(key, 'Saturn retrograde in the 4th house modifier', '');
+// The isolated storage fixture does not execute Postgres CHECK constraints.
+// Bind both creator paths to the deployed schema instead of accepting a mock-only type.
+const blockTypeMigration = readFileSync('apps/web/supabase/migrations/20261016174132_allow_calendar_event_block_type.sql', 'utf8');
+const blockTypeCheck = blockTypeMigration.match(/block_type in \(([\s\S]*?)\)\)/u)?.[1];
+assert.ok(blockTypeCheck, 'The generated-content block-type constraint must be available.');
+const allowedBlockTypes = new Set([...blockTypeCheck.matchAll(/'([^']+)'/gu)].map(match => match[1]));
+for (const created of [draft, natalPlacementOverrideDraft('fallback-hook/natal-you-placement-complete-final/saturn/virgo/4', 'Synthetic complete placement', '')]) {
+  assert.ok(allowedBlockTypes.has(created.blockType), `${created.blockType}: Postgres would reject this new natal source.`);
+}
 assert.equal(draft.sections.packageRecord.body_they, '');
 assert.equal(draft.sections.packageRecord.review_status, 'needs_review');
 assert.equal(natalPlacementLabel('saturn', 'virgo', '4', 'retrograde'), 'Saturn retrograde in Virgo in the 4th house');
@@ -51,6 +60,7 @@ try {
     sections: { packageRecord: draft.sections.packageRecord, packageDraft: { ...draft.sections.packageRecord, body: you } } });
   assert.equal(result.status, 200, JSON.stringify(result));
   let saved = result.payload.rows[0];
+  assert.ok(allowedBlockTypes.has(saved.block_type), 'The actual create handler must persist a supported block type.');
   const id = saved.id;
   assert.equal(saved.status, 'DRAFT');
   const reopened = await store.invoke('GET', undefined, `/api/admin/generated-content?id=${id}`);
