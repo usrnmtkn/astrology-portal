@@ -1,6 +1,6 @@
 import type { StudioVariable } from './studioVariableCatalog';
 import type { CustomVariable } from './studioCustomVariableClient';
-import {quoteCsvCell} from '../../../src/shared/csvText';
+import {quoteCsvCell} from '../../../src/shared/csvText.js';
 // @ts-ignore Shared deterministic reference validation used by the actual reader.
 import {resolveIngressSource} from '../../web/src/content/fallbackArchitectureV3/resolver/skyIngressComposition.mjs';
 
