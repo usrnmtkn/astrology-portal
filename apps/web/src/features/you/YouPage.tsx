@@ -1,6 +1,7 @@
 import { LunationTransitSection, LunationTransitCard, type LunationTransitCardProps } from "../../components/LunationTransitSection";
 import { NatalPatternsInsights } from "./NatalPatternsInsights";
 import { ArticleKeyDates, type ArticleKeyDate } from "../../components/ArticleKeyDates";
+import { PersonalTransitIcon } from "../../components/PersonalTransitCard";
 import "../../styles/profile-overview.css";
 import "../../styles/you-transits.css";
 import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
@@ -90,6 +91,7 @@ export type YouTransitArticle = {
   pills?: ArticlePillData;
   transitDescription?: string;
   keyDates?: ArticleKeyDate[];
+  personalTransit?: { aspect: string; planet: string };
   id: string;
   title: string;
   glyph?: string;
@@ -1038,7 +1040,7 @@ function YouTransitArticlePage({
       <article className="article-shell sky-detail-article you-transit-article">
         <div className="article-card sky-detail-card">
           <header className="article-id sky-detail-id">
-            {eyebrowAspect ? <AspectBadge aspect={eyebrowAspect.aspect} planet={eyebrowAspect.from} /> : readingPage && displayArticle.glyph ? <span className="article-planet-badge" aria-hidden="true">{displayArticle.glyph}</span> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
+            {displayArticle.personalTransit ? <PersonalTransitIcon {...displayArticle.personalTransit} /> : eyebrowAspect ? <AspectBadge aspect={eyebrowAspect.aspect} planet={eyebrowAspect.from} /> : readingPage && displayArticle.glyph ? <span className="article-planet-badge" aria-hidden="true">{displayArticle.glyph}</span> : <div className="article-eyebrow" aria-label={eyebrowGlyphs.length ? `${eyebrowLabel}: ${eyebrowDescription}` : eyebrowLabel}>
               <span>{eyebrowLabel}</span>
               {eyebrowGlyphs.length ? (
                 <>

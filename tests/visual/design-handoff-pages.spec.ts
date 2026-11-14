@@ -367,13 +367,17 @@ for(const width of [320,390,960,1440]) for(const theme of ['light','dark']) {
   for(const group of await groups.all()){
     const cards=group.locator('.you-transit-group__item:visible');expect(await cards.count()).toBeLessThanOrEqual(3);
     const cardBoxes=await cards.evaluateAll(nodes=>nodes.map(node=>{const b=node.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width};}));
-    const cardTitle=cards.first().locator('.updates-aspect-row__headline');
-    if(await cardTitle.count()){await expect(cardTitle).toHaveCSS('font-family',/Newsreader/);await expect(cardTitle).toHaveCSS('font-size','26px');await expect(cardTitle).toHaveCSS('font-weight','400');}
-    await expect(cards.first().locator('.card-read-more--icon')).toHaveCSS('width','44px');
-    const firstGlyph=(await cards.first().locator('.updates-aspect-row__glyphs').boundingBox())!;
+    const personal=await cards.first().locator('.personal-transit-card').count()>0;
+    const cardTitle=cards.first().locator(personal ? '.updates-aspect-row__title' : '.updates-aspect-row__headline');
+    if(await cardTitle.count()){await expect(cardTitle).toHaveCSS('font-family',/Newsreader/);await expect(cardTitle).toHaveCSS('font-size',personal?'30px':'26px');await expect(cardTitle).toHaveCSS('font-weight','400');}
+    await expect(cards.first().locator('.card-read-more--icon')).toHaveCSS('width',personal?'56px':'44px');
+    const glyph=cards.first().locator(personal?'.personal-transit-icon':'.updates-aspect-row__glyphs');
+    const firstGlyph=(await glyph.boundingBox())!;
     expect(Math.abs(firstGlyph.x+firstGlyph.width/2-cardBoxes[0].x-cardBoxes[0].width/2)).toBeLessThan(1);
-    const symbolOffset=await cards.first().locator('.updates-aspect-row__glyphs').evaluate(node=>{
-      const range=document.createRange();range.selectNodeContents(node.querySelector('.planet-glyph')??node);const symbol=range.getBoundingClientRect(),circle=node.getBoundingClientRect();
+    const symbolOffset=await glyph.evaluate(node=>{
+      const svg=node.querySelector('svg');
+      const range=document.createRange();range.selectNodeContents(node.querySelector('.planet-glyph')??node);
+      const symbol=svg?.getBoundingClientRect()??range.getBoundingClientRect(),circle=node.getBoundingClientRect();
       return Math.abs(symbol.x+symbol.width/2-circle.x-circle.width/2);
     });
     expect(symbolOffset).toBeLessThan(2);
@@ -391,7 +395,7 @@ for(const width of [320,390,960,1440]) for(const theme of ['light','dark']) {
   await profile.getByRole('button',{name:'Open full transit chart',exact:true}).click();await expect(page.getByRole('dialog').locator('.sky-wheel-transit-overlay')).toBeVisible();await page.keyboard.press('Escape');
   await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:`test-results/design-you-transits-overview-${width}-${theme}.png`});
   await daily.scrollIntoViewIfNeeded();await page.screenshot({path:`test-results/design-you-transits-cards-${width}-${theme}.png`});
-  const first=daily.locator('button.updates-aspect-row').first(), title=await first.locator('.updates-aspect-row__title').innerText();
+  const first=daily.locator('a.personal-transit-card').first(), title=(await first.getAttribute('data-aspect-name'))!;
   const preview=await first.locator('.transit-card-preview').innerText();await first.click();
   const article=page.locator('.you-transit-article-page');await expect(article.getByRole('heading',{level:1})).toHaveText(title);
   await expect(article).toContainText(preview.replace(/\.\.\.$/,'').slice(0,70));

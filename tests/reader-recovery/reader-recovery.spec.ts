@@ -142,7 +142,7 @@ test("You keeps calculated planet and house transits visible while saved content
   for (const row of await staticRows.all()) {
     await expect(row).not.toHaveAttribute("role", "button");
   }
-  await expect(page.locator("button.updates-aspect-row .updates-aspect-row__description").first()).toBeVisible();
+  await expect(page.locator(".updates-aspect-row:is(a,button) .updates-aspect-row__description").first()).toBeVisible();
   await page.screenshot({ path: "test-results/reader-recovery/you-transits-desktop.png", fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await houses.scrollIntoViewIfNeeded();

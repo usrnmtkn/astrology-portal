@@ -92,6 +92,7 @@ import { PortalVisibility } from "./components/portalVisibility";
 import { ProfileAvatar, profileInitials } from "./components/ProfileAvatar";
 import { CitySearchField, CitySuggestions } from "./components/CitySearchField";
 import { AspectBadge } from "./components/charts/AspectBadge";
+import { PersonalTransitCard } from "./components/PersonalTransitCard";
 import { useReaderRouteIssue } from "./hooks/useReaderRouteIssue";
 import {
   AspectGlyphs,
@@ -771,6 +772,7 @@ type CalendarContentCacheEntry = {
 };
 
 export type YouTransitArticle = {
+  personalTransit?: { aspect: string; planet: string };
   natalPlanetReading?: import("./content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
   transitDescription?: string;
@@ -17423,11 +17425,19 @@ function ProfileView({
     savedGeneratedContent,
     transit, group, background
   }) => {
-    const rowSummary = transit.timing ? transitCardPreview(normalizedSurfacePreview(normalizedTransit)) : "";
+    const reading = normalizedTransit.sections[0];
+    const savedReading = group.length === 1 && hasReaderFacingGeneratedCopy(savedGeneratedContent) ? savedGeneratedContent : null;
+    const headline = savedReading
+      ? firstReaderFacingCopy([savedReading.headline]) || undefined
+      : reading?.heading !== personalTransitDisplayTitle(transit) ? reading?.heading : undefined;
+    const rowSummary = transit.timing
+      ? savedReading
+        ? generatedContentParagraphs(savedReading).join("\n\n") || generatedContentSections(savedReading).map(section => section.body).join("\n\n")
+        : reading ? taggedSectionBody(reading) : ""
+      : "";
     const lifeAreaTags = transit.natalHouse
       ? houseLifeAreaKeywords(transit.natalHouse)
       : [];
-    const isBackgroundUpdate = background;
     const timing = transitItemTimingDisplay(transit, targetDate);
     const title = group.map(personalTransitTitle).join(" · ");
     const peakLabel = transit.dailyPeak ? personalDailyPeakLabel(transit.dailyPeak) : null;
@@ -17436,6 +17446,11 @@ function ProfileView({
         exactDateFromInput(targetDate, transitEventTimeZone(transit)) || new Date(targetDate), transitEventTimeZone(transit)) : null;
     const dateLabel = !background && peakLabel ? peakLabel
       : currentRange ? `Current contact: ${currentRange}` : peakLabel || (transit.timing === null ? "Dates unavailable" : "Calculating dates…");
+    const cardTime = !background && transit.dailyPeak?.exactToday.length
+      ? transit.dailyPeak.exactToday.map(iso => `Exact ${new Intl.DateTimeFormat("en-US", {
+        timeZone: transit.dailyPeak!.timeZone, hour: "numeric", minute: "2-digit", timeZoneName: "short"
+      }).format(new Date(iso))}`).join("; ")
+      : background && currentRange ? currentRange.replace(" - ", " – ") : dateLabel;
     const orbLabel = precisePersonalOrb(transit.dailyPeak?.orbDegrees ?? transitOrbValue(transit));
     const transitSeries = transit.timing && transit.timing.exactPasses.length > 1
       ? { index: transit.timing.passIndex, count: transit.timing.exactPasses.length }
@@ -17460,6 +17475,7 @@ function ProfileView({
       ] },
       title,
       glyph: pointGlyph(transit.transitPlanet),
+      personalTransit: { aspect: transit.aspect, planet: transit.transitPlanet },
       // The authored aspect package declares headline + body, not TLDR.
       // The collapsed-row preview must not be promoted into another slot.
       subtitle: "",
@@ -17489,32 +17505,19 @@ function ProfileView({
       });
     };
 
-    const Row = detailAvailable ? "button" : "article";
-    return (
-      <Row
-        type={detailAvailable ? "button" : undefined}
-        className={`updates-aspect-row updates-aspect-row--personal${isBackgroundUpdate ? " updates-aspect-row--background" : ""}`}
-        data-aspect={transit.aspect}
-        key={transit.id}
-        onClick={detailAvailable ? openArticle : undefined}
-      >
-        <AspectBadge aspect={transit.aspect} className="updates-aspect-row__glyphs" />
-        <span className="updates-aspect-row__content">
-          <span className="updates-aspect-row__identity">
-          <span className="updates-aspect-row__title">
-            {title}
-          </span>
-          <span className="updates-aspect-row__orb" aria-label={`${orbLabel} orb at daily reference`}>· {orbLabel}</span>
-          </span>
-          {normalizedTransit.sections[0]?.heading && normalizedTransit.sections[0].heading !== title ? <span className="updates-aspect-row__headline">{normalizedTransit.sections[0].heading}</span> : null}
-          <span className="updates-aspect-row__meta-line" aria-label={dateLabel}>
-            <span>{dateLabel}</span>
-          </span>
-          {rowSummary ? <span className="updates-aspect-row__description transit-card-preview">{rowSummary}</span> : null}
-          {detailAvailable ? <CardReadMore appearance="icon" /> : null}
-        </span>
-      </Row>
-    );
+    return <PersonalTransitCard
+      key={transit.id}
+      aspect={transit.aspect}
+      planet={transit.transitPlanet}
+      aspectName={title}
+      headline={headline}
+      time={cardTime}
+      orb={orbLabel}
+      body={rowSummary}
+      background={background}
+      href={detailAvailable ? `/?date=${encodeURIComponent(targetDate)}&personalTransit=${encodeURIComponent(`${transit.transitPlanet}|${transit.aspect}|${transit.natalPoint}`)}#you` : undefined}
+      onOpen={openArticle}
+    />;
   });
   const personalArticleRevision = JSON.stringify([...personalAspectArticles]);
   const linkedPersonalRevision = JSON.stringify([...linkedPersonalArticles]);

@@ -119,9 +119,9 @@ for (const theme of ["light", "dark"]) {
     });
     for (const [index, date] of dates.entries()) {
       await page.goto(`/?date=${date}#you`);
-      const row = page.locator("button.updates-aspect-row--personal").first();
+      const row = page.locator("a.updates-aspect-row--personal").first();
       await expect(row).toBeVisible({ timeout: 45_000 });
-      const title = await row.locator(".updates-aspect-row__title").innerText();
+      const title = (await row.getAttribute("data-aspect-name"))!;
       expect(title).toMatch(/^.+ in [A-Z][a-z]+ (?:conjunct|opposite|square|trine|sextile) your natal .+$/);
       const expected = expectedIdentity(title, skies[index], natal);
       await expect(row).not.toContainText(expected);
