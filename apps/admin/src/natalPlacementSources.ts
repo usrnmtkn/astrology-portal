@@ -1,5 +1,5 @@
 import { natalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
-import { natalPlacementSourceKeys as natalPlacementResolverDependencyKeys, natalPlacementAngles, natalPlacementSigns } from '../../web/src/content/natalPlacementSourceKeys';
+import { natalPlacementSourceKeys as natalPlacementResolverDependencyKeys, natalPlacementAngles, natalPlacementSigns } from '../../web/src/content/natalPlacementSourceKeys.js';
 export { natalPlacementResolverDependencyKeys, natalPlacementAngles, natalPlacementSigns };
 
 export const natalPlacementPlanets = [
