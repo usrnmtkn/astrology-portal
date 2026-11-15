@@ -1072,7 +1072,7 @@ function withoutLegacyHouseBridge(body, house, voice) {
   return paragraphBreak >= 0 ? body.slice(paragraphBreak + 2).trim() : "";
 }
 function natalPlacementMotionExactKey(facts2) {
-  if (!facts2.house) return null;
+  if (!facts2.house || !facts2.sign) return null;
   const directKey = `fallback-hook/natal-you-placement-complete-final/${facts2.planet}/${facts2.sign}/${facts2.house}`;
   return facts2.isRetrograde ? `${directKey}/retrograde` : directKey;
 }
@@ -1155,7 +1155,8 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     return body;
   };
   function renderNatalPlacement(facts2, opts2 = {}) {
-    const { planet, sign, house } = facts2;
+    const { planet, sign = "", house } = facts2;
+    if (!sign && !house) throw new SourceGapError("SOURCE_GAP: natal placement requires a sign or house");
     const voice = facts2.voice === "you" ? "you" : "they";
     const exactCompleteKey = natalPlacementMotionExactKey(facts2);
     const exactCompleteLived = exactCompleteKey ? getReaderLivedRow(exactCompleteKey, voice, opts2) : null;
@@ -1172,8 +1173,8 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     }
     const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) : null;
     const genericHouseLived = house ? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts2) : null;
-    const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2);
-    const genericSignLived = getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2);
+    const exactSignLived = sign ? getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2) : null;
+    const genericSignLived = sign ? getReaderLivedRow(`fallback-hook/sign-lived/${sign}`, voice, opts2) : null;
     const needsArticle = planet === "sun" || planet === "moon" || planet.endsWith("-node");
     const possessive = facts2.voice === "you" ? "Your" : `${facts2.voice}'s`;
     const ctx = {
@@ -1182,19 +1183,21 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       planetTitle: title6(planet),
       planetRef: needsArticle ? `the ${title6(planet)}` : title6(planet),
       planetRefCap: needsArticle ? `The ${title6(planet)}` : title6(planet),
-      signTitle: title6(sign),
-      planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts2),
-      planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts2),
-      planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts2),
-      planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, opts2),
-      signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, opts2),
-      signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts2),
-      planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts2),
-      signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts2),
-      planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, opts2),
-      planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts2),
-      placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts2),
-      placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts2).join(", or ") || null
+      ...sign ? {
+        signTitle: title6(sign),
+        planetTopic: getVocab(`fallback-vocab/planet-topic/${planet}`, voice, opts2),
+        planetExcess: getVocab(`fallback-vocab/planet-excess/${planet}`, voice, opts2),
+        planetProductive: getVocab(`fallback-vocab/planet-productive/${planet}`, voice, opts2),
+        planetCore: getVocab(`fallback-vocab/planet-core/${planet}`, voice, opts2),
+        signStyle: getVocab(`fallback-vocab/sign-style/${sign}`, voice, opts2),
+        signNeed: getVocab(`fallback-vocab/sign-need/${sign}`, voice, opts2),
+        planetVerb: getVocab(`fallback-vocab/planet-verb/${planet}`, voice, opts2),
+        signAdverb: getVocab(`fallback-vocab/sign-adverb/${sign}`, voice, opts2),
+        planetIntro: getHook(`fallback-hook/natal/planet-intro/${planet}`, voice, opts2),
+        planetBest: getHook(`fallback-hook/planet-best/${planet}`, voice, opts2),
+        placementSentences: getHook(`fallback-hook/placement-sentence/${planet}/${sign}`, voice, opts2),
+        placementGerundText: getVocabList(`fallback-vocab/placement-gerund/${planet}/${sign}`, voice, opts2).join(", or ") || null
+      } : {}
     };
     const mods = [];
     const mod = (key, extra = {}) => {
@@ -1217,17 +1220,17 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
     const partKeys = [];
     const withModifiers = (body, include) => [body, ...include ? mods : []].filter(Boolean).join("\n\n");
     const isNode = planet === "north-node" || planet === "south-node";
-    if (isNode) {
+    if (isNode && sign) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts2);
       const oppSign = OPPOSITE_SIGN[sign];
       const oppDir = getVocab(`fallback-vocab/node-direction/${oppSign}`, voice, opts2);
       ctx.nodeJourney = j ? j.replace(/\{\{oppositeSignTitle\}\}/g, title6(oppSign)).replace(/\{\{oppositeDirection\}\}/g, oppDir ?? "") : null;
     }
-    const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
-    if (exactSignLived) {
+    const signTemplate = sign ? findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign") : null;
+    if (signTemplate && exactSignLived) {
       parts.push(withModifiers(exactSignLived.body ?? "", !house));
       partKeys.push(exactSignLived.contentKey);
-    } else {
+    } else if (signTemplate) {
       try {
         parts.push(renderTemplate(signTemplate, { ...ctx, modifierSentences: house ? [] : mods }, gapLabel, voice));
         partKeys.push(signTemplate.contentKey);
@@ -1278,7 +1281,7 @@ function createFallbackRenderer(templatesFile, rowsFile, publication = {}) {
       partKeys.push(retrogradeKey);
     }
     return {
-      headline: exactHouseLived ? `${title6(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
+      headline: !sign || exactHouseLived ? `${title6(planet)} in the ${ordinal(house)} house` : fixArticles(mustache(headlineTemplate.headline ?? "", ctx)),
       parts,
       partKeys,
       body: parts.join("\n\n"),
@@ -6683,7 +6686,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-11-13-natal-vars-retro";
+var PACKAGE_VERSION = "v3-2026-11-15-natal-house-only";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

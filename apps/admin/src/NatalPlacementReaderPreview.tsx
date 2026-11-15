@@ -9,6 +9,7 @@ import {
   isNatalPlacementAngle,
   natalPlacementExactKey,
   natalPlacementLabel,
+  natalPlacementHouseLabel,
   natalPlacementResolverDependencyKeys,
   natalPlacementSignLabel,
   type NatalPlacementHouse,
@@ -61,7 +62,7 @@ type Props = {
   planet: NatalPlacementPlanet;
   rows: PreviewRow[];
   secret: string;
-  sign: NatalPlacementSign;
+  sign: NatalPlacementSign | "";
 };
 
 function record(value: unknown): Record<string, unknown> {
@@ -203,7 +204,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     return () => controller.abort();
   }, [audience, house, motion, overrideFingerprint, planet, previewContextKey, publicationVersion, retry, secret, sign]);
 
-  const exactKey = house ? natalPlacementExactKey(planet, sign, house, motion) : "";
+  const exactKey = house && sign ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
   const exactServing = Boolean(
     house
@@ -212,7 +213,8 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
   );
   const exactServingFromStudio = Boolean(exactServing && preview.appliedOverrideKeys.includes(exactKey));
   const usingLiveStudioSources = preview.appliedOverrideKeys.length > 0;
-  const label = house ? natalPlacementLabel(planet, sign, house, motion) : natalPlacementSignLabel(planet, sign);
+  const label = house && !sign ? natalPlacementHouseLabel(planet, house, motion)
+    : house && sign ? natalPlacementLabel(planet, sign, house, motion) : natalPlacementSignLabel(planet, sign as NatalPlacementSign);
 
   const provenanceLabel = audience === "they"
     ? exactServingFromStudio
@@ -276,7 +278,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             <span className={`ui-pill admin-status ${motion === "retrograde" ? "status-reviewed" : "status-live"}`}>
               {motion === "retrograde" ? "Retrograde chart context" : "Direct chart context"}
             </span>
-            {house && audience === "you" && !isNatalPlacementAngle(planet) && !exactServing && (
+            {exactKey && audience === "you" && !isNatalPlacementAngle(planet) && !exactServing && (
               exactSaved
                 ? <StudioButton type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open saved override</StudioButton>
                 : <StudioButton type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</StudioButton>

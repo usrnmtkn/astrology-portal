@@ -54,6 +54,13 @@ assert.ok(northNodeAries.has("fallback-vocab/node-direction/libra"));
 assert.ok(northNodeAries.has("fallback-template/natal.node-in-sign"));
 
 const ascendantAries = natalPlacementResolverDependencyKeys("ascendant", "aries");
+const houseOnly = natalPlacementResolverDependencyKeys("mars", "", "12");
+assert.ok(houseOnly.includes("fallback-hook/placement-house-sentence/mars/12"));
+assert.ok(houseOnly.includes("fallback-hook/natal-you-placement-house-final/mars/12"));
+assert.ok(houseOnly.includes("fallback-template/natal.house-context"));
+assert.ok(houseOnly.every(key => !key.includes("sign") && !key.includes("complete-final") && !key.includes("//")));
+assert.ok(natalPlacementResolverDependencyKeys("saturn", "", "4", "retrograde").includes("fallback-hook/natal-retrograde-modifier/saturn/4"));
+assert.deepEqual(natalPlacementResolverDependencyKeys("ascendant", "", "1"), []);
 assert.deepEqual(ascendantAries, [
   "fallback-hook/angle-intro/ascendant",
   "fallback-hook/angle-sign/ascendant/aries",

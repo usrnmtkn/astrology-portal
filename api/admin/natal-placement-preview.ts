@@ -103,8 +103,10 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   if (input.kind !== undefined && input.kind !== "empty-house") throw new Error("Unknown preview kind.");
   if (emptyHouse && (!/^(?:[1-9]|1[0-2])$/u.test(house) || !Number.isInteger(rulerHouse)
     || rulerHouse! < 1 || rulerHouse! > 12 || rulerHouse === Number(house))) throw new Error("Choose an empty house and a different ruler house between 1 and 12.");
-  if (!planets.has(planet) || !signs.has(sign) || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
-    throw new Error("Choose a valid planet or point and sign. If provided, the house must be between 1 and 12.");
+  if (!planets.has(planet) || (input.sign !== undefined && typeof input.sign !== "string")
+    || (sign ? !signs.has(sign) : !house || emptyHouse || isNatalPlacementAngle(planet))
+    || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
+    throw new Error("Choose a valid planet or point and a sign or house. If provided, the house must be between 1 and 12. Angles and empty houses require a sign.");
   }
   if (!Array.isArray(input.overrides) || input.overrides.length > 64) throw new Error("Preview source overrides are invalid.");
   const overrides = input.overrides

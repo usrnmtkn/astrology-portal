@@ -4034,7 +4034,7 @@ export function GeneratedContentAdminDashboard() {
   }, [loadState, secret, studioListQuery, studioListQueryKey]);
 
   useEffect(() => {
-    if (loadState !== "loaded" || activePage !== "content" || categoryFilter !== "Natal Chart" || !natalPlacementPlanet || !natalPlacementSign || !secret.trim()) return;
+    if (loadState !== "loaded" || activePage !== "content" || categoryFilter !== "Natal Chart" || !natalPlacementPlanet || (!natalPlacementSign && !natalPlacementHouse) || !secret.trim()) return;
     const controller = new AbortController();
     setNatalSourcesLoading(true);
     const params = new URLSearchParams({ status: "all", visibility: "all", limit: "200" });
