@@ -7,6 +7,7 @@ import {defaultHoroscopeProfile} from '../src/astro-writing/horoscopeWritingProf
 import {prepareHoroscopeWriting,writeHoroscopeSign} from '../src/astro-writing/horoscopeWriting.mjs';
 import {usesWeeklyFromSamples,weeklyFromSamplesFacts,weeklyFromSamplesResearch,WEEKLY_FROM_SAMPLES_AUTHORITY} from '../src/astro-writing/weeklyFromSamples.mjs';
 import {buildHoroscopeProviderRequest,horoscopeProviderRequestSnapshot} from '../api/_lib/horoscope-provider-codecs';
+import {horoscopeWritingExport} from '../api/_lib/horoscope-writing-export';
 
 installHoroscopeWriterFixture();
 const source='Complete synthetic voice opening.\n\nComplete synthetic voice ending.';
@@ -55,6 +56,8 @@ assert.deepEqual(row.facts.horoscopeBrief,calculated,'Meaning metadata never cha
 assert.throws(()=>weeklyFromSamplesResearch({...row,content_key:'another-edition'}),/does not match/);
 const changed=structuredClone(row);changed.source_snapshot.weeklyMeaningResearch.bySign.aries.records.push({id:'additional-meaning'});
 assert.notEqual(prepareHoroscopeWriting(changed).planHash,prepared.planHash,'Changed research invalidates a previously prepared plan.');
+const exported=horoscopeWritingExport(prepared,row);
+assert(JSON.stringify(exported).includes('synthetic-meaning'),'Unsigned export retains the same edition-specific meaning as generation.');
 for(const provider of ['openai','anthropic','gemini']){
  const config={provider,model:'synthetic',maxOutputTokens:12000,reasoningEffort:'medium',thinkingLevel:'medium'};
  const request=buildHoroscopeProviderRequest({...captured,config});
