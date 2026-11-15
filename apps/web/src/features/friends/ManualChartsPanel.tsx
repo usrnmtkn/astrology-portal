@@ -1,4 +1,5 @@
 import { articleTransitKeyDates } from "../../services/articleTransitDates";
+import { emptyNatalHouseNumbers } from "../../services/natalHouseCards";
 import { LunationTransitCard, lunationTransitReading } from "../../components/LunationTransitSection";
 import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "../../services/weeklyHoroscope";
 import { returnToArticleParent } from "../../services/articleNavigation";
@@ -1967,14 +1968,7 @@ export function ManualChartsPanel({
       return [];
     }
 
-    const occupiedHouses = new Set(
-      selectedFriendReadyNatalChart.positions
-        .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
-        .map((position) => position.house)
-        .filter((house): house is number => typeof house === "number")
-    );
-
-    return Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !occupiedHouses.has(house));
+    return emptyNatalHouseNumbers(selectedFriendReadyNatalChart.positions);
   }, [friendProfileWork.natal, selectedChartIsEvent, selectedFriendReadyNatalChart]);
   const selectedFriendEmptyHouseViewRows = useMemo<FriendNatalEmptyHouseRow[]>(() => {
     const friendNatalChart = selectedFriendReadyNatalChart;

@@ -348,12 +348,14 @@ function placementTableMeta(house?: number | null, degree?: string | null, point
 }
 
 export function PlacementGlyphIcon({
+  badgePointName,
   className,
   fallback,
   pointName,
   retrograde = false,
   signName
 }: {
+  badgePointName?: string;
   className: string;
   fallback: string;
   pointName?: string;
@@ -368,24 +370,24 @@ export function PlacementGlyphIcon({
   const signKey = signName
     ? Object.keys(zodiacSignIconFiles).find((key) => key.toLowerCase() === signName.toLowerCase())
     : undefined;
-  const signHref = zodiacAssetHref(signKey ? zodiacSignIconFiles[signKey] : undefined);
+  const signHref = zodiacAssetHref(badgePointName ? pointIconFiles[badgePointName] : signKey ? zodiacSignIconFiles[signKey] : undefined);
   const glyphClassName = [
     className,
     useTextGlyph ? "placement-glyph--text" : "",
-    signName ? "placement-glyph-pair" : ""
+    signName || badgePointName ? "placement-glyph-pair" : ""
   ].filter(Boolean).join(" ");
 
-  if (signName) {
+  if (signName || badgePointName) {
     return (
       <span className={glyphClassName} aria-hidden="true">
         <span className="placement-glyph-pair__planet">
           {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : fallback}
         </span>
-        <span className="placement-glyph-pair__sign">
+        <span className="placement-glyph-pair__sign" data-point={badgePointName}>
           {signHref ? (
             <img className="placement-sign-glyph-svg" src={signHref} alt="" aria-hidden="true" />
           ) : (
-            signGlyph(signName)
+            badgePointName ? pointGlyph(badgePointName) : signGlyph(signName!)
           )}
         </span>
       </span>
@@ -407,10 +409,12 @@ export function PlacementTableRow({
   description,
   dignity,
   glyph,
+  glyphBadgePointName,
   house,
   metadata,
   onClick,
   pointName,
+  readMoreAppearance = "text",
   retrograde = false,
   sign,
   title,
@@ -423,10 +427,12 @@ export function PlacementTableRow({
   description?: string | null;
   dignity?: PlacementDignity | PlacementDignity[] | null;
   glyph: string;
+  glyphBadgePointName?: string;
   house?: number | null;
   metadata?: string;
   onClick?: () => void;
   pointName?: string;
+  readMoreAppearance?: "text" | "icon";
   retrograde?: boolean;
   sign?: string | null;
   title: string;
@@ -441,6 +447,7 @@ export function PlacementTableRow({
   const content = (
     <>
       <PlacementGlyphIcon
+        badgePointName={glyphBadgePointName}
         className="placement-table-row__glyph"
         fallback={glyph}
         pointName={pointName}
@@ -457,8 +464,9 @@ export function PlacementTableRow({
           </span>
         ) : null}
         {description ? <span className="placement-table-row__description"><FormattedText text={description} /></span> : null}
-        {onClick ? <CardReadMore /> : null}
+        {onClick && readMoreAppearance === "text" ? <CardReadMore /> : null}
       </span>
+      {onClick && readMoreAppearance === "icon" ? <CardReadMore appearance="icon" /> : null}
     </>
   );
 

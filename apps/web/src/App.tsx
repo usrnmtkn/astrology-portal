@@ -1,6 +1,7 @@
 import { articleTransitKeyDates } from "./services/articleTransitDates";
 import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
+import { emptyNatalHouseNumbers, natalHouseCardRuler } from "./services/natalHouseCards";
 import { isNatalRetrogradeModifierKey } from './content/natalRetrogradeModifier.js';
 import { comparePersonalDailyTransits, personalDailyPriority, personalDailyPeakLabel, precisePersonalOrb, personalTransitCopySeed, type PersonalDailyPeak } from "./services/personalDailyTransits";
 import { usePersonalDailyPeaks, usePersonalTransitSeries } from "./services/usePersonalDailyTransits";
@@ -17110,13 +17111,7 @@ function ProfileView({
   const lifeAreaFocus = chartSettings.lifeAreaFocus;
   const houseSignLabelStyle = chartSettings.houseSignLabelStyle;
   const showNatalAspectPatterns = natalAspectPatternReaderEnabled();
-  const occupiedNatalHouses = new Set(
-    routeableNatalPositions
-      .map((position) => position.house)
-      .filter((house): house is number => typeof house === "number" && house >= 1 && house <= 12)
-  );
-  const emptyNatalHouses = Array.from({ length: 12 }, (_, index) => index + 1)
-    .filter((house) => !occupiedNatalHouses.has(house));
+  const emptyNatalHouses = unknownBirthTime ? [] : emptyNatalHouseNumbers(natalPositions);
   const natalAspectPatternItems = showNatalAspectPatterns
     ? natalAspectPatternReaderItems(natalSky)
     : [];
@@ -17282,7 +17277,8 @@ function ProfileView({
     />,
   ];
   const planetPlacementRows = planetRows.map((position) => (
-    <PlanetPlacementRow
+    <PlacementTableRow
+      asButton
       degree={formatPlanetDegree(position)}
       description={natalPlacementDescription(position.planet, position.sign, generatedContent)}
       dignity={placementDignity(position)}
@@ -17291,6 +17287,7 @@ function ProfileView({
       key={position.planet}
       onClick={() => openPlacementArticle(position)}
       pointName={position.planet}
+      readMoreAppearance={["North Node", "South Node", "Chiron", "Lilith"].includes(position.planet) ? "icon" : "text"}
       retrograde={isDisplayRetrograde(position)}
       sign={position.sign}
       title={natalPlacementSignTitle(position)}
@@ -17298,7 +17295,7 @@ function ProfileView({
     />
   ));
   const emptyHouseRows = natalSky ? emptyNatalHouses.map((house) => {
-    const houseSign = natalSky.ascendant ? signAtWholeSignHouse(natalSky.ascendant, house) : "";
+    const ruler = natalHouseCardRuler(natalSky, house);
 
     return (
       <PlacementTableRow
@@ -17306,7 +17303,9 @@ function ProfileView({
         asButton
         description={emptyHouseCardDescription(house, natalSky, "self", undefined, undefined, emptyNatalHouses, generatedContent)}
         glyph={String(house)}
+        glyphBadgePointName={ruler?.name}
         house={house}
+        metadata={ruler?.metadata}
         key={`empty-house-${house}`}
         onClick={() => {
           transitionPage(() => {
