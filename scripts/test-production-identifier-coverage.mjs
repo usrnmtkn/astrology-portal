@@ -62,8 +62,9 @@ const writeQuarantine = process.argv.includes("--write-quarantine");
 // Bind enumeration to the production-owned emitter grammars. If an emitter
 // changes shape, CI must update the bridge and this audit in the same change.
 const emitterSource = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
+assert.doesNotMatch(emitterSource("apps/web/src/App.tsx"), /\bgenerateUserContent\s*\(/u,
+  "Reader navigation must not emit paid generation requests.");
 const emitterBindings = [
-  ["apps/web/src/App.tsx", /transitNatalContentId\(transit\.transitPlanet, transit\.aspect, transit\.natalPoint\)/u],
   ["api/admin/prepopulate-content.ts", /knowledgeIds: \["natal-moon-trine-saturn", "moon-trine-saturn"\]/u],
   ["api/admin/prepopulate-content.ts", /knowledgeIds: \["synastry-venus-in-4-house", "relationship-venus-in-4-house", "personal-planet-house4"\]/u],
   ["api/admin/prepopulate-content.ts", /knowledgeIds: \["composite-venus-house-4", "composite-venus-house4", "venus-house-4"\]/u],
@@ -188,11 +189,11 @@ for (const sign of SIGNS) {
 }
 
 // -------------------------------------------------- you: transit to natal
-// App.tsx:12215 transitNatalContentId + transits.py:219-222 (both spellings).
+// transits.py:219-222 retains both identifier spellings.
 for (const transiting of SKY_POINTS) {
   for (const natal of NATAL_POINTS) {
     for (const aspect of CHART_ASPECTS) {
-      emit(`transit-natal-${transiting}-${aspect}-${natal}`, YOU_TRANSIT, "App.tsx:12215 / transits.py:219");
+      emit(`transit-natal-${transiting}-${aspect}-${natal}`, YOU_TRANSIT, "transits.py:219");
       emit(`${transiting}-${aspect}-${natal}`, YOU_TRANSIT, "transits.py:221 (bare spelling)");
     }
   }
