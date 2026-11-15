@@ -2091,6 +2091,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     const article = page.locator('.you-transit-article');
     await expect(article.locator('.article-related-aspect-row').first()).toBeVisible();
     const checkNoDividers = async () => {
+      await expect.poll(() => article.locator('.article-related-aspect-row').count()).toBeGreaterThan(1);
       const borders = await article.locator('.article-related-aspect-row').evaluateAll(rows => rows.map(row => {
         const style = getComputedStyle(row);
         return { top: style.borderTopWidth, bottom: style.borderBottomWidth };
