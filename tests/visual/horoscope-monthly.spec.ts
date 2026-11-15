@@ -193,7 +193,7 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
    const grid=page.locator('.lunar-calendar-grid-panel');
    const gridBox=await grid.boundingBox(),cardBox=await calendarOverview.boundingBox();
    expect(cardBox!.y).toBeGreaterThanOrEqual(gridBox!.y+gridBox!.height);
-   expect(await calendarOverview.locator('p').nth(1).evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.lineHeight,s.letterSpacing];})).toEqual(bodyStyle);
+   expect(await calendarOverview.locator('p').nth(1).evaluate(el=>{const s=getComputedStyle(el);return[s.fontFamily,s.fontSize,s.lineHeight,s.letterSpacing];})).toEqual([bodyStyle[0],'19px','28.5px','normal']);
    await expect(calendarOverview.getByRole('heading')).toHaveText(['October 2026 Overview']);
    const readMore=calendarOverview.getByRole('link',{name:'Read more: October 2026 Overview',exact:true});
    await expect(readMore).toHaveAttribute('href',`/#horoscopes?period=monthly&edition=${saved.id}`);

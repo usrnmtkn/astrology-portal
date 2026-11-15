@@ -422,7 +422,6 @@
   .modal-panel.auth-dialog { width: 100%; height: 100dvh; max-height: 100dvh; border-radius: 0; box-shadow: none; }
   .auth-page.auth-flow-v2 { min-height: 100dvh; padding: var(--space-10) var(--space-6) var(--space-7); }
   .auth-flow-close { top: var(--space-4); right: var(--space-4); }
-  .auth-flow-heading h1 { font-size: var(--type-compact-title-size); }
   .auth-flow-v2--chart .auth-flow-heading h1 { font-size: var(--type-section-display-size); }
   .friends-signin-card { padding: var(--space-8) var(--space-6); }
 }
