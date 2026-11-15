@@ -2069,7 +2069,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const audi
 }
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
-  test(`Natal article dividers and wheel house clearance ${width} ${theme}`, async ({ page }) => {
+  test(`Natal article rows without dividers and wheel house clearance ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width, height: 1100 });
     await seed(page, theme);
@@ -2090,29 +2090,28 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.locator('.natal-big-three .placement-table-row').first().click();
     const article = page.locator('.you-transit-article');
     await expect(article.locator('.article-related-aspect-row').first()).toBeVisible();
-    const checkDividers = async () => {
-      const borders = await article.locator('.article-related-aspects__list').evaluateAll(lists => lists.flatMap(list =>
-        [...list.children].slice(1).map(row => {
-          const style = getComputedStyle(row);
-          return { width: parseFloat(style.borderTopWidth), style: style.borderTopStyle, color: style.borderTopColor };
-        })));
-      expect(borders.length).toBeGreaterThan(0);
+    const checkNoDividers = async () => {
+      await expect.poll(() => article.locator('.article-related-aspect-row').count()).toBeGreaterThan(1);
+      const borders = await article.locator('.article-related-aspect-row').evaluateAll(rows => rows.map(row => {
+        const style = getComputedStyle(row);
+        return { top: style.borderTopWidth, bottom: style.borderBottomWidth };
+      }));
+      expect(borders.length).toBeGreaterThan(1);
       for (const border of borders) {
-        expect(border.width).toBeGreaterThanOrEqual(1);
-        expect(border.style).toBe('solid');
-        expect(border.color).not.toBe('rgba(0, 0, 0, 0)');
+        expect(border.top).toBe('0px');
+        expect(border.bottom).toBe('0px');
       }
     };
-    await checkDividers();
+    await checkNoDividers();
     await article.screenshot({ path: test.info().outputPath(`natal-article-${width}-${theme}.png`) });
     const title = await article.locator('h1').textContent();
     await page.reload();
     await expect(article.locator('h1')).toHaveText(title!);
-    await checkDividers();
+    await checkNoDividers();
     await article.locator('.article-related-aspect-row').first().click();
     await expect(article.locator('h1')).not.toHaveText(title!);
     await page.getByRole('button', { name: 'Back to updates', exact: true }).click();
     await expect(article.locator('h1')).toHaveText(title!);
-    await checkDividers();
+    await checkNoDividers();
   });
 }

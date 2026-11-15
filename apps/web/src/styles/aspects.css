@@ -551,3 +551,7 @@
 .article-related-aspects .article-related-aspects__list > .article-related-aspect-row + .article-related-aspect-row {
   border-top: var(--border-width-thin) solid var(--detail-table-rule);
 }
+
+.you-transit-article .article-related-aspects .aspect-row.article-related-aspect-row {
+  border-top: 0;
+}
