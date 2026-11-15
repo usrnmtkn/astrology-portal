@@ -153,6 +153,7 @@ import {
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderSections";
+import { useNatalPlacementSources } from "./features/you/useNatalPlacementSources";
 import { skyPlacementAspectBridgeKey, skyPlacementAspectBridgeErrors } from './content/skyPlacementAspectBridge';
 import { preserveProtectedOwnerSkyPlacementPassage } from "./content/protectedOwnerSkyPlacementPassages";
 import {
@@ -772,6 +773,7 @@ type CalendarContentCacheEntry = {
 };
 
 export type YouTransitArticle = {
+  natalPlacement?: boolean;
   personalTransit?: { aspect: string; planet: string };
   natalPlanetReading?: import("./content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
@@ -15984,6 +15986,7 @@ function natalPlacementDetailArticle(
 
   return {
     id: natalPlacementRouteId(position),
+    natalPlacement: true,
     natalPlanetReading: natalSky && ownerContext?.ownerKind !== "chart" ? {
       snapshot: natalSky,
       audience: ownerContext ? "they" : "you",
@@ -17267,6 +17270,14 @@ function ProfileView({
   const placementPositionByRouteId = (placementId: string | null) => (
     placementId ? routeableNatalPositions.find((position) => natalPlacementRouteId(position) === placementId) ?? null : null
   );
+  const activeNatalPosition = placementPositionByRouteId(placementRouteIdFromUrl());
+  const natalPlacementSources = useNatalPlacementSources(activeNatalPosition ? {
+    planet: normalizedNatalAngleKey(activeNatalPosition.planet) || normalizeContentIdPart(activeNatalPosition.planet),
+    sign: normalizeContentIdPart(activeNatalPosition.sign),
+    house: activeNatalPosition.house ? String(activeNatalPosition.house) : undefined,
+    motion: isDisplayRetrograde(activeNatalPosition) ? "retrograde" : "direct",
+    dignity: placementDignity(activeNatalPosition)?.label?.toLowerCase()
+  } : null);
   const openNatalAspectArticle = (aspect: SkySnapshot["aspects"][number]) => {
     transitionPage(() => {
       setTransitArticle(natalAspectDetailArticle(aspect, generatedContent));
@@ -17317,6 +17328,7 @@ function ProfileView({
   }, [
     activePlacementRouteId,
     fallbackArchitectureV3Version,
+    natalPlacementSources.status,
     generatedContent,
     natalSky,
     routeableNatalPositions.map(natalPlacementRouteId).join("|")
@@ -18176,6 +18188,8 @@ function ProfileView({
         standaloneTransitRows={standaloneHouseTransitRows}
         weeklyTransitRows={weeklyTransitRows}
         transitArticle={transitArticle}
+        natalPlacementContentStatus={natalPlacementSources.status}
+        onRetryNatalPlacementContent={natalPlacementSources.retry}
         transitDateLabel={formatSkyFullChartDate(targetDate)}
         transitLoadingMessage={targetDate === dateInputValue()
           ? "Adding today’s transits."

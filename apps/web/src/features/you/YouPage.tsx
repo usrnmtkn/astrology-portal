@@ -87,6 +87,7 @@ export type DailyHoroscopeAssembly = {
 };
 
 export type YouTransitArticle = {
+  natalPlacement?: boolean;
   natalPlanetReading?: import("../../content/natalChartReadings").NatalPlanetReadingContext;
   pills?: ArticlePillData;
   transitDescription?: string;
@@ -180,6 +181,8 @@ export type YouPageProps = {
   onRetryTransitCopy?: () => void;
   weeklyTransitRows?: LunationTransitCardProps[];
   transitArticle?: YouTransitArticle | null;
+  natalPlacementContentStatus?: 'loading' | 'ready' | 'error';
+  onRetryNatalPlacementContent?: () => void;
 };
 
 type NatalAspectPatternDetailSelection = {
@@ -890,10 +893,12 @@ function articleEyebrowGlyphs(article: YouTransitArticle) {
 
 function YouTransitArticlePage({
   article,
+  sourceFeedback,
   backAriaLabel = "Back to updates",
   onClose
 }: {
   article: YouTransitArticle;
+  sourceFeedback?: ReactNode;
   backAriaLabel?: string;
   onClose: () => void;
 }) {
@@ -1064,6 +1069,8 @@ function YouTransitArticlePage({
             ) : null}
           </header>
 
+          {sourceFeedback}
+
           {displaySummary || displayIntroParagraphs.length || mainSections.length ? (
           <div className="article-body-card sky-detail-body">
             <div className="article-body-inner">
@@ -1225,6 +1232,8 @@ export function YouPage({
   transitsLoading = false,
   weeklyTransitRows = [],
   transitArticle,
+  natalPlacementContentStatus,
+  onRetryNatalPlacementContent,
   transitCopyLoading = false,
   transitCopyError = false,
   onRetryTransitCopy
@@ -1306,6 +1315,13 @@ export function YouPage({
     ? <PageLoadError message="The transit readings could not load. Please try again." onRetry={onRetryTransitCopy} />
     : transitCopyLoading ? <PageLoading message="Loading transit readings…" /> : null;
   if (transitArticle && onCloseTransitArticle) {
+    if (transitArticle.natalPlacement) {
+      const missing = !transitArticle.sections.some(section => section.body.trim());
+      const feedback = missing && (natalPlacementContentStatus === 'loading'
+        ? <PageLoading message="Loading natal reading…" />
+        : <PageLoadError message="The natal reading could not load. Please try again." onRetry={onRetryNatalPlacementContent ?? (() => window.location.reload())} />);
+      return <YouTransitArticlePage article={transitArticle} sourceFeedback={feedback} onClose={onCloseTransitArticle} />;
+    }
     if (transitSourceFeedback) return transitSourceFeedback;
     return <YouTransitArticlePage article={transitArticle} onClose={onCloseTransitArticle} />;
   }

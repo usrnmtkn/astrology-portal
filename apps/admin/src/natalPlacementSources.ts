@@ -1,4 +1,6 @@
 import { natalRetrogradeModifierKey } from '../../web/src/content/natalRetrogradeModifier.js';
+import { natalPlacementSourceKeys as natalPlacementResolverDependencyKeys, natalPlacementAngles, natalPlacementSigns } from '../../web/src/content/natalPlacementSourceKeys.js';
+export { natalPlacementResolverDependencyKeys, natalPlacementAngles, natalPlacementSigns };
 
 export const natalPlacementPlanets = [
   "sun",
@@ -21,7 +23,7 @@ export const natalPlacementPlanets = [
   "imum-coeli"
 ] as const;
 
-export const natalPlacementAngles = ["ascendant", "descendant", "midheaven", "imum-coeli"] as const;
+
 
 const natalPlacementPointLabels = {
   ascendant: "ASC",
@@ -41,20 +43,7 @@ const natalPlacementPointAliases: Array<{ pattern: RegExp; point: typeof natalPl
   { pattern: /\bic\b/, point: "imum-coeli" }
 ];
 
-export const natalPlacementSigns = [
-  "aries",
-  "taurus",
-  "gemini",
-  "cancer",
-  "leo",
-  "virgo",
-  "libra",
-  "scorpio",
-  "sagittarius",
-  "capricorn",
-  "aquarius",
-  "pisces"
-] as const;
+
 
 export const natalPlacementHouses = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] as const;
 export const natalPlacementMotions = ["direct", "retrograde"] as const;
@@ -120,77 +109,6 @@ export function natalPlacementExactKey(
 ) {
   const directKey = `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`;
   return motion === "retrograde" ? `${directKey}/retrograde` : directKey;
-}
-
-/**
- * Every Content Studio row the production natal resolver can consult for the
- * selected placement. This is intentionally broader than the visible authoring
- * cards: production can resolve through exact lived rows, composed templates,
- * or generic floors, and any LIVE serving override for one of those keys must
- * be present in the Studio preview too.
- *
- * Keep this list synchronized with renderNatalPlacement / renderNatalAngle in renderFallback.*.
- */
-export function natalPlacementResolverDependencyKeys(
-  planet: NatalPlacementPlanet,
-  sign: NatalPlacementSign,
-  house?: NatalPlacementHouse | "",
-  motion: NatalPlacementMotion = "direct"
-) {
-  if (isNatalPlacementAngle(planet)) {
-    return [
-      `fallback-hook/angle-intro/${planet}`,
-      `fallback-hook/angle-sign/${planet}/${sign}`,
-      "fallback-template/natal.angle-in-sign"
-    ];
-  }
-
-  const keys = new Set<string>([
-    `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`,
-    `fallback-hook/placement-sign-lived/${planet}/${sign}`,
-    `fallback-hook/sign-lived/${sign}`,
-    `fallback-hook/natal/planet-intro/${planet}`,
-    `fallback-hook/planet-best/${planet}`,
-    `fallback-hook/placement-sentence/${planet}/${sign}`,
-    `fallback-vocab/planet-topic/${planet}`,
-    `fallback-vocab/planet-excess/${planet}`,
-    `fallback-vocab/planet-productive/${planet}`,
-    `fallback-vocab/planet-core/${planet}`,
-    `fallback-vocab/sign-style/${sign}`,
-    `fallback-vocab/sign-need/${sign}`,
-    `fallback-vocab/planet-verb/${planet}`,
-    `fallback-vocab/sign-adverb/${sign}`,
-    `fallback-template/natal.planet-in-sign/${planet}`,
-    planet === "north-node" || planet === "south-node"
-      ? "fallback-template/natal.node-in-sign"
-      : "fallback-template/natal.planet-in-sign"
-  ]);
-
-  for (let index = 0; index < 8; index += 1) {
-    keys.add(`fallback-vocab/placement-gerund/${planet}/${sign}/${index}`);
-  }
-
-  if (planet === "north-node" || planet === "south-node") {
-    keys.add(`fallback-hook/node-journey/${planet}`);
-    keys.add(`fallback-vocab/node-direction/${natalPlacementSigns[(natalPlacementSigns.indexOf(sign) + 6) % 12]}`);
-  }
-
-  const retrogradeKey = motion === "retrograde" ? natalRetrogradeModifierKey(planet, house) : null;
-  if (retrogradeKey) {
-    keys.add(retrogradeKey);
-  }
-
-  if (house) {
-    keys.add(natalPlacementExactKey(planet, sign, house, motion));
-    keys.add(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`);
-    keys.add(`fallback-hook/placement-house-lived/${planet}/${house}`);
-    keys.add(`fallback-hook/house-lived/${house}`);
-    keys.add(`fallback-hook/house-meaning/${house}`);
-    keys.add(`fallback-hook/placement-house-sentence/${planet}/${house}`);
-    keys.add("fallback-template/natal.house-context");
-  }
-
-  return [...keys];
 }
 
 export function natalPlacementSourceGroups(
