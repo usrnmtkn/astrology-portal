@@ -6,6 +6,7 @@ import {buildSeasonalDraftInput} from './seasonalDraftInput.mjs';
 import {dailyHoroscopeEvidence} from './dailyHoroscopeEvidence.mjs';
 import {weeklyHoroscopeEvidence,weeklyMeaningReferences} from './weeklyRequestEvidence.mjs';
 import {HOROSCOPE_SIGNS,horoscopeSignLabel,horoscopeOverviewHeadline} from '../../apps/web/src/content/horoscopeEditions.mjs';
+import {usesWeeklyFromSamples,weeklyFromSamplesFacts} from './weeklyFromSamples.mjs';
 
 export {HOROSCOPE_EDITORIAL_AUTHORITY} from './canonicalInstructions.mjs';
 
@@ -25,6 +26,16 @@ export function horoscopeDraftSchema(sign,window) {
 }
 
 export function buildHoroscopeDraftInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile}) {
+  if(usesWeeklyFromSamples(writingProfile?.profile)){
+    const factsText=JSON.stringify(weeklyFromSamplesFacts(engineFacts));
+    const variables=buildHoroscopePromptVariables({writingProfile,context,
+      primaryPassages:context.primaryRegisterPassages??[],supportingPassages:context.sameFamilyExamples??[],factsText});
+    return ['SURFACE\nhoroscopes','CONTENT FAMILY\nhoroscope','REGISTER\nsecond_person',
+      `TASK\n${task}`,`READING HEADLINE\n${horoscopeDraftSchema(engineFacts.risingSign).properties.headline.enum[0]}`,
+      `COMPLETE SAVED WEEKLY BRIEF\n${variables.prompt}`,
+      ...(!variables.uses('governedFacts')?[`CALCULATED ASTROLOGY\n${factsText}`]:[])
+    ].join('\n\n');
+  }
   if(engineFacts?.window?.period==='seasonal')return buildSeasonalDraftInput({context,task,engineFacts,argumentOutline,writingProfile});
   if(engineFacts?.risingSign==='overview')return buildHoroscopeOverviewInput({plan,context,task,target,engineFacts,argumentOutline,spine,writingProfile});
   const daily=engineFacts?.window?.period==='daily';

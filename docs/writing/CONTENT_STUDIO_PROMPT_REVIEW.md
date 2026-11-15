@@ -1,5 +1,28 @@
 # Content Studio prompt review
 
+## Weekly from complete samples — November 15, 2026
+
+An explicitly saved `WEEKLY PROMPT V3` profile uses one short authority layer
+and its complete saved writing brief. It excludes the legacy argument prose,
+generic style appendix and separate Hellenistic prose appendix from the writer
+input. Complete saved source passages and scoped owner feedback remain intact.
+Other profile versions and periods retain their existing paths.
+
+Optional edition-specific neutral meanings live in editor-only
+`source_snapshot.weeklyMeaningResearch`, bound to the exact edition key and
+rising sign. Their identity participates in the plan hash. They never modify
+the calculated brief or reader fields. Signs without an additional research
+packet retain the native governed development meanings, labeled separately
+from calculations and voice evidence. Research references remain unapproved.
+
+`scripts/test-weekly-from-samples.mts` checks canonical request delivery,
+source preservation, sign/window isolation, plan invalidation and the three
+provider codecs. The ordinary prompt-variable command includes this test.
+The publication-claim command also checks a bounded same-subject aspect
+construction, including incorrect sign, motion, aspect and ambiguous subjects.
+These are contract checks, not evidence that generated prose matches the owner
+voice. Paid generation, exact wording approval and publication stay separate.
+
 Use this workflow when changing Studio generation prompts or writer instructions.
 The [October 21 full ingress audit](INGRESS_PROMPT_VOICE_AUDIT_2026-10-21.md)
 records the local request comparison, scoped conflict removals and verification
