@@ -143,7 +143,7 @@
 .sky-page .placement-section,
 .sky-page .calculation-diagnostics-panel,
 .sky-page .sky-cache-notice { grid-column: 1 / -1; order: 0; }
-.sky-page .placements-heading h2 { font-family: var(--font-display); font-size: var(--type-section-display-size); font-weight: var(--weight-regular); line-height: var(--leading-compact-title); margin: 0 0 var(--space-6); }
+.sky-page .placements-heading h2 { font-family: var(--font-display); font-size: var(--type-section-display-size); font-weight: var(--weight-regular); line-height: var(--leading-display); margin: 0 0 var(--space-6); }
 .sky-placement-group + .sky-placement-group { margin-top: var(--space-7); }
 .sky-angle-group .placement-table-row:disabled { cursor: default; background: var(--surface); grid-template-columns: var(--size-7) minmax(0, 1fr); }
 .sky-angle-group .placement-table-row__title { font-family: var(--font-ui); font-size: var(--text-row-title-size); font-weight: var(--weight-semibold); }
@@ -208,7 +208,7 @@
 :is(.sky-page, .horoscope-planet-grid) .planet-placement-row__glyph .placement-glyph-svg { width: var(--text-glyph); height: var(--text-glyph); }
 :is(.sky-page, .horoscope-planet-grid) .planet-placement-row__glyph .placement-glyph-pair__sign, .sky-angle-group .placement-glyph-pair__sign { display: none; }
 @media (max-width: 800px) {
- .sky-page .sky-intro__lead { font-size: var(--type-compact-title-size); line-height: var(--leading-feature-title); }
+ .sky-page .sky-intro__lead { font-size: var(--type-page-title-mobile-size); line-height: var(--leading-cover); letter-spacing: var(--tracking-normal); }
  .sky-placement-group > h3 { font-size: var(--type-section-heading-size); }
  :is(.sky-page, .horoscope-planet-grid) .planet-placement-row__glyph .placement-glyph-pair__sign { display: grid; right: var(--glyph-badge-compact-offset); bottom: var(--glyph-badge-compact-offset); width: var(--size-3); height: var(--size-3); }
  :is(.sky-page, .horoscope-planet-grid) .planet-placement-row__glyph .placement-glyph-svg { width: var(--size-3); height: var(--size-3); }

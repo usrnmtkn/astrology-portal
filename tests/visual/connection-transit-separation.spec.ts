@@ -233,9 +233,9 @@ test('transit titles identify the sky sign and natal chart owner in both section
       weight: s.fontWeight, expectedFont: reference.fontFamily, expectedSize:reference.fontSize, expectedLine:reference.lineHeight };
   });
   expect(factStyles.font).toBe(factStyles.expectedFont);
-  expect(factStyles.size).toBe(factStyles.expectedSize);
+  expect(factStyles.size).toBe('19px');
   expect(factStyles.weight).toBe('400');
-  expect(factStyles.line).toBe(factStyles.expectedLine);
+  expect(factStyles.line).toBe('28.5px');
   expect(factStyles.tracking).toBe('normal');
   const headingStyles = await facts.evaluate(element => {
     const title = getComputedStyle(element.querySelector('h2')!);

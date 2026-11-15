@@ -44,7 +44,12 @@ for(const [width,theme] of [[390,'light'],[390,'dark'],[1440,'light'],[1440,'dar
   await expect(page.locator('.horoscope-weekday')).toHaveText('This week');
   await expect(page.getByRole('group',{name:'Your signs'}).locator('[aria-pressed="true"]')).toHaveCount(0);
   await page.goBack();await expect(page.getByRole('button',{name:'Gemini & Gemini Rising',exact:true})).toHaveAttribute('aria-pressed','true');
-  expect(await page.locator('.horoscope-reading-date').evaluate(el=>{const probe=document.createElement('span');probe.style.cssText='font-family:var(--font-display);font-size:var(--text-title);font-weight:var(--weight-regular);line-height:var(--leading-display);letter-spacing:var(--tracking-display)';el.parentElement!.append(probe);const a=getComputedStyle(el),b=getComputedStyle(probe);const same=['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing'].every(k=>(a as any)[k]===(b as any)[k]);probe.remove();return same;})).toBe(true);
+  const dateTitle=page.locator('.horoscope-reading-date');
+  await expect(dateTitle).toHaveCSS('font-family',/Newsreader/);
+  await expect(dateTitle).toHaveCSS('font-size',width<=800?'34px':'44px');
+  await expect(dateTitle).toHaveCSS('line-height',width<=800?'37.4px':'48.4px');
+  await expect(dateTitle).toHaveCSS('font-weight','400');
+  await expect(dateTitle).toHaveCSS('letter-spacing',width<=800?'-0.51px':'-0.66px');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:`test-results/horoscope-personalized-${width}-${theme}.png`,fullPage:true,animations:'disabled'});
   empty=true;await page.reload();await expect(page.getByRole('status')).toContainText('haven’t been published');

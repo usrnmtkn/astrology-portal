@@ -127,8 +127,8 @@ for(const width of [390,1440])for(const theme of ['light','dark']){
   await expect(page.getByRole('button',{name:'Planets',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(article.locator('.horoscope-reading-sign')).toHaveText(['Gemini','↑Gemini Rising']);
   const title=article.locator('.horoscope-reading-date');
-  await expect(title).toHaveCSS('font-family',/Newsreader/);await expect(title).toHaveCSS('font-size','36px');await expect(title).toHaveCSS('font-weight','400');await expect(title).toHaveCSS('line-height','40.32px');
-  await expect(article.locator('.horoscope-prose p')).toHaveCSS('font-family',/Newsreader/);await expect(article.locator('.horoscope-prose p')).toHaveCSS('font-size','19px');await expect(article.locator('.horoscope-prose p')).toHaveCSS('line-height','28.5px');
+  await expect(title).toHaveCSS('font-family',/Newsreader/);await expect(title).toHaveCSS('font-size',width<=800?'34px':'44px');await expect(title).toHaveCSS('font-weight','400');await expect(title).toHaveCSS('line-height',width<=800?'37.4px':'48.4px');
+  await expect(article.locator('.horoscope-prose p')).toHaveCSS('font-family',/Newsreader/);await expect(article.locator('.horoscope-prose p')).toHaveCSS('font-size',width<=800?'19px':'26px');await expect(article.locator('.horoscope-prose p')).toHaveCSS('line-height',width<=800?'28.5px':'37.7px');
   await expect(page.getByRole('heading',{level:1})).toHaveText('Horoscopes');
   await expect(page.getByRole('navigation',{name:'Planetary horoscopes'}).getByRole('button',{name:'Previous',exact:true})).toBeDisabled();
   await page.getByRole('button',{name:'Aries & Aries Rising',exact:true}).click();

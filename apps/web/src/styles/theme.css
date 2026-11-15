@@ -140,7 +140,7 @@
   --filter-glyph-white: brightness(0) invert(1);
   --radius-card-compact: 24px;
   --card-hover-shadow: inset 0 0 0 1px var(--line-strong), 0 12px 24px -16px var(--line-strong);
-  --type-mobile-section-display-size: var(--type-display-size);
+  --type-mobile-section-display-size: var(--type-sheet-title-size);
   --surface-symbol: #eef4f3;
   --filter-glyph-neutral: brightness(0) saturate(100%);
   --filter-glyph-ink: brightness(0);
@@ -375,6 +375,7 @@
     0 1px 1px rgba(28, 32, 52, 0.05),
     0 2px 6px -3px rgba(28, 32, 52, 0.1);
   --elev-card: inset 0 0 0 1px rgba(28, 31, 38, 0.06), 0 1px 0 rgba(28, 31, 38, 0.05);
+  --shadow-recessed: inset 0 1px 2px rgba(28, 31, 38, 0.1), inset 0 0 0 1px rgba(28, 31, 38, 0.05);
   --elev-hero:
     0 1px 1px rgba(28, 32, 52, 0.04),
     0 8px 18px -8px rgba(28, 32, 52, 0.13),
@@ -456,7 +457,7 @@
   --leading-title: 1.15;
   --leading-body: 1.5;
   --leading-description: 1.5;
-  --leading-meta: 1.35;
+  --leading-meta: 1.4;
   --leading-label: 1;
   --leading-pill: 1;
   --leading-tight: var(--leading-h1);
@@ -469,6 +470,10 @@
   --type-modal-title-size: 36px;
   --type-disclosure-size: 22px;
   --type-date-size: 17px;
+  /* Date-led readings use their own display tier, above the page-title role. */
+  --text-date-display: 44px;
+  --text-context-title: 32px;
+  --leading-heading: 1.1;
   --leading-dialog-title: var(--leading-display);
   --tracking-dialog-title: -0.015em;
   --tracking-eyebrow-compact: 0.06em;
@@ -545,7 +550,7 @@
   --type-section-display-size: var(--type-display-size);
   --type-compact-section-size: 21px;
   --type-feature-title-size: var(--type-display-size);
-  --type-compact-title-size: var(--type-display-size);
+  --type-compact-title-size: var(--type-page-title-mobile-size);
   /* Updated planetary placement handoff, October 24. */
   --type-placement-title-size: var(--type-display-size);
   --leading-placement-title: var(--leading-display);
@@ -557,13 +562,20 @@
   --type-table-value-size: 16px;
   --placement-control-size: 44px;
   --placement-row-compact-size: 16px;
-  --article-body-size: var(--text-body);
+  /* Long-form article roles from Screens - Articles; compact readings keep
+     the shared 19px body role used by Articles Web Mobile. */
+  --text-reading-longform: var(--type-title-size);
+  --text-reading-preview: var(--type-small-display-size);
+  --leading-longform: 1.45;
+  --leading-lead: 1.35;
+  --tracking-longform: -0.005em;
+  --article-body-size: var(--text-reading-longform);
   --sky-highlight-tint: #a7f2d7;
   --type-reading-compact-size: var(--type-reading-size);
   --type-compact-row-size: 17px;
   --type-ui-copy-size: 15px;
   --leading-feature-title: var(--leading-display);
-  --leading-compact-title: var(--leading-display);
+  --leading-compact-title: 1.08;
   --leading-reading-lead: var(--leading-body);
   --leading-reading: 1.5;
   --leading-section-heading: 1.25;
@@ -1583,6 +1595,7 @@
 @media (max-width: 720px) {
   :root {
     --article-back-top: var(--mobile-article-back-top);
+    --article-page-gutter: var(--mobile-page-gutter);
     --sky-overview-width: calc(100% - var(--space-7));
     --article-page-padding: var(--page-top) var(--article-page-gutter) calc(var(--mobile-page-bottom) + env(safe-area-inset-bottom, 0px));
     --article-sheet-padding: calc(var(--space-7) * 3 + var(--space-5)) var(--space-5) var(--space-9);
@@ -1777,6 +1790,7 @@
   --friend-request-count-bg: #7fb98b;
   --friend-request-count-fg: #102818;
   --shadow-card: none;
+  --shadow-recessed: none;
   --shadow-article: var(--shadow-card);
   --shadow-floating: none;
   --shadow-hero: var(--shadow-card);

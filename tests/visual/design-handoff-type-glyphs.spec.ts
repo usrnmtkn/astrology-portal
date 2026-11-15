@@ -28,7 +28,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await page.goto('/?date=2026-10-24#sky');
     await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
     const compact = width < 800;
-    await expect(page.getByRole('heading', { name: 'Sky', exact: true, level: 1 })).toHaveCSS('font-size', '36px');
+    await expect(page.getByRole('heading', { name: 'Sky', exact: true, level: 1 })).toHaveCSS('font-size', compact ? '34px' : '36px');
     await expect(page.getByLabel('Daily sky summary').locator('p').first()).toHaveCSS('font-size', '19px');
     const cards = page.locator('.sky-placement-group .planet-placement-row');
     await expect(cards).toHaveCount(14);
@@ -67,14 +67,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     const article = page.locator('.article-page');
     await expect(article.locator('h1')).toContainText('Saturn');
     await expectReadableTheme(page, '.sky-placement-article h1, .sky-placement-article .article-section p, .sky-placement-article__retrograde, .sky-placement-key-dates h2, .retrograde-cycles__title');
-    await expect(article.locator('h1')).toHaveCSS('font-size', '36px');
-    await expect(article.locator('h1')).toHaveCSS('letter-spacing', '-0.54px');
+    await expect(article.locator('h1')).toHaveCSS('font-size', compact ? '34px' : '36px');
+    await expect(article.locator('h1')).toHaveCSS('letter-spacing', compact ? '-0.51px' : '-0.54px');
     await expect(article.locator('.article-duration').first()).toHaveCSS('font-family', compact ? /system-ui/ : /Newsreader/);
     if (compact) {
       await expect(article).toHaveCSS('padding-left', '16px');
       await expect(article).toHaveCSS('padding-right', '16px');
     }
-    await expect(article.locator('.article-section p').first()).toHaveCSS('font-size', '19px');
+    await expect(article.locator('.article-section p').first()).toHaveCSS('font-size', compact ? '19px' : '26px');
     await expect(article.locator('.sky-placement-article__glyph')).toHaveCSS('width', '64px');
     await expect(article.locator('.article-title')).toHaveCSS('font-weight', '400');
     const dates = article.locator('.sky-placement-key-dates');
@@ -115,7 +115,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     for (let i = 1; i < levels.length; i++) expect(levels[i]).toBeLessThanOrEqual(levels[i - 1] + 1);
     await page.reload();
     await expect(article.locator('h1')).toContainText('Saturn');
-    await expect(article.locator('h1')).toHaveCSS('font-size', '36px');
+    await expect(article.locator('h1')).toHaveCSS('font-size', compact ? '34px' : '36px');
     await expect(dates).not.toHaveAttribute('open');
     await expect(facts.locator('.retrograde-cycles__section')).toHaveCount(2);
     await expect(facts.locator('.retrograde-cycles__section[open]')).toHaveCount(0);
@@ -125,7 +125,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(article.locator('.retrograde-cycles')).toHaveCount(0);
     await expect(article.locator('.sky-placement-key-dates')).toBeVisible();
     await expect(article.locator('.sky-placement-key-dates')).not.toHaveAttribute('open');
-    await expect(article.locator('h1')).toHaveCSS('font-size', '36px');
+    await expect(article.locator('h1')).toHaveCSS('font-size', compact ? '34px' : '36px');
     await article.locator('h1').scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/placement-direct-${width}-${theme}.png` });
   });

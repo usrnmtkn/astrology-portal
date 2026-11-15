@@ -56,6 +56,12 @@ const validBodyFontSizes = new Set([
 
 const requiredTypographyTokenValues = new Map([
   ["--type-display-size", "36px"],
+  ["--type-compact-title-size", "var(--type-page-title-mobile-size)"],
+  ["--text-date-display", "44px"],
+  ["--text-context-title", "32px"],
+  ["--leading-heading", "1.1"],
+  ["--leading-meta", "1.4"],
+  ["--leading-compact-title", "1.08"],
   ["--type-body-size", "19px"],
   ["--type-reading-size", "var(--type-body-size)"],
   ["--type-reading-compact-size", "var(--type-reading-size)"],
@@ -71,7 +77,12 @@ const requiredTypographyTokenValues = new Map([
   ["--text-row-body-size", "var(--text-body)"],
   // Tabular data is a UI role; narrative copy uses the shared reading scale.
   ["--text-table-body-size", "15px"],
-  ["--article-body-size", "var(--text-body)"],
+  ["--text-reading-longform", "var(--type-title-size)"],
+  ["--text-reading-preview", "var(--type-small-display-size)"],
+  ["--leading-longform", "1.45"],
+  ["--leading-lead", "1.35"],
+  ["--tracking-longform", "-0.005em"],
+  ["--article-body-size", "var(--text-reading-longform)"],
   ["--label-eyebrow-font-family", "var(--font-label)"]
 ]);
 

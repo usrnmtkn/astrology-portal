@@ -4882,7 +4882,12 @@ test.describe("client-facing user flow case studies", () => {
     });
 
     expect(bodyType, "Friend aspect typography must resolve in the placement detail").not.toBeNull();
-    expect(bodyType?.aspect).toEqual(bodyType?.article);
+    expect(bodyType?.aspect).toEqual({
+      fontFamily: bodyType?.article.fontFamily,
+      fontSize: page.viewportSize()!.width <= 800 ? '19px' : '20px',
+      fontWeight: '400',
+      lineHeight: page.viewportSize()!.width <= 800 ? '28.5px' : '29px'
+    });
 
     await page.getByRole("button", { name: "Close detail" }).click();
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();

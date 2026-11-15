@@ -150,7 +150,7 @@ for (const theme of ["light", "dark"] as const) {
       const debilityType = await debilityHeading.evaluate(el => {
         const style = getComputedStyle(el);
         const probe = document.createElement("h3");
-        probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-display);font-size:var(--type-mobile-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-placement-title)" : "font-family:var(--font-display);font-size:var(--type-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-compact-title)";
+        probe.style.cssText = innerWidth <= 800 ? "font-family:var(--font-display);font-size:var(--type-mobile-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-placement-title)" : "font-family:var(--font-display);font-size:var(--type-section-display-size);font-weight:400;letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-display)";
         el.after(probe);
         const expected = getComputedStyle(probe);
         const keys = ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"] as const;

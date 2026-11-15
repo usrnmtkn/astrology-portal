@@ -62,7 +62,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`in
   const heading = head.getByRole("heading", { level: 3 });
   const headingType = await heading.evaluate(el => {
     const actual = getComputedStyle(el), probe = document.createElement("span");
-    probe.style.cssText = "font-family:var(--font-display);font-size:var(--type-section-display-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-compact-title)";
+    probe.style.cssText = "font-family:var(--font-display);font-size:var(--type-section-display-size);font-weight:var(--weight-regular);letter-spacing:var(--tracking-dialog-title);line-height:var(--leading-display)";
     if (innerWidth <= 800) { probe.style.fontSize = 'var(--type-mobile-section-display-size)'; probe.style.lineHeight = 'var(--leading-placement-title)'; }
     el.append(probe);
     const expected = getComputedStyle(probe);

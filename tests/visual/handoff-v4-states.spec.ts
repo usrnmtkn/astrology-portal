@@ -50,7 +50,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Ha
     await page.evaluate(value => (window as any).renderCount(value), count);
     const effort = page.locator('.sky-debility-ledger'), cards = effort.locator('.sky-debility-card'); await expect(cards).toHaveCount(count);
     await expect(effort.locator('h3')).toHaveText('Things may take more effort right now');
-    await expect(effort.locator('h3')).toHaveCSS('font-size', '36px');
+    await expect(effort.locator('h3')).toHaveCSS('font-size', width <= 800 ? '30px' : '36px');
     await expect(effort.locator('.sky-today-ledger__copy p').last()).toContainText(`${['','','Two','Three','Four','Five','Six','Seven'][count]} of the seven classical planets are`);
     for(const paragraph of await effort.locator('.sky-today-ledger__copy p').all()){await expect(paragraph).toHaveCSS('font-family',/Newsreader/);await expect(paragraph).toHaveCSS('font-size','19px');await expect(paragraph).toHaveCSS('line-height','28.5px');await expect(paragraph).toHaveCSS('font-weight','400');}
     await expect(effort.locator('mark')).toHaveCount(0); await expect(cards.locator('strong')).toHaveText(['Sun in Libra', 'Moon in Scorpio', 'Mercury Rx in Pisces', 'Venus Rx in Scorpio', 'Mars in Cancer', 'Jupiter in Gemini', 'Saturn Rx in Aries'].slice(0, count));
