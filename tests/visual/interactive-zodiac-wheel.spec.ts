@@ -2,9 +2,16 @@ import { expect, test } from "@playwright/test";
 import { build } from "esbuild";
 import { readFileSync } from "node:fs";
 import { watchBrowserErrors } from "./qaRuntimeGuards";
+import { defaultLocation, getAstrodienstSky } from "../../apps/web/src/services/ephemeris";
+import type { ZodiacWheelSnapshot } from "../../apps/web/src/services/zodiacWheelFacts";
 
 let script = "";
+let labelSnapshots: Record<string, ZodiacWheelSnapshot> = {};
 test.beforeAll(async () => {
+  labelSnapshots = {
+    "label-alignment": await getAstrodienstSky(defaultLocation, new Date("2026-11-04T10:00:00Z"), { includeTransitWindows: false }),
+    "label-alignment-sky": await getAstrodienstSky(defaultLocation, new Date("2026-11-04T23:00:00Z"), { includeTransitWindows: false })
+  };
   const output = await build({ stdin: { resolveDir: process.cwd(), loader: "tsx", contents: `
     import React, {useState} from 'react';
     import {createRoot} from 'react-dom/client';
@@ -13,6 +20,7 @@ test.beforeAll(async () => {
     const initial = [213.4,39.75,230.2,209.1,135.55,143.15,9.3,64.45,2.6,303.1,327.4,147.4,253.8,28.2];
     const signs = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
     const params = new URLSearchParams(location.search), kind = params.get('kind') ?? 'sky';
+    const labelSnapshots = ${JSON.stringify(labelSnapshots)};
     function Harness() {
       const [changed,setChanged] = useState(false);
       const positions = names.map((planet,index) => {
@@ -23,11 +31,11 @@ test.beforeAll(async () => {
         return {planet,longitude,sign:signs[Math.floor(longitude/30)],degree:longitude%30,
           house:1,glyph:'',signGlyph:'',speed:index===2?-0.5:index===6?-0.05:0.1,motion:'direct'};
       });
-      const snapshot = {positions,aspects:[],ascendantLongitude:271.2,midheavenLongitude:kind==='angle-clearance'?315:208.7,
+      const snapshot = labelSnapshots[kind] ?? {positions,aspects:[],ascendantLongitude:271.2,midheavenLongitude:kind==='angle-clearance'?315:208.7,
         birthTimeKnown:true,generatedAt:'2026-11-04T17:00:00Z',solarHorizon:{version:'solar-horizon-v1',instant:'2026-11-04T17:00:00Z',altitude:30}};
       return <main style={{maxWidth:520,margin:'auto',padding:16}}>
         <button onClick={()=>setChanged(value=>!value)}>Change selected date</button>
-        <InteractiveZodiacWheel snapshot={snapshot} mode={kind==='sky'?'sky':'natal'}
+        <InteractiveZodiacWheel snapshot={snapshot} mode={kind==='sky'||kind==='label-alignment-sky'?'sky':'natal'}
           ownerName={kind==='friend'||kind==='unknown'?'Alisa Hart':undefined}
           birthTimeUnknown={kind==='unknown'} pronouns={params.get('pronouns') ?? undefined}/>
       </main>;
@@ -51,6 +59,80 @@ async function openHarness(page: import("@playwright/test").Page, kind: string, 
   await page.goto(`/__interactive-wheel?kind=${kind}&pronouns=${pronouns}`);
   await expect(page.locator(".interactive-zodiac-wheel__svg")).toBeVisible();
   await expect(page.locator(".interactive-zodiac-wheel")).toHaveCSS("display", "grid");
+}
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`zodiac and house labels stay centered along their rings ${width} ${theme}`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 1000 });
+    for (const kind of ["label-alignment-sky", "label-alignment"]) {
+      await openHarness(page, kind, theme);
+      await page.evaluate(() => document.fonts.ready);
+      const svg = page.locator(".interactive-zodiac-wheel__svg");
+      const labels = await svg.evaluate(root => {
+        const radius = (point: { x: number; y: number }) => Math.hypot(point.x - 300, point.y - 300);
+        const circles = root.querySelectorAll<SVGCircleElement>(".interactive-wheel-paper");
+        const sector = root.querySelector<SVGPathElement>(".interactive-wheel-sector__band")!;
+        const houseRadius = Number(sector.getAttribute("d")!.match(/ A([\d.]+)/)![1]);
+        return {
+          signRadius: (circles[0].r.baseVal.value + Number(root.querySelector<SVGPathElement>(".interactive-wheel-sector__wedge")!.getAttribute("d")!.match(/ A([\d.]+)/)![1])) / 2,
+          houseRadius: (circles[1].r.baseVal.value + houseRadius) / 2,
+          signs: [...root.querySelectorAll<SVGTextPathElement>(".interactive-wheel-sign textPath")].map(text => {
+            const path = root.querySelector<SVGPathElement>(text.getAttribute("href")!)!;
+            return { radius: radius(path.getPointAtLength(path.getTotalLength() / 2)), baseline: getComputedStyle(text).dominantBaseline };
+          }),
+          angles: [...root.querySelectorAll<SVGGElement>(".interactive-wheel-angle")].map(node => {
+            const matrix = node.transform.baseVal.consolidate()!.matrix;
+            return { key: node.getAttribute("data-angle")!, x: matrix.e, y: matrix.f, label: node.getAttribute("aria-label")! };
+          }),
+          houses: [...root.querySelectorAll<SVGTextElement>(".interactive-wheel-house")].map(text => {
+            const x = text.x.baseVal[0].value, y = text.y.baseVal[0].value;
+            const matrix = text.transform.baseVal.consolidate()!.matrix;
+            return {
+              radius: radius({ x, y }),
+              radialBaseline: ((x - 300) * matrix.a + (y - 300) * matrix.b) / radius({ x, y }),
+              readable: matrix.a >= -0.0001,
+              anchorMovement: Math.hypot(matrix.a * x + matrix.c * y + matrix.e - x, matrix.b * x + matrix.d * y + matrix.f - y),
+              baseline: getComputedStyle(text).dominantBaseline,
+              textAnchor: getComputedStyle(text).textAnchor
+            };
+          })
+        };
+      });
+      expect(labels.signs).toHaveLength(12);
+      expect(labels.houses).toHaveLength(12);
+      for (const sign of labels.signs) {
+        expect(sign.radius).toBeCloseTo(labels.signRadius, 2);
+        expect(sign.baseline).toBe("central");
+      }
+      for (const house of labels.houses) {
+        expect(house.radius).toBeCloseTo(labels.houseRadius, 3);
+        expect(house.radialBaseline, "House numbers follow the ring tangent").toBeCloseTo(0, 3);
+        expect(house.readable, "House numbers stay upright on both halves of the wheel").toBe(true);
+        expect(house.anchorMovement, "Rotation keeps each number at its sector center").toBeCloseTo(0, 3);
+        expect(house.baseline).toBe("central");
+        expect(house.textAnchor).toBe("middle");
+      }
+      const snapshot = labelSnapshots[kind];
+      const normalize = (longitude: number) => (longitude % 360 + 360) % 360;
+      const longitudes: Record<string, number> = {
+        ASC: snapshot.ascendantLongitude!, DSC: normalize(snapshot.ascendantLongitude! + 180),
+        MC: snapshot.midheavenLongitude!, IC: normalize(snapshot.midheavenLongitude! + 180)
+      };
+      expect(labels.angles.map(angle => angle.key)).toEqual(["ASC", "DSC", "MC", "IC"]);
+      for (const angle of labels.angles) {
+        const longitude = normalize(Math.atan2(300 - angle.y, angle.x - 300) * 180 / Math.PI - 180 + snapshot.ascendantLongitude!);
+        const difference = normalize(longitude - longitudes[angle.key] + 180) - 180;
+        expect(difference, `${angle.key} retains its calculated longitude`).toBeCloseTo(0, 3);
+        if (angle.key === "ASC" || angle.key === "DSC") {
+          expect(angle.y).toBeCloseTo(300, 3);
+          expect(angle.key === "ASC" ? angle.x < 300 : angle.x > 300).toBe(true);
+        } else {
+          expect(angle.key === "MC" ? angle.y < 300 : angle.y > 300, "MC stays above the horizon and IC below it").toBe(true);
+        }
+      }
+      await svg.screenshot({ path: info.outputPath(`label-alignment-${kind}-${width}-${theme}.png`) });
+    }
+  });
 }
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
