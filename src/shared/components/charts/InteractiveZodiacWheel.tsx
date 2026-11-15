@@ -140,7 +140,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
 
   return <div ref={rootRef} className="interactive-zodiac-wheel" data-mode={mode} data-has-houses={facts.hasHouses} data-selected-type={selected?.type}>
     <div className="interactive-zodiac-wheel__drawing">
-      <svg className="interactive-zodiac-wheel__svg" viewBox="0 0 600 600" role="group" aria-label={mode === "sky" ? "Interactive sky chart" : ownerName ? `${ownerName} interactive natal chart` : "Your interactive natal chart"} onClick={clear}>
+      <svg className="interactive-zodiac-wheel__svg" viewBox={facts.angles.length ? "-40 -40 680 680" : "0 0 600 600"} role="group" aria-label={mode === "sky" ? "Interactive sky chart" : ownerName ? `${ownerName} interactive natal chart` : "Your interactive natal chart"} onClick={clear}>
         <desc>Select a planet{facts.hasHouses ? ", house, or angle" : ""} to explore its chart details. Press Escape to clear the selection.</desc>
         <defs>{wheelSigns.map((sign, index) => {
           const angle = ((180 + index * 30 + 15 - (facts.ascendant ?? 0)) % 360 + 360) % 360;
@@ -214,7 +214,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
           </g>;
         })}
         {facts.angles.map(angle => {
-          const position = at(angle.longitude, radii.sign);
+          const position = at(angle.longitude, radii.outer + 24);
           let rotation = 90 - (180 + angle.longitude - (facts.ascendant ?? 0));
           while (rotation > 90) rotation -= 180;
           while (rotation < -90) rotation += 180;

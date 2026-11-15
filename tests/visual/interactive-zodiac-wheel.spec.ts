@@ -23,7 +23,7 @@ test.beforeAll(async () => {
         return {planet,longitude,sign:signs[Math.floor(longitude/30)],degree:longitude%30,
           house:1,glyph:'',signGlyph:'',speed:index===2?-0.5:index===6?-0.05:0.1,motion:'direct'};
       });
-      const snapshot = {positions,aspects:[],ascendantLongitude:271.2,midheavenLongitude:208.7,
+      const snapshot = {positions,aspects:[],ascendantLongitude:271.2,midheavenLongitude:kind==='angle-clearance'?315:208.7,
         birthTimeKnown:true,generatedAt:'2026-11-04T17:00:00Z',solarHorizon:{version:'solar-horizon-v1',instant:'2026-11-04T17:00:00Z',altitude:30}};
       return <main style={{maxWidth:520,margin:'auto',padding:16}}>
         <button onClick={()=>setChanged(value=>!value)}>Change selected date</button>
@@ -51,6 +51,48 @@ async function openHarness(page: import("@playwright/test").Page, kind: string, 
   await page.goto(`/__interactive-wheel?kind=${kind}&pronouns=${pronouns}`);
   await expect(page.locator(".interactive-zodiac-wheel__svg")).toBeVisible();
   await expect(page.locator(".interactive-zodiac-wheel")).toHaveCSS("display", "grid");
+}
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
+  test(`angle badges leave zodiac names readable ${width} ${theme}`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await openHarness(page, "angle-clearance", theme);
+    await page.evaluate(() => document.fonts.ready);
+    const svg = page.locator(".interactive-zodiac-wheel__svg");
+    const facts = await svg.locator(".interactive-wheel-planet-button").evaluateAll(nodes => nodes.map(node => node.getAttribute("aria-label")));
+    const geometry = await svg.evaluate(root => {
+      const signs = [...root.querySelectorAll(".interactive-wheel-sign")].map(node => ({ name: node.textContent, box: node.getBoundingClientRect() }));
+      const badges = [...root.querySelectorAll(".interactive-wheel-angle")].map(node => ({ name: node.getAttribute("data-angle"), box: node.getBoundingClientRect() }));
+      const viewport = root.getBoundingClientRect();
+      const outerRadius = Number(root.querySelector(".interactive-wheel-paper")!.getAttribute("r"));
+      const clearances = [...root.querySelectorAll<SVGGElement>(".interactive-wheel-angle")].map(node => {
+        const rect = node.querySelector("rect")!;
+        const center = new DOMPoint(300, 300).matrixTransform(node.transform.baseVal.consolidate()!.matrix.inverse());
+        const x = Math.max(rect.x.baseVal.value, Math.min(rect.x.baseVal.value + rect.width.baseVal.value, center.x));
+        const y = Math.max(rect.y.baseVal.value, Math.min(rect.y.baseVal.value + rect.height.baseVal.value, center.y));
+        return Math.hypot(center.x - x, center.y - y) - outerRadius;
+      });
+      return {
+        names: signs.map(sign => sign.name),
+        clearances,
+        contained: badges.every(({ box }) => box.left >= viewport.left && box.right <= viewport.right && box.top >= viewport.top && box.bottom <= viewport.bottom)
+      };
+    });
+    expect(geometry.names).toHaveLength(12);
+    expect(geometry.names).toContain("AQUARIUS");
+    expect(geometry.names).toContain("LEO");
+    expect(geometry.clearances).toHaveLength(4);
+    for (const clearance of geometry.clearances) expect(clearance, "Angle badges clear the entire circular sign-name band").toBeGreaterThanOrEqual(4);
+    expect(geometry.contained, "Every badge stays inside the SVG canvas").toBe(true);
+    const mc = svg.locator('[data-angle="MC"]');
+    await mc.focus();
+    await page.keyboard.press("Enter");
+    await expect(mc).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator(".interactive-wheel-detail__heading")).toContainText("Midheaven");
+    await page.keyboard.press("Escape");
+    expect(await svg.locator(".interactive-wheel-planet-button").evaluateAll(nodes => nodes.map(node => node.getAttribute("aria-label")))).toEqual(facts);
+    await svg.screenshot({ path: info.outputPath(`angle-clearance-${width}-${theme}.png`) });
+  });
 }
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {

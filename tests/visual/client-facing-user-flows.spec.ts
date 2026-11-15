@@ -6754,11 +6754,14 @@ for (const width of [320, 390, 1280, 1440, 1920]) for (const theme of ["light", 
       else await selectFriendDetailTab(page, "Natal");
       const natal = page.locator(owner === "you" ? '#wheel-natal .interactive-zodiac-wheel' : '[aria-label="Nikki natal chart wheel"] .interactive-zodiac-wheel');
       await expect(natal.locator('.interactive-zodiac-wheel__svg')).toBeVisible();
-      await expect(natal.locator('.interactive-zodiac-wheel__svg')).toHaveAttribute('viewBox', '0 0 600 600');
+      await expect(natal.locator('.interactive-zodiac-wheel__svg')).toHaveAttribute('viewBox', '-40 -40 680 680');
+      await expectNoHorizontalOverflow(page, `${owner} natal angle badges ${width} ${theme}`);
       const openNatal = page.getByRole('button', { name: 'Open full natal chart', exact: true });
       await openNatal.click();
       const fullscreen = page.getByRole('dialog', { name: 'Natal chart', exact: true });
       await expect(fullscreen.locator('.interactive-zodiac-wheel__svg')).toBeVisible();
+      await expect(fullscreen.locator('.interactive-zodiac-wheel__svg')).toHaveAttribute('viewBox', '-40 -40 680 680');
+      await expectNoHorizontalOverflow(page, `${owner} fullscreen angle badges ${width} ${theme}`);
       await fullscreen.getByRole('button', { name: 'Close full-screen chart', exact: true }).click();
       await expect(openNatal).toBeFocused();
       if (owner === "you") await page.getByRole('tab', { name: 'Transits', exact: true }).click();
