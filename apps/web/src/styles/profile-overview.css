@@ -37,9 +37,18 @@
 :is(.natal-placement-sections, .natal-big-three) .placement-table-row { display: grid; grid-template-columns: var(--size-7) minmax(0, 1fr); align-items: start; gap: var(--space-4); width: 100%; border: 0; border-radius: var(--card-radius-sm); text-align: left; }
 :is(.natal-placement-sections, .natal-big-three) .placement-table-row__title { font-family: var(--font-ui); font-size: var(--text-row-title-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); color: var(--ink); }
 :is(.natal-placement-sections, .natal-big-three) .placement-table-row__description { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--card-preview-lines); overflow: hidden; font-family: var(--font-body); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
-:is(.natal-placement-sections, .natal-big-three) .placement-table-row__glyph { width: var(--size-7); height: var(--size-7); border-radius: var(--radius-sm); background: var(--surface); color: var(--accent); }
+:is(.natal-placement-sections, .natal-big-three) .placement-table-row__glyph { place-items: center; width: var(--size-7); height: var(--size-7); border-radius: var(--radius-sm); background: var(--surface); color: var(--accent); }
 .natal-big-three .placement-table-row__glyph { background: var(--surface-2); }
 :is(.natal-placement-sections, .natal-big-three) .card-read-more { display: none; }
+.natal-empty-houses .placement-table-row__glyph { color: var(--ink); }
+.natal-empty-houses .placement-glyph-pair__sign { color: var(--accent); }
+.natal-placement-sections .placement-glyph-pair__sign { border-color: var(--surface-2); background: var(--surface-2); }
+.natal-empty-houses .placement-sign-glyph-svg { filter: var(--filter-glyph-accent); }
+.natal-empty-houses .placement-table-row__description { -webkit-line-clamp: var(--card-preview-lines-compact); }
+.natal-points .placement-table-row { grid-template-columns: var(--size-7) minmax(0, 1fr) var(--placement-control-size); }
+.natal-points .natal-placement-grid { border: var(--border-width-thin) solid var(--card-border); }
+.natal-points .placement-table-row__glyph { border-radius: var(--radius-circle); }
+.natal-points .card-read-more--icon { display: grid; justify-self: end; background: var(--surface); }
 .natal-readings { grid-column: 1 / -1; min-width: 0; }
 .natal-readings--insights .natal-readings__items { display: grid; grid-template-columns: var(--layout-card-columns); gap: var(--space-6); }
 .natal-reading-card { display: grid; justify-items: center; gap: var(--space-3); width: 100%; border: 0; border-radius: var(--card-radius-sm); padding: var(--space-8) var(--space-7) var(--space-7); background: var(--surface); color: var(--ink); box-shadow: var(--card-shadow); cursor: pointer; }

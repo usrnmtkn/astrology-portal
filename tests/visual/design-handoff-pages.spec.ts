@@ -12,6 +12,8 @@ import { readerResponse } from '../helpers/reader-response';
 import skyHandler from '../../api/sky';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import retrogradeCycleCopy from '../../apps/web/src/content/retrogradeCycleNarratives.json' with {type:'json'};
+import { emptyHouseRulerName } from '../../apps/web/src/content/emptyHouseRulership';
+import { zodiacSigns } from '../../apps/web/src/services/chartMath';
 
 async function showRelationshipOutlooks(page: Page) {
   await expect(page.getByRole('region',{name:'Friction and flow',exact:true})).toBeVisible({timeout:60_000});
@@ -2115,3 +2117,80 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await checkNoDividers();
   });
 }
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (const audience of ['you', 'friend']) {
+  test(`Natal empty-house and point card UI ${width} ${theme} ${audience}`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1100 });
+    const snapshot = await seed(page, theme);
+    await authenticate(page);
+    const route = audience === 'you' ? '/#you?tab=chart' : '/#friends?tab=charts&chart=fixture-friend&view=natal';
+    await page.goto(route);
+    const empty = page.getByRole('region', { name: 'Empty houses', exact: true });
+    const points = page.getByRole('region', { name: 'Points', exact: true });
+    const planetNames = new Set(['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto']);
+    const occupied = new Set(snapshot.positions.filter(position => planetNames.has(position.planet)).map(position => position.house));
+    const expectedHouses = Array.from({ length: 12 }, (_, index) => index + 1).filter(house => !occupied.has(house));
+    const cards = empty.locator('.placement-table-row');
+    await expect(cards).toHaveCount(expectedHouses.length);
+    for (const [index, house] of expectedHouses.entries()) {
+      const sign = zodiacSigns[(zodiacSigns.indexOf(snapshot.ascendant) + house - 1) % 12];
+      const ruler = emptyHouseRulerName(sign);
+      const rulerSign = snapshot.positions.find(position => position.planet === ruler)!.sign;
+      const card = cards.nth(index);
+      await expect(card.locator('.placement-table-row__title')).toContainText(`House in ${sign}`);
+      await expect(card.locator('.placement-table-row__title')).not.toContainText('Empty');
+      await expect(card.locator('.placement-glyph-pair__planet')).toHaveText(String(house));
+      await expect(card.locator('.placement-glyph-pair__sign')).toHaveAttribute('data-point', ruler);
+      await expect(card.locator('.placement-table-row__meta')).toHaveText(`Ruled by ${ruler} in ${rulerSign}`);
+      await card.scrollIntoViewIfNeeded();
+      const offset = await card.locator('.placement-glyph-pair__planet').evaluate(node => {
+        const range = document.createRange(); range.selectNodeContents(node);
+        const text = range.getBoundingClientRect(), tile = node.getBoundingClientRect();
+        return Math.abs(text.x + text.width / 2 - tile.x - tile.width / 2);
+      });
+      expect(offset, 'House number is centered within its tile').toBeLessThan(1);
+    }
+    await expect(points.locator('.placement-table-row')).toHaveCount(4);
+    await expect(points.locator('.placement-table-row__title')).toHaveText([/North Node/, /South Node/, /Chiron/, /Lilith/]);
+    for (const row of await points.locator('.placement-table-row').all()) {
+      await expect(row.locator('.placement-table-row__glyph')).toHaveCSS('border-radius', '50%');
+      await expect(row.locator('.placement-glyph-pair__sign')).toBeVisible();
+      await expect(row.locator('.card-read-more--icon')).toBeVisible();
+    }
+    for (const section of [empty, points]) {
+      for (const description of await section.locator('.placement-table-row__description').all()) {
+        await expect(description).toHaveCSS('font-family', /Newsreader/);
+        await expect(description).toHaveCSS('font-size', '19px');
+      }
+      await section.scrollIntoViewIfNeeded();
+      await section.evaluate(node => node.scrollIntoView({ block: 'center' }));
+      await section.screenshot({ path: test.info().outputPath(`${audience}-${section === empty ? 'empty-houses' : 'points'}-${width}-${theme}.png`) });
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.reload();
+    await expect(cards).toHaveCount(expectedHouses.length);
+    await expect(points.locator('.card-read-more--icon')).toHaveCount(4);
+    await page.getByRole('tab', { name: 'Table', exact: true }).click();
+    await expect.poll(() => page.locator('.natal-chart-data-table tbody tr').evaluateAll(rows => rows
+      .filter(row => row.lastElementChild?.textContent?.trim() === '—')
+      .map(row => Number(row.firstElementChild?.textContent)))).toEqual(expectedHouses);
+    await page.getByRole('tab', { name: 'Circle', exact: true }).click();
+    const northNode = points.locator('.placement-table-row').first();
+    await northNode.scrollIntoViewIfNeeded();
+    await northNode.focus(); await page.keyboard.press('Enter');
+    await expect(page.getByRole('heading', { level: 1, name: /North Node/ })).toBeVisible();
+  });
+}
+
+test('Unknown birth time omits Empty houses cards', async ({ page }) => {
+  await seed(page, 'light');
+  await authenticate(page);
+  const profile = structuredClone(fixtureProfile);
+  profile.charts[0].birthTime = 'Time unknown';
+  await page.addInitScript(profile => localStorage.setItem('tldrastro:userProfile', JSON.stringify(profile)), profile);
+  await page.route('**/rest/v1/user_profiles*', route => route.fulfill({ json: { data: { version: 1, profile } } }));
+  await page.goto('/#you?tab=chart');
+  await expect(page.getByRole('heading', { level: 1, name: 'Fixture Reader', exact: true })).toBeVisible();
+  await expect(page.locator('.natal-points .placement-table-row')).toHaveCount(4);
+  await expect(page.getByRole('region', { name: 'Empty houses', exact: true })).toHaveCount(0);
+});
