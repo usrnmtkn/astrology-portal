@@ -244,7 +244,10 @@ try {
   // Established #742 card/header contract: subtitle/pills belong in articles,
   // while the card keeps its title, complete description, action and orb.
   assert.doesNotMatch(populatedSynastryHtml, /aspect-row-subtitle|Easy recognition/);
-  assert.match(populatedSynastryHtml, /Read More/);
+  assert.match(populatedSynastryHtml, /<button[^>]*aria-label="Open full entry for Your Sun trine Alex&#x27;s Moon"/,
+    "The synastry card retains its labeled action for opening the full entry.");
+  assert.match(populatedSynastryHtml, /<span class="card-read-more card-read-more--icon [^"]*" aria-hidden="true"><svg[^>]*class="[^"]*lucide-chevron-right/,
+    "The synastry card uses the shared decorative chevron cue.");
   assert.match(populatedSynastryHtml, /aria-label="1° orb"/);
   assert.doesNotMatch(populatedSynastryHtml, /Add both charts/);
 
@@ -287,10 +290,10 @@ try {
       description: "Alex thinks deliberately."
     }]
   }));
-  assert.match(natalTabHtml, /Big three/);
-  assert.match(natalTabHtml, /Alex&#x27;s natal placements/);
+  assert.match(natalTabHtml, /<h2[^>]*>Big Three<\/h2>/);
+  assert.match(natalTabHtml, /aria-label="Traditional planets"/);
   assert.match(natalTabHtml, /Empty houses/);
-  assert.match(natalTabHtml, /Empty 2nd House in Taurus/);
+  assert.match(natalTabHtml, />2nd House in Taurus<\/span>/);
   assert.doesNotMatch(natalTabHtml, /aspect-row-button|aspect-row-static/,
     "The natal placement surface must not reintroduce the removed top-level aspect list.");
   assert.match(natalTabHtml, /Alex thinks deliberately/,
@@ -314,7 +317,7 @@ try {
   }));
   assert.match(repairingNatalTabHtml, /aria-label="Completing Alex&#x27;s natal chart"/);
   assert.match(repairingNatalTabHtml, /aria-busy="true"/);
-  assert.doesNotMatch(repairingNatalTabHtml, /Big three|Alex&#x27;s natal placements|Empty houses/);
+  assert.doesNotMatch(repairingNatalTabHtml, /Big Three|Traditional planets|Empty houses/);
 
   const emptyTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsFixture, {
     bondTransits: [],
