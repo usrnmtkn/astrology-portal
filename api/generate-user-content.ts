@@ -1,3 +1,4 @@
+import { GenerationProviderError, generationProviderFailure } from "./_lib/generation-provider-error.js";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
   ContentGenerationHardEditorialError,
@@ -65,6 +66,12 @@ type SupabaseUserPayload = {
   msg?: string;
 };
 
+class UserContentRequestError extends Error {
+  constructor(readonly status: number, readonly errorType: string, message: string) {
+    super(message);
+  }
+}
+
 function requireEnv(name: string) {
   const value = process.env[name];
 
@@ -100,6 +107,7 @@ function contentProvider(subjectType: UserContentSubjectType) {
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json");
+  res.setHeader("cache-control", "no-store");
   res.end(JSON.stringify(body));
 }
 
@@ -110,7 +118,16 @@ async function readJsonBody(req: IncomingMessage) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
 
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as UserContentRequest;
+  let value: unknown;
+  try {
+    value = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+  } catch {
+    throw new UserContentRequestError(400, "invalid_request", "Send a valid JSON object.");
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new UserContentRequestError(400, "invalid_request", "Send a valid JSON object.");
+  }
+  return value as UserContentRequest;
 }
 
 function bearerToken(req: IncomingMessage) {
@@ -135,7 +152,7 @@ async function requireAuthenticatedUser(req: IncomingMessage) {
   const token = bearerToken(req);
 
   if (!token) {
-    throw new Error("Sign in before generating personalized content.");
+    throw new UserContentRequestError(401, "authentication_required", "Sign in before generating personalized content.");
   }
 
   const response = await fetch(`${supabaseUrl()}/auth/v1/user`, {
@@ -143,12 +160,18 @@ async function requireAuthenticatedUser(req: IncomingMessage) {
       apikey: supabaseAnonKey(),
       authorization: `Bearer ${token}`
     }
+  }).catch(() => {
+    throw new UserContentRequestError(503, "authentication_unavailable", "Sign-in verification is temporarily unavailable.");
   });
   const payload = await response.json().catch(() => null) as SupabaseUserPayload | null;
   const userId = payload?.id ?? payload?.user?.id;
 
   if (!response.ok || !userId) {
-    throw new Error(payload?.error ?? payload?.msg ?? "Could not verify signed-in user.");
+    throw new UserContentRequestError(
+      response.status >= 500 ? 503 : 401,
+      response.status >= 500 ? "authentication_unavailable" : "authentication_required",
+      response.status >= 500 ? "Sign-in verification is temporarily unavailable." : "Sign in again before generating personalized content."
+    );
   }
 
   return userId;
@@ -326,6 +349,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const userId = await requireAuthenticatedUser(req);
     const input = await readJsonBody(req);
     requestSubjectType = input.subjectType;
+    if (input.subjectType === "you_transit") {
+      sendJson(res, 409, {
+        ok: false,
+        errorType: "automatic_generation_disabled",
+        error: "Transit readings use published content. Automatic generation is disabled.",
+        retryable: false
+      });
+      return;
+    }
     if (input.subjectType === "friend_transit_reading") {
       const locked = friendTransitReadingRequestLock({
         brief: input.facts?.friendTransitsBrief,
@@ -389,6 +421,21 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       saved
     });
   } catch (error) {
+    if (error instanceof UserContentRequestError) {
+      sendJson(res, error.status, {
+        ok: false, errorType: error.errorType, error: error.message,
+        retryable: error.status === 503
+      });
+      return;
+    }
+    if (error instanceof GenerationProviderError) {
+      const { status, ...failure } = generationProviderFailure(error);
+      console.warn("generate-user-content provider rejected request", {
+        provider: error.provider, upstreamStatus: error.status, errorType: failure.errorType
+      });
+      sendJson(res, status, { ok: false, ...failure });
+      return;
+    }
     if (error instanceof ContentGenerationHardEditorialError) {
       sendJson(res, 422, {
         ok: false,
@@ -414,7 +461,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       errorType: requestSubjectType === "friend_transit_reading" ? "paid_reading_unavailable" : "generation_error",
       error: requestSubjectType === "friend_transit_reading"
         ? "This paid reading is currently unavailable."
-        : error instanceof Error ? error.message : "Unknown personalized generation error."
+        : "Personalized generation could not complete. Please try again later.",
+      retryable: false
     });
   }
 }

@@ -16,7 +16,8 @@ assert.match(page, /article\.generatedContent\?\.status === "LIVE"/u);
 assert.match(page, /generatedContentParagraphs\(/u);
 assert.match(page, /generatedContentSections\(generated\)/u);
 assert.match(app, /generatedContent: savedGeneratedContent/u);
-assert.match(app, /if \(nextContent\.has\(contentKey\)\) \{\s+continue;/u);
+assert.doesNotMatch(app, /generateUserContent\(/u, "Normal reader navigation must never generate paid content.");
+assert.match(app, /signal: controller\.signal/u);
 assert.match(app, /const readerAspectRows = \[\.\.\.dailyAspectGroups, \.\.\.backgroundAspectGroups\]\.map/u,
   "Calculated transit rows remain visible when prose is unavailable.");
 assert.equal((app.match(/const Row = detailAvailable \? "button" : "article"/gu) ?? []).length, 1,
