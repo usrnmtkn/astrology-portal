@@ -269,7 +269,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) test(`Re
   await page.routeWebSocket('**/realtime/v1/websocket*',socket=>socket.onMessage(raw=>{const m=JSON.parse(String(raw));socket.send(JSON.stringify({topic:m.topic,event:'phx_reply',ref:m.ref,payload:{status:'ok',response:{}}}));}));
   await page.goto('/reports/');
   const card=page.locator('.report-library-row').filter({hasText:row.headline}), title=card.locator('.type-card-title');
-  await expect(card).toBeVisible();await expect(title).toHaveCSS('font-family',width<800?/system-ui/:/Newsreader/);await expect(title).toHaveCSS('font-size',width<800?'17px':'24px');await expect(title).toHaveCSS('font-weight',width<800?'600':'400');await expect(title).toHaveCSS('line-height',width<800?'22.95px':'27.6px');
+  await expect(card).toBeVisible();await expect(title).toHaveCSS('font-family',width<800?/system-ui/:/Newsreader/);await expect(title).toHaveCSS('font-size',width<800?'17px':'24px');await expect(title).toHaveCSS('font-weight',width<800?'600':'400');await expect(title).toHaveCSS('line-height',width<800?'22.1px':'27.6px');
   await expect(card.locator('.report-library-row__date')).toHaveCSS('font-size','13px');await expect(card.locator('.report-library-row__date')).toHaveCSS('font-family',/system-ui/);
   await expectReadableTheme(page,'.report-library-row .type-card-title, .report-library-row__subtitle, .report-library-row__date');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

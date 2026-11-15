@@ -2,9 +2,12 @@
 .article-page .article-shell { width: min(var(--layout-reading-width), 100%); margin-inline: auto; }
 .article-page .article-card { padding: var(--layout-reading-block-space) var(--layout-reading-padding); border: 0; border-radius: var(--card-radius); background: var(--surface); box-shadow: var(--card-shadow); }
 .article-page .article-title { font-size: var(--type-feature-title-size); font-weight: var(--weight-regular); line-height: var(--leading-feature-title); letter-spacing: var(--tracking-display); }
-.article-page .article-body-inner { --text-body: var(--type-reading-size); --leading-body: var(--leading-reading); }
-.article-page .article-related-aspects { --text-body: var(--type-reading-size); --leading-body: var(--leading-reading); }
+.article-page.you-transit-article-page:not(.sky-placement-article-page) .article-card { border-radius: var(--radius-article); }
+.article-page:not(.saved-generated-report) .article-body-inner { --text-body: var(--article-body-size); --leading-body: var(--leading-longform); --tracking-body: var(--tracking-longform); }
+.article-page .article-related-aspects { --text-body: var(--text-reading-preview); --leading-body: var(--leading-longform); --tracking-body: var(--tracking-longform); }
+.article-page .article-body-inner p, .article-page .article-related-aspects p { letter-spacing: var(--tracking-body); }
 .article-page .article-section :is(h2, h3), .article-page .sky-detail-section :is(h2, h3) { font-family: var(--font-display); font-size: var(--type-dialog-title-size); font-weight: var(--weight-regular); line-height: var(--leading-title); }
+.article-page:not(.saved-generated-report) .article-body-inner .article-section :is(h2, h3) { font-size: var(--type-section-emphasis-size); letter-spacing: var(--tracking-normal); }
 .article-page .article-related-aspects__copy-heading :is(h3, h4) { font-family: var(--font-display); font-size: var(--type-dialog-title-size); font-weight: var(--weight-regular); line-height: var(--leading-title); }
 .article-page .article-rule { border-color: transparent; }
 .article-page .article-related-aspects-card .article-section { border: 0; background: transparent; box-shadow: none; }
@@ -46,10 +49,10 @@
  .article-page .article-related-aspects__copy-list { gap: var(--lunar-space-28); }
  .article-page .article-related-aspects__label--outside { font-size: var(--type-small-display-size); }
  .article-page .article-title { font-size: var(--type-compact-title-size); line-height: var(--leading-compact-title); letter-spacing: var(--tracking-dialog-title); }
- .article-page .article-body-inner { --text-body: var(--type-reading-compact-size); --leading-body: var(--leading-reading); }
- .article-page .article-section :is(h2, h3) { font-size: var(--type-large-title-size); }
+ .article-page:not(.saved-generated-report) .article-body-inner, .article-page .article-related-aspects { --text-body: var(--type-reading-compact-size); --leading-body: var(--leading-reading); --tracking-body: var(--tracking-normal); }
+ .article-page .article-section :is(h2, h3), .article-page:not(.saved-generated-report) .article-body-inner .article-section :is(h2, h3) { font-size: var(--type-large-title-size); }
  .article-page .article-related-aspects__copy-heading :is(h3, h4) { font-family: var(--font-ui); font-size: var(--type-compact-row-size); font-weight: var(--weight-semibold); line-height: var(--leading-row-title); }
- .article-page.transit-aspect-article-page .article-card.sky-detail-card { padding: var(--space-9) var(--space-6); }
+ .article-page.transit-aspect-article-page .article-card.sky-detail-card { padding: var(--space-7) var(--space-5); }
  .transit-aspect-article-page .sky-detail-body { margin-top: var(--space-7); }
  .article-key-dates__row { grid-template-columns: var(--size-8) minmax(0, 1fr); gap: var(--space-3); }
 }

@@ -82,7 +82,7 @@ test.describe("body paragraph type", () => {
   });
 
   for (const mode of modes) {
-    test(`${mode.name}: every reading paragraph shares one family and 19px`, async ({ page }) => {
+    test(`${mode.name}: reading paragraphs use shared body and longform roles`, async ({ page }) => {
       test.setTimeout(180_000);
       const samples: string[] = [];
 
@@ -105,12 +105,14 @@ test.describe("body paragraph type", () => {
           timeout: 20_000
         }).toBeGreaterThan(0);
         const found = await collectBodyParagraphs(page);
-        samples.push(...found.map((item) => `${item.family} @ ${item.size} | ${route.name} | ${item.selector} | ${item.text}`));
+        for (const item of found) {
+          expect(item.size, `${route.name}: ${item.selector}`).toBe(['article', 'lead'].includes(item.role) ? '26px' : item.role === 'preview' ? '20px' : '19px');
+        }
+        samples.push(...found.map((item) => `${item.family} | ${item.size} | ${route.name} | ${item.selector} | ${item.text}`));
       }
 
       const pairs = [...new Set(samples.map((sample) => sample.split(" | ")[0]))];
       expect(pairs, samples.join("\n")).toHaveLength(1);
-      expect(pairs[0]).toContain("19px");
       if (mode.dyslexia) {
         expect(pairs[0].toLowerCase()).toContain("atkinson");
       } else {
@@ -282,6 +284,9 @@ async function collectBodyParagraphs(page: Page) {
       return [{
         family: style.fontFamily,
         size: style.fontSize,
+        role: node.matches('.lunation-transit .weekly-horoscope__macro-body > p:first-child') ? 'lead'
+          : node.closest('.horoscope-prose') ? 'article' : node.closest('.article-related-aspects') ? 'preview'
+          : node.closest('.article-page:not(.saved-generated-report) .article-body-inner') ? 'article' : 'body',
         selector: node.className || node.tagName,
         text: text.slice(0, 80)
       }];

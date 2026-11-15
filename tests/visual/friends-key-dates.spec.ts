@@ -41,13 +41,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     expect(paragraphs.at(-1)!.trim()).not.toBe('');
     for (const paragraph of await article.locator('.article-section:not(.article-transit-description) p').all()) {
       await expect(paragraph).toHaveCSS('font-family', /Newsreader/);
-      await expect(paragraph).toHaveCSS('font-size', '19px');
-      await expect(paragraph).toHaveCSS('line-height', '28.5px');
+      await expect(paragraph).toHaveCSS('font-size', width < 800 ? '19px' : '26px');
+      await expect(paragraph).toHaveCSS('line-height', width < 800 ? '28.5px' : '37.7px');
     }
     const facts = article.locator('.article-transit-description p');
     await expect(facts).toHaveCSS('font-family', /system-ui/);
     await expect(facts).toHaveCSS('font-size', '14px');
-    await expect(facts).toHaveCSS('line-height', '18.9px');
+    await expect(facts).toHaveCSS('line-height', '19.6px');
     await expectReadableTheme(page, '.article-title, .article-duration, .article-pills span, .article-section p');
     await article.screenshot({ path: test.info().outputPath('friends-transit-detail.png') });
     await page.reload();

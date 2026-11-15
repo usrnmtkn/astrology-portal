@@ -297,6 +297,10 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       const body = macro.locator(".weekly-horoscope__macro-body");
       const more = macro.getByRole("button", { name: "Read more", exact: true });
       await expect(more).toBeVisible();
+      await expect(body.locator('p').first()).toHaveCSS('font-family', /Newsreader/);
+      await expect(body.locator('p').first()).toHaveCSS('font-size', viewport.width > 800 ? '26px' : '19px');
+      await expect(body.locator('p').first()).toHaveCSS('line-height', viewport.width > 800 ? '35.1px' : '28.5px');
+      await expect(body.locator('p').nth(1)).toHaveCSS('font-size', '19px');
       const section = page.locator(".lunation-transit");
       const houses = page.getByRole("region", { name: "Planets moving through your houses", exact: true });
       await expect(section.getByRole("heading", { level: 2, name: macroHeadline, exact: true })).toBeVisible();
@@ -353,6 +357,8 @@ for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: 
       const section = page.locator(".lunation-transit");
       const houses = page.getByRole("region", { name: "House transits", exact: true });
       await expect(section.getByRole("heading", { name: macroHeadline, level: 2, exact: true })).toBeVisible({ timeout: 60_000 });
+      await expect(section.locator('.weekly-horoscope__macro-body > p').first()).toHaveCSS('font-size', viewport.width > 800 ? '26px' : '19px');
+      await expect(section.locator('.weekly-horoscope__macro-body > p').first()).toHaveCSS('line-height', viewport.width > 800 ? '35.1px' : '28.5px');
       await expect(section.locator(".lunation-transit__date")).toHaveText("Thursday, Sep 10");
       await expect(section.locator(".lunation-transit__house")).not.toBeEmpty();
       expect(await section.evaluate((el, house) => Boolean(el.compareDocumentPosition(house as Node) & Node.DOCUMENT_POSITION_FOLLOWING), await houses.elementHandle())).toBe(true);

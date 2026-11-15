@@ -17,11 +17,11 @@
 .natal-big-three { grid-column: 2; grid-row: 2; align-self: center; min-width: 0; }
 .natal-big-three > h2 { margin: 0 0 var(--space-4); }
 .natal-big-three .planet-placement-list { display: grid; gap: var(--space-4); background: transparent; border: 0; box-shadow: none; padding: 0; }
-.natal-big-three .placement-table-row { padding: var(--space-6); background: var(--surface); }
+.natal-big-three .placement-table-row { padding: var(--space-6); border-radius: var(--card-radius-sm); background: var(--surface); }
 .natal-placement-sections { display: grid; grid-column: 1 / -1; grid-template-columns: var(--layout-natal-columns); align-items: start; gap: var(--space-7) var(--space-6); }
 .natal-placement-section { min-width: 0; }
 .natal-placement-section > h2,
-.natal-readings--insights > h2 { font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); margin: 0 0 var(--space-4); }
+.natal-readings--insights > h2 { font-family: var(--font-ui); font-size: var(--type-small-display-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); margin: 0 0 var(--space-4); }
 .natal-traditional { grid-column: 1; grid-row: 1; }
 .natal-generational { grid-column: 1; grid-row: 2; }
 .natal-empty-houses { grid-column: 1; grid-row: 3; }
@@ -29,8 +29,8 @@
 .natal-points { grid-column: 2; grid-row: 2 / span 2; }
 .natal-placement-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
 .natal-angles .natal-placement-grid,
-.natal-points .natal-placement-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding: var(--space-6); border-radius: var(--card-radius); background: var(--surface-recessed); }
-.natal-placement-grid .placement-table-row { height: 100%; padding: var(--space-6); background: var(--surface-recessed); }
+.natal-points .natal-placement-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding: var(--space-6); border-radius: var(--card-radius-sm); background: var(--surface-recessed); box-shadow: var(--shadow-recessed); }
+.natal-placement-grid .placement-table-row { height: 100%; padding: var(--space-6); border: 0; border-radius: var(--card-radius-sm); background: var(--surface-recessed); box-shadow: var(--shadow-recessed); }
 .natal-angles .placement-table-row,
 .natal-points .placement-table-row { padding: 0; border: 0; box-shadow: none; background: transparent; }
 .natal-placement-item { min-width: 0; }
@@ -46,7 +46,7 @@
 .natal-empty-houses .placement-sign-glyph-svg { filter: var(--filter-glyph-accent); }
 .natal-empty-houses .placement-table-row__description { -webkit-line-clamp: var(--card-preview-lines-compact); }
 .natal-points .placement-table-row { grid-template-columns: var(--size-7) minmax(0, 1fr) var(--placement-control-size); }
-.natal-points .natal-placement-grid { border: var(--border-width-thin) solid var(--card-border); }
+.natal-points .natal-placement-grid { border: 0; }
 .natal-points .placement-table-row__glyph { border-radius: var(--radius-circle); }
 .natal-points .card-read-more--icon { display: grid; justify-self: end; background: var(--surface); }
 .natal-readings { grid-column: 1 / -1; min-width: 0; }

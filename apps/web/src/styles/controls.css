@@ -48,7 +48,7 @@
   background: transparent;
   color: var(--segmented-inactive-fg);
   font-family: var(--font-ui);
-  font-size: var(--text-meta-size);
+  font-size: var(--text-button-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-label);
   letter-spacing: var(--tracking-number);
@@ -87,7 +87,7 @@
 .segmented-control--compact .segmented-control__item {
   height: var(--segmented-item-height);
   padding: 0 var(--segmented-item-px);
-  font-size: var(--text-meta-size);
+  font-size: var(--text-button-size);
 }
 .primary-button,
 .secondary-button {

@@ -20,6 +20,58 @@ async function showRelationshipOutlooks(page: Page) {
 }
 
 for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  test(`Article typography matches approved reading roles ${width} ${theme}`, async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width, height: 1100 });
+    await seed(page, theme); await authenticate(page);
+    await page.goto('/?date=2026-10-13#you?tab=chart');
+    await page.locator('.natal-big-three .placement-table-row').first().click();
+    const article = page.locator('.article-page');
+    const title = article.locator('h1');
+    await expect(title).toContainText('Sun');
+    await page.evaluate(() => document.fonts.ready);
+    expect(await page.evaluate(() => document.fonts.check('400 26px Newsreader'))).toBe(true);
+    await expect(title).toHaveCSS('font-family', /Newsreader/);
+    await expect(title).toHaveCSS('font-size', width < 800 ? '34px' : '36px');
+    await expect(title).toHaveCSS('font-weight', '400');
+    await expect(title).toHaveCSS('line-height', width < 800 ? '36.72px' : '40.32px');
+    await expect(title).toHaveCSS('letter-spacing', width < 800 ? '-0.51px' : '-0.72px');
+    await expect(article.locator('.article-card').first()).toHaveCSS('border-radius', '28px');
+    const body = article.locator('.article-body-inner > .article-section p').first();
+    await expect(body).toHaveCSS('font-family', /Newsreader/);
+    await expect(body).toHaveCSS('font-size', width < 800 ? '19px' : '26px');
+    await expect(body).toHaveCSS('font-weight', '400');
+    await expect(body).toHaveCSS('line-height', width < 800 ? '28.5px' : '37.7px');
+    await expect(body).toHaveCSS('letter-spacing', width < 800 ? 'normal' : '-0.13px');
+    // This saved natal reading has no visible body headings. Its related
+    // section retains the H2/H3/H4 hierarchy without adding a new title.
+    await expect(article.locator('.article-body-inner > .article-section h2')).toHaveCount(0);
+    const related = article.locator('.article-related-aspect-row').first();
+    await expect(related.locator('h4')).toHaveCSS('font-family', width < 800 ? /system-ui/ : /Newsreader/);
+    await expect(related.locator('h4')).toHaveCSS('font-size', width < 800 ? '17px' : '28px');
+    await expect(related.locator('h4')).toHaveCSS('font-weight', width < 800 ? '600' : '400');
+    await expect(related.locator('p').first()).toHaveCSS('font-size', width < 800 ? '19px' : '20px');
+    await expect(related.locator('p').first()).toHaveCSS('line-height', width < 800 ? '28.5px' : '29px');
+    await expect(article.locator('.article-eyebrow').first()).toHaveCSS('font-family', /Geist Mono/);
+    const outline = await article.locator('h1, h2, h3, h4').evaluateAll(nodes => nodes.map(node => ({ tag: node.tagName, text: node.textContent })));
+    expect(outline[0].tag).toBe('H1');
+    expect(outline.find(node => node.tag === 'H2')?.text).toBeTruthy();
+    expect(outline.findIndex(node => node.tag === 'H3')).toBeLessThan(outline.findIndex(node => node.tag === 'H4'));
+    const savedBody = await body.textContent();
+    await article.screenshot({ path: `test-results/article-typography-${width}-${theme}.png` });
+    await related.click();
+    await expect(article.locator('.article-id > .aspect-badge')).toBeVisible();
+    await expect(article.locator('.article-body-inner p').first()).toHaveCSS('font-size', width < 800 ? '19px' : '26px');
+    await page.getByRole('button', { name: /Close detail|Back/ }).first().click();
+    await expect(body).toHaveText(savedBody!);
+    await page.reload();
+    await expect(body).toHaveText(savedBody!);
+    await expect(body).toHaveCSS('font-size', width < 800 ? '19px' : '26px');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  });
+}
+
+for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   test(`Placement article polish ${width} ${theme}`, async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width, height: 1100 });
@@ -56,8 +108,8 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
       await expect(row.locator('.aspect-row-timing').first()).toHaveCSS('font-size', '14px');
       const narrative = row.locator('p').first();
       await expect(narrative).toHaveCSS('font-family', /Newsreader/);
-      await expect(narrative).toHaveCSS('font-size', '19px');
-      await expect(narrative).toHaveCSS('line-height', '28.5px');
+      await expect(narrative).toHaveCSS('font-size', width < 800 ? '19px' : '20px');
+      await expect(narrative).toHaveCSS('line-height', width < 800 ? '28.5px' : '29px');
       const paragraphs = await first.locator('p').allTextContents();
       const outline = await page.locator('.article-related-aspects__label--outside, .article-related-aspect-row h4').allTextContents();
       expect(outline[0]).toBe('Gifts');
@@ -741,10 +793,10 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   await expect(article.locator('.horoscope-reading-date')).toHaveText('October 13');
   const order=await page.locator('.horoscope-page h1,h2,h3').allTextContents();expect(order[0]).toBe('Horoscopes');expect(order.indexOf('October 13')).toBeLessThan(order.indexOf('gemini fixture headline'));
   await expect(article.locator('.horoscope-reading-date')).toHaveCSS('font-family',/Newsreader/);
-  await expect(article.locator('.horoscope-reading-date')).toHaveCSS('font-size','36px');
-  await expect(article.locator('.horoscope-reading-date')).toHaveCSS('line-height','40.32px');
+  await expect(article.locator('.horoscope-reading-date')).toHaveCSS('font-size',width<=800?'34px':'44px');
+  await expect(article.locator('.horoscope-reading-date')).toHaveCSS('line-height',width<=800?'37.4px':'48.4px');
   await expect(page.locator('.horoscope-page h1')).toHaveCount(1);
-  for(const paragraph of await article.locator('.horoscope-prose p').all()){await expect(paragraph).toHaveCSS('font-family',/Newsreader/);await expect(paragraph).toHaveCSS('font-size','19px');await expect(paragraph).toHaveCSS('line-height','28.5px');await expect(paragraph).toHaveCSS('font-weight','400');await expect(paragraph).toHaveCSS('letter-spacing','normal');}
+  for(const paragraph of await article.locator('.horoscope-prose p').all()){await expect(paragraph).toHaveCSS('font-family',/Newsreader/);await expect(paragraph).toHaveCSS('font-size',width<=800?'19px':'26px');await expect(paragraph).toHaveCSS('line-height',width<=800?'28.5px':'37.7px');await expect(paragraph).toHaveCSS('font-weight','400');await expect(paragraph).toHaveCSS('letter-spacing',width<=800?'-0.095px':'-0.13px');}
   await expectReadableTheme(page,'.horoscope-reading-date, .horoscope-prose p');
   await page.getByRole('button',{name:/^Previous(?: |$)/}).click();await expect(article).toContainText('Complete 12 gemini ending.');
   await page.reload();await expect(article).toContainText('Complete 12 gemini ending.');
@@ -799,6 +851,8 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   await page.getByRole('button',{name:'Open menu',exact:true}).click();
   await page.getByRole('menuitem',{name:'Account',exact:true}).click();
   await expect(page.getByRole('heading',{level:1,name:'Account',exact:true})).toBeVisible();
+  await expect(page.locator('.account-page h1')).toHaveCSS('font-size',width<=800?'34px':'36px');
+  await expect(page.locator('.account-page h1')).toHaveCSS('line-height',width<=800?'35.7px':'40.32px');
   await expect(page.getByRole('button',{name:/Sign out/})).toBeVisible();
   const birthTime=page.getByRole('textbox',{name:'Birth time',exact:true});
   await birthTime.fill('11:30 AM');await page.getByRole('button',{name:'Save changes',exact:true}).click();
@@ -1130,7 +1184,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(page.getByLabel('Daily sky summary')).toBeVisible({ timeout: 60_000 });
     const effort = page.locator('.sky-debility-ledger');
     await expect(effort).toBeVisible(); await expect(effort.locator('mark')).toHaveCount(0);
-    await expect(effort.locator('.sky-today-ledger__head h3')).toHaveCSS('font-size', '36px');
+    await expect(effort.locator('.sky-today-ledger__head h3')).toHaveCSS('font-size', width <= 800 ? '30px' : '36px');
     await expect(effort.locator('.sky-today-ledger__copy p').first()).toHaveCSS('font-size', '19px');
     await expect(effort.getByRole('link').filter({ has: page.locator('.sky-debility-card__copy') }).first()).toBeVisible();
     const head = (await effort.locator('.sky-today-ledger__head').boundingBox())!, copy = (await effort.locator('.sky-today-ledger__copy').boundingBox())!, cards = (await effort.locator('.sky-debility-cards').boundingBox())!;
@@ -1409,10 +1463,13 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
     const title = page.locator(item.title); await expect(title).toBeVisible({ timeout: 60_000 });
     await expect(page.locator(item.body).first(), item.route).toBeVisible({ timeout: 60_000 });
     await page.evaluate(() => document.fonts.ready);
-    await expect(title).toHaveCSS('font-family', /Newsreader/); await expect(title).toHaveCSS('font-size', '36px'); await expect(title).toHaveCSS('font-weight', '400'); await expect(title).toHaveCSS('line-height', '40.32px');
+    const compactTitle = width <= 800 && ['sky', 'sky/placement/mercury/scorpio'].includes(item.route);
+    await expect(title).toHaveCSS('font-family', /Newsreader/); await expect(title).toHaveCSS('font-size', compactTitle ? '34px' : '36px'); await expect(title).toHaveCSS('font-weight', '400'); await expect(title).toHaveCSS('line-height', compactTitle ? item.route === 'sky' ? '35.7px' : '36.72px' : '40.32px');
     await expect(page.locator('h1')).toHaveCount(1);
     for (const paragraph of await page.locator(item.body).all()) {
-      await expect(paragraph, item.route).toHaveCSS('font-family', /Newsreader/); await expect(paragraph, item.route).toHaveCSS('font-size', '19px'); await expect(paragraph, item.route).toHaveCSS('line-height', '28.5px'); await expect(paragraph, item.route).toHaveCSS('font-weight', '400'); await expect(paragraph, item.route).toHaveCSS('letter-spacing', 'normal');
+      const longform = item.route === 'sky/placement/mercury/scorpio' && width > 800;
+      const preview = longform && await paragraph.evaluate(node => Boolean(node.closest('.article-related-aspects')));
+      await expect(paragraph, item.route).toHaveCSS('font-family', /Newsreader/); await expect(paragraph, item.route).toHaveCSS('font-size', longform ? preview ? '20px' : '26px' : '19px'); await expect(paragraph, item.route).toHaveCSS('line-height', longform ? preview ? '29px' : '37.7px' : '28.5px'); await expect(paragraph, item.route).toHaveCSS('font-weight', '400'); await expect(paragraph, item.route).toHaveCSS('letter-spacing', longform ? preview ? '-0.1px' : '-0.13px' : 'normal');
     }
     await expect(page.locator('.topbar-actions > .theme-toggle')).toHaveCount(0); await expectMenuTheme(page,theme as 'light'|'dark');
     await expect(page.locator('.profile-nav-button + .menu-toggle')).toBeVisible();
@@ -1427,6 +1484,17 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
       await page.mouse.move(0, 0); await expectRenderedTextContrast(page, item.body, 7);
     }
     await expectReadableTheme(page, `${item.title}, ${item.body}`);
+    if (item.route === 'you?tab=chart') {
+      await expect(page.locator('.natal-traditional > h2')).toHaveCSS('font-size', '20px');
+      await expect(page.locator('.natal-traditional > h2')).toHaveCSS('font-family', /system-ui/);
+      const raised = page.locator('.natal-big-three .placement-table-row').first();
+      const recessed = page.locator('.natal-traditional .placement-table-row').first();
+      await expect(raised).toHaveCSS('border-radius', '28px');
+      await expect(recessed).toHaveCSS('border-radius', '28px');
+      await expect(recessed).toHaveCSS('border-width', '0px');
+      await expect(recessed).toHaveCSS('box-shadow', theme === 'dark' ? 'none' : /1px 2px.*inset/);
+      await expect(page.locator('.you-profile-tabs button').first()).toHaveCSS('font-size', '15px');
+    }
     if (item.route === 'sky/placement/mercury/scorpio') {
       await expect(page.locator('.key-dates-panel[open], .retrograde-cycles__section[open]')).toHaveCount(0);
       for (const panel of await page.locator('.key-dates-panel > summary, .retrograde-cycles__section > summary').all()) { await expect(panel).toHaveCSS('font-size', '26px'); await expect(panel).toHaveCSS('line-height', '29.9px'); }
@@ -1501,14 +1569,14 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
    await expect(article).toContainText(`Full ${w.period} current ${sign} ending.`);
    await expect(article.locator('.horoscope-reading-date')).toHaveText(w.title);
    await expect(page.getByRole('button',{name:w.period[0].toUpperCase()+w.period.slice(1),exact:true})).toHaveCSS('background-color',theme==='dark'?'rgba(143, 245, 214, 0.14)':'rgb(255, 255, 255)');
-   await expect(article.locator('.horoscope-reading-date')).toHaveCSS('font-size','36px');
-   await expect(article.locator('.horoscope-reading-date')).toHaveCSS('line-height','40.32px');
+   await expect(article.locator('.horoscope-reading-date')).toHaveCSS('font-size',width<=800?'34px':'44px');
+   await expect(article.locator('.horoscope-reading-date')).toHaveCSS('line-height',width<=800?'37.4px':'48.4px');
    await expect(article.locator('.horoscope-reading-header')).toHaveCSS('text-align','center');
    await expect(article.locator('.horoscope-reading-sign')).toHaveCount(w.period==='monthly'?0:2);
    await expect(article.locator('.horoscope-passage-title')).toHaveCount(0);
    await expect(article.locator(':scope > .horoscope-date, :scope > .learn-kicker')).toHaveCount(0);
    const headings=await page.locator('.horoscope-page h1,h2,h3').allTextContents();expect(headings[0]).toBe('Horoscopes');expect(headings).toContain(w.title);
-   for(const p of await article.locator('.horoscope-prose p').all()){await expect(p).toHaveCSS('font-size','19px');await expect(p).toHaveCSS('font-family',/Newsreader/);await expect(p).toHaveCSS('line-height','28.5px');}
+   for(const p of await article.locator('.horoscope-prose p').all()){await expect(p).toHaveCSS('font-size',width<=800?'19px':'26px');await expect(p).toHaveCSS('font-family',/Newsreader/);await expect(p).toHaveCSS('line-height',width<=800?'28.5px':'37.7px');await expect(p).toHaveCSS('letter-spacing',width<=800?'-0.095px':'-0.13px');}
    await checkControls(w.previous,w.next);await expect(next).toBeDisabled();
    const context=page.getByRole('region',{name:"What's behind it",exact:true});
    await expect(context).toBeVisible();await expect(context.getByRole('link')).toHaveCount(2);
@@ -1516,7 +1584,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
    await expect(mercury).toContainText(w.period==='monthly'?'20.0°':'20.0° · House 6');
    if(w.period==='monthly')await expect(context).not.toContainText('House');
    await expect(mercury).toHaveAttribute('href',`/?date=${w.start}#sky/placement/mercury/scorpio`);
-   await expect(context.locator('h2')).toHaveCSS('font-size','26px');
+   await expect(context.locator('h2')).toHaveCSS('font-size',width<=800?'24px':'32px');
    await expect(context.locator('strong').first()).toHaveCSS('font-family',/system-ui/);
    if(w.period==='daily'&&width===1440&&theme==='light'){
     await mercury.click();await expect(page).toHaveURL(/#sky\/placement\/mercury\/scorpio/);
@@ -1634,7 +1702,10 @@ for (const width of [320, 390, 768, 820, 1024, 1440, 1920]) for (const theme of 
       expect(layout.copy.x).toBeCloseTo(layout.head.x, 0);
       expect(layout.grid.x).toBeCloseTo(layout.head.x, 0);
       expect(layout.copy.x + layout.copy.width).toBeLessThanOrEqual(layout.root.x + layout.root.width - layout.padding + 1);
-      expect(layout.columns).toBe(width > 1024 ? 3 : width > 800 ? 2 : 1);
+      expect(layout.columns).toBe(width > 800 ? 3 : 1);
+      await expect(section.locator('.sky-today-ledger__head h3')).toHaveCSS('font-size', width <= 800 ? '30px' : '36px');
+      await expect(section.locator('.sky-today-ledger__head h3')).toHaveCSS('line-height', width <= 800 ? '33.6px' : '40.32px');
+      await expect(cards.first().locator('strong')).toHaveCSS('font-size', width <= 800 ? '17px' : '20px');
       if (width > 800) {
         expect(layout.help.x).toBeGreaterThanOrEqual(layout.head.x + layout.head.width);
         expect(layout.help.y + layout.help.height / 2).toBeCloseTo(layout.head.y + layout.head.height / 2, 0);

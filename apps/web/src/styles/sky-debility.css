@@ -1,6 +1,6 @@
 .sky-page .sky-debility-ledger { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-4) var(--space-6); margin-top: var(--space-7); padding: var(--size-7) 0; border: 0; background: transparent; box-shadow: none; }
 .sky-page .sky-debility-ledger .sky-today-ledger__head { padding: 0; }
-.sky-page .sky-debility-ledger .sky-today-ledger__head h3 { margin: 0; font-family: var(--font-display); font-size: var(--type-section-display-size); font-weight: var(--weight-regular); line-height: var(--leading-compact-title); letter-spacing: var(--tracking-dialog-title); }
+.sky-page .sky-debility-ledger .sky-today-ledger__head h3 { margin: 0; font-family: var(--font-display); font-size: var(--type-section-display-size); font-weight: var(--weight-regular); line-height: var(--leading-display); letter-spacing: var(--tracking-dialog-title); }
 .sky-debility-explain { grid-column: 2; grid-row: 1; justify-self: end; display: inline-flex; align-items: center; min-height: var(--control-navigation-size); padding: 0 var(--space-6); border: 0; border-radius: var(--radius-pill); background: var(--surface); color: var(--ink); font-family: var(--font-ui); font-size: var(--text-button-size); white-space: nowrap; cursor: pointer; }
 .sky-page .sky-debility-ledger > .sky-today-ledger__copy { grid-column: 1 / -1; display: grid; gap: var(--space-3); width: 100%; padding: 0; }
 .sky-page .sky-debility-ledger .sky-today-ledger__copy > p + p { margin-top: 0; }
@@ -12,12 +12,11 @@
 .sky-debility-card__glyph .placement-glyph-pair__sign { right: var(--avatar-aspect-offset); bottom: var(--avatar-aspect-offset); width: var(--glyph-badge-size); height: var(--glyph-badge-size); border: 0; background: var(--glyph-badge-surface); box-shadow: 0 0 0 var(--border-width-thick) var(--surface); }
 .sky-debility-card__glyph .placement-glyph-pair__sign .placement-sign-glyph-svg { width: var(--space-4); height: var(--space-4); filter: var(--filter-glyph-white); }
 .sky-debility-card__copy { display: grid; gap: var(--lunar-space-2); min-width: 0; }
-.sky-debility-card__copy strong { font-family: var(--font-display); font-size: var(--type-reading-size); font-weight: var(--weight-regular); line-height: var(--leading-sky-quote); color: var(--ink); }
+.sky-debility-card__copy strong { font-family: var(--font-display); font-size: var(--type-small-display-size); font-weight: var(--weight-regular); line-height: var(--leading-sky-quote); color: var(--ink); }
 .sky-debility-card__copy > span { font-family: var(--font-ui); font-size: var(--type-meta-size); line-height: var(--leading-meta); color: var(--muted); }
 .sky-debility-card__chevron { display: none; color: var(--muted); }
 @media (min-width: 801px) and (max-width: 1024px) {
   .sky-page .sky-debility-ledger { padding: var(--space-7) 0; }
-  .sky-debility-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 800px) {
   .sky-page .sky-debility-ledger { grid-template-columns: minmax(0, 1fr); gap: var(--lunar-space-28); margin-top: 0; padding: var(--space-7) var(--space-6); border-radius: var(--card-radius); background: var(--surface-sheet); }

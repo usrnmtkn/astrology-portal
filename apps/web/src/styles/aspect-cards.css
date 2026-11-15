@@ -32,9 +32,10 @@
   letter-spacing: var(--tracking-body); color: var(--ink-2);
 }
 .article-related-aspects__copy-heading:has(.aspect-badge) { display: flex; align-items: center; gap: var(--space-4); }
+.article-page .article-related-aspect-row.aspect-row:has(> .aspect-badge) .aspect-row-copy :is(h3, h4),
 .article-page .article-related-aspects__copy-heading:has(.aspect-badge) :is(h3, h4) {
-  margin: 0; font-family: var(--font-ui); font-size: var(--type-row-title-size);
-  font-weight: var(--weight-semibold); line-height: var(--leading-row-title);
+  margin: 0; font-family: var(--font-display); font-size: var(--type-section-emphasis-size);
+  font-weight: var(--weight-regular); line-height: var(--leading-title);
   letter-spacing: var(--tracking-normal);
 }
 .article-id > .aspect-badge { width: var(--size-8); height: var(--size-8); font-size: var(--chart-planet-glyph-size); }
@@ -69,6 +70,11 @@
   .aspect-row:has(> .aspect-badge) .aspect-row-meta { justify-self: start; }
   .aspect-row:has(> .aspect-badge) .aspect-row-copy :is(h3, h4, strong),
   .article-page .article-related-aspects__copy-heading:has(.aspect-badge) :is(h3, h4) { font-size: var(--type-compact-row-size); }
+  .article-page .article-related-aspect-row.aspect-row:has(> .aspect-badge) .aspect-row-copy :is(h3, h4),
+  .article-page .article-related-aspects__copy-heading:has(.aspect-badge) :is(h3, h4) {
+    font-family: var(--font-ui); font-size: var(--type-compact-row-size);
+    font-weight: var(--weight-semibold); line-height: var(--leading-row-title);
+  }
   .reading-story-grid { grid-template-columns: minmax(0, 1fr); }
   .reading-story-card.aspect-row,
   .reading-story-card.updates-aspect-row { padding: var(--lunar-space-28) var(--space-6) var(--space-6); }

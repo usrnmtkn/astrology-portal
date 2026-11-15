@@ -134,6 +134,10 @@ async function articleHarness(){
 for(const width of [390,1440])for(const theme of ['light','dark'])test(`Reports handoff article and key dates ${width} ${theme}`,async({page})=>{
  await page.setViewportSize({width,height:1100});await fixture(page,theme);await page.route('**/api/report-delivery?**',route=>route.fulfill({json:{ready:true,report:delivery}}));
  await page.goto(`/reports/${delivery.id}`);await expect(page.getByRole('heading',{name:'A delivered report',exact:true})).toHaveCSS('font-size','48px');
+ for(const surface of await page.locator('.report-cover, .report-chapter').all()){
+  await expect(surface).toHaveCSS('border-radius','32px');
+  await expect(surface).toHaveCSS('box-shadow',theme==='dark'?'none':/inset/);
+ }
  await expect(page.locator('.report-cover__subtitle')).toHaveText('The complete cover summary.');await expect(page.locator('.report-chapter').first()).toContainText('The complete overview ending.');
  await expect(page.locator('.report-chapters')).toContainText('The complete chapter ending.');await expect(page.locator('.report-chapters')).toContainText('The complete section ending.');
  await expect(page.locator('.report-chapter__image-placeholder')).toHaveCount(0);await expect(page.locator('.report-colophon')).not.toContainText('private-fixture-facts-hash');
