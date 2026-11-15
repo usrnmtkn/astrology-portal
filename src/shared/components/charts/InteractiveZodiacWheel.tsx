@@ -144,7 +144,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
         <desc>Select a planet{facts.hasHouses ? ", house, or angle" : ""} to explore its chart details. Press Escape to clear the selection.</desc>
         <defs>{wheelSigns.map((sign, index) => {
           const angle = ((180 + index * 30 + 15 - (facts.ascendant ?? 0)) % 360 + 360) % 360;
-          const lower = angle > 180, radius = (radii.outer + radii.sign) / 2 + (lower ? 7 : -7);
+          const lower = angle > 180, radius = (radii.outer + radii.sign) / 2;
           const start = at(index * 30 + (lower ? 0.5 : 29.5), radius), end = at(index * 30 + (lower ? 29.5 : 0.5), radius);
           return <path key={sign} id={`${id}-sign-${index}`} d={`M${start.x} ${start.y} A${radius} ${radius} 0 0 ${lower ? 0 : 1} ${end.x} ${end.y}`} />;
         })}</defs>
@@ -164,9 +164,12 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
         <circle className="interactive-wheel-paper" cx={300} cy={300} r={radii.aspect} />
         <g className="interactive-wheel-labels" aria-hidden="true">{wheelSigns.map((sign, index) => {
           const n = facts.houseOf(index * 30), label = at(index * 30 + 15, (radii.aspect + radii.house) / 2);
+          let rotation = 90 - Math.atan2(300 - label.y, label.x - 300) * 180 / Math.PI;
+          while (rotation > 90) rotation -= 180;
+          while (rotation < -90) rotation += 180;
           return <g key={sign} data-dimmed={dim(house === n)}>
             <text className="interactive-wheel-sign"><textPath href={`#${id}-sign-${index}`} startOffset="50%" textAnchor="middle">{sign.toUpperCase()}</textPath></text>
-            {n !== null ? <text className="interactive-wheel-house" x={label.x} y={label.y}>{n}</text> : null}
+            {n !== null ? <text className="interactive-wheel-house" x={label.x} y={label.y} transform={`rotate(${rotation} ${label.x} ${label.y})`}>{n}</text> : null}
           </g>;
         })}</g>
         <g className="interactive-wheel-aspects" aria-hidden="true">{facts.aspects.map(aspect => {
