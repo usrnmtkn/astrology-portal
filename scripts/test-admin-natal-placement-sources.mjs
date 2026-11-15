@@ -68,6 +68,14 @@ assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => sour
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.planet-in-sign/sun"));
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).every((source) => !source.key.includes("house") && !source.key.includes("complete-final")));
 
+const houseOnlyGroups = natalPlacementSourceGroups("mars", "", "12");
+assert.deepEqual(houseOnlyGroups.map(group => group.key), ["house", "structure"]);
+assert.ok(houseOnlyGroups.flatMap(group => group.sources).some(source => source.key === "fallback-hook/placement-house-sentence/mars/12"));
+assert.ok(houseOnlyGroups.flatMap(group => group.sources).every(source => !source.key.includes("sign") && !source.key.includes("complete-final")));
+assert.deepEqual(natalPlacementSourceGroups("mars", ""), []);
+assert.deepEqual(natalPlacementSourceGroups("ascendant", "", "1"), []);
+assert.deepEqual(natalPlacementSourceGroups("saturn", "", "4", "retrograde").map(group => group.key), ["motion", "house", "structure"]);
+
 const retrogradeGroups = natalPlacementSourceGroups("mercury", "virgo", "6", "retrograde");
 const retrogradeSources = retrogradeGroups.flatMap((group) => group.sources);
 assert.deepEqual(retrogradeGroups.map((group) => group.key), ["exact", "sign", "motion", "house", "structure"]);

@@ -13,6 +13,7 @@ import { natalPlacementReaderHref, openContextualReaderHref } from "./adminReade
 import { emptyHouseRulers, emptyHouseSourceKeys } from "./emptyHouseSources";
 import {
   natalPlacementHouses,
+  isNatalPlacementAngle,
   natalPlacementLabel,
   natalPlacementMotionIsFixed,
   natalPlacementMotions,
@@ -161,12 +162,13 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
   const [emptyHouseRulerHouse, setEmptyHouseRulerHouse] = useState(2);
   const selectionKey = `${planet}/${sign}/${house}/${motion}`;
   const signSelectionComplete = Boolean(planet && sign);
+  const placementSelectionComplete = Boolean(signSelectionComplete || (planet && house && !isNatalPlacementAngle(planet)));
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
   const readerHref = fullSelectionComplete
     ? natalPlacementReaderHref(planet, sign, house)
     : "";
-  const groups = signSelectionComplete
-    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house, motion)
+  const groups = placementSelectionComplete
+    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign, house, motion)
     : [];
   const emptyHouseRuler = emptyHouseRulers[emptyHouseSign] ?? "";
   const emptyHouseKeys = emptyHouseSourceKeys(emptyHouse, emptyHouseSign, emptyHouseRulerHouse);
@@ -326,15 +328,15 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               </AdminSelect>
             </label>
           </div>
-          {signSelectionComplete && (
+          {placementSelectionComplete && (
             <Grid className={metricGrid} aria-label="Selected natal placement">
               <MetricCard label="Planet or point" value={natalPlacementPointLabel(planet as NatalPlacementPlanet)} />
-              <MetricCard label="Sign" value={titleFromKey(sign)} />
+              <MetricCard label="Sign" value={sign ? titleFromKey(sign) : "Not selected"} />
               <MetricCard label="House" value={house || "Not selected"} />
               <MetricCard label="Motion" value={titleFromKey(motion)} />
             </Grid>
           )}
-          {signSelectionComplete && (
+          {placementSelectionComplete && (
             <NatalPlacementReaderPreview
               key={selectionKey}
               house={house}
@@ -344,7 +346,7 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               planet={planet as NatalPlacementPlanet}
               rows={rows}
               secret={secret}
-              sign={sign as NatalPlacementSign}
+              sign={sign}
             />
           )}
           {groups.filter((group) => group.key !== "structure").map((group) => (

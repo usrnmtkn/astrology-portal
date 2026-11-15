@@ -3,6 +3,91 @@ import {readFileSync} from 'node:fs';
 import {studioApiStore} from '../helpers/studio-api-store';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {normalizeNatalPlacementPreviewInput,renderNatalPlacementPreviewState} from '../../api/admin/natal-placement-preview';
+import {servingPackageRecords} from '../../api/_lib/serving-package-records';
+
+for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Planet and house write-up without a sign ${width} ${theme}`, async ({page}) => {
+  test.setTimeout(90_000);
+  const key = 'fallback-hook/placement-house-lived/mars/12';
+  const you = 'Synthetic saved Mars house opening. Complete saved Mars house ending.';
+  const they = 'Synthetic saved Friend house opening. Complete saved Friend house ending.';
+  const store = await studioApiStore([{
+    id: '00000000-0000-4000-8000-000000000012', content_key: key, headline: 'Mars house source', body: you, summary: '',
+    status: 'LIVE', lane: 'serving', provider: 'tldrastro-fallback-architecture-v3', event_type: 'fallback-hook', block_type: 'fallback_hook',
+    surface: 'you', mode: 'in_depth', updated_at: '2026-11-15T12:00:00Z', created_at: '2026-11-15T12:00:00Z',
+    sections: { packageRecord: { ...servingPackageRecords.get(key), body: you, body_you: you, body_they: they, body_they_review_status: 'approved', body_they_approval: { approvalLevel: 'exact_owner_approved', recordPath: 'synthetic-fixture' }, review_status: 'approved' } },
+    facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3' }
+  }]);
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  let failPreview = false;
+  let releasePreview!: () => void;
+  const previewReady = new Promise<void>(resolve => { releasePreview = resolve; });
+  try {
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(theme => {
+      localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+      localStorage.setItem('tldrastro:studio-theme',theme);
+      localStorage.setItem('tldrastro:studio-palette','green');
+    },theme);
+    await routeStudioInventoryApi(page,{call:store.call,answer:async(route,url) => {
+      if (url.pathname !== '/api/admin/natal-placement-preview') return false;
+      await previewReady;
+      if (failPreview) {
+        await route.fulfill({status:503,json:{ok:false,error:'Synthetic preview unavailable.'}});
+        return true;
+      }
+      await route.fulfill({json:{ok:true,...renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput(route.request().postDataJSON()))}});
+      return true;
+    }});
+    await page.goto('/admin/content#exact-content?category=Natal+Chart&planet=mars&house=12');
+    const preview = page.locator('.admin-natal-reader-preview');
+    await expect(preview).toHaveAttribute('aria-busy','true');
+    releasePreview();
+    await expect(preview).toHaveAccessibleName('Reader preview for Mars in the 12th house');
+    await expect(preview.locator('.admin-natal-reader-preview-part')).toHaveCount(1);
+    await expect(preview).toContainText(you);
+    await expect(preview.getByRole('heading',{level:3})).toHaveText(['What you see','Mars in the 12th house']);
+    const titleStyles = () => preview.getByRole('heading',{level:3}).last().evaluate(element => {
+      const style = getComputedStyle(element);
+      return Object.fromEntries(['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing','marginTop','marginBottom','textTransform','textAlign'].map(name => [name,style[name as keyof CSSStyleDeclaration]]));
+    });
+    const houseTitleStyles = await titleStyles();
+    await expect(page.getByRole('combobox',{name:'Natal placement zodiac sign'})).toHaveValue('');
+    await expect(preview.getByRole('button',{name:'Create exact override',exact:true})).toHaveCount(0);
+    const original = await preview.locator('.admin-natal-reader-preview-part > p').allTextContents();
+    await preview.getByRole('button',{name:'Friend',exact:true}).click();
+    await expect(preview).toContainText(they);
+    await preview.getByRole('button',{name:'You',exact:true}).click();
+    await expect(preview).toContainText(you);
+    await page.getByRole('combobox',{name:'Natal placement zodiac sign'}).selectOption('aries');
+    await expect(preview.locator('.admin-natal-reader-preview-part')).toHaveCount(2);
+    expect(await titleStyles()).toEqual(houseTitleStyles);
+    expect((await preview.locator('.admin-natal-reader-preview-part > p').allTextContents()).slice(1)).toEqual(original);
+    await page.getByRole('combobox',{name:'Natal placement zodiac sign'}).selectOption('');
+    await expect(preview.locator('.admin-natal-reader-preview-part')).toHaveCount(1);
+    await expect(preview).toContainText(you);
+    await page.reload();
+    await expect(preview).toContainText(you);
+    await expect(page.getByRole('combobox',{name:'Natal placement zodiac sign'})).toHaveValue('');
+    const sourceCard = page.locator('.admin-natal-source-card').filter({has:page.locator('code').filter({hasText:key})});
+    await sourceCard.getByRole('button',{name:'Edit source',exact:true}).click();
+    const dialog = page.getByRole('dialog',{name:'Generated content editor'});
+    await expect(dialog.getByRole('textbox',{name:'Reader phrase · You',exact:true})).toHaveValue(you);
+    await expect(dialog.getByRole('textbox',{name:'Reader phrase · They',exact:true})).toHaveValue(they);
+    await dialog.getByRole('button',{name:'Close',exact:true}).click();
+    await preview.screenshot({path:`test-results/natal-house-only-${width}-${theme}.png`});
+    failPreview = true;
+    const failedWithSavedSources = page.waitForResponse(response => response.url().endsWith('/api/admin/natal-placement-preview')
+      && response.status() === 503 && response.request().postDataJSON().overrides.some((candidate: any) => candidate.packageRow.contentKey === key));
+    await page.reload();
+    await failedWithSavedSources;
+    await expect(preview.getByRole('alert')).toContainText('Synthetic preview unavailable.');
+    failPreview = false;
+    await preview.getByRole('button',{name:'Retry reader preview',exact:true}).click();
+    await expect(preview).toContainText(you);
+    expect(errors).toEqual([]);
+  } finally { releasePreview(); store.close(); }
+});
 
 const key='fallback-hook/natal-you-placement-complete-final/chiron/taurus/12';
 const source=JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json','utf8')).hookRows.find((row:any)=>row.contentKey===key);

@@ -101,6 +101,10 @@ export function natalPlacementSignLabel(planet: NatalPlacementPlanet, sign: Nata
   return `${natalPlacementPointLabel(planet)} in ${titleCase(sign)}`;
 }
 
+export function natalPlacementHouseLabel(planet: NatalPlacementPlanet, house: NatalPlacementHouse, motion: NatalPlacementMotion = "direct") {
+  return `${natalPlacementPointLabel(planet)}${motion === "retrograde" ? " retrograde" : ""} in the ${ordinalHouse(house)} house`;
+}
+
 export function natalPlacementExactKey(
   planet: NatalPlacementPlanet,
   sign: NatalPlacementSign,
@@ -113,12 +117,13 @@ export function natalPlacementExactKey(
 
 export function natalPlacementSourceGroups(
   planet: NatalPlacementPlanet,
-  sign: NatalPlacementSign,
+  sign: NatalPlacementSign | "",
   house?: NatalPlacementHouse | "",
   motion: NatalPlacementMotion = "direct"
 ): NatalPlacementSourceGroup[] {
   const planetLabel = natalPlacementPointLabel(planet);
   const signLabel = titleCase(sign);
+  if (!sign && (!house || isNatalPlacementAngle(planet))) return [];
   if (isNatalPlacementAngle(planet)) {
     return [
       {
@@ -165,7 +170,7 @@ export function natalPlacementSourceGroups(
     label: "Sentence structure (advanced)",
     description: "Preview the assembled copy; colored sections open its source writing.",
     sources: [
-      signStructure,
+      ...(sign ? [signStructure] : []),
       ...(includeHouse ? [{ key: "fallback-template/natal.house-context", label: "Natal house template", scope: "Controls the sentence order for all natal placement house paragraphs." }] : [])
     ]
   });
@@ -187,10 +192,10 @@ export function natalPlacementSourceGroups(
   if (!house) return [signGroup, ...(motionGroup ? [motionGroup] : []), structureGroup(false)];
 
   const houseLabel = ordinalHouse(house);
-  const exactKey = natalPlacementExactKey(planet, sign, house, motion);
+  const exactKey = sign ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const motionLabel = motion === "retrograde" ? "retrograde " : "";
   return [
-    {
+    ...(sign ? [{
       key: "exact",
       label: natalPlacementLabel(planet, sign, house, motion),
       description: `Optional exact override. Direct/retrograde stored separately; replaces all assembled sections.`,
@@ -201,8 +206,7 @@ export function natalPlacementSourceGroups(
           scope: `Only for this planet, sign, house and motion.`
         }
       ]
-    },
-    signGroup,
+    } as NatalPlacementSourceGroup, signGroup] : []),
     ...(motionGroup ? [motionGroup] : []),
     {
       key: "house",
