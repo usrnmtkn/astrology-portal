@@ -5884,6 +5884,18 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
       body_they: "QA published friend solar return opening.\n\nQA published friend solar return final sentence." });
     await seedCrossSurfacePublications(page, records, { profile: true, friends: true, theme,
       profileBirthDate: "1979-08-22", preloadProfileNatalSky: true, now: "2026-08-22T16:00:00.000Z" });
+    let generationRequests = 0, savedReadingRequests = 0;
+    await page.route('**/api/generate-user-content', route => {
+      generationRequests++;
+      return route.fulfill({ status: 503, json: { error: 'Generation must never run while reading.' } });
+    });
+    await page.route('**/rest/v1/user_generated_interpretations*', route => {
+      const query = new URL(route.request().url()).searchParams;
+      if (query.get('subject_type') !== 'eq.you_transit') return route.fallback();
+      savedReadingRequests++;
+      expect(query.get('status')).toBe('eq.LIVE');
+      return route.fulfill({ json: [] });
+    });
     let personalReads = 0;
     await page.route('**/api/content-reader', async route => {
       const query = route.request().postDataJSON();
@@ -5907,6 +5919,9 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await page.evaluate(() => { window.location.hash = "you"; });
     const personalRow = page.locator('.updates-aspect-row:is(a,button)').filter({ hasText: /QA published (?:transit|solar return) opening/ }).first();
     await expect(personalRow).toBeVisible({ timeout: 30_000 });
+    await expect.poll(() => savedReadingRequests).toBeGreaterThan(0);
+    await page.reload();
+    await expect(personalRow).toBeVisible({ timeout: 30_000 });
     await personalRow.click();
     await expect(page.locator('.you-transit-article')).toContainText(/QA published (?:transit|solar return) final sentence/);
     await page.evaluate(() => { window.location.hash = "friends?tab=charts&chart=friend-nikki&view=transits"; });
@@ -5915,6 +5930,7 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await friend.click();
     await expect(page.locator('.app-shell.mode-detail')).toContainText(/QA published friend transit final sentence/);
     await expectNoHorizontalOverflow(page, "published friend personal reading");
+    expect(generationRequests).toBe(0);
     errors();
   });
 }

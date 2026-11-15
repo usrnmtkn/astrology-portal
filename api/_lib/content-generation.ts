@@ -1,3 +1,4 @@
+import { GenerationProviderError } from "./generation-provider-error.js";
 import {writingExport} from '../../src/astro-writing/writingExport.mjs';
 import {approvedVoiceStyleReference,approvedVoiceStylePrompt} from '../../src/astro-writing/approvedVoiceStyle.mjs';
 import { advisoryModelViolation, effectiveRulePrompt, governValidationResult } from "../../src/astro-writing/effectiveRuleGovernance.mjs";
@@ -5402,7 +5403,7 @@ async function reviewColdRenderedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI cold review failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI cold review did not include a verdict.");
   const review = JSON.parse(output) as ColdRenderedProseReview;
@@ -5470,7 +5471,7 @@ async function reviewGeneratedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI review failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI review did not include a verdict.");
   const contextualReview = JSON.parse(output) as CanonicalReview;
@@ -5545,7 +5546,7 @@ async function planGeneratedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI meaning plan failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI meaning planner returned no structured output.");
   const meaningPlan = JSON.parse(output) as Record<string, unknown>;
@@ -5619,7 +5620,7 @@ async function reviseGeneratedContentWithOpenAI({
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI revision failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const output = responseOutputText(typedPayload);
   if (!output) throw new Error("OpenAI revision did not include a patch.");
   const patch = JSON.parse(output) as Record<string, string>;
@@ -5697,7 +5698,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     output?: Array<{ content?: Array<{ text?: string }> }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI request failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
   const outputText = responseOutputText(typedPayload);
   if (!outputText) throw new Error("OpenAI response did not include generated text.");
 
@@ -5840,7 +5841,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
     };
 
     if (!response.ok) {
-      throw new Error(payload.error?.message ?? `Claude request failed with ${response.status}.`);
+      throw new GenerationProviderError("claude", response.status, payload.error);
     }
 
     const toolInput = claudeToolInput(payload);
@@ -6183,7 +6184,7 @@ export async function generateSkyArticleTemplateSlots(input: GenerateSkyArticleT
       output?: Array<{ content?: Array<{ text?: string }> }>;
       error?: { message?: string };
     };
-    if (!response.ok) throw new Error(typedPayload.error?.message ?? `OpenAI request failed with ${response.status}.`);
+    if (!response.ok) throw new GenerationProviderError("openai", response.status, typedPayload.error);
     const outputText = responseOutputText(typedPayload);
     if (!outputText) throw new Error("OpenAI response did not include template slot values.");
     const parsed = JSON.parse(outputText) as { slotValues?: unknown };
@@ -6240,7 +6241,7 @@ export async function generateSkyArticleTemplateSlots(input: GenerateSkyArticleT
     content?: Array<{ type?: string; name?: string; input?: { slotValues?: unknown } }>;
     error?: { message?: string };
   };
-  if (!response.ok) throw new Error(payload.error?.message ?? `Claude request failed with ${response.status}.`);
+  if (!response.ok) throw new GenerationProviderError("claude", response.status, payload.error);
   const toolInput = payload.content?.find((content) => (
     content.type === "tool_use" && content.name === "tldr_astro_sky_article_template_slots"
   ))?.input;

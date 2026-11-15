@@ -428,8 +428,6 @@ import {
 import {
   type PersonalTimingResponse
 } from "./services/tldrastroApi";
-const generateUserContent: typeof import("./services/userGeneratedContent").generateUserContent = (...args) =>
-  import("./services/userGeneratedContent").then(module => module.generateUserContent(...args));
 const loadUserGeneratedInterpretation: typeof import("./services/userGeneratedContent").loadUserGeneratedInterpretation = (...args) =>
   import("./services/userGeneratedContent").then(module => module.loadUserGeneratedInterpretation(...args));
 import type { AccountMode, LocationInput, PlanetPosition, SkySnapshot } from "./types";
@@ -13683,127 +13681,36 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
+    setPersonalTransitGeneratedContent(new Map());
 
-    async function loadOrGenerateTransitContent() {
+    async function loadSavedTransitContent() {
       const nextContent = new Map<string, LiveGeneratedContent>();
 
       try {
         for (const transit of transits) {
+          controller.signal.throwIfAborted();
           const contentKey = personalTransitGeneratedContentKey(transit, skyDate);
           const existing = await loadUserGeneratedInterpretation({
             subjectType: "you_transit",
             subjectId,
             contentKey,
-            targetDate: skyDate
+            targetDate: skyDate,
+            signal: controller.signal
           });
-
-          if (cancelled) {
-            return;
-          }
-
-          if (existing) {
-            nextContent.set(contentKey, existing);
-          }
+          controller.signal.throwIfAborted();
+          if (existing) nextContent.set(contentKey, existing);
         }
-
-        if (!cancelled) {
-          setPersonalTransitGeneratedContent(new Map(nextContent));
-        }
-
-        for (const transit of transits) {
-          const contentKey = personalTransitGeneratedContentKey(transit, skyDate);
-
-          if (nextContent.has(contentKey)) {
-            continue;
-          }
-
-          const timing = transitItemTimingDisplay(transit, skyDate);
-          let generated: LiveGeneratedContent | null = null;
-
-          try {
-            generated = await generateUserContent({
-              subjectType: "you_transit",
-              subjectId,
-              contentKey,
-              surface: "you",
-              mode: "in_depth",
-              eventType: "you-transit-to-natal",
-              headline: personalTransitTitle(transit),
-              targetDate: skyDate,
-              facts: {
-                type: "you_transit_to_natal_description",
-                targetDate: skyDate,
-                person: {
-                  name: profile.name,
-                  bigThree: {
-                    sun: profile.sun,
-                    moon: profile.moon,
-                    rising: profile.rising
-                  }
-                },
-                transit: compactTransitItemFact(transit, skyDate),
-                timing: {
-                  durationLabel: timing.durationLabel,
-                  rangeLabel: timing.rangeLabel,
-                  label: timing.label
-                }
-              },
-              knowledgeIds: Array.from(new Set([
-                transitNatalContentId(transit.transitPlanet, transit.aspect, transit.natalPoint),
-                ...(transit.knowledgeIds ?? [])
-              ])),
-              sourceSnapshot: {
-                source: "tldrastro-local-transits",
-                targetDate: skyDate,
-                chartId: subjectId,
-                transitId: transit.id
-              },
-              voiceNotes: [
-                "Write this as a personalized explanation for one transit-to-natal aspect card.",
-                `Explain what it means to have ${transit.transitPlanet} ${transit.aspect} the user's natal ${transit.natalPoint}.`,
-                "Make the summary one concrete sentence for the collapsed card, without a visible TLDR label.",
-                "Return 2 to 3 sections in grounded, specific language. Do not start section bodies with TLDR or any other visible scaffold label.",
-                "Sound like a sharp human astrologer writing in the TLDR Astro voice: specific, plainspoken, observant, emotionally precise, and not overly mystical.",
-                "Name the concrete pressure, choice, behavior, or relationship pattern this aspect can describe.",
-                "Use direct sentences with clear verbs: 'You may feel...', 'Notice...', 'Name...', 'Try...'.",
-                "Prefer: 'You may feel a quiet pressure today, even if you cannot explain exactly why. Notice where it shows up in your body before trying to solve it. Naming it honestly may be enough for now.'",
-                "Do not write like: 'There can be a low hum of pressure today that is hard to name out loud. It tends to live in the body before it becomes a thought.'",
-                "Avoid vague phrases like energy, invitation, portal, lean into, the universe, journey, alignment, may be asking, low hum, lives in the body, or hard to name out loud.",
-                "Keep it practical. Avoid generic fortune-telling.",
-                "Do not mention databases, generated content, source-backed content, or knowledge base."
-              ].join("\n")
-            });
-          } catch (error) {
-            console.warn("Personalized transit generation failed for one transit; continuing batch.", {
-              contentKey,
-              error
-            });
-            continue;
-          }
-
-          if (cancelled) {
-            return;
-          }
-
-          if (generated) {
-            nextContent.set(contentKey, generated);
-            setPersonalTransitGeneratedContent(new Map(nextContent));
-          }
-        }
-
+        setPersonalTransitGeneratedContent(nextContent);
       } catch (error) {
-        if (!cancelled) {
-          console.warn("Personalized transit generation failed; using transit fallbacks.", error);
+        if (!controller.signal.aborted) {
+          console.warn("Saved transit readings could not load; using published transit sources.", error);
         }
       }
     }
 
-    void loadOrGenerateTransitContent();
-
-    return () => {
-      cancelled = true;
-    };
+    void loadSavedTransitContent();
+    return () => controller.abort();
   }, [
     profileTransits,
     profileTransitsTargetDate,
@@ -13812,10 +13719,6 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
     skyDate,
     transitsDrawn,
     userProfile?.id,
-    userProfile?.name,
-    userProfile?.sun,
-    userProfile?.moon,
-    userProfile?.rising,
     userProfile?.settings,
     userProfile?.charts[0]?.id
   ]);
