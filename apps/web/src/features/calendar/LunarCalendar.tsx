@@ -23,6 +23,7 @@ import {
 import { calendarSunSummary, calendarSkyForDay } from "./calendarDaySummary";
 import { skyDateTimeFromInput } from "../../services/skySelection";
 import { skyDailySummaryFields } from "../../content/skyDailySummaryCatalog";
+import { calendarSeasonTransitionSummaryKey } from '../../../../../src/shared/features/calendar/calendarSeasonTransitionSummaryKey';
 import type { SkySnapshot } from "../../types";
 import { CardReadMore } from "../../components/CardReadMore";
 import { PageLoadError, PageLoading, PageLoadState } from "../../components/PageLoading";
@@ -2368,6 +2369,8 @@ export function LunarCalendar({
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
       ...skyDailySummaryFields.map(field => field.key),
+      ...editorialEvents.flatMap(event => event.type === 'ingress' && event.planet === 'Sun' && event.fromSign && (event.toSign || event.sign)
+        ? [calendarSeasonTransitionSummaryKey(event.fromSign, (event.toSign || event.sign)!)] : []),
       ...(selectedDay ? lunarDayGeneratedContentKeys(selectedDay, editorialEvents) : []),
       ...["new-moon", "waxing-crescent", "first-quarter", "waxing-gibbous", "full-moon", "disseminating", "last-quarter", "balsamic"]
         .map((phase) => `fallback-hook/moon-phase/${phase}`),

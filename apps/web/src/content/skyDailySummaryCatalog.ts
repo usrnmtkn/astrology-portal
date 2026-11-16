@@ -4,6 +4,7 @@ import legacyAssembly from "./skyDailySummaryLegacyAssembly.json" with { type: "
 import assembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import timing from "./skyDailySummaryTiming.json" with { type: "json" };
+import { calendarSeasonTransitionSummaryKey } from '../../../../src/shared/features/calendar/calendarSeasonTransitionSummaryKey.js';
 
 export const skySummarySigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 export type SkySummaryField = { key: string; label: string; group: string; body: string; allowedSlots: string[]; readerEnabled?: boolean; optionalSlots?: boolean };
@@ -76,7 +77,8 @@ export const skyDailySummaryFields: SkySummaryField[] = [
 // These slots are required because the summary preserves calculated facts and linked event names.
 export function skySummaryTemplateErrors(key: string, body: string): string[] {
   body = currentSkySummaryWording(key, body);
-  const field = [...skyDailySummaryFields, ...skyIngressSummaryFields].find(field => field.key === key);
+  const field: Pick<SkySummaryField, 'allowedSlots' | 'optionalSlots' | 'group'> | undefined = [...skyDailySummaryFields, ...skyIngressSummaryFields].find(field => field.key === key)
+    ?? (skySeasonTransitionSummaryKeys.includes(key) ? { group: '', allowedSlots: [] } : undefined);
   if (!field) return key.startsWith("cms/sky-daily-summary/") ? ["Unknown daily sky summary field."] : [];
   const slots = Array.from(body.matchAll(/\{([^{}]+)\}/gu), match => match[1]);
   const errors: string[] = [];
@@ -104,3 +106,5 @@ export function skySummaryWordingAdvisories(key: string, body: string): string[]
   if (body.includes("—")) errors.push("Use sentence punctuation without em dashes.");
   return errors;
 }
+
+const skySeasonTransitionSummaryKeys = skySummarySigns.map((from, index) => calendarSeasonTransitionSummaryKey(from, skySummarySigns[(index + 1) % skySummarySigns.length]));

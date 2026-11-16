@@ -2,6 +2,7 @@ import type { CalendarOverviewValue } from '../../../src/shared/features/calenda
 import type { LiveGeneratedContent } from '../../web/src/services/generatedContent';
 import type { CalendarPreviewRow, CalendarPreviewValue } from './calendarPreviewModel';
 import { skyDailySummaryFields } from '../../web/src/content/skyDailySummaryCatalog';
+import { skySeasonTransitionSummaryFields } from '../../web/src/content/skySeasonTransitionSummaryFields';
 
 /** Only expose sources that actually contribute to the reader's selected value.
  * Composite Moon passages have several sources; their synthetic assembly key is
@@ -25,10 +26,11 @@ export function calendarSharedPassageSources(value: CalendarOverviewValue, prove
   }
   // The reader can use its shipped Sun clause before a Studio row exists. Open
   // that clause through the existing Sun editor, which creates a draft normally.
-  if (value.sourceKey && !originals.has(value.sourceKey) && !content.has(value.sourceKey)) {
-    const field = skyDailySummaryFields.find(field => field.key === value.sourceKey && field.body);
+  for (const key of new Set([value.sourceKey, ...(provenance?.parts ?? []).filter(part => part.text && value.text.includes(part.text)).map(part => part.sourceKey)])) {
+    if (!key || originals.has(key) || content.has(key)) continue;
+    const field = [...skyDailySummaryFields, ...skySeasonTransitionSummaryFields].find(field => field.key === key && field.body);
     if (field) {
-      originals.set(field.key, { id: `builtin:${field.key}`, content_key: field.key, headline: field.label, body: field.body, status: 'DRAFT' });
+      originals.set(field.key, { id: `builtin:${field.key}`, content_key: field.key, headline: field.label, body: field.body, status: 'DRAFT', source_snapshot: { summaryField: field } });
       readerBodies.set(field.key, field.body);
     }
   }

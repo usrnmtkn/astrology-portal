@@ -25,6 +25,8 @@ import { moonContinuationSummaryKey, moonContinuationSummaryForSign } from "../.
 import { calendarSeasonTransitionForSurface, calendarSeasonTransitionWhen, calendarSeasonTransitionKeyForSurface, calendarSeasonTransitionKeys } from "../../../src/shared/features/calendar/calendarSeasonTransitions";
 import { moonSignTransitionKey, moonSignTransitionForPair } from "../../../src/shared/features/calendar/moonSignTransitions";
 import { lunarSigns } from "./lunarCalendarContent";
+import { skyAssemblyFields } from "../../web/src/content/skyDailySummaryCatalog";
+import { calendarSeasonTransitionSummaryKey } from "../../../src/shared/features/calendar/calendarSeasonTransitionSummaryKey";
 
 export type CalendarPreviewRow = SummaryCompositionRow & { id: string; facts?: Record<string, unknown> | null; sections?: unknown; previewBody?: string };
 export type CalendarPreviewPart = CalendarOverviewValue & { name: string };
@@ -66,7 +68,8 @@ function calendarWorkingRow(row: CalendarPreviewRow | undefined) {
 }
 
 export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: string[]) {
-  return [...new Set([...calendarTransitionPhraseKeys, skyForecastTemplates[period].contentKey, ...signs.filter(Boolean).flatMap(sign => {
+  return [...new Set([...calendarTransitionPhraseKeys, skyForecastTemplates[period].contentKey,
+    ...skyAssemblyFields.filter(field => /\/sunIngress(?:Before|After)$/u.test(field.key)).map(field => field.key), ...signs.filter(Boolean).flatMap(sign => {
     const slug = sign.toLowerCase();
     return [
       `fallback-hook/zodiac-season/${slug}`,
@@ -89,7 +92,8 @@ export function calendarPreviewSourceKeys(period: SkyForecastPeriod, signs: stri
       "fallback-hook/moon-phase/balsamic",
       ...(lunarSigns.includes(slug) ? [
         `authored/calendar-moon-transition/${slug}/${lunarSigns[(lunarSigns.indexOf(slug) + 1) % lunarSigns.length]}`,
-        ...calendarSeasonTransitionKeys(slug, lunarSigns[(lunarSigns.indexOf(slug) + 1) % lunarSigns.length])
+        ...calendarSeasonTransitionKeys(slug, lunarSigns[(lunarSigns.indexOf(slug) + 1) % lunarSigns.length]),
+        calendarSeasonTransitionSummaryKey(slug, lunarSigns[(lunarSigns.indexOf(slug) + 1) % lunarSigns.length])
       ] : []),
       ...[1, 2, 3, 4].map(variant => `authored/calendar-weekly-moon/${slug}${variant === 1 ? "" : `/variant-${variant}`}`)
     ];
@@ -224,9 +228,16 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
   put("moonSign", moonSign, calculation ? "fact" : "example");
   const content = publishedSkySummaryContent(rows.map(row => calendarWorkingRow(row)!));
   if (sunSign) {
-    const parts = calculation ? calendarSunSummary(calculation.sky, content)
+    const parts = calculation ? calendarSunSummary(calculation.sky, content,
+      calculation.days.find(day => day.dateKey === calendarLocalDateKey(calculation.sky.generatedAt, calculation.timeZone))?.events)
       : skyDailySummaryParts({ sun: { sign: sunSign }, moonIsVoid: false }, content, { openingOnly: true });
-    put("sunSummary", parts.map(part => part.text).join(""), "copy", parts.find(part => part.sourceKey?.startsWith("cms/sky-daily-summary/sun/"))?.sourceKey ?? `cms/sky-daily-summary/sun/${sunSign.toLowerCase()}`);
+    put("sunSummary", parts.map(part => part.text).join(""), "copy", parts.find(part => part.sourceKey)?.sourceKey);
+    const sourceKeys = [...new Set(parts.flatMap(part => part.sourceKey ? [part.sourceKey] : []))];
+    // A single source keeps its existing whole-summary edit action. Composite
+    // summaries expose complete source spans without dropping calculated text.
+    if (values.sunSummary && sourceKeys.length > 1) values.sunSummary.parts = calendarPreviewCopyParts(values.sunSummary.text,
+      sourceKeys.map((sourceKey, index) => ({ name: index ? 'summary' : 'timing', kind: 'copy', sourceKey,
+        text: parts.filter(part => part.sourceKey === sourceKey).map(part => part.text).join('') })));
   }
   const moonPassages = calendarMoonPassages(rows, moonSign);
   const moon = moonPassages.find(row => row.content_key === moonKey) ?? moonPassages[0];

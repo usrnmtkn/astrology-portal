@@ -1,5 +1,6 @@
 import { sunSeasonSourceKeys } from "../../content/skySunSeason";
 import { skyDailySummaryFields, skySummaryTemplateErrors } from "../../content/skyDailySummaryCatalog";
+import { calendarSeasonTransitionSummaryKey } from '../../../../../src/shared/features/calendar/calendarSeasonTransitionSummaryKey';
 import { moonSummaryKey, selectedMoonKind } from "../../content/skyMoonSummary";
 import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from "../../content/contentPublicationState";
 import { ingressSummaryKeys } from "../../content/skySummaryEvents";
@@ -14,6 +15,7 @@ export function skySummarySourceKeys(facts: SkyDailySummaryFacts, events: LunarC
   const moon = kind === "regular" ? facts.moon : facts.event;
   const common = skyDailySummaryFields.filter(field => !/^cms\/sky-daily-summary\/(sun|moon)\//u.test(field.key)).map(field => field.key);
   return [...new Set([...common,
+    ...(facts.sunTransition ? [calendarSeasonTransitionSummaryKey(facts.sunTransition.fromSign, facts.sunTransition.toSign)] : []),
     ...(sun?.sign ? sunSeasonSourceKeys(sun.sign, facts.retrogradePlacements?.map(p => p.planet) ?? facts.retrogradePlanets) : []),
     ...(moon?.sign ? [moonSummaryKey(moon.sign, kind)] : []),
     ...events.flatMap(ingressSummaryKeys)

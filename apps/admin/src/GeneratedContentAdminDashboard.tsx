@@ -3391,6 +3391,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const [skySummaryEditorField, setSkySummaryEditorField] = useState<SkySummaryField | null>(null);
   const publicationRefresh = useStudioPublicationRefresh(draft?.contentKey);
   const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
@@ -6924,21 +6925,10 @@ export function GeneratedContentAdminDashboard() {
           sourceSnapshot: { ...previous.sourceSnapshot, allowedSlots: field.allowedSlots, ...(candidateReceipt ? { suppliedBank: candidateReceipt } : {}) }
         } : previous);
       } else {
-        const { importedSkySummary, skySummaryImportProvenance } = await import("./skySummaryImportedCopy");
-        const nextDraft: AdminDraft = {
-          id: null, contentKey: field.key, surface: "sky", mode: "card", status: "DRAFT",
-          headline: field.key.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX) ? "" : field.label, summary: "", body: initialBody ?? (field.body || importedSkySummary(field.key) || ""), lane: "serving", reviewState: "EDITORIAL_REVIEW_REQUIRED",
-          blockType: "essay", promptVersion: "cms-surface-template-v1", sections: null, facts: null, reviewerNotes: "",
-          sourceSnapshot: {
-            contentType: "mustache-template", contentSystem: "cms-surface-override", contentLevel: "owner-authored",
-            authoringSource: "admin-dashboard", cmsSurfaceId: field.key.startsWith("cms/sky-debility/") ? "sky-debility-card" : "sky-daily-summary",
-            readerLocation: field.key.startsWith("cms/sky-debility/") ? "Sky → Without their tools card" : "Sky → Daily Sky Summary; Calendar → Sun introduction",
-            allowedSlots: field.allowedSlots,
-            ...(initialBody !== undefined && candidateReceipt ? { suppliedBank: candidateReceipt } : {}),
-            ...(moonSource ? { moonSource, sourceAttachment: "daily-sky-summary-moon-system-v6-owner-phrases-audited.md" } : {}),
-            ...(importedSkySummary(field.key) !== undefined ? { suppliedCopy: skySummaryImportProvenance } : {})
-          }
-        };
+        const { newSkySummaryDraft } = await import("./skySummaryComposition");
+        const nextDraft = newSkySummaryDraft(field,
+          field.key.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX) ? "" : field.label,
+          initialBody, candidateReceipt, moonSource);
         rememberSavedDraft(nextDraft);
         setSelectedRowId(null);
         setCompositionEditorContext(null);
@@ -6947,6 +6937,7 @@ export function GeneratedContentAdminDashboard() {
         setDailyGlancePairSelector(null);
         setEditorSaveError("");
       }
+      setSkySummaryEditorField(field);
       setMessage(`Opened ${field.label}. Save & publish makes your edits live in one step.`);
       scrollEditorToTop();
     } catch (error) {
@@ -7896,7 +7887,8 @@ export function GeneratedContentAdminDashboard() {
               {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "weekly-sky" || calendarWriteupWorkspaceView === "monthly-sky") && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio secret={secret} period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft} readerEntry={readerEntry?.surface === 'calendar' ? readerEntry : undefined}
                 onEditSource={row => {
-                  const field = row.id.startsWith('builtin:') ? skyDailySummaryFields.find(field => field.key === row.content_key) : undefined;
+                  const field = row.id.startsWith('builtin:') ? (row.source_snapshot?.summaryField as SkySummaryField | undefined)
+                    ?? skyDailySummaryFields.find(field => field.key === row.content_key) : undefined;
                   if (field) void openSkySummaryField(field);
                   else void openCalendarWritingSource(row as AdminGeneratedContentRow);
                 }}
@@ -10883,7 +10875,8 @@ export function GeneratedContentAdminDashboard() {
     const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/")
       || currentDraft.contentKey.startsWith("cms/sky-debility/");
     const isCompleteEffortDraft = currentDraft.contentKey.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX);
-    const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey);
+    const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey)
+      ?? (skySummaryEditorField?.key === currentDraft.contentKey ? skySummaryEditorField : undefined);
     const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
     const savedArticleStatusRow = skyArticleEditor ? rows.find(row => row.id === skyArticleEditor.rowId) : null;
     const editorStatusRow = savedArticleStatusRow ?? { status: currentDraft.status, id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
@@ -11428,7 +11421,7 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
-    const editorUseLabel = isAstro101Draft ? `Astro 101 · ${ASTRO_101_KIND_LABELS[astro101KindForDraft(currentDraft)]}` : isSkyPlacementSource ? (currentDraft.contentKey.includes("/retrograde/") ? "Retrograde writing" : "Shared placement writing") : lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
+    const editorUseLabel = activePage === 'calendarWriteups' && !currentDraft.contentKey.startsWith('calendar-passage/') ? 'Shared writing · all matching dates' : isAstro101Draft ? `Astro 101 · ${ASTRO_101_KIND_LABELS[astro101KindForDraft(currentDraft)]}` : isSkyPlacementSource ? (currentDraft.contentKey.includes("/retrograde/") ? "Retrograde writing" : "Shared placement writing") : lunarContentIdentity(currentDraft.contentKey)?.destination ?? aspectContext?.label
       ?? (selectedRow
         ? contentCategoryForRow(selectedRow)
         : isArticleDraft
