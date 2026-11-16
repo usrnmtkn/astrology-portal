@@ -5,7 +5,8 @@ import { selectedMoonKind, moonEventNames, moonSummaryKey, moonSummaryBody } fro
 import defaultAssembly from "./skyDailySummaryAssembly.json" with { type: "json" };
 import clauses from "./skyDailySummaryClauses.json" with { type: "json" };
 import defaultTiming from "./skyDailySummaryTiming.json" with { type: "json" };
-import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "./skyDailySummaryCatalog";
+import { currentSkySummaryWording, skyDailySummaryFields, skySummarySigns, skySummaryTemplateErrors, type SkySummaryField } from "./skyDailySummaryCatalog";
+import { calendarSeasonTransitionSummaryKey } from '../../../../src/shared/features/calendar/calendarSeasonTransitionSummaryKey';
 import type { CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { contentPublication, publicationAllowsContent, publicationRestoresBaseline } from "./contentPublicationState";
 import {
@@ -13,8 +14,7 @@ import {
   calendarSeasonTransitionIsCurrent
 } from "../features/calendar/calendarSeasonTransitionFacts";
 import {
-  calendarSeasonTransitionEndsBridge,
-  calendarSeasonTransitionKey
+  calendarSeasonTransitionEndsBridge
 } from "../features/calendar/calendarSeasonTransitionBridge";
 
 const skySummaryLiveCopyCacheKey = "tldrastro:sky-daily-summary-live-copy:v1";
@@ -241,11 +241,11 @@ export function skyDailySummaryParts(facts: SkyDailySummaryFacts, content?: CmsG
       action: 'sun',
       emphasis: true
     }]
-  }) : [];
+  }).map(part => ({ ...part, sourceKey: `cms/sky-daily-summary/assembly/${transitionKey}` })) : [];
   const transitionText = transitionParts.map(part => part.text).join('');
   if (transition && transitionText) {
-    const bridge = calendarSeasonTransitionEndsBridge(transition.fromSign, transition.toSign);
-    const bridgeSourceKey = calendarSeasonTransitionKey(transition.fromSign, transition.toSign);
+    const bridgeSourceKey = calendarSeasonTransitionSummaryKey(transition.fromSign, transition.toSign);
+    const bridge = savedCopy(content, bridgeSourceKey, calendarSeasonTransitionEndsBridge(transition.fromSign, transition.toSign), editorialPreview);
     values.openingSentence = [
       ...transitionParts,
       ...(bridge ? [{ text: ` ${bridge}`, sourceKey: bridgeSourceKey }] : []),
@@ -413,4 +413,12 @@ export function skySummaryParagraphs(parts: SummaryPart[]): SummaryPart[][] {
     paragraphs[paragraphs.length - 1].push(part);
   }
   return paragraphs;
+}
+
+export function skySeasonTransitionSummaryFields(): SkySummaryField[] {
+  return skySummarySigns.map((from, index) => {
+    const to = skySummarySigns[(index + 1) % skySummarySigns.length];
+    return { key: calendarSeasonTransitionSummaryKey(from, to), label: `${from} to ${to} · Sun summary`,
+      group: 'Sun transition summaries', body: calendarSeasonTransitionEndsBridge(from, to), allowedSlots: [] };
+  });
 }

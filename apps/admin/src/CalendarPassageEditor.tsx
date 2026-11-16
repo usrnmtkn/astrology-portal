@@ -79,7 +79,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
   const publishedReading = useMemo(() => calculation ? calendarWorkspaceReading(period, calculation, requested.date, calculation.sky, content) : null, [period, calculation, requested.date, content]);
   const editingSource = useMemo(() => {
     if (sourceDraft && sourceDraft.contentKey !== contentKey
-      && (sources.some(row => row.content_key === sourceDraft.contentKey) || Object.values(values).some(value => value.sourceKey === sourceDraft.contentKey))) return sourceDraft;
+      && (sourceDraft.contentKey === selectedSourceKey || sources.some(row => row.content_key === sourceDraft.contentKey) || Object.values(values).some(value => value.sourceKey === sourceDraft.contentKey))) return sourceDraft;
     if (scope !== 'shared' || !selectedSourceKey) return null;
     const drafts = sources.filter(row => row.content_key === selectedSourceKey && row.status === 'DRAFT' && !row.id.startsWith('package:'));
     const pending = drafts.find(row => 'mode' in row && row.mode === 'studio-draft') ?? drafts[0];
@@ -140,7 +140,7 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
       const pattern = bodyOf(proposal) ?? bodyOf(editions.find(row => row.id.startsWith('package:'))) ?? (scope === 'date' ? calendarEditablePassage(sharedPattern, assembledValues) : sharedPattern);
       setContentKey(selectedKey); setSourcesChanged(false); setCalculation(result); setSources(rows); setSaved(proposal ?? retiredTarget); setPublished(live); setHistoryId([live, proposal, editions[0]].find(row => row && !row.id.startsWith('package:'))?.id ?? '');
       setBody(localEdits.get(selectedKey) ?? pattern); setBaseline(pattern);
-      setLoaded(contextKey); setStatus(proposal ? proposal.status === 'LIVE' ? 'Published passage. Editing creates a separate draft.' : proposal.id.startsWith('package:') ? 'Original shared source. Editing creates a draft; the current reader wording stays published.' : 'Saved draft. Readers still see the last published passage.' : period === 'monthly' && !shared && !assembledValues.overview ? 'No published monthly overview is available. Write a passage using the calculated variables below.' : 'Using the current shared writing. Nothing has been saved for this selection.');
+      setLoaded(contextKey); setStatus(proposal ? proposal.status === 'LIVE' ? 'Published passage. Editing creates a separate draft.' : proposal.id.startsWith('package:') ? 'Original shared source. Editing creates a draft; the current reader wording stays published.' : 'Saved draft. Readers still see the last published passage.' : period === 'monthly' && !shared && !assembledValues.overview ? 'No published monthly overview is available. Write a passage using the calculated variables below.' : scope === 'shared' ? 'No shared template has been saved. Reader preview shows the published passage; you are editing the default shared template.' : 'No saved passage for this selection. Starting with the current shared writing.');
     })().catch(reason => { if (active) { setError(passageError(reason, 'The passage could not load. Reload saved status to try again.')); setStatus(''); } });
     return () => { active = false; };
   }, [contextKey, loadRows, secret]);
@@ -218,12 +218,16 @@ export default function CalendarPassageEditor({ period: studioPeriod, loadRows, 
         <p><strong>{target === 'moon' ? 'Moon transition passage' : 'Daily overview'} · {scope === 'date' ? 'Date-only edit' : 'Shared edit'}</strong></p>
         <p>{scope === 'date' ? `Editing the complete passage for ${requested.date} in ${requested.timeZone}. Other dates keep their writing.`
           : sharedMoon ? 'Editing the shared transition wording. It is used wherever the Calendar selects this Moon-sign pair.' : 'Editing the shared daily template. It is used on dates without a valid date-only passage.'}</p>
+        {scope === 'shared' && publishedReading?.sourceLabel === 'Date-only passage' && <>
+          <p>This date currently shows a published date-only passage. Shared edits leave its copied wording unchanged.</p>
+          <StudioButton disabled={busy || dirty} onClick={() => { setTarget('overview'); setScope('date'); }}>Edit wording shown for this date</StudioButton>
+        </>}
         {scope === 'date' && target === 'moon' && <p>{/\{\{\s*#\s*moonWriteup\s*\}\}/u.test(body) ? 'The Moon section is selected below. Saving preserves the complete daily passage, including its Sun section.' : 'This saved passage has no separate Moon section. Edit its complete wording below; saving affects this date only.'}</p>}
       </div>}
       {(sourcesChanged || sourceChanges && sourceChanges.length > 0) && <p role="note">Shared writing has changed since this passage was loaded or saved. Your wording has been preserved. {sourcesChanged ? 'Save your draft and reload the sources before publishing.' : 'Review the assembled preview before publishing.'}</p>}
       <CalendarPassageTemplateEditor key={loaded} ref={templateEditor} value={body} onChange={setBody} disabled={busy} values={values} label={scope === 'date' ? `This ${period === 'daily' ? 'date' : period === 'weekly' ? 'week' : 'month'} only` : sharedMoon ? 'Shared Moon transition' : 'Shared template · all dates'}
         sharedWording={scope === 'shared' && !sharedMoon ? names => <div aria-label="Shared passage wording" className="studio-section">
-          <p>Edit the saved wording below. Each source is shared by all dates that use it. Signs, dates, and event times stay calculated.</p>
+          <p>Shared writing · edits apply to all matching dates. Signs, dates, and event times stay calculated.</p>
           {[...new Set(names)].filter(name => values[name]?.kind === 'copy').map(name => {
             const value = values[name];
             const editable = calendarSharedPassageSources(value, sourceValues[name], content, sources);

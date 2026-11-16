@@ -24,12 +24,17 @@ import { fallbackArchitectureV3DashboardPackageDestination } from "../../apps/we
 import { isReaderServableGeneratedContentRow, isGeneratedContentReaderBoundaryAllowed, generatedRowPackageRole } from "../../apps/web/src/content/generatedContentEligibility.js";
 import { astro101IsLiveOnLearn, isAstro101ContentKey } from "../../apps/web/src/content/astro101.js";
 import { hasExactSkyArticleOwnerApproval, skyArticleEditionRecord } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
-import { currentSkySummaryWording, skyDailySummaryFields, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+import { currentSkySummaryWording, skyDailySummaryFields, skySummarySigns, skySummaryTemplateErrors } from "../../apps/web/src/content/skyDailySummaryCatalog.js";
+import { calendarSeasonTransitionEndsBridge, calendarSeasonTransitionSummaryKey } from '../../src/shared/features/calendar/calendarSeasonTransitionBridge.js';
 
 export { isSkyPartitionKey, servingPackageRecords };
 
 // These are the same defaults consumed by the Daily Sky reader, not CMS drafts.
-export const builtinContentRecords = new Map(skyDailySummaryFields.map(field => [field.key, {
+export const builtinContentRecords = new Map([...skyDailySummaryFields, ...skySummarySigns.map((from, index) => {
+  const to = skySummarySigns[(index + 1) % skySummarySigns.length];
+  return { key: calendarSeasonTransitionSummaryKey(from, to), label: `${from} to ${to} · Sun summary`,
+    body: calendarSeasonTransitionEndsBridge(from, to), readerEnabled: true };
+})].map(field => [field.key, {
   id: `builtin:${field.key}`, content_key: field.key, body: field.body, headline: field.label, readerEnabled: field.readerEnabled
 }]));
 
