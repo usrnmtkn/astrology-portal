@@ -139,7 +139,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    await expect(held.getByText(reason,{exact:true})).toBeVisible();await expect(held.locator('blockquote')).toHaveText(paragraph);
    expect((await f.call({method:'writer-state'}))).toMatchObject({calls:1,reviewCalls:1,batchCalls:1});
    expect((await f.latest()).source_snapshot.horoscopeGeneration.candidateHolds.aries.code).toBe('weekly_direction_drift');
-   await page.screenshot({path:`test-results/weekly-direction-hold-${width}-${theme}.png`,fullPage:true});
+   await held.screenshot({path:`test-results/weekly-direction-hold-${width}-${theme}.png`});
    await page.reload();await expect(held.getByText(reason,{exact:true})).toBeVisible();
    await held.getByRole('button',{name:'Edit saved Aries draft',exact:true}).click();
    await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(`You can read the complete aries fixture opening.\n\n${paragraph}`);
