@@ -4204,9 +4204,12 @@ function natalAspectDetailArticle(
 ): YouTransitArticle {
   const contentKey = aspectContentId(aspect.from, aspect.type, aspect.to);
   const title = natalAspectDisplayTitle(aspect);
-  const generatedSection = generatedNatalAspectSection(aspect, generatedContent);
-  const normalized = generatedSection
-    ? { surface: "natal-aspect", status: "servable", sections: [generatedSection] } satisfies NormalizedNatalAspectArticle
+  const friendSection = ownerContext ? sourceGroundedNatalAspectNormalizedSection(aspect, ownerContext) : null;
+  const exactFriendSection = friendSection?.tier === "exact-owner-approved-natal-aspect-v1" ? friendSection : null;
+  const generatedSection = exactFriendSection ? null : generatedNatalAspectSection(aspect, generatedContent);
+  const selectedSection = exactFriendSection ?? generatedSection;
+  const normalized = selectedSection
+    ? { surface: "natal-aspect", status: "servable", sections: [selectedSection] } satisfies NormalizedNatalAspectArticle
     : normalizeNatalAspectSurface(aspect, ownerContext);
   const ownerAwareCopy = (section: NormalizedNatalAspectSection) => {
     const value = taggedSectionBody(section);
