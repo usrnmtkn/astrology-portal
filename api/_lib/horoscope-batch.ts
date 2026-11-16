@@ -58,7 +58,7 @@ export async function runWeeklyHoroscopeBatch(id:string,{maxSteps=100,wait=()=>n
         const planning=!weeklyPlanCurrent(gate,batch.planHash);
         if(gate?.pending||planning||complete&&!weeklyReviewCurrent(row)){
           const prior=planning?gate?.plan:gate?.review;
-          if(!gate?.pending&&prior){
+          if(!gate?.pending&&prior&&(!planning||prior.status)){
             await saveBatch({...batch,lease:null,status:'needs_attention',error:prior.error??(planning&&prior.status==='passed'?'The shared Weekly plan no longer matches the approved facts or instructions. Review its findings and prepare a fresh plan.':'The Weekly editorial gate found issues. Review the saved findings before approving another check.')});
             return {state:'needs_attention'};
           }
