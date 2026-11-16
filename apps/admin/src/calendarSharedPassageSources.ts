@@ -30,7 +30,7 @@ export function calendarSharedPassageSources(value: CalendarOverviewValue, prove
     if (!key || originals.has(key) || content.has(key)) continue;
     const field = [...skyDailySummaryFields, ...skySeasonTransitionSummaryFields].find(field => field.key === key && field.body);
     if (field) {
-      originals.set(field.key, { id: `builtin:${field.key}`, content_key: field.key, headline: field.label, body: field.body, status: 'DRAFT' });
+      originals.set(field.key, { id: `builtin:${field.key}`, content_key: field.key, headline: field.label, body: field.body, status: 'DRAFT', source_snapshot: { summaryField: field } });
       readerBodies.set(field.key, field.body);
     }
   }

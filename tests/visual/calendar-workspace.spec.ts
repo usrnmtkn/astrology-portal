@@ -79,8 +79,11 @@ for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1
       const openShared = () => sun.locator(`[data-calendar-source-key="${sharedKey}"]`).click();
       await openShared();
       await expect(body).toHaveValue(original);
-      await expect(editor.getByRole('note',{name:'Calendar source editing scope'})).toContainText('Shared writing · all matching dates');
-      await expectStudioReadingType(editor.getByRole('note',{name:'Calendar source editing scope'}).locator('p').last());
+      const sourceScope = editor.getByText('Shared writing · all matching dates', {exact:true});
+      await expect(sourceScope).toBeVisible();
+      const metrics = (node: Element) => { const style = getComputedStyle(node); return [style.fontFamily,style.fontSize,style.fontWeight,style.lineHeight,style.letterSpacing]; };
+      expect(await sourceScope.evaluate(metrics)).toEqual(await editor.locator('.admin-editor-context-line').evaluate(metrics));
+      expect(await editor.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
       await editor.screenshot({path:`test-results/calendar-short-shared-source-${width}-${theme}.png`});
       await body.fill(sharedCopy);
       await editor.getByRole('button',{name:'Save draft',exact:true}).click();
