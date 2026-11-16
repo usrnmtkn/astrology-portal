@@ -132,8 +132,12 @@ const reader=await readerRouteResponse('/api/content-reader',{method:'POST',body
 const nativeTransport=installAlternativeHoroscopeProviders();
 const native=await create('2026-11-30',true);row=latest(native);row.sections.horoscopeEdition.passages[11]={...row.sections.horoscopeEdition.passages[11],headline:'',body:''};row.body=horoscopeEditionBody(row.sections.horoscopeEdition);store.rows.set(native,row);
 const nativeExisting=structuredClone(row.sections.horoscopeEdition.passages.slice(0,11));
-const nativePlan=await action(native,'prepare',{writerChoice:'claude'});assert.equal(nativePlan.status,200);await action(native,'start-batch',{approvedPlanHash:nativePlan.payload.plan.planHash});assert.equal((await runWeeklyHoroscopeBatch(native,{maxSteps:100,wait:()=>new Promise(resolve=>setTimeout(resolve,5))})).state,'complete');
-assert.equal(nativeTransport.requests.length,1);assert(nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
+const nativePlan=await action(native,'prepare',{writerChoice:'claude'});assert.equal(nativePlan.status,200);
+await action(native,'plan-weekly',{approvedPlanHash:nativePlan.payload.plan.planHash});await action(native,'poll-weekly');
+const nativeEdits={coreConcern:'Exact native owner concern.',stakes:'Exact native owner stakes.',distinctiveObservation:'Exact native owner observation.'};
+const nativeSaved=await action(native,'save-weekly-concern',{sign:'pisces',concern:nativeEdits,approvedPlanHash:nativePlan.payload.plan.planHash});assert.equal(nativeSaved.status,200);
+await action(native,'start-batch',{approvedPlanHash:nativeSaved.payload.plan.planHash});assert.equal((await runWeeklyHoroscopeBatch(native,{maxSteps:100,wait:()=>new Promise(resolve=>setTimeout(resolve,5))})).state,'complete');
+assert.equal(nativeTransport.requests.length,1);assert.deepEqual(JSON.parse(nativeTransport.requests[0].request.messages[0].content.split('OWNER-EDITED WEEKLY CONCERNS\n')[1].split('\n')[0]),{pisces:nativeEdits});assert(nativeTransport.requests[0].request.messages[0].content.includes('SHARED WEEKLY CONCERNS\n'));assert(nativeTransport.requests[0].request.messages[0].content.includes('CURRENT SIGN CONCERN\n'));
 assert(nativeTransport.requests[0].request.system.includes('An opening may need several connected sentences'),'The native Claude system retains the Weekly opening correction');
 assert(nativeTransport.requests[0].request.messages[0].content.includes('without requiring a psychological revelation'),'The native Claude plan retains the ordinary-language correction');
 assert(nativeTransport.requests[0].request.messages[0].content.includes(JSON.stringify({previousReadings:latest(native).source_snapshot.horoscopeGeneration.readings.pisces.previousReadings})));
@@ -163,5 +167,50 @@ assert(raced);assert.equal(latest(contended).source_snapshot.horoscopeGeneration
 assert.equal(latest(contended).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'passed');assert.equal(writerFixture.batchCalls,beforeContention);
 assert.equal((await worker(contended)).state,'complete');
 assert.deepEqual([...writerFixture.requests.values()].slice(beforeOrderedWriters).map((request:any)=>request.sign),HOROSCOPE_SIGNS,'The batch drafts in zodiac order');
+// Owner edits are a versioned edition plan, never an additional provider call.
+const editable=await create('2027-01-04'),originalHash=await prepare(editable);
+const beforeEdits={calls:writerFixture.calls,batchCalls:writerFixture.batchCalls};
+assert.equal((await action(editable,'plan-weekly',{approvedPlanHash:originalHash})).status,202);
+assert.equal((await action(editable,'poll-weekly')).status,200);
+const originalRow=latest(editable),originalPlan=structuredClone(originalRow.source_snapshot.horoscopeGeneration.weeklyEditorial.plan);
+let editedHash=originalHash;
+const edits=Object.fromEntries(HOROSCOPE_SIGNS.map(sign=>[sign,{coreConcern:`Exact owner concern for ${sign}.`,stakes:`Exact owner stakes for ${sign}.`,distinctiveObservation:`Exact owner observation for ${sign}.`} ]));
+for(const sign of HOROSCOPE_SIGNS){
+ const result=await action(editable,'save-weekly-concern',{sign,concern:edits[sign],approvedPlanHash:editedHash});
+ assert.equal(result.status,200,JSON.stringify(result.payload));assert.notEqual(result.payload.plan.planHash,editedHash);editedHash=result.payload.plan.planHash;
+ assert.deepEqual(latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns.find((c:any)=>c.sign===sign),{...originalPlan.concerns.find((c:any)=>c.sign===sign),...edits[sign]});
+}
+const editedRow=latest(editable);
+assert.deepEqual(editedRow.sections,originalRow.sections);assert.deepEqual(editedRow.facts,originalRow.facts);assert.deepEqual(editedRow.source_snapshot.studioWritingProfile,originalRow.source_snapshot.studioWritingProfile);
+assert.equal(editedRow.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.status,'owner-edited');
+assert.equal((await prepare(editable)),editedHash,'Reloaded preparation retains the edited plan identity');
+assert.equal(writerFixture.calls,beforeEdits.calls);assert.equal(writerFixture.batchCalls,beforeEdits.batchCalls+1,'Saving twelve signs is free');
+assert.equal((await runHoroscopeWriting({action:'save-weekly-concern',id:editable,expectedUpdatedAt:originalRow.updated_at,sign:'aries',concern:edits.aries,approvedPlanHash:originalHash},'synthetic-owner')).status,409);
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:{...edits.aries,stakes:''},approvedPlanHash:editedHash})).status,400);
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:{...edits.aries,eventIds:['fabricated']},approvedPlanHash:editedHash})).status,400);
+assert.equal((await action(editable,'generate',{sign:'aries',approvedPlanHash:originalHash})).status,409,'Earlier plan approval cannot authorize an edited plan');
+// A fresh planner cannot overwrite the owner's saved choices.
+assert.equal((await action(editable,'plan-weekly',{approvedPlanHash:editedHash})).status,202);
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:edits.aries,approvedPlanHash:editedHash})).status,409);
+assert.equal((await action(editable,'poll-weekly')).status,200);
+assert.deepEqual(latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.ownerEdits,edits);
+for(const c of latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns)for(const [key,value] of Object.entries(edits[c.sign]))assert.equal(c[key],value);
+// Changed saved instructions replan around the edits rather than dropping them.
+const currentProfile=editedRow.source_snapshot.studioWritingProfile;
+assert.equal((await store.invoke('POST',{profile:{...currentProfile.profile,voiceGuidance:currentProfile.profile.voiceGuidance+' An additional scoped instruction.'},expectedUpdatedAt:currentProfile.updatedAt},'/api/admin/generated-content?writingProfiles=true')).status,200);
+editedHash=await prepare(editable);
+const editedRequests=writerFixture.requests.size;
+await action(editable,'start-batch',{approvedPlanHash:editedHash});
+assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:edits.aries,approvedPlanHash:editedHash})).status,409);
+assert.equal((await worker(editable)).state,'complete');
+for(const request of [...writerFixture.requests.values()].slice(editedRequests)){
+ assert.deepEqual(JSON.parse(request.input.split('OWNER-EDITED WEEKLY CONCERNS\n')[1].split('\n')[0]),edits);
+ assert.deepEqual(JSON.parse(request.input.split('CURRENT SIGN CONCERN\n')[1].split('\n')[0]),latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.concerns.map(({priorQuote,priorEditionId,priorSign,...c}:any)=>c).find((c:any)=>c.sign===request.sign));
+}
+const editedReview=[...writerFixture.batchRequests.values()].at(-1);assert.deepEqual(JSON.parse(editedReview.input).ownerConcernEdits,edits);
+const currentEdited=latest(editable);assert(weeklyReviewCurrent(currentEdited));
+const finalEdit=await action(editable,'save-weekly-concern',{sign:'aries',concern:{...edits.aries,stakes:'A newer exact owner stake.'},approvedPlanHash:editedHash});
+assert.equal(finalEdit.status,200);assert.equal(weeklyReviewCurrent(latest(editable)),false);assert.deepEqual(latest(editable).sections,currentEdited.sections);
+console.log('PASS editable Weekly concerns: all twelve exact saves/reload, version conflicts, validation, approval and review invalidation, immutable drafts/facts, free saves, and actual writer/reviewer delivery.');
 console.log('PASS Weekly batch editorial gate: plan all twelve before prose, full profile/facts delivery, 26 bounded requests, exact quotes, failed/stale/malformed checks, manual edits, publication, free recovery and unknown-outcome release. Synthetic models only.');
 await store.close();

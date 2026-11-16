@@ -247,3 +247,35 @@ can be added without compressing earlier sources. Complete comparison blocks
 retain their exact-text hashes and are delivered through the existing governed
 writer and private evidence receipt. Saving a profile makes no model call and
 does not publish an edition.
+
+## Editable Weekly concerns — November 15, 2026
+
+Before drafting, use **Plan twelve concerns · 1 AI request**, then expand
+**Shared concerns for all twelve signs**. Each sign has Concern, Stakes and
+Observation fields and its own Save action. Saving is free, preserves exact text
+and existing readings, and requires fresh generation approval. Unsaved concern
+edits block generation and leaving the plan. Reopening restores the saved fields;
+load the current writing plan before editing.
+
+The edition's private shared plan retains owner edits and the original planner
+and review history. Version-checked saves preserve other signs and reject stale
+or in-flight edits. Edits change the prepared plan identity and invalidate the
+whole-set review. Fresh planning retains the saved edits, including after profile
+changes. The actual writer and whole-set reviewer receive the saved directions;
+calculated facts and complete voice evidence retain their existing authority.
+Saving concerns does not approve prose, rewrite existing drafts or start a model.
+
+`test-weekly-batch-editorial.mts` checks all twelve exact saves, reloads, stale
+versions, invalid fields, approval/review invalidation, profile changes and actual
+OpenAI/native Claude input delivery with synthetic providers. The matching
+browser cases check editing, independent saves, unsaved-work protection, reload
+and generation at mobile/light and desktop/dark sizes. These are workflow and
+transport checks, not a guarantee of generated prose quality.
+
+Release validation retained a hosted standalone-Admin aggregate budget failure of
+202 gzip bytes. The compacted editor shares the existing batch request path.
+Independent accepted-main/candidate builds with matching locked installs and
+generated knowledge measured 932,675 → 933,401 aggregate gzip bytes and
+245,710 → 245,735 entry gzip bytes; entry raw bytes stayed identical. The existing
+measured-feature policy allocates those 726/25-byte deltas, preserving the
+control's 605/35-byte headroom. Other guards and deferred boundaries stay intact.

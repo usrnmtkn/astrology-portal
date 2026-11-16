@@ -24,6 +24,9 @@ export async function weeklyEditorialOperation({action,row:initial,persist,prepa
       if(content.some((part:any)=>part.type==='refusal'))throw Error('The shared check was refused.');
       const text=content.filter((part:any)=>part.type==='output_text').map((part:any)=>part.text).join('');
       result=validateWeeklyEditorialResult(JSON.parse(text),{phase:operation.phase,input:operation.input});status=result.status;
+      if(operation.phase==='planning'&&operation.input.ownerConcernEdits){
+        result={...result,ownerEdits:operation.input.ownerConcernEdits,concerns:result.concerns.map((concern:any)=>({...concern,...operation.input.ownerConcernEdits[concern.sign]}))};
+      }
       if(weeklyEditorialBinding(row)!==operation.bindingHash
         ||weeklyEditorialContent(row)!==operation.contentHash){status='stale';error='The saved readings or instructions changed during this check.';}
     }catch(reason){error=reason instanceof Error?reason.message:'The shared check could not be verified.';}

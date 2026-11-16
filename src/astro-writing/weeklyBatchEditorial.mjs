@@ -7,13 +7,14 @@ export const weeklyEditorialHash=value=>createHash('sha256').update(horoscopeCan
 export const weeklyEditorialBinding=row=>weeklyEditorialHash({facts:row.facts?.horoscopeBrief,
   profile:row.source_snapshot?.studioWritingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},
   writerChoice:row.source_snapshot?.horoscopeWriterChoice??'current',
+  ...(row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.ownerEdits?{ownerEdits:row.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.ownerEdits}:{}),
   ...(row.source_snapshot?.weeklyComparison?{weeklyComparisonHash:row.source_snapshot.weeklyComparison.contextHash,weeklyComparisonContract:WEEKLY_CROSS_WEEK_EDITORIAL}:{})});
 export const weeklyEditorialContent=row=>weeklyEditorialHash({binding:weeklyEditorialBinding(row),edition:row.sections.horoscopeEdition,
   sharedPlan:row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.requestHash??null});
 export const weeklyEditorialComplete=row=>row.sections.horoscopeEdition.passages.length===12
   &&row.sections.horoscopeEdition.passages.every(p=>p.headline.trim()&&p.body.trim());
 export const weeklyPlanCurrent=(gate,scopeHash)=>gate?.version===WEEKLY_BATCH_EDITORIAL
-  &&gate.plan?.status==='passed'&&gate.plan.scopeHash===scopeHash;
+  &&['passed','owner-edited'].includes(gate.plan?.status)&&gate.plan.scopeHash===scopeHash;
 export const weeklyReviewCurrent=row=>row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.review?.status==='passed'
   &&row.source_snapshot.horoscopeGeneration.weeklyEditorial.review.contentHash===weeklyEditorialContent(row);
 export function weeklyEditorialIssue(row){
@@ -55,6 +56,7 @@ export const WEEKLY_PLAN_INSTRUCTIONS=`WEEKLY BATCH PLANNING AUTHORITY
 Plan twelve distinct concerns together before any new sign is drafted.
 ${CROSS_WEEK_AUTHORITY}
 ${WEEKLY_READER_CLARITY}
+When ownerConcernEdits is supplied, preserve those exact concern, stakes and observation values for their signs. They are edition-specific editorial direction, not voice examples or new calculated facts. Develop compatible supporting notes from the supplied facts; do not restore superseded AI choices.
 For each concern, astrologicalReason must explain why its chosen current event IDs, planetary meanings and actual house relationships support this particular reading now. weekDifference must compare its mechanism and conclusion with the nearest relevant supplied prior passage, with its priorEditionId, priorSign and verbatim priorQuote, or use null IDs and an empty priorQuote when no history was available. development describes how this thought develops without enforcing a reusable conflict-and-correction formula. These are concise editorial decisions, not hidden reasoning or reader sentences. Current scoped owner corrections, the complete saved Weekly profile and its complete examples govern. Examples supply voice, never current facts or stories to recycle. Calculated events and their own house activations supply meaning.
 For every sign select the event(s) that matter, a possible human situation, the specific choice, relationship or consequence at stake, and an observation another sign cannot borrow unchanged. Use only that sign's supplied event or reference IDs. A human situation can be a supported experience without an invented scene. Stakes describe what matters, including a positive possibility, and need no problem to solve. Keep unknown biography, motives and history conditional. Supportive contacts need no invented problem or remedy.
 Compare all twelve concerns. Rephrasing be honest, speak up, reconsider an agreement, rest, or revisit the past does not differentiate their interpretations. Explain different supported mechanisms, stakes and choices. Avoid making all signs about unpaid work, money, unequal responsibility or keeping the peace. Different house numbers and props alone are insufficient. Revise your internal outline before returning if concerns collapse to one lesson.
@@ -77,6 +79,7 @@ export function weeklyEditorialInput(prepared,row,phase){
     existingReadings:row.sections.horoscopeEdition.passages,
     priorWeeks:prepared.weeklyComparison??{version:'weekly-prior-editions/v1',editions:[],availability:'This legacy approval has no prior-edition snapshot. Do not claim a historical comparison.'},
     sharedConcerns:row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.concerns??[],
+    ...(row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.ownerEdits?{ownerConcernEdits:row.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.ownerEdits}:{}),
     priorFindings:(row.source_snapshot?.horoscopeGeneration?.weeklyEditorialHistory??[]).slice(-2).map(h=>h.result?.findings??[])};
 }
 const nonempty=value=>typeof value==='string'&&value.trim()&&value.length<=5000;
