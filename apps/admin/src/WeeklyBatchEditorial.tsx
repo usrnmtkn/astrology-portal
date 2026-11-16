@@ -30,18 +30,18 @@ export default function WeeklyBatchEditorial({period='weekly',gate,complete,dirt
       {[...finding.evidence,...(finding.priorEvidence??[])].map((e:any,i:number)=><p key={i}>{e.editionId&&'Prior week · '}{e.sign}: “{e.quote}”</p>)}
     </div>)}
     {plan?.concerns&&<details className="admin-workspace-details"><AdminDisclosureSummary>Shared concerns for all twelve signs</AdminDisclosureSummary>
-      {hasPlan&&!concernsCurrent&&<p>Replan to edit these concerns.</p>}
+      {hasPlan&&!concernsCurrent&&<p>Save your edits, then refresh the plan before drafting.</p>}
       {plan.concerns.map((concern:any)=>{
         const label=concern.sign[0].toUpperCase()+concern.sign.slice(1),value=edits[concern.sign]??concern;
         const fields=[['coreConcern','Concern'],['stakes','Stakes'],['distinctiveObservation','Observation']];
         return <div key={concern.sign}>
           <p><strong>{concern.sign}: </strong>{concern.coreConcern}</p>
           {fields.map(([key,title])=><label className="admin-review-copy-editor" key={key}><span>{title}</span>
-            <StudioTextarea aria-label={`${label} ${title.toLowerCase()}`} rows={3} maxLength={5000} value={value[key]} disabled={disabled||dirty||running||Boolean(pending)||!concernsCurrent}
+            <StudioTextarea aria-label={`${label} ${title.toLowerCase()}`} rows={3} maxLength={5000} value={value[key]} disabled={disabled||dirty||running||Boolean(pending)||!hasPlan}
               onChange={event=>setEdits(current=>({...current,[concern.sign]:Object.fromEntries(fields.map(([field])=>[field,field===key?event.target.value:value[field]]))}))}/>
           </label>)}
           <div className="admin-toolbar-actions">
-            <StudioButton disabled={disabled||dirty||running||Boolean(pending)||!concernsCurrent||!edits[concern.sign]||fields.some(([key])=>!value[key].trim())}
+            <StudioButton disabled={disabled||dirty||running||Boolean(pending)||!hasPlan||!edits[concern.sign]||fields.some(([key])=>!value[key].trim())}
               onClick={async()=>{if(await onAction('save-weekly-concern',{sign:concern.sign,concern:edits[concern.sign],approvedPlanHash:planHash}))discard(concern.sign);}}>Save {label} concern</StudioButton>
             {edits[concern.sign]&&<StudioButton disabled={disabled} onClick={()=>discard(concern.sign)}>Discard {label} changes</StudioButton>}
           </div>
