@@ -116,7 +116,9 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
     ...(edition.window.period==='weekly'?{weeklyBatchEditorial:WEEKLY_BATCH_EDITORIAL}:{})}:{};
   const comparison=edition.window.period==='weekly'?row.source_snapshot?.weeklyComparison:null;
   const comparisonBinding=comparison?{weeklyComparisonHash:comparison.contextHash,weeklyComparisonContract:WEEKLY_CROSS_WEEK_EDITORIAL}:{};
-  const cacheKey=digest({...proseVersion,...comparisonBinding,...(meaningResearchBySign?{meaningResearchBySign}:{}),...(edition.window.period==='weekly'?{rejectedReadings}:{}),...(writerSelection?{writerSelection}:{}),brief,writingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},feedbackReceipt,studioCorrections,sourceHash});
+  const ownerEdits=edition.window.period==='weekly'?row.source_snapshot?.horoscopeGeneration?.weeklyEditorial?.plan?.ownerEdits:null;
+  const concernBinding=ownerEdits&&Object.keys(ownerEdits).length?{weeklyConcernEdits:ownerEdits}:{};
+  const cacheKey=digest({...proseVersion,...comparisonBinding,...concernBinding,...(meaningResearchBySign?{meaningResearchBySign}:{}),...(edition.window.period==='weekly'?{rejectedReadings}:{}),...(writerSelection?{writerSelection}:{}),brief,writingProfile,outlines:row.source_snapshot?.horoscopeOutlines??{},feedbackReceipt,studioCorrections,sourceHash});
   if(preparedPlans.has(cacheKey))return {...preparedPlans.get(cacheKey),edition};
   const planet=edition.window.period==='daily'?'moon':'sun';
   const anchor=brief.positions.find(p=>String(p.planet).toLowerCase()===planet);
@@ -197,7 +199,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
       approvedStyleReference:approvedVoiceStyleReference({family:'horoscope',surface:'horoscopes'}).receipt,
       meaningSupport:buildHellenisticMeaningSupport({facts:{...brief,house,developments},plan,family:'horoscope',surface:'horoscopes'}).receipt};
   });
-  const planHash=digest({...proseVersion,...comparisonBinding,...(meaningResearchBySign?{meaningResearchBySign}:{}),ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
+  const planHash=digest({...proseVersion,...comparisonBinding,...concernBinding,...(meaningResearchBySign?{meaningResearchBySign}:{}),ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,...(edition.window.period==='weekly'?{rejectedReadings}:{}),brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
   const prepared={edition,brief,writingProfile,entries,meaningResearchBySign,weeklyComparison:comparison,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt,
     explicitFeedbackMarker:explicitFeedback?.marker??'',explicitFeedbackRows:explicitFeedback?.rows??[]};
@@ -222,6 +224,7 @@ export function horoscopeWriterContextInput(input,prepared,sign) {
   return [input,...(prepared.weeklyBatchPlan?[
       `SHARED WEEKLY CONCERNS\n${JSON.stringify(sharedConcerns)}`,
       `CURRENT SIGN CONCERN\n${JSON.stringify(sharedConcerns.find(c=>c.sign===sign))}`,
+      ...(prepared.weeklyBatchPlan.ownerEdits?[`OWNER-EDITED WEEKLY CONCERNS\n${JSON.stringify(prepared.weeklyBatchPlan.ownerEdits)}`, 'The saved owner edits to concern, stakes and observation are the editorial direction for this edition. Develop their meaning without restoring earlier AI choices. Use other planning notes only where consistent with those edits and the calculated facts. These notes are direction, not wording to copy or additional astrological facts.']:[]),
       'The shared plan supplies current meaning decisions and scope, not reader wording or a required paragraph script. Use its current astrologicalReason and development. weekDifference is comparison-only analysis, never voice evidence, current facts or a story to copy. Historical citations are retained by the planner and reviewer rather than passed as writer evidence. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
     ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
 }

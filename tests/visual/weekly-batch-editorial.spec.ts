@@ -116,3 +116,44 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
  }finally{f.child.kill();}
  });
 }
+
+for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
+ test(`Weekly concern edits save before writing ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,false);try{
+   const studio=await f.open(),gate=studio.getByRole('region',{name:'Weekly batch editorial gate'});
+   await gate.getByRole('button',{name:'Plan twelve concerns · 1 AI request',exact:true}).click();
+   await gate.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
+   await expect(gate).toContainText('Twelve concerns saved.');
+   await gate.getByText('Shared concerns for all twelve signs',{exact:true}).click();
+   const fields={concern:'Exact owner edition concern.',stakes:'Exact owner edition stakes.',observation:'Exact owner edition observation.'};
+   for(const [field,value] of Object.entries(fields))await gate.getByLabel(`Aries ${field}`,{exact:true}).fill(value);
+   await gate.getByLabel('Taurus concern',{exact:true}).fill('Unsaved Taurus concern.');
+   await expect(studio.getByRole('button',{name:'Generate Aries',exact:true})).toBeDisabled();
+   await gate.getByRole('button',{name:'Save Aries concern',exact:true}).click();
+   await expect(gate.getByRole('button',{name:'Save Aries concern',exact:true})).toBeDisabled();
+   await expect(gate.getByLabel('Taurus concern',{exact:true})).toHaveValue('Unsaved Taurus concern.');
+   await expect(gate.getByRole('status')).toContainText('Save or discard');
+   await gate.getByRole('button',{name:'Discard Taurus changes',exact:true}).click();
+   expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0,batchCalls:1});
+   expect((await f.latest()).sections.horoscopeEdition).toEqual(f.edition);
+   const savedProfile=(await f.latest()).source_snapshot.studioWritingProfile;
+   expect((await f.call({method:'POST',url:'/api/admin/generated-content?writingProfiles=true',body:{profile:{...savedProfile.profile,voiceGuidance:savedProfile.profile.voiceGuidance+' New saved instruction.'},expectedUpdatedAt:savedProfile.updatedAt}})).status).toBe(200);
+   await page.reload();
+   await gate.getByRole('button',{name:'Load batch review plan',exact:true}).click();
+   await gate.getByRole('button',{name:'Plan twelve concerns again · 1 AI request',exact:true}).click();
+   await gate.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
+   await gate.getByText('Shared concerns for all twelve signs',{exact:true}).click();
+   for(const [field,value] of Object.entries(fields))await expect(gate.getByLabel(`Aries ${field}`,{exact:true})).toHaveValue(value);
+   await expect(studio.getByLabel('I approve this writing plan for generation.')).not.toBeChecked();
+   await expect(studio.getByRole('button',{name:'Generate Aries',exact:true})).toBeDisabled();
+   await page.screenshot({path:`test-results/weekly-editable-concerns-${width}-${theme}.png`,fullPage:true});
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'Generate Aries',exact:true}).click();
+   await expect.poll(async()=>(await f.latest()).sections.horoscopeEdition.passages[0].body,{timeout:120000,intervals:[1000]}).not.toBe('');
+   const row=await f.latest();expect(row.source_snapshot.horoscopeGeneration.weeklyEditorial.plan.ownerEdits.aries).toEqual({coreConcern:fields.concern,stakes:fields.stakes,distinctiveObservation:fields.observation});
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await expect(studio.getByRole('button',{name:'Check saved progress',exact:true})).toBeEnabled();
+  }finally{await page.goto('about:blank');await page.unrouteAll({behavior:'wait'});f.child.kill();}
+ });
+}

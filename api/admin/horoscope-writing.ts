@@ -66,8 +66,9 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
   const invocationDeadline=deadline;
   const reply=(status:number,payload:any)=>({status,payload});
   try {
-    if(!['export','prepare','generate','continue','poll','recover-review','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence','validate-publication','plan-weekly','review-weekly','poll-weekly','release-weekly','review-daily','poll-daily','release-daily'].includes(input.action)||typeof input.id!=='string'||!input.id
-      ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome','writerChoice'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
+    if(!['export','prepare','generate','continue','poll','recover-review','release','reject','diagnose','inspect','start-batch','pause-batch','resume-batch','evidence','validate-publication','plan-weekly','review-weekly','poll-weekly','release-weekly','review-daily','poll-daily','release-daily','save-weekly-concern'].includes(input.action)||typeof input.id!=='string'||!input.id
+      ||typeof input.expectedUpdatedAt!=='string'||Object.keys(input).some(k=>!['action','id','expectedUpdatedAt','sign','approvedPlanHash','acknowledgeUnknownOutcome','writerChoice','concern'].includes(k)))throw new AdminHttpError(400,'Choose a saved edition and a writing action.');
+    if(input.concern!==undefined&&input.action!=='save-weekly-concern')throw new AdminHttpError(400,'Concern edits require the save concern action.');
     if(input.writerChoice!==undefined&&(input.action!=='prepare'||!horoscopeWriterOptions(process.env).some((writer:any)=>writer.id===input.writerChoice)))throw new AdminHttpError(400,'Choose a supported writing model while preparing the plan.');
     const {url,headers}=studioStorage();
     const read=await adminFetchJson(`${url}?${new URLSearchParams({id:`eq.${input.id}`,select:'*',limit:'1'})}`,{headers},horoscopeStorageTimeoutMs);
@@ -347,6 +348,29 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     const writerAvailable=writerModels.find((writer:any)=>writer.id===writerChoice)?.available;
     let prepared=prepareHoroscopeWriting(writingRow,{feedbackReceipt,explicitFeedback,seasonalSourceRows,writerSelection:writerChoice==='current'?null:writerConfig});
     const editorial=row.source_snapshot?.horoscopeGeneration?.weeklyEditorial;
+    if(input.action==='save-weekly-concern'){
+      if(prepared.edition.window.period!=='weekly')throw new AdminHttpError(400,'Concern edits are Weekly only.');
+      if(operation||editorial?.pending||batch?.status==='running')throw new AdminHttpError(409,'Finish or pause generation before editing concerns.');
+      if(writingRow!==row||input.approvedPlanHash!==prepared.planHash||editorial?.plan?.scopeHash!==prepared.planHash)
+        throw new AdminHttpError(409,'The writing plan changed. Reopen and review the current plan before saving concerns.');
+      const concern=input.concern,keys=['coreConcern','stakes','distinctiveObservation'];
+      if(!concern||typeof concern!=='object'||Array.isArray(concern)||Object.keys(concern).sort().join()!==[...keys].sort().join()
+        ||keys.some(key=>typeof concern[key]!=='string'||!concern[key].trim()||concern[key].length>5000)
+        ||!editorial.plan.concerns?.some((entry:any)=>entry.sign===input.sign))
+        throw new AdminHttpError(400,'Choose a planned sign and enter its concern, stakes and observation (up to 5,000 characters each).');
+      const previous=editorial.plan,editedAt=new Date().toISOString();
+      const {error:previousError,...previousFields}=previous;
+      const editedPlan={...previousFields,status:'owner-edited',ownerApproved:false,promotionAuthorized:false,ownerEdits:{...previous.ownerEdits,[input.sign]:concern},
+        concerns:previous.concerns.map((entry:any)=>entry.sign===input.sign?{...entry,...concern}:entry),editedAt,editedBy:actor};
+      const generation={...row.source_snapshot.horoscopeGeneration,weeklyEditorial:{...editorial,plan:editedPlan,review:null},
+        weeklyEditorialHistory:[...(row.source_snapshot.horoscopeGeneration.weeklyEditorialHistory??[]),{outcome:'owner-edited',previousPlan:previous,previousReview:editorial.review??null,sign:input.sign,editedAt,editedBy:actor}],
+        ...(batch?.status==='paused'?{batch:{...batch,status:'cancelled'}}:{})};
+      const editedRow={...row,source_snapshot:{...row.source_snapshot,horoscopeGeneration:generation}};
+      const updated=prepareHoroscopeWriting(editedRow,{feedbackReceipt,explicitFeedback,seasonalSourceRows,writerSelection:writerChoice==='current'?null:writerConfig});
+      editedPlan.scopeHash=updated.planHash;
+      await persist({source_snapshot:editedRow.source_snapshot});
+      return reply(200,{ok:true,rows:[row],plan:{...horoscopePlanPreview(updated),writerChoice,writerModel:writerConfig.model,writerModels},configured:writerAvailable});
+    }
     if(weeklyPlanCurrent(editorial,prepared.planHash))prepared={...prepared,weeklyBatchPlan:editorial.plan};
     if(input.action==='export')return reply(200,{ok:true,writingExport:horoscopeWritingExport(prepared,writingRow)});
     if(['plan-weekly','review-weekly'].includes(input.action)){
@@ -389,7 +413,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
       const next={id:randomUUID(),status:'running',planHash:prepared.planHash,signs,attempted:operation?[operation.sign]:[],actor,approvedAt:new Date().toISOString(),writerChoice,error:null,
         ...(daily?{editorialVersion:DAILY_BATCH_EDITORIAL}:upgraded?{editorialVersion:WEEKLY_BATCH_EDITORIAL}:{})};
       const weeklyEditorial=upgraded?{version:WEEKLY_BATCH_EDITORIAL,
-        plan:weeklyPlanCurrent(editorial,prepared.planHash)?editorial.plan:null,review:null,pending:null}:editorial;
+        plan:weeklyPlanCurrent(editorial,prepared.planHash)?editorial.plan:editorial?.plan?.ownerEdits?{ownerEdits:editorial.plan.ownerEdits}:null,review:null,pending:null}:editorial;
       await persist({source_snapshot:{...writingRow.source_snapshot,horoscopeGeneration:{...generation,
         ...(daily?{dailyEditorial:{version:DAILY_BATCH_EDITORIAL,review:null,pending:null}}:{weeklyEditorial}),
         batch:next,batches:batch?[...(generation.batches??[]),batch]:(generation.batches??[])}}});
