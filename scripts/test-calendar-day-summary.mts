@@ -5,6 +5,13 @@ import type { SkySnapshot } from '../apps/web/src/types.ts';
 import { skySunTransition } from '../apps/web/src/content/skySunTransition.ts';
 import { skySummaryEventFacts } from '../apps/web/src/content/skySummaryEvents.ts';
 import { skySummaryTemplateErrors } from '../apps/web/src/content/skyDailySummaryCatalog.ts';
+import { skySeasonTransitionSummaryFields } from '../apps/web/src/content/skySeasonTransitionSummaryFields.ts';
+import { skySummarySourceKeys } from '../apps/web/src/features/sky/skySummarySources.ts';
+
+for (const field of skySeasonTransitionSummaryFields) {
+  assert.deepEqual(skySummaryTemplateErrors(field.key, field.body), []);
+  assert.ok(skySummaryTemplateErrors(field.key, 'Unsupported {date}.').length);
+}
 
 const location = { label: 'Test location', latitude: 40.7, longitude: -74, timeZone: 'America/New_York' };
 const sky = { location, generatedAt: '2026-09-12T16:00:00Z', positions: [
@@ -49,7 +56,11 @@ for (const [asOf, phase, sign, expected] of [
   const parts = calendarSunSummary(snapshot, undefined, [ingress]);
   assert.ok(text(parts).startsWith(expected));
   assert.ok(text(parts).includes(transitionBridge));
-  assert.equal(parts.find(part => part.sourceKey === 'authored/calendar-season-transition/virgo/libra')?.text.trim(), transitionBridge);
+  const bridgeKey = 'cms/sky-daily-summary/season-transition/virgo/libra';
+  assert.ok(skySummarySourceKeys({sun:snapshot.positions[0],moonIsVoid:false,sunTransition:transition},[ingress]).includes(bridgeKey), 'Sky must request the same exact editable summary source.');
+  assert.equal(parts.find(part => part.sourceKey === bridgeKey)?.text.trim(), transitionBridge);
+  assert.equal(parts.some(part => part.sourceKey === 'authored/calendar-season-transition/virgo/libra'), false, 'The short summary must not open the unrelated long seasonal passage.');
+  assert.equal(skySeasonTransitionSummaryFields.find(field => field.key === bridgeKey)?.body, transitionBridge);
   assert.equal(text(parts).includes('turns our attention to the daily rituals'), false, 'Transition day replaces the ordinary Sun summary');
   assert.equal(parts.find(part => part.action === 'event')?.eventId, ingress.id);
   const shared = skyDailySummaryParts({ sun: snapshot.positions[0], moonIsVoid: false, sunTransition: transition,
@@ -57,6 +68,7 @@ for (const [asOf, phase, sign, expected] of [
   assert.equal(text(parts), text(shared), 'Sky and Calendar share the entire transition opening');
   assert.equal(text(shared).includes('Sun enters Libra today.'), false, 'No duplicate untimed ingress sentence');
   const sourceKey = `cms/sky-daily-summary/assembly/sunIngress${phase === 'before' ? 'Before' : 'After'}`;
+  assert.ok(parts.some(part => part.sourceKey === sourceKey), 'The calculated sentence exposes its own complete editable template.');
   const template = phase === 'before'
     ? '{sunTransitionPlacementLink} → {toSign}: {transitionTime}.'
     : '{sunTransitionPlacementLink}: {fromSign} → {toSign}: {transitionTime}.';
@@ -68,6 +80,12 @@ for (const [asOf, phase, sign, expected] of [
     : `Sun is in ${sign} at 19°: Virgo → Libra: 8:05 PM EDT.`;
   assert.ok(text(calendarSunSummary(snapshot, custom, [ingress])).startsWith(customOpening));
   assert.equal(text(calendarSunSummary(snapshot, new Map([[sourceKey, { ...custom.get(sourceKey), status: 'DRAFT' } as any]]), [ingress])), text(parts));
+  const replacement = 'Synthetic shared season summary opening. Complete shared summary ending.';
+  const bridgeEdit = new Map([[bridgeKey, { body: replacement, status: 'LIVE' } as any],
+    ['authored/calendar-season-transition/virgo/libra', { body: 'Unrelated complete long seasonal passage.', status: 'LIVE' } as any]]);
+  const revised = text(calendarSunSummary(snapshot, bridgeEdit, [ingress]));
+  assert.equal(revised, text(parts).replace(transitionBridge, replacement), 'Publishing the exact summary source changes only its prose and preserves calculated facts.');
+  assert.equal(text(calendarSunSummary(snapshot, new Map([[bridgeKey, { body: replacement, status: 'DRAFT' } as any]]), [ingress])), text(parts));
 }
 assert.equal(skySunTransition([ingress], '2026-09-22T18:52:00Z', 'UTC'), undefined, 'UTC ingress is tomorrow');
 assert.equal(skySunTransition([ingress], '2026-09-24T00:00:00Z', location.timeZone), undefined, 'No transition line on another local day');

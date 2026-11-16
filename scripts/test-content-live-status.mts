@@ -227,7 +227,9 @@ console.log(`PASS: ${exactRows.length} actual Calendar exact rows, pending revis
 // Audit the second source class: installed CMS defaults with no database mirror.
 const { builtinContentRecords } = await import('../api/_lib/content-live-status');
 const { skyDailySummaryFields } = await import('../apps/web/src/content/skyDailySummaryCatalog');
-for (const field of skyDailySummaryFields) {
+const { skySeasonTransitionSummaryFields } = await import('../apps/web/src/content/skySeasonTransitionSummaryFields');
+const allSummaryFields = [...skyDailySummaryFields, ...skySeasonTransitionSummaryFields];
+for (const field of allSummaryFields) {
   const baseline = builtinContentRecords.get(field.key)!;
   assert.equal(contentLiveStatuses([baseline], [])[0].live, field.readerEnabled !== false && Boolean(field.body.trim()), field.key);
   const mirror = { ...baseline, id: 'summary-mirror', status: 'DRAFT', lane: 'serving', review_state: 'EDITORIAL_REVIEW_REQUIRED' };
@@ -257,7 +259,7 @@ assert.equal((await request([summaryRow.id])).statuses[0].label, 'Live');
 publications = [{ ...publications[0], state: 'retired', revision: 2 }];
 assert.equal((await request([summaryRow.id, summaryBuiltin.id])).statuses.every((status: any) => !status.live), true);
 globalThis.fetch = originalFetch;
-console.log(`PASS: all ${skyDailySummaryFields.length} Daily Sky defaults, absent/identical/different CMS rows, current publication, retired sources, and ordinary-row ledger checks`);
+console.log(`PASS: all ${allSummaryFields.length} Daily Sky defaults, absent/identical/different CMS rows, current publication, retired sources, and ordinary-row ledger checks`);
 
 // Initialized publications make each Sky source independent; status must not load a giant legacy mirror.
 const { isSkyPartitionKey } = await import('../api/_lib/content-live-status');

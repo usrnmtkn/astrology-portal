@@ -7,9 +7,129 @@ import { expectStudioPanel, expectStudioReadingType } from '../helpers/studio-re
 import { calendarPassageKey, calendarPassageRecord } from '../../src/shared/features/calendar/calendarPassageTemplates';
 import { zonedDateTimeToUtc } from '../../apps/web/src/services/timezones';
 import { canonicalPublicationLedger, publicationLedgerTag } from '../../apps/web/src/services/publicationLedgerTransport';
+import { skyDailySummaryFields } from '../../apps/web/src/content/skyDailySummaryCatalog';
+import { skySeasonTransitionSummaryFields } from '../../apps/web/src/content/skySeasonTransitionSummaryFields';
 
 const location = {label:'QA reference',latitude:0,longitude:0,timeZone:'America/New_York'};
 const date = '2026-10-21';
+for (const [width, theme] of [[1440, 'light'], [390, 'dark'], [390, 'light'], [1440, 'dark']] as const) {
+  test(`Calendar Sun edit opens reader wording with explicit date and shared scope ${width} ${theme}`, async ({page, context}) => {
+    test.setTimeout(180_000);
+    const store = await studioApiStore([], {uuidIds:true});
+    const selectedDate = '2027-02-18', matchingDate = '2028-02-18';
+    const datedKey = calendarPassageKey('daily', selectedDate, location.timeZone);
+    const datedCopy = 'Synthetic published date-only opening.\n\nComplete published date-only ending.';
+    const sharedKey = 'cms/sky-daily-summary/season-transition/aquarius/pisces';
+    const sharedCopy = 'Synthetic shared summary opening. Complete shared summary ending.';
+    const original = skySeasonTransitionSummaryFields.find(field => field.key === sharedKey)!.body;
+    try {
+      const record = calendarPassageRecord(datedKey, datedCopy);
+      const created = await store.call({method:'POST',url:'/api/admin/generated-content',body:{contentKey:datedKey,surface:'sky',mode:'feed',eventType:'calendar-passage',blockType:'fallback_hook',status:'DRAFT',lane:'reference',headline:record.headline,body:datedCopy,
+        facts:{fallbackArchitectureV3:true},provider:'tldrastro-fallback-architecture-v3',sections:{packageRecord:record,packageDraft:record},sourceSnapshot:{sourcePackage:record.source_package,content_role:'full_copy',review_status:'needs_review'}}});
+      expect(created.status).toBe(200);
+      const saved = created.payload.rows[0];
+      expect((await store.call({method:'PATCH',url:'/api/admin/generated-content',body:{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'approve-package-revision'}})).status).toBe(200);
+      await context.addInitScript(({location,theme}) => {
+        localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+        localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));
+        localStorage.setItem('tldrastro:studio-theme',theme);
+        localStorage.setItem('tldrastro:theme',theme);
+      }, {location,theme});
+      await context.route('**/rest/v1/**', async route => route.fulfill({json:route.request().url().includes('/content_publications?') ? await store.call({method:'publications'}) : []}));
+      await routeStudioInventoryApi(context, {call:store.call, answer:async (route,url) => {
+        if (url.pathname === '/api/content-publications') {
+          const publications = canonicalPublicationLedger(await store.call({method:'publications'}));
+          await route.fulfill({headers:{etag:await publicationLedgerTag(publications)},json:{schema:'tldr-publications/v1',publications}}); return true;
+        }
+        if (url.pathname === '/api/calendar') {
+          const chosen = url.searchParams.get('date') ?? selectedDate;
+          const instant = zonedDateTimeToUtc(chosen,'12:00 PM',location.timeZone);
+          const calendar = await (url.searchParams.get('mode') === 'month' ? getLunarCalendarMonth : getLunarCalendarWeek)(location,instant);
+          await route.fulfill({json:{ok:true,calendar}}); return true;
+        }
+        if (!['/api/content-reader','/api/admin/content-live-status','/api/admin/content-history','/api/admin/content-publication'].includes(url.pathname)) return false;
+        const result = await store.call({method:route.request().method(),body:route.request().method() === 'GET' ? undefined : route.request().postDataJSON(),url:url.pathname+url.search});
+        await route.fulfill({status:result.status,json:result.payload}); return true;
+      }});
+      await page.setViewportSize({width,height:1000});
+      await page.goto('/admin/content#calendar-writeups?'+new URLSearchParams({view:'daily-sky',date:selectedDate,timeZone:location.timeZone,editSource:datedKey}));
+      const workspace = page.getByRole('region',{name:'Assembled Calendar passage',exact:true});
+      const scope = workspace.getByLabel('Passage editing scope', {exact:true});
+      const complete = workspace.getByRole('textbox',{name:'Complete passage wording',exact:true});
+      const preview = workspace.getByLabel('Assembled passage preview', {exact:true});
+      await expect(complete).toHaveValue(datedCopy, {timeout:60000});
+      await expect(scope).toHaveValue('date');
+      await expect(workspace.getByLabel('Calendar editing source')).toContainText('Date-only edit');
+      await expect(preview).toContainText(datedCopy, {useInnerText:true});
+      await scope.selectOption('shared');
+      await expect(workspace.getByLabel('Calendar editing source')).toContainText('This date currently shows a published date-only passage.');
+      await expect(workspace.getByRole('status',{name:'Calendar save status'})).toContainText('No shared template has been saved.');
+      await workspace.getByRole('button',{name:'Edit wording shown for this date',exact:true}).click();
+      await expect(complete).toHaveValue(datedCopy);
+      await expect(scope).toHaveValue('date');
+      await scope.selectOption('shared');
+      const sun = workspace.getByRole('group',{name:'Shared Sun summary wording',exact:true});
+      await expect(sun).toContainText(original, {useInnerText:true});
+      await expect(sun.locator('[data-calendar-source-key^="authored/calendar-season-transition/"]')).toHaveCount(0);
+      const editor = page.getByRole('dialog',{name:'Generated content editor'});
+      const body = editor.locator('textarea[data-sky-field="body"]');
+      await sun.locator('[data-calendar-source-key="cms/sky-daily-summary/assembly/sunIngressBefore"]').click();
+      await expect(body).toHaveValue(skyDailySummaryFields.find(field => field.key.endsWith('/assembly/sunIngressBefore'))!.body);
+      await editor.getByRole('button',{name:'Close',exact:true}).click();
+      const openShared = () => sun.locator(`[data-calendar-source-key="${sharedKey}"]`).click();
+      await openShared();
+      await expect(body).toHaveValue(original);
+      await expect(editor.getByRole('note',{name:'Calendar source editing scope'})).toContainText('Shared writing · all matching dates');
+      await expectStudioReadingType(editor.getByRole('note',{name:'Calendar source editing scope'}).locator('p').last());
+      await editor.screenshot({path:`test-results/calendar-short-shared-source-${width}-${theme}.png`});
+      await body.fill(sharedCopy);
+      await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect.poll(async () => (await store.call({method:'rows'})).find((row:any) => row.content_key === sharedKey && row.status === 'DRAFT')?.body).toBe(sharedCopy);
+      if (await editor.isVisible()) await editor.getByRole('button',{name:'Close',exact:true}).click();
+      await expect(preview).toContainText(datedCopy, {useInnerText:true});
+      await openShared();
+      await expect(body).toHaveValue(sharedCopy);
+      await editor.getByRole('button',{name:'Save & publish',exact:true}).click();
+      await expect.poll(async () => (await store.call({method:'rows'})).find((row:any) => row.content_key === sharedKey && row.status === 'LIVE')?.body).toBe(sharedCopy);
+      if (await editor.isVisible()) await editor.getByRole('button',{name:'Close',exact:true}).click();
+      await expect(preview).toContainText(datedCopy, {useInnerText:true});
+      await page.reload();
+      await expect(complete).toHaveValue(datedCopy, {timeout:60000});
+      await scope.selectOption('shared');
+      await openShared();
+      await expect(body).toHaveValue(sharedCopy);
+      await editor.getByRole('button',{name:'Close',exact:true}).click();
+      await workspace.getByLabel('Passage date',{exact:true}).fill(matchingDate);
+      await workspace.getByRole('button',{name:'Load passage',exact:true}).click();
+      await expect(preview).toContainText(sharedCopy, {timeout:60000,useInnerText:true});
+      await expect(preview).toContainText('10:26 PM EST');
+      await expect(workspace.getByRole('button',{name:'Edit wording shown for this date',exact:true})).toHaveCount(0);
+      const reader = await context.newPage();
+      await emptyLastKnownGoodSnapshot(reader);
+      await reader.goto(`/?date=${matchingDate}#calendar?view=day&date=${matchingDate}`);
+      const readerDay = reader.getByLabel('Selected lunar day',{exact:true});
+      await expect(readerDay).toContainText(sharedCopy, {timeout:60000,useInnerText:true});
+      await expect(readerDay).toContainText('10:26 PM EST');
+      await workspace.getByLabel('Passage date',{exact:true}).fill(selectedDate);
+      await workspace.getByRole('button',{name:'Load passage',exact:true}).click();
+      await workspace.getByRole('button',{name:'Edit wording shown for this date',exact:true}).click();
+      await expect(complete).toHaveValue(datedCopy);
+      const dateRevision = 'Synthetic revised date-only opening.\n\nComplete revised date-only ending.';
+      await complete.fill(dateRevision);
+      await workspace.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(workspace.getByRole('status',{name:'Calendar save status'})).toContainText('Draft saved.');
+      await workspace.getByRole('button',{name:'Publish passage',exact:true}).click();
+      await expect(preview).toContainText(dateRevision, {useInnerText:true});
+      await page.reload();
+      await expect(complete).toHaveValue(dateRevision, {timeout:60000});
+      await reader.goto(`/?date=${selectedDate}#calendar?view=day&date=${selectedDate}`);
+      await expect(readerDay).toContainText(dateRevision, {timeout:60000,useInnerText:true});
+      await reader.goto(`/?date=${matchingDate}#calendar?view=day&date=${matchingDate}`);
+      await expect(readerDay).toContainText(sharedCopy, {timeout:60000,useInnerText:true});
+      await workspace.screenshot({path:`test-results/calendar-actual-wording-${width}-${theme}.png`});
+    } finally { store.close(); }
+  });
+}
 for (const [width,theme] of [[1440,'light'],[390,'dark'],[390,'light'],[1440,'dark']] as const) {
   test(`Shared Calendar wording edits complete sources from the top level ${width} ${theme}`, async ({page,context}) => {
     test.setTimeout(150_000);

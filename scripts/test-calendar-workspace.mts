@@ -8,6 +8,24 @@ import { installContentPublications, contentPublicationRecords } from '../apps/w
 import { moonSignTransitionForPair } from '../src/shared/features/calendar/moonSignTransitions';
 import { createApiStore } from '../tests/helpers/calendar-review-api.mjs';
 import { calendarSharedPassageSources } from '../apps/admin/src/calendarSharedPassageSources';
+import { calculateCalendarPreview } from '../apps/admin/src/calendarPreviewCalculation';
+import { calendarPreviewValues, calendarPreviewSourceKeys } from '../apps/admin/src/calendarPreviewModel';
+
+test('season-change Sun editing opens the exact short summary and calculated template, never the long seasonal source', async () => {
+  const date = '2027-02-18', zone = 'America/New_York';
+  const calculation = await calculateCalendarPreview('daily-sky', '2027-02-18T17:00:00Z', zone);
+  const reading = calendarWorkspaceReading('daily', calculation, date, calculation.sky, new Map());
+  const provenance = calendarPreviewValues({sunSign:'Aquarius',moonSign:'Cancer',calculation,rows:[]});
+  const sources = calendarSharedPassageSources(reading.values.sunSummary, provenance.sunSummary, new Map(), []);
+  assert.deepEqual(sources.map(row => row.content_key), ['cms/sky-daily-summary/assembly/sunIngressBefore', 'cms/sky-daily-summary/season-transition/aquarius/pisces']);
+  assert.ok(reading.values.sunSummary.text.includes(sources[1].body!), 'The opened prose is the actual complete short sentence shown to readers.');
+  assert.match(sources[0].body!, /\{transitionTime\}/u);
+  for (const source of sources) assert.ok(calendarPreviewSourceKeys('daily-sky', ['Aquarius']).includes(source.content_key));
+  const draftBody = 'Synthetic summary opening. Complete summary final sentence.';
+  const draft = calendarWorkspaceReading('daily', calculation, date, calculation.sky, new Map(), {key:sources[1].content_key,body:draftBody});
+  assert.ok(draft.body!.includes(draftBody));
+  assert.ok(draft.body!.includes('4:33 PM EST'), 'Shared editing preserves the calculated ingress time.');
+});
 
 test('shared editor resolves complete source units and leaves facts and ambiguous text alone', () => {
   const rows = ['sun','continuation','context','phase','unused','duplicate-a','duplicate-b'].map(key => ({

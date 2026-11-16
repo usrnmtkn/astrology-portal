@@ -3391,6 +3391,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const [skySummaryEditorField, setSkySummaryEditorField] = useState<SkySummaryField | null>(null);
   const publicationRefresh = useStudioPublicationRefresh(draft?.contentKey);
   const customVariableLibrary = useStudioCustomVariables(secret, activePage === "variables" || Boolean(draft));
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
@@ -6947,6 +6948,7 @@ export function GeneratedContentAdminDashboard() {
         setDailyGlancePairSelector(null);
         setEditorSaveError("");
       }
+      setSkySummaryEditorField(field);
       setMessage(`Opened ${field.label}. Save & publish makes your edits live in one step.`);
       scrollEditorToTop();
     } catch (error) {
@@ -7896,7 +7898,8 @@ export function GeneratedContentAdminDashboard() {
               {(calendarWriteupWorkspaceView === "daily-sky" || calendarWriteupWorkspaceView === "weekly-sky" || calendarWriteupWorkspaceView === "monthly-sky") && <Suspense fallback={<PageLoading message="Loading Calendar template…" />}><SkyForecastTemplateStudio secret={secret} period={calendarWriteupWorkspaceView} rows={rows} busy={isLoading}
                 loadRows={loadCalendarPreviewRows} draft={draft} readerEntry={readerEntry?.surface === 'calendar' ? readerEntry : undefined}
                 onEditSource={row => {
-                  const field = row.id.startsWith('builtin:') ? skyDailySummaryFields.find(field => field.key === row.content_key) : undefined;
+                  const field = row.id.startsWith('builtin:') ? skyDailySummaryFields.find(field => field.key === row.content_key)
+                    ?? { key: row.content_key, label: row.headline ?? 'Sun summary', body: row.body ?? '', group: '', allowedSlots: [] } : undefined;
                   if (field) void openSkySummaryField(field);
                   else void openCalendarWritingSource(row as AdminGeneratedContentRow);
                 }}
@@ -10883,7 +10886,8 @@ export function GeneratedContentAdminDashboard() {
     const isSkySummaryDraft = currentDraft.contentKey.startsWith("cms/sky-daily-summary/")
       || currentDraft.contentKey.startsWith("cms/sky-debility/");
     const isCompleteEffortDraft = currentDraft.contentKey.startsWith(SKY_DEBILITY_INTERPRETATION_PREFIX);
-    const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey);
+    const summaryBuiltin = [...skyDailySummaryFields, ...skyDebilityFields].find(field => field.key === currentDraft.contentKey)
+      ?? (skySummaryEditorField?.key === currentDraft.contentKey ? skySummaryEditorField : undefined);
     const matchesBuiltinSummary = Boolean(summaryBuiltin?.body && currentDraft.body.trim() === summaryBuiltin.body.trim());
     const savedArticleStatusRow = skyArticleEditor ? rows.find(row => row.id === skyArticleEditor.rowId) : null;
     const editorStatusRow = savedArticleStatusRow ?? { status: currentDraft.status, id: currentDraft.id ?? (matchesBuiltinSummary ? `builtin:${currentDraft.contentKey}` : selectedRow?.id.startsWith("package:") ? selectedRow.id : null), updated_at: currentDraft.updatedAt };
@@ -11559,6 +11563,10 @@ export function GeneratedContentAdminDashboard() {
             onSkyAspects={() => navigateAdminPage("content", new URLSearchParams({ category: "Calendar Aspects", first: skyWriteupContext!.planet }))} /></Suspense>}
         </header>
         <section className="admin-post-editor" id={!hasSkyEditorNavigation || skyEditorSection === "article" ? "sky-placement-editor-content" : undefined} hidden={hasSkyEditorNavigation && skyEditorSection !== "article"}>
+
+          {activePage === 'calendarWriteups' && !currentDraft.contentKey.startsWith('calendar-passage/') && <div className="studio-variable-description studio-context-panel" role="note" aria-label="Calendar source editing scope">
+            <p><strong>Shared writing · all matching dates</strong>. Publishing changes readings using this source. Copied date-only wording stays unchanged.</p>
+          </div>}
 
           {skySourceContext?.sign && !skyLunationContext && skyFallbackEditor
             && <details className="admin-workspace-details"><AdminDisclosureSummary>Reader sources</AdminDisclosureSummary>{renderPlacementSources(skySourceContext.planet, skySourceContext.sign, true)}</details>}
