@@ -16,6 +16,8 @@ test('season-change Sun editing opens the exact short summary and calculated tem
   const calculation = await calculateCalendarPreview('daily-sky', '2027-02-18T17:00:00Z', zone);
   const reading = calendarWorkspaceReading('daily', calculation, date, calculation.sky, new Map());
   const provenance = calendarPreviewValues({sunSign:'Aquarius',moonSign:'Cancer',calculation,rows:[]});
+  assert.equal(provenance.sunSummary.parts?.map(part => part.text).join(''), provenance.sunSummary.text,
+    'Composite source annotations must preserve the complete Sun sentence, including calculated facts.');
   const sources = calendarSharedPassageSources(reading.values.sunSummary, provenance.sunSummary, new Map(), []);
   assert.deepEqual(sources.map(row => row.content_key), ['cms/sky-daily-summary/assembly/sunIngressBefore', 'cms/sky-daily-summary/season-transition/aquarius/pisces']);
   assert.ok(reading.values.sunSummary.text.includes(sources[1].body!), 'The opened prose is the actual complete short sentence shown to readers.');
@@ -25,6 +27,16 @@ test('season-change Sun editing opens the exact short summary and calculated tem
   const draft = calendarWorkspaceReading('daily', calculation, date, calculation.sky, new Map(), {key:sources[1].content_key,body:draftBody});
   assert.ok(draft.body!.includes(draftBody));
   assert.ok(draft.body!.includes('4:33 PM EST'), 'Shared editing preserves the calculated ingress time.');
+});
+
+test('sign-only Sun previews preserve the full sentence and existing whole-summary edit action', () => {
+  const key = 'cms/sky-daily-summary/sun/virgo';
+  const values = calendarPreviewValues({sunSign:'Virgo',moonSign:'Cancer',rows:[
+    {id:'sun-virgo',content_key:key,body:'shows the virgo fixture',status:'LIVE',lane:'serving'}
+  ]});
+  assert.equal(values.sunSummary.text, 'The Sun in Virgo shows the virgo fixture.');
+  assert.equal(values.sunSummary.sourceKey, key);
+  assert.equal(values.sunSummary.parts, undefined, 'A single source retains the sunSummary edit/inspect target.');
 });
 
 test('shared editor resolves complete source units and leaves facts and ambiguous text alone', () => {

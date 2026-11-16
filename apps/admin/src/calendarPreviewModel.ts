@@ -232,9 +232,12 @@ export function calendarPreviewValues({ sunSign, moonSign, calculation, rows, mo
       calculation.days.find(day => day.dateKey === calendarLocalDateKey(calculation.sky.generatedAt, calculation.timeZone))?.events)
       : skyDailySummaryParts({ sun: { sign: sunSign }, moonIsVoid: false }, content, { openingOnly: true });
     put("sunSummary", parts.map(part => part.text).join(""), "copy", parts.find(part => part.sourceKey)?.sourceKey);
-    if (values.sunSummary) values.sunSummary.parts = parts.filter(part => part.sourceKey && part.text.trim()).map(part => ({
-      name: 'sunSummary', text: part.text, kind: 'copy', sourceKey: part.sourceKey
-    }));
+    const sourceKeys = [...new Set(parts.flatMap(part => part.sourceKey ? [part.sourceKey] : []))];
+    // A single source keeps its existing whole-summary edit action. Composite
+    // summaries expose complete source spans without dropping calculated text.
+    if (values.sunSummary && sourceKeys.length > 1) values.sunSummary.parts = calendarPreviewCopyParts(values.sunSummary.text,
+      sourceKeys.map((sourceKey, index) => ({ name: index ? 'summary' : 'timing', kind: 'copy', sourceKey,
+        text: parts.filter(part => part.sourceKey === sourceKey).map(part => part.text).join('') })));
   }
   const moonPassages = calendarMoonPassages(rows, moonSign);
   const moon = moonPassages.find(row => row.content_key === moonKey) ?? moonPassages[0];
