@@ -199,6 +199,18 @@ for(const c of latest(editable).source_snapshot.horoscopeGeneration.weeklyEditor
 const currentProfile=editedRow.source_snapshot.studioWritingProfile;
 assert.equal((await store.invoke('POST',{profile:{...currentProfile.profile,voiceGuidance:currentProfile.profile.voiceGuidance+' An additional scoped instruction.'},expectedUpdatedAt:currentProfile.updatedAt},'/api/admin/generated-content?writingProfiles=true')).status,200);
 editedHash=await prepare(editable);
+const staleScope=latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.scopeHash;
+const beforeStaleSave=writerFixture.batchCalls;
+edits.taurus.stakes='Exact owner stakes saved after the profile changed.';
+const staleSaved=await action(editable,'save-weekly-concern',{sign:'taurus',concern:edits.taurus,approvedPlanHash:editedHash});
+assert.equal(staleSaved.status,200,JSON.stringify(staleSaved.payload));editedHash=staleSaved.payload.plan.planHash;
+assert.equal(latest(editable).source_snapshot.horoscopeGeneration.weeklyEditorial.plan.scopeHash,staleScope,'Saving directions does not certify an obsolete shared plan');
+assert.notEqual(staleScope,editedHash);assert.equal(writerFixture.batchCalls,beforeStaleSave,'Editing a stale plan makes no paid request');
+const savedExport=await action(editable,'export');assert.equal(savedExport.status,200);assert.equal(savedExport.payload.writingExport.providerCalls,0);
+const exportedEdits=savedExport.payload.writingExport.text.split('OWNER-EDITED WEEKLY CONCERNS\n').slice(1).map((text:string)=>JSON.parse(text.split('\n')[0]));
+assert.equal(exportedEdits.length,12);for(const fields of exportedEdits)assert.deepEqual(fields,edits);
+assert.equal(writerFixture.batchCalls,beforeStaleSave,'Reading exact writer inputs makes no paid request');
+assert.equal((await action(editable,'generate',{sign:'aries',approvedPlanHash:editedHash})).status,409,'Stale plan still requires fresh planning before single-sign drafting');
 const editedRequests=writerFixture.requests.size;
 await action(editable,'start-batch',{approvedPlanHash:editedHash});
 assert.equal((await action(editable,'save-weekly-concern',{sign:'aries',concern:edits.aries,approvedPlanHash:editedHash})).status,409);

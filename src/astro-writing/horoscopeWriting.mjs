@@ -201,7 +201,7 @@ export function prepareHoroscopeWriting(row,{studioCorrections=[],feedbackReceip
   });
   const planHash=digest({...proseVersion,...comparisonBinding,...concernBinding,...(meaningResearchBySign?{meaningResearchBySign}:{}),ghostwritingSkill:GHOSTWRITING_SKILL_INSTRUCTIONS,...(writerSelection?{writerSelection}:{}),version:horoscopeWritingVersionFor(edition.window.period),...(edition.window.period!=='seasonal'?{reviewVersion:HOROSCOPE_RHETORICAL_REVIEW}:{}),window:edition.window,writingProfile,sourceHash,
     feedbackReceipt,...(edition.window.period==='weekly'?{rejectedReadings}:{}),brief,entries:entries.map(e=>({sign:e.sign,outline:e.argumentOutline,developments:e.developments,seasonalMeaning:e.seasonalMeaning}))});
-  const prepared={edition,brief,writingProfile,entries,meaningResearchBySign,weeklyComparison:comparison,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt,
+  const prepared={edition,brief,writingProfile,entries,meaningResearchBySign,...(ownerEdits?{weeklyConcernEdits:ownerEdits}:{}),weeklyComparison:comparison,writerSelection,planHash,sources:sources.hashes,sourceHash,seasonalMeaning,feedbackReceipt,
     explicitFeedbackMarker:explicitFeedback?.marker??'',explicitFeedbackRows:explicitFeedback?.rows??[]};
   if(preparedPlans.size>=4)preparedPlans.delete(preparedPlans.keys().next().value);preparedPlans.set(cacheKey,prepared);return prepared;
 }
@@ -221,12 +221,12 @@ export function horoscopePlanPreview(prepared) {
 
 export function horoscopeWriterContextInput(input,prepared,sign) {
   const sharedConcerns=prepared.weeklyBatchPlan?.concerns.map(({priorQuote,priorEditionId,priorSign,...concern})=>concern);
+  const ownerEdits=prepared.weeklyBatchPlan?.ownerEdits??prepared.weeklyConcernEdits;
   return [input,...(prepared.weeklyBatchPlan?[
       `SHARED WEEKLY CONCERNS\n${JSON.stringify(sharedConcerns)}`,
       `CURRENT SIGN CONCERN\n${JSON.stringify(sharedConcerns.find(c=>c.sign===sign))}`,
-      ...(prepared.weeklyBatchPlan.ownerEdits?[`OWNER-EDITED WEEKLY CONCERNS\n${JSON.stringify(prepared.weeklyBatchPlan.ownerEdits)}`, 'The saved owner edits to concern, stakes and observation are the editorial direction for this edition. Develop their meaning without restoring earlier AI choices. Use other planning notes only where consistent with those edits and the calculated facts. These notes are direction, not wording to copy or additional astrological facts.']:[]),
       'The shared plan supplies current meaning decisions and scope, not reader wording or a required paragraph script. Use its current astrologicalReason and development. weekDifference is comparison-only analysis, never voice evidence, current facts or a story to copy. Historical citations are retained by the planner and reviewer rather than passed as writer evidence. Develop this sign\'s specific concern, stakes and observation. Do not borrow another sign\'s interpretation or ending. Keep complete saved owner examples and current corrections authoritative for voice. Only the final whole-set check can compare the complete finished set; this writer compares only supplied earlier readings.'
-    ]:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
+    ]:[]),...(ownerEdits?[`OWNER-EDITED WEEKLY CONCERNS\n${JSON.stringify(ownerEdits)}`, 'The saved owner edits to concern, stakes and observation are the editorial direction for this edition. Develop their meaning without restoring earlier AI choices. Use other planning notes only where consistent with those edits and the calculated facts. These notes are direction, not wording to copy or additional astrological facts.']:[]),...(prepared.previousReadings?[weeklyPreviousReadingsInput(prepared.previousReadings)]:[]),...(prepared.explicitFeedbackMarker?[prepared.explicitFeedbackMarker]:[])].join('\n\n');
 }
 
 export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerClient,approvalReference}) {
@@ -235,7 +235,7 @@ export async function writeHoroscopeSign(prepared,sign,{approvedPlanHash,writerC
   const approved=approveArgumentOutline(entry.argumentOutline,{exactOwnerRuling:`Authenticated owner selected Generate drafts for plan ${approvedPlanHash}. Reference: ${approvalReference}`});
   const argumentSource={contentKey:`horoscope-plan/${approvedPlanHash}/${sign}`,sourcePath:approvalReference,ownerApproved:true,
     authority:'owner-approved-horoscope-plan',opening:approved.thesis,tension:approved.complication,development:approved.recognition,close:approved.response};
-  const currentWriter=prepared.explicitFeedbackMarker||prepared.weeklyBatchPlan||prepared.previousReadings?Object.assign(async request=>{
+  const currentWriter=prepared.explicitFeedbackMarker||prepared.weeklyBatchPlan||prepared.weeklyConcernEdits||prepared.previousReadings?Object.assign(async request=>{
     const input=horoscopeWriterContextInput(request.input,prepared,sign);
     return writerClient({...request,input,...(request.ownerEvidence?{ownerEvidence:{...request.ownerEvidence,inputSha256:createHash('sha256').update(input).digest('hex'),writingFeedback:prepared.feedbackReceipt}}:{})});
   },writerClient):writerClient;
