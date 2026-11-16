@@ -21,6 +21,7 @@ import {composeMonthlyHoroscopeDraft} from './monthlyHoroscopeFormat.mjs';
 import { LUNATION_EDITORIAL_AUTHORITY } from './lunationEditorialConstraints.mjs';
 import {buildHellenisticMeaningSupport,hellenisticMeaningPrompt} from './hellenisticMeaningSupport.mjs';
 import {HOROSCOPE_PROSE_INSTRUCTIONS_VERSION,usesRefinedHoroscopeProse,horoscopeProseInstructions,renderHoroscopeProseAppendices} from './horoscopeProseInstructions.mjs';
+import {usesWeeklyFromSamples,WEEKLY_FROM_SAMPLES_AUTHORITY} from './weeklyFromSamples.mjs';
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -237,11 +238,12 @@ export function prepareDraftRequest({
     ? {context,task,engineFacts,argumentOutline,writingProfile,meaningSupport,approvedStyleReference,proseInstructionsVersion:HOROSCOPE_PROSE_INSTRUCTIONS_VERSION}:null;
   const draftInput=buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine, writingProfile });
   const refined=family==='horoscope'&&usesRefinedHoroscopeProse(engineFacts?.window?.period);
-  const input=seasonalPreparation?draftInput:refined?[draftInput,renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference})].filter(Boolean).join('\n\n')
+  const weeklyFromSamples=family==='horoscope'&&usesWeeklyFromSamples(writingProfile?.profile);
+  const input=weeklyFromSamples?draftInput:seasonalPreparation?draftInput:refined?[draftInput,renderHoroscopeProseAppendices({meaningSupport,approvedStyleReference})].filter(Boolean).join('\n\n')
     :[draftInput,hellenisticMeaningPrompt({facts:engineFacts??{},plan,family,surface}),renderApprovedVoiceStyleReference(approvedStyleReference)].filter(Boolean).join('\n\n');
   const ownerEvidence=family==='horoscope'&&engineFacts?.window?.period==='weekly'
     ?assertHoroscopeEvidenceDelivered(horoscopeEvidenceReceipt(context,writingProfile),input):null;
-  const instructions=refined?horoscopeProseInstructions(engineFacts.window.period):withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
+  const instructions=weeklyFromSamples?WEEKLY_FROM_SAMPLES_AUTHORITY:refined?horoscopeProseInstructions(engineFacts.window.period):withGhostwritingSkill(effectiveRulePrompt(baseInstructions, { surface, family }));
   const request = {
     stage: "draft",
     role,

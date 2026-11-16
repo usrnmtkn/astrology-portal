@@ -22,7 +22,11 @@ const leadingRuler=`your\\s+(?:ruling\\s+planet|(?:traditional\\s+)?ruler),\\s*$
 const direct=`${planet}\\s+(?:(?:is|in|an?|exact|forms?|makes?|also)\\s+)*(?:${terms})\\s+(?:(?:to|with|the)\\s+)*(?:${leadingRuler}|${planet})`;
 const named=`(?:${terms})\\s+(?:between|of)\\s+(?:the\\s+)?${planet}\\s+(?:and|with)\\s+(?:the\\s+)?${planet}`;
 const paired=`${planet}(?:\\s*[-–—]\\s*|\\s+and\\s+)${planet}\\s+(?:${terms})`;
-export const horoscopeAspectPattern=`(?:${direct}|${named}|${paired})`;
+// A stated motion/sign can lead into a same-subject temporal clause. Keep the
+// intervening sector gloss bounded so another planet cannot supply its subject.
+const describedState=`\\b(${bodies})\\s+(?:is|remains)\\s+(?:(?:still|now)\\s+)?(retrograde|direct)\\s+(?:in|through)\\s+(${signs})`;
+const described=`${describedState}(?:\\s+and\\s+(?:your|the)(?:\\s+${glossWord}){1,4}\\s+sector)?\\s+when\\s+it\\s+(?:forms?|makes?)\\s+(?:an?\\s+)?(?:${terms})\\s+(?:with|to)\\s+${planet}`;
+export const horoscopeAspectPattern=`(?:${described}|${direct}|${named}|${paired})`;
 export function horoscopeAspectClaim(text) {
   const planets=[...text.matchAll(new RegExp(`\\b(${bodies})\\b`,'giu'))].map(m=>m[1].toLowerCase());
   const word=text.match(new RegExp(`\\b(${terms})\\b`,'iu'))?.[1].toLowerCase();
@@ -30,9 +34,12 @@ export function horoscopeAspectClaim(text) {
   const qualified=[...text.matchAll(new RegExp(`\\b(retrograde|direct)\\s+(${bodies})\\b`,'giu'))].map(m=>[m[2].toLowerCase(),m[1].toLowerCase()]);
   qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})\\s+(retrograde|direct)\\b`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
   qualified.push(...[...text.matchAll(new RegExp(`\\b(${bodies})${rulerAside}${placement}${house},\\s*(?:which\\s+is\\s+)?(?:(?:now|still)\\s+)?(retrograde|direct)${placement}${house}\\s*(?:,|(?=[.!?]|$))`,'giu'))].map(m=>[m[1].toLowerCase(),m[2].toLowerCase()]));
+  const describedMatch=text.match(new RegExp(describedState,'iu'));
+  if(describedMatch)qualified.push([describedMatch[1].toLowerCase(),describedMatch[2].toLowerCase()]);
   const motions=Object.fromEntries(qualified);
   if(qualified.some(([body,motion])=>motions[body]!==motion))return null;
-  return planets.length===2&&new Set(planets).size===2&&aspect?{planets,aspect,motions}:null;
+  return planets.length===2&&new Set(planets).size===2&&aspect?{planets,aspect,motions,
+    ...(describedMatch?{placements:{[describedMatch[1].toLowerCase()]:describedMatch[3].toLowerCase()}}:{})}:null;
 }
 // A pair can describe both houses after its second planet. Bind only the
 // explicit, adjacent "from ... house to ... house" construction, never prose
@@ -55,7 +62,8 @@ export function horoscopePersonalSignClaims(text) {
 }
 export function supportsHoroscopeAspect(event,claim) {
   return Boolean(claim)&&event.type==='aspect'&&event.aspect===claim.aspect&&claim.planets.every(p=>event.planets?.some(v=>v.toLowerCase()===p))
-    &&Object.entries(claim.motions??{}).every(([p,motion])=>[event.fromMotion,event.toMotion][event.planets.findIndex(v=>v.toLowerCase()===p)]===motion);
+    &&Object.entries(claim.motions??{}).every(([p,motion])=>[event.fromMotion,event.toMotion][event.planets.findIndex(v=>v.toLowerCase()===p)]===motion)
+    &&Object.entries(claim.placements??{}).every(([p,sign])=>[event.fromSign,event.toSign][event.planets.findIndex(v=>v.toLowerCase()===p)]?.toLowerCase()===sign);
 }
 export function supportsHoroscopeConfiguration(snapshot,sentence) {
   const named=[...sentence.matchAll(new RegExp(`\\b(${bodies})\\b`,'giu'))].map(m=>m[1].toLowerCase());

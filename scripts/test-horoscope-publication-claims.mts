@@ -345,3 +345,4 @@ for(const bad of [
  assert.equal(denied.status,422);assert.deepEqual(store.rows.get(invalid.id),invalid);
 }
 console.log('PASS natural grammar: twelve exact drafts clear preflight without writes; missing/wrong planets, aspects, motion, houses and natal biography remain blocked.');
+await import('./test-horoscope-described-aspect.mjs');

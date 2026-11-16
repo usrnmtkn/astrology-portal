@@ -14,7 +14,7 @@ export function horoscopeWritingExport(prepared:any,row?:any) {
       argumentOutline:entry.argumentOutline,spine:getContentSpine('horoscope'),
       writingProfile:prepared.writingProfile,family:'horoscope',surface:'horoscopes',register:'second_person',
       target:{surface:'horoscopes',route:'horoscopes',renderer:'HoroscopeReader',contentKeyFamily:'horoscope',temporality:'current_sky',voiceMode:'second_person'},
-      engineFacts:{...prepared.brief,risingSign:entry.sign,anchor:entry.anchor,house:entry.house,developments:entry.developments,seasonalMeaning:entry.seasonalMeaning},
+      engineFacts:{...prepared.brief,...(prepared.meaningResearchBySign?{meaningResearchBySign:prepared.meaningResearchBySign}:{}),risingSign:entry.sign,anchor:entry.anchor,house:entry.house,developments:entry.developments,seasonalMeaning:entry.seasonalMeaning},
       task:entry.sign==='overview'?`Write one shared ${period==='seasonal'?'season introduction':'calendar-month overview'} for readers of all signs in ${timeZone}. Do not assign a personal house or rising sign.`:`Write one complete ${period} horoscope for ${entry.sign} rising in ${timeZone}.`});
     const previousReadings=row?weeklyPreviousReadings(row,entry.sign):null;
     const value=hydrateExplicitWritingFeedback({input:horoscopeWriterContextInput(unapprovedWritingInput(request.input),{...prepared,previousReadings},entry.sign)},prepared.feedbackReceipt,prepared.explicitFeedbackRows);

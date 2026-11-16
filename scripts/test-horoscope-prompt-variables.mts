@@ -102,3 +102,4 @@ assert(v2Request.input.includes('OWNER-APPROVED WRITING PLAN'));
 assert.deepEqual(v2Row.source_snapshot.studioWritingProfile.profile,v2Profile);
 assert.equal(v2Row.status,'DRAFT');
 console.log('PASS weekly v2 actual request: exact saved instructions and complete approved example, calculated meaning and approved plan; no legacy voice/rejected prose or unsupported set-comparison placeholder.');
+await import('./test-weekly-from-samples.mts');
