@@ -71,6 +71,7 @@ assert.ok(natalAspectMatchesSelection(
 ), "The finder must match the runtime's reverse body lookup order.");
 
 const dashboardSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
+assert.match(dashboardSource, /const showPackageBodyThey[\s\S]*?isExactNatalAspectDraft/u, "A You-only natal aspect must expose its missing Friend field before the first edit.");
 const natalChartNavIndex = dashboardSource.indexOf('label: "Natal Chart"');
 const natalAspectNavIndex = dashboardSource.indexOf('label: "Natal Aspects"');
 const skyWriteupsNavIndex = dashboardSource.indexOf('label: "Sky Write-ups"');

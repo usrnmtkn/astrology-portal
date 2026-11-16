@@ -10842,7 +10842,7 @@ export function GeneratedContentAdminDashboard() {
     const showPackageBodyThey = isPackageDraft
       && !isVocabularyDraft
       && !isExactTransitReturnDraft
-      && (isAuthoredTransitAspectDraft || isBondEffectDraft
+      && (isAuthoredTransitAspectDraft || isBondEffectDraft || isExactNatalAspectDraft
         || typeof editablePackageRecord.body_they === "string"
         || typeof objectRecord(currentDraft.sections)?.body_they === "string");
     const isYouOnlyNatalExactDraft = categoryFilter === "Natal Chart"

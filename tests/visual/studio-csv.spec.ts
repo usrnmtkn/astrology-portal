@@ -34,6 +34,58 @@ const fixtures = Array.from({ length: 31 }, (_, index) => ({
 }));
 test.use({ actionTimeout: 15_000 });
 
+for (const width of [390,1440]) for (const theme of ['light','dark']) {
+  test(`missing natal Friend field edits, publishes and reloads ${width} ${theme}`, async ({ page, context }) => {
+    test.setTimeout(120_000);
+    const key = 'fallback-hook/natal-aspect-lived/lilith/quincunx/sun';
+    const you = 'You may explain your decision carefully. You can keep the final answer clear.';
+    const friend = '{{Name}} may take time to explain a decision.\n\nThey can keep their answer clear without repeating the explanation.';
+    const source = { ...fixtures[0], content_key: key, body: you, headline: 'Lilith quincunx Sun', summary: '',
+      event_type: 'fallback-system', mode: 'feed', provider: 'fallback-system-reference', review_state: 'fallback-system-reference',
+      sections: { packageRecord: { contentKey: key, content_role: 'fallback_hook', grammar_frame: 'complete_sentence',
+        reader_only: true, render_policy: 'reader-only-exact-lived-v1', review_status: 'approved', body: you } },
+      facts: { fallbackArchitectureV3: true }, source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', review_status: 'approved' } };
+    const store = await studioApiStore([source]);
+    try {
+      await page.setViewportSize({ width, height: 1000 });
+      await context.addInitScript(theme => {
+        localStorage.setItem('tldrastro:contentAdminSecret','calendar-api-fixture');
+        localStorage.setItem('tldrastro:studio-theme',theme);
+      }, theme);
+      await routeCsvInventoryApi(page, { call: store.call, actualDocumentRoute: true });
+      const open = async () => {
+        await page.getByRole('button',{name:'Edit source',exact:true}).click();
+        const dialog = page.getByRole('dialog',{name:'Generated content editor'});
+        await expect(dialog.locator('[data-sky-field="body_they"]')).toBeVisible();
+        return dialog;
+      };
+      await page.goto('/admin/content#exact-content?category=Natal+Aspects&first=lilith&aspect=quincunx&second=sun');
+      let dialog = await open();
+      await expect(dialog.locator('[data-sky-field="body_they"]')).toHaveValue('');
+      await expect(dialog.getByRole('textbox',{name:'Reader copy',exact:true})).toHaveValue(you);
+      await dialog.locator('[data-sky-field="body_they"]').fill(friend);
+      await dialog.getByRole('button',{name:'Save & publish',exact:true}).click();
+      await expect.poll(async () => {
+        const rows = await store.call({method:'rows'});
+        return rows.find((row: any) => row.id === source.id)?.status;
+      }).toBe('LIVE');
+      const rows = await store.call({method:'rows'});
+      const saved = rows.find((row: any) => row.id === source.id);
+      expect(saved.body).toBe(you);
+      expect(saved.sections.packageRecord.body).toBe(you);
+      expect(saved.sections.packageRecord.body_they).toBe(friend);
+      expect(saved.sections.packageRecord.body_they_review_status).toBe('approved');
+      expect(saved.sections.packageRecord.body_they_approval.approvalLevel).toBe('exact_owner_approved');
+      await page.reload();
+      dialog = await open();
+      await expect(dialog.locator('[data-sky-field="body_they"]')).toHaveValue(friend);
+      await expect(dialog.getByRole('textbox',{name:'Reader copy',exact:true})).toHaveValue(you);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await dialog.screenshot({path:`test-results/studio-natal-friend-${width}-${theme}.png`});
+    } finally { await closeCsvFixture(page,store); }
+  });
+}
+
 const standaloneCsvCases = [
   ...[390, 1440].flatMap(width => ['manual', 'guide'].map(kind => ({ width, kind, conflict: false }))),
   { width: 390, kind: 'manual', conflict: true }

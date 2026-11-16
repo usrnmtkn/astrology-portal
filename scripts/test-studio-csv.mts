@@ -9,6 +9,7 @@ import { projectReaderRow } from '../apps/web/src/content/readerRowProjection.mj
 import { csvSourceContext } from '../apps/admin/src/studioCsvContext';
 import { skyReaderCsvRecord } from '../apps/web/src/features/sky/skyReaderCsvExport';
 import { articleKeyFromHash } from '../src/shared/articleLibrary';
+import { createFallbackRenderer } from '../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js';
 
 const original = {
   id: '10000000-0000-4000-8000-000000000001', content_key: 'cms/csv/first',
@@ -18,6 +19,62 @@ const original = {
   sections: {}, facts: {}, source_snapshot: {}, provider: 'manual-admin',
 };
 const importBody = (record: Record<string, string>) => ({ id: record.content_id, expectedUpdatedAt: record.saved_version.slice(2), ownerAction: 'import-csv-draft', csvRecord: record });
+
+test('a missing natal Friend passage exports, imports and publishes through the actual handler and reader', async () => {
+  const key = 'fallback-hook/natal-aspect-lived/lilith/quincunx/sun';
+  const you = 'You may explain your decision carefully. You can keep the final answer clear.';
+  const friend = '{{Name}} may take time to explain a decision.\n\nThey can keep their answer clear without repeating the explanation.';
+  const source = { ...original, content_key: key, status: 'DRAFT', body: you, headline: 'Lilith quincunx Sun', summary: '',
+    lane: 'reference', review_state: 'fallback-system-reference', provider: 'fallback-system-reference',
+    event_type: 'fallback-system', facts: { fallbackArchitectureV3: true },
+    sections: { packageRecord: { contentKey: key, content_role: 'fallback_hook', grammar_frame: 'complete_sentence',
+      reader_only: true, render_policy: 'reader-only-exact-lived-v1', review_status: 'approved', body: you } },
+    source_snapshot: { sourcePackage: 'tldrastro-fallback-architecture-v3', content_role: 'fallback_hook', review_status: 'approved' } };
+  const store = await createApiStore([source]);
+  try {
+    const exported = csvRecordForRow(source);
+    assert.equal(exported.body_they, '', 'An absent Friend field must be editable without changing You.');
+    const imported = readStudioCsv(writeStudioCsv([{ ...exported, body_they: friend, publish: 'yes' }]))[0];
+    assert.deepEqual(csvChanges(source, imported).map(change => change.column), ['body_they']);
+    const saved = await store.invoke('PATCH', importBody(imported));
+    assert.equal(saved.status, 200, JSON.stringify(saved.payload));
+    const draft = saved.payload.rows[0];
+    assert.equal(draft.status, 'DRAFT');
+    assert.equal(draft.body, you);
+    assert.equal(draft.sections.packageRecord.body, you);
+    assert.equal(draft.sections.packageRecord.body_they, undefined);
+    assert.equal(draft.sections.packageDraft.body_they, friend);
+    assert.equal(draft.sections.packageDraft.body_they_approval, undefined);
+    const publish = { id: draft.id, expectedUpdatedAt: draft.updated_at, ownerAction: 'approve-package-revision' };
+    const denied = await store.invoke('PATCH', publish, '/api/admin/generated-content', 'not-owner');
+    assert.equal(denied.status, 401);
+    const published = await store.invoke('PATCH', publish);
+    assert.equal(published.status, 200, JSON.stringify(published.payload));
+    const live = published.payload.rows.find(row => row.content_key === key);
+    assert.equal(live.status, 'LIVE');
+    assert.equal(live.body, you);
+    assert.equal(live.sections.packageRecord.body, you);
+    assert.equal(live.sections.packageRecord.body_they, friend);
+    assert.equal(live.sections.packageRecord.body_they_review_status, 'approved');
+    assert.equal(live.sections.packageRecord.body_they_approval.approvalLevel, 'exact_owner_approved');
+    assert.equal(live.sections.packageRecord.body_they_approval.payloadSha256, createHash('sha256').update(friend).digest('hex'));
+    const confirmed = await store.invoke('PATCH', publish);
+    assert.equal(confirmed.status, 200, 'An exact retry may confirm the prior atomic publication.');
+    assert.equal(confirmed.payload.rows.find(row => row.content_key === key).updated_at, live.updated_at);
+    const staleEdit = await store.invoke('PATCH', { id: source.id, expectedUpdatedAt: source.updated_at, status: 'DRAFT',
+      sections: { packageDraft: { body_they: 'An unopened stale revision.' } } });
+    assert.equal(staleEdit.status, 409, 'A stale edit cannot replace the published Friend passage.');
+    const reader = await store.invoke('POST', { keys: [key] }, '/api/content-reader');
+    assert.equal(reader.status, 200);
+    assert.equal(reader.payload.rows.length, 1);
+    const record = reader.payload.rows[0].sections.packageRecord;
+    const renderer = createFallbackRenderer({ templates: [] }, { hookRows: [record], vocabularyRows: [] });
+    for (const [planetA, planetB] of [['lilith','sun'],['sun','lilith']]) {
+      assert.equal(renderer.renderNatalAspect({ planetA, planetB, aspect: 'quincunx', voice: 'ExampleFriend' }).body, friend.replaceAll('{{Name}}','ExampleFriend'));
+      assert.equal(renderer.renderNatalAspect({ planetA, planetB, aspect: 'quincunx', voice: 'you' }).body, you);
+    }
+  } finally { await store.close(); }
+});
 
 for (const kind of ['manual', 'guide']) test(`CSV ${kind} article import preserves its live edition until explicit revision publication`, async () => {
   const source = { ...original, content_key: `article/${kind}/csv-revision`, mode: 'article' };

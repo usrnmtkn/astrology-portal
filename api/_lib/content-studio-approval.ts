@@ -43,7 +43,9 @@ export function approveNatalAspectStudioCopy(record: Record<string, unknown>, co
     approvedAt: new Date().toISOString(),
     action: "content-studio-publish"
   };
-  if (contentKey.startsWith("authored/transit-aspect/")) for (const field of ["body_you", "body_they"]) {
+  const audienceFields = contentKey.startsWith("authored/transit-aspect/") ? ["body_you", "body_they"]
+    : contentKey.startsWith("fallback-hook/natal-aspect-lived/") ? ["body_they"] : [];
+  for (const field of audienceFields) {
     if (typeof record[field] !== "string") continue;
     record[`${field}_sha256`] = createHash("sha256").update(record[field] as string).digest("hex");
     record[`${field}_word_count`] = (record[field] as string).trim().split(/\s+/u).filter(Boolean).length;
