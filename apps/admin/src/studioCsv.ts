@@ -59,11 +59,13 @@ export function csvTextFields(row: CsvContentRow): Field[] {
     const declared = Array.isArray(base.studio_editable_fields) ? base.studio_editable_fields.map((field: any) => field?.path).filter((path: unknown): path is string => typeof path === 'string' && safePath(path)) : [];
     // Explicit Studio definitions take precedence over generated reader mirrors.
     const paths = declared.length ? declared : copyFields.filter(key => typeof record[key] === 'string');
-    if (row.content_key.startsWith('authored/transit-aspect/')) for (const field of ['body_you', 'body_they']) if (!paths.includes(field)) paths.push(field);
+    const audienceFields = row.content_key.startsWith('authored/transit-aspect/') ? ['body_you', 'body_they']
+      : row.content_key.startsWith('fallback-hook/natal-aspect-lived/') ? ['body_they'] : [];
+    for (const field of audienceFields) if (!paths.includes(field)) paths.push(field);
     if (record.render_policy === 'sky-placement-continuous-v2' && !declared.length) {
       for (const field of ['body', 'body_you']) { const index = paths.indexOf(field); if (index >= 0) paths.splice(index, 1); }
     }
-    return [...new Set(paths)].filter(path => typeof at(record, path) === 'string' || row.content_key.startsWith('authored/transit-aspect/') && ['body_you', 'body_they'].includes(path)).map(path => ({ column: path === 'headline' ? 'title' : path, path, value: (typeof at(record, path) === 'string' ? at(record, path) : sections[path] ?? (path === 'body_you' ? row.body : '') ?? '') as string, package: true }));
+    return [...new Set(paths)].filter(path => typeof at(record, path) === 'string' || audienceFields.includes(path)).map(path => ({ column: path === 'headline' ? 'title' : path, path, value: (typeof at(record, path) === 'string' ? at(record, path) : sections[path] ?? (path === 'body_you' ? row.body : '') ?? '') as string, package: true }));
   }
   const fields: Field[] = ['headline', 'summary', 'body'].map(path => ({ column: path === 'headline' ? 'title' : path, path, value: String(at(row, path) ?? ''), package: false }));
   const addSection = (path: string, column: string) => {
