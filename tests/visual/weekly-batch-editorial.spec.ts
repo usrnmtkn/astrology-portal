@@ -118,6 +118,35 @@ for(const [width,theme] of [[390,'dark'],[1440,'light']] as const){
 }
 
 for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
+ test(`Weekly saved direction ending finding keeps the draft ${width} ${theme}`,async({page})=>{
+  await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
+  const f=await fixture(page,false);try{
+   const studio=await f.open(),gate=studio.getByRole('region',{name:'Weekly batch editorial gate'});
+   await gate.getByRole('button',{name:'Plan twelve concerns · 1 AI request',exact:true}).click();
+   await gate.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
+   await expect(gate).toContainText('Twelve concerns saved.');
+   await gate.getByText('Shared concerns for all twelve signs',{exact:true}).click();
+   for(const field of ['concern','stakes','observation'])await gate.getByLabel(`Aries ${field}`,{exact:true}).fill(`Exact saved Aries ${field}.`);
+   await gate.getByRole('button',{name:'Save Aries concern',exact:true}).click();
+   await expect(gate.getByRole('button',{name:'Save Aries concern',exact:true})).toBeDisabled();
+   const paragraph='Your saved fixture ends here.',reason='The ending switches to a task instead of developing the saved observation.';
+   const weeklyDirection=Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:key==='ending'?'fail':'pass',quote:paragraph,paragraph,reason:key==='ending'?reason:'Synthetic transport-only assessment.'}]));
+   await f.call({method:'writer-state',body:{nextReviewResult:{status:'completed',output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],weeklyDirection})}]}]}}});
+   await studio.getByLabel('I approve this writing plan for generation.').check();
+   await studio.getByRole('button',{name:'Generate Aries',exact:true}).click();
+   const held=studio.getByRole('region',{name:'Aries prose review'});
+   await expect(held.getByRole('heading',{name:'Aries needs a prose edit',exact:true})).toBeVisible();
+   await expect(held.getByText(reason,{exact:true})).toBeVisible();await expect(held.locator('blockquote')).toHaveText(paragraph);
+   expect((await f.call({method:'writer-state'}))).toMatchObject({calls:1,reviewCalls:1,batchCalls:1});
+   expect((await f.latest()).source_snapshot.horoscopeGeneration.candidateHolds.aries.code).toBe('weekly_direction_drift');
+   await page.screenshot({path:`test-results/weekly-direction-hold-${width}-${theme}.png`,fullPage:true});
+   await page.reload();await expect(held.getByText(reason,{exact:true})).toBeVisible();
+   await held.getByRole('button',{name:'Edit saved Aries draft',exact:true}).click();
+   await expect(studio.getByLabel('Complete reading',{exact:true})).toHaveValue(`You can read the complete aries fixture opening.\n\n${paragraph}`);
+   expect((await f.call({method:'writer-state'}))).toMatchObject({calls:1,reviewCalls:1,batchCalls:1});
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  }finally{await page.goto('about:blank');await page.unrouteAll({behavior:'wait'});f.child.kill();}
+ });
  test(`Weekly concern edits save before writing ${width} ${theme}`,async({page})=>{
   await page.setViewportSize({width,height:1000});await page.addInitScript(theme=>localStorage.setItem('tldrastro:studio-theme',theme),theme);
   const f=await fixture(page,false);try{

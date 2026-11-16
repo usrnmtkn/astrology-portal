@@ -221,7 +221,9 @@ export function installHoroscopeWriterFixture(){
    if(writerFixture.terminalNext){writerFixture.terminalNext=false;return Response.json({id,status:'failed',error:{message:'Fixture provider could not finish this reading.'}});}
    if(request.instructions.startsWith('SHARED SEMANTIC RHETORICAL REVIEW')){
      if(writerFixture.nextReviewResult){const value=writerFixture.nextReviewResult;writerFixture.nextReviewResult=null;return Response.json({id,...value});}
-     return Response.json({id,status:'completed',usage:{input_tokens:60,output_tokens:10},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[]})}]}]});
+     const paragraph=JSON.parse(request.input).candidate.body.split(/\n\s*\n/u).at(-1);
+     const weeklyDirection=request.text.format.schema.properties.weeklyDirection?{weeklyDirection:Object.fromEntries(['concern','stakes','observation','ending'].map(key=>[key,{outcome:'pass',quote:paragraph,paragraph,reason:'Synthetic transport fixture, not a prose-quality judgment.'}]))}:{};
+     return Response.json({id,status:'completed',usage:{input_tokens:60,output_tokens:10},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({checks:['CORRECTIO','TRICOLON','PURPLE_PROSE'].map(label=>({label,outcome:'pass',reason:'Synthetic transport fixture.'})),findings:[],...weeklyDirection})}]}]});
    }
    if(request.instructions.startsWith('SEASONAL PRIVATE EDITORIAL AUTHORITY')){
      const input=JSON.parse(request.input),required=request.text.format.schema.required;

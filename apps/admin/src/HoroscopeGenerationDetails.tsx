@@ -65,8 +65,9 @@ function HoroscopeRejectionHistory({rejections,period}:{rejections:any[];period:
 
 function HoroscopeReviewHolds({holds,locked,active,canRecover,onRecover,onEdit,onReject}:{holds:[string,any][];locked:boolean;active:boolean;canRecover:(held:any)=>boolean;onRecover:(sign:string)=>void;onEdit:(sign:string,held:any)=>void;onReject:(sign:string)=>void}) {
   return <>{holds.map(([sign,held])=><section key={sign} aria-label={`${horoscopeSignLabel(sign)} prose review`}>
-    <h3>{horoscopeSignLabel(sign)} {held.code==='rhetorical_pattern'?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
+    <h3>{horoscopeSignLabel(sign)} {['rhetorical_pattern','weekly_direction_drift'].includes(held.code)?'needs a prose edit':'prose check did not finish'}</h3><p>{held.message}</p>
     {(held.review?.rhetoric?.findings??[]).map((finding:any,index:number)=><div key={index}><strong>{finding.label}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason} {finding.readerConsequence}</p></div>)}
+    {Object.entries(held.review?.weeklyDirection??{}).filter(([,finding]:any)=>finding.outcome==='fail').map(([key,finding]:any)=><div key={key}><strong>{key}</strong><blockquote>{finding.quote}</blockquote><p>{finding.reason}</p></div>)}
     {canRecover(held)&&<StudioButton disabled={locked||active} onClick={()=>onRecover(sign)}>Check saved {horoscopeSignLabel(sign)} prose review</StudioButton>}
     <StudioButton disabled={locked} onClick={()=>onEdit(sign,held)}>Edit saved {horoscopeSignLabel(sign)} draft</StudioButton>
     <StudioButton disabled={locked} onClick={()=>onReject(sign)}>Reject {horoscopeSignLabel(sign)} draft</StudioButton>
