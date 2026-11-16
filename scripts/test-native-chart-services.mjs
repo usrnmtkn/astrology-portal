@@ -128,3 +128,58 @@ assert.equal(status, 503);
 console.log(
   "Native chart services: bounded city search, exact historical time transport, credential isolation, and no fallback timezones passed.",
 );
+
+for (const supplied of [
+  { kind: "cities", query: "New York", date: "1990-01-01" },
+  JSON.stringify({ kind: "cities", query: "New York", date: "1990-01-01" }),
+]) {
+  const req = Readable.from([]);
+  req.method = "POST";
+  req.headers = { "content-type": "application/json" };
+  req.body = supplied;
+  let result;
+  const res = {
+    statusCode: 200,
+    setHeader() {},
+    end(value) {
+      result = JSON.parse(value);
+    },
+  };
+  await handler(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(result.kind, "cities");
+}
+for (const supplied of [
+  {
+    kind: "cities",
+    query: "New York",
+    date: "1990-01-01",
+    padding: "x".repeat(16_385),
+  },
+  "bad-json",
+]) {
+  const req = Readable.from([]);
+  req.method = "POST";
+  req.headers = { "content-type": "application/json" };
+  if (supplied === "bad-json")
+    Object.defineProperty(req, "body", {
+      get() {
+        throw new SyntaxError("private platform parse detail");
+      },
+    });
+  else req.body = supplied;
+  let result;
+  const res = {
+    statusCode: 200,
+    setHeader() {},
+    end(value) {
+      result = JSON.parse(value);
+    },
+  };
+  await handler(req, res);
+  assert.equal(res.statusCode, supplied === "bad-json" ? 400 : 413);
+  assert.ok(!JSON.stringify(result).includes("private platform parse detail"));
+}
+console.log(
+  "Native chart platform bodies: parsed objects, strings, limits and lazy-parser errors passed.",
+);

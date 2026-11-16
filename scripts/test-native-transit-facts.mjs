@@ -371,3 +371,51 @@ for (const referenceAt of [
 console.log(
   "Retrograde comparison: exact current, previous and next same-sign Swiss cycles passed on two dates.",
 );
+
+// Vercel may supply an already-parsed body with no remaining stream bytes.
+for (const supplied of [dailyInput, JSON.stringify(dailyInput)]) {
+  const req = Readable.from([]);
+  req.method = "POST";
+  req.headers = { "content-type": "application/json" };
+  req.body = supplied;
+  let result;
+  const res = {
+    statusCode: 200,
+    setHeader() {},
+    end(value) {
+      result = JSON.parse(value);
+    },
+  };
+  await fake(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(result.kind, "daily");
+}
+for (const supplied of [
+  { ...dailyInput, padding: "x".repeat(65_537) },
+  "bad-json",
+]) {
+  const req = Readable.from([]);
+  req.method = "POST";
+  req.headers = { "content-type": "application/json" };
+  if (supplied === "bad-json")
+    Object.defineProperty(req, "body", {
+      get() {
+        throw new SyntaxError("private platform parse detail");
+      },
+    });
+  else req.body = supplied;
+  let result;
+  const res = {
+    statusCode: 200,
+    setHeader() {},
+    end(value) {
+      result = JSON.parse(value);
+    },
+  };
+  await fake(req, res);
+  assert.equal(res.statusCode, supplied === "bad-json" ? 400 : 413);
+  assert.ok(!JSON.stringify(result).includes("private platform parse detail"));
+}
+console.log(
+  "Native timing platform bodies: parsed objects, strings, limits and lazy-parser errors passed.",
+);

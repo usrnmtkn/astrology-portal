@@ -10,6 +10,7 @@ import { transitToNatalOrbLimit } from "../apps/web/src/astrologyConfig.js";
 import { personalDateKey } from "../apps/web/src/services/personalDailyTransits.js";
 import { relationshipForecastPolicy } from "../apps/web/src/services/relationshipForecast.js";
 import { readNativeTransitInput } from "./_lib/native-transit-input.js";
+import { readAdminJsonBody, AdminHttpError } from "./_lib/admin-http.js";
 
 const dependencies = {
   daily: natalDailyTransitPeaksFor,
@@ -43,22 +44,12 @@ export function createNativeTransitHandler(calculations = dependencies) {
     }
     let input: ReturnType<typeof readNativeTransitInput>;
     try {
-      const chunks: Buffer[] = [];
-      let size = 0;
-      for await (const chunk of req) {
-        const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-        size += bytes.length;
-        if (size > 65_536) {
-          send(413, { error: "Calculation input is too large." });
-          return;
-        }
-        chunks.push(bytes);
-      }
-      input = readNativeTransitInput(
-        JSON.parse(Buffer.concat(chunks).toString("utf8")),
+      input = readNativeTransitInput(await readAdminJsonBody(req, 65_536));
+    } catch (error) {
+      send(
+        error instanceof AdminHttpError && error.statusCode === 413 ? 413 : 400,
+        { error: "Invalid transit calculation inputs." },
       );
-    } catch {
-      send(400, { error: "Invalid transit calculation inputs." });
       return;
     }
     try {

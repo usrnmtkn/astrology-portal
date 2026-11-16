@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { parseCalculationDate } from "./_lib/calculation-date.js";
 import { loadLocalWebEnv } from "./_lib/local-env.js";
 import { formatSuggestionLabel } from "./_lib/native-city-labels.js";
+import { readAdminJsonBody, AdminHttpError } from "./_lib/admin-http.js";
 loadLocalWebEnv();
 type Input =
   | { kind: "cities"; query: string; date: string }
@@ -81,19 +82,12 @@ export function createNativeChartServices(
       return send(415, { error: "Use JSON." });
     let input: Input;
     try {
-      const chunks: Buffer[] = [];
-      let size = 0;
-      for await (const chunk of req) {
-        const bytes = Buffer.from(chunk);
-        size += bytes.length;
-        if (size > 16_384) return send(413, { error: "Request too large." });
-        chunks.push(bytes);
-      }
-      input = readNativeChartInput(
-        JSON.parse(Buffer.concat(chunks).toString("utf8")),
+      input = readNativeChartInput(await readAdminJsonBody(req, 16_384));
+    } catch (error) {
+      return send(
+        error instanceof AdminHttpError && error.statusCode === 413 ? 413 : 400,
+        { error: "Check the city, date, and time." },
       );
-    } catch {
-      return send(400, { error: "Check the city, date, and time." });
     }
     try {
       const config = configuration();
