@@ -271,3 +271,11 @@ OpenAI/native Claude input delivery with synthetic providers. The matching
 browser cases check editing, independent saves, unsaved-work protection, reload
 and generation at mobile/light and desktop/dark sizes. These are workflow and
 transport checks, not a guarantee of generated prose quality.
+
+Release validation retained a hosted standalone-Admin aggregate budget failure of
+202 gzip bytes. The compacted editor shares the existing batch request path.
+Independent accepted-main/candidate builds with matching locked installs and
+generated knowledge measured 932,675 → 933,401 aggregate gzip bytes and
+245,710 → 245,735 entry gzip bytes; entry raw bytes stayed identical. The existing
+measured-feature policy allocates those 726/25-byte deltas, preserving the
+control's 605/35-byte headroom. Other guards and deferred boundaries stay intact.
