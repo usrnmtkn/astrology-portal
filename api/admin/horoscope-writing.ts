@@ -351,12 +351,12 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
     if(input.action==='save-weekly-concern'){
       if(prepared.edition.window.period!=='weekly')throw new AdminHttpError(400,'Concern edits are Weekly only.');
       if(operation||editorial?.pending||batch?.status==='running')throw new AdminHttpError(409,'Finish or pause generation before editing concerns.');
-      if(writingRow!==row||input.approvedPlanHash!==prepared.planHash||editorial?.plan?.scopeHash!==prepared.planHash)
+      if(writingRow!==row||input.approvedPlanHash!==prepared.planHash)
         throw new AdminHttpError(409,'The writing plan changed. Reopen and review the current plan before saving concerns.');
       const concern=input.concern,keys=['coreConcern','stakes','distinctiveObservation'];
       if(!concern||typeof concern!=='object'||Array.isArray(concern)||Object.keys(concern).sort().join()!==[...keys].sort().join()
         ||keys.some(key=>typeof concern[key]!=='string'||!concern[key].trim()||concern[key].length>5000)
-        ||!editorial.plan.concerns?.some((entry:any)=>entry.sign===input.sign))
+        ||!editorial?.plan?.concerns?.some((entry:any)=>entry.sign===input.sign))
         throw new AdminHttpError(400,'Choose a planned sign and enter its concern, stakes and observation (up to 5,000 characters each).');
       const previous=editorial.plan,editedAt=new Date().toISOString();
       const {error:previousError,...previousFields}=previous;
@@ -367,7 +367,7 @@ export async function runHoroscopeWriting(input:Record<string,any>,actor:string,
         ...(batch?.status==='paused'?{batch:{...batch,status:'cancelled'}}:{})};
       const editedRow={...row,source_snapshot:{...row.source_snapshot,horoscopeGeneration:generation}};
       const updated=prepareHoroscopeWriting(editedRow,{feedbackReceipt,explicitFeedback,seasonalSourceRows,writerSelection:writerChoice==='current'?null:writerConfig});
-      editedPlan.scopeHash=updated.planHash;
+      editedPlan.scopeHash=previous.scopeHash===prepared.planHash?updated.planHash:previous.scopeHash;
       await persist({source_snapshot:editedRow.source_snapshot});
       return reply(200,{ok:true,rows:[row],plan:{...horoscopePlanPreview(updated),writerChoice,writerModel:writerConfig.model,writerModels},configured:writerAvailable});
     }

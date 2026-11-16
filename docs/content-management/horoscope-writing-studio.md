@@ -279,3 +279,15 @@ generated knowledge measured 932,675 → 933,401 aggregate gzip bytes and
 245,710 → 245,735 entry gzip bytes; entry raw bytes stayed identical. The existing
 measured-feature policy allocates those 726/25-byte deltas, preserving the
 control's 605/35-byte headroom. Other guards and deferred boundaries stay intact.
+
+A stale shared plan does not prevent editing its saved concern, stakes or
+observation after loading the current writing plan. Saving these directions is
+free and preserves the shared plan's stale scope; it cannot approve obsolete
+planning. Refresh planning before single-sign drafting, or use the approved batch
+workflow, which refreshes planning and retains the exact saved edits.
+
+The complete writing-plan export includes saved owner concern edits even while
+shared AI planning is stale. It uses the same context builder as generation,
+excludes obsolete shared planning notes, and makes no model request. This allows
+checking saved directions in the actual assembled writing material before
+approving paid planning or drafting.
