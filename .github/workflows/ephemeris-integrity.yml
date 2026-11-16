@@ -30,6 +30,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: mkdir -p artifacts
+      - name: Verify NASA/JPL provider aspect phases
+        run: node scripts/test-nasa-horizons-provider.mjs
       - name: Compare TLDR Astro with NASA/JPL Horizons
         id: comparison
         run: npm run qa:ephemeris:horizons
@@ -78,7 +80,7 @@ jobs:
               "",
               summary,
               "",
-              "This issue is updated daily. Each run also leaves a dated comment below, preserving the verification history outside short-lived workflow artifacts."
+              "This issue is updated weekly and on manual runs. Each run also leaves a dated comment below, preserving the verification history outside short-lived workflow artifacts."
             ].join("\n");
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,

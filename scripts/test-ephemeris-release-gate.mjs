@@ -62,13 +62,15 @@ const missing = evaluateEphemerisReleaseGate([], { now, maxAgeHours: 36 });
 assert.equal(missing.ok, false);
 
 const integrityWorkflow = fs.readFileSync(path.join(repoRoot, ".github/workflows/ephemeris-integrity.yml"), "utf8");
-assert.match(integrityWorkflow, /cron: "17 9 \* \* \*"/, "Horizons comparison must run daily");
-assert.match(integrityWorkflow, /issues: write/, "daily workflow must be able to persist its monitor issue");
-assert.match(integrityWorkflow, /NASA\/JPL ephemeris integrity status/, "daily workflow must preserve durable status/history");
+assert.match(integrityWorkflow, /cron: "17 9 \* \* 1"/, "Horizons comparison must preserve the weekly Actions-budget schedule");
+assert.match(integrityWorkflow, /workflow_dispatch:/, "monitoring must remain available before a release");
+assert.match(integrityWorkflow, /issues: write/, "monitoring must be able to persist its issue");
+assert.match(integrityWorkflow, /NASA\/JPL ephemeris integrity status/, "monitoring must preserve durable status/history");
 
 const releaseWorkflow = fs.readFileSync(path.join(repoRoot, ".github/workflows/ephemeris-release-gate.yml"), "utf8");
-assert.match(releaseWorkflow, /pull_request:/, "release gate must run on pull requests");
+assert.match(releaseWorkflow, /workflow_dispatch:/, "release freshness checks must remain manually available");
+assert.doesNotMatch(releaseWorkflow, /^\s+pull_request:/m, "preserve the manual release-gate Actions-budget policy");
 assert.match(releaseWorkflow, /name: nasa-jpl-freshness/, "required check name must stay stable for branch rules");
 assert.match(releaseWorkflow, /EPHEMERIS_MAX_AGE_HOURS: 36/, "release gate must enforce the 36-hour freshness window");
 
-console.log("Ephemeris release gate contract passed: daily durable monitoring wired; fresh success accepted; failures, stale runs, PR runs, and wrong branches rejected.");
+console.log("Ephemeris release gate contract passed: weekly/manual monitoring wired; fresh success accepted; failures, stale runs, PR runs, and wrong branches rejected.");
