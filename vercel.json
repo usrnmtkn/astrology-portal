@@ -79,6 +79,13 @@
     }
   ],
   "functions": {
+    "api/native-chart-services.ts": {
+      "maxDuration": 60
+    },
+    "api/native-transit-facts.ts": {
+      "includeFiles": "node_modules/swisseph-wasm/wasm/*",
+      "maxDuration": 60
+    },
     "api/content-reader.ts": {
       "includeFiles": "api/_lib/local-env.ts"
     },
