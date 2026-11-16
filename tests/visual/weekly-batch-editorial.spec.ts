@@ -150,6 +150,7 @@ for(const [width,theme] of [[390,'light'],[1440,'dark']] as const){
    expect((await f.call({method:'writer-state'}))).toMatchObject({calls:0,reviewCalls:0,batchCalls:1});
    await studio.getByLabel('I approve this writing plan for generation.').check();
    await expect(studio.getByRole('button',{name:'Generate Aries',exact:true})).toBeDisabled();
+   await studio.getByLabel('I approve this writing plan for generation.').uncheck();
    await gate.getByText('Shared concerns for all twelve signs',{exact:true}).click();
    await gate.getByRole('button',{name:'Plan twelve concerns again · 1 AI request',exact:true}).click();
    await gate.getByRole('button',{name:'Check saved batch progress',exact:true}).click();
