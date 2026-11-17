@@ -14,6 +14,8 @@ export function FullChartView({ source, children, titleId, onClose, controls }: 
     includePoints={includePoints} onIncludePoints={setIncludePoints} controls={controls}>{children}</ChartReportView>;
 }
 
+export default FullChartView;
+
 function ChartReportView({ source, report, children, titleId, onClose, controls, includePoints, onIncludePoints }: {
   source: ChartReportSource; report: ReturnType<typeof buildChartReport>; children: ReactNode; titleId: string; onClose: () => void;
   controls?: ReactNode; includePoints: boolean; onIncludePoints: (value: boolean) => void;
