@@ -1,4 +1,4 @@
-import { lunationAspectIdentity } from '../../../../src/shared/lunationAspectIdentity';
+import { isLunationAspectKey } from '../../../../src/shared/lunationHoroscopeIdentity';
 import type { SkySnapshot } from '../types';
 import { datedLunationContentKey } from './lunationArticleIdentity';
 import { resolveCmsSurfaceOverride, type CmsGeneratedContentMap } from './cmsSurfaceOverrides';
@@ -16,7 +16,7 @@ export function lunationAspectReaderKey(event: Event, aspect: Aspect, positions:
   const planetSign = (reversed ? aspect.fromSign : aspect.toSign) ?? positions.find(p => p.planet === planet)?.sign;
   if (!moonSign || !planetSign || moonSign.toLowerCase() !== event.sign.toLowerCase()) return null;
   const key = `lunation.${phase}.${moonSign.toLowerCase()}.${aspect.type.toLowerCase()}.${planet.toLowerCase().replaceAll(' ', '-')}.${planetSign.toLowerCase()}`;
-  return lunationAspectIdentity(key) ? key : null;
+  return isLunationAspectKey(key) ? key : null;
 }
 
 export function lunationAspectReaderKeys(event: Event, sky: Pick<SkySnapshot, 'aspects' | 'positions'>) {

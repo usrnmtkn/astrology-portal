@@ -1,6 +1,5 @@
 import { calendarTransitionPhraseRecordForKey } from "./calendar-transition-phrase-sources.js";
-import { isLunationHoroscopeKey } from "../../src/shared/lunationHoroscopeIdentity.js";
-import { lunationAspectIdentity } from '../../src/shared/lunationAspectIdentity.js';
+import { isLunationHoroscopeKey, isLunationAspectKey } from "../../src/shared/lunationHoroscopeIdentity.js";
 import { calendarMoonIngressPackageRecordForKey } from "./calendar-moon-ingress-sources.js";
 import { calendarPassageIdentity, calendarPassageErrors } from '../../src/calendar-writing/passageContract.js';
 import { isRegisteredLunarJournalKey } from "./content-studio-package-admission.js";
@@ -152,7 +151,7 @@ export function contentLiveStatuses(rows: LiveStatusRow[], candidates: LiveStatu
       detail: articlePublishAt(row) ? `Scheduled for ${articlePublishAt(row)}. Readers cannot open this version before its publish date.` : "This article has an invalid publish date.",
       updatedAt: row.updated_at ?? null } as ContentLiveStatus;
     if (isRetiredCompositionKey(row.content_key)) return { id: row.id, live: false, label: "Not live", source: null, detail: "Superseded composition. Use the canonical Personal Transit source.", updatedAt: row.updated_at ?? null } as ContentLiveStatus;
-    if (lunationAspectIdentity(row.content_key)) {
+    if (isLunationAspectKey(row.content_key)) {
       const current = [...candidates].sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))
         .find(candidate => candidate.content_key === row.content_key && candidate.status === 'LIVE'
           && candidate.lane === 'serving' && !candidate.review_state && candidate.body?.trim()
