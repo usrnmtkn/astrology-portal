@@ -38,5 +38,6 @@ export default defineConfig({
     'load-error-handoff10.spec.ts',
     'tooltip-toast-viewport.spec.ts',
     'chart-table-viewport.spec.ts',
+    'full-chart-reports.spec.ts',
   ]
 });

@@ -5,6 +5,7 @@ import { PersonalTransitIcon } from "../../components/PersonalTransitCard";
 import "../../styles/profile-overview.css";
 import "../../styles/you-transits.css";
 import { ChartFullscreenButton } from "../../components/charts/ChartFullscreenButton";
+import type { ChartReportSource } from "../../services/chartReport";
 import { NatalPlacementSections } from "../../components/NatalPlacementSections";
 import { NatalChartReadings } from "../../components/NatalChartReadings";
 import { NatalInsightPage } from "../../components/NatalInsightPage";
@@ -395,7 +396,8 @@ function YouNatalChartPanel({
   natalChartError,
   onViewModeChange,
   tableContent,
-  viewMode
+  viewMode,
+  report
 }: {
   ariaLabel?: string;
   natalChart: ReactNode;
@@ -404,6 +406,7 @@ function YouNatalChartPanel({
   onViewModeChange?: (value: NatalChartViewMode) => void;
   tableContent?: ReactNode;
   viewMode?: NatalChartViewMode;
+  report?: ChartReportSource;
 }) {
   const showViewToggle = Boolean(onViewModeChange && tableContent);
 
@@ -426,11 +429,11 @@ function YouNatalChartPanel({
           className="natal-chart-view-toggle"
           compact
         />
-        {natalChart && viewMode === "circle" && <ChartFullscreenButton title="Natal chart">{natalChart}</ChartFullscreenButton>}
+        {natalChart && viewMode === "circle" && <ChartFullscreenButton title="Natal chart" report={report}>{natalChart}</ChartFullscreenButton>}
         </div>
       ) : null}
       {viewMode === "table" && tableContent ? tableContent : natalChart}
-      {!showViewToggle && natalChart && <div className="natal-chart-controls"><div className="you-transit-legend" aria-label="Chart rings"><span>Sky · outer</span><span>You · inner</span></div><ChartFullscreenButton title="Transit chart">{natalChart}</ChartFullscreenButton></div>}
+      {!showViewToggle && natalChart && <div className="natal-chart-controls"><div className="you-transit-legend" aria-label="Chart rings"><span>Sky · outer</span><span>You · inner</span></div><ChartFullscreenButton title="Transit chart" report={report}>{natalChart}</ChartFullscreenButton></div>}
       {(natalChartStatus === "idle" || natalChartStatus === "loading") && (
         <section className="you-empty-card you-calculating-card" aria-label="Chart calculation">
           <span>Chart</span>
@@ -1362,6 +1365,9 @@ export function YouPage({
         <YouNatalChartPanel
           ariaLabel={activeChartLabel}
           natalChart={activeChart}
+          report={natalSky ? profileTab === "transits" && currentSky
+            ? { kind: "transit", primary: currentSky, secondary: natalSky, primaryLabel: "Sky · outer", secondaryLabel: `${profileName || "You"} · inner`, subtitle: transitDateLabel }
+            : { kind: "natal", primary: natalSky, primaryLabel: profileName || "You" } : undefined}
           natalChartStatus={natalChartStatus}
           natalChartError={natalChartError}
           onViewModeChange={profileTab === "chart" ? setNatalChartViewMode : undefined}

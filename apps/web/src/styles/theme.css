@@ -1434,6 +1434,11 @@
   --auth-card-radius: calc(var(--card-radius) + 8px);
   --input-inner-radius: calc(var(--input-radius) - 2px);
   --chart-dialog-height: min(960px, calc(100svh - 28px));
+  /* Full chart reports: a readable wheel/positions split and scrollable matrix. */
+  --chart-report-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  --chart-report-grid-cell: var(--space-10);
+  --chart-report-grid-label: var(--space-9);
+  --chart-report-viewport-height: 100dvh;
   --chart-dialog-mobile-height: calc(100svh - 16px);
   --chart-dialog-padding: clamp(calc(var(--space-4) + var(--space-1) / 2), 3vw, calc(var(--space-7) - var(--space-1) / 2));
   --chart-dialog-top-padding: clamp(var(--space-1), 1vh, var(--space-3));
