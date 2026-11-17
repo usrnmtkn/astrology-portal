@@ -8,7 +8,7 @@ CI and production results belong to the release PR. No live reader-content write
 is part of this change.
 
 The code/test fingerprint is
-`4c7fa83fe0452c5c5a28e6beedb62bd507249f51d82d30cd4b49de5ef4198773`:
+`9851ede978004766f293db0127b432a60e00eca2e1720c76e462bfa45b57d413`:
 SHA-256 of sorted modified/new code and test paths, each followed by NUL,
 complete file bytes, and NUL. Documentation is excluded. The checkout has its
 own `npm ci` dependencies and locally built knowledge package.
@@ -100,6 +100,18 @@ meaning-card construction. Source keys, fields and reader prose are unchanged.
 All ten focused editor/publication browser cases pass from its fresh build;
 local aggregate gzip is 3,788,582 bytes (147 bytes below the unchanged cap).
 Required exact-head CI remains mandatory.
+
+The fourth candidate, `3215064ff3ee520911d82a69cf769adc48bb4351`, passed
+`content-studio-api` and `project-privacy`, with no bundle failure. Its broader
+`design-handoff (4)` browser job failed a populated member fixture that reloaded
+with a started cache request unfinished. The CI trace and unchanged local
+reproduction showed the aborted request. A response-only pending snapshot missed
+requests awaiting headers. The fixture now tracks started API requests through
+finish/failure and waits before navigation; an additional check precedes opening
+the detail. API/console failures remain errors and no timeout was raised. All
+eight member-source variants and the Daily source loading contract pass from a
+fresh build after this test-only correction. Product code is unchanged; prior
+local runtime evidence remains applicable. New exact-head gates remain required.
 
 The broader static `test-fallback-refresh-wiring.mjs` still fails at line 758,
 expecting an older personal-transit preview expression. The same failure was

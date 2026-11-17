@@ -2115,6 +2115,7 @@ for(const width of [390,1440])for(const theme of ['light','dark'])for(const audi
       await expect(cards.last().locator('.natal-insight-card__preview')).toHaveText(insightPreview.replace(/\n+/g,' '));
       await expect(cards.first().locator('.natal-insight-card__preview')).toHaveText(patternPreview);
       await section.scrollIntoViewIfNeeded();await section.screenshot({path:test.info().outputPath(`member-sources-${audience}-${width}-${theme}.png`)});
+      await assertClean();
       await cards.first().click();await expect(page.locator('.sky-detail-article h1')).toHaveText(/A good plan can still leave.*out of it/);
       await expect(page.locator('.sky-detail-article')).toContainText('The complete parent reading ending remains.');
       await expect(page.locator('.sky-detail-article')).toContainText('The supporting pattern overview remains.');

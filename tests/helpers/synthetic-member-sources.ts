@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type Request } from '@playwright/test';
 import { bundledPublications } from './bundled-publications';
 import { getAstrodienstSky } from '../../apps/web/src/services/ephemeris';
 import { zonedDateTimeToUtc } from '../../apps/web/src/services/timezones';
@@ -176,7 +176,13 @@ export async function inspectMemberSourceFailures(page:Page){
   page.on('pageerror',error=>failures.push(`pageerror: ${error.message}`));
   page.on('console',message=>{if(['warning','error'].includes(message.type()))failures.push(`console ${message.type()}: ${message.text()}`);});
   const isApi=(url:string)=>/^\/(?:api\/|rest\/v1\/|auth\/v1\/)/.test(new URL(url).pathname);
-  page.on('requestfailed',request=>{if(isApi(request.url()))failures.push(`requestfailed: ${request.method()} ${new URL(request.url()).pathname}: ${request.failure()?.errorText}`);});
+  const active=new Set<Request>();
+  page.on('request',request=>{if(isApi(request.url()))active.add(request);});
+  page.on('requestfinished',request=>active.delete(request));
+  page.on('requestfailed',request=>{
+    active.delete(request);
+    if(isApi(request.url()))failures.push(`requestfailed: ${request.method()} ${new URL(request.url()).pathname}: ${request.failure()?.errorText}`);
+  });
   page.on('response',response=>{
     if(!isApi(response.url()))return;
     pending.push((async()=>{
@@ -193,6 +199,9 @@ export async function inspectMemberSourceFailures(page:Page){
     })());
   });
   const assertClean=async()=>{
+    // A response-only snapshot misses requests whose headers have not arrived.
+    // Finish those reads before the caller navigates or reloads the document.
+    await expect.poll(()=>active.size,{message:'Started member API requests must finish before navigation'}).toBe(0);
     await Promise.all(pending);expect(failures,'Populated member sources must not rely on console/API failures').toEqual([]);
     await expect.poll(()=>page.evaluate(()=>(window as unknown as {__syntheticRealtimeReceipt?:{successfulJoins:number}}).__syntheticRealtimeReceipt?.successfulJoins??0),{message:'Browser must receive a successful synthetic join acknowledgement'}).toBeGreaterThan(0);
   };
