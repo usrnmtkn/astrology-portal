@@ -161,7 +161,7 @@ for (const viewport of [{ width: 360, height: 640 }, { width: 390, height: 844 }
       }
       if (name === 'Full-screen chart') {
         await page.getByRole('button', { name: 'Full-screen chart', exact: true }).click();
-        overlay = page.locator('.chart-fullscreen-panel');
+        overlay = page.locator('.full-chart-panel');
       } else {
         await page.locator('.friend-compare-pill').click();
         overlay = page.getByRole('dialog', { name: 'Compare with saved chart' });

@@ -10,6 +10,7 @@ import {
 import {
   calculateNatalAspects,
   calculateSkyAspects,
+  canonicalizeNodeAxisAspects,
   NATAL_ASPECT_DEFINITIONS
 } from "../packages/astro-knowledge/engine/sky-aspects/browser.mjs";
 
@@ -219,7 +220,7 @@ function referenceNatalMatrix(positions) {
   const pointOrder = [
     "Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
     "Uranus", "Neptune", "Pluto", "Chiron", "Lilith", "North Node",
-    "South Node", "Ascendant", "Midheaven"
+    "South Node", "Ascendant", "Midheaven", "Part Of Fortune"
   ];
   const ordered = [...positions].sort((first, second) => pointOrder.indexOf(first.planet) - pointOrder.indexOf(second.planet));
   const aspects = [];
@@ -274,6 +275,43 @@ for (const date of [
   const houses = swe.houses(julianDay, 40.7128, -74.006, "W");
   positions.push({ planet: "Ascendant", longitude: normalizeDegrees(houses.ascmc[0]) });
   positions.push({ planet: "Midheaven", longitude: normalizeDegrees(houses.ascmc[1]) });
+
+  const sun = swe.calc_ut(julianDay, swe.SE_SUN, flags);
+  const moon = swe.calc_ut(julianDay, swe.SE_MOON, flags);
+  const altitude = swe.azalt(julianDay, swe.SE_ECL2HOR, [-74.006, 40.7128, 0], 0, 15, sun).trueAltitude;
+  const fortune = normalizeDegrees(houses.ascmc[0] + (altitude > 0 ? moon[0] - sun[0] : sun[0] - moon[0]));
+  const snapshot = {
+    positions: positions.map(({ planet, longitude }) => position(planet, longitude)), aspects: [],
+    ascendantLongitude: houses.ascmc[0], midheavenLongitude: houses.ascmc[1],
+    generatedAt: date.toISOString(), birthTimeKnown: true,
+    solarHorizon: { version: "solar-horizon-v1", instant: date.toISOString(), altitude }
+  };
+  const snapshotBefore = JSON.stringify(snapshot);
+  const expectedWithFortune = canonicalizeNodeAxisAspects(
+    referenceNatalMatrix([...positions, { planet: "Part Of Fortune", longitude: fortune }])
+      .map(({ key, orb }) => { const [from, type, to] = key.split("|"); return { from, type, to, orb }; })
+  ).map(aspect => ({ key: aspectKey(aspect), orb: aspect.orb })).sort((a, b) => a.key.localeCompare(b.key));
+  const friendAspects = canonicalNatalAspectsForSnapshot(snapshot, { includePartOfFortune: true });
+  assert.deepEqual(friendAspects.map(aspect => ({ key: aspectKey(aspect), orb: aspect.orb })).sort((a, b) => a.key.localeCompare(b.key)), expectedWithFortune,
+    `Friend Fortune contacts match direct Swiss positions and ${altitude > 0 ? "day" : "night"} formula at ${date.toISOString()}`);
+  assert.ok(friendAspects.some(aspect => [aspect.from, aspect.to].includes("Part Of Fortune")));
+  assert.deepEqual(canonicalNatalAspectsForSnapshot({ ...snapshot, positions: [...snapshot.positions, position("Part Of Fortune", 0)] }, { includePartOfFortune: true }), friendAspects,
+    "A stored legacy Fortune longitude cannot replace the calculation from the verified natal positions");
+  assert.equal(JSON.stringify(snapshot), snapshotBefore, "Friend aspect calculation does not mutate the saved natal chart");
+  assert.equal(canonicalNatalAspectsForSnapshot(snapshot).some(aspect => [aspect.from, aspect.to].includes("Part Of Fortune")), false,
+    "The default You natal aspect inventory is unchanged");
+  for (const unavailable of [
+    { ...snapshot, birthTimeKnown: false },
+    { ...snapshot, solarHorizon: undefined },
+    { ...snapshot, solarHorizon: { ...snapshot.solarHorizon, altitude: 0.1 } },
+    { ...snapshot, solarHorizon: { ...snapshot.solarHorizon, instant: "different-instant" } },
+    { ...snapshot, ascendantLongitude: undefined, positions: snapshot.positions.filter(p => p.planet !== "Ascendant") },
+    { ...snapshot, positions: snapshot.positions.filter(p => p.planet !== "Moon") }
+  ]) {
+    assert.equal(canonicalNatalAspectsForSnapshot({ ...unavailable, positions: [...unavailable.positions, position("Part Of Fortune", 0)] }, { includePartOfFortune: true })
+      .some(aspect => [aspect.from, aspect.to].includes("Part Of Fortune")), false,
+    "Unreliable time, sect or required positions cannot expose even a stored legacy Fortune point");
+  }
 
   const directActual = calculateNatalAspects(positions)
     .map((aspect) => ({ key: aspectKey(aspect), orb: aspect.orb }))

@@ -33,6 +33,7 @@ type FriendProfileChartRailProps = {
   comparisonSelectedId: string;
   compositeSky: WheelSky | null;
   currentSkyPositions: PlanetPosition[];
+  currentSky?: SkySnapshot | null;
   houseSignLabelStyle: HouseSignLabelStyle;
   natalSky: WheelSky | null;
   natalTableRows: NatalChartDataTableRow[];
@@ -60,6 +61,7 @@ export function FriendProfileChartRail({
   comparisonSelectedId,
   compositeSky,
   currentSkyPositions,
+  currentSky,
   houseSignLabelStyle,
   natalSky,
   natalTableRows,
@@ -89,7 +91,7 @@ export function FriendProfileChartRail({
             value={natalViewMode}
             onChange={onNatalViewModeChange}
             ariaLabel={`${chartName} natal chart display`}
-          />{natalViewMode === "circle" && <ChartFullscreenButton title="Natal chart"><InteractiveZodiacWheel snapshot={natalSky} mode="natal" ownerName={chartName} birthTimeUnknown={birthTimeUnknown} pronouns={pronouns} /></ChartFullscreenButton>}</div>
+          />{natalViewMode === "circle" && <ChartFullscreenButton title="Natal chart" report={{ kind: "natal", primary: natalSky, primaryLabel: chartName, birthTimeUnknown }}><InteractiveZodiacWheel snapshot={natalSky} mode="natal" ownerName={chartName} birthTimeUnknown={birthTimeUnknown} pronouns={pronouns} /></ChartFullscreenButton>}</div>
           {natalViewMode === "table" ? (
             <NatalChartDataTable
               rows={natalTableRows}
@@ -107,6 +109,11 @@ export function FriendProfileChartRail({
 
       {activeTab === "transits" && natalSky ? (
         <div className="friend-synastry-wheel-shell">
+          {currentSky && <div className="natal-chart-controls"><ChartFullscreenButton title="Transit chart" report={{ kind: "transit", primary: currentSky, secondary: { ...natalSky, birthTimeKnown: !birthTimeUnknown }, primaryLabel: "Sky · outer", secondaryLabel: `${chartName} · inner` }}>
+            <SkyWheel positions={natalSky.positions} aspects={[]} transitPositions={currentSkyPositions} transitAspects={transitAspects}
+              ascendant={natalSky.ascendant} ascendantLongitude={natalSky.ascendantLongitude} midheavenLongitude={natalSky.midheavenLongitude}
+              showHouses={!birthTimeUnknown} houseSignLabelStyle={houseSignLabelStyle} variant="natal"/>
+          </ChartFullscreenButton></div>}
           <div className="chart-shell">
             <div className="wheel natal-wheel friend-wheel chart-frame" aria-label={`${chartName} transit chart wheel`}>
               <SkyWheel

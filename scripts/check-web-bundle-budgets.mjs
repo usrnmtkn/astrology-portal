@@ -191,6 +191,15 @@ else if ([wheelEntry.file, ...(wheelEntry.css ?? [])].some(file => bootFiles.has
   failures.push("Interactive wheel drawing and inspection styles must stay outside reader startup.");
 }
 
+for (const name of ["FullChartView", "chartDownload"]) {
+  const entries = Object.values(manifest).filter(item => item.name === name);
+  const entry = entries[0];
+  if (entries.length !== 1 || !entry.isDynamicEntry) failures.push(`${name} must remain an on-demand chart entry.`);
+  else if ([entry.file, ...(entry.css ?? [])].some(file => bootFiles.has(file) || readerStyleFiles.has(file))) {
+    failures.push(`${name} and its styles must stay outside reader startup.`);
+  }
+}
+
 const formattingChunks = javaScriptFiles.filter(item => /\/(?:studio-rich-text|writing-markdown|FormattedWritingContent)-/u.test(item.file));
 if (!deferredCalendarItem || bootFiles.has(deferredCalendarItem.file)) {
   failures.push("Calendar copy must remain in its own on-demand chunk outside reader startup.");
