@@ -1,5 +1,6 @@
 import { angularSeparation, calculateNatalAspects, calculateSkyAspects, normalizeDegrees, SKY_ASPECT_DEFINITIONS } from "@tldr/astro-knowledge/sky-aspect-engine";
 import { hasCalculatedSolarHorizon, natalSectForSnapshot, natalSectFromAltitude } from "../../../../src/shared/solarHorizon";
+import { fortuneLongitude } from "../../../../src/shared/fortune";
 import type { PlanetPosition, SkySnapshot } from "../types";
 import { isDisplayRetrograde } from "./astrologyDisplay";
 import { planetSignDignity } from "./planetSignDignity.mjs";
@@ -92,7 +93,7 @@ export function zodiacWheelFacts(snapshot: ZodiacWheelSnapshot, mode: "sky" | "n
   // the app's sect readings. No noon/whole-sign approximation near the horizon.
   // https://www.astro.com/astrology/in_fortune_e.htm
   if (!positions.has("Lot of Fortune") && ascendant !== null && sect && sun && moon) {
-    const longitude = normalizeDegrees(ascendant + (sect === "day" ? moon.longitude - sun.longitude : sun.longitude - moon.longitude));
+    const longitude = fortuneLongitude(ascendant, sun.longitude, moon.longitude, sect);
     positions.set("Lot of Fortune", { name: "Lot of Fortune", longitude, sign: zodiacSigns[Math.floor(longitude / 30)],
       degree: longitude % 30, house: houseOf(longitude), retrograde: false, kind: "point", conditions: [] });
   }

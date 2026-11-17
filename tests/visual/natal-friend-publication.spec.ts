@@ -8,6 +8,65 @@ import {readerSession} from '../helpers/reader-session';
 import {emptyLastKnownGoodSnapshot} from '../helpers/bundled-publications';
 import {routeStudioPublicReader} from '../helpers/studio-public-reader-route';
 
+for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Friend Fortune aspects use calculated day/night positions and exact copy ${width} ${theme}`,async({page})=>{
+  await checkFriendFortune(page,width,theme,false);
+});
+test('Friend Fortune aspects stay unavailable with an unknown birth time',async({page})=>{
+  await checkFriendFortune(page,390,'light',true);
+});
+
+async function checkFriendFortune(page: import('@playwright/test').Page,width:number,theme:string,unknown:boolean){
+  test.setTimeout(90_000);
+  const key='fallback-hook/natal-aspect-lived/mercury/conjunction/part-of-fortune';
+  const supplied=process.env.TLDR_FORTUNE_READER_ROWS
+    ? JSON.parse(readFileSync(process.env.TLDR_FORTUNE_READER_ROWS,'utf8')).rows.find((row:any)=>row.content_key===key)?.sections?.packageRecord?.body_they
+    : undefined;
+  const friend=supplied??'{{Name}} keeps this Fortune opening exactly.\n\nThey keep the complete approved Fortune ending exactly.';
+  if(process.env.TLDR_FORTUNE_READER_ROWS && typeof supplied!=='string')throw new Error('The requested approved Fortune source is missing.');
+  const record={contentKey:key,content_role:'full_copy',grammar_frame:'complete_sentence',reader_only:true,render_policy:'reader-only-exact-lived-v1',review_status:'needs_review',body:''};
+  const store=await studioApiStore([{
+    id:'00000000-0000-4000-8000-000000000063',content_key:key,headline:'Mercury conjunction Part Of Fortune',body:'',summary:'',
+    status:'DRAFT',lane:'reference',review_state:'needs-review',surface:'you',mode:'in_depth',provider:'tldrastro-fallback-architecture-v3',event_type:'fallback-system',block_type:'fallback_hook',
+    updated_at:'2026-11-17T12:00:00Z',created_at:'2026-11-17T12:00:00Z',facts:{fallbackArchitectureV3:true},sections:{packageRecord:record},
+    source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',content_role:'full_copy',review_status:'needs_review'}
+  }]);
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  try{
+    const initial=(await store.call({method:'rows'}))[0];
+    const draft=await store.call({method:'PATCH',body:{id:initial.id,expectedUpdatedAt:initial.updated_at,status:'DRAFT',sections:{packageDraft:{...record,body_they:friend}}}});
+    expect(draft.status).toBe(200);const saved=draft.payload.rows[0];
+    const published=await store.call({method:'PATCH',body:{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'approve-package-revision'}});
+    expect(published.status).toBe(200);expect(published.payload.rows[0].sections.packageRecord.body_they).toBe(friend);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(({theme,unknown})=>{
+      const location={label:'Synthetic New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'};
+      const names=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','Chiron','Lilith','North Node','South Node'];
+      const longitudes=[10,40,theme==='light'?150:90,55,100,170,195,220,245,280,305,330,80,260];
+      const signs=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+      const instant='2026-11-17T12:00:00Z';
+      const sky={location,generatedAt:instant,birthTimeKnown:!unknown,solarHorizon:{version:'solar-horizon-v1',instant,altitude:theme==='light'?30:-30},
+        ascendant:'Leo',ascendantLongitude:120,midheaven:'Scorpio',midheavenLongitude:210,moonPhase:'Waxing Crescent',dominantElement:'Fire',
+        aspects:[{from:'Mercury',to:'Part Of Fortune',type:'opposition',orb:0}],
+        positions:names.map((planet,i)=>({planet,glyph:'',longitude:longitudes[i],sign:signs[Math.floor(longitudes[i]/30)],degree:longitudes[i]%30,house:i%12+1,motion:'direct',theme:''}))};
+      localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:pageAnimations','off');localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));
+      localStorage.setItem('tldrastro:userProfile',JSON.stringify({id:'synthetic-fortune-reader',name:'Test Reader',provider:'email',sun:'Aries',moon:'Taurus',rising:'Leo',currentLocation:location.label,currentLocationData:location,
+        charts:[{id:'synthetic-birth-chart',name:'Test Reader',type:'Birth chart',birthDate:'1990-01-01',birthTime:'12:00 PM',birthCity:location.label,birthLocation:location}]}));
+      localStorage.setItem('tldrastro:manualCharts:synthetic-fortune-reader',JSON.stringify([{id:'synthetic-fortune-friend',ownerUserId:'synthetic-fortune-reader',chartType:'person',displayName:'ExampleFriend',firstName:'ExampleFriend',lastName:null,relationshipType:'friend',birthDate:'1988-04-03',birthTime:unknown?null:'9:15 AM',birthTimeUnknown:unknown,birthPlace:location.label,birthLocation:location,natalChart:sky,notes:null,createdAt:instant,updatedAt:instant}]));
+    },{theme,unknown});
+    await readerSession(page,'synthetic-fortune-reader');await emptyLastKnownGoodSnapshot(page);
+    await page.route('**/api/**',async route=>{if(await routeStudioPublicReader(route,new URL(route.request().url()),message=>store.call(message.method==='reader'?{method:'POST',url:'/api/content-reader',body:message.body}:message)))return;
+      await route.fulfill({status:503,json:{error:'Synthetic unavailable calculation service'}});});
+    const open=async()=>{await page.goto('/#friends?tab=charts&chart=synthetic-fortune-friend&view=natal&detail=natal-placement-mercury');await expect(page.locator('.sky-detail-article')).toContainText('Mercury');};
+    await open();const article=page.locator('.sky-detail-article');const contact=article.getByRole('button',{name:/Mercury.*Conjunction.*Part Of Fortune/});
+    if(unknown){await expect(contact).toHaveCount(0);await expect(article).not.toContainText('Part Of Fortune');expect(errors).toEqual([]);return;}
+    await expect(contact).toBeVisible();await expect(article).not.toContainText('Mercury Opposition Part Of Fortune');await contact.click();
+    const expected=friend.replaceAll('{{Name}}','ExampleFriend');await expect(article).toContainText(expected);
+    await article.screenshot({path:`test-results/friend-fortune-${width}-${theme}.png`});
+    await page.reload();await open();await article.getByRole('button',{name:/Mercury.*Conjunction.*Part Of Fortune/}).click();await expect(article).toContainText(expected);
+    expect((await store.call({method:'rows'}))[0].body).toBe('');expect(errors).toEqual([]);
+  }finally{store.close();}
+}
+
 for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Friend natal aspect uses exact approved Friend copy ${width} ${theme}`,async({page})=>{
   test.setTimeout(90_000);
   const key='fallback-hook/natal-aspect-lived/lilith/square/north-node';
