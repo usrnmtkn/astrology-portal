@@ -40,24 +40,12 @@ export type CompatibilityPlanetCard = {
     relationship: string;
     contentTrace?: string;
   };
-  exactAspectLabel?: string;
   contentTrace?: string;
-};
-
-export type CompatibilityDynamic = {
-  id: string;
-  heading: "What flows" | "Challenges" | "Mixed or charged dynamics";
-  glyphs: string;
-  aspect?: string;
-  title: string;
-  summary: string;
-  meta: string;
 };
 
 export type CompatibilityTabProps = {
   cards: CompatibilityPlanetCard[];
   daily?: { body: string; dateLabel: string } | null;
-  dynamics: CompatibilityDynamic[];
   friendName: string;
   onOpenCard?: (card: CompatibilityPlanetCard, paragraphs: string[]) => void;
 };

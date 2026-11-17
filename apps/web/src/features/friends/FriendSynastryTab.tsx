@@ -1,19 +1,14 @@
 import { FormattedProse } from "../../components/FormattedProse";
 import { CardReadMore } from "../../components/CardReadMore";
-import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
-import type { SkySnapshot } from "../../types";
 import { zodiacAssetHref, aspectGlyph } from "../../components/charts/chartAssets";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
 
 export type FriendSynastryAspectGroup = {
-  key: string;
-  label: AspectGiftLessonLabel;
   contacts: Array<{
     id: string;
     aspect: string;
     orb: number;
     title: string;
-    subtitle: string;
     description: string;
     yourPoint: { name: string; glyph: string };
     friendPoint: { name: string; glyph: string };
@@ -24,11 +19,7 @@ export function FriendSynastryTab({ contactGroups, explainer, friendName, onOpen
   contactGroups: FriendSynastryAspectGroup[];
   explainer: string;
   friendName: string;
-  innerIsSelf: boolean;
-  innerName: string;
-  innerSky: SkySnapshot | null;
   onOpenContact: (contactId: string) => void;
-  outerSky: SkySnapshot | null | undefined;
 }) {
   const contacts = contactGroups.flatMap(group => group.contacts);
   const strongest = [...contacts].sort((a, b) => a.orb - b.orb)[0];

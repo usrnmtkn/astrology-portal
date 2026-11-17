@@ -46,9 +46,6 @@
   /* Open profile frame and editorial overview roles, approved handoff (11).
      These roles supplement the shared body scale; compact excerpts retain
      complete CMS text in the DOM and open the complete reading. */
-  --container-profile: 1304px;
-  --profile-page-gutter: 68px;
-  --layout-profile-balanced-columns: minmax(0, 640fr) minmax(0, 600fr);
   --type-identity-title-size: 44px;
   --tracking-overline: 0.14em;
   --type-overview-title-size: 40px;
@@ -1135,7 +1132,6 @@
   --element-chip-water-fg: color-mix(in srgb, var(--lunar-element-water) 42%, var(--ink));
   --container-calendar: 1360px;
   --container-wide: 1240px;
-  --container-friends-detail: 1380px;
   --container-page: 1440px;
   --container-chart-layout: 1520px;
   --container-app-wide: 1700px;
@@ -1452,8 +1448,6 @@
   --glyph-gap-xl: 0.58em;
   --glyph-gap-2xl: 0.6em;
   --friends-route-page-margin: var(--page-top) auto 0;
-  --friends-route-column-gap: 55px;
-  --friends-route-profile-padding: clamp(var(--space-4), 2.5vw, calc(var(--space-5) + var(--space-1) / 2));
   --friends-route-pane-padding: 0 clamp(calc(var(--space-4) + var(--space-1) / 2), 2.6vw, calc(var(--space-7) - var(--space-1)));
   --friends-route-tab-padding: calc(var(--space-2) - var(--space-1) / 4) clamp(calc(var(--space-3) + var(--space-1) / 2), 2.3vw, var(--space-6));
   --friends-form-padding: clamp(var(--space-6), 5vw, 36px);
@@ -1929,12 +1923,8 @@
   --chart-fullscreen-canvas-size: min(100cqw, 100cqh, var(--chart-fullscreen-wheel-size));
 }
 
-@media (max-width: 1100px) {
-  :root { --profile-page-gutter: var(--space-7); }
-}
 @media (max-width: 800px) {
   :root {
-    --profile-page-gutter: var(--mobile-page-gutter);
     --type-identity-title-size: var(--type-page-title-mobile-size);
     --type-overview-title-size: var(--type-page-title-mobile-size);
     --type-overview-reading-size: var(--text-body);

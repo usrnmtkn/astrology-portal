@@ -1,3 +1,14 @@
+.app-shell.mode-friends {
+  --container-profile: 1304px;
+  --profile-page-gutter: 68px;
+  --layout-profile-balanced-columns: minmax(0, 640fr) minmax(0, 600fr);
+}
+@media (max-width: 1100px) {
+  .app-shell.mode-friends { --profile-page-gutter: var(--space-7); }
+}
+@media (max-width: 800px) {
+  .app-shell.mode-friends { --profile-page-gutter: var(--mobile-page-gutter); }
+}
 /* Approved Friend profile handoff (11); shared roles are defined in theme.css. */
 .app-shell.mode-friends .friends-page.friend-detail-page:has(.friend-profile-view) {
   width: min(var(--container-profile), calc(100vw - var(--profile-page-gutter) * 2));
