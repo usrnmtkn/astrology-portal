@@ -101,7 +101,7 @@ function isSourceMaterial(row: ContentWiringRow) {
 
 function isKnownRenderedKey(contentKey: string) {
   return contentKey.startsWith("authored/connection-activation/")
-    || Boolean(isLunationAspectKey(contentKey))
+    || isLunationAspectKey(contentKey)
     || isLunationSourceKey(contentKey)
     || contentKey.startsWith("fallback-template/connection-transit.bridge/")
     || contentKey.startsWith("horoscope/")

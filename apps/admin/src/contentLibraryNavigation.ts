@@ -22,7 +22,7 @@ export function contentLibraryDestination(row: LibraryRow): LibraryDestination |
     detail: 'Also available in Articles & Guides.', kind: 'article' };
   if (key.startsWith('studio-lunation/')) return { areas: ['calendar'], label: 'Calendar · Lunation writing workspace',
     detail: 'Saved lunar writing in progress.', kind: 'workspace', date };
-  if (key.startsWith('authored/sky-lunation-macro/')) return { areas: ['sky', 'calendar'], label: 'Sky & Calendar · Lunation passage',
+  if (key.startsWith('authored/sky-lunation-macro/') || /^lunation\.(?:new|full)\./u.test(key)) return { areas: ['sky', 'calendar'], label: 'Sky & Calendar · Lunation passage',
     detail: 'Shared by matching New Moon or Full Moon readings.', kind: 'passage' };
   if (key.startsWith('calendar-passage/daily/')) {
     if (key.endsWith('/shared')) return { areas: ['calendar'], label: 'Calendar · Daily overview template', detail: 'Shared across dates.', kind: 'source' };
@@ -47,9 +47,6 @@ export function contentLibraryDestination(row: LibraryRow): LibraryDestination |
     detail: date ? `Visit begins ${date}.` : 'Writing for one placement visit.', kind: 'passage', date, sourceKey: key };
   if (/^(?:sky-placement\/article\/|sky-lilith\/article\/|sky-nodes\/|fallback-hook\/sky-placement-(?:hook|lived|turn)\/moon\/)/u.test(key)) {
     return { areas: ['sky'], label: 'Sky · Shared placement reading', detail: 'Reusable writing when a dated article is unavailable.', kind: 'source', sourceKey: key };
-  }
-  if (/^lunation\.(?:new|full)\./u.test(key)) {
-    return { areas: ['sky', 'calendar'], label: 'Sky & Calendar · Lunation aspect', detail: 'Shared by matching New Moon or Full Moon readings.', kind: 'source' };
   }
   if (/^(?:sky[./]aspect[./]|sky-card\/|authored\/sky-aspect|fallback-hook\/sky-aspect)/u.test(key)) {
     return { areas: ['sky', 'calendar'], label: 'Sky & Calendar · Aspect passage', detail: 'Shared by matching aspect events.', kind: 'source' };
