@@ -4622,6 +4622,110 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+    test(`natal aspect surfaces remain editable ${width} ${theme}`, async ({ page }) => {
+      test.setTimeout(90_000);
+      await page.setViewportSize({width,height:1000});
+      await page.addInitScript(theme => localStorage.setItem('tldrastro:studio-theme', theme), theme);
+      const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+      const key='fallback-hook/natal-aspect-lived/lilith/opposition/mercury';
+      const you='QA complete original You opening.\n\nQA complete original You ending.';
+      const friend='{{Name}} keeps the complete Friend opening.\n\nThey keep the complete Friend ending.';
+      const hint='QA original astrology hint.';
+      const sources=JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json','utf8'));
+      const templates=JSON.parse(readFileSync('apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json','utf8'));
+      const dependencyKeys=['fallback-hook/aspect-pair/lilith/mercury/hard','fallback-template/natal.aspect','fallback-hook/aspect-type/opposition',
+        'fallback-vocab/aspect-adj/opposition','fallback-vocab/aspect-motion/opposition','fallback-vocab/planet-core/lilith','fallback-vocab/planet-core/mercury'];
+      const packageRow=(record:Record<string,any>, index:number)=>({ ...generatedContentRows[0],id:`qa-natal-fields-${index}`,content_key:record.contentKey,
+        surface:'sky',mode:'feed',status:'DRAFT',lane:'reference',review_state:'fallback-system-reference',provider:'tldrastro-fallback-architecture-v3',
+        headline:record.contentKey,body:record.body??record.body_you??'',summary:'',block_type:record.content_role==='template'?'template':record.content_role==='vocabulary'?'vocabulary':'fallback_hook',
+        facts:{fallbackArchitectureV3:true,content_role:record.content_role,review_status:record.review_status??'approved_reuse'},
+        source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',contentType:'fallback-system',content_role:record.content_role,review_status:record.review_status??'approved_reuse'},
+        sections:{packageRecord:{...record,review_status:record.review_status??'approved_reuse'}} });
+      const exact=packageRow({contentKey:key,content_role:'fallback_hook',grammar_frame:'complete_sentence',reader_only:true,
+        render_policy:'reader-only-exact-lived-v1',review_status:'approved',body:you,astroHint:hint},0);
+      const nativeRows=['conjunction','sextile','square','trine','opposition','quincunx'].map((aspect,index)=>({
+        ...generatedContentRows[0],id:`qa-native-sun-moon-${index}`,content_key:`natal.aspect.sun.${aspect}.moon`,surface:'you',mode:'feed',status:'DRAFT',
+        lane:'reference',review_state:'needs-review',event_type:'natal-aspect',block_type:'natal_aspect',provider:'authored-natal-aspect-copy',
+        headline:`Sun ${aspect} Moon`,body:`QA native ${aspect} complete opening. QA native complete ending.`,summary:'',facts:{},sections:{},
+        source_snapshot:{contentType:'authored-natal-aspect',canonicalKey:`natal.aspect.sun.${aspect}.moon`}
+      }));
+      const dependencies=dependencyKeys.map((key,index)=>packageRow([...sources.hookRows,...sources.vocabularyRows,...templates.templates].find(row=>row.contentKey===key),index+1));
+      await seedAdminApi(page,{generatedRows:[exact,...dependencies,...nativeRows],useGeneratedContentHandler:true});
+      await expectAdminRouteLoads(page,'/admin/content#exact-content?category=Natal+Aspects&first=mercury&aspect=opposition&second=lilith');
+      await expect(page.locator('[data-studio-theme]').first()).toHaveAttribute('data-studio-theme',theme);
+      const matches=page.getByRole('region',{name:'Matching natal aspect passages'});
+      const shared=page.getByRole('region',{name:'Shared natal aspect fallback sources'});
+      await expect(matches).toContainText('Friend: empty');
+      await expect(shared.locator('article')).toHaveCount(7);
+      for (const key of dependencyKeys) await expect(shared).toContainText(key);
+      const fonts=await matches.locator('h4').evaluate(element=>{const s=getComputedStyle(element);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing]});
+      expect(await shared.locator('h4').first().evaluate(element=>{const s=getComputedStyle(element);return [s.fontFamily,s.fontSize,s.fontWeight,s.lineHeight,s.letterSpacing]})).toEqual(fonts);
+      await expectNoHorizontalOverflow(page,'natal aspect sources');
+      await matches.getByRole('button',{name:'Edit source',exact:true}).click();
+      let editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.locator('.admin-aspect-context-pill')).toHaveText('Natal aspect · birth chart');
+      await expect(editor.getByLabel('Reader phrase · You',{exact:true})).toHaveValue(you);
+      await expect(editor.getByLabel('Reader phrase · They',{exact:true})).toHaveValue('');
+      await expect(editor.getByLabel('Astrology hint',{exact:true})).toHaveValue(hint);
+      const editedYou='QA edited You opening.\n\nQA edited You ending.';
+      await editor.getByLabel('Reader phrase · You',{exact:true}).fill(editedYou);
+      await editor.getByLabel('Reader phrase · They',{exact:true}).fill(friend);
+      await editor.getByLabel('Astrology hint',{exact:true}).fill('QA edited astrology hint.');
+      const savedResponse=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/admin/generated-content' && ['PATCH','POST'].includes(response.request().method()));
+      await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+      expect((await savedResponse).status()).toBe(200);
+      await closeGeneratedEditor(page);
+      await page.reload();
+      await matches.getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('Reader phrase · You',{exact:true})).toHaveValue(editedYou);
+      await expect(editor.getByLabel('Reader phrase · They',{exact:true})).toHaveValue(friend);
+      await expect(editor.getByLabel('Astrology hint',{exact:true})).toHaveValue('QA edited astrology hint.');
+      await expectNoHorizontalOverflow(page,'natal aspect editor');
+      await editor.getByLabel('Astrology hint',{exact:true}).evaluate(element => element.scrollIntoView({block:'center'}));
+      await editor.screenshot({path:`test-results/natal-aspect-editor-${width}-${theme}.png`});
+      await closeGeneratedEditor(page);
+      await shared.locator('article').filter({hasText:'fallback-template/natal.aspect'}).getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('You view copy',{exact:true})).toHaveValue(templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_you);
+      await expect(editor.getByLabel('Friend view copy',{exact:true})).toHaveValue(templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_they);
+      const sharedYou=templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_you+'\n\nQA shared template ending.';
+      await editor.getByLabel('You view copy',{exact:true}).fill(sharedYou);
+      const sharedSave=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/admin/generated-content' && response.request().method()==='PATCH');
+      await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+      expect((await sharedSave).status()).toBe(200);
+      await closeGeneratedEditor(page);
+      await page.reload();
+      await shared.locator('article').filter({hasText:'fallback-template/natal.aspect'}).getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('You view copy',{exact:true})).toHaveValue(sharedYou);
+      await expect(editor.getByLabel('Friend view copy',{exact:true})).toHaveValue(templates.templates.find(row=>row.contentKey==='fallback-template/natal.aspect').body_they);
+      await closeGeneratedEditor(page);
+      await page.getByLabel('Natal aspect planet or point',{exact:true}).selectOption('sun');
+      await page.getByLabel('Other natal aspect planet or point',{exact:true}).selectOption('moon');
+      await expect(matches).toContainText('natal.aspect.sun.opposition.moon');
+      await matches.getByRole('button',{name:'Edit source',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('You write-up',{exact:true})).toHaveValue(nativeRows[4].body);
+      await expect(editor.getByLabel('Astrology hint',{exact:true})).toHaveValue('');
+      await closeGeneratedEditor(page);
+      for (const aspect of ['conjunction','sextile','square','trine','opposition','quincunx']) {
+        await page.getByLabel('Natal aspect type',{exact:true}).selectOption(aspect);
+        await expect(matches).toContainText(`natal.aspect.sun.${aspect}.moon`);
+      }
+      await page.getByLabel('Natal aspect type',{exact:true}).selectOption('opposition');
+      await matches.getByRole('button',{name:'Write Friend passage',exact:true}).click();
+      editor=page.getByRole('dialog',{name:'Generated content editor'});
+      await expect(editor.getByLabel('Reader phrase · You',{exact:true})).toHaveValue('');
+      await editor.getByLabel('Reader phrase · They',{exact:true}).fill(friend);
+      await expect(editor.getByRole('button',{name:'Save draft',exact:true})).toBeEnabled();
+      await editor.getByRole('button',{name:'Save draft',exact:true}).click();
+      await expect(page.getByRole('status').filter({hasText:/saved/i})).toBeVisible();
+      await assertNoBrowserErrors();
+    });
+  }
+
   test("new natal aspect They copy shows the exact name variable above the field", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const exactAspectSeed = (contentKey: string, headline: string) => ({

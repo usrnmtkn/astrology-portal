@@ -879,7 +879,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v9"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v10"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(

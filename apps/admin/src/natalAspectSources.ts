@@ -61,11 +61,25 @@ function titleCase(value: string) {
 }
 
 export function parseNatalAspectContentKey(contentKey: string): NatalAspectSelection | null {
+  const native = contentKey.match(/^natal\.aspect\.([\w-]+)\.([\w-]+)\.([\w-]+)$/u);
+  if (native) return { first: native[1].replaceAll('_', '-'), aspect: native[2], second: native[3].replaceAll('_', '-') };
   if (!contentKey.startsWith(natalAspectContentKeyPrefix)) return null;
   const parts = contentKey.slice(natalAspectContentKeyPrefix.length).split("/");
   if (parts.length !== 3 || parts.some((part) => !part.trim())) return null;
   const [first, aspect, second] = parts;
   return { first, aspect, second };
+}
+
+export function natalAspectSourceFields(row: { body?: string | null; sections?: unknown }) {
+  const object = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
+  const sections = object(row.sections);
+  const record = { ...object(sections.packageRecord), ...object(sections.packageDraft) };
+  const text = (...values: unknown[]) => values.find((value): value is string => typeof value === 'string' && value.length > 0) ?? '';
+  return {
+    body_you: text(record.body_you, record.body, row.body),
+    body_they: typeof record.body_they === 'string' ? record.body_they : text(sections.body_they),
+    astroHint: typeof record.astroHint === 'string' ? record.astroHint : text(sections.astroHint)
+  };
 }
 
 export function natalAspectDisplayTitle(selection: NatalAspectSelection) {
@@ -136,6 +150,7 @@ export function natalAspectComposedSources(selection: NatalAspectSelection): Nat
   const group = natalAspectComposedGroups[aspect];
   const title = natalAspectDisplayTitle({ first, aspect, second });
   const sources: NatalAspectComposedSource[] = [];
+  if (!group) return sources;
   if (group) {
     const pairKeys = [...new Set([
       `fallback-hook/aspect-pair/${first}/${second}/${group}`,
@@ -144,16 +159,23 @@ export function natalAspectComposedSources(selection: NatalAspectSelection): Nat
     sources.push({
       id: "pair-writing",
       label: `${title} pair writing`,
-      scope: "The You page currently uses this pair writing when no exact natal-aspect-lived passage is saved.",
+      scope: "You and Friend fallback shared by this aspect group.",
       candidateKeys: pairKeys
     });
   }
   sources.push({
     id: "natal-aspect-template",
     label: "Natal aspect template",
-    scope: "Shared assembled shape for natal aspects that do not have an exact pair-specific passage.",
+    scope: "You and Friend templates shared by natal aspects.",
     candidateKeys: ["fallback-template/natal.aspect"]
   });
+  sources.push(
+    { id: 'aspect-type', label: 'Aspect explanation', scope: 'Shared explanation for this aspect type.', candidateKeys: [`fallback-hook/aspect-type/${aspect}`] },
+    { id: 'aspect-adjective', label: 'Aspect wording', scope: 'Used by both audience templates.', candidateKeys: [`fallback-vocab/aspect-adj/${aspect}`] },
+    { id: 'aspect-motion', label: 'Aspect movement wording', scope: 'Used by both audience templates.', candidateKeys: [`fallback-vocab/aspect-motion/${aspect}`] },
+    { id: 'first-core', label: `${titleCase(first)} meaning`, scope: 'Planet meaning shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${first}`] },
+    { id: 'second-core', label: `${titleCase(second)} meaning`, scope: 'Planet meaning shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${second}`] }
+  );
   return sources;
 }
 

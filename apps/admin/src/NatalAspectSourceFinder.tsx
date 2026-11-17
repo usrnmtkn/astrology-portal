@@ -12,6 +12,8 @@ import {
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
   natalAspectSourceDraft,
+  natalAspectSourceFields,
+  natalAspectContentKeyPrefix,
   parseNatalAspectContentKey,
   type NatalAspectSelection,
   type NatalAspectSourceDraft
@@ -45,13 +47,8 @@ function titleCase(value: string) {
 
 
 function previewForRow(row: PreviewRow) {
-  const sections = row.sections && typeof row.sections === "object" ? row.sections as Record<string, unknown> : null;
-  const packageRecord = sections?.packageRecord && typeof sections.packageRecord === "object"
-    ? sections.packageRecord as Record<string, unknown>
-    : null;
-  const packageYou = typeof packageRecord?.body_you === "string" ? packageRecord.body_you.trim() : "";
-  const packageBody = typeof packageRecord?.body === "string" ? packageRecord.body.trim() : "";
-  return row.body?.trim() || packageYou || packageBody || row.summary?.trim() || row.headline?.trim() || "";
+  const fields = natalAspectSourceFields(row);
+  return fields.body_you.trim() || fields.body_they.trim() || row.summary?.trim() || row.headline?.trim() || "";
 }
 
 export default function NatalAspectSourceFinder({
@@ -64,7 +61,13 @@ export default function NatalAspectSourceFinder({
   rows,
   second
 }: Props) {
-  const exactRows = rows.filter((row) => parseNatalAspectContentKey(row.content_key));
+  const sourceRows = [...rows.reduce((latest, row) => {
+    if (row.status === 'ARCHIVED') return latest;
+    const previous = latest.get(row.content_key);
+    if (!previous || (row.updated_at ?? '') > (previous.updated_at ?? '')) latest.set(row.content_key, row);
+    return latest;
+  }, new Map<string, PreviewRow>()).values()];
+  const exactRows = sourceRows.filter(row => parseNatalAspectContentKey(row.content_key));
   const options = natalAspectSelectionOptions(exactRows);
   const hasSelection = Boolean(first || aspect || second);
   const fullSelection = Boolean(first && aspect && second);
@@ -79,6 +82,8 @@ export default function NatalAspectSourceFinder({
       ? "Choose the remaining values"
       : "Choose a natal aspect";
   const composedSources = fullSelection ? natalAspectComposedSources({ first, aspect, second }) : [];
+  const hasExactSource = matches.some(row => row.content_key.startsWith(natalAspectContentKeyPrefix));
+  const hasStandaloneSource = matches.some(row => row.content_key.startsWith('natal.aspect.'));
 
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal aspect source writing">
@@ -121,10 +126,9 @@ export default function NatalAspectSourceFinder({
       )}
 
       {!isLoading && fullSelection && matches.length === 0 && (
-        <>
           <div className="admin-empty-state">
             <strong>No exact pair-specific passage is saved for {selectedTitle}.</strong>
-            <p>The You page currently uses composed natal aspect writing for this pair. Create exact You and Friend passages only if this selection needs its own writing.</p>
+            <p>Shared composed natal aspect writing appears below when supported.</p>
             <StudioButton
               type="button"
               className="primary"
@@ -133,14 +137,70 @@ export default function NatalAspectSourceFinder({
               Write {selectedTitle}
             </StudioButton>
           </div>
-          <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Live composed natal aspect sources">
+      )}
+
+      {!isLoading && hasSelection && !fullSelection && matches.length === 0 && (
+        <div className="admin-empty-state" role="status">
+          <strong>No passage matches the selected values yet.</strong>
+          <p>Choose all three values to create an exact pair-specific passage.</p>
+        </div>
+      )}
+
+      {hasSelection && matches.length > 0 && (
+        <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Matching natal aspect passages">
+          <header>
+            <Stack gap="sm">
+              <h3>{matches.length === 1 ? "Exact reader passage" : `${matches.length} matching passages`}</h3>
+            </Stack>
+          </header>
+          <div className="admin-natal-source-grid">
+            {hasStandaloneSource && !hasExactSource && fullSelection && (
+              <div className="admin-empty-state">
+                <p>Write a Friend passage to replace automatic conversion of the You write-up.</p>
+                <StudioButton type="button" onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}>
+                  Write Friend passage
+                </StudioButton>
+              </div>
+            )}
+            {matches.map((row) => {
+              const parsed = parseNatalAspectContentKey(row.content_key) as NatalAspectSelection;
+              const title = natalAspectDisplayTitle(parsed);
+              const preview = previewForRow(row);
+              const fields = natalAspectSourceFields(row);
+              const standalone = row.content_key.startsWith('natal.aspect.');
+              return (
+                <article className="admin-natal-source-card" aria-label={`${standalone ? 'Standalone' : 'Exact'} ${title}`} key={row.content_key}>
+                  <div className="admin-natal-source-card-copy">
+                    <div className="admin-natal-source-card-heading">
+                      <h4>{title}</h4>
+                      <ContentLiveStatusBadge row={row} />
+                    </div>
+                    <Text size="body" tone="secondary">{standalone
+                      ? 'You write-up; Friend copy uses the exact override or automatic conversion.'
+                      : hasStandaloneSource
+                        ? 'Friend override and You fallback.'
+                        : 'Exact natal aspect writing for You and Friend.'}</Text>
+                    <p>You: {fields.body_you.trim() ? 'saved' : 'empty'}. Friend: {fields.body_they.trim() ? 'saved' : standalone ? 'automatic conversion' : 'empty'}. Astrology hint: {fields.astroHint.trim() ? 'saved' : 'empty (optional)'}.</p>
+                    <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
+                    {preview && <blockquote>{preview}</blockquote>}
+                  </div>
+                  <StudioButton type="button" onClick={() => onOpenSource(row.content_key, title)} disabled={isLoading}>Edit source</StudioButton>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
+      {fullSelection && composedSources.length > 0 && (
+          <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Shared natal aspect fallback sources">
             <header>
-              <h3>Live composed sources</h3>
+              <h3>Shared fallback sources</h3>
             </header>
+            <p>Used when You or Friend has no exact passage.</p>
             <div className="admin-natal-source-grid">
               {composedSources.map((source) => {
                 const savedRow = source.candidateKeys
-                  .map((contentKey) => rows.find((row) => row.content_key === contentKey))
+                  .map((contentKey) => sourceRows.find((row) => row.content_key === contentKey))
                   .find((row): row is PreviewRow => Boolean(row));
                 const contentKey = savedRow?.content_key ?? source.candidateKeys[0];
                 const preview = savedRow ? previewForRow(savedRow) : "";
@@ -163,46 +223,8 @@ export default function NatalAspectSourceFinder({
               })}
             </div>
           </section>
-        </>
       )}
 
-      {!isLoading && hasSelection && !fullSelection && matches.length === 0 && (
-        <div className="admin-empty-state" role="status">
-          <strong>No passage matches the selected values yet.</strong>
-          <p>Choose all three values to create an exact pair-specific passage.</p>
-        </div>
-      )}
-
-      {hasSelection && matches.length > 0 && (
-        <section className={`${surfaceSection} admin-natal-source-group`} aria-label="Matching natal aspect passages">
-          <header>
-            <Stack gap="sm">
-              <h3>{matches.length === 1 ? "Exact reader passage" : `${matches.length} matching passages`}</h3>
-            </Stack>
-          </header>
-          <div className="admin-natal-source-grid">
-            {matches.map((row) => {
-              const parsed = parseNatalAspectContentKey(row.content_key) as NatalAspectSelection;
-              const title = natalAspectDisplayTitle(parsed);
-              const preview = previewForRow(row);
-              return (
-                <article className="admin-natal-source-card" key={row.content_key}>
-                  <div className="admin-natal-source-card-copy">
-                    <div className="admin-natal-source-card-heading">
-                      <h4>{title}</h4>
-                      <ContentLiveStatusBadge row={row} />
-                    </div>
-                    <Text size="body" tone="secondary">Exact natal aspect writing for the reader’s birth chart.</Text>
-                    <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
-                    {preview && <blockquote>{preview}</blockquote>}
-                  </div>
-                  <StudioButton type="button" onClick={() => onOpenSource(row.content_key, title)} disabled={isLoading}>Edit source</StudioButton>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-      )}
     </section>
   );
 }

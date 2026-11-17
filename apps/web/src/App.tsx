@@ -4186,6 +4186,7 @@ function generatedNatalAspectSection(
     return null;
   }
 
+  const astroHint = (generated.sections as { astroHint?: unknown } | null)?.astroHint;
   return {
     slot: "meaning",
     required: true,
@@ -4193,6 +4194,7 @@ function generatedNatalAspectSection(
     tier: "content-studio-approved-natal-aspect-v1",
     sourceKeys: [generated.contentKey],
     heading: generated.headline || natalAspectDisplayTitle(aspect),
+    astroHint: typeof astroHint === 'string' ? astroHint : undefined,
     body
   };
 }

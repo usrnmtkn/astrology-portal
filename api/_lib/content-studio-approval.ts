@@ -35,7 +35,7 @@ export function approveNatalAspectStudioCopy(record: Record<string, unknown>, co
     && !contentKey.startsWith("authored/transit-aspect/")
     && !contentKey.startsWith("authored/transit-return/")
   ) return;
-  const payload = { contentKey, headline: record.headline ?? null, summary: record.summary ?? null, body: record.body ?? null, body_you: record.body_you ?? null, body_they: record.body_they ?? null, ...(record.alternate_copy_sha256 ? { alternate_copy_sha256: record.alternate_copy_sha256 } : {}) };
+  const payload = { contentKey, headline: record.headline ?? null, summary: record.summary ?? null, body: record.body ?? null, body_you: record.body_you ?? null, body_they: record.body_they ?? null, ...(contentKey.startsWith('fallback-hook/natal-aspect-lived/') ? { astroHint: record.astroHint ?? null } : {}), ...(record.alternate_copy_sha256 ? { alternate_copy_sha256: record.alternate_copy_sha256 } : {}) };
   record.approval = {
     approvalLevel: "exact_owner_approved",
     recordPath: `/api/admin/generated-content?contentKey=${encodeURIComponent(contentKey)}`,
