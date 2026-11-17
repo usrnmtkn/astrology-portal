@@ -4,6 +4,75 @@ import {studioApiStore} from '../helpers/studio-api-store';
 import {routeStudioInventoryApi} from '../helpers/studio-inventory-route';
 import {normalizeNatalPlacementPreviewInput,renderNatalPlacementPreviewState} from '../../api/admin/natal-placement-preview';
 import {servingPackageRecords} from '../../api/_lib/serving-package-records';
+import {readerSession} from '../helpers/reader-session';
+import {emptyLastKnownGoodSnapshot} from '../helpers/bundled-publications';
+import {routeStudioPublicReader} from '../helpers/studio-public-reader-route';
+
+for(const width of [390,1440]) for(const theme of ['light','dark']) test(`Friend natal aspect uses exact approved Friend copy ${width} ${theme}`,async({page})=>{
+  test.setTimeout(90_000);
+  const key='fallback-hook/natal-aspect-lived/lilith/square/north-node';
+  const you='You keep this separate synthetic You opening. You keep this exact You ending.';
+  const friend='{{Name}} has a separately approved Friend opening. They can say, “You can leave it here.”\n\nTheir exact Friend final sentence stays unchanged.';
+  const store=await studioApiStore([{
+    id:'00000000-0000-4000-8000-000000000028',content_key:key,headline:'Lilith square North Node',body:you,summary:'',
+    status:'DRAFT',lane:'reference',review_state:'fallback-system-reference',surface:'you',mode:'in_depth',
+    provider:'tldrastro-fallback-architecture-v3',event_type:'fallback-system',block_type:'fallback_hook',
+    updated_at:'2026-11-15T12:00:00Z',created_at:'2026-11-15T12:00:00Z',facts:{fallbackArchitectureV3:true},
+    sections:{packageRecord:{contentKey:key,content_role:'fallback_hook',grammar_frame:'complete_sentence',reader_only:true,
+      render_policy:'reader-only-exact-lived-v1',review_status:'approved',body:you}},
+    source_snapshot:{sourcePackage:'tldrastro-fallback-architecture-v3',content_role:'fallback_hook',review_status:'approved'}
+  }]);
+  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  try{
+    const initial=(await store.call({method:'rows'}))[0];
+    const draft=await store.call({method:'PATCH',body:{id:initial.id,expectedUpdatedAt:initial.updated_at,status:'DRAFT',sections:{packageDraft:{...initial.sections.packageRecord,body_they:friend}}}});
+    expect(draft.status).toBe(200);
+    const saved=draft.payload.rows[0];
+    const published=await store.call({method:'PATCH',body:{id:saved.id,expectedUpdatedAt:saved.updated_at,ownerAction:'approve-package-revision'}});
+    expect(published.status).toBe(200);
+    expect(published.payload.rows[0].sections.packageRecord.body_they).toBe(friend);
+    await page.setViewportSize({width,height:1000});
+    await page.addInitScript(({theme})=>{
+      const location={label:'Synthetic New York',latitude:40.7,longitude:-74,timeZone:'America/New_York'};
+      const names=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','Chiron','Lilith','North Node','South Node'];
+      const longitudes=[10,50,20,40,100,150,180,210,240,280,0,0,90,270];
+      const signs=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+      const sky={location,generatedAt:'2026-11-15T12:00:00Z',ascendant:'Leo',ascendantLongitude:120,midheaven:'Scorpio',midheavenLongitude:210,
+        moonPhase:'Waxing Crescent',dominantElement:'Fire',aspects:[],positions:names.map((planet,i)=>({planet,glyph:'',longitude:longitudes[i],sign:signs[Math.floor(longitudes[i]/30)],degree:longitudes[i]%30,house:i%12+1,motion:'direct',theme:''}))};
+      localStorage.setItem('tldrastro:theme',theme);localStorage.setItem('tldrastro:pageAnimations','off');
+      localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));
+      localStorage.setItem('tldrastro:userProfile',JSON.stringify({id:'synthetic-lilith-reader',name:'Test Reader',provider:'email',sun:'Aries',moon:'Taurus',rising:'Leo',currentLocation:location.label,currentLocationData:location,
+        charts:[{id:'synthetic-birth-chart',name:'Test Reader',type:'Birth chart',birthDate:'1990-01-01',birthTime:'12:00 PM',birthCity:location.label,birthLocation:location}]}));
+      localStorage.setItem('tldrastro:manualCharts:synthetic-lilith-reader',JSON.stringify([{id:'synthetic-lilith-friend',ownerUserId:'synthetic-lilith-reader',chartType:'person',displayName:'ExampleFriend',firstName:'ExampleFriend',lastName:null,relationshipType:'friend',birthDate:'1988-04-03',birthTime:'9:15 AM',birthTimeUnknown:false,birthPlace:location.label,birthLocation:location,natalChart:sky,notes:null,createdAt:'2026-11-15T12:00:00Z',updatedAt:'2026-11-15T12:00:00Z'}]));
+    },{theme});
+    await readerSession(page,'synthetic-lilith-reader');
+    await emptyLastKnownGoodSnapshot(page);
+    await page.route('**/api/**',async route=>{
+      if(await routeStudioPublicReader(route,new URL(route.request().url()),message=>store.call(message.method==='reader'
+        ? {method:'POST',url:'/api/content-reader',body:message.body} : message)))return;
+      await route.fulfill({status:503,json:{error:'Synthetic unavailable calculation service'}});
+    });
+    const openAspect=async()=>{
+      await page.goto('/#friends?tab=charts&chart=synthetic-lilith-friend&view=natal&detail=natal-placement-lilith');
+      const placement=page.locator('.sky-detail-article');
+      await expect(placement).toContainText('Lilith');
+      await expect(placement).toContainText('ExampleFriend has a separately approved Friend opening.');
+      await placement.getByRole('button',{name:/Lilith.*North Node|North Node.*Lilith/}).click();
+    };
+    await openAspect();
+    const article=page.locator('.sky-detail-article');
+    const expected=friend.replaceAll('{{Name}}','ExampleFriend');
+    await expect(article).toContainText(expected.split('\n\n')[0]);
+    await expect(article).toContainText(expected.split('\n\n')[1]);
+    await expect(article).not.toContainText('You keep this separate synthetic You opening');
+    await article.screenshot({path:`test-results/friend-natal-aspect-exact-${width}-${theme}.png`});
+    await page.reload();await openAspect();
+    await expect(article).toContainText(expected.split('\n\n')[0]);
+    await expect(article).toContainText(expected.split('\n\n')[1]);
+    expect((await store.call({method:'rows'}))[0].body).toBe(you);
+    expect(errors).toEqual([]);
+  }finally{store.close();}
+});
 
 for (const width of [390,1440]) for (const theme of ['light','dark']) test(`Planet and house write-up without a sign ${width} ${theme}`, async ({page}) => {
   test.setTimeout(90_000);
