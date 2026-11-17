@@ -208,10 +208,20 @@ for (const viewport of [{width:320,height:568},{width:390,height:844},{width:844
      await fits(page,page.locator('.full-chart-panel'));
      await chartFits(page,page.locator('.full-chart-panel .sky-wheel'));
      const panel=await page.locator('.full-chart-panel').boundingBox();
-     const wheel=await page.locator('.full-chart-panel .sky-wheel').boundingBox();
-     expect(wheel!.y).toBeGreaterThanOrEqual(panel!.y-1);
-     expect(wheel!.y+wheel!.height).toBeLessThanOrEqual(panel!.y+panel!.height+1);
+     const wheel=page.locator('.full-chart-panel .sky-wheel');
+     // Full reports scroll on short screens. Both drawing edges must remain
+     // reachable inside the dialog, including when the wheel is taller than it.
+     await wheel.evaluate(el=>el.scrollIntoView({block:'start',inline:'nearest'}));
+     const top=await wheel.boundingBox();
+     expect(top!.y).toBeGreaterThanOrEqual(panel!.y-1);
+     expect(top!.y).toBeLessThan(panel!.y+panel!.height);
+     await wheel.evaluate(el=>el.scrollIntoView({block:'end',inline:'nearest'}));
+     const bottom=await wheel.boundingBox();
+     expect(bottom!.y+bottom!.height).toBeLessThanOrEqual(panel!.y+panel!.height+1);
+     expect(bottom!.y+bottom!.height).toBeGreaterThan(panel!.y);
      const close=page.getByRole('button',{name:'Close full-screen chart',exact:true});
+     await close.scrollIntoViewIfNeeded();
+     await expect(close).toBeInViewport();
      const closeBounds=await close.boundingBox();
      expect(closeBounds!.height,'full-screen back control has a usable target').toBeGreaterThanOrEqual(40);
      await close.click();
