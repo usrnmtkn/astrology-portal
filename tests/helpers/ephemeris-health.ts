@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test';
  * is tested separately; use the browser clock so dated fixtures remain fresh. */
 export async function healthyEphemerisProbe(page: Page) {
   await page.route('**/api/health?scope=ephemeris', async route => {
+    if (route.request().method() !== 'GET') return route.fallback();
     try {
       const timestamp = await page.evaluate(() => new Date().toISOString());
       const check = { ok: true, elapsedMs: 1, detail: { actualEngine: 'swiss' } };
