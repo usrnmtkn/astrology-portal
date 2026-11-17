@@ -5496,9 +5496,18 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
     expect(row?.body, `The published fixture must contain ${contentKey}`).toBeTruthy();
     return { contentKey, body: row.body as string };
   };
-  const expectPublishedBody = (body: string) => expect.poll(async () =>
-    (await page.locator(".sky-detail-article p").allTextContents()).join("\n\n"),
-    { timeout: 60_000 }).toContain(body.trim());
+  const normalizeParagraph = (value: string) => value.replace(/\s+/gu, " ").trim();
+  const expectPublishedBody = (body: string) => {
+    const expected = body.split(/\n\s*\n/u).map(normalizeParagraph).filter(Boolean);
+    return expect.poll(async () => {
+      const actual = (await page.locator(".sky-detail-article p").allTextContents()).map(normalizeParagraph);
+      let matched = 0;
+      for (const paragraph of actual) {
+        if (paragraph === expected[matched]) matched += 1;
+      }
+      return matched;
+    }, { timeout: 60_000 }).toBe(expected.length);
+  };
   const publications = snapshot.publications.filter((row: any) => row.content_key.startsWith("sky.aspect."));
   await seedClientState(page, { now: "2026-09-08T14:03:00.000Z", contentPublications: publications });
   const requested = new Set<string>();
