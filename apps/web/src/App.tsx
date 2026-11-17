@@ -1,3 +1,4 @@
+import { EphemerisStatus } from "./components/EphemerisStatus";
 import { articleTransitKeyDates } from "./services/articleTransitDates";
 import {dateFromDurationInput,differenceInCalendarDays,differenceInCalendarParts,exactDateFromInput,formatCountdown,formatRemainingClockCompact,placementCardCountdowns} from "./services/placementCardTiming";
 import { emptyHouseRulerName, emptyHouseRulerSystems, type EmptyHouseRulerSystem } from "./content/emptyHouseRulership.js";
@@ -343,6 +344,7 @@ import {
   skySnapshotCacheKey,
   scopedSkySnapshotCacheKey,
   VERIFIED_NATAL_SKY_CACHE_MAX_AGE_MS,
+  VERIFIED_SKY_CACHE_MAX_AGE_MS,
   writeCachedSkySnapshot
 } from "./services/verifiedSkyCache";
 import {
@@ -13065,6 +13067,19 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
   }, []);
 
   const currentSkyCalculationNeeded = shouldRunCurrentSkyCalculation(mode, friendCalculationNeeds);
+  useEffect(() => {
+    const retry = () => {
+      if (skyStatus === "error" || skyStatus === "stale") setSkyRefreshKey(value => value + 1);
+    };
+    const retrySelected = () => setSkyRefreshKey(value => value + 1);
+    window.addEventListener("tldr:ephemeris-recovered", retry);
+    window.addEventListener("tldr:ephemeris-retry", retrySelected);
+    return () => {
+      window.removeEventListener("tldr:ephemeris-recovered", retry);
+      window.removeEventListener("tldr:ephemeris-retry", retrySelected);
+    };
+  }, [skyStatus]);
+
   const skyCalculationDetail = isTodayMode && !skyDetailRoutePath ? "placements" : "full";
   const skyUsesLiveClock = isTodayMode || mode === "calendar";
   const coreSkyDelayMs = mode === "profile" ? 500 : 0;
@@ -13095,8 +13110,10 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       : skyDateTimeFromInput(skyDate, skyLocation, skyUsesLiveClock));
     const live = skyUsesLiveClock && Boolean(liveSkyReference(skyDate, skyLocation.timeZone));
     const selectionKey = scopedSkySnapshotCacheKey(skySnapshotCacheKey(skyLocation, `${skyDate}:${live ? "live" : "daily"}`), skyCalculationDetail);
-    const refreshing = skyCalculationSelectionRef.current === selectionKey && Boolean(sky)
-      || Boolean(initialRequest?.snapshot && sky && sky.generatedAt === initialRequest.snapshot.generatedAt);
+    const liveAge = sky ? Date.now() - Date.parse(sky.generatedAt) : Infinity;
+    const canRetain = !live || liveAge >= 0 && liveAge <= VERIFIED_SKY_CACHE_MAX_AGE_MS;
+    const refreshing = canRetain && (skyCalculationSelectionRef.current === selectionKey && Boolean(sky)
+      || Boolean(initialRequest?.snapshot && sky && sky.generatedAt === initialRequest.snapshot.generatedAt));
     skyCalculationSelectionRef.current = selectionKey;
     // A noon snapshot or earlier live calculation must never stand in for now.
     const cacheKey = skySnapshotCacheKey(skyLocation, live ? `live-${selectedDateTime.toISOString()}` : skyDate);
@@ -13117,6 +13134,16 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       setSkyStatus("loading");
     }
 
+    const retainVerifiedSkyAfterFailure = () => {
+      let retained = refreshing ? sky : cachedSky;
+      if (live && retained) {
+        const age = Date.now() - Date.parse(retained.generatedAt);
+        if (age < 0 || age > VERIFIED_SKY_CACHE_MAX_AGE_MS) retained = null;
+      }
+      setSky(retained);
+      setSkyStatus(retained ? "stale" : "error");
+    };
+
     const publishFreshSky = (nextSky: SkySnapshot) => {
       if (cancelled) {
         return false;
@@ -13126,8 +13153,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
 
       if (!validation.ok) {
         logSkyFactDiagnostic("fresh-calculation", nextSky, validation.diagnostics);
-        if (!refreshing) setSky(cachedSky);
-        setSkyStatus(refreshing || cachedSky ? "stale" : "error");
+        retainVerifiedSkyAfterFailure();
         return false;
       }
 
@@ -13160,8 +13186,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             if (!cancelled) {
               setSkyLoadError(error);
               setSkyTimingStatus("error");
-              if (!refreshing) setSky(cachedSky);
-              setSkyStatus(refreshing || cachedSky ? "stale" : "error");
+              retainVerifiedSkyAfterFailure();
             }
           });
       }, coreSkyDelayMs);
@@ -14798,6 +14823,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         </header>
       )}
 
+      {!isSignupMode && <EphemerisStatus retainedAt={skyStatus === "stale" && !sky?.cacheState ? sky?.generatedAt : undefined} timeZone={sky?.location.timeZone} />}
       <PageLoadBoundary resetKey={`${mode}:${skyDetailRoutePath ?? ""}`}>
       <Suspense fallback={<PageLoading message={mode === "calendar" ? "Loading calendar…" : mode === "friends" ? "Loading Friends…" : mode === "profile" ? "Loading your profile…" : "Loading page…"} />}>
       {routeIssue ? <ReaderUnavailable kind={routeIssue} /> : skyDetailRoutePath && skyDetailUnavailableRoute === skyDetailRoutePath ? <ReaderUnavailable kind="sky-event" /> : selectedSkyDetail && !connectionDetail && (!/^sky\/(?:placement|retrograde)\//u.test(skyDetailRoutePath ?? "")

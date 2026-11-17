@@ -2,7 +2,7 @@ name: Calculation service availability
 
 on:
   schedule:
-    - cron: "23 13 * * *"
+    - cron: "7,22,37,52 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -20,6 +20,7 @@ jobs:
     env:
       PRODUCTION_BASE_URL: https://tldrastro.vercel.app
       CALCULATION_MONITOR_SUMMARY_PATH: artifacts/calculation-service-summary.md
+      CALCULATION_MONITOR_REPORT_PATH: artifacts/calculation-service-status.json
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -30,8 +31,15 @@ jobs:
       - name: Check the calculation service through production health
         id: availability
         run: node scripts/monitor-calculation-service.mjs
-      - name: Persist status and history in GitHub
+      - name: Preserve the machine-readable observation
         if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ephemeris-availability
+          path: artifacts/
+          retention-days: 14
+      - name: Persist status and history in GitHub
+        if: always() && github.ref == 'refs/heads/main'
         uses: actions/github-script@v8
         env:
           AVAILABILITY_OUTCOME: ${{ steps.availability.outcome }}
@@ -51,7 +59,7 @@ jobs:
             const alertMentions = alertLogins.map((login) => `@${login}`).join(" ");
             const alertMessage = passed || !alertMentions
               ? ""
-              : `Action required: ${alertMentions} the calculation service is down. Reader sky facts, reports, and Studio generation are failing.`;
+              : `Action required: ${alertMentions} ephemeris readiness could not be verified. Review the failed probe before using affected calculations.`;
             const summary = fs.existsSync(process.env.SUMMARY_PATH)
               ? fs.readFileSync(process.env.SUMMARY_PATH, "utf8").trim()
               : "The check ended before a structured summary was written.";
@@ -59,7 +67,7 @@ jobs:
             const body = [
               "# Calculation service availability monitor",
               "",
-              "Current sky placements, report facts, relationship facts, and the Sky generation crons are calculated by the tldrastro-api service. This check reads the calculation dependency reported by production health.",
+              "This check calculates current facts with the web Swiss engine and verifies the calculation service readiness. Independent NASA/JPL accuracy verification remains a separate monitor.",
               "",
               `Latest result: **${status}**`,
               `Latest run: [${context.runId}](${runUrl})`,
@@ -67,7 +75,7 @@ jobs:
               "",
               summary,
               "",
-              "This issue is updated daily. It closes on its own once the service answers again, and each run leaves a dated comment below."
+              "Readiness is checked every 15 minutes, subject to GitHub scheduling delays. Only outage and recovery transitions notify; each run retains a machine-readable observation."
             ].join("\n");
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
@@ -77,6 +85,11 @@ jobs:
             });
             let issue = issues.find((candidate) => !candidate.pull_request && candidate.title === title);
             if (!issue && passed) return;
+            const expectedState = passed ? "closed" : "open";
+            // Repeated outages and healthy checks retain their run evidence
+            // without sending another issue notification.
+            if (issue?.state === expectedState && issue.body?.includes(`Latest result: **${status}**`)) return;
+            let createdNow = false;
             if (!issue) {
               const created = await github.rest.issues.create({
                 owner: context.repo.owner,
@@ -86,6 +99,7 @@ jobs:
                 assignees: alertLogins
               });
               issue = created.data;
+              createdNow = true;
             }
             const update = {
               owner: context.repo.owner,
@@ -96,6 +110,7 @@ jobs:
             };
             if (!passed && alertLogins.length) update.assignees = alertLogins;
             await github.rest.issues.update(update);
+            if (createdNow) return;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

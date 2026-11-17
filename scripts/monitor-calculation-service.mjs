@@ -1,12 +1,15 @@
+import { isEphemerisHealthReport } from "../src/shared/ephemerisHealth.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
 const baseUrl = (process.env.PRODUCTION_BASE_URL || "https://tldrastro.vercel.app").replace(/\/+$/u, "");
 const attempts = Number.parseInt(process.env.CALCULATION_MONITOR_ATTEMPTS || "5", 10);
 const delayMs = Number.parseInt(process.env.CALCULATION_MONITOR_DELAY_MS || "30000", 10);
+const timeoutMs = Number(process.env.CALCULATION_MONITOR_TIMEOUT_MS || "10000");
+const reportPath = process.env.CALCULATION_MONITOR_REPORT_PATH || "";
 const summaryPath = process.env.CALCULATION_MONITOR_SUMMARY_PATH || "";
 
-if (!Number.isInteger(attempts) || attempts < 1 || !Number.isInteger(delayMs) || delayMs < 0) {
+if (!Number.isInteger(attempts) || attempts < 1 || !Number.isInteger(delayMs) || delayMs < 0 || !Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 60_000 || attempts > 10) {
   throw new Error("Calculation monitor retry configuration is invalid.");
 }
 
@@ -19,20 +22,19 @@ function wait(ms) {
  * so a single probe is not evidence of an outage. Only every attempt failing is.
  */
 async function checkOnce() {
-  const response = await fetch(`${baseUrl}/api/health`, { headers: { accept: "application/json" } });
-  if (response.status !== 200) {
-    throw new Error(`${baseUrl}/api/health answered ${response.status}, so the calculation dependency could not be read.`);
+  const response = await fetch(`${baseUrl}/api/health?scope=ephemeris`, {
+    headers: { accept: "application/json" }, cache: "no-store", signal: AbortSignal.timeout(timeoutMs)
+  });
+  const payload = await response.json();
+  if (!isEphemerisHealthReport(payload)) {
+    throw new Error(`Ephemeris health answered ${response.status} with a missing, stale, or invalid readiness report.`);
   }
-
-  const payload = await response.json().catch(() => null);
-  const dependency = payload?.dependencies?.skyCalculationApi;
-  if (!dependency || typeof dependency !== "object") {
-    throw new Error("Health did not report a skyCalculationApi dependency. The deployed revision predates the calculation check.");
+  if (!response.ok || !payload.ok) {
+    const failed = Object.entries(payload.dependencies).filter(([, result]) => !result.ok)
+      .map(([name, result]) => `${name}: ${result.code || "unavailable"}`);
+    throw new Error(failed.join("; ") || `Ephemeris health answered ${response.status}.`);
   }
-  if (dependency.ok !== true) {
-    throw new Error(dependency.error ? String(dependency.error) : "The calculation service reported a failure without a reason.");
-  }
-
+  const dependency = payload.dependencies.skyCalculationApi;
   return dependency;
 }
 
@@ -40,6 +42,13 @@ function writeSummary(lines) {
   if (!summaryPath) return;
   fs.mkdirSync(path.dirname(path.resolve(summaryPath)), { recursive: true });
   fs.writeFileSync(summaryPath, `${lines.join("\n")}\n`, "utf8");
+}
+
+function writeReport(ok, reason) {
+  if (!reportPath) return;
+  fs.mkdirSync(path.dirname(path.resolve(reportPath)), { recursive: true });
+  fs.writeFileSync(reportPath, JSON.stringify({ schema: "ephemeris-monitor/v1", ok,
+    checkedAt: new Date().toISOString(), reason, target: `${baseUrl}/api/health?scope=ephemeris` }, null, 2) + "\n");
 }
 
 let dependency;
@@ -57,6 +66,7 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
 }
 
 if (dependency) {
+  writeReport(true, "ready");
   const host = dependency.detail?.host ? String(dependency.detail.host) : "the configured calculation host";
   console.log(`Calculation service reachable through ${baseUrl}: ${host} answered in ${dependency.elapsedMs}ms.`);
   writeSummary([
@@ -67,9 +77,10 @@ if (dependency) {
   process.exit(0);
 }
 
+writeReport(false, lastError);
 console.error(`Calculation service unreachable through ${baseUrl} after ${attempts} attempts.`);
 writeSummary([
-  `The calculation service is not answering. Checked ${baseUrl}/api/health ${attempts} times.`,
+  `The calculation service is not answering. Checked ${baseUrl}/api/health?scope=ephemeris ${attempts} times.`,
   "",
   "Reported reason:",
   "",

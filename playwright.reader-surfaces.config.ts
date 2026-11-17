@@ -6,6 +6,7 @@ import base from './playwright.config';
 export default defineConfig({
   ...base,
   testMatch: [
+    'ephemeris-health.spec.ts',
     'astro-101-learn.spec.ts',
     'learn-article-discovery.spec.ts',
     'fallback-cache-self-heal.spec.ts',

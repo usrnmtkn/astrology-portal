@@ -1,4 +1,5 @@
 import { installSyntheticNetworkGuard } from './synthetic-network-guard';
+import { healthyEphemerisProbe } from './ephemeris-health';
 import { writeFile } from "node:fs/promises";
 import { test as base, expect, type Page, type TestInfo } from '@playwright/test';
 export * from '@playwright/test';
@@ -47,6 +48,7 @@ export async function installReaderPolishObserver(page: Page) {
 
 export const test=base.extend({
   page: async({page},use,info)=>{
+    await healthyEphemerisProbe(page);
     const target = process.env.PLAYWRIGHT_ISOLATED_SYNTHETIC === '1' ? new URL(info.project.use.baseURL!) : null;
     const deployedFixture = target && (info.project.metadata.syntheticDeploymentTransport === true
       || !['localhost', '127.0.0.1', '[::1]', '::1'].includes(target.hostname))
