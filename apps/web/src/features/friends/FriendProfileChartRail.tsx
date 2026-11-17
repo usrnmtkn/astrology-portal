@@ -91,7 +91,7 @@ export function FriendProfileChartRail({
         </button>
       ) : null}
       {wheel ? <div className="chart-shell"><div className="wheel natal-wheel friend-wheel chart-frame"
-        aria-label={activeTab === "composite" ? `${chartName} and ${comparisonIsSelf ? "you" : comparisonName} composite chart wheel` : `${chartName} ${activeTab} chart wheel`}>{wheel}</div></div> : null}
+        aria-label={activeTab === "composite" ? `${chartName} and ${comparisonIsSelf ? "you" : comparisonName} composite chart wheel` : `${chartName} ${activeTab === "transits" ? "transit" : activeTab} chart wheel`}>{wheel}</div></div> : null}
       {activeTab === "composite" && compositeSky ? <RelationshipComparePicker
         variant="composite" options={comparisonOptions} selectedId={comparisonSelectedId}
         open={comparisonPickerOpen} onToggle={onComparisonToggle} onSelect={onComparisonSelect}

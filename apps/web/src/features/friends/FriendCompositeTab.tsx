@@ -44,7 +44,7 @@ export function FriendCompositeTab({ aspectGroups, compositeAvailable, composite
         </article>
         {relationshipCompare || relationshipCompareStatus === "loading" ? <RelationshipApiSummary mode="composite" response={relationshipCompare} status={relationshipCompareStatus} /> : strongest ? <section className="friend-profile-contact" aria-label="Composite pattern">
           <span className="friend-profile-eyebrow">Composite pattern</span>
-          <h2 className="friend-profile-contact__title"><button className="friend-profile-pattern-open" type="button" onClick={() => onAspectClick?.(strongest)} disabled={!onAspectClick}>{strongest.from} {strongest.type} {strongest.to}</button></h2>
+          <h2 className="friend-profile-contact__title"><button className="friend-profile-pattern-open" type="button" aria-label={`Open full entry for ${strongest.from} ${strongest.type} ${strongest.to}`} onClick={() => onAspectClick?.(strongest)} disabled={!onAspectClick}>{strongest.from} {strongest.type} {strongest.to}</button></h2>
           <FormattedProse text={strongest.summary} />
           <div className="friend-profile-pattern-chips">{aspects.filter(aspect => aspect !== strongest && aspect.summary).slice(0, 4).map(aspect => <button type="button" key={`${aspect.from}-${aspect.type}-${aspect.to}`} onClick={() => onAspectClick?.(aspect)} disabled={!onAspectClick}>{aspect.from} {aspect.type} {aspect.to}</button>)}</div>
         </section> : null}
