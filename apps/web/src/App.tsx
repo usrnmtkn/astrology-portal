@@ -122,6 +122,7 @@ import {
 } from "./components/charts/chartAssets";
 import { type InterChartAspectLine } from "./components/charts/Wheels";
 import { InteractiveZodiacWheel, InteractiveWheelLoading } from "./components/charts/LazyInteractiveZodiacWheel";
+import { FullChartView } from "./components/charts/LazyFullChartView";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
@@ -15274,29 +15275,15 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           {skyFullChartOpen && sky && (
             <ModalPortal
               className="sky-full-chart-modal-root"
-              panelClassName="sky-full-chart-panel"
+              panelClassName="full-chart-panel full-chart-panel--sky"
               titleId={skyFullChartTitleId}
               restoreFocusId={`${skyFullChartTitleId}-open`}
               width="100vw"
               onClose={() => setSkyFullChartOpen(false)}
             >
-              <div className="sky-full-chart-view">
-                <header className="sky-full-chart-header">
-                  <button className="sky-full-chart-back" type="button" onClick={() => setSkyFullChartOpen(false)}>
-                    <ChevronLeft size={24} aria-hidden="true" />
-                    <span>Back</span>
-                  </button>
-                </header>
-
-                <div className="sky-full-chart-body">
-                  <h2 className="sr-only" id={skyFullChartTitleId}>Full sky chart</h2>
-                  <div className="sky-full-chart-shell">
-                    <div className="wheel natal-wheel chart-frame" aria-label={`Full sky chart for ${skyFullChartMeta}`}>
-                      <InteractiveZodiacWheel snapshot={sky} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <FullChartView source={{ kind: "sky", primary: sky, subtitle: skyFullChartMeta }} titleId={skyFullChartTitleId} onClose={() => setSkyFullChartOpen(false)}>
+                <div aria-label={`Full sky chart for ${skyFullChartMeta}`}><InteractiveZodiacWheel snapshot={sky} /></div>
+              </FullChartView>
             </ModalPortal>
           )}
 

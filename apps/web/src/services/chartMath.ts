@@ -583,7 +583,7 @@ export function synastryAspectOrbLimit(aspect: string, firstPoint: string, secon
   return Math.min(baseLimit, 2);
 }
 
-function synastryWheelAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
+export function synastryWheelAspectOrbLimit(aspect: string, firstPoint: string, secondPoint: string) {
   const listLimit = synastryAspectOrbLimit(aspect, firstPoint, secondPoint);
 
   if (isSameSocialOrOuterSynastryContact(firstPoint, secondPoint)) {

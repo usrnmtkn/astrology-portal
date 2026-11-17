@@ -13,8 +13,8 @@
   "calendarFallbackChunkGzipBytes": 10000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
-  "totalCssGzipBytes": 150302,
-  "totalJavaScriptGzipBytes": 3791801,
+  "totalCssGzipBytes": 152094,
+  "totalJavaScriptGzipBytes": 3802041,
   "_rationale": {
     "ephemerisOutageDetection20261116": {
       "baseRevision": "997ec0c8125d7e5bf0f66f28bf7e09d7f0e79951",
@@ -66,7 +66,76 @@
           "totalJavaScriptGzipBytes": 2412,
           "horoscopeReaderChunkGzipBytes": 1
         }
+      },
+      "integration20261117": {
+        "baseRevision": "aea0156b3a3508941fb3bc6ceb146ef369448400",
+        "previousHead": "80d8936eabe9b452f3ea1b96ac8ffce3904d811e",
+        "carriedAllocations": {
+          "readerBootGzipBytes": {
+            "existingFeatureAllowance": 1280,
+            "latestMainLimit": 458250,
+            "combinedLimit": 459530
+          },
+          "readerInitialCssGzipBytes": {
+            "existingFeatureAllowance": 320,
+            "latestMainLimit": 59518,
+            "combinedLimit": 59838
+          },
+          "totalCssGzipBytes": {
+            "existingFeatureAllowance": 128,
+            "latestMainLimit": 151966,
+            "combinedLimit": 152094
+          },
+          "totalJavaScriptGzipBytes": {
+            "existingFeatureAllowance": 3072,
+            "latestMainLimit": 3798969,
+            "combinedLimit": 3802041
+          },
+          "horoscopeReaderChunkGzipBytes": {
+            "existingFeatureAllowance": 16,
+            "latestMainLimit": 5800,
+            "combinedLimit": 5816
+          }
+        },
+        "reason": "Reconcile the concurrently accepted chart-report and ephemeris budget edits. Carry each existing positive ephemeris allocation exactly once onto latest main; preserve the complete chart allocation and both histories. No additional allowance or unrelated numeric/source/dependency guard changes. Fresh combined-build and exact-head verification are required."
       }
+    },
+    "chartReportsDownloads20261116": {
+        "baseRevision": "19539307040744df0d4df0903ae972da9e070179",
+        "profile": {
+            "node": "v22.20.0",
+            "arch": "arm64",
+            "gzipLevel": 9,
+            "buildEnvironment": "VITE_ENABLE_NATAL_ASPECT_PATTERNS=true; VITE_SUPABASE_URL=https://visual-smoke.supabase.test; VITE_SUPABASE_ANON_KEY=visual-smoke-placeholder; VITE_SUPABASE_PUBLISHABLE_KEY=empty; separate npm ci installs"
+        },
+        "control": {
+            "appBootGzipBytes": 398069,
+            "readerBootGzipBytes": 457539,
+            "readerInitialCssGzipBytes": 59470,
+            "totalCssGzipBytes": 149957,
+            "totalJavaScriptGzipBytes": 3788029
+        },
+        "candidate": {
+            "appBootGzipBytes": 398617,
+            "readerBootGzipBytes": 458128,
+            "readerInitialCssGzipBytes": 59511,
+            "totalCssGzipBytes": 151608,
+            "totalJavaScriptGzipBytes": 3798023
+        },
+        "delta": {
+            "appBootGzipBytes": 548,
+            "readerBootGzipBytes": 589,
+            "readerInitialCssGzipBytes": 41,
+            "totalCssGzipBytes": 1651,
+            "totalJavaScriptGzipBytes": 9994
+        },
+        "allocation": {
+            "totalCssGzipBytes": 1792,
+            "totalJavaScriptGzipBytes": 10240
+        },
+        "reason": "Account for the requested five full-chart reports, calculated grids and local branded SVG/PNG/PDF/CSV exports. The report view/styles and exporter remain separate dynamic entries, now enforced by the bundle gate. Existing startup, individual-chunk, timing, payload, dependency and standalone Admin limits stay unchanged. Reuse the existing Newsreader font asset; no library or font is added. This is a measured feature cost, not a performance improvement.",
+        "preservedCiFailure": "PR #1502 original head 75129604c: auth-access reported readerInitialCssGzipBytes 59520 > 59518, totalCssGzipBytes 151625 > 150174, and totalJavaScriptGzipBytes 3798044 > 3788729. Removing an unused global token brings startup CSS back within its existing limit. visual-smoke also exposed the font asset import in an esbuild component harness; native import.meta URL resolution fixes the harness boundary. Exact final-head CI remains required.",
+        "evidence": "docs/qa/chart-reports-downloads-2026-11-16.json"
     },
     "approvedDesignSystem20261115": {
       "baseRevision": "69545b58fb1b3fede25e909ba62db4269d65df64",

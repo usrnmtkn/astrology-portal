@@ -3010,6 +3010,7 @@ export function ManualChartsPanel({
                 comparisonPickerOpen={relationshipComparisonPickerOpen}
                 comparisonSelectedId={selectedRelationshipComparison?.id ?? "self"}
                 compositeSky={selectedCompositeSky}
+                currentSky={currentSky}
                 currentSkyPositions={currentSky?.positions ?? []}
                 houseSignLabelStyle={houseSignLabelStyle}
                 natalSky={selectedFriendReadyNatalChart}
