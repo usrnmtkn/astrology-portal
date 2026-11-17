@@ -51,10 +51,11 @@ export function buildChartReport(source: ChartReportSource, includePoints = fals
     aspects = rows.flatMap(row => columns.flatMap(column => {
       const separation = angularSeparation(row.longitude, column.longitude);
       const candidates = transitAspectDefinitions.map(definition => {
-        // Natal targets are fixed; only the transiting point moves.
-        const next = angularSeparation(row.longitude + (row.speed ?? 0) / 100, column.longitude);
+        // The instantaneous derivative keeps fast points from overshooting exactness.
+        const separationSpeed = Math.sign(((row.longitude - column.longitude + 540) % 360) - 180) * (row.speed ?? 0);
+        const residual = separation - definition.exact;
         const applying = Number.isFinite(row.speed) && row.speed !== 0 && Math.abs(separation - definition.exact) >= 0.01
-          ? Math.abs(next - definition.exact) < Math.abs(separation - definition.exact) : undefined;
+          ? residual * separationSpeed < 0 : undefined;
         return { type: definition.type, orb: Math.abs(separation - definition.exact), applying,
           limit: source.kind === "synastry" ? synastryWheelAspectOrbLimit(definition.type, row.name, column.name)
             : transitToNatalOrbLimit(row.name, applying === undefined ? undefined : applying ? "applying" : "separating") };
@@ -76,7 +77,8 @@ export function buildChartReport(source: ChartReportSource, includePoints = fals
       aspects = calculated.map(aspect => {
         const fromIndex = rows.findIndex(point => point.name === aspect.from), toIndex = rows.findIndex(point => point.name === aspect.to);
         const row = rows[Math.max(fromIndex, toIndex)], column = rows[Math.min(fromIndex, toIndex)];
-        return { id: `${row.name}|${column.name}`, row: row.name, column: column.name, type: aspect.type, orb: aspect.orb,
+        return { id: `${row.name}|${column.name}`, row: row.name, column: column.name, type: aspect.type,
+          orb: Math.abs(angularSeparation(row.longitude, column.longitude) - aspect.exactAngle),
           applying: source.kind === "sky" && Number.isFinite(row.speed) && Number.isFinite(column.speed) ? aspect.applying : undefined };
       });
     }

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { buildChartReport } from "../apps/web/src/services/chartReport.ts";
 import { chartCsv } from "../apps/web/src/services/chartCsv.ts";
+import { wheelDegree } from "../apps/web/src/services/zodiacWheelFacts.ts";
 import type { ZodiacWheelSnapshot } from "../apps/web/src/services/zodiacWheelFacts.ts";
 
 const names = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"];
@@ -9,6 +10,30 @@ function snapshot(longitudes = names.map(() => 0)): ZodiacWheelSnapshot {
     aspects: [], ascendantLongitude: 30, midheavenLongitude: 300, birthTimeKnown: true };
 }
 const sky = buildChartReport({ kind: "sky", primary: snapshot() });
+for (const kind of ["sky", "natal"] as const) {
+  const precise = buildChartReport({ kind, primary: snapshot([0, 92 + 3 / 60, ...names.slice(2).map(() => 0)]) });
+  const contact = precise.aspects.find(aspect => aspect.row === "Moon" && aspect.column === "Sun")!;
+  assert.equal(contact.type, "square");
+  assert(Math.abs(contact.orb - (2 + 3 / 60)) < 1e-10, `${kind} report retains the calculated orb before minute formatting`);
+  assert.equal(wheelDegree(contact.orb), "2°03′");
+  const wrap = buildChartReport({ kind, primary: snapshot([359.98, 0.02, ...names.slice(2).map(() => 0)]) });
+  assert.equal(wheelDegree(wrap.aspects.find(aspect => aspect.row === "Moon" && aspect.column === "Sun")!.orb), "0°02′", `${kind} keeps a small conjunction across zero Aries`);
+}
+// Swiss Ephemeris longitudes at the four supplied 2026 lunation timestamps.
+for (const [instant, first, firstLongitude, second, secondLongitude, type, orb] of [
+  ["2026-11-09T07:01:48Z", "Venus", 203.3187760662519, "Mars", 142.67991626547018, "sextile", "0°38′"],
+  ["2026-11-24T14:53:15Z", "Sun", 242.3359383137689, "Neptune", 1.7081330996433537, "trine", "0°38′"],
+  ["2026-12-09T00:51:34Z", "Venus", 213.20933824296958, "Uranus", 63.132114748517445, "quincunx", "0°05′"],
+  ["2026-12-24T01:27:55Z", "Sun", 272.23258134298504, "Neptune", 1.6488751237593477, "square", "0°35′"]
+] as const) for (const kind of ["sky", "natal"] as const) {
+  const data = snapshot();
+  data.generatedAt = instant;
+  data.positions = data.positions.filter(point => point.planet === first || point.planet === second)
+    .map(point => ({ ...point, longitude: point.planet === first ? firstLongitude : secondLongitude }));
+  const contact = buildChartReport({ kind, primary: data }).aspects[0];
+  assert.equal(contact.type, type);
+  assert.equal(wheelDegree(contact.orb), orb, `${kind} matches the reference's minute precision at ${instant}`);
+}
 assert.equal(sky.aspects.length, 45, "full sky grid must retain every contact, without a reader-card cap");
 assert.equal(new Set(sky.aspects.map(aspect => aspect.id)).size, 45);
 assert(sky.aspects.every(aspect => sky.rows.findIndex(point => point.name === aspect.row) > sky.columns.findIndex(point => point.name === aspect.column)), "single-chart matrix stores one lower triangle");
@@ -38,6 +63,13 @@ outer.positions[0].speed = -0.5;
 const applying = buildChartReport({ kind: "transit", primary: outer, secondary: inner });
 assert.equal(applying.aspects.length, 1, "applying Saturn uses its shared 3-degree gate");
 assert.equal(applying.aspects[0].applying, true);
+const fastOuter = snapshot(); fastOuter.positions = [{ ...fastOuter.positions[1], longitude: 59.98, speed: 13 }];
+const fixedInner = snapshot(); fixedInner.positions = [{ ...fixedInner.positions[0], longitude: 0 }];
+assert.equal(buildChartReport({ kind: "transit", primary: fastOuter, secondary: fixedInner }).aspects[0].applying, true, "fast applying Moon must not be mislabelled after a forward sample overshoots exactness");
+fastOuter.positions[0].longitude = 60.02;
+assert.equal(buildChartReport({ kind: "transit", primary: fastOuter, secondary: fixedInner }).aspects[0].applying, false);
+fastOuter.positions[0].longitude = 59.98; fastOuter.positions[0].speed = -13;
+assert.equal(buildChartReport({ kind: "transit", primary: fastOuter, secondary: fixedInner }).aspects[0].applying, false, "the instantaneous phase respects retrograde motion");
 inner.positions[0].planet = "Saturn";
 assert.equal(buildChartReport({ kind: "synastry", primary: outer, secondary: inner }).aspects.length, 0, "same outer-planet synastry contacts keep the shared tighter gate");
 const invalid = snapshot(); invalid.positions[0].longitude = NaN; invalid.positions[0].sign = "Unknown";

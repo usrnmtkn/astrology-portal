@@ -39,6 +39,30 @@ async function openReport(page: Page, kind: string) {
   await expect(page.locator(".full-chart__wheel svg").first()).toBeVisible();
 }
 
+async function verifyGridPrecision(page: Page, csv: string) {
+  const exact: Record<string, number> = { conjunction: 0, sextile: 60, square: 90, trine: 120, quincunx: 150, opposition: 180 };
+  const rows = csv.replace(/^\uFEFF/, "").split(/\r?\n/).map(line => [...line.matchAll(/"((?:[^"]|"")*)"/g)].map(match => match[1].replaceAll('""', '"')));
+  const positions = new Map<string, number>();
+  let section = "", checked = 0;
+  for (const row of rows) {
+    if (row[0] === "Chart ring") { section = "positions"; continue; }
+    if (row[0] === "Row chart") { section = "aspects"; continue; }
+    if (row.length !== 7) continue;
+    if (section === "positions") positions.set(`${row[0]}|${row[1]}`, Number(row[4]));
+    if (section === "aspects") {
+      const radians = (positions.get(`${row[0]}|${row[1]}`)! - positions.get(`${row[2]}|${row[3]}`)!) * Math.PI / 180;
+      const orb = Math.abs(Math.abs(Math.atan2(Math.sin(radians), Math.cos(radians))) * 180 / Math.PI - exact[row[4]]);
+      expect(Math.abs(Number(row[5]) - orb), `${row[1]} ${row[4]} ${row[3]} CSV retains the calculated precision`).toBeLessThan(1e-7);
+      const minutes = Math.round(orb * 60), label = `${Math.floor(minutes / 60)}°${String(minutes % 60).padStart(2, "0")}′`;
+      const cell = page.locator(".full-chart").getByRole("button", { name: `${row[1]} ${row[4]} ${row[3]}, orb ${label}`, exact: true });
+      await expect(cell).toHaveCount(1);
+      checked++;
+    }
+  }
+  expect(checked).toBeGreaterThan(0);
+  await expect(page.locator(".full-chart__grid button")).toHaveCount(checked);
+}
+
 for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 1000 }]) for (const theme of ["light", "dark"]) {
   test(`all five full charts, grids and branded CSV ${viewport.width} ${theme}`, async ({ page }, info) => {
     test.setTimeout(120000);
@@ -84,6 +108,7 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 1000
       const pending = page.waitForEvent("download"); await report.getByRole("button", { name: "Download CSV", exact: true }).click();
       const file = await pending; expect(file.suggestedFilename()).toBe(`tldr-astro-${kind}-full.csv`);
       const csv = await readFile((await file.path())!, "utf8"); expect(csv).toContain('"Brand","TLDR Astro"'); expect(csv).toContain('"Orb (degrees)"');
+      await verifyGridPrecision(page, csv);
       expect(csv).not.toContain("Fixture Friend"); expect(csv).not.toContain("Test Reader");
       await page.screenshot({ path: info.outputPath(`${kind}-overview.png`) });
       await report.locator(".full-chart__grid-scroll").scrollIntoViewIfNeeded();
@@ -94,6 +119,28 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1440, height: 1000
     expect(errors).toEqual([]);
   });
 }
+
+for (const kind of ["sky", "natal"]) test(`${kind} precise grid matches branded SVG, PNG and PDF downloads`, async ({ page }, info) => {
+  test.setTimeout(90000);
+  await prepareChartReport(page, "light", "Fixture Friend"); await openReport(page, kind);
+  const report = page.locator(".full-chart");
+  const gridOrbs = (await report.locator(".full-chart__grid button > span:last-child").allTextContents()).sort();
+  await report.getByRole("button", { name: "Download", exact: true }).click();
+  for (const format of ["csv", "svg", "png", "pdf"]) {
+    await report.getByLabel("Download format", { exact: true }).selectOption(format);
+    const pending = page.waitForEvent("download");
+    await report.getByRole("button", { name: `Download ${format.toUpperCase()}`, exact: true }).click();
+    const file = await pending; await file.saveAs(info.outputPath(`${kind}.${format}`));
+    const bytes = await readFile((await file.path())!);
+    if (format === "csv") await verifyGridPrecision(page, bytes.toString());
+    else if (format === "svg") {
+      const orbs = await page.evaluate(text => [...new DOMParser().parseFromString(text, "image/svg+xml").documentElement.children]
+        .filter(element => element.localName === "text" && element.getAttribute("font-size") === "11").map(element => element.textContent ?? "").sort(), bytes.toString());
+      expect(orbs).toEqual(gridOrbs);
+    } else if (format === "png") expect(bytes.subarray(1, 4).toString()).toBe("PNG");
+    else { expect(bytes.subarray(0, 8).toString()).toBe("%PDF-1.4"); expect(bytes.toString()).toContain("/Creator (TLDR Astro)"); }
+  }
+});
 
 for (const theme of ["light", "dark"]) test(`real downloads render as standalone SVG, PNG and branded PDF ${theme}`, async ({ page }, info) => {
   test.setTimeout(120000);
