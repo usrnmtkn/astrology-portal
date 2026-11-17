@@ -48,6 +48,9 @@ export function contentLibraryDestination(row: LibraryRow): LibraryDestination |
   if (/^(?:sky-placement\/article\/|sky-lilith\/article\/|sky-nodes\/|fallback-hook\/sky-placement-(?:hook|lived|turn)\/moon\/)/u.test(key)) {
     return { areas: ['sky'], label: 'Sky · Shared placement reading', detail: 'Reusable writing when a dated article is unavailable.', kind: 'source', sourceKey: key };
   }
+  if (/^lunation\.(?:new|full)\./u.test(key)) {
+    return { areas: ['sky', 'calendar'], label: 'Sky & Calendar · Lunation aspect', detail: 'Used by matching New Moon and Full Moon articles with the calculated signs and aspect.', kind: 'source' };
+  }
   if (/^(?:sky[./]aspect[./]|sky-card\/|authored\/sky-aspect|fallback-hook\/sky-aspect)/u.test(key)) {
     return { areas: ['sky', 'calendar'], label: 'Sky & Calendar · Aspect passage', detail: 'Shared by matching aspect events.', kind: 'source' };
   }

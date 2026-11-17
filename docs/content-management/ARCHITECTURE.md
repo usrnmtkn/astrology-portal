@@ -417,6 +417,18 @@ copy wins for the matching signs, followed by a `status: "LIVE"` exact-aspect
 phrasebook copy, approved generated prose, and the general fallback template.
 Generated prose is provenance layer `generated`, never `authored`.
 
+Lunation articles additionally request `lunation.{new|full}.{moonSign}.{aspect}.{planet}.{planetSign}`
+from their calculated event-time snapshot. A published matching passage supplies
+the complete aspect section before ordinary Sky aspect copy. These keys are not
+requested by ordinary Moon transits or quarter-Moon articles. Both direct lunar
+routes and Calendar event navigation hydrate the same keys. Existing calculated
+aspect ordering and the two-section limit remain in place. Publication holds and
+retirement cannot reveal older generic wording underneath a held exact source.
+Studio's Live status checks the saved exact approval and the same publication
+and reader gates. `test-lunation-article-horoscopes.mts` covers source admission;
+the four destination cases in `calendar-lunation-preview.spec.ts` cover rendered
+publication, direct navigation and reload using isolated synthetic prose.
+
 ## 10. Surface map
 
 ### You: natal

@@ -5480,14 +5480,20 @@ function currentSkyV4LunationDetailArticle({
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
   const aspectSections = lunationAspectCandidates(sky.aspects)
-    .flatMap((aspect) => relatedSkyAspectSectionsForPlacement({
-      aspects: [aspect],
-      generatedAt,
-      generatedContent,
-      pointName: aspect.from,
-      positions: sky.positions,
-      timeZone: sky.location.timeZone
-    }))
+    .flatMap((aspect) => {
+      const exact = lunationArticleHoroscopeReader?.resolveLunationAspectReading(event, aspect, sky.positions, generatedContent);
+      if (exact) return exact.body ? [{ heading: skyAspectDisplayTitle(aspect), body: exact.body,
+        sourceKeys: [exact.contentKey], role: "aspect" as const, aspectType: aspect.type,
+        group: normalizedAspectToneBucket(aspect.type) }] : [];
+      return relatedSkyAspectSectionsForPlacement({
+        aspects: [aspect],
+        generatedAt,
+        generatedContent,
+        pointName: aspect.from,
+        positions: sky.positions,
+        timeZone: sky.location.timeZone
+      });
+    })
     .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
     .slice(0, 2);
 
