@@ -35,7 +35,7 @@
     {
       "scope": "Initial hosted horoscope-reader (2)",
       "job": "https://github.com/usrnmtkn/astrology-portal/actions/runs/44170648805/job/134352219293",
-      "result": "50 passed; Seasonal quality_exhausted 390 light timed out at its 95-second assertion boundary. The captured API returned the expected quality_exhausted result at that boundary; the unchanged test passed in a fresh local build. Later required gates must still pass."
+      "result": "50 passed; Seasonal quality_exhausted 390 light timed out at its 95-second assertion boundary. The captured API returned the expected quality_exhausted result at that boundary; the unchanged test passed in a fresh local build. The 12-stage exhausted fixture now has a bounded 120-second terminal assertion and 150-second whole-test deadline. All terminal-state, exact call-count, private-candidate, persistence and unchanged-row assertions remain. Later required gates must still pass."
     }
   ],
   "releaseAcceptance": "All four existing approved source bodies must render in their calculated matching New/Full Moon articles and remain complete after production reload. No paid generation or owner-content writes are part of verification."
