@@ -50,13 +50,14 @@ export function buildChartReport(source: ChartReportSource, includePoints = fals
   if (rectangular && source.secondary) {
     aspects = rows.flatMap(row => columns.flatMap(column => {
       const separation = angularSeparation(row.longitude, column.longitude);
+      // Natal targets are fixed; instantaneous speed cannot overshoot exactness.
+      const separationSpeed = Math.sign(((row.longitude - column.longitude + 540) % 360) - 180) * (row.speed ?? 0);
       const candidates = transitAspectDefinitions.map(definition => {
-        // The instantaneous derivative keeps fast points from overshooting exactness.
-        const separationSpeed = Math.sign(((row.longitude - column.longitude + 540) % 360) - 180) * (row.speed ?? 0);
         const residual = separation - definition.exact;
-        const applying = Number.isFinite(row.speed) && row.speed !== 0 && Math.abs(separation - definition.exact) >= 0.01
+        const orb = Math.abs(residual);
+        const applying = Number.isFinite(row.speed) && row.speed !== 0 && orb >= 0.01
           ? residual * separationSpeed < 0 : undefined;
-        return { type: definition.type, orb: Math.abs(separation - definition.exact), applying,
+        return { type: definition.type, orb, applying,
           limit: source.kind === "synastry" ? synastryWheelAspectOrbLimit(definition.type, row.name, column.name)
             : transitToNatalOrbLimit(row.name, applying === undefined ? undefined : applying ? "applying" : "separating") };
       }).filter(candidate => candidate.orb <= candidate.limit).sort((a, b) => a.orb - b.orb);
