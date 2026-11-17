@@ -19,6 +19,7 @@ type RelationshipChartFullscreenProps = {
   mode: RelationshipChartFullscreenMode;
   outerInitials?: string;
   outerName?: string;
+  restoreFocusId?: string;
   onClose: () => void;
   onComparisonSelect: (id: string) => void;
   onComparisonToggle: () => void;
@@ -33,6 +34,7 @@ export function RelationshipChartFullscreen({
   mode,
   outerInitials,
   outerName,
+  restoreFocusId,
   onClose,
   onComparisonSelect,
   onComparisonToggle
@@ -44,6 +46,7 @@ export function RelationshipChartFullscreen({
       className="chart-fullscreen-modal-root"
       panelClassName="full-chart-panel"
       titleId={titleId}
+      restoreFocusId={restoreFocusId}
       onClose={onClose}
     >
       <FullChartView source={report} titleId={titleId} onClose={onClose} controls={
@@ -98,6 +101,7 @@ export function FriendProfileChartFullscreen({
   if (mode === "synastry" && natalSky && relationshipComparisonSky) {
     return (
       <RelationshipChartFullscreen
+        restoreFocusId="friend-profile-chart-expand"
         comparisonOptions={comparisonOptions}
         comparisonPickerOpen={comparisonPickerOpen}
         comparisonSelectedId={comparisonSelectedId}
@@ -131,6 +135,7 @@ export function FriendProfileChartFullscreen({
   if (mode === "composite" && compositeSky) {
     return (
       <RelationshipChartFullscreen
+        restoreFocusId="friend-profile-chart-expand"
         comparisonOptions={comparisonOptions}
         comparisonPickerOpen={comparisonPickerOpen}
         comparisonSelectedId={comparisonSelectedId}

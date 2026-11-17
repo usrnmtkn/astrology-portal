@@ -84,6 +84,7 @@ type SynastryWheelProps = {
   innerMidheavenLongitude?: number;
   houseSignLabelStyle?: HouseSignLabelStyle;
   aspectInspector?: boolean;
+  showHouseSystemLabel?: boolean;
   outerLabel?: string;
   innerLabel?: string;
   aspectColorMode?: AspectColorMode;
@@ -101,6 +102,7 @@ export const SynastryWheel = memo(function SynastryWheel({
   innerMidheavenLongitude,
   houseSignLabelStyle = "text",
   aspectInspector = false,
+  showHouseSystemLabel = true,
   outerLabel = "Outer chart",
   innerLabel = "Inner chart",
   aspectColorMode: colorModeOverride
@@ -468,7 +470,7 @@ export const SynastryWheel = memo(function SynastryWheel({
     >
     <svg
       className={`sky-wheel sky-wheel--handoff synastry-wheel sky-wheel-synastry${inspectorEnabled ? " sky-wheel--aspect-inspector" : ""}${focusedInspectorPoint ? " is-inspecting-aspects" : ""}`}
-      viewBox="-4 -4 608 648"
+      viewBox={showHouseSystemLabel ? "-4 -4 608 648" : "-4 -4 608 608"}
       role="img"
       aria-label="Synastry chart with two rings"
       onClick={inspectorEnabled ? () => setFocusedInspectorPointId(null) : undefined}
@@ -644,9 +646,9 @@ export const SynastryWheel = memo(function SynastryWheel({
           })}
         </g>
       )}
-      <text x={center} y={626} className="chart-house-system-label">
+      {showHouseSystemLabel ? <text x={center} y={626} className="chart-house-system-label">
         Whole-sign houses · angles exact
-      </text>
+      </text> : null}
     </svg>
     {focusedInspectorPoint ? (
       <div className="aspect-inspector-summary" role="status" aria-live="polite">

@@ -43,6 +43,25 @@
   --sheet-radius: 36px;
   --type-sheet-title-size: 30px;
   /* Centered reading cards and their section labels, from the transit handoff. */
+  /* Open profile frame and editorial overview roles, approved handoff (11).
+     These roles supplement the shared body scale; compact excerpts retain
+     complete CMS text in the DOM and open the complete reading. */
+  --container-profile: 1304px;
+  --profile-page-gutter: 68px;
+  --layout-profile-balanced-columns: minmax(0, 640fr) minmax(0, 600fr);
+  --type-identity-title-size: 44px;
+  --tracking-overline: 0.14em;
+  --type-overview-title-size: 40px;
+  --type-overview-reading-size: 24px;
+  --type-feature-reading-size: 21px;
+  --type-card-excerpt-size: 17px;
+  --type-placement-excerpt-size: 15px;
+  --color-element-comparison-fire: #f4e1d6;
+  --color-element-comparison-earth: #e2e8d6;
+  --color-element-comparison-air: #e8e1f6;
+  --color-element-comparison-water: #d4e4f4;
+  --color-aspect-story-soft: #2f8f80;
+  --color-aspect-story-hard: #c8403f;
   --type-story-title-size: 30px;
   --type-section-emphasis-size: 28px;
   --leading-note: 1.4;
@@ -370,7 +389,6 @@
   --aspect-trine: var(--color-aspect-trine);
   --aspect-opposition: var(--color-aspect-opposition);
   --focus-ring: color-mix(in srgb, var(--interactive) 78%, var(--ink));
-  --synastry-row-bg: color-mix(in srgb, var(--surface-2) 62%, var(--card-bg));
   --elev-pill:
     0 1px 1px rgba(28, 32, 52, 0.05),
     0 2px 6px -3px rgba(28, 32, 52, 0.1);
@@ -902,7 +920,6 @@
   --text-nav: var(--type-nav-size);
   --friend-card-title-line: 1.2;
   --friend-row-title-size: var(--text-card-title);
-  --friend-row-description-size: var(--text-body);
   --friend-feed-chevron-size: 34px;
   --friend-feed-chevron-size-compact: 28px;
   --compatibility-card-glyph-size: 23px;
@@ -1266,22 +1283,6 @@
   --friend-toast-bg: #151821;
   --friend-toast-fg: var(--color-white);
   --relationship-wheel-size: var(--shared-chart-size);
-  --friend-detail-content-max: 720px;
-  --friend-detail-chart-max: var(--shared-chart-size);
-  --friend-wheel-stack-gap: var(--space-1);
-  --friend-detail-no-chart-max: 760px;
-  --friend-composite-row-template: 56px minmax(0, 1fr) auto;
-  --friend-composite-row-gap: 20px;
-  --friend-composite-row-padding: var(--space-6) calc(var(--space-7) - var(--space-1) / 2);
-  --friend-placement-column-title-padding: 0 0 var(--space-3);
-  --friend-placement-symbol-size: var(--text-glyph);
-  --friend-placement-label-size: var(--friend-row-title-size);
-  --friend-placement-meta-size: var(--text-placement-meta);
-  --friend-placement-summary-size: var(--text-description);
-  --friend-placement-compact-padding: var(--space-6) var(--space-5);
-  --friend-placement-row-gap: 12px;
-  --friend-placement-row-bg: var(--card-bg);
-  --friend-placement-row-border: var(--card-border);
   --radius-article: 28px;
   --radius-article-mobile: 22px;
   --shadow-article: 0 30px 80px color-mix(in srgb, var(--ink) 10%, transparent);
@@ -1532,16 +1533,8 @@
   --ds-optical-offset-2: -2px;
   --ds-overlap-18: -18px;
   --ds-card-inset-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
-  --ds-friends-detail-friend-wheel-stack-gap: 18px;
-  --ds-friends-detail-synastry-placement-meta-width: 104px;
-  --ds-friends-detail-aspect-row-template: 82px minmax(0, 1fr) 30px;
   --ds-aspect-row-gap-wide: 14px;
-  --ds-friends-detail-aspect-row-meta-width: 30px;
   --ds-friends-route-friends-page-rail: min(1640px, calc(100vw - 96px));
-  --ds-friends-route-friend-detail-copy-width: minmax(480px, 532px);
-  --ds-friends-route-friend-detail-top-clearance: var(--page-top);
-  --ds-friends-route-aspect-row-glyph-gap: 4px;
-  --ds-friends-route-aspect-row-glyph-width: 68px;
   --ds-friends-route-friends-page-rail-variant-2: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
   --ds-friends-friends-feed-avatar-overlap: -14px;
   --ds-layout-deferred-placeholder-height: 320px;
@@ -1934,4 +1927,25 @@
    inherited full-screen size and the available container dimensions exist. */
 .chart-shell--fullscreen {
   --chart-fullscreen-canvas-size: min(100cqw, 100cqh, var(--chart-fullscreen-wheel-size));
+}
+
+@media (max-width: 1100px) {
+  :root { --profile-page-gutter: var(--space-7); }
+}
+@media (max-width: 800px) {
+  :root {
+    --profile-page-gutter: var(--mobile-page-gutter);
+    --type-identity-title-size: var(--type-page-title-mobile-size);
+    --type-overview-title-size: var(--type-page-title-mobile-size);
+    --type-overview-reading-size: var(--text-body);
+    --type-feature-reading-size: var(--text-body);
+  }
+}
+:is(.theme-dark, [data-theme="dark"]) {
+  --color-element-comparison-fire: var(--element-chip-fire-bg);
+  --color-element-comparison-earth: var(--element-chip-earth-bg);
+  --color-element-comparison-air: var(--element-chip-air-bg);
+  --color-element-comparison-water: var(--element-chip-water-bg);
+  --color-aspect-story-soft: var(--color-aspect-trine);
+  --color-aspect-story-hard: var(--color-aspect-square);
 }

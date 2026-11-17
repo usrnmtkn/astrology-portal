@@ -54,10 +54,6 @@ import {
   socialPlacementRows,
   type SocialPlacementRow
 } from "../../components/charts/PlacementRows";
-import {
-  completeNatalChartTableRows,
-  natalChartTableRowFromSocial
-} from "../../components/charts/natalChartTableRows";
 import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
@@ -130,7 +126,6 @@ import {
   cleanGeneratedSectionHeading
 } from "../../utils/articleText";
 import type { RelationshipChartFullscreenMode } from "./RelationshipChartFullscreen";
-import type { FriendNatalChartViewMode } from "./FriendNatalViewControl";
 import type {
   CompatibilityDynamic,
   CompatibilityPlanetCard
@@ -840,6 +835,7 @@ export function ManualChartsPanel({
         id: `compatibility-${normalizeContentIdPart(planet)}`,
         glyph: yourPosition?.glyph || pointGlyph(planet),
         planet,
+        headline: rendered.headline,
         comparisonLabel,
         youSign: yourSign,
         friendName: chart.displayName,
@@ -1003,7 +999,6 @@ export function ManualChartsPanel({
   });
   const [friendsMainView, setFriendsMainView] = useState<FriendsMainView>(() => initialFriendsTab());
   const [friendProfileTab, setFriendProfileTab] = useState<FriendProfileTab>("compatibility");
-  const [friendNatalChartViewMode, setFriendNatalChartViewMode] = useState<FriendNatalChartViewMode>("circle");
   const [relationshipChartFullscreenMode, setRelationshipChartFullscreenMode] = useState<RelationshipChartFullscreenMode | null>(null);
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
@@ -1188,7 +1183,7 @@ export function ManualChartsPanel({
           orb: contact.orb,
           title: rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart?.displayName ?? "Friend"}'s ${contact.friendPoint.name}`,
           subtitle: rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect),
-          description: rendered?.body ? textPreview(rendered.body) : "",
+          description: rendered?.body ?? "",
           yourPoint: contact.yourPoint,
           friendPoint: contact.friendPoint
         };
@@ -1852,16 +1847,6 @@ export function ManualChartsPanel({
       ? selectedFriendPlacementRows
       : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row))
   ), [selectedChartIsEvent, selectedFriendPlacementRows]);
-  const selectedFriendNatalTableRows = useMemo(() => {
-    if (!friendProfileWork.natal || !selectedFriendReadyNatalChart) {
-      return [];
-    }
-
-    return completeNatalChartTableRows(
-      selectedFriendReadyNatalChart,
-      selectedFriendPlacementRows.map(natalChartTableRowFromSocial)
-    );
-  }, [friendProfileWork.natal, selectedFriendPlacementRows, selectedFriendReadyNatalChart]);
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
     showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
       ? natalAspectPatternReaderItemsForOwner(
@@ -3014,16 +2999,12 @@ export function ManualChartsPanel({
                 currentSkyPositions={currentSky?.positions ?? []}
                 houseSignLabelStyle={houseSignLabelStyle}
                 natalSky={selectedFriendReadyNatalChart}
-                natalTableRows={selectedFriendNatalTableRows}
-                natalViewMode={friendNatalChartViewMode}
                 onComparisonSelect={(id) => {
                   setRelationshipComparisonChartId(id);
                   setRelationshipComparisonPickerOpen(false);
                 }}
                 onComparisonToggle={() => setRelationshipComparisonPickerOpen((current) => !current)}
-                onNatalViewModeChange={setFriendNatalChartViewMode}
                 onOpenFullscreen={setRelationshipChartFullscreenMode}
-                outerInitials={profileInitials(selectedChart.displayName, selectedChart.displayName)}
                 relationshipComparisonSky={relationshipComparisonSky}
                 synastryAspects={selectedSynastryAspectLines}
                 transitAspects={selectedFriendTransitAspectLines}
@@ -3150,6 +3131,8 @@ export function ManualChartsPanel({
           {friendProfileTab === "composite" && (
             <FriendCompositeTab
               aspectGroups={selectedCompositeViewGroups}
+              compositeSky={selectedCompositeSky}
+              housesReliable={selectedFriendReadyNatalChart?.birthTimeKnown === true && relationshipComparisonSky?.birthTimeKnown === true}
               compositeAvailable={Boolean(selectedCompositeSky)}
               placementRows={selectedCompositePlacementRows}
               onPlacementClick={openCompositePlacementDetail}

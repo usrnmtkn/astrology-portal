@@ -353,6 +353,7 @@ export function PlacementGlyphIcon({
   fallback,
   pointName,
   retrograde = false,
+  textGlyphs = false,
   signName
 }: {
   badgePointName?: string;
@@ -361,16 +362,17 @@ export function PlacementGlyphIcon({
   pointName?: string;
   retrograde?: boolean;
   preferTextGlyph?: boolean;
+  textGlyphs?: boolean;
   signName?: string | null;
 }) {
   const retrogradeFileName = pointName && retrograde ? pointRetrogradeIconFiles[pointName] : undefined;
   const fileName = pointName ? retrogradeFileName ?? pointIconFiles[pointName] : undefined;
-  const href = zodiacAssetHref(fileName);
+  const href = textGlyphs ? undefined : zodiacAssetHref(fileName);
   const useTextGlyph = !href;
   const signKey = signName
     ? Object.keys(zodiacSignIconFiles).find((key) => key.toLowerCase() === signName.toLowerCase())
     : undefined;
-  const signHref = zodiacAssetHref(badgePointName ? pointIconFiles[badgePointName] : signKey ? zodiacSignIconFiles[signKey] : undefined);
+  const signHref = textGlyphs ? undefined : zodiacAssetHref(badgePointName ? pointIconFiles[badgePointName] : signKey ? zodiacSignIconFiles[signKey] : undefined);
   const glyphClassName = [
     className,
     useTextGlyph ? "placement-glyph--text" : "",
@@ -381,13 +383,13 @@ export function PlacementGlyphIcon({
     return (
       <span className={glyphClassName} aria-hidden="true">
         <span className="placement-glyph-pair__planet">
-          {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : fallback}
+          {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : textGlyphs && !/^\d+$/u.test(fallback) ? `${fallback}\uFE0E` : fallback}
         </span>
         <span className="placement-glyph-pair__sign" data-point={badgePointName}>
           {signHref ? (
             <img className="placement-sign-glyph-svg" src={signHref} alt="" aria-hidden="true" />
           ) : (
-            badgePointName ? pointGlyph(badgePointName) : signGlyph(signName!)
+            textGlyphs ? `${badgePointName ? pointGlyph(badgePointName) : signGlyph(signName!)}\uFE0E` : badgePointName ? pointGlyph(badgePointName) : signGlyph(signName!)
           )}
         </span>
       </span>
@@ -396,7 +398,7 @@ export function PlacementGlyphIcon({
 
   return (
     <span className={glyphClassName} aria-hidden="true">
-      {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : fallback}
+      {href ? <img className="placement-glyph-svg" src={href} alt="" aria-hidden="true" /> : textGlyphs && !/^\d+$/u.test(fallback) ? `${fallback}\uFE0E` : fallback}
     </span>
   );
 }
@@ -414,6 +416,7 @@ export function PlacementTableRow({
   metadata,
   onClick,
   pointName,
+  textGlyphs = false,
   readMoreAppearance = "text",
   retrograde = false,
   sign,
@@ -432,6 +435,7 @@ export function PlacementTableRow({
   metadata?: string;
   onClick?: () => void;
   pointName?: string;
+  textGlyphs?: boolean;
   readMoreAppearance?: "text" | "icon";
   retrograde?: boolean;
   sign?: string | null;
@@ -451,6 +455,7 @@ export function PlacementTableRow({
         className="placement-table-row__glyph"
         fallback={glyph}
         pointName={pointName}
+        textGlyphs={textGlyphs}
         retrograde={retrograde}
         signName={sign}
       />

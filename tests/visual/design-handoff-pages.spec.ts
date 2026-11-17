@@ -138,34 +138,35 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     for (const view of ['transits', 'synastry', 'composite']) {
       await page.goto(`/?date=2026-10-13#friends?tab=charts&chart=fixture-friend&view=${view}`);
       const pane = page.getByLabel(view === 'transits' ? 'Fixture Friend transits' : view === 'synastry' ? 'Synastry' : 'Composite', { exact: true });
-      const cards = pane.locator(view === 'composite' ? '.friend-aspect-row' : '.reading-story-card');
-      await expect(cards.first()).toBeVisible({ timeout: 60_000 });
-      const badge = cards.first().locator('.aspect-badge');
-      await expect(badge).toHaveCSS('width', view === 'composite' ? '48px' : '64px');
-      await expect(badge).toHaveCSS('border-radius', '50%');
-      expect(await badge.textContent()).toMatch(/^[☌☍□△⚹⚻]$/u);
-      await expect(cards.first().locator('.inline-glyph-icon')).toHaveCount(0);
-      const title = cards.first().locator('h3');
-      await expect(title).toHaveCSS('font-family', view === 'composite' ? /system-ui/ : /Newsreader/);
-      await expect(title).toHaveCSS('font-size', view === 'composite' ? width < 800 ? '17px' : '18px' : '26px');
-      const body = cards.first().locator('p').first();
-      await expect(body).toHaveCSS('font-size', '19px');
-      await expect(body).toHaveCSS('line-height', '28.5px');
-      await expect(cards.first().locator('.card-read-more--icon')).toHaveCSS('width', '44px');
-      const cardBox = (await cards.first().boundingBox())!;
-      const profileBox = (await page.locator('.friend-chart-page').boundingBox())!;
-      if (view !== 'composite' && width > 800) expect(cardBox.width).toBeLessThan(profileBox.width / 2);
-      await expectReadableTheme(page, '.friend-aspect-row h3, .friend-aspect-row p, .friend-transit-row h3, .friend-transit-row p');
-      await cards.first().screenshot({ path: `test-results/aspect-handoff-${view}-${width}-${theme}.png` });
-      const titleText = await title.textContent();
-      await cards.first().click();
+      const card = pane.locator(view === 'transits' ? '.personal-transit-card' : view === 'synastry' ? '.friend-dynamic-card' : '.friend-profile-pattern-open').first();
+      await expect(card).toBeVisible({ timeout: 60_000 });
+      if (view === 'transits') {
+        await expect(card.locator('.personal-transit-icon')).toHaveCSS('width', '88px');
+        await expect(card.locator('.personal-transit-icon__planet')).toHaveCSS('width', '30px');
+        await expect(card.locator('h3')).toHaveCSS('font-size', '30px');
+        await expect(card.locator('.updates-aspect-row__meta')).toHaveCount(0);
+        await expect(card.locator('.updates-aspect-row__meta-line')).toContainText(' · ');
+        await expect(card.locator('.card-read-more')).toHaveCSS('width', '56px');
+      } else if (view === 'synastry') {
+        await expect(card.locator('h4')).toHaveCSS('font-family', /Newsreader/);
+        await expect(card.locator('h4')).toHaveCSS('font-size', '30px');
+        await expect(card.locator('p')).toHaveCSS('font-size', '17px');
+        await expect(card.locator('.friend-dynamic-card__glyphs > span')).toHaveCount(3);
+        await expect(pane.locator('.synastry-placements-comparison')).toHaveCount(0);
+      } else {
+        await expect(pane.locator('.natal-placement-sections')).toBeVisible();
+        await expect(pane.getByRole('heading', {name: 'Composite planets', exact: true})).toBeVisible();
+      }
+      await card.scrollIntoViewIfNeeded();
+      await card.screenshot({ path: `test-results/aspect-handoff-${view}-${width}-${theme}.png` });
+      await card.click();
       const article = page.locator('.article-page');
       await expect(article.locator('h1')).toBeVisible();
       await expect(article.locator('.article-id > .aspect-badge')).toHaveCount(1);
       await page.reload();
       await expect(article.locator('h1')).toBeVisible();
       await page.getByRole('button', { name: /Close detail|Back/ }).first().click();
-      await expect(cards.filter({ hasText: titleText! }).first()).toBeVisible();
+      await expect(card).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
     await page.goto('/?date=2026-10-13#you?tab=chart');
@@ -194,44 +195,11 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     const first = cards.first();
     await expect(first).toBeVisible({ timeout: 60_000 });
     await expect(first.locator('.compatibility-card__glyph')).toHaveCSS('width', '56px');
-    await expect(first.locator('h3')).toHaveCSS('font-size', '26px');
-    await expect(first.locator('h3')).toHaveCSS('font-family', /Newsreader/);
-    await expect(first.locator('.compatibility-card__action')).toHaveCSS('width', '44px');
-    await expect(first.locator('.compatibility-card__action')).toHaveCSS('height', '44px');
-    await expect(first.locator('.compatibility-card__preview p').first()).toHaveCSS('font-size', '19px');
-    const dynamics = page.locator('.compatibility-dynamic-row');
-    await expect(dynamics.first()).toBeVisible();
-    const dynamicParagraphs = await dynamics.locator('p').allTextContents();
-    const dynamicTitles = await dynamics.locator('h4').allTextContents();
-    for (const dynamic of await dynamics.all()) {
-      await expect(dynamic).toHaveClass(/reading-story-card/);
-      await expect(dynamic).toHaveCSS('border-radius', '32px');
-      await expect(dynamic).toHaveCSS('background-color', await first.evaluate(node => getComputedStyle(node).backgroundColor));
-      await expect(dynamic).toHaveCSS('text-align', 'center');
-      await expect(dynamic).toHaveCSS('align-items', 'center');
-      await expect(dynamic.locator('.aspect-badge')).toHaveCSS('width', '64px');
-      await expect(dynamic.locator('.aspect-badge')).toHaveCSS('justify-content', 'center');
-      await expect(dynamic.locator('h4')).toHaveCSS('font-family', /Newsreader/);
-      await expect(dynamic.locator('h4')).toHaveCSS('font-size', '26px');
-      await expect(dynamic.locator('p').first()).toHaveCSS('font-size', '19px');
-      await expect(dynamic.locator('p').first()).toHaveCSS('line-height', '28.5px');
-      await expect(dynamic.locator('p').first()).toHaveCSS('text-align', 'center');
-      await expect(dynamic.locator('p').first()).toHaveCSS('max-height', 'none');
-      await expect(dynamic.locator('p').first()).toHaveCSS('mask-image', 'none');
-      await expect(dynamic.locator('.compatibility-dynamic-row__tag')).toHaveCSS('align-self', 'center');
-    }
-    const dynamicGrid = page.locator('.compatibility-dynamics__group .reading-story-grid').first();
-    const firstDynamicBox = (await dynamicGrid.locator('article').first().boundingBox())!;
-    const nextDynamicBox = (await dynamicGrid.locator('article').nth(1).boundingBox())!;
-    if (width > 800) expect(nextDynamicBox.y).toBeCloseTo(firstDynamicBox.y, 0);
-    else expect(nextDynamicBox.y).toBeGreaterThan(firstDynamicBox.y + firstDynamicBox.height);
-    await expectReadableTheme(page, '.compatibility-dynamic-row h4, .compatibility-dynamic-row p, .compatibility-dynamic-row__tag');
-    await dynamicGrid.evaluate(node => {
-      const navigationBottom = document.querySelector('.nav-pill')?.getBoundingClientRect().bottom ?? 0;
-      const gap = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--space-6'));
-      window.scrollBy(0, node.getBoundingClientRect().top - navigationBottom - gap);
-    });
-    await page.screenshot({ path: `test-results/compatibility-dynamics-${width}-${theme}.png` });
+    await expect(first.locator('h3')).toHaveCount(0);
+    await expect(first.locator('.compatibility-card__action')).toHaveCSS('min-height', '48px');
+    await expect(first.locator('.compatibility-card__action')).toContainText('Read Sun');
+    await expect(first.locator('.compatibility-card__preview p').first()).toHaveCSS('font-size', '17px');
+    await expect(page.locator('.compatibility-dynamic-row')).toHaveCount(0);
     const cardsBox = (await page.locator('.compatibility-card-list').boundingBox())!;
     const railBox = (await page.locator('.friend-chart-page').boundingBox())!;
     expect(cardsBox.width).toBeCloseTo(railBox.width, 0);
@@ -245,7 +213,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(signs).toHaveCount(2);
     expect((await signs.nth(1).boundingBox())!.y).toBeGreaterThan((await signs.first().boundingBox())!.y);
     await expectReadableTheme(page, '.compatibility-card h3, .compatibility-card__signs, .compatibility-card__action, .compatibility-card__match');
-    await expect(page.getByRole('heading', { name: 'Planet by planet', exact: true })).toHaveCSS('font-size', '22px');
+    await expect(page.getByRole('heading', { name: 'Planet by planet', exact: true })).toHaveCSS('font-size', '26px');
     await first.scrollIntoViewIfNeeded();
     await page.screenshot({ path: `test-results/compatibility-handoff-${width}-${theme}.png` });
     await first.focus(); await page.keyboard.press('Enter');
@@ -264,8 +232,6 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
     await expect(prose).toHaveText(fullText, { useInnerText: true });
     await page.getByRole('button', { name: /Close detail|Back/ }).first().click();
     await expect(first).toBeVisible();
-    await expect(dynamics.locator('h4')).toHaveText(dynamicTitles);
-    await expect(dynamics.locator('p')).toHaveText(dynamicParagraphs);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
@@ -484,85 +450,101 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
  });
 }
 
-for(const width of [320,390,960,1440]) for(const theme of ['light','dark']) {
- test(`friend profile layout across sections ${width} ${theme}`,async({page})=>{
-  test.setTimeout(120_000);await page.setViewportSize({width,height:1100});await seed(page,theme);await authenticate(page);
-  const friendName=width===320 || width===960 ? 'Fixture Friend With A Longer Display Name' : 'Fixture Friend';
-  await page.addInitScript(name=>{const key='tldrastro:manualCharts:design-reader';const charts=JSON.parse(localStorage.getItem(key)??'[]');localStorage.setItem(key,JSON.stringify(charts.map((chart:any)=>({...chart,displayName:name}))));},friendName);
+for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']) {
+ test(`friend profile layout across sections ${width} ${theme}`, async ({page}) => {
+  test.setTimeout(150_000);
+  await page.setViewportSize({width, height: 1100}); await seed(page, theme); await authenticate(page);
+  const friendName = width === 320 || width === 960 ? 'Fixture Friend With A Longer Display Name' : 'Fixture Friend';
+  await page.addInitScript(name => {
+    const key = 'tldrastro:manualCharts:design-reader';
+    const charts = JSON.parse(localStorage.getItem(key) ?? '[]');
+    localStorage.setItem(key, JSON.stringify(charts.map((chart: any) => ({...chart, displayName: name}))));
+  }, friendName);
   await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-friend&view=compatibility');
-  const profile=page.getByRole('region',{name:`${friendName} chart profile`,exact:true});
-  const heading=profile.locator('.friend-profile-heading'), title=heading.locator('h1');
+  const profile = page.getByRole('region', {name: `${friendName} chart profile`, exact: true});
+  const heading = profile.locator('.friend-profile-heading'), title = heading.locator('h1');
   await expect(title).toHaveText(friendName);
-  await expect(profile.locator('.compatibility-card').first()).toBeVisible({timeout:60_000});
-  await expect(profile.locator('.sky-wheel-synastry')).toBeVisible();
-  await expect(profile.locator('.compatibility-card__source')).toHaveCount(0);
-  const tabs=profile.getByRole('tablist',{name:'Chart profile sections',exact:true});
-  const edit=profile.getByRole('button',{name:`Edit ${friendName}`,exact:true});
-  const style=await title.evaluate(node=>{const s=getComputedStyle(node);return {family:s.fontFamily,size:s.fontSize,weight:s.fontWeight,line:s.lineHeight,tracking:s.letterSpacing};});
-  expect(style.family).toContain('Newsreader');expect(style).toMatchObject({size:'36px',weight:'400',line:'40.32px',tracking:'-0.72px'});
-  const panelBox=(await profile.boundingBox())!, headerBox=(await heading.boundingBox())!, tabsBox=(await tabs.boundingBox())!, editBox=(await edit.boundingBox())!;
-  const backBox=(await page.getByRole('button',{name:'Charts',exact:true}).boundingBox())!, navBox=(await page.locator('.nav-pill').boundingBox())!;
-  const logoBox=(await page.locator('.brand-dot').boundingBox())!, menuBox=(await page.getByRole('button',{name:'Open menu',exact:true}).boundingBox())!;
-  expect(logoBox.x).toBeGreaterThanOrEqual(navBox.x);
-  expect(logoBox.x+logoBox.width).toBeLessThanOrEqual(navBox.x+navBox.width);
-  expect(backBox.x).toBeGreaterThanOrEqual(0);
-  expect(menuBox.x+menuBox.width).toBeLessThanOrEqual(width);
-  await expect(page.getByRole('button',{name:'Your profile',exact:true})).toBeVisible();
-  if(width<=520){
-    await page.getByRole('button',{name:'Open menu',exact:true}).click();
-    await expect(page.locator('.site-menu-theme').getByRole('button',{name:theme,exact:true})).toHaveAttribute('aria-pressed','true');
-    await page.keyboard.press('Escape');
-  }
-  expect(await page.locator('.brand-dot').evaluate(node=>{const b=node.getBoundingClientRect();const hit=document.elementFromPoint(b.x+b.width/2,b.y+b.height/2);return hit===node||Boolean(hit&&node.contains(hit));})).toBe(true);
-  expect(Math.abs(backBox.y+backBox.height/2-navBox.y-navBox.height/2)).toBeLessThan(1);
-  expect(panelBox.width).toBeLessThanOrEqual(1053);
-  expect(headerBox.y).toBeGreaterThan((await page.locator('.nav-pill').boundingBox())!.y+(await page.locator('.nav-pill').boundingBox())!.height);
-  expect(Math.abs(editBox.x+editBox.width-panelBox.x-panelBox.width)).toBeLessThan(1);
-  if(width>800)expect(tabsBox.width).toBeLessThan(panelBox.width);
-  else expect(tabsBox.width).toBeLessThanOrEqual(panelBox.width);
-  if(width>800)expect(Math.abs(tabsBox.y+tabsBox.height/2-editBox.y-editBox.height/2)).toBeLessThan(1);
-  else expect(tabsBox.y).toBeGreaterThanOrEqual(editBox.y+editBox.height);
-  const visual=(await profile.locator('.friend-detail-chart-rail').boundingBox())!, content=(await profile.locator('.friend-daily-forecast').first().boundingBox())!;
-  expect(visual.y).toBeGreaterThanOrEqual(headerBox.y+headerBox.height);
-  if(width>800){expect(Math.abs(visual.y-content.y)).toBeLessThan(1);expect(visual.x+visual.width).toBeLessThanOrEqual(content.x);}
-  else expect(content.y).toBeGreaterThanOrEqual(visual.y+visual.height);
-  expect((await profile.getByRole('heading').allTextContents())[0]).toBe(friendName);
-  await expect(profile.locator('.compatibility-card h3').first()).toHaveCSS('font-family',/Newsreader/);
-  await expect(profile.locator('.compatibility-card h3').first()).toHaveCSS('font-size','26px');
-  await expect(profile.locator('.compatibility-card h3').first()).toHaveCSS('font-weight','400');
-  const glyphFilter=await profile.locator('.compatibility-sign-label img').first().evaluate(node=>{
-    const reference=document.createElement('span');reference.style.filter='var(--filter-glyph-neutral)';node.parentElement!.append(reference);
-    const expected=getComputedStyle(reference).filter;reference.remove();return {actual:getComputedStyle(node).filter,expected};
-  });
-  expect(glyphFilter.actual).toBe(glyphFilter.expected);expect(glyphFilter.actual).not.toBe('none');
-  await expectReadableTheme(page,'.friend-profile-heading h1, .friend-view-tab, .compatibility-card h3, .compatibility-card p');
-  await page.screenshot({path:`test-results/design-friend-layout-${width}-${theme}.png`});
-  const bodyBefore=await profile.locator('.compatibility-card p').allTextContents();
-  await edit.click();await expect(page.getByRole('dialog')).toBeVisible();await page.keyboard.press('Escape');await expect(edit).toBeFocused();
-  for(const name of ['Transits','Natal','Synastry','Composite','Compatibility']){
-    const tab=tabs.getByRole('tab',{name,exact:true,includeHidden:true});
-    if(await tab.isVisible())await tab.click();
+  await expect(profile.locator('.compatibility-card').first()).toBeVisible({timeout: 60_000});
+  const tabs = profile.getByRole('tablist', {name: 'Chart profile sections', exact: true});
+  const edit = profile.getByRole('button', {name: `Edit ${friendName}`, exact: true});
+  await expect(title).toHaveCSS('font-family', /Newsreader/);
+  await expect(title).toHaveCSS('font-size', width > 800 ? '44px' : '34px');
+  await expect(title).toHaveCSS('font-weight', '400');
+  const headerY = (await heading.boundingBox())!.y;
+  const panelBox = (await profile.boundingBox())!;
+  expect(panelBox.width).toBeLessThanOrEqual(width - (width > 1100 ? 136 : width > 800 ? 64 : 32));
+  if (width === 1440) { expect(panelBox.width).toBe(1304); expect(panelBox.x).toBe(68); }
+  // The installed compatibility passages have no CMS headline. Keep that gap
+  // visible instead of repeating the tag or inventing the mockup's headline.
+  await expect(profile.locator('.compatibility-card h3')).toHaveCount(0);
+  await expect(profile.locator('.compatibility-card__preview p').first()).toHaveCSS('font-size', '17px');
+  await expect(profile.locator('.compatibility-card__action').first()).toContainText('Read Sun');
+  await expect(profile.locator('.compatibility-card .compatibility-sign-label img')).toHaveCount(0);
+  const bodyBefore = await profile.locator('.compatibility-card p').allTextContents();
+  await edit.click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape'); await expect(edit).toBeFocused();
+  for (const name of ['Compatibility', 'Transits', 'Natal', 'Synastry', 'Composite']) {
+    const tab = tabs.getByRole('tab', {name, exact: true, includeHidden: true});
+    if (await tab.isVisible()) await tab.click();
     else {
-      await profile.getByRole('button',{name:'More, 2 sections',exact:true}).click();
-      const menu=page.getByRole('menu',{name:'More chart profile sections',exact:true});await expect(menu).toBeVisible();
-      const box=(await menu.boundingBox())!;expect(box.x).toBeGreaterThanOrEqual(0);expect(box.x+box.width).toBeLessThanOrEqual(width);
-      await menu.getByRole('menuitemradio',{name:new RegExp(`^${name}`)}).click();
+      await profile.getByRole('button', {name: 'More, 2 sections', exact: true}).click();
+      await page.getByRole('menuitemradio', {name: new RegExp(`^${name}`)}).click();
     }
-    await expect(tab).toHaveAttribute('aria-selected','true');
-    await expect(profile.locator('.friend-detail-chart-rail').locator(name==='Natal' ? '.interactive-zodiac-wheel__svg' : '.sky-wheel')).toBeVisible({timeout:60_000});
-    if(name==='Natal') {
-      const chart=(await profile.locator('.friend-detail-chart-rail').boundingBox())!;
-      const placements=(await profile.locator('.natal-placement-sections').boundingBox())!;
-      expect(chart.y).toBeGreaterThanOrEqual((await heading.boundingBox())!.y+(await heading.boundingBox())!.height);
-      expect(placements.y).toBeGreaterThanOrEqual(chart.y+chart.height);
-    }
+    await expect(tab).toHaveAttribute('aria-selected', 'true');
+    const rail = profile.locator('.friend-detail-chart-rail');
+    await expect(rail.locator(name === 'Natal' ? '.interactive-zodiac-wheel__svg' : '.sky-wheel')).toBeVisible({timeout: 60_000});
+    await page.evaluate(() => scrollTo(0, 0));
+    expect(Math.abs((await heading.boundingBox())!.y - headerY)).toBeLessThan(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(title).toHaveText(friendName);
-    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    const chart = (await rail.boundingBox())!;
+    const topCopy = profile.locator(name === 'Compatibility' ? '.friend-profile-overview' : name === 'Natal' ? '.natal-big-three' : '.friend-profile-intro');
+    await expect(topCopy).toBeVisible({timeout: 60_000});
+    const copy = (await topCopy.boundingBox())!;
+    if (width > 800) {
+      expect(copy.x).toBeGreaterThanOrEqual(chart.x + chart.width);
+      if (width === 1440) { expect(chart.width).toBe(640); expect(copy.width).toBe(600); expect(copy.x - chart.x - chart.width).toBe(64); }
+      if (name === 'Synastry' || name === 'Composite') {
+        expect(Math.abs(chart.y - copy.y)).toBeLessThan(1);
+        await expect(rail).toHaveCSS('position', 'sticky'); await expect(rail).toHaveCSS('top', '32px');
+      } else expect(Math.abs(chart.y + chart.height / 2 - copy.y - copy.height / 2)).toBeLessThan(1);
+    } else expect(copy.y).toBeGreaterThanOrEqual(chart.y + chart.height);
+    await expect(rail.locator('.chart-house-system-label, .interactive-zodiac-wheel__caption')).toHaveCount(0);
+    const expand = rail.locator('.natal-chart-expand');
+    await expect(expand).toHaveCSS('width', '48px'); await expect(expand).toHaveText('');
+    await expand.click(); await expect(page.getByRole('dialog')).toBeVisible();
+    await page.getByRole('button', {name: 'Close full-screen chart', exact: true}).click(); await expect(expand).toBeFocused();
+    if (name === 'Composite') {
+      const picker = rail.locator('.friend-compare-pill');
+      await expect(picker).toHaveCSS('border-width', '0px');
+      expect((await picker.boundingBox())!.width).toBeLessThan(chart.width);
+      await picker.click(); await expect(page.getByRole('dialog')).toBeVisible(); await page.keyboard.press('Escape');
+    }
+    if (name === 'Synastry') {
+      await expect(profile.locator('.synastry-placements-comparison')).toHaveCount(0);
+      await expect(profile.locator('.friend-profile-dynamics__columns > section > h3')).toHaveText(['What flows', 'Challenges', 'Mixed or charged']);
+    }
+    if (name === 'Natal' || name === 'Composite') {
+      const placements = profile.locator('.natal-placement-sections');
+      expect((await placements.boundingBox())!.y).toBeGreaterThanOrEqual(Math.max(chart.y + chart.height, copy.y + copy.height));
+      await expect(placements.getByRole('heading', {name: name === 'Natal' ? 'Planets' : 'Composite planets', exact: true})).toBeVisible();
+      await expect(placements.locator('.placement-glyph-svg, .placement-sign-glyph-svg')).toHaveCount(0);
+      await expect(placements.getByRole('heading', {name: 'Empty houses', exact: true})).toBeVisible();
+      await expect(placements.locator('.placement-table-row__description').first()).toHaveCSS('font-size', '15px');
+      if (name === 'Natal') {
+        await expect(profile.locator('.natal-big-three .placement-table-row__description').first()).toHaveCSS('font-size', '20px');
+        await expect(profile.locator('.natal-big-three .placement-table-row__glyph').first()).toHaveCSS('border-radius', '16px');
+      }
+    }
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.screenshot({path: `test-results/design-friend-refined-${name.toLowerCase()}-${width}-${theme}.png`, fullPage: width === 1440});
   }
+  await page.goto('/?date=2026-10-13#friends?tab=charts&chart=fixture-friend&view=compatibility');
   await expect(profile.locator('.compatibility-card').first()).toBeVisible();
   expect(await profile.locator('.compatibility-card p').allTextContents()).toEqual(bodyBefore);
-  await page.reload();await expect(title).toHaveText(friendName);await expect(profile.locator('.compatibility-card').first()).toBeVisible({timeout:60_000});
-  await page.getByRole('button',{name:'Charts',exact:true}).click();await expect(page.getByRole('heading',{level:1,name:'Friends',exact:true})).toBeVisible();
+  await page.reload(); await expect(title).toHaveText(friendName); await expect(profile.locator('.compatibility-card').first()).toBeVisible({timeout: 60_000});
+  await expectReadableTheme(page, '.friend-profile-heading h1, .friend-view-tab, .compatibility-card h3, .compatibility-card p');
+  await page.getByRole('button', {name: 'Charts', exact: true}).click();
+  await expect(page.getByRole('heading', {level: 1, name: 'Friends', exact: true})).toBeVisible();
  });
 }
 
@@ -609,7 +591,7 @@ for(const width of [390,1440]) for(const theme of ['light','dark']) {
   profile=page.getByRole('region',{name:'Connected Friend chart profile',exact:true});
   await expect(profile.locator('h1')).toHaveText('Connected Friend');await expect(profile.locator('.friend-kebab')).toHaveCount(0);
   await expect(profile.locator('.friend-detail-chart-rail').locator('.sky-wheel, .interactive-zodiac-wheel__svg')).toBeVisible({timeout:60_000});
-  box=(await profile.boundingBox())!;expect(box.width).toBeLessThanOrEqual(1053);
+  box=(await profile.boundingBox())!;expect(box.width).toBeLessThanOrEqual(1304);
   const tabs=(await profile.getByRole('tablist',{name:'Chart profile sections',exact:true}).boundingBox())!;expect(tabs.x+tabs.width).toBeLessThanOrEqual(box.x+box.width);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  });
@@ -2231,7 +2213,7 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     for (const section of [empty, points]) {
       for (const description of await section.locator('.placement-table-row__description').all()) {
         await expect(description).toHaveCSS('font-family', /Newsreader/);
-        await expect(description).toHaveCSS('font-size', '19px');
+        await expect(description).toHaveCSS('font-size', audience === 'friend' ? '15px' : '19px');
       }
       await section.scrollIntoViewIfNeeded();
       await section.evaluate(node => node.scrollIntoView({ block: 'center' }));
@@ -2241,11 +2223,13 @@ for (const width of [390, 1440]) for (const theme of ['light', 'dark']) for (con
     await page.reload();
     await expect(cards).toHaveCount(expectedHouses.length);
     await expect(points.locator('.card-read-more--icon')).toHaveCount(4);
+    if (audience === 'you') {
     await page.getByRole('tab', { name: 'Table', exact: true }).click();
     await expect.poll(() => page.locator('.natal-chart-data-table tbody tr').evaluateAll(rows => rows
       .filter(row => row.lastElementChild?.textContent?.trim() === '—')
       .map(row => Number(row.firstElementChild?.textContent)))).toEqual(expectedHouses);
     await page.getByRole('tab', { name: 'Circle', exact: true }).click();
+    }
     const northNode = points.locator('.placement-table-row').first();
     await northNode.scrollIntoViewIfNeeded();
     await northNode.focus(); await page.keyboard.press('Enter');

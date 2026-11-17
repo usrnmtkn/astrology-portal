@@ -1,16 +1,18 @@
 import { FormattedProse } from "../../components/FormattedProse";
-import { CardReadMore } from "../../components/CardReadMore";
+import { ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { FriendProfileForecast } from "./FriendProfileForecast";
 import type { KeyboardEvent } from "react";
 
-import { zodiacAssetHref, zodiacSignIconFiles } from "../../components/charts/chartAssets";
+import { signGlyph } from "../../components/charts/chartAssets";
 import { zodiacElementForSign } from "../../services/chartMath";
 import { compatibilityCardParagraphs } from "./compatibilityCardCopy";
-import { AspectBadge } from "../../components/charts/AspectBadge";
 
 export type CompatibilityPlanetCard = {
   id: string;
   glyph: string;
   planet: string;
+  headline?: string;
   comparisonLabel: string;
   youSign: string;
   friendName: string;
@@ -61,49 +63,39 @@ export type CompatibilityTabProps = {
 };
 
 function CompatibilitySignLabel({ sign }: { sign: string }) {
-  const iconHref = zodiacAssetHref(zodiacSignIconFiles[sign]);
-
-  return (
-    <span className="compatibility-sign-label">
-      {iconHref ? <img src={iconHref} alt="" aria-hidden="true" /> : null}
-      <span>{sign}</span>
-    </span>
-  );
+  return <span className="compatibility-sign-label"><span className="compatibility-sign-glyph" aria-hidden="true">{signGlyph(sign)}︎</span><span>{sign}</span></span>;
 }
 
 
 export function CompatibilityTab({
   cards,
   daily,
-  dynamics,
   friendName,
   onOpenCard
 }: CompatibilityTabProps) {
-  const groupedDynamics = dynamics.reduce<Record<CompatibilityDynamic["heading"], CompatibilityDynamic[]>>((groups, dynamic) => {
-    groups[dynamic.heading].push(dynamic);
-    return groups;
-  }, {
-    "What flows": [],
-    "Challenges": [],
-    "Mixed or charged dynamics": []
-  });
+  const [showAll, setShowAll] = useState(false);
+  const visibleCards = showAll ? cards : cards.slice(0, 6);
 
   return (
     <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${friendName} compatibility`}>
       <div className="friend-profile-copy-column compatibility-column">
         {daily ? (
-          <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Today - ${daily.dateLabel}`}>
-            <span className="eyebrow section-label friend-section-label">Today - {daily.dateLabel}</span>
-            <FormattedProse text={daily.body} />
-          </section>
+          <FriendProfileForecast eyebrow={`Between you · ${daily.dateLabel}`} body={daily.body} ariaLabel={`Today - ${daily.dateLabel}`} />
         ) : null}
         <section className="compatibility-comparisons" aria-labelledby="compatibility-comparisons-title">
-          <h2 className="chart-section-title" id="compatibility-comparisons-title">Planet by planet</h2>
+          <div className="friend-profile-section-heading"><h2 className="chart-section-title" id="compatibility-comparisons-title">Planet by planet</h2>
+            {cards.length > 6 ? <button type="button" className="friend-profile-see-all" aria-expanded={showAll} onClick={() => setShowAll(!showAll)}>{showAll ? "Show less" : `See all ${cards.length}`} <ChevronRight size={16} aria-hidden="true" /></button> : null}
+          </div>
           <div className="compatibility-card-list">
-          {cards.map((card) => {
+          {visibleCards.map((card) => {
             const writeup = card.goDeeper;
             const contentTrace = writeup.contentTrace ?? card.contentTrace;
-            const sameSign = writeup.sameSign;
+            const sameSign = card.youSign === card.friendSign;
+            const yourElement = zodiacElementForSign(card.youSign);
+            const friendElement = zodiacElementForSign(card.friendSign);
+            const elementLabel = sameSign ? card.youSign : yourElement === friendElement ? `${yourElement} signs` : `${yourElement} meets ${friendElement.toLowerCase()}`;
+            const tag = `${card.planet} · ${elementLabel}`;
+            const headline = card.headline && card.headline.toLowerCase() !== tag.toLowerCase() ? card.headline : "";
             const fullParagraphs = compatibilityCardParagraphs(card);
             const opensDetail = fullParagraphs.length > 0 && Boolean(onOpenCard);
             const openDetail = () => {
@@ -136,11 +128,11 @@ export function CompatibilityTab({
               tabIndex={opensDetail ? 0 : undefined}
             >
               <header className="compatibility-card__header">
-                <span className="compatibility-card__glyph" aria-hidden="true">{writeup.glyph || card.glyph}</span>
-                {writeup.match ? <span className={`compatibility-card__match${sameSign ? " is-same-sign" : ""}`}>{writeup.match}</span> : null}
+                <span className="compatibility-card__glyph" aria-hidden="true">{writeup.glyph || card.glyph}︎</span>
+                <span className={`compatibility-card__match${sameSign ? " is-same-sign" : ""}`}>{tag}</span>
                 <div>
                   <div className="compatibility-card__title-row">
-                    <h3>{card.planet}</h3>
+                    {headline ? <h3>{headline}</h3> : null}
 
                   </div>
                 </div>
@@ -152,37 +144,12 @@ export function CompatibilityTab({
               <div className="compatibility-card__preview" aria-hidden={opensDetail ? true : undefined}>
                 {fullParagraphs.map((paragraph, index) => <FormattedProse key={`${card.id}-${index}`} text={paragraph} />)}
               </div>
-              {opensDetail ? <CardReadMore appearance="icon" className="compatibility-card__action" /> : null}
+              {opensDetail ? <span className="compatibility-card__action">Read {card.planet} <ChevronRight size={16} aria-hidden="true" /></span> : null}
             </article>
           )})}
           </div>
         </section>
 
-        {dynamics.length > 0 ? (
-          <section className="compatibility-dynamics" aria-label="Compatibility dynamics">
-            {(Object.keys(groupedDynamics) as CompatibilityDynamic["heading"][]).map((heading) => (
-              groupedDynamics[heading].length > 0 ? (
-                <div className="compatibility-dynamics__group" key={heading}>
-                  <span className="eyebrow section-label friend-section-label">{heading}</span>
-                  <div className="reading-story-grid">
-                    {groupedDynamics[heading].map((dynamic) => (
-                      <article className="aspect-row aspect-row-static friend-aspect-row compatibility-dynamic-row reading-story-card" key={dynamic.id}>
-                        {dynamic.aspect ? <AspectBadge aspect={dynamic.aspect} /> : null}
-                        <span className="aspect-row-copy">
-                          <h4>{dynamic.title}</h4>
-                          <FormattedProse text={dynamic.summary} />
-                          <span className="aspect-row-subtitle ui-pill ui-pill--muted compatibility-dynamic-row__tag">
-                            {dynamic.meta}
-                          </span>
-                        </span>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              ) : null
-            ))}
-          </section>
-        ) : null}
       </div>
     </div>
   );
