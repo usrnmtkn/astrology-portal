@@ -8237,12 +8237,6 @@ function renderReaderDirectedSynastryContact(
     return null;
   }
 
-  const relationshipType = options.relationshipType ?? null;
-  const friendVenusMarsSquare = relationshipType !== null
-    && normalizeRelationshipContextKey(relationshipType) === "friend"
-    && normalizedAspect === "square"
-    && [contact.yourPoint.name, contact.friendPoint.name].sort().join("/") === "Mars/Venus";
-
   try {
     const otherReference = resolveThirdPersonReference({
       name: friendName,
@@ -8258,8 +8252,8 @@ function renderReaderDirectedSynastryContact(
         object: otherReference.object,
         possessive: otherReference.possessiveAdjective
       },
-      romanticAllowed: options.romanticAllowed ?? (isExplicitRomanticRelationship(relationshipType) || friendVenusMarsSquare),
-      relationshipType
+      romanticAllowed: options.romanticAllowed ?? false,
+      relationshipType: options.relationshipType ?? null
     });
     const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 

@@ -865,6 +865,23 @@ export function ManualChartsPanel({
     });
   }
 
+  function renderFriendSynastryContact(
+    contact: SynastryContact,
+    friendName: string,
+    otherPronouns?: PronounChoice | null,
+    relationshipType?: string | null
+  ) {
+    const friendVenusMarsSquare = relationshipType != null
+      && normalizeRelationshipContextKey(relationshipType) === "friend"
+      && contact.aspect === "square"
+      && [contact.yourPoint.name, contact.friendPoint.name].sort().join("/") === "Mars/Venus";
+    return renderReaderDirectedSynastryContact(contact, friendName, {
+      otherPronouns,
+      relationshipType,
+      romanticAllowed: isExplicitRomanticRelationship(relationshipType) || friendVenusMarsSquare
+    });
+  }
+
   function compatibilityDynamicsFromContacts(
     contacts: SynastryContact[],
     friendName: string,
@@ -880,10 +897,7 @@ export function ManualChartsPanel({
     void comparisonPronouns;
 
     return contacts.flatMap((contact) => {
-      const rendered = renderReaderDirectedSynastryContact(contact, friendName, {
-        otherPronouns: friendPronouns,
-        relationshipType
-      });
+      const rendered = renderFriendSynastryContact(contact, friendName, friendPronouns, relationshipType);
       if (!rendered) return [];
 
       return [{
@@ -1185,10 +1199,7 @@ export function ManualChartsPanel({
       key: group.key,
       label: group.label,
       contacts: group.aspects.map((contact) => {
-        const rendered = renderReaderDirectedSynastryContact(contact, selectedChart?.displayName ?? "Friend", {
-          otherPronouns: selectedChart?.pronouns,
-          relationshipType: selectedRelationshipContextType
-        });
+        const rendered = renderFriendSynastryContact(contact, selectedChart?.displayName ?? "Friend", selectedChart?.pronouns, selectedRelationshipContextType);
 
         return {
           id: contact.id,
@@ -2422,10 +2433,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    const rendered = renderReaderDirectedSynastryContact(contact, selectedChart.displayName, {
-      otherPronouns: selectedChart.pronouns,
-      relationshipType: selectedRelationshipContextType
-    });
+    const rendered = renderFriendSynastryContact(contact, selectedChart.displayName, selectedChart.pronouns, selectedRelationshipContextType);
     const title = rendered?.headline ?? `Your ${contact.yourPoint.name} ${contact.aspect} ${selectedChart.displayName}'s ${contact.friendPoint.name}`;
     const subtitle = rendered?.tag ?? relationshipThemeTitle(contact.yourPoint.name, contact.friendPoint.name, contact.aspect);
 
