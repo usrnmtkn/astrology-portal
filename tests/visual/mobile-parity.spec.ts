@@ -37,7 +37,7 @@ test.beforeAll(async()=>{
  {open==='own'&&<CreateChartDialog onClose={()=>setOpen('')} form={own} setForm={setOwn} profile={null} step='birth' setStep={()=>{}} saving={false} message='' onSave={()=>{window.__mobileOwnSaves=(window.__mobileOwnSaves||0)+1}}/>}
  </>}
  createRoot(document.getElementById('root')).render(<App/>);
- `},bundle:true,write:false,format:'iife',platform:'browser',external:['module'],loader:{'.woff2':'dataurl'},jsx:'automatic',outfile:'harness.js',define:{'process.env.NODE_ENV':'"production"','import.meta.env':'{}'}});
+ `},bundle:true,write:false,format:'iife',platform:'browser',external:['module'],jsx:'automatic',outfile:'harness.js',define:{'process.env.NODE_ENV':'"production"','import.meta.env':'{}'}});
  script=result.outputFiles.find(file=>file.path.endsWith('.js'))!.text;
  styles=result.outputFiles.find(file=>file.path.endsWith('.css'))?.text??'';
 });

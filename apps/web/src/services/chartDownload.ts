@@ -1,4 +1,3 @@
-import newsreaderUrl from "../assets/fonts/newsreader.woff2?url";
 import { aspectSymbols, reportDegree, reportPointGlyph, type ChartReport } from "./chartReport";
 import { wheelDegree } from "./zodiacWheelFacts";
 
@@ -54,7 +53,7 @@ async function standaloneWheel(wheel: SVGSVGElement) {
 export async function chartSvg(options: Omit<Options, "format">) {
   const { report, scope, includeDetails, metadata, showOrbs } = options;
   if (scope !== "grid" && !options.wheel) throw new Error("Chart drawing is still loading");
-  const font = await localAsset(newsreaderUrl);
+  const font = await localAsset(new URL("../assets/fonts/newsreader.woff2", import.meta.url).href);
   const width = 1200, margin = 48, bodyWidth = width - margin * 2;
   const labels = includeDetails ? [report.rowLabel, report.columnLabel] : defaultLabels(report);
   const texts = (x: number, y: number, value: unknown, attrs = "") => `<text x="${x}" y="${y}" ${attrs}>${escapeXml(value)}</text>`;
