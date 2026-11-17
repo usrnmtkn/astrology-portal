@@ -40,7 +40,8 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
       secondSign: event.toSign ?? "",
       targetDate: dateKey
     };
-    return withJournal([...calendarAspectPublicationKeys(identity), ...skyAspectGeneratedContentKeys(identity)]);
+    const lunarKey = event.lunationAspectKey;
+    return withJournal([...(lunarKey ? [lunarKey] : []), ...calendarAspectPublicationKeys(identity), ...skyAspectGeneratedContentKeys(identity)]);
   }
 
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {

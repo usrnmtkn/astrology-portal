@@ -1,4 +1,5 @@
 import type { LocationInput, PlanetPosition, SkySnapshot, SolarDaylight } from "../types.js";
+import { skyLunationAspectKey } from '../../../../src/shared/skyLunationAspectIdentity.js';
 import { remainingSkyMinutes } from "./skyClock.js";
 import { SOLAR_HORIZON_VERSION } from "../../../../src/shared/solarHorizon.js";
 import {
@@ -160,6 +161,8 @@ export type LunarCalendarEvent = {
   cazimi?: boolean;
   cazimiOrb?: number;
   eclipseType?: LunarCalendarEclipseType;
+  /** Source identity for a contact active at the calculated lunation on this local day. */
+  lunationAspectKey?: string;
 };
 
 export type MatchingNewMoonFact = {
@@ -3120,7 +3123,7 @@ function lunarCalendarEvents(
 ): LunarCalendarEvent[] {
   const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
   const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
-  return [
+  const events = [
     ...findLunations(swe, eventStart, eventEnd, timeZone),
     ...cycleEvents.filter((event) => event.type === "ingress" && event.planet === "Moon"
       && Date.parse(event.startsAt) >= eventStart.getTime()
@@ -3130,6 +3133,23 @@ function lunarCalendarEvents(
     ...findActiveRetrogrades(swe, displayStart, gridEnd, timeZone),
     ...findSkyAspects(swe, eventStart, eventEnd, timeZone)
   ].sort((first, second) => new Date(first.startsAt).getTime() - new Date(second.startsAt).getTime());
+  for (const lunar of events.filter(event => event.type === 'lunation' && event.primary)) {
+    const instant = new Date(lunar.startsAt);
+    const active = activeSkyAspectsForDay(swe, instant);
+    for (const event of events) {
+      if (event.type !== 'aspect' || !event.planets || event.dateKey !== lunar.dateKey) continue;
+      const [first, second] = event.planets;
+      if (![first, second].includes('Moon') && !(/new moon/iu.test(lunar.title) && [first, second].includes('Sun'))) continue;
+      if (!active.some(contact => contact.planetA === first && contact.planetB === second && contact.aspectType === event.aspect)) continue;
+      const firstId = planets.findIndex(([name]) => name === first);
+      const secondId = planets.findIndex(([name]) => name === second);
+      // The first ten entries share Swiss's Sun-through-Pluto numbering.
+      if (firstId < 0 || firstId > 9 || secondId < 0 || secondId > 9) continue;
+      event.lunationAspectKey = skyLunationAspectKey(lunar, { from:first, to:second, type:event.aspect!,
+        fromSign:exactPlanetSign(swe, firstId, instant), toSign:exactPlanetSign(swe, secondId, instant) }) ?? undefined;
+    }
+  }
+  return events;
 }
 
 /** Sky needs the selected day's exact week-feed events, without seven days of

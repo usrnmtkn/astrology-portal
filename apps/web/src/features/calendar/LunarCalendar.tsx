@@ -88,6 +88,7 @@ import {
 import { zonedDateTimeToUtc } from "../../services/timezones";
 import type { LocationInput } from "../../types";
 import { calendarEventGeneratedContentKeys, calendarContentRequestResolved, type CalendarContentRequest } from "./calendarContentKeys";
+import { resolveCalendarLunationAspectReading } from '../../content/skyLunationAspectReading';
 import {resolveLunationReaderSource} from '../../content/lunationReaderSource';
 import { calendarDayMoonWriting, calendarLunationMacroKey, calendarMoonWritingParagraphs, calendarMoonWritingSequenceWithoutRepeat, type CalendarMoonWritingPiece } from "./calendarDayMoonReading";
 import { calendarDateKeyDistance, calendarLunarDayNumber, calendarMoonCycleFactsForDays, type CalendarMoonCycleFacts } from "./calendarMoonCycle";
@@ -199,7 +200,7 @@ const viewModeOptions: Array<{ value: LunarCalendarViewMode; label: string }> = 
 
 // v15 uses native eclipse classification alongside the complete exact events.
 // Earlier cached calendars can retain incorrect eclipse labels.
-const calendarStorageVersion = "v15";
+const calendarStorageVersion = "v16";
 const calendarStorageTtlMs = 12 * 60 * 60_000;
 const enableLunarArcContent = String(import.meta.env.VITE_ENABLE_LUNAR_ARC_CONTENT ?? "true").toLowerCase() !== "false";
 const enableCalendarApi = import.meta.env.PROD
@@ -876,6 +877,9 @@ export function liveCalendarEventContent(
 
     const [first, second] = event.planets;
 
+    const lunar = resolveCalendarLunationAspectReading(event, generatedContent);
+    if (lunar) return lunar.body ? generatedContent.get(lunar.contentKey) ?? null : null;
+
     const calendarPublication = resolveCalendarAspectPublication({
       generatedContent, first, second, aspect: event.aspect,
       firstMotion: event.fromMotion, secondMotion: event.toMotion,
@@ -1201,6 +1205,12 @@ export function normalizeCalendarEventSurface(
 
   if (event.type === "aspect" && event.planets && event.aspect && isSkyAspectRetired(event.planets[0], event.aspect, event.planets[1])) {
     return { surface: "calendar-event", status: "not-servable", sections: [] };
+  }
+  if (event.type === 'aspect') {
+    const lunar = resolveCalendarLunationAspectReading(event, generatedContent ?? new Map());
+    if (lunar) return { surface: 'calendar-event', status: lunar.body ? 'servable' : 'not-servable',
+      sections: lunar.body ? [{ slot: 'description', required: false, layer: 'authored', tier: 'content-studio-lunation-aspect',
+        sourceKeys: lunar.sourceKeys, body: lunar.body }] : [] };
   }
   // Manually authored Calendar entries are complete event write-ups. Preserve
   // every paragraph in the card and slide-out, as we do for exact aspects.

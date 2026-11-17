@@ -6,14 +6,26 @@ import {moonHoroscopeKey} from '../../../../src/shared/datedMoonIdentity.mjs';
 import { resolveCmsSurfaceOverride, type CmsGeneratedContentMap } from "./cmsSurfaceOverrides";
 import { publicationAllowsContent } from "./contentPublicationState";
 import { fallbackArchitectureV3AuthoredContentForKey } from "../services/generatedContent";
-import { loadSkyDetailContent } from "../services/skyDetailContent";
-import { getAstrodienstSkyOffMainThread, getLunarCalendarRangeEventsOffMainThread } from "../services/skyCalculationClient";
+import { loadSkyDetailContent, skySnapshotAspectContentKeys } from "../services/skyDetailContent";
+import { skyLunationAspectKeys } from './skyLunationAspectIdentity';
+export { resolveSkyLunationAspectReading, resolveCalendarLunationAspectReading } from './skyLunationAspectReading';
+import { getAstrodienstSkyOffMainThread, getLunarCalendarRangeEventsOffMainThread, getLunarCalendarWeekOffMainThread } from "../services/skyCalculationClient";
+import type { LunarCalendarEvent } from '../services/ephemeris';
 import type { LocationInput, SkySnapshot } from "../types";
 import { lunationAspectReaderKeys } from './lunationAspectReading';
 export { resolveLunationAspectReading } from './lunationAspectReading';
 export { lunationAspectCandidates } from './lunationAspectCandidates';
 
 type Event = Parameters<typeof datedLunationContentKey>[0];
+
+export async function datedLunationAspectEvent(location: LocationInput, at: string, first: string, aspect: string, second: string) {
+  const matches = (value: string, route: string) => value.toLowerCase().replace(/\s+/gu, '-') === route.toLowerCase();
+  const { events } = await getLunarCalendarWeekOffMainThread(location, new Date(at));
+  return events.find((event: LunarCalendarEvent) => event.type === 'aspect' && event.planets && event.lunationAspectKey
+    && Math.abs(Date.parse(event.startsAt) - Date.parse(at)) <= 2000 && matches(event.aspect ?? '', aspect)
+    && (matches(event.planets[0], first) && matches(event.planets[1], second)
+      || matches(event.planets[1], first) && matches(event.planets[0], second)));
+}
 
 function identities(event: Event) {
   if (event.eclipseType) return [];
@@ -29,12 +41,15 @@ export function lunationArticleContentKeys(event: Event) {
   return [...lunationReaderContentKeys(event), ...[moonHoroscopeKey(event)].filter(Boolean), ...lunationArticleHoroscopeKeys(event)];
 }
 
-export function lunationArticleSnapshotKeys(sky: Pick<SkySnapshot, "moonEvent"> & Partial<Pick<SkySnapshot, 'aspects' | 'positions'>>, event?: Event) {
+export function lunationArticleSnapshotKeys(sky: Pick<SkySnapshot, "moonEvent"> & Partial<Pick<SkySnapshot, 'aspects' | 'positions' | 'generatedAt'>>, event?: Event) {
   const moon = sky.moonEvent;
   const selected = event ?? (moon ? { startsAt: moon.occursAt, sign: moon.sign,
     title: moon.name, eclipseType: moon.eclipseType } : null);
   return selected ? [...lunationArticleContentKeys(selected), ...(sky.aspects && sky.positions
-    ? lunationAspectReaderKeys(selected, {aspects: sky.aspects, positions: sky.positions}) : [])] : [];
+    ? [...lunationAspectReaderKeys(selected, {aspects: sky.aspects, positions: sky.positions}),
+      ...skyLunationAspectKeys(selected, { aspects: sky.aspects, positions: sky.positions }),
+      ...skySnapshotAspectContentKeys({ ...sky, aspects: sky.aspects.filter(aspect =>
+        [aspect.from, aspect.to].some(point => point === 'Sun' || point === 'Moon')) } as SkySnapshot)] : [])] : [];
 }
 
 /** Dated lunar calculations and source selection load only with the article. */
@@ -49,8 +64,7 @@ export async function loadDatedLunationArticle(location: LocationInput, datePart
   if (!event) return null;
   const eventSky = await getAstrodienstSkyOffMainThread(location, new Date(event.startsAt),
     { includeTransitWindows: true, transitWindowPlanets: [] });
-  const content = await loadSkyDetailContent(eventSky, existing,
-    [...lunationArticleContentKeys(event), ...lunationAspectReaderKeys(event, eventSky)], load, []);
+  const content = await loadSkyDetailContent(eventSky, existing, lunationArticleSnapshotKeys(eventSky, event), load, []);
   return { event, eventSky, content };
 }
 

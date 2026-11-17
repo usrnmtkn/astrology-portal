@@ -45,7 +45,7 @@ export async function getLunarCalendarFromApi(
     const params = new URLSearchParams({
       mode,
       detail,
-      factsVersion: "calendar-exact-aspects-v6",
+      factsVersion: "calendar-lunation-context-v7",
       date: requestedDate,
       lat: String(location.latitude),
       lon: String(location.longitude),
