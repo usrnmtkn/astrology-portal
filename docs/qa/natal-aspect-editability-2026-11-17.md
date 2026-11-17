@@ -8,7 +8,7 @@ CI and production results belong to the release PR. No live reader-content write
 is part of this change.
 
 The code/test fingerprint is
-`258395d8750cee10484030e32e76c6ea19561f15bd0f75b2a6e41ad9f997d7bf`:
+`52a765ca393b80af6946b3f1fa2ebcb8239daa7251444f7c4420e0996d0be12b`:
 SHA-256 of sorted modified/new code and test paths, each followed by NUL,
 complete file bytes, and NUL. Documentation is excluded. The checkout has its
 own `npm ci` dependencies and locally built knowledge package.
@@ -82,6 +82,16 @@ The corrective candidate removes repeated source-array construction and redundan
 interface explanations. Fields, source keys, navigation and budget caps stay
 unchanged. Its focused browser matrix and budget checks are rerun before push;
 required CI must pass its new exact head.
+
+The second exact-head CI run on `bac2820f763d7e6e1c045abb84670a74f61fd8ec`
+passed the bundle/auth check and all three selected API command shards. Its
+`studio-admin-flows (4)` job passed 132 cases and failed four existing natal
+Friend publication variants because their locator still expected the former
+"Reader copy" field label. The assertions now use "Reader phrase · You" and
+retain publication, reload and audience-preservation checks. All four corrected
+variants pass locally from a fresh preview build. No product source
+or budget changed in this correction. Required gates must pass the corrected
+exact head; the failed run is retained.
 
 The broader static `test-fallback-refresh-wiring.mjs` still fails at line 758,
 expecting an older personal-transit preview expression. The same failure was
