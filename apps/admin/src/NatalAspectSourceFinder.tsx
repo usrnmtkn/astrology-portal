@@ -2,22 +2,18 @@ import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { AdminSelect } from "./AdminNativeControls";
 import { MetricCard } from "./studio-ds/patterns";
-import { Grid, Stack, Text } from "./studio-ds/primitives";
+import { Grid, Stack } from "./studio-ds/primitives";
 import { metricGrid, surfaceSection } from "./studio-ds/recipes";
 import ContentLiveStatusBadge from "./ContentLiveStatus";
 import {
-  natalAspectComposedSources,
   natalAspectComposedStatusRow,
-  natalAspectDisplayTitle,
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
-  natalAspectSourceDraft,
-  natalAspectSourceFields,
-  natalAspectContentKeyPrefix,
   parseNatalAspectContentKey,
-  type NatalAspectSelection,
-  type NatalAspectSourceDraft
-} from "./natalAspectSources";
+  natalAspectComposedSources, natalAspectSourceFields
+} from "./natalAspectFinderSources";
+
+import { natalAspectContentKeyPrefix, natalAspectDisplayTitle, natalAspectSourceDraft, natalAspectTitleCase as titleCase, type NatalAspectSelection, type NatalAspectSourceDraft } from "./natalAspectSources";
 
 type PreviewRow = {
   id?: string | null;
@@ -40,11 +36,6 @@ type Props = {
   rows: PreviewRow[];
   second: string;
 };
-
-function titleCase(value: string) {
-  return value.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
-}
-
 
 function previewForRow(row: PreviewRow) {
   const fields = natalAspectSourceFields(row);
@@ -83,7 +74,6 @@ export default function NatalAspectSourceFinder({
       : "Choose a natal aspect";
   const composedSources = fullSelection ? natalAspectComposedSources({ first, aspect, second }) : [];
   const hasExactSource = matches.some(row => row.content_key.startsWith(natalAspectContentKeyPrefix));
-  const hasStandaloneSource = matches.some(row => row.content_key.startsWith('natal.aspect.'));
 
   return (
     <section className="admin-natal-placement-finder" aria-label="Find natal aspect source writing">
@@ -153,7 +143,7 @@ export default function NatalAspectSourceFinder({
             </Stack>
           </header>
           <div className="admin-natal-source-grid">
-            {hasStandaloneSource && !hasExactSource && fullSelection && (
+            {!hasExactSource && fullSelection && (
               <div className="admin-empty-state">
                 <StudioButton type="button" onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}>
                   Write Friend passage
@@ -173,7 +163,7 @@ export default function NatalAspectSourceFinder({
                       <h4>{title}</h4>
                       <ContentLiveStatusBadge row={row} />
                     </div>
-                    <p>You: {fields.body_you.trim() ? 'saved' : 'empty'}. Friend: {fields.body_they.trim() ? 'saved' : standalone ? 'automatic conversion' : 'empty'}. Astrology hint: {fields.astroHint.trim() ? 'saved' : 'empty (optional)'}.</p>
+                    <p>You: {fields.body_you.trim() ? 'saved' : 'empty'}. Friend: {fields.body_they.trim() ? 'saved' : standalone ? 'automatic conversion' : 'empty'}. Astrology hint: {fields.astroHint.trim() ? 'saved' : 'empty'}.</p>
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
                     {preview && <blockquote>{preview}</blockquote>}
                   </div>
@@ -204,7 +194,6 @@ export default function NatalAspectSourceFinder({
                         <h4>{source.label}</h4>
                         <ContentLiveStatusBadge row={natalAspectComposedStatusRow(savedRow, contentKey)} />
                       </div>
-                      <Text size="body" tone="secondary">{source.scope}</Text>
                       <p className="admin-natal-source-key"><span>Source key</span><code>{contentKey}</code></p>
                       {preview && <blockquote>{preview}</blockquote>}
                     </div>

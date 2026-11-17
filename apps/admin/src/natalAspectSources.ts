@@ -53,39 +53,6 @@ export type NatalAspectSourceDraft = {
   };
 };
 
-function titleCase(value: string) {
-  return value
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-export function parseNatalAspectContentKey(contentKey: string): NatalAspectSelection | null {
-  const native = contentKey.match(/^natal\.aspect\.([\w-]+)\.([\w-]+)\.([\w-]+)$/u);
-  if (native) return { first: native[1].replaceAll('_', '-'), aspect: native[2], second: native[3].replaceAll('_', '-') };
-  if (!contentKey.startsWith(natalAspectContentKeyPrefix)) return null;
-  const parts = contentKey.slice(natalAspectContentKeyPrefix.length).split("/");
-  if (parts.length !== 3 || parts.some((part) => !part.trim())) return null;
-  const [first, aspect, second] = parts;
-  return { first, aspect, second };
-}
-
-export function natalAspectSourceFields(row: { body?: string | null; sections?: unknown }) {
-  const object = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {};
-  const sections = object(row.sections);
-  const record = { ...object(sections.packageRecord), ...object(sections.packageDraft) };
-  const text = (...values: unknown[]) => values.find((value): value is string => typeof value === 'string' && value.length > 0) ?? '';
-  return {
-    body_you: text(record.body_you, record.body, row.body),
-    body_they: typeof record.body_they === 'string' ? record.body_they : text(sections.body_they),
-    astroHint: typeof record.astroHint === 'string' ? record.astroHint : text(sections.astroHint)
-  };
-}
-
-export function natalAspectDisplayTitle(selection: NatalAspectSelection) {
-  return `${titleCase(selection.first)} ${titleCase(selection.aspect)} ${titleCase(selection.second)}`;
-}
-
 export function natalAspectContentKey(selection: NatalAspectSelection) {
   return `${natalAspectContentKeyPrefix}${selection.first}/${selection.aspect}/${selection.second}`;
 }
@@ -136,52 +103,40 @@ export function natalAspectReaderCandidateKeys(selection: NatalAspectSelection) 
   ])];
 }
 
-export type NatalAspectComposedSource = {
-  id: string;
-  label: string;
-  scope: string;
-  candidateKeys: string[];
-};
-
-export function natalAspectComposedSources(selection: NatalAspectSelection): NatalAspectComposedSource[] {
+export function natalAspectComposedSourceKeys(selection: NatalAspectSelection): string[][] {
   const first = natalAspectKeyPart(selection.first);
   const second = natalAspectKeyPart(selection.second);
   const aspect = natalAspectKeyPart(selection.aspect);
   const group = natalAspectComposedGroups[aspect];
-  const title = natalAspectDisplayTitle({ first, aspect, second });
-  if (!group) return [];
-  return [
-    {
-      id: "pair-writing",
-      label: `${title} pair writing`,
-      scope: "Shared pair writing for You and Friend.",
-      candidateKeys: [
-        `fallback-hook/aspect-pair/${first}/${second}/${group}`,
-        `fallback-hook/aspect-pair/${second}/${first}/${group}`
-      ]
-    },
-    {
-      id: "natal-aspect-template",
-      label: "Natal aspect template",
-      scope: "Shared You and Friend templates.",
-      candidateKeys: ["fallback-template/natal.aspect"]
-    },
-    { id: 'aspect-type', label: 'Aspect explanation', scope: 'Shared aspect explanation.', candidateKeys: [`fallback-hook/aspect-type/${aspect}`] },
-    { id: 'aspect-adjective', label: 'Aspect wording', scope: 'Shared by both templates.', candidateKeys: [`fallback-vocab/aspect-adj/${aspect}`] },
-    { id: 'aspect-motion', label: 'Aspect movement wording', scope: 'Shared by both templates.', candidateKeys: [`fallback-vocab/aspect-motion/${aspect}`] },
-    ...[first, second].map((body, index) => ({ id: `core-${index}`, label: `${titleCase(body)} meaning`,
-      scope: 'Shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${body}`] }))
-  ];
+  return group ? [
+    [`fallback-hook/aspect-pair/${first}/${second}/${group}`, `fallback-hook/aspect-pair/${second}/${first}/${group}`],
+    ["fallback-template/natal.aspect"],
+    [`fallback-hook/aspect-type/${aspect}`],
+    [`fallback-vocab/aspect-adj/${aspect}`],
+    [`fallback-vocab/aspect-motion/${aspect}`],
+    [`fallback-vocab/planet-core/${first}`],
+    [`fallback-vocab/planet-core/${second}`]
+  ] : [];
 }
 
 export function natalAspectResolverDependencyKeys(selection: NatalAspectSelection) {
   return [...new Set([
     ...natalAspectReaderCandidateKeys(selection),
-    ...natalAspectComposedSources(selection).flatMap((source) => source.candidateKeys)
+    ...natalAspectComposedSourceKeys(selection).flat()
   ])];
 }
 
-export { studioServingStatusRow as natalAspectComposedStatusRow } from "./studioServingStatus.ts";
+export function natalAspectTitleCase(value: string) {
+  return value
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export function natalAspectDisplayTitle(selection: NatalAspectSelection) {
+  return `${natalAspectTitleCase(selection.first)} ${natalAspectTitleCase(selection.aspect)} ${natalAspectTitleCase(selection.second)}`;
+}
+
 
 export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAspectSourceDraft {
   const contentKey = natalAspectContentKey(selection);
@@ -217,7 +172,7 @@ export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAs
       aspect: selection.aspect,
       second: selection.second
     },
-    reviewerNotes: "Created from the Natal Aspects empty state. Write and review both reader perspectives before publishing.",
+    reviewerNotes: "Write and review You and Friend before publishing.",
     sourceSnapshot: {
       contentType: "natal-aspect-exact",
       contentSystem: "fallback",
@@ -226,31 +181,4 @@ export function natalAspectSourceDraft(selection: NatalAspectSelection): NatalAs
       sourcePackage: "tldrastro-fallback-architecture-v3"
     }
   };
-}
-
-export function natalAspectSelectionOptions(rows: NatalAspectSourceRow[]) {
-  const parsed = rows
-    .map((row) => parseNatalAspectContentKey(row.content_key))
-    .filter((selection): selection is NatalAspectSelection => Boolean(selection));
-  const bodies = [...new Set(parsed.flatMap((selection) => [selection.first, selection.second]))].sort();
-  return {
-    first: bodies,
-    aspects: [...new Set(parsed.map((selection) => selection.aspect))].sort(),
-    second: bodies
-  };
-}
-
-export function natalAspectMatchesSelection(
-  row: NatalAspectSourceRow,
-  selection: Partial<NatalAspectSelection>
-) {
-  const parsed = parseNatalAspectContentKey(row.content_key);
-  if (!parsed) return false;
-  if (selection.aspect && parsed.aspect !== selection.aspect) return false;
-  if (selection.first && selection.second) {
-    return (parsed.first === selection.first && parsed.second === selection.second)
-      || (parsed.first === selection.second && parsed.second === selection.first);
-  }
-  const selectedBody = selection.first || selection.second;
-  return !selectedBody || parsed.first === selectedBody || parsed.second === selectedBody;
 }

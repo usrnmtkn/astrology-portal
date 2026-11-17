@@ -5,19 +5,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
-  natalAspectComposedSources,
-  natalAspectComposedStatusRow,
-  natalAspectContentKey,
-  natalAspectContentKeyPrefix,
-  natalAspectDisplayTitle,
-  natalAspectMatchesSelection,
-  natalAspectReaderCandidateKeys,
-  natalAspectResolverDependencyKeys,
-  natalAspectSelectionOptions,
-  natalAspectSourceDraft,
-  natalAspectSourceFields,
-  natalAspectTheyNameVariable,
-  parseNatalAspectContentKey
+  natalAspectComposedSources, natalAspectSourceFields, natalAspectComposedStatusRow,
+  natalAspectMatchesSelection, natalAspectSelectionOptions, parseNatalAspectContentKey
+} from "../apps/admin/src/natalAspectFinderSources.ts";
+import {
+  natalAspectDisplayTitle, natalAspectSourceDraft, natalAspectContentKey, natalAspectContentKeyPrefix, natalAspectReaderCandidateKeys,
+  natalAspectResolverDependencyKeys, natalAspectTheyNameVariable
 } from "../apps/admin/src/natalAspectSources.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");

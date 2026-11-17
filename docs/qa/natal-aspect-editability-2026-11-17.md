@@ -8,7 +8,7 @@ CI and production results belong to the release PR. No live reader-content write
 is part of this change.
 
 The code/test fingerprint is
-`9851ede978004766f293db0127b432a60e00eca2e1720c76e462bfa45b57d413`:
+`7dec00bc359e622d7a9019d948c76ef02123ad949ad045be7825c7c14da450a9`:
 SHA-256 of sorted modified/new code and test paths, each followed by NUL,
 complete file bytes, and NUL. Documentation is excluded. The checkout has its
 own `npm ci` dependencies and locally built knowledge package.
@@ -112,6 +112,21 @@ the detail. API/console failures remain errors and no timeout was raised. All
 eight member-source variants and the Daily source loading contract pass from a
 fresh build after this test-only correction. Product code is unchanged; prior
 local runtime evidence remains applicable. New exact-head gates remain required.
+
+The fifth candidate, `3d1916aaad2852d23826986aec2b1d75eb188e60`, again
+passed API and privacy gates. `sky-summary (studio)` passed its browser cases
+but failed the configured standalone Admin budget: startup was 845,287 raw /
+245,983 gzip bytes and aggregate gzip 934,025. Rebuilding with CI's public
+Supabase placeholders reproduced these exact measurements; earlier unset-env
+Admin acceptance had missed that configured build. Finder-only parsing, source
+preview and card metadata now stay in a separate lazy module, while the shared
+source-key list remains available at startup. No field, source key or reader
+prose was removed. The matched configured build passes unchanged limits at
+843,390 raw / 245,549 startup gzip bytes and 933,873 aggregate gzip bytes.
+All ten focused editor/publication cases, Admin typecheck, Web budget, CSS audit
+and built-Web privacy scan pass after this correction. Existing remote checks
+are allowed to finish; no failing gate is waived or suppressed. The next
+candidate stays local during the other owner's reserved release window.
 
 The broader static `test-fallback-refresh-wiring.mjs` still fails at line 758,
 expecting an older personal-transit preview expression. The same failure was
