@@ -46,6 +46,9 @@
   /* Open profile frame and editorial overview roles, approved handoff (11).
      These roles supplement the shared body scale; compact excerpts retain
      complete CMS text in the DOM and open the complete reading. */
+  --container-profile: 1304px;
+  --profile-page-gutter: 68px;
+  --layout-profile-balanced-columns: minmax(0, 640fr) minmax(0, 600fr);
   --type-identity-title-size: 44px;
   --tracking-overline: 0.14em;
   --type-overview-title-size: 40px;
