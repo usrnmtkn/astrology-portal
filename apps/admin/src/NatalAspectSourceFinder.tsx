@@ -173,11 +173,6 @@ export default function NatalAspectSourceFinder({
                       <h4>{title}</h4>
                       <ContentLiveStatusBadge row={row} />
                     </div>
-                    <Text size="body" tone="secondary">{standalone
-                      ? 'You write-up; Friend copy uses the exact override or automatic conversion.'
-                      : hasStandaloneSource
-                        ? 'Friend override and You fallback.'
-                        : 'Exact natal aspect writing for You and Friend.'}</Text>
                     <p>You: {fields.body_you.trim() ? 'saved' : 'empty'}. Friend: {fields.body_they.trim() ? 'saved' : standalone ? 'automatic conversion' : 'empty'}. Astrology hint: {fields.astroHint.trim() ? 'saved' : 'empty (optional)'}.</p>
                     <p className="admin-natal-source-key"><span>Source key</span><code>{row.content_key}</code></p>
                     {preview && <blockquote>{preview}</blockquote>}

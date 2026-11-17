@@ -8,7 +8,7 @@ CI and production results belong to the release PR. No live reader-content write
 is part of this change.
 
 The code/test fingerprint is
-`52a765ca393b80af6946b3f1fa2ebcb8239daa7251444f7c4420e0996d0be12b`:
+`4c7fa83fe0452c5c5a28e6beedb62bd507249f51d82d30cd4b49de5ef4198773`:
 SHA-256 of sorted modified/new code and test paths, each followed by NUL,
 complete file bytes, and NUL. Documentation is excluded. The checkout has its
 own `npm ci` dependencies and locally built knowledge package.
@@ -92,6 +92,14 @@ retain publication, reload and audience-preservation checks. All four corrected
 variants pass locally from a fresh preview build. No product source
 or budget changed in this correction. Required gates must pass the corrected
 exact head; the failed run is retained.
+
+The third exact-head CI run on `09e21bbdfbdce9fef5b62346a8ee4261f5513a0f`
+passed every auth test but measured 3,788,740 gzip bytes, 11 bytes above the same
+cap. The next candidate removes duplicate card explanations and shares planet
+meaning-card construction. Source keys, fields and reader prose are unchanged.
+All ten focused editor/publication browser cases pass from its fresh build;
+local aggregate gzip is 3,788,582 bytes (147 bytes below the unchanged cap).
+Required exact-head CI remains mandatory.
 
 The broader static `test-fallback-refresh-wiring.mjs` still fails at line 758,
 expecting an older personal-transit preview expression. The same failure was

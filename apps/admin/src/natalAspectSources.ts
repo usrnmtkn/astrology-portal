@@ -154,7 +154,7 @@ export function natalAspectComposedSources(selection: NatalAspectSelection): Nat
     {
       id: "pair-writing",
       label: `${title} pair writing`,
-      scope: "You and Friend fallback shared by this aspect group.",
+      scope: "Shared pair writing for You and Friend.",
       candidateKeys: [
         `fallback-hook/aspect-pair/${first}/${second}/${group}`,
         `fallback-hook/aspect-pair/${second}/${first}/${group}`
@@ -163,14 +163,14 @@ export function natalAspectComposedSources(selection: NatalAspectSelection): Nat
     {
       id: "natal-aspect-template",
       label: "Natal aspect template",
-      scope: "You and Friend templates shared by natal aspects.",
+      scope: "Shared You and Friend templates.",
       candidateKeys: ["fallback-template/natal.aspect"]
     },
-    { id: 'aspect-type', label: 'Aspect explanation', scope: 'Shared explanation for this aspect type.', candidateKeys: [`fallback-hook/aspect-type/${aspect}`] },
-    { id: 'aspect-adjective', label: 'Aspect wording', scope: 'Used by both audience templates.', candidateKeys: [`fallback-vocab/aspect-adj/${aspect}`] },
-    { id: 'aspect-motion', label: 'Aspect movement wording', scope: 'Used by both audience templates.', candidateKeys: [`fallback-vocab/aspect-motion/${aspect}`] },
-    { id: 'first-core', label: `${titleCase(first)} meaning`, scope: 'Planet meaning shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${first}`] },
-    { id: 'second-core', label: `${titleCase(second)} meaning`, scope: 'Planet meaning shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${second}`] }
+    { id: 'aspect-type', label: 'Aspect explanation', scope: 'Shared aspect explanation.', candidateKeys: [`fallback-hook/aspect-type/${aspect}`] },
+    { id: 'aspect-adjective', label: 'Aspect wording', scope: 'Shared by both templates.', candidateKeys: [`fallback-vocab/aspect-adj/${aspect}`] },
+    { id: 'aspect-motion', label: 'Aspect movement wording', scope: 'Shared by both templates.', candidateKeys: [`fallback-vocab/aspect-motion/${aspect}`] },
+    ...[first, second].map((body, index) => ({ id: `core-${index}`, label: `${titleCase(body)} meaning`,
+      scope: 'Shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${body}`] }))
   ];
 }
 
