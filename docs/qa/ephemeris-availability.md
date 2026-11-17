@@ -26,8 +26,10 @@ agents must use the scoped readiness contract rather than its aggregate flag.
 ## App behavior
 
 The app checks readiness after its initial reading, every minute while visible,
-and when it returns online or becomes visible. API and worker failures also
-update its local warning immediately. Browser observations contain only the
+and when it returns online or becomes visible. API failures are recorded while
+a verified local fallback is attempted. Failed readiness, a failed worker, or
+stale retained data triggers the warning; healthy fallback loading does not.
+Browser observations contain only the
 source and health state; personal inputs are not uploaded to the monitor.
 
 Existing exact-input validation, verified-cache expiry and provenance, and

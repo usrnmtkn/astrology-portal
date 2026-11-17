@@ -17,8 +17,7 @@ export function EphemerisStatus({ retainedAt, timeZone }: { retainedAt?: string;
       document.removeEventListener("visibilitychange", check);
     };
   }, []);
-  const degraded = Boolean(retainedAt) || health.service?.ok === false || health.worker?.ok === false
-    || health["sky-api"]?.ok === false && health.worker?.ok !== true;
+  const degraded = Boolean(retainedAt) || health.service?.ok === false || health.worker?.ok === false;
   if (!degraded) return null;
   return <aside className="ephemeris-status" role="status" aria-live="polite" data-ephemeris-status="degraded">
     <p>{retainedAt
