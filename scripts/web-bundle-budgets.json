@@ -1,7 +1,7 @@
 {
-  "appBootGzipBytes": 400000,
+  "appBootGzipBytes": 401490,
   "appChunkGzipBytes": 91358,
-  "readerBootGzipBytes": 459530,
+  "readerBootGzipBytes": 460037,
   "readerInitialCssGzipBytes": 59838,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
@@ -97,7 +97,41 @@
             "combinedLimit": 5816
           }
         },
-        "reason": "Reconcile the concurrently accepted chart-report and ephemeris budget edits. Carry each existing positive ephemeris allocation exactly once onto latest main; preserve the complete chart allocation and both histories. No additional allowance or unrelated numeric/source/dependency guard changes. Fresh combined-build and exact-head verification are required."
+        "reason": "Preserve the accepted chart allocation and the original ephemeris allocation history. The initial arithmetic carry at 881110e1 failed startup by 221, reader boot by 499 and HoroscopeReader by 15 bytes. Matched independently installed current-main/control and combined builds establish the full positive ephemeris cost. Rebase only those three failing feature allocations once onto latest main, preserving its exact control headroom; do not add the old allocation again or allocate only the observed overage. Other numeric, source/lazy-graph, runtime and dependency guards remain unchanged. This records feature cost, not a performance improvement.",
+        "matchedMeasurement": {
+          "controlRevision": "aea0156b3a3508941fb3bc6ceb146ef369448400",
+          "candidateRevision": "881110e134326a22abac53edcef34314b29f60e7",
+          "profile": "Independent own locked npm-ci dependencies; identical source and installed lock manifests; ARM64 Node22.20.0, zlib1.3.1-470d3a2 gzip9; CI1 standard visual-smoke placeholders and natal aspect patterns enabled. All 3362 knowledge files match after excluding only top-level generatedAt fields. Both complete fresh builds succeeded; the strict control budget passed and original combined failure is retained.",
+          "metrics": {
+            "appBootGzipBytes": {
+              "control": 398731,
+              "candidate": 400221,
+              "measuredFeatureDelta": 1490,
+              "initialCombinedLimit": 400000,
+              "latestMainLimit": 400000,
+              "newLimit": 401490,
+              "preservedControlHeadroom": 1269
+            },
+            "readerBootGzipBytes": {
+              "control": 458242,
+              "candidate": 460029,
+              "measuredFeatureDelta": 1787,
+              "initialCombinedLimit": 459530,
+              "latestMainLimit": 458250,
+              "newLimit": 460037,
+              "preservedControlHeadroom": 8
+            },
+            "horoscopeReaderChunkGzipBytes": {
+              "control": 5790,
+              "candidate": 5831,
+              "measuredFeatureDelta": 41,
+              "initialCombinedLimit": 5816,
+              "latestMainLimit": 5800,
+              "newLimit": 5841,
+              "preservedControlHeadroom": 10
+            }
+          }
+        }
       }
     },
     "chartReportsDownloads20261116": {
@@ -528,7 +562,7 @@
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
   "memoryGraphCssGzipBytes": 33142,
-  "horoscopeReaderChunkGzipBytes": 5816,
+  "horoscopeReaderChunkGzipBytes": 5841,
   "horoscopeEditorChunkGzipBytes": 16400,
   "studioCsvChunkGzipBytes": 8200
 }
