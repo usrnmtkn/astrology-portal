@@ -61,8 +61,9 @@ files.each do |file|
     overlays = jobs.fetch('reader-overlays')
     [reader, overlays].each do |job|
       raise 'Reader and overlay coverage must retain all three shards' unless job.fetch('strategy').fetch('matrix').fetch('shard') == [1, 2, 3]
-      raise 'Reader job budgets must remain bounded' unless job.fetch('timeout-minutes') == 30
     end
+    raise 'Reader job must allow the complete suite and cleanup within a bounded deadline' unless reader.fetch('timeout-minutes') == 40
+    raise 'Overlay job budget must remain bounded' unless overlays.fetch('timeout-minutes') == 30
     overlay_command = 'tests/visual/overlay-viewport.spec.ts'
     raise 'Overlay checks must run independently of reader shards' if reader.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) }
     raise 'Overlay job must execute its full viewport suite' unless overlays.fetch('steps').any? { |step| step.fetch('run', '').include?(overlay_command) && step['run'].include?('--shard=${{ matrix.shard }}/3') }

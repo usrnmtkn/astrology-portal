@@ -82,7 +82,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
           }),
           angles: [...root.querySelectorAll<SVGGElement>(".interactive-wheel-angle")].map(node => {
             const matrix = node.transform.baseVal.consolidate()!.matrix;
-            return { key: node.getAttribute("data-angle")!, x: matrix.e, y: matrix.f, label: node.getAttribute("aria-label")! };
+            return { key: node.getAttribute("data-angle")!, x: matrix.e, y: matrix.f, text: node.querySelector("text")!.textContent, label: node.getAttribute("aria-label")! };
           }),
           houses: [...root.querySelectorAll<SVGTextElement>(".interactive-wheel-house")].map(text => {
             const x = text.x.baseVal[0].value, y = text.y.baseVal[0].value;
@@ -120,6 +120,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       };
       expect(labels.angles.map(angle => angle.key)).toEqual(["ASC", "DSC", "MC", "IC"]);
       for (const angle of labels.angles) {
+        expect(Math.hypot(angle.x - 300, angle.y - 300), `${angle.key} sits on the inner zodiac border`).toBeCloseTo(248, 3);
+        expect(angle.text, "Compact angle labels match the transit wheel").toBe(angle.key);
         const longitude = normalize(Math.atan2(300 - angle.y, angle.x - 300) * 180 / Math.PI - 180 + snapshot.ascendantLongitude!);
         const difference = normalize(longitude - longitudes[angle.key] + 180) - 180;
         expect(difference, `${angle.key} retains its calculated longitude`).toBeCloseTo(0, 3);
@@ -136,7 +138,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
 }
 
 for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
-  test(`angle badges leave zodiac names readable ${width} ${theme}`, async ({ page }, info) => {
+  test(`angle badges sit on the zodiac ring and leave sign names readable ${width} ${theme}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 1000 });
     await openHarness(page, "angle-clearance", theme);
     await page.evaluate(() => document.fonts.ready);
@@ -146,13 +148,11 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
       const signs = [...root.querySelectorAll(".interactive-wheel-sign")].map(node => ({ name: node.textContent, box: node.getBoundingClientRect() }));
       const badges = [...root.querySelectorAll(".interactive-wheel-angle")].map(node => ({ name: node.getAttribute("data-angle"), box: node.getBoundingClientRect() }));
       const viewport = root.getBoundingClientRect();
-      const outerRadius = Number(root.querySelector(".interactive-wheel-paper")!.getAttribute("r"));
       const clearances = [...root.querySelectorAll<SVGGElement>(".interactive-wheel-angle")].map(node => {
         const rect = node.querySelector("rect")!;
-        const center = new DOMPoint(300, 300).matrixTransform(node.transform.baseVal.consolidate()!.matrix.inverse());
-        const x = Math.max(rect.x.baseVal.value, Math.min(rect.x.baseVal.value + rect.width.baseVal.value, center.x));
-        const y = Math.max(rect.y.baseVal.value, Math.min(rect.y.baseVal.value + rect.height.baseVal.value, center.y));
-        return Math.hypot(center.x - x, center.y - y) - outerRadius;
+        const matrix = node.transform.baseVal.consolidate()!.matrix;
+        const centerRadius = Math.hypot(matrix.e - 300, matrix.f - 300);
+        return { centerRadius, outerEdge: Math.hypot(centerRadius + rect.height.baseVal.value / 2, rect.width.baseVal.value / 2) };
       });
       return {
         names: signs.map(sign => sign.name),
@@ -164,7 +164,10 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     expect(geometry.names).toContain("AQUARIUS");
     expect(geometry.names).toContain("LEO");
     expect(geometry.clearances).toHaveLength(4);
-    for (const clearance of geometry.clearances) expect(clearance, "Angle badges clear the entire circular sign-name band").toBeGreaterThanOrEqual(4);
+    for (const badge of geometry.clearances) {
+      expect(badge.centerRadius, "Angle badges sit on the inner zodiac border").toBeCloseTo(248, 3);
+      expect(badge.outerEdge, "Angle badges stay inside the zodiac wheel").toBeLessThan(292);
+    }
     expect(geometry.contained, "Every badge stays inside the SVG canvas").toBe(true);
     const mc = svg.locator('[data-angle="MC"]');
     await mc.focus();

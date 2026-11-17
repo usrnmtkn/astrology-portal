@@ -4,11 +4,13 @@ import {
   NATAL_ASPECT_POINT_ORDER
 } from "@tldr/astro-knowledge/sky-aspect-engine";
 import type { PlanetPosition, SkySnapshot } from "../types";
+import { natalSectForSnapshot } from "../../../../src/shared/solarHorizon";
+import { fortuneLongitude } from "../../../../src/shared/fortune";
 
 type NatalAspectSnapshot = Pick<
   SkySnapshot,
   "positions" | "aspects" | "ascendantLongitude" | "midheavenLongitude"
->;
+> & Partial<Pick<SkySnapshot, "birthTimeKnown" | "generatedAt" | "solarHorizon" | "sharedNatalSect">>;
 
 const canonicalNatalPoints = new Set<string>(NATAL_ASPECT_POINT_ORDER);
 const natalZodiacSigns = [
@@ -81,10 +83,21 @@ function canonicalNatalPositions(snapshot: NatalAspectSnapshot) {
  * inconsistent with the natal positions.
  */
 export function canonicalNatalAspectsForSnapshot(
-  snapshot: NatalAspectSnapshot | null | undefined
+  snapshot: NatalAspectSnapshot | null | undefined,
+  options: { includePartOfFortune?: boolean } = {}
 ): SkySnapshot["aspects"] {
   if (!snapshot) return [];
 
-  const calculated = calculateNatalAspects(canonicalNatalPositions(snapshot));
+  const positions = canonicalNatalPositions(snapshot);
+  if (options.includePartOfFortune) {
+    const sect = natalSectForSnapshot({ ...snapshot, generatedAt: snapshot.generatedAt ?? "" });
+    const ascendant = positions.find(position => position.planet === "Ascendant");
+    const sun = positions.find(position => position.planet === "Sun");
+    const moon = positions.find(position => position.planet === "Moon");
+    if (sect && ascendant && sun && moon) {
+      positions.push({ planet: "Part Of Fortune", longitude: fortuneLongitude(ascendant.longitude, sun.longitude, moon.longitude, sect) });
+    }
+  }
+  const calculated = calculateNatalAspects(positions);
   return canonicalizeNodeAxisAspects(calculated);
 }
