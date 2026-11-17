@@ -15881,7 +15881,7 @@ function natalPlacementDetailArticle(
   });
   const relatedAspectRows = natalSky
     ? relatedAspectRowsForPlacement({
-        aspects: canonicalNatalAspectsForSnapshot(natalSky),
+        aspects: canonicalNatalAspectsForSnapshot(natalSky, { includePartOfFortune: Boolean(ownerContext) }),
         generatedContent,
         mode: "natal",
         onOpenNatalAspect,
