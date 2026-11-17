@@ -1,8 +1,8 @@
 {
   "appBootGzipBytes": 400000,
   "appChunkGzipBytes": 91358,
-  "readerBootGzipBytes": 458250,
-  "readerInitialCssGzipBytes": 59518,
+  "readerBootGzipBytes": 459530,
+  "readerInitialCssGzipBytes": 59838,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 6981,
@@ -13,9 +13,61 @@
   "calendarFallbackChunkGzipBytes": 10000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
-  "totalCssGzipBytes": 150174,
-  "totalJavaScriptGzipBytes": 3788729,
+  "totalCssGzipBytes": 150302,
+  "totalJavaScriptGzipBytes": 3791801,
   "_rationale": {
+    "ephemerisOutageDetection20261116": {
+      "baseRevision": "997ec0c8125d7e5bf0f66f28bf7e09d7f0e79951",
+      "runtimeCandidateRevision": "766785aa70d7b95388009ac019c1ba97c8568e98",
+      "profile": "Matched separate worktrees, independent locked npm ci dependencies, x64 Node 22.20.0 and zlib 1.3.1-470d3a2. Both web builds use visual-smoke Supabase placeholders and natal aspect patterns enabled.",
+      "control": {
+        "appBootGzipBytes": 398009,
+        "appChunkGzipBytes": 89711,
+        "readerBootGzipBytes": 457479,
+        "readerInitialCssGzipBytes": 59470,
+        "totalCssGzipBytes": 149957,
+        "totalJavaScriptGzipBytes": 3787981,
+        "horoscopeReaderChunkGzipBytes": 5774
+      },
+      "candidate": {
+        "appBootGzipBytes": 399496,
+        "appChunkGzipBytes": 90376,
+        "readerBootGzipBytes": 459263,
+        "readerInitialCssGzipBytes": 59767,
+        "totalCssGzipBytes": 150254,
+        "totalJavaScriptGzipBytes": 3791074,
+        "horoscopeReaderChunkGzipBytes": 5803
+      },
+      "delta": {
+        "appBootGzipBytes": 1487,
+        "appChunkGzipBytes": 665,
+        "readerBootGzipBytes": 1784,
+        "readerInitialCssGzipBytes": 297,
+        "totalCssGzipBytes": 297,
+        "totalJavaScriptGzipBytes": 3093,
+        "horoscopeReaderChunkGzipBytes": 29
+      },
+      "allocation": {
+        "readerBootGzipBytes": 1280,
+        "readerInitialCssGzipBytes": 320,
+        "totalCssGzipBytes": 128,
+        "totalJavaScriptGzipBytes": 3072,
+        "horoscopeReaderChunkGzipBytes": 16
+      },
+      "reason": "Record the bounded cost of the owner-requested engine readiness probe, failure observer, immediately available app status/retry UI, worker restart and retained-data expiry safeguards. The matched total JavaScript cost is 3093 gzip bytes and CSS cost is 297 bytes; existing headroom covers part of each cost. Preserve the 400000-byte App JavaScript boot cap, App chunk cap, dependency/source-payload guards and runtime timing limits. The unchanged HoroscopeReader artifact shifts by 29 gzip bytes through shared import/chunk changes; its existing 26-byte headroom covers most of that, with 16 bytes allocated for measured artifact variance. This records safety-feature cost, not a performance improvement.",
+      "preservedCiFailure": {
+        "run": "https://github.com/usrnmtkn/astrology-portal/actions/runs/43996519186",
+        "job": 133752638961,
+        "head": "766785aa70d7b95388009ac019c1ba97c8568e98",
+        "exceededBy": {
+          "readerBootGzipBytes": 1011,
+          "readerInitialCssGzipBytes": 249,
+          "totalCssGzipBytes": 80,
+          "totalJavaScriptGzipBytes": 2412,
+          "horoscopeReaderChunkGzipBytes": 1
+        }
+      }
+    },
     "approvedDesignSystem20261115": {
       "baseRevision": "69545b58fb1b3fede25e909ba62db4269d65df64",
       "profile": "Matched fresh Web builds in separate worktrees with independent locked npm-ci dependencies, ARM64 Node 22.20.0, visual-smoke Supabase placeholders and natal aspect patterns enabled.",
@@ -407,7 +459,7 @@
   },
   "memoryGraphJavaScriptGzipBytes": 64000,
   "memoryGraphCssGzipBytes": 33142,
-  "horoscopeReaderChunkGzipBytes": 5800,
+  "horoscopeReaderChunkGzipBytes": 5816,
   "horoscopeEditorChunkGzipBytes": 16400,
   "studioCsvChunkGzipBytes": 8200
 }
