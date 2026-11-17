@@ -1,6 +1,37 @@
 import { readerResponse } from '../helpers/reader-response';
 import { test, expect } from '@playwright/test';
 import { build } from 'esbuild';
+import { readFileSync } from 'node:fs';
+
+test('the exported Chiron publication renders its complete current wording from the recovery snapshot', async ({ page, context }) => {
+  const snapshot = JSON.parse(readFileSync('apps/web/public/content-studio-last-known-good.json', 'utf8'));
+  const key = 'fallback-hook/natal-aspect-lived/lilith/trine/chiron';
+  const source = snapshot.rows.find((row: any) => row.content_key === key);
+  expect(source).toBeTruthy();
+  expect(source.body.length).toBeGreaterThan(100);
+  const compiled = await build({ stdin: { contents: `
+    export {loadOfflineContentRows} from './apps/web/src/services/offlineContentSnapshot.ts';
+    export {fallbackV3HookBody} from './apps/web/src/content/fallbackArchitectureV3Runtime.ts';
+  `, resolveDir: process.cwd() }, bundle: true, format: 'esm', write: false, define: { 'import.meta.env': '{}' }, logLevel: 'silent' });
+  await context.route('**/chiron-snapshot-qa', route => route.fulfill({ contentType: 'text/html', body: '<html><body><article></article><script type="module">import * as qa from "/chiron-snapshot-qa.js";window.qa=qa;</script></body></html>' }));
+  await context.route('**/chiron-snapshot-qa.js', route => route.fulfill({ contentType: 'text/javascript', body: compiled.outputFiles[0].text }));
+  // Live content is unavailable; use the actual freshly built static snapshot.
+  await context.route('**/api/content-reader', route => route.abort('failed'));
+  await context.route('**/rest/v1/**', route => route.abort('failed'));
+  await page.goto('/chiron-snapshot-qa');
+  await page.waitForFunction(() => Boolean((window as any).qa));
+  const actual = await page.evaluate(async key => {
+    const qa = (window as any).qa;
+    await qa.loadOfflineContentRows();
+    const body = qa.fallbackV3HookBody(key);
+    document.querySelector('article')!.textContent = body;
+    return body;
+  }, key);
+  expect(actual).toBe(source.body);
+  expect(await page.locator('article').textContent()).toBe(source.body);
+  expect(actual.startsWith(source.body.split('\n')[0])).toBe(true);
+  expect(actual.endsWith(source.body.split('\n').at(-1))).toBe(true);
+});
 
 test('offline retirement survives older snapshots, reload, and an already-open second tab', async ({ page, context }) => {
   const entry = `

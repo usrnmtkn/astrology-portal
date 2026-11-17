@@ -2,6 +2,7 @@
 import { projectReaderRow, READER_ROW_SCHEMA } from "../apps/web/src/content/readerRowProjection.mjs";
 import { correctedReaderSummary } from "../apps/web/src/content/fallbackArchitectureV3/readerSummaryReferenceCorrections.mjs";
 import { loadPrivacyPolicy, privateSafeExport } from "./lib/privacy-policy.mjs";
+import { readPublicationSnapshot, publicationSnapshotIdentity, assertStablePublicationSnapshot } from "./lib/content-studio-snapshot.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -85,6 +86,17 @@ function durableRow(row) {
 }
 
 const readerUrl = process.env.CONTENT_READER_URL ?? "https://tldrastro.vercel.app/api/content-reader";
+const publicationOptions = { supabaseUrl, publishableKey };
+const initialPublications = await readPublicationSnapshot(publicationOptions);
+let previous = null;
+try {
+  previous = JSON.parse(fs.readFileSync(outPath, "utf8"));
+} catch {}
+if (process.argv.includes('--if-changed') && previous?.schema === 'content-studio-last-known-good-v2'
+  && publicationSnapshotIdentity(previous.publications ?? []) === publicationSnapshotIdentity(initialPublications)) {
+  console.log('Published revisions are already synchronized.');
+  process.exit(0);
+}
 const rows = [];
 let cursor = null;
 const maxPages = 200;
@@ -105,26 +117,8 @@ for (let page = 0; page < maxPages; page += 1) {
 }
 
 // Export the same durable lifecycle records used by Studio and the reader.
-const publications = [];
-let publicationCursor = null;
-for (;;) {
-  const url = new URL(`${supabaseUrl}/rest/v1/content_publications`);
-  url.searchParams.set("select", "content_key,state,revision,row_id,row_updated_at,updated_at");
-  url.searchParams.set("order", "content_key.asc");
-  url.searchParams.set("limit", "1000");
-  if (publicationCursor) url.searchParams.set("content_key", `gt.${publicationCursor}`);
-  const response = await fetch(url, { headers: { apikey: publishableKey, authorization: `Bearer ${publishableKey}` } });
-  if (!response.ok) throw new Error(`Publication snapshot query failed (${response.status}).`);
-  const page = await response.json();
-  if (!Array.isArray(page) || !page.every((record) => typeof record.content_key === "string" && record.content_key
-    && ["live", "retired"].includes(record.state) && Number.isSafeInteger(record.revision) && record.revision > 0
-    && Number.isFinite(Date.parse(record.updated_at)))) throw new Error("Invalid publication snapshot.");
-  publications.push(...page);
-  if (page.length < 1000) break;
-  const nextCursor = page.at(-1).content_key;
-  if (publicationCursor !== null && nextCursor <= publicationCursor) throw new Error("Publication pagination did not advance.");
-  publicationCursor = nextCursor;
-}
+const publications = await readPublicationSnapshot(publicationOptions);
+assertStablePublicationSnapshot(initialPublications, publications);
 function publicationTimestamp(value) {
   return `${Date.parse(value)}:${(value?.match(/\.(\d+)/)?.[1] ?? "").padEnd(6, "0").slice(3, 6)}`;
 }
@@ -146,10 +140,6 @@ const snapshotRows = [...newest.values()].map((source) => projectReaderRow({
 })).filter(Boolean).sort((a, b) => String(a.content_key).localeCompare(String(b.content_key)));
 if (snapshotRows.length < 100) throw new Error(`Refusing implausibly small last-known-good snapshot (${snapshotRows.length} rows).`);
 
-let previous = null;
-try {
-  previous = JSON.parse(fs.readFileSync(outPath, "utf8"));
-} catch {}
 if (
   previous?.rowCount > 0
   && snapshotRows.length < Math.floor(previous.rowCount * 0.5)

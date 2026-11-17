@@ -51,12 +51,20 @@ The prose plane answers:
 - Is the unit reviewed and safe to serve?
 - What should happen if content is missing?
 
-The primary owner is:
+Content Studio / Supabase owns saved editorial revisions, exact owner decisions,
+publication and retirement. Reader publication is selected by
+`content_publications`; a newer saved draft does not replace the published version.
+
+The repository's prose package is:
 
 `apps/web/src/content/fallbackArchitectureV3`
 
-The Supabase dashboard mirrors this package for review, editing, and runtime
-hydration. It is not an independent authoring source.
+Package source files include original imports and historical source material.
+They do not override newer saved Studio writing. GitHub's generated
+`apps/web/public/content-studio-last-known-good.json` records reader-safe published
+versions for recovery; it is not an editable editorial store. See
+[Studio synchronization](CONTENT_STUDIO_SYNC.md) for ownership, export scope and
+delivery verification.
 
 ### UI plane
 
@@ -714,6 +722,10 @@ owner. Do not fill uncertainty with plausible astrology or plausible prose.
 
 
 ## Shared publication lifecycle
+
+Editorial revisions flow from Studio to the generated GitHub snapshot. Repository
+materialization is an explicit import/migration operation, never an automatic
+reverse synchronization or authority to replace newer saved owner work.
 
 Content Studio, reader overrides, and offline snapshots use `content_publications` to identify the published version of a shared content key. A retirement is durable even when its editable source is removed. Reader fallback lookup stops at a retired key rather than exposing bundled copy underneath it. Only an explicit authorized publication can undo retirement. Offline clients retain lifecycle revisions separately from cached writing and learn new retirements when they reconnect.
 
