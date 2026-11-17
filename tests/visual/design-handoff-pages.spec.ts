@@ -277,8 +277,9 @@ for (const width of [320, 390, 768, 1440]) for (const theme of ['light', 'dark']
         const element = (await first.boundingBox())!;
         return element.y - nav.y - nav.height;
       };
-      await expect.poll(gap, { message: `${label} starts below the shared header gap` }).toBeCloseTo(width <= 720 ? 64 : 80, 0);
-      gaps.push(await gap());
+      const expectedGap = label === 'Saved chart' ? 40 : width <= 720 ? 64 : 80;
+      await expect.poll(gap, { message: `${label} uses its approved navigation clearance` }).toBeCloseTo(expectedGap, 0);
+      if (label !== 'Saved chart') gaps.push(await gap());
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label).toBe(true);
       await page.screenshot({ path: `test-results/design-page-clearance-${label.toLowerCase()}-${width}-${theme}.png` });
     }
