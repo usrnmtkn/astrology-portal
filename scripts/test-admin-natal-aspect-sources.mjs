@@ -97,7 +97,6 @@ assert.match(finderSource, />Edit source</u, "Every matching exact natal aspect 
 assert.match(finderSource, /Write \{selectedTitle\}/u, "A missing exact aspect must offer a contextual writing action.");
 assert.match(finderSource, /onCreateSource\(natalAspectSourceDraft\(\{ first, aspect, second \}\)\)/u, "The contextual action must preserve the selected exact pair.");
 assert.doesNotMatch(finderSource, /No exact passage exists/u, "The finder must not tell the owner that live composed natal aspect writing does not exist.");
-assert.match(finderSource, /composed natal aspect writing/u, "A missing exact passage must explain that You currently uses composed natal aspect writing.");
 assert.match(finderSource, /Shared fallback sources/u, "Exact passages must retain access to the shared fallback sources.");
 assert.match(dashboardSource, /natalAspectResolverDependencyKeys/u, "Natal Aspects must fetch the exact and composed keys the You page actually reads.");
 assert.match(finderSource, /natalAspectComposedStatusRow/u, "Composed natal sources must badge the displayed saved revision, or the package when no saved revision exists.");

@@ -8,7 +8,7 @@ CI and production results belong to the release PR. No live reader-content write
 is part of this change.
 
 The code/test fingerprint is
-`9f07fcc8fa93747d7290131549caf89fc8d909b63b4342ffa2e72a889e8c4633`:
+`258395d8750cee10484030e32e76c6ea19561f15bd0f75b2a6e41ad9f997d7bf`:
 SHA-256 of sorted modified/new code and test paths, each followed by NUL,
 complete file bytes, and NUL. Documentation is excluded. The checkout has its
 own `npm ci` dependencies and locally built knowledge package.
@@ -74,6 +74,14 @@ exceeded the Admin raw entry cap by 27 bytes and Web aggregate gzip cap by 268
 bytes; duplicated classification and unnecessary interface text were removed.
 No budget was increased. Ad hoc compiler invocations omitted project declarations;
 the canonical server/Admin/Web checks passed.
+
+The first exact-head CI run on `1883bc36f49299b6cc870cc921565533fa913d1a`
+passed the auth tests but failed `auth-access` at its Web bundle check: Linux
+measured 3,788,731 aggregate gzip bytes against the 3,788,729 cap, two bytes over.
+The corrective candidate removes repeated source-array construction and redundant
+interface explanations. Fields, source keys, navigation and budget caps stay
+unchanged. Its focused browser matrix and budget checks are rerun before push;
+required CI must pass its new exact head.
 
 The broader static `test-fallback-refresh-wiring.mjs` still fails at line 758,
 expecting an older personal-transit preview expression. The same failure was

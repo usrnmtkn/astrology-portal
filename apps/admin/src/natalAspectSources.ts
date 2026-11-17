@@ -149,34 +149,29 @@ export function natalAspectComposedSources(selection: NatalAspectSelection): Nat
   const aspect = natalAspectKeyPart(selection.aspect);
   const group = natalAspectComposedGroups[aspect];
   const title = natalAspectDisplayTitle({ first, aspect, second });
-  const sources: NatalAspectComposedSource[] = [];
-  if (!group) return sources;
-  if (group) {
-    const pairKeys = [...new Set([
-      `fallback-hook/aspect-pair/${first}/${second}/${group}`,
-      `fallback-hook/aspect-pair/${second}/${first}/${group}`
-    ])];
-    sources.push({
+  if (!group) return [];
+  return [
+    {
       id: "pair-writing",
       label: `${title} pair writing`,
       scope: "You and Friend fallback shared by this aspect group.",
-      candidateKeys: pairKeys
-    });
-  }
-  sources.push({
-    id: "natal-aspect-template",
-    label: "Natal aspect template",
-    scope: "You and Friend templates shared by natal aspects.",
-    candidateKeys: ["fallback-template/natal.aspect"]
-  });
-  sources.push(
+      candidateKeys: [
+        `fallback-hook/aspect-pair/${first}/${second}/${group}`,
+        `fallback-hook/aspect-pair/${second}/${first}/${group}`
+      ]
+    },
+    {
+      id: "natal-aspect-template",
+      label: "Natal aspect template",
+      scope: "You and Friend templates shared by natal aspects.",
+      candidateKeys: ["fallback-template/natal.aspect"]
+    },
     { id: 'aspect-type', label: 'Aspect explanation', scope: 'Shared explanation for this aspect type.', candidateKeys: [`fallback-hook/aspect-type/${aspect}`] },
     { id: 'aspect-adjective', label: 'Aspect wording', scope: 'Used by both audience templates.', candidateKeys: [`fallback-vocab/aspect-adj/${aspect}`] },
     { id: 'aspect-motion', label: 'Aspect movement wording', scope: 'Used by both audience templates.', candidateKeys: [`fallback-vocab/aspect-motion/${aspect}`] },
     { id: 'first-core', label: `${titleCase(first)} meaning`, scope: 'Planet meaning shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${first}`] },
     { id: 'second-core', label: `${titleCase(second)} meaning`, scope: 'Planet meaning shared by both audiences.', candidateKeys: [`fallback-vocab/planet-core/${second}`] }
-  );
-  return sources;
+  ];
 }
 
 export function natalAspectResolverDependencyKeys(selection: NatalAspectSelection) {

@@ -128,7 +128,6 @@ export default function NatalAspectSourceFinder({
       {!isLoading && fullSelection && matches.length === 0 && (
           <div className="admin-empty-state">
             <strong>No exact pair-specific passage is saved for {selectedTitle}.</strong>
-            <p>Shared composed natal aspect writing appears below when supported.</p>
             <StudioButton
               type="button"
               className="primary"
@@ -156,7 +155,6 @@ export default function NatalAspectSourceFinder({
           <div className="admin-natal-source-grid">
             {hasStandaloneSource && !hasExactSource && fullSelection && (
               <div className="admin-empty-state">
-                <p>Write a Friend passage to replace automatic conversion of the You write-up.</p>
                 <StudioButton type="button" onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}>
                   Write Friend passage
                 </StudioButton>
