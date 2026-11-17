@@ -140,7 +140,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
 
   return <div ref={rootRef} className="interactive-zodiac-wheel" data-mode={mode} data-has-houses={facts.hasHouses} data-selected-type={selected?.type}>
     <div className="interactive-zodiac-wheel__drawing">
-      <svg className="interactive-zodiac-wheel__svg" viewBox={facts.angles.length ? "-40 -40 680 680" : "0 0 600 600"} role="group" aria-label={mode === "sky" ? "Interactive sky chart" : ownerName ? `${ownerName} interactive natal chart` : "Your interactive natal chart"} onClick={clear}>
+      <svg className="interactive-zodiac-wheel__svg" viewBox="0 0 600 600" role="group" aria-label={mode === "sky" ? "Interactive sky chart" : ownerName ? `${ownerName} interactive natal chart` : "Your interactive natal chart"} onClick={clear}>
         <desc>Select a planet{facts.hasHouses ? ", house, or angle" : ""} to explore its chart details. Press Escape to clear the selection.</desc>
         <defs>{wheelSigns.map((sign, index) => {
           const angle = ((180 + index * 30 + 15 - (facts.ascendant ?? 0)) % 360 + 360) % 360;
@@ -196,7 +196,7 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
           </g>
         </g> : null}
         {facts.angles.map(angle => {
-          const first = at(angle.longitude, radii.aspect), second = at(angle.longitude, radii.sign - 16);
+          const first = at(angle.longitude, radii.aspect), second = at(angle.longitude, radii.sign);
           return <line key={angle.key} className="interactive-wheel-axis" x1={first.x} y1={first.y} x2={second.x} y2={second.y} data-dimmed={dim(litAngles.has(angle.key))} />;
         })}
         {facts.planets.map(point => {
@@ -217,14 +217,14 @@ function WheelInteraction({ facts, mode, ownerName, pronouns, tooltipPreview }: 
           </g>;
         })}
         {facts.angles.map(angle => {
-          const position = at(angle.longitude, radii.outer + 24);
+          const position = at(angle.longitude, radii.sign), width = angle.key.length * 6 + 24;
           let rotation = 90 - (180 + angle.longitude - (facts.ascendant ?? 0));
           while (rotation > 90) rotation -= 180;
           while (rotation < -90) rotation += 180;
           return <g key={angle.key} className="interactive-wheel-angle" data-angle={angle.key} data-dimmed={dim(litAngles.has(angle.key))}
             transform={`translate(${position.x} ${position.y}) rotate(${rotation})`}
             {...interaction({ type: "angle", key: angle.key }, `${angle.name} · ${wheelDegree(angle.longitude % 30)} ${wheelSigns[Math.floor(angle.longitude / 30)]}`)}>
-            <rect x={-40} y={-17} width={80} height={34} rx={17} /><text>{angle.key} {Math.floor(angle.longitude % 30)}°</text>
+            <rect x={-width / 2} y={-12} width={width} height={24} rx={12} /><text>{angle.key}</text>
           </g>;
         })}
       </svg>
