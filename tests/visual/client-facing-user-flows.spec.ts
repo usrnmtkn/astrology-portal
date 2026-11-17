@@ -5555,7 +5555,7 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 1440]) {
-    test(`shared reading cards use one visual contract ${theme} ${width}`, async ({ page }) => {
+    test(`reading cards retain their approved type roles ${theme} ${width}`, async ({ page }) => {
       test.setTimeout(300_000);
       await page.setViewportSize({ width, height: 1000 });
       // Hydrate the real pattern component through the cached chart fixture.
@@ -5597,12 +5597,13 @@ for (const theme of ["light", "dark"] as const) {
         await checkToken('.natal-insight-card__title', 'font-size', width <= 800 ? '--type-large-title-size' : '--text-card-title');
         await expect(pattern.locator('.natal-insight-card__meta')).toHaveCSS('font-family', /system-ui/);
         await expect(pattern.locator('.card-read-more--icon')).toBeVisible();
-        const placement = page.locator('button.placement-table-row').first();
+        const placementScope = audience === 'friend' ? '.natal-placement-sections ' : '';
+        const placement = page.locator(`${placementScope}button.placement-table-row`).first();
         await expect(placement).toBeVisible();
-        await checkToken('.placement-table-row__title', 'font-size', '--text-row-title-size');
+        await checkToken(`${placementScope}.placement-table-row__title`, 'font-size', '--text-row-title-size');
         await expect(placement.locator('.placement-table-row__title')).toHaveCSS('font-family', /system-ui/);
         await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-family', /Newsreader/);
-        await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-size', '19px');
+        await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-size', audience === 'friend' ? '15px' : '19px');
         await expect(placement.locator('.ui-pill')).toHaveCount(0);
         await expectNoHorizontalOverflow(page, `${audience} current reading cards`);
         await mkdir(responsiveScreenshotDir, { recursive: true });
@@ -6133,8 +6134,9 @@ for (const theme of ["light", "dark"] as const) {
             })))
           };
         }, rings);
-        expect(geometry.viewBox).toBe("-4 -4 608 648");
-        expect(Math.abs(geometry.height / geometry.width - 648 / 608)).toBeLessThan(0.01);
+        expect(geometry.viewBox).toBe("-4 -4 608 608");
+        expect(Math.abs(geometry.height / geometry.width - 1)).toBeLessThan(0.01);
+        await expect(wheel.locator(".chart-house-system-label")).toHaveCount(0);
         expect(geometry.fits).toBe(true);
         expect(geometry.scrollRegions).toBe(0);
         for (const glyph of geometry.glyphs) {
