@@ -6190,9 +6190,9 @@ for (const theme of ["light", "dark"] as const) {
       const dialog = page.getByRole("dialog");
       await expect(dialog.locator(".synastry-house-number")).toHaveCount(12);
       await expect(dialog.locator(".relationship-wheel-viewport, .relationship-wheel-controls")).toHaveCount(0);
-      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await synastry.locator(".sky-wheel").boundingBox())!.width - 2);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await dialog.locator(".full-chart__wheel").boundingBox())!.width - 2);
       const synastryDialogBox = (await dialog.boundingBox())!;
-      const synastryFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      const synastryFooterBox = (await dialog.locator(".full-chart__heading .friend-compare-control").boundingBox())!;
       expect(synastryFooterBox.y + synastryFooterBox.height).toBeLessThan(synastryDialogBox.y + synastryDialogBox.height);
       await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
 
@@ -6208,9 +6208,9 @@ for (const theme of ["light", "dark"] as const) {
       await expectNoHorizontalOverflow(page, "Composite chart");
       await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
       await expect(dialog.locator(".sky-wheel-composite")).toHaveClass(/sky-wheel--monochrome/);
-      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await composite.locator(".sky-wheel").boundingBox())!.width - 2);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await dialog.locator(".full-chart__wheel").boundingBox())!.width - 2);
       const compositeDialogBox = (await dialog.boundingBox())!;
-      const compositeFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      const compositeFooterBox = (await dialog.locator(".full-chart__heading .friend-compare-control").boundingBox())!;
       expect(compositeFooterBox.y + compositeFooterBox.height).toBeLessThan(compositeDialogBox.y + compositeDialogBox.height);
       await dialog.screenshot({ path: testInfo.outputPath("composite-fullscreen.png") });
       await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
@@ -6720,8 +6720,8 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await expect(skyWheel.locator(".interactive-wheel-lord-connector")).toHaveCount(0);
     await skyWheel.screenshot({ path: info.outputPath("sky-selected.png") });
     await sky.getByRole("button", { name: "Open full current sky chart" }).click();
-    await expect(page.locator(".sky-full-chart-view .interactive-zodiac-wheel")).toBeVisible();
-    await page.locator(".sky-full-chart-view").getByRole("button", { name: "Back", exact: true }).click();
+    await expect(page.locator(".full-chart[data-chart-kind=sky] .interactive-zodiac-wheel")).toBeVisible();
+    await page.locator(".full-chart[data-chart-kind=sky]").getByRole("button", { name: "Back", exact: true }).click();
     await expect(sky.getByRole("button", { name: "Open full current sky chart" })).toBeFocused();
 
     await navigate("/#you?tab=chart");

@@ -244,6 +244,7 @@
     "test:friction-flow-studio-api": "node --import tsx scripts/test-friction-flow-studio-api.mts",
     "test:friends-feed-sources": "node --import tsx scripts/test-friends-feed-sources.mts",
     "test:interactive-zodiac-wheel": "node --import tsx scripts/test-interactive-zodiac-wheel.mts",
+    "test:chart-reports": "node --import tsx scripts/test-chart-reports.mts",
     "test:wheel-tooltip-studio-api": "node --import tsx scripts/test-wheel-tooltip-studio-api.mts && node --import tsx scripts/test-wheel-tooltip-variable-api.mts && node --import tsx scripts/test-wheel-tooltip-preview.mts && node --import tsx scripts/test-wheel-tooltip-wayfinding.mts"
   },
   "overrides": {
