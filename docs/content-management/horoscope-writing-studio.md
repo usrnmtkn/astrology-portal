@@ -291,3 +291,20 @@ shared AI planning is stale. It uses the same context builder as generation,
 excludes obsolete shared planning notes, and makes no model request. This allows
 checking saved directions in the actual assembled writing material before
 approving paid planning or drafting.
+
+Saved direction continuity uses `weekly-owner-direction/v1`. The exact current
+sign's concern, stakes and observation appear after the remaining writer context,
+with a requirement to develop the same thought through the ending. This does not
+require repeated wording, a fixed paragraph sequence or an extra conclusion.
+The version participates in edited-plan identity, so an older approval cannot
+silently authorize the changed instructions.
+
+For newly prepared Weekly requests with saved edits for that sign, the existing
+single prose-check request also assesses concern, stakes, observation and ending.
+Each assessment must cite exact candidate text and its complete paragraph; the
+ending assessment must cite the actual final paragraph. Drift holds the original
+draft with quoted findings for owner editing or rejection. No replacement,
+retry or additional judge call is started. Old pinned requests and other periods
+retain their existing review schema. Transport fixtures verify this contract;
+one authorized live candidate can establish its own behavior, not a guarantee
+for all future model output or owner approval.
