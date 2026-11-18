@@ -54,7 +54,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     await page.goto("/admin/content#sky-writeups?view=daily-summary");
-    const reference = await page.getByRole("heading", { name: "Sun and Moon together", exact: true }).evaluate(style);
+    const reference = await page.getByRole("region", { name: "Summary editing workspace", exact: true }).getByRole("heading", { name: "Reader preview", exact: true }).evaluate(style);
     await page.goto("/admin/content#calendar-writeups?view=weekly-sky");
     await page.getByText("Reference templates and source previews", {exact:true}).click();
     const preview = page.getByRole("region", { name: "Calendar template preview", exact: true });

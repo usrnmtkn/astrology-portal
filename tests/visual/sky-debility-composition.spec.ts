@@ -87,7 +87,7 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.addInitScript(theme => localStorage.setItem("tldrastro:studio-theme", theme), theme);
     await page.goto("/#sky-writeups?view=daily-summary");
-    const summaryHeadingStyle = await page.getByRole("heading", { name: "Sun and Moon together", exact: true }).evaluate(style);
+    const summaryHeadingStyle = await page.getByRole("region", { name: "Summary editing workspace", exact: true }).getByRole("heading", { name: "Reader preview", exact: true }).evaluate(style);
     await page.goto("/#sky-writeups?view=detriment-fall");
     await expect(page.locator(".admin-dashboard")).toHaveAttribute("data-studio-theme", theme);
     const studio = page.getByTestId("sky-debility-studio");

@@ -7818,18 +7818,18 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
     await page.addInitScript(value => localStorage.setItem('tldrastro:studio-theme', value), theme);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await expectAdminRouteLoads(page, '/admin/content#sky-writeups?view=daily-summary');
-    const assembly = page.getByRole('region', { name: 'Full summary assembly', exact: true });
-    const composition = page.getByRole('region', { name: 'Sun and Moon composition map', exact: true });
-    // The sections are flat and the workspace grid holds them apart, so the 24px that used
-    // to be each section's top padding is now the gap between them. Asserting that gap on
-    // the workspace keeps an unseparated stack failing.
+    const workspace = page.getByRole('region', { name: 'Summary editing workspace', exact: true });
+    await expect(workspace.getByRole('textbox', { name: 'Summary wording text', exact: true })).toBeEnabled();
+    const wording = workspace.getByLabel('Selected summary wording', { exact: true });
+    const reader = workspace.getByLabel('Summary reader preview', { exact: true });
     await expect(page.locator('.admin-daily-glance-studio').first()).toHaveCSS('gap', '24px');
-    for (const card of [assembly, composition]) {
-      await expect(card).toHaveCSS('padding', '0px');
-      await expect(card).toHaveCSS('border-radius', '0px');
-      await expect(card).toHaveCSS('gap', '24px');
-      await expect(card).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-      const outsideChildren = await card.evaluate(element => {
+    const fieldGap = await page.locator('.admin-dashboard').evaluate(root => getComputedStyle(root).getPropertyValue('--workspace-field-gap').trim());
+    for (const pane of [wording, reader]) {
+      await expect(pane).toHaveCSS('padding', '0px');
+      await expect(pane).toHaveCSS('border-radius', '0px');
+      await expect(pane).toHaveCSS('gap', fieldGap);
+      await expect(pane).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+      const outsideChildren = await pane.evaluate(element => {
         const parent = element.getBoundingClientRect();
         return Array.from(element.children).filter(child => {
           const rect = child.getBoundingClientRect();
@@ -7837,38 +7837,37 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
         }).map(child => child.className);
       });
       expect(outsideChildren).toEqual([]);
-      for (const preview of await card.locator('.admin-template-reader-surface').all()) {
-        await expect(preview).toHaveCSS('padding', '16px');
-        await expect(preview).toHaveCSS('border-top-width', '1px');
-        await expect(preview).toHaveCSS('background-color', theme === 'light' ? 'rgb(244, 244, 245)' : 'rgb(17, 18, 19)');
-      }
     }
-    const a = (await assembly.boundingBox())!;
-    const b = (await composition.boundingBox())!;
-    expect(b.x).toBe(a.x);
-    expect(b.width).toBe(a.width);
-    expect(b.y - a.y - a.height).toBe(24);
-    const controls = composition.locator('.admin-daily-glance-context-form > label');
-    const first = (await controls.nth(0).boundingBox())!;
-    const second = (await controls.nth(1).boundingBox())!;
-    if (width > 720) expect(second.y).toBe(first.y);
-    else expect(second.y).toBeGreaterThan(first.y + first.height);
-    await composition.getByLabel('Composition Sun sign', { exact: true }).selectOption('Aries');
-    await expect(composition.getByLabel('Combined Sun and Moon preview', { exact: true })).toContainText('Aries');
+    const a = (await wording.boundingBox())!;
+    const b = (await reader.boundingBox())!;
+    if (width > 1000) { expect(b.x).toBeGreaterThan(a.x + a.width); expect(b.y).toBe(a.y); }
+    else { expect(b.x).toBe(a.x); expect(b.width).toBe(a.width); expect(b.y).toBeGreaterThan(a.y + a.height); }
+    await workspace.getByText('Change example facts', { exact: true }).click();
+    await workspace.getByLabel('Preview Sun sign', { exact: true }).selectOption('Aries');
+    await expect(workspace.getByLabel('Summary preview passage', { exact: true })).toContainText('Aries');
+    await expect(workspace.getByRole('button', { name: 'Save draft', exact: true })).toBeVisible();
+    await expect(workspace.getByRole('button', { name: 'Review & publish', exact: true })).toBeVisible();
+    await workspace.screenshot({ path: `outputs/studio-style/summary-workspace-${theme}-${width}.png` });
+    await page.getByText('Sources and writing system', { exact: true }).click();
+    const assembly = page.getByRole('region', { name: 'Full summary assembly', exact: true });
+    await expect(assembly).toHaveCSS('padding', '0px');
+    await expect(assembly).toHaveCSS('border-radius', '0px');
+    await expect(assembly).toHaveCSS('gap', '24px');
+    await expect(assembly).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
     await expect(assembly.getByRole('region', { name: 'Full summary preview' })).toContainText('Aries');
+    for (const preview of await assembly.locator('.admin-template-reader-surface').all()) {
+      await expect(preview).toHaveCSS('padding', '16px');
+      await expect(preview).toHaveCSS('border-top-width', '1px');
+      await expect(preview).toHaveCSS('background-color', theme === 'light' ? 'rgb(244, 244, 245)' : 'rgb(17, 18, 19)');
+    }
     await assembly.getByText('Preview event examples', { exact: true }).click();
     await assembly.getByLabel('Exact aspect examples', { exact: true }).fill('Example aspect');
     await expect(assembly.getByRole('region', { name: 'Full summary preview' })).toContainText('Example aspect');
     await assembly.getByText('Preview event examples', { exact: true }).click();
-    const notification = page.getByRole('button', { name: 'Dismiss notification', exact: true });
-    if (await notification.isVisible()) await notification.click();
     await assembly.screenshot({ path: `outputs/studio-style/summary-assembly-${theme}-${width}.png` });
-    await composition.screenshot({ path: `outputs/studio-style/summary-composition-${theme}-${width}.png` });
     await page.getByLabel('Search summary wording', { exact: true }).fill('no-matching-summary-12345');
     await expect(page.getByText('No summary fields match this search.', { exact: true })).toBeVisible();
     await page.getByLabel('Search summary wording', { exact: true }).fill('');
-    // Pair rows are flat and divided now: the first sits flush, and each row after it takes
-    // a rule plus the 24px that used to be every row's own padding.
     const pairRows = await page.locator('.admin-daily-glance-pair-list > article').evaluateAll(items => items.map(item => {
       const style = getComputedStyle(item);
       return { padding: style.padding, divider: parseFloat(style.borderTopWidth), radius: parseFloat(style.borderRadius),
@@ -7882,7 +7881,6 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1440, 390])
       expect(pairRow.padding).toBe('24px 0px 0px');
       expect(pairRow.divider).toBeGreaterThan(0);
     }
-    // Without a divided pair the flat treatment would pass on an unseparated list.
     expect(pairRows.filter(pairRow => pairRow.followsRow).length).toBeGreaterThan(0);
     await expectNoHorizontalOverflow(page, 'Daily summary containers');
     await assertNoBrowserErrors();
@@ -7953,6 +7951,7 @@ for (const theme of ['dark', 'light'] as const) for (const width of [1440, 390])
     await expect(page.getByText('No templates match',{exact:true})).toBeVisible();
     await expectNoHorizontalOverflow(page,'Composition empty state');
     await expectAdminRouteLoads(page,'/admin/content#sky-writeups?view=daily-summary');
+    await page.getByText('Sources and writing system', {exact:true}).click();
     await assertNarrativeVariables('.admin-daily-glance-studio p .admin-composition-variable');
     await page.getByRole('region',{name:'Full summary assembly',exact:true}).screenshot({path:`outputs/studio-style/summary-type-spacing-${theme}-${width}.png`});
     await expectNoHorizontalOverflow(page,'Daily summary typography');
