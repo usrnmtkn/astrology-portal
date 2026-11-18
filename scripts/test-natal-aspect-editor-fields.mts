@@ -70,10 +70,15 @@ try {
   const bundle=path.join(tmpdir(),`natal-aspect-editor-reader-${process.pid}.mjs`);
   try {
     await build({bundle:true,format:'esm',platform:'node',outfile:bundle,logLevel:'silent',define:{'import.meta.env':'{}'},loader:{'.css':'empty','.svg':'dataurl'},
+      banner:{js:'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);'},
       stdin:{resolveDir:process.cwd(),loader:'tsx',contents:`
         export { friendsViewModelDependencies } from './apps/web/src/App.tsx';
         export { generatedContentMapFromRows } from './apps/web/src/services/generatedContent.ts';
         export { installContentPublications } from './apps/web/src/content/contentPublicationState.ts';
+        export { default as NatalAspectSourceFinder } from './apps/admin/src/NatalAspectSourceFinder.tsx';
+        export { studioListingRow, studioListingFacts } from './src/shared/studio-listing-facts.ts';
+        export { createElement } from 'react';
+        export { renderToStaticMarkup } from 'react-dom/server';
       `}});
     const runtime=await import(pathToFileURL(bundle).href);
     runtime.installContentPublications(nativeReader.payload.publications);
@@ -81,6 +86,20 @@ try {
     const article=runtime.friendsViewModelDependencies.natalAspectDetailArticle({from:'Sun',to:'Moon',type:'opposition',orb:0},content);
     assert.equal(article.lensHint,hint,'The actual app article must forward the saved Sun–Moon hint.');
     assert.ok(article.body.join('\n\n').includes('Synthetic complete You ending.'));
+    const renderSource=(row:Record<string,unknown>)=>runtime.renderToStaticMarkup(runtime.createElement(runtime.NatalAspectSourceFinder,{
+      first:'sun',aspect:'opposition',second:'moon',isLoading:false,rows:[row],onCreateSource(){},onOpenSource(){},onSelectionChange(){}
+    }));
+    for(const contentKey of ['natal.aspect.sun.opposition.moon','fallback-hook/natal-aspect-lived/sun/opposition/moon']) {
+      const document={...nativePublish.payload.rows[0],content_key:contentKey,body:originalYou,sections:{astroHint:hint}};
+      const listing=runtime.studioListingRow(document,runtime.studioListingFacts(document));
+      const unloaded=renderSource(listing);
+      assert.match(unloaded,/Open to inspect saved fields\./,'Real list projection must stay unknown until its document loads.');
+      assert.doesNotMatch(unloaded,/You: empty|Friend: empty|Astrology hint: empty/,'Omitted copy is not missing copy.');
+      assert.match(renderSource(document),/You: saved/);
+      assert.match(renderSource({...document,body:'',sections:{}}),/You: empty/,'A loaded empty document still reports its real gap.');
+    }
+    assert.match(renderSource({content_key:'fallback-hook/natal-aspect-lived/sun/opposition/moon',headline:'Synthetic source',status:'DRAFT',
+      inventory_only:true,body:'',sections:{packageRecord:{body:originalYou}}}),/You: saved/,'Known virtual package copy stays inspectable without a saved document.');
   } finally { rmSync(bundle,{force:true}); }
 } finally { store.close(); }
-console.log('Natal aspect editor fields: hint save/reopen/publish, stale refusal, shipped reader delivery, and audience isolation passed.');
+console.log('Natal aspect editor fields: hint save/reopen/publish, stale refusal, shipped reader delivery, audience isolation, and listing-versus-empty source coverage passed.');
