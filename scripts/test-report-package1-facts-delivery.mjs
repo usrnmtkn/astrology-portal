@@ -5,7 +5,7 @@ import { reportSeasonContracts } from "../api/_lib/report-season-contract.ts";
 import { reportUnitScopeRange } from "../api/_lib/report-unit-scope.ts";
 import { buildReviewedReportDocument, resolveReviewedDeliveryBytes, reviewedReportDocumentBytes, reviewedReportDocumentHash } from "../api/_lib/report-review-document.ts";
 
-const facts = JSON.parse(fs.readFileSync(new URL("./fixtures/marie-report-frozen-facts.json", import.meta.url), "utf8"));
+const facts = JSON.parse(fs.readFileSync(new URL("./fixtures/synthetic-report-package1-facts.json", import.meta.url), "utf8"));
 const seasons = reportSeasonContracts(facts);
 assert.equal(seasons.length, 5);
 for (const season of seasons) {

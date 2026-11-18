@@ -210,12 +210,12 @@ const localizedKeyDateManifest = reportKeyDateEventManifest({
   }]
 }, "12_months");
 assert.equal(
-  localizedKeyDateManifest.find((entry) => entry.eventId === "saturn-sextile-ascendant:0")?.dateLabel,
+  localizedKeyDateManifest.find((entry) => entry.factorId === "saturn-sextile-ascendant")?.dateLabel,
   "MAY 18",
   "Deterministic Key Dates must display the normalized report-local transit date, not the raw UTC day."
 );
 assert.equal(
-  localizedKeyDateManifest.find((entry) => entry.eventId === "solar_eclipse-local-date-fixture")?.dateLabel,
+  localizedKeyDateManifest.find((entry) => entry.factorId === "solar_eclipse-local-date-fixture")?.dateLabel,
   "OCT 6",
   "Deterministic Key Dates must display the normalized report-local eclipse date, not the raw UTC day."
 );
