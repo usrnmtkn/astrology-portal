@@ -47,6 +47,27 @@ try {
   const { FriendSynastryTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendSynastryTab.tsx"
   );
+  const renderCompatibility = (daily) => renderToStaticMarkup(React.createElement(CompatibilityTab, {
+    cards: [], dynamics: [], friendName: "Fixture Friend", daily
+  }));
+  const overviewHtml = renderCompatibility({
+    opening: "Complete opening.", body: "Complete opening. Complete supporting passage. Final sentence.", dateLabel: "Mon, Nov 16"
+  });
+  assert.match(overviewHtml, /Between you · Mon, Nov 16<\/span><p[^>]*>Complete opening\.<\/p><p[^>]*> Complete supporting passage\. Final sentence\.<\/p>/);
+  assert.ok(overviewHtml.indexOf("Complete opening.") < overviewHtml.indexOf("Planet by planet"));
+  for (const daily of [
+    { body: "Complete unsplit passage.", dateLabel: "Mon, Nov 16" },
+    { opening: "Mismatched opening.", body: "Complete unsplit passage.", dateLabel: "Mon, Nov 16" },
+    { opening: "Complete unsplit passage.", body: "Complete unsplit passage.", dateLabel: "Mon, Nov 16" }
+  ]) {
+    const html = renderCompatibility(daily);
+    assert.match(html, /<p[^>]*>Complete unsplit passage\.<\/p>/);
+    assert.doesNotMatch(html, /friend-profile-overview__body/);
+  }
+  const completeOpeningHtml = renderCompatibility({ opening: "Complete first sentence. Full opening ending.", body: "Complete first sentence. Full opening ending. Supporting passage.", dateLabel: "Mon, Nov 16" });
+  assert.match(completeOpeningHtml, /friend-profile-overview__headline">Complete first sentence\. Full opening ending\.<\/p>/);
+  assert.match(completeOpeningHtml, /friend-profile-overview__body"> Supporting passage\.<\/p>/);
+  assert.doesNotMatch(renderCompatibility(null), /compatibility-overview|Between you/);
   const { FriendNatalTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendNatalTab.tsx"
   );

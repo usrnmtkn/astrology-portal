@@ -504,7 +504,9 @@ for (const width of [320, 390, 960, 1440]) for (const theme of ['light', 'dark']
     if (width > 800) {
       expect(copy.x).toBeGreaterThanOrEqual(chart.x + chart.width);
       if (width === 1440) { expect(chart.width).toBe(640); expect(copy.width).toBe(600); expect(copy.x - chart.x - chart.width).toBe(64); }
-      if (name === 'Synastry' || name === 'Composite') {
+      if (name === 'Compatibility') {
+        expect(Math.abs(chart.y - copy.y)).toBeLessThan(1);
+      } else if (name === 'Synastry' || name === 'Composite') {
         expect(Math.abs(chart.y - copy.y)).toBeLessThan(1);
         await expect(rail).toHaveCSS('position', 'sticky'); await expect(rail).toHaveCSS('top', '32px');
       } else expect(Math.abs(chart.y + chart.height / 2 - copy.y - copy.height / 2)).toBeLessThan(1);

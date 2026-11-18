@@ -2084,7 +2084,7 @@ test.describe("client-facing user flow case studies", () => {
 
   for (const theme of ["light", "dark"] as const) {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
-      test(`Compatibility Pair Daily appears above planets on a cold visit (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
+      test(`Compatibility overview pairs the chart with its opening on a cold visit (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
         const assertNoClientErrors = await expectNoClientErrors(page);
         await page.setViewportSize(viewport);
         await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
@@ -2102,24 +2102,73 @@ test.describe("client-facing user flow case studies", () => {
         const comparisons = page.getByRole("region", { name: "Planet by planet", exact: true });
         await expect(daily).toBeVisible();
         await expect(daily.locator(".friend-profile-eyebrow")).toHaveText(/^Between you · /);
-        const body = await daily.locator("p").allTextContents();
-        expect(body.join(" ")).toContain("Nikki");
-        expect(body.join(" ").length).toBeGreaterThan(40);
-        expect(body.join(" ")).not.toMatch(/SOURCE_GAP|\{[^}]+\}|undefined/);
+        const opening = daily.locator(".friend-profile-overview__headline");
+        await expect(opening).toContainText("Nikki");
+        const headline = await opening.innerText();
+        const supportingParagraphs = daily.locator(".friend-profile-overview__body");
+        const supporting = await supportingParagraphs.allTextContents();
+        const body = [headline, ...supporting].join(" ");
+        expect(body.length).toBeGreaterThan(40);
+        expect(body).not.toMatch(/SOURCE_GAP|\{[^}]+\}|undefined/);
         await expect(comparisons.locator(".compatibility-card").first()).toBeVisible();
         const dailyBounds = (await daily.boundingBox())!;
         const comparisonsBounds = (await comparisons.boundingBox())!;
         expect(dailyBounds.y + dailyBounds.height).toBeLessThanOrEqual(comparisonsBounds.y);
         expect(dailyBounds.x).toBeGreaterThanOrEqual(0);
         expect(dailyBounds.x + dailyBounds.width).toBeLessThanOrEqual(viewport.width);
+        const wheel = page.getByLabel("Nikki compatibility chart wheel");
+        await expect(wheel).toBeVisible();
+        const wheelBounds = (await wheel.boundingBox())!;
+        if (viewport.width > 800) {
+          expect(Math.abs(wheelBounds.y - dailyBounds.y)).toBeLessThan(2);
+          expect(wheelBounds.x + wheelBounds.width).toBeLessThan(dailyBounds.x);
+          expect(comparisonsBounds.y).toBeGreaterThanOrEqual(wheelBounds.y + wheelBounds.height);
+        } else {
+          expect(dailyBounds.y).toBeGreaterThanOrEqual(wheelBounds.y + wheelBounds.height);
+        }
+        await expect(daily).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+        const typography = await daily.evaluate((element) => {
+          const title = element.querySelector(".friend-profile-overview__headline")!;
+          const paragraph = element.querySelector(".friend-profile-overview__body")!;
+          const style = getComputedStyle(title);
+          const bodyStyle = getComputedStyle(paragraph);
+          const role = document.createElement("span");
+          element.append(role);
+          role.style.cssText = "font-family:var(--font-display);font-size:var(--type-overview-title-size);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-title)";
+          const expectedTitle = getComputedStyle(role);
+          const properties = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing"];
+          const titleMatches = properties.every(property => style.getPropertyValue(property) === expectedTitle.getPropertyValue(property));
+          role.style.cssText = "font-family:var(--font-body);font-size:var(--type-overview-reading-size);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
+          const expectedBody = getComputedStyle(role);
+          const bodyMatches = properties.every(property => bodyStyle.getPropertyValue(property) === expectedBody.getPropertyValue(property));
+          role.remove();
+          return { titleMatches, bodyMatches, order: Array.from(element.children).map(child => child.tagName) };
+        });
+        expect(typography).toEqual({ titleMatches: true, bodyMatches: true, order: ["SPAN", "P", "P"] });
+        const headings = await page.locator(".friend-chart-page h1, .friend-chart-page h2").allTextContents();
+        expect(headings.slice(0, 2)).toEqual(["Nikki", "Planet by planet"]);
         await daily.screenshot({ path: testInfo.outputPath("pair-daily.png") });
+        if (viewport.width > 800) {
+          await page.screenshot({ path: testInfo.outputPath("compatibility-hero.png") });
+        }
+
+        const expand = page.getByRole("button", { name: "Full-screen chart", exact: true });
+        await expand.click();
+        const fullscreen = page.getByRole("dialog");
+        await expect(fullscreen.getByRole("heading").first()).toBeVisible();
+        await expect(fullscreen.locator(".synastry-wheel")).toBeVisible();
+        await page.keyboard.press("Escape");
+        await expect(fullscreen).toHaveCount(0);
+        await expect(expand).toBeFocused();
 
         // A reload and a tab round-trip must retain the complete approved reading.
         await page.reload();
-        await expect(daily.locator("p")).toHaveText(body);
+        await expect(opening).toHaveText(headline);
+        await expect(supportingParagraphs).toHaveText(supporting);
         await page.getByRole("tab", { name: "Natal" }).click();
         await page.getByRole("tab", { name: "Compatibility" }).click();
-        await expect(daily.locator("p")).toHaveText(body);
+        await expect(opening).toHaveText(headline);
+        await expect(supportingParagraphs).toHaveText(supporting);
         await assertNoClientErrors();
       });
     }

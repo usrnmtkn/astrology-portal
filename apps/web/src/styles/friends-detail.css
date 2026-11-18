@@ -287,6 +287,8 @@
 .friend-compatibility-stage,
 .friend-compatibility-stage > .compatibility-column { display: contents; }
 .friend-compatibility-stage .friend-daily-forecast { grid-column: 2; grid-row: 2; }
+.friend-chart-page.friend-profile-view.friend-chart-page--compatibility.relationship-detail-layout > .friend-detail-chart-rail,
+.friend-chart-page.friend-profile-view.friend-chart-page--compatibility .compatibility-overview { align-self: start; }
 .friend-compatibility-stage :is(.compatibility-comparisons, .compatibility-dynamics) { grid-column: 1 / -1; }
 .compatibility-comparisons { display: grid; gap: var(--space-4); }
 .friend-chart-page .compatibility-comparisons > .chart-section-title { font-family: var(--font-ui); font-size: var(--type-section-heading-size); font-weight: var(--weight-semibold); line-height: var(--leading-section-heading); letter-spacing: var(--tracking-normal); text-transform: none; }
