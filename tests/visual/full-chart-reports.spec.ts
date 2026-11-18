@@ -4,6 +4,10 @@ import { prepareChartReport } from "../helpers/chart-report-fixture";
 
 test.describe.configure({ mode: "parallel" });
 
+test("chart report calculation model retains precision and phase", async () => {
+  await import("../../scripts/test-chart-reports.mts");
+});
+
 async function houseGeometry(wheel: Locator) {
   return wheel.locator('.synastry-house-labels text').evaluateAll(nodes => nodes.map(node =>
     [node.textContent, node.getAttribute('x'), node.getAttribute('y'), node.getAttribute('transform')]));
