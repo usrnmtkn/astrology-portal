@@ -67,7 +67,7 @@ try {
   const ep = await vite.ssrLoadModule("/src/services/ephemeris.ts");
   const timing = await vite.ssrLoadModule("/src/services/skyAspectTiming.ts");
   const swe = await ep.getSwissEph();
-  const ids: Record<string,number> = { Sun: 0, Moon: 1, Mercury: 2, Venus: 3, Mars: 4, Jupiter: 5, Saturn: 6, Uranus: 7, Neptune: 8, Pluto: 9, Chiron: 15, Lilith: 13 };
+  const ids: Record<string,number> = { Sun: 0, Moon: 1, Mercury: 2, Venus: 3, Mars: 4, Jupiter: 5, Saturn: 6, Uranus: 7, Neptune: 8, Pluto: 9, Chiron: 15, Lilith: 13, "North Node": swe.SE_TRUE_NODE };
   let count = 0;
   let directNeptuneEvent;
   for (const [start,end] of [["2026-09-07", "2026-09-14"], ["2026-12-09", "2026-12-23"]]) {
@@ -77,10 +77,12 @@ try {
     for (const event of events) {
       for (const [i,field] of [[0,"fromMotion"],[1,"toMotion"]] as const) {
         // Independent finite difference in longitude across exactness, not the event's speed field.
+        assert.ok(Number.isInteger(ids[event.planets[i]]), `Swiss body ID required for ${event.planets[i]}`);
         const at = new Date(event.startsAt).getTime();
         const before = ep.exactPlanetLongitude(swe, ids[event.planets[i]], new Date(at - 30_000));
         const after = ep.exactPlanetLongitude(swe, ids[event.planets[i]], new Date(at + 30_000));
         const delta = (after - before + 540) % 360 - 180;
+        assert.ok(Number.isFinite(delta), `${event.id}: finite independent motion`);
         assert.equal(event[field], delta < 0 ? "retrograde" : "direct", `${event.id} ${field}`);
       }
       count++;

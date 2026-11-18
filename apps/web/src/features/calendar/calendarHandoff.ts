@@ -1,4 +1,5 @@
 import astro2026Catalog from "./data/astro-2026.catalog.json" with { type: "json" };
+import astro2027KeySelections from "./data/astro-2027-key-selections.json" with { type: "json" };
 import {
   LUNAR_JOURNAL_INDEX,
   type LunarJournalType
@@ -71,10 +72,16 @@ export function compactHandoffTitle(title: string) {
     .replace(/[^a-z]/g, "");
 }
 
-export function isHandoffKeyEvent(event: { title: string; dateKey?: string }, dateKey?: string) {
+export function isHandoffKeyEvent(event: { title: string; dateKey?: string; startsAt?: string }, dateKey?: string) {
+  const compact = compactHandoffTitle(event.title);
+  // Editorial dates select an already calculated event; they never supply its
+  // facts. UTC identity keeps a highlight stable across subscriber time zones.
+  if (event.startsAt && Number.isFinite(Date.parse(event.startsAt))) {
+    const dateUTC = new Date(event.startsAt).toISOString().slice(0, 10);
+    if (astro2027KeySelections.some(item => item.dateUTC === dateUTC && compactHandoffTitle(item.title) === compact)) return true;
+  }
   const day = dateKey ?? event.dateKey;
   if (!day) return false;
-  const compact = compactHandoffTitle(event.title);
   return ASTRO_2026_EVENTS.some((item) => (
     item.date === day
     && item.kind === "key"

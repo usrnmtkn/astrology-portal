@@ -1,0 +1,200 @@
+[
+  {
+    "at": "2027-01-06T11:01:00Z",
+    "type": "station",
+    "planet": "Chiron",
+    "direction": "direct"
+  },
+  {
+    "at": "2027-01-25T13:33:00Z",
+    "type": "aspect",
+    "planets": [
+      "Mercury",
+      "North Node"
+    ],
+    "aspect": "conjunction"
+  },
+  {
+    "at": "2027-02-09T12:39:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Sun"
+    ],
+    "aspect": "conjunction"
+  },
+  {
+    "at": "2027-02-22T14:20:00Z",
+    "type": "aspect",
+    "planets": [
+      "Jupiter",
+      "North Node"
+    ],
+    "aspect": "opposition"
+  },
+  {
+    "at": "2027-03-18T01:40:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Venus"
+    ],
+    "aspect": "conjunction"
+  },
+  {
+    "at": "2027-04-14T14:57:00Z",
+    "type": "ingress",
+    "planet": "Chiron",
+    "sign": "Taurus"
+  },
+  {
+    "at": "2027-04-20T16:21:00Z",
+    "type": "aspect",
+    "planets": [
+      "Chiron",
+      "Sun"
+    ],
+    "aspect": "conjunction"
+  },
+  {
+    "at": "2027-04-23T15:39:00Z",
+    "type": "aspect",
+    "planets": [
+      "Jupiter",
+      "North Node"
+    ],
+    "aspect": "opposition"
+  },
+  {
+    "at": "2027-04-25T05:45:00Z",
+    "type": "aspect",
+    "planets": [
+      "Chiron",
+      "Mercury"
+    ],
+    "aspect": "conjunction"
+  },
+  {
+    "at": "2027-05-02T17:44:00Z",
+    "type": "aspect",
+    "planets": [
+      "Mercury",
+      "North Node"
+    ],
+    "aspect": "square"
+  },
+  {
+    "at": "2027-05-06T17:38:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Sun"
+    ],
+    "aspect": "square"
+  },
+  {
+    "at": "2027-05-16T10:41:00Z",
+    "type": "aspect",
+    "planets": [
+      "Chiron",
+      "Venus"
+    ],
+    "aspect": "conjunction"
+  },
+  {
+    "at": "2027-05-26T07:06:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Venus"
+    ],
+    "aspect": "square"
+  },
+  {
+    "at": "2027-08-04T01:29:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Sun"
+    ],
+    "aspect": "opposition"
+  },
+  {
+    "at": "2027-08-05T20:09:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Venus"
+    ],
+    "aspect": "opposition"
+  },
+  {
+    "at": "2027-08-08T00:26:00Z",
+    "type": "aspect",
+    "planets": [
+      "Mercury",
+      "North Node"
+    ],
+    "aspect": "opposition"
+  },
+  {
+    "at": "2027-08-08T02:55:00Z",
+    "type": "station",
+    "planet": "Chiron",
+    "direction": "retrograde"
+  },
+  {
+    "at": "2027-09-18T02:25:00Z",
+    "type": "aspect",
+    "planets": [
+      "Mars",
+      "North Node"
+    ],
+    "aspect": "square"
+  },
+  {
+    "at": "2027-10-15T03:48:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Venus"
+    ],
+    "aspect": "square"
+  },
+  {
+    "at": "2027-10-30T12:35:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Sun"
+    ],
+    "aspect": "square"
+  },
+  {
+    "at": "2027-11-13T17:21:00Z",
+    "type": "aspect",
+    "planets": [
+      "Mercury",
+      "North Node"
+    ],
+    "aspect": "square"
+  },
+  {
+    "at": "2027-11-16T06:42:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Pluto"
+    ],
+    "aspect": "conjunction"
+  },
+  {
+    "at": "2027-12-22T02:21:00Z",
+    "type": "aspect",
+    "planets": [
+      "North Node",
+      "Venus"
+    ],
+    "aspect": "conjunction"
+  }
+]

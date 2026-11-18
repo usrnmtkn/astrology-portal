@@ -1,6 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import calendarHandler from "../../api/calendar";
+import skyHandler from "../../api/sky";
 import { calendarSubscriptionFixture } from "../helpers/calendar-subscription-fixture";
-import { bundledPublications } from "../helpers/bundled-publications";
+import { bundledPublications, bundledSkyPublications } from "../helpers/bundled-publications";
 import { calendarReadingUrl } from "../../apps/web/src/features/calendar/calendarFeedPreview";
 import { moonSignTransitionForPair } from "../../src/shared/features/calendar/moonSignTransitions";
 let fixture: Awaited<ReturnType<typeof calendarSubscriptionFixture>>;
@@ -33,8 +36,8 @@ test.beforeEach(async ({ page }) => {
 });
 test.afterEach(async () => fixture.close());
 
-async function openSheet(page: Page) {
-  await page.goto("/#calendar?date=2026-09-21&view=month");
+async function openSheet(page: Page, date = "2026-09-21") {
+  await page.goto(`/#calendar?date=${date}&view=month`);
   await page.getByRole("button", { name: /Add to your calendar|Calendar subscription link/ }).first().click();
   return page.getByRole("dialog", { name: /Add to your calendar|Your calendar link is ready/ });
 }
@@ -86,7 +89,67 @@ test("creation failure preserves choices and never reports success", async ({ pa
   await expect(sheet.getByText("Your calendar link is ready", { exact: true })).toBeVisible();
 });
 
-for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`feed excerpt links open exact full readings ${theme} ${width}`, async ({ page }, testInfo) => {
+test("2027 subscriptions export every selected event and open a quarter reading", async ({ page }) => {
+  test.setTimeout(90000);
+  const errors: string[] = []; page.on("pageerror", error => errors.push(error.message));
+  const sheet = await openSheet(page, "2027-04-14");
+  await expect(sheet.getByRole("switch", { name: "Moon phases & eclipses", exact: true })).toHaveAttribute("aria-checked", "true");
+  await expect(sheet).toContainText("New, full, first and last quarter Moons");
+  await sheet.getByRole("switch", { name: "Moon sign changes", exact: true }).click();
+  await sheet.getByRole("switch", { name: "All aspects", exact: true }).click();
+  await sheet.getByRole("button", { name: "Create my calendar link" }).click();
+  const input = sheet.getByRole("textbox", { name: "Calendar subscription URL" });
+  await expect(input).toBeVisible();
+  const url = await input.inputValue();
+  const response = await page.evaluate(async url => { const response = await fetch(url); return { status: response.status, body: await response.text() }; }, url);
+  expect(response.status).toBe(200);
+  const entries = response.body.replace(/\r\n /gu, "").split("BEGIN:VEVENT");
+  for (const title of ["Chiron enters Taurus", "Chiron stations direct", "Chiron stations retrograde", "Sun conjunction Chiron", "Jupiter opposition North Node", "Venus conjunction North Node"]) {
+    expect(entries.some(entry => entry.includes(`SUMMARY:${title}\r\n`) && entry.includes("DTSTART:2027"))).toBe(true);
+  }
+  const quarters = entries.filter(entry => /SUMMARY:(?:First|Last) Quarter Moon/u.test(entry) && entry.includes("DTSTART:2027"));
+  expect(quarters).toHaveLength(24);
+  const quarter = quarters[0];
+  const title = quarter.match(/\r\nSUMMARY:([^\r]+)/)![1];
+  const link = new URL(quarter.match(/\r\nURL:([^\r]+)/)![1]);
+  await page.goto(link.pathname + link.search + link.hash);
+  const reading = page.getByRole("dialog", { name: title, exact: true });
+  await expect(reading).toBeVisible();
+  const body = await reading.locator(".calendar-reading__body").innerText();
+  expect(body.trim()).toBeTruthy();
+  expect(quarter).toContain(`DESCRIPTION:${body.replace(/\\/gu, "\\\\").replace(/\n/gu, "\\n").replace(/;/gu, "\\;").replace(/,/gu, "\\,")}`);
+  await page.reload();
+  await expect(reading).toBeVisible();
+  await expect(reading.locator(".calendar-reading__body")).toHaveText(body);
+  expect(errors).toEqual([]);
+});
+
+test("2027 Chiron ingress opens its calculated Sky reading and survives reload", async ({ page }) => {
+  test.setTimeout(90000);
+  await bundledSkyPublications(page);
+  // Vite preview serves assets, not calculation APIs. Keep this native event
+  // route on the real calculation handlers, as in the approved-copy audit.
+  for (const [path, handler] of [["calendar", calendarHandler], ["sky", skyHandler]] as const) {
+    await page.route(`**/api/${path}?*`, async route => {
+      const response = { statusCode: 200, body: "", setHeader() {}, end(value: string) { this.body = value; } };
+      await handler({ method: "GET", url: route.request().url() } as IncomingMessage, response as unknown as ServerResponse);
+      await route.fulfill({ status: response.statusCode, contentType: "application/json", body: response.body });
+    });
+  }
+  await page.goto("/#calendar?date=2027-04-14&view=day");
+  await page.getByRole("button", { name: "Chiron enters Taurus", exact: true }).click();
+  await expect(page).toHaveURL(/#sky\/event\/ingress\/chiron\/taurus\/at\//);
+  const eventUrl = page.url();
+  expect(eventUrl).toContain("2027-04-14");
+  await expect(page.locator(".sky-detail-article")).toBeVisible({ timeout: 60000 });
+  await expect(page.locator("#sky-detail-title")).toHaveText("Chiron in Taurus");
+  await page.reload();
+  await expect(page).toHaveURL(eventUrl);
+  await expect(page.locator(".sky-detail-article")).toBeVisible({ timeout: 60000 });
+  await expect(page.locator("#sky-detail-title")).toHaveText("Chiron in Taurus");
+});
+
+for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`complete feed readings and links ${theme} ${width}`, async ({ page }, testInfo) => {
   test.setTimeout(90000);
   await page.setViewportSize({ width, height: 950 });
   await page.addInitScript(value => localStorage.setItem("tldrastro:theme", value), theme);
@@ -101,7 +164,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) test(`fe
   const feed = (await fixture.invoke(`/feed/${sub.token}.ics`)).body.replace(/\r\n /gu, "");
   const entry = feed.split("BEGIN:VEVENT").find(part => part.includes(`UID:${id}@tldrastro`))!;
   expect(entry).toContain("Published first sentence. Second sentence. Third sentence.");
-  expect(entry).not.toContain("Fourth sentence");
+  expect(entry).toContain("Fourth sentence");
+  expect(entry).toContain("The complete final sentence is preserved.");
   const link = new URL(entry.match(/\r\nURL:([^\r]+)/)![1]);
   expect(entry).toContain(`Read more: ${link.href}`);
   await page.goto(link.pathname + link.search + link.hash);

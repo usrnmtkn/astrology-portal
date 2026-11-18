@@ -82,8 +82,8 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
     const venus = page.locator(".calendar-day-events .calendar-stoic-card").filter({ hasText: /Moon opposes Venus Rx/ });
     await expect(venus).toBeVisible({ timeout: 60_000 });
     await expect(venus).toContainText("6:59p");
-    expect(calendarVersions).toContain("calendar-lunation-context-v7");
-    expect(await page.evaluate(() => Object.keys(localStorage).some(key => key.startsWith("tldr-lunar-calendar|v16|")))).toBe(true);
+    expect(calendarVersions).toContain("calendar-complete-events-v8");
+    expect(await page.evaluate(() => Object.keys(localStorage).some(key => key.startsWith("tldr-lunar-calendar|v17|")))).toBe(true);
     await venus.click();
     const detail = page.locator('.sky-detail-article');
     await expect(detail.locator('#sky-detail-title')).toHaveText(/Moon.*Opposition.*Venus/i);

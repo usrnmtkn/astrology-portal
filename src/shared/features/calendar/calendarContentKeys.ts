@@ -76,28 +76,17 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
     const motion = event.direction ?? (event.title.toLowerCase().includes("direct") ? "direct" : "retrograde");
     const signPart = event.sign ? slugContentPart(event.sign) : "";
     const phasePart = event.phase ? event.phase.replace(/-/g, "_") : "";
-    const exactRetrogradeKeys = event.sign && event.phase === "retrograde-passage"
-      ? [
-          `sky.retrograde.${planetPart}.${signPart}.${phasePart}`,
-          `fallback-hook/sky.retrograde/${planetPart}/${signPart}/${event.phase}`,
-          `sky-retrograde-${planetPart}`,
-          `ms/retrograde/${planetPart}`,
-          `fallback-hook/sky.retrograde/${planetPart}`
-        ]
-      : [];
-    const exactStationKeys = event.sign && event.phase && event.phase !== "retrograde-passage"
-      ? [
-          `sky.station.${planetPart}.${signPart}.${motion}`,
-          `sky.retrograde.${planetPart}.${signPart}.${phasePart}`,
-          `fallback-hook/sky.retrograde/${planetPart}/${signPart}/${event.phase}`,
-          `fallback-hook/sky.station/${planetPart}/${motion}`
-        ]
-      : [];
-
-    return withJournal([
-      ...exactRetrogradeKeys,
-      ...exactStationKeys
-    ]);
+    const passage = event.phase === "retrograde-passage";
+    const keys: string[] = [];
+    if (event.sign && event.phase) {
+      if (!passage) keys.push(`sky.station.${planetPart}.${signPart}.${motion}`);
+      keys.push(`sky.retrograde.${planetPart}.${signPart}.${phasePart}`,
+        `fallback-hook/sky.retrograde/${planetPart}/${signPart}/${event.phase}`);
+      if (passage) keys.push(`sky-retrograde-${planetPart}`, `ms/retrograde/${planetPart}`, `fallback-hook/sky.retrograde/${planetPart}`);
+      else keys.push(`fallback-hook/sky.station/${planetPart}/${motion}`);
+    }
+    if (!passage) keys.push(`authored/station/${planetPart}/${motion === "retrograde" ? "rx" : "direct"}`);
+    return withJournal(keys);
   }
 
   if(event.type==='lunation')return withJournal(lunationReaderContentKeys(event));
@@ -114,5 +103,6 @@ export function calendarSkyV4LunationContentKey(event: LunarCalendarEvent) {
   if (event.eclipseType) {
     return `sky-lunation/${event.eclipseType}-eclipse/${event.dateKey}-${sign}`;
   }
+  if (/quarter/iu.test(event.title)) return null;
   return `sky-lunation/${/new moon/iu.test(event.title) ? "new-moon" : "full-moon"}/${sign}`;
 }

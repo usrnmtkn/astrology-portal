@@ -7,7 +7,7 @@ import { ModalDialog } from "../../components/ModalDialog";
 import type { CalendarEventKind } from "./calendarKinds";
 
 const feedItems = [
-  { key: "lunations", name: "New & Full Moons", hint: "Plus eclipses", icon: "🌑🌕", kind: "lunation" as const, on: true },
+  { key: "lunations", name: "Moon phases & eclipses", hint: "New, full, first and last quarter Moons", icon: "🌑🌕", kind: "lunation" as const, on: true },
   { key: "moon-signs", name: "Moon sign changes", hint: "Every 2–3 days", icon: "☽→♈", kind: "moon" as const, on: false },
   { key: "seasons", name: "Season changes", hint: "Sun enters a new sign", icon: "☉→♎", kind: "season" as const, on: true },
   { key: "ingresses", name: "Planet ingresses", hint: "Planets entering signs", icon: "♀→♏", kind: "ingress" as const, on: true },

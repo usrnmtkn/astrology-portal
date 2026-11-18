@@ -7,7 +7,7 @@ import { calendarTransitDetailContentKeys } from "./calendarContentKeys.js";
 export function calendarEventArticleSourceKeys(event: LunarCalendarEvent) {
   if (!(event.type === "ingress" && event.planet && !["Sun", "Moon"].includes(event.planet)
     || event.type === "station" && /^station-(direct|retrograde)$/u.test(event.phase ?? ""))) return [];
-  return calendarTransitDetailContentKeys(event).filter(key => key.startsWith("sky.") || key.startsWith("sky-")
+  return calendarTransitDetailContentKeys(event).filter(key => key.startsWith("sky.") || key.startsWith("sky-") || key.startsWith("authored/station/")
     || key.startsWith("fallback-hook/sky.retrograde/"));
 }
 
@@ -82,6 +82,8 @@ export function contentMatchesCalendarEventFacts(event: LunarCalendarEvent, cont
     const expectedRetrogradePhase = event.phase
       ? `sky.retrograde.${planetPart}.${signPart}.${event.phase.replace(/-/g, "_")}`
       : "";
+
+    if (canonicalKey === `authored/station/${planetPart}/${event.direction === "retrograde" ? "rx" : "direct"}`) return true;
 
     return canonicalKey === expected || canonicalKey === expectedRetrogradePhase;
   }
