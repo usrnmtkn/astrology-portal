@@ -38,8 +38,13 @@ on:
       - "tests/visual/report-library-ui.spec.ts"
       - ".github/workflows/report-library.yml"
 
+concurrency:
+  group: report-library-${{ github.event.pull_request.number || github.sha }}-${{ github.event_name }}
+  cancel-in-progress: true
+
 jobs:
   report-library-contract:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -59,6 +64,7 @@ jobs:
       - run: npm run build:web
 
   report-library-browser:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
@@ -88,6 +94,7 @@ jobs:
         run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts tests/visual/report-library-delete.spec.ts tests/visual/report-generation-beam.spec.ts tests/visual/you-report-auth.spec.ts tests/visual/you-report-page.spec.ts tests/visual/friend-report-state.spec.ts
 
   report-library-database:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

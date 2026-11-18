@@ -61,6 +61,12 @@ or commit without the owner's request.
 
 ## Validation scope and reuse
 
+For PR submission, CI waits, merging or deployment, follow
+[`docs/qa/release-queue.md`](docs/qa/release-queue.md). One coordinator assigns the
+active PR and advances releases through automatic production acceptance.
+Reuse recorded release authorization instead of asking the human to reconfirm
+an operational slot, merge or deployment within that scope.
+
 - Default to targeted checks for the changed behavior and its affected consumers.
 - Reuse valid passing results when the relevant source, dependencies,
   configuration and test environment are unchanged and the required revision

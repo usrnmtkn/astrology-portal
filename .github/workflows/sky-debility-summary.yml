@@ -34,10 +34,11 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: sky-effort-summary-${{ github.event.pull_request.number || github.ref }}
+  group: sky-effort-summary-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 jobs:
   combinations-and-builds:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -77,7 +78,7 @@ jobs:
           path: test-results/
           retention-days: 7
   deployed-reader:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ ((github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR)) && (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

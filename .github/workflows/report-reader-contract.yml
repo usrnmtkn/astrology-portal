@@ -48,8 +48,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: report-reader-contract-${{ github.event.pull_request.number || github.sha }}-${{ github.event_name }}
+  cancel-in-progress: true
+
 jobs:
   report-reader-contract:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -111,6 +116,7 @@ jobs:
       - run: npm run build:web
 
   report-reader-browser:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a

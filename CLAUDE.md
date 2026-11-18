@@ -1,5 +1,13 @@
 # TLDR Astro Claude instructions
 
+## Release queue
+
+For PR submission, CI waits, merging or deployment, follow
+[`docs/qa/release-queue.md`](docs/qa/release-queue.md). One coordinator assigns the
+active PR and advances releases through automatic production acceptance.
+Reuse recorded release authorization instead of asking the human to reconfirm
+an operational slot, merge or deployment within that scope.
+
 Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
 
 ## Shared writing governance

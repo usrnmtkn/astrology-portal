@@ -12,11 +12,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: visual-smoke-${{ github.event.pull_request.number || github.ref }}
+  group: visual-smoke-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
   scope:
+    if: ${{ (github.ref_type == 'branch' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && vars.RELEASE_ACTIVE_PR != '' && format('{0}', github.event.pull_request.number) == vars.RELEASE_ACTIVE_PR) }}
     # Always evaluate the actual revision, including merge commits on main.
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -46,7 +47,7 @@ jobs:
         with:
           node-version: 22
       - name: Validate workflow YAML and conditions
-        run: ruby scripts/test-ci-workflow-syntax.rb
+        run: ruby scripts/test-ci-workflow-syntax.rb && node scripts/test-ci-release-admission.mjs
       - run: npm ci
       - name: Verify affected selection and browser coverage
         run: node scripts/test-ci-affected-tests.mjs && node scripts/test-browser-suite-coverage.mjs
@@ -59,8 +60,35 @@ jobs:
           HEAD_SHA: ${{ github.sha }}
         run: node scripts/ci-affected-tests.mjs
 
-  friends-loading-performance:
+  build-preflight:
     needs: scope
+    if: ${{ fromJSON(needs.scope.outputs.test_plan).browserJobs[0] != null }}
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble@sha256:57b65fdc9ceabe0ef613124c7bbe2babcf9362c4d85e382fe3b03604e84b428a
+    defaults:
+      run:
+        shell: bash
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify exact container checkout
+        run: bash scripts/ci-prepare-playwright-workspace.sh
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check Web build and bundle limits before browser fan-out
+        run: npm run build && npm run qa:bundle
+      - name: Check Studio build and bundle limits before browser fan-out
+        run: npm run build:admin && node scripts/check-admin-bundle-budgets.mjs
+
+  friends-loading-performance:
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.friends_loading_performance == 'true'
     runs-on: ubuntu-latest
     container:
@@ -98,7 +126,7 @@ jobs:
           if-no-files-found: ignore
 
   visual-smoke:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.visual_smoke == 'true'
     runs-on: ubuntu-latest
     container:
@@ -188,7 +216,7 @@ jobs:
           if-no-files-found: ignore
 
   client-facing-flows:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.client_facing_flows == 'true'
     runs-on: ubuntu-latest
     container:
@@ -230,7 +258,7 @@ jobs:
           if-no-files-found: ignore
 
   studio-admin-flows:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.studio_admin_flows == 'true'
     runs-on: ubuntu-latest
     container:
@@ -272,7 +300,7 @@ jobs:
           if-no-files-found: ignore
 
   lunation-source-wiring:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.lunation_source_wiring == 'true'
     runs-on: ubuntu-latest
     container:
@@ -310,7 +338,7 @@ jobs:
           if-no-files-found: ignore
 
   connection-transit-sources:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.connection_transit_sources == 'true'
     runs-on: ubuntu-latest
     container:
@@ -346,7 +374,7 @@ jobs:
           if-no-files-found: ignore
 
   sky-placement-studio:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.sky_placement_studio == 'true'
     runs-on: ubuntu-latest
     container:
@@ -398,7 +426,7 @@ jobs:
           if-no-files-found: ignore
 
   sky-placement-reader:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.sky_placement_reader == 'true'
     runs-on: ubuntu-latest
     container:
@@ -448,7 +476,7 @@ jobs:
           if-no-files-found: ignore
 
   sky-summary:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.sky_summary == 'true'
     runs-on: ubuntu-latest
     container:
@@ -535,7 +563,7 @@ jobs:
   # These suites had no workflow running them. The Studio style, article, and variable suites
   # serve the admin preview; the web-entry suite serves the same Studio through the web bundle.
   studio-preview-suites:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.studio_preview_suites == 'true'
     runs-on: ubuntu-latest
     container:
@@ -601,7 +629,7 @@ jobs:
   # The complete Horoscope editor/reader journeys outgrew one serial job.
   # Shard by test while retaining one worker and every per-action deadline.
   horoscope-reader:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.horoscope_reader == 'true'
     runs-on: ubuntu-latest
     container:
@@ -644,7 +672,7 @@ jobs:
 
   # Calendar, learning, date consistency, and ephemeris parity screens had no workflow either.
   reader-surface-suites:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.reader_surface_suites == 'true'
     runs-on: ubuntu-latest
     container:
@@ -690,7 +718,7 @@ jobs:
 
   # Overlay coverage runs in parallel so the reader shards retain their full job budget.
   reader-overlays:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.reader_overlays == 'true'
     runs-on: ubuntu-latest
     container:
@@ -736,7 +764,7 @@ jobs:
           if-no-files-found: ignore
 
   key-dates-disclosures:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.key_dates_disclosures == 'true'
     runs-on: ubuntu-24.04
     container:
@@ -779,7 +807,7 @@ jobs:
           if-no-files-found: ignore
 
   design-handoff:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.design_handoff == 'true'
     runs-on: ubuntu-latest
     container:
@@ -822,7 +850,7 @@ jobs:
           if-no-files-found: ignore
 
   mobile-parity:
-    needs: scope
+    needs: [scope, build-preflight]
     if: needs.scope.outputs.mobile_parity == 'true'
     runs-on: ubuntu-latest
     container:
@@ -872,7 +900,7 @@ jobs:
           if-no-files-found: ignore
 
   browser-release-gate:
-    needs: [scope, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, lunation-source-wiring, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, reader-overlays, key-dates-disclosures, design-handoff, mobile-parity]
+    needs: [scope, build-preflight, friends-loading-performance, visual-smoke, client-facing-flows, studio-admin-flows, lunation-source-wiring, connection-transit-sources, sky-placement-studio, sky-placement-reader, sky-summary, studio-preview-suites, horoscope-reader, reader-surface-suites, reader-overlays, key-dates-disclosures, design-handoff, mobile-parity]
     # Still inspect failed dependencies, but let a superseded workflow cancel.
     # An always() gate can remain queued and block the next revision's run.
     if: ${{ !cancelled() }}
@@ -883,6 +911,10 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
+      - name: Require the coordinator release slot
+        env:
+          RELEASE_ACTIVE_PR: ${{ vars.RELEASE_ACTIVE_PR }}
+        run: node scripts/ci-release-admission.mjs
       - run: node scripts/test-browser-release-gate.mjs
       - name: Require every applicable browser job to pass
         env:
