@@ -8,6 +8,7 @@ import {
 } from "../../../../apps/web/src/services/generatedContentKeys.js";
 import { calendarAspectPublicationKeys, skyAspectGeneratedContentKeys } from "../../../../apps/web/src/services/skyAspectContent.js";
 import { lunarJournalContentKeyForEvent } from "./lunarJournalKeys.js";
+import { lunationAspectPublicationKeys } from '../../skyLunationAspectIdentity.js';
 
 export type CalendarContentRequest = { cacheKey: string; contentKeys: string[] };
 
@@ -40,7 +41,7 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
       secondSign: event.toSign ?? "",
       targetDate: dateKey
     };
-    return withJournal([...calendarAspectPublicationKeys(identity), ...skyAspectGeneratedContentKeys(identity)]);
+    return withJournal([...lunationAspectPublicationKeys(event.lunationAspectKey), ...calendarAspectPublicationKeys(identity), ...skyAspectGeneratedContentKeys(identity)]);
   }
 
   if (event.type === "ingress" && event.planet && (event.toSign || event.sign)) {

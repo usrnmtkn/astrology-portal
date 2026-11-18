@@ -5481,12 +5481,22 @@ function currentSkyV4LunationDetailArticle({
   }
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
-  const aspectSections = lunationAspectCandidates(sky.aspects)
-    .flatMap((aspect) => {
-      const exact = lunationArticleHoroscopeReader?.resolveLunationAspectReading(event, aspect, sky.positions, generatedContent);
-      if (exact) return exact.body ? [{ heading: skyAspectDisplayTitle(aspect), body: exact.body,
-        sourceKeys: [exact.contentKey], role: "aspect" as const, aspectType: aspect.type,
-        group: normalizedAspectToneBucket(aspect.type) }] : [];
+  const aspectCandidates = lunationAspectCandidates(sky.aspects)
+    .map(aspect => ({ aspect, lunar: lunationArticleHoroscopeReader?.resolveSkyLunationAspectReading(event, aspect, sky.positions, generatedContent)
+      ?? lunationArticleHoroscopeReader?.resolveLunationAspectReading(event, aspect, sky.positions, generatedContent) }))
+    .filter((entry, index, all) => !entry.lunar || all.findIndex(other => other.lunar?.contentKey === entry.lunar?.contentKey) === index)
+    .flatMap(({ aspect, lunar }) => {
+      if (lunar) {
+        if (!lunar.body) return [];
+        const isLunar = lunar.contentKey.startsWith('sky.lunation.');
+        const section: SkyDetailSection = {
+          heading: `${aspect.fromMotion ? skyBodyLabel(aspect.from, aspect.fromMotion) : skyAspectMotionName(aspect.from, sky.positions)} ${titleCase(aspect.type)} ${aspect.toMotion ? skyBodyLabel(aspect.to, aspect.toMotion) : skyAspectMotionName(aspect.to, sky.positions)}`,
+          body: isLunar ? `${skyPlacementAspectExactDate(aspect, generatedAt, sky.positions)}\n\n${lunar.body}` : lunar.body,
+          sourceKeys: [lunar.contentKey],
+          role: 'aspect', aspectType: aspect.type, group: normalizedAspectToneBucket(aspect.type)
+        };
+        return [{ aspect, isLunar, section }];
+      }
       return relatedSkyAspectSectionsForPlacement({
         aspects: [aspect],
         generatedAt,
@@ -5494,10 +5504,16 @@ function currentSkyV4LunationDetailArticle({
         pointName: aspect.from,
         positions: sky.positions,
         timeZone: sky.location.timeZone
-      });
+      }).map(section => ({ aspect, isLunar: Boolean(lunar), section }));
     })
-    .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
-    .slice(0, 2);
+    .filter((entry, index, all) => all.findIndex(candidate => candidate.section.heading === entry.section.heading) === index);
+  const leadAspects = aspectCandidates.slice(0, 2);
+  const representedPlanets = new Set(leadAspects.flatMap(entry => [entry.aspect.from, entry.aspect.to]));
+  const lunarCandidates = aspectCandidates.slice(2).filter(entry => entry.isLunar);
+  const additionalLunar = lunarCandidates.find(entry => [entry.aspect.from, entry.aspect.to]
+    .some(planet => planet !== 'Sun' && planet !== 'Moon' && !representedPlanets.has(planet))) ?? lunarCandidates[0];
+  // Keep both leads and add one lunar row, preferring another planet when available.
+  const aspectSections = [...leadAspects, ...(additionalLunar ? [additionalLunar] : [])].map(entry => entry.section);
 
   return {
     routePath: `sky/lunation/${event.startsAt.slice(0,10)}/${normalizeContentIdPart(event.sign ?? "event")}`,
@@ -11696,6 +11712,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       // event-time calculation can supply this dated article's position caption.
       if (!calculatedDetail) detail.mechanicsCaption = null;
       const eventBody = calendarEventDetailBody(event, generatedContent, description);
+      const lunar = lunationArticleHoroscopeReader?.resolveCalendarLunationAspectReading(event, generatedContent);
+      if (lunar) return { ...detail, body: lunar.body ? lunar.body.split(/\n\s*\n/u) : [], plainBody: true };
       const hasAspectBody = skyDetailHasReaderFacingMainBody(detail);
 
       return eventBody.length > 0 && !hasAspectBody
@@ -12439,11 +12457,16 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
       if (selectedSkyDetail?.routePath !== skyDetailRoutePath) commitResolvedSkyDetail(null);
       // Recompute the dated event on reload; never borrow today's motion or signs.
       void getAstrodienstSky(sky.location, new Date(exactAt)).then(async eventSky => {
+        const lunarReader = [routePlanet, routeOther].some(point => point === 'sun' || point === 'moon')
+          ? await loadLunationArticleHoroscopes() : null;
+        const lunarEvent = lunarReader ? await lunarReader.datedLunationAspectEvent(sky.location, exactAt, routePlanet, routeSign, routeOther) : undefined;
         const renderAspect = (detailContent: GeneratedContentMap, complete = false) => {
           if (cancelled || skyDetailRoutePath !== skyDetailRoutePathFromUrl()) return;
           selectedSkyDetailContentRef.current = detailContent;
           const detail = skyDetailFromRoutePath(baseRoute, eventSky, detailContent, openSkyDetail);
           if (!detail) { commitUnavailableSkyDetail(); return; }
+          const lunar = lunarEvent && lunarReader?.resolveCalendarLunationAspectReading(lunarEvent, detailContent);
+          if (lunar) { detail.body = lunar.body ? lunar.body.split(/\n\s*\n/u) : []; detail.plainBody = true; }
           if (complete) {
             selectedSkyDetailRefreshKeyRef.current = refreshKey;
             selectedSkyDetailRefreshContentRef.current = skyGeneratedContent;
@@ -12454,7 +12477,8 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
             : { ...detail, routePath: skyDetailRoutePath });
         };
         renderAspect(await loadSkyDetailContent(eventSky, availableDetailContent,
-          skyDetailRequiredAspectKeys(eventSky, routePlanet, routeSign, routeOther), loadLiveGeneratedContentForKeys, []), true);
+          [...skyDetailRequiredAspectKeys(eventSky, routePlanet, routeSign, routeOther),
+            ...(lunarEvent ? calendarTransitDetailContentKeys(lunarEvent) : [])], loadLiveGeneratedContentForKeys, []), true);
       }).catch(error => { if (!cancelled && skyDetailRoutePath === skyDetailRoutePathFromUrl()) { console.warn("Dated aspect calculation failed.", error); setSkyDetailReadError(skyDetailRoutePath); } });
       return () => { cancelled = true; };
     }
@@ -12486,6 +12510,7 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
         : getAstrodienstSky(sky.location, new Date(calendarEvent.event.startsAt), { includeTransitWindows: true })
       : Promise.resolve(sky);
     void detailSnapshot.then(async detailSky => {
+      if (calendarEvent?.event.lunationAspectKey) await loadLunationArticleHoroscopes();
       const lunarKeys = routeType === "lunation"
         ? (await loadLunationArticleHoroscopes()).lunationArticleSnapshotKeys(detailSky, calendarEvent?.event) : [];
       const content = await loadSkyDetailContent(detailSky, availableDetailContent,
