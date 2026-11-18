@@ -7253,6 +7253,17 @@ for (const theme of ["light", "dark"] as const) for (const width of [960, 390]) 
           await page.evaluate(() => window.scrollTo(0, 0));
           await page.screenshot({ path: testInfo.outputPath(`approach-${audience}.png`), fullPage: true });
         }
+        // Clicking the guide scrolls the viewport. Return to the article top
+        // before capturing a full-page image with the app's fixed navigation.
+        await page.evaluate(() => window.scrollTo(0, 0));
+        const geometry = await article.evaluate(el => [...el.querySelectorAll(".natal-insight-reading__section")].every(section => {
+          const bounds = section.getBoundingClientRect();
+          const children = [...section.querySelectorAll("h2, h3, .natal-reading-prose p")].map(child => child.getBoundingClientRect());
+          return children.every((child, index) => child.left >= bounds.left && child.right <= bounds.right + 1
+            && child.top >= bounds.top && child.bottom <= bounds.bottom + 1
+            && (!index || child.top >= children[index - 1].bottom));
+        }));
+        expect(geometry, "Placement headings and full paragraphs stay inside their sections without overlapping").toBe(true);
         if (topic === "home-belonging" && audience === "you") await page.screenshot({ path: testInfo.outputPath("home-structure.png"), fullPage: true });
         await expect(article.locator(".planet-placement-list,details")).toHaveCount(0);
         await expectNoHorizontalOverflow(page, "Shared natal essay");
