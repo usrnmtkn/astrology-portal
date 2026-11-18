@@ -274,7 +274,11 @@ test("Daily Sky Summary keeps assembly flat and uses the shared canvas for neste
   await expect(page.locator(".admin-dashboard-header h1")).toHaveText("Sky Write-ups");
   const studio = page.getByRole("region", { name: "Daily Sky Summary editor" });
   await expect(studio.getByRole("heading", { level: 3, name: "Daily Sky Summary", exact: true })).toBeVisible();
+  const workspace = studio.getByRole("region", { name: "Summary editing workspace", exact: true });
+  await expect(workspace.getByRole("textbox", { name: "Summary wording text", exact: true })).toBeEnabled();
   const assembly = studio.getByRole("region", { name: "Full summary assembly" });
+  await expect(assembly).not.toBeVisible();
+  await studio.getByText("Sources and writing system", { exact: true }).click();
   await expect(assembly).toBeVisible();
   expect(await assembly.evaluate(element => element.classList.contains("studio-surface"))).toBe(false);
   expect(await assembly.evaluate(element => getComputedStyle(element).backgroundColor)).toBe("rgba(0, 0, 0, 0)");

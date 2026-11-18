@@ -14,8 +14,29 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4325,
   "totalCssGzipBytes": 151966,
-  "totalJavaScriptGzipBytes": 3798969,
+  "totalJavaScriptGzipBytes": 3801017,
   "_rationale": {
+    "dailySummaryWorkspace20261118": {
+      "baseRevision": "767a98a5285ac9e917aadaab0712a7f20a8c493f",
+      "applicationRevision": "6c80c91186297483599d39fd8dbf9e404d6a927a",
+      "receipt": "docs/qa/daily-sky-summary-workspace-2026-11-18.json",
+      "control": {
+        "totalJavaScriptGzipBytes": 3798032,
+        "entryJavaScriptRawBytes": 32811,
+        "entryJavaScriptGzipBytes": 11384,
+        "files": 316
+      },
+      "candidate": {
+        "totalJavaScriptGzipBytes": 3799856,
+        "entryJavaScriptRawBytes": 32811,
+        "entryJavaScriptGzipBytes": 11384,
+        "files": 316
+      },
+      "allocation": {
+        "totalJavaScriptGzipBytes": 2048
+      },
+      "reason": "Allocate the measured requested compact summary editor, selected-source Draft/Published preview and existing versioned save/review controls. Duplicate preview and page-specific CSS were removed. Preserve every startup, single-chunk, CSS, dependency and reader-payload ceiling. No writer instructions or owner prose change; initial over-cap builds remain failures. This is a bounded interface cost, not a performance improvement."
+    },
     "lunationReaderDestinations20261117": {"baseRevision":"aea0156b3a3508941fb3bc6ceb146ef369448400","featureSourceRevision":"e39d82bc20fa224374f3d6eda0a6b409d91fc110","receipt":"docs/qa/lunation-reader-destinations-2026-11-17.json","control":{"readerBootGzipBytes":458222,"totalJavaScriptGzipBytes":3798035},"candidate":{"readerBootGzipBytes":458418,"totalJavaScriptGzipBytes":3798802},"allocation":{"readerBootGzipBytes":200},"reason":"Allocate the measured 196-byte reader startup cost of the requested phase-specific lunar article selection, preserving the current main headroom. Lunar calculations and hydration remain article-scoped. Aggregate JavaScript passes its unchanged ceiling. Every App, CSS, deferred/source payload, dependency and runtime guard remains enforced. Initial over-cap builds remain failures; exact-head release gates and production complete-copy/reload checks remain required."},
     "chartReportsDownloads20261116": {
         "baseRevision": "19539307040744df0d4df0903ae972da9e070179",
