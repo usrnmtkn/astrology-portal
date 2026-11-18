@@ -269,6 +269,11 @@ export default defineConfig(({ mode }) => {
         },
         output: {
           manualChunks(id) {
+            // Shared natal identities and traditional rulers must never inherit
+            // Studio's lazy editor workspace through its combination selectors.
+            if (id.endsWith("/content/natalInsightDefinitions.ts")) return "natal-insight-navigation";
+            if (/\/content\/natalInsight(?:Combination|Catalog)\.ts$/u.test(id)) return "natal-insight-facts";
+            if (id.endsWith("/content/skySunSeason.ts")) return "reader-eligibility";
             // Natal source identities are shared with Studio but load on article intent.
             if (id.endsWith('/content/natalPlacementSourceKeys.ts')) return 'natal-placement-keys';
             // Memory and Studio share this small authentication transport. Keep

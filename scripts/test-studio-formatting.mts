@@ -4,6 +4,7 @@ import React, { Suspense } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { FormattedProse, FormattedText, FormattedParagraph } from '../apps/web/src/components/FormattedProse';
 import FormattedWritingContent, { PreparedProse as PreparedFormattedProse } from '../apps/web/src/components/FormattedWritingContent';
+import SharedFormattedWritingContent from "../src/shared/components/FormattedWritingContent";
 import { writingDocument, preserveWritingVariables } from '../apps/web/src/content/formattedText';
 import { fullDetailReaderFacingCopy } from '../apps/web/src/content/readerSafety';
 import { hasWritingFormatting as hasFormatting } from '../apps/web/src/content/formattedText';
@@ -30,6 +31,13 @@ for(const [child,expected]of [
 ]as const){
  assert.equal(renderToStaticMarkup(React.createElement(Suspense,{fallback:React.createElement('span',null,'Loading fixture')},child)),expected,'Prepared complete formatting renders on the first frame without suspending on a new lazy promise.');
 }
+
+const natalParagraphs = renderToStaticMarkup(React.createElement(SharedFormattedWritingContent, {
+  text: 'First sentence. The rest stays in this paragraph.\n\nA second opening. Another closing sentence.',
+  emphasizeOpening: true,
+  renderText: (text: string) => text.split('second').map((part, index) => React.createElement(React.Fragment, { key: index }, index ? React.createElement('a', { href: '#qa' }, 'second') : null, part))
+}));
+assert.equal(natalParagraphs, '<p><strong>First sentence.</strong> The rest stays in this paragraph.</p><p><strong>A <a href="#qa">second</a> opening.</strong> Another closing sentence.</p>');
 assert.equal(renderToStaticMarkup(React.createElement(FormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
 assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: 'Original text.\nFinal line.' })), '<p>Original text.\nFinal line.</p>');
 assert.equal(renderToStaticMarkup(React.createElement(PreparedFormattedProse, { text: 'First.\n\nFinal.', className:'fixture-copy' })), '<p class="fixture-copy">First.\n\nFinal.</p>');

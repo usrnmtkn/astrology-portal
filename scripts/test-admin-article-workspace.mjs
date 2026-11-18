@@ -2,8 +2,14 @@ import assert from "node:assert/strict";
 import {
   articleAppDestination,
   isAstro101ContentRow,
+  isNatalInsightContentRow,
   isSkyWriteupContentRow
 } from "../apps/admin/src/articleWorkspace.ts";
+
+for (const content_key of ["cms/natal-insight/you/approach", "cms/natal-insight/they/approach/reading", "cms/natal-insight/passage/ruler-placement/you/mars/leo"]) {
+  assert.equal(isNatalInsightContentRow({ content_key }), true);
+}
+assert.equal(isNatalInsightContentRow({ content_key: "article/manual/example" }), false);
 
 const skyRows = [
   { content_key: "sky-article/jupiter/leo/2026", block_type: "sky_article", mode: "article" },
