@@ -3,7 +3,7 @@ import {calendarPlanetaryReaderEntry} from '../apps/admin/src/calendarPlanetaryR
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { parseStudioPassageEdit, skyPassageEditPlacement, skyPassageEditSource, studioPassageEditHref } from '../src/shared/studioPassageEdit';
-import { calendarPassageReviewParams } from '../apps/admin/src/calendarPassageReviewRoute';
+import { calendarPassageReviewParams, parseCalendarPassageReview } from '../apps/admin/src/calendarPassageReviewRoute';
 
 test('Review Queue derives the exact dated Calendar context from its canonical source key', () => {
   for (const [date,timeZone] of [['2026-10-21','America/New_York'],['2026-11-01','America/New_York'],
@@ -19,6 +19,18 @@ test('Review Queue derives the exact dated Calendar context from its canonical s
     'calendar-passage/daily/template','authored/calendar-moon-transition/aquarius/pisces','sky-article/sun/libra/2026/2026-09-22']) {
     assert.equal(calendarPassageReviewParams(key),null,key);
   }
+});
+
+test('Daily writer review links retain the selected result and reject unrelated destinations', () => {
+  const sourceKey='calendar-passage/daily/2026-11-17/America%2FNew_York';
+  const writerResultId='b1c2d3e4-1111-4222-8333-123456789abc';
+  const params=calendarPassageReviewParams(sourceKey,writerResultId)!;
+  const context=parseCalendarPassageReview(`#calendar-writeups?${params}`)!;
+  assert.deepEqual(context,{surface:'calendar',date:'2026-11-17',timeZone:'America/New_York',sourceKey,writerResultId});
+  assert(!studioPassageEditHref(context)!.includes('writerResult'),'Writer result identity belongs to Studio, not shared reader links');
+  assert.equal(calendarPassageReviewParams(sourceKey,'invalid'),null);
+  assert.equal(parseCalendarPassageReview('#calendar-writeups?date=2026-11-17&timeZone=America%2FNew_York&editSource=authored/calendar-moon-transition/aquarius/pisces&writerResult='+writerResultId),null);
+  assert.equal(parseCalendarPassageReview('#sky-writeups?date=2026-11-17&timeZone=UTC&editSource=sky-placement/article/sun/scorpio&writerResult='+writerResultId),null);
 });
 
 test('reader handoffs preserve exact dates, zones and source keys without credentials or cross-origin destinations', () => {

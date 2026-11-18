@@ -4,7 +4,7 @@ import type { CalendarTemplatePreviewProps } from "./CalendarTemplatePreview";
 import { StudioButton } from "./StudioControls";
 import { PageLoading } from "../../../src/shared/components/PageLoading";
 import { skyForecastTemplates, type SkyForecastPeriod } from "./skyForecastTemplates";
-import type { StudioPassageEdit } from '../../../src/shared/studioPassageEdit';
+import type { CalendarPassageReviewContext } from './calendarPassageReviewRoute';
 
 const CalendarPassageEditor = lazy(() => import("./CalendarPassageEditor"));
 const CalendarTemplatePreview = lazy(() => import("./CalendarTemplatePreview"));
@@ -14,7 +14,7 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
   busy: boolean;
   onOpen: (period: SkyForecastPeriod) => void;
   editor: ReactNode;
-  readerEntry?: StudioPassageEdit | null;
+  readerEntry?: CalendarPassageReviewContext | null;
 } & CalendarTemplatePreviewProps) {
   const template = skyForecastTemplates[period];
   const saved = rows.find(row => row.content_key === template.contentKey);
@@ -24,7 +24,7 @@ export default function SkyForecastTemplateStudio({ period, rows, busy, onOpen, 
       <p>Publish your Monthly edition in Horoscopes. Calendar Month uses its TLDR and links to the complete reading.</p>
       <a className="admin-source-action" href="#horoscopes">Open Monthly horoscopes</a>
       <p className="admin-field-hint">Earlier Calendar monthly passages remain in Content Library.</p>
-    </> : <Suspense fallback={<PageLoading message="Loading assembled passage editor…" />}><CalendarPassageEditor key={`${period}|${readerEntry?.sourceKey ?? ''}|${readerEntry?.date ?? ''}|${readerEntry?.timeZone ?? ''}`} period={period} loadRows={loadRows} secret={secret} onEditSource={onEditSource} readerEntry={readerEntry} sourceEditor={editor} sourceDraft={draft} /></Suspense>}
+    </> : <Suspense fallback={<PageLoading message="Loading assembled passage editor…" />}><CalendarPassageEditor key={`${period}|${readerEntry?.sourceKey ?? ''}|${readerEntry?.date ?? ''}|${readerEntry?.timeZone ?? ''}|${readerEntry?.writerResultId ?? ''}`} period={period} loadRows={loadRows} secret={secret} onEditSource={onEditSource} readerEntry={readerEntry} sourceEditor={editor} sourceDraft={draft} /></Suspense>}
     <details><summary>Reference templates and source previews</summary>
     <header className="admin-section-heading-row">
       <div>

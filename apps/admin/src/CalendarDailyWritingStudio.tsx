@@ -11,7 +11,7 @@ async function request(secret:string,body:any,signal?:AbortSignal){
   if(!response.ok||data.ok!==true)throw new Error(data.error??'Daily writing could not be loaded.');
   return data;
 }
-export default function CalendarDailyWritingStudio({secret,dirtyRef}:{secret:string;dirtyRef:{current:boolean}}){
+export default function CalendarDailyWritingStudio({secret,dirtyRef,onReviewDraft}:{secret:string;dirtyRef:{current:boolean};onReviewDraft:(date:string,timeZone:string,resultId:string)=>void}){
   const params=new URLSearchParams(window.location.hash.split('?')[1]??'');
   const [date,setDate]=useState(params.get('date')??new Intl.DateTimeFormat('en-CA').format(new Date()));
   const [timeZone,setTimeZone]=useState(params.get('timeZone')??Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -78,7 +78,10 @@ export default function CalendarDailyWritingStudio({secret,dirtyRef}:{secret:str
         {section==='draft'&&<div className="admin-writing-field">
           {active&&<><p>A writer request is saved. Retrieval checks that same request without generating again.</p><StudioButton disabled={busy||selectionChanged} onClick={()=>void action('poll')}>Retrieve saved result</StudioButton></>}
           {!results.length&&<p>No writer results for this date yet.</p>}
-          {[...results].reverse().map((result:any)=><section key={result.id} className="admin-writing-preview" aria-label="Saved first-pass result"><p>{result.completedAt} · {result.status==='invalid'?'Incomplete or invalid result':'Needs owner review'}</p><StudioTextarea formatting={false} readOnly aria-label="Untouched writer passage" value={result.candidate} rows={8}/><details className="admin-workspace-details"><AdminDisclosureSummary>Exact request, response and usage</AdminDisclosureSummary><StudioTextarea formatting={false} readOnly aria-label="Generation receipt" value={JSON.stringify(result,null,2)} rows={12}/></details></section>)}
+          {[...results].reverse().map((result:any)=><section key={result.id} className="admin-writing-preview" aria-label="Saved first-pass result"><p>{result.completedAt} · {result.status==='invalid'?'Incomplete or invalid result':'Needs owner review'}</p><StudioTextarea formatting={false} readOnly aria-label="Untouched writer passage" value={result.candidate} rows={8}/>
+            <div className="admin-new-actions"><StudioButton disabled={busy||dirty||selectionChanged||result.status!=='needs_review'||!result.candidate?.trim()} onClick={()=>onReviewDraft(selected.date,selected.timeZone,result.id)}>Review & edit</StudioButton></div>
+            <p>Open this result in the Calendar editor to make changes, preview the date, save a draft and publish. The original writer result stays here.</p>
+            <details className="admin-workspace-details"><AdminDisclosureSummary>Exact request, response and usage</AdminDisclosureSummary><StudioTextarea formatting={false} readOnly aria-label="Generation receipt" value={JSON.stringify(result,null,2)} rows={12}/></details></section>)}
         </div>}
       </StudioTabs>
       <footer className="admin-writing-savebar"><div className="admin-writing-savebar-row"><span>{dirty?'Unsaved changes':'Saved'}</span><StudioButton disabled={busy} onClick={()=>{if(!dirty||window.confirm('Discard unsaved edits and reload?'))setReload(v=>v+1);}}>Reload saved writing</StudioButton></div></footer>
