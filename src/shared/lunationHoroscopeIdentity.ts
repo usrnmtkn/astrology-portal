@@ -10,3 +10,9 @@ export function isLunationHoroscopeKey(key: string) {
   const rising = lunationRisingSigns.indexOf(match[2] as typeof lunationRisingSigns[number]);
   return sign >= 0 && rising >= 0 && Number(match[3]) === ((sign - rising + 12) % 12) + 1;
 }
+
+/** Phase-specific Moon aspects never identify an ordinary Moon transit. */
+export function isLunationAspectKey(key: string) {
+  const parts = /^lunation\.(?:new|full)\.([a-z]+)\.(?:conjunction|sextile|square|trine|opposition|quincunx)\.(?:mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|lilith|nodes|north-node|south-node)\.([a-z]+)$/u.exec(key);
+  return Boolean(parts && lunationRisingSigns.includes(parts[1] as typeof lunationRisingSigns[number]) && lunationRisingSigns.includes(parts[2] as typeof lunationRisingSigns[number]));
+}

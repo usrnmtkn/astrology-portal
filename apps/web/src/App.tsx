@@ -121,6 +121,7 @@ import {
 } from "./components/charts/chartAssets";
 import { type InterChartAspectLine } from "./components/charts/Wheels";
 import { InteractiveZodiacWheel, InteractiveWheelLoading } from "./components/charts/LazyInteractiveZodiacWheel";
+import { FullChartView } from "./components/charts/LazyFullChartView";
 import {
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError
@@ -218,7 +219,6 @@ import {
   shouldLoadEmptyHouseFallbackContent,
   shouldStartRelationshipFallbackEnhancement
 } from "./features/friends/friendsContentLoading";
-import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
 import type { LunarCalendarEvent, MatchingNewMoonFact } from "./services/ephemeris";
@@ -5482,14 +5482,20 @@ function currentSkyV4LunationDetailArticle({
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
   const aspectSections = lunationAspectCandidates(sky.aspects)
-    .flatMap((aspect) => relatedSkyAspectSectionsForPlacement({
-      aspects: [aspect],
-      generatedAt,
-      generatedContent,
-      pointName: aspect.from,
-      positions: sky.positions,
-      timeZone: sky.location.timeZone
-    }))
+    .flatMap((aspect) => {
+      const exact = lunationArticleHoroscopeReader?.resolveLunationAspectReading(event, aspect, sky.positions, generatedContent);
+      if (exact) return exact.body ? [{ heading: skyAspectDisplayTitle(aspect), body: exact.body,
+        sourceKeys: [exact.contentKey], role: "aspect" as const, aspectType: aspect.type,
+        group: normalizedAspectToneBucket(aspect.type) }] : [];
+      return relatedSkyAspectSectionsForPlacement({
+        aspects: [aspect],
+        generatedAt,
+        generatedContent,
+        pointName: aspect.from,
+        positions: sky.positions,
+        timeZone: sky.location.timeZone
+      });
+    })
     .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
     .slice(0, 2);
 
@@ -9971,20 +9977,6 @@ function synastryContactSummary(
 }
 
 
-const compatibilityPlanets = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"] as const;
-
-
-function compatibilityDynamicHeading(aspect: string): CompatibilityDynamic["heading"] {
-  if (aspect === "trine" || aspect === "sextile") {
-    return "What flows";
-  }
-
-  if (aspect === "square" || aspect === "opposition") {
-    return "Challenges";
-  }
-
-  return "Mixed or charged dynamics";
-}
 
 
 function synastryDetailCopy(
@@ -15250,29 +15242,15 @@ export function App({ initialSkyLoad = null }: { initialSkyLoad?: InitialSkyLoad
           {skyFullChartOpen && sky && (
             <ModalPortal
               className="sky-full-chart-modal-root"
-              panelClassName="sky-full-chart-panel"
+              panelClassName="full-chart-panel full-chart-panel--sky"
               titleId={skyFullChartTitleId}
               restoreFocusId={`${skyFullChartTitleId}-open`}
               width="100vw"
               onClose={() => setSkyFullChartOpen(false)}
             >
-              <div className="sky-full-chart-view">
-                <header className="sky-full-chart-header">
-                  <button className="sky-full-chart-back" type="button" onClick={() => setSkyFullChartOpen(false)}>
-                    <ChevronLeft size={24} aria-hidden="true" />
-                    <span>Back</span>
-                  </button>
-                </header>
-
-                <div className="sky-full-chart-body">
-                  <h2 className="sr-only" id={skyFullChartTitleId}>Full sky chart</h2>
-                  <div className="sky-full-chart-shell">
-                    <div className="wheel natal-wheel chart-frame" aria-label={`Full sky chart for ${skyFullChartMeta}`}>
-                      <InteractiveZodiacWheel snapshot={sky} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <FullChartView source={{ kind: "sky", primary: sky, subtitle: skyFullChartMeta }} titleId={skyFullChartTitleId} onClose={() => setSkyFullChartOpen(false)}>
+                <div aria-label={`Full sky chart for ${skyFullChartMeta}`}><InteractiveZodiacWheel snapshot={sky} /></div>
+              </FullChartView>
             </ModalPortal>
           )}
 
@@ -18115,8 +18093,6 @@ export const friendsViewModelDependencies = {
   buildNatalTransitItems,
   natalTransitTargets,
   bondEffectFamily,
-  compatibilityDynamicHeading,
-  compatibilityPlanets,
   createNatalGeneratedCopyForOwnerConverter,
   currentSkyHouseActivations,
   dailyGlanceDriver,

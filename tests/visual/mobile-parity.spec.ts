@@ -31,7 +31,7 @@ test.beforeAll(async()=>{
  {open==='delete'&&<FriendChartDeleteDialog name='Sample Chart' pending={deleting} restoreFocusId='delete-sample' onClose={()=>setOpen('')} onDelete={()=>{window.__mobileDeletes=(window.__mobileDeletes||0)+1;setDeleting(true)}}/>}
  <ConnectionTransitDisclosure heading='Why this involves Sample' facts={facts} description='Complete calculated final description.'/>
  <div className='reading-story-card updates-aspect-row'><AspectBadge aspect='sextile'/><span className='updates-aspect-row__glyphs'><span className='planet-glyph'>♀</span></span></div>
- {open==='wheel'&&<RelationshipChartFullscreen mode='synastry' title='Sample comparison' outerName='Sample' outerInitials='SC' comparisonOptions={[{id:'self',displayName:'You',initials:'SR',subtitle:'Your chart',natalChart:null,isSelf:true}]} comparisonPickerOpen={false} comparisonSelectedId='self' onClose={()=>setOpen('')} onComparisonSelect={()=>{}} onComparisonToggle={()=>{}}><svg viewBox='0 0 100 100' aria-label='Synthetic chart shell fixture'><circle cx='50' cy='50' r='40'/></svg></RelationshipChartFullscreen>}
+ {open==='wheel'&&<RelationshipChartFullscreen mode='synastry' report={{kind:'synastry',primary:{positions:[],aspects:[]},secondary:{positions:[],aspects:[]}}} outerName='Sample' outerInitials='SC' comparisonOptions={[{id:'self',displayName:'You',initials:'SR',subtitle:'Your chart',natalChart:null,isSelf:true}]} comparisonPickerOpen={false} comparisonSelectedId='self' onClose={()=>setOpen('')} onComparisonSelect={()=>{}} onComparisonToggle={()=>{}}><svg viewBox='0 0 100 100' aria-label='Synthetic chart shell fixture'><circle cx='50' cy='50' r='40'/></svg></RelationshipChartFullscreen>}
  <HoroscopeSigns sign='aries' rising={null} sun={null} onSelect={()=>{}}/>
  {open==='friend'&&<FriendChartModal restoreFocusId='edit-sample' form={form} formCopy={{title:'Add chart',editTitle:'Edit chart',subtitle:'Add a saved chart.',editSubtitle:'Update birth details for this saved chart.',nameLabel:'Name',dateLabel:'Birth date',timeLabel:'Birth time',placeLabel:'Birth place',unknownTime:"I don't know their birth time.",saveSubmit:'Save chart',submit:'Create chart'}} isEditing isEventForm={false} isSubmitting={false} message='' onClose={()=>setOpen('')} onChartTypeChange={chartType=>setForm({...form,chartType})} onFieldChange={(key,value)=>setForm({...form,[key]:value})} onSubmit={e=>{e.preventDefault();window.__mobileFriendSaves=(window.__mobileFriendSaves||0)+1}} citySearchField={<label className='add-chart-field'><span>Birth place</span><input value={form.birthPlace} onChange={e=>setForm({...form,birthPlace:e.target.value})}/></label>}/>}
  {open==='own'&&<CreateChartDialog onClose={()=>setOpen('')} form={own} setForm={setOwn} profile={null} step='birth' setStep={()=>{}} saving={false} message='' onSave={()=>{window.__mobileOwnSaves=(window.__mobileOwnSaves||0)+1}}/>}
@@ -157,13 +157,16 @@ test('Mobile parity: chart forms, close icons, connection sheet and badge center
  const fullScreen=page.getByRole('button',{name:'Full-screen chart',exact:true});
  await expect(fullScreen).toHaveCSS('font-family',/system-ui/);await expect(fullScreen).toHaveCSS('font-size','15px');
  await fullScreen.click();
- dialog=page.getByRole('dialog',{name:'Sample comparison',exact:true});
- await expect(dialog.locator('.chart-fullscreen-title')).toHaveCSS('font-family',/system-ui/);
- await expect(dialog.locator('.chart-fullscreen-close')).toHaveCSS('padding','0px');
- await expect(dialog.locator('.chart-fullscreen-close svg')).toHaveCSS('width','16px');
+ dialog=page.getByRole('dialog',{name:'Synastry chart',exact:true});
+ await expect(dialog.locator('.full-chart__heading h2')).toHaveCSS('font-family',/Newsreader/);
+ await expect(dialog.getByRole('button',{name:'Close full-screen chart'})).toHaveCSS('min-height','40px');
+ await expect(dialog.getByRole('button',{name:'Close full-screen chart'}).locator('svg')).toHaveCSS('width','18px');
  await expect(dialog.locator('.friend-chart-legend')).toHaveCSS('font-family',/system-ui/);
  await expect(dialog.locator('.friend-compare-pill')).toHaveCSS('font-family',/system-ui/);
  await expect(dialog.locator('.friend-compare-pill')).toHaveCSS('font-size','15px');
+ await expect(dialog.locator('.full-chart__selection')).toHaveText('No aspects within the chart’s orb limits.');
+ await dialog.getByRole('button',{name:'Download',exact:true}).click();
+ await expect(dialog.getByRole('button',{name:'Download PDF',exact:true})).toBeDisabled();
  await dialog.getByRole('button',{name:'Close full-screen chart'}).click();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  expect(guard.unhandledExternal).toEqual([]);

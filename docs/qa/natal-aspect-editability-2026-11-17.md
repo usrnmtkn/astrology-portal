@@ -7,8 +7,16 @@ this fix in the owning chat. This document records local acceptance; exact-head
 CI and production results belong to the release PR. No live reader-content write
 is part of this change.
 
+On November 18 the coordinator explicitly opened this release window after
+PR #1516 production acceptance. The candidate integrates accepted main
+`0891044436f2ea2d9eaf4e8bc4e20fc37d5b2f03` without conflicts, preserving its
+App, Friends, chart-report, lunation and selector changes. Dependencies remain
+locked to the same package-lock inputs. Current-base local checks, required
+exact-head gates and production acceptance are recorded in PR #1507; the older
+runs below remain historical evidence rather than proof of this integrated head.
+
 The code/test fingerprint is
-`7dec00bc359e622d7a9019d948c76ef02123ad949ad045be7825c7c14da450a9`:
+`95a88ae595a318276ad05150e40a84d7c12a5207f0f992005e9086506738e6b3`:
 SHA-256 of sorted modified/new code and test paths, each followed by NUL,
 complete file bytes, and NUL. Documentation is excluded. The checkout has its
 own `npm ci` dependencies and locally built knowledge package.
@@ -128,10 +136,10 @@ and built-Web privacy scan pass after this correction. Existing remote checks
 are allowed to finish; no failing gate is waived or suppressed. The next
 candidate stays local during the other owner's reserved release window.
 
-The broader static `test-fallback-refresh-wiring.mjs` still fails at line 758,
+The earlier-base static `test-fallback-refresh-wiring.mjs` failed at line 758,
 expecting an older personal-transit preview expression. The same failure was
-confirmed using the unchanged main App source. It is preserved as a pre-existing
-failure, not described as a passing check or waived CI gate. The dedicated cache
+confirmed using the unchanged main App source. That historical failure is preserved and is not described as a passing check
+or a waived CI gate. The dedicated cache
 and source-hydration checks pass. Full-suite and exact-commit CI results are not
 claimed by this local evidence; required release gates remain mandatory.
 

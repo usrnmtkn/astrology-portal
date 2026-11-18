@@ -34,6 +34,24 @@ can therefore affect many tests; that is distinct from running every suite for
 a test-only edit. Unchanged runtime code in a CI-policy-only PR needs only the
 selector/runner and workflow contracts, plus the ordinary privacy gate.
 
+Web presentation files (`.tsx`, `.jsx`, and CSS) use the browser journeys for
+their UI surfaces. The selector associates hash/path routes with the sources
+composed on Friends, You, Sky, Calendar, Horoscopes, Account, Settings, Learn,
+Auth, and Reports. This also covers components passed into route wrappers by
+`App.tsx`. Surface CSS stays with that surface; shared styles, global App UI,
+and unmapped components keep broad browser coverage. An App helper import in
+a journey with an explicit route does not select unrelated App views. Journeys
+without route evidence retain conservative App dependencies.
+
+CSS selects no API commands. Other UI changes retain API commands that actually
+import or render them, rather than expanding to the whole API catalog. Type-only
+imports/exports and path metadata do not execute modules. Text and fixture reads
+depend on the referenced bytes without following that file's imports; executable
+imports, re-exports, Vite SSR modules, worker URLs, and CSS imports remain
+transitive. Unknown runtime changes and shared data/dependency changes retain
+the full fallback. Complete selected browser specs still run; this does not
+filter individual cases or weaken the required gates.
+
 Use `node scripts/ci-affected-tests.mjs --json` with `PR_BASE_SHA` (or
 `AFFECTED_BASE_SHA`) and `HEAD_SHA` to inspect a committed candidate's plan.
 The normal CI invocation writes the same plan to job outputs and logs counts.

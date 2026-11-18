@@ -186,9 +186,10 @@ test('transit titles identify the sky sign and natal chart owner in both section
   await expect(between.getByRole('heading', { name: readerTitle, exact: true })).toBeVisible();
   await expect(active).toBeVisible();
   await expect(page.locator('.sky-detail-page h1')).toHaveCount(0);
-  expect(await page.locator('.friend-transit-group > .friend-section-label').allTextContents()).toEqual(expect.arrayContaining(['Between you two', 'Active for Nikki']));
-  const labels = await page.locator('.friend-transit-group > .friend-section-label').allTextContents();
-  expect(labels.indexOf('Between you two')).toBeLessThan(labels.indexOf('Active for Nikki'));
+  const labels = await page.locator('.friend-transit-group > .friend-section-label, .friend-transit-group > .friend-profile-section-heading > h2').allTextContents();
+  expect(labels).toEqual(expect.arrayContaining(['Short-term transits', 'Long-term transits', 'Between you two']));
+  expect(labels.indexOf('Short-term transits')).toBeLessThan(labels.indexOf('Long-term transits'));
+  expect(labels.indexOf('Long-term transits')).toBeLessThan(labels.indexOf('Between you two'));
 
   const activeHeadings = active.getByRole('heading', { level: 3 });
   const activeTitles = await activeHeadings.allTextContents();
@@ -196,11 +197,16 @@ test('transit titles identify the sky sign and natal chart owner in both section
   for (const title of activeTitles) {
     expect(title).toMatch(/^.+ in (?:Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces) (?:conjunct|opposite|square|trine|sextile) Nikki's natal .+$/);
   }
-  const titleStyles = await page.locator('.friend-transit-row h3').evaluateAll(headings => headings.map(heading => {
-    const style = getComputedStyle(heading);
-    return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(property => [property, style[property as keyof CSSStyleDeclaration]]));
-  }));
-  for (const style of titleStyles) expect(style).toEqual(titleStyles[0]);
+  // Primary transit cards and supplemental relationship cards have separate DS roles.
+  for (const [selector, size] of [['.personal-transit-card h3', '30px'], ['.friend-transit-row:not(.personal-transit-card) h3', '26px']]) {
+    const titles = page.locator(selector);
+    await expect(titles.first()).toHaveCSS('font-size', size);
+    const titleStyles = await titles.evaluateAll(headings => headings.map(heading => {
+      const style = getComputedStyle(heading);
+      return Object.fromEntries(['fontFamily', 'fontSize', 'fontWeight', 'lineHeight', 'letterSpacing', 'marginTop', 'marginBottom', 'textTransform', 'textAlign'].map(property => [property, style[property as keyof CSSStyleDeclaration]]));
+    }));
+    for (const style of titleStyles) expect(style).toEqual(titleStyles[0]);
+  }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.screenshot({ path: `test-results/friend-transit-titles-${testInfo.project.name}.png`, fullPage: true, animations: 'disabled' });
 

@@ -5,6 +5,7 @@ import { useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import "../../styles/friends-detail.css";
 import "../../styles/profile-overview.css";
+import "../../styles/friend-profile-refined.css";
 
 export type FriendDetailTab = "compatibility" | "transits" | "natal" | "synastry" | "composite";
 export type FriendDetailTabOption = {

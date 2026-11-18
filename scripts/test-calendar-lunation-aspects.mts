@@ -51,12 +51,13 @@ test("Full Moon Key aspects prioritize orb over earlier exact dates", async () =
   const vite = await createServer({
     root: path.join(process.cwd(), "apps/web"), appType: "custom", logLevel: "silent", server: { middlewareMode: true },
     plugins: [{ name: "lunation-aspect-test-exports", enforce: "pre", transform(code, id) {
-      if (id.endsWith("/src/App.tsx")) return code + "\nexport { currentSkyV4LunationDetailArticle };";
+      if (id.endsWith("/src/App.tsx")) return code + "\nexport { currentSkyV4LunationDetailArticle, loadLunationArticleHoroscopes };";
       if (id.includes("/fallbackArchitectureV3/authored-inputs/") && id.endsWith(".json?url")) return `export default ${fs.readFileSync(id.slice(0, -4), "utf8")};`;
     } }]
   });
   try {
     const app = await vite.ssrLoadModule("/src/App.tsx");
+    await app.loadLunationArticleHoroscopes();
     const runtime = await vite.ssrLoadModule("/src/content/fallbackArchitectureV3Runtime.ts");
     await runtime.loadSkyPlacementFallbackArchitectureV3Bundle();
     await app.loadContentRegistry("sky");

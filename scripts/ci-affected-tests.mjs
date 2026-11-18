@@ -11,6 +11,21 @@ import {apiTestCommands,validateTestPlan} from './ci-test-plan.mjs';
 const nonRuntime = /^(?:docs\/|README(?:\.[^/]+)?$|LICENSE(?:\.[^/]+)?$|AGENTS\.md$|CLAUDE\.md$)/u;
 const infrastructure = /^(?:\.github\/workflows\/|scripts\/(?:ci-|test-ci-|check-affected-api-gate|check-browser-release-gate|test-browser-release-gate|test-browser-suite-coverage|test-content-studio-api-shards|run-content-studio-api-shard|run-affected-playwright|balanced-browser-tests|test-browser-balance)|config\/.*(?:durations|timings).*\.json$)/u;
 const budget = /^scripts\/(?:web|admin)-bundle-budgets\.json$/u;
+const webUi = /^apps\/web\/src\/(?:(?:features|components|routes)\/.*\.(?:[jt]sx|css)|styles\/.*\.css)$/u;
+// Browser journeys load UI through routes rather than importing its components.
+// Include every source in that surface, including children passed by App.tsx.
+const uiSurfaces = [
+  ['friends', /(?:features\/friends\/|routes\/FriendsRoute\.|components\/FriendsPageShell\.|styles\/friends(?:-|\.))/u],
+  ['you|profile', /(?:features\/you\/|routes\/YouRoute\.|styles\/you-)/u],
+  ['sky', /(?:features\/sky\/|routes\/SkyRoute\.|styles\/sky(?:-|\.))/u],
+  ['calendar', /(?:features\/calendar\/|routes\/CalendarRoute\.|styles\/(?:lunar-calendar|calendar-))/u],
+  ['horoscopes', /(?:features\/horoscopes\/|styles\/(?:horoscopes|weekly-horoscope)\.)/u],
+  ['account', /(?:features\/account\/|styles\/account-)/u],
+  ['settings', /(?:routes\/SettingsRoute\.|styles\/settings(?:-|\.))/u],
+  ['learn|guide', /(?:features\/learn\/|styles\/learn\.)/u],
+  ['signup|login|auth', /(?:features\/auth\/|styles\/auth\.)/u],
+  ['reports?', /(?:features\/reports\/|components\/reports\/|routes\/ReportRoute\.|styles\/(?:reports?-|you-reports\.))/u]
+];
 
 export function browserJobCatalog(root, scripts, specs) {
   const workflow = readFileSync(path.join(root,'.github/workflows/visual-smoke.yml'),'utf8');
@@ -32,43 +47,106 @@ export function browserJobCatalog(root, scripts, specs) {
 }
 
 export function createDependencyGraph(root, files) {
-  const known = new Set(files), cache = new Map();
+  const known = new Set(files), cache = new Map(), referenceCache = new Map(), browserCache = new Map(), browserRoutes = new Set();
+  const surfaces = uiSurfaces.map(([routes,source])=>({
+    route: new RegExp(`(?:#(?:${routes})|^(?:https?:\\/\\/[^/]+)?\\/(?:${routes}))(?=[/?&]|$)`,'u'),
+    sources: files.filter(file=>file.startsWith('apps/web/src/')&&source.test(file.slice('apps/web/src/'.length)))
+  }));
   const names = new Map();
   for (const file of files.filter(file=>file.endsWith('.sql'))) names.set(path.basename(file),file);
-  function resolveReference(file, value) {
-    if (names.has(value)) return names.get(value);
-    if (value === '@tldr/astro-knowledge') return 'packages/astro-knowledge/src/index.ts';
-    if (!value.startsWith('.') && !/^(?:api|apps|src|tests|scripts|packages|config)\//u.test(value)) return null;
-    const candidate = value.startsWith('.') ? path.posix.normalize(path.posix.join(path.posix.dirname(file),value)) : value;
-    const stem = candidate.replace(/\.[cm]?js$/u,'');
-    return [candidate,...['.ts','.tsx','.mts','.mjs','.js','.json','/index.ts','/index.tsx','/index.js'].map(ext=>stem+ext)].find(candidate=>known.has(candidate)) ?? null;
+  function resolveReferences(file, value) {
+    if (names.has(value)) return [names.get(value)];
+    if (value === '@tldr/astro-knowledge') return ['packages/astro-knowledge/src/index.ts'];
+    if (!value.startsWith('.') && !value.startsWith('/src/') && !/^(?:api|apps|src|tests|scripts|packages|config)\//u.test(value)) return [];
+    const candidates = value.startsWith('/src/') ? [`apps/web${value}`,`apps/admin${value}`]
+      : [value.startsWith('.') ? path.posix.normalize(path.posix.join(path.posix.dirname(file),value)) : value];
+    return candidates.flatMap(candidate=>{
+      const stem = candidate.replace(/\.[cm]?js$/u,'');
+      const resolved=[candidate,...['.ts','.tsx','.mts','.mjs','.js','.json','/index.ts','/index.tsx','/index.js'].map(ext=>stem+ext)].find(candidate=>known.has(candidate));
+      return resolved?[resolved]:[];
+    });
   }
   function dependencies(file) {
     if (cache.has(file)) return cache.get(file);
-    const dependencies = new Set();cache.set(file,dependencies);
-    if (!/\.[cm]?[jt]sx?$/u.test(file) || !existsSync(path.join(root,file))) return dependencies;
-    const ast=ts.createSourceFile(file,readFileSync(path.join(root,file),'utf8'),ts.ScriptTarget.Latest,true);
+    const dependencies = new Set(),references=new Set();cache.set(file,dependencies);referenceCache.set(file,references);
+    if (!/\.(?:css|[cm]?[jt]sx?)$/u.test(file) || !existsSync(path.join(root,file))) return dependencies;
+    const source=readFileSync(path.join(root,file),'utf8');
+    if(file.endsWith('.css')) {
+      for(const [,value] of source.matchAll(/@import\s+(?:url\(\s*)?["']([^"']+)["']/gu)) {
+        for(const dependency of resolveReferences(file,value))dependencies.add(dependency);
+      }
+      return dependencies;
+    }
+    if (!/\.[cm]?[jt]sx?$/u.test(file)) return dependencies;
+    const ast=ts.createSourceFile(file,source,ts.ScriptTarget.Latest,true);
     function visit(node) {
+      if(ts.isImportDeclaration(node)) {
+        const clause=node.importClause;
+        if(clause?.isTypeOnly||clause&&!clause.name&&clause.namedBindings&&ts.isNamedImports(clause.namedBindings)
+          &&clause.namedBindings.elements.length&&clause.namedBindings.elements.every(element=>element.isTypeOnly))return;
+      }
+      if(ts.isExportDeclaration(node)&&(node.isTypeOnly||node.exportClause&&ts.isNamedExports(node.exportClause)
+        &&node.exportClause.elements.length&&node.exportClause.elements.every(element=>element.isTypeOnly)))return;
       if (ts.isStringLiteralLike(node)) {
-        const dependency=resolveReference(file,node.text);
-        if (dependency) dependencies.add(dependency);
+        const parent=node.parent;
+        const call=ts.isCallExpression(parent)?parent:null;
+        const method=call&&(ts.isIdentifier(call.expression)?call.expression.text:ts.isPropertyAccessExpression(call.expression)?call.expression.name.text:null);
+        const module=ts.isImportDeclaration(parent)||ts.isExportDeclaration(parent)||ts.isExternalModuleReference(parent)
+          ||call&&(call.expression.kind===ts.SyntaxKind.ImportKeyword||['require','ssrLoadModule'].includes(method));
+        const worker=ts.isNewExpression(parent)&&ts.isIdentifier(parent.expression)&&parent.expression.text==='URL'
+          &&ts.isNewExpression(parent.parent)&&ts.isIdentifier(parent.parent.expression)&&['Worker','SharedWorker'].includes(parent.parent.expression.text);
+        for(const dependency of resolveReferences(file,node.text)) {
+          if(module||worker)dependencies.add(dependency);
+          // Text/fixture reads depend on these bytes, not on their imports.
+          else if(/^(?:scripts|tests)\//u.test(file)||call||ts.isNewExpression(parent))references.add(dependency);
+        }
       }
       ts.forEachChild(node,visit);
     }
     visit(ast);
     return dependencies;
   }
-  function reaches(roots, changed) {
+  function browserDependencies(file) {
+    if(browserCache.has(file))return browserCache.get(file);
+    const result=new Set();browserCache.set(file,result);
+    if(!/^tests\/(?:visual|helpers)\/.*\.[cm]?[jt]sx?$/u.test(file)||!existsSync(path.join(root,file)))return result;
+    const ast=ts.createSourceFile(file,readFileSync(path.join(root,file),'utf8'),ts.ScriptTarget.Latest,true);
+    const addRoutes=value=>{
+      if(/^(?:https?:\/\/[^/]+)?\/admin(?:[/?#.]|$)/u.test(value))browserRoutes.add(file);
+      for(const surface of surfaces)if(surface.route.test(value)||value.endsWith('/#')) {
+        browserRoutes.add(file);
+        for(const source of surface.sources)result.add(source);
+      }
+    };
+    function visit(node) {
+      if(ts.isStringLiteralLike(node))addRoutes(node.text);
+      if(ts.isTemplateExpression(node)) {
+        addRoutes(node.head.text);
+        for(const span of node.templateSpans)addRoutes(span.literal.text);
+      }
+      ts.forEachChild(node,visit);
+    }
+    visit(ast);
+    return result;
+  }
+  function reaches(roots, changed, browser=false, ui=false) {
+    const routeKnown=browser&&roots.some(file=>{browserDependencies(file);return browserRoutes.has(file);});
     const seen = new Set(), pending=[...roots];
     while(pending.length) {
       const file=pending.pop();
       if(changed.has(file))return true;
       if(seen.has(file))continue;seen.add(file);
+      // Route evidence supplies the rendered children. Importing an App helper
+      // does not mean a Sky journey renders every Friends and Calendar view.
+      if(ui&&routeKnown&&file==='apps/web/src/App.tsx')continue;
       pending.push(...dependencies(file));
+      if([...referenceCache.get(file)??[]].some(reference=>changed.has(reference)))return true;
+      if(browser)pending.push(...browserDependencies(file));
     }
     return false;
   }
-  return {reaches};
+  return {reaches, reachesBrowser:(roots,changed,ui=false)=>reaches(roots,changed,true,ui),
+    appImports:file=>dependencies('apps/web/src/App.tsx').has(file)};
 }
 
 export function commandSources(command,scripts,seen=new Set()) {
@@ -98,7 +176,6 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
     if(nonRuntime.test(file)||infrastructure.test(file))continue;
     if(budget.test(file)){build=true;continue;}
     if(file.startsWith('tests/visual/')) {if(runnableSpecs.has(file))selected.add(file);continue;}
-    if(/^apps\/(?:admin|web)\/.*\.css$/u.test(file)){runnableSpecs.forEach(spec=>selected.add(spec));build=true;continue;}
     if(file==='package.json') {
       assert(previousPackage,'Package changes require the base package manifest');
       const withoutScripts=value=>Object.fromEntries(Object.entries(value).filter(([key])=>key!=='scripts'));
@@ -110,9 +187,11 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
       continue;
     }
     const changed=new Set([file]);
+    const styling=/^apps\/(?:admin|web)\/.*\.css$/u.test(file);
     let known=false;
-    for(const command of commands)if(graph.reaches(commandSources(command,pkg.scripts),changed)){api.add(command);known=true;}
-    for(const spec of runnableSpecs)if(graph.reaches([spec],changed)){selected.add(spec);known=true;}
+    if(!styling)for(const command of commands)if(graph.reaches(commandSources(command,pkg.scripts),changed)){api.add(command);known=true;}
+    let browserKnown=false;
+    for(const spec of runnableSpecs)if(graph.reachesBrowser([spec],changed,webUi.test(file))){selected.add(spec);known=true;browserKnown=true;}
     if(/^playwright\..*\.config\.ts$/u.test(file)) {
       if(file==='playwright.config.ts')for(const spec of runnableSpecs)selected.add(spec);
       else for(const spec of specsSelectedByConfig(readFileSync(path.join(root,file),'utf8'),specs.map(file=>path.basename(file))))selected.add(`tests/visual/${spec}`);
@@ -122,6 +201,15 @@ export function createAffectedPlan({root=process.cwd(),files,head,base,previousP
       build=true;
       const narrow=/(?:Natal|natal|EmptyHouse|emptyHouse|houseTransit)/u.test(file);
       for(const spec of runnableSpecs)if(narrow?/natal|empty-house|house-transit|house-natal|content-dashboard-admin/u.test(spec):['studio-admin-flows','studio-preview-suites','sky-placement-studio'].some(job=>jobs[job]?.includes(spec)))selected.add(spec);
+      continue;
+    }
+    if(webUi.test(file)) {
+      const surfaceOwned=uiSurfaces.some(([,source])=>source.test(file.slice('apps/web/src/'.length)));
+      const shared=styling&&!surfaceOwned||!surfaceOwned&&graph.appImports(file);
+      if(shared||!browserKnown) {
+        runnableSpecs.forEach(spec=>selected.add(spec));
+        build=true;reasons.push(`shared or unmapped UI: ${file}`);
+      }
       continue;
     }
     if(/^src\/shared\/natal/u.test(file)) {for(const spec of runnableSpecs)if(/natal|content-dashboard-admin/u.test(spec))selected.add(spec);continue;}

@@ -30,6 +30,7 @@ export default defineConfig({
     'swisseph-web-data-parity.spec.ts',
     'you-loading-performance.spec.ts',
     'personal-daily-aspects.spec.ts',
+    'you-transit-card-flow.spec.ts',
     'friends-authenticated-loading-diagnostic.spec.ts',
     'body-paragraph-type.spec.ts',
     'header-navigation-overflow.spec.ts',
@@ -38,5 +39,6 @@ export default defineConfig({
     'load-error-handoff10.spec.ts',
     'tooltip-toast-viewport.spec.ts',
     'chart-table-viewport.spec.ts',
+    'full-chart-reports.spec.ts',
   ]
 });

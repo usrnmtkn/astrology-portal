@@ -22,12 +22,52 @@ try {
   const { RelationshipApiSummary } = await server.ssrLoadModule(
     "/src/features/friends/RelationshipApiSummary.tsx"
   );
+  const { CompatibilityTab } = await server.ssrLoadModule("/src/features/friends/CompatibilityTab.tsx");
+  const { FriendProfileForecast } = await server.ssrLoadModule("/src/features/friends/FriendProfileForecast.tsx");
+  const passage = "First approved sentence. The complete saved ending stays intact.";
+  const forecastHtml = renderToStaticMarkup(React.createElement(FriendProfileForecast, {
+    eyebrow: "Between you", body: passage, ariaLabel: "Synthetic forecast"
+  }));
+  assert.ok(forecastHtml.replace(/<[^>]+>/gu, "").endsWith(passage), "The overview splits the CMS passage without dropping or duplicating text.");
+  const compatibilityCard = {
+    id: "synthetic-sun", planet: "Sun", glyph: "☉", comparisonLabel: "You", youSign: "Aries", friendName: "Alex", friendSign: "Leo",
+    goDeeper: { glyph: "☉", match: "", body: passage, function: "", yourLine: "", theirLine: "", sameSign: false, sameSignLine: "", verdict: "", relationship: "sign-pair" }
+  };
+  const compatibilityProps = { cards: [compatibilityCard], friendName: "Alex", dynamics: [], onOpenCard() {} };
+  const headlineGap = renderToStaticMarkup(React.createElement(CompatibilityTab, compatibilityProps));
+  assert.doesNotMatch(headlineGap, /<h3/);
+  assert.match(headlineGap, /Sun · Fire signs/);
+  assert.match(headlineGap, /Read Sun/);
+  const withHeadline = renderToStaticMarkup(React.createElement(CompatibilityTab, {...compatibilityProps, cards: [{...compatibilityCard, headline: "Saved CMS headline"}]}));
+  assert.match(withHeadline, /<h3>Saved CMS headline<\/h3>/);
+  assert.ok(withHeadline.replace(/<[^>]+>/gu, "").includes(passage));
   const { FriendCompositeTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendCompositeTab.tsx"
   );
   const { FriendSynastryTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendSynastryTab.tsx"
   );
+  const renderCompatibility = (daily) => renderToStaticMarkup(React.createElement(CompatibilityTab, {
+    cards: [], dynamics: [], friendName: "Fixture Friend", daily
+  }));
+  const overviewHtml = renderCompatibility({
+    opening: "Complete opening.", body: "Complete opening. Complete supporting passage. Final sentence.", dateLabel: "Mon, Nov 16"
+  });
+  assert.match(overviewHtml, /Between you · Mon, Nov 16<\/span><p[^>]*>Complete opening\.<\/p><p[^>]*> Complete supporting passage\. Final sentence\.<\/p>/);
+  assert.ok(overviewHtml.indexOf("Complete opening.") < overviewHtml.indexOf("Planet by planet"));
+  for (const daily of [
+    { body: "Complete unsplit passage.", dateLabel: "Mon, Nov 16" },
+    { opening: "Mismatched opening.", body: "Complete unsplit passage.", dateLabel: "Mon, Nov 16" },
+    { opening: "Complete unsplit passage.", body: "Complete unsplit passage.", dateLabel: "Mon, Nov 16" }
+  ]) {
+    const html = renderCompatibility(daily);
+    assert.match(html, /<p[^>]*>Complete unsplit passage\.<\/p>/);
+    assert.doesNotMatch(html, /friend-profile-overview__body/);
+  }
+  const completeOpeningHtml = renderCompatibility({ opening: "Complete first sentence. Full opening ending.", body: "Complete first sentence. Full opening ending. Supporting passage.", dateLabel: "Mon, Nov 16" });
+  assert.match(completeOpeningHtml, /friend-profile-overview__headline">Complete first sentence\. Full opening ending\.<\/p>/);
+  assert.match(completeOpeningHtml, /friend-profile-overview__body"> Supporting passage\.<\/p>/);
+  assert.doesNotMatch(renderCompatibility(null), /compatibility-overview|Between you/);
   const { FriendNatalTab } = await server.ssrLoadModule(
     "/src/features/friends/FriendNatalTab.tsx"
   );
@@ -137,8 +177,9 @@ try {
     transitAspects: []
   }));
   assert.match(profileChartRailHtml, /aria-label="Relationship chart"/);
-  assert.match(profileChartRailHtml, /aria-label="Alex natal placement table"/);
-  assert.match(profileChartRailHtml, /10°30&#x27;/);
+  assert.match(profileChartRailHtml, /aria-label="Alex natal chart wheel"/);
+  assert.match(profileChartRailHtml, /aria-label="Open full natal chart"/);
+  assert.doesNotMatch(profileChartRailHtml, /natal-chart-data-table|natal-chart-view-toggle/);
 
   const loadingSummaryHtml = renderToStaticMarkup(React.createElement(RelationshipApiSummary, {
     mode: "composite",
@@ -199,7 +240,7 @@ try {
     relationshipCompare: null,
     relationshipCompareStatus: "idle"
   }));
-  assert.match(populatedCompositeHtml, /Composite placements/);
+  assert.match(populatedCompositeHtml, /Composite planets/);
   assert.match(populatedCompositeHtml, /Sun trine Moon/);
   assert.match(populatedCompositeHtml, /The relationship has an easy emotional rhythm/);
 
@@ -291,7 +332,7 @@ try {
     }]
   }));
   assert.match(natalTabHtml, /<h2[^>]*>Big Three<\/h2>/);
-  assert.match(natalTabHtml, /aria-label="Traditional planets"/);
+  assert.match(natalTabHtml, /aria-label="Planets"/);
   assert.match(natalTabHtml, /Empty houses/);
   assert.match(natalTabHtml, />2nd House in Taurus<\/span>/);
   assert.doesNotMatch(natalTabHtml, /aspect-row-button|aspect-row-static/,
@@ -392,7 +433,7 @@ try {
       }]
     }]
   }));
-  assert.match(populatedTransitsHtml, /friend-profile-copy-column"><section class="daily-horoscope-summary friend-daily-forecast"/);
+  assert.match(populatedTransitsHtml, /friend-profile-copy-column"><div class="friend-profile-intro"><section class="friend-profile-overview friend-daily-forecast"/);
   assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
   assert.match(populatedTransitsHtml, /An opening just appeared/);
   assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
@@ -405,7 +446,7 @@ try {
   assert.match(populatedTransitsHtml, /Where it lands/);
   assert.match(populatedTransitsHtml, /Mars trine Moon/);
   assert.match(populatedTransitsHtml, /Emotional momentum is easier to use/);
-  assert.match(populatedTransitsHtml, /Aug 1–3/, "Verified date ranges remain visible beside durations.");
+  assert.match(populatedTransitsHtml, /Active now · 1°/, "Short-term timing and orb have a single fixed slot.");
   const durationOnlyHtml = renderToStaticMarkup(React.createElement(FriendTransitsFixture, {
     personalTransitGroups: [{ key: "long", label: "Long-term themes", transits: [{
       id: "stationary-transit", title: "Uranus trine Mars", durationLabel: "3Y3M",
@@ -419,13 +460,13 @@ try {
   }));
   const visibleTiming = durationOnlyHtml.match(/updates-aspect-row__meta-line[^>]*>(.*?)<\/span><p/s)?.[1];
   assert.ok(visibleTiming, "Stationary timing is rendered.");
-  assert.equal((visibleTiming.match(/<span>3Y3M<\/span>/g) ?? []).length, 1,
+  assert.equal((visibleTiming.match(/3Y3M/g) ?? []).length, 1,
     "The established card/header contract keeps the sole visible timing estimate.");
   assert.doesNotMatch(durationOnlyHtml, /class="[^"]*planet-placement-row__duration/,
     "Duration pills remain in article headers rather than repeating on cards.");
   assert.doesNotMatch(populatedTransitsHtml, /Read what this means/);
   assert.doesNotMatch(populatedTransitsHtml, /friend-transit-focus-card/);
-  assert.doesNotMatch(populatedTransitsHtml, /Today for Alex/);
+  assert.match(populatedTransitsHtml, /Today for Alex · Today/);
   assert.match(populatedTransitsHtml, /Name the plan/);
   assert.match(populatedTransitsHtml, /Force an answer/);
   assert.ok(
@@ -458,8 +499,8 @@ try {
   assert.doesNotMatch(unknownBirthTimeTransitsHtml, /7th house|Partnership|One-to-one relationships/);
 
   assert.ok(
-    populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Mars trine Moon"),
-    "Relationship context should lead the ranked short-term transit list."
+    populatedTransitsHtml.indexOf("Mars trine Moon") < populatedTransitsHtml.indexOf("Between you two"),
+    "The approved short-term section leads the additional relationship context."
   );
   assert.ok(
     populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Where it lands"),

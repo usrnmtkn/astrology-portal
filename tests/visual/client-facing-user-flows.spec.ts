@@ -1272,6 +1272,7 @@ async function expectRelationshipWheelGeometry(page: Page, label: string) {
     expect(Math.max(...radii) - Math.min(...radii), `${label} keeps house numbers centered on one circle`).toBeLessThan(0.01);
   }
   expect(geometry.houses.radii[0], `${label} preserves twelve whole-sign house labels`).toHaveLength(12);
+  expect(geometry.houses.radii[1], `${label} preserves twelve independently numbered inner houses`).toHaveLength(12);
   expect(geometry.houses.degreeMin, `${label} keeps house labels clear of planet degree text`).toBeGreaterThanOrEqual(9);
   expect(geometry.houses.tickMin, `${label} keeps house labels clear of degree tick lines`).toBeGreaterThanOrEqual(6);
 }
@@ -2083,7 +2084,7 @@ test.describe("client-facing user flow case studies", () => {
 
   for (const theme of ["light", "dark"] as const) {
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }]) {
-      test(`Compatibility Pair Daily appears above planets on a cold visit (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
+      test(`Compatibility overview pairs the chart with its opening on a cold visit (${theme}, ${viewport.width}px)`, async ({ page }, testInfo) => {
         const assertNoClientErrors = await expectNoClientErrors(page);
         await page.setViewportSize(viewport);
         await seedClientState(page, { profile: true, friends: true, preloadProfileNatalSky: true, theme });
@@ -2100,9 +2101,13 @@ test.describe("client-facing user flow case studies", () => {
         const daily = page.locator(".friend-compatibility-stage .friend-daily-forecast");
         const comparisons = page.getByRole("region", { name: "Planet by planet", exact: true });
         await expect(daily).toBeVisible();
-        await expect(daily.locator(".friend-section-label")).toHaveText(/^Today - /);
-        await expect(daily.locator("p")).toContainText("Nikki");
-        const body = await daily.locator("p").innerText();
+        await expect(daily.locator(".friend-profile-eyebrow")).toHaveText(/^Between you · /);
+        const opening = daily.locator(".friend-profile-overview__headline");
+        await expect(opening).toContainText("Nikki");
+        const headline = await opening.innerText();
+        const supportingParagraphs = daily.locator(".friend-profile-overview__body");
+        const supporting = await supportingParagraphs.allTextContents();
+        const body = [headline, ...supporting].join(" ");
         expect(body.length).toBeGreaterThan(40);
         expect(body).not.toMatch(/SOURCE_GAP|\{[^}]+\}|undefined/);
         await expect(comparisons.locator(".compatibility-card").first()).toBeVisible();
@@ -2111,14 +2116,59 @@ test.describe("client-facing user flow case studies", () => {
         expect(dailyBounds.y + dailyBounds.height).toBeLessThanOrEqual(comparisonsBounds.y);
         expect(dailyBounds.x).toBeGreaterThanOrEqual(0);
         expect(dailyBounds.x + dailyBounds.width).toBeLessThanOrEqual(viewport.width);
+        const wheel = page.getByLabel("Nikki compatibility chart wheel");
+        await expect(wheel).toBeVisible();
+        const wheelBounds = (await wheel.boundingBox())!;
+        if (viewport.width > 800) {
+          expect(Math.abs(wheelBounds.y - dailyBounds.y)).toBeLessThan(2);
+          expect(wheelBounds.x + wheelBounds.width).toBeLessThan(dailyBounds.x);
+          expect(comparisonsBounds.y).toBeGreaterThanOrEqual(wheelBounds.y + wheelBounds.height);
+        } else {
+          expect(dailyBounds.y).toBeGreaterThanOrEqual(wheelBounds.y + wheelBounds.height);
+        }
+        await expect(daily).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+        const typography = await daily.evaluate((element) => {
+          const title = element.querySelector(".friend-profile-overview__headline")!;
+          const paragraph = element.querySelector(".friend-profile-overview__body")!;
+          const style = getComputedStyle(title);
+          const bodyStyle = getComputedStyle(paragraph);
+          const role = document.createElement("span");
+          element.append(role);
+          role.style.cssText = "font-family:var(--font-display);font-size:var(--type-overview-title-size);font-weight:var(--weight-regular);line-height:var(--leading-title);letter-spacing:var(--tracking-title)";
+          const expectedTitle = getComputedStyle(role);
+          const properties = ["font-family", "font-size", "font-weight", "line-height", "letter-spacing"];
+          const titleMatches = properties.every(property => style.getPropertyValue(property) === expectedTitle.getPropertyValue(property));
+          role.style.cssText = "font-family:var(--font-body);font-size:var(--type-overview-reading-size);font-weight:var(--weight-regular);line-height:var(--leading-body);letter-spacing:var(--tracking-body)";
+          const expectedBody = getComputedStyle(role);
+          const bodyMatches = properties.every(property => bodyStyle.getPropertyValue(property) === expectedBody.getPropertyValue(property));
+          role.remove();
+          return { titleMatches, bodyMatches, order: Array.from(element.children).map(child => child.tagName) };
+        });
+        expect(typography).toEqual({ titleMatches: true, bodyMatches: true, order: ["SPAN", "P", "P"] });
+        const headings = await page.locator(".friend-chart-page h1, .friend-chart-page h2").allTextContents();
+        expect(headings.slice(0, 2)).toEqual(["Nikki", "Planet by planet"]);
         await daily.screenshot({ path: testInfo.outputPath("pair-daily.png") });
+        if (viewport.width > 800) {
+          await page.screenshot({ path: testInfo.outputPath("compatibility-hero.png") });
+        }
+
+        const expand = page.getByRole("button", { name: "Full-screen chart", exact: true });
+        await expand.click();
+        const fullscreen = page.getByRole("dialog");
+        await expect(fullscreen.getByRole("heading").first()).toBeVisible();
+        await expect(fullscreen.locator(".synastry-wheel")).toBeVisible();
+        await page.keyboard.press("Escape");
+        await expect(fullscreen).toHaveCount(0);
+        await expect(expand).toBeFocused();
 
         // A reload and a tab round-trip must retain the complete approved reading.
         await page.reload();
-        await expect(daily.locator("p")).toHaveText(body);
+        await expect(opening).toHaveText(headline);
+        await expect(supportingParagraphs).toHaveText(supporting);
         await page.getByRole("tab", { name: "Natal" }).click();
         await page.getByRole("tab", { name: "Compatibility" }).click();
-        await expect(daily.locator("p")).toHaveText(body);
+        await expect(opening).toHaveText(headline);
+        await expect(supportingParagraphs).toHaveText(supporting);
         await assertNoClientErrors();
       });
     }
@@ -2165,14 +2215,11 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByLabel("Nikki transit chart wheel")).toBeVisible();
     const transitDailyForecast = page.locator(".friend-daily-forecast").first();
-    await expect(transitDailyForecast, "Transit daily forecast keeps its card inset").toBeVisible();
-    await expect(transitDailyForecast).toHaveCSS("border-top-style", "solid");
-    expect(
-      await transitDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
-      "Transit daily forecast has visible internal padding"
-    ).toBeGreaterThan(0);
+    await expect(transitDailyForecast, "Transit overview uses the editorial headline and complete reading").toBeVisible();
+    await expect(transitDailyForecast.locator(".friend-profile-overview__headline")).not.toBeEmpty();
+    await expect(transitDailyForecast).toHaveCSS("border-top-width", "0px");
 
-    const transitCard = page.locator(".friend-transit-row:has(.updates-aspect-row__orb)").first();
+    const transitCard = page.locator(".friend-transit-row").first();
     await expect(transitCard).toBeVisible();
     await expect(transitCard, "Friend transit cards open their full entries").toHaveJSProperty("tagName", "BUTTON");
     await expect(transitCard).toHaveCSS("cursor", "pointer");
@@ -2211,10 +2258,9 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Close detail" }).click();
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
-    const rangeLabel = ((await transitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()) ?? "").trim();
-    const orbLabel = ((await transitCard.locator(".updates-aspect-row__orb").innerText()) ?? "").trim();
-    expect(transitCardText.split(rangeLabel).length - 1, "Transit date range appears once").toBe(1);
-    expect(transitCardText.split(orbLabel).length - 1, "Transit orb appears once").toBe(1);
+    const metaLabel = ((await transitCard.locator(".updates-aspect-row__meta-line").innerText()) ?? "").trim();
+    expect(transitCardText.split(metaLabel).length - 1, "Transit timing and orb appear together once").toBe(1);
+    expect(metaLabel).toMatch(/ · .+°/u);
     await transitCard.click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByLabel("Transit details", { exact: true })).toBeVisible();
@@ -2232,19 +2278,12 @@ test.describe("client-facing user flow case studies", () => {
       page.getByLabel("synastry relationship summary"),
       "Synastry omits the relationship-patterns summary card"
     ).toHaveCount(0);
-    await expect(page.locator(".synastry-placement-row").first()).toBeVisible();
-    await expect(page.locator(".synastry-placement-planet"), "Synastry placement cards use glyph-only rows without planet-name columns").toHaveCount(0);
-    await expect(page.locator(".synastry-placement-sign-svg").first(), "Synastry placement cards keep zodiac glyphs visible").toBeVisible();
-    const synastryPlacementHeaders = page.locator(".synastry-placement-column-header");
-    await expect(synastryPlacementHeaders, "Synastry shows both placement-column headings").toHaveCount(2);
-    await expect(
-      synastryPlacementHeaders.first(),
-      "Synastry placement headings omit the horizontal rule"
-    ).toHaveCSS("border-bottom-width", "0px");
+    await expect(page.locator(".synastry-placements-comparison")).toHaveCount(0);
+    await expect(page.locator(".friend-profile-dynamics__columns > section > h3")).toHaveText(["What flows", "Challenges", "Mixed or charged"]);
     const synastryContactCard = page
-      .locator(".friend-aspect-row:has(.synastry-contact-description)")
+      .locator(".friend-dynamic-card:has(.reading-story-card__preview)")
       .first();
-    const synastryContactDescription = synastryContactCard.locator(".synastry-contact-description");
+    const synastryContactDescription = synastryContactCard.locator(".reading-story-card__preview");
     await expect(synastryContactDescription).toBeVisible();
     await expect(synastryContactCard.locator(".ui-pill")).toHaveCount(0);
     await synastryContactCard.click();
@@ -2322,10 +2361,10 @@ test.describe("client-facing user flow case studies", () => {
         await seedClientState(page, { profile: true, friends: true, theme });
         await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=composite");
         const pane = page.locator('.friend-tab-pane[aria-label="Composite"]');
-        const card = pane.locator('.friend-aspect-row:not(:disabled)').first();
+        const card = pane.locator('.friend-profile-pattern-open:not(:disabled)');
         await expect(card).toBeVisible();
-        const title = await card.locator("h3").innerText();
-        const paragraphs = await card.locator(".aspect-row-copy p").allTextContents();
+        const title = await card.innerText();
+        const paragraphs = await pane.locator(".friend-profile-contact > p").allTextContents();
         expect(paragraphs.join("").trim().length).toBeGreaterThan(0);
         await card.focus();
         await page.keyboard.press("Enter");
@@ -3721,7 +3760,7 @@ test.describe("client-facing user flow case studies", () => {
       await page.getByRole("button", { name: "Open Nikki" }).click();
       for (const view of ["Synastry", "Composite"] as const) {
         await selectFriendDetailTab(page, view);
-        const rows = page.locator(view === "Synastry" ? ".synastry-placement-row" : ".composite-placements-section .placement-table-row");
+        const rows = page.locator(view === "Synastry" ? ".friend-dynamic-card" : ".friend-composite-stage .placement-table-row");
         await expect(rows.first()).toBeVisible();
         for (const width of [1440, 1280, 1080, 1024, 820, 768, 390, 320]) {
           await page.setViewportSize({ width, height: 1000 });
@@ -3729,10 +3768,10 @@ test.describe("client-facing user flow case studies", () => {
           for (const row of await rows.all()) await row.scrollIntoViewIfNeeded();
           const defects = await rows.evaluateAll(rows => rows.flatMap(row => {
             const box = row.getBoundingClientRect();
-            const rail = row.closest(".synastry-placements-comparison, .composite-placements-section")!.getBoundingClientRect();
+            const rail = row.closest(".friend-profile-dynamics, .natal-placement-section")!.getBoundingClientRect();
             const issues: string[] = [];
             if (box.left < rail.left - 1 || box.right > rail.right + 1) issues.push("card exceeds content rail");
-            for (const child of row.querySelectorAll(".synastry-placement-lead, .synastry-placement-sign, .synastry-placement-degree, .synastry-placement-house, .placement-table-row__body, .placement-table-row__glyph")) {
+            for (const child of row.querySelectorAll(".friend-dynamic-card__glyphs, .friend-dynamic-card h4, .reading-story-card__preview, .placement-table-row__body, .placement-table-row__glyph")) {
               const bounds = child.getBoundingClientRect();
               if (bounds.left < box.left - 1 || bounds.right > box.right + 1) issues.push(`clipped ${child.className}`);
             }
@@ -3741,8 +3780,8 @@ test.describe("client-facing user flow case studies", () => {
           expect(defects, `${view} ${theme} ${width}px`).toEqual([]);
           if (view === "Synastry") {
             const geometry = await rows.evaluateAll(rows => rows.map(row => ({height:row.getBoundingClientRect().height,padding:getComputedStyle(row).padding})));
-            expect(new Set(geometry.map(row => row.height)).size, "Both people's rows have equal height").toBe(1);
-            expect(new Set(geometry.map(row => row.padding)).size, "Both people's rows have equal padding").toBe(1);
+            expect(geometry.every(row => row.height > 0), "Dynamics cards remain rendered").toBe(true);
+            expect(new Set(geometry.map(row => row.padding)).size, "Dynamics cards share their card padding").toBe(1);
           }
           await expectNoHorizontalOverflow(page, `${view} ${theme} ${width}px`);
           await page.evaluate(() => window.scrollTo(0, 0));
@@ -3763,7 +3802,7 @@ test.describe("client-facing user flow case studies", () => {
       await page.getByRole("button", { name: "Open Nikki" }).click();
       await selectFriendDetailTab(page, "Synastry");
       const card = page.getByRole("button", { name: "Open full entry for Your Moon sextile Nikki's Neptune", exact: true });
-      const copy = card.locator(".synastry-contact-description");
+      const copy = card.locator(".reading-story-card__preview");
       const source = fallbackSourceRowsV3.hookRows.find(row => row.contentKey === "fallback-hook/synastry-pair/moon/neptune/soft");
       expect(source?.body_you).toBeTruthy();
       const expectedCopy = source!.body_you!.replaceAll("{{holder2}}", "Nikki");
@@ -3784,13 +3823,13 @@ test.describe("client-facing user flow case studies", () => {
     });
   }
 
-  test("synastry placement data stays inside each card after lazy styles load", async ({ page }) => {
+  test("synastry Dynamics stays inside each card after lazy styles load", async ({ page }) => {
     test.setTimeout(60_000);
     await seedClientState(page, { profile: true, friends: true });
     await expectClientRouteLoads(page, "/#friends?tab=charts");
     await page.getByRole("button", { name: "Open Nikki" }).click();
     await selectFriendDetailTab(page, "Synastry");
-    const rows = page.locator(".synastry-placement-row:not(.synastry-placement-row-empty)");
+    const rows = page.locator(".friend-dynamic-card");
     await expect(rows.first()).toBeVisible();
     for (const theme of ["light", "dark"]) {
       await page.evaluate((theme) => {
@@ -3802,7 +3841,7 @@ test.describe("client-facing user flow case studies", () => {
         await page.setViewportSize({ width, height: 1000 });
         const overflow = await rows.evaluateAll((rows) => rows.flatMap((row) => {
           const bounds = row.getBoundingClientRect();
-          return Array.from(row.querySelectorAll(".synastry-placement-lead, .synastry-placement-sign, .synastry-placement-degree, .synastry-placement-house"))
+          return Array.from(row.querySelectorAll(".friend-dynamic-card__glyphs, .friend-profile-eyebrow, h4, .reading-story-card__preview"))
             .filter((child) => {
               const box = child.getBoundingClientRect();
               return box.left < bounds.left - 1 || box.right > bounds.right + 1;
@@ -3810,7 +3849,7 @@ test.describe("client-facing user flow case studies", () => {
         }));
         expect(overflow, `${theme} synastry at ${width}px`).toEqual([]);
         await mkdir(responsiveScreenshotDir, { recursive: true });
-        await page.locator(".synastry-placements-comparison").screenshot({
+        await page.locator(".friend-profile-dynamics").screenshot({
           path: path.join(responsiveScreenshotDir, `synastry-${theme}-${width}.png`)
         });
       }
@@ -4705,12 +4744,9 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
     await page.getByRole("tab", { name: "Transits" }).click();
     const mobileDailyForecast = page.locator(".friend-daily-forecast").first();
-    await expect(mobileDailyForecast, "Mobile friend forecast keeps its card inset").toBeVisible();
-    await expect(mobileDailyForecast).toHaveCSS("border-top-style", "solid");
-    expect(
-      await mobileDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
-      "Mobile friend forecast has visible internal padding"
-    ).toBeGreaterThan(0);
+    await expect(mobileDailyForecast, "Mobile friend overview retains its complete reading").toBeVisible();
+    await expect(mobileDailyForecast.locator(".friend-profile-overview__headline")).not.toBeEmpty();
+    await expect(mobileDailyForecast).toHaveCSS("border-top-width", "0px");
     await expectNoHorizontalOverflow(page, "Mobile friend transit forecast");
     await assertNoClientErrors();
   });
@@ -5569,7 +5605,7 @@ test("Sky detail hydrates published aspects for its displayed snapshot and dated
 
 for (const theme of ["light", "dark"] as const) {
   for (const width of [390, 1440]) {
-    test(`shared reading cards use one visual contract ${theme} ${width}`, async ({ page }) => {
+    test(`reading cards retain their approved type roles ${theme} ${width}`, async ({ page }) => {
       test.setTimeout(300_000);
       await page.setViewportSize({ width, height: 1000 });
       // Hydrate the real pattern component through the cached chart fixture.
@@ -5611,12 +5647,13 @@ for (const theme of ["light", "dark"] as const) {
         await checkToken('.natal-insight-card__title', 'font-size', width <= 800 ? '--type-large-title-size' : '--text-card-title');
         await expect(pattern.locator('.natal-insight-card__meta')).toHaveCSS('font-family', /system-ui/);
         await expect(pattern.locator('.card-read-more--icon')).toBeVisible();
-        const placement = page.locator('button.placement-table-row').first();
+        const placementScope = audience === 'friend' ? '.natal-placement-sections ' : '';
+        const placement = page.locator(`${placementScope}button.placement-table-row`).first();
         await expect(placement).toBeVisible();
-        await checkToken('.placement-table-row__title', 'font-size', '--text-row-title-size');
+        await checkToken(`${placementScope}.placement-table-row__title`, 'font-size', '--text-row-title-size');
         await expect(placement.locator('.placement-table-row__title')).toHaveCSS('font-family', /system-ui/);
         await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-family', /Newsreader/);
-        await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-size', '19px');
+        await expect(placement.locator('.placement-table-row__description')).toHaveCSS('font-size', audience === 'friend' ? '15px' : '19px');
         await expect(placement.locator('.ui-pill')).toHaveCount(0);
         await expectNoHorizontalOverflow(page, `${audience} current reading cards`);
         await mkdir(responsiveScreenshotDir, { recursive: true });
@@ -5648,8 +5685,8 @@ test("an open Friends article survives an empty initial dashboard overlay", asyn
   });
   await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
   const card = page.getByRole("button", { name: "Open full entry for Your Midheaven sextile Sofia's Sun", exact: true });
-  await expect(card.locator(".synastry-contact-description")).not.toBeEmpty();
-  const copy = await card.locator(".synastry-contact-description").innerText();
+  await expect(card.locator(".reading-story-card__preview")).not.toBeEmpty();
+  const copy = await card.locator(".reading-story-card__preview").innerText();
   await expect.poll(() => overlayReads).toBeGreaterThan(0);
   await card.click();
   const detail = page.locator(".app-shell.mode-detail");
@@ -5682,7 +5719,7 @@ for (const body of ["Ascendant", "Midheaven", "Descendant", "Imum Coeli", "Chiro
           .replaceAll("{{holder2Poss}}", inverse ? "your" : "Sofia's")
           .replaceAll("{{holder1}}", inverse ? "Sofia" : "you")
           .replaceAll("{{holder2}}", inverse ? "you" : "Sofia");
-        await expect(card.locator(".synastry-contact-description")).toHaveText(copy, { timeout: 20_000 });
+        await expect(card.locator(".reading-story-card__preview")).toHaveText(copy, { timeout: 20_000 });
         await card.click();
         const detail = page.locator(".app-shell.mode-detail");
         await expect(detail).toContainText(copy);
@@ -5738,7 +5775,7 @@ for (const theme of ["light", "dark"] as const) {
       await expect(page.locator(".article-id h1")).toBeVisible();
       await expectNoHorizontalOverflow(page, `friend article pills ${theme} ${width}`);
       await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-nikki&view=synastry");
-      const contact = page.locator("button.friend-aspect-row").filter({ has: page.locator(".synastry-contact-description") }).first();
+      const contact = page.locator("button.friend-dynamic-card").filter({ has: page.locator(".reading-story-card__preview") }).first();
       await expect(contact).toBeVisible();
       await expect(contact.locator(".ui-pill")).toHaveCount(0);
       await contact.click();
@@ -5813,7 +5850,7 @@ for (const theme of ["light", "dark"] as const) {
       await expectClientRouteLoads(page, "/#friends?tab=charts&chart=friend-batch4&view=synastry");
       const card = page.getByRole("button", { name: `Open full entry for Your ${inverse ? "Chiron" : "Sun"} square Sofia's ${inverse ? "Sun" : "Chiron"}`, exact: true });
       const copy = inverse ? record.body_they : record.body_you;
-      await expect(card.locator(".synastry-contact-description")).toHaveText(copy, { timeout: 30_000 });
+      await expect(card.locator(".reading-story-card__preview")).toHaveText(copy, { timeout: 30_000 });
       await card.click();
       await expect(page.locator(".app-shell.mode-detail")).toContainText(copy);
       await expectNoHorizontalOverflow(page, "new synastry publication");
@@ -6147,8 +6184,9 @@ for (const theme of ["light", "dark"] as const) {
             })))
           };
         }, rings);
-        expect(geometry.viewBox).toBe("-4 -4 608 648");
-        expect(Math.abs(geometry.height / geometry.width - 648 / 608)).toBeLessThan(0.01);
+        expect(geometry.viewBox).toBe("-4 -4 608 608");
+        expect(Math.abs(geometry.height / geometry.width - 1)).toBeLessThan(0.01);
+        await expect(wheel.locator(".chart-house-system-label")).toHaveCount(0);
         expect(geometry.fits).toBe(true);
         expect(geometry.scrollRegions).toBe(0);
         for (const glyph of geometry.glyphs) {
@@ -6160,7 +6198,7 @@ for (const theme of ["light", "dark"] as const) {
         { selector: ".planet-marker-inner .planet-glyph-image", size: 22 }
       ];
       await expectFitsPage(synastry, synastryRings);
-      await expect(synastry.locator(".synastry-house-number")).toHaveCount(12);
+      await expect(synastry.locator(".synastry-house-number")).toHaveCount(24);
       await expect(synastry.locator(".wheel-surfaces > circle")).toHaveCount(5);
 
       // Find chart preferences through the site's existing menu, not on a profile.
@@ -6188,11 +6226,11 @@ for (const theme of ["light", "dark"] as const) {
       await expectNoHorizontalOverflow(page, "Synastry chart");
       await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
       const dialog = page.getByRole("dialog");
-      await expect(dialog.locator(".synastry-house-number")).toHaveCount(12);
+      await expect(dialog.locator(".synastry-house-number")).toHaveCount(24);
       await expect(dialog.locator(".relationship-wheel-viewport, .relationship-wheel-controls")).toHaveCount(0);
-      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await synastry.locator(".sky-wheel").boundingBox())!.width - 2);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await dialog.locator(".full-chart__wheel").boundingBox())!.width - 2);
       const synastryDialogBox = (await dialog.boundingBox())!;
-      const synastryFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      const synastryFooterBox = (await dialog.locator(".full-chart__heading .friend-compare-control").boundingBox())!;
       expect(synastryFooterBox.y + synastryFooterBox.height).toBeLessThan(synastryDialogBox.y + synastryDialogBox.height);
       await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
 
@@ -6208,9 +6246,9 @@ for (const theme of ["light", "dark"] as const) {
       await expectNoHorizontalOverflow(page, "Composite chart");
       await page.getByRole("button", { name: "Full-screen chart", exact: true }).click();
       await expect(dialog.locator(".sky-wheel-composite")).toHaveClass(/sky-wheel--monochrome/);
-      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await composite.locator(".sky-wheel").boundingBox())!.width - 2);
+      expect((await dialog.locator(".sky-wheel").boundingBox())!.width).toBeGreaterThanOrEqual((await dialog.locator(".full-chart__wheel").boundingBox())!.width - 2);
       const compositeDialogBox = (await dialog.boundingBox())!;
-      const compositeFooterBox = (await dialog.locator(".chart-fullscreen-footer").boundingBox())!;
+      const compositeFooterBox = (await dialog.locator(".full-chart__heading .friend-compare-control").boundingBox())!;
       expect(compositeFooterBox.y + compositeFooterBox.height).toBeLessThan(compositeDialogBox.y + compositeDialogBox.height);
       await dialog.screenshot({ path: testInfo.outputPath("composite-fullscreen.png") });
       await dialog.getByRole("button", { name: "Close full-screen chart" }).click();
@@ -6720,8 +6758,8 @@ for (const theme of ["light", "dark"] as const) for (const width of [390, 1440])
     await expect(skyWheel.locator(".interactive-wheel-lord-connector")).toHaveCount(0);
     await skyWheel.screenshot({ path: info.outputPath("sky-selected.png") });
     await sky.getByRole("button", { name: "Open full current sky chart" }).click();
-    await expect(page.locator(".sky-full-chart-view .interactive-zodiac-wheel")).toBeVisible();
-    await page.locator(".sky-full-chart-view").getByRole("button", { name: "Back", exact: true }).click();
+    await expect(page.locator(".full-chart[data-chart-kind=sky] .interactive-zodiac-wheel")).toBeVisible();
+    await page.locator(".full-chart[data-chart-kind=sky]").getByRole("button", { name: "Back", exact: true }).click();
     await expect(sky.getByRole("button", { name: "Open full current sky chart" })).toBeFocused();
 
     await navigate("/#you?tab=chart");

@@ -6,7 +6,7 @@ import { PlacementTableRow } from "./charts/PlacementRows";
 type NatalPlacementItem = { id: string; pointName: string; node: ReactNode };
 
 /** One grouping contract for self and friend natal charts. */
-export function NatalPlacementSections({ items, emptyHouses, snapshot }: { items: NatalPlacementItem[]; emptyHouses: ReactNode[]; snapshot?: SkySnapshot | null }) {
+export function NatalPlacementSections({ items, emptyHouses, snapshot, planetTitle, includeLuminaries = false, supplementalAngleDescriptions = true }: { supplementalAngleDescriptions?: boolean; planetTitle?: string; includeLuminaries?: boolean; items: NatalPlacementItem[]; emptyHouses: ReactNode[]; snapshot?: SkySnapshot | null }) {
   const traditional = new Set(["Mercury", "Venus", "Mars", "Jupiter", "Saturn"]);
   const generational = new Set(["Uranus", "Neptune", "Pluto"]);
   const angles = new Set(["Midheaven", "MC", "Descendant", "IC", "Ic", "Imum Coeli"]);
@@ -15,23 +15,27 @@ export function NatalPlacementSections({ items, emptyHouses, snapshot }: { items
   if (snapshot?.birthTimeKnown === true) {
     const signs = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
     for (const [id, source] of [["descendant", snapshot.ascendantLongitude], ["imum-coeli", snapshot.midheavenLongitude]] as const) {
+      if (planetTitle && id === "descendant") continue;
       const guide = LEARN_POINT_INDEX.find(point => point.id === id)!;
       if (typeof source !== "number" || !Number.isFinite(source) || items.some(item => item.pointName === guide.name || item.pointName === guide.glyph)) continue;
       const longitude = ((source + 180) % 360 + 360) % 360;
       const signIndex = Math.floor(longitude / 30);
       const degree = longitude % 30;
       const house = (signIndex - signs.indexOf(snapshot.ascendant) + 12) % 12 + 1;
-      supplementalAngles.push({ id, pointName: guide.name, node: <PlacementTableRow
+      supplementalAngles.push({ id, pointName: guide.name, node: <PlacementTableRow textGlyphs={Boolean(planetTitle)} readMoreAppearance={planetTitle ? "icon" : "text"}
         pointName={guide.name} glyph={guide.glyph} sign={signs[signIndex]} house={house}
         degree={`${Math.floor(degree)}°${String(Math.floor((degree % 1) * 60)).padStart(2, "0")}'`}
-        title={`${guide.name} in ${signs[signIndex]}`} description={guide.detail}
-        onClick={() => window.location.assign(`/learn/points/${id}`)} /> });
+        title={`${guide.name} in ${signs[signIndex]}`} description={supplementalAngleDescriptions ? guide.detail : undefined}
+        onClick={supplementalAngleDescriptions ? () => window.location.assign(`/learn/points/${id}`) : undefined} /> });
     }
   }
+  const planets = new Set([...traditional, ...generational, ...(includeLuminaries ? ["Sun", "Moon", "Ascendant"] : [])]);
   const groups = [
+    ...(planetTitle ? [{ title: planetTitle, className: "natal-planets", rows: items.filter(item => planets.has(item.pointName)) }] : [
     { title: "Traditional planets", className: "natal-traditional", rows: items.filter(item => traditional.has(item.pointName)) },
     { title: "Generational planets", className: "natal-generational", rows: items.filter(item => generational.has(item.pointName)) },
-    { title: "Angles", className: "natal-angles", rows: [...items.filter(item => angles.has(item.pointName)), ...supplementalAngles] },
+    ]),
+    { title: "Angles", className: "natal-angles", rows: [...items.filter(item => angles.has(item.pointName) && (!planetTitle || item.pointName !== "Descendant")), ...supplementalAngles] },
     { title: "Points", className: "natal-points", rows: items.filter(item => !traditional.has(item.pointName) && !generational.has(item.pointName) && !angles.has(item.pointName) && !["Sun", "Moon", "Ascendant"].includes(item.pointName)).sort((a, b) => (pointOrder[a.pointName] ?? 4) - (pointOrder[b.pointName] ?? 4)) }
   ];
   return <div className="natal-placement-sections">
