@@ -5,7 +5,8 @@ export function transitNatalPackagedSourceDraft(source: Record<string, unknown>,
   }
   return {
     reviewerNotes: "", id: null, contentKey, surface: contentKey.startsWith("fallback-hook/natal/") ? "natal" as const : "you" as const, mode: "in_depth" as const,
-    status: "DRAFT" as const, lane: "reference" as const, blockType: "fallback_hook" as const,
+    status: "DRAFT" as const, lane: "reference" as const,
+    blockType: source.content_role === "template" ? "fallback_template" as const : source.content_role === "vocabulary" ? "vocabulary_phrase" as const : "fallback_hook" as const,
     headline: typeof source.headline === "string" ? source.headline : contentKey,
     summary: "", body: String(source.body_you ?? source.body ?? source.body_they ?? ""),
     reviewState: "needs-review" as const, promptVersion: "manual-admin",
