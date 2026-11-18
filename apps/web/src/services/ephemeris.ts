@@ -161,7 +161,7 @@ export type LunarCalendarEvent = {
   cazimi?: boolean;
   cazimiOrb?: number;
   eclipseType?: LunarCalendarEclipseType;
-  /** Source identity for a contact active at the calculated lunation on this local day. */
+  /** Source identity for a Moon contact active at the calculated lunation. */
   lunationAspectKey?: string;
 };
 
@@ -3121,8 +3121,9 @@ function lunarCalendarEvents(
   swe: SwissEphInstance, gridStart: Date, gridEnd: Date, displayStart: Date,
   timeZone: string, cycleEvents: LunarCalendarEvent[]
 ): LunarCalendarEvent[] {
-  const eventStart = new Date(gridStart.getTime() - 2 * 86_400_000);
-  const eventEnd = new Date(gridEnd.getTime() + 2 * 86_400_000);
+  const eventPaddingMs = 2 * 86_400_000;
+  const eventStart = new Date(gridStart.getTime() - eventPaddingMs);
+  const eventEnd = new Date(gridEnd.getTime() + eventPaddingMs);
   const events = [
     ...findLunations(swe, eventStart, eventEnd, timeZone),
     ...cycleEvents.filter((event) => event.type === "ingress" && event.planet === "Moon"
@@ -3136,11 +3137,15 @@ function lunarCalendarEvents(
   for (const lunar of events.filter(event => event.type === 'lunation' && event.primary)) {
     const instant = new Date(lunar.startsAt);
     const active = activeSkyAspectsForDay(swe, instant);
-    for (const event of events) {
-      if (event.type !== 'aspect' || !event.planets || event.dateKey !== lunar.dateKey) continue;
+    for (const contact of active.filter(contact => contact.planetA === 'Moon' || contact.planetB === 'Moon')) {
+      const distance = (event: LunarCalendarEvent) => Math.abs(Date.parse(event.startsAt) - +instant);
+      const event = events.filter(event => event.type === 'aspect' && event.aspect === contact.aspectType
+        && event.planets?.[0] === contact.planetA && event.planets?.[1] === contact.planetB)
+        .sort((a, b) => distance(a) - distance(b))[0];
+      // Keep the physical contact across civil-day boundaries, without borrowing
+      // another month's occurrence when this padded feed lacks the nearest one.
+      if (!event?.planets || distance(event) > eventPaddingMs) continue;
       const [first, second] = event.planets;
-      if (![first, second].includes('Moon') && !(/new moon/iu.test(lunar.title) && [first, second].includes('Sun'))) continue;
-      if (!active.some(contact => contact.planetA === first && contact.planetB === second && contact.aspectType === event.aspect)) continue;
       const firstId = planets.findIndex(([name]) => name === first);
       const secondId = planets.findIndex(([name]) => name === second);
       // The first ten entries share Swiss's Sun-through-Pluto numbering.

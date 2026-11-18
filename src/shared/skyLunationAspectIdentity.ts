@@ -10,8 +10,7 @@ export function skyLunationAspectKey(event: Event, aspect: Aspect, positions: Po
     : event.phase === 'full-moon' || /full moon/iu.test(event.title ?? '') ? 'full-moon' : null;
   if (!phase || !event.sign || !Number.isFinite(Date.parse(event.startsAt))) return null;
   const kind = event.eclipseType ? `${event.eclipseType}-eclipse` : phase;
-  const luminary = aspect.from === 'Moon' || aspect.to === 'Moon' ? 'Moon'
-    : phase === 'new-moon' && (aspect.from === 'Sun' || aspect.to === 'Sun') ? 'Sun' : null;
+  const luminary = aspect.from === 'Moon' || aspect.to === 'Moon' ? 'Moon' : null;
   if (!luminary) return null;
   const reversed = aspect.to === luminary;
   const other = reversed ? aspect.from : aspect.to;

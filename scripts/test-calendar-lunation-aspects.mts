@@ -96,8 +96,7 @@ test("Full Moon Key aspects prioritize orb over earlier exact dates", async () =
       assert.equal(identity.skyLunationAspectKey(lunar, {...contact, from:other, to:'Moon', fromSign:otherSign, toSign:sign}), key);
       assert.equal(identity.skyLunationAspectKey({...lunar, sign:'Aries'}, contact), null);
       assert.equal(identity.skyLunationAspectKey({...lunar, title:'First Quarter Moon', eclipseType:undefined}, contact), null);
-      if (phase === 'New Moon') assert.equal(identity.skyLunationAspectKey(lunar, {...contact, from:'Sun'}), key);
-      else assert.equal(identity.skyLunationAspectKey(lunar, {...contact, from:'Sun'}), null);
+      assert.equal(identity.skyLunationAspectKey(lunar, {...contact, from:'Sun'}), null, 'Moon-context writing cannot replace a Sun reading');
     }
     const publications = await vite.ssrLoadModule("/src/content/contentPublicationState.ts");
     const detailLoader = await vite.ssrLoadModule("/src/services/skyDetailContent.ts");
@@ -115,14 +114,20 @@ test("Full Moon Key aspects prioritize orb over earlier exact dates", async () =
     assert.equal(venus.fromSign, 'Aquarius', 'The exact contact retains its independently calculated sign');
     assert.equal(venus.lunationAspectKey, 'sky.lunation.new-moon.capricorn.conjunction.venus.aquarius',
       'An out-of-sign contact uses the signs at the lunation, without rewriting exact-event facts');
+    const utc = await getLunarCalendarDayEvents({...defaultLocation,timeZone:'UTC'},new Date('2026-01-19T12:00:00Z'));
+    assert.equal(utc.find(event=>event.aspect==='conjunction'&&event.planets?.includes('Moon')&&event.planets?.includes('Venus'))?.lunationAspectKey,
+      venus.lunationAspectKey,'The same physical contact retains its lunar source across a civil-day boundary');
     assert.equal(await reader.datedLunationAspectEvent(defaultLocation, contact.startsAt, 'moon', 'square', 'uranus') !== undefined, true);
     assert.equal(identity.skyLunationAspectKey(eclipse, {from:'Moon',to:'Uranus',type:'square',fromSign:'Aries',toSign:'Gemini'}), null, 'Wrong endpoint sign cannot select lunar copy');
     assert(!(await getLunarCalendarDayEvents(defaultLocation, new Date('2026-08-29T16:00:00Z'))).some(event => event.lunationAspectKey === key), 'Ordinary days do not carry the eclipse contact');
+    const mercuryKey = 'sky.lunation.lunar-eclipse.pisces.opposition.mercury.virgo';
+    const mercuryRow = {id:'synthetic-lunar-mercury-live',contentKey:mercuryKey,body:'Complete synthetic lunar Mercury passage.',updatedAt:'2026-11-17T12:00:00Z'};
     const body = 'Synthetic lunar opening.\n\nThe complete approved final sentence remains intact.';
     const row = { id: 'synthetic-lunar-live', contentKey: key, body, updatedAt: '2026-11-17T12:00:00Z' };
-    const content = new Map([[key, row]]);
+    const content = new Map([[key, row], [mercuryKey, mercuryRow]]);
     publications.installContentPublications([{content_key: key, state: 'live', revision: 1,
-      row_id: row.id, row_updated_at: row.updatedAt, updated_at: row.updatedAt}]);
+      row_id: row.id, row_updated_at: row.updatedAt, updated_at: row.updatedAt}, {content_key:mercuryKey,state:'live',revision:1,
+      row_id:mercuryRow.id,row_updated_at:mercuryRow.updatedAt,updated_at:mercuryRow.updatedAt}]);
     const keys = reader.lunationArticleSnapshotKeys(lunarSky, eclipse);
     assert(keys.includes(key));
     assert(keys.includes('sky.aspect.sun.opposition.moon'), 'Dated lunar hydration includes exact general aspect publications');
@@ -142,6 +147,9 @@ test("Full Moon Key aspects prioritize orb over earlier exact dates", async () =
       new Map([[key, {...row, updatedAt: '2000-01-01T00:00:00Z'}]])).body, '', 'A stale authoritative source cannot reveal older copy');
     publications.installContentPublications([{content_key: key, state: 'retired', revision: 2, row_id: null, row_updated_at: null, updated_at: row.updatedAt}]);
     assert.equal(calendarReader.normalizeCalendarEventSurface(contact, row, 'August 28', null, null, null, content).sections.length, 0);
+    const remaining = app.currentSkyV4LunationDetailArticle({event:eclipse,sky:lunarSky,generatedContent:content});
+    assert.equal(remaining.sections[2].heading,'Moon Opposition Mercury','A remaining approved lunar contact may share a planet with a lead');
+    assert(remaining.sections[2].body.endsWith(mercuryRow.body));
   } finally {
     await vite.close();
   }

@@ -5481,8 +5481,7 @@ function currentSkyV4LunationDetailArticle({
   }
   const selectedLunarSource = resolveLunationReaderSource(event, generatedContent, sky.location.timeZone);
   if(selectedLunarSource){readerParts=selectedLunarSource.body ? selectedLunarSource.body.split(/\n\s*\n/u) : [];resolution=selectedLunarSource.body?'approved-lunar-article':'facts-only';}
-  const lunarSections = new Set<SkyDetailSection>();
-  const aspectSections = lunationAspectCandidates(sky.aspects)
+  const aspectCandidates = lunationAspectCandidates(sky.aspects)
     .map(aspect => ({ aspect, lunar: lunationArticleHoroscopeReader?.resolveSkyLunationAspectReading(event, aspect, sky.positions, generatedContent) }))
     .filter((entry, index, all) => !entry.lunar || all.findIndex(other => other.lunar?.contentKey === entry.lunar?.contentKey) === index)
     .flatMap(({ aspect, lunar }) => {
@@ -5493,21 +5492,25 @@ function currentSkyV4LunationDetailArticle({
           body: `${skyPlacementAspectExactDate(aspect, generatedAt, sky.positions)}\n\n${lunar.body}`,
           role: 'aspect', aspectType: aspect.type, group: normalizedAspectToneBucket(aspect.type)
         };
-        lunarSections.add(section);
-        return [section];
+        return [{ aspect, isLunar: Boolean(lunar), section }];
       }
       return relatedSkyAspectSectionsForPlacement({
-      aspects: [aspect],
-      generatedAt,
-      generatedContent,
-      pointName: aspect.from,
-      positions: sky.positions,
-      timeZone: sky.location.timeZone
-      });
+        aspects: [aspect],
+        generatedAt,
+        generatedContent,
+        pointName: aspect.from,
+        positions: sky.positions,
+        timeZone: sky.location.timeZone
+      }).map(section => ({ aspect, isLunar: Boolean(lunar), section }));
     })
-    .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
-    // Preserve both calculated leads; approved lunar contacts add their own rows.
-    .filter((section, index) => index < 2 || lunarSections.has(section));
+    .filter((entry, index, all) => all.findIndex(candidate => candidate.section.heading === entry.section.heading) === index);
+  const leadAspects = aspectCandidates.slice(0, 2);
+  const representedPlanets = new Set(leadAspects.flatMap(entry => [entry.aspect.from, entry.aspect.to]));
+  const lunarCandidates = aspectCandidates.slice(2).filter(entry => entry.isLunar);
+  const additionalLunar = lunarCandidates.find(entry => [entry.aspect.from, entry.aspect.to]
+    .some(planet => planet !== 'Sun' && planet !== 'Moon' && !representedPlanets.has(planet))) ?? lunarCandidates[0];
+  // Keep both leads and add one lunar row, preferring another planet when available.
+  const aspectSections = [...leadAspects, ...(additionalLunar ? [additionalLunar] : [])].map(entry => entry.section);
 
   return {
     routePath: `sky/lunation/${event.startsAt.slice(0,10)}/${normalizeContentIdPart(event.sign ?? "event")}`,

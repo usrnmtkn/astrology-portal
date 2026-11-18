@@ -76,12 +76,14 @@ for (const width of [390, 1440]) for (const theme of ["light", "dark"]) {
   });
 }
 
-for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [390, 'dark']] as const) {
-  test(`Published eclipse contact and fresh general aspect survive both reader routes ${width} ${theme}`, async ({page}) => {
-    test.setTimeout(150_000);
+for (const [width, theme, zone] of [[1440, 'light', 'America/New_York'], [1440, 'dark', 'America/New_York'], [390, 'light', 'America/New_York'], [390, 'dark', 'America/New_York'], [390, 'dark', 'UTC']] as const) {
+  test(`Published eclipse contact and fresh general aspect survive both reader routes ${width} ${theme} ${zone}`, async ({page}) => {
+    test.setTimeout(180_000);
+    const location={...defaultLocation,timeZone:zone};
     const lunarBody = 'Synthetic eclipse contact opening. The calculated contact belongs to this lunar event.\n\nThe full approved lunar final sentence remains visible.';
     const generalBody = 'Synthetic revised general aspect opening. This complete owner revision replaces the older bundled interpretation.\n\nThe approved general final sentence remains visible.';
     const mercuryBody = 'Synthetic approved Sun Mercury opening. This separate exact source replaces its generic conjunction reading.\n\nThe approved Mercury final sentence remains visible.';
+    const mercuryLunarBody = 'Synthetic lunar Mercury opening. This separate Moon contact retains its own complete source.\n\nThe lunar Mercury final sentence remains visible in its matching reading.';
     const newMoonBody = 'Synthetic Capricorn New Moon contact opening. The Moon reaches its exact Venus conjunction after entering Aquarius.\n\nThe full approved out-of-sign final sentence remains visible.';
     const base = {surface:'sky', mode:'in_depth', status:'LIVE', lane:'serving', review_state:null,
       target_date:null, flags:[], provider:'manual-admin', headline:null, summary:null, sections:null, updated_at:'2026-11-17T12:00:00Z'};
@@ -93,6 +95,8 @@ for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [
       {...base, id:'a0000000-0000-4000-8000-000000000082', content_key:'sky.aspect.sun.opposition.moon',
         event_type:'sky-aspect-owner-approved-exact', block_type:'fallback_hook', body:generalBody,
         source_snapshot:{contentStudioExactAspect:true, review_status:'approved', exactSkyAspectIdentity:{a:'sun',aspect:'opposition',b:'moon'}}},
+      {...base, id:'a0000000-0000-4000-8000-000000000085', content_key:'sky.lunation.lunar-eclipse.pisces.opposition.mercury.virgo',
+        event_type:'lunation-aspect', block_type:'fallback_hook', body:mercuryLunarBody, source_snapshot:{review_status:'approved', content_role:'full_copy'}},
       {...base, id:'a0000000-0000-4000-8000-000000000084', content_key:'sky.aspect.sun.conjunction.mercury',
         event_type:'sky-aspect-owner-approved-exact', block_type:'fallback_hook', body:mercuryBody,
         source_snapshot:{contentStudioExactAspect:true, review_status:'approved', exactSkyAspectIdentity:{a:'sun',aspect:'conjunction',b:'mercury'}}}
@@ -104,7 +108,7 @@ for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [
       await page.addInitScript(({theme,location}) => {
         localStorage.setItem('tldrastro:theme',theme);
         localStorage.setItem('tldrastro:selectedLocation',JSON.stringify(location));
-      }, {theme,location:defaultLocation});
+      }, {theme,location});
       await bundledPublications(page);
       await page.route('**/api/sky-reader?**',route=>route.fulfill({status:503,json:{error:'Use the actual calculation fixture'}}));
       await page.route('**/api/**', async route => {
@@ -125,6 +129,7 @@ for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [
         await expect.poll(async()=>whole(await related.innerText(),lunarBody)).toBe(true);
         await expect.poll(async()=>whole(await related.innerText(),generalBody)).toBe(true);
         await expect.poll(async()=>whole(await related.innerText(),mercuryBody)).toBe(true);
+        await expect(related).not.toContainText(mercuryLunarBody);
         await expect(page.locator('.article-related-aspects__copy h4')).toHaveText(['Sun Opposition Moon','Sun Conjunction Mercury','Moon Square Uranus']);
       };
       await page.goto('/?date=2026-08-28#sky/lunation/2026-08-28/pisces');
@@ -132,17 +137,24 @@ for (const [width, theme] of [[1440, 'light'], [1440, 'dark'], [390, 'light'], [
       await page.reload();
       await verifyLunar();
       await page.goto('/?date=2026-08-28#calendar?view=day&date=2026-08-28');
+      const article=page.locator('.sky-detail-article');
+      const mercuryCard=page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:/Moon opposes Mercury/});
+      await expect(mercuryCard).toBeVisible({timeout:60_000});
+      await expect.poll(async()=>whole(await mercuryCard.innerText(),mercuryLunarBody)).toBe(true);
+      await mercuryCard.click();
+      await expect.poll(async()=>whole(await article.innerText(),mercuryLunarBody)).toBe(true);
+      await page.goto('/?date=2026-08-28#calendar?view=day&date=2026-08-28');
       const card=page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:/Moon squares Uranus/});
       await expect(card).toBeVisible({timeout:60_000});
       await expect.poll(async()=>whole(await card.innerText(),lunarBody)).toBe(true);
       await card.click();
-      const article=page.locator('.sky-detail-article');
       await expect.poll(async()=>whole(await article.innerText(),lunarBody)).toBe(true);
       await page.reload();
       await expect.poll(async()=>whole(await article.innerText(),lunarBody),{timeout:60_000}).toBe(true);
       await page.goto('/?date=2026-01-18#sky/lunation/2026-01-18/capricorn');
       await expect.poll(async()=>whole(await page.locator('.article-related-aspects-card').innerText(),newMoonBody),{timeout:60_000}).toBe(true);
-      await page.goto('/?date=2026-01-18#calendar?view=day&date=2026-01-18');
+      const venusDate=zone==='UTC'?'2026-01-19':'2026-01-18';
+      await page.goto(`/?date=${venusDate}#calendar?view=day&date=${venusDate}`);
       const venus=page.locator('.calendar-day-events .calendar-stoic-card').filter({hasText:/Moon conjoins Venus/});
       await expect(venus).toBeVisible({timeout:60_000});
       await expect.poll(async()=>whole(await venus.innerText(),newMoonBody)).toBe(true);
