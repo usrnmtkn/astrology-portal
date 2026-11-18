@@ -45,7 +45,7 @@ export type CompatibilityPlanetCard = {
 
 export type CompatibilityTabProps = {
   cards: CompatibilityPlanetCard[];
-  daily?: { body: string; dateLabel: string } | null;
+  daily?: { body: string; opening?: string; dateLabel: string } | null;
   friendName: string;
   onOpenCard?: (card: CompatibilityPlanetCard, paragraphs: string[]) => void;
 };
@@ -68,7 +68,7 @@ export function CompatibilityTab({
     <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${friendName} compatibility`}>
       <div className="friend-profile-copy-column compatibility-column">
         {daily ? (
-          <FriendProfileForecast eyebrow={`Between you · ${daily.dateLabel}`} body={daily.body} ariaLabel={`Today - ${daily.dateLabel}`} />
+          <FriendProfileForecast className="compatibility-overview" eyebrow={`Between you · ${daily.dateLabel}`} body={daily.body} opening={daily.opening} ariaLabel={`Between you · ${daily.dateLabel}`} />
         ) : null}
         <section className="compatibility-comparisons" aria-labelledby="compatibility-comparisons-title">
           <div className="friend-profile-section-heading"><h2 className="chart-section-title" id="compatibility-comparisons-title">Planet by planet</h2>

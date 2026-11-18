@@ -1569,7 +1569,7 @@ export function ManualChartsPanel({
       }
 
       return rendered.body
-        ? { body: rendered.body, dateLabel: formatPairDailyDate(isoDate) }
+        ? { body: rendered.body, opening: rendered.parts[0]?.replace(/\s{2,}/g, " ").trim(), dateLabel: formatPairDailyDate(isoDate) }
         : null;
     } catch (error) {
       if (error instanceof FallbackV3SourceGapError) return null;
